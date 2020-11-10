@@ -4,7 +4,7 @@ import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 import { FontStyle, FontWeight } from "../scene/shape/text";
 import { Marker } from "./marker/marker";
-import { reactive, Observable, PropertyChangeEvent } from "../util/observable";
+import { reactive, Observable, PropertyChangeEvent, SourceEvent } from "../util/observable";
 import { getMarker } from "./marker/util";
 import { createId } from "../util/id";
 
@@ -22,6 +22,11 @@ export interface LegendDatum {
     label: {
         text: string;  // display name for the sub-component
     };
+}
+
+export interface LegendClickEvent extends SourceEvent<Legend> {
+    itemId: string;
+    enabled: boolean;
 }
 
 export enum LegendOrientation {
