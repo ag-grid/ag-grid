@@ -88,6 +88,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private hasChartRange = false;
 
     private usingWrapper: boolean;
+    private wrapText: boolean;
 
     private includeSelectionComponent: boolean;
     private includeRowDraggingComponent: boolean;
@@ -407,7 +408,8 @@ export class CellComp extends Component implements TooltipParentComp {
             cssClasses.push(CSS_CELL_VALUE);
         }
 
-        if (this.column.getColDef().wrapText) {
+        this.wrapText = this.column.getColDef().wrapText == true;
+        if (this.wrapText) {
             cssClasses.push(CSS_CELL_WRAP_TEXT);
         }
 
@@ -457,6 +459,19 @@ export class CellComp extends Component implements TooltipParentComp {
 
     public getCellEditor(): ICellEditorComp | null {
         return this.cellEditor;
+    }
+
+    public onNewColumnsLoaded(): void {
+        this.postProcessWrapText();
+        this.postProcessCellClassRules();
+    }
+
+    private postProcessWrapText(): void {
+        const newValue = this.column.getColDef().wrapText == true;
+        if (newValue!==this.wrapText) {
+            this.wrapText = newValue;
+            this.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, this.wrapText);
+        }
     }
 
     // + stop editing {forceRefresh: true, suppressFlash: true}
