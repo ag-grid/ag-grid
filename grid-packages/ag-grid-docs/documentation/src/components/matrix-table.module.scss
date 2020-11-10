@@ -11,10 +11,10 @@
     }
 
     &__true {
-        color: green;
+        color: $success;
     }
 
     &__false {
-        color: red;
+        color: $danger;
     }
 }
