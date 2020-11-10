@@ -74,4 +74,12 @@
             @extend .mb-0;
         }
     }
+
+    a {
+        color: $primary;
+        &:hover {
+            text-decoration: none;
+            color: $indigo;
+        }
+    }
 }
