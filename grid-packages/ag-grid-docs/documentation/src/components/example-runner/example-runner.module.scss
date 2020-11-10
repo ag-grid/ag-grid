@@ -1,5 +1,5 @@
 .example-runner {
-    border: 1px solid darken(theme-color(light), 10%);
+    border: 1px solid darken($light, 10%);
     border-radius: 5px;
     margin: 20px 0;
     display: flex;
@@ -7,7 +7,7 @@
 
     &__header {
         display: flex;
-        background-image: linear-gradient(to bottom right, theme-color(primary), darken(theme-color(primary), 10%));
+        background-image: linear-gradient(to bottom right, $primary, darken($primary, 10%));
         padding: 10px;
         border-radius: 5px 5px 0 0;
         height: 3.2rem;
@@ -16,7 +16,7 @@
     &__title {
         flex: 1;
         font-weight: bold;
-        color: theme-color(light);
+        color: $light;
         line-height: 2rem;
     }
 
@@ -39,7 +39,7 @@
     &__menu {
         display: flex;
         flex-direction: column;
-        background-color: lighten(theme-color(secondary), 20%);
+        background-color: lighten($secondary, 20%);
         padding: 20px 0;
     }
 
@@ -49,10 +49,10 @@
         text-align: center;
         padding-top: 12px;
         cursor: pointer;
-        color: theme-color(dark);
+        color: $dark;
 
         a {
-            color: theme-color(dark);
+            color: $dark;
         }
 
         &:focus,
@@ -62,9 +62,9 @@
 
         &--selected {
             color: white;
-            background-color: theme-color(dark);
+            background-color: $dark;
             &:focus {
-                outline: 1px solid theme-color(light);
+                outline: 1px solid $light;
                 outline-offset: -2px;
             }
         }

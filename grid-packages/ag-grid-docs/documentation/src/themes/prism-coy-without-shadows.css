@@ -51,7 +51,7 @@
  :not(pre) > code[class*="language-"],
  :not(pre) > code:not([class]) {
      position: relative;
-     padding: .2em;
+     padding: 0 .2em;
      border-radius: 0.3em;
      font-size: .9rem;
      color: #007bff;

@@ -3,7 +3,7 @@
     top: 4rem;
     right: 0;
     width: 300px;
-    border-left: solid 1px lighten(theme-color(secondary), 40%);
+    border-left: solid 1px lighten($secondary, 40%);
     font-size: 0.9rem;
     @extend .my-4, .mx-3, .pl-3, .list-unstyled;
 
@@ -27,11 +27,11 @@
     }
 
     &__link {
-        color: theme-color(secondary);
+        color: $secondary;
         text-decoration: none;
 
         &:hover {
-            color: theme-color(primary);
+            color: $primary;
             text-decoration: none;
         }
     }

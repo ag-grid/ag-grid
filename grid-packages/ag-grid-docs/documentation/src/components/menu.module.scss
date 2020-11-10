@@ -3,13 +3,13 @@
 
     &__item {
         a {
-            color: theme-color(secondary);
+            color: $secondary;
             font-size: 0.85rem;
             @extend .d-block, .my-1;
 
             &:hover {
                 text-decoration: none;
-                color: theme-color(primary);
+                color: $primary;
             }
         }
 
@@ -21,7 +21,7 @@
             }
 
             &:focus-visible {
-                outline-color: theme-color(primary);
+                outline-color: $primary;
                 outline-width: 1px;
                 outline-style: solid;
                 outline-offset: 0.15rem;
@@ -29,12 +29,12 @@
         }
 
         div[role="button"] {
-            color: theme-color(dark);
+            color: $dark;
             font-weight: 500;
         }
 
         &--active {
-            color: theme-color(primary) !important;
+            color: $primary !important;
         }
     }
 
@@ -64,11 +64,11 @@
             @extend .pl-4;
 
             > li > a {
-                color: theme-color(dark);
+                color: $dark;
                 font-weight: 400;
                 font-size: 0.9rem;
                 &:hover {
-                    color: theme-color(primary);
+                    color: $primary;
                 }
             }
         }
@@ -84,6 +84,6 @@
     }
 
     input:focus {
-        border-color: theme-color(primary);
+        border-color: $primary;
     }
 }

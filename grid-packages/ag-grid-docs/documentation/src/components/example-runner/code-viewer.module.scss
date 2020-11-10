@@ -6,7 +6,7 @@
     &__files {
         @extend .mt-2, .ml-2, .mb-2, .py-2;
         width: 200px;
-        background-color: transparentize(theme-color(secondary), 0.5);
+        background-color: transparentize($secondary, 0.5);
         border-radius: 5px 0 0 5px;
     }
 
@@ -20,11 +20,11 @@
         }
 
         &--active {
-            color: theme-color(light);
-            background-color: theme-color(dark);
+            color: $light;
+            background-color: $dark;
             outline: none;
             &:focus {
-                outline: 1px solid theme-color(light);
+                outline: 1px solid $light;
                 outline-offset: -2px;
             }
         }
@@ -32,8 +32,8 @@
 
     &__file-title {
         @extend .py-1, .px-2;
-        border-bottom: 1px solid theme-color(light);
-        color: theme-color(primary);
+        border-bottom: 1px solid $light;
+        color: $primary;
         font-weight: bold;
     }
 

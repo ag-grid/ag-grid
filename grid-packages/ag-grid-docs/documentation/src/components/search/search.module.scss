@@ -18,6 +18,6 @@
     }
 
     input:focus + svg {
-        color: theme-color(primary);
+        color: $primary;
     }
 }

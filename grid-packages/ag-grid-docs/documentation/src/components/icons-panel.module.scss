@@ -9,7 +9,7 @@
     &__nav-link {
         @extend .nav-link;
         background-color: transparent;
-        color: theme-color(light);
+        color: $light;
 
         &:focus {
             outline: none;
@@ -17,11 +17,11 @@
         
         &__active {
             @extend .active;
-            background-color: theme-color(light);
+            background-color: $light;
             color: black;
         }
         &:hover {
-            color: theme-color(light);
+            color: $light;
         }
     }
     
@@ -62,7 +62,7 @@
     &__download {
         @extend .bg-primary, .p-2;
         a {
-            color: theme-color(light);
+            color: $light;
             &:hover {
                 text-decoration: none;
             }

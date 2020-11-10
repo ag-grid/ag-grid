@@ -24,10 +24,10 @@
             overflow: hidden;
 
             &:hover {
-                background-color: lighten(theme-color(primary), 10%);
+                background-color: lighten($primary, 10%);
 
                 a {
-                    color: theme-color(light);
+                    color: $light;
                 }
             }
 
@@ -47,7 +47,7 @@
     &__mark {
         @extend .p-0;
         background-color: transparent;
-        color: theme-color(dark);
+        color: $dark;
         font-weight: bold;
     }
 }

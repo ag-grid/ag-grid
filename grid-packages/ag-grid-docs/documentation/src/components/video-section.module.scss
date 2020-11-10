@@ -5,7 +5,7 @@
     }
     iframe {
         @extend .ml-3;
-        border: 2px solid theme-color(dark);
+        border: 2px solid $dark;
         border-radius: 5px;
     }
 }

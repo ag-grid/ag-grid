@@ -5,7 +5,7 @@
 .header {
     @extend .d-flex, .p-3;
     justify-content: space-between;
-    background-image: linear-gradient(to top left, theme-color(primary), darken(theme-color(primary), 25%));
+    background-image: linear-gradient(to top left, $primary, darken($primary, 25%));
 
     &__logo {
         @extend .d-block;
@@ -26,7 +26,7 @@
     flex: none;
     width: 300px;
     overflow: auto;
-    background-color: theme-color(light);
+    background-color: $light;
 }
 
 .content {
@@ -39,6 +39,6 @@
     flex: none;
     height: 60px;
     text-align: center;
-    background-image: linear-gradient(to top left, darken(theme-color(primary), 25%), theme-color(primary));
+    background-image: linear-gradient(to top left, darken($primary, 25%), $primary);
     color: white;
 }
