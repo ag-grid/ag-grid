@@ -31,7 +31,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     fragment: true,
     components: {
       'grid-example': props => ExampleRunner(getExampleRunnerProps(props, 'grid')),
-      'chart-example': props => ExampleRunner(getExampleRunnerProps(props, 'chart')),
+      'chart-example': props => ExampleRunner(getExampleRunnerProps(props, 'charts')),
       'api-documentation': props => ApiDocumentation({
         ...props,
         pageName,

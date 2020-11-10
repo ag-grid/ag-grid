@@ -5,7 +5,7 @@ import Scripts from './Scripts';
 import Styles from './Styles';
 import SystemJs from './SystemJs';
 
-const ReactTemplate = ({ boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+const ReactTemplate = ({ library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
     <html lang="en">
         <head>
             <title>React example</title>
@@ -19,7 +19,12 @@ const ReactTemplate = ({ boilerplatePath, appLocation, options, scriptFiles, sty
             <div id="root">Loading React example&hellip;</div>
 
             <Scripts files={scriptFiles} />
-            <SystemJs boilerplatePath={boilerplatePath} appLocation={appLocation} startFile={appLocation + 'index.jsx'} options={options} />
+            <SystemJs
+                library={library}
+                boilerplatePath={boilerplatePath}
+                appLocation={appLocation}
+                startFile={appLocation + 'index.jsx'}
+                options={options} />
         </body>
     </html>;
 

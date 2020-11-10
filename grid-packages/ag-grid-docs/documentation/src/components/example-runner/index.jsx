@@ -11,14 +11,14 @@ import { doOnEnter, getExampleInfo, isDevelopment, openPlunker } from './helpers
 import { getIndexHtml } from './index-html-helper';
 import styles from './example-runner.module.scss';
 
-const ExampleRunner = ({ pageName, framework, name, title, type, options = {} }) => {
+const ExampleRunner = ({ pageName, framework, name, title, type, options = {}, library }) => {
     const [showCode, setShowCode] = useState(false);
     const nodes = useExampleFileNodes();
 
     return <GlobalContextConsumer>
         {({ exampleImportType, useFunctionalReact, set }) => {
             const exampleInfo = getExampleInfo(
-                nodes, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
+                nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
 
             let openTabLink = <a href={withPrefix(`${exampleInfo.appLocation}index.html`)} target="_blank" rel="noreferrer">
                 <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
@@ -46,12 +46,12 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = {} })
             return <div className={styles.exampleRunner}>
                 <div className={`form-inline ${styles.exampleRunner__header}`}>
                     <div className={styles.exampleRunner__title}>Example: {title}</div>
-                    {exampleInfo.framework === 'react' &&
+                    {library === 'grid' && exampleInfo.framework === 'react' &&
                         <ReactVersionSelector
                             useFunctionalReact={useFunctionalReact}
                             onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
                     }
-                    {exampleInfo.framework !== 'javascript' && exampleInfo.type !== 'multi' &&
+                    {library === 'grid' && exampleInfo.framework !== 'javascript' && exampleInfo.type !== 'multi' &&
                         <ImportTypeSelector
                             importType={exampleImportType}
                             onChange={event => set({ exampleImportType: event.target.value })} />

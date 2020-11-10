@@ -8,7 +8,7 @@ import VueTemplate from './VueTemplate';
 import PolymerTemplate from './PolymerTemplate';
 
 export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
-    const { sourcePath, options } = exampleInfo;
+    const { sourcePath, options, library } = exampleInfo;
     let { boilerplatePath, appLocation, framework } = exampleInfo;
 
     const getFileUrl = file => isExecuting ?
@@ -46,6 +46,7 @@ export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
                 }
 
                 element = <VanillaTemplate
+                    library={library}
                     appLocation={appLocation}
                     options={options}
                     indexFragment={indexHtml.childHtmlRehype.html}
@@ -67,6 +68,7 @@ export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
                 const FrameworkTemplate = frameworkTemplates[framework];
 
                 element = <FrameworkTemplate
+                    library={library}
                     boilerplatePath={boilerplatePath}
                     appLocation={appLocation}
                     options={options}

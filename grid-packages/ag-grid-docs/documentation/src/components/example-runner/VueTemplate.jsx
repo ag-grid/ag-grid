@@ -5,7 +5,7 @@ import Scripts from './Scripts';
 import Styles from './Styles';
 import SystemJs from './SystemJs';
 
-const VueTemplate = ({ boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+const VueTemplate = ({ library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
     <html lang="en">
         <head>
             <title>Vue example</title>
@@ -19,7 +19,12 @@ const VueTemplate = ({ boilerplatePath, appLocation, options, scriptFiles, style
             <div id="app" dangerouslySetInnerHTML={{ __html: `<my-component>Loading Vue example&hellip;</my-component>` }}></div>
 
             <Scripts files={scriptFiles} />
-            <SystemJs boilerplatePath={boilerplatePath} appLocation={appLocation} startFile={appLocation + 'main.js'} options={options} />
+            <SystemJs
+                library={library}
+                boilerplatePath={boilerplatePath}
+                appLocation={appLocation}
+                startFile={appLocation + 'main.js'}
+                options={options} />
         </body>
     </html>;
 

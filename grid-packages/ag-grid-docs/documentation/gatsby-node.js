@@ -3,6 +3,7 @@ const express = require('express');
 const { createFilePath } = require('gatsby-source-filesystem');
 const { GraphQLString } = require('gatsby/graphql');
 const fs = require('fs-extra');
+const supportedFrameworks = require('./src/utils/supported-frameworks.js');
 
 /* We override this to allow us to specify the directory structure of the example files, so that we can reference
  * them correctly in the examples. By default, Gatsby includes a cache-busting hash of the file which would cause
@@ -102,16 +103,15 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
     result.data.allMarkdownRemark.nodes.forEach(node => {
         const { frontmatter: { frameworks: specifiedFrameworks } } = node;
 
-        const frameworks = ['javascript', 'react', 'angular', 'vue']
-            .filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
-
-        frameworks.forEach(framework => {
-            createPage({
-                path: `/${framework}${node.fields.path}/`,
-                component: docPageTemplate,
-                context: { frameworks, framework, srcPath: node.fields.path, }
+        supportedFrameworks
+            .filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f))
+            .forEach(framework => {
+                createPage({
+                    path: `/${framework}${node.fields.path}/`,
+                    component: docPageTemplate,
+                    context: { frameworks: supportedFrameworks, framework, srcPath: node.fields.path, }
+                });
             });
-        });
     });
 };
 

@@ -12,12 +12,16 @@ const getInternalFramework = (framework, useFunctionalReact) => {
     return framework;
 };
 
-export const getExampleInfo = (nodes, pageName, name, title, type, options, framework, importType, useFunctionalReact) => {
+export const getExampleInfo = (nodes, library, pageName, name, title, type, options, framework, importType, useFunctionalReact) => {
     const internalFramework = getInternalFramework(framework, useFunctionalReact);
-    const boilerplatePath = `/example-runner/grid-${framework}-boilerplate/`;
+    const boilerplatePath = `/example-runner/${library}-${framework}-boilerplate/`;
 
     let sourcePath = `${pageName}/examples/${name}/`;
     let appLocation = `/examples/${pageName}/${name}/`;
+
+    if (library === 'charts') {
+        importType = 'packages';
+    }
 
     switch (type) {
         case 'generated':
@@ -40,6 +44,7 @@ export const getExampleInfo = (nodes, pageName, name, title, type, options, fram
     }
 
     return {
+        library,
         pageName,
         name,
         title,

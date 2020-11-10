@@ -5,7 +5,7 @@ import Scripts from './Scripts';
 import Styles from './Styles';
 import SystemJs from './SystemJs';
 
-const AngularTemplate = ({ boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+const AngularTemplate = ({ library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
     <html lang="en">
         <head>
             <title>Angular 2 example</title>
@@ -22,7 +22,12 @@ const AngularTemplate = ({ boilerplatePath, appLocation, options, scriptFiles, s
             <script src="https://unpkg.com/core-js-bundle@3.6.5/minified.js"></script>
             <script src="https://unpkg.com/zone.js@0.11.2/dist/zone.min.js"></script>
             <Scripts files={scriptFiles} />
-            <SystemJs boilerplatePath={boilerplatePath} appLocation={appLocation} startFile={boilerplatePath + 'main.ts'} options={options} />
+            <SystemJs
+                library={library}
+                boilerplatePath={boilerplatePath}
+                appLocation={appLocation}
+                startFile={boilerplatePath + 'main.ts'}
+                options={options} />
         </body>
     </html>;
 

@@ -1,9 +1,9 @@
 import React from 'react';
-import { localPrefix, agGridVersion } from './consts';
+import { localPrefix, agGridVersion, agChartsVersion } from './consts';
 import { isDevelopment } from './helpers';
 
 const devConfiguration = {
-    gridPackagesMap: {
+    gridMap: {
         /* START OF GRID CSS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-grid.css`,
         "@ag-grid-community/core/dist/styles/ag-grid.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-grid.css`,
@@ -65,7 +65,7 @@ const devConfiguration = {
         "ag-grid-react": `${localPrefix}/ag-grid-react`,
         "ag-grid-vue": `${localPrefix}/ag-grid-vue`
     },
-    gridCommunityModulesMap: {
+    gridCommunityPaths: {
         /* START OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js`,
         "@ag-grid-community/client-side-row-model": `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js`,
@@ -75,7 +75,7 @@ const devConfiguration = {
         /* END OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
         "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`,
     },
-    gridEnterpriseModulesMap: {
+    gridEnterprisePaths: {
         /* START OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js`,
         "@ag-grid-community/client-side-row-model": `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js`,
@@ -103,11 +103,22 @@ const devConfiguration = {
         "@ag-grid-enterprise/viewport-row-model": `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js`,
         /* END OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
         "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`
+    },
+    chartMap: {
+        /* START OF CHART MODULES DEV - DO NOT DELETE */
+        "ag-charts-community": `${localPrefix}/ag-charts-community`,
+        /* END OF CHART MODULES DEV - DO NOT DELETE */
+        "ag-charts-react": `${localPrefix}/ag-charts-react`,
+        "ag-charts-angular": `${localPrefix}/ag-charts-angular`,
+        "ag-charts-vue": `${localPrefix}/ag-charts-vue`
+    },
+    chartPaths: {
+        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`,
     }
 };
 
 const prodConfiguration = {
-    gridPackagesMap: {
+    gridMap: {
         /* START OF GRID CSS PROD - DO NOT DELETE */
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-grid.css`,
         "@ag-grid-community/core/dist/styles/ag-grid.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-grid.css`,
@@ -139,7 +150,7 @@ const prodConfiguration = {
         "ag-grid-react": `https://unpkg.com/ag-grid-react@${agGridVersion}/`,
         "ag-grid-vue": `https://unpkg.com/ag-grid-vue@${agGridVersion}/`
     },
-    gridCommunityModulesMap: {
+    gridCommunityPaths: {
         /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
         "@ag-grid-community/all-modules": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/ag-grid-community.cjs.js`,
         "@ag-grid-community/client-side-row-model": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/ag-grid-community.cjs.js`,
@@ -148,7 +159,7 @@ const prodConfiguration = {
         "@ag-grid-community/infinite-row-model": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/ag-grid-community.cjs.js`,
         /* END OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
     },
-    gridEnterpriseModulesMap: {
+    gridEnterprisePaths: {
         /* START OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
         "@ag-grid-community/all-modules": `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridVersion}/dist/ag-grid-enterprise.cjs.js`,
         "@ag-grid-community/client-side-row-model": `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridVersion}/dist/ag-grid-enterprise.cjs.js`,
@@ -175,21 +186,38 @@ const prodConfiguration = {
         "@ag-grid-enterprise/status-bar": `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridVersion}/dist/ag-grid-enterprise.cjs.js`,
         "@ag-grid-enterprise/viewport-row-model": `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridVersion}/dist/ag-grid-enterprise.cjs.js`,
         /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
-    }
+    },
+    chartMap: {
+        "ag-charts-react": `npm:ag-charts-react@${agChartsVersion}/`,
+        "ag-charts-angular": `npm:ag-charts-angular@${agChartsVersion}/`,
+        "ag-charts-vue": `npm:ag-charts-vue@${agChartsVersion}/`,
+        "ag-charts-community": `https://unpkg.com/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.cjs.js`,
+    },
+    chartPaths: {}
 };
 
-const SystemJs = ({ boilerplatePath, appLocation, startFile, options }) => {
+const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options }) => {
     const { enterprise: isEnterprise } = options;
     const systemJsPath = `${boilerplatePath}systemjs.config${isDevelopment() ? '.dev' : ''}.js`;
     const configuration = isDevelopment() ? devConfiguration : prodConfiguration;
-    const { gridPackagesMap, gridCommunityModulesMap, gridEnterpriseModulesMap } = configuration;
+
+    let systemJsMap;
+    let systemJsPaths;
+
+    if (library === 'charts') {
+        systemJsMap = configuration.chartMap;
+        systemJsPaths = configuration.chartPaths;
+    } else {
+        systemJsMap = configuration.gridMap;
+        systemJsPaths = isEnterprise ? configuration.gridEnterprisePaths : configuration.gridCommunityPaths;
+    }
 
     return <>
         <script dangerouslySetInnerHTML={{
             __html: `var appLocation = '${appLocation}';
         var boilerplatePath = '${boilerplatePath}';
-        var systemJsMap = ${JSON.stringify(gridPackagesMap, null, 2)};
-        var systemJsPaths = ${JSON.stringify(isEnterprise ? gridEnterpriseModulesMap : gridCommunityModulesMap, null, 2)};`
+        var systemJsMap = ${JSON.stringify(systemJsMap, null, 2)};
+        ${Object.keys(systemJsPaths).length > 0 ? `var systemJsPaths = ${JSON.stringify(systemJsPaths, null, 2)};` : ''}`
         }}></script>
 
         <script src="https://unpkg.com/systemjs@0.19.47/dist/system.js"></script>
