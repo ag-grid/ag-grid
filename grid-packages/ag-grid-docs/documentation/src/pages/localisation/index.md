@@ -2,10 +2,9 @@
 title: "Localisation"
 ---
 
-All the displayed text in the grid is customisable for the purposes of localisation. This is done by providing locale information to the grid for the required language.  Either provide an object of key->value pairs via the `localeText` property, or provide a `localeTextFunc` callback to hook the grid up to your applications localisation.
+All the displayed text in the grid is customisable for the purposes of localisation. This is done by providing locale information to the grid for the required language. Either provide an object  of key/value pairs via the `localeText` property, or provide a `localeTextFunc` callback to hook the grid up to your application's localisation.
 
-
-The default language of the grid is American English. The grid does not come with other locales. If you want to provide the grid in another language, you must provide to the grid the relevant locale information.
+The default language of the grid is American English. The grid does not come with other locales. If you want to provide the grid in another language, you must provide to the grid the relevant  locale information.
 
 ## Creating a Locale
 
@@ -13,18 +12,9 @@ The grid by default does not need a locale. If no locale is provide, the grid wi
 
 An example full locale file is provided below. To support other languages, the first step is to copy this file and translate the values into the required language.
 
+`embed:examples/localisation/locale.en.js`
 
-```php
-<?php
-ob_start();
-include './localisation/locale.en.js';
-$buffer = ob_get_clean();
-echo createSnippet($buffer);
-?>
-```
-
-You can download the full file from [here](examples/localisation/locale.en.js).
-
+You can download the full file from [here](../../examples/localisation/localisation/locale.en.js).
 
 There is one locale file for all of the grid. The file covers all modules across all of ag-Grid Enterprise and ag-Grid Free. This was done on purpose as having multiple files for each module would provide to much confusion. The decision was made to keep it simple in one file.
 
@@ -32,7 +22,6 @@ There is one locale file for all of the grid. The file covers all modules across
 ## Installing a Locale
 
 To install a locale into the grid, set the locale object to the grid's `localeText` property. The example below shows this in action:
-
 
 The example below shows installing a locale file. The example has two local files `locale.en.js` and `locale.zzz.js`. The second one is a dummy locale, it just adds "zzz" to the start of each value. This is done so that the example looks different - otherwise is would just display English as normal and there would be no way of knowing if the locale was working or not as English is the default.
 

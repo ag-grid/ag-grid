@@ -18,7 +18,8 @@ export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
         .filter(file => file.relativePath.startsWith(sourcePath) &&
             file.base.endsWith(`.${extension}`) &&
             file.base !== exclude)
-        .map(file => getFileUrl(file));
+        .map(file => getFileUrl(file))
+        .sort();
 
     const scriptFiles = getExampleFileUrls('js', 'main.js');
     const styleFiles = getExampleFileUrls('css');
