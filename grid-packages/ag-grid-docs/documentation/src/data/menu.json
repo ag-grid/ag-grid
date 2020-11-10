@@ -15,11 +15,11 @@
             "items": [
               {
                 "title": "Install with NPM",
-                "url": "../npm/"
+                "url": "../javascript-npm/"
               },
               {
                 "title": "Download Bundles",
-                "url": "../download/"
+                "url": "../javascript-download/"
               }
             ]
           },
@@ -32,35 +32,35 @@
             "items": [
               {
                 "title": "Components",
-                "url": "../more-details/"
+                "url": "../angular-more-details/"
               },
               {
                 "title": "Markup",
-                "url": "../markup/"
+                "url": "../angular-markup/"
               },
               {
                 "title": "SystemJS",
-                "url": "../systemjs/"
+                "url": "../angular-systemjs/"
               },
               {
                 "title": "Webpack 3",
-                "url": "../webpack-3/"
+                "url": "../angular-webpack-3/"
               },
               {
                 "title": "Webpack 2",
-                "url": "../webpack-2/"
+                "url": "../angular-webpack-2/"
               },
               {
                 "title": "Webpack 1",
-                "url": "../webpack/"
+                "url": "../angular-webpack/"
               },
               {
                 "title": "Material Components",
-                "url": "../material-design/"
+                "url": "../angular-material-design/"
               },
               {
                 "title": "Use with RxJS",
-                "url": "../rxjs/"
+                "url": "../angular-rxjs/"
               }
             ]
           },
@@ -73,27 +73,27 @@
             "items": [
               {
                 "title": "Column Configuration",
-                "url": "../column-configuration/"
+                "url": "../react-column-configuration/"
               },
               {
                 "title": "Context API & Redux",
-                "url": "../apis/"
+                "url": "../react-apis/"
               },
               {
                 "title": "Fine Tuning",
-                "url": "../fine-tuning/"
+                "url": "../react-fine-tuning/"
               },
               {
                 "title": "Hooks & Functional Components",
-                "url": "../hooks/"
+                "url": "../react-hooks/"
               },
               {
                 "title": "Redux Integration Part 1",
-                "url": "../redux-integration-pt1/"
+                "url": "../react-redux-integration-pt1/"
               },
               {
                 "title": "Redux Integration Part 2",
-                "url": "../redux-integration-pt2/"
+                "url": "../react-redux-integration-pt2/"
               },
               {
                 "title": "React 15.x",
@@ -110,32 +110,32 @@
             "items": [
               {
                 "title": "Components",
-                "url": "../components/"
+                "url": "../vue-components/"
               },
               {
                 "title": "Markup",
-                "url": "../markup/"
+                "url": "../vue-markup/"
               },
               {
                 "title": "Vue & Unidirectional Data Flow",
-                "url": "../data-flow/"
+                "url": "../vue-data-flow/"
               },
               {
                 "title": "Misc",
-                "url": "../misc/"
+                "url": "../vue-misc/"
               }
             ]
           },
           {
             "title": "AngularJS",
-            "url": "../best-grid/",
+            "url": "../angular-best-grid/",
             "frameworks": [
               "angular"
             ]
           },
           {
             "title": "Polymer",
-            "url": "../getting-started/",
+            "url": "../polymer-getting-started/",
             "frameworks": [
               "javascript"
             ]
