@@ -210,7 +210,9 @@ export class BarSeries extends CartesianSeries {
     }
 
     private cumYKeyCount: number[] = [];
-    private flatYKeys: string[] | undefined = undefined;
+    private flatYKeys: string[] | undefined = undefined; // only set when a user used a flat array for yKeys
+
+    @reactive('layoutChange') hideInLegend: string[] = [];
 
     /**
      * yKeys: [['coffee']] - regular bars, each category has a single bar that shows a value for coffee
@@ -735,28 +737,30 @@ export class BarSeries extends CartesianSeries {
 
     listSeriesItems(legendData: LegendDatum[]): void {
         const {
-            id, data, xKey, yKeys, yNames, cumYKeyCount, seriesItemEnabled,
+            id, data, xKey, yKeys, yNames, cumYKeyCount, seriesItemEnabled, hideInLegend,
             fills, strokes, fillOpacity, strokeOpacity
         } = this;
 
         if (data && data.length && xKey && yKeys.length) {
             this.yKeys.forEach((stack, stackIndex) => {
                 stack.forEach((yKey, levelIndex) => {
-                    const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
-                    legendData.push({
-                        id,
-                        itemId: yKey,
-                        enabled: seriesItemEnabled.get(yKey) || false,
-                        label: {
-                            text: yNames[yKey] || yKey
-                        },
-                        marker: {
-                            fill: fills[colorIndex % fills.length],
-                            stroke: strokes[colorIndex % strokes.length],
-                            fillOpacity: fillOpacity,
-                            strokeOpacity: strokeOpacity
-                        }
-                    });
+                    if (hideInLegend.indexOf(yKey) < 0) {
+                        const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                        legendData.push({
+                            id,
+                            itemId: yKey,
+                            enabled: seriesItemEnabled.get(yKey) || false,
+                            label: {
+                                text: yNames[yKey] || yKey
+                            },
+                            marker: {
+                                fill: fills[colorIndex % fills.length],
+                                stroke: strokes[colorIndex % strokes.length],
+                                fillOpacity: fillOpacity,
+                                strokeOpacity: strokeOpacity
+                            }
+                        });
+                    }
                 });
             });
         }
