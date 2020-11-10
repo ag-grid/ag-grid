@@ -259,7 +259,7 @@ The example below shows five columns formatted, demonstrating each of the method
 - 'Days of Air Frost' column uses the Component method to format each cell in the column with the same style
 - 'Days Sunshine' and 'Rainfall (10mm)' use simple functions to display icons.
 
-<grid-example title='Cell Renderer' name='cell-renderer' type='generated'></grid-example>
+<grid-example title='Cell Renderer' name='cell-renderer' type='vanilla'></grid-example>
 
 ## Accessing Cell Renderer Instances
 
@@ -300,7 +300,7 @@ The example below demonstrates custom methods on cell renderers called by the ap
 - The **First Row Gold** method executes a method on the gold cell of the first row only. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled past the first row.
 - The **All Cells** method executes a method on all instances of all cell renderers.
 
-<grid-example title='Get Cell Renderer' name='get-cell-renderer' type='generated'></grid-example>
+<grid-example title='Get Cell Renderer' name='get-cell-renderer' type='vanilla'></grid-example>
 
 If your are using a framework component (detailed below), then the returned object is a wrapper and you can get the underlying cell renderer using `getFrameworkComponentInstance()`
 
