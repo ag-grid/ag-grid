@@ -25,6 +25,7 @@ export interface LegendDatum {
 }
 
 export interface LegendClickEvent extends SourceEvent<Legend> {
+    event: MouseEvent;
     itemId: string;
     enabled: boolean;
 }
