@@ -15,8 +15,12 @@ export const shouldUpdateScroll = ({ prevRouterProps, routerProps: { location: {
     const pageName = getPageName(pathname);
 
     if (pageName !== previousPageName) {
-        document.getElementById('doc-page-wrapper').scrollIntoView();
-        return false;
+        const docPageWrapper = document.getElementById('doc-page-wrapper');
+
+        if (docPageWrapper) {
+            docPageWrapper.scrollIntoView();
+            return false;
+        }
     }
 
     return true;

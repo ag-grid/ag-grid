@@ -1,6 +1,8 @@
 import React from 'react';
-import { Link, withPrefix } from 'gatsby';
+import { Link } from 'gatsby';
 import styles from './index.module.scss';
+import fwLogos from '../images/fw-logos';
+import supportedFrameworks from '../utils/supported-frameworks';
 
 export default function Home() {
   return <div style={{ textAlign: 'center' }}>
@@ -9,9 +11,9 @@ export default function Home() {
     <p>Which framework would you like to learn?</p>
 
     <div className={styles.gettingStartedCards}>
-      {['javascript', 'angular', 'react', 'vue'].map(framework => (
+      {supportedFrameworks.map(framework => (
         <div key={framework} className={styles.gettingStartedCard}>
-          <img alt={framework} src={withPrefix(`/images/fw-logos/${framework}.svg`)} className={styles.gettingStartedCard__logo} />
+          <img alt={framework} src={fwLogos[framework]} className={styles.gettingStartedCard__logo} />
           <div>
             <Link to={`/${framework}/getting-started/`} className={styles.gettingStartedCard__button}>Get started</Link>
           </div>
