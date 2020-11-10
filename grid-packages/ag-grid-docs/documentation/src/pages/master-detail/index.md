@@ -60,7 +60,7 @@ The example below shows a simple Master / Detail with all the above configured.
 | To learn more about `detailCellRendererParams` configuration see the
 | [Detail Grids](../master-detail-detail-grids/) section.
 
-<grid-example title='Master Detail Example' name='simple' type='generated' options='{ "enterprise": true, "exampleHeight": 535, "modules": ["clientside", "masterdetail", "menu", "columnpanel "] }'></grid-example>
+<grid-example title='Master Detail Example' name='simple' type='generated' options='{ "enterprise": true, "exampleHeight": 535, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
 
 ## Row Models
