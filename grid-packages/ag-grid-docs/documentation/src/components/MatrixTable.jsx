@@ -91,7 +91,7 @@ const createTitleRow = (title, isTree, rowData, level, rowKey) => !title ? [] : 
     <tr key={rowKey}>
         <td colSpan="3">
             { level === 1 
-                ? <h3>{ title }</h3> 
+                ? <span className={styles.matrixTableTitle}>{ title }</span> 
                 : (
                     <span className={ level > 2 ? `${styles['matrixTablePad' + level]}` : null }>
                         { wrapWithLink(renderEnterprise(title, isTree, rowData), rowData.url) }

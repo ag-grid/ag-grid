@@ -6,6 +6,10 @@
         @extend .ml-5;
     }
 
+    &--title {
+        font-size: 1.5rem;
+    }
+
     &__true {
         color: green;
     }
