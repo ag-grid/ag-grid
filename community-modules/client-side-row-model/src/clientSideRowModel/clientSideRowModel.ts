@@ -796,17 +796,24 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const callbackFuncsBound: Function[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
 
+        // The rowGroup stage uses rowNodeOrder if order was provided. if we didn't pass 'true' to
+        // commonUpdateRowData, using addIndex would have no effect when grouping.
+        let forceRowNodeOrder = false;
+
         if (this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch.forEach(tranItem => {
-                const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, null);
+                const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, undefined);
                 rowNodeTrans.push(rowNodeTran);
                 if (tranItem.callback) {
                     callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
                 }
+                if (typeof tranItem.rowDataTransaction.addIndex === 'number') {
+                    forceRowNodeOrder = true;
+                }
             });
         }
 
-        this.commonUpdateRowData(rowNodeTrans);
+        this.commonUpdateRowData(rowNodeTrans, undefined, forceRowNodeOrder);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -838,11 +845,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // if doing immutableData, addIndex is never present. however if doing standard transaction, and user
         // provided addIndex, then this is used in updateRowData. However if doing Enterprise, then the rowGroup
         // stage also uses the
-        if (typeof rowDataTran.addIndex === 'number') {
-            rowNodeOrder = this.createRowNodeOrder();
-        }
+        const forceRowNodeOrder = typeof rowDataTran.addIndex === 'number';
 
-        this.commonUpdateRowData([rowNodeTran], rowNodeOrder);
+        this.commonUpdateRowData([rowNodeTran], rowNodeOrder, forceRowNodeOrder);
 
         return rowNodeTran;
     }
@@ -864,7 +869,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     // common to updateRowData and batchUpdateRowData
-    private commonUpdateRowData(rowNodeTrans: RowNodeTransaction[], rowNodeOrder?: { [id: string]: number; }): void {
+    private commonUpdateRowData(rowNodeTrans: RowNodeTransaction[],
+                                rowNodeOrder: { [id: string]: number; } | undefined,
+                                forceRowNodeOrder: boolean): void {
+
+        if (forceRowNodeOrder) {
+            rowNodeOrder = this.createRowNodeOrder();
+        }
+
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
             rowNodeTransactions: rowNodeTrans,
