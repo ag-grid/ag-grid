@@ -112,11 +112,25 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
 
         this.appendHeaderComp();
     }
 
+    private onColumnRowGroupChanged(): void {
+        this.checkDisplayName();
+    }
+
+    private onColumnPivotChanged(): void {
+        this.checkDisplayName();
+    }
+
     private onColumnValueChanged(): void {
+        this.checkDisplayName();
+    }
+
+    private checkDisplayName(): void {
         // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
         if (this.displayName !== this.calculateDisplayName()) {
             this.refresh();
