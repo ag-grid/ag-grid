@@ -28,7 +28,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
 
   const renderAst = new rehypeReact({
     createElement: React.createElement,
-    fragment:true,
+    fragment: true,
     components: {
       'grid-example': props => ExampleRunner(getExampleRunnerProps(props, 'grid')),
       'chart-example': props => ExampleRunner(getExampleRunnerProps(props, 'chart')),
@@ -38,11 +38,11 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
         sources: props.sources != null ? JSON.parse(props.sources) : undefined,
         config: props.config != null ? JSON.parse(props.config) : undefined
       }),
-      'icons-panel': props => IconsPanel({ ...props }),
+      'icons-panel': IconsPanel,
       'image-caption': ImageCaption,
-      'matrix-table': props => MatrixTable({...props }),
-      'video-section': props => VideoSection({ ...props }),
-      'video-link': props => VideoLink({ ...props })
+      'matrix-table': MatrixTable,
+      'video-section': VideoSection,
+      'video-link': VideoLink
     },
   }).Compiler;
 

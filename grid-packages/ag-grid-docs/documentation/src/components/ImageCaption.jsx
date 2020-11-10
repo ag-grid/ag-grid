@@ -2,13 +2,12 @@ import React from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import styles from './image-caption.module.scss';
 
-const ImageCaption = ({ src, alt, centered, children, constrained, descriptiontop, height, maxwidth, width }) => {
-    const { allFile: { nodes } } = useStaticQuery(graphql`
+const ImageCaption = ({ src, alt, centered, children, constrained, descriptiontop: descriptionTop, height, maxwidth: maxWidth, width }) => {
+    const { fluidImages: { nodes: fluidImages }, images: { nodes: images } } = useStaticQuery(graphql`
     {
-        allFile(filter: { sourceInstanceName: { eq: "pages" }, relativePath: { regex: "/(?:.jpg|.jpg|png|.svg|.gif)$/" } }) {
+        fluidImages: allFile(filter: { sourceInstanceName: { eq: "pages" }, relativePath: { regex: "/.(jpg|png)$/" } }) {
             nodes {
                 relativePath
-                publicURL
                 childImageSharp {
                     fluid {
                         src
@@ -16,31 +15,54 @@ const ImageCaption = ({ src, alt, centered, children, constrained, descriptionto
                 }
             }
         }
+        images: allFile(filter: { sourceInstanceName: { eq: "pages" }, relativePath: { regex: "/.(svg|gif)$/" } }) {
+            nodes {
+                relativePath
+                publicURL
+            }
+        }
     }
     `);
 
-    const img = nodes.filter(file => file.relativePath === src)[0];
+    const getImage = (images, src) => images.filter(file => file.relativePath === src)[0];
+
+    let imgSrc;
+
+    const fluidImage = getImage(fluidImages, src);
+
+    if (fluidImage) {
+        imgSrc = fluidImage.childImageSharp.fluid.src;
+    } else {
+        const image = getImage(images, src);
+
+        if (image) {
+            imgSrc = image.publicURL;
+        }
+    }
+
+    if (!imgSrc) {
+        throw new Error(`Could not find requested image: ${src}`);
+    }
+
     const style = {};
 
     if (width != null) { style.width = width; style.minWidth = width; }
-    if (maxwidth != null) { style.maxWidth = maxwidth; }
+    if (maxWidth != null) { style.maxWidth = maxWidth; }
     if (height != null) { style.height = height; }
 
-    const keyName = alt.replace(/\s/g, '').toLowerCase();
     const className = `${styles.imageCaption} ${centered ? styles.imageCaptionCentered : ''}`;
-    const bodyClass = `${styles.imageCaption__body} ${descriptiontop ? styles.imageCaptionDescriptionTop : null}`;
-    const imageClass= `${styles.imageCaption__top} ${constrained ? styles.imageCaptionConstrained: null}`;
-
-    const content = [
-        <img src={img.childImageSharp == null ? img.publicURL : img.childImageSharp.fluid.src}  key={`${keyName}-img`} className={imageClass} alt={alt} />,
-        children 
-            ? <div className={bodyClass} key={`${keyName}-body`}><p className={styles.imageCaption__bodyText}>{children}</p></div>
-            : null
-    ]
+    const bodyClass = `${styles.imageCaption__body} ${descriptionTop ? styles.imageCaption__bodyDescriptionTop : ''}`;
+    const imageClass = `${styles.imageCaption__image} ${constrained ? styles.imageCaptionConstrained : ''}`;
+    const description = children &&
+        <div className={bodyClass}>
+            <p className={styles.imageCaption__bodyText}>{children}</p>
+        </div>;
 
     return (
         <div className={className} style={style}>
-            { descriptiontop ? content.reverse() : content }
+            {descriptionTop && description}
+            <img src={imgSrc} className={imageClass} alt={alt} />
+            {!descriptionTop && description}
         </div>
     );
 };

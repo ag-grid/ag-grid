@@ -4,10 +4,10 @@ title: "Simple Filters"
 
 The grid provides three Simple Filters for filtering strings, numbers and dates.
 
-<div style="display: flex; justify-content: space-between;">
-    <image-caption src="filter-provided-simple/resources/text-filter.png" alt="Text Filter" width="12.5rem" descriptiontop="true"><strong>Text Filter</strong></image-caption>
+<div style="display: flex; justify-content: space-around;">
+    <image-caption src="filter-provided-simple/resources/text-filter.png" alt="Text Filter" width="12.5rem" descriptionTop="true"><strong>Text Filter</strong></image-caption>
     <image-caption src="filter-provided-simple/resources/number-filter.png" alt="Number Filter" width="12.5rem" descriptionTop="true"><strong>Number Filter</strong></image-caption>
-    <image-caption src="filter-provided-simple/resources/date-filter.png" alt="Date Filter" width="12.5rem" descriptiontop="true"><strong>Date Filter</strong></image-caption>
+    <image-caption src="filter-provided-simple/resources/date-filter.png" alt="Date Filter" width="12.5rem" descriptionTop="true"><strong>Date Filter</strong></image-caption>
 </div>
 
 Each of the filters works in a similar way. This page describes the common parts of the Simple Filters.
