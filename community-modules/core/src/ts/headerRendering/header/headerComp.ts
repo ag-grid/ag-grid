@@ -86,7 +86,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     public refresh(params: IHeaderParams): boolean {
 
         this.params = params;
-console.log(`refresh`, params);
+
         // if template changed, then recreate the whole comp, the code required to manage
         // a changing template is to difficult for what it's worth.
         if (this.workOutTemplate() != this.currentTemplate) { return false; }
