@@ -1,7 +1,13 @@
 import { AgChart, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart } from "ag-charts-community";
-import { AgPieSeriesOptions, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import {
+    AgPieSeriesOptions,
+    HighlightOptions,
+    PieSeriesOptions,
+    PolarChartOptions
+} from "@ag-grid-community/core";
+import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
+import { LegendClickEvent } from "ag-charts-community/dist/cjs/chart/legend";
 
 export class PieChartProxy extends PolarChartProxy {
 
@@ -10,6 +16,25 @@ export class PieChartProxy extends PolarChartProxy {
 
         this.initChartOptions();
         this.recreateChart();
+    }
+
+    protected createChart(options: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        options = options || this.chartOptions;
+        const seriesDefaults = options.seriesDefaults;
+        const agChartOptions = options as AgPolarChartOptions;
+
+        agChartOptions.autoSize = true;
+        agChartOptions.series = [{
+            ...seriesDefaults,
+            fills: seriesDefaults.fill.colors,
+            fillOpacity: seriesDefaults.fill.opacity,
+            strokes: seriesDefaults.stroke.colors,
+            strokeOpacity: seriesDefaults.stroke.opacity,
+            strokeWidth: seriesDefaults.stroke.width,
+            type: 'pie'
+        }];
+
+        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     }
 
     protected getDefaultOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
@@ -46,49 +71,62 @@ export class PieChartProxy extends PolarChartProxy {
         return options;
     }
 
-    protected createChart(options: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        options = options || this.chartOptions;
-        const seriesDefaults = options.seriesDefaults;
-        const agChartOptions = options as AgPolarChartOptions;
-
-        agChartOptions.autoSize = true;
-        agChartOptions.series = [{
-            ...seriesDefaults,
-            fills: seriesDefaults.fill.colors,
-            fillOpacity: seriesDefaults.fill.opacity,
-            strokes: seriesDefaults.stroke.colors,
-            strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width,
-            type: 'pie'
-        }];
-
-        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
-    }
-
     public update(params: UpdateChartParams): void {
-        const { chart } = this;
+        const {chart} = this;
 
         if (params.fields.length === 0) {
             chart.removeAllSeries();
             return;
         }
 
-        const existingSeries = chart.series[0] as PieSeries;
-        const existingSeriesId = existingSeries && existingSeries.angleKey;
-        const pieSeriesField = params.fields[0];
-        const { fills, strokes } = this.getPalette();
-        const { seriesDefaults } = this.chartOptions;
+        const field = params.fields[0];
 
-        let pieSeries = existingSeries;
+        if (this.crossFiltering) {
+            const filteredField = params.fields[1];
+
+            params.data.forEach(d => {
+                d[field.colId + '-total'] = d[field.colId] + d[filteredField.colId];
+                d[field.colId] = d[field.colId] / d[field.colId + '-total'];
+                d[filteredField.colId] = 1;
+            });
+
+            let unFilteredSeries = chart.series[1] as PieSeries;
+            unFilteredSeries = this.updateSeries(chart, unFilteredSeries, field, filteredField, params, params.data, true, undefined);
+
+            const series = chart.series[0] as PieSeries;
+            this.updateSeries(chart, series, field, field, params, params.data, false, unFilteredSeries);
+
+        } else {
+            const series = chart.series[0] as PieSeries;
+            this.updateSeries(chart, series, field, field, params, params.data, false, undefined);
+        }
+    }
+
+    private updateSeries(
+        chart: PolarChart,
+        series: PieSeries,
+        angleField: FieldDefinition,
+        field: FieldDefinition,
+        params: UpdateChartParams,
+        data: any[],
+        filteredSeries: boolean,
+        otherSeries: PieSeries | undefined
+    ) {
+        const existingSeriesId = series && series.angleKey;
+        const {fills, strokes} = this.getPalette();
+        const {seriesDefaults} = this.chartOptions;
+
+        let pieSeries = series;
         const calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
 
-        if (existingSeriesId !== pieSeriesField.colId) {
-            chart.removeSeries(existingSeries);
+        if (existingSeriesId !== field.colId) {
+            chart.removeSeries(series);
 
             pieSeries = AgChart.createComponent({
                 ...seriesDefaults,
                 type: 'pie',
-                angleKey: pieSeriesField.colId,
+                angleKey: this.crossFiltering ? angleField.colId + '-total' : angleField.colId,
+                radiusKey: this.crossFiltering ? field.colId : undefined,
                 title: {
                     ...seriesDefaults.title,
                     text: seriesDefaults.title.text || params.fields[0].displayName,
@@ -102,22 +140,58 @@ export class PieChartProxy extends PolarChartProxy {
             }, 'pie.series');
         }
 
-        pieSeries.angleName = pieSeriesField.displayName!;
-        pieSeries.labelKey = params.category.id;
-        pieSeries.labelName = params.category.name;
-        pieSeries.data = params.data;
-        pieSeries.fills = fills;
-        pieSeries.strokes = strokes;
+        if (this.crossFiltering) {
+            pieSeries.angleName = field.displayName!;
+            pieSeries.labelKey = params.category.id;
+            pieSeries.labelName = params.category.name;
+            pieSeries.data = data;
 
-        if (calloutColors) {
-            pieSeries.callout.colors = strokes;
+            pieSeries.radiusMin = 0;
+            pieSeries.radiusMax = 1;
+
+            if (filteredSeries) {
+                pieSeries.fills = fills.map(fill => this.hexToRGB(fill, '0.3'));
+                pieSeries.strokes = strokes.map(stroke => this.hexToRGB(stroke, '0.3'));
+            } else {
+                pieSeries.fills = fills;
+                pieSeries.strokes = strokes;
+            }
+
+            if (!filteredSeries && calloutColors) {
+                pieSeries.callout.colors = strokes;
+            }
+
+            if (filteredSeries) {
+                pieSeries.showInLegend = false;
+            } else {
+                chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                    if (otherSeries) {
+                        (otherSeries as PieSeries).toggleSeriesItem(event.itemId as any, event.enabled);
+                    }
+                });
+            }
+
+            pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
+        } else {
+            pieSeries.angleName = field.displayName!;
+            pieSeries.labelKey = params.category.id;
+            pieSeries.labelName = params.category.name;
+            pieSeries.data = params.data;
+            pieSeries.fills = fills;
+            pieSeries.strokes = strokes;
+
+            if (calloutColors) {
+                pieSeries.callout.colors = strokes;
+            }
         }
 
         chart.addSeries(pieSeries);
+
+        return pieSeries;
     }
 
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
-        const { strokes } = this.getPredefinedPalette();
+        const {strokes} = this.getPredefinedPalette();
         const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
         const fontOptions = this.getDefaultFontOptions();
 

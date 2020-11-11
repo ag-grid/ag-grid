@@ -1215,6 +1215,11 @@
             "enterprise": true
           },
           {
+            "title": "Cross Filtering",
+            "url": "javascript-grid-charts-integrated-cross-filtering/",
+            "enterprise": true
+          },
+          {
             "title": "Third-Party Charting",
             "url": "javascript-grid-graphing/"
           }

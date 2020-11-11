@@ -9,7 +9,8 @@ import {
     ChartModel,
     ChartOptions,
     ChartType,
-    ColumnApi, ColumnController,
+    ColumnApi,
+    ColumnController,
     Component,
     Environment,
     Events,
@@ -21,19 +22,20 @@ import {
     ProcessChartOptionsParams,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartMenu } from "./menu/chartMenu";
-import { TitleEdit } from "./titleEdit";
-import { ChartController } from "./chartController";
-import { ChartDataModel, ChartModelParams } from "./chartDataModel";
-import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
-import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
-import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
-import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
-import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
-import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
-import { ChartTranslator } from "./chartTranslator";
+import {ChartMenu} from "./menu/chartMenu";
+import {TitleEdit} from "./titleEdit";
+import {ChartController} from "./chartController";
+import {ChartDataModel, ChartModelParams} from "./chartDataModel";
+import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
+import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxies/chartProxy";
+import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
+import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
+import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
+import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
+import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
+import {ChartTranslator} from "./chartTranslator";
+import {ChartCrossFilter} from "./chartCrossFilter";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -46,6 +48,7 @@ export interface GridChartParams {
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
+    crossFiltering?: boolean;
 }
 
 export class GridChartComp extends Component {
@@ -111,6 +114,7 @@ export class GridChartComp extends Component {
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
             unlinkChart: this.params.unlinkChart,
+            crossFiltering: this.params.crossFiltering,
         };
 
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
@@ -175,6 +179,8 @@ export class GridChartComp extends Component {
         const chartType = this.model.getChartType();
         const isGrouping = this.model.isGrouping();
 
+        const crossFilter = this.createManagedBean(new ChartCrossFilter());
+
         const chartProxyParams: ChartProxyParams = {
             chartId: this.model.getChartId(),
             chartType,
@@ -187,6 +193,8 @@ export class GridChartComp extends Component {
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             allowPaletteOverride: !this.params.chartThemeName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
+            crossFiltering: !!this.params.crossFiltering,
+            crossFilterCallback: (event: any, reset: boolean) => crossFilter.filter(event, reset),
             parentElement: this.eChart,
             width,
             height,
@@ -340,7 +348,17 @@ export class GridChartComp extends Component {
         const { model, chartProxy } = this;
 
         const selectedCols = model.getSelectedValueColState();
-        const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
+        let fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
+
+        // TODO cross filtering
+        if (this.params.crossFiltering) {
+            fields.forEach(field => {
+               let crossFilteringField = {...field};
+               crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField) ;
+            });
+        }
+
         const data = model.getData();
         const chartEmpty = this.handleEmptyChart(data, fields);
 
