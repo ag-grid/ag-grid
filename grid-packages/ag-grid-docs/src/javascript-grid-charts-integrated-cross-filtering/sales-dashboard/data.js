@@ -30,8 +30,8 @@ function generateData() {
             salesRep: names[getRandomNumber(0, names.length)],
             handset: phone.handset,
             sale: phone.price,
-            saleDate,
-            quarter,
+            saleDate: saleDate,
+            quarter: quarter,
         });
     }
 
@@ -39,7 +39,7 @@ function generateData() {
         return a.saleDate.getTime() - b.saleDate.getTime();
     });
 
-    data.forEach(d => {
+    data.forEach(function(d) {
         d.saleDate = d.saleDate.toISOString().substring(0, 10);
     });
 
