@@ -52,7 +52,7 @@ const plugins = [
     options: {
       plugins: [
         {
-          resolve: `gatsby-remark-images`,
+          resolve: 'gatsby-remark-images',
           options: {
             maxWidth: 800,
             quality: 100,
@@ -94,7 +94,7 @@ const plugins = [
         },
         'gatsby-remark-component-parent2div',
         {
-          resolve: `gatsby-remark-autolink-headers`,
+          resolve: 'gatsby-remark-autolink-headers',
           options: {
             enableCustomId: true,
             removeAccents: true,
@@ -103,6 +103,12 @@ const plugins = [
         },
         'gatsby-remark-embed-snippet',
         'gatsby-remark-prismjs',
+        {
+          resolve: 'gatsby-remark-copy-linked-files',
+          options: {
+            ignoreFileExtensions: ['png', 'jpg', 'jpeg']
+          }
+        }
       ]
     }
   },

@@ -2,7 +2,7 @@ import React from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import styles from './image-caption.module.scss';
 
-const ImageCaption = ({ src, alt, centered, children, constrained, descriptiontop: descriptionTop, height, maxwidth: maxWidth, width }) => {
+const ImageCaption = ({ src, alt, centered, children, constrained, descriptiontop: descriptionTop, height, maxwidth: maxWidth, minwidth: minWidth, width }) => {
     const { fluidImages: { nodes: fluidImages }, images: { nodes: images } } = useStaticQuery(graphql`
     {
         fluidImages: allFile(filter: { sourceInstanceName: { eq: "pages" }, relativePath: { regex: "/.(jpg|png)$/" } }) {
@@ -44,9 +44,11 @@ const ImageCaption = ({ src, alt, centered, children, constrained, descriptionto
         throw new Error(`Could not find requested image: ${src}`);
     }
 
+    
     const style = {};
 
-    if (width != null) { style.width = width; style.minWidth = width; }
+    if (width != null) { style.width = width; }
+    if (minWidth != null) { style.minWidth = minWidth }
     if (maxWidth != null) { style.maxWidth = maxWidth; }
     if (height != null) { style.height = height; }
 

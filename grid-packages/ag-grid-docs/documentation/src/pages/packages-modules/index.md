@@ -10,23 +10,22 @@ There are two main ways to install ag-Grid - either by using `packages` , or by 
 
 If you're unsure whether to use `packages` or `modules` then we'd recommend starting with `packages` and migrate to `modules` if you wish to reduce overall bundle size.
 
-<div id="get-started-packages-modules">
-    <div class="row no-gutters" style="justify-content: space-evenly">
-        <div>
-            <div class="get-started-published package-card">
-                <a href="../grid-packages/" alt="Packages">Packages</a>
-                <div>
-                    <a href="../grid-packages/" alt="Packages Overview">Packages Overview</a>
-                </div>
-            </div>
+
+<div class="d-flex justify-content-around" style="height: 20rem;">
+    <div class="d-flex flex-column" style="max-width: 20rem; min-width: 10rem; height: 20rem; border: 1px solid lightgray; border-radius: 5px; overflow: hidden;">
+        <div class="flex-grow-1 d-flex justify-content-center p-4" style="background-color: #fffaf0;">
+            <a class="d-flex align-items-center" href="../grid-packages/"><img src="resources/packages.svg" style="width: 100%; max-width: 6rem;" alt="Grid Packages Overview" /></a>
         </div>
-        <div>
-            <div class="get-started-published module-card">
-                <a href="../grid-modules" alt= "Modules">Modules</a>
-                <div>
-                    <a href="../grid-modules" alt= "Modules Overview">Modules Overview</a>
-                </div>
-            </div>
+        <div class="p-2" style="border-top: 1px solid lightgray; background-color: #f8f9fa; text-align: center;">
+            <p class="mb-0 btn btn-primary"><a href="../grid-packages/" style="color: white">Packages Overview</a></p>
+        </div>
+    </div>
+    <div class="d-flex flex-column" style="max-width: 20rem; min-width: 10rem; height: 20rem; border: 1px solid lightgray; border-radius: 5px; overflow: hidden;">
+        <div class="flex-grow-1 d-flex justify-content-center p-4" style="background-color: #fffaf0;">
+            <a class="d-flex align-items-center" href="../grid-packages/"><img src="resources/modules.svg" style="width: 100%; max-width: 6rem;" alt="Grid Modules Overview"/></a>
+        </div>
+        <div class="p-2" style="border-top: 1px solid lightgray; background-color: #f8f9fa; text-align: center;">
+            <p class="mb-0 btn btn-primary"><a href="../grid-modules/" style="color: white">Modules Overview</a></p>
         </div>
     </div>
 </div>

@@ -10,13 +10,15 @@ ag-Grid `modules` allow you to pick and choose which features you require, resul
 
 `@ag-grid-community/all-modules` can be considered to be equivalent to `ag-grid-community`, but with the additional need to register modules within. If using this module you might be better off using `ag-grid-community` as the bundle size will be similar and will reduce the need to register modules.
 
-<image-caption src="grid-modules-more-details/resources/community-all-modules.png" alt="@ag-grid-community/all-modules" constrained="true"></image-caption>
+![Community All Modules](resources/community-all-modules.png)
 
 ### @ag-grid-enterprise/all-modules
 
 `@ag-grid-enterprise/all-modules` can be considered to be equivalent to `ag-grid-enterprise`, but with the additional need to register modules within. If using this module you might be better off using `ag-grid-enterprise` (along with `ag-grid-enterprise)` as the bundle size will be similar and will reduce the need to register modules.
 
-<image-caption src="grid-modules-more-details/resources/enterprise-all-modules.png" alt="@ag-grid-enterprise/all-modules" constrained="true"></image-caption>
+![Enterprise All Modules](resources/enterprise-all-modules.png)
+
+<br/><br/>
 
 [[note]]
 | If you decide to use `@ag-grid-enterprise/all-modules` then you do **not** need to
@@ -27,7 +29,10 @@ ag-Grid `modules` allow you to pick and choose which features you require, resul
 
 This module contains the core code required by the Grid and all modules (Enterprise or Community) depend on it. As such `@ag-grid-community/core` will always be available no matter what module you specify in your `package.json`.
 
-<image-caption src="grid-modules-more-details/resources/community-hierarchy.png" alt="Community Hierarchy" constrained="true"></image-caption>
+
+![Community Hierarchy](resources/community-hierarchy.png)
+
+<br/><br/>
 
 For example, let's assume you specify the following in your `package.json`:
 
@@ -52,7 +57,8 @@ All Enterprise modules depend on `@ag-grid-enterprise/core` as such will always 
 
 The main functionality you'll want to import from the `@ag-grid-enterprise/core` is the `LicenceManager`.
 
-<image-caption src="grid-modules-more-details/resources/enterprise-hierarchy.png" alt="Enterprise Hierarchy" constrained="true"></image-caption>
+
+![Enterprise Hierarchy](resources/enterprise-hierarchy.png)
 
 _The above is a truncated hierarchy of Entreprise modules for illustrative purposes._
 

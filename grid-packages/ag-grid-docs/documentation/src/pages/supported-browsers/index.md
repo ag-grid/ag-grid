@@ -11,13 +11,19 @@ We test against all the browser below. However we also work with other less comm
 
 The officially supported desktop browsers are as follows:
 
-| Browser           | Supported Version                                                         |
-| ----------------- | ------------------------------------------------------------------------- |
-| Chrome            | Two latest versions.                                                      |
-| Firefox           | Two latest versions.                                                      |
-| Microsoft Edge    | Two latest versions.                                                      |
-| Internet Explorer | Version 11                                                                |
-| Safari            | Two latest versions on OSX only (Microsoft Windows version not supported) |
+<style>
+    img {
+        width: 24px;
+    }
+</style>
+
+| Browser                                                                 | Supported Version                                                         |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| ![Chrome](resources/chrome.svg) Chrome                                  | Two latest versions.                                                      |
+| ![Firefox](resources/firefox.svg) Firefox                               | Two latest versions.                                                      |
+| ![Microsoft Edge](resources/edge.svg) Microsoft Edge                    | Two latest versions.                                                      |
+| ![Internet Explorer](resources/internet_explorer.svg) Internet Explorer | Version 11                                                                |
+| ![Safari](resources/safari.svg) Safari                                  | Two latest versions on OSX only (Microsoft Windows version not supported) |
 
 ## Mobile Browsers
 
@@ -25,5 +31,5 @@ The officially supported mobile browsers are as follows:
 
 | Browser | Supported Version |
 | ------- | ----------------- |
-| Safari iOS | Two latest versions on iOS devices (iPad / iPhone) only. |
-| Chrome | Two latest versions on iOS devices (iPad / iPhone) and Android devices (Android phones and tablets). |
+| ![Safari iOS](resources/safari.svg) Safari iOS | Two latest versions on iOS devices (iPad / iPhone) only. |
+| ![Chrome](resources/chrome.svg) Chrome | Two latest versions on iOS devices (iPad / iPhone) and Android devices (Android phones and tablets). |

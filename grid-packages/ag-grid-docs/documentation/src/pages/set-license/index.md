@@ -9,7 +9,7 @@ Enterprise (you need a license to use).
     <div>
         The Enterprise version of ag-Grid comes with more grid features and <a href="https://ag-grid.zendesk.com/" target="_blank">Support via Zendesk</a>. The features that are available in agGrid Enterprise only are marked with the Enterprise icon<enterprise-icon></enterprise-icon> as demonstrated in the image to the right. See <a href="../../license-pricing.php">Pricing</a> for details on purchasing an ag-Grid Enterprise license.
     </div>
-    <image-caption src="set-license/resources/enterprise-features.png" alt="Enterprise Features" width="15rem" maxwidth="15rem" constrained="true"></image-caption>
+    <image-caption src="set-license/resources/enterprise-features.png" alt="Enterprise Features" minwidth="15rem" width="15rem" maxwidth="15rem" height="10rem" constrained="true"></image-caption>
 </div>
 
 ## Trial ag-Grid Enterprise for Free

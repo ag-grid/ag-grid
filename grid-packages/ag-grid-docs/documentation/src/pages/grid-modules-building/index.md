@@ -163,9 +163,9 @@ In this section we describe how you can cherry pick modules to provide the featu
 |
 |     <script>
 |         var columnDefs = [
-|             { headerName: 'Make', field: 'make' },
-|             { headerName: 'Model', field: 'model' },
-|             { headerName: 'Price', field: 'price' }
+|             { field: 'make' },
+|             { field: 'model' },
+|             { field: 'price' }
 |         ];
 |
 |         // specify the data
