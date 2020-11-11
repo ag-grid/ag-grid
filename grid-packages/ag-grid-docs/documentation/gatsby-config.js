@@ -66,11 +66,11 @@ const plugins = [
                 classes: 'note',
                 title: 'optional',
               },
-              'warning': {
+              warning: {
                 classes: 'note warning',
                 title: 'optional'
               },
-              'info': {
+              info: {
                 classes: 'note info',
                 title: 'optional'
               },
@@ -86,6 +86,9 @@ const plugins = [
               'only-vue': {
                 classes: 'vue-only-section',
               },
+              'only-frameworks': {
+                classes: 'frameworks-only-section',
+              }
             },
           },
         },

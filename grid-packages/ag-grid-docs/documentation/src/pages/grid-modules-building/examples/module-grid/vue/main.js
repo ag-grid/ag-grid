@@ -1,19 +1,19 @@
-import Vue from "vue";
-import {AgGridVue} from "@ag-grid-community/vue";
+import Vue from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue';
 
-import {ModuleRegistry} from '@ag-grid-community/core';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {MenuModule} from '@ag-grid-enterprise/menu';
-import {ExcelExportModule} from '@ag-grid-enterprise/excel-export';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 const VueExample = {
     template: `
-        <ag-grid-vue style="width: 100%; height: 180px;"
+        <ag-grid-vue style="width: 100%; height: 100%;"
                      class="ag-theme-alpine"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
@@ -21,9 +21,9 @@ const VueExample = {
         </ag-grid-vue>
     `,
     components: {
-        "ag-grid-vue": AgGridVue
+        'ag-grid-vue': AgGridVue
     },
-    data: function () {
+    data: function() {
         return {
             columnDefs: null,
             rowData: null
@@ -31,15 +31,15 @@ const VueExample = {
     },
     beforeMount() {
         this.columnDefs = [
-            {headerName: 'Make', field: 'make'},
-            {headerName: 'Model', field: 'model'},
-            {headerName: 'Price', field: 'price'}
+            { headerName: 'Make', field: 'make' },
+            { headerName: 'Model', field: 'model' },
+            { headerName: 'Price', field: 'price' }
         ];
 
         this.rowData = [
-            {make: 'Toyota', model: 'Celica', price: 35000},
-            {make: 'Ford', model: 'Mondeo', price: 32000},
-            {make: 'Porsche', model: 'Boxter', price: 72000}
+            { make: 'Toyota', model: 'Celica', price: 35000 },
+            { make: 'Ford', model: 'Mondeo', price: 32000 },
+            { make: 'Porsche', model: 'Boxter', price: 72000 }
         ];
     },
     methods: {
@@ -50,8 +50,8 @@ const VueExample = {
 };
 
 new Vue({
-    el: "#app",
+    el: '#app',
     components: {
-        "my-component": VueExample
+        'my-component': VueExample
     }
 });

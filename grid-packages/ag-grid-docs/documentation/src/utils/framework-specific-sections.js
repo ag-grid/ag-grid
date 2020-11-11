@@ -1,18 +1,20 @@
 const processChildren = (node, framework) => node.reduce((children, child) => {
     if (child.children) {
-        child.children = processChildren(child.children,  framework);
+        child.children = processChildren(child.children, framework);
     }
+
     if (child.tagName === 'div' &&
         child.properties != null &&
         child.properties.className != null &&
-        child.properties.className[0] === 'custom-block') 
-    {
+        child.properties.className[0] === 'custom-block') {
         const blockCustomClass = child.properties.className[1];
 
         if (blockCustomClass.endsWith('-only-section')) {
-            if (blockCustomClass === `${framework}-only-section`) {
+            if (blockCustomClass === `${framework}-only-section` ||
+                (blockCustomClass === 'frameworks-only-section' && framework !== 'javascript')) {
                 return [...children, ...child.children[0].children];
             }
+
             return children;
         }
     }

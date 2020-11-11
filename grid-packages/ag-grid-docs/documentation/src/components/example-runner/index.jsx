@@ -12,7 +12,7 @@ import { getIndexHtml } from './index-html-helper';
 import styles from './example-runner.module.scss';
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = {}, library }) => {
-    const [showCode, setShowCode] = useState(false);
+    const [showCode, setShowCode] = useState(!!options.showCode);
     const nodes = useExampleFileNodes();
 
     return <GlobalContextConsumer>

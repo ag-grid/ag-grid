@@ -10,7 +10,7 @@ This page explains first how to create cell renderers using standard JavaScript.
 
 The example below shows a simple cell renderer in action. It uses a cell renderer to show a hash (`#`) symbol instead of the medal count.
 
-<grid-example title='Simple Cell Renderer' name='simple-javascript' type='vanilla' options='{ "showResult": true, "exampleHeight": 460 }'></grid-example>
+<grid-example title='Simple Cell Renderer' name='simple-javascript' type='vanilla' options='{ "exampleHeight": 460 }'></grid-example>
 
 ## Cell Renderer Component
 
@@ -346,8 +346,7 @@ if (instances.length > 0) {
 |
 | Using more complex Angular Components in the Cell Renderers - specifically how you can use nested `NgModule`'s within the grid.
 |
-|
-| <grid-example title='Richer Dynamic Components' name='angular-rich-dynamic' type='angular' options='{ "showImportsDropdown": false, "exampleHeight": 380, "showResult": true, "extras": ["bootstrap"] }'></grid-example>
+| <grid-example title='Richer Dynamic Components' name='angular-rich-dynamic' type='angular' options='{ "showImportsDropdown": false, "exampleHeight": 380, "extras": ["bootstrap"] }'></grid-example>
 
 [[only-react]]
 | ## Cell Rendering
