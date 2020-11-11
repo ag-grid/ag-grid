@@ -21,7 +21,7 @@ var phones = [
 
 function generateData() {
     var data = [];
-    for(let i = 0; i < numRows; i++) {
+    for(var i = 0; i < numRows; i++) {
         var phone = phones[getRandomNumber(0, phones.length)];
         var saleDate = randomDate(new Date(2020, 0, 1), new Date(2020, 11, 31));
         var quarter = 'Q' + Math.floor((saleDate.getMonth() + 3) / 3);
