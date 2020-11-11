@@ -34,7 +34,7 @@ Below shows two grids, both aligned with the other (so any column change to one 
 
 The grids don't serve much purpose (why would you show the same grid twice???) however it demonstrates the features in an easy to understand way.
 
-<grid-example title='Aligned Grids' name='aligned-grids' type='multi' options='{"showImportsDropdown": false }'></grid-example>
+<grid-example title='Aligned Grids' name='aligned-grids' type='multi'></grid-example>
 
 ## Events
 
@@ -61,7 +61,7 @@ This example is a bit more useful. In the bottom grid, we show a summary row. Al
 - The bottom grid has no header, suppressed via a grid option.
 - sizeColumnsToFit is only called on the top grid, the bottom grid receives the new column widths from the top grid.
 
-<grid-example title='Aligned Grid as Footer' name='aligned-floating-footer' type='multi' options='{ "showImportsDropdown": false }'></grid-example>
+<grid-example title='Aligned Grid as Footer' name='aligned-floating-footer' type='multi'></grid-example>
 
 [[note]]
 | * The property `suppressHorizontalScroll` does not work with the browser Edge.
@@ -75,9 +75,8 @@ This example is a bit more useful. In the bottom grid, we show a summary row. Al
 
 It is possible that you have column groups that are split because of pinning or the order of the columns. The grid below has only two groups that are split, displayed as many split groups. The column aligning also works here in that a change to a split group will open / close all the instances of that group in both tables.
 
-<grid-example title='Aligned Column Groups' name='aligned-column-groups' type='multi' options='{ "showImportsDropdown": false }'></grid-example>
+<grid-example title='Aligned Column Groups' name='aligned-column-groups' type='multi'></grid-example>
 
 ## Event Propagation
 
 When a grid fires an event, it will be processed to all registered aligned grids. However if a grid is processing such an event, it will not fire an event to other aligned grids. For example, consider the grids A, B and C where B is aligned to A and C is aligned to B (ie A -> B -> C). If A gets a column resized, it will fire the event to B, but B will not fire the event to C. If C is also dependent on A, it needs to be set up directly. This stops cyclic dependencies between grids causing infinite firing of events if two grids are aligned to each other.
-

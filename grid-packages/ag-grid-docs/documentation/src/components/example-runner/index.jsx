@@ -43,6 +43,8 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = {}, l
                 height: exampleInfo.options.exampleHeight || '500px',
             };
 
+            const isGenerated = exampleInfo.type === 'generated' || exampleInfo.type === 'mixed';
+
             return <div className={styles.exampleRunner}>
                 <div className={`form-inline ${styles.exampleRunner__header}`}>
                     <div className={styles.exampleRunner__title}>Example: {title}</div>
@@ -51,7 +53,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = {}, l
                             useFunctionalReact={useFunctionalReact}
                             onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
                     }
-                    {library === 'grid' && exampleInfo.framework !== 'javascript' && exampleInfo.type !== 'multi' &&
+                    {library === 'grid' && exampleInfo.framework !== 'javascript' && isGenerated &&
                         <ImportTypeSelector
                             importType={exampleImportType}
                             onChange={event => set({ exampleImportType: event.target.value })} />

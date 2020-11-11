@@ -346,7 +346,7 @@ if (instances.length > 0) {
 |
 | Using more complex Angular Components in the Cell Renderers - specifically how you can use nested `NgModule`'s within the grid.
 |
-| <grid-example title='Richer Dynamic Components' name='angular-rich-dynamic' type='angular' options='{ "showImportsDropdown": false, "exampleHeight": 380, "extras": ["bootstrap"] }'></grid-example>
+| <grid-example title='Richer Dynamic Components' name='angular-rich-dynamic' type='angular' options='{ "exampleHeight": 380, "extras": ["bootstrap"] }'></grid-example>
 
 [[only-react]]
 | ## Cell Rendering
