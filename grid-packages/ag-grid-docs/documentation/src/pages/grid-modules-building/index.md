@@ -30,9 +30,9 @@ For our purposes we're going to assume that the application we're building requi
 - Excel Export
 - Context Menu
 
-Recall from earlier [documentation](../grid-modules/#providing-modules-to-individual-grids) that at a minimum you need to provide a [Row Model](../javascript-grid-row-models/) to the Grid and in our case we've opted for the Client Side Row Model.
+Recall from earlier [documentation](../grid-modules/#providing-modules-to-individual-grids) that at a minimum you need to provide a [Row Model](../row-models/) to the Grid and in our case we've opted for the Client Side Row Model.
 
-Additionally we're going to provide [Excel Export](../javascript-grid-excel/) functionality, so we're going to need the corresponding Excel Module.
+Additionally we're going to provide [Excel Export](../grid-excel/) functionality, so we're going to need the corresponding Excel Module.
 
 Finally, we'd like our users to be able to export the data using the [Context Menu](../context-menu/), so we'll include that module too.
 
@@ -53,10 +53,10 @@ This is what our `package.json` file will look like based on the requirements ab
 Now that these modules are available to us we need to import them within our application, and then register them with the Grid:
 
 ```js
-import {ModuleRegistry} from '@ag-grid-community/core';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {MenuModule} from '@ag-grid-enterprise/menu';
-import {ExcelExportModule} from '@ag-grid-enterprise/excel-export';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 ```
@@ -68,10 +68,12 @@ And that's all that's required. Below are examples using using the above configu
 
 We don't list plain JavaScript here as the assumption is that if using JavaScript you'll most likely be using the provided UMD bundles. If you'd like to create a custom UMD bundle please see the section following the examples on how to do so.
 
+```html
 <grid-example title='Using Modules' name='module-grid' type='multi' options='{ "enterprise": true, "showResult": false, "showImportsDropdown": false }'></grid-example>
+```
 
 [[note]]
-| Full working examples of this can be found on Github(https://github.com/seanlandsman/ag-grid-module-bundling).
+| Full working examples of this can be found on [Github](https://github.com/seanlandsman/ag-grid-module-bundling).
 
 ## Building Your Own UMD Bundle
 
@@ -115,10 +117,10 @@ export * from '@ag-grid-community/client-side-row-model';
 export * from '@ag-grid-enterprise/menu';
 export * from '@ag-grid-enterprise/excel-export';
 
-import {ModuleRegistry} from "@ag-grid-community/core";
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {MenuModule} from '@ag-grid-enterprise/menu';
-import {ExcelExportModule} from '@ag-grid-enterprise/excel-export';
+import { ModuleRegistry } from "@ag-grid-community/core";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 
 ModuleRegistry.register(ClientSideRowModelModule);
 ModuleRegistry.register(MenuModule);
@@ -142,6 +144,7 @@ module.exports = {
         library: ["agGrid"],
         libraryTarget: "umd"
     }
+}
 ```
 
 There are two main items here:
@@ -196,6 +199,6 @@ Which will result in a file called `dist/bundle.umd.js` being created, which we 
 </html>
 ```
 
-[[note]
-| Full working examples of this can be found on Github(https://github.com/seanlandsman/ag-grid-module-bundling).
+[[note]]
+| Full working examples of this can be found on [Github](https://github.com/seanlandsman/ag-grid-module-bundling).
 

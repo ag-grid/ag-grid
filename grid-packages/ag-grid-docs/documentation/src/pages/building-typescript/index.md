@@ -125,15 +125,15 @@ module.exports = {
 };
 ```
 
-### `entry`
+### entry
 
 This serves as our entry point for our application.
 
-### `resolve`
+### resolve
 
 As our imports done specify what file extension to use, we need to specify what file types we want to match on - in this case we're looking at TypeScript and JavaScript files, but you could also add CSS & HTML files too.
 
-### `module.rules`
+### module.rules
 
 Loaders tell Webpack how & what to do with certain types of file - we have specified a few here to deal with Typescript, HTML, CSS and Images:
 
@@ -141,7 +141,7 @@ Loaders tell Webpack how & what to do with certain types of file - we have speci
 - html
 - scss: process and bundle imported SCSS
 
-### `plugins`
+### plugins
 
 - HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS file for us
 
@@ -162,7 +162,7 @@ Now we can either run `npm start` to run the development setup, or `npm run buil
 
 If we now run our application with the above code we will see this:
 
-<img-caption src="building-typescript/resources/ts-grid.png" alt="Datagrid" constrained="true">
+<image-caption src="building-typescript/resources/ts-grid.png" alt="Datagrid" width="40rem" centered="true" constrained="true"></image-caption>
 
 ## Example Code
 

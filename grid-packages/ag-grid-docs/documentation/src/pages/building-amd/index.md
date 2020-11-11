@@ -73,7 +73,7 @@ requirejs(['agGrid'], function (agGrid) {
 
 Now we can either serve the HTML file above which will result in the following grid.
 
-<img-caption src="building-amdresources/ts-grid.png" alt="Datagrid" constrained="true"></image-caption>
+<image-caption src="building-amd/resources/ts-grid.png" alt="Datagrid" width="40rem" centered="true" constrained="true"></image-caption>
 
 ## Example Code
 

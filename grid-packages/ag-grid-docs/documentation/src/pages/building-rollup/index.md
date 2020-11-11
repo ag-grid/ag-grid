@@ -6,11 +6,12 @@ We walk through the main steps required when using ag-Grid with Rollup.js.
 
 [[note]]
 | A full working example of using Rollup.js with ag-Grid can be found on 
-| <a href="https://github.com/seanlandsman/ag-grid-rollup">Github</a>.
+| [Github](https://github.com/seanlandsman/ag-grid-rollup).
 
+[[note]]
 | This walkthrough uses the `@ag-grid-community/all-modules` package which will include all 
 | features of ag-Grid. If you're using Rollup to reduce your bundle size you probably want to be selective 
-| in which packages you include - please see the [Modules](../javascript-grid-modules) documentation for more 
+| in which packages you include - please see the [Modules](../grid-modules) documentation for more 
 | information.
 
 ## Initialise Project
@@ -126,4 +127,4 @@ The resulting bundle will be available in `./dist/ag-bundle.js`
 
 If we now serve `index-ag-grid.html` our grid will be rendered as expected:
 
-<img-caption src="building-rollup/resources/bundled-grid.png" width="50%" alt="Bundled Grid" constrained="true"></image-caption>
+<image-caption src="building-rollup/resources/bundled-grid.png" width="33rem" alt="Bundled Grid" centered="true" constrained="true"></image-caption>

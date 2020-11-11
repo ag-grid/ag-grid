@@ -20,7 +20,7 @@ The below table summarizes the modules provided in the ag-Grid Community and ag-
 Note that neither `@ag-grid-community/all-modules` nor `@ag-grid-enterprise/all-modules` contain
 framework support - if you require framework support you need to explicitly specify it:
 
-### `All Modules Bundles`
+### All Modules Bundles
 
 `@ag-grid-community/all-modules` can be considered to be equivalent to `ag-grid-community`, but
     with the additional
@@ -39,7 +39,7 @@ framework support - if you require framework support you need to explicitly spec
 | specify `@ag-grid-community/all-modules` too. `@ag-grid-enterprise/all-modules`
 | will contain all Community modules.
 
-## Mixing `packages` and `modules`
+## Mixing **packages** and **modules**
 
 The following artifacts are "`modules`" and are designed to work to together:
 
@@ -52,9 +52,10 @@ You **cannot** mix `packages` and `modules` - in other words you cannot have a m
 
 ```js
 "dependencies": {
-"ag-grid-community": "^23.0.0" <- a package dependency
-"@ag-grid-enterprise/all-modules": "^23.0.0"  <- a module dependency
-...other dependencies...
+    "ag-grid-community": "^23.0.0" <- a package dependency
+    "@ag-grid-enterprise/all-modules": "^23.0.0"  <- a module dependency
+    //...other dependencies...
+}
 ```
 
 ## Installing ag-Grid Modules
@@ -80,18 +81,18 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
     "@ag-grid-enterprise/excel-export": "^23.0.0",
     "@ag-grid-enterprise/master-detail": "^23.0.0",
     "@ag-grid-community/react": "^23.0.0",
-    ...other dependencies...
+    //...other dependencies...
 }
 ```
 
 We now need to register the Grid modules we wish to use - note that this does not include `@ag-grid-community/react` as the React support is not a Grid feature, but rather a support library:
 
 ```js
-import {ModuleRegistry} from '@ag-grid-community/core';     // @ag-grid-community/core will always be implicitly available
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
-import {CsvExportModule} from "@ag-grid-community/csv-export";
-import {ExcelExportModule} from "@ag-grid-enterprise/excel-export";
-import {MasterDetailModule} from "@ag-grid-enterprise/master-detail";
+import { ModuleRegistry } from '@ag-grid-community/core';     // @ag-grid-community/core will always be implicitly available
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { CsvExportModule } from "@ag-grid-community/csv-export";
+import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
+import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -123,7 +124,8 @@ Using the same real-world example above let us assume that we wish to use the `C
     "@ag-grid-enterprise/excel-export": "^23.0.0",
     "@ag-grid-enterprise/master-detail": "^23.0.0",
     "@ag-grid-community/react": "^23.0.0",
-    ...other dependencies...
+    //...other dependencies...
+}
 ```
 
 We now need to provide the Grid modules we wish to use - note that this does not include `@ag-grid-community/react` as the React support is not a Grid feature, but rather a support library.
@@ -159,14 +161,16 @@ export default class GridExample extends Component {
 };
 ```
 
-Example
-
 [[only-javascript]]
+| Example
+|
 | ```js
 | new Grid(<dom element>, gridOptions, { modules: [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule]});
 | ```
 
 [[only-angular]]
+| Example
+|
 | ```jsx
 | public modules: Module[] = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule];
 |
@@ -178,6 +182,8 @@ Example
 | ```
 
 [[only-vue]]
+| Example
+|
 | ```jsx
 | data() {
 |     return {
@@ -193,8 +199,7 @@ Example
 | </ag-grid-vue>
 | ```
 
-
-## `Core` Modules
+## Core Modules
 
 If you specify _any_ Community or Enterprise dependency then the corresponding `core` module will also be pulled in and be made available to you.
 
@@ -220,8 +225,8 @@ Let us assume we have the following modules specified:
 We can then assume the `core` packages are available implicitly:
 
 ```js
-import {ColumnApi, GridApi} from "@ag-grid-community/core";
-import {LicenseManager} from "@ag-grid-enterprise/core";
+import { ColumnApi, GridApi } from "@ag-grid-community/core";
+import { LicenseManager } from "@ag-grid-enterprise/core";
 ```
 
 ## CSS/SCSS Paths
@@ -233,6 +238,7 @@ CSS & SCSS will be available in the `@ag-grid-community/core` module,  which wil
 import "./node_modules/@ag-grid-community/core/dist/styles/ag-grid.css";
 import "./node_modules/@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 ```
+
 ```scss
 // SCSS Community
 @import "./node_modules/@ag-grid-community/core/dist/styles/ag-grid.scss";
