@@ -49,6 +49,7 @@ import { camelCaseToHumanText, startsWith } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
+import {_} from "../utils";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -1768,65 +1769,71 @@ export class ColumnController extends BeanStub {
         let letRowGroupIndex = 1000;
         let letPivotIndex = 1000;
 
-        if (primaryColumns) {
-            primaryColumns.forEach((column) => {
-
-                const colDef = column.getColDef();
-
-                const sort = colDef.sort != null ? colDef.sort : null;
-                const sortIndex = colDef.sortIndex;
-                const hide = colDef.hide ? true : false;
-                const pinned = colDef.pinned ? colDef.pinned : null;
-
-                const width = colDef.width;
-                const flex = colDef.flex != null ? colDef.flex : null;
-
-                let rowGroupIndex: number | null | undefined = colDef.rowGroupIndex;
-                let rowGroup: boolean | null | undefined = colDef.rowGroup;
-
-                if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
-                    rowGroupIndex = null;
-                    rowGroup = null;
-                }
-
-                let pivotIndex: number | null | undefined = colDef.pivotIndex;
-                let pivot: boolean | null | undefined = colDef.pivot;
-
-                if (pivotIndex == null && (pivot == null || pivot == false)) {
-                    pivotIndex = null;
-                    pivot = null;
-                }
-
-                const aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
-
-                const stateItem = {
-                    colId: column.getColId(),
-                    sort,
-                    sortIndex,
-                    hide,
-                    pinned,
-
-                    width,
-                    flex,
-
-                    rowGroup,
-                    rowGroupIndex,
-                    pivot,
-                    pivotIndex,
-                    aggFunc,
-                };
-
-                if (missing(rowGroupIndex) && rowGroup) {
-                    stateItem.rowGroupIndex = letRowGroupIndex++;
-                }
-
-                if (missing(pivotIndex) && pivot) {
-                    stateItem.pivotIndex = letPivotIndex++;
-                }
-
-                columnStates.push(stateItem);
-            });
+        let colsToProcess: Column[] = [];
+        if (this.groupAutoColumns) {
+            colsToProcess = colsToProcess.concat(this.groupAutoColumns);
         }
+        if (primaryColumns) {
+            colsToProcess = colsToProcess.concat(primaryColumns);
+        }
+
+        colsToProcess.forEach(column => {
+
+            const colDef = column.getColDef();
+
+            const sort = colDef.sort != null ? colDef.sort : null;
+            const sortIndex = colDef.sortIndex;
+            const hide = colDef.hide ? true : false;
+            const pinned = colDef.pinned ? colDef.pinned : null;
+
+            const width = colDef.width;
+            const flex = colDef.flex != null ? colDef.flex : null;
+
+            let rowGroupIndex: number | null | undefined = colDef.rowGroupIndex;
+            let rowGroup: boolean | null | undefined = colDef.rowGroup;
+
+            if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
+                rowGroupIndex = null;
+                rowGroup = null;
+            }
+
+            let pivotIndex: number | null | undefined = colDef.pivotIndex;
+            let pivot: boolean | null | undefined = colDef.pivot;
+
+            if (pivotIndex == null && (pivot == null || pivot == false)) {
+                pivotIndex = null;
+                pivot = null;
+            }
+
+            const aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
+
+            const stateItem = {
+                colId: column.getColId(),
+                sort,
+                sortIndex,
+                hide,
+                pinned,
+
+                width,
+                flex,
+
+                rowGroup,
+                rowGroupIndex,
+                pivot,
+                pivotIndex,
+                aggFunc,
+            };
+
+            if (missing(rowGroupIndex) && rowGroup) {
+                stateItem.rowGroupIndex = letRowGroupIndex++;
+            }
+
+            if (missing(pivotIndex) && pivot) {
+                stateItem.pivotIndex = letPivotIndex++;
+            }
+
+            columnStates.push(stateItem);
+        });
 
         this.applyColumnState({ state: columnStates, applyOrder: true }, source);
     }

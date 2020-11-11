@@ -4,7 +4,7 @@ import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 import { FontStyle, FontWeight } from "../scene/shape/text";
 import { Marker } from "./marker/marker";
-import { reactive, Observable, PropertyChangeEvent } from "../util/observable";
+import { reactive, Observable, PropertyChangeEvent, SourceEvent } from "../util/observable";
 import { getMarker } from "./marker/util";
 import { createId } from "../util/id";
 
@@ -22,6 +22,12 @@ export interface LegendDatum {
     label: {
         text: string;  // display name for the sub-component
     };
+}
+
+export interface LegendClickEvent extends SourceEvent<Legend> {
+    event: MouseEvent;
+    itemId: string;
+    enabled: boolean;
 }
 
 export enum LegendOrientation {
@@ -458,7 +464,7 @@ export class Legend extends Observable {
             markerLabel.markerFillOpacity = marker.fillOpacity;
             markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
-            markerLabel.color = this.color;
+            markerLabel.color = this.item.label.color;
         });
     }
 
