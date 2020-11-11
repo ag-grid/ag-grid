@@ -17,6 +17,12 @@ ag-Grid `modules` allow you to pick and choose which features you require, resul
 
 The below table summarizes the modules provided in the ag-Grid Community and ag-Grid Enterprise packages.
 
+<style>
+    table > thead > tr > th:first-child {
+        width: 355px;
+    }
+</style>
+
 <matrix-table src='modules.json' columns='{ "title": "", "module": "Community Module", "exported": "Exported" }' stringonly="true" showcondition="notIn(enterprise, framework)"></matrix-table>
 <matrix-table src='modules.json' columns='{ "title": "", "module": "Enterprise Module<enterprise-icon></enterprise-icon>", "exported": "Exported" }' stringonly="true" showcondition="in(enterprise)"></matrix-table>
 Note that neither `@ag-grid-community/all-modules` nor `@ag-grid-enterprise/all-modules` contain

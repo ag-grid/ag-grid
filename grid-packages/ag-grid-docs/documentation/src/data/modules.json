@@ -52,7 +52,7 @@
     "exported": "Polymer Support"
   },
   {
-    "title": "All Community &<br/>Enterprise Modules <sup>(!)</sup><enterprise-icon></enterprise-icon>",
+    "title": "All Community & Enterprise Modules <sup>(!)</sup><enterprise-icon></enterprise-icon>",
     "module": "@ag-grid-enterprise/all-modules",
     "enterprise": true,
     "exported": "All Community & Enterprise Modules"
