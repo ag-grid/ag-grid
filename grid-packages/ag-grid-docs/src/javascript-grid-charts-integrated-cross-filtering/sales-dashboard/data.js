@@ -31,7 +31,7 @@ function generateData() {
             handset: phone.handset,
             sale: phone.price,
             saleDate,
-            quarter
+            quarter,
         });
     }
 
