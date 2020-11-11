@@ -10,7 +10,10 @@
             "title": "Overview",
             "url": "../getting-started/",
             "frameworks": [
-              "javascript", "angular", "react", "vue"
+              "javascript",
+              "angular",
+              "react",
+              "vue"
             ],
             "items": [
               {
@@ -31,14 +34,16 @@
                 "title": "Components",
                 "url": "../framework-components/",
                 "frameworks": [
-                  "angular", "vue"
+                  "angular",
+                  "vue"
                 ]
               },
               {
                 "title": "Markup",
                 "url": "../framework-markup/",
                 "frameworks": [
-                  "angular", "vue"
+                  "angular",
+                  "vue"
                 ]
               },
               {
@@ -1253,43 +1258,43 @@
                 "items": [
                   {
                     "title": "Simple Bar",
-                    "url": "../charts-overview/simple-bar.php"
+                    "url": "../charts-overview/simple-bar/"
                   },
                   {
                     "title": "Grouped Bar",
-                    "url": "../charts-overview/grouped-bar.php"
+                    "url": "../charts-overview/grouped-bar/"
                   },
                   {
                     "title": "Stacked Bar",
-                    "url": "../charts-overview/stacked-bar.php"
+                    "url": "../charts-overview/stacked-bar/"
                   },
                   {
                     "title": "100% Stacked Bar",
-                    "url": "../charts-overview/100--stacked-bar.php"
+                    "url": "../charts-overview/100--stacked-bar/"
                   },
                   {
                     "title": "Bar With Labels",
-                    "url": "../charts-overview/bar-with-labels.php"
+                    "url": "../charts-overview/bar-with-labels/"
                   },
                   {
                     "title": "Simple Column",
-                    "url": "../charts-overview/simple-column.php"
+                    "url": "../charts-overview/simple-column/"
                   },
                   {
                     "title": "Grouped Column",
-                    "url": "../charts-overview/grouped-column.php"
+                    "url": "../charts-overview/grouped-column/"
                   },
                   {
                     "title": "Stacked Column",
-                    "url": "../charts-overview/stacked-column.php"
+                    "url": "../charts-overview/stacked-column/"
                   },
                   {
                     "title": "100% Stacked Column",
-                    "url": "../charts-overview/100--stacked-column.php"
+                    "url": "../charts-overview/100--stacked-column/"
                   },
                   {
                     "title": "Column With Negative Values",
-                    "url": "../charts-overview/column-with-negative-values.php"
+                    "url": "../charts-overview/column-with-negative-values/"
                   }
                 ]
               },
@@ -1301,11 +1306,11 @@
                 "items": [
                   {
                     "title": "Simple Pie",
-                    "url": "../charts-overview/simple-pie.php"
+                    "url": "../charts-overview/simple-pie/"
                   },
                   {
                     "title": "Simple Doughnut",
-                    "url": "../charts-overview/simple-doughnut.php"
+                    "url": "../charts-overview/simple-doughnut/"
                   }
                 ]
               },
@@ -1317,11 +1322,11 @@
                 "items": [
                   {
                     "title": "Simple Line",
-                    "url": "../charts-overview/simple-line.php"
+                    "url": "../charts-overview/simple-line/"
                   },
                   {
                     "title": "Line With Gaps",
-                    "url": "../charts-overview/line-with-gaps.php"
+                    "url": "../charts-overview/line-with-gaps/"
                   }
                 ]
               },
@@ -1333,19 +1338,19 @@
                 "items": [
                   {
                     "title": "Simple Scatter",
-                    "url": "../charts-overview/simple-scatter.php"
+                    "url": "../charts-overview/simple-scatter/"
                   },
                   {
                     "title": "Simple Bubble",
-                    "url": "../charts-overview/simple-bubble.php"
+                    "url": "../charts-overview/simple-bubble/"
                   },
                   {
                     "title": "Bubble With Negative Values",
-                    "url": "../charts-overview/bubble-with-negative-values.php"
+                    "url": "../charts-overview/bubble-with-negative-values/"
                   },
                   {
                     "title": "Bubble With Categories",
-                    "url": "../charts-overview/bubble-with-categories.php"
+                    "url": "../charts-overview/bubble-with-categories/"
                   }
                 ]
               },
@@ -1357,19 +1362,19 @@
                 "items": [
                   {
                     "title": "Simple Area",
-                    "url": "../charts-overview/simple-area.php"
+                    "url": "../charts-overview/simple-area/"
                   },
                   {
                     "title": "Stacked Area",
-                    "url": "../charts-overview/stacked-area.php"
+                    "url": "../charts-overview/stacked-area/"
                   },
                   {
                     "title": "100% Stacked Area",
-                    "url": "../charts-overview/100--stacked-area.php"
+                    "url": "../charts-overview/100--stacked-area/"
                   },
                   {
                     "title": "Area With Negative Values",
-                    "url": "../charts-overview/area-with-negative-values.php"
+                    "url": "../charts-overview/area-with-negative-values/"
                   }
                 ]
               },
@@ -1381,15 +1386,15 @@
                 "items": [
                   {
                     "title": "Simple Histogram",
-                    "url": "../charts-overview/simple-histogram.php"
+                    "url": "../charts-overview/simple-histogram/"
                   },
                   {
                     "title": "Histogram with specified bins",
-                    "url": "../charts-overview/histogram-with-specified-bins.php"
+                    "url": "../charts-overview/histogram-with-specified-bins/"
                   },
                   {
-                    "title": "XY Histogram with Mean Aggregation",
-                    "url": "../charts-overview/xy-histogram-with-mean-aggregation.php"
+                    "title": "XY Histogram With Mean Aggregation",
+                    "url": "../charts-overview/xy-histogram-with-mean-aggregation/"
                   }
                 ]
               },
@@ -1401,31 +1406,31 @@
                 "items": [
                   {
                     "title": "Time Axis With Irregular Intervals",
-                    "url": "../charts-overview/time-axis-with-irregular-intervals.php"
+                    "url": "../charts-overview/time-axis-with-irregular-intervals/"
                   },
                   {
                     "title": "Real-Time Data Updates",
-                    "url": "../charts-overview/real-time-data-updates.php"
+                    "url": "../charts-overview/real-time-data-updates/"
                   },
                   {
                     "title": "Combination of Different Series Types",
-                    "url": "../charts-overview/combination-of-different-series-types.php"
+                    "url": "../charts-overview/combination-of-different-series-types/"
                   },
                   {
                     "title": "Chart Customisation",
-                    "url": "../charts-overview/chart-customisation.php"
+                    "url": "../charts-overview/chart-customisation/"
                   },
                   {
                     "title": "Custom Marker Shapes",
-                    "url": "../charts-overview/custom-marker-shapes.php"
+                    "url": "../charts-overview/custom-marker-shapes/"
                   },
                   {
                     "title": "Custom Tooltips",
-                    "url": "../charts-overview/custom-tooltips.php"
+                    "url": "../charts-overview/custom-tooltips/"
                   },
                   {
                     "title": "Per-Marker Customisation",
-                    "url": "../charts-overview/per-marker-customisation.php"
+                    "url": "../charts-overview/per-marker-customisation/"
                   }
                 ]
               }

@@ -13,6 +13,7 @@ import styles from './doc-page.module.scss';
 import MatrixTable from '../components/MatrixTable';
 import VideoSection from '../components/VideoSection';
 import VideoLink from '../components/VideoLink';
+import ChartGallery from '../components/chart-gallery/ChartGallery';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
@@ -42,7 +43,8 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
       'image-caption': ImageCaption,
       'matrix-table': MatrixTable,
       'video-section': VideoSection,
-      'video-link': VideoLink
+      'video-link': VideoLink,
+      'chart-gallery': ChartGallery,
     },
   }).Compiler;
 

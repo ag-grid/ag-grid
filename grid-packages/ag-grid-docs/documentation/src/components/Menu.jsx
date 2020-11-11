@@ -39,13 +39,13 @@ const MenuItem = ({ item, currentFramework }) => {
 
     return (
         <li key={item.title} className={styles.menu__item}>
-            { item.url
+            {item.url
                 ? <Link
                     to={item.url.replace('../', `/${currentFramework}/`)}
                     activeClassName={styles.menu__itemActive}>{title}</Link>
                 : title
             }
-            { item.items && <MenuGroup group={{ group: item.title, items: item.items }} currentFramework={currentFramework} />}
+            {item.items && !item.hideChildren && <MenuGroup group={{ group: item.title, items: item.items }} currentFramework={currentFramework} />}
         </li>
     );
 };

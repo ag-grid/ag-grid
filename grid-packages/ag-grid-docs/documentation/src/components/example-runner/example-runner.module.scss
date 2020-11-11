@@ -53,6 +53,10 @@
 
         a {
             color: $dark;
+
+            &:hover {
+                color: $dark;
+            }
         }
 
         &:focus,

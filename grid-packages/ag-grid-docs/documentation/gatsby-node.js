@@ -4,6 +4,8 @@ const { createFilePath } = require('gatsby-source-filesystem');
 const { GraphQLString } = require('gatsby/graphql');
 const fs = require('fs-extra');
 const supportedFrameworks = require('./src/utils/supported-frameworks.js');
+const chartGallery = require('./src/pages/charts-overview/gallery.json');
+const toKebabCase = require('./src/utils/to-kebab-case');
 
 /* We override this to allow us to specify the directory structure of the example files, so that we can reference
  * them correctly in the examples. By default, Gatsby includes a cache-busting hash of the file which would cause
@@ -101,17 +103,41 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
     }
 
     result.data.allMarkdownRemark.nodes.forEach(node => {
-        const { frontmatter: { frameworks: specifiedFrameworks } } = node;
+        const { frontmatter: { frameworks: specifiedFrameworks }, fields: { path } } = node;
+
+        if (path.split('/').some(part => part.startsWith('_'))) { return; }
 
         supportedFrameworks
             .filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f))
             .forEach(framework => {
                 createPage({
-                    path: `/${framework}${node.fields.path}/`,
+                    path: `/${framework}${path}/`,
                     component: docPageTemplate,
-                    context: { frameworks: supportedFrameworks, framework, srcPath: node.fields.path, }
+                    context: { frameworks: supportedFrameworks, framework, srcPath: path, }
                 });
             });
+    });
+
+    const chartGalleryPageTemplate = path.resolve(`src/templates/chart-gallery-page.js`);
+
+    const categories = Object.keys(chartGallery);
+    const namesByCategory = categories.reduce(
+        (names, c) => names.concat(Object.keys(chartGallery[c]).map(k => ({ category: c, name: k }))),
+        []);
+
+    namesByCategory.forEach(({ category, name }, i) => {
+        const { description } = chartGallery[category][name];
+
+        let previous = i > 0 ? namesByCategory[i - 1].name : null;
+        let next = i < namesByCategory.length - 1 ? namesByCategory[i + 1].name : null;
+
+        supportedFrameworks.forEach(framework => {
+            createPage({
+                path: `/${framework}/charts-overview/${toKebabCase(name)}/`,
+                component: chartGalleryPageTemplate,
+                context: { frameworks: supportedFrameworks, framework, framework, name, description, previous, next }
+            });
+        });
     });
 };
 

@@ -8,7 +8,7 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
 
     const nodes = useExampleFileNodes();
-    const { name, appLocation, framework, type } = exampleInfo;
+    const { name, appLocation, framework, type, library } = exampleInfo;
     const indexHtml = getIndexHtml(nodes, exampleInfo, true);
 
     if (typeof window === 'undefined') {
@@ -22,7 +22,7 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
 
             fs.writeFileSync(`public${packagesLocation}index.html`, indexHtml);
 
-            if (framework === 'react') {
+            if (framework === 'react' && library === 'grid') {
                 // need to ensure functional version is also generated
                 fs.writeFileSync(`public${modulesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
                 fs.writeFileSync(`public${packagesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
