@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
 import styles from './matrix-table.module.scss';
 
-const MatrixTable = ({ src, rootnode, columns, tree, booleanonly, childpropertyname }) => {
+const MatrixTable = ({ src, rootnode: rootNode, columns, tree, booleanonly: booleanOnly, stringonly: stringOnly, childpropertyname: childPropertyName, showcondition: showCondition }) => {
     const { allFile: { nodes } } = useStaticQuery(graphql`
     {
         allFile(filter: { sourceInstanceName: { in: ["pages", "data"] }, relativePath: { regex: "/.json$/" } }) {
@@ -19,23 +19,39 @@ const MatrixTable = ({ src, rootnode, columns, tree, booleanonly, childpropertyn
     `);
 
     const file = JSON.parse(nodes.find(node => node.relativePath === src).internal.content);
-    const allRows = getRowsToProcess(file, rootnode);
+    const allRows = getRowsToProcess(file, rootNode, showCondition);
     const allColumns = JSON.parse(columns);
     
-    return createTable(allColumns, allRows, tree, booleanonly, childpropertyname);
+    return createTable(allColumns, allRows, tree, booleanOnly, stringOnly, childPropertyName);
 }
 
-const getRowsToProcess = (file, rootNode) => {
+const getRowsToProcess = (file, rootNode, showCondition) => {
     const path = (!!rootNode && rootNode.split('.')) || '';
 
     while (path.length) {
         file = file[path.pop()];
     }
 
+    if (showCondition) {
+        const isNotIn = showCondition.startsWith('notIn');
+        let properties = showCondition.match(/\((\w+(?:,?\s*\w*)*)\)/);
+
+        if (properties) {
+            properties = properties[1].replace(/\s/g, '').split(',')
+        }
+
+        return !properties ? file : file.filter(row => {
+            if (isNotIn) {
+                return properties.every(property => !row[property])
+            }
+            return properties.some(property => !!row[property]);
+        });
+    }
+
     return file;
 }
 
-const createTable = (allColumns, allRows, isTree, booleanOnly, childPropertyName) => {
+const createTable = (allColumns, allRows, isTree, booleanOnly, stringOnly, childPropertyName) => {
     const columnFields = Object.keys(allColumns);
     const columnNames = columnFields.map(column => allColumns[column]);
 
@@ -47,7 +63,7 @@ const createTable = (allColumns, allRows, isTree, booleanOnly, childPropertyName
                 </tr>
             </thead>
             <tbody>
-                { processRows(allRows, columnFields, isTree, booleanOnly, childPropertyName, 0) }
+                { processRows(allRows, columnFields, isTree, booleanOnly, stringOnly, childPropertyName, 0) }
             </tbody>
         </table>
     );
@@ -63,7 +79,7 @@ const renderEnterprise = (value, isTree, rowData = {}) => {
     return processedValue;
 }
 
-const processRows = (rowArray, columnFields, isTree, booleanOnly, childPropertyName, level, group = 'root') => {
+const processRows = (rowArray, columnFields, isTree, booleanOnly, stringOnly, childPropertyName, level, group = 'root') => {
     return rowArray.reduce((allRows, currentRow, rowIdx) => {
         const exclude = isTree && currentRow.title === 'See Also';
         const rowItems = currentRow[childPropertyName];
@@ -73,7 +89,7 @@ const processRows = (rowArray, columnFields, isTree, booleanOnly, childPropertyN
             const title = currentRow[titleField];
             const newGroup = title ? `${group}-${title.toLowerCase().replace(/\s/g,'-')}` : group;
 
-            const processedRow = processRows(rowItems, columnFields, isTree, booleanOnly, childPropertyName, level + 1, newGroup);
+            const processedRow = processRows(rowItems, columnFields, isTree, booleanOnly, stringOnly, childPropertyName, level + 1, newGroup);
             const titleRow = createTitleRow(title, isTree, currentRow, level, `${newGroup}-title`);
 
             return allRows.concat(titleRow, processedRow);
@@ -81,7 +97,7 @@ const processRows = (rowArray, columnFields, isTree, booleanOnly, childPropertyN
 
         const newRows = (currentRow.matrixExclude || (currentRow.matrixExcludeChildren && !currentRow.url) || exclude) 
             ? allRows 
-            : allRows.concat(createRow(columnFields, currentRow, isTree, booleanOnly, level, `${group}-${rowIdx}`))
+            : allRows.concat(createRow(columnFields, currentRow, isTree, booleanOnly, stringOnly, level, `${group}-${rowIdx}`))
 
         return newRows; 
     }, [])
@@ -102,7 +118,7 @@ const createTitleRow = (title, isTree, rowData, level, rowKey) => !title ? [] : 
     </tr>
 )];
 
-const createRow = (columnFields, rowData, isTree, booleanOnly, level, rowKey) => (
+const createRow = (columnFields, rowData, isTree, booleanOnly, stringOnly, level, rowKey) => (
     <tr key={rowKey}>{
         columnFields.map((column, colIdx) => {
             const match = column.match(/not\((.*)\)/);
@@ -114,7 +130,7 @@ const createRow = (columnFields, rowData, isTree, booleanOnly, level, rowKey) =>
                 <td key={`${rowKey}-column-${colIdx}`}>{
                     colIdx === 0
                         ? renderPropertyColumn(value, isTree, rowData, level)
-                        : renderValue(value, booleanOnly, !!match)}
+                        : renderValue(value, booleanOnly, stringOnly, !!match)}
                 </td>
             )
         })
@@ -127,7 +143,9 @@ const renderPropertyColumn = (value, isTree, rowData, level) => {
     return <span className={ level > 2 ? `${styles['matrixTablePad'+ level]}` : null }>{ processedValue }</span>
 }
 
-const renderValue = (value, booleanOnly, notIn) => {
+const renderValue = (value, booleanOnly, stringOnly, notIn) => {
+    if (stringOnly) { return value; }
+
     if (value === false || (value === true && notIn)) {
         return <FontAwesomeIcon icon={ faTimes } fixedWidth className={ styles.matrixTable__false } />
     }
