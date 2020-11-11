@@ -1,9 +1,9 @@
 import React from 'react';
 import styles from './video-section.module.scss';
 
-const VideoSection = ({ src, title, children }) => (
+const VideoSection = ({ src, title, header, children }) => (
     <div className={ styles.videoSection }>
-        <p>
+        <p className={header ? styles.videoSectionHeader : null }>
             {children}
         </p>
         <iframe

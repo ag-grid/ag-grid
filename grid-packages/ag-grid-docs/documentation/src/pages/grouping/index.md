@@ -3,7 +3,7 @@ title: "Row Grouping"
 enterprise: true
 ---
 
-<video-section src="https://www.youtube.com/embed/gzqjP_kF4NI" title="Row Grouping Video Tutorial">
+<video-section src="https://www.youtube.com/embed/gzqjP_kF4NI" title="Row Grouping Video Tutorial" header="true">
     This page shows how to group your rows. It starts off with Auto Column Groups, the simplest way to configure row groups and then builds up into more advanced topics for row grouping.
 </video-section>
 

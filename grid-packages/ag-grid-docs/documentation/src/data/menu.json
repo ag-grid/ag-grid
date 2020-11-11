@@ -10,119 +10,141 @@
             "title": "Overview",
             "url": "../getting-started/",
             "frameworks": [
-              "javascript"
+              "javascript", "angular", "react", "vue"
             ],
             "items": [
               {
                 "title": "Install with NPM",
-                "url": "../javascript-npm/"
+                "url": "../npm/",
+                "frameworks": [
+                  "javascript"
+                ]
               },
               {
                 "title": "Download Bundles",
-                "url": "../javascript-download/"
-              }
-            ]
-          },
-          {
-            "title": "Overview",
-            "url": "../getting-started/",
-            "frameworks": [
-              "angular"
-            ],
-            "items": [
+                "url": "../download/",
+                "frameworks": [
+                  "javascript"
+                ]
+              },
               {
                 "title": "Components",
-                "url": "../angular-more-details/"
+                "url": "../framework-components/",
+                "frameworks": [
+                  "angular", "vue"
+                ]
               },
               {
                 "title": "Markup",
-                "url": "../angular-markup/"
+                "url": "../framework-markup/",
+                "frameworks": [
+                  "angular", "vue"
+                ]
               },
               {
                 "title": "SystemJS",
-                "url": "../angular-systemjs/"
+                "url": "../systemjs/",
+                "frameworks": [
+                  "angular"
+                ]
               },
               {
                 "title": "Webpack 3",
-                "url": "../angular-webpack-3/"
+                "url": "../webpack-3/",
+                "frameworks": [
+                  "angular"
+                ]
               },
               {
                 "title": "Webpack 2",
-                "url": "../angular-webpack-2/"
+                "url": "../webpack-2/",
+                "frameworks": [
+                  "angular"
+                ]
               },
               {
                 "title": "Webpack 1",
-                "url": "../angular-webpack/"
+                "url": "../webpack/",
+                "frameworks": [
+                  "angular"
+                ]
               },
               {
                 "title": "Material Components",
-                "url": "../angular-material-design/"
+                "url": "../material-design/",
+                "frameworks": [
+                  "angular"
+                ]
               },
               {
                 "title": "Use with RxJS",
-                "url": "../angular-rxjs/"
-              }
-            ]
-          },
-          {
-            "title": "Overview",
-            "url": "../getting-started/",
-            "frameworks": [
-              "react"
-            ],
-            "items": [
+                "url": "../angular-rxjs/",
+                "frameworks": [
+                  "angular"
+                ]
+              },
               {
                 "title": "Column Configuration",
-                "url": "../react-column-configuration/"
+                "url": "../column-configuration/",
+                "frameworks": [
+                  "react"
+                ]
               },
               {
                 "title": "Context API & Redux",
-                "url": "../react-apis/"
+                "url": "../framework-apis/",
+                "frameworks": [
+                  "react"
+                ]
               },
               {
                 "title": "Fine Tuning",
-                "url": "../react-fine-tuning/"
+                "url": "../fine-tuning/",
+                "frameworks": [
+                  "react"
+                ]
               },
               {
                 "title": "Hooks & Functional Components",
-                "url": "../react-hooks/"
+                "url": "../react-hooks/",
+                "frameworks": [
+                  "react"
+                ]
               },
               {
                 "title": "Redux Integration Part 1",
-                "url": "../react-redux-integration-pt1/"
+                "url": "../redux-integration-pt1/",
+                "frameworks": [
+                  "react"
+                ]
               },
               {
                 "title": "Redux Integration Part 2",
-                "url": "../react-redux-integration-pt2/"
+                "url": "../redux-integration-pt2/",
+                "frameworks": [
+                  "react"
+                ]
               },
               {
                 "title": "React 15.x",
-                "url": "../react-15/"
-              }
-            ]
-          },
-          {
-            "title": "Overview",
-            "url": "../getting-started/",
-            "frameworks": [
-              "vue"
-            ],
-            "items": [
-              {
-                "title": "Components",
-                "url": "../vue-components/"
-              },
-              {
-                "title": "Markup",
-                "url": "../vue-markup/"
+                "url": "../react-15/",
+                "frameworks": [
+                  "react"
+                ]
               },
               {
                 "title": "Vue & Unidirectional Data Flow",
-                "url": "../vue-data-flow/"
+                "url": "../data-flow/",
+                "frameworks": [
+                  "vue"
+                ]
               },
               {
                 "title": "Misc",
-                "url": "../vue-misc/"
+                "url": "../framework-misc/",
+                "frameworks": [
+                  "vue"
+                ]
               }
             ]
           },
