@@ -139,8 +139,12 @@ const createRow = (columnFields, rowData, isTree, booleanOnly, stringOnly, level
 );
 
 const renderPropertyColumn = (value, isTree, rowData, level) => {
-    const processedValue = isTree ? wrapWithLink(renderEnterprise(value, isTree, rowData), rowData.url) : value;
-    return <span className={ level > 2 ? `${styles['matrixTablePad'+ level]}` : null }>{ processedValue }</span>
+    if (isTree) {
+        const processedValue = wrapWithLink(renderEnterprise(value, isTree, rowData), rowData.url);
+        return <span className={ level > 2 ? `${styles['matrixTablePad'+ level]}` : null }>{processedValue}</span>;
+    }
+
+    return <span dangerouslySetInnerHTML={{ __html: value }} />;
 }
 
 const renderValue = (value, booleanOnly, stringOnly, notIn) => {
