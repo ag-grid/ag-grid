@@ -15,8 +15,6 @@ import { BeanStub } from "../../context/beanStub";
 @Bean('detailRowCompCache')
 export class DetailRowCompCache extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     private cacheItems: CacheItem[] = [];
     private maxCacheSize: number | undefined;
     private active: boolean;

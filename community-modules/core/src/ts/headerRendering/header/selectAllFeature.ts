@@ -17,7 +17,6 @@ export class SelectAllFeature extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;

@@ -14,7 +14,6 @@ import { exists } from "../utils/generic";
 @Bean('mouseEventService')
 export class MouseEventService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     private static gridInstanceSequence = new NumberSequence();

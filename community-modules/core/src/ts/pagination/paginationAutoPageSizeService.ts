@@ -7,8 +7,6 @@ import { GridPanel } from "../gridPanel/gridPanel";
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     private gridPanel: GridPanel;
 
     public registerGridComp(gridPanel: GridPanel): void {

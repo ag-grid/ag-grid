@@ -8,8 +8,6 @@ import { find, exists } from "../utils/generic";
 @Bean('selectableService')
 export class SelectableService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     private groupSelectsChildren: boolean;
     private isRowSelectableFunc?: IsRowSelectable;
 

@@ -18,7 +18,6 @@ import { BeanStub } from "../context/beanStub";
 @Bean('undoRedoService')
 export class UndoRedoService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('rowModel') private rowModel: IRowModel;

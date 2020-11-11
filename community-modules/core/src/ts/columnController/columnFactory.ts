@@ -18,7 +18,6 @@ import { removeFromArray } from '../utils/array';
 @Bean('columnFactory')
 export class ColumnFactory extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
 
     private logger: Logger;

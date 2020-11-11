@@ -14,8 +14,6 @@ import { attrToNumber } from "../utils/generic";
 @Bean('columnUtils')
 export class ColumnUtils extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     public calculateColInitialWidth(colDef: any): number {
         const optionsWrapper = this.gridOptionsWrapper;
         const minColWidth = colDef.minWidth != null ? colDef.minWidth : optionsWrapper.getMinColWidth();

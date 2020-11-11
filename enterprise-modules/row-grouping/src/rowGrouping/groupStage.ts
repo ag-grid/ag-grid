@@ -39,7 +39,6 @@ interface GroupingDetails {
 @Bean('groupStage')
 export class GroupStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;

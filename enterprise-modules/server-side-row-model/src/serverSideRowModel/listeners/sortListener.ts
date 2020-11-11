@@ -20,7 +20,6 @@ import {ListenerUtils} from "./listenerUtils";
 export class SortListener extends BeanStub {
 
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;

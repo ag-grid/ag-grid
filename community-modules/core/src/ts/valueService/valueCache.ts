@@ -6,8 +6,6 @@ import { BeanStub } from "../context/beanStub";
 @Bean('valueCache')
 export class ValueCache extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     private cacheVersion = 0;
     private active: boolean;
     private neverExpires: boolean;

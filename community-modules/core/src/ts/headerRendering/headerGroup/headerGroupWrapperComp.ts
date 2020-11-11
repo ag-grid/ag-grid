@@ -37,7 +37,6 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             <div ref="agResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
@@ -158,30 +157,23 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         return this.column.getColGroupDef();
     }
 
-    private getTooltipText(): string | null | undefined {
-        const colGroupDef = this.getComponentHolder();
-
-        return colGroupDef && colGroupDef.headerTooltip;
-    }
-
     public getTooltipParams(): ITooltipParams {
-        return {
-            location: 'headerGroup',
-            colDef: this.getComponentHolder(),
-            column: this.getColumn(),
-            value: this.getTooltipText()
-        };
+        const res = super.getTooltipParams();
+        res.location = 'headerGroup';
+
+        // this is wrong, but leaving it as i don't want to change code,
+        // but the ColumnGroup does not have a ColDef or a Column (although it does have GroupDef and ColumnGroup)
+        res.colDef = this.getComponentHolder();
+        res.column = this.getColumn();
+
+        return res;
     }
 
     private setupTooltip(): void {
-        const tooltipText = this.getTooltipText();
-
-        if (tooltipText == null) { return; }
-
-        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.getGui().setAttribute('title', tooltipText);
-        } else {
-            this.createManagedBean(new TooltipFeature(this));
+        const colGroupDef = this.getComponentHolder();
+        const tooltipText = colGroupDef && colGroupDef.headerTooltip;
+        if (tooltipText!=null) {
+            this.setTooltip(tooltipText);
         }
     }
 

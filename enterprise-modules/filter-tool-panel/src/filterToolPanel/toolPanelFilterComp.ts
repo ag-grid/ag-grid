@@ -1,4 +1,5 @@
 import {
+    _,
     Autowired,
     Column,
     ColumnController,
@@ -6,12 +7,11 @@ import {
     Events,
     FilterManager,
     FilterOpenedEvent,
-    GridOptionsWrapper,
     IFilterComp,
-    RefSelector,
+    ITooltipParams,
+    KeyCode,
     PostConstruct,
-    _,
-    KeyCode
+    RefSelector
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
@@ -32,7 +32,6 @@ export class ToolPanelFilterComp extends Component {
     @RefSelector('eExpand') private eExpand: HTMLElement;
 
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
 
     private eExpandChecked: HTMLElement;
@@ -53,6 +52,24 @@ export class ToolPanelFilterComp extends Component {
         this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper)!;
         this.eExpand.appendChild(this.eExpandChecked);
         this.eExpand.appendChild(this.eExpandUnchecked);
+    }
+
+    private setupTooltip(): void {
+
+        const refresh = () => {
+            const newTooltipText = this.column.getColDef().headerTooltip;
+            this.setTooltip(newTooltipText);
+        };
+
+        refresh();
+
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        const res = super.getTooltipParams();
+        res.location = 'filterToolPanelColumnGroup';
+        return res;
     }
 
     public setColumn(column: Column): void {
@@ -78,6 +95,8 @@ export class ToolPanelFilterComp extends Component {
         }
 
         this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+
+        this.setupTooltip();
     }
 
     public getColumn(): Column {

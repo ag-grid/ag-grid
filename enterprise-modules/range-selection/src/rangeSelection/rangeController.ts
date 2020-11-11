@@ -35,7 +35,6 @@ export class RangeController extends BeanStub implements IRangeController {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;

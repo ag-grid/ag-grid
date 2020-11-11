@@ -29,7 +29,6 @@ import { findIndex, last } from "./utils/array";
 export class GridCore extends ManagedFocusComponent {
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 

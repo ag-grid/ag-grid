@@ -18,7 +18,6 @@ import {NodeManager} from "../nodeManager";
 @Bean('ssrmBlockUtils')
 export class BlockUtils extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;

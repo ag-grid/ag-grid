@@ -22,7 +22,6 @@ export class VirtualList extends ManagedFocusComponent {
     private lastFocusedRowIndex: number | null;
     private isDestroyed = false;
 
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 

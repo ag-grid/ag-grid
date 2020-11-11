@@ -41,7 +41,6 @@ export class DropZoneColumnComp extends Component {
     @Autowired('columnController') columnController: ColumnController;
     @Autowired('popupService') popupService: PopupService;
     @Optional('aggFuncService') aggFuncService: IAggFuncService;
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
@@ -73,6 +72,20 @@ export class DropZoneColumnComp extends Component {
         if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addDragSource();
         }
+
+        this.setupTooltip();
+    }
+
+    private setupTooltip(): void {
+
+        const refresh = () => {
+            const newTooltipText = this.column.getColDef().headerTooltip;
+            this.setTooltip(newTooltipText);
+        };
+
+        refresh();
+
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     }
 
     private addDragSource(): void {

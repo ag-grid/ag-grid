@@ -13,7 +13,6 @@ import {
 export class RichSelectRow extends Component {
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private readonly params: IRichCellEditorParams;
 

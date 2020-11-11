@@ -11,8 +11,6 @@ import { stopPropagationForAgGrid } from '../utils/event';
 
 export class CheckboxSelectionComponent extends Component {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
     private rowNode: RowNode;

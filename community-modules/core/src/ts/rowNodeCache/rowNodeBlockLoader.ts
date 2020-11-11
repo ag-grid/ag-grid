@@ -10,8 +10,6 @@ export class RowNodeBlockLoader extends BeanStub {
 
     public static BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     private maxConcurrentRequests: number | undefined;
     private checkBlockToLoadDebounce: () => void;
 

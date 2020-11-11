@@ -20,7 +20,6 @@ export class StatusBar extends Component {
             <div ref="eStatusBarRight" class="ag-status-bar-right"></div>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('statusBarService') private statusBarService: StatusBarService;

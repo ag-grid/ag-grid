@@ -16,7 +16,6 @@ import {
 export enum ExpandState { EXPANDED, COLLAPSED, INDETERMINATE }
 
 export class PrimaryColsHeaderPanel extends Component {
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private readonly columnController: ColumnController;
 
     @RefSelector('eExpand') private readonly eExpand: HTMLElement;

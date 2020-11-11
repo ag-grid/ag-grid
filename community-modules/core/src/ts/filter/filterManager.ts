@@ -28,7 +28,6 @@ export class FilterManager extends BeanStub {
 
     @Autowired('$compile') private $compile: any;
     @Autowired('$scope') private $scope: any;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;

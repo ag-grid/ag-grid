@@ -26,7 +26,6 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         </div>`;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eValue') private eValue: HTMLElement;
     @RefSelector('eList') private eList: HTMLElement;

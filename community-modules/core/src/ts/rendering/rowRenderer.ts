@@ -40,7 +40,6 @@ export class RowRenderer extends BeanStub {
 
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnController") private columnController: ColumnController;
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("$scope") private $scope: any;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;

@@ -68,7 +68,6 @@ export class GridChartComp extends Component {
     @RefSelector('eEmpty') private readonly eEmpty: HTMLElement;
     @RefSelector('eTitleEditContainer') private readonly eTitleEditContainer: HTMLDivElement;
 
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
     @Autowired('columnController') private readonly columnController: ColumnController;

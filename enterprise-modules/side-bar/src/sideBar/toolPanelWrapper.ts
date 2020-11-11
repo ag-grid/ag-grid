@@ -14,7 +14,6 @@ import { HorizontalResizeComp } from "./horizontalResizeComp";
 export class ToolPanelWrapper extends Component {
 
     @Autowired("userComponentFactory") private userComponentFactory: UserComponentFactory;
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
     private static TEMPLATE = /* html */
         `<div class="ag-tool-panel-wrapper"/>`;

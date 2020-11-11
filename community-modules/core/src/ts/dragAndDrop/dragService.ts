@@ -16,7 +16,6 @@ import { areEventsNear } from "../utils/mouse";
 export class DragService extends BeanStub {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

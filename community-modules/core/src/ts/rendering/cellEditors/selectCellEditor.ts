@@ -17,7 +17,6 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
 
     private focusAfterAttached: boolean;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @RefSelector('eSelect') private eSelect: AgSelect;
 

@@ -22,7 +22,6 @@ export class PivotColDefService extends BeanStub {
     public static PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult {
 

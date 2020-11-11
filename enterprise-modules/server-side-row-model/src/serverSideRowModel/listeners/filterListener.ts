@@ -16,7 +16,6 @@ export class FilterListener extends BeanStub {
 
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
 
     @PostConstruct

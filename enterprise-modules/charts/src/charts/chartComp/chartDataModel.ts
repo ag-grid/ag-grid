@@ -44,7 +44,6 @@ export class ChartDataModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
     @Autowired('columnController') private readonly columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('rangeController') private readonly rangeController: IRangeController;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
