@@ -10,6 +10,7 @@ import {
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     PostConstruct,
+    ITooltipParams,
     PreConstruct,
     RefSelector,
     AgGroupComponentParams
@@ -30,17 +31,19 @@ export class ToolPanelFilterGroupComp extends Component {
 
     private readonly depth: number;
     private readonly columnGroup: OriginalColumnGroupChild;
+    private readonly showingColumn: boolean;
     private childFilterComps: ToolPanelFilterItem[];
     private expandedCallback: () => void;
     private filterGroupName: string | null;
 
     constructor(columnGroup: OriginalColumnGroupChild, childFilterComps: ToolPanelFilterItem[],
-        expandedCallback: () => void, depth: number) {
+        expandedCallback: () => void, depth: number, showingColumn: boolean) {
         super();
         this.columnGroup = columnGroup;
         this.childFilterComps = childFilterComps;
         this.depth = depth;
         this.expandedCallback = expandedCallback;
+        this.showingColumn = showingColumn;
     }
 
     @PreConstruct
@@ -67,6 +70,30 @@ export class ToolPanelFilterGroupComp extends Component {
 
         this.addExpandCollapseListeners();
         this.addFilterChangedListeners();
+        this.setupTooltip();
+    }
+
+    private setupTooltip(): void {
+        // we don't show tooltips for groups, as when the group expands, it's div contains the columns which also
+        // have tooltips, so the tooltips would clash. Eg mouse over group, tooltip shows, mouse over column, another
+        // tooltip shows but cos we didn't leave the group the group tooltip remains. this should be fixed in the future,
+        // maye the group shouldn't contain the children form a DOM perspective.
+        if (!this.showingColumn) { return; }
+
+        const refresh = () => {
+            const newTooltipText = (this.columnGroup as Column).getColDef().headerTooltip;
+            this.setTooltip(newTooltipText);
+        };
+
+        refresh();
+
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        const res = super.getTooltipParams();
+        res.location = 'filterToolPanelColumnGroup';
+        return res;
     }
 
     public addCssClassToTitleBar(cssClass: string) {
