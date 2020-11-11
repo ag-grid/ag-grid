@@ -341,19 +341,19 @@
             "items": [
               {
                 "title": "Packages",
-                "url": "../packages/"
+                "url": "../grid-packages/"
               },
               {
                 "title": "Modules - Overview",
-                "url": "../modules/"
+                "url": "../grid-modules/"
               },
               {
                 "title": "Modules - More Details",
-                "url": "../modules-more-details/"
+                "url": "../grid-modules-more-details/"
               },
               {
                 "title": "Building",
-                "url": "../modules-building/"
+                "url": "../grid-modules-building/"
               }
             ]
           },
@@ -364,20 +364,20 @@
           },
           {
             "title": "Building",
-            "url": "ag-grid-building/",
+            "url": "../grid-building/",
             "showInCollapsed": true,
             "items": [
               {
                 "title": "Rollup",
-                "url": "ag-grid-building-rollup/"
+                "url": "../building-rollup/"
               },
               {
                 "title": "TypeScript & Webpack",
-                "url": "ag-grid-building-typescript/"
+                "url": "../building-typescript/"
               },
               {
                 "title": "AMD",
-                "url": "ag-grid-building-amd/"
+                "url": "../building-amd/"
               }
             ]
           }
