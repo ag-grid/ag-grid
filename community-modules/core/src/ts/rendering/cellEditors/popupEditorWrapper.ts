@@ -12,8 +12,6 @@ export class PopupEditorWrapper extends PopupComponent implements ICellEditorCom
 
     public static DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-
     constructor(cellEditor: ICellEditorComp) {
         super(`<div class="ag-popup-editor" tabindex="-1"/>`);
         this.cellEditor = cellEditor;

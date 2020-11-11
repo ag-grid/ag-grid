@@ -26,7 +26,6 @@ export class AgPanel extends Component {
     protected static CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
 
     @Autowired('popupService') protected readonly popupService: PopupService;
-    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
 
     protected closable = true;
     protected config: PanelOptions | undefined;

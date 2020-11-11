@@ -11,7 +11,6 @@ export interface ChangeEvent extends AgEvent {
 }
 
 export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
-    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
 
     protected labelAlignment: LabelAlignment = 'right';
 

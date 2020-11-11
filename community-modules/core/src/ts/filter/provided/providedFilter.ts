@@ -48,7 +48,6 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     // not active) then this appliedModel will be null/undefined.
     private appliedModel: ProvidedFilterModel | null = null;
 
-    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') protected readonly rowModel: IRowModel;
 
     constructor(private readonly filterNameKey: keyof IFilterTitleLocaleText) {
