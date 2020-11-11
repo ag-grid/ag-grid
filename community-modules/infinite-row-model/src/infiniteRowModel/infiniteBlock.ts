@@ -16,7 +16,6 @@ import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 export class InfiniteBlock extends RowNodeBlock {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private readonly startRow: number;
     private readonly endRow: number;

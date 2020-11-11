@@ -37,7 +37,6 @@ export class CrossFilterDatasource extends BeanStub {
     @Autowired('rowModel') private readonly gridRowModel: IRowModel;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('columnController') private readonly columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowNodeSorter') private readonly rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
     @Optional('aggregationStage') private readonly aggregationStage: IAggregationStage;

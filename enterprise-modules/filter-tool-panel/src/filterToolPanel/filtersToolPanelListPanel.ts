@@ -139,7 +139,7 @@ export class FiltersToolPanelListPanel extends Component {
 
             if (depth > 0) { return filterComp; }
 
-            const filterGroupComp = this.createBean(new ToolPanelFilterGroupComp(column, [filterComp], this.onGroupExpanded.bind(this), depth));
+            const filterGroupComp = this.createBean(new ToolPanelFilterGroupComp(column, [filterComp], this.onGroupExpanded.bind(this), depth, true));
             filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
             filterGroupComp.collapse();
             return filterGroupComp;
@@ -158,7 +158,7 @@ export class FiltersToolPanelListPanel extends Component {
         if (columnGroup.isPadding()) { return childFilterComps; }
 
         const filterGroupComp =
-            new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth);
+            new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth, false);
 
         this.getContext().createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
