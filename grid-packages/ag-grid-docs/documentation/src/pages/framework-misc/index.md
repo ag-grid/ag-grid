@@ -1,5 +1,6 @@
 ---
 title: "Vue Grid | ag-Grid"
+frameworks: ["vue"]
 ---
 
 ## Overview
