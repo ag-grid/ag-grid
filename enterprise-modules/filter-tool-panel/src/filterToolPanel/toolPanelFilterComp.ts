@@ -1,4 +1,5 @@
 import {
+    _,
     Autowired,
     Column,
     ColumnController,
@@ -6,12 +7,11 @@ import {
     Events,
     FilterManager,
     FilterOpenedEvent,
-    GridOptionsWrapper,
     IFilterComp,
-    RefSelector,
+    ITooltipParams,
+    KeyCode,
     PostConstruct,
-    _,
-    KeyCode
+    RefSelector
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
@@ -32,7 +32,6 @@ export class ToolPanelFilterComp extends Component {
     @RefSelector('eExpand') private eExpand: HTMLElement;
 
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
 
     private eExpandChecked: HTMLElement;

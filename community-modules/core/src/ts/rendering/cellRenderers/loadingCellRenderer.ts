@@ -16,8 +16,6 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
             <span class="ag-loading-text" ref="eLoadingText"></span>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-
     @RefSelector('eLoadingIcon') private eLoadingIcon: HTMLElement;
     @RefSelector('eLoadingText') private eLoadingText: HTMLElement;
 

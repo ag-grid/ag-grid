@@ -123,7 +123,6 @@ export interface DraggingEvent {
 @Bean('dragAndDropService')
 export class DragAndDropService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('environment') private environment: Environment;
     @Autowired('columnApi') private columnApi: ColumnApi;

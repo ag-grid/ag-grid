@@ -13,7 +13,6 @@ import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 @Bean('changeDetectionService')
 export class ChangeDetectionService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 

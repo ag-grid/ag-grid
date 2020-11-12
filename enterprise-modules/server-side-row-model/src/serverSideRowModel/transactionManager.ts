@@ -24,7 +24,6 @@ interface AsyncTransactionWrapper {
 export class TransactionManager extends BeanStub implements IServerSideTransactionManager {
 
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
 

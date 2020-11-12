@@ -18,6 +18,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
 import { ChartTranslator } from './chartTranslator';
+import { CrossFilterDatasource } from "./crossFilterDatasource";
 
 export interface ColState {
     column?: Column;
@@ -35,6 +36,7 @@ export interface ChartModelParams {
     cellRange: CellRange;
     suppressChartRanges: boolean;
     unlinkChart?: boolean;
+    crossFiltering?: boolean;
 }
 
 export class ChartDataModel extends BeanStub {
@@ -42,7 +44,6 @@ export class ChartDataModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
     @Autowired('columnController') private readonly columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('rangeController') private readonly rangeController: IRangeController;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
@@ -62,10 +63,11 @@ export class ChartDataModel extends BeanStub {
 
     private chartType: ChartType;
     private chartThemeName: string;
-    private datasource: ChartDatasource;
+    private datasource: CrossFilterDatasource | ChartDatasource;
 
     private unlinked = false;
     private grouping = false;
+    private crossFiltering = false;
     private columnNames: { [p: string]: string[]; } = {};
 
     public constructor(params: ChartModelParams) {
@@ -78,6 +80,7 @@ export class ChartDataModel extends BeanStub {
         this.referenceCellRange = params.cellRange;
         this.suppressChartRanges = params.suppressChartRanges;
         this.unlinked = !!params.unlinkChart;
+        this.crossFiltering = !!params.crossFiltering;
 
         // this is used to associate chart ranges with charts
         this.chartId = this.generateId();
@@ -85,7 +88,8 @@ export class ChartDataModel extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.datasource = this.createManagedBean(new ChartDatasource());
+        this.datasource =
+            this.createManagedBean(this.crossFiltering ? new CrossFilterDatasource() : new ChartDatasource());
 
         this.updateCellRanges();
     }

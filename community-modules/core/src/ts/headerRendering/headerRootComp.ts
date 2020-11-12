@@ -33,7 +33,6 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @RefSelector('eHeaderContainer') private eHeaderContainer: HTMLElement;
     @RefSelector('eHeaderViewport') private eHeaderViewport: HTMLElement;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;

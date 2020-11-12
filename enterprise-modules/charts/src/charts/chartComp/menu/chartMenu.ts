@@ -20,7 +20,6 @@ type ChartToolbarButtons = {
 };
 
 export class ChartMenu extends Component {
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     public static EVENT_DOWNLOAD_CHART = "downloadChart";

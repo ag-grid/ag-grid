@@ -28,7 +28,6 @@ interface AggregationDetails {
 @Bean('aggregationStage')
 export class AggregationStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('pivotStage') private pivotStage: PivotStage;

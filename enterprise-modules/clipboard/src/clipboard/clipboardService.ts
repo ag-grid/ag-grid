@@ -63,7 +63,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;

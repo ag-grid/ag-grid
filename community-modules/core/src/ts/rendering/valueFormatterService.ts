@@ -9,7 +9,6 @@ import { BeanStub } from "../context/beanStub";
 @Bean('valueFormatterService')
 export class ValueFormatterService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
 
     public formatValue(

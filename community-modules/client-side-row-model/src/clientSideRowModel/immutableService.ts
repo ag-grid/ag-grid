@@ -18,7 +18,6 @@ import { ClientSideRowModel } from "./clientSideRowModel";
 export class ImmutableService extends BeanStub implements IImmutableService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private clientSideRowModel: ClientSideRowModel;
 

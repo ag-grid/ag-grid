@@ -16,7 +16,6 @@ import {StoreFactory} from "../stores/storeFactory";
 @Bean('ssrmExpandListener')
 export class ExpandListener extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
 

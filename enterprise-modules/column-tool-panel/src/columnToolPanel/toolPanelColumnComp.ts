@@ -4,17 +4,18 @@ import {
     Autowired,
     Column,
     ColumnController,
+    Component,
     CssClassApplier,
     DragAndDropService,
     DragSource,
     DragSourceType,
     Events,
-    GridOptionsWrapper,
+    ITooltipParams,
     KeyCode,
     PostConstruct,
-    RefSelector, Component
+    RefSelector
 } from "@ag-grid-community/core";
-import { ModelItemUtils } from "./modelItemUtils";
+import {ModelItemUtils} from "./modelItemUtils";
 
 export class ToolPanelColumnComp extends Component {
 
@@ -24,7 +25,6 @@ export class ToolPanelColumnComp extends Component {
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
@@ -83,7 +83,28 @@ export class ToolPanelColumnComp extends Component {
         this.onColumnStateChanged();
         this.refreshAriaLabel();
 
+        this.setupTooltip();
+
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+    }
+
+    private setupTooltip(): void {
+
+        const refresh = () => {
+            const newTooltipText = this.column.getColDef().headerTooltip;
+            this.setTooltip(newTooltipText);
+        };
+
+        refresh();
+
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        const res = super.getTooltipParams();
+        res.location = 'columnToolPanelColumn';
+        res.colDef = this.column.getColDef();
+        return res;
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {

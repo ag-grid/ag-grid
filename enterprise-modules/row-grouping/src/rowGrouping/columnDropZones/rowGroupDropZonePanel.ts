@@ -1,24 +1,23 @@
 import {
+    _,
     Autowired,
-    ColumnController,
-    LoggerFactory,
-    DragAndDropService,
-    GridOptionsWrapper,
-    PostConstruct,
-    Events,
     Column,
-    ColumnRowGroupChangeRequestEvent,
     ColumnApi,
+    ColumnController,
+    ColumnRowGroupChangeRequestEvent,
+    DragAndDropService,
+    Events,
     GridApi,
-    _
+    ITooltipParams,
+    LoggerFactory,
+    PostConstruct
 } from "@ag-grid-community/core";
-import { BaseDropZonePanel } from "./baseDropZonePanel";
+import {BaseDropZonePanel} from "./baseDropZonePanel";
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
     @Autowired('columnController') private columnController: ColumnController;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -50,6 +49,12 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        const res = super.getTooltipParams();
+        res.location = 'rowGroupColumnsList';
+        return res;
     }
 
     protected isColumnDroppable(column: Column): boolean {

@@ -16,7 +16,6 @@ export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 
 export class FiltersToolPanelHeaderPanel extends Component {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;

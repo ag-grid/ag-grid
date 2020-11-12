@@ -18,7 +18,6 @@ import { SSRMParams } from "../serverSideRowModel";
 @Bean('ssrmCacheUtils')
 export class StoreUtils extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

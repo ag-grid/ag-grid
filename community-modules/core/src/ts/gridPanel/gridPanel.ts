@@ -115,7 +115,6 @@ type ScrollDirection = 'horizontal' | 'vertical';
 
 export class GridPanel extends Component {
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
@@ -544,7 +543,7 @@ export class GridPanel extends Component {
             const target = getTarget(mouseEvent);
             if (target === this.eBodyViewport || target === this.eCenterViewport) {
                 // show it
-                this.onContextMenu(mouseEvent, null, null, null, null);
+                this.onContextMenu(mouseEvent, null, null, null, null, this.getGui());
                 this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
@@ -706,10 +705,13 @@ export class GridPanel extends Component {
             value = this.valueService.getValue(column, rowNode);
         }
 
-        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value);
+        // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
+        const anchorToElement = cellComp ? cellComp.getGui() : this.getGui();
+
+        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
     }
 
-    private onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any): void {
+    private onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any, anchorToElement: HTMLElement): void {
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
         if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
@@ -719,7 +721,7 @@ export class GridPanel extends Component {
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
             const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent!.touches[0];
-            if (this.contextMenuFactory.showMenu(rowNode!, column!, value, eventOrTouch)) {
+            if (this.contextMenuFactory.showMenu(rowNode!, column!, value, eventOrTouch, anchorToElement)) {
                 const event = mouseEvent ? mouseEvent : touchEvent;
                 event!.preventDefault();
             }

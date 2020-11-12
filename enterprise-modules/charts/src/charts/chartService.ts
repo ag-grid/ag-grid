@@ -9,7 +9,7 @@ import {
     ChartOptions,
     ChartRef,
     ChartType,
-    ColumnController,
+    ColumnController, CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
     Environment,
@@ -30,7 +30,6 @@ export class ChartService extends BeanStub implements IChartService {
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('environment') private environment: Environment;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
     // those in developer provided containers.
@@ -119,6 +118,35 @@ export class ChartService extends BeanStub implements IChartService {
             params.processChartOptions);
     }
 
+    public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
+        const cellRange = this.rangeController
+            ? this.rangeController.createCellRangeFromCellRangeParams(params.cellRange)
+            : undefined;
+
+        if (!cellRange) {
+            console.warn("ag-Grid - unable to create chart as no range is selected");
+            return;
+        }
+
+        const crossFiltering = true;
+
+        const suppressChartRanges =
+            typeof params.suppressChartRanges !== 'undefined' ? params.suppressChartRanges : true;
+
+        return this.createChart(
+            cellRange,
+            params.chartType,
+            params.chartThemeName,
+            false,
+            suppressChartRanges,
+            params.chartContainer,
+            params.aggFunc,
+            params.chartThemeOverrides,
+            params.unlinkChart,
+            undefined,
+            crossFiltering);
+    }
+
     private createChart(cellRange: CellRange,
         chartType: ChartType,
         chartThemeName?: string,
@@ -128,7 +156,8 @@ export class ChartService extends BeanStub implements IChartService {
         aggFunc?: string | IAggFunc,
         chartThemeOverrides?: AgChartThemeOverrides,
         unlinkChart = false,
-        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>): ChartRef | undefined {
+        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>,
+        crossFiltering  = false): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
@@ -142,7 +171,8 @@ export class ChartService extends BeanStub implements IChartService {
             aggFunc,
             chartThemeOverrides,
             processChartOptions,
-            unlinkChart
+            unlinkChart,
+            crossFiltering
         };
 
         const chartComp = new GridChartComp(params);

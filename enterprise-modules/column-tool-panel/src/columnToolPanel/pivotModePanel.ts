@@ -12,7 +12,6 @@ import {
 export class PivotModePanel extends Component {
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
 

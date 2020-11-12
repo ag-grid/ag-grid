@@ -9,6 +9,7 @@ export * from "./chart/chartAxis";
 export * from "./chart/groupedCategoryChart";
 export * from "./chart/polarChart";
 export * from "./chart/marker/marker";
+export * from "./chart/legend";
 export * from "./chart/series/cartesian/areaSeries";
 export * from "./chart/series/cartesian/barSeries";
 export * from "./chart/series/cartesian/lineSeries";

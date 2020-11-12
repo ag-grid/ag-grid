@@ -75,7 +75,7 @@ export interface FilterModifiedEvent extends AgGridEvent {
 }
 
 export interface FilterOpenedEvent extends AgGridEvent {
-    column: Column;
+    column: Column | OriginalColumnGroup;
     source: FilterRequestSource;
     eGui: HTMLElement;
 }

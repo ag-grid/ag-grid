@@ -61,7 +61,6 @@ export class PopupService extends BeanStub {
 
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
 
     private gridCore: GridCore;
@@ -380,11 +379,16 @@ export class PopupService extends BeanStub {
 
         const sourceRect = params.element.getBoundingClientRect();
         const initialDiffTop = parentRect.top - sourceRect.top;
+        const initialDiffLeft = parentRect.left - sourceRect.left;
 
         let lastDiffTop = initialDiffTop;
+        let lastDiffLeft = initialDiffLeft;
 
         const topPx = params.ePopup.style.top;
         const top = parseInt(topPx!.substring(0, topPx!.length - 1), 10);
+
+        const leftPx = params.ePopup.style.left;
+        const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
 
         const intervalId = window.setInterval(() => {
             const pRect = eParent.getBoundingClientRect();
@@ -395,8 +399,14 @@ export class PopupService extends BeanStub {
                 const newTop = top + initialDiffTop - currentDiffTop;
                 params.ePopup.style.top = `${newTop}px`;
             }
-
             lastDiffTop = currentDiffTop;
+
+            const currentDiffLeft = pRect.left - sRect.left;
+            if (currentDiffLeft != lastDiffLeft) {
+                const newLeft = left + initialDiffLeft - currentDiffLeft;
+                params.ePopup.style.left = `${newLeft}px`;
+            }
+            lastDiffLeft = currentDiffLeft;
 
         }, 200);
 

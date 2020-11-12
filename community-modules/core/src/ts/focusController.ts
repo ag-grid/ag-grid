@@ -27,7 +27,6 @@ import { Constants } from "./constants/constants";
 @Bean('focusController')
 export class FocusController extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private readonly columnController: ColumnController;
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;

@@ -21,7 +21,6 @@ import { exists } from "./utils/generic";
 export class SelectionController extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

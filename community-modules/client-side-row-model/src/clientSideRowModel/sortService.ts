@@ -19,7 +19,6 @@ import { RowNodeMap } from "./clientSideRowModel";
 export class SortService extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
 
     private postSortFunc: ((rowNodes: RowNode[]) => void) | undefined;

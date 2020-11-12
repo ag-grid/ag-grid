@@ -6,8 +6,6 @@ import { BeanStub } from "../context/beanStub";
 @Bean('columnAnimationService')
 export class ColumnAnimationService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     private gridPanel: GridPanel;
 
     private executeNextFuncs: Function[] = [];

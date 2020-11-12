@@ -59,7 +59,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('ssrmSortService') private sortListener: SortListener;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
 
     private rootNode: RowNode;

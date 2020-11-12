@@ -54,6 +54,8 @@ export interface ChartProxyParams {
     apiChartThemeOverrides?: AgChartThemeOverrides;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
+    crossFiltering: boolean;
+    crossFilterCallback: (event: any, reset?: boolean) => void;
     eventService: EventService;
     gridApi: GridApi;
     columnApi: ColumnApi;
@@ -86,6 +88,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected customPalette: AgChartThemePalette;
     protected chartOptions: TOptions;
     protected chartTheme: ChartTheme;
+    protected crossFiltering: boolean;
+    protected crossFilterCallback: (event: any, reset?: boolean) => void;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chartId = chartProxyParams.chartId;
@@ -93,6 +97,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.eventService = chartProxyParams.eventService;
         this.gridApi = chartProxyParams.gridApi;
         this.columnApi = chartProxyParams.columnApi;
+        this.crossFiltering = chartProxyParams.crossFiltering;
+        this.crossFilterCallback = chartProxyParams.crossFilterCallback;
     }
 
     protected abstract createChart(options?: TOptions): TChart;
@@ -103,6 +109,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
 
         this.chart = this.createChart(options);
+
+        if (this.crossFiltering) {
+            // add event listener to chart canvas to detect when user wishes to reset filters
+            const resetFilters = true;
+            this.chart.addEventListener('click', (e) => this.crossFilterCallback(e, resetFilters));
+        }
     }
 
     public abstract update(params: UpdateChartParams): void;
@@ -517,6 +529,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
             return datum;
         });
+    }
+
+    protected hexToRGB(hex: string, alpha: string) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return alpha ? `rgba(${r}, ${g}, ${b}, ${alpha})` : `rgba(${r}, ${g}, ${b})`;
     }
 
     public destroy(): void {

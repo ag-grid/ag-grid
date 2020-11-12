@@ -38,7 +38,6 @@ export interface MenuItemComponentParams extends MenuItemDef {
 }
 
 export class MenuItemComponent extends Component {
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('popupService') private readonly popupService: PopupService;
 
     public static EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';

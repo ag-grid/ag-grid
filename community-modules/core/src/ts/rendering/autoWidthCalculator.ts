@@ -13,7 +13,6 @@ import { containsClass, addCssClass } from "../utils/dom";
 export class AutoWidthCalculator extends BeanStub {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private gridPanel: GridPanel;
     private headerRootComp: HeaderRootComp;

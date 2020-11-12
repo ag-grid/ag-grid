@@ -38,7 +38,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
@@ -501,63 +500,21 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     public getTooltipParams(): ITooltipParams {
-        const colDef = this.getComponentHolder();
-
-        return {
-            location: 'header',
-            colDef,
-            column: this.getColumn(),
-            value: this.getTooltipText(),
-        };
-    }
-
-    private getTooltipText(): string | undefined {
-        return this.getComponentHolder().headerTooltip;
+        const res = super.getTooltipParams();
+        res.location = 'header';
+        res.colDef = this.column.getColDef();
+        return res;
     }
 
     private setupTooltip(): void {
-        let tooltipFeature: TooltipFeature | undefined;
-        let tooltipText: string | undefined;
-
-        const usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
-
-        const removeTooltip = () => {
-            if (usingBrowserTooltips) {
-                this.getGui().removeAttribute('title');
-            } else {
-                if (tooltipFeature) {
-                    tooltipFeature = this.destroyBean(tooltipFeature);
-                }
-            }
-        };
-
-        const addTooltip = () => {
-            if (usingBrowserTooltips) {
-                this.getGui().setAttribute('title', tooltipText!);
-            } else {
-                tooltipFeature = this.createBean(new TooltipFeature(this));
-            }
-        };
 
         const refresh = () => {
-            const newTooltipText = this.getTooltipText();
-
-            if (tooltipText != newTooltipText) {
-                if (tooltipText) {
-                    removeTooltip();
-                }
-
-                tooltipText = newTooltipText;
-
-                if (tooltipText) {
-                    addTooltip();
-                }
-            }
-
+            const newTooltipText = this.column.getColDef().headerTooltip;
+            this.setTooltip(newTooltipText);
         };
 
         refresh();
-        this.addDestroyFunc(removeTooltip);
+
         this.refreshFunctions.push(refresh);
     }
 

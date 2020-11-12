@@ -31,7 +31,6 @@ export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupP
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     @Autowired("columnController") private columnController: ColumnController;
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
     static TEMPLATE = /* html */
         `<div class="ag-header-group-cell-label" ref="agContainer" role="presentation">

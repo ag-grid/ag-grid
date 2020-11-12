@@ -438,7 +438,7 @@ export class ChartTheme {
         if (isObject(options)) {
             const mergeOptions = { arrayMerge };
             options = deepMerge({}, options, mergeOptions) as AgChartThemeOptions;
-            const overrides = options.defaults;
+            const overrides = options.overrides;
             if (overrides) {
                 if (isObject(overrides.common)) {
                     ChartTheme.seriesTypes.forEach(seriesType => {

@@ -19,7 +19,6 @@ import { DEFAULT_LOCALE_TEXT } from './localeText';
 export class SetFloatingFilterComp extends Component implements IFloatingFilter {
     @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
     @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private readonly columnController: ColumnController;
 
     private params: IFloatingFilterParams;

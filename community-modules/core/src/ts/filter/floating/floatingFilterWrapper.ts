@@ -36,7 +36,6 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         </div>`;
 
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;

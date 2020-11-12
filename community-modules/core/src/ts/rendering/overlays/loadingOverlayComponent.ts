@@ -11,8 +11,6 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
 
     private static DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-
     constructor() {
         super();
     }

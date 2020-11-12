@@ -240,7 +240,7 @@ export { Constants } from "./constants/constants";
 export { KeyCode } from "./constants/keyCode";
 export { KeyName } from "./constants/keyName";
 export { Grid, GridParams } from "./grid";
-export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, CreatePivotChartParams } from "./gridApi";
+export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, CreatePivotChartParams, CreateCrossFilterChartParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusController } from "./focusController";
 export { defaultGroupComparator } from "./functions";

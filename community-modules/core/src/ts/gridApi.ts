@@ -106,6 +106,7 @@ export interface CreateRangeChartParams {
     aggFunc?: string | IAggFunc;
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
+    /** @deprecated since v24.0.0, use `chartThemeOverrides` instead */
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
@@ -115,7 +116,19 @@ export interface CreatePivotChartParams {
     chartContainer?: HTMLElement;
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
+    /** @deprecated since v24.0.0, use `chartThemeOverrides` instead */
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
+}
+
+export interface CreateCrossFilterChartParams {
+    cellRange: CellRangeParams;
+    chartType: ChartType;
+    chartThemeName?: string;
+    chartContainer?: HTMLElement;
+    suppressChartRanges?: boolean;
+    aggFunc?: string | IAggFunc;
+    chartThemeOverrides?: AgChartThemeOverrides;
+    unlinkChart?: boolean;
 }
 
 export interface DetailGridInfo {
@@ -1142,6 +1155,13 @@ export class GridApi {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createRangeChart') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart')) {
             return this.chartService.createRangeChart(params);
+        }
+    }
+
+    public createCrossFilterChart(params: CreateRangeChartParams): ChartRef | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createCrossFilterChart') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart')) {
+            return this.chartService.createCrossFilterChart(params);
         }
     }
 

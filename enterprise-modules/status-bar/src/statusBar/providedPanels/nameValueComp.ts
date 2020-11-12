@@ -2,8 +2,6 @@ import { Autowired, Component, GridOptionsWrapper, RefSelector } from '@ag-grid-
 
 export class NameValueComp extends Component {
 
-    @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
-
     private static TEMPLATE = /* html */
         `<div class="ag-status-name-value">
             <span ref="eLabel"></span>:&nbsp;

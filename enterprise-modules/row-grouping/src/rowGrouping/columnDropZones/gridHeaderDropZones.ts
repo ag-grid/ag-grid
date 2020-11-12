@@ -13,7 +13,6 @@ import { PivotDropZonePanel } from "./pivotDropZonePanel";
 
 export class GridHeaderDropZones extends Component {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
 
     private rowGroupComp: Component;

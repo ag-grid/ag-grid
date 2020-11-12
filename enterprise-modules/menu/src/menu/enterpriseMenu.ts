@@ -42,7 +42,6 @@ export interface TabSelectedEvent extends AgEvent {
 export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('focusController') private focusController: FocusController;
 
     private lastSelectedTab: string;
@@ -179,7 +178,6 @@ export class EnterpriseMenu extends BeanStub {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('focusController') private focusController: FocusController;

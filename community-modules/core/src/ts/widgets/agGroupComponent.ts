@@ -35,8 +35,6 @@ export class AgGroupComponent extends Component {
     private suppressOpenCloseIcons: boolean = false;
     private alignItems: Align | undefined;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     @RefSelector('eTitleBar') private eTitleBar: HTMLElement;
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;

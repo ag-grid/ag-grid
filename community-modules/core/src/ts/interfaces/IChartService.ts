@@ -1,6 +1,6 @@
 import { ChartOptions, ChartType } from "./iChartOptions";
 import { ChartRef } from "../entities/gridOptions";
-import { CreatePivotChartParams, CreateRangeChartParams } from "../gridApi";
+import { CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams } from "../gridApi";
 import { CellRangeParams } from "./iRangeController";
 import { IAggFunc } from "../entities/colDef";
 
@@ -27,6 +27,7 @@ export interface ChartModel {
 export interface IChartService {
     getChartModels(): ChartModel[];
     createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
+    createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined;
     createChartFromCurrentRange(chartType: ChartType): ChartRef | undefined;
     createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
     restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;

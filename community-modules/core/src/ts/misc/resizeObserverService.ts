@@ -7,8 +7,6 @@ import { offsetHeight, offsetWidth } from "../utils/dom";
 @Bean('resizeObserverService')
 export class ResizeObserverService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     public observeResize(element: HTMLElement, callback: () => void, debounceDelay: number = 50): () => void {
         // put in variable, so available to usePolyfill() function below
         const frameworkFactory = this.getFrameworkOverrides();

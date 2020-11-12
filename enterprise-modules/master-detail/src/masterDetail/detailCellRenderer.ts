@@ -24,7 +24,6 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     @Autowired('environment') private environment: Environment;
     @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private detailGridOptions: GridOptions;
 

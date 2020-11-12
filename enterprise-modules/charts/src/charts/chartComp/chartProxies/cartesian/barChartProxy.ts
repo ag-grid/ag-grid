@@ -8,7 +8,14 @@ import {
     DropShadowOptions,
     HighlightOptions
 } from "@ag-grid-community/core";
-import { AgCartesianChartOptions, AgChart, BarSeries, CartesianChart, ChartTheme } from "ag-charts-community";
+import {
+    AgCartesianChartOptions,
+    AgChart,
+    BarSeries,
+    CartesianChart,
+    ChartTheme,
+    LegendClickEvent
+} from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
@@ -108,8 +115,43 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         barSeries.xName = params.category.name;
         barSeries.yKeys = params.fields.map(f => f.colId) as any;
         barSeries.yNames = params.fields.map(f => f.displayName!) as any;
-        barSeries.fills = palette.fills;
-        barSeries.strokes = palette.strokes;
+
+        if (this.crossFiltering) {
+            // introduce cross filtering transparent fills
+            let fills: string[] = [];
+            palette.fills.forEach(fill => {
+                fills.push(fill);
+                fills.push(this.hexToRGB(fill, '0.3'));
+            });
+            barSeries.fills = fills;
+
+            // introduce cross filtering transparent strokes
+            let strokes: string[] = [];
+            palette.strokes.forEach(stroke => {
+                fills.push(stroke);
+                fills.push(this.hexToRGB(stroke, '0.3'));
+            });
+            barSeries.strokes = strokes;
+
+            // disable series highlighting by default
+            barSeries.highlightStyle.fill = undefined;
+
+            // hide 'filtered out' legend items
+            const colIds = params.fields.map(f => f.colId);
+            barSeries.hideInLegend = colIds.filter(colId => colId.includes('-filtered-out'));
+
+            // sync toggling of legend item with hidden 'filtered out' item
+            chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+            });
+
+            // add node click cross filtering callback to series
+            barSeries.addEventListener('nodeClick', this.crossFilterCallback);
+
+        } else {
+            barSeries.fills = palette.fills;
+            barSeries.strokes = palette.strokes;
+        }
 
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     }

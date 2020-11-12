@@ -63,7 +63,6 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             <span class="ag-group-child-count" ref="eChildCount"></span>
         </span>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('columnController') private columnController: ColumnController;

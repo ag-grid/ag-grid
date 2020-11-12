@@ -13,7 +13,6 @@ import {
 export class FilterService extends BeanStub {
 
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private doingTreeData: boolean;
 

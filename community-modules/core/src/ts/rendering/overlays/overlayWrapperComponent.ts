@@ -21,7 +21,6 @@ export class OverlayWrapperComponent extends Component {
             </div>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('userComponentFactory') userComponentFactory: UserComponentFactory;
 
     @RefSelector('eOverlayWrapper') eOverlayWrapper: HTMLElement;

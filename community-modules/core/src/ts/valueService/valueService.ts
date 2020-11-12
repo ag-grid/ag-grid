@@ -15,7 +15,6 @@ import { doOnce } from "../utils/function";
 @Bean('valueService')
 export class ValueService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueCache') private valueCache: ValueCache;

@@ -27,7 +27,6 @@ import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('selectionController') private readonly selectionController: SelectionController;

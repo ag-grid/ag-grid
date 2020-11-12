@@ -43,7 +43,6 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     private static OVERFLOW_SIZE = 1;
 
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
     @Autowired('columnController') private columnController: ColumnController;

@@ -21,8 +21,6 @@ export class ChartSettingsPanel extends Component {
             </div>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
-
     @RefSelector('eMiniChartsContainer') private readonly eMiniChartsContainer: HTMLElement;
     @RefSelector('eNavBar') private readonly eNavBar: HTMLElement;
     @RefSelector('eCardSelector') private readonly eCardSelector: HTMLElement;

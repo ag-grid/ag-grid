@@ -34,7 +34,6 @@ export class ChartDatasource extends BeanStub {
     @Autowired('rowModel') private readonly gridRowModel: IRowModel;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('columnController') private readonly columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Optional('aggregationStage') private readonly aggregationStage: IAggregationStage;
 
     public getData(params: ChartDatasourceParams): IData {

@@ -54,7 +54,6 @@ export class HeaderComp extends Component implements IHeaderComp {
             </div>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
 
