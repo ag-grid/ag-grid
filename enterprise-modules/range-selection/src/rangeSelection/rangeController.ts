@@ -68,9 +68,10 @@ export class RangeController extends BeanStub implements IRangeController {
     private init(): void {
         this.logger = this.loggerFactory.create('RangeController');
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));

@@ -99,7 +99,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @PostConstruct
     private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
 
         const resetListener = this.resetRootStore.bind(this);

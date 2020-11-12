@@ -58,7 +58,7 @@ export class UndoRedoService extends BeanStub {
         // performed that change the order of the row / cols.
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.clearStacks);

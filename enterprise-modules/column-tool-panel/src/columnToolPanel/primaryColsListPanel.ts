@@ -87,10 +87,9 @@ export class PrimaryColsListPanel extends Component {
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnsChanged.bind(this));
 
         const eventsImpactingCheckedState: string[] = [
-            Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             Events.EVENT_COLUMN_PIVOT_CHANGED,
             Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
