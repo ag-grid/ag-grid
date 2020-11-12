@@ -118,7 +118,8 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
      */
     mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void) {
         this.portals = [...this.portals, portal];
-        this.batchUpdate(() => this.waitForInstance(reactComponent, resolve));
+        this.batchUpdate();
+        this.waitForInstance(reactComponent, resolve);
     }
 
     batchUpdate(callback?: () => void): void {
