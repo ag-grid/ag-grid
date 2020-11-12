@@ -81,7 +81,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
     }
 
@@ -277,7 +277,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        return false;
+        const foundRowNode = this.getRowNode(rowNode.id!);
+        return !!foundRowNode;
     }
 
     public refreshCache(): void {

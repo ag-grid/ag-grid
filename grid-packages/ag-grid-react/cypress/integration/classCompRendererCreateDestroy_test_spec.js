@@ -2,6 +2,8 @@ describe('Basic Tests of UMD Bundle', function () {
     it('Visit Simple Bundle Test With React Cell Renderer', function () {
         cy.visit('./cypress/integration/classCompRendererCreateDestroy.html');
 
+        cy.wait(50);
+
         // we check the values here to determine if the rendered rows are correct, but we're also
         // implicitly checking the console log for errors (see support/commands.js and plugins/index.js)
 

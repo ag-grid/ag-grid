@@ -1251,13 +1251,11 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (!ePopupGui) { return; }
 
+        const popupService = this.beans.popupService;
+
         const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenGridLosesFocus();
-        this.hideEditorPopup = this.beans.popupService.addPopup({
-            modal: useModelPopup,
-            eChild: ePopupGui,
-            closeOnEsc: true,
-            closedCallback: () => { this.onPopupEditorClosed(); }
-        });
+
+        const position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
 
         const params = {
             column: this.column,
@@ -1268,13 +1266,18 @@ export class CellComp extends Component implements TooltipParentComp {
             keepWithinBounds: true
         };
 
-        const position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
+        const positionCallback = position === 'under' ?
+            popupService.positionPopupUnderComponent.bind(popupService, params)
+            : popupService.positionPopupOverComponent.bind(popupService, params);
 
-        if (position === 'under') {
-            this.beans.popupService.positionPopupUnderComponent(params);
-        } else {
-            this.beans.popupService.positionPopupOverComponent(params);
-        }
+        this.hideEditorPopup = popupService.addPopup({
+            modal: useModelPopup,
+            eChild: ePopupGui,
+            closeOnEsc: true,
+            closedCallback: () => { this.onPopupEditorClosed(); },
+            anchorToElement: this.getGui(),
+            positionCallback
+        });
 
         this.angular1Compile();
     }

@@ -259,22 +259,22 @@ export class ColumnController extends BeanStub {
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
 
+        // this event is legacy, no grid code listens to it. instead the grid listens to New Columns Loaded
         const eventEverythingChanged: ColumnEverythingChangedEvent = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi,
             source
         };
-
         this.eventService.dispatchEvent(eventEverythingChanged);
+
+        raiseEventsFunc();
 
         const newColumnsLoadedEvent: NewColumnsLoadedEvent = {
             type: Events.EVENT_NEW_COLUMNS_LOADED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
-
-        raiseEventsFunc();
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
     }
@@ -1972,13 +1972,13 @@ export class ColumnController extends BeanStub {
 
         this.updateDisplayedColumns(source);
 
-        const event: ColumnEverythingChangedEvent = {
+/*        const event: ColumnEverythingChangedEvent = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi,
             source: source
         };
-        this.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent(event);*/
 
         raiseEventsFunc();
 
