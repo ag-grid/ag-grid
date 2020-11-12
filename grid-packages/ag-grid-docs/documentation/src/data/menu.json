@@ -139,7 +139,7 @@
               },
               {
                 "title": "Vue & Unidirectional Data Flow",
-                "url": "../data-flow/",
+                "url": "../framework-data-flow/",
                 "frameworks": [
                   "vue"
                 ]
