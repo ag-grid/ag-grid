@@ -1,5 +1,6 @@
 ---
 title: "React Hooks & Functional Components"
+frameworks: ["react"]
 ---
 
 ### React Hooks

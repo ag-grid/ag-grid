@@ -1,5 +1,6 @@
 ---
 title: "Redux Integration - Part 1"
+frameworks: ["react"]
 ---
 
 This section introduces how React components using the ag-Grid Data Table can take advantage of a Redux store to

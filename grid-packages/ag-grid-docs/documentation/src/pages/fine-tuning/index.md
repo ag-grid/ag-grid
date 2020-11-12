@@ -1,5 +1,6 @@
 ---
 title: "Fine Tuning"
+frameworks: ["react"]
 ---
 
 This section describes some of the finer grain tuning you might want to do with your React & ag-Grid application.

@@ -1,5 +1,6 @@
 ---
 title: "ag-Grid with React 15.x.x"
+frameworks: ["react"]
 ---
 
 [[note]]

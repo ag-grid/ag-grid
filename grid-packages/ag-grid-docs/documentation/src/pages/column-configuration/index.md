@@ -1,5 +1,6 @@
 ---
 title: "Column Configuration"
+frameworks: ["react"]
 ---
 
 After importing `AgGridReact` you can then reference the component inside your JSX definitions. An example of the Grid Component can be seen below:

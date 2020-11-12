@@ -1,5 +1,6 @@
 ---
 title: "Context API & Redux"
+frameworks: ["react"]
 ---
 
 ### React Context API

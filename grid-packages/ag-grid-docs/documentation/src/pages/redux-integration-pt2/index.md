@@ -1,5 +1,6 @@
 ---
 title: "Redux Integration - Part 2"
+frameworks: ["react"]
 ---
 
 This section takes a deeper look at integrating ag-Grid with a Redux store by implementing a 
