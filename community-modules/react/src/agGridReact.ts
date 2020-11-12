@@ -107,7 +107,9 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
                 return;
             }
 
-            window.setTimeout(() => this.batchUpdate(() => this.waitForInstance(reactComponent, resolve, startTime)));
+            window.setTimeout(() => {
+                this.waitForInstance(reactComponent, resolve, startTime);
+            });
         }
     }
 
@@ -118,20 +120,18 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
      */
     mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void) {
         this.portals = [...this.portals, portal];
-        this.batchUpdate();
         this.waitForInstance(reactComponent, resolve);
+        this.batchUpdate();
     }
 
-    batchUpdate(callback?: () => void): void {
+    batchUpdate(): void {
         if (this.hasPendingPortalUpdate) {
-            callback && callback();
             return;
         }
 
         setTimeout(() => {
             if (this.api) { // destroyed?
                 this.forceUpdate(() => {
-                    callback && callback();
                     this.hasPendingPortalUpdate = false;
                 });
             }
