@@ -9,10 +9,10 @@ const VideoSection = ({ src, title, header, children }) => (
         <iframe
             title={title}
             src={src} 
-            frameborder='0'
+            frameBorder='0'
             modestbranding='1'
             allow='accelerometer; encrypted-media; gyroscope; picture-in-picture' 
-            allowfullscreen>
+            allowFullScreen={true}>
         </iframe>
     </div>
 );
