@@ -10,12 +10,288 @@ title: "Get Started with ag-Grid"
     .gatsby-resp-image-image {
         box-shadow: none !important;
     }
+
+    .code-tab pre {
+        margin-top: 0;
+    }
+
+    .code-tab .nav-item {
+        margin-bottom: 0 !important;
+    }
 </style>
 
 [[only-javascript]]
 | ag-Grid is the industry standard for JavaScript Enterprise Applications. Developers using 
 | ag-Grid are building applications that would not be possible if ag-Grid did not exist.
+
+[[only-angular]]
+| ag-Grid is the industry standard for Angular Enterprise Applications. Developers using ag-Grid are 
+| building applications that would not be possible if ag-Grid did not exist.
+
+[[only-react]]
+| ag-Grid is the industry standard for React Enterprise Applications. Developers using ag-Grid
+| are building applications that would not be possible if ag-Grid did not exist.
+
+[[only-vue]]
+| ag-Grid is the industry standard for Vue Enterprise Applications. Developers using ag-Grid 
+| are building applications that would not be possible if ag-Grid did not exist.
+
+
+<section class="code-tab mb-3">
+<div class="card">
+<div class="card-header">Quick Look Code Example</div>
+<div class="card-body">
+<ul class="nav nav-tabs">
+<li class="nav-item">
+<a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
+
+[[only-javascript]]
+| main.js
+
+[[only-angular]]
+| app.component.ts
+
+[[only-react]]
+| index.js
+
+[[only-vue]]
+| app.js
+
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
+
+[[only-javascript]]
+| index.html
+
+[[only-angular]]
+| app.component.html
+
+[[only-react]]
+| index.html
+
+[[only-vue]]
+| index.js
+
+</a>
+</li>
+</ul>
+<div class="tab-content">
+<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
+
+[[only-javascript]]
+| ```js
+| var columnDefs = [
+|   { field: "make" },
+|   { field: "model" },
+|   { field: "price" }
+| ];
+|     
+| // specify the data
+| var rowData = [
+|   { make: "Toyota", model: "Celica", price: 35000 },
+|   { make: "Ford", model: "Mondeo", price: 32000 },
+|   { make: "Porsche", model: "Boxter", price: 72000 }
+| ];
+|     
+| // let the grid know which columns and what data to use
+| var gridOptions = {
+|   columnDefs: columnDefs,
+|   rowData: rowData
+| };
 | 
+| // setup the grid after the page has finished loading
+| document.addEventListener('DOMContentLoaded', function() {
+|     var gridDiv = document.querySelector('#myGrid');
+|     new agGrid.Grid(gridDiv, gridOptions);
+| });
+| ```
+
+[[only-angular]]
+| ```jsx
+| import { Component } from '@angular/core';
+| 
+| @Component({
+|   selector: 'my-app',
+|   templateUrl: './app.component.html',
+|   styleUrls: [ './app.component.scss' ]
+| })
+| export class AppComponent  {
+| 
+|     columnDefs = [
+|         { field: 'make' },
+|         { field: 'model' },
+|         { field: 'price' }
+|     ];
+| 
+|     rowData = [
+|         { make: 'Toyota', model: 'Celica', price: 35000 },
+|         { make: 'Ford', model: 'Mondeo', price: 32000 },
+|         { make: 'Porsche', model: 'Boxter', price: 72000 }
+|     ];
+| 
+| }
+| ```
+
+[[only-react]]
+| ```jsx
+| import React, { useState } from 'react';
+| import { render } from 'react-dom';
+| import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+| 
+| import 'ag-grid-enterprise';
+| import 'ag-grid-community/dist/styles/ag-grid.css';
+| import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+| 
+| const App = () => {
+|     const [gridApi, setGridApi] = useState(null);
+|     const [gridColumnApi, setGridColumnApi] = useState(null);
+| 
+|     const [rowData, setRowData] = useState([
+|         { make: "Toyota", model: "Celica", price: 35000 },
+|         { make: "Ford", model: "Mondeo", price: 32000 },
+|         { make: "Porsche", model: "Boxter", price: 72000 }
+|     ]);
+| 
+|     function onGridReady(params) {
+|         setGridApi(params.api);
+|         setGridColumnApi(params.columnApi);
+|     }
+| 
+|     return (
+|         <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
+|             <AgGridReact
+|                 onGridReady={onGridReady}
+|                 rowData={rowData}>
+|                 <AgGridColumn field="make"></AgGridColumn>
+|                 <AgGridColumn field="model"></AgGridColumn>
+|                 <AgGridColumn field="price"></AgGridColumn>
+|             </AgGridReact>
+|         </div>
+|     );
+| };
+| 
+| render(<App />, document.getElementById('root'));
+| ```
+
+[[only-vue]]
+| ```jsx
+| import "ag-grid-community/dist/styles/ag-grid.css";
+| import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+| import { AgGridVue } from 'ag-grid-vue';
+| 
+| export const App = {
+|     name: 'App',
+|     data() {
+|         return {
+|             columnDefs: null,
+|             rowData: null
+|         }
+|     },
+|     components: {
+|         AgGridVue
+|     },
+|     beforeMount() {
+|         this.columnDefs = [
+|             { field: 'make' },
+|             { field: 'model' },
+|             { field: 'price' }
+|         ];
+| 
+|         this.rowData = [
+|             { make: 'Toyota', model: 'Celica', price: 35000 },
+|             { make: 'Ford', model: 'Mondeo', price: 32000 },
+|             { make: 'Porsche', model: 'Boxter', price: 72000 }
+|         ];
+|     },
+|     template: `
+|         <ag-grid-vue 
+|             style="width: 500px; height: 300px;"
+|             class="ag-theme-alpine"
+|             :columnDefs="columnDefs"
+|             :rowData="rowData">
+|             </ag-grid-vue>
+|     `
+| }
+| ```
+
+</div>
+<div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
+
+[[only-javascript]]
+| ```html
+| <!DOCTYPE html>
+| <html lang="en">
+| <head>
+|     <title>Ag-Grid Basic Example</title>
+|     <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"></script>
+|     <script src="main.js"></script>
+| </head>
+| <body>
+|     <div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine"></div>
+| </body>
+| </html>
+| ```
+
+[[only-angular]]
+| ```html
+| <ag-grid-angular
+|     style="width: 500px; height: 150px;"
+|     class="ag-theme-alpine"
+|     [rowData]="rowData"
+|     [columnDefs]="columnDefs">
+| </ag-grid-angular>
+| ```
+
+[[only-react]]
+| ```html
+| <div id="root"></div>
+| ```
+
+[[only-vue]]
+| ```jsx
+| import Vue from 'vue';
+| import { App } from './app';
+| 
+| new Vue({
+|   el: '#root',
+|   render: h => h(App)
+| });
+| ```
+
+</div>
+</div>
+</div>
+<div class="text-right" style="margin-top: -1.5rem;">
+
+[[only-javascript]]
+| <a class="btn btn-dark mb-2 mr-3" href="https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview" target="_blank">
+|     Open in <img src="resources/plunker_icon.svg" alt="Open in Plunker" style="width: 2.5rem" /> Plunker
+| </a>
+
+[[only-angular]]
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-grid-angular-hello-world" target="_blank">
+|     Open in <img src="resources/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
+| </a>
+
+[[only-react]]
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-grid-react-hello-world" target="_blank">
+|     Open in <img src="resources/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
+| </a>
+
+
+[[only-vue]]
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-grid-vue-hello-world" target="_blank">
+|     Open in <img src="resources/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
+| </a>
+
+</div>
+</div>
+</section>
+
+
+[[only-javascript]]
 | ## Getting Started
 | 
 | <video-section src="https://www.youtube.com/embed/KS-wg5zfCXc" title="Getting Started Video Tutorial">
@@ -427,9 +703,6 @@ title: "Get Started with ag-Grid"
 
 
 [[only-angular]]
-| ag-Grid is the industry standard for Angular Enterprise Applications. Developers using ag-Grid are 
-| building applications that would not be possible if ag-Grid did not exist.
-| 
 | [[note]]
 | | Please refer to our [Compatibility Chart](#compatibility) for Supported Versions of 
 | | Angular & ag-Grid.
@@ -1038,9 +1311,6 @@ title: "Get Started with ag-Grid"
 
 
 [[only-react]]
-| ag-Grid is the industry standard for React Enterprise Applications. Developers using ag-Grid
-| are building applications that would not be possible if ag-Grid did not exist.
-| 
 | [[note]]
 | | Please refer to our [Compatibility Chart](#compatibility) for Supported Versions of React & ag-Grid.
 | 
@@ -1449,9 +1719,6 @@ title: "Get Started with ag-Grid"
 
 
 [[only-vue]]
-| ag-Grid is the industry standard for Vue Enterprise Applications. Developers using ag-Grid 
-| are building applications that would not be possible if ag-Grid did not exist.
-| 
 | <video-section src="https://www.youtube.com/embed/eW3qCti1lsA" title="Getting Started Video Tutorial">
 |     In this article, we will walk you through the necessary steps to add ag-Grid 
 |     (both <a href="../set-license/">Community and Enterprise</a> are covered) 
