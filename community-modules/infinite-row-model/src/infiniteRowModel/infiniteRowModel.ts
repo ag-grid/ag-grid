@@ -277,7 +277,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        return false;
+        const foundRowNode = this.getRowNode(rowNode.id!);
+        return !!foundRowNode;
     }
 
     public refreshCache(): void {
