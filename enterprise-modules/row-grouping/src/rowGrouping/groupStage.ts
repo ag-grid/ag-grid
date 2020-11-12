@@ -17,6 +17,7 @@ import {
     ValueService,
     _
 } from "@ag-grid-community/core";
+import {BatchRemover} from "./batchRemover";
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
@@ -111,7 +112,14 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private handleTransaction(details: GroupingDetails): void {
+
         details.transactions.forEach(tran => {
+            // we don't allow batch remover for tree data as tree data uses Filler Nodes,
+            // and creating/deleting filler nodes needs to be done alongside the node deleting
+            // and moving. if we want to Batch Remover working with tree data then would need
+            // to consider how Filler Nodes would be impacted (it's possible that it can be easily
+            // modified to work, however for now I don't have the brain energy to work it all out).
+            const batchRemover = this.usingTreeData ? undefined : new BatchRemover();
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
@@ -119,10 +127,15 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 this.insertNodes(tran.add, details, false);
             }
             if (_.existsAndNotEmpty(tran.remove)) {
-                this.removeNodes(tran.remove, details);
+                this.removeNodes(tran.remove, details, batchRemover);
             }
             if (_.existsAndNotEmpty(tran.update)) {
-                this.moveNodesInWrongPath(tran.update, details);
+                this.moveNodesInWrongPath(tran.update, details, batchRemover);
+            }
+            // must flush here, and not allow another transaction to be applied,
+            // as each transaction must finish leaving the data in a consistent state.
+            if (batchRemover) {
+                batchRemover.flush();
             }
         });
 
@@ -175,7 +188,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return res;
     }
 
-    private moveNodesInWrongPath(childNodes: RowNode[], details: GroupingDetails): void {
+    private moveNodesInWrongPath(childNodes: RowNode[], details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
         childNodes.forEach(childNode => {
 
             // we add node, even if parent has not changed, as the data could have
@@ -191,14 +204,14 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             const nodeInCorrectPath = _.areEqual(oldPath, newPath);
 
             if (!nodeInCorrectPath) {
-                this.moveNode(childNode, details);
+                this.moveNode(childNode, details, batchRemover);
             }
         });
     }
 
-    private moveNode(childNode: RowNode, details: GroupingDetails): void {
+    private moveNode(childNode: RowNode, details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
 
-        this.removeNodesInStages([childNode], details);
+        this.removeNodesInStages([childNode], details, batchRemover);
         this.insertOneNode(childNode, details, true);
 
         // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
@@ -216,17 +229,19 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private removeNodes(leafRowNodes: RowNode[], details: GroupingDetails): void {
-        this.removeNodesInStages(leafRowNodes, details);
+    private removeNodes(leafRowNodes: RowNode[], details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
+        this.removeNodesInStages(leafRowNodes, details, batchRemover);
         if (details.changedPath.isActive()) {
             leafRowNodes.forEach(rowNode => details.changedPath.addParentNode(rowNode.parent));
         }
     }
 
-    private removeNodesInStages(leafRowNodes: RowNode[], details: GroupingDetails): void {
-        this.removeNodesFromParents(leafRowNodes, details);
-        this.postRemoveCreateFillerNodes(leafRowNodes, details);
-        this.postRemoveRemoveEmptyGroups(leafRowNodes, details);
+    private removeNodesInStages(leafRowNodes: RowNode[], details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
+        this.removeNodesFromParents(leafRowNodes, details, batchRemover);
+        if (this.usingTreeData) {
+            this.postRemoveCreateFillerNodes(leafRowNodes, details);
+            this.postRemoveRemoveEmptyGroups(leafRowNodes, details);
+        }
     }
 
     private forEachParentGroup(details: GroupingDetails, child: RowNode, callback: (parent: RowNode) => void): void {
@@ -237,21 +252,23 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private removeNodesFromParents(nodesToRemove: RowNode[], details: GroupingDetails): void {
-
-        const batchRemover: BatchRemover = new BatchRemover();
+    private removeNodesFromParents(nodesToRemove: RowNode[], details: GroupingDetails, provided: BatchRemover | undefined): void {
+        const batchRemoverIsLocal = provided==null;
+        const batchRemoverToUse = provided ? provided : new BatchRemover();
 
         nodesToRemove.forEach(nodeToRemove => {
-            this.removeFromParent(nodeToRemove, batchRemover);
+            this.removeFromParent(nodeToRemove, batchRemoverToUse);
 
             // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
             // the ClientSideNodeManager is responsible for the Root Node.
             this.forEachParentGroup(details, nodeToRemove, parentNode => {
-                batchRemover.removeFromAllLeafChildren(parentNode, nodeToRemove);
+                batchRemoverToUse.removeFromAllLeafChildren(parentNode, nodeToRemove);
             });
         });
 
-        batchRemover.flush();
+        if (batchRemoverIsLocal) {
+            batchRemoverToUse.flush();
+        }
     }
 
     private postRemoveCreateFillerNodes(nodesToRemove: RowNode[], details: GroupingDetails): void {
@@ -592,57 +609,5 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 }
 
-interface RemoveDetails {
-    removeFromChildrenAfterGroup: { [id: string]: boolean; };
-    removeFromAllLeafChildren: { [id: string]: boolean; };
-}
 
-// doing _.removeFromArray() multiple times on a large list can be a bottleneck.
-// when doing large deletes (eg removing 1,000 rows) then we would be calling _.removeFromArray()
-// a thousands of times, in particular RootNode.allGroupChildren could be a large list, and
-// 1,000 removes is time consuming as each one requires traversing the full list.
-// to get around this, we do all the removes in a batch. this class manages the batch.
-//
-// This problem was brought to light by a client (AG-2879), with dataset of 20,000
-// in 10,000 groups (2 items per group), then deleting all rows with transaction,
-// it took about 20 seconds to delete. with the BathRemoved, the reduced to less than 1 second.
-class BatchRemover {
 
-    private allSets: { [parentId: string]: RemoveDetails; } = {};
-    private allParents: RowNode[] = [];
-
-    public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
-        const set = this.getSet(parent);
-        set.removeFromChildrenAfterGroup[child.id!] = true;
-    }
-
-    public removeFromAllLeafChildren(parent: RowNode, child: RowNode): void {
-        const set = this.getSet(parent);
-        set.removeFromAllLeafChildren[child.id!] = true;
-    }
-
-    private getSet(parent: RowNode): RemoveDetails {
-        if (!this.allSets[parent.id!]) {
-            this.allSets[parent.id!] = {
-                removeFromAllLeafChildren: {},
-                removeFromChildrenAfterGroup: {}
-            };
-            this.allParents.push(parent);
-        }
-        return this.allSets[parent.id!];
-    }
-
-    public flush(): void {
-        this.allParents.forEach(parent => {
-            const nodeDetails = this.allSets[parent.id!];
-            parent.childrenAfterGroup = parent.childrenAfterGroup!.filter(child => {
-                const res = !nodeDetails.removeFromChildrenAfterGroup[child.id!];
-                return res;
-            });
-            parent.allLeafChildren = parent.allLeafChildren.filter(child => !nodeDetails.removeFromAllLeafChildren[child.id!]);
-            parent.updateHasChildren();
-        });
-        this.allSets = {};
-        this.allParents.length = 0;
-    }
-}
