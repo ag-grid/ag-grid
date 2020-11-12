@@ -1,33 +1,32 @@
 import {
+    _,
+    AgEvent,
     Autowired,
     Bean,
     BeanStub,
     CellPosition,
+    CellPositionUtils,
     Column,
     ColumnController,
     Component,
     FocusController,
     GetContextMenuItems,
     GetContextMenuItemsParams,
-    GridOptionsWrapper,
+    GridPanel,
     IAfterGuiAttachedParams,
     IContextMenuFactory,
+    IRangeController,
     MenuItemDef,
     ModuleNames,
     ModuleRegistry,
+    Optional,
     PopupService,
     PostConstruct,
-    RowNode,
-    Optional,
-    IRangeController,
-    CellPositionUtils,
-    _,
-    AgEvent,
-    GridPanel
+    RowNode
 } from "@ag-grid-community/core";
-import { MenuItemComponent } from "./menuItemComponent";
-import { MenuList } from "./menuList";
-import { MenuItemMapper } from "./menuItemMapper";
+import {MenuItemComponent} from "./menuItemComponent";
+import {MenuList} from "./menuList";
+import {MenuItemMapper} from "./menuItemMapper";
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
@@ -100,7 +99,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         return defaultMenuOptions;
     }
 
-    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): boolean {
+    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch, anchorToElement: HTMLElement): boolean {
         const menuItems = this.getMenuItems(node, column, value);
 
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
@@ -132,8 +131,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             },
             click: mouseEvent,
             positionCallback: positionCallback,
-            // so when browser is scrolled down, the context menu stays on the grid
-            anchorToElement: this.gridPanel.getGui()
+            // so when browser is scrolled down, or grid is scrolled, context menu stays with cell
+            anchorToElement: anchorToElement
         });
 
         menu.afterGuiAttached({ container: 'contextMenu', hidePopup });
@@ -200,9 +199,6 @@ class ContextMenu extends Component {
         if (this.menuList) {
             this.focusController.focusInto(this.menuList.getGui());
         }
-
-        // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        this.addManagedListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     }
 
     protected destroy(): void {
