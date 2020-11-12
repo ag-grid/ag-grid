@@ -10,27 +10,41 @@ is an optional part of ag-Grid and you need to tell ag-Grid you want to use it.
 
 ## Download ag-Grid-Enterprise
 
+<style>
+    .gatsby-resp-image-wrapper {
+        width: 4rem;
+    }
+
+    table.content code {
+        font-family: monospace;
+        font-size: 1.2rem;
+        white-space: nowrap;
+    }
+</style>
+
 <table class="content">
     <tr>
         <td style="padding: 10px;">
             <img src="resources/bower.png" alt="Bower Install ag-Grid" />
         </td>
         <td>
-            **Bower**<br/>`bower install ag-grid-enterprise`
+            <strong>Bower</strong><br/><code>bower install ag-grid-enterprise</code>
         </td>
-        <td style="width: 20px;"/>
-            <td style="padding: 10px;">
-                <img src="../images/npm.png" alt="NPM install ag-Grid" />
-            </td>
-        <td>
-            **NPM**<br/>`npm install ag-grid-enterprise`
-        </td>
-        <td style="width: 20px;"/>
+    </tr>
+    <tr>
         <td style="padding: 10px;">
-            <img src="../images/github.png" alt="Github install ag-Grid" />
+            <img src="resources/npm.png" alt="NPM install ag-Grid" />
         </td>
         <td>
-            **Github**<br/>Download from [Github](https://github.com/ag-grid/ag-grid-enterprise)
+            <strong>NPM</strong><br/><code>npm install ag-grid-enterprise</code>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 10px;">
+            <img src="resources/github.png" alt="Github install ag-Grid" />
+        </td>
+        <td>
+            <strong>Github</strong><br/>Download from <a href="https://github.com/ag-grid/ag-grid-enterprise" target="_blank">Github</a>
         </td>
     </tr>
 </table>
