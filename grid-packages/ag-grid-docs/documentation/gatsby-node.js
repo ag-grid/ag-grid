@@ -107,15 +107,16 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
 
         if (path.split('/').some(part => part.startsWith('_'))) { return; }
 
-        supportedFrameworks
-            .filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f))
-            .forEach(framework => {
-                createPage({
-                    path: `/${framework}${path}/`,
-                    component: docPageTemplate,
-                    context: { frameworks: supportedFrameworks, framework, srcPath: path, }
-                });
+        const filteredFrameworks = supportedFrameworks
+            .filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
+
+        filteredFrameworks.forEach(framework => {
+            createPage({
+                path: `/${framework}${path}/`,
+                component: docPageTemplate,
+                context: { frameworks: filteredFrameworks, framework, srcPath: path, }
             });
+        });
     });
 
     const chartGalleryPageTemplate = path.resolve(`src/templates/chart-gallery-page.js`);
