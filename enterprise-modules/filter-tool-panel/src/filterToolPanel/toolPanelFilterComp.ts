@@ -54,24 +54,6 @@ export class ToolPanelFilterComp extends Component {
         this.eExpand.appendChild(this.eExpandUnchecked);
     }
 
-    private setupTooltip(): void {
-
-        const refresh = () => {
-            const newTooltipText = this.column.getColDef().headerTooltip;
-            this.setTooltip(newTooltipText);
-        };
-
-        refresh();
-
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
-    }
-
-    public getTooltipParams(): ITooltipParams {
-        const res = super.getTooltipParams();
-        res.location = 'filterToolPanelColumnGroup';
-        return res;
-    }
-
     public setColumn(column: Column): void {
         this.column = column;
         this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false) || '';
@@ -95,8 +77,6 @@ export class ToolPanelFilterComp extends Component {
         }
 
         this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-
-        this.setupTooltip();
     }
 
     public getColumn(): Column {
