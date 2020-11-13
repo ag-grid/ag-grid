@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "license": "0BSD",
   "scripts": {
-    "build": "npm run clean && npx gatsby build --prefix-paths",
+    "build": "npm run clean && cd .. && node dev-server.js generate-examples && cd documentation && npx gatsby build --prefix-paths",
     "develop": "npx gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run clean && npm run develop",
