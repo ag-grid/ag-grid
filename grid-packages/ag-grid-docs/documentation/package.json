@@ -21,7 +21,7 @@
     "algoliasearch": "4.6.0",
     "bootstrap": "4.5.3",
     "fontsource-roboto": "3.0.3",
-    "gatsby": "2.24.92",
+    "gatsby": "2.26.0",
     "gatsby-plugin-algolia": "0.14.1",
     "gatsby-plugin-catch-links": "2.3.15",
     "gatsby-plugin-compile-es6-packages": "2.1.0",
