@@ -276,9 +276,8 @@ function watchAndGenerateExamples() {
         .on('change', regenerateDocumentationExamplesForFileChange);
 
     chokidar
-        .watch([`./documentation/src/pages/**/*.md`], { ignored: ['**/_gen/**/*'], ignoreInitial: true })
-        .on('add', regenerateDocumentationExamplesForFileChange)
-        .on('change', regenerateDocumentationExamplesForFileChange);
+        .watch([`./documentation/src/pages/**/*.md`], { ignoreInitial: true })
+        .on('add', regenerateDocumentationExamplesForFileChange);
 }
 
 const updateLegacyWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
