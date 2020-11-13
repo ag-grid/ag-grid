@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './side-menu.module.scss';
 
-const SideMenu = ({ headings, pageName }) => {
+const SideMenu = ({ headings, pageName, setShowSideMenu }) => {
     const [allHeadings, setAllHeadings] = useState(headings);
 
     useEffect(() => {
@@ -32,7 +32,12 @@ const SideMenu = ({ headings, pageName }) => {
         setAllHeadings(headings);
     }, [pageName]);
 
-    if (!allHeadings || allHeadings.length < 1) { return null; }
+    if (!allHeadings || allHeadings.filter(h => h.id).length < 2) {
+        setShowSideMenu(false);
+        return null;
+    }
+
+    setShowSideMenu(true);
 
     return <ul className={styles.sideNav}>
         {allHeadings.map(heading => <li key={`${pageName}_${heading.id}`} className={styles[`sideNav__itemLevel${heading.depth}`]}>

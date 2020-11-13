@@ -14,7 +14,11 @@
 
 .doc-page {
     margin-left: 1rem;
-    margin-right: calc(300px + 3rem);
+    margin-right: 1rem;
+
+    &--with-side-menu {
+        margin-right: calc(300px + 3rem);
+    }
 
     h1 {
         font-weight: 400;

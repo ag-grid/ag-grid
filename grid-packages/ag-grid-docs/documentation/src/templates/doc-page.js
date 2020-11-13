@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { graphql } from 'gatsby';
 import rehypeReact from 'rehype-react';
@@ -14,6 +14,7 @@ import MatrixTable from '../components/MatrixTable';
 import VideoSection from '../components/VideoSection';
 import VideoLink from '../components/VideoLink';
 import ChartGallery from '../components/chart-gallery/ChartGallery';
+import ChartsApiExplorer from '../components/charts-api-explorer/ChartsApiExplorer';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
@@ -45,17 +46,20 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
       'video-section': VideoSection,
       'video-link': VideoLink,
       'chart-gallery': ChartGallery,
+      'charts-api-explorer': props => ChartsApiExplorer({ ...props, framework }),
     },
   }).Compiler;
 
+  const [showSideMenu, setShowSideMenu] = useState(true);
+
   return (
     <div id="doc-page-wrapper" className={styles.docPageWrapper}>
-      <div id="doc-content" className={styles.docPage}>
+      <div id="doc-content" className={`${styles.docPage} ${showSideMenu ? styles.docPageWithSideMenu : ''}`}>
         <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
         <h1 className={page.frontmatter.enterprise ? styles.enterprise : null}>{page.frontmatter.title}</h1>
         {renderAst(ast)}
       </div>
-      {<SideMenu headings={page.headings} pageName={pageName} />}
+      <SideMenu headings={page.headings} pageName={pageName} setShowSideMenu={setShowSideMenu} />
     </div>
   );
 };
