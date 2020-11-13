@@ -130,4 +130,4 @@ With these simple changes we go from [stacked columns](#stacked-columns) to stac
 
 ## Next Up
 
-Continue to the next section to learn about [area series](../charts-area-series/).
+Continue to the next section to learn about [histogram series](../charts-histogram-series/).
