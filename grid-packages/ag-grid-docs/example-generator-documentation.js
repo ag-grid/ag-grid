@@ -374,7 +374,7 @@ module.exports.generateChartExamples = (scope, trigger, done) => {
     }
 };
 
-module.exports.generateExamples = (scope, trigger) => {
+module.exports.generateExamples = async (scope, trigger) => {
     if (trigger) {
         console.log(`\u270E ${trigger} was changed`);
         console.log(`\u27F3 Re-generating affected documentation examples...`);
@@ -384,6 +384,8 @@ module.exports.generateExamples = (scope, trigger) => {
         console.log(`\u27F3 Generating all documentation examples...`);
     }
 
-    module.exports.generateGridExamples(scope, trigger);
-    module.exports.generateChartExamples(scope, trigger);
+    return new Promise(resolve => {
+        module.exports.generateGridExamples(
+            scope, trigger, () => module.exports.generateChartExamples(scope, trigger, () => resolve()));
+    });
 };
