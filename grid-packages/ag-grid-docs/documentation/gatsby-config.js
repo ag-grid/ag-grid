@@ -14,7 +14,6 @@ const plugins = [
       filter: node => node.sourceInstanceName === 'examples' && node.base.endsWith('.html'),
     },
   },
-  'gatsby-transformer-json',
   'gatsby-plugin-layout',
   'gatsby-transformer-sharp',
   'gatsby-plugin-sharp',

@@ -37,7 +37,6 @@
     "gatsby-remark-images": "3.4.1",
     "gatsby-remark-prismjs": "3.6.0",
     "gatsby-source-filesystem": "2.4.0",
-    "gatsby-transformer-json": "2.4.15",
     "gatsby-transformer-rehype": "1.9.5",
     "gatsby-transformer-remark": "2.9.1",
     "gatsby-transformer-sharp": "2.5.21",

@@ -68,6 +68,13 @@ exports.onCreateNode = ({ node, getNode, actions: { createNodeField } }) => {
             value: filePath.substring(0, filePath.length - 1)
         });
     }
+
+    if (node.internal.type === 'File' && node.extension === 'json') {
+        // load contents of JSON files to be used e.g. by ApiDocumentation
+        fs.readFile(node.absolutePath, undefined, (_err, buf) => {
+            createNodeField({ node, name: 'content', value: buf.toString() });
+        });
+    }
 };
 
 /* This allows us to use different layouts for different pages */
