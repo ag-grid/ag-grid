@@ -1438,25 +1438,7 @@
           },
           {
             "title": "Getting Started",
-            "isCategory": true,
-            "items": [
-              {
-                "title": "Vanilla JavaScript",
-                "url": "../charts/"
-              },
-              {
-                "title": "Angular",
-                "url": "angular-charts/"
-              },
-              {
-                "title": "React",
-                "url": "react-charts/"
-              },
-              {
-                "title": "Vue",
-                "url": "vuejs-charts/"
-              }
-            ]
+            "url": "../charts/"
           },
           {
             "title": "API",
