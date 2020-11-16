@@ -119,7 +119,18 @@ const plugins = [
   },
   'gatsby-plugin-catch-links',
   'gatsby-plugin-react-helmet',
-
+  {
+    resolve: 'gatsby-plugin-eslint',
+    options: {
+      test: /\.js$|\.jsx$/,
+      exclude: /(node_modules|.cache|public|charts-packages)/,
+      stages: ['develop'],
+      options: {
+        emitWarning: true,
+        failOnError: false
+      }
+    }
+  }
 ];
 
 if (process.env.GATSBY_UPDATE_ALGOLIA === 'true') {
