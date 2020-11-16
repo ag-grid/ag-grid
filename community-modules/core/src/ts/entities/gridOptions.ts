@@ -105,6 +105,7 @@ export interface GridOptions {
     suppressMoveWhenRowDragging?: boolean;
     enableMultiRowDragging?: boolean;
     ensureDomOrder?: boolean;
+    suppressAggFilteredOnly?: boolean;
     /** @deprecated */
     deltaRowDataMode?: boolean;
     /** @deprecated */

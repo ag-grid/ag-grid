@@ -418,6 +418,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public debounceVerticalScrollbar : any = undefined;
     @Input() public detailRowAutoHeight : any = undefined;
     @Input() public serverSideFilteringAlwaysResets : any = undefined;
+    @Input() public suppressAggFilteredOnly : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
