@@ -116,7 +116,7 @@ legend: {
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='chart.legend' options='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='chart.legend' config='{ "showSnippets": true }'></api-documentation>
 
 ## Next Up
 

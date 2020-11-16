@@ -1,5 +1,6 @@
 ---
 title: "Chart Container"
+enterprise: true
 ---
 
 This section describes how to specify an alternative chart container to the default grid-provided popup window.

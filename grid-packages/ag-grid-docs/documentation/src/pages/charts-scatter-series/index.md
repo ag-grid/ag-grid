@@ -46,7 +46,7 @@ The example below uses both `'circle'` and `'square'` markers to represent the a
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='scatter' options='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='scatter' config='{ "showSnippets": true }'></api-documentation>
 
 ## Next Up
 

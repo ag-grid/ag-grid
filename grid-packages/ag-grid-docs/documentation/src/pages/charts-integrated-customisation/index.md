@@ -1,5 +1,6 @@
 ---
 title: "Chart Customisation"
+enterprise: true
 ---
 
 Chart themes can be used to customise the look and feel of your charts to match your application.
@@ -13,8 +14,7 @@ There are five chart themes that are provided by the grid: `'ag-default'`, `'ag-
 
 When you create a chart, you can scroll through the different available themes in the chart settings.
 
-
-<img src="resoucrs/theme-picker.gif" />
+<img src="resources/theme-picker.gif" style="max-width: 100%; margin-bottom: 1rem;" />
 
 You can change which themes are available by setting the `chartThemes` property in `gridOptions`. The example below shows a different selection of themes configured in this way.
 
@@ -110,8 +110,7 @@ These overrides can be used with any cartesian chart.
 
 ### Example: Histogram Chart Overrides
 
-<grid-example title='Histogram Chart Overrides' name='histogram-overrides' type='generated' options='{ "enterprise": true }></grid-example>
-
+<grid-example title='Histogram Chart Overrides' name='histogram-overrides' type='generated' options='{ "enterprise": true }'></grid-example>
 
 ## Next Up
 

@@ -1,5 +1,6 @@
 ---
 title: "Integrated Charts"
+enterprise: true
 ---
 
 This section introduces the grid's integrated charting functionality, which allows users to chart directly inside the grid and supports applications that want to create pre-defined charts.
@@ -74,25 +75,30 @@ Try it out on our [demo page](../../example.php) by doing the following:
 
 - Bring up the [Context Menu](../context-menu) and select the desired chart type from the 'Chart Range' sub menu.
 
-<img data-gifffer="resources/chart-showcase.gif" />
-
+<div style="width: 100%; overflow: hidden; margin-bottom: 1rem;">
+    <img src="resources/chart-showcase.gif" alt="Chart Showcase" style="max-width: 100%" />
+</div>
 
 The animation above highlights a number of charting features. For more details on each feature follow the links provided below:
 
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px;">
-    <div style="flex-grow: 1;">
+    <div style="flex: 1 1 0;">
         <ul class="content">
-            <li>[Chart Ranges](../charts-integrated-range-chart/#creating-chart-ranges): When a chart is created, corresponding chart ranges appear in the grid and can be adjusted via the chart range handle.</li>
+            <li><a href="../charts-integrated-range-chart/#creating-chart-ranges">Chart Ranges</a>: When a chart is created, corresponding chart ranges appear in the grid and can be adjusted via the chart range handle.</li>
             <li><a href="../charts-integrated-range-chart/#category-and-series-ranges">Categories and Series</a>: Columns can be configured as either categories or series for charting. If not configured then the grid will infer whether a column contains category or series data.</li>
         </ul>
     </div>
-    <img src="resources/category-range-fill-handle.png" />
+    <div style="flex: 1 1 0;">
+        <img src="resources/category-range-fill-handle.png" alt="Range Handle" />
+    </div>
 </div>
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
-    <img src="resources/chart-toolbar.png" />
-    <div style="flex-grow: 1;">
+    <div style="flex: 1 1 0;">
+        <img src="resources/chart-toolbar.png" alt="Chart Toolbar" />
+    </div>
+    <div style="flex: 1 1 0;">
         <ul class="content">
             <li><a href="../charts-integrated-chart-toolbar/">Chart Toolbar</a>:
                 The chart toolbar is located in the top right area of the chart and allows a user to:

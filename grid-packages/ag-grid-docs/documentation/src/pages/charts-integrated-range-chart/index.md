@@ -1,12 +1,13 @@
 ---
 title: "Range Chart"
+enterprise: true
 ---
 
 This section covers how charts can be created directly from a range of selected cells.
 
 Range charts provide a quick and easy way for users to create charts from inside the grid. Once users have selected a range of cells in the grid, a chart can be created from the context menu, as shown below:
 
-<img data-gifffer="resources/range-chart.gif" />
+<img src="resources/range-chart.gif" alt="Range Chart" style="max-width: 100%; margin-bottom: 1rem;" />
 
 Notice that Chart Ranges appear in the grid after a chart is created. These provide useful visual feedback for users by highlighting the charted category and series data in the grid.
 
@@ -24,7 +25,8 @@ To see how chart ranges are created from a cell range, using our [demo page](../
 
 - Bring up the [Context Menu](../context-menu) and select the desired chart type from the 'Chart Range' sub menu.
 
-<img src="resources/charting-ranges.gif" />
+
+<img src="resources/charting-ranges.gif" alt="Charting Ranges" style="max-width: 100%; margin-bottom: 1rem;" />
 
 As illustrated above, the resulting chart range can subsequently be modified by dragging on the chart range handle, located at the bottom right corner of the chart range.
 
@@ -64,7 +66,7 @@ When defining column definitions the `ColDef.chartDataType` property can be used
 
 
 ```ts
-    ColDef.chartDataType = 'category' | 'series' | 'time' | excluded' | undefined
+ColDef.chartDataType = 'category' | 'series' | 'time' | excluded' | undefined
 ```
 
 Columns defined as `excluded` will not be included in charts or charting ranges.
@@ -74,17 +76,17 @@ The following column definitions show how the different `ColDef.chartDataType` v
 
 
 ```js
-    // 'category' columns
-    { field: 'athlete', chartDataType: 'category' },
-    { field: 'age', chartDataType: 'category' }, // despite containing numbers
-    { field: 'country' }, // contains strings
+// 'category' columns
+{ field: 'athlete', chartDataType: 'category' },
+{ field: 'age', chartDataType: 'category' }, // despite containing numbers
+{ field: 'country' }, // contains strings
 
-    // 'excluded' from charts
-    { field: 'date', chartDataType: 'excluded' },
+// 'excluded' from charts
+{ field: 'date', chartDataType: 'excluded' },
 
-    // 'series' columns
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', width: 100 } // contains numbers
+// 'series' columns
+{ field: 'gold', chartDataType: 'series' },
+{ field: 'silver', width: 100 } // contains numbers
 ```
 
 See the [Time Series](../charts-integrated-time-series) section for details on the `'time'` chart data type.

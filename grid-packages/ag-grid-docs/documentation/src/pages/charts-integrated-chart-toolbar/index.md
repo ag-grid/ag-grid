@@ -1,22 +1,24 @@
 ---
 title: "Chart Toolbar"
+enterprise: true
 ---
 
 The chart toolbar appears when the mouse hovers over the top right area of the chart, and provides access to additional functionality and the chart configuration sidebar.
 
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
-    <img src="resources/chart-toolbar.png"/>
-    <div style="flex-grow: 1;">
+    <div style="flex: 1 1 0">
+        <img src="resources/chart-toolbar.png" alt="Chart Toolbar"/>
+    </div>
+    <div style="flex: 1 1 0;">
         From the toolbar, users can:
-        <ul class="content">
-                <li>Change the chart type</li>
-                <li>Change the theme</li>
-                <li>Change which columns are used as categories and series</li>
-                <li>Format different aspects of the chart</li>
-                <li>Unlink the chart from the grid</li>
-                <li>Download the chart</li>
-            </ul>
+        <ul>
+            <li>Change the chart type</li>
+            <li>Change the theme</li>
+            <li>Change which columns are used as categories and series</li>
+            <li>Format different aspects of the chart</li>
+            <li>Unlink the chart from the grid</li>
+            <li>Download the chart</li>
         </ul>
     </div>
 </div>
@@ -29,7 +31,7 @@ Clicking on the 'hamburger' icon will open up the configuration sidebar, which p
 
 The chart settings panel allows users to change the chart type as well as the theme used in the chart as demonstrated below:
 
-<img src="resources/chart-settings.gif" />
+<img src="resources/chart-settings.gif" style="max-width: 100%; margin-bottom: 1rem;" />
 
 Notice that charts are organised into different groups and the current chart can be changed by selecting the icon of a different chart.
 
@@ -39,7 +41,7 @@ The theme used by the chart can also be changed via the carousel located at the 
 
 The chart data panel is used to dynamically change the data being charted as shown below:
 
-<img src="resources/chart-data.gif" />
+<img src="resources/chart-data.gif" style="max-width: 100%; margin-bottom: 1rem;" />
 
 Using the chart data panel the category used in the chart can be changed via radio button selections. Multiple series can be charted and these can also be changed via checkbox selection.
 
@@ -52,7 +54,7 @@ For more details on how the grid determines which columns are to be used as char
 The chart format panel allows users to change the appearance of the chart as shown below:
 
 
-<img src="resources/chart-format.gif" />
+<img src="resources/chart-format.gif" style="max-width: 100%; margin-bottom: 1rem;" />
 
 Chart options corresponding to the currently selected chart type appear in the format panel. This gives users full control over the appearance of the chart.
 
@@ -62,7 +64,7 @@ Charts are linked to the data in the grid by default, so that if the data change
 
 Unlinking a chart is achieved through the 'Unlink Chart' toolbar item as shown below:
 
-<img src="resoucrs/chart-unlinking.gif" />
+<img src="resources/chart-unlinking.gif" style="max-width: 100%; margin-bottom: 1rem;" />
 
 Notice that the chart range disappears from the grid when the chart has been unlinked, and subsequent changes to the grid sorting do not impact the chart.
 

@@ -220,5 +220,5 @@ Notice that the tooltip renderer in the example below:
 
 ## Next Up
 
-Continue to the next section to learn about [axes](../charts-axis/).
+Continue to the next section to learn about [axes](../charts-axes/).
 

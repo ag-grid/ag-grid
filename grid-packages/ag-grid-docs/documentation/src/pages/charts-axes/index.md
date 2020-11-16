@@ -199,4 +199,4 @@ Each config object in the `gridStyle` array is alternately applied to the grid l
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='axis' options='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='axis' config='{ "showSnippets": true }'></api-documentation>

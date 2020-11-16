@@ -1,5 +1,6 @@
 ---
 title: "Time Series"
+enterprise: true
 ---
 
 This section covers how to chart time series data using Integrated Charts.
@@ -8,7 +9,7 @@ Integrated Charts supports the charting of time series data using line and area 
 
 ## Time vs Category Axis
 
-A [Time Axis](../charts-axis/#time-axis) is used to plot continuous date / time values, whereas a [Category Axis](../charts-axis/#category-axis) is used to plot discrete values or
+A [Time Axis](../charts-axes/#time-axis) is used to plot continuous date / time values, whereas a [Category Axis](../charts-axes/#category-axis) is used to plot discrete values or
     categories.
 
 
@@ -21,7 +22,7 @@ The example below highlights the differences between time and category axes. Not
 
 ## Time Axis Configuration
 
-Columns that contain date object values will be automatically plotted using a [Time Axis](../charts-axis/#time-axis) unless it has been explicitly changed through the `chartDataType` column definition property.
+Columns that contain date object values will be automatically plotted using a [Time Axis](../charts-axes/#time-axis) unless it has been explicitly changed through the `chartDataType` column definition property.
 
 Numeric timestamps in a unix format are also allowed but the column should be explicitly configured to use a time axis via `chartDataType='time'` on the column definition.
 

@@ -1,12 +1,13 @@
 ---
 title: "Events"
+enterprise: true
 ---
 
 This section explains how to listen and respond to various chart and series events.
 
 ## Series Events
 
-### Example: `nodeClick` Event
+### Example: nodeClick Event
 
 This example shows how the `nodeClick` event listener can be used to listen to column clicks. Notice the following:
 
@@ -31,29 +32,29 @@ Note that the `datum` object is untyped and can contain keys that are not plotte
 
 #### Bar/Column series
 
-<api-documentation source='charts-api/api.json' section='bar.listeners' options='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='bar.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 #### Line series
 
-<api-documentation source='charts-api/api.json' section='line.listeners' options='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='line.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 #### Area series
 
 No events yet.
 
-<api-documentation source='charts-api/api.json' section='area.listeners' options='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='area.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 #### Scatter series
 
-<api-documentation source='charts-api/api.json' section='scatter.listeners' options='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='scatter.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 #### Pie series
 
-<api-documentation source='charts-api/api.json' section='pie.listeners' options='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='pie.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 #### Histogram series
 
-<api-documentation source='charts-api/api.json' section='histogram.listeners' options='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='histogram.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 Note that the `datum` in this case is not an element from the `chart.data` or `series.data` array provided by the user. It's a histogram bin, which represents an aggregated value of one or more `datum`s, where the datums themselves can be accessed via the `datum.data` property.
 
