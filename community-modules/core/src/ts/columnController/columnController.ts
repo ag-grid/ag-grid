@@ -259,17 +259,15 @@ export class ColumnController extends BeanStub {
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
 
-        // this event is legacy, no grid code listens to it. instead the grid listens to New Columns Loaded
-        const eventEverythingChanged: ColumnEverythingChangedEvent = {
-            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source
-        };
-        this.eventService.dispatchEvent(eventEverythingChanged);
+        // this event is not used by ag-Grid, but left here for backwards compatibility,
+        // in case applications use it
+        this.dispatchEverythingChanged(source);
 
         raiseEventsFunc();
+        this.dispatchNewColumnsLoaded();
+    }
 
+    private dispatchNewColumnsLoaded(): void {
         const newColumnsLoadedEvent: NewColumnsLoadedEvent = {
             type: Events.EVENT_NEW_COLUMNS_LOADED,
             api: this.gridApi,
@@ -277,6 +275,17 @@ export class ColumnController extends BeanStub {
         };
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
+    }
+
+    // this event is legacy, no grid code listens to it. instead the grid listens to New Columns Loaded
+    private dispatchEverythingChanged(source: ColumnEventType = 'api'): void {
+        const eventEverythingChanged: ColumnEverythingChangedEvent = {
+            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            source
+        };
+        this.eventService.dispatchEvent(eventEverythingChanged);
     }
 
     private orderGridColumnsLikePrimary(): void {
@@ -1972,13 +1981,7 @@ export class ColumnController extends BeanStub {
 
         this.updateDisplayedColumns(source);
 
-/*        const event: ColumnEverythingChangedEvent = {
-            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source: source
-        };
-        this.eventService.dispatchEvent(event);*/
+        this.dispatchEverythingChanged(source);
 
         raiseEventsFunc();
 
