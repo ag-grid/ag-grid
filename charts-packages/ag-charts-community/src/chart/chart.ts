@@ -141,6 +141,8 @@ class ChartTooltip extends Observable {
 
     element = document.createElement('div');
 
+    private observer?: IntersectionObserver;
+
     @reactive() class: string = Chart.defaultTooltipClass;
 
     /**
@@ -232,13 +234,33 @@ class ChartTooltip extends Observable {
 
         this.chart = chart;
         this.class = '';
-        document.body.appendChild(this.element);
+
+        const tooltipRoot = document.body;
+        tooltipRoot.appendChild(this.element);
+
+        // Detect when the chart becomes invisible and hide the tooltip as well.
+        if (window.IntersectionObserver) {
+            const target = this.chart.scene.canvas.element;
+            const observer = new IntersectionObserver(entries => {
+                for (const entry of entries) {
+                    if (entry.target === target && entry.intersectionRatio === 0) {
+                        this.hide();
+                    }
+                }
+            }, { root: tooltipRoot });
+            observer.observe(target);
+            this.observer = observer;
+        }
     }
 
     destroy() {
         const { parentNode } = this.element;
         if (parentNode) {
             parentNode.removeChild(this.element);
+        }
+
+        if (this.observer) {
+            this.observer.unobserve(this.chart.scene.canvas.element);
         }
     }
 }
@@ -334,7 +356,7 @@ export abstract class Chart extends Observable {
         return this._autoSize;
     }
 
-    readonly tooltip: ChartTooltip = new ChartTooltip(this);
+    readonly tooltip: ChartTooltip;
 
     private _tooltipClass: string = Chart.defaultTooltipClass;
     /**
@@ -384,6 +406,7 @@ export abstract class Chart extends Observable {
         legend.addEventListener('layoutChange', this.onLayoutChange, this);
         legend.addPropertyListener('position', this.onLegendPositionChange, this);
 
+        this.tooltip = new ChartTooltip(this);
         this.tooltip.addPropertyListener('class', () => this.tooltip.toggle());
 
         if (Chart.tooltipDocuments.indexOf(document) < 0) {
