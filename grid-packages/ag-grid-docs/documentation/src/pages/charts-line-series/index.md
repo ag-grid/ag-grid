@@ -80,7 +80,7 @@ series: [
 
 The provided `yName` will also show up in tooltip titles:
 
-![Left: tooltip with no title, Right: tooltip with title](tooltip-titles.png)
+![Left: tooltip with no title, Right: tooltip with title](resources/tooltip-titles.png)
 
 ## Line and Marker Colours
 

@@ -8,6 +8,7 @@ The navigator allows to zoom in on a portion of chart's data and then pan around
 
 The navigator is hidden by default, to enable it add the following config to the chart:
 
+
 ```js
 navigator: {
     enabled: true
@@ -16,13 +17,17 @@ navigator: {
 
 ### Example: Showing the Navigator
 
-<chart-example title='Showing the Navigator' name='navigator' type='generated'></chart-example>
+```html
+<?= chart_example('Showing the Navigator', 'navigator', 'generated') ?>
+```
 
 ## Setting the Visible Range
 
 By default the navigator shows the whole range of chart's data in the horizontal direction. The two properties that control the range of data to show are `min` and `max`, which default to `0` and `1`, respectively.
 
+
 The visible range is normalized to the `[0, 1]` interval. For example, to show the last quarter of the chart's data by default we can use the following config:
+
 
 ```js
 navigator: {
@@ -34,9 +39,11 @@ navigator: {
 
 Regardless of the initial visible range, the user will be able to adjust the range as they see fit by dragging the range handles inside the navigator.
 
+
 ## Styling the Navigator
 
 The navigator's `height` is configurable and affects chart's layout by leaving more or less vertical space for the series:
+
 
 ```js
 navigator: {
@@ -45,7 +52,7 @@ navigator: {
 }
 ```
 
-The navigator component has three sub-components that can be styled independently:
+The navigator component has three subcomponents that can be styled independently:
 
 - `mask` - the range mask
 - `minHandle` - the min drag handle
@@ -53,7 +60,9 @@ The navigator component has three sub-components that can be styled independentl
 
 The range mask shows the portion of the range selected, and the drag handles are used to adjust it.
 
-All sub-component configs are optional too and have default values that make the navigator look good in charts with both light and dark backgrounds.
+
+All subcomponent configs are optional too and have default values that make the navigator look good in charts with both light and dark backgrounds.
+
 
 ### Example: Navigator Styling
 
@@ -68,8 +77,9 @@ The example below uses various navigator configs (in a deliberately exaggerated 
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='chart.navigator' options='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='chart.navigator'></api-documentation>
 
 ## Next Up
 
 Continue to the next section to learn more about [markers](../charts-markers/).
+

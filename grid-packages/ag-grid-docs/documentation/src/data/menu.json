@@ -1234,8 +1234,13 @@
             "enterprise": true
           },
           {
+            "title": "Cross Filtering",
+            "url": "../charts-integrated-cross-filtering/",
+            "enterprise": true
+          },
+          {
             "title": "Third-Party Charting",
-            "url": "../graphing/"
+            "url": "../grid-graphing/"
           }
         ]
       },

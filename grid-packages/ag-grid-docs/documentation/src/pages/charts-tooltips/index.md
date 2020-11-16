@@ -9,9 +9,11 @@ There are four ways of enabling the tooltips in ag-Charts by using:
 - [custom title / content](#modifying-content-title) via a renderer function
 - [completely custom template and markup](#using-custom-tooltips) via a renderer function
 
+
 ## Default Tooltip
 
 The default chart tooltip has the following template:
+
 
 ```html
 <div class="ag-chart-tooltip">
@@ -20,21 +22,24 @@ The default chart tooltip has the following template:
 </div>
 ```
 
-The title element may or may not exist but the content element is always present. In the screenshots below the content element of both tooltips contains `Jun: 50.00`:
+The title element may or may not exist but the content element is always present.
+    In the screenshots below the content element of both tooltips contains `Jun: 50.00`:
 
-<p style="text-align: center;">
+<div>
     <span>No Title&nbsp;</span>
-    <img alt="Tooltip without the title element" src="tooltip-no-title.png" style="margin-bottom: 0px; height: 170px;">
+    <img alt="Tooltip without the title element" src="resources/tooltip-no-title.png" />
     <span style="width: 50px; display: inline-block;"></span>
     <span>With Title&nbsp;</span>
-    <img alt="Tooltip with a title element" src="tooltip-with-title.png" style="margin-bottom: 0px; height: 169px;">
-</p>
+    <img alt="Tooltip with a title element" src="resources/tooltip-with-title.png" />
+</div>
+
 
 To make the tooltip title visible you need to specify the series' `yName` or `yNames`, or `labelName` in the case of `'pie'` series. These configs supply the keys used to fetch the display names, because the keys themselves may not be presentable or descriptive.
 
 ### Example: Default Tooltip
 
 In the sample data below the `value1` key is not descriptive, while `hats_made` is not very presentable:
+
 
 ```js
 data: [
@@ -43,7 +48,7 @@ data: [
         value1: 50,
         hats_made: 40
     },
-    ...
+    // ...
 ]
 ```
 
@@ -53,13 +58,16 @@ Notice that when we set the `yNames` of the `'column'` series:
 - The `yNames` changes are reflected in the legend as well.
 - The legend will use the `yKeys` when the `yNames` is not set. The tooltip however will only have a title if the `yNames` (or `title`) is set.
 
+
 <chart-example title='Default Tooltip' name='default-tooltip' type='generated'></chart-example>
 
 ## Styling the Default Tooltip
 
 The default tooltip already uses `ag-chart-tooltip`, `ag-chart-tooltip-title` and `ag-chart-tooltip-content` CSS classes, but these classes are not meant to be used directly to add custom CSS rules to, unless you want to change the styling of all the tooltips in your app. Instead, users of the charting library should provide their own tooltip class name via the `chart.tooltipClass` config. This class name will be added to the class list of the tooltip element for only that particular chart instance.
 
+
 For example, if we wanted to set the tooltip's content `background-color` to `gold`, we'd add a custom class name to our chart in the code:
+
 
 ```js
 chart.tooltipClass = 'my-tooltip';
@@ -77,15 +85,17 @@ This limits the styling changes to this chart instance alone (or instances that 
 
 Note that your styles don't override the default tooltip styles but complement them.
 
+
 ### Example: Tooltip Styling
 
-In this example we show how to change the content's background colour and the colour of the tooltip's arrow to gold.
+In this example we show how to change the content's background color and the color of the tooltip's arrow to gold.
 
 <chart-example title='Default Tooltip with Custom Styling' name='default-tooltip-styling' type='generated'></chart-example>
 
 ## Modifying Content / Title
 
 To control what goes into the title and content divs of the tooltip one can set up a tooltip renderer function (one per series) that receives values associated with the highlighted data point and returns an object with the `title` and `content` fields containing plain text or inner HTML that goes into the corresponding divs:
+
 
 ```ts
 tooltipRenderer?: (params: AgTooltipRendererParams) => AgTooltipRendererResult;
@@ -127,6 +137,7 @@ interface AgTooltipRendererParams {
 
 Let's say we wanted to remove the digits after the decimal point from the values shown in tooltips (by default the tooltips show two digits after the decimal point for numeric values). We could use the following `tooltipRenderer` to achieve that:
 
+
 ```js
 tooltipRenderer: function (params) {
     return {
@@ -146,6 +157,7 @@ Instead of having the tooltip renderer return an object with title and content s
 
 Let's say we wanted to remove the digits after the decimal point from the values shown in tooltips (by default the tooltips show two digits after the decimal point for numeric values). We could use the following `tooltipRenderer` to achieve that:
 
+
 ```js
 series: [{
     type: 'column',
@@ -157,7 +169,9 @@ series: [{
 
 The tooltip renderer function receives the `params` object as a single parameter. Inside that object you get the `xValue` and `yValue` for the highlighted data point as well as the reference to the raw `datum` element from the `chart.data` or `series.data` array. You can then process the raw values however you like before using them as a part of the returned HTML string.
 
+
 Notice that stacked series (like `'column'`, `'bar'` and `'area'`) that have the `yKeys` property still receive a single `yKey` inside the tooltip renderer's `params` object. This is because the tooltip renderer is only given the `yKey` for the currently highlighted series item.
+
 
 [[note]]
 | Different series types get different tooltip renderer parameters. You can find out which parameters are supported by which series using the [API reference](#api-reference) below.
@@ -180,28 +194,31 @@ Notice that the tooltip renderer in the example below:
 
 ### Bar/Column Tooltips
 
-<api-documentation source='charts-api/api.json' section='bar' names='["tooltipEnabled", "tooltipRenderer"]' options='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='bar', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
 
 ### Area Tooltips
 
-<api-documentation source='charts-api/api.json' section='area' names='["tooltipEnabled", "tooltipRenderer"]' options='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='area', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
 
 ### Line Tooltips
 
-<api-documentation source='charts-api/api.json' section='line' names='["tooltipEnabled", "tooltipRenderer"]' options='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='line', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
 
 ### Scatter/Bubble Tooltips
 
-<api-documentation source='charts-api/api.json' section='scatter' names='["tooltipEnabled", "tooltipRenderer"]' options='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='scatter', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
 
 ### Pie/Doughnut Tooltips
 
-<api-documentation source='charts-api/api.json' section='pie' names='["tooltipEnabled", "tooltipRenderer"]' options='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='pie', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
+
 
 ### Histogram Tooltips
 
-<api-documentation source='charts-api/api.json' section='histogram' names='["tooltipEnabled", "tooltipRenderer"]' options='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='histogram', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
+
 
 ## Next Up
 
-Continue to the next section to learn about [axes](../charts-axes/).
+Continue to the next section to learn about [axes](../charts-axis/).
+
