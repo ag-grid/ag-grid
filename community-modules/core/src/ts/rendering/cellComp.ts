@@ -1030,7 +1030,9 @@ export class CellComp extends Component implements TooltipParentComp {
         // in the header when the group is open
         const ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
 
-        return this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
+        const value = this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
+
+        return value;
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
