@@ -4,9 +4,9 @@
     "enterprise-modules/*",
     "charts-packages/*",
     "grid-packages/*",
-    "grid-packages/ag-grid-docs/documentation/",
     "examples-charts/*",
-    "examples-grid/*"
+    "examples-grid/*",
+    "grid-packages/ag-grid-docs/documentation/"
   ],
   "command": {
     "bootstrap": {
