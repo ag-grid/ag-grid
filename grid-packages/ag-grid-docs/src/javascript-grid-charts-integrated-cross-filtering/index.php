@@ -10,4 +10,7 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('Sales Dashboard', 'sales-dashboard', 'generated', ['exampleHeight' => 1000, 'enterprise' => true]) ?>
 
+<?= grid_example('Cross Filtering with Row Groups', 'cross-filtering-row-groups', 'generated', ['exampleHeight' => 1000, 'enterprise' => true]) ?>
+
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

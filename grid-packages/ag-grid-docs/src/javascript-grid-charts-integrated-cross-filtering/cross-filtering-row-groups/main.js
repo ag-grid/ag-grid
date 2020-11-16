@@ -15,13 +15,18 @@ var customDashboardTheme = {
                 left: 30,
             }
         },
-        column: {
+        cartesian: {
             axes: {
                 number: {
                     label: {
                         formatter: function (params) {
                             return params.value / 1000 + 'k';
                         },
+                    },
+                },
+                category: {
+                    label: {
+                        rotation: 335,
                     },
                 }
             }
@@ -43,11 +48,11 @@ var customDashboardTheme = {
 };
 
 var columnDefs = [
-    { field: 'salesRep', chartDataType: 'category' },
-    { field: 'handset', chartDataType: 'category' },
-    { headerName: 'Sale Price', field: 'sale', maxWidth: 160, aggFunc: 'sum', chartDataType: 'series' },
+    { field: 'quarter', rowGroup: true, maxWidth: 160, chartDataType: 'category' },
+    { field: 'salesRep', rowGroup: false, chartDataType: 'category' },
+    { field: 'handset', rowGroup: false, chartDataType: 'category' },
+    { headerName: 'Sale Price', field: 'sale', filter: 'agNumberColumnFilter', maxWidth: 160, aggFunc: 'sum', chartDataType: 'series' },
     { field: 'saleDate', chartDataType: 'category' },
-    { field: 'quarter', maxWidth: 160, chartDataType: 'category' },
 ];
 
 var gridOptions = {
@@ -59,7 +64,14 @@ var gridOptions = {
         filter: 'agMultiColumnFilter',
         floatingFilter: true,
         resizable: true,
+        enableRowGroup: true,
     },
+    autoGroupColumnDef: {
+        headerName: 'Group',
+        field: 'salesRep',
+        minWidth: 250,
+    },
+    sideBar: true,
     rowData: generateData(),
     popupParent: document.body,
     enableCharts: true,
@@ -68,24 +80,24 @@ var gridOptions = {
     },
     chartThemes: ['customDashboardTheme'],
     chartThemeOverrides: {
-        cartesian: {
-            axes: {
-                category: {
-                    label: {
-                        rotation: 0,
-                    },
-                }
-            },
-        },
+        // cartesian: {
+        //     axes: {
+        //         category: {
+        //             label: {
+        //                 rotation: 10,
+        //             },
+        //         }
+        //     },
+        // },
     },
-    getChartToolbarItems: function() { return []; },
+    // getChartToolbarItems: function() { return []; },
     onFirstDataRendered: onFirstDataRendered
 };
 
 function onFirstDataRendered(params) {
+    // createSalesByRefChart(params.api);
     createQuarterlySalesChart(params.api);
-    createSalesByRefChart(params.api);
-    createHandsetSalesChart(params.api);
+    // createHandsetSalesChart(params.api);
 }
 
 function createQuarterlySalesChart(gridApi) {
@@ -95,7 +107,7 @@ function createQuarterlySalesChart(gridApi) {
             columns: ['quarter', 'sale'],
         },
         chartType: 'stackedColumn',
-        aggFunc: 'sum',
+        // aggFunc: 'sum',
         chartThemeOverrides: {
             common: {
                 title: {
