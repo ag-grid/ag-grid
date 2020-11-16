@@ -93,7 +93,7 @@ series: [{
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='histogram' options='{ "showSnippets": true }'>
+<api-documentation source='charts-api/api.json' section='histogram' options='{ "showSnippets": true }'></api-documentation>
 
 ## Next Up
 

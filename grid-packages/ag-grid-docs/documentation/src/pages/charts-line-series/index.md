@@ -112,7 +112,7 @@ If the `yKey` value of a data point is positive or negative `Infinity`, `null`, 
 
 By default, the bottom axis is a `'category'` axis, but this can be changed if you have continuous data that you would like to plot. See the <a href='../javascript-charts-axis'>axes section</a> for more information on configuring axes.
 
-<chart-example title='Continuous Data: Spiral Curve' name='two-number-axes' type='generated'></chart-example>
+<chart-example title='Continuous Data: Spiral Curve' name='two-number-axes' type='generated' options='{ "exampleHeight": 600 }'></chart-example>
 
 ## Time-Series Data
 
@@ -167,7 +167,7 @@ This example uses the `'time'` axis which is configured to show a tick every 5 s
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='line' options='{ "showSnippets": true }'>
+<api-documentation source='charts-api/api.json' section='line' options='{ "showSnippets": true }'></api-documentation>
 
 ## Next Up
 
