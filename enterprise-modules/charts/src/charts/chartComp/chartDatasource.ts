@@ -1,9 +1,10 @@
 import {
     _,
     Autowired,
-    BeanStub,
+    BeanStub, CellRange,
     Column,
-    ColumnController, ColumnGroup, GridOptionsWrapper,
+    ColumnController,
+    ColumnGroup,
     IAggFunc,
     IAggregationStage,
     IRowModel,
@@ -23,6 +24,7 @@ export interface ChartDatasourceParams {
     startRow: number;
     endRow: number;
     aggFunc?: string | IAggFunc;
+    referenceCellRange?: CellRange;
 }
 
 interface IData {

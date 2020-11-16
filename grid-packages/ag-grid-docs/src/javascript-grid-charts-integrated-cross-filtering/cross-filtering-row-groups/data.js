@@ -1,4 +1,4 @@
-var numRows = 500;
+var numRows = 10;
 
 var names = [
     'Aden Moreno',
@@ -43,33 +43,7 @@ function generateData() {
         d.saleDate = d.saleDate.toISOString().substring(0, 10);
     });
 
-    // console.log(data);
-    //
     return data;
-
-    // return [
-    //     {
-    //         "salesRep": "Aden Moreno",
-    //         "handset": "Motorola Edge",
-    //         "sale": 549,
-    //         "saleDate": "2020-06-26",
-    //         "quarter": "Q2"
-    //     },
-    //     {
-    //         "salesRep": "Jermaine Price",
-    //         "handset": "Motorola Edge",
-    //         "sale": 549,
-    //         "saleDate": "2020-06-30",
-    //         "quarter": "Q2"
-    //     },
-    //     {
-    //         "salesRep": "Charlie Dodd",
-    //         "handset": "Hauwei P40",
-    //         "sale": 599,
-    //         "saleDate": "2020-07-20",
-    //         "quarter": "Q3"
-    //     }
-    // ]
 }
 
 function getRandomNumber(min, max) {
