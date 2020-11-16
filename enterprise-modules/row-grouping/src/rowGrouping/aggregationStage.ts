@@ -35,6 +35,8 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
+    private filteredOnly: boolean;
+
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
     public execute(params: StageExecuteParams): any {
@@ -70,6 +72,9 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     }
 
     private recursivelyCreateAggData(aggDetails: AggregationDetails) {
+
+        // update prop, in case changed since last time
+        this.filteredOnly = !this.gridOptionsWrapper.isSuppressAggFilteredOnly();
 
         const callback = (rowNode: RowNode) => {
 
@@ -230,10 +235,12 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         valueColumns.forEach(() => values.push([]));
 
         const valueColumnCount = valueColumns.length;
-        const rowCount = rowNode.childrenAfterFilter!.length;
+
+        const nodeList = this.filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup;
+        const rowCount = nodeList!.length;
 
         for (let i = 0; i < rowCount; i++) {
-            const childNode = rowNode.childrenAfterFilter![i];
+            const childNode = nodeList![i];
             for (let j = 0; j < valueColumnCount; j++) {
                 const valueColumn = valueColumns[j];
                 // if the row is a group, then it will only have an agg result value,

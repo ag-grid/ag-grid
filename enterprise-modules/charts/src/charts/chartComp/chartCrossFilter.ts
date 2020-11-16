@@ -1,9 +1,10 @@
-import { _, Autowired, Bean, BeanStub, GridApi, RowNode } from "@ag-grid-community/core";
+import { _, Autowired, Bean, BeanStub, ColumnController, GridApi, RowNode } from "@ag-grid-community/core";
 
 @Bean("chartCrossFilter")
 export class ChartCrossFilter extends BeanStub {
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('columnController') private readonly columnController: ColumnController;
 
     public filter(event: any, reset: boolean = false): void {
         const filterModel = this.gridApi.getFilterModel();
@@ -30,8 +31,17 @@ export class ChartCrossFilter extends BeanStub {
         let dataKey = ChartCrossFilter.extractDataKey(event);
         let selectedValue = event.datum[dataKey].toString();
 
+        let filterColId = dataKey;
+
+        //TODO - handle more than one group level, currently missing context in chart event
+        if (dataKey === 'ag-Grid-AutoColumn') {
+            let rowGroupColumns = this.columnController.getRowGroupColumns();
+            console.log("rowGroupColumns: ", rowGroupColumns);
+            filterColId = rowGroupColumns[0].getColId();
+        }
+
         if (event.event.metaKey) {
-            const existingGridValues = this.getCurrentGridValuesForCategory(dataKey);
+            const existingGridValues = this.getCurrentGridValuesForCategory(filterColId);
             const valueAlreadyExists = _.includes(existingGridValues, selectedValue);
 
             let updatedValues;
@@ -42,10 +52,10 @@ export class ChartCrossFilter extends BeanStub {
                 updatedValues.push(selectedValue);
             }
 
-            filterModel[dataKey] = {filterType: 'multi', filterModels: [null, {filterType: 'set', values: updatedValues}]};
+            filterModel[filterColId] = {filterType: 'multi', filterModels: [null, {filterType: 'set', values: updatedValues}]};
         } else {
             const values = [selectedValue];
-            filterModel = {[dataKey]: {filterType: 'multi', filterModels: [null, {filterType: 'set', values}]}};
+            filterModel = {[filterColId]: {filterType: 'multi', filterModels: [null, {filterType: 'set', values}]}};
         }
 
         this.gridApi.setFilterModel(filterModel);
@@ -56,9 +66,11 @@ export class ChartCrossFilter extends BeanStub {
         let filteredValues: any[] = [];
         const gridContainsValue = _.includes;
         this.gridApi.forEachNodeAfterFilter((rowNode: RowNode, _) => {
-            const value = rowNode.data[dataKey]; //TODO use value service
-            if (!gridContainsValue(filteredValues, value)) {
-                filteredValues.push(value);
+            if (!rowNode.group) {
+                const value = rowNode.data[dataKey];
+                if (!gridContainsValue(filteredValues, value)) {
+                    filteredValues.push(value);
+                }
             }
         });
         return filteredValues;

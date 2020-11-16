@@ -211,24 +211,15 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private addValueElement(): void {
-        const params = this.params;
-        const rowNode = this.displayedGroup;
-
-        if (rowNode.footer) {
-            this.createFooterCell();
-        } else if (
-            rowNode.hasChildren() ||
-            get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
-            get(params.colDef, 'cellRendererParams.innerRendererFramework', null)
-        ) {
-            this.createGroupCell();
-            this.addChildCount();
+        if (this.displayedGroup.footer) {
+            this.addFooterValue();
         } else {
-            this.createLeafCell();
+            this.addGroupValue();
+            this.addChildCount();
         }
     }
 
-    private createFooterCell(): void {
+    private addFooterValue(): void {
         const footerValueGetter = this.params.footerValueGetter;
         let footerValue: string;
 
@@ -251,7 +242,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         this.eValue.innerHTML = footerValue!;
     }
 
-    private createGroupCell(): void {
+    private addGroupValue(): void {
         const params = this.params;
         const rowGroupColumn = this.displayedGroup.rowGroupColumn;
         // we try and use the cellRenderer of the column used for the grouping if we can
@@ -372,15 +363,10 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     private updateChildCount(): void {
         const allChildrenCount = this.displayedGroup.allChildrenCount;
-        const showCount = allChildrenCount != null && allChildrenCount >= 0;
+        const showingGroupForThisNode = this.isShowRowGroupForThisRow();
+        const showCount = showingGroupForThisNode && allChildrenCount != null && allChildrenCount >= 0;
         const countString = showCount ? `(${allChildrenCount})` : ``;
         this.eChildCount.innerHTML = countString;
-    }
-
-    private createLeafCell(): void {
-        if (exists(this.params.value)) {
-            this.eValue.innerText = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
-        }
     }
 
     private isUserWantsSelected(): boolean {
@@ -549,11 +535,23 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private isExpandable(): boolean {
-        const rowNode = this.params.node;
+        if (this.draggedFromHideOpenParents) { return true; }
+
+        const rowNode = this.displayedGroup;
         const reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
 
-        return this.draggedFromHideOpenParents ||
-            (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
+        const expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
+        if (!expandableGroup) { return false; }
+
+        const showing = this.isShowRowGroupForThisRow();
+        return showing;
+    }
+
+    private isShowRowGroupForThisRow(): boolean {
+        const rowGroupColumn = this.displayedGroup.rowGroupColumn;
+        if (!rowGroupColumn) { return false; }
+        const thisColumnIsInterested = this.params.column.isRowGroupDisplayed(rowGroupColumn.getId());
+        return thisColumnIsInterested;
     }
 
     private showExpandAndContractIcons(): void {
@@ -575,11 +573,12 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
         const pivotModeAndLeafGroup = columnController.isPivotMode() && displayedGroup.leafGroup;
-        const notExpandable = !displayedGroup.isExpandable();
-        const addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
+        const expandable = displayedGroup.isExpandable() && this.isShowRowGroupForThisRow();
+        const addExpandableCss = expandable && !displayedGroup.footer && !pivotModeAndLeafGroup;
 
-        this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
-        this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
+        this.addOrRemoveCssClass('ag-cell-expandable', addExpandableCss);
+        this.addOrRemoveCssClass('ag-row-group', addExpandableCss);
+        this.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

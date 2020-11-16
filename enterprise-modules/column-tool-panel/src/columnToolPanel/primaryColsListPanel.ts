@@ -132,6 +132,8 @@ export class PrimaryColsListPanel extends Component {
     }
 
     public onColumnsChanged(): void {
+        const expandedStates = this.getExpandedStates();
+
         const pivotModeActive = this.columnController.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
 
@@ -141,8 +143,41 @@ export class PrimaryColsListPanel extends Component {
             this.buildTreeFromProvidedColumnDefs();
         }
 
+        this.setExpandedStates(expandedStates);
+
         this.markFilteredColumns();
         this.flattenAndFilterModel();
+    }
+
+    private getExpandedStates(): {[key:string]:boolean} {
+        if (!this.allColsTree) { return {}; }
+
+        const res: {[id:string]:boolean} = {};
+        this.forEachItem(item => {
+            if (!item.isGroup()) { return; }
+            const colGroup = item.getColumnGroup();
+            if (colGroup) { // group should always exist, this is defensive
+                res[colGroup.getId()] = item.isExpanded();
+            }
+        });
+
+        return res;
+    }
+
+    private setExpandedStates(states: {[key:string]:boolean}): void {
+        if (!this.allColsTree) { return; }
+
+        this.forEachItem(item => {
+            if (!item.isGroup()) { return; }
+            const colGroup = item.getColumnGroup();
+            if (colGroup) { // group should always exist, this is defensive
+                const expanded = states[colGroup.getId()];
+                const groupExistedLastTime = expanded!=null;
+                if (groupExistedLastTime) {
+                    item.setExpanded(expanded);
+                }
+            }
+        });
     }
 
     private buildTreeFromWhatGridIsDisplaying(): void {

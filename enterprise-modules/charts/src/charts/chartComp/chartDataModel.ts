@@ -8,7 +8,6 @@ import {
     ChartType,
     Column,
     ColumnController,
-    GridOptionsWrapper,
     IAggFunc,
     IRangeController,
     PostConstruct,
@@ -55,6 +54,8 @@ export class ChartDataModel extends BeanStub {
     private readonly suppressChartRanges: boolean;
 
     private referenceCellRange: CellRange;
+    private suppliedCellRange: CellRange;
+
     private dimensionCellRange?: CellRange;
     private valueCellRange?: CellRange;
     private dimensionColState: ColState[] = [];
@@ -63,7 +64,7 @@ export class ChartDataModel extends BeanStub {
 
     private chartType: ChartType;
     private chartThemeName: string;
-    private datasource: CrossFilterDatasource | ChartDatasource;
+    private datasource: ChartDatasource | CrossFilterDatasource;
 
     private unlinked = false;
     private grouping = false;
@@ -78,6 +79,7 @@ export class ChartDataModel extends BeanStub {
         this.chartThemeName = params.chartThemeName;
         this.aggFunc = params.aggFunc;
         this.referenceCellRange = params.cellRange;
+        this.suppliedCellRange = params.cellRange;
         this.suppressChartRanges = params.suppressChartRanges;
         this.unlinked = !!params.unlinkChart;
         this.crossFiltering = !!params.crossFiltering;
@@ -88,8 +90,8 @@ export class ChartDataModel extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.datasource =
-            this.createManagedBean(this.crossFiltering ? new CrossFilterDatasource() : new ChartDatasource());
+        const ds = this.crossFiltering ? new CrossFilterDatasource() : new ChartDatasource();
+        this.datasource = this.createManagedBean(ds);
 
         this.updateCellRanges();
     }
@@ -271,6 +273,7 @@ export class ChartDataModel extends BeanStub {
 
     private getAllChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
         const displayedCols = this.columnController.getAllDisplayedColumns();
+
         const dimensionCols = new Set<Column>();
         const valueCols = new Set<Column>();
 
@@ -354,9 +357,7 @@ export class ChartDataModel extends BeanStub {
 
     private displayNameMapper(col: ColState): ColState {
         const columnNames = this.columnNames[col.colId];
-
         col.displayName = columnNames ? columnNames.join(' - ') : this.getColDisplayName(col.column!);
-
         return col;
     }
 
@@ -400,9 +401,19 @@ export class ChartDataModel extends BeanStub {
         let hasSelectedDimension = false;
         let order = 1;
 
+        const aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
+
         dimensionCols.forEach(column => {
             const isAutoGroupCol = column.getColId() === 'ag-Grid-AutoColumn';
-            const selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+
+            let selected = false;
+            if (this.crossFiltering && this.aggFunc) {
+                if (aggFuncDimension.getColId() === column.getColId()) {
+                    selected = true;
+                }
+            } else {
+                selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+            }
 
             this.dimensionColState.push({
                 column,
@@ -507,7 +518,10 @@ export class ChartDataModel extends BeanStub {
 
         let selectedDimensionColState = updatedColState;
 
-        if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column!)) {
+        if (this.crossFiltering && this.aggFunc) {
+            const aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
+            selectedDimensionColState = this.dimensionColState.filter(cs => cs.colId === aggFuncDimension.getColId())[0];
+        } else if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column!)) {
             selectedDimensionColState = this.dimensionColState.filter(cs => cs.selected)[0];
         }
 

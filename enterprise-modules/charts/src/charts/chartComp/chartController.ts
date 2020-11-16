@@ -11,7 +11,6 @@ import {
     Events,
     GetChartImageDataUrlParams,
     GridApi,
-    GridOptionsWrapper,
     IRangeController,
     PostConstruct,
 } from "@ag-grid-community/core";

@@ -954,6 +954,14 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressAggAtRootLevel);
     }
 
+    public isSuppressAggFilteredOnly() {
+        return isTrue(this.gridOptions.suppressAggFilteredOnly);
+    }
+
+    public isShowOpenedGroup() {
+        return isTrue(this.gridOptions.showOpenedGroup);
+    }
+
     public isEnableRangeSelection(): boolean {
         return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
     }
