@@ -6,33 +6,9 @@ global.window = window;
 global.document = document;
 
 const glob = require('glob');
-const fs = require('fs');
 const path = require('path');
 const prettier = require('prettier');
-const fsExtra = require('fs-extra');
-
-function emptyDirectory(directory) {
-    if (!directory || directory.trim().indexOf('/') === 0 || !fs.existsSync(directory)) { return; }
-
-    try {
-        const files = fs.readdirSync(directory);
-
-        files.forEach(file => {
-            const filePath = path.join(directory, file);
-
-            if (fs.statSync(filePath).isFile()) {
-                fs.unlinkSync(filePath);
-            }
-            else {
-                emptyDirectory(filePath);
-                fs.rmdirSync(filePath);
-            }
-        });
-    }
-    catch (e) {
-        console.error(`Failed to empty ${directory}`, e);
-    }
-}
+const fs = require('fs-extra');
 
 const extensionsToOverride = new Set(['html', 'js', 'jsx', 'ts']);
 const parsers = {
@@ -227,10 +203,10 @@ function createExampleGenerator(prefix, importTypes) {
             const destPath = path.join(createExamplePath(`_gen/${importType}`), framework);
             const sourcePath = path.join(providedRootPath, importType, framework);
 
-            fsExtra.copySync(sourcePath, destPath);
+            fs.copySync(sourcePath, destPath);
         };
 
-        emptyDirectory(createExamplePath(`_gen`));
+        fs.emptyDirSync(createExamplePath(`_gen`));
 
         // inline styles in the examples index.html
         // will be added to styles.css in the various generated fw examples
