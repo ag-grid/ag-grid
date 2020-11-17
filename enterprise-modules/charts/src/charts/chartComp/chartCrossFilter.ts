@@ -9,6 +9,9 @@ export class ChartCrossFilter extends BeanStub {
     public filter(event: any, reset: boolean = false): void {
         const filterModel = this.gridApi.getFilterModel();
 
+        // const passValidation = this.validateColumnFilter(filterModel, event);
+        // if (!passValidation) { return; }
+
         if (reset) {
             // filter reset is performed when user clicks on canvas
             this.resetFilters(filterModel);
@@ -36,11 +39,10 @@ export class ChartCrossFilter extends BeanStub {
         //TODO - handle more than one group level, currently missing context in chart event
         if (dataKey === 'ag-Grid-AutoColumn') {
             let rowGroupColumns = this.columnController.getRowGroupColumns();
-            console.log("rowGroupColumns: ", rowGroupColumns);
             filterColId = rowGroupColumns[0].getColId();
         }
 
-        if (event.event.metaKey) {
+        if (event.event.metaKey || event.event.ctrlKey) {
             const existingGridValues = this.getCurrentGridValuesForCategory(filterColId);
             const valueAlreadyExists = _.includes(existingGridValues, selectedValue);
 
@@ -76,8 +78,16 @@ export class ChartCrossFilter extends BeanStub {
         return filteredValues;
     }
 
+    private validateColumnFilter(filterModel: any, event: any): boolean {
+        let dataKey = ChartCrossFilter.extractDataKey(event);
+        if (!_.includes(['set', 'multi'], filterModel[dataKey])) {
+            console.warn("ag-Grid: cross filtering requires 'set' or 'multi' filter to be configured on a column:  " + event.xKey);
+            return false;
+        }
+        return true;
+    }
+
     private static extractDataKey(event: any) {
         return event.xKey ? event.xKey : event.labelKey;
     }
-
 }
