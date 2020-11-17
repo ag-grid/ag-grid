@@ -42,6 +42,52 @@ function onThemeChanged(initial) {
     }
 }
 
+function axisLabelFormatter(params) {
+    var value = params.value;
+    var isNormalized = false;
+    var hasBarSeries = false;
+    var hasScatterSeries = false;
+    var hasHistogramSeries = false;
+    var hasAreaSeries = false;
+    var hasLineSeries = false;
+    var flipXY = false;
+    params.axis.boundSeries.forEach(function (series) {
+        if (series.normalizedTo) {
+            isNormalized = true;
+        }
+        if (series.type === 'bar') {
+            hasBarSeries = true;
+            flipXY = series.flipXY;
+        } else if (series.type === 'scatter') {
+            hasScatterSeries = true;
+        } else if (series.type === 'histogram') {
+            hasHistogramSeries = true;
+        } else if (series.type === 'area') {
+            hasAreaSeries = true;
+        } else if (series.type === 'line') {
+            hasLineSeries = true;
+        }
+    });
+
+    if (isNaN(value)) { return value; }
+    if (isNormalized) { return value + '%'; }
+
+    var absolute = Math.abs(value);
+    var standardised = '';
+
+    if (absolute < 1e3) { standardised = absolute; }
+    if (absolute >= 1e3 && absolute < 1e6) { standardised = '$' + +(absolute / 1e3).toFixed(1) + 'K'; }
+    if (absolute >= 1e6 && absolute < 1e9) { standardised = '$' + +(absolute / 1e6).toFixed(1) + 'M'; }
+    if (absolute >= 1e9 && absolute < 1e12) { standardised = '$' + +(absolute / 1e9).toFixed(1) + 'B'; }
+    if (absolute >= 1e12) standardised = '$' + +(absolute / 1e12).toFixed(1) + 'T';
+
+    if (hasScatterSeries || (hasAreaSeries || hasLineSeries) && params.axis.direction === 'y' || hasHistogramSeries && params.axis.direction === 'x' || hasBarSeries && (flipXY && params.axis.direction === 'x' || !flipXY && params.axis.direction === 'y')) {
+        return value < 0 ? '-' + standardised : standardised;
+    } else {
+        return value;
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     var select = document.getElementById('data-size');
 
@@ -448,81 +494,136 @@ var gridOptions = {
     onRangeSelectionChanged: function(event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
+    chartThemeOverrides: {
+        polar: {
+            label: {
+                enabled: false
+            },
+            tooltip: {
+                renderer: function (params) {
+                    var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                    var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+                    var value = formatThousands(Math.round(params.datum[params.angleKey]));
+                    return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
+                }
+            }
+        },
+        cartesian: {
+            axes: {
+                number: {
+                    label: {
+                        formatter: axisLabelFormatter
+                    }
+                }
+            },
+            series: {
+                common: {
+                    tooltip: {
+                        renderer: function (params) {
+                            var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                            var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+                            var value = formatThousands(Math.round(params.datum[params.yKey]));
+                            return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
+                        }
+                    }
+                },
+                scatter: {
+                    tooltip: {
+                        renderer: function (params) {
+                            var formatCurrency = function (value) {
+                                return '$' + formatThousands(value);
+                            };
+
+                            var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                            var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+                            var label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
+                            var xValue = params.xName + ': ' + formatCurrency(params.datum[params.xKey]);
+                            var yValue = params.yName + ': ' + formatCurrency(params.datum[params.yKey]);
+                            var size = '';
+                            if (type === 'bubble' && params.sizeKey) {
+                                size = '<br>' + params.sizeName + ': ' + formatCurrency(params.datum[params.sizeKey]);
+                            }
+                            return title + '<div class="ag-chart-tooltip-content">' + label + xValue + '<br>' + yValue + size + '</div>';
+                        }
+                    }
+                },
+                histogram: {
+                    tooltip: {
+                        renderer: function (params) {
+
+                            var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                            var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+
+                            if (params.yKey) {
+                                // with a y key, the value is the total of the yKey value for the population of the bin:
+                                var value = formatThousands(Math.round(params.datum.total));
+                                return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
+                            } else {
+                                // without a y key, the value is a count of the population of the bin:
+                                var value = params.datum.frequency;
+                                return title + '<div class="ag-chart-tooltip-content">' + value + '</div>';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
     processChartOptions: function(params) {
         var type = params.type;
         var options = params.options;
 
         if (type === 'pie' || type === 'doughnut') {
-            options.seriesDefaults.label.enabled = false;
-            options.seriesDefaults.tooltip.renderer = function(params) {
-                var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var value = formatThousands(Math.round(params.datum[params.angleKey]));
-                return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
-            };
+            // options.seriesDefaults.label.enabled = false;
+            // options.seriesDefaults.tooltip.renderer = function(params) {
+            //     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+            //     var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+            //     var value = formatThousands(Math.round(params.datum[params.angleKey]));
+            //     return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
+            // };
         } else {
-            var isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
-            var isBar = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
+            // var isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
+            // var isBar = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
 
-            var standardiseNumber = function(value) {
-                if (isNaN(value)) { return value; }
-                if (isNormalized) { return value + '%'; }
-
-                var absolute = Math.abs(value);
-                var standardised = '';
-
-                if (absolute < 1e3) { standardised = absolute; }
-                if (absolute >= 1e3 && absolute < 1e6) { standardised = '$' + +(absolute / 1e3).toFixed(1) + 'K'; }
-                if (absolute >= 1e6 && absolute < 1e9) { standardised = '$' + +(absolute / 1e6).toFixed(1) + 'M'; }
-                if (absolute >= 1e9 && absolute < 1e12) { standardised = '$' + +(absolute / 1e9).toFixed(1) + 'B'; }
-                if (absolute >= 1e12) standardised = '$' + +(absolute / 1e12).toFixed(1) + 'T';
-
-                return value < 0 ? '-' + standardised : standardised;
-            };
-
-            var standardNumberFormatter = function(params) {
-                return standardiseNumber(params.value);
-            };
-
-            options[isBar ? 'xAxis' : 'yAxis'].label.formatter = standardNumberFormatter;
+            // options[isBar ? 'xAxis' : 'yAxis'].label.formatter = standardNumberFormatter;
 
             if (type === 'scatter' || type === 'bubble') {
-                options.xAxis.label.formatter = standardNumberFormatter;
+                // options.xAxis.label.formatter = standardNumberFormatter;
 
-                options.seriesDefaults.tooltip.renderer = function(params) {
-                    var formatCurrency = function(value) {
-                        return '$' + formatThousands(value);
-                    };
+                // options.seriesDefaults.tooltip.renderer = function(params) {
+                //     var formatCurrency = function(value) {
+                //         return '$' + formatThousands(value);
+                //     };
 
-                    var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                    var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    var label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
-                    var xValue = params.xName + ': ' + formatCurrency(params.datum[params.xKey]);
-                    var yValue = params.yName + ': ' + formatCurrency(params.datum[params.yKey]);
-                    var size = '';
-                    if (type === 'bubble' && params.sizeKey) {
-                        size = '<br>' + params.sizeName + ': ' + formatCurrency(params.datum[params.sizeKey]);
-                    }
-                    return title + '<div class="ag-chart-tooltip-content">' + label + xValue + '<br>' + yValue + size + '</div>';
-                };
+                //     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                //     var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+                //     var label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
+                //     var xValue = params.xName + ': ' + formatCurrency(params.datum[params.xKey]);
+                //     var yValue = params.yName + ': ' + formatCurrency(params.datum[params.yKey]);
+                //     var size = '';
+                //     if (type === 'bubble' && params.sizeKey) {
+                //         size = '<br>' + params.sizeName + ': ' + formatCurrency(params.datum[params.sizeKey]);
+                //     }
+                //     return title + '<div class="ag-chart-tooltip-content">' + label + xValue + '<br>' + yValue + size + '</div>';
+                // };
             } else if (type === 'histogram') {
-                options.seriesDefaults.tooltip.renderer = function(params) {
+                // options.seriesDefaults.tooltip.renderer = function(params) {
 
-                    var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                    var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+                //     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                //     var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
 
-                    if (params.yKey) {
-                        // with a y key, the value is the total of the yKey value for the population of the bin:
-                        var value = formatThousands(Math.round(params.datum.total));
-                        return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
-                    } else {
-                        // without a y key, the value is a count of the population of the bin:
-                        var value = params.datum.frequency;
-                        return title + '<div class="ag-chart-tooltip-content">' + value + '</div>';
-                    }
-                };
+                //     if (params.yKey) {
+                //         // with a y key, the value is the total of the yKey value for the population of the bin:
+                //         var value = formatThousands(Math.round(params.datum.total));
+                //         return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
+                //     } else {
+                //         // without a y key, the value is a count of the population of the bin:
+                //         var value = params.datum.frequency;
+                //         return title + '<div class="ag-chart-tooltip-content">' + value + '</div>';
+                //     }
+                // };
 
-                options.xAxis.label.formatter = standardNumberFormatter;
+                // options.xAxis.label.formatter = standardNumberFormatter;
             } else {
                 options.seriesDefaults.tooltip.renderer = function(params) {
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
@@ -533,7 +634,7 @@ var gridOptions = {
             }
 
             if (options.seriesDefaults.label) {
-                options.seriesDefaults.label.formatter = standardNumberFormatter;
+                // options.seriesDefaults.label.formatter = standardNumberFormatter;
             }
         }
 

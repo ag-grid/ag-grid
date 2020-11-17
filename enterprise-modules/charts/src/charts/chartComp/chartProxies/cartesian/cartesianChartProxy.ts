@@ -26,7 +26,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         const standaloneChartType = this.getStandaloneChartType();
         const flipXY = standaloneChartType === 'bar';
 
-        let xAxisType = 'category';
+        let xAxisType = (standaloneChartType === 'scatter' || standaloneChartType === 'histogram') ? 'number' : 'category';
         let yAxisType = 'number';
 
         if (flipXY) {
