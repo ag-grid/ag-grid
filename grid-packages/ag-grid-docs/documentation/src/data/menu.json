@@ -554,6 +554,11 @@
                 "enterprise": true
               },
               {
+                "title": "Row Stores",
+                "url": "../server-side-model-row-stores/",
+                "enterprise": true
+              },
+              {
                 "title": "Configuration",
                 "url": "../server-side-model-configuration/",
                 "enterprise": true
@@ -574,6 +579,11 @@
                 "enterprise": true
               },
               {
+                "title": "Refresh",
+                "url": "../server-side-model-refresh/",
+                "enterprise": true
+              },
+              {
                 "title": "Pivoting",
                 "url": "../server-side-model-pivoting/",
                 "enterprise": true
@@ -586,6 +596,33 @@
               {
                 "title": "Row Selection",
                 "url": "../server-side-model-selection/",
+                "enterprise": true
+              },
+              {
+                "title": "Changing Columns",
+                "url": "../server-side-model-changing-columns/",
+                "enterprise": true
+              },
+              {
+                "title": "Updating Data",
+                "url": "../server-side-model-updating/",
+                "enterprise": true,
+                "items": [
+                  {
+                    "title": "Transactions",
+                    "url": "../server-side-model-transactions/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "High Frequency",
+                    "url": "../server-side-model-high-frequency/",
+                    "enterprise": true
+                  }
+                ]
+              },
+              {
+                "title": "Load Retry",
+                "url": "../server-side-model-retry/",
                 "enterprise": true
               },
               {
@@ -604,37 +641,27 @@
                 "enterprise": true
               },
               {
-                "title": "Changing Columns",
-                "url": "../server-side-model-changing-columns/",
-                "enterprise": true
-              },
-              {
-                "title": "CRUD",
-                "url": "../server-side-model-crud/",
-                "enterprise": true
-              },
-              {
                 "title": "See Also",
                 "url": "",
                 "items": [
                   {
                     "title": "Using Node.js & MySQL",
-                    "url": "nodejs-server-side-operations/",
+                    "url": "../server-side-operations-nodejs/",
                     "enterprise": true
                   },
                   {
                     "title": "Using GraphQL & MySQL",
-                    "url": "graphql-server-side-operations/",
+                    "url": "../server-side-operations-graphql/",
                     "enterprise": true
                   },
                   {
                     "title": "Using Java & Oracle",
-                    "url": "oracle-server-side-operations/",
+                    "url": "../server-side-operations-oracle/",
                     "enterprise": true
                   },
                   {
                     "title": "Using Java & Apache Spark",
-                    "url": "spark-server-side-operations/",
+                    "url": "../server-side-operations-spark/",
                     "enterprise": true
                   }
                 ]
