@@ -36,6 +36,12 @@
         margin-left: 0.25rem;
     }
 
+    h2 {
+        enterprise-icon:after {
+            width: 1.5rem;
+        }
+    }
+
     h1:first-child + div > p:first-child {
         font-size: 1.25rem;
     }

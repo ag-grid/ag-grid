@@ -14,17 +14,11 @@ The options available for doing updates depends on what [Row Store](../server-si
 | High Frequency | Apply transactions at high speed.        | Full Only       |
 
 
-- **Update Single Row**:
+- **Update Single Row**: This means changing an attribute for a particular row.
 
-    This means changing an attribute for a particular row.
+- **Update Transactions**: This means adding, removing or updating rows.
 
-- **Update Transactions**:
-
-    This means adding, removing or updating rows.
-
-- **High Frequency**:
-
-    This means adding, removing or updating rows at high frequency.
+- **High Frequency**: This means adding, removing or updating rows at high frequency.
 
 
 ## Partial Store Updates

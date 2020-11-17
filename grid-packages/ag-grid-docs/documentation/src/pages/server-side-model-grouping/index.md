@@ -66,7 +66,7 @@ The example below demonstrates server-side Row Grouping. Note the following:
 | When the grid sort changes, only impacted rows will be reloaded. For example, if 'Sport' groups 
 | are expanded, sortingon the 'Year' column won't cause the top level 'Country' groups to reload, 
 | but sorting on the 'Gold' column will.
-| <br/>
+| <br/><br/>
 | To avoid this and always refresh top level groups regardless of which column is sorted, set the grid 
 | property `serverSideSortingAlwaysResets=true`.
 
@@ -74,8 +74,8 @@ The example below demonstrates server-side Row Grouping. Note the following:
 
 When grouping and a group is expanded, a new Row Store is created to store the child rows of the opened group. The diagram below shows what the Row Stores could look like with Row Grouping, where two top level Row Groups are open.
 
-<image-caption src="server-side-model-grouping/resources/multi-store.svg" width="80%" constrained="true">
-    Fig 1. Node Store - Grouping
+<image-caption src="server-side-model-grouping/resources/multi-store.svg" width="80%" constrained="true" centered="true">
+    <div style="text-align: center;">Fig 1. Node Store - Grouping</div>
 </image-caption>
 
 This means there can be any number of Row Stores existing inside the SSRM. Each time a Row Group is expanded, a new Row Store is created for that level. The sections [Server-Side Row Grouping](../server-side-model-grouping/) explains in detail this topic.
@@ -153,9 +153,7 @@ The example below demonstrates the `getServerSideStoreParams()` callback. Note t
 
     To observe, expand different levels of the data and notice when rows are read back in blocks.
 
-- When no grouping is active, the store is configured to use infinite scroll and only keeps two blocks of rows in the store.
-
-    To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
+- When no grouping is active, the store is configured to use infinite scroll and only keeps two blocks of rows in the store.<br/><br/>To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
 
 - Clicking **Store State** will print the state of all stores to the console using the API `getServerSideStoreState()`.
 
@@ -243,7 +241,7 @@ function isServerSideGroupOpenByDefault(params) {
 }
 ```
 
-It may also be helpful to use the [Row Node](../javascript-grid-row-node/) API `getRoute()` to inspect the route of a row node. If the Row Node is a group, it returns the route to that Row Node. If the Row Node is not a group, it returns `undefined`.
+It may also be helpful to use the [Row Node](../row-object/) API `getRoute()` to inspect the route of a row node. If the Row Node is a group, it returns the route to that Row Node. If the Row Node is not a group, it returns `undefined`.
 
 Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note the following:
 

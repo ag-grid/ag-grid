@@ -16,34 +16,37 @@ The grid comes with four row models:
 The Client-Side Row Model deals with client-side data. The Server-Side, Infinite and Viewport Row Models 
 deal with server-side data. The following is a summary of each:
 
-- ## Client-Side 
-    This is the default. The grid will load all of the data into the grid in one go.
-    The grid can then perform filtering, sorting, grouping, pivoting and aggregation all in memory.
-    
-    [Go to Client-Side Row Model](../client-side-model/)
-
-- ## Infinite
-    This will present the data to the user and load more data as the user scrolls down.
-    Use this if you want to display a large, flat (not grouped) list of data.
-    
-    [Go to Infinite Row Model](../infinite-scrolling/)
-
-- ## Server-Side <enterprise-icon></enterprise-icon>
-    The Server-Side Row Model builds on the Infinite Row Model. In addition to lazy-loading the data as the
-    user scrolls down, it also allows lazy-loading of grouped data with server-side grouping and aggregation.
-    Advanced users will use Server-Side Row Model to do ad-hoc slice and dice of data with server-side aggregations.
-
-
-    [Go to Server-Side Row Model](../server-side-model/)
-
-- ## Viewport <enterprise-icon></enterprise-icon>
-    The grid will inform the server exactly what data it is displaying (first and last row) and the
-    server will provide data for exactly those rows only. Use this if you want the server to know exactly
-    what the user is viewing, useful for updates in very large live datastreams where the server only
-    sends updates to clients viewing the impacted rows.
-
-    [Go to Viewport Row Model](../viewport/)
-
+<ul>
+    <li>
+        <h2>Client-Side</h2>
+        <p>
+            This is the default. The grid will load all of the data into the grid in one go.
+            The grid can then perform filtering, sorting, grouping, pivoting and aggregation all in memory.
+        </p>
+        <a href="../client-side-model/">Go to Client-Side Row Model</a>
+    </li>
+    <li>
+        <h2>Infinite</h2>
+        <p>
+            This will present the data to the user and load more data as the user scrolls down. Use this if you want to display a large, flat (not grouped) list of data.
+        </p>
+        <a href="../infinite-scrolling/">Go to Infinite Row Model</a>
+    </li>
+    <li>
+        <h2>Server-Side<enterprise-icon></enterprise-icon></h2>
+        <p>
+            The Server-Side Row Model builds on the Infinite Row Model. In addition to lazy-loading the data as the user scrolls down, it also allows lazy-loading of grouped data with server-side grouping and aggregation. Advanced users will use Server-Side Row Model to do ad-hoc slice and dice of data with server-side aggregations.
+        </p>
+        <a href="../server-side-model/">Go to Server-Side Row Model</a>
+    </li>
+        <li>
+        <h2>Viewport<enterprise-icon></enterprise-icon></h2>
+        <p>
+            The grid will inform the server exactly what data it is displaying (first and last row) and the server will provide data for exactly those rows only. Use this if you want the server to know exactly what the user is viewing, useful for updates in very large live datastreams where the server only sends updates to clients viewing the impacted rows.
+        </p>
+        <a href="../viewport/">Go to Viewport Row Model</a>
+    </li>
+</ul>
 
 Which row model you use is set as a grid property `rowModelType`. Set it to one of `'clientSide'`, 
 `'infinite'`, `'viewport'`, or `'serverSide'`. The default is `'clientSide'`.

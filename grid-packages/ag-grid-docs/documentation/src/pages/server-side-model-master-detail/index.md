@@ -156,7 +156,7 @@ The following example explicitly sets detail row heights based on the number of 
 
 See [Master Detail Dynamic Height](../master-detail-height/#dynamic-height) for more details.
 
-### Example Using Property `autoHeight`
+### Example Using Property autoHeight
 
 The following example gets the grid to auto-size all details sections to fit their rows. This is done by setting `masterGridOptions.detailCellRendererParams.autoHeight = true`.
 

@@ -121,7 +121,7 @@ When using the Server-Side Row Model it is necessary to supply the values as the
 }
 ```
 
-For more details on setting values, see [Supplying Filter Values](../filter-set-filter-list/#supplying-filter-values). Once you have supplied values to the Set Filter, they will not change unless you ask for them to be refreshed; see [Refreshing Values](../filter-set-filter-list//#refreshing-values) for more information.
+For more details on setting values, see [Supplying Filter Values](../filter-set-filter-list/#supplying-filter-values). Once you have supplied values to the Set Filter, they will not change unless you ask for them to be refreshed; see [Refreshing Values](../filter-set-filter-list/#refreshing-values) for more information.
 
 The example below demonstrates server-side filtering using the Set Filter and the Partial Row Store. Note the following:
 

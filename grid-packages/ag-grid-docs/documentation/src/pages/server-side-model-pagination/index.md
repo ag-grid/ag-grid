@@ -22,7 +22,7 @@ gridOptions: {
 }
 ```
 
-For more configuration details see the section on [Pagination](../pagination).
+For more configuration details see the section on [Pagination](../row-pagination).
 
 
 ## Server Pagination

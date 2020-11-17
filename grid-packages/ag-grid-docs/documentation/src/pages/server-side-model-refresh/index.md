@@ -68,15 +68,12 @@ When using the Full Store, if Row ID's are provided and rows are not purged, the
 
 The example below shows refreshing using the Full Store and keeping group state. The example is similar to the previous example with the addition `getRowNodeId()` is implemented. Note the following:
 
-- When 'Purge' is not checked, refreshing using any refresh button will maintain any open groups and children at that level.
-
+- When 'Purge' is not checked, refreshing using any refresh button will maintain any open groups and children at that level.<br/><br/>
     For example expand 'United States' and hit 'Refresh Everything' - note that the
     top level countries are refreshed (the version column changes once the load is
     complete) and the open 'United States' group is left open and the child rows
-    (displaying year groups) are left intact.
-
-- When 'Purge' is checked, refreshing using any refresh button will close all open groups and destroy all children at that level.
-
+    (displaying year groups) are left intact.<br/><br/>
+- When 'Purge' is checked, refreshing using any refresh button will close all open groups and destroy all children at that level.<br/><br/>
     For example expand 'United States' and hit 'Refresh Everything' - note that the
     list of countries is reset, including closing 'United States' and loosing
     all child rows to 'United States'. When 'United States' is expanded again, the

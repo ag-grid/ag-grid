@@ -23,7 +23,7 @@ The grid will ask your application, via a datasource, for the rows in blocks. Ea
 contains a subset of rows of the entire dataset. The following diagram is a high-level overview.
 
 
-<img src="high-level.png" alt="high-level" style="max-width: 100%; margin-bottom: 1rem;" />
+<img src="resources/high-level.png" alt="high-level" style="max-width: 100%; margin-bottom: 1rem;" />
 
 When the grid scrolls to a position where there is no corresponding block of rows loaded, the model 
 uses the provided datasource to get the rows for the requested block. In the diagram, the datasource 
@@ -132,7 +132,7 @@ It takes the following as parameters:
 
 - The `filterModel()` and `sortModel()` are passed for doing server-side sorting and filtering.
 
-- The [`context`](../grid-context/) is just passed as is and nothing to do with infinite scrolling. It's there if you need it for providing application state to your datasource.
+- The [context](../context/) is just passed as is and nothing to do with infinite scrolling. It's there if you need it for providing application state to your datasource.
 
 ### Setting Last Row Index
 
@@ -313,7 +313,7 @@ As with all row models, it is possible to enable pagination with infinite scroll
 | Example 2 | Equal     | Equal      | Recommended Sometimes |
 
 [[note]]
-| **Having smaller infinite blocks size than your pagination page size is not supported** You must have infinite block size greater than or equal to the pagination page size. If you have a smaller block size, the grid will not fetch enough rows to display one page. This breaks how infinite scrolling works and is not supported.
+| **Having smaller infinite blocks size than your pagination page size is not supported** |<br/><br/>You must have infinite block size greater than or equal to the pagination page size. If you have a smaller block size, the grid will not fetch enough rows to display one page. This breaks how infinite scrolling works and is not supported.
 
 ### Example 1: Auto Pagination Page Size, Large Infinite Block Size
 

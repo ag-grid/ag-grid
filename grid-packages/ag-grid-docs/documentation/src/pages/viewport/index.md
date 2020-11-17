@@ -6,11 +6,11 @@ enterprise: true
 A Viewport is a row model that allows showing a 'window' of data in your client. Typically all the data will reside on the server and the server will know what data is displayed in the client. This is again useful for the server to push changes out to the client as it knows what data is currently displayed.
 
 [[note]]
-| Don't use Viewport Row Model unless you understand what advantages it offers and whether or not you need them.</p>
+| Don't use Viewport Row Model unless you understand what advantages it offers and whether or not you need them.<br/><br/>
 | We find many of our users are using Viewport Row Model when they don't need to and end up with unnecessarily
 | complicated applications as a result. We'd recommend taking a look at our most powerful row model, the
 | [Server-Side Row Model](../server-side-model/), as an alternative.
-| <br><br>
+| <br/><br/>
 | The differences between row models can be found in our [row models summary page](../row-models/)
 
 To enable the Viewport Row Model, set the grid property `rowModelType='viewport'`.
@@ -26,6 +26,8 @@ The diagram below shows how the viewport maps to a connection to your dataset. T
 
 
 <img src="resources/viewport.png" alt="Viewport Connected to Dataset"/>
+
+<br/>
 
 [[note]]
 | It is the responsibility of the grid to display the data. It is the responsibility of the application
@@ -124,11 +126,11 @@ And you guessed it, if you are doing grouping, you will need to implement this y
 
 For simplicity, we stated earlier that the viewport was the rows the grid is currently displaying. This is _almost_ true except there are two properties, `viewportRowModelPageSize` and `viewportRowModelBufferSize`, to make the communication with the server better.
 
-### `viewportRowModelPageSize`
+### viewportRowModelPageSize
 
 It is not good to have the grid ask for rows one at a time if the user is scrolling slowly. To get around this, the grid defines a page size, so it will ask for rows in 'pages'. For example, if the pages size is 5, then the viewport will always start and end in numbers divisible by 5 such as 0 to 20 or 75 to 100. So if the user is scrolling slowly, the viewport will only be requested to get new rows after the grid hits 'the next five rows'. The default page size is `5`. To change this, set the grid property `viewportRowModelPageSize`.
 
-### `viewportRowModelBufferSize`
+### viewportRowModelBufferSize
 
 In addition to the page size, the grid will also extend the viewport outside the viewable area by the buffer size. For example, if the viewport is showing rows 30 to 50, and the buffer is set to 5, the grid will request rows 25 to 55 from the viewport. This will reduce 'loading flicker' as the user scrolls through the data. The default buffer size is `5`. To change this, set the grid property `viewportRowModelBufferSize`.
 

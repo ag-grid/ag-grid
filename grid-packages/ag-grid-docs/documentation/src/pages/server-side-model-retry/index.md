@@ -11,6 +11,7 @@ When loading fails, the datasource informs the grid of such using the `fail()` c
 
 Failed loads can be retried by using the grid API `retryServerSideLoads()`. This will retry all loads that have previously failed.
 
+### Examples
 
 Below shows two examples demonstrating retrying failed loads. One example uses the Full Store while the other uses the Finite Store. Both examples otherwise work identically. Note the following:
 
@@ -24,9 +25,7 @@ The following is the retry example with Partial Store:
 
 <grid-example title='Retry Finite Store' name='retry-infinite' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-
 The following is the retry example with Full Store:
-
 
 <grid-example title='Retry Full Store' name='retry-full' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
