@@ -1,5 +1,5 @@
-describe('Basic Tests of UMD Bundle', function () {
-    it('Visit Simple Bundle Test With React Cell Renderer', function () {
+describe('Test Fragment Renderer', function () {
+    it('Test Fragment Renderer', function () {
         cy.visit('./cypress/integration/fragmentsFuncRendererCreateDestroy.html');
 
         cy.wait(50);

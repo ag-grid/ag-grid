@@ -191,14 +191,16 @@ export class DropZoneColumnComp extends Component {
             this.popupShowing = false;
         };
 
-        const hidePopup = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: ePopup,
             closeOnEsc: true,
             closedCallback: popupHiddenFunc
         });
 
-        virtualList.setComponentCreator(this.createAggSelect.bind(this, hidePopup));
+        if (addPopupRes) {
+            virtualList.setComponentCreator(this.createAggSelect.bind(this, addPopupRes.hideFunc));
+        }
 
         this.popupService.positionPopupUnderComponent({
             type: 'aggFuncSelect',

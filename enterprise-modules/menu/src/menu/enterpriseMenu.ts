@@ -117,29 +117,52 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         const eMenuGui = menu.getGui();
 
+        const anchorToElement = eventSource ? eventSource : this.gridPanel.getGui();
+
+        const closedFuncs: ((e?: Event)=>void)[] = [];
+
+        closedFuncs.push( (e?: Event)=> {
+            this.destroyBean(menu);
+            column.setMenuVisible(false, 'contextMenu');
+
+            const isKeyboardEvent = e instanceof KeyboardEvent;
+
+            if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
+                const focusableEl = this.focusController.findTabbableParent(eventSource);
+
+                if (focusableEl) { focusableEl.focus(); }
+            }
+        });
+
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        const hidePopup = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: (e?: Event) => { // menu closed callback
-                this.destroyBean(menu);
-                column.setMenuVisible(false, 'contextMenu');
-
-                const isKeyboardEvent = e instanceof KeyboardEvent;
-
-                if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
-                    const focusableEl = this.focusController.findTabbableParent(eventSource);
-
-                    if (focusableEl) { focusableEl.focus(); }
-                }
+                closedFuncs.forEach( f => f(e));
             },
             positionCallback: () => { positionCallback(menu); },
-            anchorToElement: this.gridPanel.getGui()
+            anchorToElement
         });
 
-        menu.afterGuiAttached({ hidePopup });
+        if (addPopupRes) {
+            menu.afterGuiAttached({ hidePopup: addPopupRes.hideFunc });
+
+            // if user starts showing / hiding columns, or otherwise move the underlying column
+            // for this menu, we want to stop tracking the menu with the column position. otherwise
+            // the menu would move as the user is using the columns tab inside the menu.
+            const stopAnchoringFunc = addPopupRes.stopAnchoringFunc;
+            if (stopAnchoringFunc) {
+                column.addEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
+                column.addEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
+                closedFuncs.push( ()=> {
+                    column.removeEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
+                    column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
+                });
+            }
+        }
 
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
@@ -505,30 +528,7 @@ export class EnterpriseMenu extends BeanStub {
     public afterGuiAttached(params: any): void {
         this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup: params.hidePopup });
         this.hidePopupFunc = params.hidePopup;
-
-        const initialScroll = this.gridApi.getHorizontalPixelRange().left;
-        // if the user scrolls the grid horizontally, we want to hide the menu, as the menu will not appear in the right location anymore
-        const onBodyScroll = (event: any) => {
-            // If the user hides columns using the columns tab in this menu, it will change the size of the
-            // grid content and lead to a bodyScroll event. But we don't want to hide the menu for that kind
-            // of indirect scrolling. Assume that any bodyScroll that happens right after a column change is
-            // caused by that change, and ignore it.
-            const msSinceLastColumnChange = Date.now() - this.timeOfLastColumnChange;
-            if (msSinceLastColumnChange < 500) {
-                return;
-            }
-            // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal') {
-                const newScroll = this.gridApi.getHorizontalPixelRange().left;
-
-                if (Math.abs(newScroll - initialScroll) > this.gridOptionsWrapper.getScrollbarWidth()) {
-                    params.hidePopup();
-                }
-            }
-        };
-
         this.addDestroyFunc(params.hidePopup);
-        this.addManagedListener(this.eventService, 'bodyScroll', onBodyScroll);
     }
 
     public getGui(): HTMLElement {

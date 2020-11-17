@@ -9,6 +9,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 export class ReactComponent extends BaseReactComponent {
     static REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
+    static SLOW_RENDERERING_THRESHOLD = 3;
 
     private eParentElement!: HTMLElement;
     private componentInstance: any;
@@ -18,7 +19,6 @@ export class ReactComponent extends BaseReactComponent {
     private parentComponent: AgGridReact;
     private portal: ReactPortal | null = null;
     private statelessComponent: boolean;
-    private statelessDomInsertedListener: null | (() => void)  = null;
     private staticMarkup: HTMLElement | null | string = null;
     private staticRenderTime: number = 0;
 
@@ -29,12 +29,6 @@ export class ReactComponent extends BaseReactComponent {
         this.componentType = componentType;
         this.parentComponent = parentComponent;
         this.statelessComponent = ReactComponent.isStateless(this.reactComponent);
-
-        if(this.isStatelessComponent()) {
-            this.statelessDomInsertedListener = () => {
-                this.removeStaticMarkup();
-            }
-        }
     }
 
     public getFrameworkComponentInstance(): any {
@@ -53,10 +47,6 @@ export class ReactComponent extends BaseReactComponent {
         this.eParentElement = this.createParentElement(params);
         this.renderStaticMarkup(params);
 
-        if(this.isStatelessComponent()) {
-            this.eParentElement.addEventListener('DOMNodeInserted', this.statelessDomInsertedListener as any, false);
-        }
-
         return new Promise<void>(resolve => this.createReactComponent(params, resolve));
     }
 
@@ -65,18 +55,17 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     public destroy(): void {
-        this.eParentElement.removeEventListener('DOMNodeInserted', this.statelessDomInsertedListener as any);
         return this.parentComponent.destroyPortal(this.portal as ReactPortal);
     }
 
     private createReactComponent(params: any, resolve: (value: any) => void) {
+        // regular components (ie not functional)
         if (!this.isStatelessComponent()) {
             // grab hold of the actual instance created
             params.ref = (element: any) => {
                 this.componentInstance = element;
                 this.addParentContainerStyleAndClasses();
 
-                // regular components (ie not functional)
                 this.removeStaticMarkup();
             };
         }
@@ -95,9 +84,18 @@ export class ReactComponent extends BaseReactComponent {
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
             // here
             if (this.isStatelessComponent()) {
-                setTimeout(() => this.removeStaticMarkup());
+                if(this.isSlowRenderer()) {
+                    this.removeStaticMarkup()
+                }
+                setTimeout(() => {
+                    this.removeStaticMarkup()
+                });
             }
         });
+    }
+
+    private isSlowRenderer() {
+        return this.staticRenderTime >= ReactComponent.SLOW_RENDERERING_THRESHOLD;
     }
 
     private addParentContainerStyleAndClasses() {
@@ -163,10 +161,7 @@ export class ReactComponent extends BaseReactComponent {
             // if a user is doing anything that uses useLayoutEffect (like material ui) then it will throw and we
             // can't do anything to stop it; this is just a warning and has no effect on anything so just suppress it
             // for this single operation
-            const originalConsoleError = console.error;
-
-            console.error = () => {
-            };
+            console.error = () => {};
 
             const start = Date.now();
             const staticMarkup = renderToStaticMarkup(reactComponent);
@@ -213,8 +208,7 @@ export class ReactComponent extends BaseReactComponent {
 
     rendered(): boolean {
         return this.isNullRender() ||
-            !!this.staticMarkup ||
-            !!(this.isStatelessComponent() && this.statelessComponentRendered()) ||
+            !!this.staticMarkup || (this.isStatelessComponent() && this.statelessComponentRendered()) ||
             !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
     }
 }

@@ -1272,7 +1272,7 @@ export class CellComp extends Component implements TooltipParentComp {
             popupService.positionPopupUnderComponent.bind(popupService, params)
             : popupService.positionPopupOverComponent.bind(popupService, params);
 
-        this.hideEditorPopup = popupService.addPopup({
+        const addPopupRes = popupService.addPopup({
             modal: useModelPopup,
             eChild: ePopupGui,
             closeOnEsc: true,
@@ -1280,6 +1280,9 @@ export class CellComp extends Component implements TooltipParentComp {
             anchorToElement: this.getGui(),
             positionCallback
         });
+        if (addPopupRes) {
+            this.hideEditorPopup = addPopupRes.hideFunc;
+        }
 
         this.angular1Compile();
     }

@@ -206,9 +206,12 @@ export class TooltipFeature extends BeanStub {
             addCssClass(eGui, 'ag-tooltip-custom');
         }
 
-        this.tooltipPopupDestroyFunc = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             eChild: eGui
         });
+        if (addPopupRes) {
+            this.tooltipPopupDestroyFunc = addPopupRes.hideFunc;
+        }
         // this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
 
         this.positionTooltipUnderLastMouseEvent();

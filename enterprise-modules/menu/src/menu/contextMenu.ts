@@ -122,7 +122,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         };
         const positionCallback = this.popupService.positionPopupUnderMouseEvent.bind(this.popupService, positionParams);
 
-        const hidePopup = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
@@ -135,7 +135,9 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             anchorToElement: anchorToElement
         });
 
-        menu.afterGuiAttached({ container: 'contextMenu', hidePopup });
+        if (addPopupRes) {
+            menu.afterGuiAttached({ container: 'contextMenu', hidePopup: addPopupRes.hideFunc });
+        }
 
         // there should never be an active menu at this point, however it was found
         // that you could right click a second time just 1 or 2 pixels from the first
@@ -155,7 +157,9 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         });
 
         // hide the popup if something gets selected
-        menu.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, hidePopup);
+        if (addPopupRes) {
+            menu.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, addPopupRes.hideFunc);
+        }
 
         return true;
     }
