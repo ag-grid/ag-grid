@@ -1,0 +1,56 @@
+.code-viewer {
+    @extend .d-flex;
+    border: 0;
+    height: 100%;
+
+    &__files {
+        @extend .mt-2, .ml-2, .mb-2, .py-2;
+        width: 200px;
+        background-color: transparentize($secondary, 0.5);
+        border-radius: 5px 0 0 5px;
+    }
+
+    &__file {
+        font-size: 0.9rem;
+        padding: 10px;
+        width: 200px;
+
+        &:focus {
+            outline: none;
+        }
+
+        &--active {
+            color: $light;
+            background-color: $dark;
+            outline: none;
+            &:focus {
+                outline: 1px solid $light;
+                outline-offset: -2px;
+            }
+        }
+    }
+
+    &__file-title {
+        @extend .py-1, .px-2;
+        border-bottom: 1px solid $light;
+        color: $primary;
+        font-weight: bold;
+    }
+
+    &__file + &__file-title {
+        margin-top: 20px;
+    }
+
+    &__code {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+
+        pre {
+            font-size: 0.8rem;
+            flex: 1;
+            margin: 0;
+        }
+    }
+}

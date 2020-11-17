@@ -1,0 +1,13 @@
+.video-section {
+    @extend .d-flex;
+    
+    &--header {
+        font-size: 1.25rem;
+    }
+
+    iframe {
+        @extend .ml-3;
+        border: 2px solid $dark;
+        border-radius: 5px;
+    }
+}

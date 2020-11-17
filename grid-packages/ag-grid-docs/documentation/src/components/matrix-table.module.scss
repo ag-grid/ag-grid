@@ -1,0 +1,20 @@
+.matrix-table {
+    &--pad3 {
+        @extend .ml-3;
+    }
+    &--pad4 {
+        @extend .ml-5;
+    }
+
+    &--title {
+        font-size: 1.5rem;
+    }
+
+    &__true {
+        color: $success;
+    }
+
+    &__false {
+        color: $danger;
+    }
+}

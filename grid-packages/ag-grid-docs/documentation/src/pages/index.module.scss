@@ -1,0 +1,20 @@
+.getting-started-cards {
+    @extend .d-flex;
+}
+
+.getting-started-card {
+    @extend .card;
+    @extend .flex-grow-1;
+    @extend .m-3;
+    @extend .p-4;
+
+    &__logo {
+        @extend .my-5;
+        height: 100px;
+    }
+
+    &__button {
+        @extend .btn;
+        @extend .btn-primary;
+    }
+}

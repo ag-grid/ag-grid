@@ -1,0 +1,36 @@
+.image-caption {
+    @extend .card, .my-3;
+
+    &--centered {
+        @extend .mx-auto;
+
+        img {
+            @extend .mx-auto, .d-block;
+        }
+    }
+
+    &--constrained {
+        max-width: 100%;
+    }
+
+    &:not(&--centered) {
+        @extend .mx-3;
+    }
+
+    &__image {
+        @extend .p-2;
+    }
+
+    &__body {
+        @extend .card-body;
+
+        &--description-top {
+            @extend .p-1, .text-center;
+        }
+    }
+
+    &__body-text {
+        @extend .card-text;
+        white-space: nowrap;
+    }
+}
