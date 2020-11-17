@@ -1,4 +1,7 @@
 require('dotenv').config();
+const fs = require('fs');
+const gracefulFs = require('graceful-fs');
+gracefulFs.gracefulify(fs);
 
 const plugins = [
   {

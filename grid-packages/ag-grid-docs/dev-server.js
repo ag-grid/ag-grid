@@ -1,5 +1,9 @@
 const os = require('os');
 const fs = require('fs');
+const gracefulFs = require('graceful-fs');
+
+gracefulFs.gracefulify(fs);
+
 const cp = require('child_process');
 const glob = require('glob');
 const path = require('path');

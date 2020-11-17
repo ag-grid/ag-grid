@@ -1,4 +1,8 @@
 const fs = require('fs');
+const gracefulFs = require('graceful-fs');
+
+gracefulFs.gracefulify(fs);
+
 const path = require('path');
 const glob = require('glob');
 const gulp = require('gulp');
