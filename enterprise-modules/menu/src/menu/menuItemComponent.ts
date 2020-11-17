@@ -143,7 +143,7 @@ export class MenuItemComponent extends Component {
         const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
             { eventSource: eGui, ePopup });
 
-        const closePopup = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
@@ -154,7 +154,9 @@ export class MenuItemComponent extends Component {
         _.setAriaExpanded(eGui, true);
 
         this.hideSubMenu = () => {
-            closePopup();
+            if (addPopupRes) {
+                addPopupRes.hideFunc();
+            }
             this.subMenuIsOpen = false;
             _.setAriaExpanded(eGui, false);
             destroySubMenu();

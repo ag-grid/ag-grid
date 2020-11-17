@@ -54,7 +54,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             }
         });
 
-        this.hideList = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: listGui,
             closeOnEsc: true,
@@ -70,6 +70,9 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             }
         });
 
+        if (addPopupRes) {
+            this.hideList = addPopupRes.hideFunc;
+        }
         this.isPickerDisplayed = true;
 
         setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
