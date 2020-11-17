@@ -1,3 +1,5 @@
+import cheerio from 'cheerio';
+
 it('empty', () => {
 });
 
@@ -27,3 +29,5 @@ export const waitForAsyncCondition = (condition, maxAttempts, attempts=0) => new
 });
 
 export const wait = ms => new Promise((r) => setTimeout(r, 10));
+
+export const htmlForSelector = (renderedOutput, selector) => renderedOutput.find(selector).map((index, element) => cheerio(element).html())
