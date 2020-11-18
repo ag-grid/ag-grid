@@ -18,6 +18,10 @@ import ChartsApiExplorer from '../components/charts-api-explorer/ChartsApiExplor
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
+  const [showSideMenu, setShowSideMenu] = useState(true);
+
+  if (!page) { return null; }
+
   const pageName = getPageName(location.pathname);
   const ast = processFrameworkSpecificSections(page.htmlAst, framework);
   const getExampleRunnerProps = (props, library) => ({
@@ -49,8 +53,6 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
       'charts-api-explorer': props => ChartsApiExplorer({ ...props, framework }),
     },
   }).Compiler;
-
-  const [showSideMenu, setShowSideMenu] = useState(true);
 
   return (
     <div id="doc-page-wrapper" className={styles.docPageWrapper}>
