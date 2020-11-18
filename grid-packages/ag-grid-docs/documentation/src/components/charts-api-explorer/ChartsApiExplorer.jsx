@@ -94,12 +94,12 @@ const createOptionsJson = (chartType, options) => {
 
 const isFullScreen = () => window.self === window.top;
 
-export const ChartsApiExplorer = ({ framework, removeUnneededKeys = false }) => {
+export const ChartsApiExplorer = ({ framework }) => {
     const [chartType, setChartType] = useState('bar');
     const [options, setOptions] = useState({});
     const [defaults, setDefaults] = useState({});
-    const [boilerplateCode, setBoilerplateCode] = useState(null);
-    const [filesJson, setFilesJson] = useState(null);
+    const [boilerplateCode] = useState(null);
+    const setFilesJson = useState(null)[1];
 
     const getKeys = expression => expression.split('.');
 
@@ -172,8 +172,8 @@ export const ChartsApiExplorer = ({ framework, removeUnneededKeys = false }) => 
 
         const optionsJson = createOptionsJson(chartType, options);
         const files = getTemplates(framework, boilerplateCode, optionsJson);
-
         setFilesJson(JSON.stringify({ files }));
+        // eslint-disable-next-line
     }, []);
 
     const optionsJson = createOptionsJson(chartType, options);

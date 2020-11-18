@@ -31,7 +31,7 @@ import thumbnailStackedColumn from './stacked-column.png';
 import thumbnailTimeAxisWithIrregularIntervals from './time-axis-with-irregular-intervals.png';
 import thumbnailXYHistogramWithMeanAggregation from './xy-histogram-with-mean-aggregation.png';
 
-export default {
+const thumbnails = {
     '100--stacked-area': thumbnail100StackedArea,
     '100--stacked-bar': thumbnail100StackedBar,
     '100--stacked-column': thumbnail100StackedColumn,
@@ -64,4 +64,6 @@ export default {
     'stacked-column': thumbnailStackedColumn,
     'time-axis-with-irregular-intervals': thumbnailTimeAxisWithIrregularIntervals,
     'xy-histogram-with-mean-aggregation': thumbnailXYHistogramWithMeanAggregation,
-}
+};
+
+export default thumbnails;
