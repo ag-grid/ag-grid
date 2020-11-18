@@ -24,6 +24,7 @@ var gridOptions = {
         sortable: true
     },
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
     animateRows: true
 };
 

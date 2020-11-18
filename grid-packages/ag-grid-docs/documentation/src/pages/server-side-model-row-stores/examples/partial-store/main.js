@@ -15,7 +15,7 @@ var gridOptions = {
   },
 
   rowModelType: 'serverSide',
-  serverSideStoreType: 'infinite'
+  serverSideStoreType: 'partial'
 };
 
 // setup the grid after the page has finished loading

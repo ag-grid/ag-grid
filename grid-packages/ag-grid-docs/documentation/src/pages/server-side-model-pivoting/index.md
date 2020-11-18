@@ -3,12 +3,13 @@ title: "SSRM Pivoting"
 enterprise: true
 ---
 
-In this section we add Server-Side Pivoting to create an example with the ability to 'Slice and Dice' data using the Server-Side Row model.
+In this section we add Server-Side Pivoting to create an example with the ability to 'Slice and Dice' 
+data using the Server-Side Row Model (SSRM).
 
 ## Enabling Pivoting
 
-To pivot on a column `pivot=true` should be set on the column definition. Additionally the grid needs to be in pivot mode which is set through the grid option `pivotMode=true`.
-
+To pivot on a column `pivot=true` should be set on the column definition. Additionally the grid needs to be in 
+pivot mode which is set through the grid option `pivotMode=true`.
 
 In the snippet below a pivot is defined on the 'year' column and pivot mode is enabled:
 
@@ -32,7 +33,10 @@ For more configuration details see the section on [Pivoting](../pivoting).
 
 ## Pivoting on the Server
 
-The actual pivoting is performed on the server when using the Server-Side Row Model. When the grid needs more rows it makes a request via `getRows(params)` on the [Server-Side Datasource](../server-side-model-datasource/#datasource-interface) with metadata containing row grouping details.
+The actual pivoting is performed on the server when using the Server-Side Row Model. 
+When the grid needs more rows it makes a request via `getRows(params)` on the 
+[Server-Side Datasource](../server-side-model-datasource/#datasource-interface) with metadata 
+containing row grouping details.
 
 The properties relevant to pivoting in the request are shown below:
 
@@ -49,15 +53,16 @@ The properties relevant to pivoting in the request are shown below:
 }
 ```
 
-Note in the snippet above that `pivotCols` contains all the columns the grid is pivoting on, and `pivotMode` is used to determine if pivoting is currently enabled in the grid.
+Note in the snippet above that `pivotCols` contains all the columns the grid is pivoting on, 
+and `pivotMode` is used to determine if pivoting is currently enabled in the grid.
 
 ## Setting Secondary Columns
 
-Secondary columns are the columns that are created as part of the pivot function. You must provide these to the grid in order for the grid to display the correct columns for the active pivot function.
+Secondary columns are the columns that are created as part of the pivot function. You must provide 
+these to the grid in order for the grid to display the correct columns for the active pivot function.
 
-
-For example, if you pivot on `Year`, you need to add columns to the grid for each year contained in the data, e.g. `2000, 2002, 2004 etc...`
-
+For example, if you pivot on `Year`, you need to add columns to the grid for each year contained in the 
+data, e.g. `2000, 2002, 2004 etc...`
 
 Secondary columns are defined identically to primary columns: you provide a list of [Column Definitions](../column-definitions/) passing a list of columns and / or column groups using the following column API method:
 

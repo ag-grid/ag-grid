@@ -5,19 +5,18 @@ enterprise: true
 
 This section shows how the Server-Side Row Model can be configured with a Master / Detail view.
 
+The ability to nest grids within grids is commonly referred to as Master / Detail. 
+Here the top-level grid is referred to as the 'master grid' and the nested grid is referred to as the 'detail grid'.
 
-The ability to nest grids within grids is commonly referred to as Master / Detail. Here the top-level grid is referred to as the 'master grid' and the nested grid is referred to as the 'detail grid'.
+Master / Details is configured the same way for the Server-Side Row Model and the Client-Side Row Model.
+For a comprehensive look at Master / Detail configurations, see: [Client-Side Master / Detail](../master-detail/).
 
-
-As this server-side version of Master / Detail is configured in the same way as its client-side counterpart, this guide will focus on areas that are of particular interest to this server-side version.
-
-[[note]]
-| For a comprehensive look at Master / Detail configurations, see: [Client-Side Master / Detail](../master-detail/).
+Because the configuation is already discussed in [Client-Side Master / Detail](../master-detail/),
+this pages focuses on areas that are of particular interest to this Server-Side version.
 
 ## Enabling Master / Detail
 
 To enable Master / Detail, you should set the following grid options:
-
 
 - **masterDetail:** Set to `true` to inform the grid you want to allow expanding of rows to reveal detail grids.
 - **detailGridOptions:** The grid options to set for the detail grid. The detail grid is a fully featured instance of ag-Grid, so any configuration can be set on the detail grid that you would set any other grid.

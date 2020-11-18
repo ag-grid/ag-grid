@@ -19,6 +19,9 @@ var gridOptions = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
+  // set to partial, so infinite scrolling is enabled
+  serverSideStoreType: 'partial',
+
   // adding a debounce to allow skipping over blocks while scrolling
   blockLoadDebounceMillis: 1000,
 

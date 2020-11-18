@@ -9,7 +9,7 @@ Transaction Updates allow adding, removing or updating large numbers of rows ins
 Transactions for the Server Side Row Model (SSRM) work similarly to [Client Side Row Model Transactions](../data-update-transactions/). The API's are almost identical. However there are some important differences (such as the SSRM requiring a 'route') and as such the API's are not shared.
 
 
-Applying a SSRM transaction is done using the grid API applyServerSideTransaction(). Here are some introductory code snippets demonstrating how to use the API:
+Applying a SSRM transaction is done using the grid API `applyServerSideTransaction()`. Here are some introductory code snippets demonstrating how to use the API:
 
 ```js
 // Add 1 row at the top level group
@@ -138,7 +138,11 @@ export enum ServerSideTransactionResultStatus {
 
 ## Matching Rows
 
-In order for the grid to find rows to update and remove, it needs a way to identify these rows. If the grid callback `getRowNodeId` is provided, the grid will match on row ID. Other the grid callback `getRowNodeId` is not provided, the grid will match on object reference.
+In order for the grid to find rows to update and remove, it needs a way to identify these rows. 
+
+If the grid callback `getRowNodeId` is provided, the grid will match on row ID. 
+
+If the grid callback `getRowNodeId` is not provided, the grid will match on object reference.
 
 ## Targeting Stores
 
@@ -160,7 +164,7 @@ The example below demonstrates applying transactions to a store with groups. Not
 
 <grid-example title='Transactions Hierarchy' name='transactions-hierarchy' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
-## Transactions and Partial Store
+## Partial Store
 
 Transaction Updates work with the SSRM and Full Store only. For SSRM and Partial Store, Transactions are not allowed. Instead either move your application to use Full Store or us [Store Refresh](../server-side-model-refresh/) to have the grid data update.
 

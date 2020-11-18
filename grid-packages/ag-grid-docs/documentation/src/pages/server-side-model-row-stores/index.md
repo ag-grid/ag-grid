@@ -10,7 +10,7 @@ Inside the Server-Side Row Model (SSRM), rows are stored in Row Stores. There ar
 A Row Store stores [Row Nodes](../row-object/). A Row Node represents one Row inside the grid.
 
 
-There is at least one Row Store inside the grid for storing top level rows. The diagram below shows a SSRM with one Row Store.
+There is at least one Row Store inside the SSRM for storing top level rows. The diagram below shows a SSRM with one Row Store.
 
 
 <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
@@ -25,8 +25,18 @@ If the grid had [Row Grouping](../server-side-model-grouping/) there would be ma
 
 There are two types of Row Stores, which differ in their strategy for loading and managing rows. The types of Row Stores are as follows:
 
+- **Full Store**:
+    Loads rows all at once (eg if 500 rows in total, will load all 500 in one go).
+    This allows sorting and filtering inside the grid (a server
+    request isn't required to sort and filter) as the grid has all the rows needed
+    to do these operations.
+
+    The name "Full Store" comes from the fact all data is loaded into the store,
+    and not partially using blocks. The store is full of rows, no more rows will be loaded
+    after the initial load.
+    
 - **Partial Store**:
-    Loads rows in blocks (eg 100 rows in a block, thus loading 100 rows at a time). 
+    Loads rows in blocks (eg 500 rows in total and 100 rows in a block, 5 block loads are required). 
     Blocks are loaded as the user scrolls down and stored in a cache inside the 
     Partial Store. This technique, of loading rows as the user scrolls down,
     is known as [Infinite Scrolling](https://en.wiktionary.org/wiki/infinite_scroll). 
@@ -34,31 +44,24 @@ There are two types of Row Stores, which differ in their strategy for loading an
     are optionally purged from the cache, thus controlling the browser's memory footprint.
         
     The name "Partial Store" comes from the fact rows are partially loaded using blocks, 
-    one block at at time.
+    one block at a time.
 
-- **Full Store**:
-    Loads rows all at once (eg if 500 children when you expand a group, it loads
-    all 500 child rows). This allows sorting and filtering inside the grid (a server
-    request isn't required to sort and filter) and also provides the option of
-    inserting and removing rows (explained in the section on 
     [Transactions](../server-side-model-transactions/)).
-
-    The name "Full Store" comes from the fact all data is loaded into the store,
-    and not partially using blocks. The store is full of rows, no more rows will be loaded
-    after the initial load.
 
 <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
     <img src="resources/full-vs-partial-store.svg" style="width: 80%;"/>
     <div>Fig 2. Partial Store vs Full Store</div>
 </div>
 
-Set the store type using the grid property `serverSideStoreType`. Set to `full` to use the Full Store and `partial` to use the Partial Store. If not set, the Partial Store is used.
+Set the store type using the grid property `serverSideStoreType`. Set to `full` to use the Full Store and `partial` 
+to use the Partial Store. If not set, the Full Store is used.
 
 Below shows a simple example using Partial Store. Note the following:
 
 - Open the console to observe when the server is called to load rows.
 - Rows are loaded back 100 rows at a time. As the user scrolls down, more rows will be loaded.
-- Sorting the data is not possible by the grid. Sorting on the server side is explained in [Server-Side Sorting](../server-side-model-sorting/).
+- Sorting the data is not possible by the grid adn requires the data to be retrieved from the server again.
+Sorting on the server side is explained in [Server-Side Sorting](../server-side-model-sorting/).
 
 <grid-example title='Partial Store' name='partial-store' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
@@ -66,7 +69,8 @@ Below shows a simple example using Full Store. Note the following:
 
 - Open the console to observe when the server is called to load rows.
 - All the rows are loaded back in one go.
-- Sorting the data is done by the grid when the columns headers are clicked. Sorting is possible by the grid because the entire dataset is loaded into the grid.
+- Sorting the data is done by the grid when the columns headers are clicked. Sorting is possible by the grid because 
+the entire dataset is loaded into the grid.
 
 <grid-example title='Full Store' name='full-store' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
@@ -81,25 +85,38 @@ Below shows a simple example using Full Store. Note the following:
 
 So when is it best to use Partial Store? And when is it best to use Full Store?
 
-Use Full Store when all of the data comfortable fit's inside the browsers memory. It is possible to present big data inside an application using a combination of Full Store and Row Grouping. For example a dataset could have 10 million rows, however due to grouping only 200 rows are brought back at any group level - in this case Full Store would work fine.
+Use Full Store when all of the data comfortable fit's inside the browsers memory. It is possible to present big 
+data inside an application using a combination of Full Store and Row Grouping. For example a dataset could have 
+10 million rows, however due to grouping only 200 rows are brought back at any group level - in this case 
+Full Store would work fine.
 
 
-Use Partial Store when all of the data at a particular group level will not comfortably fit inside the browsers memory. For example a dataset with 10 million rows with no grouping applied would not fit inside a browsers memory, thus Partial Store would be needed to view it.
+Use Partial Store when all of the data at a particular group level will not comfortably fit inside the browsers memory. 
+For example a dataset with 10 million rows with no grouping applied would not fit inside a browsers memory, thus 
+Partial Store would be needed to view it.
 
 ## Partial Store Restrictions
 
-The Partial Store comes with one advantage - it can manage an very large (partial?) amount of data. However it comes with the following restrictions.
+The Partial Store comes with one advantage - it can manage a very large amount of data by breaking it into blocks
+and using infinite scrolling to load the blocks as the users scrolls. However it comes with the following restrictions.
 
 - ### In Grid Sorting
     Because data is read back in blocks from the Partial Store, the grid cannot sort the data,
-    as it does not have all the data loaded.
+    as it does not have all the data loaded. All sorting must be done on the server.
 
 - ### In Grid Filtering
     Because data is read back in blocks from the Partial Store, the grid cannot filter the data,
-    as it does not have all the data loaded.
+    as it does not have all the data loaded. All filtering must be done on the server.
 
-- ### Live Data
-    If data is live with regards inserts and deletes, this will cause problems with the
+- ### Updating Data
+    Updating data in the grid using [Transactions](../server-side-model-transactions/) is not supported
+    by the Partial Store.
+    
+    This is because applying updates would potentially move rows between blocks, which would not be possible
+    if all blocks are not loaded.
+
+- ### Changing Data
+    If data on the server is changing with regards inserts and deletes, this will cause problems with the
     Partial Store. This is because data is read back from the server in blocks.
     If the data is changing such that the data in each block changes,
     then the Partial Store will get incorrect rows. For example consider the following scenario:

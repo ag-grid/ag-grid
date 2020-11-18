@@ -56,6 +56,7 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     animateRows: true,

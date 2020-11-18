@@ -20,6 +20,7 @@ var gridOptions = {
         }
     },
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
     treeData: true,
     columnDefs: columnDefs,
     animateRows: true,

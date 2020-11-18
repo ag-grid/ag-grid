@@ -28,6 +28,7 @@ var gridOptions = {
     },
     // use the server-side row model
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
 
     // fetch 100 rows at a time
     cacheBlockSize: 100,

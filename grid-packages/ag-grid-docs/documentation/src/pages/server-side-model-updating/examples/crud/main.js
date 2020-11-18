@@ -16,7 +16,8 @@ var gridOptions = {
     },
     rowSelection: 'single',
     columnDefs: columnDefs,
-    rowModelType: 'serverSide'
+    rowModelType: 'serverSide',
+    serverSideStoreType: 'partial'
 };
 
 // setup the grid after the page has finished loading

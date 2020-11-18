@@ -18,6 +18,7 @@ var gridOptions = {
     },
     // use the server-side row model
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
 
     // dynamically set row heights
     getRowHeight: function(params) {

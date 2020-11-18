@@ -52,7 +52,7 @@ function createServerSideDatasource(server) {
       setTimeout(function () {
         if (response.success) {
           // supply rows for requested block to grid
-          params.success({rowData: response.rows, rowCount: response.lastRow});
+          params.success({rowData: response.rows});
         } else {
           params.fail();
         }
@@ -64,25 +64,13 @@ function createServerSideDatasource(server) {
 function createFakeServer(allData) {
   return {
     getData: function(request) {
-      // in this simplified fake server all rows are contained in an array
-      var requestedRows = allData.slice(request.startRow, request.endRow);
-
-      // here we are pretending we don't know the last row until we reach it!
-      var lastRow = getLastRowIndex(request, requestedRows);
+      // take a copy of the data to return to the client
+      var requestedRows = allData.slice();
 
       return {
         success: true,
-        rows: requestedRows,
-        lastRow: lastRow,
+        rows: requestedRows
       };
     },
   };
-}
-
-function getLastRowIndex(request, results) {
-  if (!results) return undefined;
-  var currentLastRow = request.startRow + results.length;
-
-  // if on or after the last block, work out the last row, otherwise return 'undefined'
-  return currentLastRow < request.endRow ? currentLastRow : undefined;
 }

@@ -22,8 +22,8 @@ var gridOptions = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  // set to infinite, which is the default anyway
-  serverSideStoreType: 'infinite',
+  // set to partial, so infinite scrolling is enabled
+  serverSideStoreType: 'partial',
 
   // fetch 10 rows at a time (default is 100)
   cacheBlockSize: 50,

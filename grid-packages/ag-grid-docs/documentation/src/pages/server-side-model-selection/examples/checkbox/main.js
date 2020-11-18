@@ -25,6 +25,7 @@ var gridOptions = {
 
     // use the server-side row model
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
 
     // allow multiple row selections
     rowSelection: 'multiple',

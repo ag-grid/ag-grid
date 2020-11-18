@@ -68,7 +68,8 @@ The example below shows this in action where the following can be noted:
 
 ## Update & Refresh
 
-The Partial Store acts as a cache against the original store of data which typically resides on the server-side of an application. To add or remove records when using the Partial Store, the pattern is to update the original dataset (typically on the server) and then get the Partial Store to refresh.
+To add or remove records when using the Partial Store, the pattern is to update the original dataset 
+(typically on the server) and then get the Partial Store to refresh.
 
 The example below shows this in action where the following can be noted:
 

@@ -77,7 +77,6 @@ var gridOptions = {
   asyncTransactionWaitMillis: 500,
   purgeClosedRowNodes: true,
   rowSelection: 'multiple',
-  serverSideAsyncTransactionLoadingStrategy: 'applyAfterLoaded',
   serverSideStoreType: 'full',
   columnDefs: columnDefs,
   // use the enterprise row model

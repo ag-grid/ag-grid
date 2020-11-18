@@ -23,7 +23,7 @@ Below shows two examples demonstrating retrying failed loads. One example uses t
 
 The following is the retry example with Partial Store:
 
-<grid-example title='Retry Finite Store' name='retry-infinite' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+<grid-example title='Retry Partial Store' name='retry-infinite' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 The following is the retry example with Full Store:
 

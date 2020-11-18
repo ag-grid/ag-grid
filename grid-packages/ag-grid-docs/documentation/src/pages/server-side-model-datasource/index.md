@@ -3,10 +3,12 @@ title: "SSRM Datasource"
 enterprise: true
 ---
 
-This section describes the Server-Side Datasource and demonstrates how it can be used to lazy-load data from a server through an infinite scroll.
+This section describes the Server-Side Datasource and demonstrates how it can be used to lazy-load data from a 
+server through an infinite scroll.
 
 
-The Server-Side Row Model (SSRM) requires a datasource to fetch rows for the grid. As the grid requires more data (eg the user scrolls down and Infinite Scrolling is active) more data will be requested via the datasource.
+The Server-Side Row Model (SSRM) requires a datasource to fetch rows for the grid. As the grid requires more data 
+(eg the user scrolls down and Infinite Scrolling is active) more data will be requested via the datasource.
 
 [[note]]
 | The SSRM does not impose any restrictions on the server-side technologies used. It is left up to applications to decide how and where data is sourced for the grid.
@@ -38,8 +40,7 @@ function createDatasource(server) {
             if (response.success) {
                 // supply rows for requested block to grid
                 params.success({
-                    rowData: response.rows,
-                    rowCount: response.lastRow
+                    rowData: response.rows
                 });
             } else {
                 // inform grid request failed
@@ -74,20 +75,21 @@ gridOptions.api.setServerSideDatasource(myDatasource);
 
 ## Simple Example
 
-The example below demonstrates lazy-loading of data with an infinite scroll. Notice the following:
-
+The example below demonstrates loading rows using an SSRM Datasource. The example does not use 
+Row Grouping or Infinite Scrolling, so it doesn't demonstrate the benefits of using the SSRM.
+However it does demonstrate how to configure the grid with the SSRM which will be built on later.
+Note the following:
 
 - The Server-Side Row Model is selected using the grid options property: `rowModelType = 'serverSide'`.
 - The datasource is registered with the grid using: `api.setServerSideDatasource(datasource)`.
-- A request is contained in params supplied to `getRows(params)` with `startRow` and `endRow`. This is used by the server to determine the range of rows to return.
-- When scrolling down there is a delay as more rows are fetched from the server.
-- Open the browser's dev console to view the contents of the requests made by the grid for more rows.
+- A request is contained in params supplied to `getRows(params)`.
+- Open the browser's dev console to view the contents of the request made by the grid for rows.
 
-<grid-example title='Infinite Scroll' name='infinite-scroll' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Simple Example' name='simple' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
 
 ## Datasource Interface
 
-The interface for the Server-sie Datasource is show below:
+The interface for the Server-side Datasource is show below:
 
 
 ```ts
@@ -127,16 +129,18 @@ interface IServerSideGetRowsParams {
 }
 ```
 
-The request gives details on what the grid is looking for. The success and failure callbacks are not included inside the request object to keep the request object simple data (i.e. simple data types, no functions). This allows the request object to be serialised (e.g. via JSON) and sent to your server.
+The request gives details on what the grid is looking for. The success and failure callbacks are not included inside 
+the request object to keep the request object simple data (i.e. simple data types, no functions). This allows the 
+request object to be serialised (e.g. via JSON) and sent to your server.
 
 The interface for the `request` is shown below:
 
 ```ts
 interface IServerSideGetRowsRequest {
-    // for Partial Store only, first row requested
+    // for Infinite Scroll (i.e. Partial Store) only, first row requested
    startRow: number;
 
-   // for Partial Store only, last row requested
+   // for Infinite Scroll (i.e. Partial Store) only, last row requested
    endRow: number;
 
    // row group columns
@@ -171,7 +175,8 @@ interface ColumnVO {
 }
 ```
 
-In the example above, no sorting, filter, grouping or pivoting was active. This means the request didn't have any information for these. The only attributes used in the above example were `startRow` and `endRow`.
+In the example above, no sorting, filtering, infinite scrolling, grouping or pivoting was active. This means the 
+request didn't have any information for any of these attributes.
 
 ## Success Callback
 
@@ -185,7 +190,7 @@ interface LoadSuccessParams {
     // data retreived from the server
     rowData: any[];
 
-    // the last row, if known
+    // for Infinite Scroll (i.e. Partial Store) only, the last row, if known
     rowCount?: number;
 
     // any extra info for the grid to associate with this load
@@ -194,7 +199,6 @@ interface LoadSuccessParams {
 ```
 
 The `rowData` attribute provides the grid with the requested data.
-
 
 The `rowCount` is used when Partial Store is used. When the total row count is known, this should be passed to the grid to enable the grid to set the vertical scroll range. This then allows the user to scroll the full extend of the dataset and the grid will never ask for data past the provided row count. Otherwise the grid will assume the total number of rows is not known and the vertical scrollbar range will grow as the user scrolls down (the default behaviour for Partial Store).
 

@@ -30,6 +30,7 @@ var gridOptions = {
     },
     // use the server-side row model
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
 
     onGridReady: function() {
         document.getElementById('athlete').checked = true;

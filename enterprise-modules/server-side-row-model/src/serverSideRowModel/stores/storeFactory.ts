@@ -120,7 +120,7 @@ export class StoreFactory {
                 return storeType;
             case null :
             case undefined :
-                return ServerSideStoreType.Partial;
+                return ServerSideStoreType.Full;
             default :
                 const types = Object.keys(ServerSideStoreType).join(', ');
                 console.log(`ag-Grid: invalid Server Side Store Type ${storeType}, valid types are [${types}]`);

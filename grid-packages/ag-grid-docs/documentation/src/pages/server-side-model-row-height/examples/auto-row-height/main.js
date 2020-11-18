@@ -32,6 +32,7 @@ var gridOptions = {
     },
     // use the server-side row model
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
 
     animateRows: true,
     suppressAggFuncInHeader: true,

@@ -16,6 +16,7 @@ var gridOptions = {
   rowSelection: 'multiple',
   // use the enterprise row model
   rowModelType: 'serverSide',
+  serverSideStoreType: 'partial',
   cacheBlockSize: 75,
   animateRows: true,
   isRowSelectable: isRowSelectable

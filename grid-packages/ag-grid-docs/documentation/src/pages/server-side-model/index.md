@@ -10,10 +10,7 @@ The Server-Side Row Model (SSRM) allows applications to work with very large dat
 1. Lazy loading child records from group rows as group rows are expanded.
 1. Infinite scrolling through data, loading more data as the application scrolls.
 
-As a result operations such as sorting, filtering, grouping and pivoting can be delegated to the server.
-
 Using the SSRM to view a large dataset is demonstrated below:
-
 
 <img src="resources/server-side-showcase.gif" style="max-width: 100%; margin-bottom: 1rem;" />
 
@@ -57,15 +54,27 @@ You may benefit from the combination of all these features or just be interested
 
 - **Infinite Scrolling:** When active, rows are read back from the server in blocks to provide the experience of infinite scrolling. This allows viewing very large datasets in the browser by only bringing back data one block at a time. Using Infinite Scrolling is an optional feature. It is possible to bring back all the data for a particular group level and then allow the grid to do Sorting and Filtering of the data in the browsers memory.
 
-- **Server-Side Grouping, Pivot and Aggregation:** Because the data is coming back from the server one group level at a time, this allows you to do aggregation on the server, returning back the aggregated results for the top level parent rows. For example you could include 'employee count' as an attribute on the returned manager record, to say how many employees a manager manages.
+- **Server-Side Grouping, Pivot and Aggregation:** Because the data is coming back from the server one group level at 
+a time, this allows you to do aggregation on the server, returning back the aggregated results for the top level parent 
+rows. For example you could include 'employee count' as an attribute on the returned manager record, to say how many 
+employees a manager manages.
 
-- **Slice and Dice:** Assuming your server-side can build the data query, you can allow the user to use the Grid UI to drag columns around to select what columns you want to group by and aggregate on. What the user selects will then be forwarded to your datasource as part of the request. This feature is advanced and will require some difficult server-side coding from you, however when done your users will have an experience of slicing and dicing large data in real time, something previously only available in expensive reporting tools, which you can now embed into your JavaScript application.
+- **Slice and Dice:** Assuming your server-side can build the data query, you can allow the user to use the Grid UI 
+to drag columns around to select what columns you want to group by and aggregate on. What the user selects will then 
+be forwarded to your datasource as part of the request. This feature is advanced and will require some difficult 
+server-side coding from you, however when done your users will have an experience of slicing and dicing large data in 
+real time, something previously only available in expensive reporting tools, which you can now embed into your 
+JavaScript application.
 
 ## Full Stack Examples
 
-All the examples in this documentation are standalone examples that can be run inside the documentation and exported to Plunker. This is excellent as you can easily inspect fully working examples. To allow this, all the examples have mocked servers (as the examples in the docs and Plunker are client-side only).
+All the examples in this documentation are standalone examples that can be run inside the documentation and 
+exported to Plunker. This is excellent as you can easily inspect fully working examples. To allow this, all the
+examples have mocked servers (as the examples in the docs and Plunker are client-side only).
 
-To accompany the examples in the documentation, we also provide the following full stack examples for reference. We advise using the examples in the documentation to learn about the Server-Side Row Model and then using the full stack examples as reference.
+To accompany the examples in the documentation, we also provide the following full stack examples for reference.
+We advise using the examples in the documentation to learn about the Server-Side Row Model and then using the full 
+stack examples as reference.
 
 The full stack examples are as follows:
 

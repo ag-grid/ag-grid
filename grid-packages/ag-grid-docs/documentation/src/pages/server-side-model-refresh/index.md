@@ -3,7 +3,8 @@ title: "SSRM Refresh"
 enterprise: true
 ---
 
-It is possible to get the grid to refresh any grouping level. This is useful if the data has changed and you want to do a complete refresh.
+It is possible to get the grid to refresh any grouping level. This is useful if the data has changed and 
+you want to do a complete refresh.
 
 ## Refresh API
 
@@ -55,9 +56,12 @@ When a refresh is done, all open groups at the refreshed level along with their 
 
 ### Group State - Full Store
 
-The Full Store can keep the state of open groups during a refresh. To do this the grid needs to be provided with [Row ID's](../row-object/#application-assigned-ids) by the application implementing `getRowNodeId()`. This is required to allow the grid to match newly loaded rows with previously loaded rows.
+The Full Store can keep the state of open groups during a refresh. To do this the grid needs to be 
+provided with [Row ID's](../row-object/#application-assigned-ids) by the application implementing `getRowNodeId()`. 
+This is required to allow the grid to match newly loaded rows with previously loaded rows.
 
-When using the Full Store, if Row ID's are provided and rows are not purged, then refreshing rows will keep open groups open and not destroy child rows.
+When using the Full Store, if Row ID's are provided and rows are not purged, then refreshing rows will keep open 
+groups open and not destroy child rows.
 
 | Purge | ID's Provided | Open Groups | Child Rows |
 | ----- | ------------- | ----------- | ---------- |
@@ -66,7 +70,8 @@ When using the Full Store, if Row ID's are provided and rows are not purged, the
 | Yes   | Yes           | Closed      | Destroyed  |
 | Yes   | No            | Closed      | Destroyed  |
 
-The example below shows refreshing using the Full Store and keeping group state. The example is similar to the previous example with the addition `getRowNodeId()` is implemented. Note the following:
+The example below shows refreshing using the Full Store and keeping group state. The example is similar to the 
+previous example with the addition `getRowNodeId()` is implemented. Note the following:
 
 - When 'Purge' is not checked, refreshing using any refresh button will maintain any open groups and children at that level.<br/><br/>
     For example expand 'United States' and hit 'Refresh Everything' - note that the
@@ -79,18 +84,24 @@ The example below shows refreshing using the Full Store and keeping group state.
     all child rows to 'United States'. When 'United States' is expanded again, the
     child rows are loaded again from scratch.
 
-Because the grid is getting provided ID's with via `getRowNodeId()` it allows the grid to update rows rather than replace rows. This also means when grid property `enableCellChangeFlash = true` the cells will flash when their data changes. If `getRowNodeId()` is not implemented, rows are replaced and cells are re-created from scratch, no flashing is possible.
+Because the grid is getting provided ID's with via `getRowNodeId()` it allows the grid to update rows rather than
+replace rows. This also means when grid property `enableCellChangeFlash = true` the cells will flash when their data 
+changes. If `getRowNodeId()` is not implemented, rows are replaced and cells are re-created from scratch, no flashing 
+is possible.
 
 
 <grid-example title='Keep Group State' name='keep-group-state' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ### Group State - Partial Store
 
-If using the Partial Store, the grid does not provide for keeping open groups. Refreshing a Partial Store will always reset groups and destroy children.
+If using the Partial Store, the grid does not provide for keeping open groups. Refreshing a Partial Store will always 
+reset groups and destroy children.
 
-This is because the Partial Store loads rows in blocks, so it's unreliable to expect rows that existed before to exist in the new load, as the row could be appearing in a different block.
+This is because the Partial Store loads rows in blocks, so it's unreliable to expect rows that existed before to 
+exist in the new load, as the row could appear in a different block.
 
-If you are using the Partial Store and need to restore groups to their previously open state, then this logic can be implemented in your application using the [Open by Default](../server-side-model-grouping/#open-by-default) API.
+If you are using the Partial Store and need to restore groups to their previously open state, then this logic can 
+be implemented in your application using the [Open by Default](../server-side-model-grouping/#open-by-default) API.
 
 
 ## Next Up

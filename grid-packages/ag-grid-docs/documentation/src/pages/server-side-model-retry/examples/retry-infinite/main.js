@@ -27,6 +27,7 @@ var gridOptions = {
 
     // use the server-side row model
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
     maxConcurrentDatasourceRequests: 1,
 
     suppressAggFuncInHeader: true,

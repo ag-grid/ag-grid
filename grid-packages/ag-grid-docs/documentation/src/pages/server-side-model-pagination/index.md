@@ -3,11 +3,13 @@ title: "SSRM Pagination"
 enterprise: true
 ---
 
-If you are dealing with large amounts of data, your applications may decide to use pagination to help the user navigate through the data.
+If you are dealing with large amounts of data, your applications may decide to use pagination to help 
+the user navigate through the data.
 
 ## Enabling Pagination
 
-Pagination is enabled in the grid via the `pagination` grid option. The pagination page size is typically set alongside this using the `paginationPageSize` option. These options are shown below:
+Pagination is enabled in the grid via the `pagination` grid option. The pagination page size is 
+typically set alongside this using the `paginationPageSize` option. These options are shown below:
 
 
 ```js
@@ -27,32 +29,17 @@ For more configuration details see the section on [Pagination](../row-pagination
 
 ## Server Pagination
 
-The actual pagination of rows is performed on the server when using the Server-Side Row Model. When the grid needs more rows it makes a request via `getRows(params)` on the [Server-Side Datasource](../server-side-model-datasource/#datasource-interface) with metadata containing pagination details.
-
-The properties relevant to pagination in the request are shown below:
-
-```ts
-// IServerSideGetRowsRequest
-{
-   // first row requested
-   startRow: number,
-
-   // last row requested
-   endRow: number,
-
-   ... // other params
-}
-```
-
-The `endRow` requested by the grid may not actually exist in the data so the correct `lastRowIndex` should be supplied in the response to the grid. See [Implementing the Server-Side Datasource](../server-side-model-datasource/#implementing-the-server-side-datasource) for more details.
+The pagination of rows is performed on the client, where it provides a proxy in front of the rows in the row model.
+However if using the Partial Store and have the `paginationPageSize` and `cacheBlockSize` equal, it will load
+each pagination page on demand as the user goes to the next page.
 
 The example below demonstrates server-side Pagination. Note the following:
 
 - Pagination is enabled using the grid option `pagination=true`.
 - A pagination page size of 10 (default is 100) is set using the grid option `paginationPageSize=10`.
 - The number of rows returned per request is set to 10 (default is 100) using `cacheBlockSize=10`.
-- The `startRow` and `endRow` properties in the request are used by the server to perform pagination.
-- Use the arrows in the pagination panel to traverse the data. Note the last page arrow is greyed out as the last row index is only supplied to the grid when the last row has been reached.
+- Use the arrows in the pagination panel to traverse the data. Note the last page arrow is greyed 
+out as the last row index is only supplied to the grid when the last row has been reached.
 - Open the browser's dev console to view the request supplied to the datasource.
 
 <grid-example title='Pagination' name='pagination' type='generated' options='{ "enterprise": true, "exampleHeight": 551, "extras": ["alasql"], "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>

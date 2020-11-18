@@ -18,6 +18,7 @@ var gridOptions = {
     },
     // use the server-side row model
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
 
     // allow multiple leaf row selections
     rowSelection: 'multiple',

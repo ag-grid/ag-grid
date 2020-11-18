@@ -19,6 +19,7 @@ var gridOptions = {
 
     // use the server-side row model
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
 
     // fetch group child count from 'childCount' returned by the server
     getChildCount: function(data) {

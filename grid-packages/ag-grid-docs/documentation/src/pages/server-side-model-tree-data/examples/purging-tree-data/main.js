@@ -14,6 +14,7 @@ var gridOptions = {
         field: 'employeeName'
     },
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
     treeData: true,
     columnDefs: columnDefs,
     rowSelection: 'multiple',

@@ -14,6 +14,7 @@ var gridOptions = {
 
     // use the server-side row model
     rowModelType: 'serverSide',
+    serverSideStoreType: 'partial',
 
     // enable master detail
     masterDetail: true,
