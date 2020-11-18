@@ -501,10 +501,9 @@ var gridOptions = {
             },
             tooltip: {
                 renderer: function (params) {
-                    var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                    var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    var value = formatThousands(Math.round(params.datum[params.angleKey]));
-                    return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
+                    return {
+                        content: formatThousands(Math.round(params.datum[params.angleKey]))
+                    };
                 }
             }
         },
@@ -520,125 +519,41 @@ var gridOptions = {
                 common: {
                     tooltip: {
                         renderer: function (params) {
-                            var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                            var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-                            var value = formatThousands(Math.round(params.datum[params.yKey]));
-                            return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
+                            return {
+                                content: formatThousands(Math.round(params.datum[params.yKey]))
+                            };
                         }
                     }
                 },
                 scatter: {
                     tooltip: {
                         renderer: function (params) {
-                            var formatCurrency = function (value) {
-                                return '$' + formatThousands(value);
-                            };
-
-                            var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                            var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
                             var label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
-                            var xValue = params.xName + ': ' + formatCurrency(params.datum[params.xKey]);
-                            var yValue = params.yName + ': ' + formatCurrency(params.datum[params.yKey]);
+                            var xValue = params.xName + ': $' + formatCurrency(params.datum[params.xKey]);
+                            var yValue = params.yName + ': $' + formatCurrency(params.datum[params.yKey]);
                             var size = '';
                             if (type === 'bubble' && params.sizeKey) {
-                                size = '<br>' + params.sizeName + ': ' + formatCurrency(params.datum[params.sizeKey]);
+                                size = '<br>' + params.sizeName + ': $' + formatCurrency(params.datum[params.sizeKey]);
                             }
-                            return title + '<div class="ag-chart-tooltip-content">' + label + xValue + '<br>' + yValue + size + '</div>';
+                            return {
+                                content: label + xValue + '<br>' + yValue + size
+                            };
                         }
                     }
                 },
                 histogram: {
                     tooltip: {
                         renderer: function (params) {
-
-                            var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                            var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-
-                            if (params.yKey) {
-                                // with a y key, the value is the total of the yKey value for the population of the bin:
-                                var value = formatThousands(Math.round(params.datum.total));
-                                return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
-                            } else {
-                                // without a y key, the value is a count of the population of the bin:
-                                var value = params.datum.frequency;
-                                return title + '<div class="ag-chart-tooltip-content">' + value + '</div>';
-                            }
+                            return {
+                                // With a y key, the value is the total of the yKey value for the population of the bin.
+                                // Without a y key, the value is a count of the population of the bin.
+                                content: params.yKey ? formatThousands(Math.round(params.datum.total)) : params.datum.frequency
+                            };
                         }
                     }
                 }
             }
         }
-    },
-    processChartOptions: function(params) {
-        var type = params.type;
-        var options = params.options;
-
-        if (type === 'pie' || type === 'doughnut') {
-            // options.seriesDefaults.label.enabled = false;
-            // options.seriesDefaults.tooltip.renderer = function(params) {
-            //     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-            //     var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-            //     var value = formatThousands(Math.round(params.datum[params.angleKey]));
-            //     return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
-            // };
-        } else {
-            // var isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
-            // var isBar = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
-
-            // options[isBar ? 'xAxis' : 'yAxis'].label.formatter = standardNumberFormatter;
-
-            if (type === 'scatter' || type === 'bubble') {
-                // options.xAxis.label.formatter = standardNumberFormatter;
-
-                // options.seriesDefaults.tooltip.renderer = function(params) {
-                //     var formatCurrency = function(value) {
-                //         return '$' + formatThousands(value);
-                //     };
-
-                //     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                //     var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-                //     var label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
-                //     var xValue = params.xName + ': ' + formatCurrency(params.datum[params.xKey]);
-                //     var yValue = params.yName + ': ' + formatCurrency(params.datum[params.yKey]);
-                //     var size = '';
-                //     if (type === 'bubble' && params.sizeKey) {
-                //         size = '<br>' + params.sizeName + ': ' + formatCurrency(params.datum[params.sizeKey]);
-                //     }
-                //     return title + '<div class="ag-chart-tooltip-content">' + label + xValue + '<br>' + yValue + size + '</div>';
-                // };
-            } else if (type === 'histogram') {
-                // options.seriesDefaults.tooltip.renderer = function(params) {
-
-                //     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                //     var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-
-                //     if (params.yKey) {
-                //         // with a y key, the value is the total of the yKey value for the population of the bin:
-                //         var value = formatThousands(Math.round(params.datum.total));
-                //         return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
-                //     } else {
-                //         // without a y key, the value is a count of the population of the bin:
-                //         var value = params.datum.frequency;
-                //         return title + '<div class="ag-chart-tooltip-content">' + value + '</div>';
-                //     }
-                // };
-
-                // options.xAxis.label.formatter = standardNumberFormatter;
-            } else {
-                options.seriesDefaults.tooltip.renderer = function(params) {
-                    var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                    var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    var value = formatThousands(Math.round(params.datum[params.yKey]));
-                    return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
-                };
-            }
-
-            if (options.seriesDefaults.label) {
-                // options.seriesDefaults.label.formatter = standardNumberFormatter;
-            }
-        }
-
-        return options;
     },
     getContextMenuItems: getContextMenuItems,
     excelStyles: [
