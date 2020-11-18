@@ -12,7 +12,7 @@
     overflow: hidden;
 
     a {
-        color: $secondary;
+        color: $dark;
         font-size: 0.85rem;
         @extend .d-block, .my-1;
     }
@@ -25,7 +25,7 @@
     mark {
         @extend .p-0;
         background-color: transparent;
-        color: $dark;
+        color: $primary;
         font-weight: bold;
     }
 
