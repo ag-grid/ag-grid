@@ -32,8 +32,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         const seriesDefaults = theme.getConfig<AgScatterSeriesOptions>('scatter.series.scatter');
         options.seriesDefaults = {
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -120,7 +120,9 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 strokeOpacity: seriesDefaults.stroke.opacity,
                 strokeWidth: seriesDefaults.stroke.width,
                 marker,
-                tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                tooltip: {
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                },
             }, 'scatter.series');
 
             if (!series) {

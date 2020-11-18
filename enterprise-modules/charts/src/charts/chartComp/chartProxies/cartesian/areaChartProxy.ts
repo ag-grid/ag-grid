@@ -57,7 +57,9 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             strokes: seriesDefaults.stroke.colors,
             strokeOpacity: seriesDefaults.stroke.opacity,
             strokeWidth: seriesDefaults.stroke.width,
-            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer,
+            tooltip: {
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
+            },
             marker
         }];
 
@@ -192,8 +194,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         options.seriesDefaults = {
             shadow: seriesDefaults.shadow as DropShadowOptions,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
