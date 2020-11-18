@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { AgGridReact } from '../agGridReact';
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
-import { ensureGridApiHasBeenSet, waitForAsyncCondition } from "./utils";
+import { ensureGridApiHasBeenSet } from "./utils";
 
 import { mount } from 'enzyme';
 
