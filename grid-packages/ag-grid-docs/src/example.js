@@ -532,7 +532,7 @@ var gridOptions = {
                             var xValue = params.xName + ': $' + formatCurrency(params.datum[params.xKey]);
                             var yValue = params.yName + ': $' + formatCurrency(params.datum[params.yKey]);
                             var size = '';
-                            if (type === 'bubble' && params.sizeKey) {
+                            if (params.sizeKey) {
                                 size = '<br>' + params.sizeName + ': $' + formatCurrency(params.datum[params.sizeKey]);
                             }
                             return {
