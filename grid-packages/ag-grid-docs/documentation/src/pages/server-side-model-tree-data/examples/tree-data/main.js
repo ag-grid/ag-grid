@@ -8,7 +8,8 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         width: 240,
-        filter: 'agTextColumnFilter'
+        filter: 'agTextColumnFilter',
+        flex: 1
     },
     autoGroupColumnDef: {
         field: 'employeeName',

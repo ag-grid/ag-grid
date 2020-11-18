@@ -543,8 +543,13 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
         if (!expandableGroup) { return false; }
 
-        const showing = this.isShowRowGroupForThisRow();
-        return showing;
+        const displayingForOneColumnOnly = typeof this.params.column.getColDef().showRowGroup === 'string';
+        if (displayingForOneColumnOnly) {
+            const showing = this.isShowRowGroupForThisRow();
+            return showing;
+        } else {
+            return true;
+        }
     }
 
     private isShowRowGroupForThisRow(): boolean {

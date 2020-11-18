@@ -8,7 +8,8 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         width: 235,
-        resizable: true
+        resizable: true,
+        flex: 1
     },
     autoGroupColumnDef: {
         field: 'employeeName'
