@@ -116,7 +116,8 @@ function launchPhpCP(app) {
 }
 
 function launchGatsby() {
-    const gatsby = cp.spawn('npm', ['start'], {
+    const npm = WINDOWS ? 'npm.cmd' : 'npm';
+    const gatsby = cp.spawn(npm, ['start'], {
         cwd: 'documentation',
         stdio: [process.stdin, process.stdout, process.stderr]
     });
