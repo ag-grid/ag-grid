@@ -1,3 +1,8 @@
+.ais-Hits {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
 .ais-Hits-list {
     @extend .list-group, .list-group-flush;
 }
@@ -12,11 +17,27 @@
         @extend .d-block, .my-1;
     }
 
+    .ais-Snippet {
+        white-space: normal;
+        font-size: 0.9rem;
+    }
+
+    mark {
+        @extend .p-0;
+        background-color: transparent;
+        color: $dark;
+        font-weight: bold;
+    }
+
     &:hover {
-        background-color: lighten($primary, 10%);
+        background-color: $secondary;
 
         a {
             text-decoration: none;
+            color: $light;
+        }
+
+        mark {
             color: $light;
         }
     }
@@ -25,9 +46,4 @@
         font-size: 1rem;
         font-weight: bold;
     }
-}
-
-.ais-Snippet {
-    white-space: normal;
-    font-size: 0.9rem;
 }
