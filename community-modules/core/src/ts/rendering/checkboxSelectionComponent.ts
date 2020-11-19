@@ -82,9 +82,9 @@ export class CheckboxSelectionComponent extends Component {
                     this.onCheckedClicked();
                 }
             } else if (isSelected) {
-                this.onUncheckedClicked(event || {});
-            } else {
                 this.onCheckedClicked();
+            } else {
+                this.onUncheckedClicked(event || {});
             }
         });
 
