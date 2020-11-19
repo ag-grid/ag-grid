@@ -8,7 +8,7 @@
     "build": "gulp && npm run hash",
     "umd": "rollup -c",
     "test": "jest",
-    "test:e2e": "gulp link-umd-e2e && npm run cypress:e2e && npm run cypress:components",
+    "test:e2eX": "gulp link-umd-e2e && npm run cypress:e2e && npm run cypress:components",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "cypress:open": "cross-env NODE_ENV=test cypress open",
