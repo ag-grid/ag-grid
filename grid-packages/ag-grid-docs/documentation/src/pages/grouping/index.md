@@ -144,6 +144,22 @@ The following examples shows using `rowGroupIndex` to set the order of the group
 
 <grid-example title='Row Group Index' name='row-group-index' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
+
+## Showing Open Groups
+
+Setting the grid property `showOpenedGroup=true` will show the name of the opened group inside the group column.
+This is useful when the user scrolls down through the children of the group and the row showing what group
+was opened is scrolled out of view.
+
+The example below uses `showOpenedGroup=true` with one group column. The open group is shown at the leaf level.
+
+<grid-example title='Show Opened Groups' name='show-opened-group' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+The following example uses `showOpenedGroup=true` with many group columns. The open groups are shown across all
+group columns where the group is open for that column.
+
+<grid-example title='Show Opened Groups Many Columns' name='show-opened-groups-many-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
 ## Hide Open Parents
 
 <video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=348s" time="05:48"></video-link>

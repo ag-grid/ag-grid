@@ -379,6 +379,14 @@
                 "url": "../selection/#groupSelection"
             }
         },
+        "showOpenedGroup": {
+            "default": false,
+            "description": "Shows the open group in the group column for non-group rows.",
+            "more": {
+                "name": "Showing Open Groups",
+                "url": "../grouping/#showing-open-groups"
+            }
+        },
         "groupRemoveSingleChildren": {
             "default": false,
             "description": "Set to `true` to collapse groups that only have one child.",
@@ -467,6 +475,13 @@
             "more": {
                 "name": "Custom Aggregation Functions",
                 "url": "../aggregation/#custom-aggregation-functions"
+            }
+        },
+        "suppressAggFilteredOnly": {
+            "description": "Set to true so that aggregations are not impacted by filtering.",
+            "more": {
+                "name": "Custom Aggregation Functions",
+                "url": "../aggregation/#filtering"
             }
         },
         "suppressMakeVisibleAfterUnGroup": {

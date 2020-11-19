@@ -3,7 +3,8 @@ title: "Aggregation"
 enterprise: true
 ---
 
-When grouping, you can apply an aggregation function to any column to populate the group row with values. You can pick from the grid's built in aggregation functions or provide your own.
+When grouping, you can apply an aggregation function to any column to populate the group row with values. 
+You can pick from the grid's built in aggregation functions or provide your own.
 
 ## Defining Aggregations
 
@@ -142,8 +143,6 @@ interface IAggFuncParams {
 }
 ```
 
-## Example 2 - Custom Aggregation Functions
-
 The next example shows many custom aggregation functions configured in a variety of ways and demonstrating different things aggregation functions can do.
 
 The following can be noted from the example:
@@ -218,11 +217,27 @@ The following example demonstrates this approach in action:
 
 <grid-example title='Multi-Column Aggregation' name='multi-column-aggregation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 
+## Filtering
+
+Aggregations work on filtered values only. If a filter removes rows from a group, the aggregation for the group
+is recalculated to consider only rows remaining after the filter is applied.
+
+To override this and always have aggregated values include filtered values (thus the aggregated values done change
+as filters are applied) set the grid property `suppressAggFilteredOnly`.
+
+In the example below, `suppressAggFilteredOnly` is not set. 
+Note that the Year column has a filter. As the filter changes, the aggregation values change.
+
+<grid-example title='Aggregation and Filters' name='filters' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu"] }'></grid-example>
+
+In the example below, `suppressAggFilteredOnly=true`. 
+Note that the Year column has a filter. As the filter changes, the aggregation values **do not** change.
+
+<grid-example title='Suppress Filtered Only' name='suppress-filtered-only' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu"] }'></grid-example>
+
 ## Aggregation API
 
-
 After the grid is initialised, there are two steps to set an aggregation on a column:
-
 
 1. Set the aggregation function on the column via `columnApi.setColumnAggFunc(colKey, aggFunc)`
 1. Add the columns to the list of value columns via `columnApi.addValueColumn(colKey)`

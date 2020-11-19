@@ -206,3 +206,19 @@ var gridOptions = {
 Filler groups do not keep their selection state should the filler group be moved. For example if you have groups A->B->C, where C is the only row provided (so the grid creates groups A and B for you), and then you change the patch to D->B->C, group B will not keep it's selection.
 
 If keeping selection of groups is a priority, then arrange your data so that the grid does not need to create any filler groups.
+
+
+## Filtering Aggregations
+
+If Aggregations and Filters are active in the Tree Data, there is one thing to be concerned about. That is that
+aggregation values change as filters are applied, which in turn can impact the results of the filter.
+
+This is not a concern when filtering and not using Tree Data, as under normal [Row Grouping](../grouping/) the group
+rows (where the aggregations reside) are not filterred on, only leaf rows are filtered on.
+
+However for Tree Data, all rows are filtered on, as all rows are groups (a leaf row is just a group with no children).
+For this reason, if you are filtering on a column that has an aggregation active, the aggregated value will be a
+moving target as the filter is applied.
+
+To stop the aggregation from been a moving target, you need to set the grid property `suppressAggFilteredOnly=true`.
+This is explained in the section [Aggregations](../aggregation/#filtering).
