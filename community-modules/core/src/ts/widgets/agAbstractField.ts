@@ -5,6 +5,7 @@ export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaEl
 export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabel> extends AgAbstractLabel<TConfig> {
     public static EVENT_CHANGED = 'valueChange';
 
+    protected previousValue: TValue | null | undefined;
     protected value: TValue | null | undefined;
     protected disabled: boolean = false;
 
@@ -36,6 +37,10 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabe
         return this;
     }
 
+    public getPreviousValue(): TValue | null | undefined {
+        return this.previousValue;
+    }
+
     public getValue(): TValue | null | undefined {
         return this.value;
     }
@@ -45,6 +50,7 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabe
             return this;
         }
 
+        this.previousValue = this.value;
         this.value = value;
 
         if (!silent) {
