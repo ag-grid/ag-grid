@@ -496,18 +496,25 @@ var gridOptions = {
     },
     chartThemeOverrides: {
         polar: {
-            label: {
-                enabled: false
-            },
-            tooltip: {
-                renderer: function (params) {
-                    return {
-                        content: formatThousands(Math.round(params.datum[params.angleKey]))
-                    };
+            series: {
+                pie: {
+                    label: {
+                        enabled: false
+                    },
+                    tooltip: {
+                        renderer: function (params) {
+                            return {
+                                content: '$' + formatThousands(Math.round(params.datum[params.angleKey]))
+                            };
+                        }
+                    }
                 }
             }
         },
         cartesian: {
+            common: {
+
+            },
             axes: {
                 number: {
                     label: {
@@ -516,12 +523,39 @@ var gridOptions = {
                 }
             },
             series: {
-                common: {
+                column: {
                     tooltip: {
                         renderer: function (params) {
                             return {
-                                content: formatThousands(Math.round(params.datum[params.yKey]))
-                            };
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
+                            }
+                        }
+                    }
+                },
+                bar: {
+                    tooltip: {
+                        renderer: function (params) {
+                            return {
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
+                            }
+                        }
+                    }
+                },
+                line: {
+                    tooltip: {
+                        renderer: function (params) {
+                            return {
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
+                            }
+                        }
+                    }
+                },
+                area: {
+                    tooltip: {
+                        renderer: function (params) {
+                            return {
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
+                            }
                         }
                     }
                 },
@@ -529,11 +563,11 @@ var gridOptions = {
                     tooltip: {
                         renderer: function (params) {
                             var label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
-                            var xValue = params.xName + ': $' + formatCurrency(params.datum[params.xKey]);
-                            var yValue = params.yName + ': $' + formatCurrency(params.datum[params.yKey]);
+                            var xValue = params.xName + ': $' + formatThousands(params.datum[params.xKey]);
+                            var yValue = params.yName + ': $' + formatThousands(params.datum[params.yKey]);
                             var size = '';
                             if (params.sizeKey) {
-                                size = '<br>' + params.sizeName + ': $' + formatCurrency(params.datum[params.sizeKey]);
+                                size = '<br>' + params.sizeName + ': $' + formatThousands(params.datum[params.sizeKey]);
                             }
                             return {
                                 content: label + xValue + '<br>' + yValue + size
@@ -545,8 +579,9 @@ var gridOptions = {
                     tooltip: {
                         renderer: function (params) {
                             return {
-                                // With a y key, the value is the total of the yKey value for the population of the bin.
-                                // Without a y key, the value is a count of the population of the bin.
+                                title: (params.xName || params.xKey) + ': $' + formatThousands(params.datum.domain[0]) + ' - $' + formatThousands(params.datum.domain[1]),
+                                // With a yKey, the value is the total of the yKey value for the population of the bin.
+                                // Without a yKey, the value is a count of the population of the bin.
                                 content: params.yKey ? formatThousands(Math.round(params.datum.total)) : params.datum.frequency
                             };
                         }

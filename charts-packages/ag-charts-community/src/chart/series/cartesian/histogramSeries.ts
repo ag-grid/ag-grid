@@ -601,7 +601,7 @@ export class HistogramSeries extends CartesianSeries {
         const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
         const bin: HistogramBin = nodeDatum.seriesDatum;
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
-        const title = `${xName || xKey} ${toFixed(rangeMin)} - ${toFixed(rangeMax)}`;
+        const title = `${xName || xKey}: ${toFixed(rangeMin)} - ${toFixed(rangeMax)}`;
         let content = yKey ?
             `<b>${yName || yKey} (${aggregation})</b>: ${toFixed(aggregatedValue)}<br>` :
             '';
