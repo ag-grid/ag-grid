@@ -9,29 +9,33 @@ export class ChartCrossFilter extends BeanStub {
     public filter(event: any, reset: boolean = false): void {
         const filterModel = this.gridApi.getFilterModel();
 
-        // const passValidation = this.validateColumnFilter(filterModel, event);
-        // if (!passValidation) { return; }
-
+        // filters should be reset when user clicks on canvas background
         if (reset) {
-            // filter reset is performed when user clicks on canvas
             this.resetFilters(filterModel);
-        } else {
-            // otherwise update filters based on current chart selections
+            return;
+        }
+
+        let colId = ChartCrossFilter.extractFilterColId(event);
+        if (this.isValidColumnFilter(colId)) {
+            // update filters based on current chart selections
             this.updateFilters(filterModel, event);
+        } else {
+            console.warn("ag-Grid: cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
+                "to be defined on the column with id: '" + colId + "'");
         }
     }
 
     private resetFilters(filterModel: any) {
         const filtersExist = Object.keys(filterModel).length > 0;
         if (filtersExist) {
-            // only reset filters / charts when necessary to prevent flickering
+            // only reset filters / charts when necessary to prevent undesirable flickering effect
             this.gridApi.setFilterModel(null);
             this.gridApi.onFilterChanged();
         }
     }
 
     private updateFilters(filterModel: any, event: any) {
-        let dataKey = ChartCrossFilter.extractDataKey(event);
+        let dataKey = ChartCrossFilter.extractFilterColId(event);
         let selectedValue = event.datum[dataKey].toString();
 
         let filterColId = dataKey;
@@ -54,14 +58,25 @@ export class ChartCrossFilter extends BeanStub {
                 updatedValues.push(selectedValue);
             }
 
-            filterModel[filterColId] = {filterType: 'multi', filterModels: [null, {filterType: 'set', values: updatedValues}]};
+            filterModel[filterColId] = this.getUpdatedFilterModel(filterColId, updatedValues);
         } else {
-            const values = [selectedValue];
-            filterModel = {[filterColId]: {filterType: 'multi', filterModels: [null, {filterType: 'set', values}]}};
+            const updatedValues = [selectedValue];
+            filterModel = {[filterColId]: this.getUpdatedFilterModel(filterColId, updatedValues)};
         }
 
         this.gridApi.setFilterModel(filterModel);
         this.gridApi.onFilterChanged();
+    }
+
+    private getUpdatedFilterModel(colId: any, updatedValues: any[]) {
+        let columnFilterType = this.getColumnFilterType(colId);
+        if (columnFilterType === 'agSetColumnFilter') {
+            return {filterType: 'set', values: updatedValues};
+        }
+
+        if (columnFilterType === 'agMultiColumnFilter') {
+            return {filterType: 'multi', filterModels: [null, {filterType: 'set', values: updatedValues}]};
+        }
     }
 
     private getCurrentGridValuesForCategory(dataKey: any) {
@@ -78,16 +93,16 @@ export class ChartCrossFilter extends BeanStub {
         return filteredValues;
     }
 
-    private validateColumnFilter(filterModel: any, event: any): boolean {
-        let dataKey = ChartCrossFilter.extractDataKey(event);
-        if (!_.includes(['set', 'multi'], filterModel[dataKey])) {
-            console.warn("ag-Grid: cross filtering requires 'set' or 'multi' filter to be configured on a column:  " + event.xKey);
-            return false;
-        }
-        return true;
+    private static extractFilterColId(event: any): string {
+        return event.xKey ? event.xKey : event.labelKey;
     }
 
-    private static extractDataKey(event: any) {
-        return event.xKey ? event.xKey : event.labelKey;
+    private isValidColumnFilter(colId: any) {
+        return _.includes(['agSetColumnFilter', 'agMultiColumnFilter'], this.getColumnFilterType(colId));
+    }
+
+    private getColumnFilterType(colId: any) {
+        let gridColumn = this.columnController.getGridColumn(colId);
+        return gridColumn ? gridColumn.getColDef().filter : undefined;
     }
 }

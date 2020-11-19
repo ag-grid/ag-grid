@@ -198,8 +198,6 @@ export class CrossFilterDatasource extends BeanStub {
             extractedRowData = extractedRowData.filter((_1, index) => !_.includes(groupIndexesToRemove, index));
         }
 
-        console.log("extractedRowData: ", extractedRowData.slice());
-
         return { data: extractedRowData, columnNames };
     }
 
@@ -271,8 +269,6 @@ export class CrossFilterDatasource extends BeanStub {
                 })
             });
         }
-
-        console.log('dataAggregated: ', dataAggregated);
 
         return dataAggregated;
     }

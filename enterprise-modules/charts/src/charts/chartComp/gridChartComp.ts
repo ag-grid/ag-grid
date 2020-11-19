@@ -15,7 +15,6 @@ import {
     Environment,
     Events,
     GridApi,
-    GridOptionsWrapper,
     IAggFunc,
     PopupService,
     PostConstruct,
@@ -137,7 +136,11 @@ export class GridChartComp extends Component {
 
         this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
-        this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+
+        if (this.chartMenu) {
+            // chart menu may not exist, i.e. cross filtering
+            this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        }
 
         this.refresh();
         this.raiseChartCreatedEvent();
@@ -310,8 +313,10 @@ export class GridChartComp extends Component {
     }
 
     private addMenu(): void {
-        this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
-        this.eChartContainer.appendChild(this.chartMenu.getGui());
+        if (!this.params.crossFiltering) {
+            this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
+            this.eChartContainer.appendChild(this.chartMenu.getGui());
+        }
     }
 
     private addTitleEditComp(): void {
