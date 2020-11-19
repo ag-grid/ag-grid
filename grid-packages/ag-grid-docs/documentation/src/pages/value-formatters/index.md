@@ -12,7 +12,7 @@ The interface for `valueFormatter` is as follows:
 
 ```ts
 // function for valueFormatter
-function valueFormatter(params: ValueGetterParams) => any;
+function valueFormatter(params: ValueFormatterParams) => any;
 
 // interface for params
 interface ValueFormatterParams {
