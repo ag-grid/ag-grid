@@ -1,69 +1,15 @@
 // noinspection ES6UnusedImports
 import React, {useState} from 'react'
 import {mount} from 'cypress-react-unit-test'
-import {AgGridColumn} from "../../lib/agGridColumn";
-import {AgGridReact} from "../../lib/agGridReact";
+import {AgGridColumn, AgGridReact} from "../..";
 import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
-import {ensureGridApiHasBeenSet} from "./utils";
+import {cssProperty, ensureGridApiHasBeenSet, getTextWidth} from "./utils";
 
 class CRF extends React.Component {
     render() {
-        return <>Hello thank you for your time to look at this problem</>;
+        return <div className='cell-content'>Hello thank you for your time to look at this problem</div>;
     }
 }
-
-const App = (props) => {
-    const columns = [
-        {
-            headerName: "A",
-            field: "a",
-            resizable: true
-        },
-        {
-            headerName: "B",
-            field: "b",
-            cellRenderer: 'crf',
-            cellStyle: {"white-space": "normal"},
-            autoHeight: true,
-            resizable: true
-        }
-    ];
-
-    return (
-        <div
-            className="ag-theme-alpine"
-            style={{
-                height: "80vh",
-                width: "500px"
-            }}
-        >
-            <AgGridReact
-                ref={(element) => {
-                    window.gridComponentInstance = element
-                }}
-                columnDefs={columns}
-                modules={[ClientSideRowModelModule]}
-                frameworkComponents={{
-                    crf: CRF
-                }}
-                rowData={[
-                    {a: "Toyota", b: "Celica"},
-                    {a: "Ford", b: "Mondeo"},
-                    {a: "Porsche", b: "Boxter"}
-                ]}
-            />
-        </div>
-    );
-};
-
-
-
-/*class CRF extends React.Component {
-    render() {
-        return <>Hello thank you for your time to look at this problem</>;
-    }
-}
-
 
 const App = () => {
     const [gridApi, setGridApi] = useState(null);
@@ -96,12 +42,12 @@ const App = () => {
                     field="value"
                     cellRenderer='crf'
                     cellStyle={{"white-space": "normal"}}
-                    autoHeight={true}
+                    autoHeight
                 ></AgGridColumn>
             </AgGridReact>
         </div>
     );
-};*/
+};
 
 describe('Autoheight Grid', () => {
     beforeEach((done) => {
@@ -121,10 +67,16 @@ describe('Autoheight Grid', () => {
     });
 
     it('Autoheight Cell Renders All Text', () => {
-        console.log("here");
-        cy.wait(5500).then(() => {
-            console.log("here now");
-            cy.contains('Hello thank you for your time to look at this problem').should('be.visible')
-        });
+        cy.get('.cell-content').then(cellElements => {
+            for (const cellElement of cellElements) {
+                const fontSize = cssProperty(cellElement, 'font-size');
+                const fontFamily = cssProperty(cellElement, 'font-family');
+
+                const cellText = cellElement.textContent;
+                const textWidth = getTextWidth(cellText, `${fontSize} ${fontFamily}`);
+
+                expect(textWidth).to.be.lessThan(cellElement.offsetWidth);
+            }
+        })
     })
 })
