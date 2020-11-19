@@ -9,19 +9,19 @@ export class ChartCrossFilter extends BeanStub {
     public filter(event: any, reset: boolean = false): void {
         const filterModel = this.gridApi.getFilterModel();
 
-        let colId = ChartCrossFilter.extractFilterColId(event);
-        if (!this.isValidColumnFilter(colId)) {
-            console.warn("ag-Grid: cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
-                "to be defined on the column with id: '" + colId + "'");
+        // filters should be reset when user clicks on canvas background
+        if (reset) {
+            this.resetFilters(filterModel);
             return;
         }
 
-        if (reset) {
-            // filters should be reset when user clicks on canvas background
-            this.resetFilters(filterModel);
-        } else {
+        let colId = ChartCrossFilter.extractFilterColId(event);
+        if (this.isValidColumnFilter(colId)) {
             // update filters based on current chart selections
             this.updateFilters(filterModel, event);
+        } else {
+            console.warn("ag-Grid: cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
+                "to be defined on the column with id: '" + colId + "'");
         }
     }
 
