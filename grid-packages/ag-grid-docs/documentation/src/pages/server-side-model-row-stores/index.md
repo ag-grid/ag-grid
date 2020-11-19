@@ -100,22 +100,22 @@ Partial Store would be needed to view it.
 The Partial Store comes with one advantage - it can manage a very large amount of data by breaking it into blocks
 and using infinite scrolling to load the blocks as the users scrolls. However it comes with the following restrictions.
 
-- ### In Grid Sorting
+- **In Grid Sorting**
     Because data is read back in blocks from the Partial Store, the grid cannot sort the data,
     as it does not have all the data loaded. All sorting must be done on the server.
 
-- ### In Grid Filtering
+- **In Grid Filtering**
     Because data is read back in blocks from the Partial Store, the grid cannot filter the data,
     as it does not have all the data loaded. All filtering must be done on the server.
 
-- ### Updating Data
+- **Updating Data**
     Updating data in the grid using [Transactions](../server-side-model-transactions/) is not supported
     by the Partial Store.
     
     This is because applying updates would potentially move rows between blocks, which would not be possible
     if all blocks are not loaded.
 
-- ### Changing Data
+- **Changing Data**
     If data on the server is changing with regards inserts and deletes, this will cause problems with the
     Partial Store. This is because data is read back from the server in blocks.
     If the data is changing such that the data in each block changes,
