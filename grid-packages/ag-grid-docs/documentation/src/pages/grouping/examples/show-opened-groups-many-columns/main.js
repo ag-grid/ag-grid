@@ -17,8 +17,7 @@ var gridOptions = {
         resizable: true,
     },
     autoGroupColumnDef: {
-        headerName: 'Country',
-        minWidth: 300,
+        minWidth: 300
     },
     animateRows: true,
     showOpenedGroup: true,
