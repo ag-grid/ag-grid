@@ -731,7 +731,9 @@ export class RowNode implements IEventEmitter {
             const newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             const allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (newRowClicked && allowMultiSelect) {
-                return this.doRowRangeSelection();
+                const nodesChanged = this.doRowRangeSelection(params.newValue);
+                this.selectionController.setLastSelectedNode(this);
+                return nodesChanged;
             }
         }
 
@@ -787,7 +789,7 @@ export class RowNode implements IEventEmitter {
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    private doRowRangeSelection(): number {
+    private doRowRangeSelection(value: boolean = true): number {
         const groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         const lastSelectedNode = this.selectionController.getLastSelectedNode();
         const nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
@@ -795,9 +797,9 @@ export class RowNode implements IEventEmitter {
         let updatedCount = 0;
 
         nodesToSelect.forEach(rowNode => {
-            if (rowNode.group && groupsSelectChildren) { return; }
+            if (rowNode.group && groupsSelectChildren || (value === false && rowNode === this)) { return; }
 
-            const nodeWasSelected = rowNode.selectThisNode(true);
+            const nodeWasSelected = rowNode.selectThisNode(value);
             if (nodeWasSelected) {
                 updatedCount++;
             }
