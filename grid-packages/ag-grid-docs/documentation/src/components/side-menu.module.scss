@@ -1,0 +1,38 @@
+.side-nav {
+    position: fixed;
+    top: 4rem;
+    right: 0;
+    width: 300px;
+    border-left: solid 1px lighten($secondary, 40%);
+    font-size: 0.9rem;
+    @extend .my-4, .mx-3, .pl-3, .list-unstyled;
+
+    a {
+        @extend .d-block, .my-2;
+    }
+
+    &__item--level-1 {
+        font-size: 1.05rem;
+        font-weight: 500;
+    }
+
+    &__item--level-3 {
+        @extend .ml-2;
+        font-weight: 300;
+    }
+
+    &__item--level-4 {
+        @extend .ml-3;
+        font-weight: 300;
+    }
+
+    &__link {
+        color: $secondary;
+        text-decoration: none;
+
+        &:hover {
+            color: $primary;
+            text-decoration: none;
+        }
+    }
+}

@@ -1,0 +1,38 @@
+.explorer-container {
+    height: calc(100vh - 18rem);
+    display: flex;
+    flex-direction: column;
+
+    &__body {
+        display: flex;
+        flex-direction: row;
+        flex: 1 1 auto;
+        overflow: hidden;
+    }
+
+    &__left {
+        width: 40%;
+    }
+
+    &__right {
+        flex: 1 1 auto;
+    }
+
+    &__options {
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    &__chart {
+        position: relative;
+        overflow: hidden;
+        height: 50%;
+    }
+
+    &__code {
+        padding-top: 1rem;
+        overflow: auto;
+        height: 50%;
+    }
+}

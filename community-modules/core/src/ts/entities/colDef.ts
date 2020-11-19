@@ -98,7 +98,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     sortIndex?: number | null;
     initialSortIndex?: number;
 
-    /** @deprecated since v24 - use sortOrder instead*/
+    /** @deprecated since v24 - use sortIndex instead*/
     sortedAt?: number;
 
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */

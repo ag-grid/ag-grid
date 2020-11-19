@@ -81,11 +81,9 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
     public setValue(color: string): this {
         if (this.value === color) { return this; }
 
-        this.value = color;
         this.eDisplayField.style.backgroundColor = color;
-        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
 
-        return this;
+        return super.setValue(color);
     }
 
     public getValue(): string {

@@ -92,7 +92,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             }
         };
 
-        hidePopup = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,
@@ -109,7 +109,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             }
         });
 
-        this.hidePopup = hidePopup;
+        if (addPopupRes) {
+            this.hidePopup = addPopupRes.hideFunc;
+        }
 
         column.setMenuVisible(true, 'contextMenu');
     }

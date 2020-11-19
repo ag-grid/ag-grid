@@ -248,18 +248,14 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const currentRow: RowPosition = { rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned };
         const columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
 
-        if (this.hasOnlyOneValueToPaste(parsedData)) {
-            this.pasteSingleValue(parsedData, updatedRowNodes, cellsToFlash, changedPath);
-        } else {
-            this.pasteMultipleValues(
-                parsedData,
-                currentRow,
-                updatedRowNodes,
-                columnsToPasteInto,
-                cellsToFlash,
-                Constants.EXPORT_TYPE_CLIPBOARD,
-                changedPath);
-        }
+        this.pasteMultipleValues(
+            parsedData,
+            currentRow,
+            updatedRowNodes,
+            columnsToPasteInto,
+            cellsToFlash,
+            Constants.EXPORT_TYPE_CLIPBOARD,
+            changedPath);
     }
 
     private hasOnlyOneValueToPaste(parsedData: string[][]) {
@@ -354,43 +350,34 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private pasteMultipleValues(
-        clipboardGridData: string[][],
-        currentRow: RowPosition | null,
-        updatedRowNodes: RowNode[],
-        columnsToPasteInto: Column[],
-        cellsToFlash: any,
-        type: string,
-        changedPath: ChangedPath | undefined) {
+                    clipboardGridData: string[][],
+                    currentRow: RowPosition | null,
+                    updatedRowNodes: RowNode[],
+                    columnsToPasteInto: Column[],
+                    cellsToFlash: any,
+                    type: string,
+                    changedPath: ChangedPath | undefined) {
+
+        let rowPointer = currentRow;
+
         clipboardGridData.forEach(clipboardRowData => {
             // if we have come to end of rows in grid, then skip
-            if (!currentRow) { return; }
+            if (!rowPointer) { return; }
 
-            const rowNode = this.rowPositionUtils.getRowNode(currentRow);
+            const rowNode = this.rowPositionUtils.getRowNode(rowPointer);
 
             if (rowNode) {
                 updatedRowNodes.push(rowNode);
 
                 clipboardRowData.forEach((value, index) =>
-                    this.updateCellValue(rowNode, columnsToPasteInto[index], value, currentRow, cellsToFlash, type, changedPath));
+                    this.updateCellValue(rowNode, columnsToPasteInto[index], value, rowPointer, cellsToFlash, type, changedPath));
 
                 // move to next row down for next set of values
-                currentRow = this.cellNavigationService.getRowBelow({ rowPinned: currentRow.rowPinned, rowIndex: currentRow.rowIndex });
+                rowPointer = this.cellNavigationService.getRowBelow({ rowPinned: rowPointer.rowPinned, rowIndex: rowPointer.rowIndex });
             }
         });
 
-        return currentRow;
-    }
-
-    private pasteSingleValue(parsedData: string[][], updatedRowNodes: RowNode[], cellsToFlash: any, changedPath: ChangedPath | undefined) {
-        const value = parsedData[0][0];
-
-        const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[]) => {
-            updatedRowNodes.push(rowNode);
-            columns.forEach(column =>
-                this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, Constants.EXPORT_TYPE_CLIPBOARD, changedPath));
-        };
-
-        this.iterateActiveRanges(false, rowCallback);
+        return rowPointer;
     }
 
     private updateCellValue(

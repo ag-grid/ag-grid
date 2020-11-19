@@ -28,7 +28,7 @@ export class DarkTheme extends ChartTheme {
 
         const chartDefaults = {
             background: {
-                fill: 'rgb(52, 52, 52)'
+                fill: 'rgb(34, 38, 41)'
             },
             title: {
                 color: fontColor

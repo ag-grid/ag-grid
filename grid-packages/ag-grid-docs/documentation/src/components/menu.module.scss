@@ -1,0 +1,89 @@
+.menu {
+    @extend .p-2;
+
+    &__item {
+        a {
+            color: $secondary;
+            font-size: 0.85rem;
+            @extend .d-block, .my-1;
+
+            &:hover {
+                text-decoration: none;
+                color: $primary;
+            }
+        }
+
+        div[role="button"],
+        a {
+            white-space: nowrap;
+            &:focus {
+                outline: none;
+            }
+
+            &:focus-visible {
+                outline-color: $primary;
+                outline-width: 1px;
+                outline-style: solid;
+                outline-offset: 0.15rem;
+            }
+        }
+
+        div[role="button"] {
+            color: $dark;
+            font-weight: 500;
+        }
+
+        &--active {
+            color: $primary !important;
+        }
+    }
+
+    &__enterprise-icon {
+        background-image: url("../images/enterprise.svg");
+        background-position-y: center;
+        background-repeat: no-repeat;
+        display: inline-block;
+        text-indent: -1000px;
+        width: 1rem;
+        height: 1rem;
+        background-size: contain;
+        @extend .ml-1;
+        vertical-align: middle;
+    }
+
+    &__sections {
+        @extend .list-unstyled;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__section {
+        @extend .p-1;
+
+        > .menu__group {
+            @extend .pl-4;
+
+            > li > a {
+                color: $dark;
+                font-weight: 400;
+                font-size: 0.9rem;
+                &:hover {
+                    color: $primary;
+                }
+            }
+        }
+    }
+
+    &__arrow {
+        @extend .mr-1;
+        transition: all 0.5s;
+    }
+
+    &__group {
+        @extend .pl-2, .list-unstyled;
+    }
+
+    input:focus {
+        border-color: $primary;
+    }
+}

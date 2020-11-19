@@ -1430,6 +1430,7 @@ export class GridApi {
         this.purgeServerSideCache(route);
     }
 
+    /** @deprecated */
     public purgeServerSideCache(route: string[] = []): void {
         if (this.serverSideRowModel) {
             console.warn(`ag-Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSideStore({purge: true}) instead.`);

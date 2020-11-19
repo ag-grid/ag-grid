@@ -1,0 +1,49 @@
+.ais-Hits {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.ais-Hits-list {
+    @extend .list-group, .list-group-flush;
+}
+
+.ais-Hits-item {
+    @extend .list-group-item, .list-group-item-action;
+    overflow: hidden;
+
+    a {
+        color: $dark;
+        font-size: 0.85rem;
+        @extend .d-block, .my-1;
+    }
+
+    .ais-Snippet {
+        white-space: normal;
+        font-size: 0.9rem;
+    }
+
+    mark {
+        @extend .p-0;
+        background-color: transparent;
+        color: $primary;
+        font-weight: bold;
+    }
+
+    &:hover {
+        background-color: $secondary;
+
+        a {
+            text-decoration: none;
+            color: $light;
+        }
+
+        mark {
+            color: $light;
+        }
+    }
+
+    h4 {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+}

@@ -4,8 +4,9 @@
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
-    "build": "gulp generate-examples && npm run hash",
+    "build": "npm run hash",
     "start": "gulp serve",
+    "website-only": "gulp serve-website",
     "serve-core-only": "gulp serve-core-only",
     "serve-with-formatting": "gulp serve-with-formatting",
     "tsc": "tsc -p tests/config/tsconfig.json",
@@ -45,6 +46,7 @@
     "file-loader": "2.0.0",
     "fs-extra": "7.0.0",
     "glob": "7.1.2",
+    "graceful-fs": "4.2.4",
     "jquery": "3.3.1",
     "jsdom": "13.0.0",
     "lnk": "1.1.0",

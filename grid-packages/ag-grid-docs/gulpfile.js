@@ -1,4 +1,8 @@
 const fs = require('fs');
+const gracefulFs = require('graceful-fs');
+
+gracefulFs.gracefulify(fs);
+
 const path = require('path');
 const glob = require('glob');
 const gulp = require('gulp');
@@ -19,7 +23,7 @@ const PurgecssPlugin = require('purgecss-webpack-plugin');
 const { updateBetweenStrings, getAllModules } = require("./utils");
 // const debug = require('gulp-debug'); // don't remove this Gil
 
-const { generateGridExamples, generateChartExamples } = require('./example-generator');
+const { generateGridExamples, generateChartExamples } = require('./example-generator-documentation');
 
 const SKIP_INLINE = true;
 const DEV_DIR = "dev";
@@ -243,4 +247,5 @@ gulp.task('serve-dist', serveDist);
 
 gulp.task('serve', require('./dev-server').bind(null, false, true));
 gulp.task('serve-core-only', require('./dev-server').bind(null, true, true));
+gulp.task('serve-website', require('./dev-server').bind(null, false, true, true)); // will not start gatsby
 gulp.task('serve-with-formatting', require('./dev-server').bind(null, false, false));

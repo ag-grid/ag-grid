@@ -24,6 +24,12 @@ export enum ChartAxisPosition {
     Radius = 'radius'
 }
 
+interface ChartAxisMeta {
+    id: string;
+    direction: ChartAxisDirection;
+    boundSeries: Series[];
+}
+
 export class ChartAxis extends Axis<Scale<any, number>> {
     keys: string[] = [];
     direction: ChartAxisDirection;
@@ -32,6 +38,14 @@ export class ChartAxis extends Axis<Scale<any, number>> {
 
     get type(): string {
         return (this.constructor as any).type || '';
+    }
+
+    getMeta(): ChartAxisMeta {
+        return {
+            id: this.id,
+            direction: this.direction,
+            boundSeries: this.boundSeries,
+        };
     }
 
     protected _position: ChartAxisPosition;

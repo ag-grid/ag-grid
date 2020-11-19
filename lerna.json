@@ -5,7 +5,8 @@
     "charts-packages/*",
     "grid-packages/*",
     "examples-charts/*",
-    "examples-grid/*"
+    "examples-grid/*",
+    "grid-packages/ag-grid-docs/documentation/"
   ],
   "command": {
     "bootstrap": {

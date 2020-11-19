@@ -44,8 +44,8 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             shadow: seriesDefaults.shadow as DropShadowOptions,
             label: seriesDefaults.label as BarSeriesLabelOptions,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -94,7 +94,9 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             strokes: seriesDefaults.stroke.colors,
             strokeOpacity: seriesDefaults.stroke.opacity,
             strokeWidth: seriesDefaults.stroke.width,
-            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+            tooltip: {
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+            }
         }];
 
         agChartOptions.container = parentElement;

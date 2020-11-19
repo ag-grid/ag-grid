@@ -1,0 +1,16 @@
+.search-result {
+    @extend .card;
+    position: absolute;
+    z-index: 99999;
+    width: 400px;
+    margin-top: 0.25rem;
+
+    &__hit-wrapper {
+        @extend .card-header, .p-1;
+        text-align: end;
+    }
+
+    &__hit-count {
+        @extend .badge, .badge-pill, .badge-primary;
+    }
+}

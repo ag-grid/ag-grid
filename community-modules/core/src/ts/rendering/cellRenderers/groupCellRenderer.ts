@@ -539,18 +539,27 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         const rowNode = this.displayedGroup;
         const reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-
         const expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
+
         if (!expandableGroup) { return false; }
 
-        const showing = this.isShowRowGroupForThisRow();
-        return showing;
+        const displayingForOneColumnOnly = typeof this.params.column.getColDef().showRowGroup === 'string';
+
+        if (displayingForOneColumnOnly) {
+            const showing = this.isShowRowGroupForThisRow();
+            return showing;
+        }
+
+        return true;
     }
 
     private isShowRowGroupForThisRow(): boolean {
         const rowGroupColumn = this.displayedGroup.rowGroupColumn;
+
         if (!rowGroupColumn) { return false; }
+
         const thisColumnIsInterested = this.params.column.isRowGroupDisplayed(rowGroupColumn.getId());
+
         return thisColumnIsInterested;
     }
 

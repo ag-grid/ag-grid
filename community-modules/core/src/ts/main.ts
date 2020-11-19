@@ -213,7 +213,7 @@ export { AgPanel } from "./widgets/agPanel";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 export { PopupComponent } from "./widgets/popupComponent";
-export { PopupService } from "./widgets/popupService";
+export { PopupService,  } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 

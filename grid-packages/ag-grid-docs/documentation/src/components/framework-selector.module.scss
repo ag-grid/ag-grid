@@ -1,0 +1,21 @@
+.framework-selector {
+    @extend .d-flex;
+
+    img {
+        height: 100%;
+        max-height: 100%;
+        cursor: pointer;
+    }
+
+    &__option {
+        @extend .p-1, .flex-grow-1, .mx-1;
+        position: relative;
+        background-color: $light;
+        border-radius: 5px;
+        height: 40px;
+
+        &--selected {
+            box-shadow: 0px 0px 5px 2px $light;
+        }
+    }
+}

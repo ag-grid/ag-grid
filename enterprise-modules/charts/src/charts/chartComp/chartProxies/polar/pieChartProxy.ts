@@ -50,8 +50,8 @@ export class PieChartProxy extends PolarChartProxy {
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -136,7 +136,9 @@ export class PieChartProxy extends PolarChartProxy {
                 strokes: seriesDefaults.stroke.colors,
                 strokeOpacity: seriesDefaults.stroke.opacity,
                 strokeWidth: seriesDefaults.stroke.width,
-                tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                tooltip: {
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                },
             }, 'pie.series');
         }
 

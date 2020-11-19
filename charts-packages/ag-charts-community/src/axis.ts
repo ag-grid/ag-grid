@@ -9,6 +9,7 @@ import { Shape } from "./scene/shape/shape";
 import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
 import { Caption } from "./caption";
+import { createId } from "./util/id";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -55,6 +56,7 @@ export interface AxisLabelFormatterParams {
     index: number;
     fractionDigits?: number;
     formatter?: (x: any) => string;
+    axis?: any;
 }
 
 export class AxisLabel {
@@ -155,6 +157,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
     //     return rect;
     // })();
 
+    readonly id = createId(this);
+
     private groupSelection: Selection<Group, Group, D, D>;
     private lineNode = new Line();
 
@@ -181,6 +185,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     readonly translation = { x: 0, y: 0 };
     rotation: number = 0; // axis rotation angle in degrees
+
+    getMeta(): any {}
 
     constructor(scale: S) {
         this.scale = scale;
@@ -459,6 +465,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         }
 
         const { tickFormatter } = this;
+        const meta = this.getMeta();
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         const fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
@@ -477,7 +484,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
                         value: fractionDigits >= 0 ? datum : String(datum),
                         index,
                         fractionDigits,
-                        formatter: tickFormatter
+                        formatter: tickFormatter,
+                        axis: meta
                     })
                     : fractionDigits
                         // the `datum` is a floating point number

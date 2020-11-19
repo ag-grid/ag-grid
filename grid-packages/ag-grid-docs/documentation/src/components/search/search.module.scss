@@ -1,0 +1,23 @@
+.search-form {
+    @extend .form-group;
+
+    form {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    input {
+        @extend .form-control;
+        padding-left: 2rem;
+    }
+
+    svg {
+        position: absolute;
+        @extend .ml-2;
+    }
+
+    input:focus + svg {
+        color: $primary;
+    }
+}
