@@ -797,7 +797,7 @@ export class RowNode implements IEventEmitter {
         let updatedCount = 0;
 
         nodesToSelect.forEach(rowNode => {
-            if (rowNode.group && groupsSelectChildren || (value === false && rowNode === this)) { return; }
+            if (rowNode.group && groupsSelectChildren || (value === false && this === rowNode)) { return; }
 
             const nodeWasSelected = rowNode.selectThisNode(value);
             if (nodeWasSelected) {
