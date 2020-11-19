@@ -59,7 +59,7 @@ export interface AddPopupParams {
 
 export interface AddPopupResult {
     hideFunc: () => void;
-    stopAnchoringFunc?: ()=> void;
+    stopAnchoringFunc?: () => void;
 }
 
 @Bean('popupService')
@@ -379,7 +379,7 @@ export class PopupService extends BeanStub {
     private keepPopupPositionedRelativeTo(params: {
         ePopup: HTMLElement,
         element: HTMLElement,
-        hidePopup: ()=>void
+        hidePopup: () => void
     }): () => void {
         const eParent = this.getPopupParent();
         const parentRect = eParent.getBoundingClientRect();
@@ -401,7 +401,7 @@ export class PopupService extends BeanStub {
             const pRect = eParent.getBoundingClientRect();
             const sRect = params.element.getBoundingClientRect();
 
-            const elementNotInDom = sRect.top==0 && sRect.left==0 && sRect.height==0 && sRect.width==0;
+            const elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
             if (elementNotInDom) {
                 params.hidePopup();
                 return;
@@ -424,7 +424,7 @@ export class PopupService extends BeanStub {
         }, 200);
 
         const res = () => {
-            if (intervalId!=null) {
+            if (intervalId != null) {
                 window.clearInterval(intervalId);
             }
             intervalId = undefined;
@@ -500,7 +500,7 @@ export class PopupService extends BeanStub {
         const hidePopupOnMouseEvent = (event: MouseEvent) => hidePopup({ mouseEvent: event });
         const hidePopupOnTouchEvent = (event: TouchEvent) => hidePopup({ touchEvent: event });
 
-        let destroyPositionTracker: (() => void) | undefined = undefined;
+        let destroyPositionTracker: (() => void) | undefined;
 
         const hidePopup = (popupParams: PopupEventParams = {}) => {
             const { mouseEvent, touchEvent, keyboardEvent } = popupParams;

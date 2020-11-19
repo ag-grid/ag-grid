@@ -37,7 +37,7 @@ import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import {IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams} from "./interfaces/iServerSideRowModel";
+import { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
@@ -64,7 +64,7 @@ import { doOnce } from "./utils/function";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
-import {ServerSideStoreState} from "./interfaces/IServerSideStore";
+import { ServerSideStoreState } from "./interfaces/IServerSideStore";
 
 export interface StartEditingCellParams {
     rowIndex: number;

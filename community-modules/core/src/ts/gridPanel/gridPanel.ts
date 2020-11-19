@@ -248,7 +248,7 @@ export class GridPanel extends Component {
         // we don't want each cellComp to register for events, as would increase rendering time.
         // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
         // each cell if / when event was fired.
-        this.rowRenderer.forEachCellComp(cellComp => cellComp.onNewColumnsLoaded() );
+        this.rowRenderer.forEachCellComp(cellComp => cellComp.onNewColumnsLoaded());
     }
 
     @PostConstruct

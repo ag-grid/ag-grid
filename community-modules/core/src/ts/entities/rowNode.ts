@@ -295,7 +295,9 @@ export class RowNode implements IEventEmitter {
     public getRowIndexString(): string {
         if (this.rowPinned === Constants.PINNED_TOP) {
             return 't-' + this.rowIndex;
-        } else if (this.rowPinned === Constants.PINNED_BOTTOM) {
+        }
+
+        if (this.rowPinned === Constants.PINNED_BOTTOM) {
             return 'b-' + this.rowIndex;
         }
 
@@ -924,14 +926,13 @@ export class RowNode implements IEventEmitter {
     }
 
     public getRoute(): string[] | undefined {
-        if (this.key==null) {
-            return undefined;
-        }
+        if (this.key == null) { return; }
 
         const res: string[] = [];
 
         let pointer: RowNode = this;
-        while (pointer.key!=null) {
+
+        while (pointer.key != null) {
             res.push(pointer.key);
             pointer = pointer.parent!;
         }

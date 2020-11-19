@@ -172,7 +172,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private setupTooltip(): void {
         const colGroupDef = this.getComponentHolder();
         const tooltipText = colGroupDef && colGroupDef.headerTooltip;
-        if (tooltipText!=null) {
+        if (tooltipText != null) {
             this.setTooltip(tooltipText);
         }
     }

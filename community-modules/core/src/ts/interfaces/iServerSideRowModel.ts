@@ -1,6 +1,6 @@
-import {IRowModel} from "./iRowModel";
-import {ServerSideTransaction, ServerSideTransactionResult} from "./serverSideTransaction";
-import {ServerSideStoreState} from "./IServerSideStore";
+import { IRowModel } from "./iRowModel";
+import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSideTransaction";
+import { ServerSideStoreState } from "./IServerSideStore";
 
 export interface IServerSideRowModel extends IRowModel {
     refreshStore(params: RefreshStoreParams): void;

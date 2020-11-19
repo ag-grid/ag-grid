@@ -208,7 +208,7 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
     let currentObject = data;
 
     for (let i = 0; i < fields.length; i++) {
-        if (currentObject==null) {
+        if (currentObject == null) {
             return undefined;
         }
         currentObject = currentObject[fields[i]];

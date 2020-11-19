@@ -206,14 +206,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         const minColWidth = this.gridOptionsWrapper.getMinColWidth();
         const maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
 
-        if (this.colDef.minWidth!=null) {
+        if (this.colDef.minWidth != null) {
             // we force min width to be at least one pixel, otherwise column will disappear
             this.minWidth = Math.max(this.colDef.minWidth, 1);
         } else {
             this.minWidth = minColWidth;
         }
 
-        if (this.colDef.maxWidth!=null) {
+        if (this.colDef.maxWidth != null) {
             this.maxWidth = this.colDef.maxWidth;
         } else {
             this.maxWidth = maxColWidth;

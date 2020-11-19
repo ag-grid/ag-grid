@@ -80,9 +80,9 @@ export class ValueService extends BeanStub {
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }
 
-        if (result==null) {
+        if (result == null) {
             const openedGroup = this.getOpenedGroup(rowNode, column);
-            if (openedGroup!=null) {
+            if (openedGroup != null) {
                 return openedGroup;
             }
         }
@@ -101,8 +101,8 @@ export class ValueService extends BeanStub {
 
         let pointer = rowNode.parent;
 
-        while (pointer!=null) {
-            if (pointer.rowGroupColumn && (showRowGroup===true || showRowGroup===pointer.rowGroupColumn.getId()) ) {
+        while (pointer != null) {
+            if (pointer.rowGroupColumn && (showRowGroup === true || showRowGroup === pointer.rowGroupColumn.getId())) {
                 return pointer.key;
             }
             pointer = pointer.parent;

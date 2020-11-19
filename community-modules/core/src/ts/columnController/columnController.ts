@@ -49,7 +49,7 @@ import { camelCaseToHumanText, startsWith } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import {_} from "../utils";
+import { _ } from "../utils";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -244,7 +244,7 @@ export class ColumnController extends BeanStub {
 
         this.primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
         this.primaryColumnsMap = {};
-        this.primaryColumns.forEach( col => this.primaryColumnsMap[col.getId()] = col );
+        this.primaryColumns.forEach(col => this.primaryColumnsMap[col.getId()] = col);
 
         this.extractRowGroupColumns(source, oldPrimaryColumns);
         this.extractPivotColumns(source, oldPrimaryColumns);
@@ -3015,7 +3015,7 @@ export class ColumnController extends BeanStub {
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
 
         this.gridColumnsMap = {};
-        this.gridColumns.forEach( col => this.gridColumnsMap![col.getId()] = col );
+        this.gridColumns.forEach(col => this.gridColumnsMap![col.getId()] = col);
 
         const event: GridColumnsChangedEvent = {
             type: Events.EVENT_GRID_COLUMNS_CHANGED,

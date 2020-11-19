@@ -16,9 +16,9 @@ import {
 } from '../utils/dom';
 import { forEach } from '../utils/array';
 import { getFunctionName } from '../utils/function';
-import {TooltipFeature} from "./tooltipFeature";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ITooltipParams} from "../rendering/tooltipComponent";
+import { TooltipFeature } from "./tooltipFeature";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ITooltipParams } from "../rendering/tooltipComponent";
 
 const compIdSequence = new NumberSequence();
 

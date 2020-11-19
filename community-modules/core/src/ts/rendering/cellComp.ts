@@ -468,7 +468,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private postProcessWrapText(): void {
         const newValue = this.column.getColDef().wrapText == true;
-        if (newValue!==this.wrapText) {
+        if (newValue !== this.wrapText) {
             this.wrapText = newValue;
             this.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, this.wrapText);
         }
