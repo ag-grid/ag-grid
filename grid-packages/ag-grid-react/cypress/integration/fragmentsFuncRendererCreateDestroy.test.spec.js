@@ -1,4 +1,4 @@
-describe('Test Fragment Renderer ', function () {
+describe('Test Fragment Renderer', function () {
     it('Test Fragment Renderer', function () {
         cy.visit('./cypress/integration/fragmentsFuncRendererCreateDestroy.html');
 

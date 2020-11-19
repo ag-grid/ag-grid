@@ -1,5 +1,5 @@
-describe('Basic Tests of UMD Bundle', function () {
-    it('Visit Simple Bundle Test With React Cell Renderer', function () {
+describe('Delta Row Mode Refresh Tests', function () {
+    it('Delta Row Mode Refresh Test', function () {
         cy.visit('./cypress/integration/deltaRowModeRefreshCompRenderer.html');
 
         cy.wait(150);

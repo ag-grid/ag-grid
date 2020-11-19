@@ -2,7 +2,7 @@ describe('Basic Tests of UMD Bundle', function () {
     it('Visit Simple Bundle Test With React Cell Renderer', function () {
         cy.visit('./cypress/integration/umd_index.html');
 
-        cy.wait(50);
+        cy.wait(50)
 
         cy.get('.ag-cell-value').should('to.have.length.greaterThan', 5); // 5 is a bit arbitrary - should be around 20 or so
 

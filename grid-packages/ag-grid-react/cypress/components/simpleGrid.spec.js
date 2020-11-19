@@ -1,24 +1,19 @@
 // noinspection ES6UnusedImports
 import React, {useState} from 'react'
 import {mount} from 'cypress-react-unit-test'
-import {AgGridColumn, AgGridReact} from "../..";
+import {AgGridColumn} from "../../lib/agGridColumn";
+import {AgGridReact} from "../../lib/agGridReact";
 import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
-import {cssProperty, ensureGridApiHasBeenSet, getTextWidth} from "./utils";
-
-class CRF extends React.Component {
-    render() {
-        return <div className='cell-content'>Hello thank you for your time to look at this problem</div>;
-    }
-}
+import {ensureGridApiHasBeenSet} from "./utils";
 
 const App = () => {
     const [gridApi, setGridApi] = useState(null);
     const [gridColumnApi, setGridColumnApi] = useState(null);
 
     const [rowData, setRowData] = useState([
-        {value: "Toyota"},
-        {value: "Ford"},
-        {value: "Porsche"}
+        {make: "Toyota", model: "Celica", price: 35000},
+        {make: "Ford", model: "Mondeo", price: 32000},
+        {make: "Porsche", model: "Boxter", price: 72000}
     ]);
 
     function onGridReady(params) {
@@ -34,22 +29,16 @@ const App = () => {
                 }}
                 onGridReady={onGridReady}
                 rowData={rowData}
-                modules={[ClientSideRowModelModule]}
-                frameworkComponents={{
-                    crf: CRF
-                }}>
-                <AgGridColumn
-                    field="value"
-                    cellRenderer='crf'
-                    cellStyle={{"white-space": "normal"}}
-                    autoHeight
-                ></AgGridColumn>
+                modules={[ClientSideRowModelModule]}>
+                <AgGridColumn field="make"></AgGridColumn>
+                <AgGridColumn field="model"></AgGridColumn>
+                <AgGridColumn field="price"></AgGridColumn>
             </AgGridReact>
         </div>
     );
 };
 
-describe('Autoheight Grid', () => {
+describe('Simple Grid', () => {
     beforeEach((done) => {
         window.gridComponentInstance = null;
 
@@ -66,18 +55,9 @@ describe('Autoheight Grid', () => {
         window.gridComponentInstance = null;
     });
 
-    // disabled until AG-4485 is done
-    xit('Autoheight Cell Renders All Text', () => {
-        cy.get('.cell-content').then(cellElements => {
-            for (const cellElement of cellElements) {
-                const fontSize = cssProperty(cellElement, 'font-size');
-                const fontFamily = cssProperty(cellElement, 'font-family');
-
-                const cellText = cellElement.textContent;
-                const textWidth = getTextWidth(cellText, `${fontSize} ${fontFamily}`);
-
-                expect(textWidth).to.be.lessThan(cellElement.offsetWidth);
-            }
-        })
+    it('Simple Grid Renders', () => {
+        cy.contains('Toyota').should('be.visible')
+        cy.contains('Ford').should('be.visible')
+        cy.contains('Porsche').should('be.visible')
     })
 })
