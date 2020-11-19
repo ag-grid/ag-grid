@@ -69,7 +69,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         const bodyScrollListener = (event: any) => {
             // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal') {
+            if (event.direction === 'horizontal' && hidePopup) {
                 hidePopup();
             }
         };
@@ -110,7 +110,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         });
 
         if (addPopupRes) {
-            this.hidePopup = addPopupRes.hideFunc;
+            this.hidePopup = hidePopup = addPopupRes.hideFunc;
         }
 
         column.setMenuVisible(true, 'contextMenu');
