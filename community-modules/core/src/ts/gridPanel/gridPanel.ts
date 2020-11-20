@@ -1469,7 +1469,7 @@ export class GridPanel extends Component {
         // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
         // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
 
-        if (touchOnly && !isIOSUserAgent) { return false; }
+        if (touchOnly && !isIOSUserAgent()) { return false; }
 
         if (direction === 'vertical') {
             const { clientHeight, scrollHeight } = this.eBodyViewport;
