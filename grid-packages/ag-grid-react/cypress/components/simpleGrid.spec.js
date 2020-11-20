@@ -3,7 +3,6 @@ import React, {useState} from 'react'
 import {mount} from 'cypress-react-unit-test'
 import {AgGridColumn} from "../../lib/agGridColumn";
 import {AgGridReact} from "../../lib/agGridReact";
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
 import {ensureGridApiHasBeenSet} from "./utils";
 
 const App = () => {
@@ -28,8 +27,7 @@ const App = () => {
                     window.gridComponentInstance = element
                 }}
                 onGridReady={onGridReady}
-                rowData={rowData}
-                modules={[ClientSideRowModelModule]}>
+                rowData={rowData}>
                 <AgGridColumn field="make"></AgGridColumn>
                 <AgGridColumn field="model"></AgGridColumn>
                 <AgGridColumn field="price"></AgGridColumn>

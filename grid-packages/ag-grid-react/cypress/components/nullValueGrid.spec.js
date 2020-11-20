@@ -1,23 +1,23 @@
 // noinspection ES6UnusedImports
 import React, {useState} from 'react'
 import {mount} from 'cypress-react-unit-test'
-import {AgGridColumn, AgGridReact} from "../..";
-import {cssProperty, ensureGridApiHasBeenSet, getTextWidth} from "./utils";
+import {AgGridColumn} from "../../lib/agGridColumn";
+import {AgGridReact} from "../../lib/agGridReact";
+import {ensureGridApiHasBeenSet} from "./utils";
 
-class CRF extends React.Component {
-    render() {
-        return <div className='cell-content'>Hello thank you for your time to look at this problem</div>;
-    }
-}
+const CellRenderer = props => <>{props.value}</>;
 
 const App = () => {
     const [gridApi, setGridApi] = useState(null);
     const [gridColumnApi, setGridColumnApi] = useState(null);
 
     const [rowData, setRowData] = useState([
-        {value: "Toyota"},
-        {value: "Ford"},
-        {value: "Porsche"}
+        {
+            value: 10
+        },
+        {
+            value: null
+        }
     ]);
 
     function onGridReady(params) {
@@ -34,20 +34,15 @@ const App = () => {
                 onGridReady={onGridReady}
                 rowData={rowData}
                 frameworkComponents={{
-                    crf: CRF
+                    cellRenderer: CellRenderer
                 }}>
-                <AgGridColumn
-                    field="value"
-                    cellRenderer='crf'
-                    cellStyle={{"white-space": "normal"}}
-                    autoHeight
-                ></AgGridColumn>
+                <AgGridColumn field="value" cellRenderer="cellRenderer"></AgGridColumn>
             </AgGridReact>
         </div>
     );
 };
 
-describe('Autoheight Grid', () => {
+describe('Grid With Null Values', () => {
     beforeEach((done) => {
         window.gridComponentInstance = null;
 
@@ -64,18 +59,18 @@ describe('Autoheight Grid', () => {
         window.gridComponentInstance = null;
     });
 
-    // disabled until AG-4485 is done
-    xit('Autoheight Cell Renders All Text', () => {
-        cy.get('.cell-content').then(cellElements => {
-            for (const cellElement of cellElements) {
-                const fontSize = cssProperty(cellElement, 'font-size');
-                const fontFamily = cssProperty(cellElement, 'font-family');
-
-                const cellText = cellElement.textContent;
-                const textWidth = getTextWidth(cellText, `${fontSize} ${fontFamily}`);
-
-                expect(textWidth).to.be.lessThan(cellElement.offsetWidth);
-            }
-        })
+    it('Null and Non-Null Values Render As Expected', () => {
+        // row position (top to bottom): row value
+        const EXPECTED_ROWS = {
+            0: '10',
+            1: '',
+        }
+        cy.get('div .ag-react-container')
+            .should('have.length', 2)
+            .each((value, index, collection) => {
+                cy.wrap(value)
+                    .invoke('text')
+                    .then(text => expect(text).to.equal(EXPECTED_ROWS[index]))
+            })
     })
 })
