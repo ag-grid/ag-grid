@@ -915,10 +915,10 @@ export abstract class Chart extends Observable {
     }
 
     lastPick?: {
-        datum: SeriesNodeDatum,
-        node?: Shape, // We may not always have an associated node, for example
+        datum: SeriesNodeDatum;
+        node?: Shape; // We may not always have an associated node, for example
                       // when line series are rendered without markers.
-        event?: MouseEvent
+        event?: MouseEvent;
     };
 
     // Provided x/y are in canvas coordinates.
@@ -967,10 +967,41 @@ export abstract class Chart extends Observable {
     private _onMouseOut = this.onMouseOut.bind(this);
     private _onClick = this.onClick.bind(this);
 
+    private lastOffset: { x: number; y: number; } = { x: 0, y: 0 };
+    private distanceTravelled: { distance: number; timestamp: number }[] = [];
+
     protected onMouseMove(event: MouseEvent) {
+        const { lastOffset, distanceTravelled } = this;
+        const { offsetX, offsetY } = event;
+
+        const now = Date.now();
+        const since = now - 500;
+        this.distanceTravelled.push({
+            distance: Math.sqrt((lastOffset.x - offsetX) ** 2 + (lastOffset.y - offsetY) ** 2),
+            timestamp: now
+        });
+        lastOffset.x = offsetX;
+        lastOffset.y = offsetY;
+
+        const maxTravelDistance = 50;
+        let distanceTravelledSince = 0;
+        for (let i = distanceTravelled.length - 1; i >= 0; i--) {
+            const entry = distanceTravelled[i];
+            if (entry.timestamp >= since) {
+                distanceTravelledSince += entry.distance;
+            } else {
+                distanceTravelled.splice(0, i + 1);
+                break;
+            }
+        }
+
+        if (distanceTravelledSince > maxTravelDistance) {
+            this.hideTooltip();
+            return;
+        }
+
         const { lastPick, tooltip: { tracking: tooltipTracking } } = this;
-        console.log(event.offsetX, event.offsetY);
-        const pick = this.pickSeriesNode(event.offsetX, event.offsetY);
+        const pick = this.pickSeriesNode(offsetX, offsetY);
         let nodeDatum: SeriesNodeDatum | undefined;
 
         if (pick && pick.node instanceof Shape) {
@@ -1002,7 +1033,7 @@ export abstract class Chart extends Observable {
         // and also gives the ability to show tooltips even when the series were configured
         // to not render markers.
         if (tooltipTracking) {
-            const closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+            const closestDatum = this.pickClosestSeriesNodeDatum(offsetX, offsetY);
             if (closestDatum && closestDatum.point) {
                 const { x, y } = closestDatum.point;
                 const { canvas } = this.scene;
@@ -1016,12 +1047,17 @@ export abstract class Chart extends Observable {
                 hideTooltip = true;
             }
         }
+
         if (lastPick && (hideTooltip || !tooltipTracking)) {
             // cursor moved from a non-marker node to empty space
-            this.dehighlightDatum();
-            this.tooltip.hide();
-            this.lastPick = undefined;
+            this.hideTooltip();
         }
+    }
+
+    protected hideTooltip() {
+        this.dehighlightDatum();
+        this.tooltip.hide();
+        this.lastPick = undefined;
     }
 
     protected onMouseDown(event: MouseEvent) {}
