@@ -26,8 +26,8 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
             shadow: this.getDefaultDropShadowOptions(),
             label: seriesDefaults.label as BarSeriesLabelOptions,
             tooltip: {
-                enabled: seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip.renderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,

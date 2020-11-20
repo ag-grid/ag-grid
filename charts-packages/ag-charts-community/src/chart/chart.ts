@@ -969,6 +969,7 @@ export abstract class Chart extends Observable {
 
     protected onMouseMove(event: MouseEvent) {
         const { lastPick, tooltip: { tracking: tooltipTracking } } = this;
+        console.log(event.offsetX, event.offsetY);
         const pick = this.pickSeriesNode(event.offsetX, event.offsetY);
         let nodeDatum: SeriesNodeDatum | undefined;
 

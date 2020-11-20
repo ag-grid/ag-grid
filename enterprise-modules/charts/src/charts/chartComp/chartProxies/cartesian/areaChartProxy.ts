@@ -194,8 +194,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         options.seriesDefaults = {
             shadow: seriesDefaults.shadow as DropShadowOptions,
             tooltip: {
-                enabled: seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip.renderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,

@@ -130,8 +130,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         const seriesDefaults = theme.getConfig<AgLineSeriesOptions>('line.series.line');
         options.seriesDefaults = {
             tooltip: {
-                enabled: seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip.renderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: [],

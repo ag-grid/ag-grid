@@ -50,8 +50,8 @@ export class PieChartProxy extends PolarChartProxy {
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip.renderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
