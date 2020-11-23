@@ -48,7 +48,7 @@ export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T {
         // NOT include the following:
         // 1) arrays
         // 2) functions or classes (eg ColumnAPI instance)
-        const sourceIsSimpleObject = typeof value === 'object' && value.constructor === Object;
+        const sourceIsSimpleObject = value !== null && typeof value === 'object' && value.constructor === Object;
 
         if (sourceIsSimpleObject) {
             res[key] = deepCloneDefinition(value);
