@@ -7,7 +7,7 @@ import {
     DropShadowOptions,
     HighlightOptions
 } from "@ag-grid-community/core";
-import { AgChart, AreaSeries, CartesianChart, ChartTheme } from "ag-charts-community";
+import { AgChart, AreaSeries, CartesianChart, ChartTheme, LegendClickEvent } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
@@ -126,22 +126,40 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         }
 
         const fieldIds = params.fields.map(f => f.colId);
-        const { fills, strokes } = this.getPalette();
 
-        const existingSeriesById = (chart.series as AreaSeries[]).reduceRight((map, series, i) => {
-            const id = series.yKeys[0];
-
-            if (fieldIds.indexOf(id) === i) {
-                map.set(id, series);
-            } else {
-                chart.removeSeries(series);
-            }
-
-            return map;
-        }, new Map<string, AreaSeries>());
+        const existingSeriesById = (chart.series as AreaSeries[])
+            .reduceRight((map, series, i) => {
+                const id = series.yKeys[0];
+                if (fieldIds.indexOf(id) === i) {
+                    map.set(id, series);
+                } else {
+                    chart.removeSeries(series);
+                }
+                return map;
+            }, new Map<string, AreaSeries>());
 
         const data = this.transformData(params.data, params.category.id);
         let previousSeries: AreaSeries | undefined;
+
+        let { fills, strokes } = this.getPalette();
+
+        if (this.crossFiltering) {
+            // introduce cross filtering transparent fills
+            let fillsMod: string[] = [];
+            fills.forEach(fill => {
+                fillsMod.push(fill);
+                fillsMod.push(this.hexToRGB(fill, '0.3'));
+            });
+            fills = fillsMod;
+
+            // introduce cross filtering transparent strokes
+            let strokesMod: string[] = [];
+            strokes.forEach(stroke => {
+                strokesMod.push(stroke);
+                strokesMod.push(this.hexToRGB(stroke, '0.3'));
+            });
+            strokes = strokesMod;
+        }
 
         params.fields.forEach((f, index) => {
             let areaSeries = existingSeriesById.get(f.colId);
@@ -179,6 +197,25 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 };
 
                 areaSeries = AgChart.createComponent(options, 'area.series');
+
+                if (this.crossFiltering && areaSeries) {
+                    // disable series highlighting by default
+                    areaSeries.highlightStyle.fill = undefined;
+
+                    // TODO reintroduce once 'areaSeries.hideInLegend' exists!
+                    // hide 'filtered out' legend items
+                    // const colIds = params.fields.map(f => f.colId);
+                    // areaSeries.hideInLegend = colIds.filter(colId => colId.includes('-filtered-out'));
+
+                    // TODO reintroduce once 'areaSeries.toggleSeriesItem' exists!
+                    // sync toggling of legend item with hidden 'filtered out' item
+                    chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                        (areaSeries as AreaSeries).toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                    });
+
+                    // add node click cross filtering callback to series
+                    areaSeries.addEventListener('nodeClick', this.crossFilterCallback);
+                }
 
                 chart.addSeriesAfter(areaSeries!, previousSeries);
             }

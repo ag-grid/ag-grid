@@ -63,6 +63,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
     ) {
         let labelRotation = 0;
         const axisKey = isHorizontalChart ? 'yAxis' : 'xAxis';
+
         const themeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
 
         const chartType = this.getStandaloneChartType();

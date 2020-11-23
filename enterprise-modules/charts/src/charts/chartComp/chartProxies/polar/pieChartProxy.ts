@@ -1,10 +1,5 @@
 import { AgChart, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart } from "ag-charts-community";
-import {
-    AgPieSeriesOptions,
-    HighlightOptions,
-    PieSeriesOptions,
-    PolarChartOptions
-} from "@ag-grid-community/core";
+import { AgPieSeriesOptions, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
 import { LegendClickEvent } from "ag-charts-community/dist/cjs/chart/legend";
@@ -80,6 +75,7 @@ export class PieChartProxy extends PolarChartProxy {
         }
 
         const field = params.fields[0];
+        let angleField = field;
 
         if (this.crossFiltering) {
             const filteredField = params.fields[1];
@@ -90,15 +86,17 @@ export class PieChartProxy extends PolarChartProxy {
                 d[filteredField.colId] = 1;
             });
 
-            let unFilteredSeries = chart.series[1] as PieSeries;
-            unFilteredSeries = this.updateSeries(chart, unFilteredSeries, field, filteredField, params, params.data, true, undefined);
+            let opaqueSeries = chart.series[1] as PieSeries;
+            let radiusField = filteredField;
+            opaqueSeries = this.updateSeries(chart, opaqueSeries, angleField, radiusField, params, undefined);
 
-            const series = chart.series[0] as PieSeries;
-            this.updateSeries(chart, series, field, field, params, params.data, false, unFilteredSeries);
+            radiusField = angleField;
+            const filteredSeries = chart.series[0] as PieSeries;
+            this.updateSeries(chart, filteredSeries, angleField, radiusField, params, opaqueSeries);
 
         } else {
             const series = chart.series[0] as PieSeries;
-            this.updateSeries(chart, series, field, field, params, params.data, false, undefined);
+            this.updateSeries(chart, series, angleField, angleField, params, undefined);
         }
     }
 
@@ -108,9 +106,7 @@ export class PieChartProxy extends PolarChartProxy {
         angleField: FieldDefinition,
         field: FieldDefinition,
         params: UpdateChartParams,
-        data: any[],
-        filteredSeries: boolean,
-        otherSeries: PieSeries | undefined
+        opaqueSeries: PieSeries | undefined
     ) {
         const existingSeriesId = series && series.angleKey;
         const {fills, strokes} = this.getPalette();
@@ -142,43 +138,38 @@ export class PieChartProxy extends PolarChartProxy {
             }, 'pie.series');
         }
 
-        if (this.crossFiltering) {
-            pieSeries.angleName = field.displayName!;
-            pieSeries.labelKey = params.category.id;
-            pieSeries.labelName = params.category.name;
-            pieSeries.data = data;
+        pieSeries.angleName = field.displayName!;
+        pieSeries.labelKey = params.category.id;
+        pieSeries.labelName = params.category.name;
+        pieSeries.data = params.data;
 
+        if (this.crossFiltering) {
             pieSeries.radiusMin = 0;
             pieSeries.radiusMax = 1;
 
-            if (filteredSeries) {
+            const isOpaqueSeries = !opaqueSeries;
+            if (isOpaqueSeries) {
                 pieSeries.fills = fills.map(fill => this.hexToRGB(fill, '0.3'));
                 pieSeries.strokes = strokes.map(stroke => this.hexToRGB(stroke, '0.3'));
-            } else {
-                pieSeries.fills = fills;
-                pieSeries.strokes = strokes;
-            }
-
-            if (!filteredSeries && calloutColors) {
-                pieSeries.callout.colors = strokes;
-            }
-
-            if (filteredSeries) {
                 pieSeries.showInLegend = false;
             } else {
                 chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-                    if (otherSeries) {
-                        (otherSeries as PieSeries).toggleSeriesItem(event.itemId as any, event.enabled);
+                    if (opaqueSeries) {
+                        (opaqueSeries as PieSeries).toggleSeriesItem(event.itemId as any, event.enabled);
                     }
                 });
+                pieSeries.fills = fills;
+                pieSeries.strokes = strokes;
+                if (calloutColors) {
+                    pieSeries.callout.colors = strokes;
+                }
             }
+
+            // disable series highlighting by default
+            pieSeries.highlightStyle.fill = undefined;
 
             pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
         } else {
-            pieSeries.angleName = field.displayName!;
-            pieSeries.labelKey = params.category.id;
-            pieSeries.labelName = params.category.name;
-            pieSeries.data = params.data;
             pieSeries.fills = fills;
             pieSeries.strokes = strokes;
 
