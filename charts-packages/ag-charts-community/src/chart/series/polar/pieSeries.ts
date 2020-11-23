@@ -173,8 +173,7 @@ export class PieSeries extends PolarSeries {
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
      * The largest value will correspond to the full radius and smaller values to
-     * proportionally smaller radii. To prevent confusing visuals, this config only works
-     * if {@link innerRadiusOffset} is zero.
+     * proportionally smaller radii.
      */
     @reactive('dataChange') radiusKey?: string;
     @reactive('update') radiusName?: string;
@@ -275,17 +274,16 @@ export class PieSeries extends PolarSeries {
 
         const labelKey = this.label.enabled && this.labelKey;
         const labelData = labelKey ? data.map(datum => String(datum[labelKey])) : [];
-        const useRadiusKey = !!radiusKey && !this.innerRadiusOffset;
         let radiusData: number[] = [];
 
-        if (useRadiusKey) {
+        if (radiusKey) {
             const { radiusMin, radiusMax } = this;
-            const radii = data.map(datum => Math.abs(datum[radiusKey!]));
+            const radii = data.map(datum => Math.abs(datum[radiusKey]));
             const min = radiusMin !== undefined ? radiusMin : Math.min(...radii);
             const max = radiusMax !== undefined ? radiusMax : Math.max(...radii);
             const delta = max - min;
 
-            radiusData = radii.map(value => (value - min) / delta);
+            radiusData = radii.map(value => delta ? (value - min) / delta : 1);
         }
 
         groupSelectionData.length = 0;
@@ -297,7 +295,7 @@ export class PieSeries extends PolarSeries {
 
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce((start, end) => {
-            const radius = useRadiusKey ? radiusData[datumIndex] : 1;
+            const radius = radiusKey ? radiusData[datumIndex] : 1;
             const startAngle = angleScale.convert(start) + rotation;
             const endAngle = angleScale.convert(end) + rotation;
 
@@ -362,15 +360,18 @@ export class PieSeries extends PolarSeries {
             return;
         }
 
-        this.radiusScale.range = [0, this.radius];
+        const { radius, innerRadiusOffset, outerRadiusOffset, title } = this;
+
+        this.radiusScale.range = [
+            innerRadiusOffset ? radius + innerRadiusOffset : 0,
+            radius + (outerRadiusOffset || 0)
+        ];
 
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
 
-
-        const { title } = this;
         if (title) {
-            title.node.translationY = -this.radius - this.outerRadiusOffset - 2;
+            title.node.translationY = -radius - outerRadiusOffset - 2;
             title.node.visible = title.enabled;
         }
 
@@ -410,9 +411,9 @@ export class PieSeries extends PolarSeries {
         } = this;
         const { highlightedDatum } = this.chart;
 
-        let minOuterRadius = Infinity;
         const outerRadii: number[] = [];
         const centerOffsets: number[] = [];
+        const innerRadius = radiusScale.convert(0);
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
@@ -421,10 +422,6 @@ export class PieSeries extends PolarSeries {
             const sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             const sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
             let format: PieSeriesFormat | undefined = undefined;
-
-            if (minOuterRadius > outerRadius) {
-                minOuterRadius = outerRadius;
-            }
 
             if (formatter) {
                 format = formatter({
@@ -438,8 +435,9 @@ export class PieSeries extends PolarSeries {
                 });
             }
 
-            sector.outerRadius = outerRadius;
-            sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
+            sector.innerRadius = innerRadius;
+            sector.outerRadius = radius;
+
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
 
