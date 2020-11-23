@@ -967,40 +967,9 @@ export abstract class Chart extends Observable {
     private _onMouseOut = this.onMouseOut.bind(this);
     private _onClick = this.onClick.bind(this);
 
-    private lastOffset: { x: number; y: number; } = { x: 0, y: 0 };
-    private distanceTravelled: { distance: number; timestamp: number }[] = [];
-
     protected onMouseMove(event: MouseEvent) {
-        const { lastOffset, distanceTravelled } = this;
-        const { offsetX, offsetY } = event;
-
-        const now = Date.now();
-        const since = now - 500;
-        this.distanceTravelled.push({
-            distance: Math.sqrt((lastOffset.x - offsetX) ** 2 + (lastOffset.y - offsetY) ** 2),
-            timestamp: now
-        });
-        lastOffset.x = offsetX;
-        lastOffset.y = offsetY;
-
-        const maxTravelDistance = 50;
-        let distanceTravelledSince = 0;
-        for (let i = distanceTravelled.length - 1; i >= 0; i--) {
-            const entry = distanceTravelled[i];
-            if (entry.timestamp >= since) {
-                distanceTravelledSince += entry.distance;
-            } else {
-                distanceTravelled.splice(0, i + 1);
-                break;
-            }
-        }
-
-        if (distanceTravelledSince > maxTravelDistance) {
-            this.hideTooltip();
-            return;
-        }
-
         const { lastPick, tooltip: { tracking: tooltipTracking } } = this;
+        const { offsetX, offsetY } = event;
         const pick = this.pickSeriesNode(offsetX, offsetY);
         let nodeDatum: SeriesNodeDatum | undefined;
 
@@ -1049,15 +1018,11 @@ export abstract class Chart extends Observable {
         }
 
         if (lastPick && (hideTooltip || !tooltipTracking)) {
-            // cursor moved from a non-marker node to empty space
-            this.hideTooltip();
+            // Cursor moved from a non-marker node to empty space.
+            this.dehighlightDatum();
+            this.tooltip.hide();
+            this.lastPick = undefined;
         }
-    }
-
-    protected hideTooltip() {
-        this.dehighlightDatum();
-        this.tooltip.hide();
-        this.lastPick = undefined;
     }
 
     protected onMouseDown(event: MouseEvent) {}
