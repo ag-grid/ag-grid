@@ -6,7 +6,7 @@
   "license": "0BSD",
   "scripts": {
     "build": "npm run clean && cd .. && node dev-server.js generate-examples && cd documentation && npx gatsby build --prefix-paths",
-    "develop": "npx gatsby develop",
+    "develop": "npx gatsby develop -H 0.0.0.0",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run clean && npm run develop",
     "serve": "npx gatsby serve --prefix-paths",
