@@ -310,7 +310,7 @@ gtm_data_layer('community-enterprise');
                                 unnamed, so long as the total licensed count isn’t exceeded.
                             </li>
                             <li>
-                                Single Application Development Licenses are bound to named pool of
+                                Multiple Application Development Licenses are bound to named pool of
                                 developers can be applied to an unlimited number of applications.
                             </li>
                         </ul>
