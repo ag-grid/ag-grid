@@ -58,10 +58,10 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     <div id="doc-page-wrapper" className={styles.docPageWrapper}>
       <div id="doc-content" className={`${styles.docPage} ${showSideMenu ? styles.docPageWithSideMenu : ''}`}>
         <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
-        <h1 className={page.frontmatter.enterprise ? styles.enterprise : null}>{page.frontmatter.title}</h1>
+        <h1 id="top" className={page.frontmatter.enterprise ? styles.enterprise : null}>{page.frontmatter.title}</h1>
         {renderAst(ast)}
       </div>
-      <SideMenu headings={page.headings} pageName={pageName} setShowSideMenu={setShowSideMenu} />
+      <SideMenu headings={page.headings || []} pageName={pageName} hideMenu={() => setShowSideMenu(false)} />
     </div>
   );
 };

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styles from './side-menu.module.scss';
 
-const SideMenu = ({ headings, pageName, setShowSideMenu }) => {
+const SideMenu = ({ headings = [], pageName, hideMenu }) => {
     const [allHeadings, setAllHeadings] = useState(headings);
 
     useEffect(() => {
+        // this checks for headings once the page has rendered
         let headings = [];
         let maxLevel = 1;
 
@@ -14,8 +15,11 @@ const SideMenu = ({ headings, pageName, setShowSideMenu }) => {
         for (let i = 0; i < headingsFromDom.length; i++) {
             const heading = headingsFromDom[i];
             const depth = parseInt(heading.tagName.match(/\d/)[0], 10);
+            const { id } = heading;
 
-            headings.push({ depth, id: heading.id, value: heading.innerText });
+            if (!id) { continue; }
+
+            headings.push({ depth, id, value: heading.innerText });
 
             if (depth > maxLevel) {
                 maxLevel = depth;
@@ -30,21 +34,20 @@ const SideMenu = ({ headings, pageName, setShowSideMenu }) => {
         }
 
         setAllHeadings(headings);
-    }, [pageName]);
 
-    if (!allHeadings || allHeadings.filter(h => h.id).length < 2) {
-        setShowSideMenu(false);
-        return null;
-    }
+        if (headings.length < 2) {
+            // no point in showing the menu if there is only one link
+            hideMenu();
+        }
+    }, [hideMenu]);
 
-    setShowSideMenu(true);
-
-    return <ul className={styles.sideNav}>
-        {allHeadings.map(heading => <li key={`${pageName}_${heading.id}`} className={styles[`sideNav__itemLevel${heading.depth}`]}>
-            <a className={styles.sideNav__link} href={`#${heading.id}`}>{heading.value}</a>
-        </li>
-        )}
-    </ul>;
+    return allHeadings.length > 0 &&
+        <ul className={styles.sideNav}>
+            {allHeadings.map(heading => <li key={`${pageName}_${heading.id}`} className={styles[`sideNav__itemLevel${heading.depth}`]}>
+                <a className={styles.sideNav__link} href={`#${heading.id}`}>{heading.value}</a>
+            </li>
+            )}
+        </ul>;
 };
 
 export default SideMenu;
