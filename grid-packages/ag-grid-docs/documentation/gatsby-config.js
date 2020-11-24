@@ -32,14 +32,6 @@ const plugins = [
     options: {
       path: `${__dirname}/src/pages`,
       name: 'pages',
-      ignore: ['**/examples/**'],
-    }
-  },
-  {
-    resolve: 'gatsby-source-filesystem',
-    options: {
-      path: `${__dirname}/src/pages`,
-      name: 'examples',
     }
   },
   {
