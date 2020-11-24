@@ -605,6 +605,7 @@ function moduleChanged(moduleRoot) {
     if (checkResult && checkResult.status !== 1) {
         changed = checkResult.output[1].trim() === '1';
     }
+
     return changed;
 }
 
@@ -717,14 +718,12 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
 const readModulesState = () => {
     const moduleRootNames = ['grid-packages', 'community-modules', 'enterprise-modules', 'charts-packages'];
     const exclusions = ['ag-grid-dev', 'ag-grid-docs', 'polymer', 'ag-grid-polymer'];
-
     const modulesState = {};
 
     moduleRootNames.forEach(moduleRootName => {
         const moduleRootDirectory = WINDOWS ? `..\\..\\${moduleRootName}\\` : `../../${moduleRootName}/`;
-        fs.readdirSync(moduleRootDirectory, {
-            withFileTypes: true
-        })
+
+        fs.readdirSync(moduleRootDirectory, { withFileTypes: true })
             .filter(d => d.isDirectory())
             .filter(d => !exclusions.includes(d.name))
             .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`)
