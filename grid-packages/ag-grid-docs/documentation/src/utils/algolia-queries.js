@@ -26,14 +26,14 @@ const pageQuery = `{
   }
 }`;
 
-function pageToAlgoliaRecord({ node: { id, frontmatter: { title }, fields: { path }, htmlAst } }, framework) {
-  const processedAst = processFrameworkSpecificSections(htmlAst, framework);
+function pageToAlgoliaRecord({ node: { id: objectID, frontmatter: { title }, fields: { path }, htmlAst } }, framework) {
+  const text = stripHtml(processFrameworkSpecificSections(htmlAst, framework)).substr(0, 10000);
 
   return {
-    objectID: id,
+    objectID,
     title,
-    path: `../../${framework}${path}`,
-    text: stripHtml(processedAst),
+    path: `../../${framework}${path}/`,
+    text,
   };
 }
 

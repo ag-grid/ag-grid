@@ -23,6 +23,7 @@ export default function Search({ indices }) {
                 searchClient={searchClient}
                 indexName={indices[0].name}
                 onSearchStateChange={({ query }) => setQuery(query)}
+
             >
                 <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} />
                 <SearchResult
