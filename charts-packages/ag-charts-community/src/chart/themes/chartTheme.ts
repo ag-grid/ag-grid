@@ -441,7 +441,7 @@ export class ChartTheme {
             const overrides = options.overrides;
             if (overrides) {
                 if (isObject(overrides.common)) {
-                    ChartTheme.seriesTypes.forEach(seriesType => {
+                    ChartTheme.seriesTypes.concat(['cartesian', 'polar']).forEach(seriesType => {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrides.common, mergeOptions);
                     });
                 }
