@@ -100,7 +100,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     }
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
-        const touchListener = new TouchListener(eElement);
+        const touchListener = new TouchListener(eElement, true);
 
         this.addManagedListener(touchListener, TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(() => touchListener.destroy());
