@@ -10,14 +10,14 @@ const WINDOWS = /^win/.test(os.platform());
 
 const flattenArray = array => [].concat.apply([], array);
 
-const buildDependencies = async (dependencies, command = 'build-css', arguments='') => {
+const buildDependencies = async (dependencies, command = 'build-css', arguments = '') => {
     console.log("------------------------------------------------------------------------------------------");
     console.log(`Running ${command} on the following packages: ${dependencies.join(' ')}`);
     console.log("------------------------------------------------------------------------------------------");
 
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
     const lernaArgs = `run ${command} ${scopedDependencies} ${arguments}`.trim().split(" ");
-    return await execa("./node_modules/.bin/lerna", lernaArgs, {stdio: "inherit", cwd: '../../'});
+    return await execa("./node_modules/.bin/lerna", lernaArgs, { stdio: "inherit", cwd: '../../' });
 };
 
 const buildDependencyChain = async (packageName, buildChains, command = "build-css") => {
@@ -25,11 +25,11 @@ const buildDependencyChain = async (packageName, buildChains, command = "build-c
 
     const buildBands = Object.values(buildChain);
     for (let index = 0; index < buildBands.length; index++) {
-        await buildDependencies(buildBands[index], command)
+        await buildDependencies(buildBands[index], command);
     }
 };
 
-const spawnCssWatcher = ({paths, buildChains}) => {
+const spawnCssWatcher = ({ paths, buildChains }) => {
     if (process.env.AG_NO_CSS) {
         console.log("Disabling CSS watching - manually launch sass-native-watch.sh instead");
         return;
@@ -58,14 +58,14 @@ const spawnCssWatcher = ({paths, buildChains}) => {
     return watcher
         .on("add", path => buildOperation(path, 'added'))
         .on("change", path => buildOperation(path, 'changed'))
-        .on("unlink", path => buildOperation(path, 'removed'))
+        .on("unlink", path => buildOperation(path, 'removed'));
 };
 
 const filterAgGridOnly = dependencyTree => {
     const prunedDependencyTree = {};
     const agRoots = Object.keys(dependencyTree);
     agRoots.forEach(root => {
-        prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-")) : []
+        prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-")) : [];
     });
     return prunedDependencyTree;
 };
@@ -102,7 +102,8 @@ const buildBuildTree = (startingPackage, dependencyTree, dependenciesOrdered) =>
 
 const exclude = [
     'ag-grid-dev',
-    'ag-grid-docs'
+    'ag-grid-docs',
+    'ag-grid-documentation',
 ];
 
 const excludePackage = packageName => !exclude.includes(packageName) && !packageName.includes("-example") && !packageName.includes("seans");
@@ -112,7 +113,7 @@ const filterExcludedRoots = dependencyTree => {
     const agRoots = Object.keys(dependencyTree).filter(excludePackage);
 
     agRoots.forEach(root => {
-        prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-") || dependency.includes("ag-charts-community")) : []
+        prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-") || dependency.includes("ag-charts-community")) : [];
     });
 
     return prunedDependencyTree;
@@ -120,7 +121,7 @@ const filterExcludedRoots = dependencyTree => {
 
 const getOrderedDependencies = async packageName => {
     const lernaArgs = `ls --all --sort --toposort --json --scope ${packageName} --include-dependents`.split(" ");
-    const {stdout} = await execa("./node_modules/.bin/lerna", lernaArgs, {cwd: '../../'});
+    const { stdout } = await execa("./node_modules/.bin/lerna", lernaArgs, { cwd: '../../' });
     let dependenciesOrdered = JSON.parse(stdout);
     dependenciesOrdered = dependenciesOrdered.filter(dependency => excludePackage(dependency.name));
 
@@ -130,12 +131,12 @@ const getOrderedDependencies = async packageName => {
     return {
         paths,
         orderedPackageNames
-    }
+    };
 };
 
 const generateBuildChain = async (packageName, allPackagesOrdered) => {
     let lernaArgs = `ls --all --toposort --graph --scope ${packageName} --include-dependents`.split(" ");
-    let {stdout} = await execa("./node_modules/.bin/lerna", lernaArgs, {cwd: '../../'});
+    let { stdout } = await execa("./node_modules/.bin/lerna", lernaArgs, { cwd: '../../' });
     let dependencyTree = JSON.parse(stdout);
 
     dependencyTree = filterAgGridOnly(dependencyTree);
@@ -173,7 +174,7 @@ const watchCss = () => {
     console.log("Watching css...");
     const cacheFilePath = getCacheFilePath();
     if (!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = getOrderedDependencies("@ag-grid-community/core");
+        const { paths, orderedPackageNames } = getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -196,8 +197,8 @@ const watchCss = () => {
 const getBuildChainInfo = async () => {
     const cacheFilePath = getCacheFilePath();
     if (!fs.existsSync(cacheFilePath)) {
-        const {paths: gridPaths, orderedPackageNames: orderedGridPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
-        const {paths: chartPaths, orderedPackageNames: orderedChartPackageNames} = await getOrderedDependencies("ag-charts-community");
+        const { paths: gridPaths, orderedPackageNames: orderedGridPackageNames } = await getOrderedDependencies("@ag-grid-community/core");
+        const { paths: chartPaths, orderedPackageNames: orderedChartPackageNames } = await getOrderedDependencies("ag-charts-community");
 
         const buildChains = {};
         for (let packageName of orderedGridPackageNames.concat(orderedChartPackageNames)) {
@@ -223,9 +224,9 @@ const getFlattenedBuildChainInfo = async () => {
     const packageNames = Object.keys(buildChainInfo.buildChains);
     packageNames.forEach(packageName => {
         flattenedBuildChainInfo[packageName] = flattenArray(Object.values(buildChainInfo.buildChains[packageName]));
-    })
+    });
     return flattenedBuildChainInfo;
-}
+};
 
 const buildCss = async () => {
     const buildChainInfo = await getBuildChainInfo();
@@ -233,9 +234,9 @@ const buildCss = async () => {
     await buildDependencyChain("@ag-grid-community/core", cssBuildChain.buildChains);
 };
 
-const buildPackages = async (packageNames, command='build', arguments) => {
-    return await buildDependencies(packageNames, command, arguments)
-}
+const buildPackages = async (packageNames, command = 'build', arguments) => {
+    return await buildDependencies(packageNames, command, arguments);
+};
 
 /* To be extracted/refactored */
 const getAgBuildChain = async () => {
@@ -244,10 +245,10 @@ const getAgBuildChain = async () => {
     Object.keys(lernaBuildChainInfo).forEach(packageName => {
         lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName]
             .filter(dependent => dependent.startsWith('@ag-') || dependent.startsWith('ag-'));
-    })
+    });
 
     return lernaBuildChainInfo;
-}
+};
 
 
 function moduleChanged(moduleRoot) {
@@ -264,6 +265,7 @@ function moduleChanged(moduleRoot) {
     if (checkResult && checkResult.status !== 1) {
         changed = checkResult.output[1].trim() === '1';
     }
+
     return changed;
 }
 
@@ -283,16 +285,16 @@ const readModulesState = () => {
             .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`)
             .map(d => {
                 const packageName = require(WINDOWS ? `${d}\\package.json` : `${d}/package.json`).name;
-                modulesState[packageName] = {moduleChanged: moduleChanged(d)}
-            })
+                modulesState[packageName] = { moduleChanged: moduleChanged(d) };
+            });
     });
 
     return modulesState;
-}
+};
 
-let getLastBuild = function () {
-    const lastBuild = fsExtra.readJsonSync('./.last.build.json', {throws: false});
-    if(lastBuild) {
+let getLastBuild = function() {
+    const lastBuild = fsExtra.readJsonSync('./.last.build.json', { throws: false });
+    if (lastBuild) {
         return JSON.parse(lastBuild);
     }
     return null;
@@ -310,7 +312,7 @@ const rebuildPackagesBasedOnChangeState = async () => {
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
     const lastBuild = getLastBuild();
-    if(lastBuild) {
+    if (lastBuild) {
         fs.unlinkSync('./.last.build.json');
 
         lastBuild.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
@@ -326,25 +328,25 @@ const rebuildPackagesBasedOnChangeState = async () => {
             let result = await buildPackages(packagesToRun);
             buildFailed = result.exitCode !== 0 || result.failed === 1;
 
-            result = await buildPackages(packagesToRun, 'package', '--parallel')
+            result = await buildPackages(packagesToRun, 'package', '--parallel');
             buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
 
-            result = await buildPackages(packagesToRun, 'test')
+            result = await buildPackages(packagesToRun, 'test');
             buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
 
-            result = await buildPackages(packagesToRun, 'test:e2e')
+            result = await buildPackages(packagesToRun, 'test:e2e');
             buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
         } catch (e) {
             buildFailed = true;
         }
 
-        if(buildFailed) {
-            fsExtra.writeJsonSync('./.last.build.json', `[${packagesToRun.map(packageName => `"${packageName}"`)}]`)
+        if (buildFailed) {
+            fsExtra.writeJsonSync('./.last.build.json', `[${packagesToRun.map(packageName => `"${packageName}"`)}]`);
         }
     } else {
         console.log("No changed packages to process!");
     }
-}
+};
 /* To be extracted/refactored */
 
 exports.rebuildPackagesBasedOnChangeState = rebuildPackagesBasedOnChangeState;
