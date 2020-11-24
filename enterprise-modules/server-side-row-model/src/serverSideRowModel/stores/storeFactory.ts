@@ -23,7 +23,7 @@ export class StoreFactory {
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
 
-        const CacheClass = storeParams.storeType === ServerSideStoreType.Full ? FullStore : PartialStore;
+        const CacheClass = storeParams.storeType === ServerSideStoreType.Partial ? PartialStore : FullStore;
 
         return new CacheClass(ssrmParams, storeParams, parentNode);
     }

@@ -571,11 +571,25 @@
         "isAnimationFrameQueueEmpty()": {
             "description": "Returns `true` when there are no more animation frames left to process."
         },
-        "purgeServerSideCache(route)": {
-            "description": "Purges the server-side cache. If you pass no parameters, then the top level cache is purged. To purge a child cache, pass in the string of keys to get to the child cache.",
+        "refreshServerSideStore(route)": {
+            "description": "Refresh a server-side store.",
             "more": {
                 "name": "Purging Groups",
-                "url": "../server-side-model-grouping/#purging-groups"
+                "url": "../server-side-model-refresh/"
+            }
+        },
+        "getServerSideStoreState(route)": {
+            "description": "Returns info on all server side stores.",
+            "more": {
+                "name": "Store State",
+                "url": "../server-side-model-grouping/#store-state--store-info"
+            }
+        },
+        "retryServerSideLoads()": {
+            "description": "Gets all failed server side loads to retry.",
+            "more": {
+                "name": "Retry Loads",
+                "url": "../javascript/server-side-model-retry/"
             }
         },
         "setFillHandleDirection(direction)": {

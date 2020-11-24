@@ -108,6 +108,9 @@ interface CellValueChangedEvent {
         ├── ExpandCollapseAllEvent <span class="event-hierarchy__property">{
         │       <span class="event-hierarchy__attribute">source</span>: string
         │     }</span>
+        ├── AsyncTransactionsFlushed <span class="event-hierarchy__property">{
+        │       <span class="event-hierarchy__attribute">results</span>: (RowNodeTransaction | ServerSideTransactionResult) []
+        │     }</span>
         ├── DragEvent <span class="event-hierarchy__property">{
         │   │    <span class="event-hierarchy__attribute">type</span>: string, // one of {'cell','row','headerCell','toolPanel'}
                  <span class="event-hierarchy__attribute">target</span>: HTMLElement, // The DOM element that started the event.

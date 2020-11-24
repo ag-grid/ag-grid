@@ -213,6 +213,9 @@
         "animationQueueEmpty": {
             "description": "The grid draws rows and cells using animation frames. This event gets fired when the animation frame queue is empty. Normally used in conjunction with <code>api.isAnimationFrameQueueEmpty()</code> so user can check if animation frame is pending, and if so then can be notified when no animation frames are pending. Useful if your application needs to know when drawing of the grid is no longer pending, e.g. for sending to a printer."
         },
+        "AsyncTransactionsFlushed": {
+            "description": "Async transactions have been applied. Contains a list of all transaction results."
+        },
         "cellKeyDown": {
             "description": "DOM event <code>keyDown</code> happened on a cell.",
             "more": {
