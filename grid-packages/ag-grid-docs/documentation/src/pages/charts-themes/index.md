@@ -37,10 +37,10 @@ In the example below, you can click the buttons to change the theme used in the 
 You can create your own theme, which builds upon an existing theme and allows you to change as many or as few properties as you like. A custom theme is an object with the following properties:
 
 - `baseTheme` - the name of the theme to base this theme upon (optional; if not specified, the `'ag-default'` theme is used)
-- `defaults` - the object to be merged with the base theme's defaults and override them (optional)
+- `overrides` - the object to be merged with the base theme's defaults and override them (optional)
 - `palette` - the palette to use, replaces the palette of the base theme (optional)
 
-The `defaults` object is similar in its structure to the chart's options, with two noteworthy exceptions:
+The `overrides` object is similar in its structure to the chart's options, with two noteworthy exceptions:
 
 - the `series` config is an object that maps each series type to its config
 - the `axes` config is an object that maps each axis type to its config
@@ -62,7 +62,7 @@ var myTheme = {
         ],
         strokes: ['black']
     },
-    defaults: {
+    overrides: {
         cartesian: {
             title: {
                 fontSize: 24
