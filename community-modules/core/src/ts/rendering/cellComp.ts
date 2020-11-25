@@ -37,7 +37,7 @@ import { last, areEqual, pushAll, includes } from "../utils/array";
 import { cssStyleObjectToMarkup } from "../utils/general";
 import { isStopPropagationForAgGrid, getTarget, isEventSupported } from "../utils/event";
 import { isEventFromPrintableCharacter } from "../utils/keyboard";
-import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../utils/browser";
+import { isBrowserEdge, isBrowserIE, isBrowserSafari, isIOSUserAgent } from "../utils/browser";
 import { doOnce } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
 import { ITooltipParams } from "./tooltipComponent";
@@ -2181,12 +2181,19 @@ export class CellComp extends Component implements TooltipParentComp {
             this.hideEditorPopup();
             this.hideEditorPopup = null;
         } else {
-            clearElement(this.getGui());
+            const eGui = this.getGui();
+
+            // Safari scrolls when an element that has focus is removed from the DOM.
+            if (isBrowserSafari() && eGui.contains(document.activeElement)) {
+                eGui.focus();
+            }
+
+            clearElement(eGui);
 
             // put the cell back the way it was before editing
             if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back
-                this.getGui().appendChild(this.eCellWrapper);
+                eGui.appendChild(this.eCellWrapper);
             } else if (this.cellRenderer) {
                 // if cellRenderer, then put the gui back in. if the renderer has
                 // a refresh, it will be called. however if it doesn't, then later
@@ -2198,7 +2205,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 // can be null if cell was previously null / contained empty string,
                 // this will result in new value not being rendered.
                 if (eCell) {
-                    this.getGui().appendChild(eCell);
+                    eGui.appendChild(eCell);
                 }
             }
         }

@@ -28,12 +28,8 @@ export function isBrowserEdge(): boolean {
 
 export function isBrowserSafari(): boolean {
     if (isSafari === undefined) {
-        // taken from https://github.com/ag-grid/ag-grid/issues/550
-        const anyWindow = window as any;
-        const hasNotification = (p: any) => p && p.toString() === '[object SafariRemoteNotification]';
-
-        isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') !== -1
-            || hasNotification(anyWindow.safari && anyWindow.safari.pushNotification);
+        // taken from https://stackoverflow.com/a/23522755/1388233
+        isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     }
 
     return isSafari;
