@@ -35,6 +35,7 @@
     "gatsby-plugin-react-helmet": "3.3.14",
     "gatsby-plugin-sass": "2.4.1",
     "gatsby-plugin-sharp": "2.7.1",
+    "gatsby-plugin-use-query-params": "1.0.1",
     "gatsby-remark-autolink-headers": "2.4.0",
     "gatsby-remark-component-parent2div": "1.2.3",
     "gatsby-remark-copy-linked-files": "2.3.19",
@@ -52,6 +53,7 @@
     "node-sass": "4.14.1",
     "popper.js": "1.16.1",
     "prismjs": "1.22.0",
+    "query-string": "5.1.1",
     "react": "16.14.0",
     "react-color": "2.18.1",
     "react-dom": "16.14.0",
@@ -60,7 +62,8 @@
     "react-visibility-sensor": "5.1.1",
     "rehype-react": "6.1.0",
     "typescript": "4.0.5",
-    "unist-util-visit": "2.0.3"
+    "unist-util-visit": "2.0.3",
+    "use-query-params": "1.1.9"
   },
   "devDependencies": {
     "prettier": "2.1.2"

@@ -4,8 +4,8 @@ import styles from './index.module.scss';
 import fwLogos from '../images/fw-logos';
 import supportedFrameworks from '../utils/supported-frameworks';
 
-export default function Home() {
-  return <div style={{ textAlign: 'center' }}>
+const HomePage = () =>
+  <div style={{ textAlign: 'center' }}>
     <h1>Welcome to the AG-Grid documentation</h1>
 
     <p>Which framework would you like to learn?</p>
@@ -21,4 +21,5 @@ export default function Home() {
       ))}
     </div>
   </div>;
-}
+
+export default HomePage;

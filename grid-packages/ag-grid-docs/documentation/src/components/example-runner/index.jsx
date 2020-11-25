@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { withPrefix } from 'gatsby';
-import VisibilitySensor from "react-visibility-sensor";
+import VisibilitySensor from 'react-visibility-sensor';
+import { encodeQueryParams } from 'use-query-params';
+import { stringify } from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import CodeViewer from './CodeViewer';
@@ -8,8 +10,42 @@ import GlobalContextConsumer from '../GlobalContext';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { doOnEnter, getExampleInfo, isDevelopment, openPlunker } from './helpers';
-import { getIndexHtml } from './index-html-helper';
 import styles from './example-runner.module.scss';
+import { ParameterConfig } from '../../pages/example-runner';
+
+const getNewTabLink = exampleInfo => {
+    if (isDevelopment()) {
+        const {
+            pageName,
+            library,
+            framework,
+            useFunctionalReact,
+            importType,
+            name,
+            title,
+            type,
+            options,
+        } = exampleInfo;
+
+        const queryParams = encodeQueryParams(
+            ParameterConfig,
+            {
+                pageName,
+                library,
+                framework,
+                useFunctionalReact,
+                importType,
+                name,
+                title,
+                type,
+                options,
+            });
+
+        return `/example-runner/?${stringify(queryParams)}`;
+    } else {
+        return `${exampleInfo.appLocation}index.html`;
+    }
+};
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = {}, library }) => {
     const [showCode, setShowCode] = useState(!!options.showCode);
@@ -19,24 +55,6 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = {}, l
         {({ exampleImportType, useFunctionalReact, set }) => {
             const exampleInfo = getExampleInfo(
                 nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
-
-            let openTabLink = <a href={withPrefix(`${exampleInfo.appLocation}index.html`)} target="_blank" rel="noreferrer">
-                <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
-            </a>;
-
-            if (isDevelopment()) {
-                // as the files will not have been generated in development, we generate the HTML for the new tab here
-                const indexHtml = getIndexHtml(nodes, exampleInfo, true);
-                const openTab = () => {
-                    const win = window.open(null, '_blank');
-                    win.document.write(indexHtml);
-                    win.document.close();
-                };
-
-                openTabLink = <div onClick={openTab} onKeyDown={e => doOnEnter(e, openTab)} role="button" tabIndex="0">
-                    <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
-                </div>;
-            }
 
             const exampleStyle = {
                 width: '100%',
@@ -78,7 +96,9 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = {}, l
                             <FontAwesomeIcon icon={faCode} fixedWidth />
                         </div>
                         <div className={styles.exampleRunner__menuItem}>
-                            {openTabLink}
+                            <a href={withPrefix(getNewTabLink(exampleInfo))} target="_blank" rel="noreferrer">
+                                <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
+                            </a>
                         </div>
                         {!options.noPlunker &&
                             <div

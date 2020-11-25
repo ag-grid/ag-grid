@@ -125,7 +125,8 @@ const plugins = [
         failOnError: false
       }
     }
-  }
+  },
+  'gatsby-plugin-use-query-params'
 ];
 
 if (process.env.GATSBY_UPDATE_ALGOLIA === 'true') {
