@@ -11,7 +11,7 @@ var myTheme = {
         ],
         strokes: ['gray']
     },
-    defaults: {
+    overrides: {
         common: {
             title: {
                 fontSize: 24

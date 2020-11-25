@@ -11,7 +11,7 @@ var myTheme = {
         ],
         strokes: ['black']
     },
-    defaults: {
+    overrides: {
         cartesian: {
             title: {
                 fontSize: 24
