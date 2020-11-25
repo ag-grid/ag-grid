@@ -1,5 +1,5 @@
 import { ChartTheme } from "./chartTheme";
-import { AgChartThemePalette, AgChartThemeOptions } from "../agChartOptions";
+import { AgChartThemeOptions } from "../agChartOptions";
 
 export class DarkTheme extends ChartTheme {
 

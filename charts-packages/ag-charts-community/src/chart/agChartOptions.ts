@@ -49,6 +49,7 @@ export interface AgCartesianSeriesTheme {
     scatter?: AgScatterSeriesOptions;
     area?: AgAreaSeriesOptions;
     bar?: AgBarSeriesOptions;
+    column?: AgBarSeriesOptions;
     histogram?: AgHistogramSeriesOptions;
 }
 
