@@ -15,8 +15,36 @@ var gridOptions = {
   columnDefs: columnDefs,
   animateRows: true,
   purgeClosedRowNodes: true,
+  onGridReady: function (params) {
+
+    setupData();
+
+    var dataSource = {
+      getRows: function (params2) {
+        // To make the demo look real, wait for 500ms before returning
+        setTimeout(function () {
+          let doingTopLevel = params2.request.groupKeys.length == 0;
+          if (doingTopLevel) {
+            params2.success({rowData: products.slice(), rowCount: products.length});
+          } else {
+            var key = params2.request.groupKeys[0];
+            var foundProduct;
+            products.forEach(function (product) {
+              if (product.productName == key) {
+                foundProduct = product;
+              }
+            });
+            params2.success({rowData: foundProduct.trades});
+          }
+
+        }, 2000);
+      }
+    }
+
+    params.api.setServerSideDatasource(dataSource);
+  },
   getServerSideStoreParams: function(params) {
-    var type = params.level == 0 ? 'infinite' : 'full';
+    var type = params.level == 0 ? 'partial' : 'full';
     return {
       storeType: type
     };
@@ -33,13 +61,15 @@ function createOneTrade() {
   return {id: idSequence++, tradeName: 'TRD-'+Math.floor(Math.random()*20000), value: Math.floor(Math.random()*20000)};
 }
 
-productsNames.forEach(function(productName) {
-  var product = {id: idSequence++, productName: productName, trades: []};
-  products.push(product);
-  for (var i = 0; i<2; i++) {
-    product.trades.push(createOneTrade());
-  }
-});
+function setupData() {
+  productsNames.forEach(function(productName) {
+    var product = {id: idSequence++, productName: productName, trades: []};
+    products.push(product);
+    for (var i = 0; i<2; i++) {
+      product.trades.push(createOneTrade());
+    }
+  });
+}
 
 function onBtNewPalmOil() {
   var transaction = {
@@ -96,31 +126,4 @@ function onBtStoreState() {
 document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
-
-  agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
-
-    var dataSource = {
-      getRows: function(params) {
-        // To make the demo look real, wait for 500ms before returning
-        setTimeout(function() {
-
-          if (params.request.groupKeys.length==0) {
-            params.success({rowData: products.slice(), rowCount: products.length});
-          } else {
-            var key = params.request.groupKeys[0];
-            var foundProduct;
-            products.forEach(function(product) {
-              if (product.productName==key) {
-                foundProduct = product;
-              }
-            });
-            params.success({rowData: foundProduct.trades});
-          }
-
-        }, 2000);
-      }
-    };
-
-    gridOptions.api.setServerSideDatasource(dataSource);
-  });
 });

@@ -269,9 +269,9 @@ export class GridApi {
     }
 
     public setServerSideDatasource(datasource: IServerSideDatasource) {
-        if (this.gridOptionsWrapper.isRowModelServerSide()) {
+        if (this.serverSideRowModel) {
             // should really have an IEnterpriseRowModel interface, so we are not casting to any
-            (this.rowModel as any).setDatasource(datasource);
+            this.serverSideRowModel.setDatasource(datasource);
         } else {
             console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_SERVER_SIDE}'`);
         }

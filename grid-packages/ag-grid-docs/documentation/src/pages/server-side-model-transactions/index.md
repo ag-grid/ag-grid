@@ -162,7 +162,7 @@ The example below demonstrates applying transactions to a store with groups. Not
 
 - The button **Store State** will print to the console the state of the existing stores.
 
-<grid-example title='Transactions Hierarchy' name='transactions-hierarchy' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
+<grid-example title='Transactions Hierarchy' name='transactions-hierarchy' type='generated' options='{ "enterprise": true, "modules": ["serverside","rowgrouping"] }'></grid-example>
 
 ## Partial Store
 

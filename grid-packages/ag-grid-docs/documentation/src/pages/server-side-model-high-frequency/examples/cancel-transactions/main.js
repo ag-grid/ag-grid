@@ -22,8 +22,8 @@ var gridOptions = {
   isApplyServerSideTransaction: function(params) {
     var tx = params.transaction;
     var storeInfo = params.storeInfo;
-    var txCreatedSinceRowDataRead = tx.serverVersion > storeInfo.version;
-    console.log('tx.serverVersion = ' + tx.serverVersion + ', storeInfo.version = ' + storeInfo.version);
+    var txCreatedSinceRowDataRead = tx.serverVersion > storeInfo.serverVersion;
+    console.log('tx.serverVersion = ' + tx.serverVersion + ', storeInfo.serverVersion = ' + storeInfo.serverVersion);
     if (txCreatedSinceRowDataRead) {
       console.log('Applying transaction');
       return true;
@@ -31,6 +31,24 @@ var gridOptions = {
       console.log('Cancelling transaction');
       return false;
     }
+  },
+  onGridReady: function(params) {
+
+    setupData();
+
+    var dataSource = {
+      getRows: function(params2) {
+        setTimeout(function() {
+
+          var rowData = allServerSideData.slice();
+          console.log('getRows: found ' + rowData.length + ' records on server.');
+
+          params2.success({rowData: rowData, storeInfo: {serverVersion: serverVersion}});
+        }, 2000);
+      }
+    };
+
+    params.api.setServerSideDatasource(dataSource);
   },
   getRowNodeId: function(data) {return data.product; },
   rowModelType: 'serverSide',
@@ -48,12 +66,15 @@ var all_products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','T
   'Cotton No.2','Sugar No.11','Sugar No.14'];
 
 var allServerSideData = [];
-products.forEach( function(product, index) {
-  allServerSideData.push({
-    product: product,
-    value: Math.floor(Math.random()*10000)
-  })
-});
+
+function setupData() {
+  products.forEach( function(product, index) {
+    allServerSideData.push({
+      product: product,
+      value: Math.floor(Math.random()*10000)
+    })
+  });
+}
 
 var serverVersion = 0;
 
@@ -80,18 +101,4 @@ function onBtRefresh() {
 document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
-
-  var dataSource = {
-    getRows: function(params) {
-      setTimeout(function() {
-
-        var rowData = allServerSideData.slice();
-        console.log('getRows: found ' + rowData.length + ' records on server.');
-
-        params.success({rowData: rowData, storeInfo: {serverVersion: serverVersion}});
-      }, 2000);
-    }
-  };
-
-  gridOptions.api.setServerSideDatasource(dataSource);
 });

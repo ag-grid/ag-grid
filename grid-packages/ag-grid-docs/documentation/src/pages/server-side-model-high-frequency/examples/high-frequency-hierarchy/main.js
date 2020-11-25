@@ -35,6 +35,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+  asyncTransactionWaitMillis: 500,
+  purgeClosedRowNodes: true,
+  rowSelection: 'multiple',
+  serverSideStoreType: 'full',
+  columnDefs: columnDefs,
+  rowModelType: 'serverSide',
+  animateRows: true,
   defaultColDef: {
     width: 250,
     resizable: true,
@@ -43,47 +50,63 @@ var gridOptions = {
   autoGroupColumnDef: {
     field: 'tradeId'
   },
-  getRowNodeId: function(data) {
-    if (data.tradeId) {
-      return data.tradeId;
-    } else if (data.bookId) {
-      return data.bookId;
-    } else if (data.portfolioId) {
-      return data.portfolioId;
-    } else if (data.productId) {
-      return data.productId;
-    }
-  },
-  isApplyServerSideTransaction: function(params) {
-    var transactionVersion = params.transaction.serverVersion;
-    var dataLoadedVersion = params.storeInfo.serverVersion;
-    var transactionCreatedSinceInitialLoad = transactionVersion > dataLoadedVersion;
-    if (!transactionCreatedSinceInitialLoad) {
-      console.log('cancelling transaction');
-    }
-    return transactionCreatedSinceInitialLoad;
-  },
-  onAsyncTransactionsFlushed: function(e) {
-    var summary = {};
-    e.results.forEach(function(result) {
-      var status = result.status;
-      if (summary[status]==null) {
-        summary[status] = 0;
-      }
-      summary[status]++;
-    });
-    console.log('onAsyncTransactionsFlushed: ' + JSON.stringify(summary));
-  },
-  asyncTransactionWaitMillis: 500,
-  purgeClosedRowNodes: true,
-  rowSelection: 'multiple',
-  serverSideStoreType: 'full',
-  columnDefs: columnDefs,
-  // use the enterprise row model
-  rowModelType: 'serverSide',
-  // cacheBlockSize: 100,
-  animateRows: true
+  getRowNodeId: getRowNodeId,
+  isApplyServerSideTransaction: isApplyServerSideTransaction,
+  onAsyncTransactionsFlushed: onAsyncTransactionsFlushed,
+  onGridReady: onGridReady
 };
+
+function onGridReady(params) {
+
+  var dataSource = {
+    getRows: function(params2) {
+      fakeServer.getData(params2.request, params2.parentNode.data, function(result, serverVersion) {
+        params2.success({
+          rowData: result,
+          storeInfo: {serverVersion: serverVersion}
+        });
+      });
+    }
+  };
+
+  params.api.setServerSideDatasource(dataSource);
+
+  fakeServer.addUpdateListener(processUpdateFromFakeServer);
+}
+
+function getRowNodeId(data) {
+  if (data.tradeId) {
+    return data.tradeId;
+  } else if (data.bookId) {
+    return data.bookId;
+  } else if (data.portfolioId) {
+    return data.portfolioId;
+  } else if (data.productId) {
+    return data.productId;
+  }
+}
+
+function isApplyServerSideTransaction(params) {
+  var transactionVersion = params.transaction.serverVersion;
+  var dataLoadedVersion = params.storeInfo.serverVersion;
+  var transactionCreatedSinceInitialLoad = transactionVersion > dataLoadedVersion;
+  if (!transactionCreatedSinceInitialLoad) {
+    console.log('cancelling transaction');
+  }
+  return transactionCreatedSinceInitialLoad;
+}
+
+function onAsyncTransactionsFlushed(e) {
+  var summary = {};
+  e.results.forEach(function(result) {
+    var status = result.status;
+    if (summary[status]==null) {
+      summary[status] = 0;
+    }
+    summary[status]++;
+  });
+  console.log('onAsyncTransactionsFlushed: ' + JSON.stringify(summary));
+}
 
 function numberCellFormatter(params) {
   return Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
@@ -119,18 +142,4 @@ function processUpdateFromFakeServer(transactions) {
 document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
-
-  var dataSource = {
-    getRows: function(params) {
-      fakeServer.getData(params.request, params.parentNode.data, function(result, serverVersion) {
-        params.success({
-          rowData: result,
-          storeInfo: {serverVersion: serverVersion}
-        });
-      });
-    }
-  };
-
-  gridOptions.api.setServerSideDatasource(dataSource);
-  fakeServer.addUpdateListener(processUpdateFromFakeServer);
 });

@@ -8,22 +8,43 @@ var gridOptions = {
     width: 250,
     resizable: true
   },
-  onAsyncTransactionsFlushed: function(e) {
-    var summary = {};
-    e.results.forEach(function(result) {
-      var status = result.status;
-      if (summary[status]==null) {
-        summary[status] = 0;
+
+  onAsyncTransactionsFlushed: onAsyncTransactionsFlushed,
+
+  onGridReady: function(params) {
+
+    setupData();
+
+    var dataSource = {
+      getRows: function(params) {
+        var rowData = allServerSideData.slice();
+        console.log('getRows: found ' + rowData.length + ' records on server.');
+        setTimeout(function() {
+          params.success({rowData: rowData});
+        }, 2000);
       }
-      summary[status]++;
-    });
-    console.log('onAsyncTransactionsFlushed: ' + JSON.stringify(summary));
+    };
+
+    gridOptions.api.setServerSideDatasource(dataSource);
   },
+
   getRowNodeId: function(data) {return data.product; },
   rowModelType: 'serverSide',
   serverSideStoreType: 'full',
   columnDefs: columnDefs
 };
+
+function onAsyncTransactionsFlushed(e) {
+  var summary = {};
+  e.results.forEach(function(result) {
+    var status = result.status;
+    if (summary[status]==null) {
+      summary[status] = 0;
+    }
+    summary[status]++;
+  });
+  console.log('onAsyncTransactionsFlushed: ' + JSON.stringify(summary));
+}
 
 var products = ['Palm Oil','Rubber','Wool','Amber','Copper'];
 
@@ -35,12 +56,15 @@ var all_products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','T
   'Cotton No.2','Sugar No.11','Sugar No.14'];
 
 var allServerSideData = [];
-products.forEach( function(product, index) {
-  allServerSideData.push({
-    product: product,
-    value: Math.floor(Math.random()*10000)
-  })
-});
+
+function setupData() {
+  products.forEach( function(product, index) {
+    allServerSideData.push({
+      product: product,
+      value: Math.floor(Math.random()*10000)
+    })
+  });
+}
 
 function onBtAdd() {
   var newProductName = all_products[Math.floor(all_products.length*Math.random())];
@@ -63,16 +87,4 @@ function onBtRefresh() {
 document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
-
-  var dataSource = {
-    getRows: function(params) {
-      var rowData = allServerSideData.slice();
-      console.log('getRows: found ' + rowData.length + ' records on server.');
-      setTimeout(function() {
-        params.success({rowData: rowData});
-      }, 2000);
-    }
-  };
-
-  gridOptions.api.setServerSideDatasource(dataSource);
 });

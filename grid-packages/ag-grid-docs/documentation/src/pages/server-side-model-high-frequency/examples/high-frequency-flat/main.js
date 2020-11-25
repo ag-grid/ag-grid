@@ -8,14 +8,29 @@ var gridOptions = {
     width: 250,
     resizable: true
   },
-  getRowNodeId: function(data) {return data.product; },
   rowSelection: 'multiple',
   serverSideStoreType: 'full',
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',
   animateRows: true,
-  asyncTransactionWaitMillis: 4000
+  asyncTransactionWaitMillis: 4000,
+  onGridReady: function (params) {
+
+    setupData();
+
+    var dataSource = {
+      getRows: function(params2) {
+        var rowData = allServerSideData.slice();
+        setTimeout(function() {
+          params2.success({rowData: rowData});
+        }, 200);
+      }
+    };
+
+    params.api.setServerSideDatasource(dataSource);
+  },
+  getRowNodeId: function(data) {return data.product; }
 };
 
 var products = ['Palm Oil','Rubber','Wool','Amber','Copper'];
@@ -28,12 +43,15 @@ var all_products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','T
   'Cotton No.2','Sugar No.11','Sugar No.14'];
 
 var allServerSideData = [];
-products.forEach( function(product, index) {
-  allServerSideData.push({
-    product: product,
-    value: Math.floor(Math.random()*10000)
-  })
-});
+
+function setupData() {
+  products.forEach( function(product, index) {
+    allServerSideData.push({
+      product: product,
+      value: Math.floor(Math.random()*10000)
+    })
+  });
+}
 
 function onBtAdd() {
   var newProductName = all_products[Math.floor(all_products.length*Math.random())];
@@ -58,15 +76,4 @@ function onBtFlush() {
 document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
-
-  var dataSource = {
-    getRows: function(params) {
-      var rowData = allServerSideData.slice();
-      setTimeout(function() {
-        params.success({rowData: rowData});
-      }, 200);
-    }
-  };
-
-  gridOptions.api.setServerSideDatasource(dataSource);
 });

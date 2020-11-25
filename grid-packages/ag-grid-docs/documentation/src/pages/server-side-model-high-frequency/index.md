@@ -183,7 +183,7 @@ In the example, note the following:
 - Column Deal Type has a filter associated with it. The filter is done by the grid without needing to request data again from the server.
 
 
-<grid-example title='High Frequency Hierarchy' name='high-frequency-hierarchy' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
+<grid-example title='High Frequency Hierarchy' name='high-frequency-hierarchy' type='generated' options='{ "enterprise": true, "modules": ["serverside","rowgrouping"] }'></grid-example>
 
 ## Next Up
 
