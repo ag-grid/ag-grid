@@ -16,8 +16,9 @@
     &__title {
         flex: 1;
         font-weight: bold;
-        color: $light;
+        color: $light !important;
         line-height: 2rem;
+        font-size: 1rem;
     }
 
     &__import-type,

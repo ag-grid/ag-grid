@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { getPageName } from '../utils/get-page-name';
 import toKebabCase from '../utils/to-kebab-case';
-import ExampleRunner from '../components/example-runner';
+import ExampleRunner from '../components/example-runner/ExampleRunner';
 import pageStyles from './doc-page.module.scss';
 import styles from './chart-gallery-page.module.scss';
 

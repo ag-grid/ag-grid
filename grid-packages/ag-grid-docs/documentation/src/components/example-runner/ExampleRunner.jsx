@@ -10,8 +10,9 @@ import GlobalContextConsumer from '../GlobalContext';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { doOnEnter, getExampleInfo, isDevelopment, openPlunker } from './helpers';
-import styles from './example-runner.module.scss';
 import { ParameterConfig } from '../../pages/example-runner';
+import anchorIcon from '../../images/anchor';
+import styles from './example-runner.module.scss';
 
 const getNewTabLink = exampleInfo => {
     if (isDevelopment()) {
@@ -47,7 +48,7 @@ const getNewTabLink = exampleInfo => {
     }
 };
 
-const ExampleRunner = ({ pageName, framework, name, title, type, options = {}, library }) => {
+export const ExampleRunner = ({ pageName, framework, name, title, type, options = {}, library }) => {
     const [showCode, setShowCode] = useState(!!options.showCode);
     const nodes = useExampleFileNodes();
 
@@ -62,10 +63,13 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = {}, l
             };
 
             const isGenerated = exampleInfo.type === 'generated' || exampleInfo.type === 'mixed';
+            const linkId = `example--${name}`;
 
             return <div className={styles.exampleRunner}>
                 <div className={`form-inline ${styles.exampleRunner__header}`}>
-                    <div className={styles.exampleRunner__title}>Example: {title}</div>
+                    <a id={linkId} href={`#${linkId}`} className={`anchor ${styles.exampleRunner__title}`}>
+                        {anchorIcon}&nbsp;Example: {title}
+                    </a>
                     {library === 'grid' && exampleInfo.framework === 'react' &&
                         <ReactVersionSelector
                             useFunctionalReact={useFunctionalReact}
