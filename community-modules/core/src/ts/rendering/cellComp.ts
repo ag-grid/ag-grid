@@ -1239,10 +1239,18 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private addInCellEditor(): void {
-        clearElement(this.getGui());
+        const eGui = this.getGui();
+
+        // if focus is inside the cell, we move focus to the cell itself
+        // before removing it's contents, otherwise errors could be thrown.
+        if (eGui.contains(document.activeElement)) {
+            eGui.focus();
+        }
+
+        this.clearCellElement();
 
         if (this.cellEditor) {
-            this.getGui().appendChild(this.cellEditor.getGui());
+            eGui.appendChild(this.cellEditor.getGui());
         }
 
         this.angular1Compile();
@@ -2181,15 +2189,9 @@ export class CellComp extends Component implements TooltipParentComp {
             this.hideEditorPopup();
             this.hideEditorPopup = null;
         } else {
+            this.clearCellElement();
+
             const eGui = this.getGui();
-
-            // Safari scrolls when an element that has focus is removed from the DOM.
-            if (isBrowserSafari() && eGui.contains(document.activeElement)) {
-                eGui.focus();
-            }
-
-            clearElement(eGui);
-
             // put the cell back the way it was before editing
             if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back
@@ -2235,5 +2237,17 @@ export class CellComp extends Component implements TooltipParentComp {
         };
 
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
+    }
+
+    private clearCellElement():void {
+        const eGui = this.getGui();
+
+        // if focus is inside the cell, we move focus to the cell itself
+        // before removing it's contents, otherwise errors could be thrown.
+        if (eGui.contains(document.activeElement)) {
+            eGui.focus();
+        }
+
+        clearElement(eGui);
     }
 }
