@@ -18,8 +18,8 @@ import {
     RefSelector,
     TouchListener
 } from "@ag-grid-community/core";
-import {ColumnModelItem} from "./columnModelItem";
-import {ModelItemUtils} from "./modelItemUtils";
+import { ColumnModelItem } from "./columnModelItem";
+import { ModelItemUtils } from "./modelItemUtils";
 
 export class ToolPanelColumnGroupComp extends Component {
 

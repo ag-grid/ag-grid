@@ -12,7 +12,7 @@ import {
     LoggerFactory,
     PostConstruct
 } from "@ag-grid-community/core";
-import {BaseDropZonePanel} from "./baseDropZonePanel";
+import { BaseDropZonePanel } from "./baseDropZonePanel";
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
 

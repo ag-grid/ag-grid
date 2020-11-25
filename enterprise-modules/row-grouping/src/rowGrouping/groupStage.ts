@@ -17,7 +17,7 @@ import {
     ValueService,
     _
 } from "@ag-grid-community/core";
-import {BatchRemover} from "./batchRemover";
+import { BatchRemover } from "./batchRemover";
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
@@ -253,7 +253,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private removeNodesFromParents(nodesToRemove: RowNode[], details: GroupingDetails, provided: BatchRemover | undefined): void {
-        const batchRemoverIsLocal = provided==null;
+        const batchRemoverIsLocal = provided == null;
         const batchRemoverToUse = provided ? provided : new BatchRemover();
 
         nodesToRemove.forEach(nodeToRemove => {
@@ -608,6 +608,3 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return res;
     }
 }
-
-
-

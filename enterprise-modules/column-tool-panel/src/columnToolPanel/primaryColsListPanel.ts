@@ -172,7 +172,7 @@ export class PrimaryColsListPanel extends Component {
             const colGroup = item.getColumnGroup();
             if (colGroup) { // group should always exist, this is defensive
                 const expanded = states[colGroup.getId()];
-                const groupExistedLastTime = expanded!=null;
+                const groupExistedLastTime = expanded != null;
                 if (groupExistedLastTime) {
                     item.setExpanded(expanded);
                 }

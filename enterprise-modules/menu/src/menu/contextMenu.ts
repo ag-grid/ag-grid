@@ -24,9 +24,12 @@ import {
     PostConstruct,
     RowNode
 } from "@ag-grid-community/core";
-import {MenuItemComponent} from "./menuItemComponent";
-import {MenuList} from "./menuList";
-import {MenuItemMapper} from "./menuItemMapper";
+import { MenuItemComponent } from "./menuItemComponent";
+import { MenuList } from "./menuList";
+import { MenuItemMapper } from "./menuItemMapper";
+
+const CSS_MENU = 'ag-menu';
+const CSS_CONTEXT_MENU_OPEN = ' ag-context-menu-open';
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
@@ -127,6 +130,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: () => {
+                _.removeCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
                 this.destroyBean(menu);
             },
             click: mouseEvent,
@@ -136,6 +140,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         });
 
         if (addPopupRes) {
+            _.addCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
             menu.afterGuiAttached({ container: 'contextMenu', hidePopup: addPopupRes.hideFunc });
         }
 
@@ -176,7 +181,7 @@ class ContextMenu extends Component {
     private focusedCell: CellPosition | null = null;
 
     constructor(menuItems: (MenuItemDef | string)[]) {
-        super('<div class="ag-menu" role="presentation"></div>');
+        super(/* html */`<div class="${CSS_MENU}" role="presentation"></div>`);
         this.menuItems = menuItems;
     }
 

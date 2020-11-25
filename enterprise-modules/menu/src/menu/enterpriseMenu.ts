@@ -119,9 +119,9 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
         const anchorToElement = eventSource ? eventSource : this.gridPanel.getGui();
 
-        const closedFuncs: ((e?: Event)=>void)[] = [];
+        const closedFuncs: ((e?: Event) => void)[] = [];
 
-        closedFuncs.push( (e?: Event)=> {
+        closedFuncs.push((e?: Event) => {
             this.destroyBean(menu);
             column.setMenuVisible(false, 'contextMenu');
 
@@ -141,7 +141,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: (e?: Event) => { // menu closed callback
-                closedFuncs.forEach( f => f(e));
+                closedFuncs.forEach(f => f(e));
             },
             positionCallback: () => { positionCallback(menu); },
             anchorToElement
@@ -157,7 +157,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             if (stopAnchoringFunc) {
                 column.addEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
                 column.addEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
-                closedFuncs.push( ()=> {
+                closedFuncs.push(() => {
                     column.removeEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
                     column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
                 });

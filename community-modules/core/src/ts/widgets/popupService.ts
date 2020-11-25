@@ -446,7 +446,7 @@ export class PopupService extends BeanStub {
 
         if (pos !== -1) {
             const popup = this.popupList[pos];
-            return {hideFunc: popup.hideFunc, stopAnchoringFunc: popup.stopAnchoringFunc};
+            return { hideFunc: popup.hideFunc, stopAnchoringFunc: popup.stopAnchoringFunc };
         }
 
         const ePopupParent = this.getPopupParent();
