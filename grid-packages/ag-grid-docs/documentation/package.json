@@ -5,10 +5,10 @@
   "version": "0.1.0",
   "license": "0BSD",
   "scripts": {
-    "build": "npm run clean && cd .. && node dev-server.js generate-examples && cd documentation && npx gatsby build --prefix-paths",
+    "build": "cd .. && node dev-server.js generate-examples && cd documentation && npx gatsby build --prefix-paths",
     "develop": "npx gatsby develop -H 0.0.0.0",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "start": "npm run clean && npm run develop",
+    "start": "npm run develop",
     "serve": "npx gatsby serve --prefix-paths",
     "clean": "npx gatsby clean"
   },
@@ -26,7 +26,7 @@
     "eslint-plugin-flow": "2.29.1",
     "eslint-plugin-react-hooks": "4.2.0",
     "fontsource-roboto": "3.0.3",
-    "gatsby": "2.26.1",
+    "gatsby": "2.27.2",
     "gatsby-plugin-algolia": "0.14.1",
     "gatsby-plugin-catch-links": "2.3.15",
     "gatsby-plugin-compile-es6-packages": "2.1.0",
