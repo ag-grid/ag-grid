@@ -14,7 +14,9 @@ const plugins = [
   {
     resolve: `gatsby-transformer-rehype`,
     options: {
-      filter: node => node.sourceInstanceName === 'examples' && node.relativePath.indexOf('/_gen/') < 0 && node.base.endsWith('.html'),
+      filter: node => node.sourceInstanceName === 'pages' &&
+        node.relativePath.indexOf('/_gen/') < 0 &&
+        node.base.endsWith('.html'),
     },
   },
   'gatsby-plugin-layout',
