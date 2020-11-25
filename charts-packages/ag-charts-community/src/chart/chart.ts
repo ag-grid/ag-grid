@@ -277,8 +277,8 @@ export abstract class Chart extends Observable {
 
     static readonly defaultTooltipClass = 'ag-chart-tooltip';
 
-    private _container: HTMLElement | undefined = undefined;
-    set container(value: HTMLElement | undefined) {
+    private _container: HTMLElement | undefined | null = undefined;
+    set container(value: HTMLElement | undefined | null) {
         if (this._container !== value) {
             const { parentNode } = this.element;
 
@@ -293,7 +293,7 @@ export abstract class Chart extends Observable {
             this._container = value;
         }
     }
-    get container(): HTMLElement | undefined {
+    get container(): HTMLElement | undefined | null {
         return this._container;
     }
 

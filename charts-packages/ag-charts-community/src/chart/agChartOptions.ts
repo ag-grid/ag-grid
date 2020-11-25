@@ -201,7 +201,7 @@ export interface AgChartLegendOptions {
 }
 
 interface AgBaseChartOptions {
-    container?: HTMLElement;
+    container?: HTMLElement | null;
     data?: any[];
     width?: number;
     height?: number;
