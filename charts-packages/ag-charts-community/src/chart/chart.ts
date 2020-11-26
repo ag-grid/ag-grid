@@ -151,8 +151,6 @@ class ChartTooltip extends Observable {
      */
     @reactive() tracking: boolean = true;
 
-    @reactive() delay: number = 500;
-
     isVisible(): boolean {
         const { element } = this;
         if (element.classList) { // if not IE11
