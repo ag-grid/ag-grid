@@ -1,5 +1,5 @@
 import { ReactPortal, createElement } from 'react';
-import { createPortal } from 'react-dom';
+import { createPortal, findDOMNode } from 'react-dom';
 import { _, ComponentType, Promise } from '@ag-grid-community/core';
 import { AgGridReact } from "./agGridReact";
 import { BaseReactComponent } from './baseReactComponent';
@@ -15,9 +15,10 @@ export class ReactComponent extends BaseReactComponent {
     private componentInstance: any;
 
     private reactComponent: any;
+    private eGui: any;
     private componentType: ComponentType;
     private parentComponent: AgGridReact;
-    private portal: ReactPortal | null = null;
+    public reactElement: any | null = null;
     private statelessComponent: boolean;
     private staticMarkup: HTMLElement | null | string = null;
     private staticRenderTime: number = 0;
@@ -45,17 +46,18 @@ export class ReactComponent extends BaseReactComponent {
 
     public init(params: any): Promise<void> {
         this.eParentElement = this.createParentElement(params);
-        this.renderStaticMarkup(params);
+        // this.renderStaticMarkup(params);
 
         return new Promise<void>(resolve => this.createReactComponent(params, resolve));
     }
 
     public getGui(): HTMLElement {
-        return this.eParentElement;
+        return this.eGui;
     }
 
     public destroy(): void {
-        return this.parentComponent.destroyPortal(this.portal as ReactPortal);
+        this.eParentElement.appendChild(this.eGui);
+        return this.parentComponent.destroyPortal(this);
     }
 
     private createReactComponent(params: any, resolve: (value: any) => void) {
@@ -70,28 +72,34 @@ export class ReactComponent extends BaseReactComponent {
             };
         }
 
-        const reactComponent = createElement(this.reactComponent, params);
-        const portal: ReactPortal = createPortal(
-            reactComponent,
-            this.eParentElement as any,
-            generateNewKey() // fixed deltaRowModeRefreshCompRenderer
-        );
+        this.reactElement = createElement(this.reactComponent, {...params, key: generateNewKey()});
+        this.parentComponent.mountReactPortal(this, value => {
 
-        this.portal = portal;
-        this.parentComponent.mountReactPortal(portal, this, (value: any) => {
+            this.eGui = findDOMNode(this.componentInstance) as any
+            this.eParentElement = this.eGui.parentElement;
             resolve(value);
-
-            // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
-            // here
-            if (this.isStatelessComponent()) {
-                if(this.isSlowRenderer()) {
-                    this.removeStaticMarkup()
-                }
-                setTimeout(() => {
-                    this.removeStaticMarkup()
-                });
-            }
-        });
+        })
+        // const portal: ReactPortal = createPortal(
+        //     reactComponent,
+        //     this.eParentElement as any,
+        //     generateNewKey() // fixed deltaRowModeRefreshCompRenderer
+        // );
+        //
+        // this.portal = portal;
+        // this.parentComponent.mountReactPortal(portal, this, (value: any) => {
+        //     resolve(value);
+        //
+        //     // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
+        //     // here
+        //     if (this.isStatelessComponent()) {
+        //         if(this.isSlowRenderer()) {
+        //             this.removeStaticMarkup()
+        //         }
+        //         setTimeout(() => {
+        //             this.removeStaticMarkup()
+        //         });
+        //     }
+        // });
     }
 
     private isSlowRenderer() {
