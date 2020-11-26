@@ -20,6 +20,7 @@ import { Navigator } from "./navigator/navigator";
 import { NavigatorMask } from "./navigator/navigatorMask";
 import { NavigatorHandle } from "./navigator/navigatorHandle";
 import { CartesianSeriesMarker } from "./series/cartesian/cartesianSeries";
+import { Chart } from "./chart";
 
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -44,6 +45,15 @@ const commonChartMappings: any = {
                 right: chartPadding,
                 bottom: chartPadding,
                 left: chartPadding
+            }
+        }
+    },
+    tooltip: {
+        meta: {
+            defaults: {
+                enabled: true,
+                tracking: true,
+                class: Chart.defaultTooltipClass
             }
         }
     },
