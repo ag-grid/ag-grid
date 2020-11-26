@@ -136,12 +136,14 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
     return `${titleHtml}<div class="${Chart.defaultTooltipClass}-content">${content}</div>`;
 }
 
-class ChartTooltip extends Observable {
+export class ChartTooltip extends Observable {
     chart: Chart;
 
     element = document.createElement('div');
 
     private observer?: IntersectionObserver;
+
+    @reactive() enabled: boolean = true;
 
     @reactive() class: string = Chart.defaultTooltipClass;
 
@@ -966,6 +968,12 @@ export abstract class Chart extends Observable {
     private _onClick = this.onClick.bind(this);
 
     protected onMouseMove(event: MouseEvent) {
+        if (this.tooltip.enabled) {
+            this.handleTooltip(event);
+        }
+    }
+
+    protected handleTooltip(event: MouseEvent) {
         const { lastPick, tooltip: { tracking: tooltipTracking } } = this;
         const { offsetX, offsetY } = event;
         const pick = this.pickSeriesNode(offsetX, offsetY);
