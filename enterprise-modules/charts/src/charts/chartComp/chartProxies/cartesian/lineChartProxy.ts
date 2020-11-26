@@ -49,7 +49,11 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.updateAxes(axisType);
 
         const { chart } = this;
-        const fieldIds = params.fields.map(f => f.colId);
+
+        const fields = this.crossFiltering ?
+            params.fields.filter(f => f.colId.indexOf('-filtered-out') < 0) : params.fields;
+
+        const fieldIds = fields.map(f => f.colId);
         const { fills, strokes } = this.getPalette();
         const data = this.transformData(params.data, params.category.id);
 
@@ -67,7 +71,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
         let previousSeries: LineSeries | undefined;
 
-        params.fields.forEach((f, index) => {
+        fields.forEach((f, index) => {
             let lineSeries = existingSeriesById.get(f.colId);
             const fill = fills[index % fills.length];
             const stroke = strokes[index % strokes.length];

@@ -76,7 +76,7 @@ export class CrossFilterDatasource extends BeanStub {
                     return;
                 }
             } else if (params.grouping){
-                if (rowNode.group && !!rowNode.expanded) {
+                if (rowNode.group && rowNode.expanded) {
                     return;
                 }
 
@@ -185,7 +185,6 @@ export class CrossFilterDatasource extends BeanStub {
                         data[colId] = undefined;
                         data[filteredOutColId] = actualValue;
                     }
-
                 }
             });
 

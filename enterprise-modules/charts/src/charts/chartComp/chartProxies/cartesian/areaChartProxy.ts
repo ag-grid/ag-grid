@@ -72,7 +72,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         const axisType = this.isTimeAxis(params) ? 'time' : 'category';
         this.updateAxes(axisType);
 
-        if (this.chartType === ChartType.Area) {
+        if (this.crossFiltering || this.chartType === ChartType.Area) {
             // area charts have multiple series
             this.updateAreaChart(params);
         } else {
@@ -166,11 +166,19 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             const fill = fills[index % fills.length];
             const stroke = strokes[index % strokes.length];
 
+            let yKey = f.colId;
+            const isFilteredOutYKey = yKey.indexOf('-filtered-out') > 0;
+            if (this.crossFiltering && isFilteredOutYKey) {
+                yKey = f.colId.replace("-filtered-out", "-total");
+                const nonFilteredOutKey = f.colId.replace("-filtered-out", "");
+                data.forEach(d => d[yKey] = d[nonFilteredOutKey] + d[f.colId]);
+            }
+
             if (areaSeries) {
                 areaSeries.data = data;
                 areaSeries.xKey = params.category.id;
                 areaSeries.xName = params.category.name;
-                areaSeries.yKeys = [f.colId];
+                areaSeries.yKeys = [yKey];
                 areaSeries.yNames = [f.displayName!];
                 areaSeries.fills = [fill];
                 areaSeries.strokes = [stroke];
@@ -181,12 +189,13 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     marker.shape = marker.type;
                     delete marker.type;
                 }
+
                 const options: any /*InternalAreaSeriesOptions */ = {
                     ...seriesDefaults,
                     data,
                     xKey: params.category.id,
                     xName: params.category.name,
-                    yKeys: [f.colId],
+                    yKeys: [yKey],
                     yNames: [f.displayName],
                     fills: [fill],
                     strokes: [stroke],
@@ -202,12 +211,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     // disable series highlighting by default
                     areaSeries.highlightStyle.fill = undefined;
 
-                    // TODO reintroduce once 'areaSeries.hideInLegend' exists!
-                    // hide 'filtered out' legend items
-                    // const colIds = params.fields.map(f => f.colId);
-                    // areaSeries.hideInLegend = colIds.filter(colId => colId.includes('-filtered-out'));
-
-                    // TODO reintroduce once 'areaSeries.toggleSeriesItem' exists!
                     // sync toggling of legend item with hidden 'filtered out' item
                     chart.legend.addEventListener('click', (event: LegendClickEvent) => {
                         (areaSeries as AreaSeries).toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
