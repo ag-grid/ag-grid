@@ -1,10 +1,12 @@
 .code-viewer {
-    @extend .d-flex;
+    composes: d-flex from global;
+
     border: 0;
     height: 100%;
 
     &__files {
-        @extend .mt-2, .ml-2, .mb-2, .py-2;
+        composes: mt-2 ml-2 mb-2 py-2 from global;
+
         width: 200px;
         background-color: transparentize($secondary, 0.5);
         border-radius: 5px 0 0 5px;
@@ -23,6 +25,7 @@
             color: $light;
             background-color: $dark;
             outline: none;
+
             &:focus {
                 outline: 1px solid $light;
                 outline-offset: -2px;
@@ -31,7 +34,8 @@
     }
 
     &__file-title {
-        @extend .py-1, .px-2;
+        composes: py-1 px-2 from global;
+
         border-bottom: 1px solid $light;
         color: $primary;
         font-weight: bold;

@@ -1,36 +1,33 @@
 .image-caption {
-    @extend .card, .my-3;
+    composes: card mx-3 my-3 from global;
 
     &--centered {
-        @extend .mx-auto;
-
-        img {
-            @extend .mx-auto, .d-block;
-        }
-    }
-
-    &--constrained {
-        max-width: 100%;
-    }
-
-    &:not(&--centered) {
-        @extend .mx-3;
+        composes: mx-auto from global;
     }
 
     &__image {
-        @extend .p-2;
+        composes: p-2 from global;
+
+        &--constrained {
+            max-width: 100%;
+        }
+
+        &--centered {
+            composes: mx-auto d-block from global;
+        }
     }
 
     &__body {
-        @extend .card-body;
+        composes: card-body from global;
 
         &--description-top {
-            @extend .p-1, .text-center;
+            composes: p-1 text-center from global;
         }
     }
 
     &__body-text {
-        @extend .card-text;
+        composes: card-text from global;
+
         white-space: nowrap;
     }
 }

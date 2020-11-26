@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import classnames from 'classnames';
 import { formatJson } from './utils.jsx';
 import * as Config from './config.jsx';
 import { CodeSnippet } from './CodeSnippet.jsx';
@@ -45,12 +46,12 @@ const Option = ({ name, isVisible, isAlternate, isRequired, type, description, d
     const configureLinksForParent = value =>
         value.replace(/<a (.*?)href="([^"]+)"(.*?)>/g, '<a $1href="#" onclick="window.parent.location=\'../$2\'"$3>');
 
-    return <div className={`${styles.option} ${isVisible ? '' : styles.optionHidden} ${isAlternate ? styles.optionAlternate : ''}`}>
-        <span className={styles.option__name}>{name}</span>
-        {derivedType && <span className={styles.option__type}>{isFunction ? 'Function' : derivedType}</span>}
-        {isRequired ? <div className={styles.option__required}>Required</div> : <div className={styles.option__default}>Default: {defaultValue != null ? <code className={styles.option__code}>{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
+    return <div className={classnames(styles['option'], { [styles['option--hidden']]: !isVisible, [styles['option--alternate']]: isAlternate })}>
+        <span className={styles['option__name']}>{name}</span>
+        {derivedType && <span className={styles['option__type']}>{isFunction ? 'Function' : derivedType}</span>}
+        {isRequired ? <div className={styles['option__required']}>Required</div> : <div className={styles['option__default']}>Default: {defaultValue != null ? <code className={styles['option__code']}>{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
         {isFunction && <FunctionDefinition definition={derivedType} />}
-        <span className={styles.option__description} dangerouslySetInnerHTML={{ __html: configureLinksForParent(description) }}></span><br />
+        <span className={styles['option__description']} dangerouslySetInnerHTML={{ __html: configureLinksForParent(description) }}></span><br />
         {Editor && <Editor value={defaultValue} {...editorProps} />}
         {!Editor && editorProps.options && <span>Options: <code>{editorProps.options.map(formatJson).join(' | ')}</code></span>}
     </div>;
@@ -60,27 +61,27 @@ const ComplexOption = ({ name, description, isVisible, isAlternate, isSearching,
     const [isExpanded, setExpanded] = useState(false);
     const contentIsExpanded = isExpanded || isSearching;
 
-    return <div className={`${styles.option} ${isVisible ? '' : styles.optionHidden} ${isAlternate ? styles.optionAlternate : ''}`}>
-        <div className={styles.optionExpandable} onClick={() => setExpanded(!isExpanded)}>
-            <span className={styles.option__name}>{name}</span>
-            <span className={styles.option__type}>Object</span>
-            <span className={`${styles.option__expander} ${contentIsExpanded ? styles.option__expanderExpanded : ''}`}>❯</span><br />
-            {description && <span className={styles.option__description} dangerouslySetInnerHTML={{ __html: description }}></span>}
+    return <div className={classnames(styles['option'], { [styles['option--hidden']]: !isVisible, [styles['option--alternate']]: isAlternate })}>
+        <div className={styles['option--expandable']} onClick={() => setExpanded(!isExpanded)}>
+            <span className={styles['option__name']}>{name}</span>
+            <span className={styles['option__type']}>Object</span>
+            <span className={classnames(styles['option__expander'], { [styles['option__expander--expanded']]: contentIsExpanded })}>❯</span><br />
+            {description && <span className={styles['option__description']} dangerouslySetInnerHTML={{ __html: description }}></span>}
         </div>
-        <div className={`${styles.option__content} ${contentIsExpanded ? '' : styles.option__contentHidden}`}>
+        <div className={`${styles['option__content']} ${contentIsExpanded ? '' : styles['option__contentHidden']}`}>
             {children}
         </div>
     </div>;
 };
 
 const Search = ({ text, onChange }) => {
-    return <div className={styles.search}>
-        <div className={styles.search__title}><h2>Options</h2></div>
-        <div className={styles.search__box}>Search: <input className={styles.search__input} type="text" value={text} maxLength={20} onChange={event => onChange(event.target.value)} /></div>
+    return <div className={styles['search']}>
+        <div className={styles['search__title']}><h2>Options</h2></div>
+        <div className={styles['search__box']}>Search: <input className={styles['search__input']} type="text" value={text} maxLength={20} onChange={event => onChange(event.target.value)} /></div>
     </div>;
 };
 
-export const Options = ({ chartType, updateOptionDefault, updateOption }) => {
+export const Options = ({ chartType, updateOption }) => {
     const [searchText, setSearchText] = useState('');
     const getTrimmedSearchText = () => searchText.trim();
     const matchesSearch = name => name.toLowerCase().indexOf(getTrimmedSearchText().toLowerCase()) >= 0;
@@ -132,8 +133,6 @@ export const Options = ({ chartType, updateOptionDefault, updateOption }) => {
                         !isAlternate)}
                 </ComplexOption>);
             } else {
-                //updateOptionDefault(key, defaultValue);
-
                 elements.push(<Option
                     key={componentKey}
                     name={name}
@@ -169,9 +168,9 @@ export const Options = ({ chartType, updateOptionDefault, updateOption }) => {
 
     const options = generateOptions(Object.freeze(config));
 
-    return <div className={styles.options}>
+    return <div className={styles['options']}>
         <Search value={searchText} onChange={value => setSearchText(value)} />
-        {isSearching && !hasResults && <div className={styles.options__noContent}>No properties match your search: '{getTrimmedSearchText()}'</div>}
-        <div className={styles.options__content}>{options}</div>
+        {isSearching && !hasResults && <div className={styles['options__no-content']}>No properties match your search: '{getTrimmedSearchText()}'</div>}
+        <div className={styles['options__content']}>{options}</div>
     </div>;
 };

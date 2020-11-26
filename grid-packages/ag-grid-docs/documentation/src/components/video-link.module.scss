@@ -1,10 +1,13 @@
 .video-link {
-    @extend .d-flex, .align-items-center, .my-2;
+    composes: d-flex align-items-center my-2 from global;
+
     img {
         height: 30px;
     }
-    a {
-        @extend .ml-2;
+
+    &__link {
+        composes: ml-2 from global;
+
         &:hover {
             text-decoration: none;
         }

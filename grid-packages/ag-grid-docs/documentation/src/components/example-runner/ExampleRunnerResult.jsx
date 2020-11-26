@@ -55,7 +55,7 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
         iframeDoc.close();
     }, [shouldExecute, indexHtml]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    return <iframe ref={iframeRef} title={name} className={styles.exampleRunnerResult}></iframe>;
+    return <iframe ref={iframeRef} title={name} className={styles['example-runner-result']}></iframe>;
 };
 
 export default ExampleRunnerResult;

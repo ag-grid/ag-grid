@@ -1,12 +1,13 @@
 .matrix-table {
     &--pad3 {
-        @extend .ml-3;
-    }
-    &--pad4 {
-        @extend .ml-5;
+        composes: ml-3 from global;
     }
 
-    &--title {
+    &--pad4 {
+        composes: ml-5 from global;
+    }
+
+    &__title {
         font-size: 1.5rem;
     }
 

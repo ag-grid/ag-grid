@@ -10,12 +10,12 @@ const HomePage = () =>
 
     <p>Which framework would you like to learn?</p>
 
-    <div className={styles.gettingStartedCards}>
+    <div className={styles['getting-started']}>
       {supportedFrameworks.map(framework => (
-        <div key={framework} className={styles.gettingStartedCard}>
-          <img alt={framework} src={fwLogos[framework]} className={styles.gettingStartedCard__logo} />
+        <div key={framework} className={styles['getting-started__card']}>
+          <img alt={framework} src={fwLogos[framework]} className={styles['getting-started__card__logo']} />
           <div>
-            <Link to={`/${framework}/getting-started/`} className={styles.gettingStartedCard__button}>Get started</Link>
+            <Link to={`/${framework}/getting-started/`} className={styles['getting-started__card__button']}>Get started</Link>
           </div>
         </div>
       ))}

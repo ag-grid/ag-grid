@@ -111,7 +111,10 @@ const plugins = [
   {
     resolve: 'gatsby-plugin-sass',
     options: {
-      data: `@import './src/custom.scss';`
+      data: `@import './src/custom.module';`,
+      cssLoaderOptions: {
+        camelCase: false,
+      },
     }
   },
   'gatsby-plugin-catch-links',

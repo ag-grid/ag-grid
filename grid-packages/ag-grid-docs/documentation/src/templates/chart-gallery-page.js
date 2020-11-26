@@ -11,18 +11,18 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
     const title = `AG-Charts Gallery: ${name}`;
 
     return (
-        <div id="doc-page-wrapper" className={pageStyles.docPageWrapper}>
-            <div id="doc-content" className={pageStyles.docPage}>
+        <div id="doc-page-wrapper" className={pageStyles['doc-page__wrapper']}>
+            <div id="doc-content" className={pageStyles['doc-page']}>
                 <Helmet title={title} />
 
-                <div className={styles.chartNavigation}>
+                <div className={styles['chart-navigation']}>
                     {/* eslint-disable jsx-a11y/control-has-associated-label */}
-                    {previous && <a className={styles.chartNavigation__left} href={`../${toKebabCase(previous)}/`} dangerouslySetInnerHTML={{ __html: `\u276e&nbsp;&nbsp;${previous}` }}></a>}
-                    {next && <a className={styles.chartNavigation__right} href={`../${toKebabCase(next)}/`} dangerouslySetInnerHTML={{ __html: `${next}&nbsp;&nbsp;\u276f` }}></a>}
+                    {previous && <a className={styles['chart-navigation__left']} href={`../${toKebabCase(previous)}/`} dangerouslySetInnerHTML={{ __html: `\u276e&nbsp;&nbsp;${previous}` }}></a>}
+                    {next && <a className={styles['chart-navigation__right']} href={`../${toKebabCase(next)}/`} dangerouslySetInnerHTML={{ __html: `${next}&nbsp;&nbsp;\u276f` }}></a>}
                     {/* eslint-enable jsx-a11y/control-has-associated-label */}
                 </div>
 
-                <h1 className={styles.title}>{title}</h1>
+                <h1 className={styles['title']}>{title}</h1>
                 <p dangerouslySetInnerHTML={{ __html: description }}></p>
 
                 <ExampleRunner

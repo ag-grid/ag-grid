@@ -1,0 +1,4 @@
+// only import Bootstrap that does not output CSS, to avoid bloating our generated CSS
+@import "~bootstrap/scss/_functions";
+@import "~bootstrap/scss/_variables";
+@import "~bootstrap/scss/_mixins";

@@ -1,0 +1,21 @@
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    &__input {
+        composes: form-control from global;
+
+        padding-left: 2rem !important;
+
+        &:focus + .search-box__icon {
+            color: $primary;
+        }
+    }
+
+    &__icon {
+        composes: ml-2 from global;
+
+        position: absolute;
+    }
+}

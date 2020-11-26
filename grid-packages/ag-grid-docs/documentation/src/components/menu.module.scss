@@ -1,11 +1,12 @@
 .menu {
-    @extend .p-2;
+    composes: p-2 from global;
 
     &__item {
-        a {
+        &__link {
+            composes: d-block my-1 from global;
+
             color: $secondary;
             font-size: 0.85rem;
-            @extend .d-block, .my-1;
 
             &:hover {
                 text-decoration: none;
@@ -14,8 +15,9 @@
         }
 
         div[role="button"],
-        a {
+        &__link {
             white-space: nowrap;
+
             &:focus {
                 outline: none;
             }
@@ -39,6 +41,8 @@
     }
 
     &__enterprise-icon {
+        composes: ml-1 from global;
+
         background-image: url("../images/enterprise.svg");
         background-position-y: center;
         background-repeat: no-repeat;
@@ -47,40 +51,42 @@
         width: 1rem;
         height: 1rem;
         background-size: contain;
-        @extend .ml-1;
         vertical-align: middle;
     }
 
     &__sections {
-        @extend .list-unstyled;
+        composes: list-unstyled from global;
+
         margin: 0;
         padding: 0;
     }
 
     &__section {
-        @extend .p-1;
+        composes: p-1 from global;
+    }
 
-        > .menu__group {
-            @extend .pl-4;
+    &__arrow {
+        composes: mr-1 from global;
+
+        transition: all 0.5s;
+    }
+
+    &__group {
+        composes: pl-2 list-unstyled from global;
+
+        &--top-level {
+            composes: pl-4 from global;
 
             > li > a {
                 color: $dark;
                 font-weight: 400;
                 font-size: 0.9rem;
+
                 &:hover {
                     color: $primary;
                 }
             }
         }
-    }
-
-    &__arrow {
-        @extend .mr-1;
-        transition: all 0.5s;
-    }
-
-    &__group {
-        @extend .pl-2, .list-unstyled;
     }
 
     input:focus {

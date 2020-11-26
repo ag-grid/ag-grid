@@ -13,7 +13,7 @@ export const Code = ({ framework, options }) => {
 
     const FrameworkCode = codeMap[framework];
 
-    return <div className={styles.code}>
+    return <div className={styles['code']}>
         {FrameworkCode && <FrameworkCode options={options} />}
     </div>;
 };

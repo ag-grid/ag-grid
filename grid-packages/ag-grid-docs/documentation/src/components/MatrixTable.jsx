@@ -56,7 +56,7 @@ const createTable = (allColumns, allRows, isTree, booleanOnly, stringOnly, child
     const columnNames = columnFields.map(column => allColumns[column]);
 
     return (
-        <table className={styles.matrixTable}>
+        <table className={styles['matrix-table']}>
             <thead>
                 <tr>
                     {columnNames.map((column, idx) => <th key={`header-column-${idx}`}>{renderEnterprise(column, isTree)}</th>)}
@@ -107,9 +107,9 @@ const createTitleRow = (title, isTree, rowData, level, rowKey) => !title ? [] : 
     <tr key={rowKey}>
         <td colSpan="3">
             {level === 1
-                ? <span className={styles.matrixTableTitle}>{title}</span>
+                ? <span className={styles['matrix-table__title']}>{title}</span>
                 : (
-                    <span className={level > 2 ? `${styles['matrixTablePad' + level]}` : null}>
+                    <span className={level > 2 ? styles[`matrix-table--pad${level}`] : ''}>
                         { wrapWithLink(renderEnterprise(title, isTree, rowData), rowData.url)}
                     </span>
                 )
@@ -141,7 +141,7 @@ const createRow = (columnFields, rowData, isTree, booleanOnly, stringOnly, level
 const renderPropertyColumn = (value, isTree, rowData, level) => {
     if (isTree) {
         const processedValue = wrapWithLink(renderEnterprise(value, isTree, rowData), rowData.url);
-        return <span className={level > 2 ? `${styles['matrixTablePad' + level]}` : null}>{processedValue}</span>;
+        return <span className={level > 2 ? styles[`matrix-table--pad${level}`] : ''}>{processedValue}</span>;
     }
 
     return <span dangerouslySetInnerHTML={{ __html: value }} />;
@@ -151,13 +151,13 @@ const renderValue = (value, booleanOnly, stringOnly, notIn) => {
     if (stringOnly) { return value; }
 
     if (value === false || (value === true && notIn)) {
-        return <FontAwesomeIcon icon={faTimes} fixedWidth className={styles.matrixTable__false} />;
+        return <FontAwesomeIcon icon={faTimes} fixedWidth className={styles['matrix-table__false']} />;
     }
 
     return (
         <div>
-            <FontAwesomeIcon icon={faCheck} fixedWidth className={styles.matrixTable__true} />
-            { typeof value === 'string' && !booleanOnly ? value : null}
+            <FontAwesomeIcon icon={faCheck} fixedWidth className={styles['matrix-table__true']} />
+            {typeof value === 'string' && !booleanOnly && value}
         </div>
     );
 };

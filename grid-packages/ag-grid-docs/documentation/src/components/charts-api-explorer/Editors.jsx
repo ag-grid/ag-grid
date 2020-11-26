@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { HuePicker, AlphaPicker } from 'react-color';
+import classnames from 'classnames';
 import styles from './Editors.module.scss';
 
 export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
@@ -32,9 +33,9 @@ export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
         setValueChange(props.max);
     }
 
-    return <span className={styles.numberEditor}>
-        {min != null && max != null && <input type="range" className={styles.numberEditor__slider} {...props} />}
-        <input type="number" className={styles.numberEditor__input} {...props} />
+    return <span className={styles['number-editor']}>
+        {min != null && max != null && <input type="range" className={styles['number-editor__slider']} {...props} />}
+        <input type="number" className={styles['number-editor__input']} {...props} />
         {unit && <span dangerouslySetInnerHTML={{ __html: '&nbsp;' + unit }}></span>}
     </span>;
 };
@@ -52,7 +53,7 @@ export const StringEditor = ({ value, toStringValue, fromStringValue, onChange }
         onChange(transformedValue);
     };
 
-    return <input className={styles.stringEditor__input} type="text" value={stateValue} maxLength={200} onChange={inputOnChange} />;
+    return <input className={styles['string-editor__input']} type="text" value={stateValue} maxLength={200} onChange={inputOnChange} />;
 };
 
 export const ArrayEditor = props =>
@@ -75,7 +76,7 @@ export const PresetEditor = ({ value, options, suggestions, breakIndex, onChange
 
     const createOptionElement = o => <div
         key={o}
-        className={`${styles.presetEditor__option} ${stateValue === o ? styles.presetEditor__optionSelected : ''}`}
+        className={classnames(styles['preset-editor__option'], { [styles['preset-editor__option--selected']]: stateValue === o })}
         onClick={() => inputOnChange(o)}
         onKeyDown={() => inputOnChange(o)}>{Array.isArray(optionsToUse) ? o.toString() : optionsToUse[o]}</div>;
 
@@ -93,8 +94,8 @@ export const PresetEditor = ({ value, options, suggestions, breakIndex, onChange
     });
 
     return <React.Fragment>
-        {elementsBeforeBreak.length > 0 && <div className={styles.presetEditor}>{elementsBeforeBreak}</div>}
-        {elementsAfterBreak.length > 0 && <div className={styles.presetEditor}>{elementsAfterBreak}</div>}
+        {elementsBeforeBreak.length > 0 && <div className={styles['preset-editor']}>{elementsBeforeBreak}</div>}
+        {elementsAfterBreak.length > 0 && <div className={styles['preset-editor']}>{elementsAfterBreak}</div>}
     </React.Fragment>;
 };
 
@@ -125,12 +126,12 @@ export const ColourEditor = ({ value, onChange }) => {
 
     const color = rgb || colourString || 'black';
 
-    return <div className={styles.colourEditor}>
-        <div className={styles.colourEditor__inputWrapper}>
-            <input className={styles.colourEditor__input} type="text" value={colourString} maxLength={25} onChange={inputOnChange} />
-            <div style={{ backgroundColor: colourString }} className={styles.colourEditor__sample}></div>
+    return <div className={styles['colour-editor']}>
+        <div className={styles['colour-editor__input-wrapper']}>
+            <input className={styles['colour-editor__input']} type="text" value={colourString} maxLength={25} onChange={inputOnChange} />
+            <div style={{ backgroundColor: colourString }} className={styles['colour-editor__sample']}></div>
         </div>
-        <div className={styles.colourEditor__slider}><HuePicker width={'100%'} height={15} color={color} onChange={value => sliderOnChange(value, false)} /></div>
-        <div className={styles.colourEditor__slider}><AlphaPicker width={'100%'} height={15} color={color} onChange={value => sliderOnChange(value, true)} /></div>
+        <div className={styles['colour-editor__slider']}><HuePicker width={'100%'} height={15} color={color} onChange={value => sliderOnChange(value, false)} /></div>
+        <div className={styles['colour-editor__slider']}><AlphaPicker width={'100%'} height={15} color={color} onChange={value => sliderOnChange(value, true)} /></div>
     </div>;
 };

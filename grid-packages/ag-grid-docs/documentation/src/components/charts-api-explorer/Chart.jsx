@@ -1,5 +1,5 @@
 import React from 'react';
-import { AgChart } from "ag-charts-community";
+import { AgChart } from 'ag-charts-community';
 import { data, series } from './templates.jsx';
 import { deepClone } from './utils.jsx';
 import styles from './Chart.module.scss';
@@ -48,6 +48,6 @@ export class Chart extends React.Component {
     }
 
     render() {
-        return <div className={styles.chart} ref={this.chart}></div>;
+        return <div className={styles['chart']} ref={this.chart}></div>;
     }
 }

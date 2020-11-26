@@ -1,5 +1,5 @@
 .framework-selector {
-    @extend .d-flex;
+    composes: d-flex from global;
 
     img {
         height: 100%;
@@ -8,7 +8,8 @@
     }
 
     &__option {
-        @extend .p-1, .flex-grow-1, .mx-1;
+        composes: p-1 flex-grow-1 mx-1 from global;
+
         position: relative;
         background-color: $light;
         border-radius: 5px;

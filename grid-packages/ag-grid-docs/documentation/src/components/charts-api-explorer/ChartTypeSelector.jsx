@@ -12,5 +12,5 @@ export const ChartTypeSelector = ({ type, onChange }) => {
         histogram: 'Histogram'
     };
 
-    return <div className={styles.chartTypeSelector}><PresetEditor value={type} options={options} onChange={onChange} /></div>;
+    return <div className={styles['chart-type-selector']}><PresetEditor value={type} options={options} onChange={onChange} /></div>;
 };

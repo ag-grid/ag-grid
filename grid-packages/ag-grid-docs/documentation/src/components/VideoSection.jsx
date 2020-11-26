@@ -1,17 +1,19 @@
 import React from 'react';
+import classnames from 'classnames';
 import styles from './video-section.module.scss';
 
 const VideoSection = ({ src, title, header, children }) => (
-    <div className={ styles.videoSection }>
-        <p className={header ? styles.videoSectionHeader : null }>
+    <div className={styles['video-section']}>
+        <p className={classnames({ [styles['video-section--header']]: header })}>
             {children}
         </p>
         <iframe
+            className={styles['video-section__frame']}
             title={title}
-            src={src} 
+            src={src}
             frameBorder='0'
             modestbranding='1'
-            allow='accelerometer; encrypted-media; gyroscope; picture-in-picture' 
+            allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
             allowFullScreen={true}>
         </iframe>
     </div>

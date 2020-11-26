@@ -1,49 +1,56 @@
 .icons-panel {
     &__container {
-        @extend .nav, .nav-tabs, .bg-primary, .pl-2, .pt-2;
-        > li {
-            @extend .nav-item, .mr-2;
-        }
+        composes: nav nav-tabs bg-primary pl-2 pt-2 from global;
     }
-    
+
+    &__item {
+        composes: nav-item mr-2 from global;
+    }
+
     &__nav-link {
-        @extend .nav-link;
+        composes: nav-link from global;
+
         background-color: transparent;
         color: $light;
 
         &:focus {
             outline: none;
         }
-        
-        &__active {
-            @extend .active;
+
+        &--active {
+            composes: active from global;
+
             background-color: $light;
             color: black;
         }
+
         &:hover {
             color: $light;
         }
     }
-    
+
     &__wrapper {
-        @extend .tab-content, .border, .border-top-0;
+        composes: tab-content border border-top-0 from global;
+
         height: 34rem;
         overflow: hidden;
     }
-    
+
     &__body {
-        @extend .tab-pane, .show, .active, .container, .px-0;
+        composes: tab-pane show active container px-0 from global;
+
         position: relative;
         height: 34rem;
         overflow-y: scroll;
     }
-    
+
     &__icon-list {
-        @extend .row, .mx-0, .w-100, .flex-fill;
+        composes: row mx-0 w-100 flex-fill from global;
     }
 
     &__icon-tile {
-        @extend .col, .col-3, .p-0, .d-flex, .flex-column, .align-items-center, .justify-content-center;
+        composes: col col-3 p-0 d-flex flex-column align-items-center justify-content-center from global;
+
         height: 5rem;
         border: 1px solid transparent;
         border-right-color: lightgrey;
@@ -54,15 +61,17 @@
             height: 32px;
         }
 
-        p {
-            @extend .m-0;
+        &__name {
+            composes: m-0 from global;
         }
     }
-    
+
     &__download {
-        @extend .bg-primary, .p-2;
+        composes: bg-primary p-2 from global;
+
         a {
             color: $light;
+
             &:hover {
                 text-decoration: none;
             }

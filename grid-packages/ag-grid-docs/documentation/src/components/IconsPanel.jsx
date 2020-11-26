@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import classnames from 'classnames';
 import styles from './icons-panel.module.scss';
 
 const icons = [
@@ -22,58 +23,58 @@ const themes = ['alpine', 'balham', 'material', 'base'];
 const onTabClick = (e, setActiveTheme, theme) => {
     e.preventDefault();
     setActiveTheme(theme);
-}
+};
 
 const PanelTabs = ({ activeTheme, setActiveTheme }) => (
-    <ul className={styles.iconsPanel__container}>
+    <ul className={styles['icons-panel__container']}>
         {themes.map(theme => (
-            <li key={`${theme}-tab`}>
-                <button 
-                    className={`${styles.iconsPanel__navLink} ${theme === activeTheme ? styles.iconsPanel__navLink__active: ''}`}
+            <li className={styles['icons-panel__item']} key={`${theme}-tab`}>
+                <button
+                    className={classnames(styles['icons-panel__nav-link'], { [styles['icons-panel__nav-link--active']]: theme === activeTheme })}
                     data-toggle="tab"
-                    role="tab" 
-                    onClick={(e) => onTabClick(e, setActiveTheme, theme)}
+                    role="tab"
+                    onClick={e => onTabClick(e, setActiveTheme, theme)}
                     aria-controls={theme}
                     aria-selected={theme === activeTheme ? 'true' : 'false'}>{`${capitalizeName(theme)} Icons`}
                 </button>
             </li>
         ))}
     </ul>
-)
+);
 
 const IconsList = ({ theme }) => (
-    <div className={styles.iconsPanel__iconList}>
+    <div className={styles['icons-panel__icon-list']}>
         {icons.map(icon => (
-            <div className={styles.iconsPanel__iconTile}>
-                <img src={ `/theme-icons/${theme}/${icon}.svg` } alt={ icon } title={ icon }></img>
-                <p>{ icon }</p>
+            <div className={styles['icons-panel__icon-tile']}>
+                <img src={`/theme-icons/${theme}/${icon}.svg`} alt={icon} title={icon}></img>
+                <p className={styles['icons-panel__icon-tile__name']}>{icon}</p>
             </div>
         ))}
     </div>
 );
 
 const PanelWrapper = ({ theme }) => (
-    <div className={styles.iconsPanel__wrapper}>
-        <div className={styles.iconsPanel__body} role="tabpanel" aria-labelledby={`${theme}-tab`}>
+    <div className={styles['icons-panel__wrapper']}>
+        <div className={styles['icons-panel__body']} role="tabpanel" aria-labelledby={`${theme}-tab`}>
             <IconsList theme={theme} />
         </div>
     </div>
-)
+);
 
 const BottomBar = ({ theme }) => (
-    <div className={styles.iconsPanel__download}><a href={`/theme-icons/${theme}/${theme}-icons.zip`}>Download All</a></div>
+    <div className={styles['icons-panel__download']}><a href={`/theme-icons/${theme}/${theme}-icons.zip`}>Download All</a></div>
 );
 
 const IconsPanel = () => {
     const [activeTheme, setActiveTheme] = useState('alpine');
 
     return (
-        <div className="icons-panel">
+        <div className={styles['icons-panel']}>
             <PanelTabs activeTheme={activeTheme} setActiveTheme={setActiveTheme} />
             <PanelWrapper theme={activeTheme} />
             <BottomBar theme={activeTheme} />
         </div>
-    )
+    );
 };
 
 

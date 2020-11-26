@@ -21,6 +21,7 @@
     "ag-charts-community": "^2.1.0",
     "algoliasearch": "4.6.0",
     "bootstrap": "4.5.3",
+    "classnames": "2.2.6",
     "eslint": "7.13.0",
     "eslint-config-react-app": "6.0.0",
     "eslint-plugin-flow": "2.29.1",

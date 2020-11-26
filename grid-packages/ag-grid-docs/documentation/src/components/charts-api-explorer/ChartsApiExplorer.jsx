@@ -179,13 +179,13 @@ export const ChartsApiExplorer = ({ framework }) => {
     const optionsJson = createOptionsJson(chartType, options);
 
     return (
-        <div className={styles.explorerContainer}>
+        <div className={styles['explorer-container']}>
             <div>
                 <ChartTypeSelector type={chartType} onChange={updateChartType} />
             </div>
-            <div className={styles.explorerContainer__body}>
-                <div className={styles.explorerContainer__left}>
-                    <div className={styles.explorerContainer__options}>
+            <div className={styles['explorer-container__body']}>
+                <div className={styles['explorer-container__left']}>
+                    <div className={styles['explorer-container__options']}>
                         <Options
                             chartType={chartType}
                             updateChartType={updateChartType}
@@ -193,9 +193,9 @@ export const ChartsApiExplorer = ({ framework }) => {
                             updateOption={updateOption} />
                     </div>
                 </div>
-                <div className={styles.explorerContainer__right}>
-                    <div className={styles.explorerContainer__chart}><Chart options={optionsJson} /></div>
-                    <div className={styles.explorerContainer__code}><Code framework={framework} options={optionsJson} /></div>
+                <div className={styles['explorer-container__right']}>
+                    <div className={styles['explorer-container__chart']}><Chart options={optionsJson} /></div>
+                    <div className={styles['explorer-container__code']}><Code framework={framework} options={optionsJson} /></div>
                 </div>
             </div>
         </div>

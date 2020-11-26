@@ -22,8 +22,12 @@
     }
 
     &__import-type,
-    .react-version-selector {
-        select {
+    &__react-style {
+        composes: form-group from global;
+
+        &__select {
+            composes: form-control from global;
+
             font-size: 0.9rem;
             padding: 5px;
             border-radius: 5px;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
+import classnames from 'classnames';
 import styles from './image-caption.module.scss';
 
 const ImageCaption = ({ src, alt, centered, children, constrained, descriptiontop: descriptionTop, height, maxwidth: maxWidth, minwidth: minWidth, width }) => {
@@ -44,26 +45,30 @@ const ImageCaption = ({ src, alt, centered, children, constrained, descriptionto
         throw new Error(`Could not find requested image: ${src}`);
     }
 
-    
+
     const style = {};
 
     if (width != null) { style.width = width; }
-    if (minWidth != null) { style.minWidth = minWidth }
+    if (minWidth != null) { style.minWidth = minWidth; }
     if (maxWidth != null) { style.maxWidth = maxWidth; }
     if (height != null) { style.height = height; }
 
-    const className = `${styles.imageCaption} ${centered ? styles.imageCaptionCentered : ''}`;
-    const bodyClass = `${styles.imageCaption__body} ${descriptionTop ? styles.imageCaption__bodyDescriptionTop : ''}`;
-    const imageClass = `${styles.imageCaption__image} ${constrained ? styles.imageCaptionConstrained : ''}`;
     const description = children &&
-        <div className={bodyClass}>
-            <p className={styles.imageCaption__bodyText}>{children}</p>
+        <div className={classnames(styles['image-caption__body'], { [styles['image-caption__body--description-top']]: descriptionTop })}>
+            <p className={styles['image-caption__body-text']}>{children}</p>
         </div>;
 
+    const imageClasses = classnames(
+        styles['image-caption__image'],
+        {
+            [styles['image-caption__image--centered']]: centered,
+            [styles['image-caption__image--constrained']]: constrained,
+        });
+
     return (
-        <div className={className} style={style}>
+        <div className={classnames(styles['image-caption'], { [styles['image-caption--centered']]: centered })} style={style}>
             {descriptionTop && description}
-            <img src={imgSrc} className={imageClass} alt={alt} />
+            <img src={imgSrc} className={imageClasses} alt={alt} />
             {!descriptionTop && description}
         </div>
     );

@@ -6,6 +6,7 @@ import {
     Index,
     Snippet,
 } from 'react-instantsearch-dom';
+import classnames from 'classnames';
 import styles from './search-result.module.scss';
 import './search-result.scss';
 
@@ -13,8 +14,8 @@ const HitCount = connectStateResults(({ searchResults }) => {
     const hitCount = searchResults && searchResults.nbHits;
 
     return hitCount > 0 ? (
-        <div className={styles.searchResult__hitWrapper}>
-            <div className={styles.searchResult__hitCount}>Results: {hitCount}</div>
+        <div className={styles['search-result__hit-wrapper']}>
+            <div className={styles['search-result__hit-count']}>Results: {hitCount}</div>
         </div>
     ) : null;
 });
@@ -36,7 +37,7 @@ const HitsInIndex = ({ index }) => (
 );
 
 const SearchResult = ({ indices, show }) => (
-    <div className={styles.searchResult} style={{ display: show ? 'block' : 'none' }}>
+    <div className={classnames(styles['search-result'], { [styles['search-result--show']]: show })}>
         {indices.map(index => (
             <HitsInIndex index={index} key={index.name} />
         ))}

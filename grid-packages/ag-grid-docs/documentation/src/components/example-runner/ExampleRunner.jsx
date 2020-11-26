@@ -3,6 +3,7 @@ import { withPrefix } from 'gatsby';
 import VisibilitySensor from 'react-visibility-sensor';
 import { encodeQueryParams } from 'use-query-params';
 import { stringify } from 'query-string';
+import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import CodeViewer from './CodeViewer';
@@ -65,13 +66,13 @@ export const ExampleRunner = ({ pageName, framework, name, title, type, options 
             const isGenerated = exampleInfo.type === 'generated' || exampleInfo.type === 'mixed';
             const linkId = `example--${name}`;
 
-            return <div className={styles.exampleRunner}>
-                <div className={`form-inline ${styles.exampleRunner__header}`}>
-                    <a id={linkId} href={`#${linkId}`} className={`anchor ${styles.exampleRunner__title}`}>
+            return <div className={styles['example-runner']}>
+                <div className={`form-inline ${styles['example-runner__header']}`}>
+                    <a id={linkId} href={`#${linkId}`} className={`anchor ${styles['example-runner__title']}`}>
                         {anchorIcon}&nbsp;Example: {title}
                     </a>
                     {library === 'grid' && exampleInfo.framework === 'react' &&
-                        <ReactVersionSelector
+                        <ReactStyleSelector
                             useFunctionalReact={useFunctionalReact}
                             onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
                     }
@@ -81,10 +82,10 @@ export const ExampleRunner = ({ pageName, framework, name, title, type, options 
                             onChange={event => set({ exampleImportType: event.target.value })} />
                     }
                 </div>
-                <div className={styles.exampleRunner__body} style={exampleStyle}>
-                    <div className={styles.exampleRunner__menu}>
+                <div className={styles['example-runner__body']} style={exampleStyle}>
+                    <div className={styles['example-runner__menu']}>
                         <div
-                            className={`${styles.exampleRunner__menuItem} ${showCode ? '' : styles.exampleRunner__menuItemSelected}`}
+                            className={classnames(styles['example-runner__menu-item'], { [styles['example-runner__menu-item--selected']]: !showCode })}
                             onClick={() => setShowCode(false)}
                             onKeyDown={e => doOnEnter(e, () => setShowCode(false))}
                             role="button"
@@ -92,21 +93,21 @@ export const ExampleRunner = ({ pageName, framework, name, title, type, options 
                             <FontAwesomeIcon icon={faPlay} fixedWidth />
                         </div>
                         <div
-                            className={`${styles.exampleRunner__menuItem} ${showCode ? styles.exampleRunner__menuItemSelected : ''}`}
+                            className={classnames(styles['example-runner__menu-item'], { [styles['example-runner__menu-item--selected']]: showCode })}
                             onClick={() => setShowCode(true)}
                             onKeyDown={e => doOnEnter(e, () => setShowCode(true))}
                             role="button"
                             tabIndex="0">
                             <FontAwesomeIcon icon={faCode} fixedWidth />
                         </div>
-                        <div className={styles.exampleRunner__menuItem}>
+                        <div className={styles['example-runner__menu-item']}>
                             <a href={withPrefix(getNewTabLink(exampleInfo))} target="_blank" rel="noreferrer">
                                 <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
                             </a>
                         </div>
                         {!options.noPlunker &&
                             <div
-                                className={styles.exampleRunner__menuItem}
+                                className={styles['example-runner__menu-item']}
                                 onClick={() => openPlunker(nodes, exampleInfo)}
                                 onKeyDown={e => doOnEnter(e, () => openPlunker(nodes, exampleInfo))}
                                 role="button"
@@ -114,7 +115,7 @@ export const ExampleRunner = ({ pageName, framework, name, title, type, options 
                                 <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
                             </div>}
                     </div>
-                    <div className={styles.exampleRunner__content}>
+                    <div className={styles['example-runner__content']}>
                         {!showCode &&
                             <VisibilitySensor partialVisibility={true}>
                                 {({ isVisible }) =>
@@ -131,18 +132,18 @@ export const ExampleRunner = ({ pageName, framework, name, title, type, options 
 };
 
 const ImportTypeSelector = ({ importType, onChange }) => {
-    return <div className={`form-group ${styles.exampleRunner__importType}`}>
-        <select className="form-control" style={{ width: 120 }} value={importType} onChange={onChange} onBlur={onChange}>
+    return <div className={styles['example-runner__import-type']}>
+        <select className={styles['example-runner__import-type__select']} style={{ width: 120 }} value={importType} onChange={onChange} onBlur={onChange}>
             {['packages', 'modules'].map(type =>
                 <option key={type} value={type}>{type[0].toUpperCase()}{type.substring(1)}</option>
             )}
         </select>
-    </div>;
+    </div >;
 };
 
-const ReactVersionSelector = ({ useFunctionalReact, onChange }) => {
-    return <div className={`form-group ${styles.reactVersionSelector}`}>
-        <select className="form-control" style={{ width: 120 }} value={JSON.stringify(useFunctionalReact)} onChange={onChange} onBlur={onChange}>
+const ReactStyleSelector = ({ useFunctionalReact, onChange }) => {
+    return <div className={styles['example-runner__react-style']}>
+        <select className={styles['example-runner__react-style__select']} style={{ width: 120 }} value={JSON.stringify(useFunctionalReact)} onChange={onChange} onBlur={onChange}>
             <option value="false">Classes</option>
             <option value="true">Hooks</option>
         </select>

@@ -1,20 +1,17 @@
-.getting-started-cards {
-    @extend .d-flex;
-}
+.getting-started {
+    composes: d-flex from global;
 
-.getting-started-card {
-    @extend .card;
-    @extend .flex-grow-1;
-    @extend .m-3;
-    @extend .p-4;
+    &__card {
+        composes: card flex-grow-1 m-3 p-4 from global;
 
-    &__logo {
-        @extend .my-5;
-        height: 100px;
-    }
+        &__logo {
+            composes: my-5 from global;
 
-    &__button {
-        @extend .btn;
-        @extend .btn-primary;
+            height: 100px;
+        }
+
+        &__button {
+            composes: btn btn-primary from global;
+        }
     }
 }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { graphql } from 'gatsby';
 import rehypeReact from 'rehype-react';
+import classnames from 'classnames';
 import ExampleRunner from '../components/example-runner/ExampleRunner';
 import SideMenu from '../components/SideMenu';
 import processFrameworkSpecificSections from '../utils/framework-specific-sections';
@@ -55,10 +56,10 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   }).Compiler;
 
   return (
-    <div id="doc-page-wrapper" className={styles.docPageWrapper}>
-      <div id="doc-content" className={`${styles.docPage} ${showSideMenu ? styles.docPageWithSideMenu : ''}`}>
+    <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
+      <div id="doc-content" className={classnames(styles['doc-page'], { [styles['doc-page--with-side-menu']]: showSideMenu })}>
         <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
-        <h1 id="top" className={page.frontmatter.enterprise ? styles.enterprise : null}>{page.frontmatter.title}</h1>
+        <h1 id="top" className={classnames(styles['doc-page__title'], { [styles['doc-page__title--enterprise']]: page.frontmatter.enterprise })}>{page.frontmatter.title}</h1>
         {renderAst(ast)}
       </div>
       <SideMenu headings={page.headings || []} pageName={pageName} hideMenu={() => setShowSideMenu(false)} />

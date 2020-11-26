@@ -1,5 +1,8 @@
+@import "~bootstrap/scss/_utilities";
+
 .doc-page-wrapper {
-    @extend .p-3;
+    composes: p-3 from global;
+
     position: relative;
 }
 
@@ -20,9 +23,10 @@
         margin-right: calc(300px + 3rem);
     }
 
-    h1 {
+    &__title {
         font-weight: 400;
-        &.enterprise:after {
+
+        &--enterprise:after {
             @extend %enterprise-icon;
             height: 1em;
             width: 1em;
@@ -80,6 +84,7 @@
 
     li {
         @extend .mb-1;
+
         > p:first-child {
             @extend .mb-0;
         }

@@ -18,13 +18,11 @@ export default function Search({ indices }) {
     useClickOutside(rootRef, () => setFocus(false));
 
     return (
-        <div className={styles.searchForm} ref={rootRef}>
+        <div className={styles['search-form']} ref={rootRef}>
             <InstantSearch
                 searchClient={searchClient}
                 indexName={indices[0].name}
-                onSearchStateChange={({ query }) => setQuery(query)}
-
-            >
+                onSearchStateChange={({ query }) => setQuery(query)}>
                 <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} />
                 <SearchResult
                     show={query && query.length > 0 && hasFocus}

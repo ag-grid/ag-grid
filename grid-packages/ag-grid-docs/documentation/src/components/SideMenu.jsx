@@ -42,9 +42,9 @@ const SideMenu = ({ headings = [], pageName, hideMenu }) => {
     }, [hideMenu]);
 
     return allHeadings.length > 0 &&
-        <ul className={styles.sideNav}>
-            {allHeadings.map(heading => <li key={`${pageName}_${heading.id}`} className={styles[`sideNav__itemLevel${heading.depth}`]}>
-                <a className={styles.sideNav__link} href={`#${heading.id}`}>{heading.value}</a>
+        <ul className={styles['side-nav']}>
+            {allHeadings.map(heading => <li key={`${pageName}_${heading.id}`} className={styles[`side-nav__item--level-${heading.depth}`]}>
+                <a className={styles['side-nav__link']} href={`#${heading.id}`}>{heading.value}</a>
             </li>
             )}
         </ul>;

@@ -142,8 +142,8 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
 
         rows.push(<tr key={name}>
             <td>
-                <span className={styles.reference__name}><code dangerouslySetInnerHTML={{ __html: name }}></code></span>
-                {isRequired && <><br /><span className={styles.reference__required}>Required</span></>}
+                <span className={styles['reference__name']}><code dangerouslySetInnerHTML={{ __html: name }}></code></span>
+                {isRequired && <><br /><span className={styles['reference__required']}>Required</span></>}
             </td>
             <td dangerouslySetInnerHTML={{ __html: description }}></td>
             {definition.relevantTo && <td style={{ whiteSpace: 'nowrap' }}>{definition.relevantTo.join(', ')}</td>}
@@ -187,7 +187,7 @@ const Breadcrumbs = ({ breadcrumbs }) => {
         index++;
     });
 
-    return <div className={styles.breadcrumbs}>{links}</div>;
+    return <div className={styles['breadcrumbs']}>{links}</div>;
 };
 
 const generateCodeTags = content => content.replace(/`(.*?)`/g, '<code>$1</code>');
