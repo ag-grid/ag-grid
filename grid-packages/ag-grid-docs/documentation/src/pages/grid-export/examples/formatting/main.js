@@ -106,9 +106,8 @@ function makeCustomContent() {
 function myCellCallback(params) {
     if (params.value && params.value.toUpperCase) {
         return params.value.toUpperCase();
-    } else {
-        return params.value;
     }
+    return params.value;
 }
 
 function myGroupHeaderCallback(params) {
@@ -117,22 +116,27 @@ function myGroupHeaderCallback(params) {
 }
 
 function myHeaderCallback(params) {
-    return params.column.getColDef().headerName.toUpperCase();
+    var displayName = params.columnApi.getDisplayNameForColumn(params.column);
+    return displayName.toUpperCase();
 }
 
 function myRowGroupCallback(params) {
-    var indent = '--';
-    var node = params.node;
-    var label = node.key.toUpperCase();
+    var indent = '--',
+        node = params.node,
+        label = node.key.toUpperCase();
+
     if (!node.parent.parent) {
         return label; // top level node, parent is root node
     }
+
     label = '> ' + label;
     // indent once per level in the row group hierarchy
+
     while (node.parent.parent) {
         label = indent + label;
         node = node.parent;
     }
+
     return label;
 }
 
@@ -156,10 +160,12 @@ function onBtnExportDataAsCsv() {
 
 function onBtnExportDataAsExcel() {
     var params = getParams();
+
     if (typeof params.customHeader === 'string' || typeof params.customFooter === 'string') {
         alert('Excel does not support strings in customHeader or customFooter');
         return;
     }
+
     gridOptions.api.exportDataAsExcel(params);
 }
 
