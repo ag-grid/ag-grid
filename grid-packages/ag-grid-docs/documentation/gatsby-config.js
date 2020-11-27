@@ -34,14 +34,7 @@ const plugins = [
     options: {
       path: `${__dirname}/src/pages`,
       name: 'pages',
-    }
-  },
-  {
-    resolve: 'gatsby-source-filesystem',
-    options: {
-      name: 'data',
-      path: `${__dirname}/src/data/`,
-    }
+    },
   },
   {
     resolve: 'gatsby-transformer-remark',

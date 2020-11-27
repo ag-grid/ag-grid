@@ -7,7 +7,7 @@ import styles from './MatrixTable.module.scss';
 const MatrixTable = ({ src, rootnode: rootNode, columns, tree, booleanonly: booleanOnly, stringonly: stringOnly, childpropertyname: childPropertyName, showcondition: showCondition }) => {
     const { allFile: { nodes } } = useStaticQuery(graphql`
     {
-        allFile(filter: { sourceInstanceName: { in: ["pages", "data"] }, relativePath: { regex: "/.json$/" } }) {
+        allFile(filter: { relativePath: { regex: "/.json$/" } }) {
             nodes {
                 relativePath
                 fields {

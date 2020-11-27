@@ -5,10 +5,10 @@ title: "ag-Grid Modules - Overview"
 ag-Grid `modules` allow you to pick and choose which features you require, resulting in a smaller application size overall, with the trade-off being that you need to register the modules you require.
 
 [[note]]
-| The introduction of modules in version 22.0.0 is a significant first step towards reducing 
-| the size of ag-Grid inside applications. As most of the new modules cover enterprise 
-| features, community users should not expect to see a size reduction right away. However, 
-| in the coming releases, we will strive to reduce the size of the community-core module 
+| The introduction of modules in version 22.0.0 is a significant first step towards reducing
+| the size of ag-Grid inside applications. As most of the new modules cover enterprise
+| features, community users should not expect to see a size reduction right away. However,
+| in the coming releases, we will strive to reduce the size of the community-core module
 | by splitting it out into separate community modules.
 
 ## Introduction
@@ -17,12 +17,13 @@ ag-Grid `modules` allow you to pick and choose which features you require, resul
 
 The below table summarizes the modules provided in the ag-Grid Community and ag-Grid Enterprise packages.
 
-<matrix-table src='modules.json' columns='{ "title": "", "module": "Community Module", "exported": "Exported" }' stringonly="true" showcondition="notIn(enterprise, framework)"></matrix-table>
-<matrix-table src='modules.json' columns='{ "title": "", "module": "Enterprise Module<enterprise-icon></enterprise-icon>", "exported": "Exported" }' stringonly="true" showcondition="in(enterprise)"></matrix-table>
+<matrix-table src='grid-modules/modules.json' columns='{ "title": "", "module": "Community Module", "exported": "Exported" }' stringonly="true" showcondition="notIn(enterprise, framework)"></matrix-table>
+<matrix-table src='grid-modules/modules.json' columns='{ "title": "", "module": "Enterprise Module<enterprise-icon></enterprise-icon>", "exported": "Exported" }' stringonly="true" showcondition="in(enterprise)"></matrix-table>
+
 Note that neither `@ag-grid-community/all-modules` nor `@ag-grid-enterprise/all-modules` contain
 framework support - if you require framework support you need to explicitly specify it:
 
-<matrix-table src='modules.json' columns='{ "title": "", "module": "Framework Module", "exported": "Exported" }' stringonly="true" showcondition="in(framework)"></matrix-table>
+<matrix-table src='grid-modules/modules.json' columns='{ "title": "", "module": "Framework Module", "exported": "Exported" }' stringonly="true" showcondition="in(framework)"></matrix-table>
 
 ### All Modules Bundles
 
@@ -47,7 +48,7 @@ framework support - if you require framework support you need to explicitly spec
 
 The following artifacts are "`modules`" and are designed to work to together:
 
-| Module Prefix               | 
+| Module Prefix               |
 | --------------------------- |
 | `@ag-grid-community/xxxxx`  |
 | `@ag-grid-enterprise/xxxxx` |
