@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import fs from 'fs';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { getIndexHtml } from './index-html-helper';
-import styles from './example-runner-result.module.scss';
+import styles from './ExampleRunnerResult.module.scss';
 
 const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);

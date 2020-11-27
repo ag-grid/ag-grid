@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
-import styles from './icons-panel.module.scss';
+import styles from './IconsPanel.module.scss';
 
 const icons = [
     'aggregation', 'arrows', 'asc', 'cancel', 'chart',

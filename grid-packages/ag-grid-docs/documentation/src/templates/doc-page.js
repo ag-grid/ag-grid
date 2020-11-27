@@ -16,6 +16,7 @@ import VideoSection from '../components/VideoSection';
 import VideoLink from '../components/VideoLink';
 import ChartGallery from '../components/chart-gallery/ChartGallery';
 import ChartsApiExplorer from '../components/charts-api-explorer/ChartsApiExplorer';
+import { ListItem } from '../components/ListItem';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
@@ -37,6 +38,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     createElement: React.createElement,
     fragment: true,
     components: {
+      'li': ListItem,
       'grid-example': props => ExampleRunner(getExampleRunnerProps(props, 'grid')),
       'chart-example': props => ExampleRunner(getExampleRunnerProps(props, 'charts')),
       'api-documentation': props => ApiDocumentation({

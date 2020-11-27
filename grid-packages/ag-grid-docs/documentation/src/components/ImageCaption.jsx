@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import classnames from 'classnames';
-import styles from './image-caption.module.scss';
+import styles from './ImageCaption.module.scss';
 
 const ImageCaption = ({ src, alt, centered, children, constrained, descriptiontop: descriptionTop, height, maxwidth: maxWidth, minwidth: minWidth, width }) => {
     const { fluidImages: { nodes: fluidImages }, images: { nodes: images } } = useStaticQuery(graphql`

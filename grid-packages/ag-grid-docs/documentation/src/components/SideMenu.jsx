@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styles from './side-menu.module.scss';
+import styles from './SideMenu.module.scss';
 
 const SideMenu = ({ headings = [], pageName, hideMenu }) => {
     const [allHeadings, setAllHeadings] = useState(headings);

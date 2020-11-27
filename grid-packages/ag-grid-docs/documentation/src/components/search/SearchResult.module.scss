@@ -1,16 +1,36 @@
-@import "~bootstrap/scss/_list-group";
-@import "~bootstrap/scss/_utilities";
+@import "~bootstrap/scss/list-group";
+@import "~bootstrap/scss/utilities/display";
+@import "~bootstrap/scss/utilities/spacing";
 
-.ais-Hits {
-    max-height: 400px;
-    overflow-y: auto;
+.search-result {
+    composes: card from global;
+
+    position: absolute !important;
+    z-index: 99999;
+    width: 400px;
+    margin-top: 0.25rem;
+    display: none !important;
+
+    &__hit-wrapper {
+        composes: card-header p-1 from global;
+
+        text-align: end;
+    }
+
+    &__hit-count {
+        composes: badge badge-pill badge-primary from global;
+    }
+
+    &--show {
+        display: block !important;
+    }
 }
 
-.ais-Hits-list {
+:global(.ais-Hits-list) {
     @extend .list-group, .list-group-flush;
 }
 
-.ais-Hits-item {
+:global(.ais-Hits-item) {
     @extend .list-group-item, .list-group-item-action;
     overflow: hidden;
 
@@ -48,5 +68,12 @@
     h4 {
         font-size: 1rem;
         font-weight: bold;
+    }
+}
+
+:global {
+    .ais-Hits {
+        max-height: 400px;
+        overflow-y: auto;
     }
 }

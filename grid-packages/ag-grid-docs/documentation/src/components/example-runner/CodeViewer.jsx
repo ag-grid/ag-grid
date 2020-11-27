@@ -10,7 +10,7 @@ import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { doOnEnter, getExampleFiles } from './helpers';
-import styles from './code-viewer.module.scss';
+import styles from './CodeViewer.module.scss';
 
 const updateFiles = (nodes, exampleInfo, setFiles, setActiveFile) => {
     if (typeof window === 'undefined') { return; }

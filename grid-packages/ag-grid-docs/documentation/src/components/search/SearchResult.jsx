@@ -7,8 +7,7 @@ import {
     Snippet,
 } from 'react-instantsearch-dom';
 import classnames from 'classnames';
-import styles from './search-result.module.scss';
-import './search-result.scss';
+import styles from './SearchResult.module.scss';
 
 const HitCount = connectStateResults(({ searchResults }) => {
     const hitCount = searchResults && searchResults.nbHits;

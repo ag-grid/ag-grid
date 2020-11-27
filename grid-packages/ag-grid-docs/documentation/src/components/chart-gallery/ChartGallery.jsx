@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import chartGallery from '../../pages/charts-overview/gallery.json';
 import thumbnails from './thumbnails';
 import toKebabCase from '../../utils/to-kebab-case';
-import styles from './chart-gallery.module.scss';
+import styles from './ChartGallery.module.scss';
 
 const ChartGallery = () => {
     const categories = Object.keys(chartGallery);

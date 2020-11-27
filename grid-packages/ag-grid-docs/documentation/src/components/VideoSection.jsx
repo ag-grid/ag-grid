@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import styles from './video-section.module.scss';
+import styles from './VideoSection.module.scss';
 
 const VideoSection = ({ src, title, header, children }) => (
     <div className={styles['video-section']}>

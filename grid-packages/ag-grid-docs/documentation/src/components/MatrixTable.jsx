@@ -2,7 +2,7 @@ import React from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
-import styles from './matrix-table.module.scss';
+import styles from './MatrixTable.module.scss';
 
 const MatrixTable = ({ src, rootnode: rootNode, columns, tree, booleanonly: booleanOnly, stringonly: stringOnly, childpropertyname: childPropertyName, showcondition: showCondition }) => {
     const { allFile: { nodes } } = useStaticQuery(graphql`

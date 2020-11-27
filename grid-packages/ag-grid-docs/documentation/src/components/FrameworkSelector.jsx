@@ -2,8 +2,8 @@ import { Link } from 'gatsby';
 import React from 'react';
 import classnames from 'classnames';
 import fwLogos from '../images/fw-logos';
-import styles from './framework-selector.module.scss';
 import supportedFrameworks from '../utils/supported-frameworks';
+import styles from './FrameworkSelector.module.scss';
 
 export default function FrameworkSelector({ frameworks, path, currentFramework }) {
     if (!currentFramework) { return null; }

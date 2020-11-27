@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { connectSearchBox } from 'react-instantsearch-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import styles from './search-box.module.scss';
+import styles from './SearchBox.module.scss';
 
 export default connectSearchBox(
     ({ refine, currentRefinement, className, onFocus }) => (

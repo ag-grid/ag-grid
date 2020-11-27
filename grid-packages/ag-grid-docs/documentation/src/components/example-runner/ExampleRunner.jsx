@@ -13,7 +13,7 @@ import { useExampleFileNodes } from './use-example-file-nodes';
 import { doOnEnter, getExampleInfo, isDevelopment, openPlunker } from './helpers';
 import { ParameterConfig } from '../../pages/example-runner';
 import anchorIcon from '../../images/anchor';
-import styles from './example-runner.module.scss';
+import styles from './ExampleRunner.module.scss';
 
 const getNewTabLink = exampleInfo => {
     if (isDevelopment()) {

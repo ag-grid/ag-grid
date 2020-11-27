@@ -1,5 +1,5 @@
-@import "~bootstrap/scss/_type";
-@import "~bootstrap/scss/_alert";
+@import "~bootstrap/scss/type";
+@import "~bootstrap/scss/alert";
 
 .main-container {
     composes: container-fluid p-0 vh-100 d-flex flex-column from global;

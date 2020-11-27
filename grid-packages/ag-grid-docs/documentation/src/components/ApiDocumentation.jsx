@@ -3,7 +3,7 @@ import ReactDOMServer from 'react-dom/server';
 import { useStaticQuery, graphql } from 'gatsby';
 import Prism from 'prismjs';
 import anchorIcon from '../images/anchor';
-import styles from './api-documentation.module.scss';
+import styles from './ApiDocumentation.module.scss';
 
 export const ApiDocumentation = ({ pageName, source, sources, section, names = [], config = {} }) => {
     const { allFile: { nodes } } = useStaticQuery(graphql`

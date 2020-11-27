@@ -4,7 +4,7 @@ import { InstantSearch } from 'react-instantsearch-dom';
 import SearchBox from './SearchBox';
 import SearchResult from './SearchResult';
 import useClickOutside from './use-click-outside';
-import styles from './search.module.scss';
+import styles from './Search.module.scss';
 
 export default function Search({ indices }) {
     const rootRef = createRef();
