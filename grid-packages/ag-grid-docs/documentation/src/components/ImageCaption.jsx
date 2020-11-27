@@ -6,7 +6,7 @@ import styles from './ImageCaption.module.scss';
 const ImageCaption = ({ src, alt, centered, children, constrained, descriptiontop: descriptionTop, height, maxwidth: maxWidth, minwidth: minWidth, width }) => {
     const { fluidImages: { nodes: fluidImages }, images: { nodes: images } } = useStaticQuery(graphql`
     {
-        fluidImages: allFile(filter: { sourceInstanceName: { eq: "pages" }, relativePath: { regex: "/.(jpg|png)$/" } }) {
+        fluidImages: allFile(filter: { relativePath: { regex: "/.(jpg|png)$/" } }) {
             nodes {
                 relativePath
                 childImageSharp {
@@ -16,7 +16,7 @@ const ImageCaption = ({ src, alt, centered, children, constrained, descriptionto
                 }
             }
         }
-        images: allFile(filter: { sourceInstanceName: { eq: "pages" }, relativePath: { regex: "/.(svg|gif)$/" } }) {
+        images: allFile(filter: { relativePath: { regex: "/.(svg|gif)$/" } }) {
             nodes {
                 relativePath
                 publicURL

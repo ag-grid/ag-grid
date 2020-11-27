@@ -60,7 +60,7 @@ The main functionality you'll want to import from the `@ag-grid-enterprise/core`
 
 ![Enterprise Hierarchy](resources/enterprise-hierarchy.png)
 
-_The above is a truncated hierarchy of Entreprise modules for illustrative purposes._
+_The above is a truncated hierarchy of Enterprise modules for illustrative purposes._
 
 For example, let's assume you specify the following in your `package.json`:
 
