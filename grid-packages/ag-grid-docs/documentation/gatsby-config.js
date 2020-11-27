@@ -117,6 +117,7 @@ const plugins = [
       },
     }
   },
+  'gatsby-plugin-minify-classnames',
   'gatsby-plugin-catch-links',
   'gatsby-plugin-react-helmet',
   {
