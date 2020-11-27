@@ -1,5 +1,6 @@
 import { AgChart } from "../agChart";
-import { AgCartesianChartOptions, AgChartTheme, AgPolarChartOptions } from "../agChartOptions";
+import { AgCartesianChartOptions, AgCartesianSeriesMarkerFormatter, AgChartTheme, AgPolarChartOptions } from "../agChartOptions";
+import { AreaSeries } from "../series/cartesian/areaSeries";
 import { BarSeries } from "../series/cartesian/barSeries";
 import { PieSeries } from "../series/polar/pieSeries";
 
@@ -13,6 +14,12 @@ const data = [
 
 describe("cartesian overrides", () => {
     const tooltipRenderer = () => 'testing';
+    const markerFormatter: AgCartesianSeriesMarkerFormatter = () => {
+        return {
+
+        };
+    };
+
     const theme: AgChartTheme = {
         baseTheme: 'ag-default',
         palette: {
@@ -39,6 +46,11 @@ describe("cartesian overrides", () => {
                             enabled: false,
                             renderer: tooltipRenderer
                         }
+                    },
+                    area: {
+                        marker: {
+                            formatter: markerFormatter
+                        }
                     }
                 }
             }
@@ -60,6 +72,10 @@ describe("cartesian overrides", () => {
             label: {
                 fontSize: 18
             }
+        }, {
+            type: 'area',
+            xKey: 'label',
+            yKeys: ['v1', 'v2', 'v3', 'v4', 'v5']
         }]
     };
 
@@ -85,6 +101,11 @@ describe("cartesian overrides", () => {
         expect((chart.series[0] as BarSeries).label.fontSize).toBe(18);
         expect((chart.series[0] as BarSeries).tooltip.enabled).toBe(false);
         expect((chart.series[0] as BarSeries).tooltip.renderer).toBe(tooltipRenderer);
+
+        expect(chart.series[1].type).toBe('area');
+        expect((chart.series[1] as AreaSeries).fills).toEqual(['blue', 'red', 'green', 'blue', 'red']);
+        expect((chart.series[1] as AreaSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
+        expect((chart.series[1] as AreaSeries).marker.formatter).toBe(markerFormatter);
     });
 });
 
