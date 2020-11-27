@@ -377,20 +377,22 @@ interface AgSeriesMarker {
     strokeWidth?: number;
 }
 
-interface AgCartesianSeriesMarkerFormatterParams {
+export interface AgCartesianSeriesMarkerFormatterParams {
     xKey: string;
     yKey: string;
 }
 
-interface AgCartesianSeriesMarkerFormat {
+export interface AgCartesianSeriesMarkerFormat {
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
     size?: number;
 }
 
+export type AgCartesianSeriesMarkerFormatter = (params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat;
+
 interface AgCartesianSeriesMarker extends AgSeriesMarker {
-    formatter?: (params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat;
+    formatter?: AgCartesianSeriesMarkerFormatter;
 }
 
 export interface AgSeriesTooltip {
