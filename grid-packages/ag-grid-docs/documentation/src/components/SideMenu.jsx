@@ -41,7 +41,7 @@ const SideMenu = ({ headings = [], pageName, hideMenu }) => {
         }
     }, [hideMenu]);
 
-    return allHeadings.length > 0 &&
+    return allHeadings.length > 1 &&
         <ul className={styles['side-nav']}>
             {allHeadings.map(heading => <li key={`${pageName}_${heading.id}`} className={styles[`side-nav__item--level-${heading.depth}`]}>
                 <a className={styles['side-nav__link']} href={`#${heading.id}`}>{heading.value}</a>
