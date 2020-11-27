@@ -20,7 +20,7 @@ It is free to try out ag-Grid Enterprise. Please take ag-Grid Enterprise for a t
 
 The below table summarizes the features included in ag-Grid Community and ag-Grid Enterprise. Note that ag-Grid Enterprise builds on ag-Grid Community, it offers everything ag-Grid Community offers plus more.
 
-<matrix-table src='menu.json' tree='true' childpropertyname='items' booleanonly='true' columns='{ "title": "", "not(enterprise)": "Community", "enterprise": "Enterprise<enterprise-icon></enterprise-icon>" }'></matrix-table>
+<matrix-table src='set-license/menu.json' tree='true' childpropertyname='items' booleanonly='true' columns='{ "title": "", "not(enterprise)": "Community", "enterprise": "Enterprise<enterprise-icon></enterprise-icon>" }'></matrix-table>
 
 ## Installing ag-Grid Enterprise
 
@@ -111,7 +111,7 @@ Note that you must pass the key exactly as provided by ag-Grid - do not modify t
 
 [[only-javascript]]
 | Use this if you are using the bundled version of ag-Grid (e.g. you are using `@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`).
-| 
+|
 | ```js
 | agGrid.LicenseManager.setLicenseKey("your license key");
 | ```
@@ -133,37 +133,37 @@ enterprise.LicenseManager.setLicenseKey("your license key");
 If you mix the methods above (eg if you are using CommonJS in your application, but use the JavaScript approach above to set license key) then it will not work. This is because the ag-Grid library will be loaded twice, one will have the license key and the other will be used in your application without the license key.
 
 [[only-angular]]
-| We recommend setting the license key in your main boot files (typically named either `main.ts` or `boot.ts`, before you 
+| We recommend setting the license key in your main boot files (typically named either `main.ts` or `boot.ts`, before you
 | bootstrap your application.
 |
 | For example:
-| 
+|
 | ```js
 | // other imports...
-| 
+|
 | import {LicenseManager} from "@ag-grid-enterprise/core";
 | LicenseManager.setLicenseKey("your license key");
-| 
+|
 | // bootstrap your angular application. ie: platformBrowser().bootstrapModuleFactory(..)
 | ```
 
 [[only-react]]
 | We recommend setting the license key in your main bootstrap file (typically named `index.js`), before you bootstrap your application.
-| 
+|
 | For example:
-| 
+|
 | ```js
 | import React from "react";
 | import {render} from "react-dom";
-| 
+|
 | import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
 | import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-alpine.css";
-| 
+|
 | import {LicenseManager} from "@ag-grid-enterprise/core";
 | LicenseManager.setLicenseKey("your license key");
-| 
+|
 | import App from "./App";
-| 
+|
 | document.addEventListener('DOMContentLoaded', () => {
 |     render(
 |         <App/>,
@@ -174,22 +174,22 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 
 [[only-vue]]
 | We recommend setting the license key in your main bootstrap file (typically named `main.js`), before you bootstrap your application.
-| 
+|
 | For example:
-| 
+|
 | ```jsx
 | import Vue from "vue";
-| 
+|
 | import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
 | import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-alpine.css";
-| 
+|
 | import { AllModules } from "@ag-grid-enterprise/all-modules";
 | import { LicenseManager } from "@ag-grid-enterprise/core";
-| 
+|
 | LicenseManager.setLicenseKey("your license key");
-| 
+|
 | // provide the AllModules array to the vue grid...
-| 
+|
 | new Vue({
 |     el: "#el",
 |     ...
@@ -198,17 +198,17 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 
 [[only-javascript]]
 | ### Polymer
-| 
+|
 | You have two choices as to where to set your license key in Polymer.
-| 
+|
 | If you have many components with agGrid in, the we suggest you run a separate script to reference and set the license key - for example:
 |
 | ```html
 | <script src="../bower_components/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.noStyle.js"></script>
-| 
+|
 | <!-- ag-grid-polymer element -->
 | <link rel="import" href="../bower_components/ag-grid-polymer/ag-grid-polymer.html">
-| 
+|
 | <!-- your code -->
 | <!-- licenseKey.js will be responsible for setting the license key across the application -->
 | <script src="licenseKey.js"></script>
@@ -221,7 +221,7 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 | agGrid.LicenseManager.setLicenseKey("your license key")
 | ```
 |
-| If you have a single component, or a single component that in turn has the child components, you can set the 
+| If you have a single component, or a single component that in turn has the child components, you can set the
 | license key in this parent component - for example:
 |
 | ```html
@@ -229,7 +229,7 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 |
 | <!-- ag-grid-polymer element -->
 | <link rel="import" href="../bower_components/ag-grid-polymer/ag-grid-polymer.html">
-| 
+|
 | <!-- your code -->
 | <link rel="import" href="main-component-one.html">
 | ```
@@ -248,7 +248,7 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 |
 | <script>
 |     agGrid.LicenseManager.setLicenseKey("your license key")
-| 
+|
 |     class SimpleGridExample extends Polymer.Element {
 |         ...
 |     }
