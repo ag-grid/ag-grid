@@ -957,6 +957,9 @@ export class CellComp extends Component implements TooltipParentComp {
         // if async components, then it's possible the user started editing since this call was made
         if (!this.editingCell) {
             this.eCellValue.appendChild(this.cellRendererGui);
+            if(this.cellRenderer.afterGuiAttached) {
+                this.cellRenderer.afterGuiAttached();
+            }
         }
     }
 

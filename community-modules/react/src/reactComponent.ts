@@ -1,15 +1,12 @@
-import { ReactPortal, createElement } from 'react';
-import { createPortal, findDOMNode } from 'react-dom';
-import { _, ComponentType, Promise } from '@ag-grid-community/core';
-import { AgGridReact } from "./agGridReact";
-import { BaseReactComponent } from './baseReactComponent';
-import { assignProperties } from './utils';
+import {createElement, useEffect, useRef} from 'react';
+import {findDOMNode} from 'react-dom';
+import {_, ComponentType, IComponent, Promise, WrapableInterface} from '@ag-grid-community/core';
+import {AgGridReact} from "./agGridReact";
+import {assignProperties} from './utils';
 import generateNewKey from './keyGenerator';
-import { renderToStaticMarkup } from 'react-dom/server';
 
-export class ReactComponent extends BaseReactComponent {
+export class ReactComponent implements IComponent<any>, WrapableInterface {
     static REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
-    static SLOW_RENDERERING_THRESHOLD = 3;
 
     private eParentElement!: HTMLElement;
     private componentInstance: any;
@@ -20,12 +17,8 @@ export class ReactComponent extends BaseReactComponent {
     private parentComponent: AgGridReact;
     public reactElement: any | null = null;
     private statelessComponent: boolean;
-    private staticMarkup: HTMLElement | null | string = null;
-    private staticRenderTime: number = 0;
 
     constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
-        super();
-
         this.reactComponent = reactComponent;
         this.componentType = componentType;
         this.parentComponent = parentComponent;
@@ -34,6 +27,10 @@ export class ReactComponent extends BaseReactComponent {
 
     public getFrameworkComponentInstance(): any {
         return this.componentInstance;
+    }
+
+    public getNonProxiedWrapperComponent(): any {
+        return this;
     }
 
     public isStatelessComponent(): boolean {
@@ -46,8 +43,6 @@ export class ReactComponent extends BaseReactComponent {
 
     public init(params: any): Promise<void> {
         this.eParentElement = this.createParentElement(params);
-        // this.renderStaticMarkup(params);
-
         return new Promise<void>(resolve => this.createReactComponent(params, resolve));
     }
 
@@ -55,55 +50,66 @@ export class ReactComponent extends BaseReactComponent {
         return this.eGui;
     }
 
+    public afterComponentGuiAttached(): void {
+        if (this.eGui.style && this.eGui.style.display) {
+            this.eGui.style.display = '';
+        }
+    }
+
     public destroy(): void {
+        if (this.isStatelessComponent()) {
+            this.eGui.style.display = 'none';
+        }
         this.eParentElement.appendChild(this.eGui);
-        return this.parentComponent.destroyPortal(this);
+        this.parentComponent.destroyPortal(this);
     }
 
     private createReactComponent(params: any, resolve: (value: any) => void) {
-        // regular components (ie not functional)
-        if (!this.isStatelessComponent()) {
+        const key = generateNewKey();
+
+        // functional components
+        if (this.isStatelessComponent()) {
+            const reactElement = createElement(this.reactComponent, {...params, style: {display: "none"}, key})
+
+            const that = this;
+
+            // @ts-ignore
+            function Foo() {
+                var fragmentRef = useRef();
+                useEffect(function () {
+                    const holdingDiv = fragmentRef.current! as HTMLElement;
+                    that.eGui = holdingDiv;
+                    that.eParentElement = holdingDiv.parentElement!;
+                });
+                return createElement('div', {ref: fragmentRef, style: {display: "none"}, key}, reactElement);
+            }
+
+            this.reactElement = createElement(Foo, {key});
+        } else {
+            // regular components (ie not functional)
+
             // grab hold of the actual instance created
             params.ref = (element: any) => {
                 this.componentInstance = element;
-                this.addParentContainerStyleAndClasses();
 
-                this.removeStaticMarkup();
+                this.addParentContainerStyleAndClasses();
             };
+
+            this.reactElement = createElement('div', {
+                style: {display: "none"},
+                key
+            }, createElement(this.reactComponent, {...params, key}));
         }
 
-        this.reactElement = createElement(this.reactComponent, {...params, key: generateNewKey()});
         this.parentComponent.mountReactPortal(this, value => {
 
-            this.eGui = findDOMNode(this.componentInstance) as any
-            this.eParentElement = this.eGui.parentElement;
+            if (!this.isStatelessComponent()) {
+                this.eGui = findDOMNode(this.componentInstance) as any
+                this.eParentElement = this.eGui.parentElement;
+            }
+
             resolve(value);
         })
-        // const portal: ReactPortal = createPortal(
-        //     reactComponent,
-        //     this.eParentElement as any,
-        //     generateNewKey() // fixed deltaRowModeRefreshCompRenderer
-        // );
-        //
-        // this.portal = portal;
-        // this.parentComponent.mountReactPortal(portal, this, (value: any) => {
-        //     resolve(value);
-        //
-        //     // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
-        //     // here
-        //     if (this.isStatelessComponent()) {
-        //         if(this.isSlowRenderer()) {
-        //             this.removeStaticMarkup()
-        //         }
-        //         setTimeout(() => {
-        //             this.removeStaticMarkup()
-        //         });
-        //     }
-        // });
-    }
-
-    private isSlowRenderer() {
-        return this.staticRenderTime >= ReactComponent.SLOW_RENDERERING_THRESHOLD;
     }
 
     private addParentContainerStyleAndClasses() {
@@ -148,75 +154,50 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     public isNullRender(): boolean {
-        return this.staticMarkup === '';
+        return this.eGui && this.eGui.innerText === '';
     }
 
-    /*
-     * Attempt to render the component as static markup if possible
-     * What this does is eliminate any visible flicker for the user in the scenario where a component is destroyed and
-     * recreated with exactly the same data (ie with force refresh)
-     * Note: Some use cases will throw an error (ie when using Context) so if an error occurs just ignore it any move on
-     */
-    private renderStaticMarkup(params: any) {
-        if (this.parentComponent.isDisableStaticMarkup() || (this.componentType.isCellRenderer && !this.componentType.isCellRenderer())) {
-            return;
-        }
-
-        const originalConsoleError = console.error;
-        const reactComponent = createElement(this.reactComponent, params);
-
-        try {
-            // if a user is doing anything that uses useLayoutEffect (like material ui) then it will throw and we
-            // can't do anything to stop it; this is just a warning and has no effect on anything so just suppress it
-            // for this single operation
-            console.error = () => {};
-
-            const start = Date.now();
-            const staticMarkup = renderToStaticMarkup(reactComponent);
-            this.staticRenderTime = Date.now() - start;
-
-            console.error = originalConsoleError;
-
-            // if the render method returns null the result will be an empty string
-            if (staticMarkup === '') {
-                this.staticMarkup = staticMarkup;
-            } else {
-                if (staticMarkup) {
-                    // we wrap the content as if there is "trailing" text etc it's not easy to safely remove
-                    // the same is true for memoized renderers, renderers that that return simple strings or NaN etc
-                    this.staticMarkup = document.createElement('span');
-                    this.staticMarkup.innerHTML = staticMarkup;
-                    this.eParentElement.appendChild(this.staticMarkup);
-                }
-            }
-        } catch (e) {
-            // we tried - this can happen with certain (rare) edge cases
-        } finally {
-            console.error = originalConsoleError;
-        }
+    static WRAPPER_METHODS: { [instanceMethodName: string]: string } = {
+        afterGuiAttached: 'afterComponentGuiAttached'
     }
 
-    private removeStaticMarkup() {
-        if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
-            return;
-        }
+    isMethodOnInstance(name: string): boolean {
+        const frameworkComponentInstance = this.getFrameworkComponentInstance();
+        return frameworkComponentInstance && frameworkComponentInstance[name] !== null
+    }
 
-        if (this.staticMarkup) {
-            if ((this.staticMarkup as HTMLElement).remove) {
-                // everyone else in the world
-                (this.staticMarkup as HTMLElement).remove();
-                this.staticMarkup = null;
-            } else if (this.eParentElement.removeChild) {
-                // ie11...
-                this.eParentElement.removeChild(this.staticMarkup as any);
-                this.staticMarkup = null;
-            }
-        }
+    isMethodOnWrapper(name: string): boolean {
+        return ReactComponent.WRAPPER_METHODS[name] !== null && ReactComponent.WRAPPER_METHODS[name] !== undefined;
     }
 
     rendered(): boolean {
         return this.isNullRender() ||
-            !!this.staticMarkup || (this.isStatelessComponent() && this.statelessComponentRendered()) ||
+            (this.isStatelessComponent() && this.statelessComponentRendered()) ||
             !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
+    }
+
+    hasMethod(name: string): boolean {
+        const onInstance = this.isMethodOnInstance(name);
+        const onWrapper = this.isMethodOnWrapper(name);
+        return onInstance || onWrapper;
+    }
+
+    callMethod(name: string, args: IArguments): void {
+        if (this.isMethodOnWrapper(name)) {
+            (this as any)[ReactComponent.WRAPPER_METHODS[name]](args);
+        }
+
+        if (this.isMethodOnInstance(name)) {
+            const frameworkComponentInstance = this.getFrameworkComponentInstance();
+            const method = frameworkComponentInstance[name];
+
+            if (method == null) return;
+
+            return method.apply(frameworkComponentInstance, args);
+        }
+    }
+
+    addMethod(name: string, callback: Function): void {
+        (this as any)[name] = callback;
     }
 }
