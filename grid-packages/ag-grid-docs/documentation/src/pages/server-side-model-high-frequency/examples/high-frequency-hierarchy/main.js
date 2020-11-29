@@ -53,26 +53,26 @@ var gridOptions = {
   getRowNodeId: getRowNodeId,
   isApplyServerSideTransaction: isApplyServerSideTransaction,
   onAsyncTransactionsFlushed: onAsyncTransactionsFlushed,
-  onGridReady: onGridReady
-};
+  onGridReady: function (params) {
 
-function onGridReady(params) {
-
-  var dataSource = {
-    getRows: function(params2) {
-      fakeServer.getData(params2.request, params2.parentNode.data, function(result, serverVersion) {
-        params2.success({
-          rowData: result,
-          storeInfo: {serverVersion: serverVersion}
+    var dataSource = {
+      getRows: function(params2) {
+        fakeServer.getData(params2.request, params2.parentNode.data, function(result, serverVersion) {
+          params2.success({
+            rowData: result,
+            storeInfo: {serverVersion: serverVersion}
+          });
         });
-      });
-    }
-  };
+      }
+    };
 
-  params.api.setServerSideDatasource(dataSource);
+    params.api.setServerSideDatasource(dataSource);
 
-  fakeServer.addUpdateListener(processUpdateFromFakeServer);
-}
+    var callback = processUpdateFromFakeServer.bind(window, params.api);
+
+    fakeServer.addUpdateListener(callback);
+  }
+};
 
 function getRowNodeId(data) {
   if (data.tradeId) {
@@ -124,13 +124,13 @@ function onBtApplyOneTransaction() {
   fakeServer.insertOneRecord();
 }
 
-function processUpdateFromFakeServer(transactions) {
+function processUpdateFromFakeServer(gridApi, transactions) {
   var updatingJustOneTransaction = transactions.length==4;
   if (updatingJustOneTransaction) {
     console.log('Updating One Record');
   }
   transactions.forEach(function(tx) {
-    gridOptions.api.applyServerSideTransactionAsync(tx, function(res) {
+    gridApi.applyServerSideTransactionAsync(tx, function(res) {
       if (updatingJustOneTransaction) {
         console.log('Route [' + tx.route.join(',') + '], status = ' + res.status);
       }
