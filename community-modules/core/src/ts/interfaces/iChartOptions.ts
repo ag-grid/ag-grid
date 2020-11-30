@@ -264,6 +264,7 @@ export interface MarkerOptions {
     shape: MarkerShape;
     size: number;
     strokeWidth: number;
+    formatter?: Function;
 }
 
 export interface LineTooltipRendererParams extends CartesianTooltipRendererParams {
