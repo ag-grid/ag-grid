@@ -1017,7 +1017,7 @@ export abstract class Chart extends Observable {
                 this.onSeriesDatumPick({
                     pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
                     pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
-                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node as Shape : undefined);
+                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node as Shape : undefined, event);
             } else {
                 hideTooltip = true;
             }
