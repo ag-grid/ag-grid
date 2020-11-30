@@ -147,6 +147,8 @@ export class ChartTooltip extends Observable {
 
     @reactive() class: string = Chart.defaultTooltipClass;
 
+    @reactive() delay: number = 0;
+
     /**
      * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
      * Only has effect on series with markers.
@@ -180,12 +182,22 @@ export class ChartTooltip extends Observable {
         this.element.setAttribute('class', classList.join(' '));
     }
 
+    private showTimeout: number = 0;
     /**
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
-    show(meta: TooltipMeta, html?: string) {
+    show(meta: TooltipMeta, html?: string, instantly = false) {
         const el = this.element;
+
+        if (this.delay > 0 && !instantly && (html || el.innerHTML)) {
+            window.clearTimeout(this.showTimeout);
+            this.hide();
+            this.showTimeout = window.setTimeout(() => {
+                this.show(meta, html || el.innerHTML, true);
+            }, this.delay);
+            return;
+        }
 
         if (html !== undefined) {
             el.innerHTML = html;
