@@ -81,7 +81,6 @@ export class FocusController extends BeanStub {
 
         if (gridCoresForDocument) {
             gridCoresForDocument.forEach(gridCore => {
-                console.log('Firing mouse event....');
                 gridCore.dispatchEvent({ type: Events.EVENT_MOUSE_FOCUS });
             });
         }
@@ -96,7 +95,6 @@ export class FocusController extends BeanStub {
 
         if (gridCoresForDocument) {
             gridCoresForDocument.forEach(gridCore => {
-                console.log('Firing key event....');
                 gridCore.dispatchEvent({ type: Events.EVENT_KEYBOARD_FOCUS });
             });
         }
