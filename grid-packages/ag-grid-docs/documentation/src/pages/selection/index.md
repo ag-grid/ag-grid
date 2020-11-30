@@ -271,7 +271,7 @@ From the code below you can see that we iterate over each node and call the `set
 ```js
 function myNavigation(params) {
     var suggestedNextCell = params.nextCellPosition;
-
+// this is some code
     var KEY_UP = 38;
     var KEY_DOWN = 40;
 

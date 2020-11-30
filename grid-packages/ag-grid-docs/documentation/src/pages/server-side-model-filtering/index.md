@@ -43,7 +43,7 @@ The example below demonstrates the Full Store filtering inside the grid. Note th
     - Year column has Number Filter.
 - Rows are loaded once. All filtering is then subsequently done by the grid.
 
-<grid-example title='Full Store Filtering' name='full' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
+<grid-example title='Full Store Filtering' name='full' type='generated' options='{ "enterprise": true, "modules": ["serverside","setfilter", "menu"] }'></grid-example>
 
 Note that the Set Filter is provided values to work. This is a requirement when using the Set Filter with the SSRM.
 
