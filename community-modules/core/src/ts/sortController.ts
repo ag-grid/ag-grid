@@ -145,7 +145,19 @@ export class SortController extends BeanStub {
         const columnsWithSorting = allColumnsIncludingAuto.filter(column => !!column.getSort());
 
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort((a: Column, b: Column) => a.getSortIndex()! - b.getSortIndex()!);
+        columnsWithSorting.sort((a: Column, b: Column) => {
+            const iA = a.getSortIndex();
+            const iB = b.getSortIndex();
+            if (iA!=null && iB!=null) {
+                return iA - iB; // both present, normal comparison
+            } else if (iB==null) {
+                return -1; // iB missing
+            } else if (iA==null) {
+                return 1; // iA missing
+            } else {
+                return 0; // both missing
+            }
+        });
 
         return columnsWithSorting;
     }
