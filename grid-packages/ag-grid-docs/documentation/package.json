@@ -5,11 +5,13 @@
   "version": "0.1.0",
   "license": "0BSD",
   "scripts": {
-    "build": "cd .. && node dev-server.js generate-examples && cd documentation && npx gatsby build --prefix-paths",
+    "generate-examples": "cd .. && node dev-server.js generate-examples && cd documentation",
+    "build": "npm run publish && npm run clean",
+    "publish": "npm run generate-examples && npx gatsby build --prefix-paths",
     "develop": "npx gatsby develop -H 0.0.0.0",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run develop",
-    "serve": "npx gatsby serve --prefix-paths",
+    "serve": "npx gatsby serve --prefix-paths -H 0.0.0.0",
     "clean": "npx gatsby clean"
   },
   "dependencies": {
