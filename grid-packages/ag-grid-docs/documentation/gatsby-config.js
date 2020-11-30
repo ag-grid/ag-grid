@@ -16,7 +16,7 @@ const plugins = [
     options: {
       filter: node => node.sourceInstanceName === 'pages' &&
         node.relativePath.indexOf('/_gen/') < 0 &&
-        node.base.endsWith('.html'),
+        node.ext === '.html',
     },
   },
   'gatsby-plugin-layout',

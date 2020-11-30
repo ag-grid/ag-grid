@@ -1,23 +1,11 @@
 import React from 'react';
-import { useStaticQuery, graphql } from 'gatsby';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { useJsonFileNodes } from './use-json-file-nodes';
 import styles from './MatrixTable.module.scss';
 
 const MatrixTable = ({ src, rootnode: rootNode, columns, tree, booleanonly: booleanOnly, stringonly: stringOnly, childpropertyname: childPropertyName, showcondition: showCondition }) => {
-    const { allFile: { nodes } } = useStaticQuery(graphql`
-    {
-        allFile(filter: { relativePath: { regex: "/.json$/" } }) {
-            nodes {
-                relativePath
-                fields {
-                    content
-                }
-            }
-        }
-    }
-    `);
-
+    const nodes = useJsonFileNodes();
     const file = JSON.parse(nodes.find(node => node.relativePath === src).fields.content);
     const allRows = getRowsToProcess(file, rootNode, showCondition);
     const allColumns = JSON.parse(columns);

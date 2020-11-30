@@ -1,23 +1,12 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { useStaticQuery, graphql } from 'gatsby';
 import Prism from 'prismjs';
+import { useJsonFileNodes } from './use-json-file-nodes';
 import anchorIcon from '../images/anchor';
 import styles from './ApiDocumentation.module.scss';
 
 export const ApiDocumentation = ({ pageName, source, sources, section, names = [], config = {} }) => {
-    const { allFile: { nodes } } = useStaticQuery(graphql`
-    {
-        allFile(filter: { sourceInstanceName: { eq: "pages" }, relativePath: { regex: "/json$/" } }) {
-            nodes {
-                relativePath
-                fields {
-                    content
-                }
-            }
-        }
-    }
-    `);
+    const nodes = useJsonFileNodes();
 
     if (source) {
         sources = [source];
