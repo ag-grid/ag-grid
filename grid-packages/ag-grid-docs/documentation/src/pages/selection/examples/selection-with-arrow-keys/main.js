@@ -21,39 +21,23 @@ var gridOptions = {
 };
 
 function navigateToNextCell(params) {
-    var previousCell = params.previousCellPosition;
     var suggestedNextCell = params.nextCellPosition;
 
     var KEY_UP = 38;
     var KEY_DOWN = 40;
-    var KEY_LEFT = 37;
-    var KEY_RIGHT = 39;
 
-    switch (params.key) {
-        case KEY_DOWN:
-            previousCell = params.previousCellPosition;
-            // set selected cell on current cell + 1
-            gridOptions.api.forEachNode(function(node) {
-                if (previousCell.rowIndex + 1 === node.rowIndex) {
-                    node.setSelected(true);
-                }
-            });
-            return suggestedNextCell;
-        case KEY_UP:
-            previousCell = params.previousCellPosition;
-            // set selected cell on current cell - 1
-            gridOptions.api.forEachNode(function(node) {
-                if (previousCell.rowIndex - 1 === node.rowIndex) {
-                    node.setSelected(true);
-                }
-            });
-            return suggestedNextCell;
-        case KEY_LEFT:
-        case KEY_RIGHT:
-            return suggestedNextCell;
-        default:
-            throw "this will never happen, navigation is always one of the 4 keys above";
+    var noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
+    if (noUpOrDownKeyPressed) {
+        return suggestedNextCell;
     }
+
+    gridOptions.api.forEachNode(function(node) {
+        if (node.rowIndex === suggestedNextCell.rowIndex) {
+            node.setSelected(true);
+        }
+    });
+
+    return suggestedNextCell;
 }
 
 // setup the grid after the page has finished loading
