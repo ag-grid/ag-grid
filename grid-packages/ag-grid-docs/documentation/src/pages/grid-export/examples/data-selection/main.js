@@ -111,7 +111,7 @@ function getParams() {
     };
 }
 
-function validateSelection(params) {
+function validateSelection(params, api) {
     var message = '';
     var errorDiv = document.querySelector('.example-error');
     var messageDiv = errorDiv.querySelector('.message');
@@ -120,7 +120,7 @@ function validateSelection(params) {
         message += params.onlySelected ? 'onlySelected' : 'onlySelectedAllPages';
         message += ' is checked, please selected a row.';
 
-        if (!gridOptions.api.getSelectedNodes().length) {
+        if (!api.getSelectedNodes().length) {
             errorDiv.classList.remove('inactive');
             messageDiv.innerHTML = message;
             window.setTimeout(function() {
@@ -135,15 +135,19 @@ function validateSelection(params) {
 }
 
 function onBtnExportDataAsCsv() {
-    var params = getParams();
-    if (validateSelection(params)) { return; }
-    gridOptions.api.exportDataAsCsv(params);
+    var api = gridOptions.api,
+        params = getParams();
+        
+    if (validateSelection(params, api)) { return; }
+    api.exportDataAsCsv(params);
 }
 
 function onBtnExportDataAsExcel() {
-    var params = getParams();
-    if (validateSelection(params)) { return; }
-    gridOptions.api.exportDataAsExcel(params);
+    var api = gridOptions.api,
+        params = getParams();
+
+    if (validateSelection(params, api)) { return; }
+    api.exportDataAsExcel(params);
 }
 
 // setup the grid after the page has finished loading
