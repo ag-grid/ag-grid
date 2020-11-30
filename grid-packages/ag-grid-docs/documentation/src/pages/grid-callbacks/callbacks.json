@@ -125,6 +125,21 @@
         },
         "paginationNumberFormatter(params)": {
             "description": "Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use <code>valueFormatter</code> in the column definitions."
+        },
+        "getServerSideStoreParams(params)": {
+            "description": "Server-side Row Model only - allows providing different params for different levels of grouping."
+        },
+        "isServerSideGroupOpenByDefault(params)": {
+            "description": "Server-side Row Model only - allows groups to be open by default."
+        },
+        "isApplyServerSideTransaction(params)": {
+            "description": "Server-side Row Model only - allows cancelling transactions."
+        },
+        "isServerSideGroup(data)": {
+            "description": "Server-side Row Model and Tree Data only - allows specifying which rows are expandable."
+        },
+        "getServerSideGroupKey(data)": {
+            "description": "Server-side Row Model and Tree Data only - allows specifying group keys."
         }
     }
 }
