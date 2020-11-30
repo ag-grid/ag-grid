@@ -113,19 +113,7 @@ const plugins = [
   'gatsby-plugin-minify-classnames',
   'gatsby-plugin-catch-links',
   'gatsby-plugin-react-helmet',
-  {
-    resolve: 'gatsby-plugin-eslint',
-    options: {
-      test: /\.js$|\.jsx$/,
-      exclude: /(node_modules|.cache|public|charts-packages)/,
-      stages: ['develop'],
-      options: {
-        emitWarning: true,
-        failOnError: false
-      }
-    }
-  },
-  'gatsby-plugin-use-query-params'
+  'gatsby-plugin-use-query-params',
 ];
 
 if (process.env.GATSBY_UPDATE_ALGOLIA === 'true') {
