@@ -549,7 +549,7 @@ const watchCoreModules = async (skipFrameworks) => {
 
 const updateCoreModuleHashes = () => {
     const coreModuleRootNames = ['community-modules', 'enterprise-modules'];
-    const exclusions = ['react', 'angular', 'vue', 'polymer'];
+    const exclusions = ['react', 'angular', 'vue', 'vue3', 'polymer'];
 
     coreModuleRootNames.forEach(moduleRootName => {
         const moduleRootDirectory = WINDOWS ? `..\\..\\${moduleRootName}\\` : `../../${moduleRootName}/`;
