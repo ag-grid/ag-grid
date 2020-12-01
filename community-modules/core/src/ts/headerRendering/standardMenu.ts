@@ -99,6 +99,10 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             closedCallback
         });
 
+        if (addPopupRes) {
+            this.hidePopup = hidePopup = addPopupRes.hideFunc;
+        }
+
         filterWrapper.filterPromise!.then(filter => {
             // need to make sure the filter is present before positioning, as only
             // after filter it is visible can we find out what the width of it is
@@ -108,10 +112,6 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 filter!.afterGuiAttached({ container: 'columnMenu', hidePopup });
             }
         });
-
-        if (addPopupRes) {
-            this.hidePopup = hidePopup = addPopupRes.hideFunc;
-        }
 
         column.setMenuVisible(true, 'contextMenu');
     }

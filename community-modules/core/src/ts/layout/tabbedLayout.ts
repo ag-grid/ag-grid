@@ -154,9 +154,8 @@ export class TabbedLayout extends ManagedFocusComponent {
     }
 
     public showItem(tabbedItem: TabbedItem): void {
-        const itemWrapper = find(this.items, wrapper => {
-            return wrapper.tabbedItem === tabbedItem;
-        });
+        const itemWrapper = find(this.items, wrapper => wrapper.tabbedItem === tabbedItem);
+
         if (itemWrapper) {
             this.showItemWrapper(itemWrapper);
         }
@@ -179,6 +178,10 @@ export class TabbedLayout extends ManagedFocusComponent {
             const onlyUnmanaged = !this.focusController.isKeyboardMode();
 
             this.focusController.focusInto(this.eBody, false, onlyUnmanaged);
+
+            if (wrapper.tabbedItem.afterAttachedCallback) {
+                wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);
+            }
         });
 
         if (this.activeItem) {
@@ -188,10 +191,6 @@ export class TabbedLayout extends ManagedFocusComponent {
         addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
 
         this.activeItem = wrapper;
-
-        if (wrapper.tabbedItem.afterAttachedCallback) {
-            wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);
-        }
     }
 }
 

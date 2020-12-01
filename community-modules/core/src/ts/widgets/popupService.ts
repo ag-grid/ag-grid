@@ -32,6 +32,10 @@ interface Rect {
     bottom: number;
 }
 
+export interface AfterGuiAttachedParams {
+    hidePopup: () => void;
+}
+
 export interface AddPopupParams {
     // if true then listens to background checking for clicks, so that when the background is clicked,
     // the child is removed again, giving a model look to popups.
@@ -45,6 +49,7 @@ export interface AddPopupParams {
     // if a clicked caused the popup (eg click a button) then the click that caused it
     click?: MouseEvent | Touch | null;
     alwaysOnTop?: boolean;
+    afterGuiAttached?: (params: AfterGuiAttachedParams) => void;
     // this gets called after the popup is created. the called could just call positionCallback themselves,
     // however it needs to be called first before anchorToElement is called, so must provide this callback
     // here if setting anchorToElement
@@ -376,7 +381,7 @@ export class PopupService extends BeanStub {
     private keepPopupPositionedRelativeTo(params: {
         ePopup: HTMLElement,
         element: HTMLElement,
-        hidePopup: () => void
+        hidePopup: () => void;
     }): () => void {
         const eParent = this.getPopupParent();
         const parentRect = eParent.getBoundingClientRect();
@@ -431,7 +436,18 @@ export class PopupService extends BeanStub {
     }
 
     public addPopup(params: AddPopupParams): AddPopupResult | undefined {
-        const { modal, eChild, closeOnEsc, closedCallback, click, alwaysOnTop, positionCallback, anchorToElement } = params;
+        const {
+            modal,
+            eChild,
+            closeOnEsc,
+            closedCallback,
+            click,
+            alwaysOnTop,
+            afterGuiAttached,
+            positionCallback,
+            anchorToElement
+        } = params;
+
         const eDocument = this.gridOptionsWrapper.getDocument();
 
         if (!eDocument) {
@@ -473,7 +489,6 @@ export class PopupService extends BeanStub {
         addCssClass(eChild, 'ag-popup-child');
 
         eWrapper.appendChild(eChild);
-
         ePopupParent.appendChild(eWrapper);
 
         if (alwaysOnTop) {
@@ -535,6 +550,10 @@ export class PopupService extends BeanStub {
                 destroyPositionTracker();
             }
         };
+
+        if (afterGuiAttached) {
+            afterGuiAttached({ hidePopup });
+        }
 
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want

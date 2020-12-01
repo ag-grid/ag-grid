@@ -1,6 +1,5 @@
 import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { Autowired, PostConstruct } from '../../context/context';
-import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { Constants } from '../../constants/constants';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
@@ -176,7 +175,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
                     class="ag-standard-button ag-filter-apply-panel-button"
                 >${text}
                 </button>`
-                );
+            );
 
             eButtonsPanel.appendChild(button);
             this.addManagedListener(button, 'click', clickListener);

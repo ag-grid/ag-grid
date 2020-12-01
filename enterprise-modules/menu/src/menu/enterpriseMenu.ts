@@ -12,7 +12,6 @@ import {
     FilterManager,
     FilterWrapper,
     GridApi,
-    GridOptionsWrapper,
     IMenuFactory,
     IPrimaryColsPanel,
     IRowModel,
@@ -27,12 +26,12 @@ import {
     FocusController,
     IAfterGuiAttachedParams,
     GridPanel
-} from "@ag-grid-community/core";
-
-import { MenuList } from "./menuList";
-import { MenuItemComponent } from "./menuItemComponent";
-import { MenuItemMapper } from "./menuItemMapper";
-import { PrimaryColsPanel } from "@ag-grid-enterprise/column-tool-panel";
+} from '@ag-grid-community/core';
+import { MenuList } from './menuList';
+import { MenuItemComponent } from './menuItemComponent';
+import { MenuItemMapper } from './menuItemMapper';
+import { PrimaryColsPanel } from '@ag-grid-enterprise/column-tool-panel';
+import { AfterGuiAttachedParams } from '@ag-grid-community/core/dist/cjs/widgets/popupService';
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -67,6 +66,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 mouseEvent,
                 ePopup
             });
+
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
@@ -103,7 +103,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
-
         }, defaultTab, restrictToTabs, eventSource);
     }
 
@@ -143,20 +142,21 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             closedCallback: (e?: Event) => { // menu closed callback
                 closedFuncs.forEach(f => f(e));
             },
-            positionCallback: () => { positionCallback(menu); },
-            anchorToElement
+            afterGuiAttached: params => menu.afterGuiAttached(params),
+            positionCallback: () => positionCallback(menu),
+            anchorToElement,
         });
 
         if (addPopupRes) {
-            menu.afterGuiAttached({ hidePopup: addPopupRes.hideFunc });
-
             // if user starts showing / hiding columns, or otherwise move the underlying column
             // for this menu, we want to stop tracking the menu with the column position. otherwise
             // the menu would move as the user is using the columns tab inside the menu.
             const stopAnchoringFunc = addPopupRes.stopAnchoringFunc;
+
             if (stopAnchoringFunc) {
                 column.addEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
                 column.addEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
+
                 closedFuncs.push(() => {
                     column.removeEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
                     column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
@@ -172,7 +172,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             this.lastSelectedTab = event.key;
         });
 
-        column.setMenuVisible(true, "contextMenu");
+        column.setMenuVisible(true, 'contextMenu');
 
         this.activeMenu = menu;
 
@@ -525,10 +525,12 @@ export class EnterpriseMenu extends BeanStub {
         return this.tabItemColumns;
     }
 
-    public afterGuiAttached(params: any): void {
-        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup: params.hidePopup });
-        this.hidePopupFunc = params.hidePopup;
-        this.addDestroyFunc(params.hidePopup);
+    public afterGuiAttached(params: AfterGuiAttachedParams): void {
+        const { hidePopup } = params;
+
+        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup });
+        this.hidePopupFunc = hidePopup;
+        this.addDestroyFunc(hidePopup);
     }
 
     public getGui(): HTMLElement {

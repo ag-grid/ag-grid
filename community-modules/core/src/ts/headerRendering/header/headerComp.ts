@@ -22,7 +22,7 @@ export interface IHeaderParams {
     displayName: string;
     enableSorting: boolean;
     enableMenu: boolean;
-    showColumnMenu: (source:HTMLElement) => void;
+    showColumnMenu: (source: HTMLElement) => void;
     progressSort: (multiSort?: boolean) => void;
     setSort: (sort: string, multiSort?: boolean) => void;
     columnApi: ColumnApi;
@@ -131,7 +131,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
     }
 
-    private setupIcons(column:Column): void {
+    private setupIcons(column: Column): void {
         this.addInIcon('sortAscending', this.eSortAsc, column);
         this.addInIcon('sortDescending', this.eSortDesc, column);
         this.addInIcon('sortUnSort', this.eSortNone, column);
@@ -222,6 +222,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (!eventSource) {
             eventSource = this.eMenu;
         }
+
         this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
     }
 
@@ -253,7 +254,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
-            this.addManagedListener(this.eLabel, 'click', (event:MouseEvent) => {
+            this.addManagedListener(this.eLabel, 'click', (event: MouseEvent) => {
 
                 // sometimes when moving a column via dragging, this was also firing a clicked event.
                 // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
