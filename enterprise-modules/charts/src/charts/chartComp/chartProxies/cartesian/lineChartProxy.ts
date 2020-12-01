@@ -119,6 +119,23 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
                 lineSeries = AgChart.createComponent(options, 'line.series');
 
+                if (this.crossFiltering) {
+                    // add node click cross filtering callback to series
+                    lineSeries!.addEventListener('nodeClick', (event) => {
+                        this.crossFilterCallback(event);
+                    });
+
+                    // special handling for cross filtering markers
+                    lineSeries!.marker.enabled = true;
+                    lineSeries!.marker.size = 0;
+                    lineSeries!.marker.formatter =  (params) => {
+                        return {
+                            fill: 'yellow',
+                            size: params.highlighted ? 12 : params.size
+                        };
+                    }
+                }
+
                 chart.addSeriesAfter(lineSeries!, previousSeries);
             }
 
