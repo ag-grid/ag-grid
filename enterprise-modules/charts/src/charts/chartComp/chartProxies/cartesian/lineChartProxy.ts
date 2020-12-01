@@ -128,10 +128,10 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     // special handling for cross filtering markers
                     lineSeries!.marker.enabled = true;
                     lineSeries!.marker.size = 0;
-                    lineSeries!.marker.formatter =  (params) => {
+                    lineSeries!.marker.formatter =  p => {
                         return {
                             fill: 'yellow',
-                            size: params.highlighted ? 12 : params.size
+                            size: p.highlighted ? 12 : p.size
                         };
                     }
                 }

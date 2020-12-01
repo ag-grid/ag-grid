@@ -1,4 +1,4 @@
-import { Autowired, Bean, BeanStub, GridOptionsWrapper } from "@ag-grid-community/core";
+import { Bean, BeanStub } from "@ag-grid-community/core";
 
 @Bean("chartTranslator")
 export class ChartTranslator extends BeanStub {

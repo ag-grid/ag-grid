@@ -13,7 +13,6 @@ import {
     DragSource,
     DragSourceType,
     DropTarget,
-    GridOptionsWrapper,
     PostConstruct,
     VerticalDirection
 } from "@ag-grid-community/core";

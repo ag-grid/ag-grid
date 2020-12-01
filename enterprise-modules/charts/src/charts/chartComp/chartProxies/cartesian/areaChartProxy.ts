@@ -167,7 +167,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             const stroke = strokes[index % strokes.length];
 
             let yKey = f.colId;
-            const isFilteredOutYKey = yKey.indexOf('-filtered-out') > 0;
+            const isFilteredOutYKey = yKey.indexOf('-filtered-out') > -1;
             if (this.crossFiltering && isFilteredOutYKey) {
                 yKey = f.colId.replace("-filtered-out", "-total");
                 const nonFilteredOutKey = f.colId.replace("-filtered-out", "");
@@ -219,10 +219,10 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     // special handling for cross filtering markers
                     areaSeries.marker.enabled = true;
                     areaSeries.marker.size = 0;
-                    areaSeries.marker.formatter =  (params) => {
+                    areaSeries.marker.formatter =  p => {
                         return {
                             fill: 'yellow',
-                            size: params.highlighted ? 12 : params.size
+                            size: p.highlighted ? 12 : p.size
                         };
                     }
 

@@ -82,7 +82,7 @@ export class ChartCrossFilter extends BeanStub {
     private getCurrentGridValuesForCategory(dataKey: any) {
         let filteredValues: any[] = [];
         const gridContainsValue = _.includes;
-        this.gridApi.forEachNodeAfterFilter((rowNode: RowNode, _) => {
+        this.gridApi.forEachNodeAfterFilter((rowNode: RowNode) => {
             if (!rowNode.group) {
                 const value = rowNode.data[dataKey];
                 if (!gridContainsValue(filteredValues, value)) {

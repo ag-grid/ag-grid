@@ -187,7 +187,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             } else {
                 doughnutChart.legend.addEventListener('click', (event: LegendClickEvent) => {
                     if (opaqueSeries) {
-                        (opaqueSeries as PieSeries).toggleSeriesItem(event.itemId as any, event.enabled);
+                        opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);
                     }
                 });
                 pieSeries.fills = fills;

@@ -318,7 +318,7 @@ export class CrossFilterDatasource extends BeanStub {
 
     private getFilteredRowNodes() {
         const filteredNodes: { [key: string]: RowNode; } = {};
-        (this.gridRowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort((rowNode: RowNode, _) => {
+        (this.gridRowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort((rowNode: RowNode) => {
             filteredNodes[rowNode.id as string] = rowNode;
         });
         return filteredNodes;
@@ -326,7 +326,7 @@ export class CrossFilterDatasource extends BeanStub {
 
     private getAllRowNodes() {
         let allRowNodes: RowNode[] = [];
-        this.gridRowModel.forEachNode((rowNode: RowNode, _) => {
+        this.gridRowModel.forEachNode((rowNode: RowNode) => {
             allRowNodes.push(rowNode);
         });
         return this.sortRowNodes(allRowNodes);

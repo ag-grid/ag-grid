@@ -6,7 +6,6 @@ import {
     ChartMenuOptions,
     Component,
     GetChartToolbarItemsParams,
-    GridOptionsWrapper,
     PostConstruct,
     Promise
 } from "@ag-grid-community/core";
