@@ -176,7 +176,7 @@ export class TabbedLayout extends ManagedFocusComponent {
 
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body!);
-            const onlyUnmanaged = !this.focusController.isKeyboardFocus();
+            const onlyUnmanaged = !this.focusController.isKeyboardMode();
 
             this.focusController.focusInto(this.eBody, false, onlyUnmanaged);
         });
