@@ -234,9 +234,13 @@ export class ChartTooltip extends Observable {
     }
 
     toggle(visible?: boolean) {
-        if (!visible && this.chart.lastPick) {
-            this.chart.dehighlightDatum();
-            this.chart.lastPick = undefined;
+        if (!visible) {
+            window.clearTimeout(this.showTimeout);
+
+            if (this.chart.lastPick) {
+                this.chart.dehighlightDatum();
+                this.chart.lastPick = undefined;
+            }
         }
         this.updateClass(visible);
     }
