@@ -202,6 +202,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
             pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
 
+            doughnutChart.tooltip.delay = 500;
+
             pieSeries.outerRadiusOffset = offset;
             offset -= 40;
             pieSeries.innerRadiusOffset = offset;

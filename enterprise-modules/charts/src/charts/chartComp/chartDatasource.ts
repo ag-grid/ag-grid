@@ -1,18 +1,22 @@
 import {
     _,
     Autowired,
-    BeanStub, CellRange,
+    BeanStub,
+    CellRange,
     Column,
     ColumnController,
     ColumnGroup,
     IAggFunc,
     IAggregationStage,
+    IClientSideRowModel,
     IRowModel,
     ModuleNames,
     ModuleRegistry,
     Optional,
     RowNode,
-    ValueService
+    ValueService,
+    RowNodeSorter,
+    SortController,
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
 
@@ -20,6 +24,7 @@ export interface ChartDatasourceParams {
     dimensionCols: ColState[];
     grouping: boolean;
     pivoting: boolean;
+    crossFiltering: boolean;
     valueCols: Column[];
     startRow: number;
     endRow: number;
@@ -36,6 +41,8 @@ export class ChartDatasource extends BeanStub {
     @Autowired('rowModel') private readonly gridRowModel: IRowModel;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('rowNodeSorter') private readonly rowNodeSorter: RowNodeSorter;
+    @Autowired('sortController') private sortController: SortController;
     @Optional('aggregationStage') private readonly aggregationStage: IAggregationStage;
 
     public getData(params: ChartDatasourceParams): IData {
@@ -50,22 +57,61 @@ export class ChartDatasource extends BeanStub {
     }
 
     private extractRowsFromGridRowModel(params: ChartDatasourceParams): IData {
-        let extractedRowData = [];
+        let extractedRowData: any[] = [];
         const columnNames: { [key: string]: string[]; } = {};
 
         // maps used to keep track of expanded groups that need to be removed
         const groupNodeIndexes: { [key: string]: number; } = {};
         const groupsToRemove: { [key: string]: number; } = {};
 
-        // make sure enough rows in range to chart. if user filters and less rows, then end row will be
-        // the last displayed row, not where the range ends.
-        const modelLastRow = this.gridRowModel.getRowCount() - 1;
-        const rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
-        const numRows = rangeLastRow - params.startRow + 1;
+        // only used when cross filtering
+        let filteredNodes: { [key: string]: RowNode; } = {};
+        let allRowNodes: RowNode[] = [];
+
+        let numRows;
+        if (params.crossFiltering) {
+            filteredNodes = this.getFilteredRowNodes();
+            allRowNodes = this.getAllRowNodes();
+            numRows = allRowNodes.length;
+        } else {
+            // make sure enough rows in range to chart. if user filters and less rows, then end row will be
+            // the last displayed row, not where the range ends.
+            const modelLastRow = this.gridRowModel.getRowCount() - 1;
+            const rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
+            numRows = rangeLastRow - params.startRow + 1;
+        }
 
         for (let i = 0; i < numRows; i++) {
             const data: any = {};
-            const rowNode = this.gridRowModel.getRow(i + params.startRow)!;
+
+            let rowNode: RowNode;
+            if (params.crossFiltering) {
+                rowNode = allRowNodes[i];
+
+                // TODO temporary handling to facilitate chart integration
+                const isAggFuncChart = !!params.aggFunc;
+                if (isAggFuncChart) {
+                    if (!params.grouping && rowNode.group) {
+                        continue;
+                    }
+                } else if (params.grouping){
+                    if (rowNode.group && rowNode.expanded) {
+                        continue;
+                    }
+
+                    if (rowNode.group && rowNode.level > 0 && (rowNode.parent && !rowNode.parent.expanded)) {
+                        continue;
+                    }
+
+                    if (!rowNode.group && rowNode.parent && rowNode.parent.group && !rowNode.parent.expanded) {
+                        continue;
+                    }
+
+                    // TODO: need to handle manually removed row groups
+                }
+            } else {
+                rowNode = this.gridRowModel.getRow(i + params.startRow)!;
+            }
 
             // first get data for dimensions columns
             params.dimensionCols.forEach(col => {
@@ -130,10 +176,45 @@ export class ChartDatasource extends BeanStub {
                     columnNames[col.getId()] = columnNamesArr;
                 }
 
-                // add data value to value column
-                const value = this.valueService.getValue(col, rowNode);
+                if (params.crossFiltering) {
+                    const colId = col.getColId();
+                    const filteredOutColId = colId + '-filtered-out';
 
-                data[col.getId()] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                    // add data value to value column
+                    if (params.grouping && !params.aggFunc && rowNode.group) {
+                        const filteredAggData = rowNode.allLeafChildren
+                            .filter(child => filteredNodes[child.id as string])
+                            .map(child => child.data[colId]);
+
+                        let filteredAggResult: any = this.aggregationStage.aggregateValues(filteredAggData, 'sum'); //TODO support all agg funcs
+                        data[colId] = filteredAggResult && typeof filteredAggResult.value !== 'undefined' ? filteredAggResult.value : filteredAggResult;
+
+                        const filteredOutAggData = rowNode.allLeafChildren
+                            .filter(child => !filteredNodes[child.id as string])
+                            .map(child => child.data[colId]);
+
+                        let filteredOutAggResult: any = this.aggregationStage.aggregateValues(filteredOutAggData, 'sum'); //TODO support all agg funcs
+                        data[filteredOutColId] = filteredOutAggResult && typeof filteredOutAggResult.value !== 'undefined' ? filteredOutAggResult.value : filteredOutAggResult;
+
+                    } else {
+                        // add data value to value column
+                        const value = this.valueService.getValue(col, rowNode);
+                        const actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+
+                        if (filteredNodes[rowNode.id as string]) {
+                            data[colId] = actualValue;
+                            data[filteredOutColId] = undefined;
+                        } else {
+                            data[colId] = undefined;
+                            data[filteredOutColId] = actualValue;
+                        }
+                    }
+                } else {
+                    // add data value to value column
+                    const value = this.valueService.getValue(col, rowNode);
+                    data[col.getId()] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                }
+
             });
 
             // add data to results
@@ -192,16 +273,40 @@ export class ChartDatasource extends BeanStub {
             });
         });
 
-        dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
-            const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
-            let aggResult: any = 0;
+        if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+            dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
 
-            if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
-                aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
-            }
+                if (params.crossFiltering) {
+                    params.valueCols.forEach(col => {
+                        // filtered data
+                        const dataToAgg = groupItem.__children
+                            .filter((child: any) => typeof child[col.getColId()] !== 'undefined')
+                            .map((child: any) => child[col.getColId()]);
 
-            groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
-        }));
+                        let aggResult: any = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
+                        groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+
+                        // filtered out data
+                        const filteredOutColId = col.getId()+'-filtered-out';
+                        const dataToAggFiltered = groupItem.__children
+                            .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
+                            .map((child: any) => child[filteredOutColId]);
+
+                        let aggResultFiltered: any = this.aggregationStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
+                        groupItem[filteredOutColId] = aggResultFiltered && typeof aggResultFiltered.value !== 'undefined' ? aggResultFiltered.value : aggResultFiltered;
+                    })
+                } else {
+                    const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
+                    let aggResult: any = 0;
+
+                    if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+                        aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
+                    }
+
+                    groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                }
+            }));
+        }
 
         return dataAggregated;
     }
@@ -248,5 +353,28 @@ export class ChartDatasource extends BeanStub {
             }
         }
         return labels;
+    }
+
+    private getFilteredRowNodes() {
+        const filteredNodes: { [key: string]: RowNode; } = {};
+        (this.gridRowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort((rowNode: RowNode) => {
+            filteredNodes[rowNode.id as string] = rowNode;
+        });
+        return filteredNodes;
+    }
+
+    private getAllRowNodes() {
+        let allRowNodes: RowNode[] = [];
+        this.gridRowModel.forEachNode((rowNode: RowNode) => {
+            allRowNodes.push(rowNode);
+        });
+        return this.sortRowNodes(allRowNodes);
+    }
+
+    private sortRowNodes(rowNodes: RowNode[]): RowNode[] {
+        const sortOptions = this.sortController.getSortOptions();
+        const noSort = !sortOptions || sortOptions.length == 0;
+        if (noSort) return rowNodes;
+        return this.rowNodeSorter.doFullSort(rowNodes, sortOptions);
     }
 }

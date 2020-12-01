@@ -17,7 +17,6 @@ import {
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
 import { ChartTranslator } from './chartTranslator';
-import { CrossFilterDatasource } from "./crossFilterDatasource";
 
 export interface ColState {
     column?: Column;
@@ -64,7 +63,7 @@ export class ChartDataModel extends BeanStub {
 
     private chartType: ChartType;
     private chartThemeName: string;
-    private datasource: ChartDatasource | CrossFilterDatasource;
+    private datasource: ChartDatasource;
 
     private unlinked = false;
     private grouping = false;
@@ -90,9 +89,7 @@ export class ChartDataModel extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        const ds = this.crossFiltering ? new CrossFilterDatasource() : new ChartDatasource();
-        this.datasource = this.createManagedBean(ds);
-
+        this.datasource = this.createManagedBean(new ChartDatasource());
         this.updateCellRanges();
     }
 
@@ -379,6 +376,7 @@ export class ChartDataModel extends BeanStub {
             dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
+            crossFiltering: this.crossFiltering,
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow

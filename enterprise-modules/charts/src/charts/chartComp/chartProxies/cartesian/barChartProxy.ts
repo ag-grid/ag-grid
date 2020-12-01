@@ -147,6 +147,8 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
                 barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
             });
 
+            chart.tooltip.delay = 500;
+
             // add node click cross filtering callback to series
             barSeries.addEventListener('nodeClick', this.crossFilterCallback);
 

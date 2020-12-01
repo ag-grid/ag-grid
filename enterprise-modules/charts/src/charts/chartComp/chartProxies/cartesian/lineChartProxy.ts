@@ -134,6 +134,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                             size: p.highlighted ? 12 : p.size
                         };
                     }
+                    chart.tooltip.delay = 500;
                 }
 
                 chart.addSeriesAfter(lineSeries!, previousSeries);

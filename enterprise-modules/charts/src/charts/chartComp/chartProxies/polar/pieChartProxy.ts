@@ -165,6 +165,8 @@ export class PieChartProxy extends PolarChartProxy {
                 }
             }
 
+            chart.tooltip.delay = 500;
+
             // disable series highlighting by default
             pieSeries.highlightStyle.fill = undefined;
 

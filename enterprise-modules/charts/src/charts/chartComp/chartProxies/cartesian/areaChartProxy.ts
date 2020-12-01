@@ -226,6 +226,15 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                         };
                     }
 
+                    chart.tooltip.delay = 500;
+                    areaSeries.tooltip.renderer = (params) => {
+                        return {
+                            content: params.yValue.toFixed(0),
+                            title: params.xValue, // optional, same as default
+                            color: 'black'
+                        };
+                    }
+
                     // add node click cross filtering callback to series
                     areaSeries.addEventListener('nodeClick', this.crossFilterCallback);
                 }
