@@ -369,9 +369,9 @@ export class ScatterSeries extends CartesianSeries {
             content = `<b>${labelName}</b>: ${datum[labelKey]}<br>` + content;
         }
 
-        const defaults = {
+        const defaults: TooltipRendererResult = {
             title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content
         };
 

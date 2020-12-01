@@ -112,8 +112,8 @@ export interface TooltipMeta {
 export interface TooltipRendererResult {
     content?: string;
     title?: string;
-    titleColor?: string;
-    titleBackgroundColor?: string;
+    color?: string;
+    backgroundColor?: string;
 }
 
 export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: TooltipRendererResult): string {
@@ -126,12 +126,12 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
     const {
         content = defaults.content || '',
         title = defaults.title || undefined,
-        titleColor = defaults.titleColor || 'white',
-        titleBackgroundColor = defaults.titleBackgroundColor || '#888'
+        color = defaults.color || 'white',
+        backgroundColor = defaults.backgroundColor || '#888'
     } = input;
 
     const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title"
-        style="color: ${titleColor}; background-color: ${titleBackgroundColor}">${title}</div>` : '';
+        style="color: ${color}; background-color: ${backgroundColor}">${title}</div>` : '';
 
     return `${titleHtml}<div class="${Chart.defaultTooltipClass}-content">${content}</div>`;
 }

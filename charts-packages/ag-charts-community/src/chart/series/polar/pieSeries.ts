@@ -537,9 +537,9 @@ export class PieSeries extends PolarSeries {
         const formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : angleValue.toString();
         const title = this.title ? this.title.text : undefined;
         const content = label + formattedAngleValue;
-        const defaults = {
+        const defaults: TooltipRendererResult = {
             title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content
         };
 

@@ -608,9 +608,9 @@ export class HistogramSeries extends CartesianSeries {
 
         content += `<b>Frequency</b>: ${frequency}`;
 
-        const defaults = {
+        const defaults: TooltipRendererResult = {
             title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content
         };
 

@@ -713,9 +713,9 @@ export class BarSeries extends CartesianSeries {
         const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
         const title = yName;
         const content = xString + ': ' + yString;
-        const defaults = {
+        const defaults: TooltipRendererResult = {
             title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content
         };
 
