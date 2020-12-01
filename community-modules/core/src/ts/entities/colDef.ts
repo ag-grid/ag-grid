@@ -462,7 +462,7 @@ export interface SuppressHeaderKeyboardEventParams {
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
     column: Column | ColumnGroup;
-    colDef: ColDef | ColGroupDef;
+    colDef: ColDef | ColGroupDef | null;
     context: any;
     headerRowIndex: number;
     event: KeyboardEvent;
