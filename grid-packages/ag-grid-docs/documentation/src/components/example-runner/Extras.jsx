@@ -104,11 +104,11 @@ const Extras = ({ options }) => {
         const config = extrasMap[key];
 
         if (config.styles) {
-            styles.push(config.styles);
+            styles.push(...config.styles);
         }
 
         if (config.scripts) {
-            scripts.push(config.scripts);
+            scripts.push(...config.scripts);
         }
     });
 
