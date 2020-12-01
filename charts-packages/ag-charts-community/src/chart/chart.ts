@@ -191,7 +191,6 @@ export class ChartTooltip extends Observable {
         const el = this.element;
 
         if (this.delay > 0 && !instantly && (html || el.innerHTML)) {
-            window.clearTimeout(this.showTimeout);
             this.hide();
             this.showTimeout = window.setTimeout(() => {
                 this.show(meta, html || el.innerHTML, true);
@@ -237,7 +236,7 @@ export class ChartTooltip extends Observable {
         if (!visible) {
             window.clearTimeout(this.showTimeout);
 
-            if (this.chart.lastPick) {
+            if (this.chart.lastPick && !this.delay) {
                 this.chart.dehighlightDatum();
                 this.chart.lastPick = undefined;
             }
