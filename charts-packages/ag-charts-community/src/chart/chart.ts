@@ -192,6 +192,7 @@ export class ChartTooltip extends Observable {
 
         if (this.delay > 0 && !instantly && (html || el.innerHTML)) {
             this.hide();
+            el.innerHTML = '';
             this.showTimeout = window.setTimeout(() => {
                 this.show(meta, html || el.innerHTML, true);
             }, this.delay);
