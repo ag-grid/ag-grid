@@ -3,7 +3,6 @@ import { SimpleFilter } from '../simpleFilter';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 
 export class NumberFloatingFilter extends TextInputFloatingFilter {
-
     protected getDefaultFilterOptions(): string[] {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }

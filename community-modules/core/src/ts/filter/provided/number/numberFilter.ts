@@ -6,6 +6,7 @@ import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedPa
 import { makeNull } from '../../../utils/generic';
 import { setDisplayed } from '../../../utils/dom';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { isBrowserChrome, isBrowserEdge } from '../../../utils/browser';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     filter?: number | null;
@@ -88,7 +89,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     protected setParams(params: INumberFilterParams): void {
         this.numberFilterParams = params;
 
-        const { allowedCharPattern } = params;
+        const allowedCharPattern = this.getAllowedCharPattern();
 
         if (allowedCharPattern) {
             const config = { allowedCharPattern };
@@ -148,7 +149,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     protected createValueTemplate(position: ConditionPosition): string {
         const pos = position === ConditionPosition.One ? '1' : '2';
-        const { allowedCharPattern } = this.numberFilterParams || {};
+        const allowedCharPattern = this.getAllowedCharPattern();
         const agElementTag = allowedCharPattern ? 'ag-input-text-field' : 'ag-input-number-field';
 
         return /* html */`
@@ -240,5 +241,21 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         setDisplayed(this.eValueTo1.getGui(), this.showValueTo(condition1Type));
         setDisplayed(this.eValueFrom2.getGui(), this.showValueFrom(condition2Type));
         setDisplayed(this.eValueTo2.getGui(), this.showValueTo(condition2Type));
+    }
+
+    private getAllowedCharPattern(): string | null {
+        const { allowedCharPattern } = this.numberFilterParams || {};
+
+        if (allowedCharPattern) {
+            return allowedCharPattern;
+        }
+
+        if (!isBrowserChrome() && !isBrowserEdge()) {
+            // only Chrome and Edge support the HTML5 number field, so for other browsers we provide an equivalent
+            // constraint instead
+            return '\\d\\-\\.';
+        }
+
+        return null;
     }
 }
