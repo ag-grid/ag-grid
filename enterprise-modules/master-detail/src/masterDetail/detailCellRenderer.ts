@@ -6,11 +6,9 @@ import {
     Environment,
     Grid,
     GridOptions,
-    GridOptionsWrapper,
     ICellRenderer,
     ICellRendererParams,
     RefSelector,
-    ResizeObserverService,
     RowNode
 } from "@ag-grid-community/core";
 
@@ -18,12 +16,11 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     private static TEMPLATE = /* html */
         `<div class="ag-details-row">
-            <div ref="eDetailGrid" class="ag-details-grid"/>
+            <div ref="eDetailGrid" class="ag-details-grid"></div>
         </div>`;
 
     @Autowired('environment') private environment: Environment;
     @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     private detailGridOptions: GridOptions;
 
@@ -134,7 +131,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     private addThemeToDetailGrid(): void {
         // this is needed by environment service of the child grid, the class needs to be on
         // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.
-        const {theme} = this.environment.getTheme();
+        const { theme } = this.environment.getTheme();
         if (theme) {
             _.addCssClass(this.eDetailGrid, theme);
         }
