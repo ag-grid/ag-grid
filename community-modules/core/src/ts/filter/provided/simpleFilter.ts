@@ -259,7 +259,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
                 const customOption = this.optionsFactory.getCustomOption(value);
 
-                text = customOption ? customOption.displayName : this.translate(value as keyof IFilterLocaleText);
+                text = customOption ?
+                    this.gridOptionsWrapper.getLocaleTextFunc()(customOption.displayKey, customOption.displayName) :
+                    this.translate(value as keyof IFilterLocaleText);
             }
 
             const createOption = () => ({ value, text });
