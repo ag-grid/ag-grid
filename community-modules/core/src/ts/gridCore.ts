@@ -103,11 +103,11 @@ export class GridCore extends ManagedFocusComponent {
 
         const eGui = this.getGui();
 
-        this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
+        this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, () => {
             addCssClass(eGui, 'ag-keyboard-focus');
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
+        this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, () => {
             removeCssClass(eGui, 'ag-keyboard-focus');
         });
 

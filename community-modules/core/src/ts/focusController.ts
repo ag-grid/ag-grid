@@ -2,7 +2,6 @@ import { Bean, Autowired, PostConstruct, Optional } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { CellFocusedEvent, Events } from "./events";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
 import { CellPosition } from "./entities/cellPosition";
@@ -38,25 +37,84 @@ export class FocusController extends BeanStub {
     private gridCore: GridCore;
     private focusedCellPosition: CellPosition | null;
     private focusedHeaderPosition: HeaderPosition | null;
-    private keyboardFocusActive: boolean = false;
+
+    private static keyboardModeActive: boolean = false;
+    private static instancesMonitored: Map<Document, GridCore[]> = new Map();
+
+    private static addKeyboardModeEvents(doc: Document, gridCore: GridCore): void {
+        const gridCoresForDocument = FocusController.instancesMonitored.get(doc);
+
+        if (gridCoresForDocument && gridCoresForDocument.length > 0) {
+            if (gridCoresForDocument.indexOf(gridCore) === -1) {
+                gridCoresForDocument.push(gridCore);
+            }
+        } else {
+            FocusController.instancesMonitored.set(doc, [gridCore]);
+            doc.addEventListener('keydown', FocusController.toggleKeyboardMode);
+            doc.addEventListener('mousedown', FocusController.toggleKeyboardMode);
+        }
+    }
+
+    private static removeKeyboardModeEvents(doc: Document, gridCore: GridCore): void {
+        const gridCoresForDocument = FocusController.instancesMonitored.get(doc);
+
+        let newGridCoresForDocument: GridCore[] = [];
+
+        if (gridCoresForDocument && gridCoresForDocument.length) {
+            newGridCoresForDocument = [...gridCoresForDocument].filter(
+                currentGridCore => currentGridCore !== gridCore
+            );
+            FocusController.instancesMonitored.set(doc, newGridCoresForDocument);
+        }
+
+        if (newGridCoresForDocument.length === 0) {
+            doc.removeEventListener('keydown', FocusController.toggleKeyboardMode);
+            doc.removeEventListener('mousedown', FocusController.toggleKeyboardMode);
+        }
+    }
+
+    private static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void {
+        const isKeyboardActive = FocusController.keyboardModeActive;
+        const isKeyboardEvent = event.type === 'keydown';
+
+        if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) { return; }
+
+        FocusController.keyboardModeActive = isKeyboardEvent;
+        const doc = (event.target as HTMLElement).ownerDocument;
+
+        if (!doc) { return; }
+
+        const gridCoresForDocument = FocusController.instancesMonitored.get(doc);
+
+        if (gridCoresForDocument) {
+            gridCoresForDocument.forEach(gridCore => {
+                gridCore.dispatchEvent({ type: isKeyboardEvent ? Events.EVENT_KEYBOARD_FOCUS : Events.EVENT_MOUSE_FOCUS });
+            });
+        }
+    }
 
     @PostConstruct
     private init(): void {
-        const eDocument = this.gridOptionsWrapper.getDocument();
-
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverythingChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
-
-        this.addManagedListener(eDocument, 'keydown', this.activateKeyboardMode.bind(this));
-        this.addManagedListener(eDocument, 'mousedown', this.activateMouseMode.bind(this));
     }
 
     public registerGridCore(gridCore: GridCore): void {
         this.gridCore = gridCore;
+
+        const doc = this.gridOptionsWrapper.getDocument();
+        FocusController.addKeyboardModeEvents(doc, gridCore);
+        this.addDestroyFunc(() => this.unregisterGridCore(gridCore));
+    }
+
+    public unregisterGridCore(gridCore: GridCore): void {
+        const doc = this.gridOptionsWrapper.getDocument();
+
+        FocusController.removeKeyboardModeEvents(doc, gridCore);
     }
 
     public onColumnEverythingChanged(): void {
@@ -72,22 +130,8 @@ export class FocusController extends BeanStub {
         }
     }
 
-    public isKeyboardFocus(): boolean {
-        return this.keyboardFocusActive;
-    }
-
-    private activateMouseMode(): void {
-        if (!this.keyboardFocusActive) { return; }
-
-        this.keyboardFocusActive = false;
-        this.eventService.dispatchEvent({ type: Events.EVENT_MOUSE_FOCUS });
-    }
-
-    private activateKeyboardMode(): void {
-        if (this.keyboardFocusActive) { return; }
-
-        this.keyboardFocusActive = true;
-        this.eventService.dispatchEvent({ type: Events.EVENT_KEYBOARD_FOCUS });
+    public isKeyboardMode(): boolean {
+        return FocusController.keyboardModeActive;
     }
 
     // we check if the browser is focusing something, and if it is, and

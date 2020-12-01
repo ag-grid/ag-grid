@@ -72,19 +72,16 @@ export class PopupService extends BeanStub {
     private gridCore: GridCore;
     private popupList: AgPopup[] = [];
 
-    @PostConstruct
-    private init(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
+
+        this.addManagedListener(this.gridCore, Events.EVENT_KEYBOARD_FOCUS, () => {
             forEach(this.popupList, popup => addCssClass(popup.element, 'ag-keyboard-focus'));
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
+        this.addManagedListener(this.gridCore, Events.EVENT_MOUSE_FOCUS, () => {
             forEach(this.popupList, popup => removeCssClass(popup.element, 'ag-keyboard-focus'));
         });
-    }
-
-    public registerGridCore(gridCore: GridCore): void {
-        this.gridCore = gridCore;
     }
 
     public getPopupParent(): HTMLElement {
