@@ -1,4 +1,4 @@
-(function () {
+(function() {
     var COUNTRY_CODES = {
         Ireland: "ie",
         Spain: "es",
@@ -38,7 +38,7 @@
         return iconEl;
     }
 
-    function ContactInfoRenderer() {}
+    function ContactInfoRenderer() { }
 
     ContactInfoRenderer.prototype.init = function(params) {
         var wrapperEl = document.createElement('div');
@@ -48,11 +48,11 @@
         var nameEl = document.createElement('p');
         var landlineEl = document.createElement('p');
         landlineEl.appendChild(createIcon('fa-phone'));
-        landlineEl.style.marginBottom = '10px'
+        landlineEl.style.marginBottom = '10px';
 
         var mobileEl = document.createElement('p');
-        mobileEl.appendChild(createIcon('fa-mobile-alt'))
-        mobileEl.style.marginBottom = '5px'
+        mobileEl.appendChild(createIcon('fa-mobile-alt'));
+        mobileEl.style.marginBottom = '5px';
 
         var name = params.data.name;
         var landline = params.data.landline;
@@ -61,26 +61,26 @@
         nameEl.style.fontWeight = 'bold';
         nameEl.innerHTML = name;
 
-        var landlineText = document.createTextNode(landline)
+        var landlineText = document.createTextNode(landline);
         landlineEl.appendChild(landlineText);
 
         var mobileText = document.createTextNode(mobile);
         mobileEl.appendChild(mobileText);
-        
+
         wrapperEl.appendChild(nameEl);
         wrapperEl.appendChild(landlineEl);
         wrapperEl.appendChild(mobileEl);
 
         this.eGui = wrapperEl;
-    }
+    };
 
     ContactInfoRenderer.prototype.getGui = function() {
         return this.eGui;
-    }
+    };
 
     var columnDefsMobile = [
         {
-            headerName:  'Contact Info',
+            headerName: 'Contact Info',
             cellRenderer: ContactInfoRenderer,
             field: 'name',
             sort: 'asc',
@@ -194,7 +194,7 @@
 
     // wait for the document to be loaded, otherwise
     // ag-Grid will not find the div in the document.
-    var loadGrid = function () {
+    var loadGrid = function() {
         btBringGridBack = document.querySelector("#btBringGridBack");
         btDestroyGrid = document.querySelector("#btDestroyGrid");
 
@@ -249,7 +249,7 @@
         }
 
         var data = params.data;
-        IT_SKILLS.forEach(function (skill) {
+        IT_SKILLS.forEach(function(skill) {
             var img;
             if (data && data.skills[skill]) {
                 img = document.createElement('img');
@@ -258,7 +258,7 @@
                 img.style.margin = '2px';
                 img.title = skill;
                 img.alt = skill;
-                
+
                 wrapperEl.appendChild(img);
             }
         });
@@ -266,6 +266,10 @@
     }
 
     function countryCellRenderer(params) {
+        if (params.value == null || params.value === "" || params.value === '(Select All)') {
+            return params.value;
+        }
+
         var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://flags.fmcdn.net/data/flags/mini/" + COUNTRY_CODES[params.value] + ".png' alt='" + params.value + "' />";
         return flag + " " + params.value;
     }
@@ -330,7 +334,7 @@
 
     function SkillFilter() { }
 
-    SkillFilter.prototype.init = function (params) {
+    SkillFilter.prototype.init = function(params) {
         this.filterChangedCallback = params.filterChangedCallback;
         this.model = {
             android: false,
@@ -341,11 +345,11 @@
         };
     };
 
-    SkillFilter.prototype.getModel = function () { };
+    SkillFilter.prototype.getModel = function() { };
 
-    SkillFilter.prototype.setModel = function (model) { };
+    SkillFilter.prototype.setModel = function(model) { };
 
-    SkillFilter.prototype.getGui = function () {
+    SkillFilter.prototype.getGui = function() {
         var eGui = document.createElement("div");
         var eInstructions = document.createElement("div");
         eInstructions.innerHTML = FILTER_TITLE.replace("TITLE_NAME", "Custom Skills Filter");
@@ -353,14 +357,14 @@
 
         var that = this;
 
-        IT_SKILLS.forEach(function (skill, index) {
+        IT_SKILLS.forEach(function(skill, index) {
             var skillName = IT_SKILLS_NAMES[index];
             var eSpan = document.createElement("span");
             var html = SKILL_TEMPLATE.replace("SKILL_NAME", skillName).replace("SKILL", skill);
             eSpan.innerHTML = html;
 
             var eCheckbox = eSpan.querySelector("input");
-            eCheckbox.addEventListener("click", function () {
+            eCheckbox.addEventListener("click", function() {
                 that.model[skill] = eCheckbox.checked;
                 that.filterChangedCallback();
             });
@@ -371,12 +375,12 @@
         return eGui;
     };
 
-    SkillFilter.prototype.doesFilterPass = function (params) {
+    SkillFilter.prototype.doesFilterPass = function(params) {
         var rowSkills = params.data.skills;
         var model = this.model;
         var passed = true;
 
-        IT_SKILLS.forEach(function (skill) {
+        IT_SKILLS.forEach(function(skill) {
             if (model[skill]) {
                 if (!rowSkills[skill]) {
                     passed = false;
@@ -387,7 +391,7 @@
         return passed;
     };
 
-    SkillFilter.prototype.isFilterActive = function () {
+    SkillFilter.prototype.isFilterActive = function() {
         var model = this.model;
         var somethingSelected = model.android || model.css || model.html5 || model.mac || model.windows;
         return somethingSelected;
@@ -405,17 +409,17 @@
 
     function ProficiencyFilter() { }
 
-    ProficiencyFilter.prototype.init = function (params) {
+    ProficiencyFilter.prototype.init = function(params) {
         this.filterChangedCallback = params.filterChangedCallback;
         this.selected = PROFICIENCY_NONE;
         this.valueGetter = params.valueGetter;
     };
 
-    ProficiencyFilter.prototype.getModel = function () { };
+    ProficiencyFilter.prototype.getModel = function() { };
 
-    ProficiencyFilter.prototype.setModel = function (model) { };
+    ProficiencyFilter.prototype.setModel = function(model) { };
 
-    ProficiencyFilter.prototype.getGui = function () {
+    ProficiencyFilter.prototype.getGui = function() {
         var eGui = document.createElement("div");
         var eInstructions = document.createElement("div");
         eInstructions.innerHTML = FILTER_TITLE.replace("TITLE_NAME", "Custom Proficiency Filter");
@@ -424,7 +428,7 @@
         var random = "" + Math.random();
 
         var that = this;
-        PROFICIENCY_NAMES.forEach(function (name, index) {
+        PROFICIENCY_NAMES.forEach(function(name, index) {
             var eFilter = document.createElement("div");
             var html = PROFICIENCY_TEMPLATE.replace("PROFICIENCY_NAME", name).replace("RANDOM", random);
             eFilter.innerHTML = html;
@@ -434,7 +438,7 @@
             }
             eGui.appendChild(eFilter);
 
-            eRadio.addEventListener("click", function () {
+            eRadio.addEventListener("click", function() {
                 that.selected = PROFICIENCY_VALUES[index];
                 that.filterChangedCallback();
             });
@@ -443,7 +447,7 @@
         return eGui;
     };
 
-    ProficiencyFilter.prototype.doesFilterPass = function (params) {
+    ProficiencyFilter.prototype.doesFilterPass = function(params) {
         var value = this.valueGetter(params);
         var valueAsNumber = parseFloat(value);
 
@@ -459,7 +463,7 @@
         }
     };
 
-    ProficiencyFilter.prototype.isFilterActive = function () {
+    ProficiencyFilter.prototype.isFilterActive = function() {
         return this.selected !== PROFICIENCY_NONE;
     };
 })();
