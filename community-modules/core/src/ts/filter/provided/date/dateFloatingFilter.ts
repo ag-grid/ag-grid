@@ -36,12 +36,17 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     protected conditionToString(condition: DateFilterModel): string {
-        if (condition.type === SimpleFilter.IN_RANGE) {
-            return `${condition.dateFrom}-${condition.dateTo}`;
+        const { type } = condition;
+        const dateFrom = parseDateTimeFromString(condition.dateFrom);
+
+        if (type === SimpleFilter.IN_RANGE) {
+            const dateTo = parseDateTimeFromString(condition.dateTo);
+
+            return `${serialiseDate(dateFrom, false)}-${serialiseDate(dateTo, false)}`;
         }
 
         // cater for when the type doesn't need a value
-        return condition.dateFrom == null ? `${condition.type}` : `${condition.dateFrom}`;
+        return dateFrom == null ? `${type}` : `${serialiseDate(dateFrom, false)}`;
     }
 
     public init(params: IFloatingFilterParams): void {
