@@ -10,6 +10,7 @@ const moduleDirectories = glob.sync('../../community-modules/*', {
         '../../community-modules/core',
         '../../community-modules/angular',
         '../../community-modules/react',
+        '../../community-modules/vue',
         '../../community-modules/vue3',
         '../../community-modules/polymer'
     ]

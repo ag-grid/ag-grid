@@ -14,7 +14,7 @@ import {
     UserComponentFactory,
     ValueFormatterService
 } from '@ag-grid-community/core';
-import {ISetFilterLocaleText} from './localeText';
+import { ISetFilterLocaleText } from './localeText';
 
 export interface SetFilterListItemSelectionChangedEvent extends AgEvent {
     isSelected: boolean;
@@ -66,7 +66,7 @@ export class SetFilterListItem extends Component {
     }
 
     public render(): void {
-        const { params: { column, colDef } } = this;
+        const { params: { column } } = this;
 
         let { value } = this;
         let formattedValue: string | null = null;
@@ -79,7 +79,7 @@ export class SetFilterListItem extends Component {
 
         if (this.params.showTooltips) {
             const tooltipText = _.escapeString(formattedValue != null ? formattedValue : value);
-            if (tooltipText==null) {
+            if (tooltipText == null) {
                 this.setTooltip(undefined);
             } else {
                 this.setTooltip(tooltipText);
@@ -93,7 +93,7 @@ export class SetFilterListItem extends Component {
             context: this.gridOptionsWrapper.getContext()
         };
 
-        this.renderCell(colDef, params);
+        this.renderCell(params);
     }
 
     public getTooltipParams(): ITooltipParams {
@@ -109,9 +109,8 @@ export class SetFilterListItem extends Component {
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     }
 
-    private renderCell(target: ColDef, params: any): void {
-        const filterParams = target.filterParams as ISetFilterParams;
-        const cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(filterParams, params);
+    private renderCell(params: any): void {
+        const cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(this.params, params);
 
         if (cellRendererPromise == null) {
             const valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
