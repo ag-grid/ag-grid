@@ -12,7 +12,7 @@ var columnDefs = [
         suppressHeaderKeyboardEvent: function (params) {
             var key = params.event.key;
       
-            return (key === 'ArrowLeft' || key === 'ArrowRight');
+            return (key === 'ArrowLeft' || key === 'ArrowRight' || key === 'Enter');
         }
     },
     { field: "year" },
