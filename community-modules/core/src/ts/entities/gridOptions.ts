@@ -174,6 +174,7 @@ export interface GridOptions {
     copyHeadersToClipboard?: boolean;
     clipboardDeliminator?: string;
     suppressClipboardPaste?: boolean;
+    suppressClipboardApi?: boolean;
     suppressLastEmptyLineOnPaste?: boolean;
     suppressAggFuncInHeader?: boolean;
     suppressAggAtRootLevel?: boolean;

@@ -1074,6 +1074,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressParentsInRowNodes);
     }
 
+    public isSuppressClipboardApi() {
+        return isTrue(this.gridOptions.suppressClipboardApi);
+    }
+
     public isFunctionsReadOnly() {
         return isTrue(this.gridOptions.functionsReadOnly);
     }

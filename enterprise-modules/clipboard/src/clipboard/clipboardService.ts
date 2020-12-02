@@ -88,45 +88,61 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     public pasteFromClipboard(): void {
         this.logger.log('pasteFromClipboard');
 
+        // Method 1 - native clipboard API, available in modern chrome browsers
+        const allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
+        if (allowNavigator && navigator.clipboard) {
+            try {
+                navigator.clipboard.readText().then(this.processClipboardData.bind(this));
+                return;
+            } catch (err) {
+                // not need to do anything, as if readText failed, means code
+                // falls through to the next method, it the 'return' above never gets called
+            }
+        }
+
+        // Method 2 - if modern API fails, the old school hack
         this.executeOnTempElement(
             (textArea: HTMLTextAreaElement) => textArea.focus(),
             (element: HTMLTextAreaElement) => {
                 const data = element.value;
-
-                if (_.missingOrEmpty(data)) { return; }
-
-                let parsedData: string[][] | null = _.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
-
-                const userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
-
-                if (userFunc) {
-                    parsedData = userFunc({ data: parsedData });
-                }
-
-                if (_.missingOrEmpty(parsedData)) { return; }
-
-                if (this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
-                    this.removeLastLineIfBlank(parsedData!);
-                }
-
-                const pasteOperation = (cellsToFlash: any,
-                    updatedRowNodes: RowNode[],
-                    focusedCell: CellPosition,
-                    changedPath: ChangedPath | undefined) => {
-
-                    const rangeActive = this.rangeController && this.rangeController.isMoreThanOneCell();
-                    const pasteIntoRange = rangeActive && !this.hasOnlyOneValueToPaste(parsedData!);
-
-                    if (pasteIntoRange) {
-                        this.pasteIntoActiveRange(parsedData!, cellsToFlash, updatedRowNodes, changedPath);
-                    } else {
-                        this.pasteStartingFromFocusedCell(parsedData!, cellsToFlash, updatedRowNodes, focusedCell, changedPath);
-                    }
-                };
-
-                this.doPasteOperation(pasteOperation);
+                this.processClipboardData(data);
             }
         );
+    }
+
+    private processClipboardData(data: string): void {
+        if (_.missingOrEmpty(data)) { return; }
+
+        let parsedData: string[][] | null = _.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
+
+        const userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
+
+        if (userFunc) {
+            parsedData = userFunc({ data: parsedData });
+        }
+
+        if (_.missingOrEmpty(parsedData)) { return; }
+
+        if (this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
+            this.removeLastLineIfBlank(parsedData!);
+        }
+
+        const pasteOperation = (cellsToFlash: any,
+                                updatedRowNodes: RowNode[],
+                                focusedCell: CellPosition,
+                                changedPath: ChangedPath | undefined) => {
+
+            const rangeActive = this.rangeController && this.rangeController.isMoreThanOneCell();
+            const pasteIntoRange = rangeActive && !this.hasOnlyOneValueToPaste(parsedData!);
+
+            if (pasteIntoRange) {
+                this.pasteIntoActiveRange(parsedData!, cellsToFlash, updatedRowNodes, changedPath);
+            } else {
+                this.pasteStartingFromFocusedCell(parsedData!, cellsToFlash, updatedRowNodes, focusedCell, changedPath);
+            }
+        };
+
+        this.doPasteOperation(pasteOperation);
     }
 
     // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
@@ -156,6 +172,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
+        const doc = this.gridOptionsWrapper.getDocument();
+        const focusedElementBefore = doc.activeElement;
         const focusedCell = this.focusController.getFocusedCell();
 
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
@@ -168,7 +186,12 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
 
-        if (focusedCell) {
+        const focusedElementAfter = doc.activeElement;
+
+        // if using the clipboard hack with a temp element, then the focus has been lost,
+        // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
+        // navigation stops.
+        if (focusedCell && focusedElementBefore!=focusedElementAfter) {
             this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
 
@@ -415,8 +438,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             includeHeaders = this.gridOptionsWrapper.isCopyHeadersToClipboard();
         }
 
-        const focusedCell = this.focusController.getFocusedCell();
-
         const selectedRowsToCopy = !this.selectionController.isEmpty()
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
 
@@ -436,15 +457,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             // of exactly one cell (hence the first 'if' above didn't
             // get executed).
             this.copySelectedRangeToClipboard(includeHeaders);
-        }
-
-        if (focusedCell) {
-            this.focusController.setFocusedCell(
-                focusedCell.rowIndex,
-                focusedCell.column,
-                focusedCell.rowPinned,
-                true
-            );
         }
     }
 
@@ -637,23 +649,44 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private copyDataToClipboard(data: string): void {
         const userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
 
+        // method 1 - user provided func
         if (userProvidedFunc) {
-            userProvidedFunc({ data });
-        } else {
-            this.executeOnTempElement(element => {
-                element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
-                element.select();
-                element.focus();
-
-                const result = document.execCommand('copy');
-
-                if (!result) {
-                    console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
-                        'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
-                        'the browser will prevent it for security reasons.');
-                }
-            });
+            userProvidedFunc({data});
+            return;
         }
+
+        // method 2 - native clipboard API, available in modern chrome browsers
+        const allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
+        if (allowNavigator && navigator.clipboard) {
+            try {
+                navigator.clipboard.writeText(data);
+                return;
+            } catch (err) {
+                // not need to do anything, as if writeText failed, means code
+                // falls through to the next method, it the 'return' above never gets called
+            }
+        }
+
+        // method 3 - if all else fails, the old school hack
+        this.executeOnTempElement(element => {
+            const focusedElementBefore = this.gridOptionsWrapper.getDocument().activeElement as HTMLElement;
+
+            element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
+            element.select();
+            element.focus();
+
+            const result = document.execCommand('copy');
+
+            if (!result) {
+                console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
+                    'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
+                    'the browser will prevent it for security reasons.');
+            }
+
+            if (focusedElementBefore!=null && focusedElementBefore.focus!=null) {
+                focusedElementBefore.focus();
+            }
+        });
     }
 
     private executeOnTempElement(
