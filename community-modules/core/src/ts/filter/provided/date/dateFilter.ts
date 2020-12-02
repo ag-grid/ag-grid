@@ -8,6 +8,7 @@ import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
 import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
 import { setDisplayed } from '../../../utils/dom';
 import { Promise } from '../../../utils';
+import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -51,6 +52,12 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
     constructor() {
         super('dateFilter');
+    }
+
+    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        super.afterGuiAttached(params);
+
+        this.dateCondition1FromComp.afterGuiAttached(params);
     }
 
     protected mapRangeFromModel(filterModel: DateFilterModel): { from: Date | null; to: Date | null; } {
@@ -118,16 +125,20 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     }
 
     private createDateComponents(): void {
-        // params to pass to all four date comps
-        const dateComponentParams: IDateParams = {
-            onDateChanged: () => this.onUiChanged(),
-            filterParams: this.dateFilterParams
-        };
+        const createDateCompWrapper = (element: HTMLElement) =>
+            new DateCompWrapper(
+                this.getContext(),
+                this.userComponentFactory,
+                {
+                    onDateChanged: () => this.onUiChanged(),
+                    filterParams: this.dateFilterParams
+                },
+                element);
 
-        this.dateCondition1FromComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition1PanelFrom);
-        this.dateCondition1ToComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition1PanelTo);
-        this.dateCondition2FromComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition2PanelFrom);
-        this.dateCondition2ToComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition2PanelTo);
+        this.dateCondition1FromComp = createDateCompWrapper(this.eCondition1PanelFrom);
+        this.dateCondition1ToComp = createDateCompWrapper(this.eCondition1PanelTo);
+        this.dateCondition2FromComp = createDateCompWrapper(this.eCondition2PanelFrom);
+        this.dateCondition2ToComp = createDateCompWrapper(this.eCondition2PanelTo);
 
         this.addDestroyFunc(() => {
             this.dateCondition1FromComp.destroy();
