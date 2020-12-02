@@ -17,7 +17,7 @@ import { createId } from "../util/id";
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
-    display: none;
+    display: table;
     position: absolute;
     user-select: none;
     pointer-events: none;
@@ -30,8 +30,8 @@ const defaultTooltipCss = `
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
 }
 
-.ag-chart-tooltip-visible {
-    display: table;
+.ag-chart-tooltip-hidden {
+    top: -10000px !important;
 }
 
 .ag-chart-tooltip-title {
@@ -158,13 +158,13 @@ export class ChartTooltip extends Observable {
     isVisible(): boolean {
         const { element } = this;
         if (element.classList) { // if not IE11
-            return element.classList.contains(Chart.defaultTooltipClass + '-visible');
+            return !element.classList.contains(Chart.defaultTooltipClass + '-hidden');
         }
 
         // IE11 part.
         const classes = element.getAttribute('class');
         if (classes) {
-            return classes.split(' ').indexOf(Chart.defaultTooltipClass + '-visible') >= 0;
+            return classes.split(' ').indexOf(Chart.defaultTooltipClass + '-hidden') < 0;
         }
         return false;
     }
@@ -172,8 +172,8 @@ export class ChartTooltip extends Observable {
     updateClass(visible?: boolean, constrained?: boolean) {
         const classList = [Chart.defaultTooltipClass, this.class];
 
-        if (visible === true) {
-            classList.push(`${Chart.defaultTooltipClass}-visible`);
+        if (visible !== true) {
+            classList.push(`${Chart.defaultTooltipClass}-hidden`);
         }
         if (constrained !== true) {
             classList.push(`${Chart.defaultTooltipClass}-arrow`);
@@ -190,23 +190,10 @@ export class ChartTooltip extends Observable {
     show(meta: TooltipMeta, html?: string, instantly = false) {
         const el = this.element;
 
-        if (this.delay > 0 && !instantly && (html || el.innerHTML)) {
-            this.hide();
-            el.innerHTML = '';
-            this.showTimeout = window.setTimeout(() => {
-                this.show(meta, html || el.innerHTML, true);
-            }, this.delay);
-            return;
-        }
-
         if (html !== undefined) {
             el.innerHTML = html;
         } else if (!el.innerHTML) {
             return;
-        }
-
-        if (html) {
-            this.toggle(true);
         }
 
         let left = meta.pageX - el.clientWidth / 2;
@@ -227,16 +214,21 @@ export class ChartTooltip extends Observable {
 
         el.style.left = `${left}px`;
         el.style.top = `${top}px`;
-    }
 
-    hide() {
-        this.toggle(false);
+        if (this.delay > 0 && !instantly) {
+            this.toggle(false);
+            window.clearTimeout(this.showTimeout);
+            this.showTimeout = window.setTimeout(() => {
+                this.toggle(true);
+            }, this.delay);
+            return;
+        }
+
+        this.toggle(true);
     }
 
     toggle(visible?: boolean) {
         if (!visible) {
-            window.clearTimeout(this.showTimeout);
-
             if (this.chart.lastPick && !this.delay) {
                 this.chart.dehighlightDatum();
                 this.chart.lastPick = undefined;
@@ -260,7 +252,7 @@ export class ChartTooltip extends Observable {
             const observer = new IntersectionObserver(entries => {
                 for (const entry of entries) {
                     if (entry.target === target && entry.intersectionRatio === 0) {
-                        this.hide();
+                        this.toggle(false);
                     }
                 }
             }, { root: tooltipRoot });
@@ -985,6 +977,9 @@ export abstract class Chart extends Observable {
 
     protected onMouseMove(event: MouseEvent) {
         if (this.tooltip.enabled) {
+            if (this.tooltip.delay > 0) {
+                this.tooltip.toggle(false);
+            }
             this.handleTooltip(event);
         }
     }
@@ -1042,7 +1037,7 @@ export abstract class Chart extends Observable {
         if (lastPick && (hideTooltip || !tooltipTracking)) {
             // Cursor moved from a non-marker node to empty space.
             this.dehighlightDatum();
-            this.tooltip.hide();
+            this.tooltip.toggle(false);
             this.lastPick = undefined;
         }
     }
@@ -1093,7 +1088,7 @@ export abstract class Chart extends Observable {
             if (series) {
                 series.toggleSeriesItem(itemId, !enabled);
                 if (enabled) {
-                    this.tooltip.hide();
+                    this.tooltip.toggle(false);
                 }
                 this.legend.fireEvent<LegendClickEvent>({
                     type: 'click',
