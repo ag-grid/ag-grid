@@ -7,6 +7,7 @@ import generateNewKey from './keyGenerator';
 
 export class ReactComponent implements IComponent<any>, WrapableInterface {
     static REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
+    static REACT_FORWARD_REF_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.forward_ref') : 0xead0;
 
     private eParentElement!: HTMLElement;
     private componentInstance: any;
@@ -17,12 +18,14 @@ export class ReactComponent implements IComponent<any>, WrapableInterface {
     private parentComponent: AgGridReact;
     public reactElement: any | null = null;
     private statelessComponent: boolean;
+    private forwardRefComponent: boolean;
 
     constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
         this.reactComponent = reactComponent;
         this.componentType = componentType;
         this.parentComponent = parentComponent;
         this.statelessComponent = ReactComponent.isStateless(this.reactComponent);
+        this.forwardRefComponent = ReactComponent.isForwardRef(this.reactComponent);
     }
 
     public getFrameworkComponentInstance(): any {
@@ -85,6 +88,30 @@ export class ReactComponent implements IComponent<any>, WrapableInterface {
             }
 
             this.reactElement = createElement(Foo, {key});
+        } else if (this.forwardRefComponent) {
+            // regular components (ie not functional)
+
+            // grab hold of the actual instance created
+            params.ref = (element: any) => {
+                this.componentInstance = element;
+
+                this.addParentContainerStyleAndClasses();
+            };
+
+            const ref = (element: any) => {
+                if(!element) {
+                    return;
+                }
+
+                this.eGui = findDOMNode(element) as any
+                this.eParentElement = this.eGui.parentElement;
+            }
+
+            this.reactElement = createElement('div', {
+                style: {display: "none"},
+                ref,
+                key
+            }, createElement(this.reactComponent, {...params, key}));
         } else {
             // regular components (ie not functional)
 
@@ -103,7 +130,7 @@ export class ReactComponent implements IComponent<any>, WrapableInterface {
 
         this.parentComponent.mountReactPortal(this, value => {
 
-            if (!this.isStatelessComponent()) {
+            if (!this.isStatelessComponent() && !this.forwardRefComponent) {
                 this.eGui = findDOMNode(this.componentInstance) as any
                 this.eParentElement = this.eGui.parentElement;
             }
@@ -151,6 +178,11 @@ export class ReactComponent implements IComponent<any>, WrapableInterface {
     private static isStateless(Component: any) {
         return (typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent))
             || (typeof Component === 'object' && Component.$$typeof === ReactComponent.REACT_MEMO_TYPE);
+    }
+
+    private static isForwardRef(component: any) {
+        return !ReactComponent.isStateless(component)
+            && (typeof component === 'object' && component.$$typeof === ReactComponent.REACT_FORWARD_REF_TYPE);
     }
 
     public isNullRender(): boolean {

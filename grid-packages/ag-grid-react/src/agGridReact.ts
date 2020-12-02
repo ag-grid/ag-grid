@@ -36,7 +36,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     api: GridApi | null = null;
     columnApi!: ColumnApi;
-    portals: ReactPortal[] = [];
+    reactComponents: ReactComponent[] = [];
     hasPendingPortalUpdate = false;
 
     destroyed = false;
@@ -56,7 +56,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             ref: (e: HTMLElement) => {
                 this.eGridDiv = e;
             }
-        }, this.portals);
+        }, this.reactComponents.map(reactComponent => reactComponent.reactElement));
     }
 
     createStyleForDiv() {
@@ -118,11 +118,16 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
      * We do this because we want all portals to be in the same tree - in order to get
      * Context to work properly.
      */
-    mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void) {
-        this.portals = [...this.portals, portal];
+    mountReactPortal(reactComponent: ReactComponent, resolve: (value: any) => void) {
+        this.reactComponents = [...this.reactComponents, reactComponent];
         this.waitForInstance(reactComponent, resolve);
         this.batchUpdate();
     }
+    // mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void) {
+    //     this.portals = [...this.portals, portal];
+    //     this.waitForInstance(reactComponent, resolve);
+    //     this.batchUpdate();
+    // }
 
     batchUpdate(): void {
         if (this.hasPendingPortalUpdate) {
@@ -141,8 +146,8 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
 
-    destroyPortal(portal: ReactPortal) {
-        this.portals = this.portals.filter(curPortal => curPortal !== portal);
+    destroyPortal(reactComponent: ReactComponent) {
+        this.reactComponents = this.reactComponents.filter(currentReactComponent => currentReactComponent !== reactComponent);
         this.batchUpdate();
     }
 
@@ -184,7 +189,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         this.extractDeclarativeColDefChanges(nextProps, changes);
 
         if (Object.keys(changes).length > 0) {
-            ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
+            setTimeout(() => ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi))
         }
     }
 

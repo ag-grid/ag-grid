@@ -21,6 +21,4 @@ export interface IComponent<T> {
 
     /** The init(params) method is called on the component once. See below for details on the parameters. */
     init?(params: T): Promise<void> | void;
-
-    attached?(): void;
 }
