@@ -75,7 +75,7 @@ export class PieChartProxy extends PolarChartProxy {
         }
 
         const field = params.fields[0];
-        let angleField = field;
+        const angleField = field;
 
         if (this.crossFiltering) {
             const filteredField = params.fields[1];

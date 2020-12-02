@@ -7,13 +7,12 @@ import {
     BeanStub,
     Column,
     ColumnController,
-    GridOptionsWrapper,
     PostConstruct,
     RowNode,
     ValueService,
     NumberSequence
 } from "@ag-grid-community/core";
-import {NodeManager} from "../nodeManager";
+import { NodeManager } from "../nodeManager";
 
 @Bean('ssrmBlockUtils')
 export class BlockUtils extends BeanStub {
@@ -333,7 +332,7 @@ export class BlockUtils extends BeanStub {
             // not happen (so makes setting up rows more deterministic by expands never happening)
             // and also checkOpenByDefault is shard with both store types, so easier control how it
             // impacts things by keeping it in new VM turn.
-            window.setTimeout( ()=> rowNode.setExpanded(true), 0);
+            window.setTimeout(() => rowNode.setExpanded(true), 0);
         }
     }
 }

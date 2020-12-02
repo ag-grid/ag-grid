@@ -4,7 +4,6 @@ import {
     Bean,
     BeanStub,
     ColumnController,
-    GridOptionsWrapper,
     IRowNodeStage,
     RowNode,
     SelectionController,

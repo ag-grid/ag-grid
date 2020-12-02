@@ -4,7 +4,6 @@ import {
     ColumnController,
     Component,
     Events,
-    GridOptionsWrapper,
     PreConstruct,
     RefSelector
 } from "@ag-grid-community/core";

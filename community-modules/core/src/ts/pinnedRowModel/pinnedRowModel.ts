@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events, PinnedRowDataChangedEvent } from "../events";

@@ -2,7 +2,6 @@ import { RowRenderer } from "./rowRenderer";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { Column } from "../entities/column";
 import { Autowired, Bean } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
 import { Component } from "../widgets/component";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";

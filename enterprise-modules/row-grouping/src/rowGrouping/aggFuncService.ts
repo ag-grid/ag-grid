@@ -1,9 +1,7 @@
 import {
-    Autowired,
     Bean,
     BeanStub,
     Column,
-    GridOptionsWrapper,
     IAggFunc,
     IAggFuncService,
     PostConstruct,

@@ -3,7 +3,6 @@ import {
     Autowired,
     Bean,
     ColumnController,
-    GridOptionsWrapper,
     RowNode,
     RowNodeTransaction,
     SortController,

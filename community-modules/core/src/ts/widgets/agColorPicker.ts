@@ -2,7 +2,6 @@ import { AgColorPanel } from "./agColorPanel";
 import { AgDialog } from "./agDialog";
 import { IAgLabel } from "./agAbstractLabel";
 import { AgPickerField } from "./agPickerField";
-import { AgAbstractField } from "./agAbstractField";
 import { addCssClass } from "../utils/dom";
 
 interface ColorPickerConfig extends IAgLabel {

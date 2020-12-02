@@ -1,7 +1,6 @@
 import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
 import { RowNode } from "../../entities/rowNode";
-import { Autowired, Bean, PostConstruct, PreDestroy } from "../../context/context";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { Bean, PostConstruct, PreDestroy } from "../../context/context";
 import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 

@@ -1,6 +1,4 @@
-import { Autowired } from '../context/context';
 import { Events, CheckboxChangedEvent } from "../events";
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgEvent } from '../events';
 import { AgAbstractInputField, IInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';

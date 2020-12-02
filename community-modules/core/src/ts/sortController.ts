@@ -6,7 +6,6 @@ import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { GridApi } from "./gridApi";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { SortOption } from "./rowNodes/rowNodeSorter";
 
 export interface SortModelItem {
@@ -148,11 +147,11 @@ export class SortController extends BeanStub {
         columnsWithSorting.sort((a: Column, b: Column) => {
             const iA = a.getSortIndex();
             const iB = b.getSortIndex();
-            if (iA!=null && iB!=null) {
+            if (iA != null && iB != null) {
                 return iA - iB; // both present, normal comparison
-            } else if (iB==null) {
+            } else if (iB == null) {
                 return -1; // iB missing
-            } else if (iA==null) {
+            } else if (iA == null) {
                 return 1; // iA missing
             } else {
                 return 0; // both missing

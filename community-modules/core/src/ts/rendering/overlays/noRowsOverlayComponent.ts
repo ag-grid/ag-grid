@@ -1,5 +1,3 @@
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
 

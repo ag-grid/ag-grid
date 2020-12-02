@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ExpressionService } from "../../valueService/expressionService";
 import { Constants } from "../../constants/constants";
 import { Autowired } from "../../context/context";
@@ -23,7 +22,7 @@ import { bindCellRendererToHtmlElement } from "../../utils/general";
 import { addOrRemoveCssClass, setDisplayed } from "../../utils/dom";
 import { createIconNoSpan } from "../../utils/icon";
 import { isKeyPressed } from "../../utils/keyboard";
-import { missing, exists } from "../../utils/generic";
+import { missing } from "../../utils/generic";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventPath } from "../../utils/event";
 import { setAriaExpanded, removeAriaExpanded } from "../../utils/aria";
 import { KeyCode } from '../../constants/keyCode';

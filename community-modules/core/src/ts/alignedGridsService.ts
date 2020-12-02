@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnController } from "./columnController/columnController";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger } from "./logger";

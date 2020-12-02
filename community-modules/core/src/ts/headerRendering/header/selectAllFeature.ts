@@ -9,7 +9,6 @@ import { Constants } from "../../constants/constants";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { SelectionController } from "../../selectionController";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export class SelectAllFeature extends BeanStub {
 

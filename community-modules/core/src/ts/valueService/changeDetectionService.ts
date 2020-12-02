@@ -2,7 +2,6 @@ import { BeanStub } from "../context/beanStub";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ChangedPath } from "../utils/changedPath";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowRenderer } from "../rendering/rowRenderer";

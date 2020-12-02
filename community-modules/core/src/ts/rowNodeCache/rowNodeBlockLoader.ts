@@ -1,8 +1,7 @@
 import { RowNodeBlock } from "./rowNodeBlock";
-import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
+import { Bean, PostConstruct, Qualifier } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { Logger, LoggerFactory } from "../logger";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { _ } from "../utils";
 
 @Bean('rowNodeBlockLoader')

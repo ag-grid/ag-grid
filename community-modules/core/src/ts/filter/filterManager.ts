@@ -1,5 +1,4 @@
 import { Promise } from '../utils';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ValueService } from '../valueService/valueService';
 import { ColumnController } from '../columnController/columnController';
 import { ColumnApi } from '../columnController/columnApi';

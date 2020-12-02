@@ -3,7 +3,6 @@ import {
     BeanStub,
     IRowNodeStage,
     Autowired,
-    GridOptionsWrapper,
     ColumnController,
     ValueService,
     RowNode,

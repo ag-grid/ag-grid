@@ -8,7 +8,6 @@ import { GridPanel } from "./gridPanel";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { ColumnController } from "../columnController/columnController";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { last } from "../utils/array";

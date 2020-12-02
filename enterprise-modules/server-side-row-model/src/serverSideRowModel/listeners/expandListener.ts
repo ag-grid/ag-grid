@@ -4,14 +4,13 @@ import {
     BeanStub,
     StoreUpdatedEvent,
     Events,
-    GridOptionsWrapper,
     PostConstruct,
     RowGroupOpenedEvent,
     RowNode,
     Bean
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "../serverSideRowModel";
-import {StoreFactory} from "../stores/storeFactory";
+import { StoreFactory } from "../stores/storeFactory";
 
 @Bean('ssrmExpandListener')
 export class ExpandListener extends BeanStub {

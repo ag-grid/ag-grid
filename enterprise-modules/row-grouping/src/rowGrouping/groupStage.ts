@@ -6,7 +6,6 @@ import {
     Column,
     ColumnController,
     GetDataPath,
-    GridOptionsWrapper,
     IRowNodeStage,
     NumberSequence,
     PostConstruct,

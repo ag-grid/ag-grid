@@ -3,7 +3,6 @@ import {
     Autowired,
     ColumnController,
     Events,
-    GridOptionsWrapper,
     RefSelector,
     ToolPanelColumnCompParams,
     AgCheckbox,

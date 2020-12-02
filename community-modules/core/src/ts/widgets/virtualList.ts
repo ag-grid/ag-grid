@@ -1,6 +1,5 @@
 import { Component } from './component';
 import { Autowired } from '../context/context';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { RefSelector } from './componentAnnotations';
 import { ManagedFocusComponent } from './managedFocusComponent';
 import { addCssClass, containsClass } from '../utils/dom';

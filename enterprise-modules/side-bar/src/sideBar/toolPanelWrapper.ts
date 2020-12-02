@@ -6,8 +6,7 @@ import {
     IToolPanelParams,
     Promise,
     ToolPanelDef,
-    PostConstruct,
-    GridOptionsWrapper
+    PostConstruct
 } from "@ag-grid-community/core";
 import { HorizontalResizeComp } from "./horizontalResizeComp";
 

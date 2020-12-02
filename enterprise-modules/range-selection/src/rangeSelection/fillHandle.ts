@@ -4,7 +4,6 @@ import {
     CellPosition,
     CellRange,
     Column,
-    GridOptionsWrapper,
     RowNode,
     RowPosition,
     ValueService,

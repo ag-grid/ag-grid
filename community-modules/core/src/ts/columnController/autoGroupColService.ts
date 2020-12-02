@@ -1,6 +1,5 @@
 import { Autowired, Bean } from "../context/context";
 import { Column } from "../entities/column";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColDef } from "../entities/colDef";
 import { ColumnController } from "./columnController";
 import { ColumnFactory } from "./columnFactory";

@@ -6,7 +6,6 @@ import {
     BeanStub,
     ColumnApi,
     GridApi,
-    GridOptionsWrapper,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
     StoreRefreshAfterParams,

@@ -1,7 +1,6 @@
 import { AgSelect } from "../../widgets/agSelect";
 import { Autowired } from "../../context/context";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ValueFormatterService } from "../valueFormatterService";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";

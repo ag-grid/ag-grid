@@ -4,12 +4,11 @@ import {
     BeanStub,
     Events,
     FilterManager,
-    GridOptionsWrapper,
     PostConstruct,
     StoreRefreshAfterParams
 } from "@ag-grid-community/core";
-import {ServerSideRowModel} from "../serverSideRowModel";
-import {ListenerUtils} from "./listenerUtils";
+import { ServerSideRowModel } from "../serverSideRowModel";
+import { ListenerUtils } from "./listenerUtils";
 
 @Bean('ssrmFilterListener')
 export class FilterListener extends BeanStub {
@@ -51,15 +50,15 @@ export class FilterListener extends BeanStub {
 
         const allColKeysMap: {[key: string]: boolean} = {};
 
-        Object.keys(oldModel).forEach( key => allColKeysMap[key] = true);
-        Object.keys(newModel).forEach( key => allColKeysMap[key] = true);
+        Object.keys(oldModel).forEach(key => allColKeysMap[key] = true);
+        Object.keys(newModel).forEach(key => allColKeysMap[key] = true);
 
         const res: string[] = [];
 
-        Object.keys(allColKeysMap).forEach( key => {
+        Object.keys(allColKeysMap).forEach(key => {
             const oldJson = JSON.stringify(oldModel[key]);
             const newJson = JSON.stringify(newModel[key]);
-            const filterChanged = oldJson!=newJson;
+            const filterChanged = oldJson != newJson;
             if (filterChanged) {
                 res.push(key);
             }

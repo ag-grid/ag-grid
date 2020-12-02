@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Logger, LoggerFactory } from '../logger';
 import { ColumnUtils } from './columnUtils';
 import { AbstractColDef, ColDef, ColGroupDef } from "../entities/colDef";

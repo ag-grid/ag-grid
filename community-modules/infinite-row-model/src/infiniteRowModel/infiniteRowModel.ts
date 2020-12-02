@@ -8,7 +8,6 @@ import {
     Events,
     FilterManager,
     GridApi,
-    GridOptionsWrapper,
     IDatasource,
     ModelUpdatedEvent,
     NumberSequence,

@@ -37,7 +37,7 @@ import { last, areEqual, pushAll, includes } from "../utils/array";
 import { cssStyleObjectToMarkup } from "../utils/general";
 import { isStopPropagationForAgGrid, getTarget, isEventSupported } from "../utils/event";
 import { isEventFromPrintableCharacter } from "../utils/keyboard";
-import { isBrowserEdge, isBrowserIE, isBrowserSafari, isIOSUserAgent } from "../utils/browser";
+import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../utils/browser";
 import { doOnce } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
 import { ITooltipParams } from "./tooltipComponent";

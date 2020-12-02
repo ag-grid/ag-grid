@@ -4,7 +4,6 @@ import {
     BeanStub,
     ColumnController,
     Events,
-    GridOptionsWrapper,
     IServerSideStore,
     LoadSuccessParams,
     Logger,
@@ -26,9 +25,9 @@ import {
     StoreRefreshAfterParams,
     StoreUpdatedEvent
 } from "@ag-grid-community/core";
-import {SSRMParams} from "../serverSideRowModel";
-import {StoreUtils} from "./storeUtils";
-import {PartialStoreBlock} from "../blocks/partialStoreBlock";
+import { SSRMParams } from "../serverSideRowModel";
+import { StoreUtils } from "./storeUtils";
+import { PartialStoreBlock } from "../blocks/partialStoreBlock";
 
 enum FindResult {FOUND, CONTINUE_FIND, BREAK_FIND}
 
@@ -103,7 +102,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     }
 
     public retryLoads(): void {
-        this.getBlocksInOrder().forEach( block => block.retryLoads() );
+        this.getBlocksInOrder().forEach(block => block.retryLoads());
     }
 
     public onBlockLoadFailed(block: PartialStoreBlock): void {
@@ -121,7 +120,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
         if (!params.rowData) {
             const message = 'ag-Grid: "params.rowData" is missing from Server-Side Row Model success() callback. Please use the "rowData" attribute. If no data is returned, set an empty list.';
-            _.doOnce( () => console.warn(message, params), 'InfiniteStore.noData');
+            _.doOnce(() => console.warn(message, params), 'InfiniteStore.noData');
         }
 
         const finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
@@ -189,7 +188,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     }
 
     public removeDuplicateNode(id: string): void {
-        this.getBlocksInOrder().forEach( block => block.removeDuplicateNode(id) );
+        this.getBlocksInOrder().forEach(block => block.removeDuplicateNode(id));
     }
 
     private checkRowCount(block: PartialStoreBlock, lastRow?: number): void {
@@ -695,10 +694,10 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
         // call refreshAfterSort on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
-        this.forEachChildStoreShallow(store=>store.refreshAfterSort(params));
+        this.forEachChildStoreShallow(store => store.refreshAfterSort(params));
     }
 
-    private forEachChildStoreShallow(callback: (childStore: IServerSideStore)=>void): void {
+    private forEachChildStoreShallow(callback: (childStore: IServerSideStore) => void): void {
         this.getBlocksInOrder().forEach(block => {
             if (block.isGroupLevel()) {
                 const innerCallback = (rowNode: RowNode) => {

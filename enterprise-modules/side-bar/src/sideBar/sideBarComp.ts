@@ -1,9 +1,7 @@
 import {
     _,
-    Autowired,
     Component,
     Events,
-    GridOptionsWrapper,
     IComponent,
     ISideBar,
     IToolPanel,

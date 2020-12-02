@@ -120,7 +120,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         if (this.crossFiltering) {
             // introduce cross filtering transparent fills
-            let fills: string[] = [];
+            const fills: string[] = [];
             palette.fills.forEach(fill => {
                 fills.push(fill);
                 fills.push(this.hexToRGB(fill, '0.3'));
@@ -128,7 +128,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             barSeries.fills = fills;
 
             // introduce cross filtering transparent strokes
-            let strokes: string[] = [];
+            const strokes: string[] = [];
             palette.strokes.forEach(stroke => {
                 fills.push(stroke);
                 fills.push(this.hexToRGB(stroke, '0.3'));

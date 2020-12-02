@@ -2,7 +2,6 @@ import {
     Autowired,
     AgEvent,
     Component,
-    GridOptionsWrapper,
     PostConstruct,
     ToolPanelDef,
     RefSelector,

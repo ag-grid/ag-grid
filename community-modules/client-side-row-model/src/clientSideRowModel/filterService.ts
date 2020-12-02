@@ -3,7 +3,6 @@ import {
     Bean,
     ChangedPath,
     FilterManager,
-    GridOptionsWrapper,
     PostConstruct,
     RowNode,
     BeanStub

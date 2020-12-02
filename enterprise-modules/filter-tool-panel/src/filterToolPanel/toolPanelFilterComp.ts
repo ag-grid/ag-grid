@@ -8,7 +8,6 @@ import {
     FilterManager,
     FilterOpenedEvent,
     IFilterComp,
-    ITooltipParams,
     KeyCode,
     PostConstruct,
     RefSelector

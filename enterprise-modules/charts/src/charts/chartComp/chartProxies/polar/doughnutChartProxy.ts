@@ -83,13 +83,13 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
         const { seriesDefaults } = this.chartOptions;
         const { fills, strokes } = this.getPalette();
-        let offset = 0;
+        const offset = 0;
 
         if (this.crossFiltering) {
             const field = params.fields[0];
             const filteredField = params.fields[1];
 
-            let angleField = field;
+            const angleField = field;
 
             params.data.forEach(d => {
                 d[field.colId + '-total'] = d[field.colId] + d[filteredField.colId];

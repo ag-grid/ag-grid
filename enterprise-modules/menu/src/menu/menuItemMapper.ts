@@ -8,7 +8,6 @@ import {
     ColumnController,
     Constants,
     GridApi,
-    GridOptionsWrapper,
     IAggFuncService,
     IChartService,
     IClipboardService,

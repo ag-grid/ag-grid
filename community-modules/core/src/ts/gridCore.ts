@@ -1,5 +1,4 @@
 import { GridOptions } from "./entities/gridOptions";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnApi } from "./columnController/columnApi";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";

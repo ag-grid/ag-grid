@@ -6,8 +6,7 @@ import {
     ICellRendererParams,
     IRichCellEditorParams,
     Promise,
-    UserComponentFactory,
-    GridOptionsWrapper
+    UserComponentFactory
 } from "@ag-grid-community/core";
 
 export class RichSelectRow extends Component {

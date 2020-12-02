@@ -1,7 +1,6 @@
 import {
     Autowired,
     Bean,
-    GridOptionsWrapper,
     IRowNodeStage,
     SelectableService,
     StageExecuteParams,

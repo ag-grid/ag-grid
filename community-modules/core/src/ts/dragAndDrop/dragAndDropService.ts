@@ -3,7 +3,6 @@ import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { DragService, DragListenerParams } from "./dragService";
 import { Environment } from "../environment";
 import { RowDropZoneParams } from "../gridPanel/rowDragFeature";

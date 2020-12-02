@@ -7,7 +7,6 @@ import {
     Events,
     TouchListener,
     DragAndDropService,
-    GridOptionsWrapper,
     DropTarget,
     PostConstruct,
     Column,

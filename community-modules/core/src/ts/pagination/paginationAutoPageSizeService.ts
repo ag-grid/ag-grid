@@ -1,7 +1,6 @@
 import { BeanStub } from "../context/beanStub";
 import { Events } from "../events";
-import { Autowired, Bean } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Bean } from "../context/context";
 import { GridPanel } from "../gridPanel/gridPanel";
 
 @Bean('paginationAutoPageSizeService')

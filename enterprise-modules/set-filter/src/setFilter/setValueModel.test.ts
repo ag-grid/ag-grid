@@ -1,5 +1,5 @@
 import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
-import { Constants, ColDef, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams } from '@ag-grid-community/core';
+import { Constants, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 function createSetValueModel(

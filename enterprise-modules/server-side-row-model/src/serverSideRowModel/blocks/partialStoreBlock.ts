@@ -6,7 +6,6 @@ import {
     ColumnApi,
     ColumnController,
     GridApi,
-    GridOptionsWrapper,
     Logger,
     LoggerFactory,
     NumberSequence,
@@ -197,13 +196,13 @@ export class PartialStoreBlock extends RowNodeBlock {
     }
 
     public retryLoads(): void {
-        if (this.getState()===RowNodeBlock.STATE_FAILED) {
+        if (this.getState() === RowNodeBlock.STATE_FAILED) {
             this.setStateWaitingToLoad();
             this.rowNodeBlockLoader.checkBlockToLoad();
             this.setData();
         }
 
-        this.forEachNodeShallow( node => {
+        this.forEachNodeShallow(node => {
             if (node.childStore) {
                 node.childStore.retryLoads();
             }
@@ -268,7 +267,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     }
 
     public refresh(): void {
-        if (this.getState()!==RowNodeBlock.STATE_WAITING_TO_LOAD) {
+        if (this.getState() !== RowNodeBlock.STATE_WAITING_TO_LOAD) {
             this.setStateWaitingToLoad();
         }
     }

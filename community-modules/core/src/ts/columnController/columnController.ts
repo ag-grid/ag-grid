@@ -2,7 +2,6 @@ import { ColumnGroup } from '../entities/columnGroup';
 import { Column } from '../entities/column';
 import { AbstractColDef, ColDef, ColGroupDef, IAggFunc } from '../entities/colDef';
 import { ColumnGroupChild } from '../entities/columnGroupChild';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ExpressionService } from '../valueService/expressionService';
 import { ColumnFactory } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';

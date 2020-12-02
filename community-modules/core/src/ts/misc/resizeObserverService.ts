@@ -1,5 +1,4 @@
-import { Autowired, Bean } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { debounce } from "../utils/function";
 import { offsetHeight, offsetWidth } from "../utils/dom";

@@ -2,7 +2,6 @@ import { RefSelector } from "./componentAnnotations";
 import { PostConstruct, Autowired } from "../context/context";
 import { Component } from "./component";
 import { PopupService } from "./popupService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { addCssClass, setFixedHeight, getAbsoluteHeight, setFixedWidth, getAbsoluteWidth, getInnerHeight, getInnerWidth } from "../utils/dom";
 import { createIconNoSpan } from "../utils/icon";
 

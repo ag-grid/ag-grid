@@ -1,4 +1,4 @@
-import {Autowired, Bean, ColumnController} from "@ag-grid-community/core";
+import { Autowired, Bean, ColumnController } from "@ag-grid-community/core";
 
 @Bean('ssrmListenerUtils')
 export class ListenerUtils {
@@ -32,6 +32,5 @@ export class ListenerUtils {
 
         return false;
     }
-
 
 }

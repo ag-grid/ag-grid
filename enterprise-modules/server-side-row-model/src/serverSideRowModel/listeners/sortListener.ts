@@ -6,7 +6,6 @@ import {
     ColumnController,
     Constants,
     Events,
-    GridOptionsWrapper,
     PostConstruct,
     SortController,
     Column,
@@ -14,7 +13,7 @@ import {
     StoreRefreshAfterParams
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "../serverSideRowModel";
-import {ListenerUtils} from "./listenerUtils";
+import { ListenerUtils } from "./listenerUtils";
 
 @Bean('ssrmSortService')
 export class SortListener extends BeanStub {
