@@ -7,8 +7,8 @@ import {
     IFloatingFilterParams,
     AgInputTextField,
     _,
-    GridOptionsWrapper,
-    ColumnController
+    ColumnController,
+    ISetFilterParams
 } from '@ag-grid-community/core';
 
 import { SetFilterModel } from './setFilterModel';
@@ -51,7 +51,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
 
     public onParentModelChanged(parentModel: SetFilterModel): void {
         this.lastKnownModel = parentModel;
-        this.updateSetFilterText();
+        this.updateFloatingFilterText();
     }
 
     private addAvailableValuesListener(): void {
@@ -66,13 +66,13 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
             this.addManagedListener(
-                setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, () => this.updateSetFilterText());
+                setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, () => this.updateFloatingFilterText());
         });
 
         this.availableValuesListenerAdded = true;
     }
 
-    private updateSetFilterText(): void {
+    private updateFloatingFilterText(): void {
         if (!this.lastKnownModel) {
             this.eFloatingFilterText.setValue('');
             return;
@@ -100,7 +100,10 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
 
             // format all the values, if a formatter is provided
             const formattedValues = _.map(availableValues, value => {
-                const formattedValue = this.valueFormatterService.formatValue(this.params.column, null, null, value);
+                const { column, filterParams } = this.params;
+                const formattedValue = this.valueFormatterService.formatValue(
+                    column, null, null, value, (filterParams as ISetFilterParams).valueFormatter, false);
+
                 const valueToRender = formattedValue != null ? formattedValue : value;
 
                 return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT.blanks) : valueToRender;
