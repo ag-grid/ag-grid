@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { ColumnGroup } from "../entities/columnGroup";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";

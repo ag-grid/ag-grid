@@ -645,7 +645,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.copyDataToClipboard(data);
     }
 
-    private copyDataToClipboard(data: string): void {
+    private  copyDataToClipboard(data: string): void {
         const userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
 
         // method 1 - user provided func

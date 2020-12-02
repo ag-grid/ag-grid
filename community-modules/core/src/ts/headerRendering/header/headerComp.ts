@@ -2,7 +2,6 @@ import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { Autowired } from "../../context/context";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { SortController } from "../../sortController";
 import { TapEvent, LongTapEvent, TouchListener } from "../../widgets/touchListener";
 import { IComponent } from "../../interfaces/iComponent";
