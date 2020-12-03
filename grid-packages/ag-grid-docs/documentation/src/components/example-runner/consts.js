@@ -1,3 +1,3 @@
-export const agGridVersion = '24.1.0';
-export const agChartsVersion = '2.1.0';
+export const agGridVersion = require('../../../../../../community-modules/core/package.json').version;
+export const agChartsVersion = require('../../../../../../charts-packages/ag-charts-community/package.json').version;
 export const localPrefix = '//localhost:8080/dev';
