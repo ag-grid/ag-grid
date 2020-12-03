@@ -7,7 +7,7 @@
   "scripts": {
     "build": "gulp && npm run hash",
     "umd": "rollup -c",
-    "testX": "jest",
+    "test": "jest",
     "test:e2eX": "gulp link-umd-e2e && npm run cypress:e2e && npm run cypress:components",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
