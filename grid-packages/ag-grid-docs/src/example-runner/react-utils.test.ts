@@ -48,10 +48,17 @@ describe('convertTemplate', () => {
     });
 
     it('ensures input tags are closed', () => {
+        const template = '<input type="checkbox">';
+        const converted = convertTemplate(template);
+
+        expect(converted).toBe('<input type="checkbox" />');
+    });
+
+    it('ensures input value attributes are renamed', () => {
         const template = '<input type="text" value="foo" maxLength="20">';
         const converted = convertTemplate(template);
 
-        expect(converted).toBe('<input type="text" value="foo" maxLength="20" />');
+        expect(converted).toBe('<input type="text" defaultValue="foo" maxLength="20" />');
     });
 
     it('replaces class with className', () => {
