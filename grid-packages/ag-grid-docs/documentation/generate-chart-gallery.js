@@ -9,7 +9,7 @@
     you would like to update thumbnails. By default only thumbnails for changed charts will be generated, but you can
     provide the --force-thumbnails argument if you would like to force all thumbnails to be regenerated.
 */
-const fs = require('fs');
+const fs = require('fs-extra');
 const Path = require('path');
 const { execSync } = require('child_process');
 
@@ -18,12 +18,12 @@ function hasArgument(name) {
 }
 
 const options = {
-    rootPageName: 'charts-overview',
-    rootDirectory: 'src/pages/charts-overview',
+    rootPageName: 'charts',
+    rootDirectory: 'src/pages/charts',
     galleryJsonFile: 'gallery.json',
     thumbnailDirectory: 'src/components/chart-gallery/thumbnails',
     encoding: 'utf8',
-    menuJsonPath: 'src/data/menu.json',
+    menuJsonPath: 'src/pages/licensing/menu.json',
 };
 
 console.log('Generating gallery assets using gallery.json');
@@ -93,10 +93,12 @@ function generateThumbnails(galleryConfig) {
     const startTime = Date.now();
     const { thumbnailDirectory } = options;
 
-    if (!fs.existsSync(thumbnailDirectory)) {
-        fs.mkdirSync(thumbnailDirectory);
-    } else if (shouldGenerateAllScreenshots) {
-        emptyDirectory(thumbnailDirectory);
+    const tempDirectory = Path.join(thumbnailDirectory, '..', 'thumbnails-temp');
+
+    if (fs.existsSync(tempDirectory)) {
+        fs.emptyDirSync(tempDirectory);
+    } else {
+        fs.mkdirSync(tempDirectory);
     }
 
     const chrome = '"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"';
@@ -109,9 +111,9 @@ function generateThumbnails(galleryConfig) {
         .filter(name => shouldGenerateAllScreenshots || changedDirectories.indexOf(name) >= 0)
         .forEach(name => {
             try {
-                const url = `http://localhost:9000/documentation/examples/${options.rootPageName}/${name}/packages/vanilla/index.html`;
+                const url = `http://localhost:8000/example-runner/?library=charts&pageName=${options.rootPageName}&name=${name}&importType=packages&framework=javascript`;
                 execSync(`${chrome} --headless --disable-gpu --screenshot --window-size=800,570 "${url}"`, { stdio: 'pipe' });
-                fs.renameSync('screenshot.png', Path.join(thumbnailDirectory, `${name}.png`));
+                fs.renameSync('screenshot.png', Path.join(tempDirectory, `${name}.png`));
                 console.log(`Generated thumbnail for ${name}`);
             } catch (e) {
                 console.error(`Failed to generate thumbnail for ${name}`, e);
@@ -123,11 +125,17 @@ function generateThumbnails(galleryConfig) {
     const indexFile =
         `${names.map(name => `import ${getThumbnailName(name)} from './${toKebabCase(name)}.png';`).join('\n')}
 
-export default {
+const thumbnails = {
 ${names.map(name => `    '${toKebabCase(name)}': ${getThumbnailName(name)},`).join('\n')}
-}`;
+}
 
-    writeFile(Path.join(options.thumbnailDirectory, 'index.js'), indexFile);
+export default thumbnails;`;
+
+    writeFile(Path.join(tempDirectory, 'index.js'), indexFile);
+
+    fs.emptyDirSync(thumbnailDirectory);
+    fs.rmdirSync(thumbnailDirectory);
+    fs.renameSync(tempDirectory, thumbnailDirectory);
 
     console.log(`Finished generating thumbnails in ${(Date.now() - startTime) / 1000}s`);
 }
@@ -166,29 +174,6 @@ function toKebabCase(name) {
 
 function getJson(path) {
     return JSON.parse(fs.readFileSync(path, { encoding: options.encoding }));
-}
-
-function emptyDirectory(directory) {
-    if (!directory || directory.trim().indexOf('/') === 0) { return; }
-
-    try {
-        const files = fs.readdirSync(directory);
-
-        files.forEach(file => {
-            const filePath = Path.join(directory, file);
-
-            if (fs.statSync(filePath).isFile()) {
-                fs.unlinkSync(filePath);
-            }
-            else {
-                emptyDirectory(filePath);
-            }
-        });
-    }
-    catch (e) {
-        console.error(`Failed to empty ${directory}`, e);
-        return;
-    }
 }
 
 function writeFile(path, contents) {

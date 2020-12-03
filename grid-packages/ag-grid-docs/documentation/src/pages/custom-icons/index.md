@@ -29,7 +29,7 @@ You can change individual icons by overriding the background images for the resp
 ## Replace the Icons by Changing the Icon Font
 
 
-If you are using a [custom theme](./styling/) in your project, you can use theme parameters to change the icon font. We [provide an example](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla) that does this, and the relevant code looks like this:
+If you are using a [custom theme](./themes/) in your project, you can use theme parameters to change the icon font. We [provide an example](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla) that does this, and the relevant code looks like this:
 
 ```scss
 @import "~ag-grid-community/src/styles/ag-grid.scss";

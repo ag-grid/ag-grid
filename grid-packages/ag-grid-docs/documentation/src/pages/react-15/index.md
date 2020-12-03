@@ -3,7 +3,7 @@ title: "ag-Grid with React 15.x.x"
 frameworks: ["react"]
 ---
 
-[[note]]
+[[warning]]
 | Version 21.2.0 of `AgGridReact` is the last version that supports both React 15.x.x and React 16.x.x. <br/><br/>Version 22 onwards of `AgGridReact` will support React 16+ only.
 
 ### Control React Components Container
@@ -44,8 +44,8 @@ Doing this would result in the following being rendered:
 ```html
 <span class="ag-react-container"><span>Age: 24</span></span    >
 ```
-If you wish to override the style of this div you can either provide an implementation of 
-the `ag-react-container` class, or via the `getReactContainerStyle` or `getReactContainerClasses` 
+If you wish to override the style of this div you can either provide an implementation of
+the `ag-react-container` class, or via the `getReactContainerStyle` or `getReactContainerClasses`
 callbacks on the React component:
 
 ```js

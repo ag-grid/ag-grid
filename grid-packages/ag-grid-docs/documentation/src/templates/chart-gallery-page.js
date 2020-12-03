@@ -30,7 +30,7 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
                     name={pageName}
                     type="generated"
                     framework={framework}
-                    pageName={'charts-overview'}
+                    pageName={'charts'}
                     library="charts"
                     options={{ exampleHeight: '60vh' }} />
             </div>

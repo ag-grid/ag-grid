@@ -6,7 +6,7 @@ import { values } from "../utils/generic";
 export class ModuleRegistry {
 
     // having in a map a) removes duplicates and b) allows fast lookup
-    private static modulesMap: { [name: string]: Module } = {};
+    private static modulesMap: { [name: string]: Module; } = {};
     private static moduleBased: boolean | undefined;
 
     public static register(module: Module, moduleBased = true): void {
@@ -17,10 +17,10 @@ export class ModuleRegistry {
         } else {
             if (ModuleRegistry.moduleBased !== moduleBased) {
                 doOnce(() => {
-                        console.warn(`ag-Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.`);
-                        console.warn('Please see https://www.ag-grid.com/javascript-grid-packages-modules/ for more information.');
+                    console.warn(`ag-Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.`);
+                    console.warn('Please see https://www.ag-grid.com/documentation/javascript/packages-modules/ for more information.');
 
-                    },
+                },
                     'ModulePackageCheck');
             }
         }
@@ -40,7 +40,7 @@ export class ModuleRegistry {
         }
 
         const warningKey = reason + moduleName;
-        const warningMessage = `ag-Grid: unable to use ${reason} as module ${moduleName} is not present. Please see: https://www.ag-grid.com/javascript-grid-modules/`;
+        const warningMessage = `ag-Grid: unable to use ${reason} as module ${moduleName} is not present. Please see: https://www.ag-grid.com/documentation/javascript/modules/`;
 
         doOnce(() => {
             console.warn(warningMessage);

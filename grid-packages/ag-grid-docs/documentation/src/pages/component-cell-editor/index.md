@@ -171,7 +171,7 @@ colDef.cellEditorParams = {
 
 ## Registering Cell Renderers with Columns
 
-See the section [registering custom components](../grid-components/#registering-custom-components) for details on registering and using custom cell renderers.
+See the section [registering custom components](../components/#registering-custom-components) for details on registering and using custom cell renderers.
 
 ## Keyboard Navigation While Editing
 
@@ -321,7 +321,7 @@ if (instances.length > 0) {
 | ## Cell Editing
 |
 | It is possible to provide Angular cell editors's for ag-Grid to use if you are are using the Angular version of
-| ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to
+| ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to
 | register framework components.
 |
 | Your components need to implement `AgEditorComponent`. The ag Framework expects to find the `agInit` method
@@ -353,7 +353,7 @@ if (instances.length > 0) {
 | ## Cell Editing
 |
 | It is possible to provide React cell editors for ag-Grid to use if you are are using the React version of ag-Grid.
-| See [registering framework components](../grid-components/#registering-framework-components) for how to register
+| See [registering framework components](../components/#registering-framework-components) for how to register
 | framework components.
 |
 | ###  React Props
@@ -386,7 +386,7 @@ if (instances.length > 0) {
 | ##  Cell Editing
 |
 | It is possible to provide VueJS cell editors's for ag-Grid to use if you are are using the VueJS version of
-| ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to
+| ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to
 | register framework components.
 |
 | ###  VueJS Parameters
@@ -432,7 +432,7 @@ if (instances.length > 0) {
 | ##  Polymer Cell Editing
 |
 | It is possible to provide Polymer cell editors's for ag-Grid to use if you are are using the Polymer version of
-| ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to
+| ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to
 | register framework components.
 |
 | ###  Polymer Parameters

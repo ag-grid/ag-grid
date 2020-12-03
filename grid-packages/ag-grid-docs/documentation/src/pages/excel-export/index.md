@@ -1,13 +1,13 @@
 ---
 title: "Excel Export"
 enterprise: true
---- 
+---
 
 Excel Export allows exporting ag-Grid data to Excel using Open XML format (xlsx) or Excel's own XML format. The export can be initiated with with an API call or by using the right-click context menu on the Grid.
 
 [[note]]
 | This page covers Excel-specific features such as styling. For information on how to control what data is included in the export
-| and to format/transform the data as it is exported, see the [Export documentation](../javascript-grid-export/).
+| and to format/transform the data as it is exported, see the [Export documentation](../export/).
 
 Using this format allows for rich Excel files to be created with the following:
 
@@ -29,7 +29,7 @@ Using this format allows for rich Excel files to be created with the following:
 
 <api-documentation source='grid-api/api.json' section='export' names='["exportDataAsExcel(params)", "getDataAsExcel(params)"]'></api-documentation>
 
-The `params` object can contain all the [common export options](../grid-export/), as well as these Excel-specific options:
+The `params` object can contain all the [common export options](../export/), as well as these Excel-specific options:
 
 <api-documentation source='excel-export/resources/excel.json' section='exportProperties'></api-documentation>
 
@@ -55,7 +55,7 @@ An Excel style object has the following properties:
     - borderLeft
     - borderTop
     - borderRight
-    
+
 - `font` (optional):  The color must be declared:
     - bold. Boolean
     - color. A color in hexadecimal format
@@ -68,12 +68,12 @@ An Excel style object has the following properties:
     - underline. One of None, Subscript, and Superscript.
     - charSet. Number. Win32-dependent character set value.
     - family. String. Win32-dependent font family. One of Automatic, Decorative, Modern, Roman, Script, and Swiss
-    
+
 - `interior` (optional): The color and pattern must be declared:
     - `color`: A color in hexadecimal format
     - `pattern`: One of the following strings: None, Solid, Gray75, Gray50, Gray25, Gray125, Gray0625, HorzStripe, VertStripe, ReverseDiagStripe, DiagStripe, DiagCross, ThickDiagCross, ThinHorzStripe, ThinVertStripe, ThinReverseDiagStripe, ThinDiagStripe, ThinHorzCross, and ThinDiagCross
     - `patternColor`: A color in hexadecimal format
-    
+
 - `numberFormat` (optional): A javascript object with one property called format, this is any valid Excel format like: #,##0.00 (This formatting is used in the example below in the age column)
 
 - `protection` (optional): A javascript object with the following properties:
@@ -173,7 +173,7 @@ Headers are a special case, headers are exported to Excel as normal rows, so in 
 
 <grid-example title='Excel Export Without Styles' name='excel-export-without-styles' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
 
-## Example: Export With Styles 
+## Example: Export With Styles
 
 - Cells with only one style will be exported to Excel, as you can see in the Country and Gold columns
 

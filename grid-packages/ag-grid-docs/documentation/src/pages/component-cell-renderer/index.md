@@ -109,7 +109,7 @@ MyCellRenderer.prototype.destroy = function() {
 
 ## Registering Cell Renderers with Columns
 
-See the section [registering custom components](../grid-components/#registering-custom-components) for details on registering and using custom cell renderers.
+See the section [registering custom components](../components/#registering-custom-components) for details on registering and using custom cell renderers.
 
 ## Component Refresh
 
@@ -323,7 +323,7 @@ if (instances.length > 0) {
 | ## Cell Rendering
 |
 | It is possible to provide Angular cell renderers for ag-Grid to use if you are are using the Angular version of ag-Grid.
-| See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
+| See [registering framework components](../components/#registering-framework-components) for how to register framework components.
 |
 | ### Example: Rendering using Angular Components
 | <grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "enterprise": false, "extras": ["fontawesome", "bootstrap"] }'></grid-example>
@@ -351,7 +351,7 @@ if (instances.length > 0) {
 [[only-react]]
 | ## Cell Rendering
 |
-| It is possible to provide React cell renderers for ag-Grid to use if you are are using the React version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
+| It is possible to provide React cell renderers for ag-Grid to use if you are are using the React version of ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to register framework components.
 |
 | ### Example: Rendering using Components
 |
@@ -403,7 +403,7 @@ if (instances.length > 0) {
 [[only-vue]]
 | ## Cell Rendering
 |
-| It is possible to provide VueJS cell renderers for ag-Grid to use if you are are using the VueJS version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
+| It is possible to provide VueJS cell renderers for ag-Grid to use if you are are using the VueJS version of ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to register framework components.
 |
 | ### Example: Rendering using Components
 |
@@ -454,7 +454,7 @@ if (instances.length > 0) {
 [[only-javascript]]
 | ## Polymer Cell Rendering
 |
-| It is possible to provide Polymer cell renderers for ag-Grid to use if you are are using the Polymer version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
+| It is possible to provide Polymer cell renderers for ag-Grid to use if you are are using the Polymer version of ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to register framework components.
 |
 | ### Example: Rendering using Polymer Components
 |

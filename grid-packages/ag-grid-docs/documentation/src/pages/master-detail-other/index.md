@@ -66,11 +66,11 @@ Master / Detail is not supported with [Tree Data](../tree-data). This is because
 
 ### Layouts
 
-It is not possible to mix [DOM layout](../width-and-height/#dom-layout) for master detail. This is because the layout is a CSS setting that would be inherited by all grids contained with the master grid. So if your master grid was 'for-print', then all child grids would pick up the 'for-print' layout.
+It is not possible to mix [DOM layout](../grid-size/#dom-layout) for master detail. This is because the layout is a CSS setting that would be inherited by all grids contained with the master grid. So if your master grid was 'for-print', then all child grids would pick up the 'for-print' layout.
 
-When using Master / Detail and [for-print](../for-print/), then all detail grids need to use for-print.
+When using Master / Detail and [for-print](../printing/), then all detail grids need to use for-print.
 
-When using Master / Detail and [auto-height](../width-and-height/#auto-height), then all detail grids need to use auto-height.
+When using Master / Detail and [auto-height](../grid-size/#auto-height), then all detail grids need to use auto-height.
 
 ### Range Selection
 

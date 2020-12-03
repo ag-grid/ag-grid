@@ -36,7 +36,7 @@
         },
         "suppressColumnMoveAnimation": {
             "default": false,
-            "description": "If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default <a href='../styling/'>themes</a>, this results in no animation when moving columns."
+            "description": "If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default <a href='../themes/'>themes</a>, this results in no animation when moving columns."
         },
         "suppressMovableColumns": {
             "default": false,
@@ -721,7 +721,7 @@
             "description": "Specifies the params to be used by the default detail <a href='../component-cell-renderer'>Cell Renderer</a>.",
             "more": {
                 "name": " DetailDetail Grids",
-                "url": "../master-detail-detail-grids"
+                "url": "../master-detail-grids/"
             }
         },
         "keepDetailRows": {
@@ -769,7 +769,7 @@
             "description": "Rules which can be applied to include certain CSS classes. See <a href='../row-styles/#row-class-rules'>Row Class Rules</a>."
         },
         "excelStyles": {
-            "description": "The list of Excel styles to be used when <a href='../excel/'>exporting to Excel</a>"
+            "description": "The list of Excel styles to be used when <a href='../excel-export/'>exporting to Excel</a>"
         },
         "scrollbarWidth": {
             "description": "Tell the grid how wide the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations."
@@ -856,7 +856,7 @@
         },
         "enableCharts": {
             "default": false,
-            "description": "Set to `true` to <a href='../charts-integrated-overview/#enabling-charts'>Enable Charts</a>."
+            "description": "Set to `true` to <a href='../integrated-charts/#enabling-charts'>Enable Charts</a>."
         },
         "chartThemes": {
             "default": [
@@ -866,13 +866,13 @@
                 "ag-vivid",
                 "ag-solar"
             ],
-            "description": "The list of chart themes to be used, see <a href='../charts-integrated-customisation/#chart-themes'>Chart Themes</a>."
+            "description": "The list of chart themes to be used, see <a href='../integrated-charts-customisation/#chart-themes'>Chart Themes</a>."
         },
         "customChartThemes": {
-            "description": "A map containing custom chart themes, see <a href='../charts-integrated-customisation/#custom-chart-themes'>Custom Chart Themes</a>."
+            "description": "A map containing custom chart themes, see <a href='../integrated-charts-customisation/#custom-chart-themes'>Custom Chart Themes</a>."
         },
         "chartThemeOverrides": {
-            "description": "Chart theme overrides applied to all themes, see <a href='../charts-integrated-customisation/#overriding-existing-themes'>Overriding Existing Themes</a>."
+            "description": "Chart theme overrides applied to all themes, see <a href='../integrated-charts-customisation/#overriding-existing-themes'>Overriding Existing Themes</a>."
         }
     },
     "components": {
@@ -880,7 +880,7 @@
             "displayName": "Components",
             "page": {
                 "name": "Components",
-                "url": "../grid-components/"
+                "url": "../components/"
             }
         },
         "components": {
@@ -906,7 +906,7 @@
             "description": "Set to `true` to set <a href='../value-cache/'>value cache</a> to not expire after data updates."
         },
         "defaultExportParams": {
-            "description": "A default configuration object used to export to <a href='../export/'>CSV</a> or <a href='../excel/'>Excel</a>."
+            "description": "A default configuration object used to export to <a href='../csv-export/'>CSV</a> or <a href='../excel-export/'>Excel</a>."
         },
         "suppressMiddleClickScrolls": {
             "default": false,
@@ -939,7 +939,7 @@
                 "autoHeight",
                 "print"
             ],
-            "description": "Switch between layout options. See <a href='../for-print/'>Printing</a> and <a href='../width-and-height/#auto-height'>Auto Height</a>."
+            "description": "Switch between layout options. See <a href='../printing/'>Printing</a> and <a href='../grid-size/#auto-height'>Auto Height</a>."
         },
         "ensureDomOrder": {
             "default": false,

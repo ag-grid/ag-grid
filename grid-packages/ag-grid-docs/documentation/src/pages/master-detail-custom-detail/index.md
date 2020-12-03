@@ -40,7 +40,7 @@ It is possible to provide a Customer Detail Grid that does a similar job to the 
 
 <grid-example title='Custom Detail Cell Renderer with Grid' name='custom-detail-with-grid' type='generated' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
-In order for the Detail Grid's API to be available via the Master Grid as explained in [Accessing Detail Grids](../master-detail-detail-grids/#accessing-detail-grids), a Grid Info object needs to be registered with the Master Grid.
+In order for the Detail Grid's API to be available via the Master Grid as explained in [Accessing Detail Grids](../master-detail-grids/#accessing-detail-grids), a Grid Info object needs to be registered with the Master Grid.
 
 When the Detail Grid is created, register it via `masterGridApi.addDetailGridInfo()` and when the Detail Grid is destroyed, unregister it via `masterGridApi.removeDetailGridInfo()`. A Detail ID is required when calling these methods. Any unique ID can be used, however for consistency with how the default Detail Cell Renderer works it's recommended to use the ID of the detail Row Node.
 

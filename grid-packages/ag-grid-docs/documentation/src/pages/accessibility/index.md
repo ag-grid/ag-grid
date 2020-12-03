@@ -8,13 +8,13 @@ ag-Grid provides amongst the best support for accessibility compared to other gr
 
 Even if you are not mandated to conform to any particular accessibility standard, it can be helpful to understand the guidelines outlined as they are generally good practices worth incorporating into your web based applications.
 
-Currently the most commonly encountered conformance guidelines are: 
+Currently the most commonly encountered conformance guidelines are:
 
 - [ADA](https://www.ada.gov) - US Department of Justice
 - [Section 508](https://www.section508.gov) - US federal agencies
 - [WCAG 2.0](https://www.w3.org/WAI/intro/wcag) - globally accepted standard
 
-WCAG 2.0 has 3 levels of conformance; A, AA and AAA (in order of conformance) 
+WCAG 2.0 has 3 levels of conformance; A, AA and AAA (in order of conformance)
 
 As meeting WCAG 2.0 level AA guidelines also meets the ADA and Section 508 standards, it is likely that most organisations will want to target this standard.
 
@@ -26,7 +26,7 @@ Using our demo page as an example, the chrome plugin [Colorblinding](https://chr
 
 <image-caption src="accessibility/resources/accessibility-colour-contrast.png" alt="High Contrast Theme" maxwidth="50rem" constrained="true"></image-caption>
 
-To create a high contrast theme please check out the [Themes](../styling/) documentation for details.
+To create a high contrast theme please check out the [Themes](../themes/) documentation for details.
 
 ## Keyboard navigation
 
@@ -41,9 +41,9 @@ interact with grid based application.
 
 There are numerous screen readers available, however right now the most popular screen reader for Windows is [JAWS](https://www.freedomscientific.com/Downloads/JAWS) and for MAC users it is the embedded [VoiceOver](http://help.apple.com/voiceover/info/guide) software. Our testing has focused on these screen readers.
 
-In order to cover the widest range of use cases and screen readers, ag-Grid has taken a standards-based approach to implementing accessibility support. Instead of optimizing our implementation for specific screen readers, we have followed the W3C WCAG standard and added the relevant ARIA-tags to let screen readers announce any ag-Grid element and its state. 
+In order to cover the widest range of use cases and screen readers, ag-Grid has taken a standards-based approach to implementing accessibility support. Instead of optimizing our implementation for specific screen readers, we have followed the W3C WCAG standard and added the relevant ARIA-tags to let screen readers announce any ag-Grid element and its state.
 
-However, different screen readers interpret the WCAG standard in different ways. As a result, they may generate different announcements for the same ag-Grid element, or no announcement at all. 
+However, different screen readers interpret the WCAG standard in different ways. As a result, they may generate different announcements for the same ag-Grid element, or no announcement at all.
 
 This is why we recommend testing how different screen readers announce the UI of the application you're using, selecting the best one and recommending that to your users. We believe this is the best way to guide your users how to get the best possible experience at this time until screen readers improve their support for the WCAG standard.
 
@@ -117,7 +117,7 @@ gridOptions.ensureDomOrder = true
 
 In order to ensure all grid elements are loaded, you need to disable column and row virtualization. The best way to do this is to use [pagination](../row-pagination/). This way you can reduce the initial loading time and memory footprint while ensuring all elements for these rows are loaded for screen readers.
 
-If your requirement is to use scrolling instead of pagination, you can disable row virtualisation at the expense  of increasing the memory footprint. Please test the performance of this and if it's not satisfactory, switch to  using pagination instead. 
+If your requirement is to use scrolling instead of pagination, you can disable row virtualisation at the expense  of increasing the memory footprint. Please test the performance of this and if it's not satisfactory, switch to  using pagination instead.
 
 Column virtualisation can be disabled as follows:
 
@@ -151,10 +151,10 @@ The example below presents a simple grid layout with the following properties en
 Using advanced functionality in ag-Grid makes the DOM structure incompatible with the assumptions screen readers make. This results in a few limitations in accessibility when specific functionality is used:
 
 
-- ### Navigation to pinned rows/columns 
+- ### Navigation to pinned rows/columns
     Screen readers assume that the visual and DOM element order are identical. Specifically, when you pin a row/column, it  causes elements to be rendered in different containers. This is why you cannot use screen readers to navigate into a  pinned row/column cells, as in fact, this means they're rendered in a different element from the rest of the columns/rows which are scrollable.
 
-- ### Limitations announcing the correct column name in grouped columns 
+- ### Limitations announcing the correct column name in grouped columns
     Even though all aria tags have been applied to th necessary elements, some screen readers have trouble navigating the tags when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing the correct column names.
 
 - ### No announcements of state change of a gridcell or gridheader

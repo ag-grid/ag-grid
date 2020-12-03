@@ -167,11 +167,11 @@ Note that:
 
 [[only-angular]]
 | ## Floating Filters
-| 
-| It is possible to provide an Angular floating filter for ag-Grid to use if you are are using the Angular version of 
-| ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to 
+|
+| It is possible to provide an Angular floating filter for ag-Grid to use if you are are using the Angular version of
+| ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to
 | register framework components.
-| 
+|
 | The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Angular.
 |
 | <grid-example title='Angular Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
@@ -179,25 +179,25 @@ Note that:
 [[only-react]]
 | ## Floating Filters
 |
-| It is possible to provide a React floating filter for ag-Grid to use if you are are using the React version of ag-Grid. 
-| See [registering framework components](../grid-components/#registering-framework-components) for how to register 
+| It is possible to provide a React floating filter for ag-Grid to use if you are are using the React version of ag-Grid.
+| See [registering framework components](../components/#registering-framework-components) for how to register
 | framework components.
-| 
+|
 | The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with React.
-| 
+|
 | <grid-example title='React Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "onlyShow": "react", "extras": ["bootstrap"] }'></grid-example>
 |
-| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please 
+| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please
 | see [here](https://www.ag-grid.com/react-hooks/) for more information.
 
 [[only-vue]]
 | ## Vue Floating Filters
-| 
-| It is possible to provide a Vue floating filter for ag-Grid to use if you are are using the Vue version of 
-| ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how 
+|
+| It is possible to provide a Vue floating filter for ag-Grid to use if you are are using the Vue version of
+| ag-Grid. See [registering framework components](../components/#registering-framework-components) for how
 | to register framework components.
-| 
+|
 | The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Vue.
-| 
+|
 | <grid-example title='Vue Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
 

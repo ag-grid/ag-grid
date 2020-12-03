@@ -5,7 +5,7 @@ enterprise: true
 
 This section shows how the Server-Side Row Model can be configured with a Master / Detail view.
 
-The ability to nest grids within grids is commonly referred to as Master / Detail. 
+The ability to nest grids within grids is commonly referred to as Master / Detail.
 Here the top-level grid is referred to as the 'master grid' and the nested grid is referred to as the 'detail grid'.
 
 Master / Details is configured the same way for the Server-Side Row Model and the Client-Side Row Model.
@@ -167,8 +167,7 @@ See [Master Detail Auto Height](../master-detail-height/#auto-height) for more d
 
 ## Lazy Loading Detail Rows
 
-In the examples above, the data for the detail grid was returned with the master row. However it is also possible to lazy-load data for the detail row, see: [Providing Rows](../master-detail-detail-grids/#providing-rows).
-
+In the examples above, the data for the detail grid was returned with the master row. However it is also possible to lazy-load data for the detail row, see: [Providing Rows](../master-detail-grids/#providing-rows).
 
 However note that detail rows will be purged once the master row is closed, or if the detail row leaves the viewport through scrolling. In both cases data will need to be fetched again.
 

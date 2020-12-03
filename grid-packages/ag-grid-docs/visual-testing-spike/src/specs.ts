@@ -191,7 +191,7 @@ export const specs: SpecDefinition[] = [
         community: true
     },
     {
-        exampleSection: 'for-print',
+        exampleSection: 'printing',
         exampleId: 'for-print-complex',
         community: true,
         defaultViewport: { width: 800, height: 1000 },
@@ -259,7 +259,7 @@ export const specs: SpecDefinition[] = [
         ]
     },
     {
-        exampleSection: 'charts-integrated-range-chart',
+        exampleSection: 'integrated-charts-range-chart',
         exampleId: 'defining-categories-and-series',
         defaultViewport: {
             width: 800,

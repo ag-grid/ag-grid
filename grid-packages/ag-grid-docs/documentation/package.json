@@ -63,6 +63,7 @@
     "use-query-params": "1.1.9"
   },
   "devDependencies": {
+    "fs-extra": "9.0.1",
     "prettier": "2.1.2"
   }
 }

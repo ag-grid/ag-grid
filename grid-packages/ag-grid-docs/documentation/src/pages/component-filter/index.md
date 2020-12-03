@@ -174,7 +174,7 @@ There are two ways you can get fix this problem:
 | ## Angular Filtering
 |
 | It is possible to provide Angular filters for ag-Grid to use if you are are using the Angular version of ag-Grid.
-| See [registering framework components](../grid-components/#registering-framework-components) for how to register
+| See [registering framework components](../components/#registering-framework-components) for how to register
 | framework components.
 |
 | Your Angular components need to implement `AgFilterComponent`. The ag Framework expects to find the mandatory
@@ -253,7 +253,7 @@ There are two ways you can get fix this problem:
 | ## React Filtering
 |
 | It is possible to provide React filters for ag-Grid to use if you are are using the React version of ag-Grid.
-| See [registering framework components](../grid-components/#registering-framework-components) for how to register
+| See [registering framework components](../components/#registering-framework-components) for how to register
 | framework components.
 |
 | ###  React Props
@@ -334,7 +334,7 @@ There are two ways you can get fix this problem:
 | ## VueJS Filtering
 |
 | It is possible to provide VueJS filters for ag-Grid to use if you are are using the VueJS version of ag-Grid.
-| See [registering framework components](../grid-components/#registering-framework-components) for how to register
+| See [registering framework components](../components/#registering-framework-components) for how to register
 | framework components.
 |
 | ###  VueJS Params
@@ -407,7 +407,7 @@ There are two ways you can get fix this problem:
 | ## Polymer Filtering
 |
 | It is possible to provide Polymer filters for ag-Grid to use if you are are using the Polymer version of
-| ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to
+| ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to
 | register framework components.
 |
 | ###  Specifying a Polymer Filter

@@ -58,7 +58,7 @@ interface INoRowsOverlayParams {
 
 ## Registering Overlay Components
 
-See the section [registering custom components](../grid-components/#registering-custom-components) for details on registering and using custom overlays.
+See the section [registering custom components](../components/#registering-custom-components) for details on registering and using custom overlays.
 
 ## Example: Custom Overlay Components
 

@@ -58,7 +58,7 @@ The example below shows a simple Master / Detail with all the above configured.
 
 [[note]]
 | To learn more about `detailCellRendererParams` configuration see the
-| [Detail Grids](../master-detail-detail-grids/) section.
+| [Detail Grids](../master-detail-grids/) section.
 
 <grid-example title='Master Detail Example' name='simple' type='generated' options='{ "enterprise": true, "exampleHeight": 535, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
@@ -81,6 +81,4 @@ Top level Master Detail properties available on the Grid Options:
 
 Detail Cell Renderer parameters available on the `detailCellRendererParams` object:
 
-<api-documentation source='master-detail-detail-grids/resources/properties.json' section="detailCellRenderer"></api-documentation>
-
-
+<api-documentation source='master-detail-grids/resources/properties.json' section="detailCellRenderer"></api-documentation>

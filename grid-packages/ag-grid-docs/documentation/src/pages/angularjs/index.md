@@ -5,7 +5,7 @@ frameworks: ["angular"]
 
 This page details how to set up ag-Grid inside and AngularJS 1.x application.
 
-When the ag-Grid script loads, it does not register with AngularJS 1.x. This is because AngularJS 1.x 
+When the ag-Grid script loads, it does not register with AngularJS 1.x. This is because AngularJS 1.x
 is an optional part of ag-Grid and you need to tell ag-Grid you want to use it.
 
 ## Download ag-Grid-Enterprise
@@ -54,7 +54,7 @@ is an optional part of ag-Grid and you need to tell ag-Grid you want to use it.
 ag-Grid-Enterprise is also distributed as both a self contained bundle and also via a CommonJS package.
 
 
-As with the [ag-Grid example](https://www.ag-grid.com/example.php), all we need to do is reference 
+As with the [ag-Grid example](https://www.ag-grid.com/example.php), all we need to do is reference
 the ag-grid-enterprise dependency and we're good to go:
 
 ```html
@@ -72,7 +72,7 @@ the ag-grid-enterprise dependency and we're good to go:
 [[note]]
 | **Self Contained Bundles**
 | <br/>
-| Do **not** include both ag-Grid Community and ag-Grid-Enterprise self contained bundles. 
+| Do **not** include both ag-Grid Community and ag-Grid-Enterprise self contained bundles.
 | The ag-Grid-Enterprise bundle contains ag-Grid Community within it.
 
 The creation of the Grid would be the same as the ag-Grid example above.
@@ -91,8 +91,8 @@ you need to do. Any grid you create will be an enterprise grid once you load the
 
 ### CommonJS
 
-If using CommonJS, you one need to include ag-Grid-Enterprise into your project. You do not need 
-to execute any code inside it. When ag-Grid-Enterprise loads, it will register with ag-Grid such 
+If using CommonJS, you one need to include ag-Grid-Enterprise into your project. You do not need
+to execute any code inside it. When ag-Grid-Enterprise loads, it will register with ag-Grid such
 that the enterprise features are available when you use ag-Grid.
 
 ```js
@@ -111,7 +111,7 @@ import { Grid } from '@ag-grid-community/all-modules'
 
 ### Creating the AngularJS 1.x Module
 
-Include ag-Grid as a dependency of your module like this: 
+Include ag-Grid as a dependency of your module like this:
 
 ```js
 // if you're using ag-Grid-Enterprise, you'll need to provide the License Key before doing anything else
@@ -127,15 +127,15 @@ var module = angular.module("example", ["agGrid"]);
 
 ### ag-Grid div
 
-To include a grid in your html, add the `ag-grid` attribute to a div. The value 
+To include a grid in your html, add the `ag-grid` attribute to a div. The value
 of the div should be the provided grid options on the scope.
 
-It is also usual to provide a styling theme to the grid. Three themes come with the 
-grid, `ag-theme-alpine`, `ag-theme-alpine` and `ag-theme-material`. Each one is set 
+It is also usual to provide a styling theme to the grid. Three themes come with the
+grid, `ag-theme-alpine`, `ag-theme-alpine` and `ag-theme-material`. Each one is set
 by applying the corresponding class of the same name to the div.
 
 
-You must provide **width and height** to your grid. The grid is programmed to fill 
+You must provide **width and height** to your grid. The grid is programmed to fill
 the width and height you give it.
 
 
@@ -148,7 +148,7 @@ the width and height you give it.
 
 ### Grid Options
 
-The grid options provide ag-Grid with the details needed to render. At a minimum you 
+The grid options provide ag-Grid with the details needed to render. At a minimum you
 should provide the columns (columnDefs) and the rows (rowData).
 
 
@@ -158,29 +158,29 @@ should provide the columns (columnDefs) and the rows (rowData).
 
 ## Events & Digest Cycle
 
-For AngularJS 1.x - ag-Grid does not not fire events inside an Angular JS digest cycle. This is done on 
-purpose for performance reasons, as there are many events fired, even if you don't listen to them. 
-Firing the digest cycle for each one would kill performance. So you may want to $scope.$apply() after you 
+For AngularJS 1.x - ag-Grid does not not fire events inside an Angular JS digest cycle. This is done on
+purpose for performance reasons, as there are many events fired, even if you don't listen to them.
+Firing the digest cycle for each one would kill performance. So you may want to $scope.$apply() after you
 handle the event.
 
 ## Destroy
 
-If using ag-Grid's AngularJS direction, you do not need to manually clean up the grid. The grid ties in 
+If using ag-Grid's AngularJS direction, you do not need to manually clean up the grid. The grid ties in
 with the AngularJS 1.x lifecycle and releases all resources when the directive is destroyed.
 
 ## Advanced AngularJS 1.x Example
 
-The below example has much more details. The mechanism for setting up the grid is the same as above. 
-Don't worry about the finer details for now, how all the different options are configured is explained 
+The below example has much more details. The mechanism for setting up the grid is the same as above.
+Don't worry about the finer details for now, how all the different options are configured is explained
 in the relevant parts of the documentation.
 
 <grid-example title='Basic AngularJS 1.x ag-Grid' name='basic2' type='vanilla' options='{ "exampleHeight": 460, "extras": ["angularjs1"] }'></grid-example>
 
 ## Angular 1.x and ag-Grid Components
 
-ag-Grid does not provide direct support for it's [components](../grid-components/) and AngularJS 1.x. 
-If you want to put custom AngularJS 1.x components into ag-Grid, follow the 
-[instructions for plain JavaScript component](../getting-started/). You will then need to manage creating 
+ag-Grid does not provide direct support for it's [components](../components/) and AngularJS 1.x.
+If you want to put custom AngularJS 1.x components into ag-Grid, follow the
+[instructions for plain JavaScript component](../getting-started/). You will then need to manage creating
 and destroying child scopes yourself inside the `init()` and `destroy()` methods.
 
 Below shows an example of using ag-Grid Filter, Header and Cell Renderer components. The following can be noted:
@@ -200,21 +200,21 @@ Below shows an example of using ag-Grid Filter, Header and Cell Renderer compone
 
 ## Angular Compiling
 
-Angular 1.x is great. It allows us to build large end-to-end single page web apps with relative ease. 
-However the author of ag-Grid is of the opinion that not everything should be built in Angular. 
-Angular 1.x does come with a disadvantage, it can slow things down. ag-Grid does not use 
+Angular 1.x is great. It allows us to build large end-to-end single page web apps with relative ease.
+However the author of ag-Grid is of the opinion that not everything should be built in Angular.
+Angular 1.x does come with a disadvantage, it can slow things down. ag-Grid does not use
 Angular 1.x (or any other framework) underneath the hood, it is all blazing fast raw Javascript.
 
-But maybe you are not worried about performance. Maybe you are not displaying that many rows and 
-columns. And maybe you want to provide your own cell renderers and use Angular here. For whatever 
+But maybe you are not worried about performance. Maybe you are not displaying that many rows and
+columns. And maybe you want to provide your own cell renderers and use Angular here. For whatever
 reason, it is possible to turn Angular on for Angular version 1.x.
 
-When [Angular is turned on in ag-Grid](../getting-started/), every time a row is inserted, a new 
-child Angular Scope is created for that row. This scope gets the row attached to it so it's 
+When [Angular is turned on in ag-Grid](../getting-started/), every time a row is inserted, a new
+child Angular Scope is created for that row. This scope gets the row attached to it so it's
 available to any Angular logic inside the cell.
 
-Each cell within the row does not get a new child scope. So if placing item inside the child scope 
-for the row, be aware that it is shared across all cells for that row. If you want a cell to 
+Each cell within the row does not get a new child scope. So if placing item inside the child scope
+for the row, be aware that it is shared across all cells for that row. If you want a cell to
 have it's own private scope, consider using a directive for the renderer that will introduce a new scope.
 
 
@@ -235,16 +235,16 @@ Below then uses three columns rendered using custom Angular renderers.
 <grid-example title='Angular compiling' name='compiling' type='vanilla' options='{ "extras": ["angularjs1"] }'></grid-example>
 
 [[note]]
-| When scrolling the example above up and down, the cells rendered using Angular are blank 
+| When scrolling the example above up and down, the cells rendered using Angular are blank
 | initially, and filled in during the next Angular digest cycle. This behaviour the author
 | has observed in other Angular grid implementations. This is another reason why the author
 | prefers non-Angular rendering for large grids.
 
 ## Cell Templates
 
-[Cell Templates](../component-cell-renderer/#angular-cell-render-components) allow you to specify 
-templates to use to render your cells. This is handy if you want to put JavaScript markup with 
-AngularJS 1.x bindings as the cells. Cell templates are specified in the column definition by 
+[Cell Templates](../component-cell-renderer/#angular-cell-render-components) allow you to specify
+templates to use to render your cells. This is handy if you want to put JavaScript markup with
+AngularJS 1.x bindings as the cells. Cell templates are specified in the column definition by
 providing a template as a string or a templateUrl to load the template from the server.
 
 If using templateUrl, then the html is cached. The server is only hit once per template and it is reused.
@@ -256,7 +256,7 @@ The example below uses cell templates for the first three columns.
 - **Col 3 - ** The third column is similar to the second, with the difference that it loads the template from the server.
 
 [[note]]
-| In the example, as you scroll up and down, the redraw on the AngularJS 1.x columns has a lag. 
+| In the example, as you scroll up and down, the redraw on the AngularJS 1.x columns has a lag.
 | This is waiting for the AngularJS 1.x digest cycle to kick in to populate the values into these rows.
 
 <grid-example title='Cell Templates' name='cell-templates' type='vanilla' options='{ "enterprise": true, "extras": ["angularjs1"] }'></grid-example>

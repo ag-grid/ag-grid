@@ -110,7 +110,7 @@ gtm_data_layer('community-enterprise');
                         </p>
                         <h3 style="margin-top: 26px;">ag-Charts Community</h3>
                         <p>
-                            ag-Charts Community (a.k.a. <a href="./javascript-charts-overview/">Standalone Charts</a>)
+                            ag-Charts Community (a.k.a. <a href="./documentation/javascript/charts/">Standalone Charts</a>)
                             is a free to use product distributed under the
                             <a href="./eula/AG-Grid-Community-License.html">MIT License</a>.
                             It is free to use in your production environments.
@@ -127,8 +127,8 @@ gtm_data_layer('community-enterprise');
                             ag-Grid Enterprise is a commercial product distributed under our
                             <a href="./eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
                             technical staff. It has advanced functionality like Row Grouping, Range Selection,
-                            Master / Detail, Server Side Row Model and <a href="./javascript-grid-set-license/">more</a>.
-                            ag-Grid Enterprise also comes with <a href="./javascript-grid-charts-integrated-overview/">Integrated Charts</a>, allowing users to create charts
+                            Master / Detail, Server Side Row Model and <a href="/documentation/javascript/licensing/">more</a>.
+                            ag-Grid Enterprise also comes with <a href="./documentation/javascript/integrated-charts/">Integrated Charts</a>, allowing users to create charts
                             using the grid's UI.
                         </p>
                         <p>

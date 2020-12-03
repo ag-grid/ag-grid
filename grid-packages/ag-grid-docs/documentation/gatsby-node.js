@@ -4,7 +4,7 @@ const { createFilePath } = require('gatsby-source-filesystem');
 const { GraphQLString } = require('gatsby/graphql');
 const fs = require('fs-extra');
 const supportedFrameworks = require('./src/utils/supported-frameworks.js');
-const chartGallery = require('./src/pages/charts-overview/gallery.json');
+const chartGallery = require('./src/pages/charts/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 
 /* We override this to allow us to specify the directory structure of the example files, so that we can reference
@@ -141,7 +141,7 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
 
         supportedFrameworks.forEach(framework => {
             createPage({
-                path: `/${framework}/charts-overview/${toKebabCase(name)}/`,
+                path: `/${framework}/charts/${toKebabCase(name)}/`,
                 component: chartGalleryPageTemplate,
                 context: { frameworks: supportedFrameworks, framework, framework, name, description, previous, next }
             });

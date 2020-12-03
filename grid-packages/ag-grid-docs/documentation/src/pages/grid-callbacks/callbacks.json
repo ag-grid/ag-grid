@@ -113,14 +113,14 @@
             "description": "Callback to be used to with charts to override default chart options.",
             "more": {
                 "name": "Overriding Chart Options",
-                "url": "../javascript-grid-charts-integrated-customisation/#overriding-chart-options"
+                "url": "../integrated-charts-customisation/#overriding-chart-options"
             }
         },
         "getChartToolbarItems(params)": {
             "description": "Callback to be used to customise the chart toolbar items.",
             "more": {
                 "name": "Configuring Toolbar Items",
-                "url": "../javascript-grid-charts-integrated-chart-toolbar/#configuring-toolbar-items-and-menu-panels"
+                "url": "../integrated-charts-toolbar/#configuring-toolbar-items-and-menu-panels"
             }
         },
         "paginationNumberFormatter(params)": {

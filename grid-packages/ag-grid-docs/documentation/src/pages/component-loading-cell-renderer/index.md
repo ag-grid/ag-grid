@@ -6,7 +6,7 @@ Loading cell renderers allow you to add your own loading renderers to ag-Grid. U
 
 ## Loading Cell Renderer Interface
 
-Implement this interface to provide a custom loading cell renderer when loading rows.  
+Implement this interface to provide a custom loading cell renderer when loading rows.
 
 ```ts
 interface ILoadingCellRenderer {
@@ -32,7 +32,7 @@ interface ILoadingCellRendererParams {
 
 ## Registering Loading Cell Renderer Components
 
-See the section [registering custom components](../grid-components/#registering-custom-components) for details on registering and using custom loading cell renderers.
+See the section [registering custom components](../components/#registering-custom-components) for details on registering and using custom loading cell renderers.
 
 ## Example: Custom Loading Cell Renderer
 

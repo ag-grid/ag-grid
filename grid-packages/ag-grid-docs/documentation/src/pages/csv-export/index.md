@@ -6,7 +6,7 @@ The data can be exported to CSV with an API call, or using the right-click conte
 
 [[note]]
 | This page covers CSV-specific features. For information on how to control what data is included in the export
-| and to format/transform the data as it is exported, see the [Export documentation](../grid-export/).
+| and to format/transform the data as it is exported, see the [Export documentation](../export/).
 
 ## API
 
@@ -18,13 +18,13 @@ The data can be exported to CSV with an API call, or using the right-click conte
 
 <api-documentation source='grid-api/api.json' section='export' names='["exportDataAsCsv(params)", "getDataAsCsv(params)"]'></api-documentation>
 
-The `params` object can contain all the [common export options](../grid-export/), as well as these CSV-specific options:
+The `params` object can contain all the [common export options](../export/), as well as these CSV-specific options:
 
 <api-documentation source='csv-export/resources/csv.json' section='exportProperties'></api-documentation>
 
 ## Appending header and footer content
 
-The recommended way to append header and footer content is by passing an array of ExcelCell objects to `customHeader` or `customFooter`, as described in the [Export](../grid-export/) documentation. This ensures that your header content is correctly escaped, and if your application also exports Excel data you can use the same data for both exports.
+The recommended way to append header and footer content is by passing an array of ExcelCell objects to `customHeader` or `customFooter`, as described in the [Export](../export/) documentation. This ensures that your header content is correctly escaped, and if your application also exports Excel data you can use the same data for both exports.
 
 For compatibility with earlier versions of the Grid you can also pass a string, which will be inserted into the CSV file without any processing. You are responsible for formatting the string according to the CSV standard.
 
