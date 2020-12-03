@@ -56,7 +56,7 @@ meta_and_links($title, $keywords, $description, false);
         </div>
 
         <section class="main-buttons">
-            <a class="get-started-btn" href="/javascript-grid-getting-started/" role="button">Get Started</a>
+            <a class="get-started-btn" href="/documentation/javascript/getting-started/" role="button">Get Started</a>
             <a class="get-started-btn" href="/example.php" role="button">View Demo</a>
         </section>
 
@@ -103,12 +103,12 @@ meta_and_links($title, $keywords, $description, false);
 
                 <div>
                     <ul id="frameworks">
-                        <li id="fw-javascript"><a href="./javascript-grid/">JavaScript</a></li>
-                        <li id="fw-angular"><a href="./angular-grid/">Angular</a></li>
-                        <li id="fw-react"><a href="./react-grid/">React</a></li>
-                        <li id="fw-vue"><a href="./vuejs-grid/">Vue.js</a></li>
-                        <li id="fw-angularjs"><a href="./best-angularjs-grid/">AngularJS 1.x</a></li>
-                        <li id="fw-polymer"><a href="./polymer-getting-started/">Polymer</a></li>
+                        <li id="fw-javascript"><a href="/documentation/javascript/getting-started/">JavaScript</a></li>
+                        <li id="fw-angular"><a href="/documentation/angular/getting-started/">Angular</a></li>
+                        <li id="fw-react"><a href="/documentation/react/getting-started/">React</a></li>
+                        <li id="fw-vue"><a href="/documentation/vue/getting-started/">Vue.js</a></li>
+                        <li id="fw-angularjs"><a href="/documentation/angular/angularjs/">AngularJS 1.x</a></li>
+                        <li id="fw-polymer"><a href="/documentation/javascript/polymer-getting-started/">Polymer</a></li>
                     </ul>
                 </div>
             </section>

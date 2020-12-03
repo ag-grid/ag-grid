@@ -7,7 +7,7 @@
 # ag-Grid
 
 ag-Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github#/performance/1), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-grid-getting-started/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github).
+It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github#/performance/1), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/documentation/javascript/getting-started/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github).
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
@@ -46,15 +46,14 @@ Here are some of the features that make ag-Grid stand out:
 
 \* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing.php?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github) only.
 
-Check out the [developer documentation](https://www.ag-grid.com/documentation-main/documentation.php?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
+Check out the [developer documentation](https://www.ag-grid.com/documentation/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
 
 ## Looking for a framework specific solution?
 
-* [Get Started with Angular](https://www.ag-grid.com/angular-grid/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with React](https://www.ag-grid.com/react-grid/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with Vue](https://www.ag-grid.com/vue-getting-started/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with WebComponents](https://www.ag-grid.com/best-web-component-data-grid/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with AngularJS](https://www.ag-grid.com/best-angularjs-grid/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Angular](https://www.ag-grid.com/documentation/angular/getting-started/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with React](https://www.ag-grid.com/documentation/react/getting-started/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Vue](https://www.ag-grid.com/documentation/vue/getting-started/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with AngularJS](https://www.ag-grid.com/documentation/angular/angularjs/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
 
 ## Getting started
 
@@ -103,7 +102,7 @@ var eGridDiv = document.querySelector('#myGrid');
 new Grid(eGridDiv, this.gridOptions);
 ```
 
-For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/ag-grid-building-typescript/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github).
+For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/documentation/javascript/building-typescript/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github).
 
 ## Issue Reporting
 
