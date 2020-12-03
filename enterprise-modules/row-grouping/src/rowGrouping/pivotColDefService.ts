@@ -6,7 +6,6 @@ import {
     ColGroupDef,
     Column,
     ColumnController,
-    GridOptionsWrapper,
     NumberSequence,
     _
 } from "@ag-grid-community/core";

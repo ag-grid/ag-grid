@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { Autowired, PostConstruct } from '../../context/context';
 import { Component } from '../../widgets/component';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';

@@ -39,13 +39,6 @@ export class ChartCrossFilter extends BeanStub {
         let selectedValue = event.datum[dataKey].toString();
 
         let filterColId = dataKey;
-
-        //TODO - handle more than one group level, currently missing context in chart event
-        if (dataKey === 'ag-Grid-AutoColumn') {
-            let rowGroupColumns = this.columnController.getRowGroupColumns();
-            filterColId = rowGroupColumns[0].getColId();
-        }
-
         if (event.event.metaKey || event.event.ctrlKey) {
             const existingGridValues = this.getCurrentGridValuesForCategory(filterColId);
             const valueAlreadyExists = _.includes(existingGridValues, selectedValue);

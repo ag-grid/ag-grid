@@ -1,9 +1,7 @@
-// removes the complexity of async component creation from the date panel. while the component does not
-// exist, the wrapper keeps the value that was set and returns this value when queried. when the component
-// is finally created, it gets the temp value if set.
-import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
-import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
-import { Context } from "../../../context/context";
+import { IDateComp, IDateParams } from '../../../rendering/dateComponent';
+import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
+import { Context } from '../../../context/context';
+import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
@@ -25,6 +23,7 @@ export class DateCompWrapper {
             }
 
             this.dateComp = dateComp;
+
             if (!dateComp) { return; }
 
             eParent.appendChild(dateComp.getGui());
@@ -65,6 +64,12 @@ export class DateCompWrapper {
     public setInputAriaLabel(label: string): void {
         if (this.dateComp && this.dateComp.setInputAriaLabel) {
             this.dateComp.setInputAriaLabel(label);
+        }
+    }
+
+    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (this.dateComp && typeof this.dateComp.afterGuiAttached === 'function') {
+            this.dateComp.afterGuiAttached(params);
         }
     }
 }

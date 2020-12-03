@@ -1,6 +1,5 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Autowired, Bean } from "../context/context";
 import { GridCore } from "../gridCore";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { PostProcessPopupParams } from "../entities/gridOptions";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";

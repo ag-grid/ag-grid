@@ -3,7 +3,6 @@ import { IComponent } from "../../interfaces/iComponent";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ColumnController } from "../../columnController/columnController";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { Autowired } from "../../context/context";
 import { TouchListener } from "../../widgets/touchListener";
 import { RefSelector } from "../../widgets/componentAnnotations";

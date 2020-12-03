@@ -5,7 +5,6 @@ import {
     Events,
     GridApi,
     GridOptions,
-    GridOptionsWrapper,
     RowPosition,
     IStatusPanelComp,
     PostConstruct,

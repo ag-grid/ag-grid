@@ -2,7 +2,6 @@ import { ColumnGroup } from '../entities/columnGroup';
 import { Column } from '../entities/column';
 import { AbstractColDef, ColDef, ColGroupDef, IAggFunc } from '../entities/colDef';
 import { ColumnGroupChild } from '../entities/columnGroupChild';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ExpressionService } from '../valueService/expressionService';
 import { ColumnFactory } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
@@ -49,7 +48,6 @@ import { camelCaseToHumanText, startsWith } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { _ } from "../utils";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -3015,7 +3013,7 @@ export class ColumnController extends BeanStub {
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
 
         this.gridColumnsMap = {};
-        this.gridColumns.forEach(col => this.gridColumnsMap![col.getId()] = col);
+        this.gridColumns.forEach(col => this.gridColumnsMap[col.getId()] = col);
 
         const event: GridColumnsChangedEvent = {
             type: Events.EVENT_GRID_COLUMNS_CHANGED,

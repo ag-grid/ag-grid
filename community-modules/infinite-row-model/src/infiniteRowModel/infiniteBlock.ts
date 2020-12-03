@@ -1,7 +1,6 @@
 import {
     _,
     Autowired,
-    GridOptionsWrapper,
     IGetRowsParams,
     NumberSequence,
     PostConstruct,

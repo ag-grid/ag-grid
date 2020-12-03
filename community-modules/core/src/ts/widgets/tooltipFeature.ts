@@ -3,7 +3,6 @@ import { BeanStub } from "../context/beanStub";
 import { ColumnApi } from "../columnController/columnApi";
 import { Component } from "./component";
 import { GridApi } from "../gridApi";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";

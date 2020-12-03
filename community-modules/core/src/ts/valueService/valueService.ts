@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ExpressionService } from "./expressionService";
 import { ColumnController } from "../columnController/columnController";
 import { NewValueParams, ValueGetterParams } from "../entities/colDef";

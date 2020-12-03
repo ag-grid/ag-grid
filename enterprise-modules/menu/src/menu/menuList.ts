@@ -1,6 +1,4 @@
 import {
-    Autowired,
-    GridOptionsWrapper,
     ManagedFocusComponent,
     MenuItemDef,
     _,

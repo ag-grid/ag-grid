@@ -4,7 +4,6 @@ import {
     ColumnController,
     Component,
     Events,
-    GridOptionsWrapper,
     PostConstruct,
     PreConstruct,
     RefSelector,

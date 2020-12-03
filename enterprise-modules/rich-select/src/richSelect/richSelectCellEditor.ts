@@ -8,7 +8,6 @@ import {
     PopupComponent,
     Promise,
     UserComponentFactory,
-    GridOptionsWrapper,
     RefSelector,
     VirtualList,
     KeyName,

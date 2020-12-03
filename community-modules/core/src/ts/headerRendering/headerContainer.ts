@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Autowired, PostConstruct, PreDestroy } from '../context/context';
 import { ColumnController } from '../columnController/columnController';
 import { Events } from '../events';

@@ -1,9 +1,9 @@
 // noinspection ES6UnusedImports
 import React, {Component} from 'react';
-import { AgGridReact, AgGridColumn } from '../main';
+import {AgGridColumn, AgGridReact} from '../main';
 import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
 
-import {ensureGridApiHasBeenSet, wait} from "./utils";
+import {ensureGridApiHasBeenSet} from "./utils";
 
 import {mount} from 'enzyme';
 
@@ -11,16 +11,21 @@ let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+
     component = mount((<DeclarativeColumnsGrid/>));
+    // jest.runAllTimers();
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
     ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 20));
-
 });
 
 afterEach(() => {
     component.unmount();
     agGridReact = null;
+
+    window.requestAnimationFrame.mockRestore();
+    jest.useRealTimers();
 });
 
 it('declarative grid renders as expected', () => {
@@ -31,38 +36,37 @@ it('declarative grid renders as expected', () => {
 });
 
 it('declarative grid hiding a column removes it from the dom', (done) => {
+    jest.useFakeTimers();
     component.setState({
         hideCountry: true
     }, () => {
-        console.log("");
-        wait(50).then(() => {
-            const renderedOutput = component.update().render();
+        jest.runAllTimers();
 
-            expect(renderedOutput.find('.ag-pinned-left-header .ag-header-cell-text').text()).toEqual("Name");
-            expect(renderedOutput.find('.ag-header-viewport .ag-header-cell-text').text()).toEqual("");
-            expect(renderedOutput.find('.ag-header-cell-text').text()).toEqual("Name");
-            expect(renderedOutput.find('.ag-cell-value').text()).toEqual("24");
+        const renderedOutput = component.render();
+        expect(renderedOutput.find('.ag-pinned-left-header .ag-header-cell-text').text()).toEqual("Name");
+        expect(renderedOutput.find('.ag-header-viewport .ag-header-cell-text').text()).toEqual("");
+        expect(renderedOutput.find('.ag-header-cell-text').text()).toEqual("Name");
+        expect(renderedOutput.find('.ag-cell-value').text()).toEqual("24");
 
-            done();
-        });
+        done();
     });
 });
 
 it('declarative grid unpinning a column moves it to the center header section', (done) => {
+    jest.useFakeTimers();
     component.setState({
         pinName: false
     }, () => {
-        wait(50).then(() => {
-            const renderedOutput = component.render();
+        jest.runAllTimers();
 
-            expect(renderedOutput.find('.ag-pinned-left-header .ag-header-cell-text').text()).toEqual("");
-            expect(renderedOutput.find('.ag-header-viewport .ag-header-cell[aria-colindex=1]').text().trim()).toEqual("Name");
-            expect(renderedOutput.find('.ag-header-viewport .ag-header-cell[aria-colindex=2]').text().trim()).toEqual("Country");
-            expect(renderedOutput.find('.ag-cell-value[aria-colindex=1]').text()).toEqual("24");
-            expect(renderedOutput.find('.ag-cell-value[aria-colindex=2]').text()).toEqual("South Africa");
+        const renderedOutput = component.render();
+        expect(renderedOutput.find('.ag-pinned-left-header .ag-header-cell-text').text()).toEqual("");
+        expect(renderedOutput.find('.ag-header-viewport .ag-header-cell[aria-colindex=1]').text().trim()).toEqual("Name");
+        expect(renderedOutput.find('.ag-header-viewport .ag-header-cell[aria-colindex=2]').text().trim()).toEqual("Country");
+        expect(renderedOutput.find('.ag-cell-value[aria-colindex=1]').text()).toEqual("24");
+        expect(renderedOutput.find('.ag-cell-value[aria-colindex=2]').text()).toEqual("South Africa");
 
-            done();
-        })
+        done();
     });
 });
 

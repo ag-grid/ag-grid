@@ -3,7 +3,6 @@ import {
     Component,
     UserComponentFactory,
     GridOptions,
-    GridOptionsWrapper,
     PostConstruct,
     Promise,
     RefSelector,

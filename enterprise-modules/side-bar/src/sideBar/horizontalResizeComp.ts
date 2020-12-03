@@ -1,7 +1,6 @@
 import {
     Autowired,
     Component,
-    GridOptionsWrapper,
     HorizontalResizeService,
     PostConstruct
 } from "@ag-grid-community/core";

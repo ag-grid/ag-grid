@@ -4,7 +4,6 @@ import { Constants } from "./constants/constants";
 import { ColumnController } from "./columnController/columnController";
 import { IRowModel } from "./interfaces/iRowModel";
 import { CellPosition } from "./entities/cellPosition";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { RowPosition } from "./entities/rowPosition";

@@ -7,7 +7,6 @@ import {
     Bean,
     ChangedPath,
     ColumnController,
-    GridOptionsWrapper,
     PostConstruct,
     RowNode,
     BeanStub

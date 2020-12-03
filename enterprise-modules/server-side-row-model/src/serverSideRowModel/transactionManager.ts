@@ -3,7 +3,6 @@ import {
     Bean,
     BeanStub,
     Events,
-    GridOptionsWrapper,
     IServerSideTransactionManager,
     PostConstruct,
     RowNodeBlockLoader,
@@ -115,7 +114,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
 
     public flushAsyncTransactions(): void {
         // the timeout could be missing, if we are flushing due to row data loaded
-        if (this.asyncTransactionsTimeout!=null) {
+        if (this.asyncTransactionsTimeout != null) {
             clearTimeout(this.asyncTransactionsTimeout);
         }
         this.executeAsyncTransactions();

@@ -2,7 +2,6 @@ import {
     AgEvent,
     Autowired,
     Component,
-    GridOptionsWrapper,
     MenuItemDef,
     PostConstruct,
     TooltipFeature,

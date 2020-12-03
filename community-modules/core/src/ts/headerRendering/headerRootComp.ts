@@ -13,7 +13,6 @@ import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { HeaderNavigationService, HeaderNavigationDirection } from './header/headerNavigationService';
 import { exists } from '../utils/generic';
-import { isUserSuppressingHeaderKeyboardEvent } from '../utils/keyboard';
 import { KeyName } from '../constants/keyName';
 
 export type HeaderContainerPosition = 'left' | 'right' | 'center';
@@ -104,12 +103,6 @@ export class HeaderRootComp extends ManagedFocusComponent {
             ? HeaderNavigationDirection.LEFT
             : HeaderNavigationDirection.RIGHT;
 
-        const { headerRowIndex, column } = this.focusController.getFocusedHeader()!;
-
-        if (isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
-            return;
-        }
-
         if (this.headerNavigationService.navigateHorizontally(direction, true, e) ||
             this.focusController.focusNextGridCoreContainer(e.shiftKey)
         ) {
@@ -119,12 +112,6 @@ export class HeaderRootComp extends ManagedFocusComponent {
 
     protected handleKeyDown(e: KeyboardEvent): void {
         let direction: HeaderNavigationDirection | null = null;
-
-        const { headerRowIndex, column } = this.focusController.getFocusedHeader()!;
-
-        if (isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
-            return;
-        }
 
         switch (e.key) {
             case KeyName.LEFT:

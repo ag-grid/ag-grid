@@ -3,7 +3,6 @@ import {
     Autowired,
     Bean,
     Constants,
-    GridOptionsWrapper,
     IImmutableService,
     IRowModel,
     PostConstruct,

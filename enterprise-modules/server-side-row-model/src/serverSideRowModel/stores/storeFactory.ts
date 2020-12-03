@@ -10,9 +10,9 @@ import {
     ServerSideStoreType,
     ColumnController
 } from "@ag-grid-community/core";
-import {PartialStore} from "./partialStore";
-import {SSRMParams} from "../serverSideRowModel";
-import {FullStore} from "./fullStore";
+import { PartialStore } from "./partialStore";
+import { SSRMParams } from "../serverSideRowModel";
+import { FullStore } from "./fullStore";
 
 @Bean('ssrmStoreFactory')
 export class StoreFactory {
@@ -49,13 +49,13 @@ export class StoreFactory {
     private getMaxBlocksInCache(storeType: ServerSideStoreType, ssrmParams: SSRMParams, userStoreParams?: ServerSideStoreParams)
         : number | undefined {
 
-        if (storeType==ServerSideStoreType.Full) { return undefined; }
+        if (storeType == ServerSideStoreType.Full) { return undefined; }
 
-        const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache!=null)
+        const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
             ? userStoreParams.maxBlocksInCache
             : this.gridOptionsWrapper.getMaxBlocksInCache();
 
-        const maxBlocksActive = maxBlocksInCache!=null && maxBlocksInCache >= 0;
+        const maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
 
         if (!maxBlocksActive) {
             return undefined;
@@ -64,14 +64,14 @@ export class StoreFactory {
         if (ssrmParams.dynamicRowHeight) {
             const message = 'ag-Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.';
-            _.doOnce( ()=> console.warn(message), 'storeFactory.maxBlocksInCache.dynamicRowHeight');
+            _.doOnce(() => console.warn(message), 'storeFactory.maxBlocksInCache.dynamicRowHeight');
             return undefined;
         }
 
         if (this.columnController.isAutoRowHeightActive()) {
             const message = 'ag-Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';
-            _.doOnce( ()=> console.warn(message), 'storeFactory.maxBlocksInCache.autoRowHeightActive');
+            _.doOnce(() => console.warn(message), 'storeFactory.maxBlocksInCache.autoRowHeightActive');
             return undefined;
         }
 
@@ -79,13 +79,13 @@ export class StoreFactory {
     }
 
     private getBlockSize(storeType: ServerSideStoreType, userStoreParams?: ServerSideStoreParams): number | undefined {
-        if (storeType==ServerSideStoreType.Full) { return undefined; }
+        if (storeType == ServerSideStoreType.Full) { return undefined; }
 
-        const blockSize = (userStoreParams && userStoreParams.cacheBlockSize!=null)
+        const blockSize = (userStoreParams && userStoreParams.cacheBlockSize != null)
             ? userStoreParams.cacheBlockSize
             : this.gridOptionsWrapper.getCacheBlockSize();
 
-        if (blockSize!=null && blockSize>0) {
+        if (blockSize != null && blockSize > 0) {
             return blockSize;
         } else {
             return 100;
@@ -107,10 +107,10 @@ export class StoreFactory {
 
         return callback(params);
     }
-    
+
     private getStoreType(storeParams?: ServerSideStoreParams): ServerSideStoreType {
 
-        const storeType = (storeParams && storeParams.storeType!=null)
+        const storeType = (storeParams && storeParams.storeType != null)
             ? storeParams.storeType
             : this.gridOptionsWrapper.getServerSideStoreType();
 
@@ -123,7 +123,7 @@ export class StoreFactory {
                 return ServerSideStoreType.Full;
             default :
                 const types = Object.keys(ServerSideStoreType).join(', ');
-                console.log(`ag-Grid: invalid Server Side Store Type ${storeType}, valid types are [${types}]`);
+                console.warn(`ag-Grid: invalid Server Side Store Type ${storeType}, valid types are [${types}]`);
                 return ServerSideStoreType.Partial;
         }
     }

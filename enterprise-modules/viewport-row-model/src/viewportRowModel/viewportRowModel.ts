@@ -7,7 +7,6 @@ import {
     Constants,
     Events,
     GridApi,
-    GridOptionsWrapper,
     IRowModel,
     IViewportDatasource,
     ModelUpdatedEvent,

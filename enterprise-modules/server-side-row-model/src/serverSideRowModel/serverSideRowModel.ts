@@ -11,7 +11,6 @@ import {
     Events,
     FilterManager,
     GridApi,
-    GridOptionsWrapper,
     IServerSideDatasource,
     IServerSideRowModel,
     IServerSideStore,
@@ -34,7 +33,7 @@ import {
 
 import { NodeManager } from "./nodeManager";
 import { SortListener } from "./listeners/sortListener";
-import {StoreFactory} from "./stores/storeFactory";
+import { StoreFactory } from "./stores/storeFactory";
 
 export interface SSRMParams {
     sortModel: any;
@@ -390,7 +389,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public refreshStore(params: RefreshStoreParams = {}): void {
         const route = params.route ? params.route : [];
-        this.executeOnStore(route, store => store.refreshStore(params.purge==true));
+        this.executeOnStore(route, store => store.refreshStore(params.purge == true));
     }
 
     public getStoreState(): ServerSideStoreState[] {

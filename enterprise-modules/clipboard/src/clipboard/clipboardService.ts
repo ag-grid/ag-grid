@@ -19,7 +19,6 @@ import {
     FocusController,
     GridApi,
     GridCore,
-    GridOptionsWrapper,
     IClipboardService,
     IRowModel,
     Logger,
@@ -190,7 +189,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // if using the clipboard hack with a temp element, then the focus has been lost,
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
-        if (focusedCell && focusedElementBefore!=focusedElementAfter) {
+        if (focusedCell && focusedElementBefore != focusedElementAfter) {
             this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
 
@@ -645,7 +644,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.copyDataToClipboard(data);
     }
 
-    private copyDataToClipboard(data: string): void {
+    private  copyDataToClipboard(data: string): void {
         const userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
 
         // method 1 - user provided func
@@ -679,7 +678,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                     'the browser will prevent it for security reasons.');
             }
 
-            if (focusedElementBefore!=null && focusedElementBefore.focus!=null) {
+            if (focusedElementBefore != null && focusedElementBefore.focus != null) {
                 focusedElementBefore.focus();
             }
         });

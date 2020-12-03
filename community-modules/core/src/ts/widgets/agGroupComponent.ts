@@ -1,7 +1,6 @@
 import { Component } from './component';
 import { RefSelector } from './componentAnnotations';
-import { Autowired, PostConstruct } from '../context/context';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { PostConstruct } from '../context/context';
 import { AgCheckbox } from './agCheckbox';
 import { createIcon } from '../utils/icon';
 import { setDisplayed, removeCssClass, addCssClass, addOrRemoveCssClass } from '../utils/dom';

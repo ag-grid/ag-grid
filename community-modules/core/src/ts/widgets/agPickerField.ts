@@ -1,7 +1,5 @@
 import { AgAbstractField } from "./agAbstractField";
-import { Autowired } from "../context/context";
 import { Component } from "./component";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RefSelector } from "./componentAnnotations";
 import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";

@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import {AgGridReact} from '../agGridReact';
 import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
 
-import {htmlForSelector, ensureGridApiHasBeenSet} from "./utils";
+import {ensureGridApiHasBeenSet, htmlForSelector} from "./utils";
 
 import {mount} from 'enzyme';
 
@@ -11,6 +11,8 @@ let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+
     component = mount((<GridComponent/>));
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
@@ -21,12 +23,15 @@ beforeEach((done) => {
 afterEach(() => {
     component.unmount();
     agGridReact = null;
+
+    window.requestAnimationFrame.mockRestore();
+    jest.useRealTimers();
 });
 
-it('immutable data grid with cell renderer with refresh updates as expected', (done) => {
+it('immutable data grid with cell renderer with refresh updates as expected', () => {
+    jest.useFakeTimers();
+
     /*
-    * I don't love this test - the nested timeouts are awful, but I've not had any luck with fake timeouts etc
-    *
     * This is testing a (previous) issue where immutable data wasn't correctly updating react renderers
     *
     * 1) Initial Render
@@ -51,37 +56,33 @@ it('immutable data grid with cell renderer with refresh updates as expected', (d
 
     const componentInstance = component.instance();
     componentInstance.addNew();
+    jest.runAllTimers();
 
-    setTimeout(() => {
-        renderedOutput = component.render();
-        let cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
 
-        expect(cells[0]).toEqual(`<span>10</span>`);    // first cell
-        expect(cells[1]).toEqual(`<span>9</span>`);     // second cell
+    renderedOutput = component.render();
+    cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
 
-        componentInstance.modifyRow();
+    expect(cells[0]).toEqual(`<span>10</span>`);    // first cell
+    expect(cells[1]).toEqual(`<span>9</span>`);     // second cell
 
-        setTimeout(() => {
-            renderedOutput = component.render();
-            let cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
+    componentInstance.modifyRow();
 
-            expect(cells[0]).toEqual(`<span>10*</span>`);   // first cell
-            expect(cells[1]).toEqual(`<span>9</span>`);     // second cell
+    jest.runAllTimers();
+    renderedOutput = component.render();
+    cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
 
-           componentInstance.addNew();
+    expect(cells[0]).toEqual(`<span>10*</span>`);   // first cell
+    expect(cells[1]).toEqual(`<span>9</span>`);     // second cell
 
-            setTimeout(() => {
-                renderedOutput = component.render();
-                let cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
+    componentInstance.addNew();
 
-                expect(cells[0]).toEqual(`<span>11</span>`);    // first cell
-                expect(cells[1]).toEqual(`<span>10*</span>`);   // second cell
-                expect(cells[2]).toEqual(`<span>9</span>`);     // third cell
+    jest.runAllTimers();
+    renderedOutput = component.render();
+    cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
 
-                done();
-            }, 50)
-        }, 50)
-    }, 50)
+    expect(cells[0]).toEqual(`<span>11</span>`);    // first cell
+    expect(cells[1]).toEqual(`<span>10*</span>`);   // second cell
+    expect(cells[2]).toEqual(`<span>9</span>`);     // third cell
 });
 
 class CellRenderer extends Component {

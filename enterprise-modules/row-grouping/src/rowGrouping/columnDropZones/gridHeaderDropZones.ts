@@ -4,7 +4,6 @@ import {
     Component,
     Constants,
     Events,
-    GridOptionsWrapper,
     PostConstruct,
     _
 } from "@ag-grid-community/core";

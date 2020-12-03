@@ -1,9 +1,8 @@
 import { AgCheckbox } from '../widgets/agCheckbox';
-import { Autowired, PostConstruct } from '../context/context';
+import { PostConstruct } from '../context/context';
 import { Column } from '../entities/column';
 import { Component } from '../widgets/component';
 import { Events } from '../events';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { IsRowSelectable } from '../entities/gridOptions';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { RowNode } from '../entities/rowNode';

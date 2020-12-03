@@ -4,11 +4,10 @@ import { IDateComp, IDateParams } from '../../../rendering/dateComponent';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
 import { isBrowserChrome, isBrowserFirefox, isBrowserIE } from '../../../utils/browser';
+import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 
 export class DefaultDateComponent extends Component implements IDateComp {
-    @RefSelector('eDateInput') private eDateInput: AgInputTextField;
-
-    private listener: () => void;
+    @RefSelector('eDateInput') private readonly eDateInput: AgInputTextField;
 
     constructor() {
         super(/* html */`
@@ -25,20 +24,23 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public init(params: IDateParams): void {
+        const inputElement = this.eDateInput.getInputElement();
+
         if (this.shouldUseBrowserDatePicker(params)) {
             if (isBrowserIE()) {
-                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
+                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11; reverting to text date picker');
             } else {
-                this.eDateInput.getInputElement().type = 'date';
+                inputElement.type = 'date';
             }
         }
 
-        this.listener = params.onDateChanged;
+        // ensures that the input element is focussed when a clear button is clicked
+        this.addManagedListener(inputElement, 'mousedown', () => inputElement.focus());
 
         this.addManagedListener(this.eDateInput.getInputElement(), 'input', e => {
             if (e.target !== document.activeElement) { return; }
 
-            this.listener();
+            params.onDateChanged();
         });
     }
 
@@ -54,10 +56,17 @@ export class DefaultDateComponent extends Component implements IDateComp {
         this.eDateInput.setInputPlaceholder(placeholder);
     }
 
+    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (!params || !params.suppressFocus) {
+            this.eDateInput.getInputElement().focus();
+        }
+    }
+
     private shouldUseBrowserDatePicker(params: IDateParams): boolean {
         if (params.filterParams && params.filterParams.browserDatePicker != null) {
             return params.filterParams.browserDatePicker;
         }
+
         return isBrowserChrome() || isBrowserFirefox();
     }
 }

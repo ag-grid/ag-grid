@@ -46,6 +46,13 @@ export class ChartDatasource extends BeanStub {
     @Optional('aggregationStage') private readonly aggregationStage: IAggregationStage;
 
     public getData(params: ChartDatasourceParams): IData {
+        if (params.crossFiltering) {
+            if (params.grouping) {
+                console.warn("ag-grid: crossing filtering with row grouping is not supported.");
+                return {data: [], columnNames: {}};
+            }
+        }
+
         const isServerSide = this.gridOptionsWrapper.isRowModelServerSide();
         if (isServerSide && params.pivoting) {
             this.updatePivotKeysForSSRM();
@@ -84,34 +91,7 @@ export class ChartDatasource extends BeanStub {
         for (let i = 0; i < numRows; i++) {
             const data: any = {};
 
-            let rowNode: RowNode;
-            if (params.crossFiltering) {
-                rowNode = allRowNodes[i];
-
-                // TODO temporary handling to facilitate chart integration
-                const isAggFuncChart = !!params.aggFunc;
-                if (isAggFuncChart) {
-                    if (!params.grouping && rowNode.group) {
-                        continue;
-                    }
-                } else if (params.grouping){
-                    if (rowNode.group && rowNode.expanded) {
-                        continue;
-                    }
-
-                    if (rowNode.group && rowNode.level > 0 && (rowNode.parent && !rowNode.parent.expanded)) {
-                        continue;
-                    }
-
-                    if (!rowNode.group && rowNode.parent && rowNode.parent.group && !rowNode.parent.expanded) {
-                        continue;
-                    }
-
-                    // TODO: need to handle manually removed row groups
-                }
-            } else {
-                rowNode = this.gridRowModel.getRow(i + params.startRow)!;
-            }
+            const rowNode = params.crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + params.startRow)!;
 
             // first get data for dimensions columns
             params.dimensionCols.forEach(col => {
@@ -181,40 +161,22 @@ export class ChartDatasource extends BeanStub {
                     const filteredOutColId = colId + '-filtered-out';
 
                     // add data value to value column
-                    if (params.grouping && !params.aggFunc && rowNode.group) {
-                        const filteredAggData = rowNode.allLeafChildren
-                            .filter(child => filteredNodes[child.id as string])
-                            .map(child => child.data[colId]);
+                    const value = this.valueService.getValue(col, rowNode);
+                    const actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
 
-                        let filteredAggResult: any = this.aggregationStage.aggregateValues(filteredAggData, 'sum'); //TODO support all agg funcs
-                        data[colId] = filteredAggResult && typeof filteredAggResult.value !== 'undefined' ? filteredAggResult.value : filteredAggResult;
-
-                        const filteredOutAggData = rowNode.allLeafChildren
-                            .filter(child => !filteredNodes[child.id as string])
-                            .map(child => child.data[colId]);
-
-                        let filteredOutAggResult: any = this.aggregationStage.aggregateValues(filteredOutAggData, 'sum'); //TODO support all agg funcs
-                        data[filteredOutColId] = filteredOutAggResult && typeof filteredOutAggResult.value !== 'undefined' ? filteredOutAggResult.value : filteredOutAggResult;
-
+                    if (filteredNodes[rowNode.id as string]) {
+                        data[colId] = actualValue;
+                        data[filteredOutColId] = undefined;
                     } else {
-                        // add data value to value column
-                        const value = this.valueService.getValue(col, rowNode);
-                        const actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
-
-                        if (filteredNodes[rowNode.id as string]) {
-                            data[colId] = actualValue;
-                            data[filteredOutColId] = undefined;
-                        } else {
-                            data[colId] = undefined;
-                            data[filteredOutColId] = actualValue;
-                        }
+                        data[colId] = undefined;
+                        data[filteredOutColId] = actualValue;
                     }
+
                 } else {
                     // add data value to value column
                     const value = this.valueService.getValue(col, rowNode);
                     data[col.getId()] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
                 }
-
             });
 
             // add data to results

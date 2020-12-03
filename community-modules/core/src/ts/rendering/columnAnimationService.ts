@@ -1,5 +1,4 @@
-import { Autowired, Bean } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Bean } from "../context/context";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { BeanStub } from "../context/beanStub";
 

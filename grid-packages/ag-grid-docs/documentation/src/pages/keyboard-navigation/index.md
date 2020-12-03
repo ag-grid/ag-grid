@@ -351,6 +351,7 @@ The example below demonstrates suppressing the following keyboard events:
 - On the Country header only:
     - Navigation is blocked from the left to right using arrows but is allowed using tab.
     - Navigation up and down is allowed. This is the only header that allows navigation from the header to the grid cells.
+    - Enter Key is blocked. This is the only header that blocks sorting / opening menu via keyboard.
 - On all headers (excluding country):
     - Navigation is blocked up and down, but navigation left / right is allowed using arrows and tab.
 

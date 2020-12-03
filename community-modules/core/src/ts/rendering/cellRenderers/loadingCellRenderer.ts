@@ -1,6 +1,4 @@
-import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ICellRenderer, ICellRendererParams } from "./iCellRenderer";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { createIconNoSpan } from "../../utils/icon";

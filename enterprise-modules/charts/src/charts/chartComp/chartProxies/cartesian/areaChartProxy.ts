@@ -145,7 +145,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
         if (this.crossFiltering) {
             // introduce cross filtering transparent fills
-            let fillsMod: string[] = [];
+            const fillsMod: string[] = [];
             fills.forEach(fill => {
                 fillsMod.push(fill);
                 fillsMod.push(this.hexToRGB(fill, '0.3'));
@@ -153,7 +153,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             fills = fillsMod;
 
             // introduce cross filtering transparent strokes
-            let strokesMod: string[] = [];
+            const strokesMod: string[] = [];
             strokes.forEach(stroke => {
                 strokesMod.push(stroke);
                 strokesMod.push(this.hexToRGB(stroke, '0.3'));

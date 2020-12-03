@@ -21,20 +21,20 @@ import {
     ProcessChartOptionsParams,
     RefSelector
 } from "@ag-grid-community/core";
-import {ChartMenu} from "./menu/chartMenu";
-import {TitleEdit} from "./titleEdit";
-import {ChartController} from "./chartController";
-import {ChartDataModel, ChartModelParams} from "./chartDataModel";
-import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
-import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
-import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxies/chartProxy";
-import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
-import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
-import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
-import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
-import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
-import {ChartTranslator} from "./chartTranslator";
-import {ChartCrossFilter} from "./chartCrossFilter";
+import { ChartMenu } from "./menu/chartMenu";
+import { TitleEdit } from "./titleEdit";
+import { ChartController } from "./chartController";
+import { ChartDataModel, ChartModelParams } from "./chartDataModel";
+import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
+import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
+import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
+import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
+import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
+import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
+import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
+import { ChartTranslator } from "./chartTranslator";
+import { ChartCrossFilter } from "./chartCrossFilter";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -352,12 +352,12 @@ export class GridChartComp extends Component {
         const { model, chartProxy } = this;
 
         const selectedCols = model.getSelectedValueColState();
-        let fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
+        const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
 
         // TODO cross filtering
         if (this.params.crossFiltering) {
             fields.forEach(field => {
-               let crossFilteringField = {...field};
+               const crossFilteringField = {...field};
                crossFilteringField.colId = field.colId + '-filtered-out';
                 fields.push(crossFilteringField) ;
             });
