@@ -211,7 +211,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumnName(column: Column): string | null {
-        return this.columnController.getDisplayNameForColumn(column, 'header', false);
+        return this.columnController.getDisplayNameForColumn(column, 'toolPanel', false);
     }
 
     private destroyFilters() {
