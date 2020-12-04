@@ -64,7 +64,7 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
             </HeaderTag>
             <Breadcrumbs breadcrumbs={breadcrumbs} />
             {meta && meta.description && <p dangerouslySetInnerHTML={{ __html: generateCodeTags(meta.description) }}></p>}
-            {meta && meta.page && <p>See <a href={meta.page.url}>${meta.page.name}</a> for more information.</p>}
+            {meta && meta.page && <p>See <a href={meta.page.url}>{meta.page.name}</a> for more information.</p>}
             {config.showSnippets && names.length < 1 && <ObjectCodeSample breadcrumbs={breadcrumbs} properties={properties} />}
         </>;
     }
@@ -131,7 +131,7 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
 
         rows.push(<tr key={name}>
             <td>
-                <span className={styles['reference__name']}><code dangerouslySetInnerHTML={{ __html: name }}></code></span>
+                <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
                 {isRequired && <><br /><span className={styles['reference__required']}>Required</span></>}
             </td>
             <td dangerouslySetInnerHTML={{ __html: description }}></td>

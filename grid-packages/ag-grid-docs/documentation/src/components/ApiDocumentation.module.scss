@@ -8,11 +8,9 @@
 
 .reference {
     &__name {
-        code {
-            font-weight: bold;
-            color: inherit;
-            word-break: keep-all;
-        }
+        font-weight: bold;
+        color: inherit;
+        word-break: keep-all;
     }
 
     &__required {
