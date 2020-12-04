@@ -40,11 +40,18 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onSelectionChanged(): void {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
-        const stateName = state === undefined ? 'indeterminate' : (state === true ? 'checked' : 'unchecked');
+        const stateName = state === undefined
+            ? translate('ariaIndeterminate', 'indeterminate')
+            : (state === true
+                ? translate('ariaChecked', 'checked')
+                : translate('ariaUnchecked', 'unchecked')
+            );
+        const ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
 
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel(`Press Space to toggle row selection (${stateName})`);
+        this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
 
     private onCheckedClicked(event: MouseEvent): number {

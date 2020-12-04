@@ -368,13 +368,14 @@ export class SetFilter extends ProvidedFilter {
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        const { eMiniFilter } = this;
+        const { eMiniFilter, gridOptionsWrapper } = this;
+        const translate = gridOptionsWrapper.getLocaleTextFunc();
 
         _.setDisplayed(eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
 
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
-        eMiniFilter.setInputAriaLabel('Search filter values');
+        eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
 
         this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', e => this.onMiniFilterKeyPress(e));
     }

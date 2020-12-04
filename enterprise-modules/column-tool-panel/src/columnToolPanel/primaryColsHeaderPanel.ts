@@ -69,8 +69,10 @@ export class PrimaryColsHeaderPanel extends Component {
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
 
-        this.eSelect.setInputAriaLabel('Toggle Select All Columns');
-        this.eFilterTextField.setInputAriaLabel('Filter Columns Input');
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
+        this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
     }
 
     public init(params: ToolPanelColumnCompParams): void {

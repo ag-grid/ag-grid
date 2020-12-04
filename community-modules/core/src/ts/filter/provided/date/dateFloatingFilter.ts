@@ -53,9 +53,10 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         super.init(params);
         this.params = params;
         this.createDateComponent();
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eReadOnlyText
             .setDisabled(true)
-            .setInputAriaLabel('Date Filter Input');
+            .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
     }
 
     protected setEditable(editable: boolean): void {

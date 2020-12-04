@@ -232,8 +232,10 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        _.setAriaLabel(this.focusWrapper, `${this.displayName} column group toggle visibility (${state})`);
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
+        const label = translate('ariaColumnGroupToggleVisibility', 'column group toggle visibility');
+        _.setAriaLabel(this.focusWrapper, `${this.displayName} ${label} (${state})`);
     }
 
     public onColumnStateChanged(): void {

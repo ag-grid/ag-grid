@@ -155,11 +155,12 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     private resetPlaceholder(): void {
+        const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
         const placeholder = this.translate('filterOoo');
 
         this.forEachInput(field => {
             field.setInputPlaceholder(placeholder);
-            field.setInputAriaLabel('Filter value');
+            field.setInputAriaLabel(globalTranslate('ariaFilterValue', 'Filter Value'));
         });
     }
 

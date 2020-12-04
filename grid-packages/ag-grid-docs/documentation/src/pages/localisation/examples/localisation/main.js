@@ -1,6 +1,6 @@
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
-    { headerName: '#', cellRenderer: 'rowNodeIdRenderer' },
+    { headerName: '#', cellRenderer: 'rowNodeIdRenderer', checkboxSelection: true, headerCheckboxSelection: true },
     { field: 'athlete', filterParams: { buttons: ['clear', 'reset', 'apply'] } },
     { field: 'age', filterParams: { buttons: ['apply', 'cancel'] }, enablePivot: true },
     { field: 'country', enableRowGroup: true },

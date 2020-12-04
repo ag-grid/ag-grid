@@ -55,7 +55,9 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
     }
 
     public afterGuiAttached(): void {
-        this.eTextArea.setInputAriaLabel('Input Editor');
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        this.eTextArea.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 
         if (this.focusAfterAttached) {
             this.eTextArea.getFocusableElement().focus();

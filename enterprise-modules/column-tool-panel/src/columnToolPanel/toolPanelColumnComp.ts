@@ -145,8 +145,10 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        _.setAriaLabel(this.focusWrapper, `${this.displayName} column toggle visibility (${state})`);
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
+        const label = translate('ariaColumnToggleVisibility', 'column toggle visibility');
+        _.setAriaLabel(this.focusWrapper, `${this.displayName} ${label} (${state})`);
     }
 
     private setupDragging(): void {

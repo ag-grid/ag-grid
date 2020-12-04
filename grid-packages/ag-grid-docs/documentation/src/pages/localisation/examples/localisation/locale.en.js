@@ -242,4 +242,28 @@ var AG_GRID_LOCALE_EN = {
     chartLinkToolbarTooltip: 'Linked to Grid',
     chartUnlinkToolbarTooltip: 'Unlinked from Grid',
     chartDownloadToolbarTooltip: 'Download Chart',
+
+    // ARIA
+    ariaHidden: 'hidden',
+    ariaVisible: 'visible',
+    ariaChecked: 'checked',
+    ariaUnchecked: 'unchecked',
+    ariaIndeterminate:'indeterminate',
+    ariaColumnSelectAll: 'Toggle Select All Columns',
+    ariaInputEditor: 'Input Editor',
+    ariaDateFilterInput: 'Date Filter Input',
+    ariaFilterInput: 'Filter Input',
+    ariaFilterColumnsInput: 'Filter Columns Input',
+    ariaFilterValue: 'Filter Value',
+    ariaFilterFromValue: 'Filter from value',
+    ariaFilterToValue: 'Filter to value',
+    ariaFilteringOperator: 'Filtering Operator',
+    ariaColumnToggleVisibility: 'column toggle visibility',
+    ariaColumnGroupToggleVisibility: 'column group toggle visibility',
+    ariaRowSelect: 'Press SPACE to select this row',
+    ariaRowDeselect: 'Press SPACE to deselect this row',
+    ariaRowToggleSelection: 'Press Space to toggle row selection',
+    ariaRowSelectAll: 'Press Space to toggle all rows selection',
+    ariaSearch: 'Search',
+    ariaSearchFilterValues: 'Search filter values'
 }

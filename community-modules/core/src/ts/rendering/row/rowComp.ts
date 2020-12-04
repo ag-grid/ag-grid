@@ -1223,7 +1223,13 @@ export class RowComp extends Component {
             return;
         }
 
-        setAriaLabel(node, `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`);
+        const translate = this.beans.gridOptionsWrapper.getLocaleTextFunc();
+        const label = translate(
+            selected ? 'ariaRowDeselect' : 'ariaRowSelect',
+            `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`
+        );
+
+        setAriaLabel(node, label);
     }
 
     // called:

@@ -316,11 +316,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected resetUiToDefaults(silent?: boolean): Promise<void> {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
         const defaultOption = this.optionsFactory.getDefaultOption();
 
-        this.eType1.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
-        this.eType2.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
+        this.eType1.setValue(defaultOption, silent).setAriaLabel(filteringLabel);
+        this.eType2.setValue(defaultOption, silent).setAriaLabel(filteringLabel);
 
         this.eJoinOperatorAnd
             .setValue(this.isDefaultOperator('AND'), silent)

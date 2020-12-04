@@ -202,8 +202,9 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     }
 
     private resetPlaceholder(): void {
+        const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
         const placeholder = this.translate('dateFormatOoo');
-        const ariaLabel = 'Filter value';
+        const ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
 
         this.dateCondition1FromComp.setInputPlaceholder(placeholder);
         this.dateCondition1FromComp.setInputAriaLabel(ariaLabel);

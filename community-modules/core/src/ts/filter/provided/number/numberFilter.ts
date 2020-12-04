@@ -117,20 +117,29 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     private resetPlaceholder(): void {
+        const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
         const isRange1 = this.showValueTo(this.getCondition1Type());
         const isRange2 = this.showValueTo(this.getCondition2Type());
 
         this.eValueFrom1.setInputPlaceholder(this.translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueFrom1.setInputAriaLabel(isRange1 ? 'Filter from value' : 'Filter value');
+        this.eValueFrom1.setInputAriaLabel(
+            isRange1
+                ? globalTranslate('ariaFilterFromValue', 'Filter from value')
+                : globalTranslate('ariaFilterValue', 'Filter Value')
+        );
 
         this.eValueTo1.setInputPlaceholder(this.translate('inRangeEnd'));
-        this.eValueTo1.setInputAriaLabel('Filter to value');
+        this.eValueTo1.setInputAriaLabel(globalTranslate('ariaFilterToValue', 'Filter to Value'));
 
         this.eValueFrom2.setInputPlaceholder(this.translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueFrom2.setInputAriaLabel(isRange2 ? 'Filter from value' : 'Filter value');
+        this.eValueFrom2.setInputAriaLabel(
+            isRange2
+                ? globalTranslate('ariaFilterFromValue', 'Filter from value')
+                : globalTranslate('ariaFilterValue', 'Filter Value')
+        );
 
         this.eValueTo2.setInputPlaceholder(this.translate('inRangeEnd'));
-        this.eValueTo2.setInputAriaLabel('Filter to value');
+        this.eValueTo2.setInputAriaLabel(globalTranslate('ariaFilterToValue', 'Filter to Value'));
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {

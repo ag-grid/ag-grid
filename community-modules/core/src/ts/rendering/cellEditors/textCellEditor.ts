@@ -68,8 +68,10 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
     }
 
     public afterGuiAttached(): void {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const eInput = this.eInput;
-        eInput.setInputAriaLabel('Input Editor');
+
+        eInput.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 
         if (!this.focusAfterAttached) { return; }
         // Added for AG-3238. We can't remove this explicit focus() because Chrome requires an input
