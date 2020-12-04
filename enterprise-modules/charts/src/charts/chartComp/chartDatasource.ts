@@ -239,17 +239,17 @@ export class ChartDatasource extends BeanStub {
             dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
 
                 if (params.crossFiltering) {
-                    params.valueCols.forEach(col => {
+                    params.valueCols.forEach(valueCol => {
                         // filtered data
                         const dataToAgg = groupItem.__children
-                            .filter((child: any) => typeof child[col.getColId()] !== 'undefined')
-                            .map((child: any) => child[col.getColId()]);
+                            .filter((child: any) => typeof child[valueCol.getColId()] !== 'undefined')
+                            .map((child: any) => child[valueCol.getColId()]);
 
                         let aggResult: any = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
-                        groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                        groupItem[valueCol.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
                         // filtered out data
-                        const filteredOutColId = col.getId()+'-filtered-out';
+                        const filteredOutColId = valueCol.getId()+'-filtered-out';
                         const dataToAggFiltered = groupItem.__children
                             .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
                             .map((child: any) => child[filteredOutColId]);
