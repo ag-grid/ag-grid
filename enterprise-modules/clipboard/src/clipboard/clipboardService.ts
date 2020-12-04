@@ -91,10 +91,10 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.readText()
-                .catch( ()=> {
+                .then(this.processClipboardData.bind(this))
+                .catch(() => {
                     // no processing, if fails, do nothing, paste doesn't happen
-                    } )
-                .then(this.processClipboardData.bind(this));
+                });
             return;
         }
 
@@ -656,9 +656,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // method 2 - native clipboard API, available in modern chrome browsers
         const allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
         if (allowNavigator && navigator.clipboard) {
-            navigator.clipboard.writeText(data).catch( ()=> {
+            navigator.clipboard.writeText(data).catch(() => {
                 // no processing, if fails, do nothing, copy doesn't happen
-            } );
+            });
             return;
         }
 

@@ -1,4 +1,3 @@
-import { IDateParams } from '../../../rendering/dateComponent';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';

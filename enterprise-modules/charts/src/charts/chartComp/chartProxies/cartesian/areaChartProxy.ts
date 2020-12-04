@@ -227,10 +227,10 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     }
 
                     chart.tooltip.delay = 500;
-                    areaSeries.tooltip.renderer = (params) => {
+                    areaSeries.tooltip.renderer = (tooltipRenderParams) => {
                         return {
-                            content: params.yValue.toFixed(0),
-                            title: params.xValue, // optional, same as default
+                            content: tooltipRenderParams.yValue.toFixed(0),
+                            title: tooltipRenderParams.xValue, // optional, same as default
                             color: 'black'
                         };
                     }

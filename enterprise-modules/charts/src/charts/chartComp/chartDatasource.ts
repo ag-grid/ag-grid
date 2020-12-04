@@ -256,7 +256,7 @@ export class ChartDatasource extends BeanStub {
 
                         let aggResultFiltered: any = this.aggregationStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
                         groupItem[filteredOutColId] = aggResultFiltered && typeof aggResultFiltered.value !== 'undefined' ? aggResultFiltered.value : aggResultFiltered;
-                    })
+                    });
                 } else {
                     const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
                     let aggResult: any = 0;

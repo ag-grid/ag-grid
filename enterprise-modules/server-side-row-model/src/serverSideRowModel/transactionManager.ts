@@ -58,7 +58,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         const transactionsToRetry: AsyncTransactionWrapper[] = [];
         let atLeastOneTransactionApplied = false;
 
-        this.asyncTransactions!.forEach(txWrapper => {
+        this.asyncTransactions.forEach(txWrapper => {
             let result: ServerSideTransactionResult | undefined;
             this.serverSideRowModel.executeOnStore(txWrapper.transaction.route!, cache => {
                 result = cache.applyTransaction(txWrapper.transaction);
@@ -71,6 +71,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
             resultsForEvent.push(result);
 
             const retryTransaction = result.status == ServerSideTransactionResultStatus.StoreLoading;
+
             if (retryTransaction) {
                 transactionsToRetry.push(txWrapper);
                 return;
