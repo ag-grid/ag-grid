@@ -230,6 +230,8 @@ export class ScatterSeries extends CartesianSeries {
         const { xAxis, yAxis } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
+        const isContinuousX = xScale instanceof ContinuousScale;
+        const isContinuousY = yScale instanceof ContinuousScale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
 
@@ -240,6 +242,14 @@ export class ScatterSeries extends CartesianSeries {
         const nodeData: ScatterNodeDatum[] = [];
         for (let i = 0; i < xData.length; i++) {
             const xDatum = xData[i];
+            const yDatum = yData[i];
+            const noDatum =
+                yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            if (noDatum) {
+                continue;
+            }
+
             const x = xScale.convert(xDatum) + xOffset;
             if (!xAxis.inRange(x)) {
                 continue;
