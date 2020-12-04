@@ -256,7 +256,22 @@ export class DragAndDropService extends BeanStub {
         this.positionGhost(mouseEvent);
 
         // check if mouseEvent intersects with any of the drop targets
-        const dropTarget = find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
+        const validDropTargets = this.dropTargets.filter(dropTarget => this.isMouseOnDropTarget(mouseEvent, dropTarget));
+        const len = validDropTargets.length;
+
+        if (len === 0) { return; }
+
+        const dropTarget: DropTarget = len === 1
+            ? validDropTargets[0]
+            : validDropTargets.reduce((prevTarget, currTarget) => {
+                if (!prevTarget) { return currTarget; }
+                const prevContainer = prevTarget.getContainer();
+                const currContainer = currTarget.getContainer();
+
+                if (prevContainer.contains(currContainer)) { return currTarget; }
+
+                return prevTarget;
+        });
 
         if (dropTarget !== this.lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
