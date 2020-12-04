@@ -60,11 +60,13 @@ var gridOptions = {
                     colors: ['black', '#00ff00'],
                     length: 15,
                 },
-                tooltipRenderer: function(params) {
-                    return {
-                        content: '<b>' + params.angleName.toUpperCase() + ':</b> ' + params.angleValue + '<br>' +
-                            '<b>' + params.labelName.toUpperCase() + ':</b> ' + params.datum[params.labelKey]
-                    };
+                tooltip: {
+                    renderer: function (params) {
+                        return {
+                            content: '<b>' + params.angleName.toUpperCase() + ':</b> ' + params.angleValue + '<br>' +
+                                '<b>' + params.labelName.toUpperCase() + ':</b> ' + params.datum[params.labelKey]
+                        };
+                    }
                 },
             }
         }

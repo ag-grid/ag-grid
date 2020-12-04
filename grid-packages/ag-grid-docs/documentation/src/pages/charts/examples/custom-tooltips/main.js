@@ -27,19 +27,21 @@ var options = {
             'Cooling appliances containing refrigerants',
             'Gas discharge lamps and LED light sources',
         ],
-        tooltipRenderer: function(params) {
-            var formatThousands = function(value) {
-                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            };
+        tooltip: {
+            renderer: function (params) {
+                var formatThousands = function (value) {
+                    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                };
 
-            var tooltipHtml = [
-                '<div class="my-tooltip">',
-                '<span class="my-tooltip__title" style="color: ' + params.color + '">' + params.yName,
-                '(' + params.datum[params.xKey] + '):</span> ' + formatThousands(params.datum[params.yKey]) + ' tonnes',
-                '</div>'
-            ];
+                var tooltipHtml = [
+                    '<div class="my-tooltip">',
+                    '<span class="my-tooltip__title" style="color: ' + params.color + '">' + params.yName,
+                    '(' + params.datum[params.xKey] + '):</span> ' + formatThousands(params.datum[params.yKey]) + ' tonnes',
+                    '</div>'
+                ];
 
-            return tooltipHtml.join('\n');
+                return tooltipHtml.join('\n');
+            }
         }
     }],
     axes: [

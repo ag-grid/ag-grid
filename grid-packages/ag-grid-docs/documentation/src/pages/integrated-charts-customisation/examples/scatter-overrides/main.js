@@ -37,16 +37,18 @@ var gridOptions = {
                     strokeWidth: 4,
                 },
                 paired: true,
-                tooltipRenderer: function(params) {
-                    var label = params.datum[params.labelKey];
-                    var size = params.datum[params.sizeKey];
+                tooltip: {
+                    renderer: function (params) {
+                        var label = params.datum[params.labelKey];
+                        var size = params.datum[params.sizeKey];
 
-                    return {
-                        content: (label != null ? '<b>' + params.labelName.toUpperCase() + ':</b> ' + label + '<br/>' : '') +
-                            '<b>' + params.xName.toUpperCase() + ':</b> ' + params.xValue + '<br/>' +
-                            '<b>' + params.yName.toUpperCase() + ':</b> ' + params.yValue +
-                            (size != null ? '<br/><b>' + params.sizeName.toUpperCase() + ':</b> ' + size : '')
-                    };
+                        return {
+                            content: (label != null ? '<b>' + params.labelName.toUpperCase() + ':</b> ' + label + '<br/>' : '') +
+                                '<b>' + params.xName.toUpperCase() + ':</b> ' + params.xValue + '<br/>' +
+                                '<b>' + params.yName.toUpperCase() + ':</b> ' + params.yValue +
+                                (size != null ? '<br/><b>' + params.sizeName.toUpperCase() + ':</b> ' + size : '')
+                        };
+                    }
                 },
             },
         }

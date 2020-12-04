@@ -98,7 +98,9 @@ To control what goes into the title and content divs of the tooltip one can set 
 
 
 ```ts
-tooltipRenderer?: (params: AgTooltipRendererParams) => AgTooltipRendererResult;
+tooltip: {
+    renderer?: (params: AgTooltipRendererParams) => AgTooltipRendererResult;
+}
 
 interface AgTooltipRendererResult {
     title?: string;
@@ -135,15 +137,17 @@ interface AgTooltipRendererParams {
 }
 ```
 
-Let's say we wanted to remove the digits after the decimal point from the values shown in tooltips (by default the tooltips show two digits after the decimal point for numeric values). We could use the following `tooltipRenderer` to achieve that:
+Let's say we wanted to remove the digits after the decimal point from the values shown in tooltips (by default the tooltips show two digits after the decimal point for numeric values). We could use the following tooltip renderer to achieve that:
 
 
 ```js
-tooltipRenderer: function (params) {
-    return {
-        content: params.yValue.toFixed(0),
-        title: params.xValue // optional, same as default
-    };
+tooltip: {
+    renderer: function (params) {
+        return {
+            content: params.yValue.toFixed(0),
+            title: params.xValue // optional, same as default
+        };
+    }
 }
 ```
 
@@ -155,14 +159,16 @@ The example below demonstrates the above tooltip renderer in action:
 
 Instead of having the tooltip renderer return an object with title and content strings to be used in the default tooltip template, you can return a string with completely custom markup that will override not just the title and content but the template as well.
 
-Let's say we wanted to remove the digits after the decimal point from the values shown in tooltips (by default the tooltips show two digits after the decimal point for numeric values). We could use the following `tooltipRenderer` to achieve that:
+Let's say we wanted to remove the digits after the decimal point from the values shown in tooltips (by default the tooltips show two digits after the decimal point for numeric values). We could use the following tooltip renderer to achieve that:
 
 
 ```js
 series: [{
     type: 'column',
-    tooltipRenderer: function (params) {
-        return '<div class="ag-chart-tooltip-title" ' + 'style="background-color:' + params.color + '">' + params.xValue + '</div>' + '<div class="ag-chart-tooltip-content">' + params.yValue + '</div>';
+    tooltip: {
+        renderer: function (params) {
+            return '<div class="ag-chart-tooltip-title" ' + 'style="background-color:' + params.color + '">' + params.xValue + '</div>' + '<div class="ag-chart-tooltip-content">' + params.yValue + '</div>';
+        }
     }
 }]
 ```

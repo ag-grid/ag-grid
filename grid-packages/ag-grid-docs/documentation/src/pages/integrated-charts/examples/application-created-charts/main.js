@@ -77,12 +77,16 @@ var gridOptions = {
                 },
             },
             series: {
-                tooltipRenderer: tooltipRenderer
+                tooltip: {
+                    renderer: tooltipRenderer
+                }
             }
         },
         line: {
             series: {
-                tooltipRenderer: tooltipRenderer
+                tooltip: {
+                    renderer: tooltipRenderer
+                }
             }
         }
 

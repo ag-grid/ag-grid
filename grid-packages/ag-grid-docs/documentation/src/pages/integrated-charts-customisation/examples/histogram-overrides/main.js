@@ -50,16 +50,18 @@ var gridOptions = {
                     fill: 'black',
                     stroke: 'yellow',
                 },
-                tooltipRenderer: function (params) {
-                    var bin = params.datum;
-                    var binSize = bin.frequency;
-                    var medalColour = params.xKey;
+                tooltip: {
+                    renderer: function (params) {
+                        var bin = params.datum;
+                        var binSize = bin.frequency;
+                        var medalColour = params.xKey;
 
-                    return {
-                        content: binSize + (binSize >= 2 ? ' countries' : ' country') +
-                            ' got between ' + params.xValue[0] + ' and ' +
-                            params.xValue[1] + ' ' + medalColour + ' medals'
-                    };
+                        return {
+                            content: binSize + (binSize >= 2 ? ' countries' : ' country') +
+                                ' got between ' + params.xValue[0] + ' and ' +
+                                params.xValue[1] + ' ' + medalColour + ' medals'
+                        };
+                    }
                 },
             }
         }

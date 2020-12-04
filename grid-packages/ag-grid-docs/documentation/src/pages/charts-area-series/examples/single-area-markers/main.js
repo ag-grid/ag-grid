@@ -15,9 +15,11 @@ var options = {
         marker: {
             enabled: true
         },
-        tooltipRenderer: function (params) {
-            return {
-                content: params.yName + ' - ' + params.yValue + '% - Jan ' + params.xValue
+        tooltip: {
+            renderer: function (params) {
+                return {
+                    content: params.yName + ' - ' + params.yValue + '% - Jan ' + params.xValue
+                }
             }
         }
     }],

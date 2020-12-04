@@ -56,11 +56,13 @@ var gridOptions = {
                     strokeWidth: 4,
                     opacity: 0.2,
                 },
-                tooltipRenderer: function (params) {
-                    return {
-                        content: '<b>' + params.xName.toUpperCase() + ':</b> ' + params.xValue + '<br/>' +
-                            '<b>' + params.yName.toUpperCase() + ':</b> ' + params.yValue
-                    };
+                tooltip: {
+                    renderer: function (params) {
+                        return {
+                            content: '<b>' + params.xName.toUpperCase() + ':</b> ' + params.xValue + '<br/>' +
+                                '<b>' + params.yName.toUpperCase() + ':</b> ' + params.yValue
+                        };
+                    }
                 },
             },
         },

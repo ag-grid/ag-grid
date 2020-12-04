@@ -18,13 +18,15 @@ var options = {
         xKey: 'month',
         yKeys: ['sweaters', 'hats'],
         yNames: ['Sweaters made', 'Hats made'],
-        tooltipRenderer: function (params) {
-            return '<div class="ag-chart-tooltip-title" style="background-color:' + params.color + '">' +
-                params.xValue +
-            '</div>' +
-            '<div class="ag-chart-tooltip-content">' +
-                params.yValue.toFixed(0) +
-            '</div>';
+        tooltip: {
+            renderer: function (params) {
+                return '<div class="ag-chart-tooltip-title" style="background-color:' + params.color + '">' +
+                    params.xValue +
+                    '</div>' +
+                    '<div class="ag-chart-tooltip-content">' +
+                    params.yValue.toFixed(0) +
+                    '</div>';
+            }
         }
     }]
 };

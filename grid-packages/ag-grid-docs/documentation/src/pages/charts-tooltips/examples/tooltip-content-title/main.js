@@ -18,11 +18,13 @@ var options = {
         xKey: 'month',
         yKeys: ['sweaters', 'hats'],
         yNames: ['Sweaters made', 'Hats made'],
-        tooltipRenderer: function (params) {
-            return {
-                title: params.xValue,
-                content: params.yValue.toFixed(0)
-            };
+        tooltip: {
+            renderer: function (params) {
+                return {
+                    title: params.xValue,
+                    content: params.yValue.toFixed(0)
+                };
+            }
         }
     }]
 };
