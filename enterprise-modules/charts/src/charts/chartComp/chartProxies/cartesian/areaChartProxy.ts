@@ -148,7 +148,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             const fillsMod: string[] = [];
             fills.forEach(fill => {
                 fillsMod.push(fill);
-                fillsMod.push(this.hexToRGB(fill, '0.3'));
+                fillsMod.push(this.hexToRGBA(fill, '0.3'));
             });
             fills = fillsMod;
 
@@ -156,7 +156,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             const strokesMod: string[] = [];
             strokes.forEach(stroke => {
                 strokesMod.push(stroke);
-                strokesMod.push(this.hexToRGB(stroke, '0.3'));
+                strokesMod.push(this.hexToRGBA(stroke, '0.3'));
             });
             strokes = strokesMod;
         }

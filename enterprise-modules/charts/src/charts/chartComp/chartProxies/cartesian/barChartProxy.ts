@@ -123,7 +123,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             const fills: string[] = [];
             palette.fills.forEach(fill => {
                 fills.push(fill);
-                fills.push(this.hexToRGB(fill, '0.3'));
+                fills.push(this.hexToRGBA(fill, '0.3'));
             });
             barSeries.fills = fills;
 
@@ -131,7 +131,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             const strokes: string[] = [];
             palette.strokes.forEach(stroke => {
                 fills.push(stroke);
-                fills.push(this.hexToRGB(stroke, '0.3'));
+                fills.push(this.hexToRGBA(stroke, '0.3'));
             });
             barSeries.strokes = strokes;
 

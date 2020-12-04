@@ -149,8 +149,8 @@ export class PieChartProxy extends PolarChartProxy {
 
             const isOpaqueSeries = !opaqueSeries;
             if (isOpaqueSeries) {
-                pieSeries.fills = fills.map(fill => this.hexToRGB(fill, '0.3'));
-                pieSeries.strokes = strokes.map(stroke => this.hexToRGB(stroke, '0.3'));
+                pieSeries.fills = fills.map(fill => this.hexToRGBA(fill, '0.3'));
+                pieSeries.strokes = strokes.map(stroke => this.hexToRGBA(stroke, '0.3'));
                 pieSeries.showInLegend = false;
             } else {
                 chart.legend.addEventListener('click', (event: LegendClickEvent) => {
