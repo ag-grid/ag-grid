@@ -180,18 +180,11 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                     });
                 }
 
+                series.marker.size = 10;
                 (series as ScatterSeries).marker.formatter = p => {
-                    // TODO: remove special handling to hide filtered out points once addressed in standalone charts
-                    const filteredOutPoint = p.datum[xFieldDefinition.colId] == undefined;
-                    if (filteredOutPoint) {
-                        return {
-                            size: 0
-                        };
-                    }
-
                     return {
-                        fill: p.fill,
-                        size: p.highlighted ? filteredOutPoint ? 0 : 22 : p.size,
+                        fill: p.highlighted ? 'yellow' : p.fill,
+                        size: p.highlighted ? 12 : p.size
                     };
                 }
 
