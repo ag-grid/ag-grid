@@ -36,9 +36,14 @@ export class ChartCrossFilter extends BeanStub {
 
     private updateFilters(filterModel: any, event: any) {
         let dataKey = ChartCrossFilter.extractFilterColId(event);
-        let selectedValue = event.datum[dataKey].toString();
+        let rawValue = event.datum[dataKey];
+        if (rawValue === undefined) {
+            return;
+        }
 
-        let filterColId = dataKey;
+        let selectedValue = rawValue.toString();
+
+        let filterColId = dataKey.replace('-filtered-out', '');
         if (event.event.metaKey || event.event.ctrlKey) {
             const existingGridValues = this.getCurrentGridValuesForCategory(filterColId);
             const valueAlreadyExists = _.includes(existingGridValues, selectedValue);
@@ -77,7 +82,7 @@ export class ChartCrossFilter extends BeanStub {
         const gridContainsValue = _.includes;
         this.gridApi.forEachNodeAfterFilter((rowNode: RowNode) => {
             if (!rowNode.group) {
-                const value = rowNode.data[dataKey];
+                const value = rowNode.data[dataKey] + '';
                 if (!gridContainsValue(filteredValues, value)) {
                     filteredValues.push(value);
                 }
@@ -91,6 +96,9 @@ export class ChartCrossFilter extends BeanStub {
     }
 
     private isValidColumnFilter(colId: any) {
+        if (colId.indexOf('-filtered-out')) {
+            colId = colId.replace('-filtered-out', '');
+        }
         return _.includes(['agSetColumnFilter', 'agMultiColumnFilter'], this.getColumnFilterType(colId));
     }
 

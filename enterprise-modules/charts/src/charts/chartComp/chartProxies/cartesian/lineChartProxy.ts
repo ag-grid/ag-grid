@@ -1,5 +1,12 @@
 import { AgLineSeriesOptions, CartesianChartOptions, HighlightOptions, LineSeriesOptions } from "@ag-grid-community/core";
-import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries } from "ag-charts-community";
+import {
+    AgCartesianChartOptions,
+    AgChart,
+    CartesianChart,
+    ChartTheme,
+    LegendClickEvent,
+    LineSeries
+} from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
@@ -54,7 +61,6 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             params.fields.filter(f => f.colId.indexOf('-filtered-out') < 0) : params.fields;
 
         const fieldIds = fields.map(f => f.colId);
-        const { fills, strokes } = this.getPalette();
         const data = this.transformData(params.data, params.category.id);
 
         const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series, i) => {
@@ -70,6 +76,25 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         }, new Map<string, LineSeries>());
 
         let previousSeries: LineSeries | undefined;
+
+        let { fills, strokes } = this.getPalette();
+        if (this.crossFiltering) {
+            // introduce cross filtering transparent fills
+            const fillsMod: string[] = [];
+            fills.forEach(fill => {
+                fillsMod.push(fill);
+                fillsMod.push(this.hexToRGB(fill, '0.3'));
+            });
+            fills = fillsMod;
+
+            // introduce cross filtering transparent strokes
+            const strokesMod: string[] = [];
+            strokes.forEach(stroke => {
+                strokesMod.push(stroke);
+                strokesMod.push(this.hexToRGB(stroke, '0.3'));
+            });
+            strokes = strokesMod;
+        }
 
         fields.forEach((f, index) => {
             let lineSeries = existingSeriesById.get(f.colId);
@@ -119,22 +144,36 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
                 lineSeries = AgChart.createComponent(options, 'line.series');
 
-                if (this.crossFiltering) {
-                    // add node click cross filtering callback to series
-                    lineSeries!.addEventListener('nodeClick', (event) => {
-                        this.crossFilterCallback(event);
+                if (this.crossFiltering && lineSeries) {
+                    // disable series highlighting by default
+                    lineSeries.highlightStyle.fill = undefined;
+
+                    // sync toggling of legend item with hidden 'filtered out' item
+                    chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                        lineSeries!.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
                     });
 
                     // special handling for cross filtering markers
-                    lineSeries!.marker.enabled = true;
-                    lineSeries!.marker.size = 0;
-                    lineSeries!.marker.formatter =  p => {
+                    lineSeries.marker.enabled = true;
+                    lineSeries.marker.size = 10;
+                    lineSeries.marker.formatter =  p => {
                         return {
-                            fill: 'yellow',
+                            fill: p.highlighted ? 'yellow' : p.fill,
                             size: p.highlighted ? 12 : p.size
                         };
                     }
+
                     chart.tooltip.delay = 500;
+                    lineSeries.tooltip.renderer = (params) => {
+                        return {
+                            content: params.yValue.toFixed(0),
+                            title: params.xValue, // optional, same as default
+                            color: 'black'
+                        };
+                    }
+
+                    // add node click cross filtering callback to series
+                    lineSeries.addEventListener('nodeClick', this.crossFilterCallback);
                 }
 
                 chart.addSeriesAfter(lineSeries!, previousSeries);

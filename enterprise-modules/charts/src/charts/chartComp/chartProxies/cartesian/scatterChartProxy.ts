@@ -6,7 +6,14 @@ import {
     HighlightOptions,
     ScatterSeriesOptions
 } from "@ag-grid-community/core";
-import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, ScatterSeries } from "ag-charts-community";
+import {
+    AgCartesianChartOptions,
+    AgChart,
+    CartesianChart,
+    ChartTheme,
+    LegendClickEvent,
+    ScatterSeries
+} from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -102,7 +109,25 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             return map;
         }, new Map<string, ScatterSeries>());
 
-        const { fills, strokes } = this.getPalette();
+        let { fills, strokes } = this.getPalette();
+        if (this.crossFiltering) {
+            // introduce cross filtering transparent fills
+            const fillsMod: string[] = [];
+            fills.forEach(fill => {
+                fillsMod.push(fill);
+                fillsMod.push(this.hexToRGB(fill, '0.3'));
+            });
+            fills = fillsMod;
+
+            // introduce cross filtering transparent strokes
+            const strokesMod: string[] = [];
+            strokes.forEach(stroke => {
+                strokesMod.push(stroke);
+                strokesMod.push(this.hexToRGB(stroke, '0.3'));
+            });
+            strokes = strokesMod;
+        }
+
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         let previousSeries: ScatterSeries | undefined;
 
@@ -143,6 +168,50 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             series.data = params.data;
             series.fill = fills[index % fills.length];
             series.stroke = strokes[index % strokes.length];
+
+            const isFilteredOutYKey =  yFieldDefinition.colId.indexOf('-filtered-out') > -1;
+
+            if (this.crossFiltering) {
+
+                if (!isFilteredOutYKey) {
+                    // sync toggling of legend item with hidden 'filtered out' item
+                    chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                        series!.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                    });
+                }
+
+                (series as ScatterSeries).marker.formatter = p => {
+                    // TODO: remove special handling to hide filtered out points once addressed in standalone charts
+                    const filteredOutPoint = p.datum[xFieldDefinition.colId] == undefined;
+                    if (filteredOutPoint) {
+                        return {
+                            size: 0
+                        };
+                    }
+
+                    return {
+                        fill: p.fill,
+                        size: p.highlighted ? filteredOutPoint ? 0 : 22 : p.size,
+                    };
+                }
+
+                chart.tooltip.delay = 500;
+                (series as ScatterSeries).tooltip.renderer = (params) => {
+                    return {
+                        content: params.yValue.toFixed(0),
+                        title: params.xValue, // optional, same as default
+                        color: 'black'
+                    };
+                }
+
+                // hide 'filtered out' legend items
+                if (isFilteredOutYKey) {
+                    series!.showInLegend = false;
+                }
+
+                // add node click cross filtering callback to series
+                series!.addEventListener('nodeClick', this.crossFilterCallback);
+            }
 
             if (sizeFieldDefinition) {
                 series.sizeKey = sizeFieldDefinition.colId;

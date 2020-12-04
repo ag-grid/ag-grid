@@ -213,7 +213,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
                     // sync toggling of legend item with hidden 'filtered out' item
                     chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-                        areaSeries!.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                        areaSeries!.toggleSeriesItem(event.itemId + '-total', event.enabled);
                     });
 
                     // special handling for cross filtering markers
@@ -233,6 +233,12 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                             title: params.xValue, // optional, same as default
                             color: 'black'
                         };
+                    }
+
+                    // hide 'filtered out' legend items
+                    const isFilteredOutYKey = yKey.indexOf('-total') > -1;
+                    if (isFilteredOutYKey) {
+                        areaSeries!.showInLegend = false;
                     }
 
                     // add node click cross filtering callback to series
