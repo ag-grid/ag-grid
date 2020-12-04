@@ -4,18 +4,16 @@ title: "Column Filter"
 
 Column filters are filters that are applied to the data at the column level. Many column filters can be active at once (e.g. filters set on different columns) and the grid will display rows that pass every column's filter.
 
-
 Column filters are accessed in the grid UI either through the [Column Menu](../column-menu/) or the [Tool Panel](../tool-panel/).
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="filtering/resources/openColumn.gif" alt="Open Column" width="25rem" constrained="true">
+    <image-caption src="filtering/resources/open-column.gif" alt="Open Column" width="25rem" constrained="true">
         Access via Column Menu
     </image-caption>
-    <image-caption src="filtering/resources/openToolPanel.gif" alt="Open Tool Panel" width="25rem" constrained="true">
+    <image-caption src="filtering/resources/open-tool-panel.gif" alt="Open Tool Panel" width="25rem" constrained="true">
         Access via Tool Panel
     </image-caption>
 </div>
-
 
 You can use the [Provided Filters](../filter-provided/) that come with the grid, or you can build your own [Filter Components](../component-filter/) if you want to customise the filter experience to your application.
 
@@ -27,7 +25,6 @@ The example below demonstrates simple filters. The following can be noted:
 - Column **Age** has a simple number filter.
 - Column **Date** has a simple date filter.
 
-
 <grid-example title='Provided Simple' name='provided-simple' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
 ## Configuring Filters on Columns
@@ -38,8 +35,6 @@ one of the following values:
 
 - `boolean`: Set to `true` to enable the default filter. The default is [Text Filter](../filter-text/) for ag-Grid Community and [Set Filter](../filter-set/) for ag-Grid Enterprise.
 - `string` / `Component`: Provide a specific filter to use instead of the default filter.
-
-
 
 The code below shows some column definitions with filters set:
 

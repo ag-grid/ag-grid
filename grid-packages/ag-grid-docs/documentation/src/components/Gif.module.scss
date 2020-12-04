@@ -1,0 +1,9 @@
+.gif {
+    max-width: 100%;
+    margin-bottom: 1rem;
+    outline: none !important;
+
+    &--wrapped {
+        margin-bottom: 0;
+    }
+}

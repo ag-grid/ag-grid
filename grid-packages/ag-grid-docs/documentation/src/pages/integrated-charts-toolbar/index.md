@@ -31,7 +31,7 @@ Clicking on the 'hamburger' icon will open up the configuration sidebar, which p
 
 The chart settings panel allows users to change the chart type as well as the theme used in the chart as demonstrated below:
 
-<img src="resources/chart-settings.gif" style="max-width: 100%; margin-bottom: 1rem;" />
+<gif src="chart-settings.gif" alt="Chart Settings"></gif>
 
 Notice that charts are organised into different groups and the current chart can be changed by selecting the icon of a different chart.
 
@@ -41,7 +41,7 @@ The theme used by the chart can also be changed via the carousel located at the 
 
 The chart data panel is used to dynamically change the data being charted as shown below:
 
-<img src="resources/chart-data.gif" style="max-width: 100%; margin-bottom: 1rem;" />
+<gif src="chart-data.gif" alt="Chart Data"></gif>
 
 Using the chart data panel the category used in the chart can be changed via radio button selections. Multiple series can be charted and these can also be changed via checkbox selection.
 
@@ -53,8 +53,7 @@ For more details on how the grid determines which columns are to be used as char
 
 The chart format panel allows users to change the appearance of the chart as shown below:
 
-
-<img src="resources/chart-format.gif" style="max-width: 100%; margin-bottom: 1rem;" />
+<gif src="chart-format.gif" alt="Chart Format"></gif>
 
 Chart options corresponding to the currently selected chart type appear in the format panel. This gives users full control over the appearance of the chart.
 
@@ -64,10 +63,9 @@ Charts are linked to the data in the grid by default, so that if the data change
 
 Unlinking a chart is achieved through the 'Unlink Chart' toolbar item as shown below:
 
-<img src="resources/chart-unlinking.gif" style="max-width: 100%; margin-bottom: 1rem;" />
+<gif src="chart-unlinking.gif" alt="Chart Unlinking"></gif>
 
 Notice that the chart range disappears from the grid when the chart has been unlinked, and subsequent changes to the grid sorting do not impact the chart.
-
 
 ## Downloading Charts
 

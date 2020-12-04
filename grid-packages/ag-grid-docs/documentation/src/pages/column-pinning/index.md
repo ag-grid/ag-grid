@@ -31,7 +31,7 @@ It is possible to pin a column by moving the column in the following ways:
 - When other columns are pinned, drag the column to the existing pinned area.
 - When no columns are pinned, drag the column to the edge of the grid and wait for approximately one second. The grid will then assume you want to pin and create a pinned area and place the column into it.
 
-<image-caption src="column-pinning/resources/pinningByMoving.gif" alt="Pinning via Column Dragging" maxwidth="30.5rem" constrained="true"></image-caption>
+<image-caption src="column-pinning/resources/pinning-by-moving.gif" alt="Pinning via Column Dragging" maxwidth="30.5rem" centered="true" constrained="true"></image-caption>
 
 ## Lock Pinned
 

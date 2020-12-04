@@ -1,11 +1,12 @@
 ---
 title: "8 Performance Hacks for JavaScript"
+frameworks: ["javascript"]
 ---
 Niall Crosby | 8th September 2017
 
 ## Make It Faster
 
-[ag-Grid](https://www.ag-grid.com/) is a JavaScript data grid for displaying large amounts of data in the browser in a style similar to Excel spreadsheets. ag-Grid is fast, even in Internet Explorer with large volumes of data. This blog presents performance patterns, or performance 'hacks', that we used to put our grid on steroids. 
+[ag-Grid](https://www.ag-grid.com/) is a JavaScript data grid for displaying large amounts of data in the browser in a style similar to Excel spreadsheets. ag-Grid is fast, even in Internet Explorer with large volumes of data. This blog presents performance patterns, or performance 'hacks', that we used to put our grid on steroids.
 
 We describe how to squeeze performance out of the browser which can be applied to anyone wanting to tune their own applications. It will be of particular interest to users of ag-Grid to  improve understanding of how to work with the grid. We also think that it will be of interest to anyone creating a grid.  We relish the idea of healthy competition so we are happy to contribute to the wider community knowledge.
 
@@ -15,11 +16,9 @@ Row virtualisation means that we only render rows that are visible on the screen
 
 If the grid was to render 10,000 rows, it would probably crash the browser as too many DOM elements are getting created. Row virtualisation allows the display of a very large number of rows by only rendering what is currently visible to the user.
 
-
 The image below shows row virtualisation - notice how the DOM only has 5 or 6 rows rendered, matching the number of rows the user actually sees.
 
-
-![Row Virtualisation](resources/rowVirtualisation.gif)
+<gif src="row-virtualisation.gif" alt="Row Virtualisation" style="max-width: 100%"></gif>
 
 ## Hack 2 - Column Virtualisation
 
@@ -32,7 +31,6 @@ Column virtualisation allows the grid to display large numbers of columns withou
 ### Problem - Event Listener Registration
 
 The grid needs to have mouse and keyboard listeners on all the cells so that the grid can fire events such as 'cellClicked' and so that the grid can perform grid operations such as selection, range selection, keyboard navigation etc. In all there are 8 events that the grid requires at the cell level which are _click, dblclick, mousedown, contextmenu, mouseover, mouseout, mouseenter_ and _mouseleave_.
-
 
 Adding event listeners to the DOM results in a small performance hit. A grid would naturally add thousands of such listeners as even 20 visible columns and 50 visible rows means 20 (columns) x 50 (rows) x 8 (events) = 8,000 event listeners. As the user scrolls our row and column virtualisation kicks in and these listeners are getting constantly added and removed which adds a lag to scrolling.
 
@@ -78,7 +76,6 @@ function myEventListener(event) {
 
 You might have noticed that we are attaching arbitrary attributes (`__col` and `__row`) onto the DOM element and might be wondering is this safe? I hope so, as ag-Grid is used for air traffic control over Australia as far as I know. In other words, ag-Grid has done this for a long time and has been tested in the field.
 
-
 [[note]]
 | This is a similar pattern used by React using React's Synthetic Events.
 | React uses event delegation and listens for events at the
@@ -88,7 +85,6 @@ You might have noticed that we are attaching arbitrary attributes (`__col` and `
 ## Hack 4 - Throw Away DOM
 
 Good programming sense tells you to de-construct everything you construct. This means any DOM item you add to the browser you should remove in your clean down code. In the context of your framework,  it means removing components from their parents when the component is disposed.
-
 
 This hack goes as follows: if you are removing an item from the DOM (e.g. a grid cell) but you know the parent of that item is also going to be removed (e.g. a grid row) then there is no need to remove the child items individually.
 
@@ -135,7 +131,7 @@ To get around this, the grid uses debouncing of scroll events with animation fra
 Even with all the above performance tunings, our users still asked us to "make it faster, it's not good enough in Internet Explorer, the scrolling is awful, it takes too long". Some users experienced lag times of two to three seconds in Internet Explorer for rows to draw after a scroll.
 
 So the next performance hack was to break the rendering of the rows into different tasks using animation frames. When the user scrolls vertically to show different rows, the following tasks are set up in a task queue:
- 
+
 - 1 task, if pinning then scroll the pinned panels.
 - n tasks to insert each rows container (results in drawing the row background colour).
 - n tasks to insert the cells using string building and `innerHTML`.
@@ -146,7 +142,6 @@ So the next performance hack was to break the rendering of the rows into differe
 So if you scroll to show 10 new rows, you will have 50+ tasks. Each scroll, row creation, cell creation etc. will be an individual task.
 
 The grid then uses animation frames (or timeouts if the browser does not support animation frames) to execute the tasks using a priority order. The order ensures things such as:
-
 
 - Scrolling will get done first, best efforts are made to keep pinned sections in line.
 - Row containers are second, the first thing the user will see is the outline of the rows.
@@ -184,7 +179,6 @@ One lasting note - these are performance hacks that worked for us in ag-Grid. Yo
 
 Sharing is caring! So please take the time to share this article, or up-vote on Reddit (link below).
 
-
 <div style="background-color: #eee; padding: 10px; display: inline-block;">
     <div style="margin-bottom: 5px;">If you liked this article then please share</div>
     <table style="background-color: #eee;">
@@ -213,9 +207,9 @@ Sharing is caring! So please take the time to share this article, or up-vote on 
         </tr>
     </table>
 </div>
-    
 
 <hr/>
+
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = 'aggrid';
@@ -228,4 +222,5 @@ Sharing is caring! So please take the time to share this article, or up-vote on 
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
 <hr/>

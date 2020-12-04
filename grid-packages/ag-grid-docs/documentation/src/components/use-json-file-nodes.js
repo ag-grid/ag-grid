@@ -16,3 +16,5 @@ export const useJsonFileNodes = () => {
 
     return nodes;
 };
+
+export default useJsonFileNodes;

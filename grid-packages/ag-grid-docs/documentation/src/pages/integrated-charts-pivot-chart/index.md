@@ -14,11 +14,10 @@ Try it out on our [demo page](../../example.php) by doing the following:
 - Enter [Pivot Mode](../pivoting/#pivot-mode) and select a combination of group, pivot and value columns.
 - Bring up the [Context Menu](../context-menu) and select the desired chart type from the 'Pivot Chart' sub menu.
 
-<img src="resources/pivot-chart.gif" style="max-width: 100%; margin-bottom: 1rem;" />
+<gif src="pivot-chart.gif"></gif>
 
 Notice from the demonstration above that all data is charted when using the Pivot Chart. Also note that the category axis will update to reflect the expanded group categories.
 
 ## Next Up
 
 Continue to the next section to learn about the: [Chart Toolbar](../integrated-charts-toolbar/).
-

@@ -1,40 +1,20 @@
 import React from 'react';
-import { useStaticQuery, graphql } from 'gatsby';
 import classnames from 'classnames';
+import Gif from './Gif';
+import { useImageFileNodes, getImage } from './use-image-file-nodes';
 import styles from './ImageCaption.module.scss';
 
-const ImageCaption = ({ src, alt, centered, children, constrained, descriptiontop: descriptionTop, height, maxwidth: maxWidth, minwidth: minWidth, width }) => {
-    const { fluidImages: { nodes: fluidImages }, images: { nodes: images } } = useStaticQuery(graphql`
-    {
-        fluidImages: allFile(filter: { sourceInstanceName: { eq: "pages" }, ext: { in: [".jpg", ".png"] } }) {
-            nodes {
-                relativePath
-                childImageSharp {
-                    fluid {
-                        src
-                    }
-                }
-            }
-        }
-        images: allFile(filter: { sourceInstanceName: { eq: "pages" }, ext: { in: [".svg", ".gif"] } }) {
-            nodes {
-                relativePath
-                publicURL
-            }
-        }
-    }
-    `);
-
-    const getImage = (images, src) => images.filter(file => file.relativePath === src)[0];
+const ImageCaption = ({ pageName, src, alt, centered, children, constrained, descriptiontop: descriptionTop, height, maxwidth: maxWidth, minwidth: minWidth, width }) => {
+    const { fluidImages, images } = useImageFileNodes();
 
     let imgSrc;
 
-    const fluidImage = getImage(fluidImages, src);
+    const fluidImage = getImage(fluidImages, pageName, src);
 
     if (fluidImage) {
         imgSrc = fluidImage.childImageSharp.fluid.src;
     } else {
-        const image = getImage(images, src);
+        const image = getImage(images, pageName, src);
 
         if (image) {
             imgSrc = image.publicURL;
@@ -44,7 +24,6 @@ const ImageCaption = ({ src, alt, centered, children, constrained, descriptionto
     if (!imgSrc) {
         throw new Error(`Could not find requested image: ${src}`);
     }
-
 
     const style = {};
 
@@ -68,7 +47,9 @@ const ImageCaption = ({ src, alt, centered, children, constrained, descriptionto
     return (
         <div className={classnames(styles['image-caption'], { [styles['image-caption--centered']]: centered })} style={style}>
             {descriptionTop && description}
-            <img src={imgSrc} className={imageClasses} alt={alt} />
+            {src.endsWith('.gif') ?
+                <Gif src={src} alt={alt} className={imageClasses} wrapped={true} /> :
+                <img src={imgSrc} className={imageClasses} alt={alt} />}
             {!descriptionTop && description}
         </div>
     );

@@ -17,7 +17,6 @@ The column API methods for moving columns are as follows:
 
 ## Simple Example
 
-
 The example below demonstrates simple moving via mouse dragging and the API. The following can be noted:
 
 - Dragging the column headers with the mouse moves the column to the new location.
@@ -32,7 +31,7 @@ The example below demonstrates simple moving via mouse dragging and the API. The
 
 Column animations happen when you move a column. The default is for animations to be turned on. It is recommended that you leave the column move animations on unless your target platform (browser and hardware) is too slow to manage the animations. To turn OFF column animations, set the grid property `suppressColumnMoveAnimation=true`.
 
-<image-caption src="column-moving/resources/columnAnimation.gif" alt="Column Animation" maxwidth="35rem" constrained="true"></image-caption>
+<image-caption src="column-moving/resources/column-animation.gif" alt="Column Animation" maxwidth="35rem" centered="true" constrained="true"></image-caption>
 
 The move column animation transitions the column's position only, so when you move a column, it animates to the new position. No other attribute apart from position is animated.
 

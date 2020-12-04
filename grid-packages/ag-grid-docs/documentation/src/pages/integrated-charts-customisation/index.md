@@ -14,7 +14,7 @@ There are five chart themes that are provided by the grid: `'ag-default'`, `'ag-
 
 When you create a chart, you can scroll through the different available themes in the chart settings.
 
-<img src="resources/theme-picker.gif" style="max-width: 100%; margin-bottom: 1rem;" />
+<gif src="theme-picker.gif"></gif>
 
 You can change which themes are available by setting the `chartThemes` property in `gridOptions`. The example below shows a different selection of themes configured in this way.
 

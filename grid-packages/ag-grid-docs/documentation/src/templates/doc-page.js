@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { graphql } from 'gatsby';
 import rehypeReact from 'rehype-react';
+import Gifffer from 'gifffer';
 import classnames from 'classnames';
 import ExampleRunner from '../components/example-runner/ExampleRunner';
 import SideMenu from '../components/SideMenu';
@@ -17,10 +18,13 @@ import VideoLink from '../components/VideoLink';
 import ChartGallery from '../components/chart-gallery/ChartGallery';
 import ChartsApiExplorer from '../components/charts-api-explorer/ChartsApiExplorer';
 import { ListItem } from '../components/ListItem';
+import Gif from '../components/Gif';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
   const [showSideMenu, setShowSideMenu] = useState(true);
+
+  useEffect(() => Gifffer(), []);
 
   if (!page) { return null; }
 
@@ -39,6 +43,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     fragment: true,
     components: {
       'li': ListItem,
+      'gif': props => Gif({ ...props, pageName }),
       'grid-example': props => ExampleRunner(getExampleRunnerProps(props, 'grid')),
       'chart-example': props => ExampleRunner(getExampleRunnerProps(props, 'charts')),
       'api-documentation': props => ApiDocumentation({
@@ -48,7 +53,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
         config: props.config != null ? JSON.parse(props.config) : undefined
       }),
       'icons-panel': IconsPanel,
-      'image-caption': ImageCaption,
+      'image-caption': props => ImageCaption({ ...props, pageName }),
       'matrix-table': MatrixTable,
       'video-section': VideoSection,
       'video-link': VideoLink,

@@ -5,23 +5,18 @@ enterprise: true
 
 This section introduces the grid's integrated charting functionality, which allows users to chart directly inside the grid and supports applications that want to create pre-defined charts.
 
-
 The charting functionality is deeply integrated with the grid. This integration gives users a seamless charting experience while keeping the coding required by developers to a minimum.
 
-
 We are not aware of any other datagrid that provides such integration. Other companies may provide a grid library and / or a charting library, but it's up to the developer to tie the two together.
-
 
 This section introduces the two ways charts can be created from the data contained in the grid:
 
 - [User Created Charts](#user-created-charts): A user creates a chart using the grid's UI by selecting a range of cells or entering pivot mode and then creating a chart via the context menu.
-
 - [Application Created Charts](#application-created-charts): The application requests the grid to create a chart through the grid's charting API.
 
 ## Charts Module
 
 To minimise bundle sizes for applications that do not require charting, charts are contained in a separate [module](../modules/), which can be imported as follows:
-
 
 ```ts
 // import all Enterprise modules
@@ -38,7 +33,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ChartsModule]);
 ```
 
 The charts module has been built from the ground up with zero dependencies on any third party libraries.
-
 
 [[note]]
 | If you are not using ES6 Modules and are instead using the bundled version of ag-Grid Enterprise, note that `ag-grid-enterprise.js` already contains the charting module.
@@ -65,22 +59,16 @@ gridOptions = {
 
 User created charts are designed to provide an out-of-the box charting experience, similar to that found in spreadsheet applications such as Excel, but more compellingly it will be integrated inside your applications.
 
-
 All that is required for users to create charts, from the data already contained in the grid, is to import the [charts module](#charts-module) and [enable charts](#enabling-charts).
-
 
 Try it out on our [demo page](../../example.php) by doing the following:
 
 - Select a [Cell Range](../range-selection/) of numeric values in the grid by dragging the mouse over a range of cells.
-
 - Bring up the [Context Menu](../context-menu) and select the desired chart type from the 'Chart Range' sub menu.
 
-<div style="width: 100%; overflow: hidden; margin-bottom: 1rem;">
-    <img src="resources/chart-showcase.gif" alt="Chart Showcase" style="max-width: 100%" />
-</div>
+<gif src="chart-showcase.gif" alt="Chart Showcase"></gif>
 
 The animation above highlights a number of charting features. For more details on each feature follow the links provided below:
-
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px;">
     <div style="flex: 1 1 0;">
@@ -117,9 +105,7 @@ The animation above highlights a number of charting features. For more details o
 
 By default, user created charts are displayed inside the grid's own popup windows. The windows can be moved (by mouse dragging a window's title bar) and resized (by mouse dragging a window's borders).
 
-
 It is also possible to display user created charts in an another location or application dialog. For more details see the section on [providing a chart container](../integrated-charts-container/).
-
 
 [[note]]
 | If using the grid's own popup window, you will probably want to use the grid option `popupParent` so that the popup windows are not constrained to the bounds of the grid. Typically users set `popupParent=document.body` to achieve this.
@@ -138,9 +124,7 @@ The dummy financial application below just touches on what is possible with the 
 
 To learn how to create charts in your applications see the following sections for details:
 
-
 - [Chart API](../integrated-charts-api/): Used to create charts programmatically inside applications.
-
 - [Provide a Chart Container](../integrated-charts-container/): Used to target chart containers inside the application instead of the popup window provided by the grid.
 
 ## Chart Customisation
@@ -152,4 +136,3 @@ The section [Chart Customisation](../integrated-charts-customisation/) outlines 
 ## Next Up
 
 Continue to the next section to learn about the: [Range Chart](../integrated-charts-range-chart/).
-
