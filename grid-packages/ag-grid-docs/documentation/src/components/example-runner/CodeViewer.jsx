@@ -9,7 +9,8 @@ import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
 import { useExampleFileNodes } from './use-example-file-nodes';
-import { doOnEnter, getExampleFiles } from './helpers';
+import { getExampleFiles } from './helpers';
+import { doOnEnter } from '../key-handlers';
 import styles from './CodeViewer.module.scss';
 
 const updateFiles = (nodes, exampleInfo, setFiles, setActiveFile) => {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { HuePicker, AlphaPicker } from 'react-color';
 import classnames from 'classnames';
+import { doOnEnter } from '../key-handlers';
 import styles from './Editors.module.scss';
 
 export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
@@ -76,9 +77,13 @@ export const PresetEditor = ({ value, options, suggestions, breakIndex, onChange
 
     const createOptionElement = o => <div
         key={o}
+        role="button"
+        tabIndex="0"
         className={classnames(styles['preset-editor__option'], { [styles['preset-editor__option--selected']]: stateValue === o })}
         onClick={() => inputOnChange(o)}
-        onKeyDown={() => inputOnChange(o)}>{Array.isArray(optionsToUse) ? o.toString() : optionsToUse[o]}</div>;
+        onKeyDown={e => doOnEnter(e, () => inputOnChange(o))}>
+        {Array.isArray(optionsToUse) ? o.toString() : optionsToUse[o]}
+    </div>;
 
     const elementsBeforeBreak = [];
     const elementsAfterBreak = [];

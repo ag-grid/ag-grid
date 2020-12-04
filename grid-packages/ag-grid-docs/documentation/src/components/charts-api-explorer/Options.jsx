@@ -4,6 +4,7 @@ import { formatJson } from './utils.jsx';
 import * as Config from './config.jsx';
 import { CodeSnippet } from './CodeSnippet.jsx';
 import styles from './Options.module.scss';
+import { doOnEnter } from '../key-handlers.js';
 
 const getType = value => {
     if (value == null) {
@@ -62,13 +63,19 @@ const ComplexOption = ({ name, description, isVisible, isAlternate, isSearching,
     const contentIsExpanded = isExpanded || isSearching;
 
     return <div className={classnames(styles['option'], { [styles['option--hidden']]: !isVisible, [styles['option--alternate']]: isAlternate })}>
-        <div className={styles['option--expandable']} onClick={() => setExpanded(!isExpanded)}>
+        <div
+            className={styles['option--expandable']}
+            role="button"
+            tabIndex="0"
+            aria-expanded={isExpanded}
+            onClick={() => setExpanded(!isExpanded)}
+            onKeyDown={e => doOnEnter(e, () => setExpanded(!isExpanded))}>
             <span className={styles['option__name']}>{name}</span>
             <span className={styles['option__type']}>Object</span>
             <span className={classnames(styles['option__expander'], { [styles['option__expander--expanded']]: contentIsExpanded })}>❯</span><br />
             {description && <span className={styles['option__description']} dangerouslySetInnerHTML={{ __html: description }}></span>}
         </div>
-        <div className={`${styles['option__content']} ${contentIsExpanded ? '' : styles['option__contentHidden']}`}>
+        <div className={classnames(styles['option__content'], { [styles['option__content--hidden']]: !contentIsExpanded })}>
             {children}
         </div>
     </div>;

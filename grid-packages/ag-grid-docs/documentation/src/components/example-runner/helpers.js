@@ -148,12 +148,6 @@ export const openPlunker = (nodes, exampleInfo) => {
     });
 };
 
-export const doOnEnter = (e, action) => {
-    if (e.key && e.key === 'Enter') {
-        action();
-    }
-};
-
 export const isDevelopment = () => process.env.NODE_ENV === 'development';
 
 export const getCssFilePaths = theme => {
