@@ -183,24 +183,83 @@ export class CartesianChart extends Chart {
         series.removeEventListener('dataProcessed', this.updateAxes, this);
     }
 
+    private _onTouchStart: any;
+    private _onTouchMove: any;
+    private _onTouchEnd: any;
+    private _onTouchCancel: any;
+
+    protected setupDomListeners(chartElement: HTMLCanvasElement) {
+        super.setupDomListeners(chartElement);
+
+        this._onTouchStart = this.onTouchStart.bind(this);
+        this._onTouchMove = this.onTouchMove.bind(this);
+        this._onTouchEnd = this.onTouchEnd.bind(this);
+        this._onTouchCancel = this.onTouchCancel.bind(this);
+
+        chartElement.addEventListener('touchstart', this._onTouchStart);
+        chartElement.addEventListener('touchmove', this._onTouchMove);
+        chartElement.addEventListener('touchend', this._onTouchEnd);
+        chartElement.addEventListener('touchcancel', this._onTouchCancel);
+    }
+
+    protected cleanupDomListeners(chartElement: HTMLCanvasElement) {
+        super.cleanupDomListeners(chartElement);
+
+        chartElement.removeEventListener('touchstart', this._onTouchStart);
+        chartElement.removeEventListener('touchmove', this._onTouchMove);
+        chartElement.removeEventListener('touchend', this._onTouchEnd);
+        chartElement.removeEventListener('touchcancel', this._onTouchCancel);
+    }
+
+    private getTouchOffset(event: TouchEvent): { offsetX: number, offsetY: number } | undefined {
+        const rect = this.scene.canvas.element.getBoundingClientRect();
+        const touch = event.touches[0];
+        return touch ? {
+            offsetX: touch.clientX - rect.left,
+            offsetY: touch.clientY - rect.top
+        } : undefined;
+    }
+
+    protected onTouchStart(event: TouchEvent) {
+        const offset = this.getTouchOffset(event);
+        if (offset) {
+            this.navigator.onDragStart(offset);
+        }
+    }
+
+    protected onTouchMove(event: TouchEvent) {
+        const offset = this.getTouchOffset(event);
+        if (offset) {
+            this.navigator.onDrag(offset);
+        }
+    }
+
+    protected onTouchEnd(event: TouchEvent) {
+        this.navigator.onDragStop();
+    }
+
+    protected onTouchCancel(event: TouchEvent) {
+        this.navigator.onDragStop();
+    }
+
     protected onMouseDown(event: MouseEvent) {
         super.onMouseDown(event);
-        this.navigator.onMouseDown(event);
+        this.navigator.onDragStart(event);
     }
 
     protected onMouseMove(event: MouseEvent) {
         super.onMouseMove(event);
-        this.navigator.onMouseMove(event);
+        this.navigator.onDrag(event);
     }
 
     protected onMouseUp(event: MouseEvent) {
         super.onMouseUp(event);
-        this.navigator.onMouseUp(event);
+        this.navigator.onDragStop();
     }
 
     protected onMouseOut(event: MouseEvent) {
         super.onMouseOut(event);
-        this.navigator.onMouseUp(event);
+        this.navigator.onDragStop();
     }
 
     updateAxes() {
