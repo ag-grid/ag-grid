@@ -598,6 +598,9 @@
                 "name": "Fill Handle",
                 "url": "../range-selection-fill-handle/"
             }
+        },
+        "setGridAriaProperty(property, value)": {
+            "description": "Sets an aria property in the grid panel (element with role=\"grid\"), and removes an aria property when the value is null.<br><br> Example:<br>`api.setGridAriaProperty('label', 'my grid')` will set <strong>aria-label=\"my grid\"</strong>.<br>`api.setGridAriaProperty('label, null)` will remove the <strong>aria-label</strong> attribute form the grid element."
         }
     }
 }

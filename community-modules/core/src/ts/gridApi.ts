@@ -268,6 +268,19 @@ export class GridApi {
         this.setServerSideDatasource(datasource);
     }
 
+    public setGridAriaProperty(property: string, value: string | null): void {
+        if (!property) { return; }
+        const eGrid = this.gridPanel.getGui();
+        const ariaProperty = `aria-${property}`;
+
+        if (value === null) {
+            eGrid.removeAttribute(ariaProperty);
+        } else {
+            eGrid.setAttribute(ariaProperty, value);
+        }
+
+    }
+
     public setServerSideDatasource(datasource: IServerSideDatasource) {
         if (this.serverSideRowModel) {
             // should really have an IEnterpriseRowModel interface, so we are not casting to any
