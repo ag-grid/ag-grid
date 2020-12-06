@@ -9,6 +9,8 @@ let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+
     component = mount((<GridWithStatefulComponent />));
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
@@ -19,6 +21,9 @@ beforeEach((done) => {
 afterEach(() => {
     component.unmount();
     agGridReact = null;
+
+    window.requestAnimationFrame.mockRestore();
+    jest.useRealTimers();
 });
 
 it('stateful component renders as expected', () => {
@@ -36,6 +41,8 @@ it('stateful component returns a valid component instance', () => {
 });
 
 it('cell should be editable and editor component usable', async () => {
+    jest.useFakeTimers();
+
     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><div>Age: 24</div></div>`);
 
     // we use the API to start and stop editing - in a real e2e test we could actually double click on the cell etc
@@ -44,8 +51,7 @@ it('cell should be editable and editor component usable', async () => {
         colKey: 'age'
     });
 
-    await waitForAsyncCondition(() => agGridReact.api.getCellEditorInstances() && agGridReact.api.getCellEditorInstances().length > 0,
-        5).then(() => null, () => fail("Editor instance not created within expected time"));
+    jest.runAllTimers();
 
     const instances = agGridReact.api.getCellEditorInstances();
     expect(instances.length).toEqual(1);
@@ -55,12 +61,9 @@ it('cell should be editable and editor component usable', async () => {
 
     agGridReact.api.stopEditing();
 
-    await waitForAsyncCondition(() => agGridReact.api.getCellRendererInstances() && agGridReact.api.getCellRendererInstances().length > 0,
-        5).then(() => null, () => fail("Renderer instance not created within expected time"));
+    jest.runAllTimers();
 
-    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><span><div>Age: 50</div></span></div>`);
-
-
+    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><div>Age: 50</div></div>`);
 });
 
 class CellRenderer extends Component {

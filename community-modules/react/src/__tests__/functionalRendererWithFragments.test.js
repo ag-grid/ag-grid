@@ -11,6 +11,8 @@ let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+
     component = mount((<GridComponent/>));
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
@@ -21,31 +23,28 @@ beforeEach((done) => {
 afterEach(() => {
     component.unmount();
     agGridReact = null;
+
+    window.requestAnimationFrame.mockRestore();
+    jest.useRealTimers();
 });
 
-it('functional renderer with fragment renders expected cell values', (done) => {
+it('functional renderer with fragment renders expected cell values', () => {
+    jest.useFakeTimers();
+
     let renderedOutput = component.render();
     expect(renderedOutput.find('div .ag-cell-value').length).toBeGreaterThan(5); // 5 is arbitrary here
     expect(renderedOutput.find('div .ag-cell-value').first().html()).toEqual(`<div class="ag-react-container">0</div>`);
     expect(renderedOutput.find('div .ag-cell-value').last().html()).toEqual(`<div class="ag-react-container">1000</div>`);
 
     component.instance().scrollToBottom();
+    jest.runAllTimers();
 
     // the output will be the result of rendering static markup
     // (values are wrapped in span by default for static markup renderering)
     renderedOutput = component.render();
     expect(renderedOutput.find('div .ag-cell-value').length).toBeGreaterThan(5); // 5 is arbitrary here
-    expect(renderedOutput.find('div .ag-cell-value').first().html()).toEqual(`<div class="ag-react-container"><span>729000</span></div>`);
-    expect(renderedOutput.find('div .ag-cell-value').last().html()).toEqual(`<div class="ag-react-container"><span>1331000</span></div>`);
-
-    setTimeout(() => {
-        // the result will now be the async react components actually supplied
-        renderedOutput = component.render();
-        expect(renderedOutput.find('div .ag-cell-value').length).toBeGreaterThan(5); // 5 is arbitrary here
-        expect(renderedOutput.find('div .ag-cell-value').first().html()).toEqual(`<div class="ag-react-container">729000</div>`);
-        expect(renderedOutput.find('div .ag-cell-value').last().html()).toEqual(`<div class="ag-react-container">1331000</div>`);
-        done();
-    }, 50)
+    expect(renderedOutput.find('div .ag-cell-value').first().html()).toEqual(`<div class="ag-react-container">729000</div>`);
+    expect(renderedOutput.find('div .ag-cell-value').last().html()).toEqual(`<div class="ag-react-container">1331000</div>`);
 });
 
 const CellRenderer = props => <>{props.value * props.value * props.value}</>;
