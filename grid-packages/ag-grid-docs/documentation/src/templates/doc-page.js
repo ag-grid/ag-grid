@@ -24,7 +24,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
   const [showSideMenu, setShowSideMenu] = useState(true);
 
-  useEffect(() => Gifffer(), []);
+  useEffect(() => { Gifffer(); }, []);
 
   if (!page) { return null; }
 
