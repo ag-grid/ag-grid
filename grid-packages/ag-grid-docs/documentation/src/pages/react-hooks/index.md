@@ -73,6 +73,124 @@ The same applies to any other component to be used within the grid that requires
 Please refer to our [Components](../components/) documentation for working examples for the specific
 type of component you're interested in.
 
+## Avoiding State Closures (i.e. old props values)
+
+A common issue that React hook users will encounter is capturing old values in a closure - this is not unique to React
+but is a common issue with JavaScript in general, but it is something that is more common when using Hooks.
+
+An example of this (in the context of using ag-Grid) would be something like this:
+
+```jsx
+const Grid = (props) => {
+  const [rowData, setRowData] = useState([]);
+  
+  const columns = [
+    { field: 'firstName' },
+    { 
+      field: 'lastName', 
+      valueSetter: params => handleLastNameChanging(params.data, params.newValue),
+      editable: true 
+    },
+  ];
+
+    return (
+    <div className="ag-theme-balham" style={{ height: '500px' }}>
+        <AgGridReact
+          onGridReady={handleGridReady}
+          rowData={rowData || []}
+          columnDefs={columns}
+        />
+    </div>
+  );
+
+  function handleLastNameChanging(item, nextValue) {
+    const nextData = rowData.map(dataItem => {
+      if (dataItem.id !== item.id) {
+        return dataItem;
+      }
+
+      return {
+        ...dataItem,
+        lastName: nextValue,
+      };
+    });
+    
+    setRowData(nextData);
+
+    return true;
+  }
+};
+```
+
+Here the expectation is that on editing a `lastName` cell the data the `rowData` data set would be updated and this would
+eventually flow back down through the hook and update the Grid.
+
+The problem here is that the `rowData` in `handleLastNameChanging` has been "captured" (or "closed over") and subsequent updates to it
+will not be reflected in later calls.
+
+What we need to do to resolve this is to think about our approach slightly differently - let's leverage what hooks offer us 
+with `useEffect` and let that do our updates for us.
+
+```jsx
+const Grid = (props) => {
+  const [rowData, setRowData] = useState([]);
+  const [editingState, setEditingState] = useState(null);
+
+  const columns = [
+    { field: 'firstName' },
+    { 
+      field: 'lastName', 
+      valueSetter: params => setEditingState({ item: params.data, newValue: params.newValue }),
+      editable: true 
+    },
+  ];
+  
+  useEffect(() => {
+    if (!!editingState) {
+      handleLastNameChanging(
+        rowData,
+        editingState.item,
+        editingState.newValue
+      );
+    }
+  }, [editingState]);
+
+  return (
+    <div className="ag-theme-balham" style={{ height: '500px' }}>
+        <AgGridReact
+          onGridReady={handleGridReady}
+          rowData={rowData || []}
+          columnDefs={columns}
+        />
+    </div>
+  );
+
+  function handleLastNameChanging(currentRowData, item, nextValue) {
+    const nextData = currentRowData.map(dataItem => {
+      if (dataItem.id !== item.id) {
+        return dataItem;
+      }
+
+      return {
+        ...dataItem,
+        lastName: nextValue,
+      };
+    });
+    
+    setRowData(nextData);
+
+    return true;
+  }
+};
+```
+
+What we're doing here is updating `editingState` when our `valueSetter` is invoked, and making use of a `useEffect` to trigger when this 
+state changes.
+
+This allows `handleLastNameChanging` to be passed the latest data and update `rowData` correctly.
+
+This is a fairly common React pattern - you could achieve the same thing with `useCallback` or `useRef`. 
+
 ## Rendering Null
 
 If you don't want to output anything on `render` then return an empty string rather than `null`.
