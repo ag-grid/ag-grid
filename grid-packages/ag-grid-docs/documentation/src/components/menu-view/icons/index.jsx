@@ -6,9 +6,10 @@ import componentsSvg from './icon-components.svg'
 import dataSvg from './icon-data.svg'
 import editCellsSvg from './icon-edit-cells.svg'
 import filterSvg from './icon-filter.svg'
+import groupSvg from './icon-group.svg'
 import importExportSvg from './icon-import-export.svg'
 import informationSvg from './icon-information.svg'
-import interactionSvg from './icon-interaction.svg'
+import interactivitySvg from './icon-interactivity.svg'
 import renderCellsSvg from './icon-render-cells.svg'
 import rowsSvg from './icon-rows.svg'
 import scrollSvg from './icon-scroll.svg'
@@ -25,9 +26,10 @@ const icons = {
     data: dataSvg,
     'edit-cells': editCellsSvg,
     filter: filterSvg,
+    group: groupSvg,
     'import-export': importExportSvg,
     information: informationSvg,
-    interaction: interactionSvg,
+    interactivity: interactivitySvg,
     'render-cells': renderCellsSvg,
     rows: rowsSvg,
     scroll: scrollSvg,

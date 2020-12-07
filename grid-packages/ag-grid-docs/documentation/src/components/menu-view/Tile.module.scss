@@ -1,4 +1,25 @@
 .menu-view-tile {
+    composes: m-3 p-3 from global;
+    height: 22rem;
+    width: 15rem;
+    min-width: 15rem;
+    border: 1px solid lighten($secondary, 20%);
+    border-radius: 5px;
+    text-align: left;
+
+    enterprise-icon {
+        background-image: url("../../images/enterprise.svg");
+        background-position-y: center;
+        background-repeat: no-repeat;
+        display: inline-block;
+        text-indent: -1000px;
+        margin-left: 2px;
+        width: 1rem;
+        height: 1rem;
+        background-size: contain;
+        vertical-align: middle;
+    }
+
     &__icon {
         composes: mb-2 from global;
         color: $secondary;
@@ -11,8 +32,22 @@
     }
 
     &__list {
+        composes: d-flex from global;
+        flex-wrap: wrap;
+        overflow: hidden;
+
         a:hover {
             text-decoration: none;
+        }
+
+        &__block {
+            flex: 1 1 100%;
+            display: block;
+        }
+
+        &__inline {
+            font-size: 0.8rem;
+            white-space: nowrap;
         }
     }
 }

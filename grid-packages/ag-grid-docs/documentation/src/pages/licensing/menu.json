@@ -1575,7 +1575,7 @@
     "items": [
       {
         "title": "Scrolling",
-        "icon": "icon-scrolling",
+        "icon": "icon-scroll",
         "items": [
           {
             "title": "DOM Virtualisation",
