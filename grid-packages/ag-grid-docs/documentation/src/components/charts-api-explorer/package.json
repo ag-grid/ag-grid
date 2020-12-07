@@ -12,6 +12,7 @@
     "@babel/preset-react": "^7.10.4",
     "@babel/register": "^7.10.5",
     "babel-plugin-css-modules-transform": "^1.6.2",
+    "babel-plugin-transform-scss": "^1.0.9",
     "esm": "^3.2.25"
   }
 }

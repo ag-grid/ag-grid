@@ -1,6 +1,6 @@
 require("@babel/register")({
     presets: ["@babel/env", "@babel/react"],
-    plugins: ["css-modules-transform"]
+    plugins: ["babel-plugin-transform-scss", "css-modules-transform"]
 });
 
 const fs = require('fs');
