@@ -148,7 +148,7 @@ export const openPlunker = (nodes, exampleInfo) => {
     });
 };
 
-export const isDevelopment = () => process.env.NODE_ENV === 'development';
+export const isDevelopment = () => process.env.NODE_ENV === 'development' || process.env.GATSBY_ENV === 'ci';
 
 export const getCssFilePaths = theme => {
     const themeFiles = theme ?

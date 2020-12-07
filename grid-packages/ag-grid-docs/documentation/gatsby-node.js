@@ -25,9 +25,7 @@ const getIPAddress = () => {
     return '0.0.0.0';
 }
 
-if (process.env.NODE_ENV === 'development') {
-    process.env.GATSBY_IP_ADDRESS = getIPAddress();
-}
+process.env.GATSBY_IP_ADDRESS = getIPAddress();
 
 /* We override this to allow us to specify the directory structure of the example files, so that we can reference
  * them correctly in the examples. By default, Gatsby includes a cache-busting hash of the file which would cause
