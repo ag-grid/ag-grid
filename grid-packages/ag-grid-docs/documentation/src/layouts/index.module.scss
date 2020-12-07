@@ -3,6 +3,7 @@
 
 .main-container {
     composes: container-fluid p-0 vh-100 d-flex flex-column from global;
+    -webkit-font-smoothing: antialiased;
 }
 
 .header {

@@ -3,8 +3,8 @@
     height: 22rem;
     width: 15rem;
     min-width: 15rem;
-    border: 1px solid lighten($secondary, 20%);
-    border-radius: 5px;
+    border: 1px solid transparentize($secondary, 0.7);
+    border-radius: 4px;
     text-align: left;
 
     enterprise-icon {
