@@ -71,6 +71,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
             strokeOpacity: seriesDefaults.stroke.opacity,
             strokeWidth: seriesDefaults.stroke.width,
             tooltip: {
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
                 renderer: (seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer) || undefined,
             },
             type: 'histogram'

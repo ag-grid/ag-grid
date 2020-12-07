@@ -25,6 +25,12 @@ export interface SeriesOptions {
     listeners?: { [key in string]: Function };
 }
 
+export interface ChartTooltip {
+    enabled?: boolean;
+    class?: string;
+    tracking?: boolean;
+}
+
 export interface ChartOptions<T extends SeriesOptions> {
     document?: Document;
     seriesDefaults: T;
@@ -38,6 +44,7 @@ export interface ChartOptions<T extends SeriesOptions> {
     legend: LegendOptions;
     tooltipClass?: string;
     tooltipTracking?: boolean;
+    tooltip?: ChartTooltip;
     listeners?: { [key in string]: Function };
 }
 

@@ -146,6 +146,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 strokeWidth: seriesDefaults.stroke.width,
                 marker,
                 tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
                     renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
                 },
             }, 'scatter.series');

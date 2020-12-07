@@ -283,8 +283,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         options.background = theme.getConfig(standaloneChartType + '.background');
         options.legend = theme.getConfig<AgChartLegendOptions>(standaloneChartType + '.legend') as LegendOptions;
         options.navigator = theme.getConfig<AgNavigatorOptions>(standaloneChartType + '.navigator') as NavigatorOptions;
-        options.tooltipClass = theme.getConfig(standaloneChartType + '.tooltipClass');
-        options.tooltipTracking = theme.getConfig(standaloneChartType + '.tooltipTracking');
+        options.tooltip = {
+            enabled: theme.getConfig(standaloneChartType + '.tooltip.enabled'),
+            tracking: theme.getConfig(standaloneChartType + '.tooltip.tracking'),
+            class: theme.getConfig(standaloneChartType + '.tooltip.class')
+        };
         options.listeners = theme.getConfig(standaloneChartType + '.listeners');
         options.padding = theme.getConfig(standaloneChartType + '.padding');
 
