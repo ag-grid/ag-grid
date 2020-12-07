@@ -1,0 +1,14 @@
+.menu-view {
+    composes: p-3 from global;
+    &__title {
+        composes: mb-2 from global;
+        font-size: 2.5rem;
+        font-weight: 400;
+        text-align: left;
+    }
+
+    &__tile-row {
+        composes: d-flex from global;
+    }
+    
+}

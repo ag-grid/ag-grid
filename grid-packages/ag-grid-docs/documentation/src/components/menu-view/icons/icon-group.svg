@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#686868;}
+	.st1{filter:url(#Adobe_OpacityMaskFilter);}
+	.st2{fill:#FFFFFF;}
+	.st3{mask:url(#b_1_);}
+</style>
+<g>
+	<g transform="translate(3 3)">
+		<g>
+			<path id="a_1_" class="st0" d="M15.9,0.5c0.5,0,1,0.2,1.3,0.5c0.4,0.4,0.5,0.8,0.5,1.3v13.8c0,0.5-0.2,1-0.5,1.3
+				c-0.3,0.4-0.8,0.6-1.3,0.5H2.1c-0.5,0-1-0.2-1.3-0.5c-0.4-0.3-0.6-0.8-0.5-1.3V2.3c0-0.5,0.2-1,0.5-1.3c0.3-0.4,0.8-0.6,1.3-0.5
+				H15.9z M15.9,16.1V2.3H2.1v13.8H15.9z"/>
+		</g>
+		<defs>
+			<filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="-3" y="-3" width="24" height="24">
+				<feColorMatrix  type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+			</filter>
+		</defs>
+		<mask maskUnits="userSpaceOnUse" x="-3" y="-3" width="24" height="24" id="b_1_">
+			<g class="st1">
+				<path id="a_2_" class="st2" d="M15.9,0.5c0.5,0,1,0.2,1.3,0.5c0.4,0.4,0.5,0.8,0.5,1.3v13.8c0,0.5-0.2,1-0.5,1.3
+					c-0.3,0.4-0.8,0.6-1.3,0.5H2.1c-0.5,0-1-0.2-1.3-0.5c-0.4-0.3-0.6-0.8-0.5-1.3V2.3c0-0.5,0.2-1,0.5-1.3c0.3-0.4,0.8-0.6,1.3-0.5
+					H15.9z M15.9,16.1V2.3H2.1v13.8H15.9z"/>
+			</g>
+		</mask>
+		<g class="st3">
+			<path class="st0" d="M-3-3h24v24H-3V-3z"/>
+		</g>
+	</g>
+</g>
+</svg>

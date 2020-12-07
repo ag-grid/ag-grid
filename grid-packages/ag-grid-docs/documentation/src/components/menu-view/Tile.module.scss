@@ -1,0 +1,18 @@
+.menu-view-tile {
+    &__icon {
+        composes: mb-2 from global;
+        color: $secondary;
+        min-height: 40px;
+        width: 40px;
+    }
+
+    &__title {
+        color: $secondary;
+    }
+
+    &__list {
+        a:hover {
+            text-decoration: none;
+        }
+    }
+}

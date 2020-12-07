@@ -3,6 +3,7 @@ import { Link } from 'gatsby';
 import styles from './index.module.scss';
 import fwLogos from '../images/fw-logos';
 import supportedFrameworks from '../utils/supported-frameworks';
+import MenuView from '../components/menu-view/MenuView';
 
 const backgroundColor = {
     javascript: '#f8df1e',
@@ -22,7 +23,7 @@ const logos = {
 const HomePage = () => {
     const [currentFramework, setFramework] = useState('javascript');
     const updateFramework = (e, framework) => {
-        if (typeof e === 'keydown') {
+        if (e.type === 'keydown') {
             if (e.key !== 'Enter' || e.key !== 'Space') {
                 return;
             }
@@ -49,7 +50,8 @@ const HomePage = () => {
                 return (
                     <div key={framework}
                         className={ cardClass }
-                        tabindex="0"
+                        role="button"
+                        tabIndex={0}
                         onKeyDown={(e) => updateFramework(e, framework)} onClick={(e) => updateFramework(e, framework)}>
                         <div className={ styles['getting-started__card__logo-container'] } style={{ backgroundColor: cardBackgroundColor }}>
                             <img alt={framework} src={ logos[framework] } className={ styles['getting-started__card__logo'] } />
@@ -61,6 +63,7 @@ const HomePage = () => {
                 );
             })}
             </div>
+            <MenuView framework={currentFramework} />
         </div>
     );
 };
