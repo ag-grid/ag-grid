@@ -6,26 +6,7 @@ const fs = require('fs-extra');
 const supportedFrameworks = require('./src/utils/supported-frameworks.js');
 const chartGallery = require('./src/pages/charts/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
-
-const getIPAddress = () => {
-    const interfaces = require('os').networkInterfaces();
-
-    for (let devName in interfaces) {
-        const iface = interfaces[devName];
-
-        for (let i = 0; i < iface.length; i++) {
-            const alias = iface[i];
-
-            if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
-                return alias.address;
-            }
-        }
-    }
-
-    return '0.0.0.0';
-}
-
-process.env.GATSBY_IP_ADDRESS = getIPAddress();
+const publicIp = require('public-ip');
 
 /* We override this to allow us to specify the directory structure of the example files, so that we can reference
  * them correctly in the examples. By default, Gatsby includes a cache-busting hash of the file which would cause
@@ -105,8 +86,34 @@ exports.onCreatePage = ({ page, actions: { createPage } }) => {
     }
 };
 
+const getInternalIPAddress = () => {
+    const interfaces = require('os').networkInterfaces();
+
+    for (let devName in interfaces) {
+        const iface = interfaces[devName];
+
+        for (let i = 0; i < iface.length; i++) {
+            const alias = iface[i];
+
+            if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
+                return alias.address;
+            }
+        }
+    }
+
+    return '0.0.0.0';
+};
+
 /* This creates pages for each framework from all of the markdown files, using the doc-page template */
 exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => {
+    if (process.env.GATSBY_ENV === 'ci') {
+        const ip = await publicIp.v4();
+
+        process.env.GATSBY_HOST = `${ip}:9000`;
+    } else {
+        process.env.GATSBY_HOST = `${getInternalIPAddress()}:8080`;
+    }
+
     const docPageTemplate = path.resolve(`src/templates/doc-page.js`);
 
     const result = await graphql(`

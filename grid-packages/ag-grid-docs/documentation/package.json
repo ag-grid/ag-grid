@@ -52,6 +52,7 @@
     "node-sass": "4.14.1",
     "popper.js": "1.16.1",
     "prismjs": "1.22.0",
+    "public-ip": "4.0.3",
     "query-string": "5.1.1",
     "react": "16.14.0",
     "react-color": "2.18.1",
