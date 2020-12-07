@@ -1,11 +1,17 @@
-import { AgLineSeriesOptions, CartesianChartOptions, HighlightOptions, LineSeriesOptions } from "@ag-grid-community/core";
+import {
+    _,
+    AgLineSeriesOptions,
+    CartesianChartOptions,
+    HighlightOptions,
+    LineSeriesOptions
+} from "@ag-grid-community/core";
 import {
     AgCartesianChartOptions,
     AgChart,
     CartesianChart,
     ChartTheme,
     LegendClickEvent,
-    LineSeries
+    LineSeries,
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -57,9 +63,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
         const { chart } = this;
 
-        const fields = this.crossFiltering ?
-            params.fields.filter(f => f.colId.indexOf('-filtered-out') < 0) : params.fields;
-
+        const { fields } = params;
         const fieldIds = fields.map(f => f.colId);
         const data = this.transformData(params.data, params.category.id);
 
@@ -78,25 +82,24 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         let previousSeries: LineSeries | undefined;
 
         let { fills, strokes } = this.getPalette();
-        if (this.crossFiltering) {
-            // introduce cross filtering transparent fills
-            const fillsMod: string[] = [];
-            fills.forEach(fill => {
-                fillsMod.push(fill);
-                fillsMod.push(this.hexToRGBA(fill, '0.3'));
-            });
-            fills = fillsMod;
 
-            // introduce cross filtering transparent strokes
-            const strokesMod: string[] = [];
-            strokes.forEach(stroke => {
-                strokesMod.push(stroke);
-                strokesMod.push(this.hexToRGBA(stroke, '0.3'));
-            });
-            strokes = strokesMod;
-        }
+        console.log(fields);
 
         fields.forEach((f, index) => {
+            let yKey = f.colId;
+
+            // TODO: cross filtering WIP
+            if (this.crossFiltering) {
+                data.forEach(d => {
+                    d[f.colId + '-total'] = d[f.colId] + d[f.colId + '-filtered-out'];
+                });
+
+                const gridCtx = params.getGridContext!();
+                if (gridCtx.lastSelectedChartId === params.chartId) {
+                    yKey = f.colId + '-total';
+                }
+            }
+
             let lineSeries = existingSeriesById.get(f.colId);
             const fill = fills[index % fills.length];
             const stroke = strokes[index % strokes.length];
@@ -106,7 +109,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.data = data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;
-                lineSeries.yKey = f.colId;
+                lineSeries.yKey = yKey;
                 lineSeries.yName = f.displayName!;
                 lineSeries.marker.fill = fill;
                 lineSeries.marker.stroke = stroke;
@@ -129,7 +132,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     data,
                     xKey: params.category.id,
                     xName: params.category.name,
-                    yKey: f.colId,
+                    yKey: yKey,
                     yName: f.displayName,
                     fill,
                     stroke: fill, // this is deliberate, so that the line colours match the fills of other series
@@ -144,27 +147,34 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
                 lineSeries = AgChart.createComponent(options, 'line.series');
 
-                if (this.crossFiltering && lineSeries) {
-                    // disable series highlighting by default
-                    lineSeries.highlightStyle.fill = undefined;
+                // TODO crossing filtering WIP
+                const isFilteredOutYKey =  f.colId.indexOf('-filtered-out') > -1;
+                if (this.crossFiltering) {
 
-                    // sync toggling of legend item with hidden 'filtered out' item
-                    chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-                        lineSeries!.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
-                    });
+                    if (!isFilteredOutYKey) {
+                        // sync toggling of legend item with hidden 'filtered out' item
+                        chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                            lineSeries!.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                        });
+                    }
 
-                    // special handling for cross filtering markers
-                    lineSeries.marker.enabled = true;
-                    lineSeries.marker.size = 10;
-                    lineSeries.marker.formatter =  p => {
+                    // lineSeries!.marker.size = 0;
+                    lineSeries!.marker.formatter = p => {
+                        let size = 0;
+
+                        const ctx = params.getGridContext!();
+                        if(ctx && ctx.lastSelectedCategoryIds && _.includes(ctx.lastSelectedCategoryIds, p.datum[params.category.id].id)) {
+                            size = 8;
+                        }
+
                         return {
                             fill: p.highlighted ? 'yellow' : p.fill,
-                            size: p.highlighted ? 12 : p.size
+                            size: p.highlighted ? 12 : size
                         };
                     }
 
                     chart.tooltip.delay = 500;
-                    lineSeries.tooltip.renderer = (params) => {
+                    lineSeries!.tooltip.renderer = (params) => {
                         return {
                             content: params.yValue.toFixed(0),
                             title: params.xValue, // optional, same as default
@@ -172,8 +182,13 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                         };
                     }
 
+                    // hide 'filtered out' legend items
+                    if (isFilteredOutYKey) {
+                        lineSeries!.showInLegend = false;
+                    }
+
                     // add node click cross filtering callback to series
-                    lineSeries.addEventListener('nodeClick', this.crossFilterCallback);
+                    lineSeries!.addEventListener('nodeClick', this.crossFilterCallback);
                 }
 
                 chart.addSeriesAfter(lineSeries!, previousSeries);

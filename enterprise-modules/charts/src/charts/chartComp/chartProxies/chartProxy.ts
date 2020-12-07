@@ -2,6 +2,7 @@ import {
     _,
     AgChartCaptionOptions,
     AgChartLegendOptions,
+    AgChartThemeOverrides,
     AgNavigatorOptions,
     CaptionOptions,
     ChartOptions,
@@ -17,8 +18,7 @@ import {
     NavigatorOptions,
     PaddingOptions,
     ProcessChartOptionsParams,
-    SeriesOptions,
-    AgChartThemeOverrides
+    SeriesOptions
 } from "@ag-grid-community/core";
 import {
     AgChartTheme,
@@ -75,6 +75,8 @@ export interface UpdateChartParams {
         chartDataType?: string
     };
     fields: FieldDefinition[];
+    chartId?: string;
+    getGridContext?: () => any;
 }
 
 export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {

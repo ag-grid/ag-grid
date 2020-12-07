@@ -182,6 +182,35 @@ export class GridChartComp extends Component {
         const isGrouping = this.model.isGrouping();
 
         const crossFilter = this.createManagedBean(new ChartCrossFilter());
+        const crossFilterCallback = (event: any, reset: boolean) => {
+
+            // TODO - cross filtering WIP
+            let context = this.gridOptionsWrapper.getContext();
+            context.lastSelectedChartId = this.model.getChartId();
+            const category = event.datum && event.datum[event.xKey];
+            if (!event.reset && category) {
+                if (event.event.metaKey || event.event.ctrlKey) {
+
+                    if (!context.lastSelectedChartId || !context.lastSelectedCategoryIds || context.lastSelectedCategoryIds.length == 0) {
+                        context.lastSelectedCategoryIds = [];
+                    }
+
+                    if (_.includes(context.lastSelectedCategoryIds, category.id)) {
+                        context.lastSelectedCategoryIds =
+                            context.lastSelectedCategoryIds.filter((id: any) => id !== category.id);
+                    } else {
+                        context.lastSelectedCategoryIds.push(category.id);
+                    }
+
+                } else {
+                    context.lastSelectedCategoryIds = [category.id];
+                }
+            } else {
+                context.lastSelectedCategoryIds = [];
+            }
+
+            crossFilter.filter(event, reset);
+        }
 
         const chartProxyParams: ChartProxyParams = {
             chartId: this.model.getChartId(),
@@ -196,7 +225,7 @@ export class GridChartComp extends Component {
             allowPaletteOverride: !this.params.chartThemeName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             crossFiltering: !!this.params.crossFiltering,
-            crossFilterCallback: (event: any, reset: boolean) => crossFilter.filter(event, reset),
+            crossFilterCallback,
             parentElement: this.eChart,
             width,
             height,
@@ -357,9 +386,11 @@ export class GridChartComp extends Component {
         // TODO cross filtering
         if (this.params.crossFiltering) {
             fields.forEach(field => {
-               const crossFilteringField = {...field};
-               crossFilteringField.colId = field.colId + '-filtered-out';
-                fields.push(crossFilteringField) ;
+                const crossFilteringField = {...field};
+                if (this.chartType !== ChartType.Line) {
+                    crossFilteringField.colId = field.colId + '-filtered-out';
+                    fields.push(crossFilteringField);
+                }
             });
         }
 
@@ -380,11 +411,18 @@ export class GridChartComp extends Component {
                 name: selectedDimension.displayName!,
                 chartDataType: this.getChartDataType(selectedDimension.colId)
             },
-            fields
+            fields,
+            chartId: this.model.getChartId(),
+            getGridContext: () => this.gridOptionsWrapper.getContext(),
         };
 
         chartProxy.update(chartUpdateParams);
         this.titleEdit.setChartProxy(this.chartProxy);
+
+        let context = this.gridOptionsWrapper.getContext();
+        if (this.params.crossFiltering) {
+            context.lastSelectedChartId = undefined;
+        }
     }
 
     private getChartDataType(colId: string): string | undefined {
