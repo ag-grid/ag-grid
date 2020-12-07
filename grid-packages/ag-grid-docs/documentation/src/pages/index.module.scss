@@ -2,12 +2,34 @@
     composes: d-flex from global;
 
     &__card {
-        composes: card flex-grow-1 m-3 p-4 from global;
+        composes: card flex-grow-1 m-3 from global;
+        overflow: hidden;
+        cursor: pointer;
+        &:focus {
+            outline: none;
+        }
+
+        &:focus-visible {
+            outline: 1px auto $dark;
+        }
+
+        &__logo-container {
+            composes: p-2 from global;
+            height: 4rem;
+        }
 
         &__logo {
-            composes: my-5 from global;
+            min-height: 100%;
+            max-height: 100%;
+        }
 
-            height: 100px;
+        &__header {
+            composes: card-header from global;
+        }
+
+        &__selected {
+            composes: border-primary from global;
+            box-shadow: 0 0 0 3px transparentize($primary, 0.5);
         }
 
         &__button {

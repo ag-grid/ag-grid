@@ -28,7 +28,7 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
                 </div>
             </div>
             <div className={styles['footer']}>
-                &copy; AG-Grid Ltd 2020
+                &copy; AG-Grid Ltd { new Date().getFullYear().toString() }
             </div>
         </div>
     </GlobalContextProvider>;
