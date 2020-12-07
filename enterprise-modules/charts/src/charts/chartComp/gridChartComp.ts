@@ -35,6 +35,7 @@ import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
 import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
 import { ChartTranslator } from "./chartTranslator";
 import { ChartCrossFilter } from "./chartCrossFilter";
+import { CrossFilteringContext } from "../chartService";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -47,7 +48,8 @@ export interface GridChartParams {
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
-    crossFiltering?: boolean;
+    crossFiltering: boolean;
+    crossFilteringContext: CrossFilteringContext;
 }
 
 export class GridChartComp extends Component {
@@ -185,28 +187,29 @@ export class GridChartComp extends Component {
         const crossFilterCallback = (event: any, reset: boolean) => {
 
             // TODO - cross filtering WIP
-            let context = this.gridOptionsWrapper.getContext();
-            context.lastSelectedChartId = this.model.getChartId();
+
+            const ctx = this.params.crossFilteringContext;
+
+            ctx.lastSelectedChartId = this.model.getChartId();
             const category = event.datum && event.datum[event.xKey];
             if (!event.reset && category) {
                 if (event.event.metaKey || event.event.ctrlKey) {
 
-                    if (!context.lastSelectedChartId || !context.lastSelectedCategoryIds || context.lastSelectedCategoryIds.length == 0) {
-                        context.lastSelectedCategoryIds = [];
+                    if (!ctx.lastSelectedChartId || !ctx.lastSelectedCategoryIds || ctx.lastSelectedCategoryIds.length == 0) {
+                        ctx.lastSelectedCategoryIds = [];
                     }
 
-                    if (_.includes(context.lastSelectedCategoryIds, category.id)) {
-                        context.lastSelectedCategoryIds =
-                            context.lastSelectedCategoryIds.filter((id: any) => id !== category.id);
+                    if (_.includes(ctx.lastSelectedCategoryIds, category.id)) {
+                        ctx.lastSelectedCategoryIds = ctx.lastSelectedCategoryIds.filter((id: any) => id !== category.id);
                     } else {
-                        context.lastSelectedCategoryIds.push(category.id);
+                        ctx.lastSelectedCategoryIds.push(category.id);
                     }
 
                 } else {
-                    context.lastSelectedCategoryIds = [category.id];
+                    ctx.lastSelectedCategoryIds = [category.id];
                 }
             } else {
-                context.lastSelectedCategoryIds = [];
+                ctx.lastSelectedCategoryIds = [];
             }
 
             crossFilter.filter(event, reset);
@@ -224,7 +227,7 @@ export class GridChartComp extends Component {
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             allowPaletteOverride: !this.params.chartThemeName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
-            crossFiltering: !!this.params.crossFiltering,
+            crossFiltering: this.params.crossFiltering,
             crossFilterCallback,
             parentElement: this.eChart,
             width,
@@ -413,15 +416,14 @@ export class GridChartComp extends Component {
             },
             fields,
             chartId: this.model.getChartId(),
-            getGridContext: () => this.gridOptionsWrapper.getContext(),
+            crossFilteringContext: this.params.crossFilteringContext,
         };
 
         chartProxy.update(chartUpdateParams);
         this.titleEdit.setChartProxy(this.chartProxy);
 
-        let context = this.gridOptionsWrapper.getContext();
         if (this.params.crossFiltering) {
-            context.lastSelectedChartId = undefined;
+            this.params.crossFilteringContext.lastSelectedChartId = '';
         }
     }
 

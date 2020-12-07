@@ -36,6 +36,7 @@ import {
     themes,
 } from "ag-charts-community";
 import { deepMerge } from "../object";
+import { CrossFilteringContext } from "../../chartService";
 
 export interface ChartProxyParams {
     chartId: string;
@@ -76,7 +77,7 @@ export interface UpdateChartParams {
     };
     fields: FieldDefinition[];
     chartId?: string;
-    getGridContext?: () => any;
+    crossFilteringContext: CrossFilteringContext;
 }
 
 export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {

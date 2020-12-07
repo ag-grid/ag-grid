@@ -24,6 +24,11 @@ import {
 } from "@ag-grid-community/core";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 
+export interface CrossFilteringContext {
+    lastSelectedChartId: string;
+    lastSelectedCategoryIds: any[];
+}
+
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
 
@@ -35,6 +40,12 @@ export class ChartService extends BeanStub implements IChartService {
     // those in developer provided containers.
     private activeCharts = new Set<ChartRef>();
     private activeChartComps = new Set<GridChartComp>();
+
+    // this shared (singleton) context is used by cross filtering in line and area charts
+    private crossFilteringContext: CrossFilteringContext = {
+        lastSelectedChartId: '',
+        lastSelectedCategoryIds: [],
+    };
 
     public getChartModels(): ChartModel[] {
         const models: ChartModel[] = [];
@@ -172,7 +183,8 @@ export class ChartService extends BeanStub implements IChartService {
             chartThemeOverrides,
             processChartOptions,
             unlinkChart,
-            crossFiltering
+            crossFiltering,
+            crossFilteringContext: this.crossFilteringContext
         };
 
         const chartComp = new GridChartComp(params);

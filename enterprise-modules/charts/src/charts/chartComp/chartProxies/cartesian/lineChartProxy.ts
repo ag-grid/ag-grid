@@ -82,9 +82,6 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         let previousSeries: LineSeries | undefined;
 
         let { fills, strokes } = this.getPalette();
-
-        console.log(fields);
-
         fields.forEach((f, index) => {
             let yKey = f.colId;
 
@@ -94,8 +91,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     d[f.colId + '-total'] = d[f.colId] + d[f.colId + '-filtered-out'];
                 });
 
-                const gridCtx = params.getGridContext!();
-                if (gridCtx.lastSelectedChartId === params.chartId) {
+                if (params.crossFilteringContext.lastSelectedChartId === params.chartId) {
                     yKey = f.colId + '-total';
                 }
             }
@@ -162,7 +158,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     lineSeries!.marker.formatter = p => {
                         let size = 0;
 
-                        const ctx = params.getGridContext!();
+                        const ctx = params.crossFilteringContext;
                         if(ctx && ctx.lastSelectedCategoryIds && _.includes(ctx.lastSelectedCategoryIds, p.datum[params.category.id].id)) {
                             size = 8;
                         }
