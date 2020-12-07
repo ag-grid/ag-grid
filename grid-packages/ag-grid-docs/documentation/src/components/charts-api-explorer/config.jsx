@@ -154,22 +154,28 @@ export const chart = Object.freeze({
         max: () => getChartContainer().offsetHeight - 10 - (getChartContainer().offsetHeight % 10),
         unit: 'px',
     },
-    // tooltipTracking: {
-    //     type: 'boolean',
-    //     default: true,
-    //     description: 'If true, for series with markers the tooltip will be shown to the closest marker.',
-    //     editor: BooleanEditor
-    // },
-    // tooltipOffset: {
-    //     type: '[number, number]',
-    //     default: [20, 20],
-    //     description: 'Offset of a tooltip from the cursor in pixels, specified as <code>[xOffset,&nbsp;yOffset]</code>.',
-    //     editor: ArrayEditor,
-    // },
-    // tooltipClass: {
-    //     type: 'string',
-    //     description: 'A class to be added to tooltips in the chart.',
-    // },
+    tooltip: {
+        meta: {
+            description: 'Global configuration that applies to all tooltips in the chart.',
+        },
+        enabled: {
+            type: 'boolean',
+            default: true,
+            description: 'Set to false to disable tooltips for all series in the chart.',
+            editor: BooleanEditor
+        },
+        tracking: {
+            type: 'boolean',
+            default: true,
+            description: 'If true, for series with markers the tooltip will be shown to the closest marker.',
+            editor: BooleanEditor
+        },
+        class: {
+            type: 'string',
+            description: 'A class name to be added to the tooltip element of the chart.',
+        },
+
+    },
     padding: {
         meta: {
             description: 'Configuration for the padding shown around the chart.',
@@ -510,27 +516,32 @@ const series = {
         description: 'Whether or not to include the series in the legend.',
         editor: BooleanEditor,
     },
-    tooltipEnabled: {
-        default: true,
-        description: 'Whether or not to show tooltips when the series are hovered over.',
-        editor: BooleanEditor,
-    },
-    tooltipRenderer: {
-        type: {
-            parameters: {
-                'datum': 'any',
-                'title?': 'string',
-                'color?': 'string',
-                'xKey': 'string',
-                'xValue': 'any',
-                'xName?': 'string',
-                'yKey': 'string',
-                'yValue': 'any',
-                'yName?': 'string',
-            },
-            returnType: 'string',
+    tooltip: {
+        meta: {
+            description: 'Series-specific tooltip configuration.'
         },
-        description: 'Function used to create the content for tooltips.',
+        enabled: {
+            default: true,
+            description: 'Whether or not to show tooltips when the series are hovered over.',
+            editor: BooleanEditor,
+        },
+        renderer: {
+            type: {
+                parameters: {
+                    'datum': 'any',
+                    'title?': 'string',
+                    'color?': 'string',
+                    'xKey': 'string',
+                    'xValue': 'any',
+                    'xName?': 'string',
+                    'yKey': 'string',
+                    'yValue': 'any',
+                    'yName?': 'string',
+                },
+                returnType: 'string',
+            },
+            description: 'Function used to create the content for tooltips.',
+        },
     },
 };
 
@@ -988,26 +999,36 @@ export const scatter = Object.freeze({
         description: 'A human-readable description of the label values.',
     },
     ...series,
-    tooltipRenderer: {
-        type: {
-            parameters: {
-                'datum': 'any',
-                'title?': 'string',
-                'color?': 'string',
-                'xKey': 'string',
-                'xValue': 'any',
-                'xName?': 'string',
-                'yKey': 'string',
-                'yValue': 'any',
-                'yName?': 'string',
-                'sizeKey?': 'string',
-                'sizeName?': 'string',
-                'labelKey?': 'string',
-                'labelName?': 'string',
-            },
-            returnType: 'string',
+    tooltip: {
+        meta: {
+            description: 'Series-specific tooltip configuration.'
         },
-        description: 'Function used to create the content for tooltips.'
+        enabled: {
+            default: true,
+            description: 'Whether or not to show tooltips when the series are hovered over.',
+            editor: BooleanEditor,
+        },
+        renderer: {
+            type: {
+                parameters: {
+                    'datum': 'any',
+                    'title?': 'string',
+                    'color?': 'string',
+                    'xKey': 'string',
+                    'xValue': 'any',
+                    'xName?': 'string',
+                    'yKey': 'string',
+                    'yValue': 'any',
+                    'yName?': 'string',
+                    'sizeKey?': 'string',
+                    'sizeName?': 'string',
+                    'labelKey?': 'string',
+                    'labelName?': 'string',
+                },
+                returnType: 'string',
+            },
+            description: 'Function used to create the content for tooltips.'
+        },
     },
     title: {
         type: 'string',
@@ -1072,24 +1093,34 @@ export const pie = Object.freeze({
     ...series,
     ...getLineDashConfig('Defines how the pie sector strokes are rendered.'),
     ...getLineDashOffsetConfig(),
-    tooltipRenderer: {
-        type: {
-            parameters: {
-                'datum': 'any',
-                'title?': 'string',
-                'color?': 'string',
-                'angleKey': 'string',
-                'angleValue': 'any',
-                'angleName?': 'string',
-                'radiusKey?': 'string',
-                'radiusValue?': 'any',
-                'radiusName?': 'string',
-                'labelKey?': 'string',
-                'labelName?': 'string'
-            },
-            returnType: 'string',
+    tooltip: {
+        meta: {
+            description: 'Series-specific tooltip configuration.'
         },
-        description: 'Function used to create the content for tooltips.'
+        enabled: {
+            default: true,
+            description: 'Whether or not to show tooltips when the series are hovered over.',
+            editor: BooleanEditor,
+        },
+        renderer: {
+            type: {
+                parameters: {
+                    'datum': 'any',
+                    'title?': 'string',
+                    'color?': 'string',
+                    'angleKey': 'string',
+                    'angleValue': 'any',
+                    'angleName?': 'string',
+                    'radiusKey?': 'string',
+                    'radiusValue?': 'any',
+                    'radiusName?': 'string',
+                    'labelKey?': 'string',
+                    'labelName?': 'string'
+                },
+                returnType: 'string',
+            },
+            description: 'Function used to create the content for tooltips.'
+        },
     },
     rotation: {
         default: 0,
@@ -1233,26 +1264,36 @@ export const histogram = Object.freeze({
     },
     ...getLineDashConfig('Defines how the column strokes are rendered.'),
     ...getLineDashOffsetConfig(),
-    tooltipRenderer: {
-        type: {
-            parameters: {
-                'datum': 'any',
-                'title?': 'string',
-                'color?': 'string',
-                'xKey': 'string',
-                'xValue': 'any',
-                'xName?': 'string',
-                'yKey': 'string',
-                'yValue': 'any',
-                'yName?': 'string',
-                'sizeKey?': 'string',
-                'sizeName?': 'string',
-                'labelKey?': 'string',
-                'labelName?': 'string'
-            },
-            returnType: "string"
+    tooltip: {
+        meta: {
+            description: 'Series-specific tooltip configuration.'
         },
-        description: "Function used to create the content for tooltips."
+        enabled: {
+            default: true,
+            description: 'Whether or not to show tooltips when the series are hovered over.',
+            editor: BooleanEditor,
+        },
+        renderer: {
+            type: {
+                parameters: {
+                    'datum': 'any',
+                    'title?': 'string',
+                    'color?': 'string',
+                    'xKey': 'string',
+                    'xValue': 'any',
+                    'xName?': 'string',
+                    'yKey': 'string',
+                    'yValue': 'any',
+                    'yName?': 'string',
+                    'sizeKey?': 'string',
+                    'sizeName?': 'string',
+                    'labelKey?': 'string',
+                    'labelName?': 'string'
+                },
+                returnType: "string"
+            },
+            description: "Function used to create the content for tooltips."
+        },
     },
     ...getHighlightConfig('bars'),
     ...getColourConfig('histogram bars', false, true),
