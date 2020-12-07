@@ -7,6 +7,28 @@ const supportedFrameworks = require('./src/utils/supported-frameworks.js');
 const chartGallery = require('./src/pages/charts/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 
+const getIPAddress = () => {
+    const interfaces = require('os').networkInterfaces();
+
+    for (let devName in interfaces) {
+        const iface = interfaces[devName];
+
+        for (let i = 0; i < iface.length; i++) {
+            const alias = iface[i];
+
+            if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
+                return alias.address;
+            }
+        }
+    }
+
+    return '0.0.0.0';
+}
+
+if (process.env.NODE_ENV === 'development') {
+    process.env.GATSBY_IP_ADDRESS = getIPAddress();
+}
+
 /* We override this to allow us to specify the directory structure of the example files, so that we can reference
  * them correctly in the examples. By default, Gatsby includes a cache-busting hash of the file which would cause
  * problems if we included it. It does mean that example files could be held in the cache though. */
@@ -159,7 +181,7 @@ exports.onCreateDevServer = ({ app }) => {
 exports.onCreateWebpackConfig = ({ actions }) => {
     actions.setWebpackConfig({
         node: {
-            fs: 'empty'
+            fs: 'empty',
         }
     });
 };
