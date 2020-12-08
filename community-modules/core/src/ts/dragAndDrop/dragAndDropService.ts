@@ -263,6 +263,9 @@ export class DragAndDropService extends BeanStub {
 
         const dropTarget: DropTarget = len === 1
             ? validDropTargets[0]
+            // the current mouse position could intersect with more than 1 element
+            // if they are nested. In that case we need to get the most specific
+            // container, which is the one that does not contain any other targets.
             : validDropTargets.reduce((prevTarget, currTarget) => {
                 if (!prevTarget) { return currTarget; }
                 const prevContainer = prevTarget.getContainer();
