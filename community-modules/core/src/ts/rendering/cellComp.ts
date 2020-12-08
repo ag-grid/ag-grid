@@ -1305,12 +1305,6 @@ export class CellComp extends Component implements TooltipParentComp {
         // note: this only happens when use clicks outside of the grid. if use clicks on another
         // cell, then the editing will have already stopped on this cell
         this.stopRowOrCellEdit();
-
-        // we know the user has clicked outside of the grid as mentioned above.
-        // if the cell is still marked as focused, we should clear it
-        if (this.beans.focusController.isCellFocused(this.cellPosition)) {
-            this.beans.focusController.clearFocusedCell();
-        }
     }
 
     // if we are editing inline, then we don't have the padding in the cell (set in the themes)
