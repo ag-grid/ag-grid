@@ -1,5 +1,5 @@
 import { withPrefix } from 'gatsby';
-import { agGridVersion, localPrefix } from './consts';
+import { agGridVersion, getDevLibraryPrefix, localPrefix } from './consts';
 import { getIndexHtml } from './index-html-helper';
 
 const getInternalFramework = (framework, useFunctionalReact) => {
@@ -139,7 +139,14 @@ export const openPlunker = (nodes, exampleInfo) => {
         addHiddenInput('description', title);
 
         Object.keys(files).forEach(key => {
-            addHiddenInput(`files[${key}]`, files[key].source);
+            let { source } = files[key];
+
+            if (isDevelopment() && window.location) {
+                // swap out to match hostname so Plunkers from localhost can be shared
+                source = source.replace(new RegExp(localPrefix, 'g'), getDevLibraryPrefix(`${window.location.hostname}:8080`));
+            }
+
+            addHiddenInput(`files[${key}]`, source);
         });
 
         document.body.appendChild(form);
