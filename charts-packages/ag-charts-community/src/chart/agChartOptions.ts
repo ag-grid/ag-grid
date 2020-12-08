@@ -204,6 +204,7 @@ interface AgChartTooltipOptions {
     enabled?: boolean;
     class?: string;
     tracking?: boolean;
+    delay?: number;
 }
 
 interface AgBaseChartOptions {

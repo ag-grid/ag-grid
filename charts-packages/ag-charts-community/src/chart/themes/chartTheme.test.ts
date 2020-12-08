@@ -3,6 +3,7 @@ import { AgCartesianChartOptions, AgCartesianSeriesMarkerFormatter, AgChartTheme
 import { AreaSeries } from "../series/cartesian/areaSeries";
 import { BarSeries } from "../series/cartesian/barSeries";
 import { PieSeries } from "../series/polar/pieSeries";
+import { ChartTheme } from "./chartTheme";
 
 const data = [
     { label: 'Android', v1: 5.67, v2: 8.63, v3: 8.14, v4: 6.45, v5: 1.37 },
@@ -11,6 +12,22 @@ const data = [
     { label: 'Symbian', v1: 9.27, v2: 4.21, v3: 2.53, v4: 6.31, v5: 4.44 },
     { label: 'Windows', v1: 2.80, v2: 1.908, v3: 7.48, v4: 5.29, v5: 8.80 }
 ];
+
+describe("getConfig", () => {
+    test("chart tooltip", () => {
+        const theme = new ChartTheme();
+        expect(theme.getConfig('cartesian.tooltip.enabled')).toBe(true);
+        expect(theme.getConfig('column.tooltip.enabled')).toBe(true);
+
+        expect(theme.getConfig('cartesian.tooltip.delay')).toBe(0);
+        expect(theme.getConfig('column.tooltip.delay')).toBe(0);
+    });
+    test("series tooltip", () => {
+        const theme = new ChartTheme();
+        expect(theme.getConfig('cartesian.series.column.tooltip.enabled')).toBe(true);
+        expect(theme.getConfig('column.series.column.tooltip.enabled')).toBe(true);
+    });
+});
 
 describe("cartesian overrides", () => {
     const tooltipRenderer = () => 'testing';

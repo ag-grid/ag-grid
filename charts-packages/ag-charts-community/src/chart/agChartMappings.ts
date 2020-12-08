@@ -53,6 +53,7 @@ const commonChartMappings: any = {
             defaults: {
                 enabled: true,
                 tracking: true,
+                delay: 0,
                 class: Chart.defaultTooltipClass
             }
         }

@@ -286,7 +286,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         options.tooltip = {
             enabled: theme.getConfig(standaloneChartType + '.tooltip.enabled'),
             tracking: theme.getConfig(standaloneChartType + '.tooltip.tracking'),
-            class: theme.getConfig(standaloneChartType + '.tooltip.class')
+            class: theme.getConfig(standaloneChartType + '.tooltip.class'),
+            delay: theme.getConfig(standaloneChartType + '.tooltip.delay')
         };
         options.listeners = theme.getConfig(standaloneChartType + '.listeners');
         options.padding = theme.getConfig(standaloneChartType + '.padding');
