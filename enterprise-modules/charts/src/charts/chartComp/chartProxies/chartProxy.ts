@@ -411,7 +411,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         padding[property] = value;
 
-        this.chart.padding[property] = value;
+        (this.chart.padding as any)[property] = value;
 
         this.chart.performLayout();
         this.raiseChartOptionsChangedEvent();
