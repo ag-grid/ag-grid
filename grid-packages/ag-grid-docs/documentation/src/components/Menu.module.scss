@@ -12,6 +12,20 @@
                 text-decoration: none;
                 color: $primary;
             }
+
+            &--active {
+                font-weight: bolder !important;
+                color: $primary !important;
+                position: relative;
+
+                &::before {
+                    font-size: 1.5rem;
+                    content: "•";
+                    position: absolute;
+                    left: -1rem;
+                    top: -0.55rem;
+                }
+            }
         }
 
         div[role="button"],
@@ -33,10 +47,6 @@
         div[role="button"] {
             color: $dark;
             font-weight: 500;
-        }
-
-        &--active {
-            color: $primary !important;
         }
     }
 
