@@ -3,6 +3,7 @@ import { copy } from "../../util/array";
 import { AgChartThemePalette, AgChartThemeOptions, AgChartThemeOverrides } from "../agChartOptions";
 import { Series } from "../series/series";
 import { Padding } from "../../util/padding";
+import { Chart } from "../chart";
 
 const palette: AgChartThemePalette = {
     fills: [
@@ -210,6 +211,12 @@ export class ChartTheme {
                         fontFamily: this.fontFamily
                     }
                 }
+            },
+            tooltip: {
+                enabled: true,
+                tracking: true,
+                delay: 0,
+                class: Chart.defaultTooltipClass
             }
         };
     }
