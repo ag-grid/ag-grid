@@ -1,4 +1,4 @@
-import {IComponent, WrapableInterface, _} from 'ag-grid-community';
+import {_, ComponentType, IComponent, WrapableInterface} from 'ag-grid-community';
 import {AgGridReact} from "./agGridReact";
 import {ReactPortal} from "react";
 import {assignProperties} from "./utils";
@@ -28,12 +28,15 @@ export abstract class ReactComponent extends BaseReactComponent {
     protected parentComponent: AgGridReact;
     protected portal: ReactPortal | null = null;
     protected statelessComponent: boolean;
+    protected componentType: ComponentType;
 
-    constructor(reactComponent: any, parentComponent: AgGridReact) {
+    constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
         super();
 
         this.reactComponent = reactComponent;
         this.parentComponent = parentComponent;
+        this.componentType = componentType;
+
         this.statelessComponent = this.isStateless(this.reactComponent);
     }
 
@@ -104,26 +107,29 @@ export abstract class ReactComponent extends BaseReactComponent {
 
     hasMethod(name: string): boolean {
         let frameworkComponentInstance = this.getFrameworkComponentInstance();
-        if (frameworkComponentInstance == null) {
-            return false;
+        if (!!frameworkComponentInstance) {
+            return this.fallbackMethodAvailable(name) || frameworkComponentInstance[name] != null;
         }
-        return frameworkComponentInstance[name] != null;
+
+        return false;
     }
 
     callMethod(name: string, args: IArguments): void {
-        let frameworkComponentInstance = this.getFrameworkComponentInstance();
+        const frameworkComponentInstance = this.getFrameworkComponentInstance();
+        const method = frameworkComponentInstance[name];
 
-        // this should never happen now that AgGridReact.waitForInstance is in use
-        if (frameworkComponentInstance == null) {
-            window.setTimeout(() => this.callMethod(name, args), 100);
-        } else {
-            let method = this.getFrameworkComponentInstance()[name];
-            if (method == null) return;
+        if (!!method) {
             return method.apply(frameworkComponentInstance, args);
+        } else if (this.fallbackMethodAvailable(name)) {
+            return this.fallbackMethod(name, !!args && args[0] ? args[0] : {});
         }
     }
 
     addMethod(name: string, callback: Function): void {
         (this as any)[name] = callback;
     }
+
+    protected abstract fallbackMethod(name: string, params: any): any;
+
+    protected abstract fallbackMethodAvailable(name: string): boolean;
 }

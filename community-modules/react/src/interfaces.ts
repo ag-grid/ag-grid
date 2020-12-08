@@ -44,7 +44,7 @@ export interface ICellEditorReactComp extends ICellEditor, AgReactFrameworkCompo
 }
 
 export interface ILoadingCellRendererReactComp extends AgReactFrameworkComponent<ILoadingCellRendererParams> {
-    
+
 }
 
 export interface ILoadingOverlayReactComp extends AgReactFrameworkComponent<ILoadingOverlayParams> {

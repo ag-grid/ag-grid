@@ -9,14 +9,11 @@ import {renderToStaticMarkup} from 'react-dom/server';
 export class LegacyReactComponent extends ReactComponent {
     static SLOW_RENDERERING_THRESHOLD = 3;
 
-    private componentType: ComponentType;
     private staticMarkup: HTMLElement | null | string = null;
     private staticRenderTime: number = 0;
 
     constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
-        super(reactComponent, parentComponent);
-
-        this.componentType = componentType;
+        super(reactComponent, parentComponent, componentType);
     }
 
     public init(params: any): Promise<void> {
@@ -61,6 +58,12 @@ export class LegacyReactComponent extends ReactComponent {
             }
         });
     }
+
+    protected fallbackMethodAvailable(name: string): boolean {
+        return false;
+    }
+
+    protected fallbackMethod(name: string, params: any): void { /* no op */}
 
     private isSlowRenderer() {
         return this.staticRenderTime >= LegacyReactComponent.SLOW_RENDERERING_THRESHOLD;

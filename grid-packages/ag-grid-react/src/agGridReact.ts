@@ -33,6 +33,11 @@ export interface AgGridReactProps extends GridOptions {
 export class AgGridReact extends Component<AgGridReactProps, {}> {
     static propTypes: any;
 
+    static defaultProps = {
+        legacyComponentRendering: false,
+        disableStaticMarkup: false
+    };
+
     gridOptions!: GridOptions;
 
     changeDetectionService = new ChangeDetectionService();
@@ -124,6 +129,11 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void) {
         this.portals = [...this.portals, portal];
         this.waitForInstance(reactComponent, resolve);
+        this.batchUpdate();
+    }
+
+    updateReactPortal(oldPortal: ReactPortal, newPortal: ReactPortal) {
+        this.portals = this.portals.filter(portal => portal !== oldPortal).concat(newPortal);
         this.batchUpdate();
     }
 
@@ -270,11 +280,11 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     public isDisableStaticMarkup(): boolean {
-        return !!this.props.disableStaticMarkup;
+        return this.props.disableStaticMarkup;
     }
 
     public isLegacyComponentRendering(): boolean {
-        return !!this.props.legacyComponentRendering;
+        return this.props.legacyComponentRendering;
     }
 }
 
@@ -307,6 +317,6 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
     createWrapper(UserReactComponent: { new(): any; }, componentType: ComponentType): WrapableInterface {
         return this.agGridReact.isLegacyComponentRendering() ?
             new LegacyReactComponent(UserReactComponent, this.agGridReact, componentType) :
-            new NewReactComponent(UserReactComponent, this.agGridReact);
+            new NewReactComponent(UserReactComponent, this.agGridReact, componentType);
     }
 }
