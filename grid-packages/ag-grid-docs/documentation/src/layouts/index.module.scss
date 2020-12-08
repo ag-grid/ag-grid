@@ -33,7 +33,7 @@
     flex: none;
     width: 300px;
     overflow: auto;
-    background-color: $light;
+    border-right: solid 1px lighten($secondary, 40%);
 }
 
 .content {

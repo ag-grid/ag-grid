@@ -29,6 +29,7 @@ export interface ChartTooltip {
     enabled?: boolean;
     class?: string;
     tracking?: boolean;
+    delay?: number;
 }
 
 export interface ChartOptions<T extends SeriesOptions> {

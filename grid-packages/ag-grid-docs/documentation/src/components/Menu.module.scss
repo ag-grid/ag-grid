@@ -1,9 +1,9 @@
 .menu {
-    composes: p-2 from global;
+    composes: p-3 from global;
 
     &__item {
         &__link {
-            composes: d-block my-1 from global;
+            composes: d-block my-2 from global;
 
             color: $secondary;
             font-size: 0.85rem;
@@ -11,6 +11,20 @@
             &:hover {
                 text-decoration: none;
                 color: $primary;
+            }
+
+            &--active {
+                font-weight: bolder !important;
+                color: $primary !important;
+                position: relative;
+
+                &::before {
+                    font-size: 1.5rem;
+                    content: "•";
+                    position: absolute;
+                    left: -1rem;
+                    top: -0.55rem;
+                }
             }
         }
 
@@ -33,10 +47,6 @@
         div[role="button"] {
             color: $dark;
             font-weight: 500;
-        }
-
-        &--active {
-            color: $primary !important;
         }
     }
 
@@ -62,13 +72,20 @@
     }
 
     &__section {
-        composes: p-1 from global;
+        composes: pt-1 pb-2 from global;
+
+        &__heading {
+            font-weight: 500;
+            outline: none;
+        }
     }
 
     &__arrow {
         composes: mr-1 from global;
 
         transition: all 0.5s;
+        font-size: 0.8rem;
+        vertical-align: -0.05rem;
     }
 
     &__group {
@@ -77,13 +94,19 @@
         &--top-level {
             composes: pl-4 from global;
 
-            > li > a {
+            > .menu__item {
                 color: $dark;
                 font-weight: 400;
                 font-size: 0.9rem;
 
-                &:hover {
-                    color: $primary;
+                & > a {
+                    color: $dark;
+                    font-weight: 400;
+                    font-size: 0.9rem;
+
+                    &:hover {
+                        color: $primary;
+                    }
                 }
             }
         }
