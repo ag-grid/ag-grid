@@ -147,6 +147,13 @@ The example below presents a simple grid layout with the following properties en
 
 <grid-example title='Grid Customised for Accessibility' name='accessibility' type='generated' options='{ "enterprise": true }'></grid-example>
 
+## Customising ARIA Labels
+
+The grid has default ARIA labels for areas like `rows`, `group cells`, `filters`, `search fields` and so on. If there is a need to
+customise these labels, this could be achieved by changing the [localisation variables](../localisation/#creating-a-locale) for ARIA.
+See the [localisation example](../localisation/#example--localisation), inspect the items or use a screen reader to see the 
+customisation in action.
+
 ## Known Limitations
 
 Using advanced functionality in ag-Grid makes the DOM structure incompatible with the assumptions screen readers make. This results in a few limitations in accessibility when specific functionality is used:
