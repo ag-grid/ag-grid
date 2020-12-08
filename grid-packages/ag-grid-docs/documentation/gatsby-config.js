@@ -110,6 +110,12 @@ const plugins = [
   'gatsby-plugin-catch-links',
   'gatsby-plugin-react-helmet',
   'gatsby-plugin-use-query-params',
+  {
+    resolve: 'gatsby-plugin-sitemap',
+    options: {
+      exclude: [`/example-runner`],
+    }
+  }
 ];
 
 if (process.env.GATSBY_UPDATE_ALGOLIA === 'true') {
@@ -127,7 +133,8 @@ module.exports = {
   pathPrefix: '/documentation',
   siteMetadata: {
     title: 'AG-Grid Documentation',
-    author: 'AG-Grid'
+    author: 'AG-Grid',
+    siteUrl: `https://www.ag-grid.com`,
   },
   plugins
 };

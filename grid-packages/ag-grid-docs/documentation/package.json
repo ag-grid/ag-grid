@@ -33,6 +33,7 @@
     "gatsby-plugin-react-helmet": "3.3.14",
     "gatsby-plugin-sass": "2.4.1",
     "gatsby-plugin-sharp": "2.6.43-lazy-images.60",
+    "gatsby-plugin-sitemap": "2.8.0",
     "gatsby-plugin-use-query-params": "1.0.1",
     "gatsby-remark-attr": "0.1.0",
     "gatsby-remark-autolink-headers": "2.4.0",
