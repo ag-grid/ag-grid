@@ -1,9 +1,9 @@
 .menu {
-    composes: p-2 from global;
+    composes: p-3 from global;
 
     &__item {
         &__link {
-            composes: d-block my-1 from global;
+            composes: d-block my-2 from global;
 
             color: $secondary;
             font-size: 0.85rem;
@@ -62,13 +62,20 @@
     }
 
     &__section {
-        composes: p-1 from global;
+        composes: pt-1 pb-2 from global;
+
+        &__heading {
+            font-weight: 500;
+            outline: none;
+        }
     }
 
     &__arrow {
         composes: mr-1 from global;
 
         transition: all 0.5s;
+        font-size: 0.8rem;
+        vertical-align: -0.05rem;
     }
 
     &__group {
@@ -77,13 +84,19 @@
         &--top-level {
             composes: pl-4 from global;
 
-            > li > a {
+            > .menu__item {
                 color: $dark;
                 font-weight: 400;
                 font-size: 0.9rem;
 
-                &:hover {
-                    color: $primary;
+                & > a {
+                    color: $dark;
+                    font-weight: 400;
+                    font-size: 0.9rem;
+
+                    &:hover {
+                        color: $primary;
+                    }
                 }
             }
         }

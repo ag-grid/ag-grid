@@ -13,7 +13,8 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
             onClick={() => toggleActive()}
             onKeyDown={() => toggleActive()}
             role="button"
-            tabIndex="0">
+            tabIndex="0"
+            className={styles['menu__section__heading']}>
             <FontAwesomeIcon
                 icon={faChevronRight}
                 fixedWidth
@@ -36,7 +37,7 @@ const MenuGroup = ({ group, currentFramework, isTopLevel = false }) =>
 
 const MenuItem = ({ item, currentFramework }) => {
     const enterpriseIcon = item.enterprise && <div className={styles['menu__enterprise-icon']}>(e)</div>;
-    const title = <span>{item.title}{enterpriseIcon}</span>;
+    const title = <>{item.title}{enterpriseIcon}</>;
 
     return (
         <li key={item.title} className={styles['menu__item']}>
