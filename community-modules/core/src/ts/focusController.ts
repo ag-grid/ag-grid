@@ -41,6 +41,13 @@ export class FocusController extends BeanStub {
     private static keyboardModeActive: boolean = false;
     private static instancesMonitored: Map<Document, GridCore[]> = new Map();
 
+    /**
+     * Adds a gridCore to the list of the gridCores monitoring Keyboard Mode
+     * in a specific HTMLDocument.
+     *
+     * @param doc {Document} - The Document containing the gridCore.
+     * @param gridCore {GridCore} - The GridCore to be monitored.
+     */
     private static addKeyboardModeEvents(doc: Document, gridCore: GridCore): void {
         const gridCoresForDocument = FocusController.instancesMonitored.get(doc);
 
@@ -55,6 +62,13 @@ export class FocusController extends BeanStub {
         }
     }
 
+    /**
+     * Removes a gridCore from the list of the gridCores monitoring Keyboard Mode
+     * in a specific HTMLDocument.
+     *
+     * @param doc {Document} - The Document containing the gridCore.
+     * @param gridCore {GridCore} - The GridCore to be removed.
+     */
     private static removeKeyboardModeEvents(doc: Document, gridCore: GridCore): void {
         const gridCoresForDocument = FocusController.instancesMonitored.get(doc);
 
@@ -73,6 +87,13 @@ export class FocusController extends BeanStub {
         }
     }
 
+    /**
+     * This method will be called by `keydown` and `mousedown` events on all Documents monitoring
+     * KeyboardMode. It will then fire a KEYBOARD_FOCUS, MOUSE_FOCUS on each gridCore present in
+     * the Document allowing each gridCore to maintain a state for KeyboardMode.
+     *
+     * @param event {KeyboardEvent | MouseEvent | TouchEvent} - The event triggered.
+     */
     private static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void {
         const isKeyboardActive = FocusController.keyboardModeActive;
         const isKeyboardEvent = event.type === 'keydown';
