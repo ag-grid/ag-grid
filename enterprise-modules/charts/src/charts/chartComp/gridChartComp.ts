@@ -183,32 +183,24 @@ export class GridChartComp extends Component {
         const chartType = this.model.getChartType();
         const isGrouping = this.model.isGrouping();
 
+        // TODO - cross filtering WIP
         const crossFilter = this.createManagedBean(new ChartCrossFilter());
         const crossFilterCallback = (event: any, reset: boolean) => {
-
-            // TODO - cross filtering WIP
-
             const ctx = this.params.crossFilteringContext;
-
             ctx.lastSelectedChartId = this.model.getChartId();
             const category = event.datum && event.datum[event.xKey];
             if (!event.reset && category) {
                 if (event.event.metaKey || event.event.ctrlKey) {
-
-                    if (!ctx.lastSelectedChartId || !ctx.lastSelectedCategoryIds || ctx.lastSelectedCategoryIds.length == 0) {
-                        ctx.lastSelectedCategoryIds = [];
-                    }
-
                     if (_.includes(ctx.lastSelectedCategoryIds, category.id)) {
                         ctx.lastSelectedCategoryIds = ctx.lastSelectedCategoryIds.filter((id: any) => id !== category.id);
                     } else {
                         ctx.lastSelectedCategoryIds.push(category.id);
                     }
-
                 } else {
                     ctx.lastSelectedCategoryIds = [category.id];
                 }
             } else {
+                ctx.lastSelectedChartId = '';
                 ctx.lastSelectedCategoryIds = [];
             }
 
@@ -390,7 +382,7 @@ export class GridChartComp extends Component {
         if (this.params.crossFiltering) {
             fields.forEach(field => {
                 const crossFilteringField = {...field};
-                if (this.chartType !== ChartType.Line) {
+                if (!_.includes([ChartType.Line, ChartType.Area], this.chartType)) {
                     crossFilteringField.colId = field.colId + '-filtered-out';
                     fields.push(crossFilteringField);
                 }
@@ -416,15 +408,15 @@ export class GridChartComp extends Component {
             },
             fields,
             chartId: this.model.getChartId(),
-            crossFilteringContext: this.params.crossFilteringContext,
+            getCrossFilteringContext: () => this.params.crossFilteringContext,
         };
 
         chartProxy.update(chartUpdateParams);
         this.titleEdit.setChartProxy(this.chartProxy);
 
-        if (this.params.crossFiltering) {
-            this.params.crossFilteringContext.lastSelectedChartId = '';
-        }
+        // if (this.params.crossFiltering) {
+        //     this.params.crossFilteringContext.lastSelectedChartId = '';
+        // }
     }
 
     private getChartDataType(colId: string): string | undefined {

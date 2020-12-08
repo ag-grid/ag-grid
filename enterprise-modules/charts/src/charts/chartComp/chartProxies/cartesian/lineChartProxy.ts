@@ -10,7 +10,6 @@ import {
     AgChart,
     CartesianChart,
     ChartTheme,
-    LegendClickEvent,
     LineSeries,
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
@@ -91,7 +90,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     d[f.colId + '-total'] = d[f.colId] + d[f.colId + '-filtered-out'];
                 });
 
-                if (params.crossFilteringContext.lastSelectedChartId === params.chartId) {
+                if (params.getCrossFilteringContext().lastSelectedChartId === params.chartId) {
                     yKey = f.colId + '-total';
                 }
             }
@@ -145,44 +144,22 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries = AgChart.createComponent(options, 'line.series');
 
                 // TODO crossing filtering WIP
-                const isFilteredOutYKey =  f.colId.indexOf('-filtered-out') > -1;
                 if (this.crossFiltering) {
-
-                    if (!isFilteredOutYKey) {
-                        // sync toggling of legend item with hidden 'filtered out' item
-                        chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-                            lineSeries!.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
-                        });
-                    }
-
                     // lineSeries!.marker.size = 0;
                     lineSeries!.marker.formatter = p => {
-                        let size = 0;
-
-                        const ctx = params.crossFilteringContext;
-                        if(ctx && ctx.lastSelectedCategoryIds && _.includes(ctx.lastSelectedCategoryIds, p.datum[params.category.id].id)) {
-                            size = 8;
-                        }
+                        const ctx = params.getCrossFilteringContext();
+                        const lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
+                        const pointSelected = _.includes(ctx.lastSelectedCategoryIds, p.datum[params.category.id].id);
+                        const showPoint = lastSelectionOnThisChart ? pointSelected :
+                            ctx.lastSelectedCategoryIds.length > 0 ? pointSelected : false;
 
                         return {
                             fill: p.highlighted ? 'yellow' : p.fill,
-                            size: p.highlighted ? 12 : size
+                            size: p.highlighted ? 12 : showPoint ? 8 : 0,
                         };
                     }
 
                     chart.tooltip.delay = 500;
-                    lineSeries!.tooltip.renderer = (params) => {
-                        return {
-                            content: params.yValue.toFixed(0),
-                            title: params.xValue, // optional, same as default
-                            color: 'black'
-                        };
-                    }
-
-                    // hide 'filtered out' legend items
-                    if (isFilteredOutYKey) {
-                        lineSeries!.showInLegend = false;
-                    }
 
                     // add node click cross filtering callback to series
                     lineSeries!.addEventListener('nodeClick', this.crossFilterCallback);

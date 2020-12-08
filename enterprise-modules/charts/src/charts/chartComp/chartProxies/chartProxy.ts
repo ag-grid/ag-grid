@@ -77,7 +77,7 @@ export interface UpdateChartParams {
     };
     fields: FieldDefinition[];
     chartId?: string;
-    crossFilteringContext: CrossFilteringContext;
+    getCrossFilteringContext: () => CrossFilteringContext,
 }
 
 export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {

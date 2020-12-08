@@ -1,4 +1,5 @@
 import {
+    _,
     AgAreaSeriesOptions,
     AgCartesianChartOptions,
     AreaSeriesOptions,
@@ -7,7 +8,7 @@ import {
     DropShadowOptions,
     HighlightOptions
 } from "@ag-grid-community/core";
-import { AgChart, AreaSeries, CartesianChart, ChartTheme, LegendClickEvent } from "ag-charts-community";
+import { AgChart, AreaSeries, CartesianChart, ChartTheme } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
@@ -73,7 +74,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         const axisType = this.isTimeAxis(params) ? 'time' : 'category';
         this.updateAxes(axisType);
 
-        if (this.crossFiltering || this.chartType === ChartType.Area) {
+        if (this.chartType === ChartType.Area) {
             // area charts have multiple series
             this.updateAreaChart(params);
         } else {
@@ -144,36 +145,22 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
         let { fills, strokes } = this.getPalette();
 
-        if (this.crossFiltering) {
-            // introduce cross filtering transparent fills
-            const fillsMod: string[] = [];
-            fills.forEach(fill => {
-                fillsMod.push(fill);
-                fillsMod.push(this.hexToRGBA(fill, '0.3'));
-            });
-            fills = fillsMod;
-
-            // introduce cross filtering transparent strokes
-            const strokesMod: string[] = [];
-            strokes.forEach(stroke => {
-                strokesMod.push(stroke);
-                strokesMod.push(this.hexToRGBA(stroke, '0.3'));
-            });
-            strokes = strokesMod;
-        }
-
         params.fields.forEach((f, index) => {
+            let yKey = f.colId;
+            // TODO: cross filtering WIP
+            if (this.crossFiltering) {
+                data.forEach(d => {
+                    d[f.colId + '-total'] = d[f.colId] + d[f.colId + '-filtered-out'];
+                });
+
+                if (params.getCrossFilteringContext().lastSelectedChartId === params.chartId) {
+                    yKey = f.colId + '-total';
+                }
+            }
+
             let areaSeries = existingSeriesById.get(f.colId);
             const fill = fills[index % fills.length];
             const stroke = strokes[index % strokes.length];
-
-            let yKey = f.colId;
-            const isFilteredOutYKey = yKey.indexOf('-filtered-out') > -1;
-            if (this.crossFiltering && isFilteredOutYKey) {
-                yKey = f.colId.replace("-filtered-out", "-total");
-                const nonFilteredOutKey = f.colId.replace("-filtered-out", "");
-                data.forEach(d => d[yKey] = d[nonFilteredOutKey] + d[f.colId]);
-            }
 
             if (areaSeries) {
                 areaSeries.data = data;
@@ -183,6 +170,34 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 areaSeries.yNames = [f.displayName!];
                 areaSeries.fills = [fill];
                 areaSeries.strokes = [stroke];
+
+                // TODO crossing filtering WIP
+                if (this.crossFiltering) {
+                    areaSeries!.marker.enabled = true;
+                    areaSeries!.marker.formatter = p => {
+                        const ctx = params.getCrossFilteringContext();
+                        const lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
+                        const pointSelected = _.includes(ctx.lastSelectedCategoryIds, p.datum[params.category.id].id);
+                        const showPoint = pointSelected && lastSelectionOnThisChart;
+
+                        return {
+                            fill: p.highlighted ? 'yellow' : p.fill,
+                            size: p.highlighted ? 12 : showPoint ? 8 : 0,
+                        };
+                    }
+
+                    const ctx = params.getCrossFilteringContext();
+                    const lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
+                    if (lastSelectionOnThisChart && ctx.lastSelectedCategoryIds.length > 0) {
+                        areaSeries!.fillOpacity = 0.3;
+                    }
+
+                    chart.tooltip.delay = 500;
+
+                    // add node click cross filtering callback to series
+                    areaSeries!.addEventListener('nodeClick', this.crossFilterCallback);
+                }
+
             } else {
                 const seriesDefaults = this.getSeriesDefaults();
                 const marker = { ...seriesDefaults.marker };
@@ -208,42 +223,31 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
                 areaSeries = AgChart.createComponent(options, 'area.series');
 
-                if (this.crossFiltering && areaSeries) {
-                    // disable series highlighting by default
-                    areaSeries.highlightStyle.fill = undefined;
+                // TODO crossing filtering WIP
+                if (this.crossFiltering) {
+                    areaSeries!.marker.enabled = true;
+                    areaSeries!.marker.formatter = p => {
+                        const ctx = params.getCrossFilteringContext();
+                        const lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
+                        const pointSelected = _.includes(ctx.lastSelectedCategoryIds, p.datum[params.category.id].id);
+                        const showPoint = pointSelected && lastSelectionOnThisChart;
 
-                    // sync toggling of legend item with hidden 'filtered out' item
-                    chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-                        areaSeries!.toggleSeriesItem(event.itemId + '-total', event.enabled);
-                    });
-
-                    // special handling for cross filtering markers
-                    areaSeries.marker.enabled = true;
-                    areaSeries.marker.size = 0;
-                    areaSeries.marker.formatter =  p => {
                         return {
-                            fill: 'yellow',
-                            size: p.highlighted ? 12 : p.size
+                            fill: p.highlighted ? 'yellow' : p.fill,
+                            size: p.highlighted ? 12 : showPoint ? 8 : 0,
                         };
+                    }
+
+                    const ctx = params.getCrossFilteringContext();
+                    const lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
+                    if (lastSelectionOnThisChart && ctx.lastSelectedCategoryIds.length > 0) {
+                        areaSeries!.fillOpacity = 0.3;
                     }
 
                     chart.tooltip.delay = 500;
-                    areaSeries.tooltip.renderer = (tooltipRenderParams) => {
-                        return {
-                            content: tooltipRenderParams.yValue.toFixed(0),
-                            title: tooltipRenderParams.xValue, // optional, same as default
-                            color: 'black'
-                        };
-                    }
-
-                    // hide 'filtered out' legend items
-                    const isFilteredOutYKey = yKey.indexOf('-total') > -1;
-                    if (isFilteredOutYKey) {
-                        areaSeries!.showInLegend = false;
-                    }
 
                     // add node click cross filtering callback to series
-                    areaSeries.addEventListener('nodeClick', this.crossFilterCallback);
+                    areaSeries!.addEventListener('nodeClick', this.crossFilterCallback);
                 }
 
                 chart.addSeriesAfter(areaSeries!, previousSeries);
