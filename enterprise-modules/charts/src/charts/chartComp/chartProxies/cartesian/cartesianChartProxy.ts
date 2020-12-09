@@ -1,6 +1,8 @@
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { _, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions } from "@ag-grid-community/core";
 import {
+    AreaSeries,
+    LineSeries,
     CartesianChart,
     CategoryAxis,
     ChartAxis,
@@ -215,5 +217,37 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
 
     protected getYAxis(): ChartAxis | undefined {
         return find(this.chart.axes, a => a.position === ChartAxisPosition.Left);
+    }
+
+    protected updateSeriesForCrossFiltering(series: AreaSeries | LineSeries, colId: string, chart: CartesianChart, params: UpdateChartParams, atLeastOneSelectedPoint: boolean) {
+        if (this.crossFiltering) {
+
+            // special custom marker handling to show and hide points
+            series!.marker.enabled = true;
+            series!.marker.formatter = (p: any) => {
+                return {
+                    fill: p.highlighted ? 'yellow' : p.fill,
+                    size: p.highlighted ? 12 : p.datum[colId] > 0 ? 8 : 0,
+                };
+            }
+
+            chart.tooltip.delay = 500;
+
+            // make line opaque when some points are deselected
+            const ctx = params.getCrossFilteringContext();
+            const lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
+            const deselectedPoints = lastSelectionOnThisChart && atLeastOneSelectedPoint;
+
+            if (series instanceof AreaSeries) {
+                series!.fillOpacity = deselectedPoints ? 0.3 : 1;
+            }
+
+            if (series instanceof LineSeries) {
+                series!.strokeOpacity = deselectedPoints ? 0.3 : 1;
+            }
+
+            // add node click cross filtering callback to series
+            series!.addEventListener('nodeClick', this.crossFilterCallback);
+        }
     }
 }

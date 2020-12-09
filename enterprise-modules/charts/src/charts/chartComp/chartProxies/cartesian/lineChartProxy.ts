@@ -143,27 +143,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 chart.addSeriesAfter(lineSeries!, previousSeries);
             }
 
-            // TODO crossing filtering WIP
-            if (this.crossFiltering) {
-                // special custom marker handling to show and hide points
-                lineSeries!.marker.formatter = p => {
-                    return {
-                        fill: p.highlighted ? 'yellow' : p.fill,
-                        size: p.highlighted ? 12 : p.datum[f.colId] > 0 ? 8 : 0,
-                    };
-                }
-
-                chart.tooltip.delay = 500;
-
-                // make line opaque when some points are deselected
-                const ctx = params.getCrossFilteringContext();
-                const lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
-                const deselectedPoints = lastSelectionOnThisChart && atLeastOneSelectedPoint;
-                lineSeries!.strokeOpacity = deselectedPoints ? 0.3 : 1;
-
-                // add node click cross filtering callback to series
-                lineSeries!.addEventListener('nodeClick', this.crossFilterCallback);
-            }
+            this.updateSeriesForCrossFiltering(lineSeries!, f.colId, chart, params, atLeastOneSelectedPoint);
 
             previousSeries = lineSeries;
         });

@@ -203,29 +203,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 chart.addSeriesAfter(areaSeries!, previousSeries);
             }
 
-            // TODO crossing filtering WIP
-            if (this.crossFiltering) {
-
-                // special custom marker handling to show and hide points
-                areaSeries!.marker.enabled = true;
-                areaSeries!.marker.formatter = (p: any) => {
-                    return {
-                        fill: p.highlighted ? 'yellow' : p.fill,
-                        size: p.highlighted ? 12 : p.datum[f.colId] > 0 ? 8 : 0,
-                    };
-                }
-
-                chart.tooltip.delay = 500;
-
-                // make line opaque when some points are deselected
-                const ctx = params.getCrossFilteringContext();
-                const lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
-                const deselectedPoints = lastSelectionOnThisChart && atLeastOneSelectedPoint;
-                areaSeries!.fillOpacity = deselectedPoints ? 0.3 : 1;
-
-                // add node click cross filtering callback to series
-                areaSeries!.addEventListener('nodeClick', this.crossFilterCallback);
-            }
+            this.updateSeriesForCrossFiltering(areaSeries!, f.colId, chart, params, atLeastOneSelectedPoint);
 
             previousSeries = areaSeries;
         });
