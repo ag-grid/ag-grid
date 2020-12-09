@@ -10,6 +10,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    border-radius: 0 5px 0 5px;
 
     &__content {
         overflow-y: auto;
@@ -102,6 +103,7 @@
     &__title {
         h2 {
             margin: 0;
+            font-size: 1.5rem;
         }
     }
 
