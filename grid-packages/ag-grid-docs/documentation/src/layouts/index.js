@@ -8,8 +8,6 @@ import Footer from '../components/footer/Footer';
 import { getPageName } from '../utils/get-page-name';
 import styles from './index.module.scss';
 
-const isIE = () => typeof window !== 'undefined' && !!window.MSInputMethodContext && !!document.documentMode;
-
 export const Layout = ({ path, children, pageContext: { frameworks, framework, layout } }) => {
     if (path === '/')  {
         navigate('/javascript/', { replace: true});
@@ -23,7 +21,7 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
     const pageName = getPageName(path);
 
     return <GlobalContextProvider>
-        <div className={`${styles['main-container']}${isIE() ? ' ag-IE' : ''}`}>
+        <div className={styles['main-container']}>
             <header className={styles['header']}>
                 <Link to="/" className={styles['header__logo']} />
                 <HeaderNav />

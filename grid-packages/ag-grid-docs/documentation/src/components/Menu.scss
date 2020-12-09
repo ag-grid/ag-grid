@@ -3,12 +3,14 @@
     top: 64px;
     height: calc(100vh - 64px);
     overflow: auto;
+}
 
-    .ag-IE & {
+@media all and (-ms-high-contrast:none) {
+    .aside_menu {
         position: relative;
         top: 0;
-        height: initial;
-        overflow: initial;
+        height: auto;
+        overflow: visible;
 
         form svg {
             top: 10px;
