@@ -48,6 +48,6 @@ export class Chart extends React.Component {
     }
 
     render() {
-        return <div className={styles['chart']} ref={this.chart}></div>;
+        return <div id="chart-container" className={styles['chart']} ref={this.chart}></div>;
     }
 }

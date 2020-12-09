@@ -117,7 +117,7 @@ const getPaddingOption = position => ({
     max: 40,
 });
 
-const getChartContainer = () => (typeof window !== 'undefined' && document.querySelector('.container__chart')) || { offsetWidth: 800, offsetHeight: 600 };
+const getChartContainer = () => (typeof window !== 'undefined' && document.querySelector('#chart-container')) || { offsetWidth: 800, offsetHeight: 600 };
 
 export const chart = Object.freeze({
     meta: {
