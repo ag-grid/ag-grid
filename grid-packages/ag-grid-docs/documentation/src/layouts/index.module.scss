@@ -42,16 +42,6 @@
     overflow: auto;
 }
 
-.footer {
-    composes: p-3 from global;
-
-    flex: none;
-    height: 60px;
-    text-align: center;
-    background-image: linear-gradient(to top left, darken($primary, 25%), $primary);
-    color: white;
-}
-
 :global(.custom-block) {
     &:global(.note) {
         @extend .alert, .alert-primary;

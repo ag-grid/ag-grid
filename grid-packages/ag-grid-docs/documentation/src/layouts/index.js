@@ -3,6 +3,7 @@ import { Link, navigate } from 'gatsby';
 import { GlobalContextProvider } from '../components/GlobalContext';
 import FrameworkSelector from '../components/FrameworkSelector';
 import Menu from '../components/Menu';
+import Footer from '../components/Footer';
 import { getPageName } from '../utils/get-page-name';
 import styles from './index.module.scss';
 
@@ -32,9 +33,7 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
                     {children}
                 </div>
             </div>
-            <div className={styles['footer']}>
-                &copy; AG-Grid Ltd { new Date().getFullYear().toString() }
-            </div>
+            <Footer />
         </div>
     </GlobalContextProvider>;
 };
