@@ -1,13 +1,22 @@
 @import "~bootstrap/scss/type";
 @import "~bootstrap/scss/alert";
 
+html {
+    scroll-padding-top: 64px;
+}
+
 .main-container {
-    composes: container-fluid p-0 vh-100 d-flex flex-column from global;
+    composes: container-fluid p-0 d-flex flex-column from global;
     -webkit-font-smoothing: antialiased;
 }
 
 .header {
     composes: d-flex align-items-center px-3 py-1 from global;
+    position: relative;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 
     background-image: linear-gradient(to top left, $primary, darken($primary, 25%));
 
@@ -24,21 +33,16 @@
 
 .content-viewport {
     composes: d-flex flex-grow-1 from global;
-
-    overflow: hidden;
 }
 
 .main-menu {
     flex: none;
     width: 300px;
-    overflow: auto;
     border-right: solid 1px lighten($secondary, 40%);
 }
 
 .content {
     composes: flex-grow-1 from global;
-
-    overflow: auto;
 }
 
 :global(.custom-block) {

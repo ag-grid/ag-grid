@@ -1,5 +1,12 @@
 .menu {
     composes: p-3 from global;
+    position: relative;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 64px !important;
+    height: calc(100vh - 64px);
+    overflow: auto;
+    opacity: 0.98;
 
     &__item {
         &__link {

@@ -22,18 +22,18 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
 
     return <GlobalContextProvider>
         <div className={styles['main-container']}>
-            <div className={styles['header']}>
+            <header className={styles['header']}>
                 <Link to="/" className={styles['header__logo']} />
                 <HeaderNav />
                 <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
-            </div>
+            </header>
             <div className={styles['content-viewport']}>
-                {framework && <div className={styles['main-menu']}>
+                {framework && <aside className={styles['main-menu']}>
                     <Menu currentFramework={framework} currentPage={pageName} />
-                </div>}
-                <div className={styles['content']}>
+                </aside>}
+                <main className={styles['content']}>
                     {children}
-                </div>
+                </main>
             </div>
             <Footer framework={ framework } />
         </div>

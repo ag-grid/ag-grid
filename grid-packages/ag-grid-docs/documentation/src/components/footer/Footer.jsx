@@ -6,7 +6,7 @@ import styles from './Footer.module.scss';
 const replaceFramework = (url, framework) => url.replace('{framework}', framework);
 
 const Footer = ({ framework }) => (
-    <div className={ styles.footer }>
+    <footer className={ styles.footer }>
         {footerItems.map(item => (
             <div key={ item.title.replace(/\s/g,'_').toLocaleLowerCase() } className={ styles.footer__links }>
                 <h3>{ item.title }</h3>
@@ -35,7 +35,7 @@ const Footer = ({ framework }) => (
                 <a href="https://twitter.com/ag_grid?ref_src=twsrc%5Etfw" className="twitter-follow-button" data-lang="en" data-show-count="true">Follow @ag_grid</a>
             </div>
         </div>
-    </div>
+    </footer>
 );
 
 export default Footer;
