@@ -2,8 +2,7 @@ import React, { Fragment, useState } from 'react';
 import styles from './Tile.module.scss';
 import icons from './icons';
 
-const getUrl = (framework, url) => `${framework}${url.replace('../','/')}`;
-
+const getUrl = (url) => url.replace('../', '');
 
 const recursiveRender = (items, framework, group, collapsed, level = 0, isLast, forceTopLevel) => items.map((item, idx) => {
     if (item.frameworks && item.frameworks.indexOf(framework) === - 1) { return null; }
@@ -11,12 +10,10 @@ const recursiveRender = (items, framework, group, collapsed, level = 0, isLast, 
     const className = `menu-view-tile__list__${level === 0 || forceTopLevel ? 'block' : 'inline'}`;
     const hideComma = level === 0 || forceTopLevel || (isLast && items.length - 1 === idx);
 
-    const title = !item.url || (collapsed && !item.showInCollapsed)
-        ? null
-        : (
-        <span className={styles[className]}>
-            <a href={getUrl(framework, item.url)}>{item.title}{item.enterprise ? <enterprise-icon/> : null}</a>
-            {hideComma ? null : <span style={{ marginRight: 2 }}>,</span>}
+    const title = item.url && (!collapsed || item.showInCollapsed) && (
+        <span className={ styles[className]}>
+            <a href={ getUrl(item.url) }>{ item.title }{ item.enterprise && <enterprise-icon/> }</a>
+            { !hideComma && <span style={{ marginRight: 2 }}>,</span> }
         </span>
      )
 
@@ -54,11 +51,11 @@ const Tile = ({ data, group, framework }) => {
     const iconAlt= iconName.replace(/-/g,' ');
 
     return (
-        <div className={styles['menu-view-tile']}>
-            <div className={styles['menu-view-tile__icon']}><img alt={iconAlt} src={icons[iconName]}></img></div>
-            <h3 className={styles['menu-view-tile__title']}>{data.title}</h3>
+        <div className={ styles['menu-view-tile'] }>
+            <div className={styles['menu-view-tile__icon']}><img alt={ iconAlt } src={ icons[iconName] }></img></div>
+            <h3 className={styles['menu-view-tile__title']}>{ data.title }</h3>
             <div className={styles['menu-view-tile__list']}>
-                {recursiveRender(data.items, framework, group, collapsed)}
+                { recursiveRender(data.items, framework, group, collapsed) }
             </div>
         </div>
     )
