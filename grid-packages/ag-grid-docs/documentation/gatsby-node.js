@@ -53,8 +53,8 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
                 }
 
                 return `${pathPrefix}/${fileName}`;
-            },
-        },
+            }
+        }
     };
 };
 
@@ -114,7 +114,17 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
         process.env.GATSBY_HOST = `${getInternalIPAddress()}:8080`;
     }
 
-    const docPageTemplate = path.resolve(`src/templates/doc-page.js`);
+    const homePage = path.resolve('src/templates/home.jsx');
+
+    supportedFrameworks.forEach(framework => {
+        createPage({
+            path: `/${framework}/`,
+            component: homePage,
+            context: { frameworks: supportedFrameworks, framework }
+        });
+    });
+
+    const docPageTemplate = path.resolve(`src/templates/doc-page.jsx`);
 
     const result = await graphql(`
         {
@@ -153,7 +163,7 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
         });
     });
 
-    const chartGalleryPageTemplate = path.resolve(`src/templates/chart-gallery-page.js`);
+    const chartGalleryPageTemplate = path.resolve(`src/templates/chart-gallery-page.jsx`);
 
     const categories = Object.keys(chartGallery);
     const namesByCategory = categories.reduce(

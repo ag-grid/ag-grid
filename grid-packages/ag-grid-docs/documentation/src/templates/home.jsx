@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'gatsby';
-import styles from './index.module.scss';
+import styles from './home.module.scss';
 import fwLogos from '../images/fw-logos';
 import supportedFrameworks from '../utils/supported-frameworks';
 import MenuView from '../components/menu-view/MenuView';
@@ -12,26 +12,18 @@ const backgroundColor = {
     vue: '#50c297'
 };
 
-const logos = {
-    javascript: fwLogos.javascript,
-    angular: fwLogos.angular,
-    react: fwLogos.react,
-    vue: fwLogos.vueInverted
-}
+const logos = (() => {
+    const obj = {};
+
+    for (let framework of supportedFrameworks) {
+        obj[framework] = fwLogos[framework === 'vue' ? 'vueInverted' : framework];
+    }
+    return obj;
+})();
 
 
-const HomePage = () => {
-    const [currentFramework, setFramework] = useState('javascript');
-    const updateFramework = (e, framework) => {
-        if (e.type === 'keydown') {
-            if (e.key !== 'Enter' || e.key !== 'Space') {
-                return;
-            }
-        }
-
-        setFramework(framework);
-    };
-
+const HomePage = ({ path, pageContext }) => {
+    const { framework: currentFramework } = pageContext;
     return (
         <div style={{ textAlign: 'center' }}>
             <h1>Welcome to the AG-Grid documentation</h1>
@@ -48,18 +40,16 @@ const HomePage = () => {
                 }
 
                 return (
-                    <div key={framework}
+                    <Link key={framework}
                         className={ cardClass }
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => updateFramework(e, framework)} onClick={(e) => updateFramework(e, framework)}>
+                        to={path.replace(`/${currentFramework}/`, `/${framework}/`)}>
                         <div className={ styles['getting-started__card__logo-container'] } style={{ backgroundColor: cardBackgroundColor }}>
                             <img alt={framework} src={ logos[framework] } className={ styles['getting-started__card__logo'] } />
                         </div>
                         <div className={ styles['getting-started__card__header'] }>
                             <Link to={`/${framework}/getting-started/`} className={ styles['getting-started__card__button'] }>Get started</Link>
                         </div>
-                    </div>
+                    </Link>
                 );
             })}
             </div>

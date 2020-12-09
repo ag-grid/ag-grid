@@ -13,8 +13,8 @@ export default function FrameworkSelector({ frameworks, path, currentFramework }
             const isSelected = framework === currentFramework;
 
             return <div key={framework} className={classnames(styles['framework-selector__option'], { [styles['framework-selector__option--selected']]: isSelected })}>
-                <Link to={`${path.replace(`/${currentFramework}/`, `/${framework}/`)}`}>
-                    <img src={fwLogos[framework]} alt={framework} />
+                <Link to={ path.replace(`/${currentFramework}/`, `/${framework}/`) }>
+                    <img src={ fwLogos[framework]} alt={ framework } />
                 </Link>
             </div>;
         })}
