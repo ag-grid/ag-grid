@@ -3,7 +3,7 @@ import { Link, navigate } from 'gatsby';
 import { GlobalContextProvider } from '../components/GlobalContext';
 import FrameworkSelector from '../components/FrameworkSelector';
 import Menu from '../components/Menu';
-import Footer from '../components/Footer';
+import Footer from '../components/footer/Footer';
 import { getPageName } from '../utils/get-page-name';
 import styles from './index.module.scss';
 
