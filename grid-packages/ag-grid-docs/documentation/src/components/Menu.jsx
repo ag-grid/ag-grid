@@ -6,6 +6,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import Search from './search/Search';
 import menuData from '../pages/licensing/menu.json';
 import styles from './Menu.module.scss';
+import './Menu.scss'; // IE CSS overrides
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
     return <li key={title} className={styles['menu__section']}>

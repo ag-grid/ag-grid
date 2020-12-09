@@ -1,0 +1,18 @@
+.aside_menu {
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow: auto;
+
+    .ag-IE & {
+        position: relative;
+        top: 0;
+        height: initial;
+        overflow: initial;
+
+        form svg {
+            top: 10px;
+            left: 0;
+        }
+    }
+}

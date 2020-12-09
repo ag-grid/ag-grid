@@ -17,6 +17,7 @@ html {
     position: sticky;
     top: 0;
     z-index: 10;
+    opacity: 0.98;
 
     background-image: linear-gradient(to top left, $primary, darken($primary, 25%));
 
