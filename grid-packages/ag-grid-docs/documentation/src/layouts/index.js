@@ -33,7 +33,7 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
                     {children}
                 </div>
             </div>
-            <Footer />
+            <Footer framework={ framework } />
         </div>
     </GlobalContextProvider>;
 };

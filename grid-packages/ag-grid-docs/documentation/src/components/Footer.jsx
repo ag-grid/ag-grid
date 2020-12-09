@@ -2,12 +2,12 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import styles from './Footer.module.scss';
 
-const Footer = () => (
+const Footer = ({ framework }) => (
     <div className={styles.footer}>
         <div className={styles.footer__links}>
             <h3>Documentation</h3>
             <ul className={styles.footer__links__list}>
-                <li><a href="">Getting Started</a></li>
+                <li><a href={`/${framework}/getting-started/`}>Getting Started</a></li>
                 <li><a href="/ag-grid-changelog/">Changelog</a></li>
                 <li><a href="/ag-grid-pipeline/">Pipeline</a></li>
                 <li><a href="/archive/">Documentation Archive</a></li>
