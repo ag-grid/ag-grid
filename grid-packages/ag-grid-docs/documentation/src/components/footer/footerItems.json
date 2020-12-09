@@ -2,7 +2,7 @@
     "title": "DOCUMENTATION",
     "links": [{
         "name": "Getting Started",
-        "url": "/${framework}/getting-started/"
+        "url": "/{framework}/getting-started/"
     },{
         "name": "Changelog",
         "url": "/ag-grid-changelog/"

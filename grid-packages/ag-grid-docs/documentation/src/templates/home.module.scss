@@ -4,7 +4,6 @@
     &__card {
         composes: card flex-grow-1 m-3 from global;
         overflow: hidden;
-        cursor: pointer;
         &:focus {
             outline: none;
         }

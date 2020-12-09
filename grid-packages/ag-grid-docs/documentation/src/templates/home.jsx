@@ -40,16 +40,15 @@ const HomePage = ({ path, pageContext }) => {
                 }
 
                 return (
-                    <Link key={framework}
-                        className={ cardClass }
-                        to={path.replace(`/${currentFramework}/`, `/${framework}/`)}>
+                    <div key={framework}
+                        className={ cardClass }>
                         <div className={ styles['getting-started__card__logo-container'] } style={{ backgroundColor: cardBackgroundColor }}>
                             <img alt={framework} src={ logos[framework] } className={ styles['getting-started__card__logo'] } />
                         </div>
                         <div className={ styles['getting-started__card__header'] }>
                             <Link to={`/${framework}/getting-started/`} className={ styles['getting-started__card__button'] }>Get started</Link>
                         </div>
-                    </Link>
+                    </div>
                 );
             })}
             </div>
