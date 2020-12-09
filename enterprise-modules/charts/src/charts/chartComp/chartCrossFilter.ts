@@ -63,7 +63,6 @@ export class ChartCrossFilter extends BeanStub {
         }
 
         this.gridApi.setFilterModel(filterModel);
-        // this.gridApi.onFilterChanged(); //TODO review
     }
 
     private getUpdatedFilterModel(colId: any, updatedValues: any[]) {

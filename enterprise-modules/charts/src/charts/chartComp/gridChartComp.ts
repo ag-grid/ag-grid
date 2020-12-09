@@ -187,23 +187,7 @@ export class GridChartComp extends Component {
         const crossFilter = this.createManagedBean(new ChartCrossFilter());
         const crossFilterCallback = (event: any, reset: boolean) => {
             const ctx = this.params.crossFilteringContext;
-            ctx.lastSelectedChartId = this.model.getChartId();
-            const category = event.datum && event.datum[event.xKey];
-            if (!event.reset && category) {
-                if (event.event.metaKey || event.event.ctrlKey) {
-                    if (_.includes(ctx.lastSelectedCategoryIds, category.id)) {
-                        ctx.lastSelectedCategoryIds = ctx.lastSelectedCategoryIds.filter((id: any) => id !== category.id);
-                    } else {
-                        ctx.lastSelectedCategoryIds.push(category.id);
-                    }
-                } else {
-                    ctx.lastSelectedCategoryIds = [category.id];
-                }
-            } else {
-                ctx.lastSelectedChartId = '';
-                ctx.lastSelectedCategoryIds = [];
-            }
-
+            ctx.lastSelectedChartId = reset ? '' : this.model.getChartId();
             crossFilter.filter(event, reset);
         }
 
@@ -413,10 +397,6 @@ export class GridChartComp extends Component {
 
         chartProxy.update(chartUpdateParams);
         this.titleEdit.setChartProxy(this.chartProxy);
-
-        // if (this.params.crossFiltering) {
-        //     this.params.crossFilteringContext.lastSelectedChartId = '';
-        // }
     }
 
     private getChartDataType(colId: string): string | undefined {

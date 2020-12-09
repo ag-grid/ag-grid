@@ -26,7 +26,6 @@ import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 
 export interface CrossFilteringContext {
     lastSelectedChartId: string;
-    lastSelectedCategoryIds: any[];
 }
 
 @Bean('chartService')
@@ -44,7 +43,6 @@ export class ChartService extends BeanStub implements IChartService {
     // this shared (singleton) context is used by cross filtering in line and area charts
     private crossFilteringContext: CrossFilteringContext = {
         lastSelectedChartId: '',
-        lastSelectedCategoryIds: [],
     };
 
     public getChartModels(): ChartModel[] {
