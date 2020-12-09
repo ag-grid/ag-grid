@@ -28,7 +28,7 @@ export const waitForAsyncCondition = (condition, maxAttempts, attempts=0) => new
     })();
 });
 
-export const wait = ms => new Promise((r) => setTimeout(r, 10));
+export const wait = ms => new Promise((r) => setTimeout(r, ms));
 
 export const elementsForSelector = (renderedOutput, selector) => renderedOutput.find(selector);
 export const htmlForSelector = (renderedOutput, selector) => elementsForSelector(renderedOutput, selector).map((index, element) => cheerio(element).html());

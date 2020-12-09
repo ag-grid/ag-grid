@@ -7,10 +7,10 @@ import generateNewKey from "./keyGenerator";
 import {renderToStaticMarkup} from "react-dom/server";
 
 export class NewReactComponent extends ReactComponent {
-    private nullRenderer: boolean = false;
     private key: string;
     private oldPortal: ReactPortal | null = null;
     private reactElement: any;
+    private params: any;
 
     constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
         super(reactComponent, parentComponent, componentType);
@@ -20,7 +20,7 @@ export class NewReactComponent extends ReactComponent {
 
     public init(params: any): Promise<void> {
         this.eParentElement = this.createParentElement(params);
-        this.nullRenderer = this.isNullRenderer()
+        this.params = params;
 
         this.createOrUpdatePortal(params);
 
@@ -51,13 +51,21 @@ export class NewReactComponent extends ReactComponent {
         });
     }
 
+    public isNullValue() : boolean {
+        return this.valueRenderedIsNull(this.params);
+    }
+
     rendered(): boolean {
-        return this.nullRenderer ||
-            (this.isStatelessComponent() && this.statelessComponentRendered()) ||
+        return (this.isStatelessComponent() && this.statelessComponentRendered()) ||
             !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
     }
 
-    private isNullRenderer() {
+    private valueRenderedIsNull(params: any) : boolean {
+        // we only do this for cellRenderers
+        if (this.componentType.isCellRenderer && !this.componentType.isCellRenderer()) {
+            return false;
+        }
+
         // we've no way of knowing if a component returns null without rendering it first
         // so we render it to markup and check the output - if it'll be null we know and won't timeout
         // waiting for a component that will never be created
@@ -69,7 +77,7 @@ export class NewReactComponent extends ReactComponent {
             // for this single operation
             console.error = () => {
             };
-            const staticMarkup = renderToStaticMarkup(this.reactComponent);
+            const staticMarkup = renderToStaticMarkup(createElement(this.reactComponent, params));
             return staticMarkup === '';
         } catch (ignore) {
         } finally {

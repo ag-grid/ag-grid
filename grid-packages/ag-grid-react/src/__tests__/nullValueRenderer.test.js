@@ -1,8 +1,9 @@
 // noinspection ES6UnusedImports
 import React, {Component} from 'react';
 import {AgGridReact} from '../agGridReact';
+import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
 
-import {ensureGridApiHasBeenSet, htmlForSelector} from "./utils";
+import {ensureGridApiHasBeenSet, htmlForSelector, wait} from "./utils";
 
 import {mount} from 'enzyme';
 
@@ -22,8 +23,12 @@ afterEach(() => {
     agGridReact = null;
 });
 
-it('null value cell renderer test', () => {
+it('null value cell renderer test', async () => {
+    // null values are checked just as we're about to timeout waiting for a comp - currently 500ms
+    await wait(550);
+
     const renderedOutput = component.render();
+
     const cells = htmlForSelector(renderedOutput, 'div .ag-react-container');
 
     expect(cells.length).toEqual(2);

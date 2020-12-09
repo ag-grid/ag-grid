@@ -69,7 +69,7 @@ export class LegacyReactComponent extends ReactComponent {
         return this.staticRenderTime >= LegacyReactComponent.SLOW_RENDERERING_THRESHOLD;
     }
 
-    public isNullRender(): boolean {
+    public isNullValue(): boolean {
         return this.staticMarkup === '';
     }
 
@@ -138,7 +138,7 @@ export class LegacyReactComponent extends ReactComponent {
     }
 
     rendered(): boolean {
-        return this.isNullRender() ||
+        return this.isNullValue() ||
             !!this.staticMarkup || (this.isStatelessComponent() && this.statelessComponentRendered()) ||
             !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
     }

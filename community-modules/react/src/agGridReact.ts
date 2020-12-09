@@ -51,7 +51,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     protected eGridDiv!: HTMLElement;
 
-    private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
+    private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 500; // half a second should be more than enough to instantiate a component
 
     constructor(public props: any) {
         super(props);
@@ -111,6 +111,13 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             resolve(reactComponent);
         } else {
             if (Date.now() - startTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS) {
+                // last check - we check if this is a null value being rendered - we do this last as using SSR to check the value
+                // can mess up contexts
+                if(reactComponent.isNullValue()) {
+                    resolve(reactComponent);
+                    return;
+                }
+
                 console.error(`ag-Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS}ms`);
                 return;
             }

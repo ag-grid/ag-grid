@@ -106,16 +106,22 @@ export abstract class ReactComponent extends BaseReactComponent {
     }
 
     hasMethod(name: string): boolean {
-        let frameworkComponentInstance = this.getFrameworkComponentInstance();
-        if (!!frameworkComponentInstance) {
-            return this.fallbackMethodAvailable(name) || frameworkComponentInstance[name] != null;
-        }
-
-        return false;
+        const frameworkComponentInstance = this.getFrameworkComponentInstance();
+        return (!!frameworkComponentInstance && frameworkComponentInstance[name] !== null) ||
+            this.fallbackMethodAvailable(name);
     }
 
     callMethod(name: string, args: IArguments): void {
         const frameworkComponentInstance = this.getFrameworkComponentInstance();
+
+        if(this.isStatelessComponent()) {
+            return this.fallbackMethod(name, !!args && args[0] ? args[0] : {});
+        } else if(!(!!frameworkComponentInstance)) {
+            // instance not ready yet - wait for it
+            setTimeout(() => this.callMethod(name, args));
+            return;
+        }
+
         const method = frameworkComponentInstance[name];
 
         if (!!method) {
@@ -132,4 +138,6 @@ export abstract class ReactComponent extends BaseReactComponent {
     protected abstract fallbackMethod(name: string, params: any): any;
 
     protected abstract fallbackMethodAvailable(name: string): boolean;
+
+    public abstract isNullValue(): boolean;
 }
