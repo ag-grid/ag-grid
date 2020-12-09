@@ -352,6 +352,7 @@ describe('whenReady', () => {
     it('waits until child filter is ready', done => {
         let hasRun = false;
 
+        // @ts-ignore
         filter2.whenReady = callback => setTimeout(callback, 0);
 
         const multiFilter = createFilter();
