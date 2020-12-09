@@ -115,7 +115,14 @@ const plugins = [
     options: {
       exclude: [`/example-runner`],
     }
-  }
+  },
+  {
+    resolve: 'gatsby-plugin-google-tagmanager',
+    options: {
+      id: "GTM-T7JG534",
+      includeInDevelopment: false,
+    },
+  },
 ];
 
 if (process.env.GATSBY_UPDATE_ALGOLIA === 'true') {
