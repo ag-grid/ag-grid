@@ -190,6 +190,14 @@ interface SetFilterValuesFuncParams {
 }
 ```
 
+[[note]]
+| When using asynchronous values, you need to ensure that the filter is ready with those values by using the `whenReady` function before performing future actions. For example, when calling `setModel`, you should use `whenReady` to then trigger the grid filtering:
+|
+| ```js
+| filter.setModel({ values: ['a', 'b'] });
+| filter.whenReady(function() { gridApi.onFilterChanged(); })
+| ```
+
 The following example demonstrates loading set filter values asynchronously. Note the following:
 
 - `filterParams.values` is assigned a callback function that loads the filter values after a 3 second delay using the callback supplied in the params: `params.success(['value1', 'value2'])`.

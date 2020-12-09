@@ -46,6 +46,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
     private lastActivatedMenuItem: MenuItemComponent | null = null;
+    private isReady: Promise<void> = Promise.resolve();
 
     constructor() {
         super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`, true);
@@ -249,15 +250,15 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         return model;
     }
 
-    public setModel(model: IMultiFilterModel): Promise<void> {
+    public setModel(model: IMultiFilterModel | null): void {
         const setFilterModel = (filter: IFilterComp, filterModel: any) => {
-            return new Promise<void>(resolve => {
-                const promise = filter.setModel(filterModel);
+            filter.setModel(filterModel);
 
-                if (!promise) {
-                    resolve();
+            return new Promise<void>(resolve => {
+                if (typeof filter.whenReady === 'function') {
+                    filter.whenReady(() => resolve());
                 } else {
-                    promise.then(() => resolve());
+                    resolve();
                 }
             });
         };
@@ -274,7 +275,11 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
             });
         }
 
-        return Promise.all(promises).then(() => { });
+        this.isReady = new Promise(resolve => Promise.all(promises).then(() => resolve()));
+    }
+
+    public whenReady(callback: () => void): void {
+        this.isReady.then(callback);
     }
 
     public getChildFilterInstance(index: number): IFilterComp {

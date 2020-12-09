@@ -4,7 +4,6 @@ import { IRowModel } from './iRowModel';
 import { RowNode } from '../entities/rowNode';
 import { IComponent } from './iComponent';
 import { GridApi } from '../gridApi';
-import { Promise } from '../utils';
 import { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 
 type IFilterType = string | { new(): IFilterComp; } | boolean;
@@ -35,7 +34,13 @@ export interface IFilter {
     /** Gets the filter state for storing */
     getModel(): any;
     /** Restores the filter state. */
-    setModel(model: any): void | Promise<void>;
+    setModel(model: any): void;
+    /**
+     * Used to execute the provided callback when the filter is ready. Useful when the filter needs to perform
+     * asynchronous logic, e.g. to load values, before it can be interacted with.
+    */
+    whenReady?(callback: () => void): void;
+
     /** Gets called when new rows are inserted into the grid. If the filter needs to change it's state
      after rows are loaded, it can do it here. */
     onNewRowsLoaded?(): void;

@@ -398,6 +398,10 @@ export class SetValueModel implements IEventEmitter {
         });
     }
 
+    public whenReady(callback: () => void): void {
+        this.allValuesPromise.then(callback);
+    }
+
     private resetSelectionState(values: (string | null)[]): void {
         if (this.filterParams.defaultToNothingSelected) {
             this.selectedValues.clear();

@@ -107,12 +107,23 @@ export class FilterManager extends BeanStub {
     private setModelOnFilterWrapper(filterPromise: Promise<IFilterComp>, newModel: any): Promise<void> {
         return new Promise<void>(resolve => {
             filterPromise.then(filter => {
-                if (typeof filter!.setModel !== 'function') {
-                    console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
-                    resolve();
+                if (filter == null) {
+                    throw new Error('Filter was not returned.');
                 }
 
-                (filter!.setModel(newModel) || Promise.resolve()).then(() => resolve());
+                if (typeof filter.setModel !== 'function') {
+                    console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
+                    resolve();
+                    return;
+                }
+
+                filter.setModel(newModel);
+
+                if (typeof filter.whenReady === 'function') {
+                    filter.whenReady(() => resolve());
+                } else {
+                    resolve();
+                }
             });
         });
     }
@@ -553,8 +564,14 @@ export class FilterManager extends BeanStub {
 
     private disposeFilterWrapper(filterWrapper: FilterWrapper, source: ColumnEventType): void {
         filterWrapper.filterPromise!.then(filter => {
-            (filter!.setModel(null) || Promise.resolve()).then(() => {
-                this.getContext().destroyBean(filter);
+            if (filter == null) {
+                throw new Error('Filter was not returned.');
+            }
+
+            filter.setModel(null);
+
+            const dispose = () => {
+                this.destroyBean(filter);
 
                 filterWrapper.column.setFilterActive(false, source);
 
@@ -567,7 +584,13 @@ export class FilterManager extends BeanStub {
                 }
 
                 this.allAdvancedFilters.delete(filterWrapper.column.getColId());
-            });
+            };
+
+            if (typeof filter.whenReady === 'function') {
+                filter.whenReady(() => dispose());
+            } else {
+                dispose();
+            }
         });
     }
 

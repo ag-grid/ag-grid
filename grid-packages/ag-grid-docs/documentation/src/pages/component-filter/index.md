@@ -4,7 +4,6 @@ title: "Filter Component"
 
 Filter components allow you to add your own filter types to ag-Grid. Use them when the provided filters do not meet your requirements.
 
-
 ## Filter Component Interface (**IFilterComp**)
 
 ```ts
@@ -36,7 +35,6 @@ interface IFilterComp {
     // The grid will pass undefined/null to clear the filter.
     setModel(model: any): void;
 
-
     // Optional methods
 
     // Gets called every time the popup is shown, after the GUI returned in
@@ -67,6 +65,10 @@ interface IFilterComp {
     // filter with one string input value, you could just return the simple string
     // value here.
     getModelAsString?(model: any): string;
+
+    // If your filter uses asynchronous operations e.g. when loading values, implementing this method
+    // will allow developers to wait for the filter to be ready before performing further actions.
+    whenReady?(callback: () => void): void;
 }
 ```
 
@@ -149,7 +151,7 @@ interface IDoesFilterPassParams {
 
 If you create your own filter you have two options to get floating filters working for that filter:
 
-1. You can [create your own floating filter](../javascript-grid-floating-filter-component/).
+1. You can [create your own floating filter](../floating-filter-component/).
 1. You can implement the method `getModelAsString()` in your custom filter. If you implement this method and don't provide a custom floating filter, ag-Grid will automatically provide a read-only version of a floating filter.
 
 If you don't provide either of these two options for your custom filter, the display area for the floating filter will be empty.
@@ -548,4 +550,3 @@ There are two ways you can get fix this problem:
 | Using Polymer Components as a partial text filter in the Name column, illustrating filtering and lifecycle events.
 |
 | <grid-example title='Polymer Filter Component' name='polymer-filter' type='polymer' options='{ "noPlunker": true }'></grid-example>
-
