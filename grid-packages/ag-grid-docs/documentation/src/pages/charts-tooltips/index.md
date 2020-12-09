@@ -200,29 +200,27 @@ Notice that the tooltip renderer in the example below:
 
 ### Bar/Column Tooltips
 
-<api-documentation source='charts-api/api.json' section='bar', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
+<api-documentation source='charts-api/api.json' section='bar.tooltip'></api-documentation>
 
 ### Area Tooltips
 
-<api-documentation source='charts-api/api.json' section='area', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
+<api-documentation source='charts-api/api.json' section='area.tooltip'></api-documentation>
 
 ### Line Tooltips
 
-<api-documentation source='charts-api/api.json' section='line', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
+<api-documentation source='charts-api/api.json' section='line.tooltip'></api-documentation>
 
 ### Scatter/Bubble Tooltips
 
-<api-documentation source='charts-api/api.json' section='scatter', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
+<api-documentation source='charts-api/api.json' section='scatter.tooltip'></api-documentation>
 
 ### Pie/Doughnut Tooltips
 
-<api-documentation source='charts-api/api.json' section='pie', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
-
+<api-documentation source='charts-api/api.json' section='pie.tooltip'></api-documentation>
 
 ### Histogram Tooltips
 
-<api-documentation source='charts-api/api.json' section='histogram', names='["tooltipEnabled", "tooltipRenderer"]'></api-documentation>
-
+<api-documentation source='charts-api/api.json' section='histogram.tooltip'></api-documentation>
 
 ## Next Up
 
