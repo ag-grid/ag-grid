@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, navigate } from 'gatsby';
 import { GlobalContextProvider } from '../components/GlobalContext';
 import FrameworkSelector from '../components/FrameworkSelector';
+import HeaderNav from '../components/HeaderNav';
 import Menu from '../components/Menu';
 import Footer from '../components/footer/Footer';
 import { getPageName } from '../utils/get-page-name';
@@ -23,6 +24,7 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
         <div className={styles['main-container']}>
             <div className={styles['header']}>
                 <Link to="/" className={styles['header__logo']} />
+                <HeaderNav />
                 <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
             </div>
             <div className={styles['content-viewport']}>
