@@ -195,7 +195,7 @@ interface SetFilterValuesFuncParams {
 |
 | ```js
 | filter.setModel({ values: ['a', 'b'] });
-| filter.whenReady(function() { gridApi.onFilterChanged(); })
+| filter.whenReady(function() { gridApi.onFilterChanged(); });
 | ```
 
 The following example demonstrates loading set filter values asynchronously. Note the following:
