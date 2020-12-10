@@ -113,13 +113,15 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         const barSeries = chart.series[0] as BarSeries;
         const palette = this.getPalette();
 
-        barSeries.data = this.transformData(params.data, params.category.id);
-        barSeries.xKey = params.category.id;
-        barSeries.xName = params.category.name;
-        barSeries.yKeys = params.fields.map(f => f.colId) as any;
-        barSeries.yNames = params.fields.map(f => f.displayName!) as any;
-
+        let fields = params.fields;
         if (this.crossFiltering) {
+            // add additional filtered out field
+            fields.forEach(field => {
+                const crossFilteringField = {...field};
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+
             // introduce cross filtering transparent fills
             const fills: string[] = [];
             palette.fills.forEach(fill => {
@@ -157,6 +159,12 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             barSeries.fills = palette.fills;
             barSeries.strokes = palette.strokes;
         }
+
+        barSeries.data = this.transformData(params.data, params.category.id);
+        barSeries.xKey = params.category.id;
+        barSeries.xName = params.category.name;
+        barSeries.yKeys = params.fields.map(f => f.colId) as any;
+        barSeries.yNames = params.fields.map(f => f.displayName!) as any;
 
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     }

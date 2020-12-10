@@ -145,23 +145,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         let { fills, strokes } = this.getPalette();
 
         params.fields.forEach((f, index) => {
-            let yKey = f.colId;
-
-            // TODO: cross filtering WIP
-            let atLeastOneSelectedPoint = false;
-            if (this.crossFiltering) {
-                data.forEach(d => {
-                    d[f.colId + '-total'] = d[f.colId] + d[f.colId + '-filtered-out'];
-                    if (d[f.colId + '-filtered-out'] > 0) {
-                        atLeastOneSelectedPoint = true;
-                    }
-                });
-
-                const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
-                if (lastSelectedChartId === params.chartId) {
-                    yKey = f.colId + '-total';
-                }
-            }
+            let {yKey, atLeastOneSelectedPoint} = this.processDataForCrossFiltering(data, f.colId, params);
 
             let areaSeries = existingSeriesById.get(f.colId);
             const fill = fills[index % fills.length];

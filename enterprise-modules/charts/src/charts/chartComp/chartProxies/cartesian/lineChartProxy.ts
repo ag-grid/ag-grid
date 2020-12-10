@@ -75,23 +75,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
         let { fills, strokes } = this.getPalette();
         fields.forEach((f, index) => {
-            let yKey = f.colId;
-
-            // TODO: cross filtering WIP
-            let atLeastOneSelectedPoint = false;
-            if (this.crossFiltering) {
-                data.forEach(d => {
-                    d[f.colId + '-total'] = d[f.colId] + d[f.colId + '-filtered-out'];
-                    if (d[f.colId + '-filtered-out'] > 0) {
-                        atLeastOneSelectedPoint = true;
-                    }
-                });
-
-                const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
-                if (lastSelectedChartId === params.chartId) {
-                    yKey = f.colId + '-total';
-                }
-            }
+            let {yKey, atLeastOneSelectedPoint} = this.processDataForCrossFiltering(data, f.colId, params);
 
             let lineSeries = existingSeriesById.get(f.colId);
             const fill = fills[index % fills.length];

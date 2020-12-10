@@ -86,20 +86,28 @@ export class DoughnutChartProxy extends PolarChartProxy {
         const offset = 0;
 
         if (this.crossFiltering) {
-            const field = params.fields[0];
-            const filteredField = params.fields[1];
+            // add additional filtered out field
+            let fields = params.fields;
+            fields.forEach(field => {
+                const crossFilteringField = {...field};
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+
+            const field = fields[0];
+            const filteredOutField = fields[1];
 
             const angleField = field;
 
             params.data.forEach(d => {
-                d[field.colId + '-total'] = d[field.colId] + d[filteredField.colId];
+                d[field.colId + '-total'] = d[field.colId] + d[filteredOutField.colId];
                 d[field.colId] = d[field.colId] / d[field.colId + '-total'];
-                d[filteredField.colId] = 1;
+                d[filteredOutField.colId] = 1;
             });
 
             //TODO currently only works with one series
 
-            let radiusField = filteredField;
+            let radiusField = filteredOutField;
             const opaqueSeries = this.updateSeries(seriesMap, angleField, radiusField, seriesDefaults, 0, params, fills, strokes, doughnutChart, offset, undefined);
 
             radiusField = angleField;

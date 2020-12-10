@@ -219,9 +219,33 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         return find(this.chart.axes, a => a.position === ChartAxisPosition.Left);
     }
 
-    protected updateSeriesForCrossFiltering(series: AreaSeries | LineSeries, colId: string, chart: CartesianChart, params: UpdateChartParams, atLeastOneSelectedPoint: boolean) {
+    protected processDataForCrossFiltering(data: any[], colId: string, params: UpdateChartParams) {
+        let yKey = colId;
+        let atLeastOneSelectedPoint = false;
         if (this.crossFiltering) {
+            data.forEach(d => {
+                d[colId + '-total'] = d[colId] + d[colId + '-filtered-out'];
+                if (d[colId + '-filtered-out'] > 0) {
+                    atLeastOneSelectedPoint = true;
+                }
+            });
 
+            const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
+            if (lastSelectedChartId === params.chartId) {
+                yKey = colId + '-total';
+            }
+        }
+        return {yKey, atLeastOneSelectedPoint};
+    }
+
+    protected updateSeriesForCrossFiltering(
+        series: AreaSeries | LineSeries,
+        colId: string,
+        chart: CartesianChart,
+        params: UpdateChartParams,
+        atLeastOneSelectedPoint: boolean) {
+
+        if (this.crossFiltering) {
             // special custom marker handling to show and hide points
             series!.marker.enabled = true;
             series!.marker.formatter = (p: any) => {

@@ -361,18 +361,6 @@ export class GridChartComp extends Component {
 
         const selectedCols = model.getSelectedValueColState();
         const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
-
-        // TODO cross filtering
-        if (this.params.crossFiltering) {
-            fields.forEach(field => {
-                const crossFilteringField = {...field};
-                if (!_.includes([ChartType.Line, ChartType.Area], this.chartType)) {
-                    crossFilteringField.colId = field.colId + '-filtered-out';
-                    fields.push(crossFilteringField);
-                }
-            });
-        }
-
         const data = model.getData();
         const chartEmpty = this.handleEmptyChart(data, fields);
 

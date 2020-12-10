@@ -88,7 +88,16 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             return;
         }
 
-        const { fields } = params;
+        let fields = params.fields;
+        if (this.crossFiltering) {
+            // add additional filtered out field
+            fields.forEach(field => {
+                const crossFilteringField = {...field};
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+        }
+
         const { seriesDefaults } = this.chartOptions as any;
         const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
 
@@ -190,13 +199,13 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 }
 
                 chart.tooltip.delay = 500;
-                (series as ScatterSeries).tooltip.renderer = (params) => {
-                    return {
-                        content: params.yValue.toFixed(0),
-                        title: params.xValue, // optional, same as default
-                        color: 'black'
-                    };
-                }
+                // (series as ScatterSeries).tooltip.renderer = (params) => {
+                //     return {
+                //         content: params.yValue.toFixed(0),
+                //         title: params.xValue, // optional, same as default
+                //         color: 'black'
+                //     };
+                // }
 
                 // hide 'filtered out' legend items
                 if (isFilteredOutYKey) {

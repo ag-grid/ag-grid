@@ -4,7 +4,10 @@ var gridOptions = {
         { field: 'handset', chartDataType: 'category' },
         { headerName: 'Sale Price', field: 'sale', maxWidth: 160, aggFunc: 'sum', chartDataType: 'series' },
         { field: 'saleDate', chartDataType: 'category' },
-        { field: 'quarter', maxWidth: 160, filter: 'agSetColumnFilter', chartDataType: 'category' },
+        { field: 'quarter', maxWidth: 160, chartDataType: 'category' },
+        { field: 'x', chartDataType: 'series' },
+        { field: 'y', chartDataType: 'series' },
+        { field: 'w', chartDataType: 'series' },
     ],
     defaultColDef: {
         flex: 1,
@@ -41,17 +44,15 @@ var gridOptions = {
 
 function onFirstDataRendered(params) {
     createQuarterlySalesChart(params.api);
-    createSalesByRefChart(params.api);
     createHandsetSalesChart(params.api);
 }
 
 function createQuarterlySalesChart(gridApi) {
     gridApi.createCrossFilterChart({
-        chartType: 'stackedBar',
+        chartType: 'scatter',
         cellRange: {
-            columns: ['quarter', 'sale'],
+            columns: ['x', 'y'],
         },
-        aggFunc: 'sum',
         chartThemeOverrides: {
             common: {
                 title: {
@@ -81,42 +82,12 @@ function createQuarterlySalesChart(gridApi) {
     });
 }
 
-function createSalesByRefChart(gridApi) {
-    gridApi.createCrossFilterChart({
-        chartType: 'doughnut',
-        cellRange: {
-            columns: ['salesRep', 'sale'],
-        },
-        aggFunc: 'sum',
-        chartThemeOverrides: {
-            common: {
-                title: {
-                    enabled: true,
-                    text: 'Sales by Representative ($)'
-                }
-            },
-            pie: {
-                series: {
-                    title: {
-                        enabled: false
-                    },
-                    label: {
-                        enabled: false
-                    }
-                }
-            }
-        },
-        chartContainer: document.querySelector('#pieChart'),
-    });
-}
-
 function createHandsetSalesChart(gridApi) {
     gridApi.createCrossFilterChart({
-        chartType: 'line',
+        chartType: 'bubble',
         cellRange: {
-            columns: ['handset', 'sale'],
+            columns: ['x', 'y', 'w'],
         },
-        aggFunc: 'count',
         chartThemeOverrides: {
             common: {
                 title: {

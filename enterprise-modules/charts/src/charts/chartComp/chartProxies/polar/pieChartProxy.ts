@@ -78,16 +78,24 @@ export class PieChartProxy extends PolarChartProxy {
         const angleField = field;
 
         if (this.crossFiltering) {
-            const filteredField = params.fields[1];
+            // add additional filtered out field
+            let fields = params.fields;
+            fields.forEach(field => {
+                const crossFilteringField = {...field};
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+
+            const filteredOutField = fields[1];
 
             params.data.forEach(d => {
-                d[field.colId + '-total'] = d[field.colId] + d[filteredField.colId];
+                d[field.colId + '-total'] = d[field.colId] + d[filteredOutField.colId];
                 d[field.colId] = d[field.colId] / d[field.colId + '-total'];
-                d[filteredField.colId] = 1;
+                d[filteredOutField.colId] = 1;
             });
 
             let opaqueSeries = chart.series[1] as PieSeries;
-            let radiusField = filteredField;
+            let radiusField = filteredOutField;
             opaqueSeries = this.updateSeries(chart, opaqueSeries, angleField, radiusField, params, undefined);
 
             radiusField = angleField;

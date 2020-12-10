@@ -1,4 +1,4 @@
-var numRows = 500;
+var numRows = 100;
 
 var names = [
     'Aden Moreno',
@@ -32,6 +32,9 @@ function generateData() {
             sale: phone.price,
             saleDate: saleDate,
             quarter: quarter,
+            x: Math.random() * 100,
+            y: Math.random() * 100,
+            w: Math.random() * 10,
         });
     }
 
