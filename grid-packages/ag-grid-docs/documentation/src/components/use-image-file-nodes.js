@@ -26,6 +26,9 @@ export const useImageFileNodes = () => {
 };
 
 export const getImage = (images, pageName, src) => images
-    .filter(file => file.relativePath === src || file.relativePath === `${pageName}/resources/${src}`)[0];
+    .filter(file =>
+        file.relativePath === src ||
+        file.relativePath === `${pageName}/${src}` ||
+        file.relativePath === `${pageName}/resources/${src}`)[0];
 
 export default useImageFileNodes;

@@ -38,13 +38,11 @@ marker: {
 
 When markers are enabled, the tooltips will be shown on hover. In this case the values shown are percentage values, however there is no `%` suffix because the series don't know about the nature of the data (as it is designed to work with all kinds of data). So for the purposes of this example we additionally provide a `tooltipRenderer` to add the `%` suffix. After this change, the tooltips will change like so:
 
-<p style="text-align: center;">
-    <span>Before&nbsp;</span>
-    <img alt="Default Area Tooltip" src="default-area-tooltip.png" style="margin-bottom: 0px; height: 138px;">
-    <span style="width: 50px; display: inline-block;">--></span>
-    <span>After&nbsp;</span>
-    <img alt="Custom Area Tooltip" src="custom-area-tooltip.png" style="margin-bottom: 0px; height: 146px;">
-</p>
+<div style="display: flex; justify-content: center;">
+    <image-caption src="default-area-tooltip.png" alt="Default Area Tooltip" width="200px" constrained="true">Before</image-caption>
+    <div style="margin: auto 0;">--></div>
+    <image-caption src="custom-area-tooltip.png" alt="Custom Area Tooltip" width="300px" constrained="true">After</image-caption>
+</div>
 
 The final result can be seen in the example below.
 
