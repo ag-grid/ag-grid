@@ -22,8 +22,8 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
 
     return <GlobalContextProvider>
         <div className={styles['main-container']}>
-            <header className={ styles.header }>
-                <div className={ styles.header__wrapper }>
+            <header className={styles.header}>
+                <div className={styles.header__wrapper}>
                     {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
                     <a href="/" aria-label="Home" className={styles['header__logo']}></a>
                     <HeaderNav />
@@ -39,7 +39,7 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
                 </main>
             </div>
         </div>
-        <Footer framework={ framework } />
+        <Footer framework={framework} />
     </GlobalContextProvider>;
 };
 

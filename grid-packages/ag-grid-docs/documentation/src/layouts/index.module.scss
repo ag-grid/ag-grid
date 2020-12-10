@@ -49,6 +49,7 @@ html {
 
 .main-menu {
     composes: d-flex from global;
+
     position: relative;
     top: 0;
     flex: none;
@@ -70,6 +71,7 @@ html {
         border-bottom-style: none;
         border-right-style: solid;
     }
+
     @supports (position: sticky) {
         .main-menu {
             height: calc(100vh - 64px);
@@ -77,7 +79,7 @@ html {
     }
 }
 
-@media all and (-ms-high-contrast:none) {
+@media all and (-ms-high-contrast: none) {
     .main-menu {
         form svg {
             top: 10px;

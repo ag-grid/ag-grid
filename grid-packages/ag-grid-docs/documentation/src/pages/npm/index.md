@@ -34,9 +34,7 @@ For ag-Grid Enterprise features, import the `ag-grid-enterprise` package for it 
 import 'ag-grid-enterprise'
 ```
 
-After you have loaded the scripts, you should include the styles in your project. There are several 
-ways to do it, depending on your module bundler and the specifics of your project. The stylesheet 
-files reside in `dist/styles/` directory of the ag-grid package - you should include `ag-grid.css` 
-and the theme of your choice. 
-
-
+After you have loaded the scripts, you should include the styles in your project. There are several
+ways to do it, depending on your module bundler and the specifics of your project. The stylesheet
+files reside in `dist/styles/` directory of the ag-grid package - you should include `ag-grid.css`
+and the theme of your choice.

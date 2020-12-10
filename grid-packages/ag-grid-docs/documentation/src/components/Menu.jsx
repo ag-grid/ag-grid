@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import Search from './search/Search';
+import Announcements from '../components/Announcements';
 import menuData from '../pages/licensing/menu.json';
 import styles from './Menu.module.scss';
 
@@ -80,8 +81,8 @@ const Menu = ({ currentFramework, currentPage }) => {
             <button
                 className={styles['menu__nav-button']}
                 type="button" data-toggle="collapse"
-                data-target="#side-nav" 
-                aria-controls="side-nav" 
+                data-target="#side-nav"
+                aria-controls="side-nav"
                 aria-expanded="false"
                 aria-label="Toggle navigation">
                 <span className={styles['menu__nav-button-icon']}></span>
@@ -103,6 +104,7 @@ const Menu = ({ currentFramework, currentPage }) => {
                     />
                 );
             })}
+            <Announcements />
         </ul>
     </div>;
 };
