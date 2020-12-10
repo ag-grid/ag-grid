@@ -360,7 +360,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
-            'tooltip.enabled': 'tooltipEnabled',
             'callout.colors': 'calloutColors'
         };
 
