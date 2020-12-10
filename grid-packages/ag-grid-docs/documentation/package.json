@@ -7,7 +7,7 @@
   "scripts": {
     "generate-examples": "cd .. && node dev-server.js generate-examples && cd documentation",
     "build": "npm run publish && npm run clean",
-    "publish": "npm run generate-examples && npx gatsby build --prefix-paths",
+    "publish": "npm run generate-examples && npm run clean && npx gatsby build --prefix-paths",
     "develop": "npx gatsby develop -H 0.0.0.0",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run develop",
