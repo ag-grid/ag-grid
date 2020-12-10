@@ -22,11 +22,13 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
 
     return <GlobalContextProvider>
         <div className={styles['main-container']}>
-            <header className={styles['header']}>
-                {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
-                <a href="/" aria-label="Home" className={styles['header__logo']}></a>
-                <HeaderNav />
-                <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
+            <header className={ styles.header }>
+                <div className={ styles.header__wrapper }>
+                    {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
+                    <a href="/" aria-label="Home" className={styles['header__logo']}></a>
+                    <HeaderNav />
+                    <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
+                </div>
             </header>
             <div className={styles['content-viewport']}>
                 {framework && <aside className={`${styles['main-menu']}`}>

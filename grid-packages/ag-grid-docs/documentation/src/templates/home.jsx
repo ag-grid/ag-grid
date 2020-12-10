@@ -25,7 +25,7 @@ const logos = (() => {
 const HomePage = ({ path, pageContext }) => {
     const { framework: currentFramework } = pageContext;
     return (
-        <div style={{ textAlign: 'center' }}>
+        <div className='container' style={{ textAlign: 'center' }}>
             <h1>Welcome to the AG-Grid documentation</h1>
             <p>Which framework would you like to learn?</p>
 

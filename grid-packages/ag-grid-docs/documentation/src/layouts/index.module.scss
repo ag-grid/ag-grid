@@ -31,6 +31,10 @@ html {
 
     background-image: linear-gradient(to top left, $primary, darken($primary, 25%));
 
+    &__wrapper {
+        composes: container d-flex align-items-center from global;
+    }
+
     &__logo {
         composes: d-block from global;
 
@@ -80,7 +84,15 @@ html {
 }
 
 .content {
-    composes: flex-grow-1 from global;
+    width: 100vw;
+    max-width: 100vw;
+}
+
+@include media-breakpoint-up(lg) {
+    .content {
+        width: calc(100vw - 300px);
+        max-width: calc(100vw - 300px);
+    }
 }
 
 :global(.custom-block) {
