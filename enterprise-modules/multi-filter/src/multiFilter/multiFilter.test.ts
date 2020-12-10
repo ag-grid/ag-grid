@@ -310,18 +310,21 @@ describe('setModel', () => {
         filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
-    it('sets null on both filters if provided model is null', () => {
+    it('sets null on both filters if provided model is null', done => {
         const multiFilter = createFilter();
 
-        multiFilter.setModel(null);
+        // @ts-ignore
+        multiFilter.setModel(null).then(() => {
+            expect(filter1.setModel).toHaveBeenCalledTimes(1);
+            expect(filter1.setModel).toHaveBeenCalledWith(null);
+            expect(filter2.setModel).toHaveBeenCalledTimes(1);
+            expect(filter2.setModel).toHaveBeenCalledWith(null);
 
-        expect(filter1.setModel).toHaveBeenCalledTimes(1);
-        expect(filter1.setModel).toHaveBeenCalledWith(null);
-        expect(filter2.setModel).toHaveBeenCalledTimes(1);
-        expect(filter2.setModel).toHaveBeenCalledWith(null);
+            done();
+        });
     });
 
-    it('sets model on all filters if provided model is present', () => {
+    it('sets model on all filters if provided model is present', done => {
         const multiFilter = createFilter();
         const filterModel1 = { filterType: 'text' };
         const filterModel2 = { filterType: 'set', values: ['A', 'B', 'C'] };
@@ -331,39 +334,14 @@ describe('setModel', () => {
             filterModels: [filterModel1, filterModel2]
         };
 
-        multiFilter.setModel(model);
+        multiFilter.setModel(model).then(() => {
+            expect(filter1.setModel).toHaveBeenCalledTimes(1);
+            expect(filter1.setModel).toHaveBeenCalledWith(filterModel1);
+            expect(filter2.setModel).toHaveBeenCalledTimes(1);
+            expect(filter2.setModel).toHaveBeenCalledWith(filterModel2);
 
-        expect(filter1.setModel).toHaveBeenCalledTimes(1);
-        expect(filter1.setModel).toHaveBeenCalledWith(filterModel1);
-        expect(filter2.setModel).toHaveBeenCalledTimes(1);
-        expect(filter2.setModel).toHaveBeenCalledWith(filterModel2);
-    });
-});
-
-describe('whenReady', () => {
-    beforeEach(() => {
-        filter1 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel');
-        filter2 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel', 'whenReady');
-
-        filter1.getGui.mockReturnValue(document.createElement('div'));
-        filter2.getGui.mockReturnValue(document.createElement('div'));
-    });
-
-    it('waits until child filter is ready', done => {
-        let hasRun = false;
-
-        // @ts-ignore
-        filter2.whenReady = callback => setTimeout(callback, 0);
-
-        const multiFilter = createFilter();
-
-        multiFilter.setModel(null);
-        multiFilter.whenReady(() => {
-            hasRun = true;
             done();
         });
-
-        expect(hasRun).toBe(false);
     });
 });
 

@@ -230,15 +230,15 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         return this.appliedModel;
     }
 
-    public setModel(model: ProvidedFilterModel): void {
+    public setModel(model: ProvidedFilterModel): Promise<void> {
         const promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
 
-        promise.then(() => {
+        return promise.then(() => {
             this.updateUiVisibility();
 
-            // we set the model from the GUI, rather than the provided model,
-            // so the model is consistent, e.g. handling of null/undefined will be the same,
-            // or if model is case insensitive, then casing is removed.
+            // we set the model from the gui, rather than the provided model,
+            // so the model is consistent. eg handling of null/undefined will be the same,
+            // of if model is case insensitive, then casing is removed.
             this.applyModel();
         });
     }

@@ -8,6 +8,7 @@ You can access and set the models for filters through the grid API, or access in
 
 It is possible to get the state of all filters using the grid API method `getFilterModel()`, and to set the state using `setFilterModel()`. These methods manage the filters states via the `getModel()` and `setModel()` methods of the individual filters.
 
+
 ```js
 var model = gridApi.getFilterModel();
 
@@ -73,6 +74,7 @@ gridApi.getFilterInstance('name', function(filterInstance) {
 ```
 
 ### Re-running Grid Filtering
+
 
 After filters have been changed via their API, you must ensure the method `gridApi.onFilterChanged()` is called to tell the grid to filter the rows again. If `gridApi.onFilterChanged()` is not called, the grid will still show the data relevant to the filters before they were updated through the API.
 

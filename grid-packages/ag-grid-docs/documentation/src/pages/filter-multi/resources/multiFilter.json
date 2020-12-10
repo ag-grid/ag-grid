@@ -35,12 +35,6 @@
         }
     },
     "api": {
-        "setModel(model)": {
-            "description": "Sets the state of the filter using the supplied models. Providing `null` as the model will de-activate all child filters.<br /><br /><strong>Note:</strong> if you are using any child filters with asynchronous behaviour (e.g. Set Filter with asynchronous values), you should use the `whenReady` method after calling `setModel` to ensure that the filter is ready before any further action is taken, e.g. `filter.setModel([null, { values: ['a', 'b'] }]); filter.whenReady(function() { gridApi.onFilterChanged(); });`"
-        },
-        "whenReady(callback)": {
-            "description": "If you are using any child filters with asynchronous behaviour (e.g. Set Filter with asynchronous values), you should use this method to perform any actions after calling `setModel` to ensure that the filter is ready."
-        },
         "getChildFilterInstance(index)": {
             "description": "Returns the child filter instance at the specified index.",
             "more": {

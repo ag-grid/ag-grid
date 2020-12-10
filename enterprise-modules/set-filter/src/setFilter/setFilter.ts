@@ -160,14 +160,6 @@ export class SetFilter extends ProvidedFilter {
         return this.valueModel;
     }
 
-    public whenReady(callback: () => void): void {
-        if (this.valueModel) {
-            this.valueModel.whenReady(callback);
-        } else {
-            callback();
-        }
-    }
-
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
         // both are missing
         if (a == null && b == null) { return true; }
