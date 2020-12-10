@@ -1,10 +1,9 @@
-import { Logger } from "./logger";
-import { LoggerFactory } from "./logger";
-import { Bean } from "./context/context";
-import { Qualifier } from "./context/context";
-import { IEventEmitter } from "./interfaces/iEventEmitter";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { AgEvent } from "./events";
+import {Logger, LoggerFactory} from "./logger";
+import {Bean, Qualifier} from "./context/context";
+import {IEventEmitter} from "./interfaces/iEventEmitter";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {AgEvent} from "./events";
+import {IFrameworkOverrides} from "./interfaces/iFrameworkOverrides";
 
 @Bean('eventService')
 export class EventService implements IEventEmitter {
@@ -16,6 +15,7 @@ export class EventService implements IEventEmitter {
     private globalAsyncListeners = new Set<Function>();
 
     private logger: Logger;
+    private frameworkOverrides: IFrameworkOverrides;
 
     private asyncFunctionsQueue: Function[] = [];
     private scheduled = false;
@@ -35,8 +35,10 @@ export class EventService implements IEventEmitter {
     public setBeans(
         @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
         @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-        @Qualifier('globalEventListener') globalEventListener: Function | null = null) {
+        @Qualifier('globalEventListener') globalEventListener: Function | null = null,
+        @Qualifier('frameworkOverrides') frameworkOverrides: IFrameworkOverrides) {
         this.logger = loggerFactory.create('EventService');
+        this.frameworkOverrides = frameworkOverrides;
 
         if (globalEventListener) {
             const async = gridOptionsWrapper.useAsyncEvents();
@@ -101,9 +103,11 @@ export class EventService implements IEventEmitter {
 
         globalListeners.forEach(listener => {
             if (async) {
-                this.dispatchAsync(() => listener(eventType, event));
+                this.dispatchAsync(
+                    () => this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event))
+                );
             } else {
-                listener(eventType, event);
+                this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event));
             }
         });
     }
