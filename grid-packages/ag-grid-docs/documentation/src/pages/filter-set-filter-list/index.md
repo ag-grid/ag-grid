@@ -190,6 +190,14 @@ interface SetFilterValuesFuncParams {
 }
 ```
 
+[[note]]
+| If you are providing values to the Set Filter asynchronously, when setting the model using `setModel` you need to wait for changes to be applied before performing any further actions by waiting on the returned grid promise, e.g.:
+|
+| ```js
+| filter.setModel({ values: ['a', 'b'] })
+|   .then(function() { gridApi.onFilterChanged(); });
+| ```
+
 The following example demonstrates loading set filter values asynchronously. Note the following:
 
 - `filterParams.values` is assigned a callback function that loads the filter values after a 3 second delay using the callback supplied in the params: `params.success(['value1', 'value2'])`.

@@ -1,7 +1,7 @@
 {
     "api": {
         "setModel(model)": {
-            "description": "Sets the state of the filter using the supplied model. Providing `null` as the model will de-activate the filter.<br /><strong>Note:</strong> because values can be provided asynchronously to the Set Filter, the `setModel` method returns a promise. To ensure that the model has been set before any further action is taken, you should await this promise, e.g. `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); })`"
+            "description": "Sets the state of the filter using the supplied model. Providing `null` as the model will de-activate the filter.<br /><br /><strong>Note:</strong> if you are providing values to the Set Filter asynchronously, you need to wait for these changes to be applied before performing any further actions by waiting on the returned grid promise, e.g. `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`"
         },
         "getValues()": {
             "description": "Returns the full list of unique values used by the Set Filter."

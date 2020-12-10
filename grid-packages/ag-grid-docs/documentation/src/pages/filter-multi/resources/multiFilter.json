@@ -35,6 +35,9 @@
         }
     },
     "api": {
+        "setModel(model)": {
+            "description": "Sets the state of the child filters using the supplied models. Providing `null` will de-activate all child filters.<br /><br /><strong>Note:</strong> if you are providing values to a child <a href='../filter-set/'>Set Filter</a> asynchronously, you need to wait for these changes to be applied before performing any further actions by waiting on the returned grid promise, e.g. `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });`"
+        },
         "getChildFilterInstance(index)": {
             "description": "Returns the child filter instance at the specified index.",
             "more": {
