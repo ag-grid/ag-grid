@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 ZIP_PREFIX=`date +%Y%m%d`
 
@@ -11,10 +11,12 @@ zip -r ../../../$FILENAME *
 
 cd ../../../
 
-rm -rf /var/www/html/archive
-mkdir -p /var/www/html/archive/1.0.0
-mv $FILENAME /var/www/html/archive/1.0.0
-unzip /var/www/html/archive/1.0.0/$FILENAME -d /var/www/html/archive/1.0.0/
+VERSION="`grep -Po '"version":.*?[^\\\]",' package.json | sed 's/[\"|\,|version|\:| ]//g'`-beta"
+
+rm -rf /var/www/html/archive/$VERSION
+mkdir -p /var/www/html/archive/$VERSION
+mv $FILENAME /var/www/html/archive/$VERSION
+unzip /var/www/html/archive/$VERSION/$FILENAME -d /var/www/html/archive/$VERSION/
 
 # not really necessary as we don't delete this file
 touch /var/www/html/robots.txt
