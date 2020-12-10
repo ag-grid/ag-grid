@@ -13,7 +13,7 @@ import {
     VirtualList,
     VirtualListModel,
     IAfterGuiAttachedParams,
-    Promise,
+    AgPromise,
     KeyCode,
     _
 } from '@ag-grid-community/core';
@@ -107,17 +107,17 @@ export class SetFilter extends ProvidedFilter {
         return 'set-filter';
     }
 
-    private setModelAndRefresh(values: (string | null)[] | null): Promise<void> {
-        return this.valueModel ? this.valueModel.setModel(values).then(() => this.refresh()) : Promise.resolve();
+    private setModelAndRefresh(values: (string | null)[] | null): AgPromise<void> {
+        return this.valueModel ? this.valueModel.setModel(values).then(() => this.refresh()) : AgPromise.resolve();
     }
 
-    protected resetUiToDefaults(): Promise<void> {
+    protected resetUiToDefaults(): AgPromise<void> {
         this.setMiniFilter(null);
 
         return this.setModelAndRefresh(null);
     }
 
-    protected setModelIntoUi(model: SetFilterModel): Promise<void> {
+    protected setModelIntoUi(model: SetFilterModel): AgPromise<void> {
         this.setMiniFilter(null);
 
         if (model instanceof Array) {
@@ -258,10 +258,10 @@ export class SetFilter extends ProvidedFilter {
             });
     }
 
-    private syncAfterDataChange(refreshValues = true, keepSelection = true): Promise<void> {
+    private syncAfterDataChange(refreshValues = true, keepSelection = true): AgPromise<void> {
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        let promise: Promise<void> = Promise.resolve();
+        let promise: AgPromise<void> = AgPromise.resolve();
 
         if (refreshValues) {
             promise = this.valueModel.refreshValues(keepSelection);

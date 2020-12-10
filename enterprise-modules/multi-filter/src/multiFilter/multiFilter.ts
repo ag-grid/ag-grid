@@ -1,6 +1,6 @@
 import {
     ProvidedFilter,
-    Promise,
+    AgPromise,
     ProvidedFilterModel,
     IDoesFilterPassParams,
     IAfterGuiAttachedParams,
@@ -59,7 +59,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
             [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
     }
 
-    public init(params: IMultiFilterParams): Promise<void> {
+    public init(params: IMultiFilterParams): AgPromise<void> {
         this.params = params;
         this.filterDefs = MultiFilter.getFilterDefs(params);
 
@@ -68,7 +68,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         this.column = column;
         this.filterChangedCallback = filterChangedCallback;
 
-        const filterPromises: Promise<IFilterComp>[] = [];
+        const filterPromises: AgPromise<IFilterComp>[] = [];
 
         _.forEach(this.filterDefs, (filterDef, index) => {
             const filterPromise = this.createFilter(filterDef, index);
@@ -79,7 +79,9 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         });
 
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
-        return Promise.all(filterPromises).then(filters => { this.filters = filters as IFilterComp[]; this.refreshGui('columnMenu'); });
+        return AgPromise
+            .all(filterPromises)
+            .then(filters => { this.filters = filters as IFilterComp[]; this.refreshGui('columnMenu'); });
     }
 
     private refreshGui(container: ContainerType): void {
@@ -249,20 +251,16 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         return model;
     }
 
-    public setModel(model: IMultiFilterModel): Promise<void> {
+    public setModel(model: IMultiFilterModel | null): AgPromise<void> {
         const setFilterModel = (filter: IFilterComp, filterModel: any) => {
-            return new Promise<void>(resolve => {
+            return new AgPromise<void>(resolve => {
                 const promise = filter.setModel(filterModel);
 
-                if (!promise) {
-                    resolve();
-                } else {
-                    promise.then(() => resolve());
-                }
+                promise ? promise.then(() => resolve()) : resolve();
             });
         };
 
-        let promises: Promise<void>[] = [];
+        let promises: AgPromise<void>[] = [];
 
         if (model == null) {
             promises = _.map(this.filters!, filter => setFilterModel(filter, null))!;
@@ -274,7 +272,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
             });
         }
 
-        return Promise.all(promises).then(() => { });
+        return AgPromise.all(promises).then(() => { });
     }
 
     public getChildFilterInstance(index: number): IFilterComp {
@@ -329,7 +327,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         });
     }
 
-    private createFilter(filterDef: IFilterDef, index: number): Promise<IFilterComp> | null {
+    private createFilter(filterDef: IFilterDef, index: number): AgPromise<IFilterComp> | null {
         const { filterModifiedCallback, doesRowPassOtherFilter } = this.params;
 
         let filterInstance: IFilterComp;

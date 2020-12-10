@@ -1,5 +1,5 @@
 import { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
-import { Promise } from './promise';
+import { AgPromise } from './promise';
 import { loadTemplate } from './dom';
 import { camelCaseToHyphen } from './string';
 import { iterateObject } from './object';
@@ -99,10 +99,10 @@ export function message(msg: string): void {
 /**
  * cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they
  * can return back strings (instead of html elemnt) in the getGui() method. common code placed here to handle that.
- * @param {Promise<ICellRendererComp>} cellRendererPromise
+ * @param {AgPromise<ICellRendererComp>} cellRendererPromise
  * @param {HTMLElement} eTarget
  */
-export function bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement) {
+export function bindCellRendererToHtmlElement(cellRendererPromise: AgPromise<ICellRendererComp>, eTarget: HTMLElement) {
     cellRendererPromise.then(cellRenderer => {
         const gui: HTMLElement | string = cellRenderer!.getGui();
 

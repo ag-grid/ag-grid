@@ -4,7 +4,7 @@ import {
     Column,
     Constants,
     ISetFilterParams,
-    Promise,
+    AgPromise,
     SetFilterValues,
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
@@ -45,7 +45,7 @@ export class SetValueModel implements IEventEmitter {
     private providedValues: SetFilterValues | null = null;
 
     /** Values can be loaded asynchronously, so wait on this promise if you need to ensure values have been loaded. */
-    private allValuesPromise: Promise<(string | null)[]>;
+    private allValuesPromise: AgPromise<(string | null)[]>;
 
     /** All possible values for the filter, sorted if required. */
     private allValues: (string | null)[] = [];
@@ -118,7 +118,7 @@ export class SetValueModel implements IEventEmitter {
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    public refreshValues(keepSelection = true): Promise<void> {
+    public refreshValues(keepSelection = true): AgPromise<void> {
         const currentModel = this.getModel();
 
         this.updateAllValues();
@@ -132,8 +132,8 @@ export class SetValueModel implements IEventEmitter {
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    public overrideValues(valuesToUse: (string | null)[], keepSelection = true): Promise<void> {
-        return new Promise<void>(resolve => {
+    public overrideValues(valuesToUse: (string | null)[], keepSelection = true): AgPromise<void> {
+        return new AgPromise<void>(resolve => {
             // wait for any existing values to be populated before overriding
             this.allValuesPromise.then(() => {
                 this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
@@ -143,14 +143,14 @@ export class SetValueModel implements IEventEmitter {
         });
     }
 
-    public refreshAfterAnyFilterChanged(): Promise<void> {
+    public refreshAfterAnyFilterChanged(): AgPromise<void> {
         return this.showAvailableOnly() ?
             this.allValuesPromise.then(values => this.updateAvailableValues(values || [])) :
-            Promise.resolve();
+            AgPromise.resolve();
     }
 
-    private updateAllValues(): Promise<(string | null)[]> {
-        this.allValuesPromise = new Promise<(string | null)[]>(resolve => {
+    private updateAllValues(): AgPromise<(string | null)[]> {
+        this.allValuesPromise = new AgPromise<(string | null)[]>(resolve => {
             switch (this.valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
                 case SetFilterModelValuesType.PROVIDED_LIST: {
@@ -379,7 +379,7 @@ export class SetValueModel implements IEventEmitter {
         return this.hasSelections() ? _.values(this.selectedValues) : null;
     }
 
-    public setModel(model: (string | null)[] | null): Promise<void> {
+    public setModel(model: (string | null)[] | null): AgPromise<void> {
         return this.allValuesPromise.then(values => {
             if (model == null) {
                 this.resetSelectionState(values || []);

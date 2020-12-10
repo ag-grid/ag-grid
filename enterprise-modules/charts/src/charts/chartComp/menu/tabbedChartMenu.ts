@@ -5,7 +5,7 @@ import {
     ChartType,
     Component,
     PostConstruct,
-    Promise,
+    AgPromise,
     TabbedItem,
     TabbedLayout
 } from "@ag-grid-community/core";
@@ -36,7 +36,7 @@ export class TabbedChartMenu extends Component {
     constructor(params: {
         controller: ChartController,
         type: ChartType,
-        panels: ChartMenuOptions[]
+        panels: ChartMenuOptions[];
     }) {
         super();
 
@@ -68,7 +68,7 @@ export class TabbedChartMenu extends Component {
         name: ChartMenuOptions,
         title: string,
         ChildClass: new (controller: ChartController) => Component
-    ): { comp: Component, tab: TabbedItem } {
+    ): { comp: Component, tab: TabbedItem; } {
         const eWrapperDiv = document.createElement('div');
         _.addCssClass(eWrapperDiv, 'ag-chart-tab');
         _.addCssClass(eWrapperDiv, `ag-chart-${title}`);
@@ -87,13 +87,13 @@ export class TabbedChartMenu extends Component {
             tab: {
                 title: titleEl,
                 titleLabel: translatedTitle,
-                bodyPromise: Promise.resolve(eWrapperDiv),
+                bodyPromise: AgPromise.resolve(eWrapperDiv),
                 name
             }
         };
     }
 
-    public getMinDimensions(): { width: number, height: number } {
+    public getMinDimensions(): { width: number, height: number; } {
         return this.tabbedLayout.getMinDimensions();
     }
 

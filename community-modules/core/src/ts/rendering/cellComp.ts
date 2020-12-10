@@ -23,7 +23,7 @@ import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../interfa
 import { RowComp } from "./row/rowComp";
 import { RowDragComp } from "./row/rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
-import { Promise } from "../utils";
+import { AgPromise } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DndSourceComp } from "./dndSourceComp";
 import { TooltipFeature } from "../widgets/tooltipFeature";
@@ -1162,7 +1162,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private createCellEditor(params: ICellEditorParams): Promise<ICellEditorComp> {
+    private createCellEditor(params: ICellEditorParams): AgPromise<ICellEditorComp> {
         const cellEditorPromise = this.beans.userComponentFactory.newCellEditor(this.column.getColDef(), params);
 
         return cellEditorPromise!.then(cellEditor => {
@@ -2231,7 +2231,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
     }
 
-    private clearCellElement():void {
+    private clearCellElement(): void {
         const eGui = this.getGui();
 
         // if focus is inside the cell, we move focus to the cell itself

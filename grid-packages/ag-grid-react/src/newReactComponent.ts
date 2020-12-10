@@ -1,10 +1,10 @@
-import {ReactPortal, createElement} from 'react';
-import {createPortal} from 'react-dom';
-import {ComponentType, Promise} from 'ag-grid-community';
-import {AgGridReact} from "./agGridReact";
-import {ReactComponent} from './reactComponent';
+import { ReactPortal, createElement } from 'react';
+import { createPortal } from 'react-dom';
+import { ComponentType, AgPromise } from 'ag-grid-community';
+import { AgGridReact } from "./agGridReact";
+import { ReactComponent } from './reactComponent';
 import generateNewKey from "./keyGenerator";
-import {renderToStaticMarkup} from "react-dom/server";
+import { renderToStaticMarkup } from "react-dom/server";
 
 export class NewReactComponent extends ReactComponent {
     private key: string;
@@ -18,13 +18,13 @@ export class NewReactComponent extends ReactComponent {
         this.key = generateNewKey();
     }
 
-    public init(params: any): Promise<void> {
+    public init(params: any): AgPromise<void> {
         this.eParentElement = this.createParentElement(params);
         this.params = params;
 
         this.createOrUpdatePortal(params);
 
-        return new Promise<void>(resolve => this.createReactComponent(resolve));
+        return new AgPromise<void>(resolve => this.createReactComponent(resolve));
     }
 
     private createOrUpdatePortal(params: any) {
@@ -36,7 +36,7 @@ export class NewReactComponent extends ReactComponent {
             };
         }
 
-        this.reactElement = createElement(this.reactComponent, {...params, key: this.key});
+        this.reactElement = createElement(this.reactComponent, { ...params, key: this.key });
 
         this.portal = createPortal(
             this.reactElement,
@@ -51,7 +51,7 @@ export class NewReactComponent extends ReactComponent {
         });
     }
 
-    public isNullValue() : boolean {
+    public isNullValue(): boolean {
         return this.valueRenderedIsNull(this.params);
     }
 
@@ -60,7 +60,7 @@ export class NewReactComponent extends ReactComponent {
             !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
     }
 
-    private valueRenderedIsNull(params: any) : boolean {
+    private valueRenderedIsNull(params: any): boolean {
         // we only do this for cellRenderers
         if (this.componentType.isCellRenderer && !this.componentType.isCellRenderer()) {
             return false;
@@ -102,7 +102,7 @@ export class NewReactComponent extends ReactComponent {
 
     protected fallbackMethod(name: string, params: any): any {
         const method = (this as any)[`${name}Component`];
-        if(!!method) {
+        if (!!method) {
             return method.bind(this)(params);
         }
     }
@@ -110,4 +110,5 @@ export class NewReactComponent extends ReactComponent {
     protected fallbackMethodAvailable(name: string): boolean {
         const method = (this as any)[`${name}Component`];
         return !!method;
-    }}
+    }
+}

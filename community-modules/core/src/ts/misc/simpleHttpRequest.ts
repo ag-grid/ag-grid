@@ -1,11 +1,11 @@
-import { Promise } from "../utils";
+import { AgPromise } from "../utils";
 
 export interface SimpleHttpRequestParams {
     url: string;
 }
 
-export function simpleHttpRequest(params: SimpleHttpRequestParams): Promise<any> {
-    return new Promise<any>(resolve => {
+export function simpleHttpRequest(params: SimpleHttpRequestParams): AgPromise<any> {
+    return new AgPromise<any>(resolve => {
         const httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', params.url);
         httpRequest.send();

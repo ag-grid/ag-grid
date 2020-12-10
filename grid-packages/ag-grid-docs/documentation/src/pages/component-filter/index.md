@@ -4,7 +4,6 @@ title: "Filter Component"
 
 Filter components allow you to add your own filter types to ag-Grid. Use them when the provided filters do not meet your requirements.
 
-
 ## Filter Component Interface (**IFilterComp**)
 
 ```ts
@@ -149,7 +148,7 @@ interface IDoesFilterPassParams {
 
 If you create your own filter you have two options to get floating filters working for that filter:
 
-1. You can [create your own floating filter](../javascript-grid-floating-filter-component/).
+1. You can [create your own floating filter](../floating-filter-component/).
 1. You can implement the method `getModelAsString()` in your custom filter. If you implement this method and don't provide a custom floating filter, ag-Grid will automatically provide a read-only version of a floating filter.
 
 If you don't provide either of these two options for your custom filter, the display area for the floating filter will be empty.
@@ -166,9 +165,8 @@ Sometimes you will need to create custom components for your filters that also c
 
 There are two ways you can get fix this problem:
 
-- Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.<br/><br/>Note: This is the best solution, but you can only do this if you are writing the component yourself.
+- Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.<br /><br />Note: This is the best solution, but you can only do this if you are writing the component yourself.
 - Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](/component-date/#example-custom-date)
-</ul>
 
 [[only-angular]]
 | ## Angular Filtering
@@ -548,4 +546,3 @@ There are two ways you can get fix this problem:
 | Using Polymer Components as a partial text filter in the Name column, illustrating filtering and lifecycle events.
 |
 | <grid-example title='Polymer Filter Component' name='polymer-filter' type='polymer' options='{ "noPlunker": true }'></grid-example>
-

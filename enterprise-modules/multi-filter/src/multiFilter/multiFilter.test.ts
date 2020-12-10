@@ -7,7 +7,7 @@ import {
     Column,
     UserComponentFactory,
     IRowModel,
-    Promise,
+    AgPromise,
     IFilterComp,
     IAfterGuiAttachedParams,
     IDoesFilterPassParams,
@@ -46,8 +46,8 @@ function createFilter(filterParams: any = {}): MultiFilter {
 
     filterManager.createFilterParams.mockImplementation((_1, _2, _3) => ({ ...baseFilterParams }));
     userComponentFactory.newFilterComponent
-        .mockReturnValueOnce(Promise.resolve(filter1))
-        .mockReturnValueOnce(Promise.resolve(filter2));
+        .mockReturnValueOnce(AgPromise.resolve(filter1))
+        .mockReturnValueOnce(AgPromise.resolve(filter2));
 
     const params: IMultiFilterParams = {
         ...baseFilterParams,
@@ -313,7 +313,6 @@ describe('setModel', () => {
     it('sets null on both filters if provided model is null', done => {
         const multiFilter = createFilter();
 
-        // @ts-ignore
         multiFilter.setModel(null).then(() => {
             expect(filter1.setModel).toHaveBeenCalledTimes(1);
             expect(filter1.setModel).toHaveBeenCalledWith(null);
