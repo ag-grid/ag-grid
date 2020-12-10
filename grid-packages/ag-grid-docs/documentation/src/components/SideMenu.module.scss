@@ -2,11 +2,17 @@
     composes: my-4 mx-3 pl-3 list-unstyled from global;
 
     position: fixed;
-    top: 4rem;
+    top: 8rem;
     right: 0;
     width: 300px;
     border-left: solid 1px lighten($secondary, 40%);
     font-size: 0.9rem;
+
+    @include media-breakpoint-up(lg) {
+        & {
+            top: 4rem;
+        }
+    }
 
     &__item--level-1 {
         font-size: 1.05rem;

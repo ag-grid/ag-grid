@@ -2,8 +2,14 @@
     composes: navbar flex-grow-1 flex-column align-items-stretch navbar-expand-lg navbar-light p-0 from global;
 
     &__search-bar-wrapper {
-        composes: m-2 from global;
+        composes: p-2 from global;
         display: flex;
+    }
+
+    @include media-breakpoint-up(lg) {
+        &__search-bar-wrapper {
+            border-bottom: 1px solid lightgray;
+        }
     }
 
     &__nav-button {
