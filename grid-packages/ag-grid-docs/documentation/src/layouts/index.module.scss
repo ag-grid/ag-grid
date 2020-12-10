@@ -2,12 +2,22 @@
 @import "~bootstrap/scss/alert";
 
 html {
-    scroll-padding-top: 64px;
+    scroll-padding-top: 134px;
+}
+
+@include media-breakpoint-up(lg) {
+    html {
+        scroll-padding-top: 64px;
+    }
 }
 
 .main-container {
     composes: container-fluid p-0 d-flex flex-column from global;
     -webkit-font-smoothing: antialiased;
+}
+
+.content-viewport {
+    composes: container d-flex flex-column flex-lg-row flex-grow-1 from global;
 }
 
 .header {
@@ -32,14 +42,51 @@ html {
     }
 }
 
-.content-viewport {
-    composes: d-flex flex-grow-1 from global;
+.main-menu {
+    position: relative;
+    top: 0;
+    flex: none;
+    height: 70px;
+    width: auto;
+    overflow: hidden;
+    border-width: 1px;
+    border-color: lighten($secondary, 40%);
+    border-bottom-style: solid;
+    background-color: $white;
 }
 
-.main-menu {
-    flex: none;
-    width: 300px;
-    border-right: solid 1px lighten($secondary, 40%);
+@supports (position: sticky) {
+    .main-menu {
+        position: sticky;
+        top: 64px;
+        z-index: 2;
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .main-menu {
+        width: 300px;
+        border-bottom-style: none;
+        border-right-style: solid;
+        overflow: visible;
+        height: auto;
+    }
+    @supports (position: sticky) {
+        .main-menu {
+            height: calc(100vh - 64px);
+            top: 64px;
+            overflow: auto;
+        }
+    }
+}
+
+@media all and (-ms-high-contrast:none) {
+    .main-menu {
+        form svg {
+            top: 10px;
+            left: 0;
+        }
+    }
 }
 
 .content {

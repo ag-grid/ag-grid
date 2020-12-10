@@ -29,15 +29,15 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
                 <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
             </header>
             <div className={styles['content-viewport']}>
-                {framework && <aside className={`${styles['main-menu']} aside_menu`}>
+                {framework && <aside className={`${styles['main-menu']}`}>
                     <Menu currentFramework={framework} currentPage={pageName} />
                 </aside>}
                 <main className={styles['content']}>
                     {children}
                 </main>
             </div>
-            <Footer framework={framework} />
         </div>
+        <Footer framework={ framework } />
     </GlobalContextProvider>;
 };
 
