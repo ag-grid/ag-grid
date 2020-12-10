@@ -9,11 +9,9 @@ There are four ways of enabling the tooltips in ag-Charts by using:
 - [custom title / content](#modifying-content-title) via a renderer function
 - [completely custom template and markup](#using-custom-tooltips) via a renderer function
 
-
 ## Default Tooltip
 
 The default chart tooltip has the following template:
-
 
 ```html
 <div class="ag-chart-tooltip">
@@ -22,17 +20,12 @@ The default chart tooltip has the following template:
 </div>
 ```
 
-The title element may or may not exist but the content element is always present.
-    In the screenshots below the content element of both tooltips contains `Jun: 50.00`:
+The title element may or may not exist but the content element is always present. In the screenshots below the content element of both tooltips contains `Jun: 50.00`:
 
-<div>
-    <span>No Title&nbsp;</span>
-    <img alt="Tooltip without the title element" src="resources/tooltip-no-title.png" />
-    <span style="width: 50px; display: inline-block;"></span>
-    <span>With Title&nbsp;</span>
-    <img alt="Tooltip with a title element" src="resources/tooltip-with-title.png" />
+<div style="display: flex; justify-content: center;">
+    <image-caption src="tooltip-no-title.png" alt="Tooltip without the title element" width="250px" constrained="true">No Title</image-caption>
+    <image-caption src="tooltip-with-title.png" alt="Tooltip with a title element" width="250px" constrained="true">With Title</image-caption>
 </div>
-
 
 To make the tooltip title visible you need to specify the series' `yName` or `yNames`, or `labelName` in the case of `'pie'` series. These configs supply the keys used to fetch the display names, because the keys themselves may not be presentable or descriptive.
 
