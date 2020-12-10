@@ -55,7 +55,7 @@ export class ToolPanelColumnComp extends Component {
         _.addCssClass(this.eDragHandle, 'ag-column-select-column-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
-        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnToolPanel');
         const displayNameSanitised: any = _.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
 

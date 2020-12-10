@@ -245,7 +245,7 @@ export class PrimaryColsListPanel extends Component {
 
             if (skipThisColumn) { return; }
 
-            const displayName = this.columnController.getDisplayNameForColumn(column, 'toolPanel');
+            const displayName = this.columnController.getDisplayNameForColumn(column, 'columnToolPanel');
 
             parentList.push(new ColumnModelItem(displayName, column, dept));
         };

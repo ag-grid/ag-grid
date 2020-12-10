@@ -207,11 +207,11 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumnGroupName(columnGroup: OriginalColumnGroup): string | null {
-        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
+        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'filterToolPanel');
     }
 
     private getColumnName(column: Column): string | null {
-        return this.columnController.getDisplayNameForColumn(column, 'toolPanel', false);
+        return this.columnController.getDisplayNameForColumn(column, 'filterToolPanel', false);
     }
 
     private destroyFilters() {
