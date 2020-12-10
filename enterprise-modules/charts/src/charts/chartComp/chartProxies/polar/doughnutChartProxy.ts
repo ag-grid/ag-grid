@@ -83,7 +83,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
         const { seriesDefaults } = this.chartOptions;
         const { fills, strokes } = this.getPalette();
-        const offset = 0;
+        let offset = 0;
 
         if (this.crossFiltering) {
             // add additional filtered out field
@@ -108,13 +108,14 @@ export class DoughnutChartProxy extends PolarChartProxy {
             //TODO currently only works with one series
 
             let radiusField = filteredOutField;
-            const opaqueSeries = this.updateSeries(seriesMap, angleField, radiusField, seriesDefaults, 0, params, fills, strokes, doughnutChart, offset, undefined);
+            const {pieSeries} = this.updateSeries(seriesMap, angleField, radiusField, seriesDefaults, 0, params, fills, strokes, doughnutChart, offset, undefined);
 
             radiusField = angleField;
-            this.updateSeries(seriesMap, angleField, radiusField, seriesDefaults, 0, params, fills, strokes, doughnutChart, offset, opaqueSeries);
+            this.updateSeries(seriesMap, angleField, radiusField, seriesDefaults, 0, params, fills, strokes, doughnutChart, offset, pieSeries);
         } else {
             params.fields.forEach((f, index) => {
-                this.updateSeries(seriesMap, f, f, seriesDefaults, index, params, fills, strokes, doughnutChart, offset, undefined);
+                const {updatedOffset} = this.updateSeries(seriesMap, f, f, seriesDefaults, index, params, fills, strokes, doughnutChart, offset, undefined);
+                offset = updatedOffset;
             });
         }
 
@@ -227,13 +228,14 @@ export class DoughnutChartProxy extends PolarChartProxy {
             pieSeries.outerRadiusOffset = offset;
             offset -= 20;
             pieSeries.innerRadiusOffset = offset;
+            offset -= 20;
         }
 
         if (!existingSeries) {
             seriesMap[field.colId] = pieSeries;
         }
 
-        return pieSeries;
+        return {updatedOffset: offset, pieSeries};
     }
 
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
