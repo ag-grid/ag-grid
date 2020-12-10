@@ -1,11 +1,11 @@
+$container-max-widths: (
+    sm: 540px,
+    md: 970px,
+    lg: 1140px,
+    xl: 1400px,
+);
+
 // only import Bootstrap that does not output CSS, to avoid bloating our generated CSS
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
-
-$container-max-widths: (
-    sm: 540px,
-    md: 970px,
-    lg: 1140,
-    xl: 1400px,
-);

@@ -1,5 +1,5 @@
 .doc-page-wrapper {
-    composes: container p-3 from global;
+    composes: container d-flex p-3 from global;
 }
 
 %enterprise-icon {
@@ -14,8 +14,10 @@
 .doc-page {
     margin-left: 1rem;
     margin-right: 1rem;
+    flex: 1 1 0px;
+    min-width: 0px;
 
-    &--with-side-menu {
+    &:not(&--with-side-menu) {
         margin-right: calc(300px + 3rem);
     }
 

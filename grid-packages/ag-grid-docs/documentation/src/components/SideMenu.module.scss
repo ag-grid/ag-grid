@@ -1,16 +1,23 @@
 .side-nav {
-    composes: my-4 mx-3 pl-3 list-unstyled from global;
-
-    position: fixed;
-    top: 8rem;
-    right: 0;
+    composes: my-4 from global;
     width: 300px;
-    border-left: solid 1px lighten($secondary, 40%);
+    flex: none;
     font-size: 0.9rem;
 
+    &__list {
+        composes: mx-3 pl-3 list-unstyled from global;
+        @supports (position: sticky) {
+            position: sticky;
+            top: 11rem;
+        }
+        border-left: solid 1px lighten($secondary, 40%);
+    }
+
     @include media-breakpoint-up(lg) {
-        & {
-            top: 4rem;
+        @supports (position: sticky) {
+            &__list {
+                top: 7rem;
+            }
         }
     }
 

@@ -41,13 +41,16 @@ const SideMenu = ({ headings = [], pageName, hideMenu }) => {
         }
     }, [hideMenu]);
 
-    return allHeadings.length > 1 &&
-        <ul className={styles['side-nav']}>
-            {allHeadings.map(heading => <li key={`${pageName}_${heading.id}`} className={styles[`side-nav__item--level-${heading.depth}`]}>
-                <a className={styles['side-nav__link']} href={`#${heading.id}`}>{heading.value}</a>
-            </li>
-            )}
-        </ul>;
+    return allHeadings.length > 1 && (
+        <div className={styles['side-nav']}>
+            <ul className={styles['side-nav__list']}>
+                {allHeadings.map(heading => <li key={`${pageName}_${heading.id}`} className={styles[`side-nav__item--level-${heading.depth}`]}>
+                    <a className={styles['side-nav__link']} href={`#${heading.id}`}>{heading.value}</a>
+                </li>
+                )}
+            </ul>
+        </div>
+    );
 };
 
 export default SideMenu;

@@ -86,15 +86,16 @@ html {
     }
 }
 
+
 .content {
     width: 100vw;
     max-width: 100vw;
 }
 
+
 @include media-breakpoint-up(lg) {
     .content {
-        width: calc(100vw - 300px);
-        max-width: calc(100vw - 300px);
+        max-width: calc(100% - 300px);
     }
 }
 
