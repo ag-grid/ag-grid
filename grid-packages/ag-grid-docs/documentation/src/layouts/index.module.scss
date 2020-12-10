@@ -17,7 +17,7 @@ html {
 }
 
 .content-viewport {
-    composes: container d-flex flex-column flex-lg-row flex-grow-1 from global;
+    composes: d-flex flex-column flex-lg-row flex-grow-1 from global;
 }
 
 .header {
