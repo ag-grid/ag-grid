@@ -10,6 +10,21 @@ import { _, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-gr
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
 
+interface UpdateDoughnutSeriesParams {
+    seriesMap: { [p: string]: PieSeries };
+    angleField: FieldDefinition;
+    field: FieldDefinition;
+    seriesDefaults: PieSeriesOptions;
+    index: number;
+    params: UpdateChartParams;
+    fills: string[];
+    strokes: string[];
+    doughnutChart: PolarChart;
+    offset: number;
+    numFields: number;
+    opaqueSeries: PieSeries | undefined;
+}
+
 export class DoughnutChartProxy extends PolarChartProxy {
 
     public constructor(params: ChartProxyParams) {
@@ -83,38 +98,70 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
         const { seriesDefaults } = this.chartOptions;
         const { fills, strokes } = this.getPalette();
+        const numFields = params.fields.length;
+
         let offset = 0;
-
         if (this.crossFiltering) {
-            // add additional filtered out field
-            let fields = params.fields;
-            fields.forEach(field => {
-                const crossFilteringField = {...field};
-                crossFilteringField.colId = field.colId + '-filtered-out';
-                fields.push(crossFilteringField);
+
+            params.fields.forEach((field: FieldDefinition, index: number) => {
+                const filteredOutField = {...field};
+                filteredOutField.colId = field.colId + '-filtered-out';
+
+                params.data.forEach(d => {
+                    d[field.colId + '-total'] = d[field.colId] + d[filteredOutField.colId];
+                    d[field.colId] = d[field.colId] / d[field.colId + '-total'];
+                    d[filteredOutField.colId] = 1;
+                });
+
+                const {updatedOffset, pieSeries} =
+                    this.updateSeries({
+                        seriesMap,
+                        angleField: field,
+                        field: filteredOutField,
+                        seriesDefaults,
+                        index,
+                        params,
+                        fills,
+                        strokes,
+                        doughnutChart,
+                        offset,
+                        numFields,
+                        opaqueSeries: undefined
+                    });
+
+                this.updateSeries({
+                    seriesMap,
+                    angleField: field,
+                    field: field,
+                    seriesDefaults,
+                    index,
+                    params,
+                    fills,
+                    strokes,
+                    doughnutChart,
+                    offset,
+                    numFields,
+                    opaqueSeries: pieSeries
+                });
+
+                offset = updatedOffset;
             });
-
-            const field = fields[0];
-            const filteredOutField = fields[1];
-
-            const angleField = field;
-
-            params.data.forEach(d => {
-                d[field.colId + '-total'] = d[field.colId] + d[filteredOutField.colId];
-                d[field.colId] = d[field.colId] / d[field.colId + '-total'];
-                d[filteredOutField.colId] = 1;
-            });
-
-            //TODO currently only works with one series
-
-            let radiusField = filteredOutField;
-            const {pieSeries} = this.updateSeries(seriesMap, angleField, radiusField, seriesDefaults, 0, params, fills, strokes, doughnutChart, offset, undefined);
-
-            radiusField = angleField;
-            this.updateSeries(seriesMap, angleField, radiusField, seriesDefaults, 0, params, fills, strokes, doughnutChart, offset, pieSeries);
         } else {
             params.fields.forEach((f, index) => {
-                const {updatedOffset} = this.updateSeries(seriesMap, f, f, seriesDefaults, index, params, fills, strokes, doughnutChart, offset, undefined);
+                const {updatedOffset} = this.updateSeries({
+                    seriesMap,
+                    angleField: f,
+                    field: f,
+                    seriesDefaults,
+                    index,
+                    params,
+                    fills,
+                    strokes,
+                    doughnutChart,
+                    offset,
+                    numFields,
+                    opaqueSeries: undefined
+                });
                 offset = updatedOffset;
             });
         }
@@ -124,59 +171,47 @@ export class DoughnutChartProxy extends PolarChartProxy {
         doughnutChart.series = _.values(seriesMap);
     }
 
-    private updateSeries(
-        seriesMap: { [p: string]: PieSeries },
-        angleField: FieldDefinition,
-        field: FieldDefinition,
-        seriesDefaults: PieSeriesOptions,
-        index: number,
-        params: UpdateChartParams,
-        fills: string[],
-        strokes: string[],
-        doughnutChart: PolarChart,
-        offset: number,
-        opaqueSeries: PieSeries | undefined
-    ) {
-        const existingSeries = seriesMap[field.colId];
+    private updateSeries(updateParams: UpdateDoughnutSeriesParams) {
+        const existingSeries = updateParams.seriesMap[updateParams.field.colId];
 
         const seriesOptions: AgPieSeriesOptions = {
-            ...seriesDefaults,
+            ...updateParams.seriesDefaults,
             type: 'pie',
-            angleKey: this.crossFiltering ? angleField.colId + '-total' : angleField.colId,
-            radiusKey: this.crossFiltering ? field.colId : undefined,
-            showInLegend: index === 0, // show legend items for the first series only
+            angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId,
+            radiusKey: this.crossFiltering ? updateParams.field.colId : undefined,
+            showInLegend: updateParams.index === 0, // show legend items for the first series only
             title: {
-                ...seriesDefaults.title,
-                text: seriesDefaults.title.text || field.displayName!,
+                ...updateParams.seriesDefaults.title,
+                text: updateParams.seriesDefaults.title.text || updateParams.field.displayName!,
             },
-            fills: seriesDefaults.fill.colors,
-            fillOpacity: seriesDefaults.fill.opacity,
-            strokes: seriesDefaults.stroke.colors,
-            strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width,
+            fills: updateParams.seriesDefaults.fill.colors,
+            fillOpacity: updateParams.seriesDefaults.fill.opacity,
+            strokes: updateParams.seriesDefaults.stroke.colors,
+            strokeOpacity: updateParams.seriesDefaults.stroke.opacity,
+            strokeWidth: updateParams.seriesDefaults.stroke.width,
             tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: (seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer) || undefined,
+                enabled: updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled,
+                renderer: (updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled && updateParams.seriesDefaults.tooltip.renderer) || undefined,
             }
         };
 
         const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
         const pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series') as PieSeries;
 
-        pieSeries.angleName = field.displayName!;
-        pieSeries.labelKey = params.category.id;
-        pieSeries.labelName = params.category.name;
-        pieSeries.data = params.data;
+        pieSeries.angleName = updateParams.field.displayName!;
+        pieSeries.labelKey = updateParams.params.category.id;
+        pieSeries.labelName = updateParams.params.category.name;
+        pieSeries.data = updateParams.params.data;
 
         // Normally all series provide legend items for every slice.
         // For our use case, where all series have the same number of slices in the same order with the same labels
         // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
         // so we only show legend items for the first series, and then when the user toggles the slices of the
         // first series in the legend, we programmatically toggle the corresponding slices of other series.
-        if (index === 0) {
+        if (updateParams.index === 0) {
             pieSeries.toggleSeriesItem = (itemId: any, enabled: boolean) => {
-                if (doughnutChart) {
-                    doughnutChart.series.forEach((series: any) => {
+                if (updateParams.doughnutChart) {
+                    updateParams.doughnutChart.series.forEach((series: any) => {
                         (series as PieSeries).seriesItemEnabled[itemId] = enabled;
                     });
                 }
@@ -189,21 +224,21 @@ export class DoughnutChartProxy extends PolarChartProxy {
             pieSeries.radiusMin = 0;
             pieSeries.radiusMax = 1;
 
-            const isOpaqueSeries = !opaqueSeries;
+            const isOpaqueSeries = !updateParams.opaqueSeries;
             if (isOpaqueSeries) {
-                pieSeries.fills = fills.map(fill => this.hexToRGBA(fill, '0.3'));
-                pieSeries.strokes = strokes.map(stroke => this.hexToRGBA(stroke, '0.3'));
+                pieSeries.fills = updateParams.fills.map(fill => this.hexToRGBA(fill, '0.3'));
+                pieSeries.strokes = updateParams.strokes.map(stroke => this.hexToRGBA(stroke, '0.3'));
                 pieSeries.showInLegend = false;
             } else {
-                doughnutChart.legend.addEventListener('click', (event: LegendClickEvent) => {
-                    if (opaqueSeries) {
-                        opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);
+                updateParams.doughnutChart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                    if (updateParams.opaqueSeries) {
+                        updateParams.opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);
                     }
                 });
-                pieSeries.fills = fills;
-                pieSeries.strokes = strokes;
+                pieSeries.fills = updateParams.fills;
+                pieSeries.strokes = updateParams.strokes;
                 if (calloutColors) {
-                    pieSeries.callout.colors = strokes;
+                    pieSeries.callout.colors = updateParams.strokes;
                 }
             }
 
@@ -212,30 +247,35 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
             pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
 
-            doughnutChart.tooltip.delay = 500;
+            updateParams.doughnutChart.tooltip.delay = 500;
 
-            pieSeries.outerRadiusOffset = offset;
-            offset -= 40;
-            pieSeries.innerRadiusOffset = offset;
+            const offsetAmount = updateParams.numFields > 1 ? 20 : 40;
+
+            pieSeries.outerRadiusOffset = updateParams.offset;
+            updateParams.offset -= offsetAmount;
+            pieSeries.innerRadiusOffset = updateParams.offset;
+            updateParams.offset -= offsetAmount;
         } else {
-            pieSeries.fills = fills;
-            pieSeries.strokes = strokes;
+            pieSeries.fills = updateParams.fills;
+            pieSeries.strokes = updateParams.strokes;
 
             if (calloutColors) {
-                pieSeries.callout.colors = strokes;
+                pieSeries.callout.colors = updateParams.strokes;
             }
 
-            pieSeries.outerRadiusOffset = offset;
-            offset -= 20;
-            pieSeries.innerRadiusOffset = offset;
-            offset -= 20;
+            const offsetAmount = updateParams. numFields > 1 ? 20 : 40;
+
+            pieSeries.outerRadiusOffset = updateParams.offset;
+            updateParams.offset -= offsetAmount;
+            pieSeries.innerRadiusOffset = updateParams.offset;
+            updateParams.offset -= offsetAmount;
         }
 
         if (!existingSeries) {
-            seriesMap[field.colId] = pieSeries;
+            updateParams.seriesMap[updateParams.field.colId] = pieSeries;
         }
 
-        return {updatedOffset: offset, pieSeries};
+        return {updatedOffset: updateParams.offset, pieSeries};
     }
 
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
