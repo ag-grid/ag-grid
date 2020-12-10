@@ -12,6 +12,7 @@ zip -r ../../../$FILENAME *
 cd ../../../
 
 rm -rf /var/www/html/archive
+mkdir -p /var/www/html/archive/1.0.0
 mv $FILENAME /var/www/html/archive/1.0.0
 unzip /var/www/html/archive/1.0.0/$FILENAME -d /var/www/html/archive/1.0.0/
 
