@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, navigate } from 'gatsby';
+import { navigate } from 'gatsby';
 import { GlobalContextProvider } from '../components/GlobalContext';
 import FrameworkSelector from '../components/FrameworkSelector';
 import HeaderNav from '../components/HeaderNav';
@@ -9,8 +9,8 @@ import { getPageName } from '../utils/get-page-name';
 import styles from './index.module.scss';
 
 export const Layout = ({ path, children, pageContext: { frameworks, framework, layout } }) => {
-    if (path === '/')  {
-        navigate('/javascript/', { replace: true});
+    if (path === '/') {
+        navigate('/javascript/', { replace: true });
         return null;
     }
 
@@ -23,7 +23,8 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
     return <GlobalContextProvider>
         <div className={styles['main-container']}>
             <header className={styles['header']}>
-                <Link to="/" className={styles['header__logo']} />
+                {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
+                <a href="/" aria-label="Home" className={styles['header__logo']}></a>
                 <HeaderNav />
                 <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
             </header>
@@ -35,7 +36,7 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
                     {children}
                 </main>
             </div>
-            <Footer framework={ framework } />
+            <Footer framework={framework} />
         </div>
     </GlobalContextProvider>;
 };
