@@ -143,5 +143,9 @@ module.exports = {
     author: 'AG-Grid',
     siteUrl: `https://www.ag-grid.com`,
   },
-  plugins
+  flags: {
+    PRESERVE_WEBPACK_CACHE: true,
+    LAZY_IMAGES: true,
+  },
+  plugins,
 };
