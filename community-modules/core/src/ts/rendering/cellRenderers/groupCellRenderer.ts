@@ -15,7 +15,7 @@ import {
     ComponentSource,
     UserComponentFactory
 } from "../../components/framework/userComponentFactory";
-import { Promise } from "../../utils";
+import { AgPromise } from "../../utils";
 import { doOnce } from "../../utils/function";
 import { get, cloneObject } from "../../utils/object";
 import { bindCellRendererToHtmlElement } from "../../utils/general";
@@ -252,7 +252,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         params.valueFormatted = valueFormatted;
 
-        let rendererPromise: Promise<ICellRendererComp> | null;
+        let rendererPromise: AgPromise<ICellRendererComp> | null;
 
         rendererPromise = params.fullWidth
             ? this.useFullWidth(params)
@@ -274,7 +274,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         groupCellRendererParams: GroupCellRendererParams,
         groupedColumnDef: ColDef, // the column this group row is for, eg 'Country'
         params: ICellRendererParams
-    ): Promise<ICellRendererComp> | null {
+    ): AgPromise<ICellRendererComp> | null {
         // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
         // and then rating, we will use the country cell renderer for each country group row and likewise the rating
         // cell renderer for each rating group row.
@@ -287,7 +287,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         // 1) thisColDef.cellRendererParams.innerRenderer of the column showing the groups (eg auto group column)
         // 2) groupedColDef.cellRenderer of the grouped column
         // 3) groupedColDef.cellRendererParams.innerRenderer
-        let cellRendererPromise: Promise<ICellRendererComp> | null = null;
+        let cellRendererPromise: AgPromise<ICellRendererComp> | null = null;
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
         const groupInnerRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
@@ -337,8 +337,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         return cellRendererPromise;
     }
 
-    private useFullWidth(params: ICellRendererParams): Promise<ICellRendererComp> | null {
-        const cellRendererPromise: Promise<ICellRendererComp> | null = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer(params);
+    private useFullWidth(params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
+        const cellRendererPromise: AgPromise<ICellRendererComp> | null = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer(params);
 
         if (cellRendererPromise != null) {
             bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);

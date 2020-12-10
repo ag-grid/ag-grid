@@ -1,4 +1,4 @@
-import { Promise } from '../utils';
+import { AgPromise } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
@@ -204,7 +204,7 @@ export interface TabbedLayoutParams {
 export interface TabbedItem {
     title: Element;
     titleLabel: string;
-    bodyPromise: Promise<HTMLElement>;
+    bodyPromise: AgPromise<HTMLElement>;
     name: string;
     afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;
 }

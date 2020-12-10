@@ -4,7 +4,7 @@ import {
     UserComponentFactory,
     IToolPanelComp,
     IToolPanelParams,
-    Promise,
+    AgPromise,
     ToolPanelDef,
     PostConstruct
 } from "@ag-grid-community/core";
@@ -37,7 +37,7 @@ export class ToolPanelWrapper extends Component {
             columnApi: this.gridOptionsWrapper.getColumnApi()!
         };
 
-        const componentPromise: Promise<IToolPanelComp> | null = this.userComponentFactory.newToolPanelComponent(
+        const componentPromise: AgPromise<IToolPanelComp> | null = this.userComponentFactory.newToolPanelComponent(
             toolPanelDef, params);
 
         if (componentPromise == null) {

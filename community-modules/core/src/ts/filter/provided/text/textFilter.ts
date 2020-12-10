@@ -10,7 +10,7 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
 import { setDisplayed } from '../../../utils/dom';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { Promise } from '../../../utils';
+import { AgPromise } from '../../../utils';
 import { forEach } from '../../../utils/array';
 
 export interface TextFilterModel extends ISimpleFilterModel {
@@ -65,7 +65,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
                 console.warn('invalid filter type ' + filter);
                 return false;
         }
-    }
+    };
 
     @RefSelector('eValue1') private readonly eValue1: AgInputTextField;
     @RefSelector('eValue2') private readonly eValue2: AgInputTextField;
@@ -147,7 +147,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
     }
 
-    protected resetUiToDefaults(silent?: boolean): Promise<void> {
+    protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
         return super.resetUiToDefaults(silent).then(() => {
             this.forEachInput(field => field.setValue(null, silent));
             this.resetPlaceholder();

@@ -75,9 +75,19 @@ const Menu = ({ currentFramework, currentPage }) => {
     }, [currentPage, currentFramework]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <div className={styles['menu']}>
-        <Search indices={[{ name: `ag-grid_${currentFramework}`, title: "Documentation Pages" }]} />
-
-        <ul className={styles['menu__sections']}>
+        <div className={styles['menu__search-bar-wrapper']}>
+            <Search indices={[{ name: `ag-grid_${currentFramework}`, title: "Documentation Pages" }]} />
+            <button
+                className={styles['menu__nav-button']}
+                type="button" data-toggle="collapse"
+                data-target="#side-nav" 
+                aria-controls="side-nav" 
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span className={styles['menu__nav-button-icon']}></span>
+            </button>
+        </div>
+        <ul id="side-nav" className={styles['menu__sections']}>
             {combinedMenuItems.map(item => {
                 const { title } = item;
                 const isActive = title === activeSection;

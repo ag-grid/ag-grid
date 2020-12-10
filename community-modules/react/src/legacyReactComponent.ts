@@ -1,10 +1,9 @@
-import {createElement, ReactPortal} from 'react';
-import {createPortal} from 'react-dom';
-import {ComponentType, Promise} from '@ag-grid-community/core';
-import {AgGridReact} from "./agGridReact";
-import {ReactComponent} from './reactComponent';
+import { createElement, ReactPortal } from 'react';
+import { createPortal } from 'react-dom';
+import { AgPromise } from '@ag-grid-community/core';
+import { ReactComponent } from './reactComponent';
 import generateNewKey from './keyGenerator';
-import {renderToStaticMarkup} from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 export class LegacyReactComponent extends ReactComponent {
     static SLOW_RENDERERING_THRESHOLD = 3;
@@ -12,15 +11,11 @@ export class LegacyReactComponent extends ReactComponent {
     private staticMarkup: HTMLElement | null | string = null;
     private staticRenderTime: number = 0;
 
-    constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
-        super(reactComponent, parentComponent, componentType);
-    }
-
-    public init(params: any): Promise<void> {
+    public init(params: any): AgPromise<void> {
         this.eParentElement = this.createParentElement(params);
         this.renderStaticMarkup(params);
 
-        return new Promise<void>(resolve => this.createReactComponent(params, resolve));
+        return new AgPromise<void>(resolve => this.createReactComponent(params, resolve));
     }
 
     private createReactComponent(params: any, resolve: (value: any) => void) {
@@ -50,10 +45,10 @@ export class LegacyReactComponent extends ReactComponent {
             // here
             if (this.isStatelessComponent()) {
                 if (this.isSlowRenderer()) {
-                    this.removeStaticMarkup()
+                    this.removeStaticMarkup();
                 }
                 setTimeout(() => {
-                    this.removeStaticMarkup()
+                    this.removeStaticMarkup();
                 });
             }
         });
@@ -63,7 +58,7 @@ export class LegacyReactComponent extends ReactComponent {
         return false;
     }
 
-    protected fallbackMethod(name: string, params: any): void { /* no op */}
+    protected fallbackMethod(name: string, params: any): void { /* no op */ }
 
     private isSlowRenderer() {
         return this.staticRenderTime >= LegacyReactComponent.SLOW_RENDERERING_THRESHOLD;

@@ -6,7 +6,7 @@ import { ConditionPosition, ISimpleFilterModel, SimpleFilter } from '../simpleFi
 import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
 import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
 import { setDisplayed } from '../../../utils/dom';
-import { Promise } from '../../../utils';
+import { AgPromise } from '../../../utils';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
@@ -92,7 +92,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
         compTo.setDate(dateTo);
     }
 
-    protected resetUiToDefaults(silent?: boolean): Promise<void> {
+    protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
         return super.resetUiToDefaults(silent).then(() => {
             this.dateCondition1FromComp.setDate(null);
             this.dateCondition1ToComp.setDate(null);

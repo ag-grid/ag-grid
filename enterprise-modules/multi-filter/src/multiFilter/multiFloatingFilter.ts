@@ -8,7 +8,7 @@ import {
     Autowired,
     FloatingFilterWrapper,
     IFilterDef,
-    Promise,
+    AgPromise,
     IFilterComp,
 } from '@ag-grid-community/core';
 import { IMultiFilterParams, IMultiFilterModel, MultiFilter } from './multiFilter';
@@ -23,11 +23,11 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         super(/* html */`<div class="ag-multi-floating-filter ag-floating-filter-input"></div>`);
     }
 
-    public init(params: IFloatingFilterParams): Promise<void> {
+    public init(params: IFloatingFilterParams): AgPromise<void> {
         this.params = params;
 
         const filterParams = params.filterParams as IMultiFilterParams;
-        const floatingFilterPromises: Promise<IFloatingFilterComp>[] = [];
+        const floatingFilterPromises: AgPromise<IFloatingFilterComp>[] = [];
 
         _.forEach(MultiFilter.getFilterDefs(filterParams), (filterDef, index) => {
             const floatingFilterParams: IFloatingFilterParams = {
@@ -48,7 +48,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             }
         });
 
-        return Promise.all(floatingFilterPromises).then(floatingFilters => {
+        return AgPromise.all(floatingFilterPromises).then(floatingFilters => {
             _.forEach(floatingFilters!, (floatingFilter, index) => {
                 this.floatingFilters.push(floatingFilter!);
 
@@ -98,7 +98,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         super.destroy();
     }
 
-    private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams): Promise<IFloatingFilterComp> | null {
+    private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams): AgPromise<IFloatingFilterComp> | null {
         const defaultComponentName =
             FloatingFilterWrapper.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
 

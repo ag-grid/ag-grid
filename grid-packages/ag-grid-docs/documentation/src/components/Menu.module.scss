@@ -1,5 +1,18 @@
 .menu {
-    composes: p-3 from global;
+    composes: navbar flex-grow-1 flex-column align-items-stretch navbar-expand-lg navbar-light p-0 from global;
+
+    &__search-bar-wrapper {
+        composes: m-2 from global;
+        display: flex;
+    }
+
+    &__nav-button {
+        composes: navbar-toggler ml-1 mb-2 from global;
+
+        &-icon {
+            composes: navbar-toggler-icon from global;
+        }
+    }
 
     &__item {
         &__link {
@@ -65,8 +78,8 @@
     }
 
     &__sections {
-        composes: list-unstyled from global;
-
+        composes: collapse navbar-collapse flex-column ml-2 align-items-stretch list-unstyled from global;
+        overflow: auto;
         margin: 0;
         padding: 0;
     }

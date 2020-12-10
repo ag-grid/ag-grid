@@ -15,7 +15,7 @@ import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadat
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
 import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
 import { ToolPanelDef } from "../../entities/sideBar";
-import { Promise } from "../../utils";
+import { AgPromise } from "../../utils";
 import { IDateComp, IDateParams } from "../../rendering/dateComponent";
 import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
 import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroup/headerGroupComp";
@@ -90,27 +90,27 @@ export class UserComponentFactory extends BeanStub {
     @Autowired('userComponentRegistry') private readonly userComponentRegistry: UserComponentRegistry;
     @Optional('frameworkComponentWrapper') private readonly frameworkComponentWrapper: FrameworkComponentWrapper;
 
-    public newDateComponent(params: IDateParams): Promise<IDateComp> | null {
+    public newDateComponent(params: IDateParams): AgPromise<IDateComp> | null {
         return this.createAndInitUserComponent(this.gridOptions, params, DateComponent, 'agDateInput');
     }
 
-    public newHeaderComponent(params: IHeaderParams): Promise<IHeaderComp> | null {
+    public newHeaderComponent(params: IHeaderParams): AgPromise<IHeaderComp> | null {
         return this.createAndInitUserComponent(params.column.getColDef(), params, HeaderComponent, 'agColumnHeader');
     }
 
-    public newHeaderGroupComponent(params: IHeaderGroupParams): Promise<IHeaderGroupComp> | null {
+    public newHeaderGroupComponent(params: IHeaderGroupParams): AgPromise<IHeaderGroupComp> | null {
         return this.createAndInitUserComponent(
             params.columnGroup.getColGroupDef(), params, HeaderGroupComponent, 'agColumnGroupHeader');
     }
 
-    public newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): Promise<ICellRendererComp> | null {
+    public newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
         return this.createAndInitUserComponent(this.gridOptions.groupRowRendererParams, params, InnerRendererComponent, null, true);
     }
 
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
     public newFullWidthCellRenderer(
-        params: ICellRendererParams, cellRendererType: string, cellRendererName: string): Promise<ICellRendererComp> | null {
+        params: ICellRendererParams, cellRendererType: string, cellRendererName: string): AgPromise<ICellRendererComp> | null {
         return this.createAndInitUserComponent(
             null,
             params,
@@ -121,50 +121,50 @@ export class UserComponentFactory extends BeanStub {
     public newCellRenderer(
         target: ColDef | IRichCellEditorParams,
         params: ICellRendererParams,
-        isPinned = false): Promise<ICellRendererComp> | null {
+        isPinned = false): AgPromise<ICellRendererComp> | null {
         return this.createAndInitUserComponent(
             target, params, isPinned ? PinnedRowCellRendererComponent : CellRendererComponent, null, true);
     }
 
-    public newCellEditor(colDef: ColDef, params: ICellEditorParams): Promise<ICellEditorComp> | null {
+    public newCellEditor(colDef: ColDef, params: ICellEditorParams): AgPromise<ICellEditorComp> | null {
         return this.createAndInitUserComponent(colDef, params, CellEditorComponent, 'agCellEditor');
     }
 
-    public newInnerCellRenderer(target: GroupCellRendererParams, params: ICellRendererParams): Promise<ICellRendererComp> | null {
+    public newInnerCellRenderer(target: GroupCellRendererParams, params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
         return this.createAndInitUserComponent(target, params, InnerRendererComponent, null);
     }
 
-    public newLoadingOverlayComponent(params: ILoadingOverlayParams): Promise<ILoadingOverlayComp> | null {
+    public newLoadingOverlayComponent(params: ILoadingOverlayParams): AgPromise<ILoadingOverlayComp> | null {
         return this.createAndInitUserComponent(this.gridOptions, params, LoadingOverlayComponent, 'agLoadingOverlay');
     }
 
-    public newNoRowsOverlayComponent(params: INoRowsOverlayParams): Promise<INoRowsOverlayComp> | null {
+    public newNoRowsOverlayComponent(params: INoRowsOverlayParams): AgPromise<INoRowsOverlayComp> | null {
         return this.createAndInitUserComponent(this.gridOptions, params, NoRowsOverlayComponent, 'agNoRowsOverlay');
     }
 
-    public newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp> | null {
+    public newTooltipComponent(params: ITooltipParams): AgPromise<ITooltipComp> | null {
         return this.createAndInitUserComponent(params.colDef, params, TooltipComponent, 'agTooltipComponent');
     }
 
-    public newFilterComponent(def: IFilterDef, params: IFilterParams, defaultFilter: string): Promise<IFilterComp> | null {
+    public newFilterComponent(def: IFilterDef, params: IFilterParams, defaultFilter: string): AgPromise<IFilterComp> | null {
         return this.createAndInitUserComponent(def, params, FilterComponent, defaultFilter, false);
     }
 
     public newSetFilterCellRenderer(
-        target: ISetFilterParams, params: ISetFilterCellRendererParams): Promise<ICellRendererComp> | null {
+        target: ISetFilterParams, params: ISetFilterCellRendererParams): AgPromise<ICellRendererComp> | null {
         return this.createAndInitUserComponent(target, params, CellRendererComponent, null, true);
     }
 
     public newFloatingFilterComponent(
-        def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string | null): Promise<IFloatingFilterComp> | null {
+        def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string | null): AgPromise<IFloatingFilterComp> | null {
         return this.createAndInitUserComponent(def, params, FloatingFilterComponent, defaultFloatingFilter, true);
     }
 
-    public newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): Promise<IToolPanelComp> | null {
+    public newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): AgPromise<IToolPanelComp> | null {
         return this.createAndInitUserComponent(toolPanelDef, params, ToolPanelComponent);
     }
 
-    public newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): Promise<IStatusPanelComp> | null {
+    public newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): AgPromise<IStatusPanelComp> | null {
         return this.createAndInitUserComponent(def, params, StatusPanelComponent);
     }
 
@@ -189,7 +189,7 @@ export class UserComponentFactory extends BeanStub {
         defaultComponentName?: string | null,
         // optional items are: FloatingFilter, CellComp (for cellRenderer)
         optional = false,
-    ): Promise<A> | null {
+    ): AgPromise<A> | null {
         if (!definitionObject) {
             definitionObject = this.gridOptions;
         }
@@ -213,9 +213,9 @@ export class UserComponentFactory extends BeanStub {
         const deferredInit = this.initComponent(componentInstance, params);
 
         if (deferredInit == null) {
-            return Promise.resolve(componentInstance);
+            return AgPromise.resolve(componentInstance);
         }
-        return (deferredInit as Promise<void>).then(() => componentInstance);
+        return (deferredInit as AgPromise<void>).then(() => componentInstance);
     }
 
     private addReactHacks(params: any): void {
@@ -517,7 +517,7 @@ export class UserComponentFactory extends BeanStub {
         return { componentInstance: componentInstance, paramsFromSelector: componentToUse.paramsFromSelector };
     }
 
-    private initComponent<A extends IComponent<TParams>, TParams>(component: A, params: TParams): Promise<void> | void {
+    private initComponent<A extends IComponent<TParams>, TParams>(component: A, params: TParams): AgPromise<void> | void {
         this.context.createBean(component);
 
         if (component.init == null) {

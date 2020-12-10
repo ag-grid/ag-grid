@@ -2,7 +2,7 @@ import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '..
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { OptionsFactory } from './optionsFactory';
 import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
-import { Promise } from '../../utils';
+import { AgPromise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { forEach, every, some, includes } from '../../utils/array';
@@ -174,7 +174,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         return res;
     }
 
-    protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): Promise<void> {
+    protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): AgPromise<void> {
         const isCombined = (model as any).operator;
 
         if (isCombined) {
@@ -202,7 +202,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             this.setConditionIntoUi(null, ConditionPosition.Two);
         }
 
-        return Promise.resolve();
+        return AgPromise.resolve();
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
@@ -315,7 +315,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         return this.allowTwoConditions && this.isConditionUiComplete(ConditionPosition.One);
     }
 
-    protected resetUiToDefaults(silent?: boolean): Promise<void> {
+    protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
@@ -334,7 +334,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             .setName(uniqueGroupId)
             .setLabel(this.translate('orCondition'));
 
-        return Promise.resolve();
+        return AgPromise.resolve();
     }
 
     private isDefaultOperator(operator: JoinOperator): boolean {

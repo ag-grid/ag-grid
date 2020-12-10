@@ -4,7 +4,7 @@ import { UserComponentFactory } from '../../components/framework/userComponentFa
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { ILoadingOverlayComp } from './loadingOverlayComponent';
 import { INoRowsOverlayComp } from './noRowsOverlayComponent';
-import { Promise } from '../../utils';
+import { AgPromise } from '../../utils';
 import { addOrRemoveCssClass, clearElement } from '../../utils/dom';
 
 enum LoadingType { Loading, NoRows }
@@ -59,7 +59,7 @@ export class OverlayWrapperComponent extends Component {
         this.showOverlay(workItem, LoadingType.NoRows);
     }
 
-    private showOverlay(workItem: Promise<ILoadingOverlayComp | INoRowsOverlayComp> | null, type: LoadingType): void {
+    private showOverlay(workItem: AgPromise<ILoadingOverlayComp | INoRowsOverlayComp> | null, type: LoadingType): void {
         if (this.inProgress) {
             return;
         }

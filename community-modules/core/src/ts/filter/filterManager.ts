@@ -1,4 +1,4 @@
-import { Promise } from '../utils';
+import { AgPromise } from '../utils';
 import { ValueService } from '../valueService/valueService';
 import { ColumnController } from '../columnController/columnController';
 import { ColumnApi } from '../columnController/columnApi';
@@ -69,7 +69,7 @@ export class FilterManager extends BeanStub {
     }
 
     public setFilterModel(model: { [key: string]: any; }): void {
-        const allPromises: Promise<void>[] = [];
+        const allPromises: AgPromise<void>[] = [];
 
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
@@ -101,29 +101,18 @@ export class FilterManager extends BeanStub {
             });
         }
 
-        Promise.all(allPromises).then(() => this.onFilterChanged());
+        AgPromise.all(allPromises).then(() => this.onFilterChanged());
     }
 
-    private setModelOnFilterWrapper(filterPromise: Promise<IFilterComp>, newModel: any): Promise<void> {
-        return new Promise<void>(resolve => {
+    private setModelOnFilterWrapper(filterPromise: AgPromise<IFilterComp>, newModel: any): AgPromise<void> {
+        return new AgPromise<void>(resolve => {
             filterPromise.then(filter => {
-                if (filter == null) {
-                    throw new Error('Filter was not returned.');
-                }
-
-                if (typeof filter.setModel !== 'function') {
+                if (typeof filter!.setModel !== 'function') {
                     console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
                     resolve();
-                    return;
                 }
 
-                filter.setModel(newModel);
-
-                if (typeof filter.whenReady === 'function') {
-                    filter.whenReady(() => resolve());
-                } else {
-                    resolve();
-                }
+                (filter!.setModel(newModel) || AgPromise.resolve()).then(() => resolve());
             });
         });
     }
@@ -384,7 +373,7 @@ export class FilterManager extends BeanStub {
         return node => this.valueService.getValue(column, node, true);
     }
 
-    public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): Promise<IFilterComp> | null {
+    public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
         if (createIfDoesNotExist) {
             return this.getOrCreateFilterWrapper(column, source).filterPromise;
         }
@@ -417,7 +406,7 @@ export class FilterManager extends BeanStub {
         return this.allAdvancedFilters.get(column.getColId());
     }
 
-    private createFilterInstance(column: Column, $scope: any): Promise<IFilterComp> | null {
+    private createFilterInstance(column: Column, $scope: any): AgPromise<IFilterComp> | null {
         const defaultFilter =
             ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
 
@@ -479,7 +468,7 @@ export class FilterManager extends BeanStub {
             filterPromise: null,
             scope: null as any,
             compiledElement: null,
-            guiPromise: Promise.resolve(null)
+            guiPromise: AgPromise.resolve(null)
         };
 
         filterWrapper.scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
@@ -497,7 +486,7 @@ export class FilterManager extends BeanStub {
 
         eFilterGui.className = 'ag-filter';
 
-        filterWrapper.guiPromise = new Promise<HTMLElement>(resolve => {
+        filterWrapper.guiPromise = new AgPromise<HTMLElement>(resolve => {
             filterWrapper.filterPromise!.then(filter => {
                 let guiFromFilter = filter!.getGui();
 
@@ -564,14 +553,8 @@ export class FilterManager extends BeanStub {
 
     private disposeFilterWrapper(filterWrapper: FilterWrapper, source: ColumnEventType): void {
         filterWrapper.filterPromise!.then(filter => {
-            if (filter == null) {
-                throw new Error('Filter was not returned.');
-            }
-
-            filter.setModel(null);
-
-            const dispose = () => {
-                this.destroyBean(filter);
+            (filter!.setModel(null) || AgPromise.resolve()).then(() => {
+                this.getContext().destroyBean(filter);
 
                 filterWrapper.column.setFilterActive(false, source);
 
@@ -584,13 +567,7 @@ export class FilterManager extends BeanStub {
                 }
 
                 this.allAdvancedFilters.delete(filterWrapper.column.getColId());
-            };
-
-            if (typeof filter.whenReady === 'function') {
-                filter.whenReady(() => dispose());
-            } else {
-                dispose();
-            }
+            });
         });
     }
 
@@ -604,7 +581,7 @@ export class FilterManager extends BeanStub {
 export interface FilterWrapper {
     compiledElement: any;
     column: Column;
-    filterPromise: Promise<IFilterComp> | null;
+    filterPromise: AgPromise<IFilterComp> | null;
     scope: any;
-    guiPromise: Promise<HTMLElement | null>;
+    guiPromise: AgPromise<HTMLElement | null>;
 }

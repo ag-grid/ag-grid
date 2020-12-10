@@ -4,7 +4,7 @@ import {
     UserComponentFactory,
     GridOptions,
     PostConstruct,
-    Promise,
+    AgPromise,
     RefSelector,
     IStatusPanelComp
 } from '@ag-grid-community/core';
@@ -51,7 +51,7 @@ export class StatusBar extends Component {
     }
 
     private createAndRenderComponents(statusBarComponents: any[], ePanelComponent: HTMLElement) {
-        const componentDetails: { key: string; promise: Promise<IStatusPanelComp> }[] = [];
+        const componentDetails: { key: string; promise: AgPromise<IStatusPanelComp>; }[] = [];
 
         statusBarComponents.forEach(componentConfig => {
             const params = {
@@ -69,7 +69,7 @@ export class StatusBar extends Component {
             });
         });
 
-        Promise.all(componentDetails.map((details) => details.promise))
+        AgPromise.all(componentDetails.map((details) => details.promise))
             .then(() => {
                 componentDetails.forEach(componentDetail => {
                     componentDetail.promise.then((component: IStatusPanelComp) => {

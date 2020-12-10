@@ -43,24 +43,15 @@ html {
 }
 
 .main-menu {
+    composes: d-flex from global;
     position: relative;
     top: 0;
     flex: none;
-    height: 70px;
     width: auto;
-    overflow: hidden;
     border-width: 1px;
     border-color: lighten($secondary, 40%);
     border-bottom-style: solid;
     background-color: $white;
-}
-
-@supports (position: sticky) {
-    .main-menu {
-        position: sticky;
-        top: 64px;
-        z-index: 2;
-    }
 }
 
 @include media-breakpoint-up(lg) {
@@ -68,14 +59,13 @@ html {
         width: 300px;
         border-bottom-style: none;
         border-right-style: solid;
-        overflow: visible;
-        height: auto;
     }
     @supports (position: sticky) {
         .main-menu {
+            position: sticky;
+            z-index: 2;
             height: calc(100vh - 64px);
             top: 64px;
-            overflow: auto;
         }
     }
 }

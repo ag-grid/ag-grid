@@ -5,7 +5,7 @@ import { Constants } from '../../constants/constants';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
-import { Promise } from '../../utils/promise';
+import { AgPromise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
 import { IFilterLocaleText, IFilterTitleLocaleText, DEFAULT_FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
@@ -59,9 +59,9 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
 
     protected abstract createBodyTemplate(): string;
     protected abstract getCssIdentifier(): string;
-    protected abstract resetUiToDefaults(silent?: boolean): Promise<void>;
+    protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
 
-    protected abstract setModelIntoUi(model: ProvidedFilterModel): Promise<void>;
+    protected abstract setModelIntoUi(model: ProvidedFilterModel): AgPromise<void>;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
 
     /** Used to get the filter type for filter models. */
@@ -230,10 +230,10 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         return this.appliedModel;
     }
 
-    public setModel(model: ProvidedFilterModel): void {
+    public setModel(model: ProvidedFilterModel): AgPromise<void> {
         const promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
 
-        promise.then(() => {
+        return promise.then(() => {
             this.updateUiVisibility();
 
             // we set the model from the GUI, rather than the provided model,

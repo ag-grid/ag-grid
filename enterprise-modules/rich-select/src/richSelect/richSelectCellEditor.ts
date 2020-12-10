@@ -6,7 +6,7 @@ import {
     ICellRendererParams,
     IRichCellEditorParams,
     PopupComponent,
-    Promise,
+    AgPromise,
     UserComponentFactory,
     RefSelector,
     VirtualList,
@@ -193,7 +193,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             api: this.gridOptionsWrapper.getApi()
         } as ICellRendererParams;
 
-        const promise: Promise<ICellRendererComp> | null = this.userComponentFactory.newCellRenderer(this.params, params);
+        const promise: AgPromise<ICellRendererComp> | null = this.userComponentFactory.newCellRenderer(this.params, params);
 
         if (_.exists(promise)) {
             _.bindCellRendererToHtmlElement(promise, eValue);

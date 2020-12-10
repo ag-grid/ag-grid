@@ -5,7 +5,7 @@ import {
     ICellRendererComp,
     ICellRendererParams,
     IRichCellEditorParams,
-    Promise,
+    AgPromise,
     UserComponentFactory
 } from "@ag-grid-community/core";
 
@@ -51,7 +51,7 @@ export class RichSelectRow extends Component {
             api: this.gridOptionsWrapper.getApi()
         } as ICellRendererParams;
 
-        const cellRendererPromise: Promise<ICellRendererComp> | null = this.userComponentFactory.newCellRenderer(this.params, params);
+        const cellRendererPromise: AgPromise<ICellRendererComp> | null = this.userComponentFactory.newCellRenderer(this.params, params);
         if (cellRendererPromise != null) {
             _.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
         } else {

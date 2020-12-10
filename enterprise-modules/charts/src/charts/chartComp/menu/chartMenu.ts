@@ -7,7 +7,7 @@ import {
     Component,
     GetChartToolbarItemsParams,
     PostConstruct,
-    Promise
+    AgPromise
 } from "@ag-grid-community/core";
 
 import { TabbedChartMenu } from "./tabbedChartMenu";
@@ -146,7 +146,7 @@ export class ChartMenu extends Component {
         this.dispatchEvent(event);
     }
 
-    private createMenuPanel(defaultTab: number): Promise<AgPanel> {
+    private createMenuPanel(defaultTab: number): AgPromise<AgPanel> {
         const width = this.gridOptionsWrapper.chartMenuPanelWidth();
 
         const menuPanel = this.menuPanel = this.createBean(new AgPanel({
@@ -173,7 +173,7 @@ export class ChartMenu extends Component {
             () => this.destroyBean(this.tabbedMenu)
         );
 
-        return new Promise((res: (arg0: any) => void) => {
+        return new AgPromise((res: (arg0: any) => void) => {
             window.setTimeout(() => {
                 menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(defaultTab);

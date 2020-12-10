@@ -35,6 +35,7 @@ interface IFilterComp {
     // The grid will pass undefined/null to clear the filter.
     setModel(model: any): void;
 
+
     // Optional methods
 
     // Gets called every time the popup is shown, after the GUI returned in
@@ -65,10 +66,6 @@ interface IFilterComp {
     // filter with one string input value, you could just return the simple string
     // value here.
     getModelAsString?(model: any): string;
-
-    // If your filter uses asynchronous operations e.g. when loading values, implementing this method
-    // will allow developers to wait for the filter to be ready before performing further actions.
-    whenReady?(callback: () => void): void;
 }
 ```
 
@@ -168,9 +165,8 @@ Sometimes you will need to create custom components for your filters that also c
 
 There are two ways you can get fix this problem:
 
-- Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.<br/><br/>Note: This is the best solution, but you can only do this if you are writing the component yourself.
+- Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.<br /><br />Note: This is the best solution, but you can only do this if you are writing the component yourself.
 - Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](/component-date/#example-custom-date)
-</ul>
 
 [[only-angular]]
 | ## Angular Filtering

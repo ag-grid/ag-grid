@@ -1,5 +1,5 @@
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { Promise } from '../../../utils';
+import { AgPromise } from '../../../utils';
 import { SimpleFilter, ConditionPosition, ISimpleFilterModel } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
@@ -52,7 +52,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return 500;
     }
 
-    protected resetUiToDefaults(silent?: boolean): Promise<void> {
+    protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
         return super.resetUiToDefaults(silent).then(() => {
             const fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
 
