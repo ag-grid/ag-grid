@@ -167,7 +167,7 @@ export class ChartDatasource extends BeanStub {
 
                     // add data value to value column
                     const value = this.valueService.getValue(col, rowNode);
-                    const actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber : value;
+                    const actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
 
                     if (filteredNodes[rowNode.id as string]) {
                         data[colId] = actualValue;
@@ -180,7 +180,7 @@ export class ChartDatasource extends BeanStub {
                 } else {
                     // add data value to value column
                     const value = this.valueService.getValue(col, rowNode);
-                    data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber : value;
+                    data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
                 }
             });
 
