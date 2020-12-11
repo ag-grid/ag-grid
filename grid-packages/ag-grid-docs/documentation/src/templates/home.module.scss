@@ -1,8 +1,15 @@
 .getting-started {
-    composes: d-flex from global;
+    composes: mr-2 from global;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
+
+    @include media-breakpoint-up(xl) {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
 
     &__card {
-        composes: card flex-grow-1 m-3 from global;
+        composes: card from global;
         overflow: hidden;
         &:focus {
             outline: none;
@@ -24,6 +31,11 @@
 
         &__header {
             composes: card-header from global;
+            @include media-breakpoint-down(sm) {
+                & {
+                    display: none;
+                }
+            }
         }
 
         &__selected {

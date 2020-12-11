@@ -58,11 +58,6 @@ html {
     border-color: lighten($secondary, 40%);
     border-bottom-style: solid;
     background-color: $white;
-    @supports (position: sticky) {
-        position: sticky;
-        z-index: 2;
-        top: 64px;
-    }
 }
 
 @include media-breakpoint-up(lg) {
@@ -74,6 +69,9 @@ html {
 
     @supports (position: sticky) {
         .main-menu {
+            position: sticky;
+            z-index: 2;
+            top: 64px;
             height: calc(100vh - 64px);
         }
     }
