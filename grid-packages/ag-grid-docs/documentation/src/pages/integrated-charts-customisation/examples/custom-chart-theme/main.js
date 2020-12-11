@@ -47,7 +47,7 @@ var gridOptions = {
                 fills: ['#e1ba00', 'silver', 'peru'],
                 strokes: ['black', '#ff0000'],
             },
-            defaults: {
+            overrides: {
                 common: {
                     padding: {
                         top: 20,
