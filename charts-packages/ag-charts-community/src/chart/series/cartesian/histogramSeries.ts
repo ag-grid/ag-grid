@@ -82,7 +82,7 @@ export class HistogramBin {
     addDatum(datum: any) {
         this.data.push(datum);
         this.frequency++;
-    };
+    }
 
     get domainWidth(): number {
         const [domainMin, domainMax] = this.domain;
@@ -91,7 +91,7 @@ export class HistogramBin {
 
     get relativeHeight(): number {
         return this.aggregatedValue / this.domainWidth;
-    };
+    }
 
     calculateAggregatedValue(aggregationName: HistogramAggregation, yKey: string) {
         if (!yKey) {

@@ -121,25 +121,13 @@ export class CartesianChart extends Chart {
         axes.forEach(axis => {
             switch (axis.position) {
                 case ChartAxisPosition.Top:
-                    axis.translation.x = Math.floor(shrinkRect.x);
-                    axis.range = [0, shrinkRect.width];
-                    axis.gridLength = shrinkRect.height;
-                    break;
-                case ChartAxisPosition.Right:
-                    axis.translation.y = Math.floor(shrinkRect.y);
-                    if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
-                        axis.range = [0, shrinkRect.height];
-                    } else {
-                        axis.range = [shrinkRect.height, 0];
-                    }
-                    axis.gridLength = shrinkRect.width;
-                    break;
                 case ChartAxisPosition.Bottom:
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.range = [0, shrinkRect.width];
                     axis.gridLength = shrinkRect.height;
                     break;
                 case ChartAxisPosition.Left:
+                case ChartAxisPosition.Right:
                     axis.translation.y = Math.floor(shrinkRect.y);
                     if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
                         axis.range = [0, shrinkRect.height];

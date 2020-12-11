@@ -384,7 +384,7 @@ function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: Cha
 }
 
 function updateAxes(chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
-    const axes = chart.axes as ChartAxis[];
+    const axes = chart.axes;
     const axesToAdd: ChartAxis[] = [];
     const axesToUpdate: ChartAxis[] = [];
 

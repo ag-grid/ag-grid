@@ -390,8 +390,8 @@ export class BarSeries extends CartesianSeries {
 
         const yLargestMinMax = this.findLargestMinMax(yMinMax);
 
-        let yMin: number = Infinity;
-        let yMax: number = -Infinity;
+        let yMin: number;
+        let yMax: number;
         if (normalizedTo && isFinite(normalizedTo)) {
             yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
             yMax = normalizedTo;
@@ -493,7 +493,7 @@ export class BarSeries extends CartesianSeries {
         groupScale.range = [0, xScale.bandwidth!];
 
         const grouped = true;
-        const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
+        const barWidth = grouped ? groupScale.bandwidth : xScale.bandwidth!;
         const nodeData: BarNodeDatum[] = [];
 
         xData.forEach((group, groupIndex) => {

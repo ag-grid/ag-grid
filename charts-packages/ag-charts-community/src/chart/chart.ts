@@ -200,7 +200,7 @@ export class ChartTooltip extends Observable {
         const top = meta.pageY - el.clientHeight - 8;
 
         if (this.chart.container) {
-            const tooltipRect = el.getBoundingClientRect() as DOMRect;
+            const tooltipRect = el.getBoundingClientRect();
             const minLeft = 0;
             const maxLeft = window.innerWidth - tooltipRect.width;
             if (left < minLeft) {
@@ -1024,7 +1024,7 @@ export abstract class Chart extends Observable {
                 const { x, y } = closestDatum.point;
                 const { canvas } = this.scene;
                 const point = closestDatum.series.group.inverseTransformPoint(x, y);
-                const canvasRect = canvas.element.getBoundingClientRect() as DOMRect;
+                const canvasRect = canvas.element.getBoundingClientRect();
                 this.onSeriesDatumPick({
                     pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
                     pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)

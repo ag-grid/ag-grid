@@ -252,7 +252,7 @@ export class Legend extends Observable {
         this.group.visible = event.value.length > 0 && this.enabled;
     }
 
-    protected onEnabledChange(event: PropertyChangeEvent<this, Boolean>) {
+    protected onEnabledChange(event: PropertyChangeEvent<this, boolean>) {
         this.group.visible = event.value && this.data.length > 0;
     }
 

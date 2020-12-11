@@ -1,11 +1,9 @@
-import { ascending } from "../util/compare";
 import interpolateValue from "../interpolate/value";
 import interpolateNumber from "../interpolate/number";
 import Scale, {
     Deinterpolator,
     Reinterpolator
 } from './scale';
-import { bisectRight } from "../util/bisect";
 
 export const constant = (x: any) => () => x;
 export const identity = (x: any) => x;

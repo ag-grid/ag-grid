@@ -98,7 +98,7 @@ export class TimeScale extends ContinuousScale {
      * @param stop The end time (timestamp).
      * @param step Number of intervals between ticks.
      */
-    tickInterval(interval: number | CountableTimeInterval = 10, start: number, stop: number, step?: number): CountableTimeInterval | TimeInterval | undefined {
+    tickInterval(interval: number | CountableTimeInterval, start: number, stop: number, step?: number): CountableTimeInterval | TimeInterval | undefined {
         if (typeof interval === 'number') {
             const tickCount = interval;
             const tickIntervals = this.tickIntervals;

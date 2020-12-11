@@ -1,4 +1,4 @@
-import { durationMinute, durationWeek } from "./duration";
+import { durationWeek } from "./duration";
 import { CountableTimeInterval } from "./interval";
 
 // Set date to n-th day of the week.

@@ -89,7 +89,7 @@ export class Scene {
         }
 
         if (this._root) {
-            this._root._setScene(undefined);
+            this._root._setScene();
         }
 
         this._root = node;
