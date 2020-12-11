@@ -11,7 +11,7 @@ zip -r ../../../$FILENAME *
 
 cd ../../../
 
-VERSION=`grep -Po '"version":.*?[^\\\]",' package.json | sed 's/[\"|\,|version|\:| ]//g'`"
+VERSION=`grep -Po '"version":.*?[^\\\]",' package.json | sed 's/[\"|\,|version|\:| ]//g'`
 
 rm -rf /var/www/html/archive/$VERSION
 mkdir -p /var/www/html/archive/$VERSION
