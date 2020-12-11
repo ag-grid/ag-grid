@@ -760,7 +760,7 @@ title: "Get Started with ag-Grid"
 | | grid theme look through Sass variables.
 |
 | If everything goes well, `ng serve` has started the web server. You can open your app at
-| <a href="http://localhost:4200" onclick="window.open(event.target.href); return false;">localhost:4200</a>.
+| <a href="http://localhost:4200" target="_blank">localhost:4200</a>.
 |
 | As a next step, let's add the ag-Grid NPM packages. run the following command in `my-app` (you may need a new instance of | the terminal):
 |
