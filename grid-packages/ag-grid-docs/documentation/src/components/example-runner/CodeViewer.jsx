@@ -22,10 +22,18 @@ const updateFiles = (nodes, exampleInfo, setFiles, setActiveFile) => {
     };
 
     const { framework } = exampleInfo;
-    const mainFile = defaultFile[framework] || 'main.js';
 
-    setActiveFile(mainFile);
-    getExampleFiles(nodes, exampleInfo).then(files => setFiles(files));
+    getExampleFiles(nodes, exampleInfo).then(files => {
+        setFiles(files);
+
+        const mainFile = defaultFile[framework] || 'main.js';
+
+        if (files[mainFile]) {
+            setActiveFile(mainFile);
+        } else {
+            setActiveFile(Object.keys(files).sort()[0]);
+        }
+    });
 };
 
 const CodeViewer = ({ exampleInfo }) => {
@@ -35,7 +43,7 @@ const CodeViewer = ({ exampleInfo }) => {
 
     useEffect(() => updateFiles(nodes, exampleInfo, setFiles, setActiveFile), [nodes, exampleInfo]);
 
-    const keys = files ? Object.keys(files) : [];
+    const keys = files ? Object.keys(files).sort() : [];
     const exampleFiles = keys.filter(key => !files[key].isFramework);
     const frameworkFiles = keys.filter(key => files[key].isFramework);
 
@@ -59,6 +67,7 @@ const CodeViewer = ({ exampleInfo }) => {
 const FileItem = ({ path, isActive, onClick }) =>
     <div
         className={classnames(styles['code-viewer__file'], { [styles['code-viewer__file--active']]: isActive })}
+        title={path}
         onClick={onClick}
         onKeyDown={e => doOnEnter(e, onClick)}
         role="button"

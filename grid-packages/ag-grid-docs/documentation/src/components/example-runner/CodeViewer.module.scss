@@ -7,13 +7,15 @@
     &__files {
         composes: mt-2 ml-2 mb-2 py-2 from global;
 
-        width: 200px;
-        background-color: transparentize($secondary, 0.5);
+        flex: 0 0 200px;
+        background-color: #dfdfdf;
         border-radius: 5px 0 0 5px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     &__file {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         padding: 10px;
         width: 200px;
 
