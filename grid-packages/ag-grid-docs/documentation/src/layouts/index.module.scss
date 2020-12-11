@@ -2,14 +2,8 @@
 @import "~bootstrap/scss/alert";
 
 html {
-    scroll-padding-top: 134px;
+    scroll-padding-top: 64px;
     overflow-x: hidden;
-}
-
-@include media-breakpoint-up(lg) {
-    html {
-        scroll-padding-top: 64px;
-    }
 }
 
 .main-container {
@@ -22,7 +16,7 @@ html {
 }
 
 .header {
-    composes: d-flex align-items-center px-3 py-1 from global;
+    composes: d-flex align-items-center px-2 px-md-3 py-1 from global;
     position: relative;
     position: -webkit-sticky;
     position: sticky;
@@ -33,7 +27,10 @@ html {
     background-image: linear-gradient(to top left, $primary, darken($primary, 25%));
 
     &__wrapper {
-        composes: container d-flex align-items-center from global;
+        composes: container-lg my-2 d-flex from global;
+        @include media-breakpoint-down(lg) {
+            composes: px-0 from global;
+        }
     }
 
     &__logo {
@@ -43,6 +40,7 @@ html {
         background-repeat: no-repeat;
         background-size: contain;
         min-height: 2.5rem;
+        max-height: 2.5rem;
         min-width: 5.5rem;
     }
 }

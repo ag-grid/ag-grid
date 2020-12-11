@@ -147,6 +147,7 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
             </tbody>
         </table>
         {Object.entries(objectProperties).map(([name, definition]) => <Section
+            key={name}
             title={name}
             properties={definition}
             config={{ ...config, isSubset: false }}
@@ -168,9 +169,9 @@ const Breadcrumbs = ({ breadcrumbs }) => {
         href += `${href.length > 0 ? '.' : 'reference-'}${key}`;
 
         if (index < breadcrumbsLength - 1) {
-            links.push(<><a href={`#${href}`} title={text}>{key}</a> &gt; </>);
+            links.push(<React.Fragment key={key}><a href={`#${href}`} title={text}>{key}</a> &gt; </React.Fragment>);
         } else {
-            links.push(key);
+            links.push(<React.Fragment key={key}>key</React.Fragment>);
         }
 
         index++;

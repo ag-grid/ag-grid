@@ -5,7 +5,9 @@
 .announcement {
     composes: card my-2 from global;
 
-    background-color: $blue-4 !important;
+    &--highlighted {
+        background-color: $blue-4 !important;
+    }
 
     p {
         font-size: 0.8rem;

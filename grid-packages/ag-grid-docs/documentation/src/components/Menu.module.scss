@@ -84,7 +84,7 @@
     }
 
     &__sections {
-        composes: collapse navbar-collapse flex-column ml-2 align-items-stretch list-unstyled from global;
+        composes: collapse navbar-collapse flex-column ml-2 pt-1 align-items-stretch list-unstyled from global;
         overflow: auto;
         margin: 0;
         padding: 0;
