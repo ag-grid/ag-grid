@@ -4,7 +4,6 @@ title: "Cell Editing"
 
 This section outlines how to configure cell editors to enable editing in cells.
 
-
 You configure cell editors as part of the column definition and can be one of the following:
 
 - `undefined` / `null`: The grid uses the default text cell editor.
@@ -17,34 +16,14 @@ The simplest way to enable editing is by providing `colDef.editable=true`. By do
 
 It is possible to have only a few cells in a column editable; to do so, instead of `colDef.editable=true`, you can specify a callback that will get called for each cell displayed for that column. If you return `true` the cell will be editable. The params for the callback are:
 
-<table>
-    <tbody>
-        <tr>
-            <td><strong>node</strong></td>
-            <td>The <code class="language-text">RowNode</code> of the row being rendered.</td>
-        </tr>
-        <tr>
-            <td><strong>column</strong></td>
-            <td>The column being rendered (in ag-Grid, each colDef is wrapped by a <code class="language-text">Column</code>).</td>
-        </tr>
-        <tr>
-            <td><strong>colDef</strong></td>
-            <td>The colDef being rendered.</td>
-        </tr>
-        <tr>
-            <td><strong>context</strong></td>
-            <td>The context as set on the <code class="language-text">gridOptions</code>.</td>
-        </tr>
-        <tr>
-            <td><strong>api</strong></td>
-            <td>A reference to the grid API.</td>
-        </tr>
-        <tr>
-            <td><strong>columnApi</strong></td>
-            <td>A reference to the column API.</td>
-        </tr>
-    </tbody>
-</table>
+| Parameter | Description |
+|-|-|
+| **`node`** | The `RowNode` of the row being rendered. |
+| **`column`** | The column being rendered (in ag-Grid, each `colDef` is wrapped by a `Column`). |
+| **`colDef`** | The `colDef` being rendered. |
+| **`context`** | The context as set on the `gridOptions`. |
+| **`api`** | A reference to the grid API. |
+| **`columnApi`** | A reference to the column API. |
 
 ## Default Editing
 
@@ -55,30 +34,20 @@ To get simple string editing, you do not need to provide an editor. The grid by 
 If you have `colDef.editable=true` set for a column, editing will start upon any of the following:
 
 - **Edit Key Pressed**: One of the following is pressed: `Enter`, `F2`, `Backspace`, `Delete`. If this happens then `params.keyPress` will contain the key code of the key that started the edit. The default editor will clear the contents of the cell if `Backspace` or `Delete` are pressed.
-
 - **Printable Key Pressed**: Any of the following characters are pressed: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!"£$%^&amp;*()_+-=[];\'#,./\|<>?:@~{}`<br/> If this happens then `params.charPress` will contain the character that started the edit. The default editor places this character into the edit field so that the user experience is they are typing into the cell.
-
 - **Mouse Double Click**: If the mouse is double-clicked. There is a grid property `singleClickEdit` that will allow single-click to start editing instead of double-click. Another property `suppressClickEdit` will prevent both single-click and double-click from starting the edit; use this if you only want to have your own way of starting editing, such as clicking a button in your custom cell renderer.
-
 - **api.startEditingCell()**: If you call `startEditingCell()` on the grid API
 
 ## Stop / End Editing
 
 The grid will stop editing when any of the following happen:
 
-
 - **Callback stopEditing**: The callback `stopEditing` (from the params above) gets called by the editor. This is how your cell editor informs the grid to stop editing.
-
 - **Other Cell Focus**: If focus in the grid goes to another cell, the editing will stop.
-
 - **Enter Key Down**: If the grid receives an `Enter` key press event on the cell. If you do **not** want to stop editing when Enter is pressed, then listen for the event and stop propagation so the grid does not act on the event.
-
 - **Escape Key Down**: Similar to `Enter`, if `Escape` key is pressed, editing will stop. Unlike `Enter`, the `Escape` action will discard changes rather than taking the new value.
-
 - **Tab Key Down**: Editing will stop, accepting changes, and editing will move to the next cell, or the previous cell if `Shift` is also pressed.
-
 - **Popup Editor Closed**: If using popup editor, the popup is configured to close if you click outside the editor. Closing the popup triggers the grid to stop editing.
-
 - **gridApi.stopEditing()**: If you call `stopEditing()` on the grid API.
 
 ## Popup vs In Cell
@@ -122,10 +91,7 @@ The grid has the following API methods for editing:
     - `colKey`: The column key of the column to start editing.
     - `rowPinned`: Set to `'top'` or `'bottom'` to started editing a pinned row.
     - `keyPress, charPress`: The `keyPress` and `charPress` that are passed to the cell editor.
-    
-    
 - `stopEditing(cancel)`: If the grid is editing then editing is stopped. Passing `cancel=true` will keep the cell's original value and passing `cancel=false` will take the latest value from the cell editor.
-
 - `getEditingCells()`: If the grid is editing, returns back details of the editing cell(s). The result is an array of objects. If only one cell is editing (the default) then the array will have one entry. If multiple cells are editing (e.g. [Full Row Edit](#fullRowEdit)) then the array contains all editing cells.
 
 Below is a code example of using the editing API methods.
@@ -151,7 +117,6 @@ cellDefs.forEach(function(cellDef) {
 
 ## Start / Stop Editing Events
 
-
 The following events are fired as editing starts and stops:
 
 - `cellEditingStarted`: editing has started on a cell.
@@ -171,7 +136,6 @@ The example below illustrates different parts of the editing API. Each button st
 
 The example also demonstrates the following buttons for edit navigation:
 
-
 - `stop()`: Stops editing.
 - `next()`: Edits the next cell.
 - `previous()`: Edits the previous cell.
@@ -189,7 +153,6 @@ It is also possible to use different editors for different rows in the same colu
 The params that are passed to this function is the same as the params passed to [cell editors](../component-cell-editor/).
 
 The following example illustrates how to use different editors and parameters in the same column. Note that:
-
 
 - The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
 - `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
@@ -213,7 +176,6 @@ The following example illustrates how to use different editors and parameters in
         return null;
     }
     ```
-
 - Edit a cell by double clicking to observe the different editors used.
 
 <grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='vanilla' options='{ "enterprise": true, "exampleHeight": 450 }'></grid-example>
@@ -243,11 +205,8 @@ cellEditorParams: function(params) {
 Below shows an example with dynamic editor parameters. The following can be noted:
 
 - Column **Gender** uses a cell renderer for both the grid and the editor.
-
 - Column **Country** allows country selection, with `cellHeight` being used to make each entry 50px tall. If the currently selected city for the row doesn't match a newly selected country, the city cell is cleared.
-
 - Column **City** uses dynamic parameters to display values for the selected country, and uses `formatValue` to add the selected city's country as a suffix.
-
 - Column **Address** uses the large text area editor.
 
 <grid-example title='Dynamic Parameters' name='dynamic-parameters' type='generated' options='{ "enterprise": true, "exampleHeight": 520, "modules": ["clientside", "richselect", "menu", "columnpanel"] }'></grid-example>
@@ -259,7 +218,6 @@ By default pressing `Enter` will start editing on a cell, or stop editing on an 
 To allow consistency with Excel the grid has the following properties:
 
 - `enterMovesDown`: Set to `true` to have `Enter` key move focus to the cell below if not editing. The default is `Enter` key starts editing the currently focused cell.
-
 - `enterMovesDownAfterEdit:` Set to `true` to have `Enter` key move focus to the cell below after `Enter` is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
 
 The example below demonstrates the focus moving down when **Enter** is pressed.
@@ -283,9 +241,7 @@ To enable full row editing, set the grid option `editType = 'fullRow'`.
 If using custom cell editors, the cell editors will work in the exact same way with the following additions:
 
 - `focusIn`: If your cell editor has a `focusIn()` method, it will get called when the user tabs into the cell. This should be used to put the focus on the particular item to be focused, e.g. the `textfield` within your cell editor.
-
 - `focusOut`: If your cell editor has a `focusOut()` method, it will get called when the user tabs out of the cell. No intended use for this, is just there to complement the `focusIn()` method.
-
 - Events: When a row stops editing, the `cellValueChanged` event gets called for each column and `rowValueChanged` gets called once for the row.
 
 ### Full Row Edit and Popup Editors
@@ -299,15 +255,10 @@ This does not mean that you cannot show a popup from your 'in cell' editor - you
 The example below shows full row editing. In addition to standard full row editing, the following should also be noted:
 
 - The 'Price' column has a custom editor demonstrating how you should implement the `focusIn()` method. Both `focusIn()` and `focusOut()` for this editor are logged to the console.
-
 - The 'Suppress Navigable' column is not navigable using `Tab`. In other words, when tabbing around the grid, you cannot tab onto this cell.
-
 - The 'Not Editable' column is not editable, so when the row goes into edit mode, this column is not impacted. Also when editing, this column is not navigated to when tabbing.
-
 - The button will start editing line two. It uses the API to start editing a cell, however the result is that the whole row will become editable starting with the specified cell.
-
 - `cellValueChanged` and `rowValueChanged` events are logged to console.
-
 - The CSS class `ag-row-editing` changes the background color to highlight the editing row.
 
 <grid-example title='Full Row Editing' name='full-row-editing' type='generated' options='{ "enterprise": true, "exampleHeight": 527, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
@@ -317,7 +268,6 @@ The example below shows full row editing. In addition to standard full row editi
 ### Double-Click Editing
 
 The default is for the grid to enter editing when you double-click on a cell.
-
 
 ### Single-Click Editing
 
@@ -339,19 +289,15 @@ The grid below has `suppressClickEdit = true` so that clicking doesn't started e
 
 ### Stop Editing When Grid Loses Focus
 
-
 By default, the grid will not stop editing the currently editing cell when the grid loses focus. This can be bad if, for example, you have a save button, and you need the grid to stop editing before you execute your save function (e.g. you want to make sure the edit is saved into the grid's state).
 
 If you want the grid to stop editing when focus leaves, set the grid property `stopEditingWhenGridLosesFocus = true`.
 
-
 By default, the grid will not stop editing if you focus outside. The default is good for custom popup cell editors as these can have the focus leave the grid (e.g. if using a popup calendar widget). This would be bad as the grid would stop editing as soon as your external popup appeared.
-
 
 The example below shows the editing with `stopEditingWhenGridLosesFocus = true`. Notice the following:
 
 - Double-click to start editing 'Age', then click outside the grid (on the 'Dummy Save' button, or the dummy text field) and the grid will stop editing.
-
 - Double-click to start editing 'Year', a custom popup editor appears, you can click anywhere on the popup editor, but once you click outside the editor, the popup closes.
 
 <grid-example title='Stop Editing When Grid Loses Focus' name='stop-edit-when-grid-loses-focus' type='generated' options='{ "exampleHeight": 510 }'></grid-example>
