@@ -1,5 +1,6 @@
 .menu {
     composes: navbar flex-grow-1 flex-column align-items-stretch navbar-expand-lg navbar-light p-0 from global;
+    flex-basis: 0px;
 
     &__search-bar-wrapper {
         composes: p-2 from global;

@@ -11,18 +11,28 @@
 
     &__row {
         composes: d-flex ml-3 mb-2 from global;
-        height: 7.5rem;
+        height: 10rem;
+    }
+
+    &__framework_overview {
+        composes: d-flex flex-column from global;
+        height: 10rem;
     }
 
     &__framework_logo {
         composes: p-2 from global;
-        width: 120px;
-        height: 120px;
+        position: relative;
+        width: 7.5rem;
+        height: 7.5rem;
 
         img {
             width: 100%;
             height: 100%;
         }
+    }
+
+    &__framework_button {
+        composes: btn btn-primary mx-2 from global;
     }
 
     &__items {
@@ -31,5 +41,16 @@
         grid-template-rows: repeat(5, 1fr);
         grid-auto-flow: column;
         grid-column-gap: 10px;
+        height: 7.5rem;
+        @media all and (-ms-high-contrast:none) { // IE!!
+            & {
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                a {
+                    margin-left: 1rem;
+                }
+            }
+        }
     }
 }

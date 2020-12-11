@@ -46,8 +46,14 @@ const GettingStarted = ({ framework, data }) => {
         <div className={styles['getting-started']}>
             <h2 className={styles['getting-started__title']}>Getting Started</h2>
             <div className={styles['getting-started__row']}>
-                <div className={styles['getting-started__framework_logo']} style={{ backgroundColor: backgroundColor[framework]}}>
-                    <img alt={ framework } src={ logos[framework] } />
+                <div className={styles['getting-started__framework_overview']}>
+                    <Link to='./getting-started/' className={styles['getting-started__framework_logo']}>
+                        <img
+                            style={{ backgroundColor: backgroundColor[framework]}}
+                            alt={ framework }
+                            src={ logos[framework] } />
+                        </Link>
+                    <Link className={styles['getting-started__framework_button']} to='./getting-started/'>Overview</Link>
                 </div>
                 <div 
                     className={styles['getting-started__items']}
