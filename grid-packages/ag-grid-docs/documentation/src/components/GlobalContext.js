@@ -1,4 +1,5 @@
 import React from 'react';
+import { LocalStorage } from '../utils/local-storage';
 
 const defaultContextValue = {
     exampleImportType: 'modules',
@@ -8,7 +9,7 @@ const defaultContextValue = {
 
 const { Provider, Consumer } = React.createContext(defaultContextValue);
 
-const contextKey = 'documentationContext';
+const contextStorageKey = 'context';
 
 class GlobalContextProvider extends React.PureComponent {
     constructor() {
@@ -16,18 +17,16 @@ class GlobalContextProvider extends React.PureComponent {
 
         let contextValue = defaultContextValue;
 
-        if (window.localStorage) {
-            const storedContextString = window.localStorage.getItem(contextKey);
+        const storedContextString = LocalStorage.get(contextStorageKey);
 
-            if (storedContextString) {
-                const storedContext = JSON.parse(storedContextString);
+        if (storedContextString) {
+            const storedContext = JSON.parse(storedContextString);
 
-                if (storedContext) {
-                    contextValue = {
-                        ...contextValue,
-                        ...storedContext,
-                    };
-                }
+            if (storedContext) {
+                contextValue = {
+                    ...contextValue,
+                    ...storedContext,
+                };
             }
         }
 
@@ -38,11 +37,7 @@ class GlobalContextProvider extends React.PureComponent {
     }
 
     setData = newData => {
-        this.setState(newData, () => {
-            if (window.localStorage) {
-                window.localStorage.setItem(contextKey, JSON.stringify(this.state));
-            }
-        });
+        this.setState(newData, () => LocalStorage.set(contextStorageKey, JSON.stringify(this.state)));
     };
 
     render() {

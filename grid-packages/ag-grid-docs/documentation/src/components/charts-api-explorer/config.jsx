@@ -1,4 +1,5 @@
-import { StringEditor, NumberEditor, BooleanEditor, PresetEditor, ColourEditor, ArrayEditor } from "./Editors.jsx";
+import { StringEditor, NumberEditor, BooleanEditor, PresetEditor, ColourEditor, ArrayEditor } from './Editors.jsx';
+import isServerSideRendering from '../../utils/is-server-side-rendering';
 
 const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     fontStyle: {
@@ -117,7 +118,7 @@ const getPaddingOption = position => ({
     max: 40,
 });
 
-const getChartContainer = () => (typeof window !== 'undefined' && document.querySelector('#chart-container')) || { offsetWidth: 800, offsetHeight: 600 };
+const getChartContainer = () => (!isServerSideRendering() && document.querySelector('#chart-container')) || { offsetWidth: 800, offsetHeight: 600 };
 
 export const chart = Object.freeze({
     meta: {

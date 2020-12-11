@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import fs from 'fs';
+import isServerSideRendering from '../../utils/is-server-side-rendering';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { getIndexHtml } from './index-html-helper';
 import styles from './ExampleRunnerResult.module.scss';
@@ -11,7 +12,7 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
     const { name, appLocation, framework, type, library } = exampleInfo;
     const indexHtml = getIndexHtml(nodes, exampleInfo, true);
 
-    if (typeof window === 'undefined') {
+    if (isServerSideRendering()) {
         // generate code for the website to read at runtime
         if (type === 'generated' || type === 'mixed') {
             const modulesLocation = appLocation; // because modules is the default

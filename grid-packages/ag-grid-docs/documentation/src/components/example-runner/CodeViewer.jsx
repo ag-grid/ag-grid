@@ -8,13 +8,14 @@ import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
+import isServerSideRendering from '../../utils/is-server-side-rendering';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { getExampleFiles } from './helpers';
 import { doOnEnter } from '../key-handlers';
 import styles from './CodeViewer.module.scss';
 
 const updateFiles = (nodes, exampleInfo, setFiles, setActiveFile) => {
-    if (typeof window === 'undefined') { return; }
+    if (isServerSideRendering()) { return; }
 
     const defaultFile = {
         'react': 'index.jsx',

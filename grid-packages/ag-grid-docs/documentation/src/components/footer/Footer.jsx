@@ -3,10 +3,8 @@ import { Helmet } from 'react-helmet';
 import footerItems from './footerItems.json';
 import styles from './Footer.module.scss';
 
-const replaceFramework = (url, framework) => url.replace('{framework}', framework);
-
 const SocialMediaButtons = () => (
-    <div className={ styles.footer__buttons }>
+    <div className={styles.footer__buttons}>
         <div>
             <Helmet>
                 <script async defer src="https://buttons.github.io/buttons.js"></script>
@@ -22,29 +20,27 @@ const SocialMediaButtons = () => (
     </div>
 );
 
-const MenuColumns = ({ framework }) => footerItems.map(item => (
-    <div key={ item.title.replace(/\s/g,'_').toLocaleLowerCase() } className={ styles.footer__links }>
-        <h3>{ item.title }</h3>
-        <ul className={ styles.footer__links__list }>
+const MenuColumns = () => footerItems.map(item => (
+    <div key={item.title.replace(/\s/g, '_').toLocaleLowerCase()} className={styles['footer__links']}>
+        <h3>{item.title}</h3>
+        <ul className={styles['footer__links__list']}>
             {item.links.map(link => (
-                <li key={`${item.title}_${link.name}`.replace(/\s/g,'_').toLocaleLowerCase()}>
-                    <a href={ replaceFramework(link.url, framework) } target={ link.newTab ? '_blank' : ''}>
-                        { link.name }
-                    </a>
+                <li key={`${item.title}_${link.name}`.replace(/\s/g, '_').toLocaleLowerCase()}>
+                    <a href={link.url} target={link.newTab ? '_blank' : ''}>{link.name}</a>
                 </li>
             ))}
         </ul>
     </div>
 ));
 
-const Footer = ({ framework }) => (
-    <footer className={ styles.footer }>
-        <div className={ styles.footer__wrapper }>
-            <div className={ styles.footer__row }>
-                <MenuColumns framework={ framework } />
+const Footer = () => (
+    <footer className={styles['footer']}>
+        <div className={styles['footer__wrapper']}>
+            <div className={styles['footer__row']}>
+                <MenuColumns />
                 <SocialMediaButtons />
             </div>
-            <div className={ styles.footer__row}>
+            <div className={styles['footer__row']}>
                 <p>ag-Grid Limited registered in the United Kingdom. Company No. 07318192.</p>
                 <p>{`\u00A9`} ag-Grid Ltd. 2015-{new Date().getFullYear()}</p>
             </div>
