@@ -20,13 +20,13 @@ var gridOptions = {
     },
     getRowNodeId: function(data) {
         var parts = [];
-        if (data.country) {
+        if (data.country!=null) {
             parts.push(data.country);
         }
-        if (data.year) {
+        if (data.year!=null) {
             parts.push(data.year);
         }
-        if (data.id) {
+        if (data.id!=null) {
             parts.push(data.id);
         }
         return parts.join('-');
