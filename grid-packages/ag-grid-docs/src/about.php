@@ -210,7 +210,7 @@
                                 <img src='images/team/simon.jpg' alt="Simon Kenny, Customer Experience Manager"/>
                             </div>
                             <h3>Simon Kenny</h3>
-                            <h4>Sales Manager</h4>
+                            <h4>Sales Director</h4>
                         </div>
                         <div class="col-md-4">
                             <div>
