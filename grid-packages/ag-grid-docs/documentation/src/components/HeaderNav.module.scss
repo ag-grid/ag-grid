@@ -5,10 +5,6 @@
     &__wrapper {
         composes: d-flex flex-column-reverse flex-md-row px-md-0 from global;
         text-align: right;
-
-        @include media-breakpoint-down(md) {
-            composes: justify-content-end from global;
-        }
     }
 
     &__widgets {

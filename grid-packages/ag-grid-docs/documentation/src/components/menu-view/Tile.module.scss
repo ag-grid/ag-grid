@@ -1,11 +1,39 @@
 .menu-view-tile {
     composes: m-3 p-3 from global;
+    position: relative;
     height: 22rem;
     width: 15rem;
     min-width: 15rem;
     border: 1px solid transparentize($secondary, 0.7);
     border-radius: 4px;
     text-align: left;
+
+    @include media-breakpoint-down(sm) {
+        width: 100%;
+        height: auto;
+        cursor: pointer;
+
+        &--collapsed &__list {
+            display: none !important;
+        }
+
+        &__item-split {
+            display: none;
+        }
+
+        &:not(&--collapsed) &__list {
+            flex-direction: column;
+            &__inline {
+                font-size: 1rem !important;
+                font-weight: 300;
+                padding-left: 0.5rem;
+            }
+        }
+
+        &:hover {
+            border-color: $secondary;
+        }
+    }
 
     enterprise-icon {
         background-image: url("../../images/enterprise.svg");
@@ -20,10 +48,6 @@
         vertical-align: middle;
     }
 
-    &--collapsed {
-        position: relative;
-    }
-
     &__icon {
         composes: mb-2 from global;
         color: $secondary;
@@ -32,6 +56,14 @@
     }
 
     &__title {
+        color: $secondary;
+    }
+
+    &__expander {
+        position: absolute;
+        top: 2.5rem;
+        right: 1rem;
+        font-size: 1.5rem;
         color: $secondary;
     }
 

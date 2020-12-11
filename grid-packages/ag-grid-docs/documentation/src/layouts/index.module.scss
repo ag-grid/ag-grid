@@ -27,10 +27,7 @@ html {
     background-image: linear-gradient(to top left, $primary, darken($primary, 25%));
 
     &__wrapper {
-        composes: container-lg my-2 d-flex from global;
-        @include media-breakpoint-down(lg) {
-            composes: px-0 from global;
-        }
+        composes: container-lg my-2 px-0 d-flex from global;
     }
 
     &__logo {

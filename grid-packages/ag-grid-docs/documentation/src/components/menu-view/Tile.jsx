@@ -1,4 +1,6 @@
 import React, { Fragment, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
 import styles from './Tile.module.scss';
 import icons from './icons';
@@ -14,7 +16,7 @@ const recursiveRender = (items, framework, group, collapsed, level = 0, isLast, 
     const title = item.url && (!collapsed || item.showInCollapsed) && (
         <span className={ styles[className]}>
             <a href={ getUrl(item.url) }>{ item.title }{ item.enterprise && <enterprise-icon/> }</a>
-            { !hideComma && <span style={{ marginRight: 2 }}>,</span> }
+            { !hideComma && <span className={ styles['menu-view-tile__item-split'] } style={{ marginRight: 2 }}>,</span> }
         </span>
      )
 
@@ -66,11 +68,12 @@ const Tile = ({ data, group, framework }) => {
             className={ classnames(styles['menu-view-tile'], { [styles['menu-view-tile--collapsed']]: collapsed }) }
             onClick={ () => onClick() }
             onMouseLeave={ () => onMouseOut() }>
-            <div className={styles['menu-view-tile__icon']}><img alt={ iconAlt } src={ icons[iconName] }></img></div>
-            <h3 className={styles['menu-view-tile__title']}>{ data.title }</h3>
-            <div className={styles['menu-view-tile__list']}>
+            <div className={ styles['menu-view-tile__icon'] }><img alt={ iconAlt } src={ icons[iconName] }></img></div>
+            <h3 className={ styles['menu-view-tile__title'] }>{ data.title }</h3>
+            <div className={ styles['menu-view-tile__list'] }>
                 { recursiveRender(data.items, framework, group, collapsed) }
             </div>
+            <FontAwesomeIcon icon={collapsed ? faChevronDown : faChevronUp } fixedWidth className={styles['menu-view-tile__expander']} />
         </div>
     )
 }

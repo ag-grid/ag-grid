@@ -69,7 +69,7 @@ const GettingStarted = ({ framework, data }) => {
 const HomePage = ({ pageContext }) => {
     const { framework: currentFramework } = pageContext;
     return (
-        <div className='container'>
+        <div className='container-lg'>
             <GettingStarted framework={ currentFramework } data={ menuData[0].items[0].items }/>
             <MenuView framework={ currentFramework } data={ menuData } />
         </div>
