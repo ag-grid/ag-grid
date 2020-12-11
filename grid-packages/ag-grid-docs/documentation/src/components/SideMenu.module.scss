@@ -1,24 +1,17 @@
 .side-nav {
-    composes: my-4 from global;
+    composes: d-none d-md-block my-4 from global;
     width: 300px;
     flex: none;
     font-size: 0.9rem;
+    background-color: $white;
 
     &__list {
         composes: mx-3 pl-3 list-unstyled from global;
         @supports (position: sticky) {
             position: sticky;
-            top: 11rem;
+            top: 7rem;
         }
         border-left: solid 1px lighten($secondary, 40%);
-    }
-
-    @include media-breakpoint-up(lg) {
-        @supports (position: sticky) {
-            &__list {
-                top: 7rem;
-            }
-        }
     }
 
     &__item--level-1 {

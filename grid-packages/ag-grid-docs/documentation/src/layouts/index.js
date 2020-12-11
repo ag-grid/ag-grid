@@ -1,7 +1,6 @@
 import React from 'react';
 import { navigate } from 'gatsby';
 import { GlobalContextProvider } from '../components/GlobalContext';
-import FrameworkSelector from '../components/FrameworkSelector';
 import HeaderNav from '../components/HeaderNav';
 import Menu from '../components/Menu';
 import Footer from '../components/footer/Footer';
@@ -26,8 +25,7 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework, l
                 <div className={styles.header__wrapper}>
                     {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
                     <a href="/" aria-label="Home" className={styles['header__logo']}></a>
-                    <HeaderNav />
-                    <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
+                    <HeaderNav frameworks={ frameworks } framework={ framework } path= { path } />
                 </div>
             </header>
             <div className={styles['content-viewport']}>

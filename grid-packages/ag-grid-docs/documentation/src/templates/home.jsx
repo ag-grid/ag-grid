@@ -21,6 +21,33 @@ const logos = (() => {
     return obj;
 })();
 
+const GettingStarted = ({ currentFramework }) => (
+    <div className={styles['getting-started']}>
+        <h2 className={styles['getting-started__title']}>Getting Started</h2>
+        <div className={styles['getting-started__row']}>
+        {supportedFrameworks.map(framework => {
+            const cardBackgroundColor = backgroundColor[framework];
+
+            let cardClass = styles['getting-started__card'];
+
+            if (framework === currentFramework) {
+                cardClass += ` ${styles['getting-started__card__selected']}`;
+            }
+
+            return (
+                <div key={ framework } className={ cardClass }>
+                    <div className={ styles['getting-started__card__logo-container'] } style={{ backgroundColor: cardBackgroundColor }}>
+                        <img alt={ framework } src={ logos[framework] } className={ styles['getting-started__card__logo'] } />
+                    </div>
+                    <div className={ styles['getting-started__card__header'] }>
+                        <Link to={`/${framework}/getting-started/`} className={ styles['getting-started__card__button'] }>Get started</Link>
+                    </div>
+                </div>
+            );
+        })}
+        </div>
+    </div>
+)
 
 const HomePage = ({ path, pageContext }) => {
     const { framework: currentFramework } = pageContext;
@@ -28,30 +55,7 @@ const HomePage = ({ path, pageContext }) => {
         <div className='container' style={{ textAlign: 'center' }}>
             <h1>Welcome to the AG-Grid documentation</h1>
             <p>Which framework would you like to learn?</p>
-
-            <div className={styles['getting-started']}>
-            {supportedFrameworks.map(framework => {
-                const cardBackgroundColor = backgroundColor[framework];
-
-                let cardClass = styles['getting-started__card'];
-
-                if (framework === currentFramework) {
-                    cardClass += ` ${styles['getting-started__card__selected']}`;
-                }
-
-                return (
-                    <div key={framework}
-                        className={ cardClass }>
-                        <div className={ styles['getting-started__card__logo-container'] } style={{ backgroundColor: cardBackgroundColor }}>
-                            <img alt={framework} src={ logos[framework] } className={ styles['getting-started__card__logo'] } />
-                        </div>
-                        <div className={ styles['getting-started__card__header'] }>
-                            <Link to={`/${framework}/getting-started/`} className={ styles['getting-started__card__button'] }>Get started</Link>
-                        </div>
-                    </div>
-                );
-            })}
-            </div>
+            <GettingStarted framework={ currentFramework }/>
             <MenuView framework={currentFramework} />
         </div>
     );
