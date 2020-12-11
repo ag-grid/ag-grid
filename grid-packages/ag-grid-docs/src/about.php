@@ -217,7 +217,7 @@
                                 <img src='images/team/alex.jpg' alt="Alex Price, COO"/>
                             </div>
                             <h3>Alex Price</h3>
-                            <h4>Operations Manager</h4>
+                            <h4>Head of Customer Success</h4>
                         </div>
                     </div>
                     <div class="row">
