@@ -9,7 +9,7 @@
     padding: 10px;
     padding-top: 0;
 
-    .ag-chart-wrapper {
+    :global(.ag-chart-wrapper) {
         border: 1px solid #aaa;
         box-sizing: border-box;
         overflow: hidden;
