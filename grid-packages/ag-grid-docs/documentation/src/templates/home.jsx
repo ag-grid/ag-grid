@@ -43,11 +43,11 @@ const GettingStarted = ({ framework, data }) => {
     const numberOfColumns= Math.ceil(linksToRender.length / 5);
 
     return (
-        <div className={styles['getting-started']}>
-            <h2 className={styles['getting-started__title']}>Getting Started</h2>
-            <div className={styles['getting-started__row']}>
-                <div className={styles['getting-started__framework_overview']}>
-                    <Link to='./getting-started/' className={styles['getting-started__framework_logo']}>
+        <div className={styles['docs-home__getting-started']}>
+            <h2 className={styles['docs-home__getting-started__title']}>Getting Started</h2>
+            <div className={styles['docs-home__getting-started__row']}>
+                <div className={styles['docs-home__getting-started__framework_overview']}>
+                    <Link to='./getting-started/' className={styles['docs-home__getting-started__framework_logo']}>
                         <img
                             style={{ backgroundColor: backgroundColor[framework]}}
                             alt={ framework }
@@ -55,7 +55,7 @@ const GettingStarted = ({ framework, data }) => {
                         </Link>
                 </div>
                 <div 
-                    className={styles['getting-started__items']}
+                    className={styles['docs-home__getting-started__items']}
                     style={{ gridTemplateColumns: `repeat(${numberOfColumns}, 1fr)` }}
                     > {
                     linksToRender.map(link => {
@@ -69,7 +69,7 @@ const GettingStarted = ({ framework, data }) => {
 const HomePage = ({ pageContext }) => {
     const { framework: currentFramework } = pageContext;
     return (
-        <div className='container-lg'>
+        <div className={styles['docs-home']}>
             <GettingStarted framework={ currentFramework } data={ menuData[0].items[0].items }/>
             <MenuView framework={ currentFramework } data={ menuData } />
         </div>

@@ -1,9 +1,15 @@
 .menu-view {
     &__title {
-        composes: ml-3 mb-2 from global;
+        composes: my-2 p-2 from global;
         font-size: 2.5rem;
         font-weight: 400;
         text-align: left;
+
+        @supports (position: sticky) {
+            position: sticky;
+            top: 64px;
+            z-index: 1;
+        }
     }
 
     &__tile-row {

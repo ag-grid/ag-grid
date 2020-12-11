@@ -8,33 +8,6 @@
     border-radius: 4px;
     text-align: left;
 
-    @include media-breakpoint-down(sm) {
-        width: 100%;
-        height: auto;
-        cursor: pointer;
-
-        &--collapsed &__list {
-            display: none !important;
-        }
-
-        &__item-split {
-            display: none;
-        }
-
-        &:not(&--collapsed) &__list {
-            flex-direction: column;
-            &__inline {
-                font-size: 1rem !important;
-                font-weight: 300;
-                padding-left: 0.5rem;
-            }
-        }
-
-        &:hover {
-            border-color: $secondary;
-        }
-    }
-
     enterprise-icon {
         background-image: url("../../images/enterprise.svg");
         background-position-y: center;
@@ -65,6 +38,7 @@
         right: 1rem;
         font-size: 1.5rem;
         color: $secondary;
+        display: none;
     }
 
     &__list {
@@ -84,6 +58,37 @@
         &__inline {
             font-size: 0.8rem;
             white-space: nowrap;
+        }
+    }
+
+    @include media-breakpoint-down(sm) {
+        width: 100%;
+        height: auto;
+        cursor: pointer;
+
+        &--collapsed &__list {
+            display: none !important;
+        }
+
+        &__expander {
+            display: block;
+        }
+
+        &__item-split {
+            display: none;
+        }
+
+        &:not(&--collapsed) &__list {
+            flex-direction: column;
+            &__inline {
+                font-size: 1rem;
+                font-weight: 300;
+                padding-left: 0.5rem;
+            }
+        }
+
+        &:hover {
+            border-color: $secondary;
         }
     }
 }
