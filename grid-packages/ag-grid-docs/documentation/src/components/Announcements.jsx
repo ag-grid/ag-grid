@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import classnames from 'classnames';
 import styles from './Announcements.module.scss';
 import thinksterPng from '../images/thinkster.png';
 import communitySvg from '../images/community.svg';
@@ -95,10 +96,20 @@ const Announcements = () => <div className={styles['announcements']}>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>May 22</p>
     </Announcement>
     <MailingListSignup />
+    <Announcement highlight={false}>
+        <p>Work at ag-Grid:</p>
+        <h5 class="card-title"><a href="/ag-grid-jobs-board/">JavaScript Developers</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">London, United Kingdom</h6>
+        <p class="card-text">
+            Would you like to join the ag-Grid team in London?<br />
+            <br />
+                Check the <a href="/ag-grid-jobs-board/">jobs board</a>
+        </p>
+    </Announcement>
 </div>;
 
-const Announcement = ({ title, date, children, version }) => {
-    return <div className={styles['announcement']}>
+const Announcement = ({ title, date, children, version, highlight = true }) => {
+    return <div className={classnames(styles['announcement'], { [styles['announcement--highlighted']]: highlight })}>
         <div className="card-body">
             {version &&
                 <h5 className="card-title"><a href={`/ag-grid-changelog/?fixVersion=${version}`}>Version {version}</a></h5>
