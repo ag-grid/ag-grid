@@ -248,28 +248,19 @@ export class DoughnutChartProxy extends PolarChartProxy {
             pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
 
             updateParams.doughnutChart.tooltip.delay = 500;
-
-            const offsetAmount = updateParams.numFields > 1 ? 20 : 40;
-
-            pieSeries.outerRadiusOffset = updateParams.offset;
-            updateParams.offset -= offsetAmount;
-            pieSeries.innerRadiusOffset = updateParams.offset;
-            updateParams.offset -= offsetAmount;
         } else {
             pieSeries.fills = updateParams.fills;
             pieSeries.strokes = updateParams.strokes;
-
             if (calloutColors) {
                 pieSeries.callout.colors = updateParams.strokes;
             }
-
-            const offsetAmount = updateParams. numFields > 1 ? 20 : 40;
-
-            pieSeries.outerRadiusOffset = updateParams.offset;
-            updateParams.offset -= offsetAmount;
-            pieSeries.innerRadiusOffset = updateParams.offset;
-            updateParams.offset -= offsetAmount;
         }
+
+        const offsetAmount = updateParams. numFields > 1 ? 20 : 40;
+        pieSeries.outerRadiusOffset = updateParams.offset;
+        updateParams.offset -= offsetAmount;
+        pieSeries.innerRadiusOffset = updateParams.offset;
+        updateParams.offset -= offsetAmount;
 
         if (!existingSeries) {
             updateParams.seriesMap[updateParams.field.colId] = pieSeries;

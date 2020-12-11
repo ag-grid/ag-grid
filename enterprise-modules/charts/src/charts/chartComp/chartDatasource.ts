@@ -51,6 +51,11 @@ export class ChartDatasource extends BeanStub {
                 console.warn("ag-grid: crossing filtering with row grouping is not supported.");
                 return {data: [], columnNames: {}};
             }
+
+            if (!this.gridOptionsWrapper.isRowModelDefault()) {
+                console.warn("ag-grid: crossing filtering is only supported in the client side row model.");
+                return {data: [], columnNames: {}};
+            }
         }
 
         const isServerSide = this.gridOptionsWrapper.isRowModelServerSide();
@@ -156,26 +161,26 @@ export class ChartDatasource extends BeanStub {
                     columnNames[col.getId()] = columnNamesArr;
                 }
 
+                const colId = col.getColId();
                 if (params.crossFiltering) {
-                    const colId = col.getColId();
                     const filteredOutColId = colId + '-filtered-out';
 
                     // add data value to value column
                     const value = this.valueService.getValue(col, rowNode);
-                    const actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                    const actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber : value;
 
                     if (filteredNodes[rowNode.id as string]) {
                         data[colId] = actualValue;
-                        data[filteredOutColId] = undefined;
+                        data[filteredOutColId] = params.aggFunc ? undefined : 0;
                     } else {
-                        data[colId] = undefined;
+                        data[colId] = params.aggFunc ? undefined : 0;
                         data[filteredOutColId] = actualValue;
                     }
 
                 } else {
                     // add data value to value column
                     const value = this.valueService.getValue(col, rowNode);
-                    data[col.getId()] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                    data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber : value;
                 }
             });
 

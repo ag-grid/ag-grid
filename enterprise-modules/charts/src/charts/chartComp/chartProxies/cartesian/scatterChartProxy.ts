@@ -199,13 +199,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 }
 
                 chart.tooltip.delay = 500;
-                // (series as ScatterSeries).tooltip.renderer = (params) => {
-                //     return {
-                //         content: params.yValue.toFixed(0),
-                //         title: params.xValue, // optional, same as default
-                //         color: 'black'
-                //     };
-                // }
 
                 // hide 'filtered out' legend items
                 if (isFilteredOutYKey) {
