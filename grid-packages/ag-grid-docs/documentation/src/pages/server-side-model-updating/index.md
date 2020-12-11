@@ -25,7 +25,10 @@ The options available for doing updates depends on what [Row Store](../server-si
 
 If using the Partial Store, then it is not possible to insert or remove rows from the set provided to the grid. The only update option is [Single Row](#single-row) updates which is explained below.
 
-The reason inserts and removes are not allowed is because doing inserts or removes would impact the block boundaries. For example support a block of 100 rows is read back from the server and you try to insert 10 rows into the middle of the block - this would result in 10 rows falling off the end of the block as they get pushed out. Similarly if rows were remove, rows would be missing from the end of the block.
+The reason inserts and removes are not allowed is because doing inserts or removes would impact the block 
+boundaries. For example suppose a block of 100 rows is read back from the server and you try to insert 10 
+rows into the middle of the block - this would result in 10 rows falling off the end of the block as they 
+get pushed out. Similarly if rows were removed, rows would be missing from the end of the block.
 
 If you do need to insert or remove rows while using the Partial Store, then the update needs to be done on the server and then have the grid refresh. The example [Update & Refresh](#update-and-refresh) below demonstrates this.
 
