@@ -3,7 +3,8 @@ title: "SSRM Row Stores"
 enterprise: true
 ---
 
-Inside the Server-Side Row Model (SSRM), rows are stored in Row Stores. There are two types of Row Stores: 1) Infinite Store and 2) Full Store. This section explains more on these two different Row Store types.
+Inside the Server-Side Row Model (SSRM), rows are stored in Row Stores. There are two types of Row Stores: 
+1) Full Store and 2) Partial Store. This section explains more on these two different Row Store types.
 
 ## Row Stores
 
