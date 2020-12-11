@@ -10,57 +10,26 @@
     }
 
     &__row {
-        composes: mb-3 mx-3 from global;
+        composes: d-flex ml-3 mb-2 from global;
+        height: 7.5rem;
+    }
+
+    &__framework_logo {
+        composes: p-2 from global;
+        width: 120px;
+        height: 120px;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &__items {
+        composes: ml-2 from global;
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-gap: 1rem;
-    }
-    
-
-    @include media-breakpoint-up(xl) {
-        &__row {
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-        }
-    }
-
-    &__card {
-        composes: card from global;
-        text-align: center;
-        overflow: hidden;
-        &:focus {
-            outline: none;
-        }
-
-        &:focus-visible {
-            outline: 1px auto $dark;
-        }
-
-        &__logo-container {
-            composes: p-2 from global;
-            height: 4rem;
-        }
-
-        &__logo {
-            min-height: 100%;
-            max-height: 100%;
-        }
-
-        &__header {
-            composes: card-header from global;
-            @include media-breakpoint-down(sm) {
-                & {
-                    display: none;
-                }
-            }
-        }
-
-        &__selected {
-            composes: border-primary from global;
-            box-shadow: 0 0 0 3px transparentize($primary, 0.5);
-        }
-
-        &__button {
-            composes: btn btn-primary from global;
-        }
+        grid-template-rows: repeat(5, 1fr);
+        grid-auto-flow: column;
+        grid-column-gap: 10px;
     }
 }

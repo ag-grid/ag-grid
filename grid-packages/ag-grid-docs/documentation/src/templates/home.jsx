@@ -4,6 +4,7 @@ import styles from './home.module.scss';
 import fwLogos from '../images/fw-logos';
 import supportedFrameworks from '../utils/supported-frameworks';
 import MenuView from '../components/menu-view/MenuView';
+import menuData from '../pages/licensing/menu.json';
 
 const backgroundColor = {
     javascript: '#f8df1e',
@@ -21,42 +22,53 @@ const logos = (() => {
     return obj;
 })();
 
-const GettingStarted = ({ currentFramework }) => (
-    <div className={styles['getting-started']}>
-        <h2 className={styles['getting-started__title']}>Getting Started</h2>
-        <div className={styles['getting-started__row']}>
-        {supportedFrameworks.map(framework => {
-            const cardBackgroundColor = backgroundColor[framework];
+const flatRenderItems = (items, framework) => {
+    return items.reduce((prev, curr) => {
+        let ret = prev;
 
-            let cardClass = styles['getting-started__card'];
+        if (curr.frameworks && curr.frameworks.indexOf(framework) === -1) { return ret; }
+        if (curr.title.toLowerCase() !== 'overview') {
+            ret = prev.concat({ title: curr.title, url: curr.url });
+        }
+        if (!curr.items) { return ret; }
 
-            if (framework === currentFramework) {
-                cardClass += ` ${styles['getting-started__card__selected']}`;
-            }
+        return ret.concat(flatRenderItems(curr.items, framework));
+        
+    }, []);
+}
 
-            return (
-                <div key={ framework } className={ cardClass }>
-                    <div className={ styles['getting-started__card__logo-container'] } style={{ backgroundColor: cardBackgroundColor }}>
-                        <img alt={ framework } src={ logos[framework] } className={ styles['getting-started__card__logo'] } />
-                    </div>
-                    <div className={ styles['getting-started__card__header'] }>
-                        <Link to={`/${framework}/getting-started/`} className={ styles['getting-started__card__button'] }>Get started</Link>
-                    </div>
+
+const GettingStarted = ({ framework, data }) => { 
+    const linksToRender = flatRenderItems(data, framework);
+    const numberOfColumns= Math.ceil(linksToRender.length / 5);
+
+    return (
+        <div className={styles['getting-started']}>
+            <h2 className={styles['getting-started__title']}>Getting Started</h2>
+            <div className={styles['getting-started__row']}>
+                <div className={styles['getting-started__framework_logo']} style={{ backgroundColor: backgroundColor[framework]}}>
+                    <img alt={ framework } src={ logos[framework] } />
                 </div>
-            );
-        })}
+                <div 
+                    className={styles['getting-started__items']}
+                    style={{ gridTemplateColumns: `repeat(${numberOfColumns}, 1fr)` }}
+                    > {
+                    linksToRender.map(link => {
+                        return <a href={ link.url }>{ link.title }</a>
+                    })
+                }</div>
         </div>
     </div>
-)
+)}
 
-const HomePage = ({ path, pageContext }) => {
+const HomePage = ({ pageContext }) => {
     const { framework: currentFramework } = pageContext;
     return (
         <div className='container' style={{ textAlign: 'center' }}>
             <h1>Welcome to the AG-Grid documentation</h1>
             <p>Which framework would you like to learn?</p>
-            <GettingStarted framework={ currentFramework }/>
-            <MenuView framework={currentFramework} />
+            <GettingStarted framework={ currentFramework } data={ menuData[0].items[0].items }/>
+            <MenuView framework={ currentFramework } data={ menuData } />
         </div>
     );
 };
