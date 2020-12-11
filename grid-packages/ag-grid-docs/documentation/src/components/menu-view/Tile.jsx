@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from 'react';
+import classnames from 'classnames';
 import styles from './Tile.module.scss';
 import icons from './icons';
 
@@ -44,14 +45,27 @@ const recursiveRender = (items, framework, group, collapsed, level = 0, isLast, 
 });
 
 const Tile = ({ data, group, framework }) => {
-    const [collapsed] = useState(true);
+    const [collapsed, setCollapsed] = useState(true);
 
     if (!data.icon) { return null; }
     const iconName = data.icon.replace('icon-','');
     const iconAlt= iconName.replace(/-/g,' ');
 
+    const onClick = () => {
+        if (document.body.clientWidth < 768) {
+            setCollapsed(!collapsed);
+        }
+    }
+
+    const onMouseOut = () => {
+        setCollapsed(true);
+    }
+
     return (
-        <div className={ styles['menu-view-tile'] }>
+        <div 
+            className={ classnames(styles['menu-view-tile'], { [styles['menu-view-tile--collapsed']]: collapsed }) }
+            onClick={ () => onClick() }
+            onMouseLeave={ () => onMouseOut() }>
             <div className={styles['menu-view-tile__icon']}><img alt={ iconAlt } src={ icons[iconName] }></img></div>
             <h3 className={styles['menu-view-tile__title']}>{ data.title }</h3>
             <div className={styles['menu-view-tile__list']}>

@@ -27,9 +27,9 @@ const flatRenderItems = (items, framework) => {
         let ret = prev;
 
         if (curr.frameworks && curr.frameworks.indexOf(framework) === -1) { return ret; }
-        if (curr.title.toLowerCase() !== 'overview') {
-            ret = prev.concat({ title: curr.title, url: curr.url });
-        }
+
+        ret = prev.concat({ title: curr.title, url: curr.url });
+
         if (!curr.items) { return ret; }
 
         return ret.concat(flatRenderItems(curr.items, framework));
@@ -53,14 +53,13 @@ const GettingStarted = ({ framework, data }) => {
                             alt={ framework }
                             src={ logos[framework] } />
                         </Link>
-                    <Link className={styles['getting-started__framework_button']} to='./getting-started/'>Overview</Link>
                 </div>
                 <div 
                     className={styles['getting-started__items']}
                     style={{ gridTemplateColumns: `repeat(${numberOfColumns}, 1fr)` }}
                     > {
                     linksToRender.map(link => {
-                        return <a href={ link.url }>{ link.title }</a>
+                        return <a key={ link.title.replace(/\s/,'_').toLowerCase() } href={ link.url }>{ link.title }</a>
                     })
                 }</div>
         </div>
@@ -70,9 +69,7 @@ const GettingStarted = ({ framework, data }) => {
 const HomePage = ({ pageContext }) => {
     const { framework: currentFramework } = pageContext;
     return (
-        <div className='container' style={{ textAlign: 'center' }}>
-            <h1>Welcome to the AG-Grid documentation</h1>
-            <p>Which framework would you like to learn?</p>
+        <div className='container'>
             <GettingStarted framework={ currentFramework } data={ menuData[0].items[0].items }/>
             <MenuView framework={ currentFramework } data={ menuData } />
         </div>

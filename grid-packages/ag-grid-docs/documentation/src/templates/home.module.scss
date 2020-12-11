@@ -11,12 +11,12 @@
 
     &__row {
         composes: d-flex ml-3 mb-2 from global;
-        height: 10rem;
+        height: 7.5rem;
     }
 
     &__framework_overview {
         composes: d-flex flex-column from global;
-        height: 10rem;
+        height: 7.5rem;
     }
 
     &__framework_logo {

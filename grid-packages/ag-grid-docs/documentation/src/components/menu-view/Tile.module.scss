@@ -20,6 +20,10 @@
         vertical-align: middle;
     }
 
+    &--collapsed {
+        position: relative;
+    }
+
     &__icon {
         composes: mb-2 from global;
         color: $secondary;
