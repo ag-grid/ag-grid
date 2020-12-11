@@ -5,6 +5,7 @@
     &__search-bar-wrapper {
         composes: p-2 from global;
         display: flex;
+        min-height: 3.5rem;
     }
 
     @include media-breakpoint-up(lg) {
