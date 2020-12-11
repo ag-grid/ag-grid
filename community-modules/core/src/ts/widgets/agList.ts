@@ -84,7 +84,7 @@ export class AgList extends Component {
         addCssClass(itemEl, 'ag-list-item');
         addCssClass(itemEl, `ag-${this.cssIdentifier}-list-item`);
 
-        itemEl.innerHTML = text;
+        itemEl.innerHTML = `<span>${text}</span>`;
         itemEl.tabIndex = -1;
 
         this.itemEls.push(itemEl);
