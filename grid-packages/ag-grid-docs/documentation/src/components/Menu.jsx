@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'gatsby';
 import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -56,6 +56,7 @@ const MenuItem = ({ item, currentFramework }) => {
 
 const Menu = ({ currentFramework, currentPage }) => {
     const [activeSection, setActiveSection] = useState(null);
+    const listEl = useRef(null);
     const combinedMenuItems = menuData.reduce((combined, group) => [...combined, ...group.items], []);
     const containsPage = (items, frameworks) => items.reduce(
         (hasPage, item) => {
@@ -69,6 +70,11 @@ const Menu = ({ currentFramework, currentPage }) => {
 
     useEffect(() => {
         const sectionContainingPage = combinedMenuItems.filter(item => containsPage(item.items))[0];
+
+        // closes the menu when page reloads
+        if (listEl.current) {
+            listEl.current.classList.remove('show');
+        }
 
         if (sectionContainingPage) {
             setActiveSection(sectionContainingPage.title);
@@ -88,7 +94,7 @@ const Menu = ({ currentFramework, currentPage }) => {
                 <span className={styles['menu__nav-button-icon']}></span>
             </button>
         </div>
-        <ul id="side-nav" className={styles['menu__sections']}>
+        <ul id="side-nav" ref={ listEl } className={styles['menu__sections']}>
             {combinedMenuItems.map(item => {
                 const { title } = item;
                 const isActive = title === activeSection;

@@ -20,7 +20,7 @@ export const shouldUpdateScroll = ({ prevRouterProps, routerProps: { location: {
         const docPageWrapper = document.getElementById('doc-page-wrapper');
 
         if (docPageWrapper) {
-            docPageWrapper.scrollIntoView();
+            window.scrollTo(0, 0);
             return false;
         }
     }
