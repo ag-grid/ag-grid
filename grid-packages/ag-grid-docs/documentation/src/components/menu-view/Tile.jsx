@@ -22,7 +22,7 @@ const recursiveRender = (items, framework, group, collapsed, level = 0, isLast, 
 
      let content = null;
      const nextItems = item.items;
-     
+
      if (nextItems && nextItems.length) {
         content = recursiveRender(
             nextItems,
@@ -41,7 +41,6 @@ const recursiveRender = (items, framework, group, collapsed, level = 0, isLast, 
             )
         }
      }
-
 
     if (!title && !content) { return null; }
 
