@@ -17,8 +17,10 @@
     flex: 1 1 0px;
     min-width: 0px;
 
-    &:not(&--with-side-menu) {
-        margin-right: calc(300px + 3rem);
+    @include media-breakpoint-up(xl) {
+        &:not(&--with-side-menu) {
+            margin-right: calc(300px + 3rem);
+        }
     }
 
     &__title {

@@ -2,7 +2,7 @@ $container-max-widths: (
     sm: 540px,
     md: 970px,
     lg: 1140px,
-    xl: 1400px,
+    xl: 1400px
 );
 
 // only import Bootstrap that does not output CSS, to avoid bloating our generated CSS
