@@ -8,13 +8,19 @@ if [ "$#" -lt 1 ]
 fi
 
 ZIP_PREFIX=`date +%Y%m%d`
-
 RAW_VERSION=$1
 VERSION=""${RAW_VERSION//./}""
 
-echo "Building Docs Release"
+echo "Starting Docs Bundle Process"
 cd grid-packages/ag-grid-docs
 rm -rf dist
+
+echo "Gatsby Package"
+cd documentation
+GATSBY_PATH_PREFIX=/documentation npm run package
+cd ..
+
+echo "Building Docs Release Bundle"
 npx gulp release
 cd dist
 
