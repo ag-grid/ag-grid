@@ -242,7 +242,7 @@ Below then uses three columns rendered using custom Angular renderers.
 
 ## Cell Templates
 
-[Cell Templates](../component-cell-renderer/#angular-cell-render-components) allow you to specify
+[Cell Templates](../component-cell-renderer/#cell-renderer-component) allow you to specify
 templates to use to render your cells. This is handy if you want to put JavaScript markup with
 AngularJS 1.x bindings as the cells. Cell templates are specified in the column definition by
 providing a template as a string or a templateUrl to load the template from the server.

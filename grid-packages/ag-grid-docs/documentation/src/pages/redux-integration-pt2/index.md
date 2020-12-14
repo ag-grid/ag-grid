@@ -373,7 +373,7 @@ autoGroupColumnDef = {
 };
 ```
 
-For more details see our documentation on [Custom Cell Renderer Components](/../component-cell-renderer/).
+For more details see our documentation on [Custom Cell Renderer Components](../component-cell-renderer/).
 
 ## Demo - Redux File Browser
 

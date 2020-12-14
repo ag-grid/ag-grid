@@ -41,9 +41,9 @@ frameworks: ["angular", "vue"]
 | ]
 | ```
 | Please see the relevant sections on 
-| <a href="../component-cell-renderer/#ng2CellRendering">cell renderers</a>, 
-| <a href="../cell-editing/#ng2CellEditing">cell editors</a> and 
-| <a href="..//filtering/#ng2Filtering">filters</a> 
+| <a href="../component-cell-renderer/">cell renderers</a>, 
+| <a href="../cell-editing/">cell editors</a> and 
+| <a href="../filtering/">filters</a> 
 | for configuring and using Angular components in ag-Grid.</p> 
 | 
 | The example has ag-Grid configured through the template in the following ways:
@@ -251,9 +251,9 @@ frameworks: ["angular", "vue"]
 | ```
 | 
 | Please see the relevant sections on 
-| <a href="../component-cell-renderer/#vueCellRendering">cell renderers</a>, 
-| <a href="../cell-editing/#vueCellEditing">cell editors</a> and 
-| <a href="../filtering/#vueFiltering">filters</a> for configuring and using 
+| <a href="../component-cell-renderer/">cell renderers</a>, 
+| <a href="../cell-editing/">cell editors</a> and 
+| <a href="../filtering/">filters</a> for configuring and using 
 | VueJS Components in ag-Grid.
 | 
 | ## Child to Parent Communication

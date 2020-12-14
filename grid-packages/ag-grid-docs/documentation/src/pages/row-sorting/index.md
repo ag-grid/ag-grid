@@ -22,7 +22,7 @@ gridOptions: {
 }
 ```
 
-To enable sorting for all columns, set sorting in the [default column definition](../column-definitions/#default-column-definitions).
+To enable sorting for all columns, set sorting in the [default column definition](../column-definitions/).
 
 
 ```js
@@ -80,7 +80,7 @@ Example below shows the following:
 
 ### Example: Custom Sorting Groups
 
-When [Row Grouping](../row-grouping/) it is possible to override the sort order of the Row Group columns. If using the Auto Group Column, provide a comparator via the `autoGroupColumnDef` grid property.
+When [Row Grouping](../grouping/) it is possible to override the sort order of the Row Group columns. If using the Auto Group Column, provide a comparator via the `autoGroupColumnDef` grid property.
 
 ```js
 autoGroupColumnDef = {
