@@ -9,9 +9,9 @@ There are many ways in which data can change in your application, and as a resul
 Updating data in the grid via the grid's API does not cover all the ways in which data can change inside the grid. Data can also change in the grid in the following ways:
 
 
-1. Editing data inside the grid using the grid's UI, e.g. by the user double-clicking on a cell and editing the cell's value. When this happens the grid is in control and there is no need to explicitly tell the grid data has changed. See [in-line editing](../cell-editing) on how to edit via the grid's UI.
+1. Editing data inside the grid using the grid's UI, e.g. by the user double-clicking on a cell and editing the cell's value. When this happens the grid is in control and there is no need to explicitly tell the grid data has changed. See [in-line editing](../cell-editing/) on how to edit via the grid's UI.
 
-1. The grid's data is updated from elsewhere in your application. This can happen if you pass data to the grid and then subsequently change that data outside of the grid. This leaves the grid's view out of sync with the data that it has. In this instance what you want to do is [refresh the view](../refresh) to have the grid's UI redraw to display the data changes.
+1. The grid's data is updated from elsewhere in your application. This can happen if you pass data to the grid and then subsequently change that data outside of the grid. This leaves the grid's view out of sync with the data that it has. In this instance what you want to do is [refresh the view](../view-refresh/) to have the grid's UI redraw to display the data changes.
 
 ## Setting Fresh Row Data
 
