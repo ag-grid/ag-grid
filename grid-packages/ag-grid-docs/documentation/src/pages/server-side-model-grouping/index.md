@@ -229,7 +229,7 @@ The info object is merged into the Store Info (which is initially an empty objec
 
 1. Included in the Store State returned from `getServerSideStoreState()`.
 1. Included in the params to `isApplyServerSideTransaction()`. This method is explained 
-in [Cancelling Transactions](../server-side-model-transactions/#cancelling-transactions).
+in [Cancelling Transactions](../server-side-model-high-frequency/#cancelling-transactions).
 
 If rows are loaded multiple times into the Store, then the Store Info values will over write existing values
 as they are merged on top of the existing values. Rows can be loaded multiple times if a) the store
