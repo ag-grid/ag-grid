@@ -8,7 +8,7 @@ simplify state management.
 
 
 [[note]]
-| Be sure to refer to the [React/Redux More Details](../framework-apis/#react-redux-hoc) section for more details around configuration.
+| Be sure to refer to the [React/Redux More Details](../framework-apis/#redux--higher-order-components-hoc) section for more details around configuration.
 
 We will use the concrete example of a file view component to demonstrate how to move local 
 component state to a Redux store. Updates to the files state will be retrieved from the Redux store, 

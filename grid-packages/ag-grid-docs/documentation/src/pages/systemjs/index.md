@@ -144,7 +144,7 @@ platformBrowserDynamic().bootstrapModule(AppModule);
 ```
 
 Our tsconfig.json file looks like this - note we're excluding the AOT related files 
-(see [AOT](#aotCompilation) below) here:
+(see [AOT](#for-ahead-of-time-aot-compilation) below) here:
 
 ```json
 // tsconfig.json 

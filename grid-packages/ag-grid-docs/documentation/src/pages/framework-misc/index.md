@@ -13,7 +13,7 @@ This page details how to set up ag-Grid inside a Vue application.
 
 ## ag-Grid VueJS Features
 
-[Every feature](../features-overview/) of ag-Grid is available when using the ag-Grid Vue table Component. The Vue Table Grid Component wraps the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and Vue ag-Grid when it comes to features.
+[Every feature](../grid-features/) of ag-Grid is available when using the ag-Grid Vue table Component. The Vue Table Grid Component wraps the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and Vue ag-Grid when it comes to features.
 
 ## Configuring ag-Grid in Vue
 
@@ -165,8 +165,8 @@ To use a component within the grid you will reference components by **case-sensi
 ```
 
 Please see the relevant sections on [cell renderers](../component-cell-renderer/), 
-[cell editors](../component-cell-editor/#vueCellEditing) and 
-[filters](../filtering/#vueFiltering) for configuring and using VueJS Components in ag-Grid.
+[cell editors](../component-cell-editor/) and 
+[filters](../filtering/) for configuring and using VueJS Components in ag-Grid.
 
 The rich-grid example has ag-Grid configured through the template in the following ways:
 
@@ -260,7 +260,7 @@ Please refer to the section below for a practical application of this binding.
 
 ## Memory Footprint, Vuex and Unidirectional Data Flow
 
-Please refer to [Memory Footprint, Vuex & Unidirectional Data Flow](../framework-data-flow)
+Please refer to [Memory Footprint, Vuex & Unidirectional Data Flow](../framework-data-flow/)
 
 ## Child to Parent Communication
 
@@ -299,9 +299,9 @@ example of how this can be done.
 
 ## Cell Rendering & Cell Editing using VueJS
 
-It is possible to build [cell renderers](../component-cell-renderer/#vue2CellRendering), 
-[cell editors](../cell-editing/#vue2CellEditing) and 
-[filters](../filtering/#vue2Filtering) using VueJS. Doing each of these is explained in the section on each.
+It is possible to build [cell renderers](../component-cell-renderer/), 
+[cell editors](../cell-editing/) and 
+[filters](../filtering/) using VueJS. Doing each of these is explained in the section on each.
 
 ## “$attrs is readonly”,“$listeners is readonly”,“Avoid mutating a prop directly”
 

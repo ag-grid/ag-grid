@@ -9,6 +9,7 @@ import SideMenu from '../components/SideMenu';
 import processFrameworkSpecificSections from '../utils/framework-specific-sections';
 import { getPageName } from '../utils/get-page-name';
 import { ApiDocumentation } from '../components/ApiDocumentation';
+import FeatureOverview from '../components/FeatureOverview';
 import IconsPanel from '../components/IconsPanel';
 import ImageCaption from '../components/ImageCaption';
 import styles from './doc-page.module.scss';
@@ -52,6 +53,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
         sources: props.sources != null ? JSON.parse(props.sources) : undefined,
         config: props.config != null ? JSON.parse(props.config) : undefined
       }),
+      'feature-overview': FeatureOverview,
       'icons-panel': IconsPanel,
       'image-caption': props => ImageCaption({ ...props, pageName }),
       'matrix-table': MatrixTable,

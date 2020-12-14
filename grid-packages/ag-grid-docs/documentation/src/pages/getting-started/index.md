@@ -698,13 +698,13 @@ title: "Get Started with ag-Grid"
 |   <a class="btn btn-outline-primary" href="../row-sorting/" role="button">Row Sorting</a>
 |   <a class="btn btn-outline-primary" href="../filtering/" role="button">Filtering</a>
 |   <a class="btn btn-outline-primary" href="../grouping/" role="button">Grouping</a>
-|   <a class="btn btn-outline-primary" href="../selection/" role="button">Selection</a>
+|   <a class="btn btn-outline-primary" href="../row-selection/" role="button">Selection</a>
 | </div>
 
 
 [[only-angular]]
 | [[note]]
-| | Please refer to our [Compatibility Chart](#compatibility) for Supported Versions of
+| | Please refer to our [Compatibility Chart](#ag-grid--angular-compatibility-chart) for Supported Versions of
 | | Angular & ag-Grid.
 |
 | ## Getting Started
@@ -716,13 +716,13 @@ title: "Get Started with ag-Grid"
 |     the following steps:
 |  </video-section>
 |
-| 1. [Add ag-Grid to Your Project](#add-ag-grid-to-your-project)
-| 1. [Enable Sorting and Filtering](#enable-sorting-and-filtering)
-| 1. [Fetch Remote Data](#fetch-remote-data)
-| 1. [Enable Selection](#enable-selection)
-| 1. [Grouping (Enterprise)](#grouping)
+| 1. [Add ag-Grid to Your Project](#add-ag-grid-to-your-project-1)
+| 1. [Enable Sorting and Filtering](#enable-sorting-and-filtering-1)
+| 1. [Fetch Remote Data](#fetch-remote-data-1)
+| 1. [Enable Selection](#enable-selection-1)
+| 1. [Grouping (Enterprise)](#grouping-1)
 | 1. [Customise the Theme Look](#customise-the-theme-look)
-| 1. [Summary](#summary)
+| 1. [Summary](#summary-1)
 |
 | [[note]]
 | | <div id="thinkster-note" style="display: flex;">
@@ -836,7 +836,7 @@ title: "Get Started with ag-Grid"
 | ```
 |
 | The code above presents two essential configuration properties of the grid -
-| [the column definitions](/..column-definitions/)
+| [the column definitions](../column-definitions/)
 | (`columnDefs`) and the data (`rowData`). In our case, the column definitions contain three columns;
 | each column entry specifies the header label and the data field to be displayed in the body of the table.
 |
@@ -1018,7 +1018,7 @@ title: "Get Started with ag-Grid"
 | }
 | ```
 |
-| Next, let's enable [multiple row selection](../selection/#multi-row-selection),
+| Next, let's enable [multiple row selection](../row-selection/#example-multiple-row-selection),
 | so that the user can pick many rows:
 |
 | ```html
@@ -1266,13 +1266,13 @@ title: "Get Started with ag-Grid"
 | }
 | ```
 |
-| You can find a [full list of theme parameters here](../themes-provided/).
+| You can find a [full list of theme parameters here](../themes-customising/#full-list-of-theme-parameters).
 |
 | If everything is configured correctly, the second row of the grid will get slightly darker.
 | Congratulations! You now know now bend the grid look to your will - there are a few dozens more
 | Sass variables that let you control the font family and size, border color, header background color
 | and even the amount of spacing in the cells and columns. The full
-| [theme parameter list](https://www.ag-grid.com/javascript-grid-themes-provided/#customising-themes) is
+| [theme parameter list](../themes-customising/#full-list-of-theme-parameters) is
 | available in the themes documentation section.
 |
 | ## ag-Grid & Angular Compatibility Chart
@@ -1312,7 +1312,7 @@ title: "Get Started with ag-Grid"
 
 [[only-react]]
 | [[note]]
-| | Please refer to our [Compatibility Chart](#compatibility) for Supported Versions of React & ag-Grid.
+| | Please refer to our [Compatibility Chart](#ag-grid--react-compatibility-chart) for Supported Versions of React & ag-Grid.
 |
 | ## Getting Started
 |
@@ -1807,7 +1807,7 @@ title: "Get Started with ag-Grid"
 | matches your project design.
 |
 | [[note]]
-| | In a later section we documentation on how you can [Customise the Theme Look](#vue_theme_look)
+| | In a later section we documentation on how you can [Customise the Theme Look](#customise-the-theme-look-2)
 | | using SCSS, which is our recommended approach.
 |
 | As this will be a simple example we can delete the `src/components` directory. Our example
@@ -1995,7 +1995,7 @@ title: "Get Started with ag-Grid"
 | <style></style>
 | ```
 |
-| Next let's enable [multiple row selection](../selection/#multi-row-selection),
+| Next let's enable [multiple row selection](../row-selection/#example-multiple-row-selection),
 | so that the user can pick many rows:
 |
 | ```jsx
@@ -2239,7 +2239,7 @@ title: "Get Started with ag-Grid"
 | If everything is configured correctly, the second row of the grid will be blue. Congratulations!
 | You now know now bend the grid look to your will - there are a few dozens more Sass variables that
 | let you control the font family and size, border color, header background color and even the amount
-| of spacing in the cells and columns. The full [Sass variable list](../themes-provided/#customising-themes)
+| of spacing in the cells and columns. The full [Sass variable list](../themes-customising/#full-list-of-theme-parameters)
 | is available in the themes documentation section.
 |
 | ## Summary

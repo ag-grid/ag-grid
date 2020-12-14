@@ -3,27 +3,26 @@
         "meta": {
             "displayName": "createCrossFilterChart params"
         },
+        "chartType": {
+            "type": "ChartType",
+            "required": true,
+            "options": [
+                "column",
+                "bar",
+                "line",
+                "scatter",
+                "bubble",
+                "pie",
+                "doughnut",
+                "area"
+            ],
+            "description": "The type of cross-filtering chart to create."
+        },
         "cellRange": {
             "meta": {
                 "type": "CellRangeParams",
                 "required": true,
-                "description": "Defines the range of cells to be charted. A range is normally defined with start and end rows and a list of columns. If the start and end rows are omitted, the range covers all rows (i.e. entire columns are selected). The columns can either be defined using a start and end column (the range will cover the start and end columns and all columns in between), or columns can be supplied specifically in cases where the required columns are not adjacent to each other. See <a href='../range-selection/#api-addcellrange-rangeselection'>Add Cell Range</a> for more information."
-            },
-            "rowStartIndex": {
-                "type": "number",
-                "description": "The index of the first row in the range."
-            },
-            "rowStartPinned": {
-                "type": "string",
-                "description": "Sets whether the first row is pinned."
-            },
-            "rowEndIndex": {
-                "type": "number",
-                "description": "The index of the last row in the range."
-            },
-            "rowEndPinned": {
-                "type": "string",
-                "description": "Sets whether the last row is pinned."
+                "description": "Defines the list of columns to be charted. Note that cross-filter charts include all rows in the grid so there is no need to specify the range of rows."
             },
             "columnStart": {
                 "type": "string | Column",
@@ -37,27 +36,6 @@
                 "type": "(string | Column)[]",
                 "description": "The columns in the range. Used instead of `columnStart` and `columnEnd`, particularly when you want non-sequential columns."
             }
-        },
-        "chartType": {
-            "type": "ChartType",
-            "required": true,
-            "options": [
-                "groupedColumn",
-                "stackedColumn",
-                "normalizedColumn",
-                "groupedBar",
-                "stackedBar",
-                "normalizedBar",
-                "line",
-                "scatter",
-                "bubble",
-                "pie",
-                "doughnut",
-                "area",
-                "stackedArea",
-                "normalizedArea"
-            ],
-            "description": "The type of chart to create."
         },
         "chartThemeName": {
             "type": "string",
@@ -80,8 +58,8 @@
             "description": "If the chart is to be displayed outside of the grid then a chart container should be provided. If the chart is to be displayed using the grid's popup window mechanism then leave as `undefined`."
         },
         "suppressChartRanges": {
-            "default": false,
-            "description": "By default, when a chart is displayed using the grid, the grid will highlight the range the chart is charting when the chart gets focus. To suppress this behaviour, set `suppressChartRanges=true`."
+            "default": true,
+            "description": "By default, when a cross-filter chart is displayed using the grid, the grid will not highlight the range the chart is charting when the chart gets focus. To show the chart range set `suppressChartRanges=false`."
         },
         "aggFunc": {
             "description": "The aggregation function that should be applied to all series data. The built-in aggregation functions are <code>'sum'</code>, <code>'min'</code>, <code>'max'</code>, <code>'count'</code>, <code>'avg'</code>, <code>'first'</code>, <code>'last'</code>. Alternatively, custom aggregation functions can be provided if they conform to the <code>IAggFunc</code> interface shown here.",

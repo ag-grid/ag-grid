@@ -42,7 +42,7 @@ In order to override this default behaviour and can specify a `componentWrapping
 Doing this would result in the following being rendered:
 
 ```html
-<span class="ag-react-container"><span>Age: 24</span></span    >
+<span class="ag-react-container"><span>Age: 24</span></span>
 ```
 If you wish to override the style of this div you can either provide an implementation of
 the `ag-react-container` class, or via the `getReactContainerStyle` or `getReactContainerClasses`
