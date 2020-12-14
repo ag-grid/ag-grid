@@ -3,6 +3,27 @@
         "meta": {
             "displayName": "createRangeChart params"
         },
+        "chartType": {
+            "type": "ChartType",
+            "required": true,
+            "options": [
+                "groupedColumn",
+                "stackedColumn",
+                "normalizedColumn",
+                "groupedBar",
+                "stackedBar",
+                "normalizedBar",
+                "line",
+                "scatter",
+                "bubble",
+                "pie",
+                "doughnut",
+                "area",
+                "stackedArea",
+                "normalizedArea"
+            ],
+            "description": "The type of chart to create."
+        },
         "cellRange": {
             "meta": {
                 "type": "CellRangeParams",
@@ -37,27 +58,6 @@
                 "type": "(string | Column)[]",
                 "description": "The columns in the range. Used instead of `columnStart` and `columnEnd`, particularly when you want non-sequential columns."
             }
-        },
-        "chartType": {
-            "type": "ChartType",
-            "required": true,
-            "options": [
-                "groupedColumn",
-                "stackedColumn",
-                "normalizedColumn",
-                "groupedBar",
-                "stackedBar",
-                "normalizedBar",
-                "line",
-                "scatter",
-                "bubble",
-                "pie",
-                "doughnut",
-                "area",
-                "stackedArea",
-                "normalizedArea"
-            ],
-            "description": "The type of chart to create."
         },
         "chartThemeName": {
             "type": "string",
