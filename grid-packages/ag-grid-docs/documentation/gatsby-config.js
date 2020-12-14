@@ -137,7 +137,7 @@ if (process.env.GATSBY_UPDATE_ALGOLIA === 'true') {
 }
 
 module.exports = {
-  pathPrefix: '/documentation',
+  pathPrefix: process.env.GATSBY_PATH_PREFIX,
   siteMetadata: {
     title: 'AG-Grid Documentation',
     author: 'AG-Grid',
