@@ -67,7 +67,7 @@ A Header Component allows customising the inside part of the header. The compone
 The grid is always responsible for the following:
 
 - [**Resizing:**](../column-sizing/) When enabled, the grid will put an invisible widget to be grabbed by the mouse for resizing.
-- [**Checkbox Selection:**](../selection/) When enabled, the grid puts a checkbox for 'select all' in the header.
+- [**Checkbox Selection:**](../row-selection/) When enabled, the grid puts a checkbox for 'select all' in the header.
 
 The header component (your bit) will be responsible for the following:
 

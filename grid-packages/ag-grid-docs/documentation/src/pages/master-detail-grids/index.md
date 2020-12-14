@@ -99,30 +99,32 @@ To change the Detail Template, set the `template` inside the Detail Cell Rendere
 
 - **String Template** - Statically overrides the template used by the grid. The same fixed template is used for each row. This is useful for styling
 or generic information.
+
     ```js
-    // example override using string template
-    detailCellRendererParams: {
-        template:
-        '<div style="background-color: #edf6ff;">' +
-            '  <div style="height: 10%;">Call Details</div>' +
-            '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
-            '</div>'
-    }
+        // example override using string template
+        detailCellRendererParams: {
+            template:
+            '<div style="background-color: #edf6ff;">' +
+                '  <div style="height: 10%;">Call Details</div>' +
+                '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
+                '</div>'
+        }
     ```
 
 - **Function Template** - Called each time a detail row is shown to dynamically provide a template based on
 the data. Useful for displaying information specific to the Detail Grid dataset
+
     ```js
-    // override using template callback
-    detailCellRendererParams: {
-        template: function (params) {
-            var personName = params.data.name;
-            return '<div style="height: 100%; background-color: #EDF6FF;">' +
-            '  <div style="height: 10%;">Name: ' + personName + '</div>' +
-            '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
-            '</div>';
+        // override using template callback
+        detailCellRendererParams: {
+            template: function (params) {
+                var personName = params.data.name;
+                return '<div style="height: 100%; background-color: #EDF6FF;">' +
+                '  <div style="height: 10%;">Name: ' + personName + '</div>' +
+                '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
+                '</div>';
+            }
         }
-    }
     ```
 
 The following two examples demonstrate both approaches.
@@ -168,19 +170,22 @@ interface DetailGridInfo {
 The Detail Grid Info objects are accessed via the Master Grid's API via the following methods:
 
 - `getDetailGridInfo(id)`: Returns back the Detail Grid Info for the Detail Grid with the provided ID.
+
     ```js
-    // lookup a specific DetailGridInfo by id, and then call stopEditing() on it
-    var detailGridInfo = masterGridOptions.api.getDetailGridInfo('detail_someId');
-    detailGridInfo.api.flashCells();
+        // lookup a specific DetailGridInfo by id, and then call stopEditing() on it
+        var detailGridInfo = masterGridOptions.api.getDetailGridInfo('detail_someId');
+        detailGridInfo.api.flashCells();
     ```
+
     The grid generates ID's for detail grids by prefixing the parent row's ID with `detail_`. For example if the ID of the expanded Master Row is "88", then the ID of the Detail Grid / row will be "detail_88".
 
 - `forEachDetailGridInfo(callback)`: Calls the callback for each existing instance of a Detail Grid.
+
     ```js
-    // iterate over all DetailGridInfo's, and call stopEditing() on each one
-    masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
-        detailGridInfo.api.flashCells();
-    });
+        // iterate over all DetailGridInfo's, and call stopEditing() on each one
+        masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
+            detailGridInfo.api.flashCells();
+        });
     ```
 
 The following example shows flashing cells on the detail grids by using the Grid API `flashCells()`. Note the following:

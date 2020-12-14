@@ -36,5 +36,5 @@ The example below demonstrates how the loading overlay is shown automatically wh
 <grid-example title='Overlays' name='overlays' type='generated' options='{ "exampleHeight": 580 }'></grid-example>
 
 [[note]]
-| It is also possible to provide your own custom Overlay Components - please see [Overlay Component](../overlay-component) for more information
+| It is also possible to provide your own custom Overlay Components - please see [Overlay Component](../component-overlay/) for more information
 

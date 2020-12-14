@@ -96,7 +96,7 @@ function populateGrid(workbook) {
 
 function importExcel() {
     makeRequest('GET',
-        'https://www.ag-grid.com/data/OlymicData.xlsx',
+        '/data/OlymicData.xlsx',
         // success
         function (data) {
             var workbook = convertDataToWorkbook(data);

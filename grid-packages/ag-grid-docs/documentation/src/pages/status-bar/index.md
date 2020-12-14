@@ -25,7 +25,7 @@ The status bar is configured using the `statusBar` grid option. The option takes
 
 If `align` is not specified the components will default to being aligned to the right.
 
-`key` is useful for accessing status bar component instances - [see here](../status-bar-component#accessing-status-bar-comp-instances) for more information.</p>
+`key` is useful for accessing status bar component instances - [see here](../status-bar-component/#accessing-status-bar-panel-instances) for more information.</p>
 
 The snippet below shows a status bar configured with the grid provided components.
 
@@ -91,7 +91,7 @@ gridOptions: {
 
 Accessing status panel instances is possible using `api.getStatusPanel(key)`. The key will be the value provided in the component configuration (see above), but will default to the component name if not provided.
 
-See [Accessing Status Bar Panel Instances](../status-bar-component#accessing-status-bar-comp-instances) for more information.
+See [Accessing Status Bar Panel Instances](../component-status-bar/#accessing-status-bar-comp-instances) for more information.
 
 ## Configuration with Component Parameters
 
@@ -164,4 +164,4 @@ To force the the status bar to have a fixed height, add CSS to the status bar di
 
 Applications that are not using the [Client-Side Row Model](../client-side-model) or which require bespoke status bar panels can provide their own custom status bar components.
 
-For more details see the following section: [Status Bar Panels (Components)](../status-bar-component).
+For more details see the following section: [Status Bar Panels (Components)](../component-status-bar/).
