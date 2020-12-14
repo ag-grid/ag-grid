@@ -92,7 +92,7 @@ The grid has the following API methods for editing:
     - `rowPinned`: Set to `'top'` or `'bottom'` to started editing a pinned row.
     - `keyPress, charPress`: The `keyPress` and `charPress` that are passed to the cell editor.
 - `stopEditing(cancel)`: If the grid is editing then editing is stopped. Passing `cancel=true` will keep the cell's original value and passing `cancel=false` will take the latest value from the cell editor.
-- `getEditingCells()`: If the grid is editing, returns back details of the editing cell(s). The result is an array of objects. If only one cell is editing (the default) then the array will have one entry. If multiple cells are editing (e.g. [Full Row Edit](#fullRowEdit)) then the array contains all editing cells.
+- `getEditingCells()`: If the grid is editing, returns back details of the editing cell(s). The result is an array of objects. If only one cell is editing (the default) then the array will have one entry. If multiple cells are editing (e.g. [Full Row Edit](#full-row-editing)) then the array contains all editing cells.
 
 Below is a code example of using the editing API methods.
 
@@ -156,25 +156,26 @@ The following example illustrates how to use different editors and parameters in
 
 - The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
 - `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
+
     ```js
-    cellEditorSelector: function(params) {
-        if (params.data.type === 'age') {
-            return { component: 'numericCellEditor' };
-        }
+        cellEditorSelector: function(params) {
+            if (params.data.type === 'age') {
+                return { component: 'numericCellEditor' };
+            }
 
-        if (params.data.type === 'gender') {
-            return {
-                component: 'agRichSelect',
-                params: { values: ['Male', 'Female'] }
-            };
-        }
+            if (params.data.type === 'gender') {
+                return {
+                    component: 'agRichSelect',
+                    params: { values: ['Male', 'Female'] }
+                };
+            }
 
-        if (params.data.type === 'mood') {
-            return { component: 'agRichSelect' };
-        }
+            if (params.data.type === 'mood') {
+                return { component: 'agRichSelect' };
+            }
 
-        return null;
-    }
+            return null;
+        }
     ```
 - Edit a cell by double clicking to observe the different editors used.
 
@@ -303,4 +304,4 @@ The example below shows the editing with `stopEditingWhenGridLosesFocus = true`.
 <grid-example title='Stop Editing When Grid Loses Focus' name='stop-edit-when-grid-loses-focus' type='generated' options='{ "exampleHeight": 510 }'></grid-example>
 
 [[note]]
-| Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](../cell-editor) for more information.
+| Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](../component-cell-editor/) for more information.
