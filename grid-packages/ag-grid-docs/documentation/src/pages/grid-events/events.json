@@ -48,7 +48,7 @@
             "description": "Value has changed after editing."
         },
         "rowValueChanged": {
-            "description": "A cell's value within a row has changed. This event corresponds to <a href='../javascript-grid-cell-editing/#fullRowEdit'>Full Row Editing</a> only."
+            "description": "A cell's value within a row has changed. This event corresponds to <a href='../cell-editing/#full-row-editing'>Full Row Editing</a> only."
         },
         "cellEditingStarted": {
             "description": "Editing a cell has started."
@@ -57,23 +57,23 @@
             "description": "Editing a cell has stopped."
         },
         "rowEditingStarted": {
-            "description": "Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and <code>cellEditingStarted</code> will be fired for each individual cell. This event corresponds to <a href='../javascript-grid-cell-editing/#start-stop-editing-events'>Full Row Editing</a> only."
+            "description": "Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and <code>cellEditingStarted</code> will be fired for each individual cell. This event corresponds to <a href='../cell-editing/#full-row-editing'>Full Row Editing</a> only."
         },
         "rowEditingStopped": {
-            "description": "Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and <code>cellEditingStopped</code> will be fired for each individual cell. This event corresponds to <a href='../javascript-grid-cell-editing/#start-stop-editing-events'>Full Row Editing</a> only."
+            "description": "Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and <code>cellEditingStopped</code> will be fired for each individual cell. This event corresponds to <a href='../cell-editing/#full-row-editing'>Full Row Editing</a> only."
         },
         "pasteStart": {
             "description": "Paste operation has started.",
             "more": {
                 "name": "Clipboard Events",
-                "url": "../javascript-grid-clipboard/#events"
+                "url": "../clipboard/#clipboard-events"
             }
         },
         "pasteEnd": {
             "description": "Paste operation has ended.",
             "more": {
                 "name": "Clipboard Events",
-                "url": "../javascript-grid-clipboard/#events"
+                "url": "../clipboard/#clipboard-events"
             }
         }
     },
@@ -220,14 +220,14 @@
             "description": "DOM event <code>keyDown</code> happened on a cell.",
             "more": {
                 "name": "Keyboard Events",
-                "url": "../javascript-grid-keyboard-navigation/#keyboard-events"
+                "url": "../keyboard-navigation/#keyboard-events"
             }
         },
         "cellKeyPress": {
             "description": "DOM event keyPress happened on a cell.",
             "more": {
                 "name": "Keyboard Events",
-                "url": "../javascript-grid-keyboard-navigation/#keyboard-events"
+                "url": "../keyboard-navigation/#keyboard-events"
             }
         }
     }

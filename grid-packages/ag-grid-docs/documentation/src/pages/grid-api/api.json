@@ -498,14 +498,14 @@
             "description": "Used to programmatically create charts from a range.",
             "more": {
                 "name": "Range Chart API",
-                "url": "../charts-chart-range-api/#range-charts"
+                "url": "../integrated-charts-api/#range-charts"
             }
         },
         "createPivotChart(params)": {
             "description": "Used to programmatically create pivot charts from a grid.",
             "more": {
                 "name": "Pivot Chart API",
-                "url": "../charts-chart-range-api/#pivot-charts"
+                "url": "../integrated-charts-api/#pivot-charts"
             }
         }
     },
@@ -529,7 +529,7 @@
             "description": "Gets the tool panel instance corresponding to the supplied `id`.",
             "more": {
                 "name": "Expand / Collapse Column Groups",
-                "url": "../tool-panel-columns/#expand-collapse-column-groups"
+                "url": "../tool-panel-columns/#expand--collapse-column-groups"
             }
         },
         "doLayout()": {
@@ -589,7 +589,7 @@
             "description": "Gets all failed server side loads to retry.",
             "more": {
                 "name": "Retry Loads",
-                "url": "../javascript/server-side-model-retry/"
+                "url": "../server-side-model-retry/"
             }
         },
         "setFillHandleDirection(direction)": {
