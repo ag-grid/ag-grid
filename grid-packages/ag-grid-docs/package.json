@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-docs",
-  "version": "24.1.0",
+  "version": "25.0.0",
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
@@ -62,9 +62,9 @@
     "webpack-merge": "4.1.4"
   },
   "devDependencies": {
-    "@ag-grid-community/angular": "~24.1.0",
-    "@ag-grid-community/react": "~24.1.0",
-    "@ag-grid-community/vue": "~24.1.0",
+    "@ag-grid-community/angular": "~25.0.0",
+    "@ag-grid-community/react": "~25.0.0",
+    "@ag-grid-community/vue": "~25.0.0",
     "@angular/common": "7.2.3",
     "@angular/compiler": "7.2.3",
     "@angular/core": "7.2.3",
@@ -83,7 +83,7 @@
     "@types/jasmine": "^3.4.6",
     "@types/jest": "^25.2.1",
     "@types/prismjs": "^1.16.1",
-    "ag-grid-community": "~24.1.0",
+    "ag-grid-community": "~25.0.0",
     "ag-grid-testing": "0.0.2",
     "anchor-js": "^4.2.2",
     "autocomplete.js": "0.33.0",

@@ -1,0 +1,1 @@
+{"version":3,"file":"masterDetailModule.js","sourceRoot":"","sources":["../../src/masterDetailModule.ts"],"names":[],"mappings":";;AAAA,gDAA8D;AAC9D,iDAAgE;AAChE,wEAAuE;AAE1D,QAAA,kBAAkB,GAAW;IACtC,UAAU,EAAE,kBAAW,CAAC,kBAAkB;IAC1C,KAAK,EAAE,EAAE;IACT,cAAc,EAAE;QACZ,EAAE,aAAa,EAAE,sBAAsB,EAAE,cAAc,EAAE,uCAAkB,EAAE;KAChF;IACD,gBAAgB,EAAE;QACd,2BAAoB;KACvB;CACJ,CAAC"}
