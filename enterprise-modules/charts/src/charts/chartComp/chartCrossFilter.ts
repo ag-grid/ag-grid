@@ -67,13 +67,10 @@ export class ChartCrossFilter extends BeanStub {
 
     private getUpdatedFilterModel(colId: any, updatedValues: any[]) {
         let columnFilterType = this.getColumnFilterType(colId);
-        if (columnFilterType === 'agSetColumnFilter') {
-            return {filterType: 'set', values: updatedValues};
-        }
-
         if (columnFilterType === 'agMultiColumnFilter') {
             return {filterType: 'multi', filterModels: [null, {filterType: 'set', values: updatedValues}]};
         }
+        return {filterType: 'set', values: updatedValues};
     }
 
     private getCurrentGridValuesForCategory(dataKey: any) {
@@ -98,7 +95,13 @@ export class ChartCrossFilter extends BeanStub {
         if (colId.indexOf('-filtered-out')) {
             colId = colId.replace('-filtered-out', '');
         }
-        return _.includes(['agSetColumnFilter', 'agMultiColumnFilter'], this.getColumnFilterType(colId));
+
+        let filterType = this.getColumnFilterType(colId);
+        if (typeof filterType === 'boolean') {
+            return filterType;
+        }
+
+        return _.includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
     }
 
     private getColumnFilterType(colId: any) {

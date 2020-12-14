@@ -1,7 +1,9 @@
 export enum ChartType {
+    Column = 'column',
     GroupedColumn = 'groupedColumn',
     StackedColumn = 'stackedColumn',
     NormalizedColumn = 'normalizedColumn',
+    Bar = 'bar',
     GroupedBar = 'groupedBar',
     StackedBar = 'stackedBar',
     NormalizedBar = 'normalizedBar',
