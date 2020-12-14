@@ -26,7 +26,7 @@ const FeatureOverview = () => (
                         </h4>
                         <div className={ styles['feature-overview__feature_description'] }>
                             <p dangerouslySetInnerHTML={{ __html: feature.description }} />
-                            { feature.snippet && <pre className="language-js">{ feature.snippet }</pre> }
+                            { feature.snippet && <pre className="language-js"><code className="language-js">{ feature.snippet }</code></pre> }
                         </div>
                         <div className={ styles['feature-overview__feature_image'] }>
                             <a href={ feature.url }>
