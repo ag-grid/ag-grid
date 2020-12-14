@@ -35,7 +35,7 @@ function preProcessRootIndex(fileContents) {
         <html style="height: 100%">
         <head lang="en">
         <meta charset="UTF-8">
-        <meta http-equiv="refresh" content="0; URL='https://www.ag-grid.com/archive/${newVersion}/documentation-main/documentation.php'" />
+        <meta http-equiv="refresh" content="0; URL='https://www.ag-grid.com/archive/${newVersion}/documentation/'" />
         </head>        
         <body class="big-text">
         </body>
