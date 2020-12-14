@@ -1,6 +1,7 @@
 import { navigate, withPrefix } from 'gatsby';
 import { getPageName } from './src/utils/get-page-name';
 import { LocalStorage } from './src/utils/local-storage';
+import supportedFrameworks from './src/utils/supported-frameworks.js';
 import 'jquery/dist/jquery.min.js';
 import 'popper.js/dist/popper.min.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
@@ -30,22 +31,17 @@ export const shouldUpdateScroll = ({ prevRouterProps, routerProps: { location: {
 };
 
 const frameworkStorageKey = 'framework';
-
 const getRelativePath = path => path.replace(withPrefix('/'), '/');
 
-export const onPreRouteUpdate = ({ location }) => {
+export const onRouteUpdate = ({ location }) => {
     if (getRelativePath(location.pathname) === '/') {
         const selectedFramework = LocalStorage.get(frameworkStorageKey) || 'javascript';
 
         navigate(`/${selectedFramework}/`, { replace: true });
-    }
-};
-
-export const onRouteUpdate = ({ location }) => {
-    if (LocalStorage.exists()) {
+    } else if (LocalStorage.exists()) {
         const frameworkFromUrl = getRelativePath(location.pathname).split('/').filter(p => p !== '')[0];
 
-        if (frameworkFromUrl) {
+        if (frameworkFromUrl && supportedFrameworks.indexOf(frameworkFromUrl) >= 0) {
             LocalStorage.set(frameworkStorageKey, frameworkFromUrl);
         }
     }

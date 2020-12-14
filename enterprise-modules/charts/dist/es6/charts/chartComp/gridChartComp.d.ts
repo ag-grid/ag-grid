@@ -25,6 +25,7 @@ export declare class GridChartComp extends Component {
     private readonly environment;
     private readonly chartTranslator;
     private readonly columnController;
+    private readonly crossFilter;
     private readonly gridApi;
     private readonly columnApi;
     private readonly popupService;

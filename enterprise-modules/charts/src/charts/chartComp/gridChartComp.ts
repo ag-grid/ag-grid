@@ -72,6 +72,7 @@ export class GridChartComp extends Component {
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
     @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('chartCrossFilter') private readonly crossFilter: ChartCrossFilter;
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
@@ -183,12 +184,10 @@ export class GridChartComp extends Component {
         const chartType = this.model.getChartType();
         const isGrouping = this.model.isGrouping();
 
-        // TODO - cross filtering WIP
-        const crossFilter = this.createManagedBean(new ChartCrossFilter());
         const crossFilterCallback = (event: any, reset: boolean) => {
             const ctx = this.params.crossFilteringContext;
             ctx.lastSelectedChartId = reset ? '' : this.model.getChartId();
-            crossFilter.filter(event, reset);
+            this.crossFilter.filter(event, reset);
         }
 
         const chartProxyParams: ChartProxyParams = {

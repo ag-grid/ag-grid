@@ -31,7 +31,6 @@ var pieChartProxy_1 = require("./chartProxies/polar/pieChartProxy");
 var doughnutChartProxy_1 = require("./chartProxies/polar/doughnutChartProxy");
 var scatterChartProxy_1 = require("./chartProxies/cartesian/scatterChartProxy");
 var histogramChartProxy_1 = require("./chartProxies/cartesian/histogramChartProxy");
-var chartCrossFilter_1 = require("./chartCrossFilter");
 var GridChartComp = /** @class */ (function (_super) {
     __extends(GridChartComp, _super);
     function GridChartComp(params) {
@@ -108,12 +107,10 @@ var GridChartComp = /** @class */ (function (_super) {
         var customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
         var chartType = this.model.getChartType();
         var isGrouping = this.model.isGrouping();
-        // TODO - cross filtering WIP
-        var crossFilter = this.createManagedBean(new chartCrossFilter_1.ChartCrossFilter());
         var crossFilterCallback = function (event, reset) {
             var ctx = _this.params.crossFilteringContext;
             ctx.lastSelectedChartId = reset ? '' : _this.model.getChartId();
-            crossFilter.filter(event, reset);
+            _this.crossFilter.filter(event, reset);
         };
         var chartProxyParams = {
             chartId: this.model.getChartId(),
@@ -397,6 +394,9 @@ var GridChartComp = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], GridChartComp.prototype, "columnController", void 0);
+    __decorate([
+        core_1.Autowired('chartCrossFilter')
+    ], GridChartComp.prototype, "crossFilter", void 0);
     __decorate([
         core_1.Autowired('gridApi')
     ], GridChartComp.prototype, "gridApi", void 0);

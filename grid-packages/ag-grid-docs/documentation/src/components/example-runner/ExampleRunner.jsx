@@ -65,7 +65,7 @@ export const ExampleRunner = ({ pageName, framework, name, title, type, options 
             };
 
             const isGenerated = exampleInfo.type === 'generated' || exampleInfo.type === 'mixed';
-            const linkId = `example--${name}`;
+            const linkId = `example-${name}`;
 
             return <div className={styles['example-runner']}>
                 <div className={`form-inline ${styles['example-runner__header']}`}>
