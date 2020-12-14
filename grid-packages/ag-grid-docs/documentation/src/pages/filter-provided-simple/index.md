@@ -37,7 +37,7 @@ Each Simple Filter follows the same layout. The only layout difference is the ty
 
 Each filter provides a dropdown list of filter options to select from. Each filter option represents a filtering strategy, e.g. 'equals', 'not equals', etc.
 
-Each filter's default [Filter Options](#filterOptions) are listed below, as well as information on [Defining Custom Filter Options](#customFilterOptions).
+Each filter's default [Filter Options](#filterOptions) are listed below, as well as information on [Defining Custom Filter Options](#custom-filter-options).
 
 ### Filter Value
 

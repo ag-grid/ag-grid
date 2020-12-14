@@ -111,5 +111,5 @@ The following example demonstrates hiding the mini filter. Note the following:
 
 ## Next Up
 
-Continue to the next section: [Set Filter API](../filter-set-api).
+Continue to the next section: [Excel Mode](../filter-set-excel-mode/).
 
