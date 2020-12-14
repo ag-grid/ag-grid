@@ -146,13 +146,13 @@ var BarChartProxy = /** @class */ (function (_super) {
         return options;
     };
     BarChartProxy.prototype.isColumnChart = function () {
-        return core_1._.includes([core_1.ChartType.GroupedColumn, core_1.ChartType.StackedColumn, core_1.ChartType.NormalizedColumn], this.chartType);
+        return core_1._.includes([core_1.ChartType.Column, core_1.ChartType.GroupedColumn, core_1.ChartType.StackedColumn, core_1.ChartType.NormalizedColumn], this.chartType);
     };
     BarChartProxy.prototype.getSeriesDefaults = function () {
         var chartType = this.chartType;
         var isColumn = this.isColumnChart();
-        var isGrouped = chartType === core_1.ChartType.GroupedColumn || chartType === core_1.ChartType.GroupedBar;
-        var isNormalized = chartType === core_1.ChartType.NormalizedColumn || chartType === core_1.ChartType.NormalizedBar;
+        var isGrouped = !this.crossFiltering && (chartType === core_1.ChartType.GroupedColumn || chartType === core_1.ChartType.GroupedBar);
+        var isNormalized = !this.crossFiltering && (chartType === core_1.ChartType.NormalizedColumn || chartType === core_1.ChartType.NormalizedBar);
         return __assign(__assign({}, this.chartOptions.seriesDefaults), { type: isColumn ? 'column' : 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
     };
     return BarChartProxy;

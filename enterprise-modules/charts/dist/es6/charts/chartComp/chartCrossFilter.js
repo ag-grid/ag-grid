@@ -80,12 +80,10 @@ var ChartCrossFilter = /** @class */ (function (_super) {
     };
     ChartCrossFilter.prototype.getUpdatedFilterModel = function (colId, updatedValues) {
         var columnFilterType = this.getColumnFilterType(colId);
-        if (columnFilterType === 'agSetColumnFilter') {
-            return { filterType: 'set', values: updatedValues };
-        }
         if (columnFilterType === 'agMultiColumnFilter') {
             return { filterType: 'multi', filterModels: [null, { filterType: 'set', values: updatedValues }] };
         }
+        return { filterType: 'set', values: updatedValues };
     };
     ChartCrossFilter.prototype.getCurrentGridValuesForCategory = function (dataKey) {
         var filteredValues = [];
@@ -107,7 +105,11 @@ var ChartCrossFilter = /** @class */ (function (_super) {
         if (colId.indexOf('-filtered-out')) {
             colId = colId.replace('-filtered-out', '');
         }
-        return _.includes(['agSetColumnFilter', 'agMultiColumnFilter'], this.getColumnFilterType(colId));
+        var filterType = this.getColumnFilterType(colId);
+        if (typeof filterType === 'boolean') {
+            return filterType;
+        }
+        return _.includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
     };
     ChartCrossFilter.prototype.getColumnFilterType = function (colId) {
         var gridColumn = this.columnController.getGridColumn(colId);

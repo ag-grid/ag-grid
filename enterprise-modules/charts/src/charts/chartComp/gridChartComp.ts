@@ -217,7 +217,13 @@ export class GridChartComp extends Component {
         // set local state used to detect when chart changes
         this.chartType = chartType;
         this.chartThemeName = this.model.getChartThemeName();
+
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
+        if (!this.chartProxy) {
+            console.warn('ag-Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            return;
+        }
+
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
 
         const canvas = this.eChart.querySelector('canvas');
@@ -243,6 +249,8 @@ export class GridChartComp extends Component {
 
     private static createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
         switch (chartProxyParams.chartType) {
+            case ChartType.Column:
+            case ChartType.Bar:
             case ChartType.GroupedColumn:
             case ChartType.StackedColumn:
             case ChartType.NormalizedColumn:

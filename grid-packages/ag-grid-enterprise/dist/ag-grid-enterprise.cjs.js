@@ -33474,13 +33474,13 @@ var BarChartProxy = /** @class */ (function (_super) {
         return options;
     };
     BarChartProxy.prototype.isColumnChart = function () {
-        return agGridCommunity._.includes([agGridCommunity.ChartType.GroupedColumn, agGridCommunity.ChartType.StackedColumn, agGridCommunity.ChartType.NormalizedColumn], this.chartType);
+        return agGridCommunity._.includes([agGridCommunity.ChartType.Column, agGridCommunity.ChartType.GroupedColumn, agGridCommunity.ChartType.StackedColumn, agGridCommunity.ChartType.NormalizedColumn], this.chartType);
     };
     BarChartProxy.prototype.getSeriesDefaults = function () {
         var chartType = this.chartType;
         var isColumn = this.isColumnChart();
-        var isGrouped = chartType === agGridCommunity.ChartType.GroupedColumn || chartType === agGridCommunity.ChartType.GroupedBar;
-        var isNormalized = chartType === agGridCommunity.ChartType.NormalizedColumn || chartType === agGridCommunity.ChartType.NormalizedBar;
+        var isGrouped = !this.crossFiltering && (chartType === agGridCommunity.ChartType.GroupedColumn || chartType === agGridCommunity.ChartType.GroupedBar);
+        var isNormalized = !this.crossFiltering && (chartType === agGridCommunity.ChartType.NormalizedColumn || chartType === agGridCommunity.ChartType.NormalizedBar);
         return __assign$b(__assign$b({}, this.chartOptions.seriesDefaults), { type: isColumn ? 'column' : 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
     };
     return BarChartProxy;
@@ -34489,6 +34489,10 @@ var GridChartComp = /** @class */ (function (_super) {
         this.chartType = chartType;
         this.chartThemeName = this.model.getChartThemeName();
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
+        if (!this.chartProxy) {
+            console.warn('ag-Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            return;
+        }
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
         var canvas = this.eChart.querySelector('canvas');
         if (canvas) {
@@ -34507,6 +34511,8 @@ var GridChartComp = /** @class */ (function (_super) {
     };
     GridChartComp.createChartProxy = function (chartProxyParams) {
         switch (chartProxyParams.chartType) {
+            case agGridCommunity.ChartType.Column:
+            case agGridCommunity.ChartType.Bar:
             case agGridCommunity.ChartType.GroupedColumn:
             case agGridCommunity.ChartType.StackedColumn:
             case agGridCommunity.ChartType.NormalizedColumn:
@@ -35187,12 +35193,10 @@ var ChartCrossFilter = /** @class */ (function (_super) {
     };
     ChartCrossFilter.prototype.getUpdatedFilterModel = function (colId, updatedValues) {
         var columnFilterType = this.getColumnFilterType(colId);
-        if (columnFilterType === 'agSetColumnFilter') {
-            return { filterType: 'set', values: updatedValues };
-        }
         if (columnFilterType === 'agMultiColumnFilter') {
             return { filterType: 'multi', filterModels: [null, { filterType: 'set', values: updatedValues }] };
         }
+        return { filterType: 'set', values: updatedValues };
     };
     ChartCrossFilter.prototype.getCurrentGridValuesForCategory = function (dataKey) {
         var filteredValues = [];
@@ -35214,7 +35218,11 @@ var ChartCrossFilter = /** @class */ (function (_super) {
         if (colId.indexOf('-filtered-out')) {
             colId = colId.replace('-filtered-out', '');
         }
-        return agGridCommunity._.includes(['agSetColumnFilter', 'agMultiColumnFilter'], this.getColumnFilterType(colId));
+        var filterType = this.getColumnFilterType(colId);
+        if (typeof filterType === 'boolean') {
+            return filterType;
+        }
+        return agGridCommunity._.includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
     };
     ChartCrossFilter.prototype.getColumnFilterType = function (colId) {
         var gridColumn = this.columnController.getGridColumn(colId);

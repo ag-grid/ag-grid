@@ -47,7 +47,7 @@ function onFirstDataRendered(params) {
 
 function createQuarterlySalesChart(gridApi) {
     gridApi.createCrossFilterChart({
-        chartType: 'stackedColumn',
+        chartType: 'column',
         cellRange: {
             columns: ['quarter', 'sale'],
         },
@@ -112,7 +112,7 @@ function createSalesByRefChart(gridApi) {
 
 function createHandsetSalesChart(gridApi) {
     gridApi.createCrossFilterChart({
-        chartType: 'stackedBar',
+        chartType: 'bar',
         cellRange: {
             columns: ['handset', 'sale'],
         },

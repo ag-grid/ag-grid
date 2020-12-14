@@ -189,14 +189,14 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     }
 
     private isColumnChart(): boolean {
-        return _.includes([ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
+        return _.includes([ChartType.Column, ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
     }
 
     private getSeriesDefaults(): any {
         const { chartType } = this;
         const isColumn = this.isColumnChart();
-        const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
-        const isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
+        const isGrouped = !this.crossFiltering && (chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar);
+        const isNormalized = !this.crossFiltering && (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar);
 
         return {
             ...this.chartOptions.seriesDefaults,

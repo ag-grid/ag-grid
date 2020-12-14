@@ -40839,9 +40839,11 @@ var ServerSideStoreType;
  */
 var ChartType;
 (function (ChartType) {
+    ChartType["Column"] = "column";
     ChartType["GroupedColumn"] = "groupedColumn";
     ChartType["StackedColumn"] = "stackedColumn";
     ChartType["NormalizedColumn"] = "normalizedColumn";
+    ChartType["Bar"] = "bar";
     ChartType["GroupedBar"] = "groupedBar";
     ChartType["StackedBar"] = "stackedBar";
     ChartType["NormalizedBar"] = "normalizedBar";
@@ -65099,13 +65101,13 @@ var BarChartProxy = /** @class */ (function (_super) {
         return options;
     };
     BarChartProxy.prototype.isColumnChart = function () {
-        return _.includes([ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
+        return _.includes([ChartType.Column, ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
     };
     BarChartProxy.prototype.getSeriesDefaults = function () {
         var chartType = this.chartType;
         var isColumn = this.isColumnChart();
-        var isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
-        var isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
+        var isGrouped = !this.crossFiltering && (chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar);
+        var isNormalized = !this.crossFiltering && (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar);
         return __assign$g(__assign$g({}, this.chartOptions.seriesDefaults), { type: isColumn ? 'column' : 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
     };
     return BarChartProxy;
@@ -66114,6 +66116,10 @@ var GridChartComp = /** @class */ (function (_super) {
         this.chartType = chartType;
         this.chartThemeName = this.model.getChartThemeName();
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
+        if (!this.chartProxy) {
+            console.warn('ag-Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            return;
+        }
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
         var canvas = this.eChart.querySelector('canvas');
         if (canvas) {
@@ -66132,6 +66138,8 @@ var GridChartComp = /** @class */ (function (_super) {
     };
     GridChartComp.createChartProxy = function (chartProxyParams) {
         switch (chartProxyParams.chartType) {
+            case ChartType.Column:
+            case ChartType.Bar:
             case ChartType.GroupedColumn:
             case ChartType.StackedColumn:
             case ChartType.NormalizedColumn:
@@ -66812,12 +66820,10 @@ var ChartCrossFilter = /** @class */ (function (_super) {
     };
     ChartCrossFilter.prototype.getUpdatedFilterModel = function (colId, updatedValues) {
         var columnFilterType = this.getColumnFilterType(colId);
-        if (columnFilterType === 'agSetColumnFilter') {
-            return { filterType: 'set', values: updatedValues };
-        }
         if (columnFilterType === 'agMultiColumnFilter') {
             return { filterType: 'multi', filterModels: [null, { filterType: 'set', values: updatedValues }] };
         }
+        return { filterType: 'set', values: updatedValues };
     };
     ChartCrossFilter.prototype.getCurrentGridValuesForCategory = function (dataKey) {
         var filteredValues = [];
@@ -66839,7 +66845,11 @@ var ChartCrossFilter = /** @class */ (function (_super) {
         if (colId.indexOf('-filtered-out')) {
             colId = colId.replace('-filtered-out', '');
         }
-        return _.includes(['agSetColumnFilter', 'agMultiColumnFilter'], this.getColumnFilterType(colId));
+        var filterType = this.getColumnFilterType(colId);
+        if (typeof filterType === 'boolean') {
+            return filterType;
+        }
+        return _.includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
     };
     ChartCrossFilter.prototype.getColumnFilterType = function (colId) {
         var gridColumn = this.columnController.getGridColumn(colId);

@@ -2,9 +2,11 @@
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare enum ChartType {
+    Column = "column",
     GroupedColumn = "groupedColumn",
     StackedColumn = "stackedColumn",
     NormalizedColumn = "normalizedColumn",
+    Bar = "bar",
     GroupedBar = "groupedBar",
     StackedBar = "stackedBar",
     NormalizedBar = "normalizedBar",

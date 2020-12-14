@@ -139,6 +139,10 @@ var GridChartComp = /** @class */ (function (_super) {
         this.chartType = chartType;
         this.chartThemeName = this.model.getChartThemeName();
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
+        if (!this.chartProxy) {
+            console.warn('ag-Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            return;
+        }
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
         var canvas = this.eChart.querySelector('canvas');
         if (canvas) {
@@ -157,6 +161,8 @@ var GridChartComp = /** @class */ (function (_super) {
     };
     GridChartComp.createChartProxy = function (chartProxyParams) {
         switch (chartProxyParams.chartType) {
+            case core_1.ChartType.Column:
+            case core_1.ChartType.Bar:
             case core_1.ChartType.GroupedColumn:
             case core_1.ChartType.StackedColumn:
             case core_1.ChartType.NormalizedColumn:
