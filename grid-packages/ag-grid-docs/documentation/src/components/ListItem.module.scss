@@ -1,3 +1,5 @@
 .list-item {
-    composes: mb-1 from global;
+    &:not(&--navitem) {
+        margin-bottom: 0.25rem;
+    }
 }
