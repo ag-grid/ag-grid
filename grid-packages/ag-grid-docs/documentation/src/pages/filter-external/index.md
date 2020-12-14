@@ -16,5 +16,5 @@ The example below shows external filters in action. There are two methods on `gr
 
 The example below shows an external filter in action.
 
-<grid-example title='External Filter' name='external-filter' type='generated' options='{ "exampleHeight": 580 }'></grid-example>
+<grid-example title='External Filter' name='external-filter' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
