@@ -11,9 +11,9 @@ The table below provides a summary of the themes provided with the grid. To see 
 
 | Theme Name | Description |
 |------------|-------------|
-| <a href="../../example.php?theme=ag-theme-alpine" target="_blank" style="whiteSpace: nowrap">**ag-theme-alpine**</a><br/><a href="../example.php?theme=ag-theme-alpine-dark" target="_blank" style="whiteSpace: nowrap">**ag-theme-alpine-dark**</a> | Modern looking themes with high contrast, and generous padding. <br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
-| <a href="../../example.php?theme=ag-theme-balham" target="_blank" style="whiteSpace: nowrap">**ag-theme-balham**</a><br/><a href="../example.php?theme=ag-theme-balham-dark" target="_blank" style="whiteSpace: nowrap">**ag-theme-balham-dark**</a> | Themes for professional data-heavy applications.<br/><br/>**Recommendation:** Balham was the recommended theme before Alpine was developed. It is still an excellent choice for applications that need to fit more data onto each page. |
-| <a href="../../example.php?theme=ag-theme-material" target="_blank" style="whiteSpace: nowrap">**ag-theme-material**</a> | A theme designed according to the Google Material Language Specs.<br/><br/>**Recommendation:** This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-alpine` instead. |
+| <a href="/example.php?theme=ag-theme-alpine" target="_blank" style="whiteSpace: nowrap">**ag-theme-alpine**</a><br/><a href="/example.php?theme=ag-theme-alpine-dark" target="_blank" style="whiteSpace: nowrap">**ag-theme-alpine-dark**</a> | Modern looking themes with high contrast, and generous padding. <br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
+| <a href="/example.php?theme=ag-theme-balham" target="_blank" style="whiteSpace: nowrap">**ag-theme-balham**</a><br/><a href="/example.php?theme=ag-theme-balham-dark" target="_blank" style="whiteSpace: nowrap">**ag-theme-balham-dark**</a> | Themes for professional data-heavy applications.<br/><br/>**Recommendation:** Balham was the recommended theme before Alpine was developed. It is still an excellent choice for applications that need to fit more data onto each page. |
+| <a href="/example.php?theme=ag-theme-material" target="_blank" style="whiteSpace: nowrap">**ag-theme-material**</a> | A theme designed according to the Google Material Language Specs.<br/><br/>**Recommendation:** This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-alpine` instead. |
 
 
 ## Applying a Theme to an App
@@ -44,7 +44,7 @@ There are various ways to load these stylesheets, as described in the sections b
 
 ### Pre-built Bundles
 
-Some pre-built bundles, whether [downloaded from our website](../javascript-download/) or included in the `ag-grid-community` [NPM package](../javascript-npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
+Some pre-built bundles, whether [downloaded from our website](../download/) or included in the `ag-grid-community` [NPM package](../npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
 
 
 ### JavaScript Bundlers
