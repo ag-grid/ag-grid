@@ -42,8 +42,8 @@ var gridOptions = {
     }
 };
 
-function purgeCache(route) {
-    gridOptions.api.purgeServerSideCache(route);
+function refreshCache(route) {
+    gridOptions.api.refreshServerSideStore({route: route, purge: true});
 }
 
 // setup the grid after the page has finished loading
