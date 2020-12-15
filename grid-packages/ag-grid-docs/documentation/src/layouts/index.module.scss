@@ -56,7 +56,7 @@ html {
 
     &__search {
         composes: pl-0 pr-2 py-2 navbar navbar-expand-lg flex-nowrap navbar-light from global;
-        width: 300px;
+        width: 290px;
         margin: auto 0;
 
         @include media-breakpoint-down(md) {
