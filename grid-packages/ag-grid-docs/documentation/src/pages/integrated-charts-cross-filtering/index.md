@@ -6,7 +6,7 @@ enterprise: true
 Cross-filtering charts allow users to interact with data in an easy and intuitive way. Clicking on chart elements
 automatically filters values in both the grid and other cross-filter charts.
 
-<image-caption src="integrated-charts-cross-filtering/resources/cross-filtering.gif" alt="Cross Filtering" centered="true" ></image-caption>
+<gif src="cross-filtering.gif" alt="Cross Filtering" style="max-width: 100%"></gif>
 
 This built-in feature of integrated charts is particularly useful for creating interactive reports and dashboards.
 
