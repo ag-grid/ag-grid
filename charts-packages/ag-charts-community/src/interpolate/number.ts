@@ -1,5 +1,5 @@
 export default function (a: number, b: number): (t: number) => number {
+    const d = b - a;
     a = +a;
-    b -= a;
-    return t => a + b * t;
+    return t => t === 1 ? +b : a + d * t;
 }
