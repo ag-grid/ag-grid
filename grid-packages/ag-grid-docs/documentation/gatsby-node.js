@@ -106,12 +106,9 @@ const getInternalIPAddress = () => {
 
 /* This creates pages for each framework from all of the markdown files, using the doc-page template */
 exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => {
-    if (process.env.GATSBY_ENV === 'ci') {
-        const ip = await publicIp.v4();
-
-        process.env.GATSBY_HOST = `${ip}:9000`;
-    } else {
-        process.env.GATSBY_HOST = `${getInternalIPAddress()}:8080`;
+    if (!process.env.GATSBY_HOST) {
+        process.env.GATSBY_HOST =
+            process.env.NODE_ENV === 'development' ? `${getInternalIPAddress()}:8080` : `${await publicIp.v4()}:9000`;
     }
 
     const homePage = path.resolve('src/templates/home.jsx');

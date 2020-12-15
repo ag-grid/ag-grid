@@ -17,7 +17,7 @@ rm -rf dist
 
 echo "Gatsby Archive Package"
 cd documentation
-GATSBY_ENV=ci GATSBY_PATH_PREFIX="/archive/$RAW_VERSION/documentation" npm run package
+GATSBY_HOST=www.ag-grid.com GATSBY_ROOT_DIRECTORY="/archive/$RAW_VERSION" npm run package
 cd ..
 
 echo "Building Docs Archive"

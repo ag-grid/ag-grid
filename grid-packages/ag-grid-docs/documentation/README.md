@@ -18,7 +18,7 @@ To build the site for deployment, run
     npm run package
 
 This will compile all the required assets and put them in the `public` folder ready for upload. Run `npm run serve` if you want to test the website from these assets, which will then be served
-on http://localhost:9000/documentation/, unless you have changed `GATSBY_PATH_PREFIX` in your `.env` file.
+on http://localhost:9000/documentation/, unless you have changed `GATSBY_ROOT_DIRECTORY` in your `.env` file.
 
 This process will also update the indices for the Algolia search. For this to work, you will need to provide the required environment variables in your `.env`.
 
