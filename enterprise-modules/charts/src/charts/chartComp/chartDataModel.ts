@@ -379,7 +379,8 @@ export class ChartDataModel extends BeanStub {
             crossFiltering: this.crossFiltering,
             valueCols: this.getSelectedValueCols(),
             startRow,
-            endRow
+            endRow,
+            isScatter: _.includes([ChartType.Scatter, ChartType.Bubble], this.chartType)
         };
 
         const result = this.datasource.getData(params);
