@@ -1,5 +1,9 @@
 .doc-page-wrapper {
     composes: container-lg d-flex p-3 from global;
+    margin-left: 0;
+    @media (min-width: 2075px) {
+        margin-left: calc((100% - 300px) / 2 - 730px);
+    }
 }
 
 %enterprise-icon {
