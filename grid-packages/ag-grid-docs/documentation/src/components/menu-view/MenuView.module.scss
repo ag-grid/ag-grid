@@ -8,7 +8,7 @@
         @include media-breakpoint-down(md) {
             @supports (position: sticky) {
                 position: sticky;
-                top: 64px;
+                top: 0px;
                 z-index: 1;
             }
         }
