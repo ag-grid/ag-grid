@@ -85,7 +85,7 @@ to be used when the value is `false`. For example, `suppressCellSelection` is na
 |
 | ### Properties
 |
-| Properties on `ag-grid-polymer` can be provided in the following three ways:
+| Properties on ag-grid-polymer can be provided in the following three ways:
 |
 | - LowerCase: `rowanimation`
 | - CamelCase: `rowAnimation`
@@ -96,7 +96,7 @@ to be used when the value is `false`. For example, `suppressCellSelection` is na
 | - On the `ag-grid-polymer`component at declaration time
 | - On the `gridOptions` property
 |
-| #### Properties on `ag-grid-polymer`
+| #### Properties on ag-grid-polymer
 |
 | ```html
 | <ag-grid-polymer rowData="{{rowData}}" rowAnimation pivot-mode></ag-grid-polymer>
@@ -113,7 +113,7 @@ to be used when the value is `false`. For example, `suppressCellSelection` is na
 | - On the `ag-grid-polymer`component post creation time, via event listeners
 | - On the `ag-grid-polymer`component post creation time, via direct property access
 |
-| #### Events on `ag-grid-polymer`
+| #### Events on ag-grid-polymer
 |
 | ```html
 | <ag-grid-polymer onGridReady="{{onGridReady}}"></ag-grid-polymer>
@@ -123,7 +123,7 @@ to be used when the value is `false`. For example, `suppressCellSelection` is na
 | [[note]]
 | | When defining event listeners in this way it's important to note that the `this` context will be `ag-grid-polymer`, **not** the containing application element. You will have access to the grid's properties directly, but not the application element itself. The `api` and `columnApi` are available directly via `this.api` and `this.columnApi`.
 |
-| #### Events via the `gridOptions` property
+| #### Events via the _gridOptions_ property
 |
 | ```html
 | <ag-grid-polymer gridOptions="{{gridOptions}}"></ag-grid-polymer>
@@ -135,7 +135,7 @@ to be used when the value is `false`. For example, `suppressCellSelection` is na
 | };
 | ```
 |
-| #### Events via Event Listeners on an instance of `ag-grid-polymer`
+| #### Events via Event Listeners on an instance of ag-grid-polymer
 |
 | ```html
 | <ag-grid-polymer id="myGrid"></ag-grid-polymer>
@@ -151,7 +151,7 @@ to be used when the value is `false`. For example, `suppressCellSelection` is na
 |
 | The grid's payload will be available on the event's `agGridDetails` property.
 |
-| #### Events via direct property access on an instance of `ag-grid-polymer`
+| #### Events via direct property access on an instance of ag-grid-polymer
 |
 | ```html
 | <ag-grid-polymer id="myGrid"></ag-grid-polymer>
@@ -296,7 +296,7 @@ to be used when the value is `false`. For example, `suppressCellSelection` is na
 |
 | All of the above (attributes, properties, callbacks and event handlers) are registered using their 'dash' syntax and not camel-case. For example, the property `rowAnimation` is bound using `row-animation`. The following example shows some bindings:
 |
-| ```html
+| ```jsx
 | <ag-grid-angular
 |    #myGrid // assign an angular ID to the grid
 |
@@ -324,7 +324,9 @@ to be used when the value is `false`. For example, `suppressCellSelection` is na
 |
 | The APIs are also accessible through the component. For example, above the ID is given as `'#myGrid'` which then allows the API to be accessed like this:
 |
+| ```jsx
 | <button (click)="myGrid.api.deselectAll()">Clear Selection</button>
+| ```
 
 [[only-vue]]
 |
@@ -340,7 +342,7 @@ to be used when the value is `false`. For example, `suppressCellSelection` is na
 |
 | All of the above (attributes, properties, callbacks and event handlers) are registered using their 'dash' syntax and not camel-case. For example, the property `pivotMode` is bound using `pivot-mode`. The following example shows some bindings:
 |
-| ```html
+| ```jsx
 | <ag-grid-vue
 |    // these are attributes, not bound, give explicit values here
 |    rowSelection="multiple"
@@ -367,7 +369,7 @@ to be used when the value is `false`. For example, `suppressCellSelection` is na
 |
 | ```html
 | <button @click="myGrid.api.deselectAll()">Clear Selection</button>
-|
+| ```
 
 ## Next Steps
 

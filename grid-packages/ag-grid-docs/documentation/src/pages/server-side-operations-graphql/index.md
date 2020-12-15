@@ -122,7 +122,7 @@ input RowGroup {
 }
 ```
 
-The input types defined in the schema directly map to the [IServerSideGetRowsRequest](../server-side-model/#server-side-datasource). We will discuss these mappings in detail in the following sections.
+The input types defined in the schema directly map to the [IServerSideGetRowsRequest](../server-side-model-datasource/#datasource-interface). We will discuss these mappings in detail in the following sections.
 
 The corresponding `rows` resolver function is implemented as follows:
 

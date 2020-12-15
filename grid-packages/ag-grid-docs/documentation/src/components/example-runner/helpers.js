@@ -1,5 +1,5 @@
 import { withPrefix } from 'gatsby';
-import { agGridVersion, getDevLibraryPrefix, localPrefix } from './consts';
+import { agGridVersion, localPrefix, getLocalPrefix } from './consts';
 import { getIndexHtml } from './index-html-helper';
 
 const getInternalFramework = (framework, useFunctionalReact) => {
@@ -143,7 +143,7 @@ export const openPlunker = (nodes, exampleInfo) => {
 
             if (isDevelopment() && window.location) {
                 // swap out to match hostname so Plunkers from localhost can be shared
-                source = source.replace(new RegExp(localPrefix, 'g'), getDevLibraryPrefix(`${window.location.hostname}:8080`));
+                source = source.replace(new RegExp(localPrefix, 'g'), getLocalPrefix(`${window.location.hostname}:8080`));
             }
 
             addHiddenInput(`files[${key}]`, source);
@@ -155,7 +155,8 @@ export const openPlunker = (nodes, exampleInfo) => {
     });
 };
 
-export const isDevelopment = () => process.env.NODE_ENV === 'development' || process.env.GATSBY_ENV === 'ci';
+export const isDevelopment = () => process.env.NODE_ENV === 'development';
+export const isUsingPublishedPackages = () => process.env.GATSBY_USE_PUBLISHED_PACKAGES === 'true';
 
 export const getCssFilePaths = theme => {
     const themeFiles = theme ?
@@ -167,9 +168,9 @@ export const getCssFilePaths = theme => {
         ...themeFiles.map(theme => `ag-theme-${theme}.css`)
     ];
 
-    const getCssFilePath = file => isDevelopment() ?
-        `${localPrefix}/@ag-grid-community/all-modules/dist/styles/${file}` :
-        `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/${file}`;
+    const getCssFilePath = file => isUsingPublishedPackages() ?
+        `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/${file}` :
+        `${localPrefix}/@ag-grid-community/all-modules/dist/styles/${file}`;
 
     return cssFiles.map(getCssFilePath);
 };

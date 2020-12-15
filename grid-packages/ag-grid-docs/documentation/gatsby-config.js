@@ -3,6 +3,12 @@ const fs = require('fs');
 const gracefulFs = require('graceful-fs');
 gracefulFs.gracefulify(fs);
 
+console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+console.log("GATSBY_HOST:", process.env.GATSBY_HOST);
+console.log("GATSBY_ROOT_DIRECTORY: ", process.env.GATSBY_ROOT_DIRECTORY);
+console.log("GATSBY_USE_PUBLISHED_PACKAGES: ", process.env.GATSBY_USE_PUBLISHED_PACKAGES);
+console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
 const plugins = [
   {
     // this allows IE11 to work in develop mode
@@ -137,7 +143,7 @@ if (process.env.GATSBY_UPDATE_ALGOLIA === 'true') {
 }
 
 module.exports = {
-  pathPrefix: process.env.GATSBY_PATH_PREFIX || '/documentation',
+  pathPrefix: `${process.env.GATSBY_ROOT_DIRECTORY || ''}/documentation`,
   siteMetadata: {
     title: 'AG-Grid Documentation',
     author: 'AG-Grid',

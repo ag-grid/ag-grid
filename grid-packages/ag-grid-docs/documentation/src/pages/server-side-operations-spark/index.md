@@ -180,7 +180,7 @@ public class ServerSideGetRowsRequest implements Serializable {
 }
 ```
 
-We will discuss this in detail throughout this guide, however for more details see: [Server-Side Datasource](../server-side-model/#server-side-datasource).
+We will discuss this in detail throughout this guide, however for more details see: [Server-Side Datasource](../server-side-model-datasource/).
 
 ## Service Controller
 

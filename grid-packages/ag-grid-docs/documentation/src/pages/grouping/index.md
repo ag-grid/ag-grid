@@ -275,7 +275,7 @@ The grid does not attempt to order the groups. The groups are presented on a 'fi
 
 For most scenarios, this will not be a problem as the user can sort the grouping column. However this will be a problem in one of the following cases:
 
-- The grid is using [Full Width Group Rows](#fullWidthRows), which means there is no columns associated with the groups to order.
+- The grid is using [Full Width Group Rows](#full-width-group-rows), which means there is no columns associated with the groups to order.
 
 - The groups have an implied order that should not require column sorting to achieve. For example grouping by month (January, February...) or other groups which have business meaning that require order e.g. ["Severe", "Medium", "Low"] or ["Today", "Yesterday", "Older than 1 day"].
 

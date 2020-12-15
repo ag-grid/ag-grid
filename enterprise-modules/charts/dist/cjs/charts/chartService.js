@@ -92,8 +92,8 @@ var ChartService = /** @class */ (function (_super) {
             return;
         }
         var crossFiltering = true;
-        var suppressChartRanges = true;
-        // typeof params.suppressChartRanges !== 'undefined' ? params.suppressChartRanges : true;
+        var suppressChartRangesSupplied = typeof params.suppressChartRanges !== 'undefined' && params.suppressChartRanges !== null;
+        var suppressChartRanges = suppressChartRangesSupplied ? params.suppressChartRanges : true;
         return this.createChart(cellRange, params.chartType, params.chartThemeName, false, suppressChartRanges, params.chartContainer, params.aggFunc, params.chartThemeOverrides, params.unlinkChart, undefined, crossFiltering);
     };
     ChartService.prototype.createChart = function (cellRange, chartType, chartThemeName, pivotChart, suppressChartRanges, container, aggFunc, chartThemeOverrides, unlinkChart, processChartOptions, crossFiltering) {

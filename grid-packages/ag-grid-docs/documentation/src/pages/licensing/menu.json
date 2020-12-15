@@ -1251,8 +1251,8 @@
             "enterprise": true
           },
           {
-            "title": "Chart Events",
-            "url": "../integrated-charts-events/",
+            "title": "Cross Filtering",
+            "url": "../integrated-charts-cross-filtering/",
             "enterprise": true
           },
           {
@@ -1261,8 +1261,8 @@
             "enterprise": true
           },
           {
-            "title": "Cross Filtering",
-            "url": "../integrated-charts-cross-filtering/",
+            "title": "Chart Events",
+            "url": "../integrated-charts-events/",
             "enterprise": true
           },
           {

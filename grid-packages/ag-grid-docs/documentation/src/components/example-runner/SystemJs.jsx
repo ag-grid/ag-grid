@@ -1,8 +1,8 @@
 import React from 'react';
 import { localPrefix, agGridVersion, agChartsVersion } from './consts';
-import { isDevelopment } from './helpers';
+import { isDevelopment, isUsingPublishedPackages } from './helpers';
 
-const devConfiguration = {
+const unpublishedConfiguration = {
     gridMap: {
         /* START OF GRID CSS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-grid.css`,
@@ -117,7 +117,7 @@ const devConfiguration = {
     }
 };
 
-const prodConfiguration = {
+const publishedConfiguration = {
     gridMap: {
         /* START OF GRID CSS PROD - DO NOT DELETE */
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-grid.css`,
@@ -199,7 +199,7 @@ const prodConfiguration = {
 const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options }) => {
     const { enterprise: isEnterprise } = options;
     const systemJsPath = `${boilerplatePath}systemjs.config${isDevelopment() ? '.dev' : ''}.js`;
-    const configuration = isDevelopment() ? devConfiguration : prodConfiguration;
+    const configuration = isUsingPublishedPackages() ? publishedConfiguration : unpublishedConfiguration;
 
     let systemJsMap;
     let systemJsPaths;

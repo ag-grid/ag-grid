@@ -9,10 +9,10 @@ The grid provides four filters out of the box: three [Simple Filters](../filter-
 
 Follow the links below to learn more about each specific filter:
 
-- [Text](../javascript-grid-filter-text/)
-- [Number](../javascript-grid-filter-number/)
-- [Date](../javascript-grid-filter-date/)
-- [Set Filter](../javascript-grid-filter-set/)<enterprise-icon></enterprise-icon>
+- [Text](../filter-text/)
+- [Number](../filter-number/)
+- [Date](../filter-date/)
+- [Set Filter](../filter-set/)<enterprise-icon></enterprise-icon>
 
 
 The rest of this section will cover concepts that are common to every provided filter.

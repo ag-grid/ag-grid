@@ -17,7 +17,7 @@ rm -rf dist
 
 echo "Gatsby Package"
 cd documentation
-GATSBY_PATH_PREFIX=/documentation npm run package
+GATSBY_HOST=www.ag-grid.com GATSBY_USE_PUBLISHED_PACKAGES=true npm run package
 cd ..
 
 echo "Building Docs Release Bundle"

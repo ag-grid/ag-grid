@@ -96,9 +96,12 @@ Most of the frameworks ag-Grid works with use components. It is possible to use 
 - **VueJS**
 - **Polymer**
 
-The following frameworks are not configured in this way:
 
-- **AngularJS 1**: This framework does not follow the same pattern as other frameworks. See [AngularJS](../best-angularjs-grid/#angular-compiling) on how you can turn on AngularJS 1 compiling to use AngularJS bindings inside ag-Grid.
+[[only-angular]]
+| The following frameworks are not configured in this way:
+|
+| - **AngularJS 1**: This framework does not follow the same pattern as other frameworks. See [AngularJS](../angularjs/#angular-compiling) 
+| on how you can turn on AngularJS 1 compiling to use AngularJS bindings inside ag-Grid.
 
 If you are using one of the supported frameworks registration is done using the `frameworkComponents` property rather than the `components` property. Then the component is registered by name as normal.
 

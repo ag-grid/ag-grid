@@ -3,7 +3,7 @@ title: "Set Filter - Overview"
 enterprise: true
 ---
 
-The Set Filter takes inspiration from Excel's AutoFilter and allows filtering on sets of data. It is built on top of the shared functionality that is common across all [Provided Filters](../javascript-grid-filter-provided/).
+The Set Filter takes inspiration from Excel's AutoFilter and allows filtering on sets of data. It is built on top of the shared functionality that is common across all [Provided Filters](../filter-provided/).
 
 <image-caption src="filter-set/resources/set-filter.png" alt="Set Filter" width="28rem" centered="true"></image-caption>
 
@@ -60,4 +60,4 @@ Parameters that are specific to the Set Filter:
 ## Next Up
 
 
-Continue to the next section: [Filter List](../filter-set-filter-list).
+Continue to the next section: [Filter List](../filter-set-filter-list/).

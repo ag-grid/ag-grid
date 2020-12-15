@@ -64,27 +64,28 @@ The following example illustrates how to use different renderers and parameters 
 
 - The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
 - `colDef.cellRendererSelector` is a function that selects the renderer based on the row data.
+
     ```js
-    cellRendererSelector:function (params) {
-        var moodDetails = {
-            component: 'moodCellRenderer'
-        };
+        cellRendererSelector:function (params) {
+            var moodDetails = {
+                component: 'moodCellRenderer'
+            };
 
-        var genderDetails = {
-            component: 'genderCellRenderer',
-            params: {values: ['Male', 'Female']}
-        };
+            var genderDetails = {
+                component: 'genderCellRenderer',
+                params: {values: ['Male', 'Female']}
+            };
 
-        if (params.data.type === 'gender') {
-            return genderDetails;
+            if (params.data.type === 'gender') {
+                return genderDetails;
+            }
+                
+            if (params.data.type === 'mood') {
+                return moodDetails;
+            }
+
+            return null;
         }
-            
-        if (params.data.type === 'mood') {
-            return moodDetails;
-        }
-
-        return null;
-    }
     ```
 
 - The column 'Rendered Value' show the data rendered applying the component and params specified by `colDef.cellRendererSelector`

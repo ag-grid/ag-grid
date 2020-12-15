@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { withPrefix } from 'gatsby';
 import classnames from 'classnames';
 import styles from './IconsPanel.module.scss';
 
@@ -46,7 +47,7 @@ const IconsList = ({ theme }) => (
     <div className={styles['icons-panel__icon-list']}>
         {icons.map(icon => (
             <div className={styles['icons-panel__icon-tile']}>
-                <img src={`/theme-icons/${theme}/${icon}.svg`} alt={icon} title={icon}></img>
+                <img src={withPrefix(`/theme-icons/${theme}/${icon}.svg`)} alt={icon} title={icon}></img>
                 <p className={styles['icons-panel__icon-tile__name']}>{icon}</p>
             </div>
         ))}
@@ -62,7 +63,7 @@ const PanelWrapper = ({ theme }) => (
 );
 
 const BottomBar = ({ theme }) => (
-    <div className={styles['icons-panel__download']}><a href={`/theme-icons/${theme}/${theme}-icons.zip`}>Download All</a></div>
+    <div className={styles['icons-panel__download']}><a href={withPrefix(`/theme-icons/${theme}/${theme}-icons.zip`)}>Download All</a></div>
 );
 
 const IconsPanel = () => {

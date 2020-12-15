@@ -77,5 +77,5 @@ Now we can either serve the HTML file above which will result in the following g
 
 ## Example Code
 
-The code for this example can be found on [GitHub](git@github.com:seanlandsman/ag-grid-amd-example.git).
+The code for this example can be found on [GitHub](https://github.com/seanlandsman/ag-grid-amd-example).
 

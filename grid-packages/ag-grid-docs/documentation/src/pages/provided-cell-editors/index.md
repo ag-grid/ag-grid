@@ -87,4 +87,3 @@ The `agRichSelectCellEditor` takes the following parameters:
 
 - `searchDebounceDelay (Default: 300)`: The value in `ms` for the fuzzy search debounce delay.
 
-### agDateTimeCellEditor

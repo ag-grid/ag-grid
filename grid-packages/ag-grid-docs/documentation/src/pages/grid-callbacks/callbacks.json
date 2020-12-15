@@ -25,7 +25,7 @@
             "description": "Callback for grouping.",
             "more": {
                 "name": "Row Grouping",
-                "url": "../javascript-grid-grouping/#groupingCallbacks"
+                "url": "../grouping/#reference-callbacks"
             }
         },
         "getBusinessKeyForNode(node)": {
@@ -35,7 +35,7 @@
             "description": "Function to use instead of <code>headerCellTemplate</code>. Should return string or HTML DOM element."
         },
         "getChildCount(data)": {
-            "description": "(For <a href='../javascript-grid-server-side-model/'>Server-Side Row Model</a> only) Allows setting the child count for a group row."
+            "description": "(For <a href='../server-side-model/'>Server-Side Row Model</a> only) Allows setting the child count for a group row."
         },
         "processRowPostCreate(params)": {
             "description": "Allows you to process rows after they are created, so you can do final adding of custom attributes etc."
@@ -44,23 +44,23 @@
             "description": "Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination."
         },
         "isFullWidthCell(rowNode)": {
-            "description": "Tells the grid if this row should be rendered using <a href='../javascript-grid-master-detail/'>fullWidth</a>"
+            "description": "Tells the grid if this row should be rendered using <a href='../master-detail/'>fullWidth</a>"
         },
         "isRowSelectable(rowNode)": {
             "description": "Callback to be used to determine which rows are selectable. By default rows are selectable, so return <code>false</code> to make a row un-selectable.",
             "more": {
                 "name": "Specify Selectable Rows",
-                "url": "../javascript-grid-selection/#specify-selectable-rows"
+                "url": "../row-selection/#specify-selectable-rows"
             }
         },
         "isRowMaster(dataItem)": {
-            "description": "Callback to be used with <a href='../javascript-grid-master-detail'>Master Detail</a> to determine if a row should be a master row. If <code>false</code> is returned no detail row will exist for this row."
+            "description": "Callback to be used with <a href='../master-detail/'>Master Detail</a> to determine if a row should be a master row. If <code>false</code> is returned no detail row will exist for this row."
         },
         "postSort(rowNodes)": {
             "description": "Callback to perform additional sorting after the grid has sorted the rows.",
             "more": {
                 "name": "Post Sort",
-                "url": "../javascript-grid-sorting/#post-sort"
+                "url": "../row-sorting/#post-sort"
             }
         },
         "navigateToNextHeader(params)": {
@@ -106,14 +106,14 @@
             "description": "Allows default sorting of groups.",
             "more": {
                 "name": "Default Group Order",
-                "url": "../javascript-grid-grouping/#default-group-order"
+                "url": "../grouping/#default-group-order"
             }
         },
         "processChartOptions(params)": {
             "description": "Callback to be used to with charts to override default chart options.",
             "more": {
                 "name": "Overriding Chart Options",
-                "url": "../integrated-charts-customisation/#overriding-chart-options"
+                "url": "../integrated-charts-customisation/#example-common-chart-overrides"
             }
         },
         "getChartToolbarItems(params)": {

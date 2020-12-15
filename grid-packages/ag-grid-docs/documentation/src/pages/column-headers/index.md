@@ -23,89 +23,95 @@ By default, the text label for the header is display horizontally, i.e. as norma
 The following example shows how you can provide a unique look and feel to the headers. Note that:
 
 - The header heights have all been changed in the gridOptions:
+
     ```js
-    /* Group columns */
-    groupHeaderHeight: 75,
+        /* Group columns */
+        groupHeaderHeight: 75,
 
-    /* Label columns */
-    headerHeight: 150,
+        /* Label columns */
+        headerHeight: 150,
 
-    /* Floating filter */
-    floatingFiltersHeight: 50,
+        /* Floating filter */
+        floatingFiltersHeight: 50,
 
-    /* Pivoting, requires turning on pivot mode. Label columns */
-    pivotGroupHeaderHeight: 50,
+        /* Pivoting, requires turning on pivot mode. Label columns */
+        pivotGroupHeaderHeight: 50,
 
-    /* Pivoting, requires turning on pivot mode. Group columns */
-    pivotGroupHeaderHeight: 100,
+        /* Pivoting, requires turning on pivot mode. Group columns */
+        pivotGroupHeaderHeight: 100,
     ```
-- The grouped column header `Athlete Details` has a specific style applied to it to make it bigger. Note that the style is slightly different depending if pivoting or not:
-    ```css
-    .ag-pivot-off .ag-header-group-cell {
-        font-size: 50px;
-        color: red;
-    }
 
-    .ag-pivot-on .ag-header-group-cell {
-        font-size: 25px;
-        color: green;
-    }
+- The grouped column header `Athlete Details` has a specific style applied to it to make it bigger. Note that the style is slightly different depending if pivoting or not:
+
+    ```css
+        .ag-pivot-off .ag-header-group-cell {
+            font-size: 50px;
+            color: red;
+        }
+
+        .ag-pivot-on .ag-header-group-cell {
+            font-size: 25px;
+            color: green;
+        }
     ```
 
 - The column labels have CSS applied to them so they are displayed vertically.
+
     ```css
-    .ag-cell-label-container {
-        /* Necessary to allow for text to grow vertically */
-        height: 100%;
-    }
+        .ag-cell-label-container {
+            /* Necessary to allow for text to grow vertically */
+            height: 100%;
+        }
 
-    .ag-header-cell-label {
-        /* Necessary to allow for text to grow vertically */
-        height: 100%;
-        padding: 0 !important;
-    }
+        .ag-header-cell-label {
+            /* Necessary to allow for text to grow vertically */
+            height: 100%;
+            padding: 0 !important;
+        }
 
-    .ag-header-cell-label .ag-header-cell-text {
-        /* Force the width corresponding at how much width
-        we need once the text is laid out vertically */
-        width: 30px;
-        transform: rotate(90deg);
-        margin-top: 50px;
-        /* Since we are rotating a span */
-        display: inline-block;
-    }
+        .ag-header-cell-label .ag-header-cell-text {
+            /* Force the width corresponding at how much width
+            we need once the text is laid out vertically */
+            width: 30px;
+            transform: rotate(90deg);
+            margin-top: 50px;
+            /* Since we are rotating a span */
+            display: inline-block;
+        }
     ```
 
 - The floating filters are using a much bigger area and the font used is bigger and bolder.
+
     ```css
-    .ag-floating-filter-body input {
-        height: 49px;
-    }
+        .ag-floating-filter-body input {
+            height: 49px;
+        }
 
-    .ag-floating-filter-button {
-        margin-top: -49px;
-    }
+        .ag-floating-filter-button {
+            margin-top: -49px;
+        }
 
-    .ag-floating-filter-button button {
-        height: 49px
-    }
+        .ag-floating-filter-button button {
+            height: 49px
+        }
 
-    .ag-floating-filter-body input {
-        font-size: 15px;
-        font-weight: bold;
-    }
+        .ag-floating-filter-body input {
+            font-size: 15px;
+            font-weight: bold;
+        }
     ```
 
 - The styling of the column labels have also been tweaked depending if pivoting or not.
-    ```css
-    .ag-pivot-off .ag-header-cell-label {
-        color: #8a6d3b;
-    }
 
-    .ag-pivot-on .ag-header-cell-label {
-        color: #1b6d85;
-        font-weight: bold;
-    }
+    ```css
+        .ag-pivot-off .ag-header-cell-label {
+            color: #8a6d3b;
+        }
+
+        .ag-pivot-on .ag-header-cell-label {
+            color: #1b6d85;
+            font-weight: bold;
+        }
     ```
 
 <grid-example title='Header Height and Text Orientation' name='text-orientation' type='generated' options='{ "enterprise": true }'></grid-example>
@@ -166,7 +172,7 @@ When you provide your own template, everything should work as expected as long a
 The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
 [[note]]
-| Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](../icons/).
+| Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](../custom-icons/).
 
 ### Example: Simple Header Templates
 

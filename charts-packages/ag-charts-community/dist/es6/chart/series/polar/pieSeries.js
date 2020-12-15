@@ -147,6 +147,7 @@ var PieSeries = /** @class */ (function (_super) {
         _this.label.addEventListener('change', _this.scheduleLayout, _this);
         _this.label.addEventListener('dataChange', _this.scheduleData, _this);
         _this.callout.addEventListener('change', _this.scheduleLayout, _this);
+        _this.callout.colors = _this.strokes;
         _this.addPropertyListener('data', function (event) {
             if (event.value) {
                 event.source.seriesItemEnabled = event.value.map(function () { return true; });
@@ -337,9 +338,8 @@ var PieSeries = /** @class */ (function (_super) {
         if (!this.chart) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
         var highlightedDatum = this.chart.highlightedDatum;
-        var outerRadii = [];
         var centerOffsets = [];
         var innerRadius = radiusScale.convert(0);
         this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
@@ -374,19 +374,18 @@ var PieSeries = /** @class */ (function (_super) {
             sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
             sector.lineJoin = 'round';
-            outerRadii.push(outerRadius);
             centerOffsets.push(sector.centerOffset);
         });
         var calloutColors = callout.colors, calloutLength = callout.length, calloutStrokeWidth = callout.strokeWidth;
         this.groupSelection.selectByTag(PieNodeTag.Callout).each(function (line, datum, index) {
             if (datum.label) {
-                var outerRadius = centerOffsets[index] + outerRadii[index];
+                var radius = radiusScale.convert(datum.radius);
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
-                line.x1 = datum.midCos * outerRadius;
-                line.y1 = datum.midSin * outerRadius;
-                line.x2 = datum.midCos * (outerRadius + calloutLength);
-                line.y2 = datum.midSin * (outerRadius + calloutLength);
+                line.x1 = datum.midCos * radius;
+                line.y1 = datum.midSin * radius;
+                line.x2 = datum.midCos * (radius + calloutLength);
+                line.y2 = datum.midSin * (radius + calloutLength);
             }
             else {
                 line.stroke = undefined;
@@ -397,8 +396,8 @@ var PieSeries = /** @class */ (function (_super) {
             this.groupSelection.selectByTag(PieNodeTag.Label).each(function (text, datum, index) {
                 var label = datum.label;
                 if (label) {
-                    var outerRadius = outerRadii[index];
-                    var labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset_1;
+                    var radius = radiusScale.convert(datum.radius);
+                    var labelRadius = centerOffsets[index] + radius + calloutLength + offset_1;
                     text.fontStyle = fontStyle_1;
                     text.fontWeight = fontWeight_1;
                     text.fontSize = fontSize_1;

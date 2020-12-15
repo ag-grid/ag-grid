@@ -63,7 +63,7 @@ Here are the rules that determine how filter values are selected:
 
 - **Filter Active**: Before the update 'some' values in the filter were selected (as the filter was active). The filter list will be updated reflecting the data change, however previous selections will remain intact. If the update resulted in a new filter value, the new filter value will not be selected.
 
-Unlike [Cell Editing](#row-cell-updates), transaction updates will execute filtering in the grid.
+Unlike [Cell Editing](#row--cell-updates), transaction updates will execute filtering in the grid.
 
 The following example demonstrates these rules. Try the following:
 

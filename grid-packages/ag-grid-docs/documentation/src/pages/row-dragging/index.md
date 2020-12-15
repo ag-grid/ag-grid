@@ -196,11 +196,11 @@ such as row grouping or tree data, which are explained below.
 
 ## Dragging & Row Grouping
 
-[Row Grouping](../row-grouping/) in the grid allows grouping rows by a particular column. Dragging rows while grouping is possible when doing unmanaged row dragging. The application is responsible for updating the data based on the drag events fired by the grid.
+[Row Grouping](../grouping/) in the grid allows grouping rows by a particular column. Dragging rows while grouping is possible when doing unmanaged row dragging. The application is responsible for updating the data based on the drag events fired by the grid.
 
 The example below uses row dragging to place rows into groups. It does not try to order the rows within the group. For this reason, the logic works regardless of sorting or filtering.
 
-The example below shows row dragging with [Row Grouping](../row-grouping/) where the following can be noted:
+The example below shows row dragging with [Row Grouping](../grouping/) where the following can be noted:
 
 - The **Athlete** column has row drag enabled for non-group rows. This is achieved using the function variant of the `rowDrag` property.
 - The grid has not set the `rowDragManaged` property which results in unmanaged row dragging.
@@ -218,7 +218,7 @@ The example below shows row dragging with [Row Grouping](../row-grouping/) where
 
 The example below shows [Tree Data](../tree-data/) and row dragging where the following can be noted:
 
-- The [auto-group column](../row-grouping/#auto-column-group) has row drag `true` for all rows.
+- The [auto-group column](../grouping/#auto-column-group) has row drag `true` for all rows.
 
 -  The example registers for `onRowDragEnd` events and rearranges
 the rows when the drag completes.
@@ -251,7 +251,7 @@ With unmanaged row dragging, the application is in control of what gets dragged,
 
 ## Other Row Models
 
-Unmanaged row dragging will work with any of the row models [Infinite](../infinite-scrolling/), [Server-Side](../server-side-model/) and[Viewport](../viewport/). With unmanaged dragging, the implementation of what happens when a particular drag happens is up to your application.
+Unmanaged row dragging will work with any of the row models [Infinite](../infinite-scrolling/), [Server-Side](../server-side-model/) and [Viewport](../viewport/). With unmanaged dragging, the implementation of what happens when a particular drag happens is up to your application.
 
 Because the grid implementation with regards to row dragging is identical to the above, examples of row dragging with the other row models are not given. How your application behaves with regards to the row drag events is the difficult bit, but that part is specific to your application and how your application stores its state. Giving an example here with a different data store would be redundant.
 

@@ -93,7 +93,7 @@ In the example below, note the following:
 If using either of the following features, the grid will be forced to use the second mode:
 
 - [Hide Open Parents](../grouping/#hide-open-parents)
-- [Group Remove Single Children](../grouping/#removeSingleChildren)
+- [Group Remove Single Children](../grouping/#removing-single-children)
 
 This is because both of these features remove top level rows (group rows and master rows) from the displayed rows, making it impossible to paginate based on the top level rows only.
 

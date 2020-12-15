@@ -28,7 +28,7 @@ We frequently received feedback from our customers that their custom themes requ
 
 The changes described in this document all work together to fix this situation. We have rewritten the base theme so that most of its CSS selectors consist of a single class name. This has allowed us to rewrite our provided themes - Balham, Material and Alpine - to simplify them in the same way. Any CSS selectors in your custom themes can be simplified too.
 
-While re-writing our themes we took the opportunity to make some other "housekeeping" type improvements like [removing](#variables-removed-with-no-equivalent-parameter) unnecessary variables, [renaming](#renamed-css-classes) inconsistent class names, and moving to a [new method](#themes-are-now-configured-using-parameters) for configuring themes.
+While re-writing our themes we took the opportunity to make some other "housekeeping" type improvements like [removing](#3-variables-removed-with-no-equivalent-parameter) unnecessary variables, [renaming](#2-renamed-variables) inconsistent class names, and moving to a [new method](#1-themes-are-now-configured-using-parameters) for configuring themes.
 
 Upgrading your custom themes to v23 will take some work, but the result should be less breaking changes going forward. In addition, we have implemented a [backwards compatibility mode](#backwards-compatibility-mode) to help you with the transition.
 
@@ -228,8 +228,8 @@ Here is what each mode does:
 - variables mode: reads the global variables that were supported in v22 and converts them to the parameter maps used in v23, _only if there is an equivalent parameter for a variable_ (most variables are supported). This mode:
 
     - is a reliable mechanism and is safe to use long-term (although you may wish to update your themes anyway, to get the benefits of the new configuration system like better validation).
-    - does not support [variables removed with no equivalent parameter](#variables-removed-with-no-equivalent-parameter) - if you were using one of these variables, you will need to write new CSS selectors to achieve the same effect. Generally, the reason why we have removed some variables is that it is simple to write CSS to achieve the same effect.
-    - does not modify your CSS selectors. If you are using any of the [renamed CSS classes](#renamed-css-classes) you will need to update your CSS selectors.
+    - does not support [variables removed with no equivalent parameter](#3-variables-removed-with-no-equivalent-parameter) - if you were using one of these variables, you will need to write new CSS selectors to achieve the same effect. Generally, the reason why we have removed some variables is that it is simple to write CSS to achieve the same effect.
+    - does not modify your CSS selectors. If you are using any of the [renamed CSS classes](#4-renamed-css-classes) you will need to update your CSS selectors.
 
 - legacy mode: attempts to make themes written for v22 and earlier work in v23. This mode:
     - is intended to be used as a temporary solution for graceful migration to v23 for apps with many or complex themes, allowing these apps to update to v23 immediately and then gradually migrate their themes at a later date

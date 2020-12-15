@@ -2,26 +2,6 @@
     composes: navbar flex-grow-1 flex-column align-items-stretch navbar-expand-lg navbar-light p-0 from global;
     flex-basis: 0px;
 
-    &__search-bar-wrapper {
-        composes: p-2 from global;
-        display: flex;
-        min-height: 3.5rem;
-    }
-
-    @include media-breakpoint-up(lg) {
-        &__search-bar-wrapper {
-            border-bottom: 1px solid lightgray;
-        }
-    }
-
-    &__nav-button {
-        composes: navbar-toggler ml-1 mb-2 from global;
-
-        &-icon {
-            composes: navbar-toggler-icon from global;
-        }
-    }
-
     &__item {
         &__link {
             composes: d-block my-2 from global;

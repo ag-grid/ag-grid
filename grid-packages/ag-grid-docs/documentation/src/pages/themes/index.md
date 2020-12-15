@@ -23,7 +23,7 @@ If you extend a provided theme and then very extensively alter it to make a tota
 1. Between releases, we may change some of the implementation details of the provided theme in a way that breaks these rules you have added. For these apps that want a look and feel that is entirely different from our provided  themes, it is appropriate to extend the base theme. The base theme contains the most basic configurable borders  and sensible default padding but otherwise has no opinionated design elements.
 
 [[note]]
-| If you extend the base theme but want the icons from a provided theme, this can be done by adding the font from the theme you like. You can find these in the `dist/styles/webfont` folder of the distribution. Link this font into your application and follow the instructions for configuring a custom [icon font](../icons/)
+| If you extend the base theme but want the icons from a provided theme, this can be done by adding the font from the theme you like. You can find these in the `dist/styles/webfont` folder of the distribution. Link this font into your application and follow the instructions for configuring a custom [icon font](../custom-icons/)
 
 ## When Not to Use Themes
 

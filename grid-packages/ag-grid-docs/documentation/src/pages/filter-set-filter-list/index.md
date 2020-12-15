@@ -358,5 +358,5 @@ The following example demonstrates tooltips in the Set Filter. Note the followin
 
 ## Next Up
 
-Continue to the next section: [Data Updates](../filter-set-data-updates).
+Continue to the next section: [Data Updates](../filter-set-data-updates/).
 

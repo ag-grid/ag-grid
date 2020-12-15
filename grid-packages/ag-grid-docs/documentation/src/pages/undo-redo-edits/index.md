@@ -4,7 +4,7 @@ title: "Undo / Redo Edits"
 
 This section covers how to allow users to undo / redo their cell edits.
 
-When [Cell Editing](../javascript-grid-cell-editing/) is enabled in the grid, it is usually desirable to allow users to undo / redo any edits.
+When [Cell Editing](../cell-editing/) is enabled in the grid, it is usually desirable to allow users to undo / redo any edits.
 
 Users can change the contents of cells through the following grid features:
 

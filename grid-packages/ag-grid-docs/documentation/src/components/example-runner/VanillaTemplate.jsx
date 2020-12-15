@@ -3,7 +3,7 @@ import ReactDOMServer from 'react-dom/server';
 import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
 import { localPrefix, agGridVersion, agChartsVersion } from './consts';
-import { getCssFilePaths, isDevelopment } from './helpers';
+import { getCssFilePaths, isDevelopment, isUsingPublishedPackages } from './helpers';
 import Scripts from './Scripts';
 import Styles from './Styles';
 
@@ -28,18 +28,18 @@ const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment
     let scriptPath;
 
     if (library === 'charts') {
-        scriptPath = isDevelopment() ?
-            `${localPrefix}/ag-charts-community/dist/ag-charts-community.js` :
-            `https://unpkg.com/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.min.js`;
+        scriptPath = isUsingPublishedPackages() ?
+            `https://unpkg.com/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.min.js` :
+            `${localPrefix}/ag-charts-community/dist/ag-charts-community.js`;
     } else {
         if (options.enterprise) {
-            scriptPath = isDevelopment() ?
-                `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js` :
-                `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridVersion}/dist/ag-grid-enterprise.min.js`;
+            scriptPath = isUsingPublishedPackages() ?
+                `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridVersion}/dist/ag-grid-enterprise.min.js` :
+                `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`;
         } else {
-            scriptPath = isDevelopment() ?
-                `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.js` :
-                `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/ag-grid-community.min.js`;
+            scriptPath = isUsingPublishedPackages() ?
+                `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/ag-grid-community.min.js` :
+                `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.js`;
         }
     }
 

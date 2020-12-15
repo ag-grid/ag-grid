@@ -21,7 +21,7 @@ If pivot mode is off, then adding or removing pivot columns will have no effect.
 
 
 [[note]]
-| To allow a column to be used as pivot column via the [Tool Panel](../javascript-grid-tool-panel/),
+| To allow a column to be used as pivot column via the [Tool Panel](../tool-panel/),
 | set `enablePivot=true` on the required columns. Otherwise you won't be able to drag
 | and drop the columns to the pivot drop zone from the Tool Panel.
 

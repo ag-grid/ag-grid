@@ -20,18 +20,18 @@
         },
         "suppressAutoSize": {
             "default": false,
-            "description": "Suppresses <a href='../resizing/#auto-size-columns'>auto-sizing columns</a> for columns. In other words, double clicking a column's header's edge will not auto-size."
+            "description": "Suppresses <a href='../column-sizing/#auto-size-columns'>auto-sizing columns</a> for columns. In other words, double clicking a column's header's edge will not auto-size."
         },
         "autoSizePadding": {
             "default": 4,
-            "description": "Number of pixels to add to a column width after the <a href='../resizing/#auto-size-columns'>auto-sizing</a> calculation. Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header."
+            "description": "Number of pixels to add to a column width after the <a href='../column-sizing/#auto-size-columns'>auto-sizing</a> calculation. Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header."
         },
         "skipHeaderOnAutoSize": {
             "default": false,
             "description": "Set this to `true` to skip the `headerName` when `autoSize` is called by default.",
             "more": {
                 "name": "Resizing Example",
-                "url": "../resizing/#resizing-example"
+                "url": "../column-sizing/#resizing-example"
             }
         },
         "suppressColumnMoveAnimation": {
@@ -51,7 +51,7 @@
             "description": "Set to `true` to show the 'no sort' icon.",
             "more": {
                 "name": "Example Custom Sorting",
-                "url": "../sorting/#example-custom-sorting"
+                "url": "../row-sorting/#example-custom-sorting"
             }
         },
         "suppressMultiSort": {
@@ -78,7 +78,7 @@
             "description": "Sorts the grid columns in the order of Column Definitions after Column Definitions are updated.",
             "more": {
                 "name": "Apply Column Order",
-                "url": "../column-state/#applying-column-order"
+                "url": "../column-updating-definitions/#applying-column-order"
             }
         }
     },
@@ -97,7 +97,7 @@
             "description": "Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.",
             "more": {
                 "name": "Example Sorting Order and Animation",
-                "url": "../sorting/#example-sorting-order-and-animation"
+                "url": "../row-sorting/#example-sorting-order-and-animation"
             }
         },
         "accentedSort": {
@@ -105,14 +105,14 @@
             "description": "Set to `true` to specify that the sort should take into account accented characters. If this feature is turned on the sort will perform slower.",
             "more": {
                 "name": "Accented Sort",
-                "url": "../sorting/#accentedSort"
+                "url": "../row-sorting/#accented-sort"
             }
         },
         "multiSortKey": {
             "description": "Set to `'ctrl'` to have multi sorting work using the `Ctrl` or `Command` (for Apple) keys.",
             "more": {
                 "name": "Multi Column Sorting",
-                "url": "../sorting/#multi-column-sorting"
+                "url": "../row-sorting/#multi-column-sorting"
             }
         },
         "suppressMaintainUnsortedOrder": {
@@ -141,14 +141,14 @@
                 "single",
                 "multiple"
             ],
-            "description": "Type of <a href='../selection/'>Row Selection</a>."
+            "description": "Type of <a href='../row-selection/'>Row Selection</a>."
         },
         "rowMultiSelectWithClick": {
             "default": false,
             "description": "Set to `true` to allow multiple rows to be selected using single click.",
             "more": {
                 "name": "Multi Select Single Click",
-                "url": "../selection/#multi-select-single-click"
+                "url": "../row-selection/#example-multi-select-with-click"
             }
         },
         "suppressRowDeselection": {
@@ -157,7 +157,7 @@
         },
         "suppressRowClickSelection": {
             "default": false,
-            "description": "If `true`, <a href='../selection/'>row selection</a> won't happen when rows are clicked. Use when you want checkbox selection exclusively."
+            "description": "If `true`, <a href='../row-selection/'>row selection</a> won't happen when rows are clicked. Use when you want checkbox selection exclusively."
         },
         "suppressCellSelection": {
             "default": false,
@@ -211,18 +211,18 @@
         },
         "singleClickEdit": {
             "default": false,
-            "description": "Set to `true` to enable <a href='../cell-editing/#singleClickEditing'>Single Click Editing</a> for cells, to start editing with a single click."
+            "description": "Set to `true` to enable <a href='../cell-editing/#single-click-editing'>Single Click Editing</a> for cells, to start editing with a single click."
         },
         "suppressClickEdit": {
             "default": false,
             "description": "Set to `true` so that neither single nor double click starts editing.",
             "more": {
                 "name": "Single Click, Double Click, No Click Editing",
-                "url": "../cell-editing/#singleClickEditing"
+                "url": "../cell-editing/#single-click-double-click-no-click-editing"
             }
         },
         "editType": {
-            "description": "Set to `'fullRow'` to enable <a href='../cell-editing/#fullRowEdit'>Full Row Editing</a>. Otherwise leave blank to edit one cell at a time."
+            "description": "Set to `'fullRow'` to enable <a href='../cell-editing/#full-row-editing'>Full Row Editing</a>. Otherwise leave blank to edit one cell at a time."
         },
         "enableCellChangeFlash": {
             "default": false,
@@ -250,11 +250,11 @@
         },
         "stopEditingWhenGridLosesFocus": {
             "default": false,
-            "description": "Set this to `true` to <a href='../cell-editing/#losingFocusStopsEditing'> stop cell editing when grid loses focus</a>. The default is the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only."
+            "description": "Set this to `true` to <a href='../cell-editing/#stop-editing-when-grid-loses-focus'> stop cell editing when grid loses focus</a>. The default is the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only."
         },
         "enterMovesDown<br />enterMovesDownAfterEdit": {
             "default": false,
-            "description": "Set both properties to `true` to have Excel-style behaviour for the `Enter` key, i.e. <a href='../cell-editing/#enter-key-down'>enter key moves down</a>."
+            "description": "Set both properties to `true` to have Excel-style behaviour for the `Enter` key, i.e. <a href='../cell-editing/#enter-key-navigation'>enter key moves down</a>."
         }
     },
     "headers": {
@@ -266,14 +266,14 @@
             "description": "The height in pixels for the row containing the column label header.",
             "more": {
                 "name": "Header Height",
-                "url": "../column-header/#headerHeight"
+                "url": "../column-headers/#header-height"
             }
         },
         "groupHeaderHeight": {
             "description": "The height for the rows containing header column groups. If not specified, it uses `headerHeight`.",
             "more": {
                 "name": "Header Height",
-                "url": "../column-header/#headerHeight"
+                "url": "../column-headers/#header-height"
             }
         },
         "floatingFiltersHeight": {
@@ -281,21 +281,21 @@
             "description": "The height for the row containing the floating filters.",
             "more": {
                 "name": "Header Height",
-                "url": "../column-header/#headerHeight"
+                "url": "../column-headers/#header-height"
             }
         },
         "pivotHeaderHeight": {
             "description": "The height for the row containing the columns when in pivot mode. If not specified, it uses `headerHeight`.",
             "more": {
                 "name": "Header Height",
-                "url": "../column-header/#headerHeight"
+                "url": "../column-headers/#header-height"
             }
         },
         "pivotGroupHeaderHeight": {
             "description": "The height for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.",
             "more": {
                 "name": "Header Height",
-                "url": "../column-header/#headerHeight"
+                "url": "../column-headers/#header-height"
             }
         }
     },
@@ -308,7 +308,7 @@
             "description": "Used when grouping. If `true`, a group row will span all columns across the entire width of the table. If `false`, the cells will be rendered as normal and you will have the opportunity to include a grouping column (normally the first on the left) to show the group.",
             "more": {
                 "name": "Full Width Group Rows",
-                "url": "../grouping/#fullWidthRows"
+                "url": "../grouping/#full-width-group-rows"
             }
         },
         "groupDefaultExpanded": {
@@ -316,7 +316,7 @@
             "description": "If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.",
             "more": {
                 "name": "Removing Single Children",
-                "url": "../grouping/#removeSingleChildren"
+                "url": "../grouping/#removing-single-children"
             }
         },
         "autoGroupColumnDef": {
@@ -324,7 +324,7 @@
             "description": "Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping, this column is not included.",
             "more": {
                 "name": "Configuring the Auto Group Column",
-                "url": "../grouping/#configuring-auto-column"
+                "url": "../grouping/#auto-column-group"
             }
         },
         "groupSuppressAutoColumn": {
@@ -332,7 +332,7 @@
             "description": "If `true`, the grid will not swap in the grouping column when grouping is enabled. Use this if you want complete control on the column displayed and don't want the grid's help, in other words if you already have a column in your column definitions that is responsible for displaying the groups.",
             "more": {
                 "name": "Configuring the Auto Group Column",
-                "url": "../grouping/#configuring-auto-column"
+                "url": "../grouping/#auto-column-group"
             }
         },
         "groupMultiAutoColumn": {
@@ -348,7 +348,7 @@
             "description": "When `true`, if you select a group, the children of the group will also be selected.",
             "more": {
                 "name": "Group Selection",
-                "url": "../selection/#groupSelection"
+                "url": "../row-selection/#group-selection"
             }
         },
         "groupIncludeFooter": {
@@ -376,7 +376,7 @@
             "description": "If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.",
             "more": {
                 "name": "Group Selection",
-                "url": "../selection/#groupSelection"
+                "url": "../row-selection/#group-selection"
             }
         },
         "showOpenedGroup": {
@@ -392,7 +392,7 @@
             "description": "Set to `true` to collapse groups that only have one child.",
             "more": {
                 "name": "Remove Single Children",
-                "url": "../grouping/#removeSingleChildren"
+                "url": "../grouping/#removing-single-children"
             }
         },
         "groupRemoveLowestSingleChildren": {
@@ -400,7 +400,7 @@
             "description": "Set to `true` to collapse lowest level groups that only have one child.",
             "more": {
                 "name": "Remove Single Children",
-                "url": "../grouping/#removeSingleChildren"
+                "url": "../grouping/#removing-single-children"
             }
         },
         "groupHideOpenParents": {
@@ -408,7 +408,7 @@
             "description": "Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.",
             "more": {
                 "name": "Group Hide Open Parents",
-                "url": "../grouping/#replacingChildren"
+                "url": "../grouping/#hide-open-parents"
             }
         },
         "rowGroupPanelShow": {
@@ -455,7 +455,7 @@
             "description": "When `true`, the aggregations won't be computed for root node of the grid.",
             "more": {
                 "name": "Big Data Small Transactions",
-                "url": "../data-update/#big-data-small-transactions"
+                "url": "../data-update-transactions/#example-small-changes-big-data"
             }
         },
         "aggregateOnlyChangedColumns": {
@@ -496,7 +496,7 @@
             "description": "When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups,in the position specified.",
             "more": {
                 "name": "Pivot Column Group Totals",
-                "url": "../pivoting/#pivotColumnGroupTotals"
+                "url": "../pivoting/#pivot-column-group-totals"
             }
         },
         "pivotRowTotals": {
@@ -507,7 +507,7 @@
             "description": "When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.",
             "more": {
                 "name": "Pivot Row Totals",
-                "url": "../pivoting/#pivotRowTotals"
+                "url": "../pivoting/#pivot-row-totals"
             }
         },
         "suppressExpandablePivotGroups": {
@@ -620,7 +620,7 @@
             "description": "Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls.",
             "more": {
                 "name": "Aligned Grid as Footer",
-                "url": "../aligned-grids/#aligned-grid-as-footer"
+                "url": "../aligned-grids/#example-aligned-floating-footer"
             }
         },
         "suppressColumnVirtualisation": {
@@ -656,7 +656,7 @@
             "description": "How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored.",
             "more": {
                 "name": "Customising Pagination",
-                "url": "../row-pagination/#customising-pagination"
+                "url": "../row-pagination/#example-customising-pagination"
             }
         },
         "paginationAutoPageSize": {
@@ -664,7 +664,7 @@
             "description": "Set to `true` so that the number of rows to load per page is automatically adjusted by ag-Grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used.",
             "more": {
                 "name": "Auto Page Size",
-                "url": "../row-pagination/#auto-page-size"
+                "url": "../row-pagination/#example-auto-page-size"
             }
         },
         "suppressPaginationPanel": {
@@ -672,14 +672,14 @@
             "description": "If `true`, the default ag-Grid controls for navigation are hidden. This is useful if `pagination=true` and you want to provide your own pagination controls. Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.",
             "more": {
                 "name": "Custom Pagination Controls",
-                "url": "../row-pagination/#custom-pagination-controls"
+                "url": "../row-pagination/#example-customising-pagination"
             }
         },
         "paginateChildRows": {
             "description": "Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail.",
             "more": {
                 "name": "Pagination & Child Rows",
-                "url": "../row-pagination/#childRows"
+                "url": "../row-pagination/#pagination--child-rows"
             }
         }
     },
@@ -691,14 +691,14 @@
             "description": "Sets the <a href='../component-cell-renderer'>Cell Renderer</a> to use when `groupUseEntireRow=true`.",
             "more": {
                 "name": "Row Grouping",
-                "url": "../grouping/#groupingCallbacks"
+                "url": "../grouping/#reference-callbacks"
             }
         },
         "groupRowInnerRenderer<br />groupRowInnerRendererFramework": {
             "description": "Sets the inner <a href='../component-cell-renderer'>Cell Renderer</a> to use when `groupUseEntireRow=true`.",
             "more": {
                 "name": "Row Grouping",
-                "url": "../grouping/#groupingCallbacks"
+                "url": "../grouping/#reference-callbacks"
             }
         },
         "fullWidthCellRenderer<br />fullWidthCellRendererFramework<br />fullWidthCellRendererParams": {
@@ -714,7 +714,7 @@
             "description": "Used to enable Master Detail.",
             "more": {
                 "name": "Enabling Master Detail",
-                "url": "../master-detail/#enabling-master-detail"
+                "url": "../master-detail/#enabling-master--detail"
             }
         },
         "detailCellRendererParams": {
@@ -741,7 +741,7 @@
             "displayName": "Rendering and Styling"
         },
         "icons": {
-            "description": "<a href='../icons/'>Icons</a> to use inside the grid instead of the grid's default icons."
+            "description": "<a href='../custom-icons/'>Icons</a> to use inside the grid instead of the grid's default icons."
         },
         "rowHeight": {
             "default": 25,
@@ -749,7 +749,7 @@
         },
         "animateRows": {
             "default": false,
-            "description": "Set to `true` to enable <a href='../animation/#row-animations'>Row Animation</a>."
+            "description": "Set to `true` to enable <a href='../row-animation/'>Row Animation</a>."
         },
         "rowStyle": {
             "description": "The style to give a particular row.",
@@ -762,7 +762,7 @@
             "description": "The class to give a particular row.",
             "more": {
                 "name": "Row Class",
-                "url": "./row-styles/#row-class"
+                "url": "../row-styles/#row-class"
             }
         },
         "rowClassRules": {
@@ -866,7 +866,7 @@
                 "ag-vivid",
                 "ag-solar"
             ],
-            "description": "The list of chart themes to be used, see <a href='../integrated-charts-customisation/#chart-themes'>Chart Themes</a>."
+            "description": "The list of chart themes to be used, see <a href='../integrated-charts-customisation/#provided-themes'>Chart Themes</a>."
         },
         "customChartThemes": {
             "description": "A map containing custom chart themes, see <a href='../integrated-charts-customisation/#custom-chart-themes'>Custom Chart Themes</a>."
@@ -899,11 +899,11 @@
         },
         "valueCache": {
             "default": false,
-            "description": "Set to `true` to turn on the <a href='../value-cache/'>value cache</a>."
+            "description": "Set to `true` to turn on the <a href='../value-getters/#value-cache-properties'>value cache</a>."
         },
         "valueCacheNeverExpires": {
             "default": false,
-            "description": "Set to `true` to set <a href='../value-cache/'>value cache</a> to not expire after data updates."
+            "description": "Set to `true` to set <a href='../value-getters/#value-cache-properties'>value cache</a> to not expire after data updates."
         },
         "defaultExportParams": {
             "description": "A default configuration object used to export to <a href='../csv-export/'>CSV</a> or <a href='../excel-export/'>Excel</a>."
@@ -939,14 +939,14 @@
                 "autoHeight",
                 "print"
             ],
-            "description": "Switch between layout options. See <a href='../printing/'>Printing</a> and <a href='../grid-size/#auto-height'>Auto Height</a>."
+            "description": "Switch between layout options. See <a href='../printing/'>Printing</a> and <a href='../grid-size/#grid-auto-height'>Auto Height</a>."
         },
         "ensureDomOrder": {
             "default": false,
             "description": "When `true`, the order of rows and columns in the DOM are consistent with what is on screen.",
             "more": {
                 "name": "Accessibility - Row and Column Order",
-                "url": "../accessibility/#dom-order"
+                "url": "../accessibility/#ensure-dom-element-order"
             }
         },
         "rowBuffer": {

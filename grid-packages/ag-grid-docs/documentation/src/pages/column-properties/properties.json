@@ -53,7 +53,7 @@
             "description": "Used instead of `width` when the goal is to fill the remaining empty space of the grid.",
             "more": {
                 "name": "Column Flex",
-                "url": "../resizing/#column-flex"
+                "url": "../column-sizing/#column-flex"
             }
         },
         "initialFlex": {
