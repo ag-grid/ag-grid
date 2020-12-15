@@ -7,7 +7,9 @@ This section shows how Tree Data can be used with the Server-Side Row Model.
 
 ## Tree Data
 
-Tree Data is defined as data that has parent / child relationships where the parent / child relationships are provided as part of the data.
+Tree Data is defined as data that has parent / child relationships where the parent / child relationships are 
+provided as part of the data. This is in contrast to Row Grouping where the parent / child relationships are
+the result of grouping. When working with Tree Data, there are no columns getting grouped.
 
 An example of a Tree Data JSON structure is shown below:
 
@@ -40,17 +42,22 @@ An example of a Tree Data JSON structure is shown below:
 }]
 ```
 
-However it is expected that the data will be too large to send over the network, so it will be lazy-loaded as more children are requested when group nodes are expanded.
+It is expected that the data set will be too large to send over the network, hence the SSRM is used to 
+lazy-load child row as the parent rows are expanded.
 
 ## Tree Data Mode
 
-In order to set the grid to work with Tree Data, simply enable Tree Data mode via the Grid Options using: `gridOptions.treeData = true`.
+In order to set the grid to work with Tree Data, simply enable Tree Data mode via the Grid Options 
+using: `gridOptions.treeData = true`.
 
 ## Supplying Tree Data
 
-Tree Data is supplied via the [Server-Side Datasource](../server-side-model-datasource/) just like flat data, however there are two additional gridOptions callbacks: `isServerSideGroup(dataItem)` and `getServerSideGroupKey(dataItem)`.
+Tree Data is supplied via the [Server-Side Datasource](../server-side-model-datasource/) just like flat data, 
+however there are two additional gridOptions callbacks: `isServerSideGroup(dataItem)` 
+and `getServerSideGroupKey(dataItem)`.
 
-The following code snippet shows the relevant `gridOptions` entries for configuring tree data with the server-side row model:
+The following code snippet shows the relevant `gridOptions` entries for configuring tree data with the 
+server-side row model:
 
 
 ```js
@@ -87,15 +94,13 @@ The example below shows this in action where the following can be noted:
 
 [[note]]
 | The examples on this page use a simple method for expanding group nodes, however a 
-| better approach is covered in the section [Preserving Group State](../server-side-model-grouping/#preserving-group-state).
+| better approach is covered in the section 
+[Preserving Group State](../server-side-model-grouping/#preserving-group-state).
 
-## Purging Tree Data
+## Refreshing Tree Data
 
-Tree Data can be automatically purged by setting the [Cache Configuration](../infinite-scrolling/#more-control-via-properties-and-api) appropriately. However sometimes it may be necessary to perform a manual purge.
-
-
-This is achieved using the same approach covered in the previous [Purging Groups](../server-side-model-grouping/#purging-groups) section.
-
+Tree Data can be refreshed in the same way as groups are refreshed when not using Tree Data. This is
+explained in the [SSRM Refresh](../server-side-model-refresh/).
 
 The example below shows this in action where the following can be noted:
 

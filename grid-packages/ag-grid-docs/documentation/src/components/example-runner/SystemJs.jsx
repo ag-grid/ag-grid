@@ -2,7 +2,7 @@ import React from 'react';
 import { localPrefix, agGridVersion, agChartsVersion } from './consts';
 import { isDevelopment, isUsingPublishedPackages } from './helpers';
 
-const unpublishedConfiguration = {
+const localConfiguration = {
     gridMap: {
         /* START OF GRID CSS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-grid.css`,
@@ -26,33 +26,6 @@ const unpublishedConfiguration = {
         "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-material.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-material.css`,
         /* END OF GRID CSS DEV - DO NOT DELETE */
-        /* START OF GRID MODULES DEV - DO NOT DELETE */
-        "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules`,
-        "@ag-grid-community/client-side-row-model": `${localPrefix}/@ag-grid-community/client-side-row-model`,
-        "@ag-grid-community/core": `${localPrefix}/@ag-grid-community/core`,
-        "@ag-grid-community/csv-export": `${localPrefix}/@ag-grid-community/csv-export`,
-        "@ag-grid-community/infinite-row-model": `${localPrefix}/@ag-grid-community/infinite-row-model`,
-        "ag-charts-community": `${localPrefix}/ag-charts-community`,
-        "@ag-grid-enterprise/all-modules": `${localPrefix}/@ag-grid-enterprise/all-modules`,
-        "@ag-grid-enterprise/charts": `${localPrefix}/@ag-grid-enterprise/charts`,
-        "@ag-grid-enterprise/clipboard": `${localPrefix}/@ag-grid-enterprise/clipboard`,
-        "@ag-grid-enterprise/column-tool-panel": `${localPrefix}/@ag-grid-enterprise/column-tool-panel`,
-        "@ag-grid-enterprise/core": `${localPrefix}/@ag-grid-enterprise/core`,
-        "@ag-grid-enterprise/date-time-cell-editor": `${localPrefix}/@ag-grid-enterprise/date-time-cell-editor`,
-        "@ag-grid-enterprise/excel-export": `${localPrefix}/@ag-grid-enterprise/excel-export`,
-        "@ag-grid-enterprise/filter-tool-panel": `${localPrefix}/@ag-grid-enterprise/filter-tool-panel`,
-        "@ag-grid-enterprise/master-detail": `${localPrefix}/@ag-grid-enterprise/master-detail`,
-        "@ag-grid-enterprise/menu": `${localPrefix}/@ag-grid-enterprise/menu`,
-        "@ag-grid-enterprise/multi-filter": `${localPrefix}/@ag-grid-enterprise/multi-filter`,
-        "@ag-grid-enterprise/range-selection": `${localPrefix}/@ag-grid-enterprise/range-selection`,
-        "@ag-grid-enterprise/rich-select": `${localPrefix}/@ag-grid-enterprise/rich-select`,
-        "@ag-grid-enterprise/row-grouping": `${localPrefix}/@ag-grid-enterprise/row-grouping`,
-        "@ag-grid-enterprise/server-side-row-model": `${localPrefix}/@ag-grid-enterprise/server-side-row-model`,
-        "@ag-grid-enterprise/set-filter": `${localPrefix}/@ag-grid-enterprise/set-filter`,
-        "@ag-grid-enterprise/side-bar": `${localPrefix}/@ag-grid-enterprise/side-bar`,
-        "@ag-grid-enterprise/status-bar": `${localPrefix}/@ag-grid-enterprise/status-bar`,
-        "@ag-grid-enterprise/viewport-row-model": `${localPrefix}/@ag-grid-enterprise/viewport-row-model`,
-        /* END OF GRID MODULES DEV - DO NOT DELETE */
         "@ag-grid-community/react": `${localPrefix}/@ag-grid-community/react`,
         "@ag-grid-community/angular": `${localPrefix}/@ag-grid-community/angular`,
         "@ag-grid-community/vue": `${localPrefix}/@ag-grid-community/vue`,
@@ -199,7 +172,40 @@ const publishedConfiguration = {
 const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options }) => {
     const { enterprise: isEnterprise } = options;
     const systemJsPath = `${boilerplatePath}systemjs.config${isDevelopment() ? '.dev' : ''}.js`;
-    const configuration = isUsingPublishedPackages() ? publishedConfiguration : unpublishedConfiguration;
+    const configuration = isUsingPublishedPackages() ? publishedConfiguration : localConfiguration;
+
+    if (isDevelopment()) {
+        configuration.gridMap = {
+            ...configuration.gridMap,
+            /* START OF GRID MODULES DEV - DO NOT DELETE */
+            "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules`,
+            "@ag-grid-community/client-side-row-model": `${localPrefix}/@ag-grid-community/client-side-row-model`,
+            "@ag-grid-community/core": `${localPrefix}/@ag-grid-community/core`,
+            "@ag-grid-community/csv-export": `${localPrefix}/@ag-grid-community/csv-export`,
+            "@ag-grid-community/infinite-row-model": `${localPrefix}/@ag-grid-community/infinite-row-model`,
+            "ag-charts-community": `${localPrefix}/ag-charts-community`,
+            "@ag-grid-enterprise/all-modules": `${localPrefix}/@ag-grid-enterprise/all-modules`,
+            "@ag-grid-enterprise/charts": `${localPrefix}/@ag-grid-enterprise/charts`,
+            "@ag-grid-enterprise/clipboard": `${localPrefix}/@ag-grid-enterprise/clipboard`,
+            "@ag-grid-enterprise/column-tool-panel": `${localPrefix}/@ag-grid-enterprise/column-tool-panel`,
+            "@ag-grid-enterprise/core": `${localPrefix}/@ag-grid-enterprise/core`,
+            "@ag-grid-enterprise/date-time-cell-editor": `${localPrefix}/@ag-grid-enterprise/date-time-cell-editor`,
+            "@ag-grid-enterprise/excel-export": `${localPrefix}/@ag-grid-enterprise/excel-export`,
+            "@ag-grid-enterprise/filter-tool-panel": `${localPrefix}/@ag-grid-enterprise/filter-tool-panel`,
+            "@ag-grid-enterprise/master-detail": `${localPrefix}/@ag-grid-enterprise/master-detail`,
+            "@ag-grid-enterprise/menu": `${localPrefix}/@ag-grid-enterprise/menu`,
+            "@ag-grid-enterprise/multi-filter": `${localPrefix}/@ag-grid-enterprise/multi-filter`,
+            "@ag-grid-enterprise/range-selection": `${localPrefix}/@ag-grid-enterprise/range-selection`,
+            "@ag-grid-enterprise/rich-select": `${localPrefix}/@ag-grid-enterprise/rich-select`,
+            "@ag-grid-enterprise/row-grouping": `${localPrefix}/@ag-grid-enterprise/row-grouping`,
+            "@ag-grid-enterprise/server-side-row-model": `${localPrefix}/@ag-grid-enterprise/server-side-row-model`,
+            "@ag-grid-enterprise/set-filter": `${localPrefix}/@ag-grid-enterprise/set-filter`,
+            "@ag-grid-enterprise/side-bar": `${localPrefix}/@ag-grid-enterprise/side-bar`,
+            "@ag-grid-enterprise/status-bar": `${localPrefix}/@ag-grid-enterprise/status-bar`,
+            "@ag-grid-enterprise/viewport-row-model": `${localPrefix}/@ag-grid-enterprise/viewport-row-model`,
+            /* END OF GRID MODULES DEV - DO NOT DELETE */
+        };
+    }
 
     let systemJsMap;
     let systemJsPaths;
