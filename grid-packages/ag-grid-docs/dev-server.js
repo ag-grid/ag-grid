@@ -403,12 +403,12 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         .map(css => css.replace('../../community-modules/all-modules/dist/styles/', ''));
 
     let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
-        '        /* START OF GRID MODULES DEV - DO NOT DELETE */',
-        '        /* END OF GRID MODULES DEV - DO NOT DELETE */',
+        '            /* START OF GRID MODULES DEV - DO NOT DELETE */',
+        '            /* END OF GRID MODULES DEV - DO NOT DELETE */',
         gridCommunityModules.concat(chartCommunityModules),
         gridEnterpriseModules,
-        module => `        "${module.publishedName}": \`\${localPrefix}/${module.publishedName}\`,`,
-        module => `        "${module.publishedName}": \`\${localPrefix}/${module.publishedName}\`,`);
+        module => `            "${module.publishedName}": \`\${localPrefix}/${module.publishedName}\`,`,
+        module => `            "${module.publishedName}": \`\${localPrefix}/${module.publishedName}\`,`);
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
