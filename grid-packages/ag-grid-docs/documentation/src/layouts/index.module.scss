@@ -40,13 +40,13 @@ html {
 .top-bar {
     composes: px-2 px-md-3 from global;
     position: relative;
-    background-color: transparentize($light, 0.1);
+    background-color: transparentize($light, 0.05);
     border-bottom: 1px solid lighten($secondary, 40%);
 
     @supports (position: sticky) {
         position: sticky;
         top: 0;
-        z-index: 2;
+        z-index: 3;
     }
 
     &__wrapper {
