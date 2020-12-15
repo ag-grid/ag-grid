@@ -2,7 +2,9 @@
 @import "~bootstrap/scss/alert";
 
 html {
-    scroll-padding-top: 64px;
+    @include media-breakpoint-up(lg) {
+        scroll-padding-top: 64px;
+    }
     overflow-x: hidden;
 }
 
