@@ -1,5 +1,4 @@
 import React from 'react';
-import FrameworkSelector from './FrameworkSelector';
 import styles from './HeaderNav.module.scss';
 
 const links = [{
@@ -52,7 +51,6 @@ const HeaderNav = ({ frameworks, path, framework }) => (
                 <HeaderLinks />
             </div>
             <div className={styles['header-nav__widgets']}>
-                <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
                 <HeaderExpandButton />
             </div>
         </div>
