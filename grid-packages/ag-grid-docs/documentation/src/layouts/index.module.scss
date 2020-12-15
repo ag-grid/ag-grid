@@ -42,6 +42,33 @@ html {
     }
 }
 
+.top-bar {
+    composes: d-flex from global;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background-color: $light;
+    border-bottom: 1px solid lighten($secondary, 40%);
+
+    &__search {
+        composes: p-2 navbar navbar-expand-lg navbar-light from global;
+        display: flex;
+        width: 300px;
+        margin: auto 0;
+    }
+
+    &__nav-button {
+        composes: navbar-toggler mr-2 from global;
+
+        &-icon {
+            composes: navbar-toggler-icon from global;
+        }
+    }
+
+    &__framework-selector {
+        composes: p-2 from global;
+    }
+}
+
 .main-menu {
     composes: d-flex from global;
 

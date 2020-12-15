@@ -3,7 +3,6 @@ import { Link } from 'gatsby';
 import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import Search from './search/Search';
 import Announcements from '../components/Announcements';
 import menuData from '../pages/licensing/menu.json';
 import styles from './Menu.module.scss';
@@ -82,19 +81,7 @@ const Menu = ({ currentFramework, currentPage }) => {
     }, [currentPage, currentFramework]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <div className={styles['menu']}>
-        <div className={styles['menu__search-bar-wrapper']}>
-            <Search indices={[{ name: `ag-grid_${currentFramework}`, title: "Documentation Pages" }]} />
-            <button
-                className={styles['menu__nav-button']}
-                type="button" data-toggle="collapse"
-                data-target="#side-nav"
-                aria-controls="side-nav"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span className={styles['menu__nav-button-icon']}></span>
-            </button>
-        </div>
-        <ul id="side-nav" ref={ listEl } className={styles['menu__sections']}>
+        <ul id="side-nav" ref={listEl} className={styles['menu__sections']}>
             {combinedMenuItems.map(item => {
                 const { title } = item;
                 const isActive = title === activeSection;
