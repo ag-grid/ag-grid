@@ -194,7 +194,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 (series as ScatterSeries).marker.formatter = p => {
                     return {
                         fill: p.highlighted ? 'yellow' : p.fill,
-                        size: p.highlighted ? 12 : p.size
+                        size: p.highlighted ? Math.min(series.marker.maxSize, p.size) + 2 : p.size
                     };
                 }
 
