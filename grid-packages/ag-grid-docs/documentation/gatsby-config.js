@@ -3,6 +3,11 @@ const fs = require('fs');
 const gracefulFs = require('graceful-fs');
 gracefulFs.gracefulify(fs);
 
+console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+console.log("GATSBY_PATH_PREFIX:", process.env.GATSBY_PATH_PREFIX);
+console.log("GATSBY_ENV: ", process.env.GATSBY_ENV);
+console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
 const plugins = [
   {
     // this allows IE11 to work in develop mode

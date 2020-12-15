@@ -8,25 +8,27 @@ import FrameworkSelector from '../components/FrameworkSelector';
 import { getPageName } from '../utils/get-page-name';
 import styles from './index.module.scss';
 
-const TopBar = ({ frameworks, framework, path }) => {
-    return <div className={styles['top-bar']}>
-        <div className={styles['top-bar__search']}>
-            <button
-                className={styles['top-bar__nav-button']}
-                type="button" data-toggle="collapse"
-                data-target="#side-nav"
-                aria-controls="side-nav"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span className={styles['top-bar__nav-button-icon']}></span>
-            </button>
-            <Search indices={[{ name: `ag-grid_${framework}`, title: "Documentation Pages" }]} />
+const TopBar = ({ frameworks, framework, path }) => (
+    <div className={styles['top-bar']}>
+        <div className={styles['top-bar__wrapper']}>
+            <div className={styles['top-bar__search']}>
+                <button
+                    className={styles['top-bar__nav-button']}
+                    type="button" data-toggle="collapse"
+                    data-target="#side-nav"
+                    aria-controls="side-nav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span className={styles['top-bar__nav-button-icon']}></span>
+                </button>
+                <Search indices={[{ name: `ag-grid_${framework}`, title: "Documentation Pages" }]} />
+            </div>
+            <div className={styles['top-bar__framework-selector']}>
+                <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
+            </div>
         </div>
-        <div className={styles['top-bar__framework-selector']}>
-            <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
-        </div>
-    </div>;
-};
+    </div>
+);
 
 export const Layout = ({ path, children, pageContext: { frameworks, framework = 'javascript', layout } }) => {
     if (layout === 'bare') {
