@@ -1,4 +1,12 @@
 .docs-home {
+    composes: container-lg px-0 from global;
+
+    margin-left: 0;
+
+    @media (min-width: 2075px) {
+        margin-left: calc((100% - 300px) / 2 - 730px);
+    }
+
     h2 {
         background-color: $secondary;
         color: $white;
