@@ -41544,10 +41544,10 @@ var ChartDatasource = /** @class */ (function (_super) {
                     var actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
                     if (filteredNodes[rowNode.id]) {
                         data[colId] = actualValue;
-                        data[filteredOutColId] = params.aggFunc ? undefined : 0;
+                        data[filteredOutColId] = params.aggFunc || params.isScatter ? undefined : 0;
                     }
                     else {
-                        data[colId] = params.aggFunc ? undefined : 0;
+                        data[colId] = params.aggFunc || params.isScatter ? undefined : 0;
                         data[filteredOutColId] = actualValue;
                     }
                 }
@@ -42003,7 +42003,8 @@ var ChartDataModel = /** @class */ (function (_super) {
             crossFiltering: this.crossFiltering,
             valueCols: this.getSelectedValueCols(),
             startRow: startRow,
-            endRow: endRow
+            endRow: endRow,
+            isScatter: _.includes([ChartType.Scatter, ChartType.Bubble], this.chartType)
         };
         var result = this.datasource.getData(params);
         this.chartData = result.data;
@@ -44496,16 +44497,16 @@ var constant = (function (x) { return function () { return x; }; });
 
 function interpolateNumber (a, b) {
     a = +a;
-    b -= a;
-    return function (t) { return a + b * t; };
+    b = +b;
+    return function (t) { return a * (1 - t) + b * t; };
 }
 
 function date (a, b) {
     var date = new Date;
     var msA = +a;
-    var msB = +b - msA;
+    var msB = +b;
     return function (t) {
-        date.setTime(msA + msB * t);
+        date.setTime(msA * (1 - t) + msB * t);
         return date;
     };
 }
@@ -61999,13 +62000,6 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                         series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
                     });
                 }
-                series.marker.size = 10;
-                series.marker.formatter = function (p) {
-                    return {
-                        fill: p.highlighted ? 'yellow' : p.fill,
-                        size: p.highlighted ? 12 : p.size
-                    };
-                };
                 chart.tooltip.delay = 500;
                 // hide 'filtered out' legend items
                 if (isFilteredOutYKey) {

@@ -6,7 +6,7 @@ enterprise: true
 Cross-filtering charts allow users to interact with data in an easy and intuitive way. Clicking on chart elements
 automatically filters values in both the grid and other cross-filter charts.
 
-<gif src="cross-filtering.gif" alt="Cross Filtering" style="max-width: 100%"></gif>
+<gif src="cross-filtering.gif" alt="Cross Filtering"></gif>
 
 This built-in feature of integrated charts is particularly useful for creating interactive reports and dashboards.
 
@@ -76,9 +76,9 @@ The following examples show the different chart types that support cross-filteri
 
 <grid-example title='Sales Dashboard 2' name='sales-dashboard2' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true }'></grid-example>
 
-### Example: Sales Dashboard #3
+### Example: Most Populous Cities
 
-<grid-example title='Sales Dashboard 3' name='sales-dashboard3' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true }'></grid-example>
+<grid-example title='Most Populous Cities' name='most-populous-cities' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true }'></grid-example>
 
 ## Next Up
 

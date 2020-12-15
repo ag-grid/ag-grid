@@ -155,13 +155,6 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                         series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
                     });
                 }
-                series.marker.size = 10;
-                series.marker.formatter = function (p) {
-                    return {
-                        fill: p.highlighted ? 'yellow' : p.fill,
-                        size: p.highlighted ? 12 : p.size
-                    };
-                };
                 chart.tooltip.delay = 500;
                 // hide 'filtered out' legend items
                 if (isFilteredOutYKey) {

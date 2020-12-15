@@ -8,6 +8,7 @@ export interface ChartDatasourceParams {
     valueCols: Column[];
     startRow: number;
     endRow: number;
+    isScatter: boolean;
     aggFunc?: string | IAggFunc;
     referenceCellRange?: CellRange;
 }

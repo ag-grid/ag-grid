@@ -77,7 +77,7 @@ function createQuarterlySalesChart(gridApi) {
                 }
             }
         },
-        chartContainer: document.querySelector('#columnChart'),
+        chartContainer: document.querySelector('#lineChart'),
     });
 }
 
@@ -106,7 +106,7 @@ function createSalesByRefChart(gridApi) {
                 }
             }
         },
-        chartContainer: document.querySelector('#pieChart'),
+        chartContainer: document.querySelector('#doughnutChart'),
     });
 }
 
@@ -137,7 +137,7 @@ function createHandsetSalesChart(gridApi) {
                 }
             }
         },
-        chartContainer: document.querySelector('#barChart'),
+        chartContainer: document.querySelector('#areaChart'),
     });
 }
 

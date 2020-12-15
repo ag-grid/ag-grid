@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { graphql } from 'gatsby';
 import rehypeReact from 'rehype-react';
-import Gifffer from 'gifffer';
 import classnames from 'classnames';
 import ExampleRunner from '../components/example-runner/ExampleRunner';
 import SideMenu from '../components/SideMenu';
@@ -25,8 +24,6 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
   const [showSideMenu, setShowSideMenu] = useState(true);
 
-  useEffect(() => { Gifffer(); }, []);
-
   if (!page) { return null; }
 
   const pageName = getPageName(location.pathname);
@@ -44,7 +41,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     fragment: true,
     components: {
       'li': ListItem,
-      'gif': props => Gif({ ...props, pageName }),
+      'gif': props => Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false }),
       'grid-example': props => ExampleRunner(getExampleRunnerProps(props, 'grid')),
       'chart-example': props => ExampleRunner(getExampleRunnerProps(props, 'charts')),
       'api-documentation': props => ApiDocumentation({

@@ -1,5 +1,5 @@
 export default function (a, b) {
     a = +a;
-    b -= a;
-    return function (t) { return a + b * t; };
+    b = +b;
+    return function (t) { return a * (1 - t) + b * t; };
 }

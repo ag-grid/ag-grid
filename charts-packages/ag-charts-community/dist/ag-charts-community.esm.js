@@ -2324,16 +2324,16 @@ var constant = (function (x) { return function () { return x; }; });
 
 function interpolateNumber (a, b) {
     a = +a;
-    b -= a;
-    return function (t) { return a + b * t; };
+    b = +b;
+    return function (t) { return a * (1 - t) + b * t; };
 }
 
 function date (a, b) {
     var date = new Date;
     var msA = +a;
-    var msB = +b - msA;
+    var msB = +b;
     return function (t) {
-        date.setTime(msA + msB * t);
+        date.setTime(msA * (1 - t) + msB * t);
         return date;
     };
 }

@@ -285,7 +285,8 @@ var ChartDataModel = /** @class */ (function (_super) {
             crossFiltering: this.crossFiltering,
             valueCols: this.getSelectedValueCols(),
             startRow: startRow,
-            endRow: endRow
+            endRow: endRow,
+            isScatter: core_1._.includes([core_1.ChartType.Scatter, core_1.ChartType.Bubble], this.chartType)
         };
         var result = this.datasource.getData(params);
         this.chartData = result.data;

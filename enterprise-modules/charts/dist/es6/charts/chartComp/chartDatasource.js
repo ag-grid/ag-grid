@@ -130,10 +130,10 @@ var ChartDatasource = /** @class */ (function (_super) {
                     var actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
                     if (filteredNodes[rowNode.id]) {
                         data[colId] = actualValue;
-                        data[filteredOutColId] = params.aggFunc ? undefined : 0;
+                        data[filteredOutColId] = params.aggFunc || params.isScatter ? undefined : 0;
                     }
                     else {
-                        data[colId] = params.aggFunc ? undefined : 0;
+                        data[colId] = params.aggFunc || params.isScatter ? undefined : 0;
                         data[filteredOutColId] = actualValue;
                     }
                 }

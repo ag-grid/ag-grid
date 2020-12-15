@@ -24,7 +24,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-import { _, Autowired, BeanStub, CellRangeType, PostConstruct } from "@ag-grid-community/core";
+import { _, Autowired, BeanStub, CellRangeType, ChartType, PostConstruct } from "@ag-grid-community/core";
 import { ChartDatasource } from "./chartDatasource";
 var ChartDataModel = /** @class */ (function (_super) {
     __extends(ChartDataModel, _super);
@@ -283,7 +283,8 @@ var ChartDataModel = /** @class */ (function (_super) {
             crossFiltering: this.crossFiltering,
             valueCols: this.getSelectedValueCols(),
             startRow: startRow,
-            endRow: endRow
+            endRow: endRow,
+            isScatter: _.includes([ChartType.Scatter, ChartType.Bubble], this.chartType)
         };
         var result = this.datasource.getData(params);
         this.chartData = result.data;
