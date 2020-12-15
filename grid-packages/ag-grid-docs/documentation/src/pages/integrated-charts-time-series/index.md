@@ -57,5 +57,5 @@ The following example demonstrates how a column containing numeric timestamps ca
 
 ## Next Up
 
-Continue to the next section to learn about: [Third-Party Charting](../third-party-charting/).
+Continue to the next section to learn about: [Chart Events](../integrated-charts-events/).
 

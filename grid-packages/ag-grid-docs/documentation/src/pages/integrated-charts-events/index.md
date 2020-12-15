@@ -132,6 +132,6 @@ To learn about series events refer to the standalone charting library [documenta
 
 ## Next Up
 
-Continue to the next section to learn about: [Time Series](../integrated-charts-time-series/).
+Continue to the next section to learn about: [Third-Party Charting](../third-party-charting/).
 
 

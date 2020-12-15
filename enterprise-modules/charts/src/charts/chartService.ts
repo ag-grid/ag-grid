@@ -139,8 +139,8 @@ export class ChartService extends BeanStub implements IChartService {
 
         const crossFiltering = true;
 
-        const suppressChartRanges = true;
-            // typeof params.suppressChartRanges !== 'undefined' ? params.suppressChartRanges : true;
+        const suppressChartRangesSupplied = typeof params.suppressChartRanges !== 'undefined' && params.suppressChartRanges !== null;
+        const suppressChartRanges = suppressChartRangesSupplied ? params.suppressChartRanges : true;
 
         return this.createChart(
             cellRange,
