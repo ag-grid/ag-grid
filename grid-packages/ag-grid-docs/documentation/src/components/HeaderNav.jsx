@@ -44,7 +44,7 @@ const HeaderExpandButton = () => (
     </button>
 );
 
-const HeaderNav = ({ frameworks, path, framework }) => (
+const HeaderNav = () => (
     <nav className={styles['header-nav']}>
         <div className={styles['header-nav__wrapper']}>
             <div className={styles['header-nav__navbar-collapse']} id="main-nav">
