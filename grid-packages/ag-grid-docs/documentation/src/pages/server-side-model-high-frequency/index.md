@@ -6,13 +6,13 @@ enterprise: true
 High Frequency Updates allow large numbers of updates against the grid without having a drastic hit on performance.
 
 
-When a transaction is applied to the grid, it results in the grid re-rendering it's rows to cater for the new values. In addition to this, if the transactions are getting applied in different JavaScript VM turns (which is often the case when data updates are streamed), each VM turn will result in a browser redraw. If you are receiving 10's of updates a second, this will probalby kill your applications performance. Hence the need for Async Transactions.
+When a transaction is applied to the grid, it results in the grid re-rendering its rows to cater for the new values. In addition to this, if the transactions are getting applied in different JavaScript VM turns (which is often the case when data updates are streamed), each VM turn will result in a browser redraw. If you are receiving 10's of updates a second, this will probalby kill your applications performance. Hence the need for Async Transactions.
 
 ## Async Transactions
 
 Grid grid caters for High Frequency Updates via Async Transactions.
 
-When a Transaction is applied to the grid using Async Transactions, the transaction is not applied immediately. Rather the grid waits for a period for more transactions to be applied and then applies them all together in one go, result in just one redraw for all the Transactions.
+When a Transaction is applied to the grid using Async Transactions, the transaction is not applied immediately. Rather the grid waits for a period for more transactions to be applied and then applies them all together in one go, resulting in just one redraw for all the Transactions.
 
 The amount of time which the grid waits before applying the transaction is set via the grid property `asyncTransactionWaitMillis` and defaults to 50ms. Transactions are also applied after any rows are loaded.
 
@@ -37,7 +37,7 @@ Below shows a simple example using Async Transactions. Note the following:
 
 - The property `asyncTransactionWaitMillis = 4000`. This makes the grid wait 4 seconds before applying Async Transactions.
 
-- Clicking **Add** will apply the Transaction asynchronously. The grid will wait for 4 seconds before adding teh row to the grid. Any other rows added during this two seconds (eg if the button is clicked multiple times before 4 seconds have expired) then all rows will be added together at the end of the 4 second wait.
+- Clicking **Add** will apply the Transaction asynchronously. The grid will wait for 4 seconds before adding the row to the grid. Any other rows added during this two seconds (eg if the button is clicked multiple times before 4 seconds have expired) then all rows will be added together at the end of the 4 second wait.
 
 - Clicking **Flush** will apply all waiting Transactions.
 
@@ -47,7 +47,7 @@ Below shows a simple example using Async Transactions. Note the following:
 
 ## Flushed Event
 
-When Async Transactions are applied, the event `asyncTransactionsFlushed` event is fired. The event contains all of the `ServerSideTransactionResult` objects of all attempted transactions.
+When Async Transactions are applied, the `asyncTransactionsFlushed` event is fired. The event contains all of the `ServerSideTransactionResult` objects of all attempted transactions.
 
 
 ```ts
@@ -74,7 +74,7 @@ The example below listens for this event and prints a summary of the result obje
 The Retrying Transactions feature guards against Lost Updates. Lost updates refers to new data created in the server's data store that due to the order of data getting read and the transaction applied, the record ends up missing in the grid.
 
 
-Lost updates occur when data is read from the server is missing a record (as it's to early), but the transaction for the new record is attempted before the Row Store finishes loading (transaction is discarded).
+Lost updates occur when data read from the server is missing a record (as it's read to early), but the transaction for the new record is attempted before the Row Store finishes loading (causing transaction to be discarded).
 
 
 When a Row Store is loading and a transaction is applied asynchronously, the grid will wait for the Row Store to be loaded and then apply the transaction.
@@ -90,7 +90,7 @@ The example is configured to demonstrate this. Note the following:
 
 - While a refresh is underway, add records using the **Add** button. This will add records to the server that will be missing in the row data the grid receives. The transactions will be applied after the data load is complete.
 
-- Note the console - after rows are loaded, transactions that were received during the load are applied after the load. This means the grid will show new records even though they were missing form teh loaded row data.
+- Note the console - after rows are loaded, transactions that were received during the load are applied after the load. This means the grid will show new records even though they were missing from the loaded row data.
 
 <grid-example title='Retry Transactions' name='retry-transactions' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
@@ -100,7 +100,7 @@ This only applies to loading stores. If the grid is limiting the number of concu
 
 The Cancelling Transactions feature guards against Duplicate Records. Duplicate records is the inverse of Lost Update. It results in records duplicating.
 
-Duplicate records occur when data is read from the server includes a new record (it's just in time), but the transaction for the new record is attempted after the Row Store finishes loading (transaction is applied). This results in the record appearing twice.
+Duplicate records occur when data read from the server includes a new record (it's just in time), but the transaction for the new record is attempted after the Row Store finishes loading (transaction is applied). This results in the record appearing twice.
 
 Before a transaction is applied, the grid calls the `isApplyServerSideTransaction()` callback to give the application one last chance to cancel the transaction.
 
@@ -137,7 +137,7 @@ The example is configured to demonstrate this. Note the following:
 
 - A version is applied to the server. This version attached to both Store Info and also the Transaction.
 
-- Note the console - after rows are loaded, transactions that were received during the load are applied after the load. This means the grid will show new records even though they were missing form teh loaded row data.
+- Note the console - after rows are loaded, transactions that were received during the load are applied after the load. This means the grid will show new records even though they were missing from the loaded row data.
 
 <grid-example title='Cancel Transactions' name='cancel-transactions' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
@@ -158,7 +158,7 @@ The example presents a simplified trading hierarchy, typically found inside a fi
 
 As far as the grid is concerned, it is lazy loading data based on what groups the user has expanded, so it doesn't matter from the grids perspective how big the dataset is on the server.
 
-In theory there no limit to the number of groupings or data size allowed. It's common for financial institutions to use the grid to show trading hierarchies with 10 or more levels in the hierarchy with 60,000 to 100,000 books.
+In theory there is no limit to the number of groupings or data size allowed. It's common for financial institutions to use the grid to show trading hierarchies with 10 or more levels in the hierarchy with 60,000 to 100,000 books.
 
 In the example, note the following:
 
