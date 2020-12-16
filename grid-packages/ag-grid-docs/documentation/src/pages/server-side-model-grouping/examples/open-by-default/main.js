@@ -45,7 +45,9 @@ function isServerSideGroupOpenByDefault(params) {
 function onBtRouteOfSelected() {
     var selectedNodes = gridOptions.api.getSelectedNodes();
     selectedNodes.forEach(function(rowNode, index) {
-        console.log('#' + index + ', route = [' + rowNode.getRoute().join(',') + ']');
+        var route = rowNode.getRoute();
+        var routeString = route ? route.join(',') : undefined;
+        console.log('#' + index + ', route = [' + routeString + ']');
     });
 }
 
