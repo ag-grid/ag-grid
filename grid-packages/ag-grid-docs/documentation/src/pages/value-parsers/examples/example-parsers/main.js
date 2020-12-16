@@ -4,9 +4,9 @@ function onCellValueChanged(event) {
 
 var gridOptions = {
     columnDefs: [
-        {headerName: "Name", field: "simple" },
-        {headerName: "Bad Number", field: "numberBad" },
-        {headerName: "Good Number", field: "numberGood", valueParser: numberParser}
+        { headerName: "Name", field: "simple" },
+        { headerName: "Bad Number", field: "numberBad" },
+        { headerName: "Good Number", field: "numberGood", valueParser: numberParser }
     ],
     defaultColDef: {
         flex: 1,
@@ -25,16 +25,13 @@ function numberParser(params) {
 
 function createRowData() {
     var rowData = [];
-
     var words = ['One', 'Apple', 'Moon', 'Sugar', 'Grid', 'Banana', 'Sunshine', 'Stars', 'Black', 'White', 'Salt', 'Beach'];
 
-    for (var i = 0; i<100; i++) {
+    for (var i = 0; i < 100; i++) {
         rowData.push({
             simple: words[i % words.length],
-            numberBad: Math.floor(((i+2) * 173456) % 10000),
-            numberGood: Math.floor(((i+2) * 476321) % 10000),
-            a: Math.floor(i%4),
-            b: Math.floor(i%7)
+            numberBad: Math.floor(((i + 2) * 173456) % 10000),
+            numberGood: Math.floor(((i + 2) * 476321) % 10000),
         });
     }
 
