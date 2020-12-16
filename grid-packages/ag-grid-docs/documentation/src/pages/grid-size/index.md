@@ -5,10 +5,10 @@ title: "Grid Size"
 Under normal usage, your application should set the width and height of the grid using CSS styles. The grid will then fit the width you provide and use scrolling inside the grid to allow all rows and columns to be viewed.
 
 ```html
-// set width using percentages
+<!-- set width using percentages -->
 <div id="myGrid" class="ag-theme-alpine" style="width: 100%; height: 100%;"></div>
 
-// OR set width using fixed pixels
+<!-- OR set width using fixed pixels -->
 <div id="myGrid" class="ag-theme-alpine" style="width: 500px; height: 200px;"></div>
 ```
 

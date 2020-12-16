@@ -116,7 +116,7 @@ interface CellClassParams {
     // The index of the row about to be rendered
     rowIndex: number,
     // If compiling to Angular, is the row's child scope, otherwise null.
-    \$scope: any,
+    $scope: any,
     // A reference to the ag-Grid API.
     api: GridApi,
     // If provided in gridOptions, a context object
