@@ -37,7 +37,7 @@ interface RefreshStoreParams {
 
 The following example demonstrates the refresh API. The following can be noted:
 
-- Button **Refresh Everything** refreshes the top level store. Note the Version column has changed it's value.
+- Button **Refresh Top Level** refreshes the top level store. Note the Version column has changed its value.
 
 - Button **Refresh [Canada]** refreshes the Canada cache only. To see this in action, make sure you have Canada expanded. Note the Version column has changed it's value.
 
@@ -51,7 +51,8 @@ The following example demonstrates the refresh API. The following can be noted:
 
 ## Group State
 
-When a refresh is done, all open groups at the refreshed level along with their children may be destroyed depending on the store type and whether the probided `params.purge=true`.
+When a refresh is done, all open groups at the refreshed level along with their children may 
+be destroyed depending on the store type and whether `params.purge=true` is set.
 
 
 ### Group State - Full Store
@@ -74,13 +75,13 @@ The example below shows refreshing using the Full Store and keeping group state.
 previous example with the addition `getRowNodeId()` is implemented. Note the following:
 
 - When 'Purge' is not checked, refreshing using any refresh button will maintain any open groups and children at that level.<br/><br/>
-    For example expand 'United States' and hit 'Refresh Everything' - note that the
+    For example expand 'United States' and hit 'Refresh Top Level' - note that the
     top level countries are refreshed (the version column changes once the load is
     complete) and the open 'United States' group is left open and the child rows
     (displaying year groups) are left intact.<br/><br/>
 - When 'Purge' is checked, refreshing using any refresh button will close all open groups and destroy all children at that level.<br/><br/>
-    For example expand 'United States' and hit 'Refresh Everything' - note that the
-    list of countries is reset, including closing 'United States' and loosing
+    For example expand 'United States' and hit 'Refresh Top Level' - note that the
+    list of countries is reset, including closing 'United States' and losing
     all child rows to 'United States'. When 'United States' is expanded again, the
     child rows are loaded again from scratch.
 
