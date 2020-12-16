@@ -154,8 +154,6 @@ The example below demonstrates applying transactions to a store with groups. Not
 
 - The buttons **New Palm Oil** and **New Rubber** will add one row to each group accordingly and print the result to the console. The group must be open for the add to happen.
 
-- The button **New Rubber** will attempt to add one row to the Rubber group, however the transaction will be cancelled due to the logic in `isApplyServerSideTransaction()` callback.
-
 - The button **New Wool & Amber** will add one item to each group. Note that two transactions are require to achieve this, one for each group, and print the results to the console. The groups must be open for the add to happen.
 
 - The button **New Product** will attempt to add an item to the top level, however it will fail as the top level has been configured to use an Partial store.
@@ -166,9 +164,8 @@ The example below demonstrates applying transactions to a store with groups. Not
 
 ## Partial Store
 
-Transaction Updates work with the SSRM and Full Store only. For SSRM and Partial Store, Transactions are not allowed. Instead either move your application to use Full Store or us [Store Refresh](../server-side-model-refresh/) to have the grid data update.
+Transaction Updates work with the SSRM and Full Store only. For SSRM and Partial Store, Transactions are not allowed. Instead either move your application to use Full Store or use [Store Refresh](../server-side-model-refresh/) to have the grid data update.
 
 ## Next Up
 
 Continue to the next section to learn how to perform [High Frequency Updates](../server-side-model-high-frequency/).
-
