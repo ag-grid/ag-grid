@@ -72,7 +72,7 @@ In the example below, note the following:
 ## Dragging Between Grids
 
 It is possible to use a generic `DropZone` to Drag and Drop rows from one grid to another. However, this approach will treat the target grid as a generic `HTMLElement` and adding the rows should be handled by the `onDragStop` callback. If you wish the grid to manage the Drag and Drop across grids and also handle where the record should be dropped, take a look at
-[Row Dragging - Between Grids](../row-dragging-to-grid/)
+[Row Dragging - Grid to Grid](../row-dragging-to-grid/)
 
 In the example below, note the following:
 
