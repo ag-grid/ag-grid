@@ -170,7 +170,7 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     processData(): boolean {
-        const { xKey, yKey, sizeKey, xAxis, yAxis } = this;
+        const { xKey, yKey, sizeKey, xAxis, yAxis, marker } = this;
 
         const data = xKey && yKey && this.data ? this.data : [];
 
@@ -183,7 +183,7 @@ export class ScatterSeries extends CartesianSeries {
             this.sizeData = [];
         }
 
-        this.sizeScale.domain = finiteExtent(this.sizeData) || [1, 1];
+        this.sizeScale.domain = marker.domain ? marker.domain : finiteExtent(this.sizeData) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
             this.xDomain = this.fixNumericExtent(finiteExtent(this.xData), 'x');
         } else {
