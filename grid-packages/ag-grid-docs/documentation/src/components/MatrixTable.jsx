@@ -98,7 +98,7 @@ const createTitleRow = (title, isTree, rowData, level, rowKey) => !title ? [] : 
                 ? <span className={styles['matrix-table__title']}>{title}</span>
                 : (
                     <span className={level > 2 ? styles[`matrix-table--pad${level}`] : ''}>
-                        { wrapWithLink(renderEnterprise(title, isTree, rowData), rowData.url)}
+                        {wrapWithLink(renderEnterprise(title, isTree, rowData), rowData.url)}
                     </span>
                 )
             }
@@ -129,10 +129,11 @@ const createRow = (columnFields, rowData, isTree, booleanOnly, stringOnly, level
 const renderPropertyColumn = (value, isTree, rowData, level) => {
     if (isTree) {
         const processedValue = wrapWithLink(renderEnterprise(value, isTree, rowData), rowData.url);
+
         return <span className={level > 2 ? styles[`matrix-table--pad${level}`] : ''}>{processedValue}</span>;
     }
 
-    return <span dangerouslySetInnerHTML={{ __html: value }} />;
+    return <span dangerouslySetInnerHTML={{ __html: generateCodeTags(value) }} />;
 };
 
 const renderValue = (value, booleanOnly, stringOnly, notIn) => {
@@ -145,9 +146,11 @@ const renderValue = (value, booleanOnly, stringOnly, notIn) => {
     return (
         <div>
             <FontAwesomeIcon icon={faCheck} fixedWidth className={styles['matrix-table__true']} />
-            {typeof value === 'string' && !booleanOnly && value}
+            {typeof value === 'string' && !booleanOnly && ` (${value})`}
         </div>
     );
 };
+
+const generateCodeTags = content => content.replace(/`(.*?)`/g, '<code>$1</code>');
 
 export default MatrixTable;

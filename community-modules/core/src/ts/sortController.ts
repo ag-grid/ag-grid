@@ -143,18 +143,27 @@ export class SortController extends BeanStub {
         const allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
         const columnsWithSorting = allColumnsIncludingAuto.filter(column => !!column.getSort());
 
+        // when both cols are missing sortIndex, we use the position of the col in all cols list.
+        // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
+        // cols is sorted by first.
+        const allColsIndexes: {[id:string]:number} = {};
+        allColumnsIncludingAuto.forEach( (col: Column, index: number) => allColsIndexes[col.getId()] = index);
+
         // put the columns in order of which one got sorted first
         columnsWithSorting.sort((a: Column, b: Column) => {
             const iA = a.getSortIndex();
             const iB = b.getSortIndex();
             if (iA != null && iB != null) {
                 return iA - iB; // both present, normal comparison
+            } else if (iA == null && iB == null) {
+                // both missing, compare using column positions
+                const posA = allColsIndexes[a.getId()];
+                const posB = allColsIndexes[b.getId()];
+                return posA > posB ? 1 : -1;
             } else if (iB == null) {
                 return -1; // iB missing
-            } else if (iA == null) {
-                return 1; // iA missing
             } else {
-                return 0; // both missing
+                return 1; // iA missing
             }
         });
 

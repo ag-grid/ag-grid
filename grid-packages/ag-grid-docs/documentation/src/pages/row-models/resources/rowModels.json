@@ -18,14 +18,14 @@
             "feature": "<a href='../row-sorting/'>Row Sorting</a>",
             "clientSide": "(client)",
             "infinite": "(server)",
-            "serverSide": "(server)",
+            "serverSide": "(client OR server)",
             "viewport": "(server)"
         },
         {
             "feature": "<a href='../filtering/'>Row Filtering</a>",
             "clientSide": "(client)",
             "infinite": "(server)",
-            "serverSide": "(server)",
+            "serverSide": "(client OR server)",
             "viewport": "(server)"
         },
         {

@@ -108,7 +108,7 @@ is specified using the grid properties `serverSideStoreType`, `maxBlocksInCache`
 It is possible to have different configurations for different stores. For example if grouping, infinite 
 scrolling (using the Partial Store) could be turned off at the top level but turned on at the lower levels.
 
-This is done by implementing the grid callback `getServerSideStoreParams()`. It's interface is as follows:
+This is done by implementing the grid callback `getServerSideStoreParams()`. Its interface is as follows:
 
 
 ```ts
@@ -158,7 +158,7 @@ enum ServerSideStoreType {
 
 The example below demonstrates the `getServerSideStoreParams()` callback. Note the following:
 
-- The grid is configured differently depending on whether grouping is active of not by implementing 
+- The grid is configured differently depending on whether grouping is active or not by implementing 
 the `getServerSideStoreParams()` callback. The callback logs it's results to the dev console.
 
 - When grouping is active, the stores are configured as follows:
@@ -169,8 +169,6 @@ the `getServerSideStoreParams()` callback. The callback logs it's results to the
     To observe, expand different levels of the data and notice when rows are read back in blocks.
 
 - When no grouping is active, the store is configured to use infinite scroll and only keeps two blocks of rows in the store.<br/><br/>To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
-
-- Clicking **Store State** will print the state of all stores to the console using the API `getServerSideStoreState()`.
 
 <grid-example title='Dynamic Params' name='dynamic-params' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
@@ -267,7 +265,7 @@ It may also be helpful to use the [Row Node](../row-object/) API `getRoute()` to
 
 Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note the following:
 
-- The callback opens the following routes those routes are loaded:
+- The callback opens the following routes as soon as those routes are loaded:
     - [Zimbabwe]
     - [Zimbabwe, Swimming]
     - [United States, Swimming]
@@ -364,7 +362,7 @@ It is possible to force the grid to always refresh (reload data) after a filter 
 
 It is possible the data provided has composite objects, in which case it's more difficult for the grid to extract group names. This can be worked with using value getters or embedded fields (i.e. the field attribute has dot notation).
 
-In the example below, all rows back are modified so that the rows looks something like this:
+In the example below, all rows are modified so that the rows look something like this:
 
 ```js
 // sample contents of row data
