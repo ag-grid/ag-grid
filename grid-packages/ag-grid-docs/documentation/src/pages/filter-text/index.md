@@ -25,7 +25,6 @@ By default the text filter performs strict case-insensitive text filtering, i.e.
 - **contains '$'** will show 0 values
 - **contains 'gbp'** will show 1 value ['345GBP']
 
-
 You can change the default behaviour by providing your own `textCustomComparator`, which allows you to provide your own logic to decide when to include a row in the filtered results.
 
 The `textCustomComparator` is a function with the following signature:
@@ -35,11 +34,8 @@ function textCustomComparator(filter: string, gridValue: any, filterText: string
 ```
 
 - `filter: string` The applicable filter type being tested. One of: `equals`, `notEqual`, `contains`, `notContains`, `startsWith`, `endsWith`
-
 - `gridValue: any` The value about to be filtered. If this column has a value getter, this value will be coming from the value getter, otherwise it is the raw value injected into the grid.
-
 - `filterText: string` The value to filter by.
-
 - `returns: boolean` Set to `true` if the value passes the filter, otherwise `false`.
 
 The following is an example of a `textCustomComparator` that mimics the current implementation of ag-Grid. This can be used as a template to create your own.
@@ -107,24 +103,14 @@ function(value) {
 ## Example: Text Filter
 
 - The **Athlete** column has only two filter options: `filterOptions = ['contains', 'notContains']`
-
-- The **Athlete** column has a text formatter, so if you search for `'o'` it will find `&oslash;`. You can try this by searching the string `'Bjo'`.
-
+- The **Athlete** column has a text formatter, so if you search for 'o' it will find '&oslash;'. You can try this by searching the string `'Bjo'`.
 - The **Athlete** column has a debounce of 200ms (`debounceMs = 200`).
-
 - The **Athlete** column filter has the AND/OR additional filter suppressed (`suppressAndOrCondition = true`)
-
 - The **Country** column has only one filter option: `filterOptions = ['contains']`
-
 - The **Country** column has a `textCustomComparator` so that aliases can be entered in the filter, e.g. if you filter using the text `'usa'` it will match `United States` or `'holland'` will match `'Netherlands'`
-
 - The **Country** column filter has a debounce of 2000ms (`debounceMs = 2000`)
-
 - The **Year** column has one filter option: `filterOptions = ['inRange']`
-
 - The **Sport** column has a different default option (`defaultOption = 'startsWith'`)
-
 - The **Sport** column filter is case-sensitive (`caseSensitive = true`)
 
 <grid-example title='Text Filter' name='text-filter' type='generated' options='{ "exampleHeight": 555 }'></grid-example>
-

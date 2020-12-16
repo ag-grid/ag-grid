@@ -162,6 +162,6 @@ To force the the status bar to have a fixed height, add CSS to the status bar di
 
 ## Custom Status Bar Components
 
-Applications that are not using the [Client-Side Row Model](../client-side-model) or which require bespoke status bar panels can provide their own custom status bar components.
+Applications that are not using the [Client-Side Row Model](../client-side-model/) or which require bespoke status bar panels can provide their own custom status bar components.
 
 For more details see the following section: [Status Bar Panels (Components)](../component-status-bar/).

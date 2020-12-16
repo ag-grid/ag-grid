@@ -48,6 +48,7 @@
     "@ag-grid-enterprise/menu": "~24.1.0"
   },
   "devDependencies": {
+    "@babel/types": "7.12.7",
     "@types/jest": "^25.2.1",
     "jest": "^25.4.0",
     "ts-jest": "^25.4.0",

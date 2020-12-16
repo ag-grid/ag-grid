@@ -3,12 +3,12 @@ title: "SSRM Pagination"
 enterprise: true
 ---
 
-If you are dealing with large amounts of data, your applications may decide to use pagination to help 
+If you are dealing with large amounts of data, your applications may decide to use pagination to help
 the user navigate through the data.
 
 ## Enabling Pagination
 
-Pagination is enabled in the grid via the `pagination` grid option. The pagination page size is 
+Pagination is enabled in the grid via the `pagination` grid option. The pagination page size is
 typically set alongside this using the `paginationPageSize` option. These options are shown below:
 
 
@@ -24,8 +24,7 @@ gridOptions: {
 }
 ```
 
-For more configuration details see the section on [Pagination](../row-pagination).
-
+For more configuration details see the section on [Pagination](../row-pagination/).
 
 ## Server Pagination
 
@@ -38,7 +37,7 @@ The example below demonstrates server-side Pagination. Note the following:
 - Pagination is enabled using the grid option `pagination=true`.
 - A pagination page size of 10 (default is 100) is set using the grid option `paginationPageSize=10`.
 - The number of rows returned per request is set to 10 (default is 100) using `cacheBlockSize=10`.
-- Use the arrows in the pagination panel to traverse the data. Note the last page arrow is greyed 
+- Use the arrows in the pagination panel to traverse the data. Note the last page arrow is greyed
 out as the last row index is only supplied to the grid when the last row has been reached.
 - Open the browser's dev console to view the request supplied to the datasource.
 

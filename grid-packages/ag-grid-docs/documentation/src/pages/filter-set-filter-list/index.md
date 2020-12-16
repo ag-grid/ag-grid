@@ -146,7 +146,7 @@ Note that if there are missing values in the row data, the filter list will disp
 The following example demonstrates providing filter values using `filterParams.values`. Note the following:
 
 - The **Days (Values Not Provided)** set filter obtains values from the row data to populate the filter list and as `'Saturday'` and `'Sunday'` are not present in the data they do not appear in the filter list.
-- As the **Days (Values Not Provided)** filter values come from the row data they are sorted using a [Custom Sort Comparator](../filter-set-filter-list#sorting-filter-lists) to ensure the days are ordered according to the week day.
+- As the **Days (Values Not Provided)** filter values come from the row data they are sorted using a [Custom Sort Comparator](../filter-set-filter-list/#sorting-filter-lists) to ensure the days are ordered according to the week day.
 - The **Days (Values Provided)** set filter is given values using `filterParams.values`. As all days are supplied the filter list also contains `'Saturday'` and `'Sunday'`.
 - As the **Days (Values Provided)** filter values are provided in the correct order, the default filter list sorting is turned off using: `filterParams.suppressSorting=true`.
 

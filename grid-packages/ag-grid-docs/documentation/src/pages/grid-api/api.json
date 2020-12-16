@@ -560,7 +560,7 @@
             "description": "Adding and clearing of aggregation functions."
         },
         "hidePopupMenu()": {
-            "description": "Hides any showing <a href='../context-menu'>context menu</a> or <a href='../column-menu'>column menu</a>."
+            "description": "Hides any showing <a href='../context-menu/'>context menu</a> or <a href='../column-menu/'>column menu</a>."
         },
         "setEnableCellTextSelection()": {
             "description": "Sets the `enableCellTextSelection` property."
