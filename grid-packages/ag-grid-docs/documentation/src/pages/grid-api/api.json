@@ -571,7 +571,7 @@
         "isAnimationFrameQueueEmpty()": {
             "description": "Returns `true` when there are no more animation frames left to process."
         },
-        "refreshServerSideStore(route)": {
+        "refreshServerSideStore(params)": {
             "description": "Refresh a server-side store.",
             "more": {
                 "name": "Purging Groups",
