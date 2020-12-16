@@ -1,4 +1,5 @@
 import React from 'react';
+import { withPrefix } from 'gatsby';
 import styles from './HeaderNav.module.scss';
 
 const links = [{
@@ -6,7 +7,7 @@ const links = [{
     url: '/example.php'
 }, {
     name: 'Documentation',
-    url: '/documentation/'
+    url: withPrefix('/')
 }, {
     name: 'Pricing',
     url: '/license-pricing.php'

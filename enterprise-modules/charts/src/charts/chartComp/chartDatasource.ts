@@ -28,6 +28,7 @@ export interface ChartDatasourceParams {
     valueCols: Column[];
     startRow: number;
     endRow: number;
+    isScatter: boolean;
     aggFunc?: string | IAggFunc;
     referenceCellRange?: CellRange;
 }
@@ -171,9 +172,9 @@ export class ChartDatasource extends BeanStub {
 
                     if (filteredNodes[rowNode.id as string]) {
                         data[colId] = actualValue;
-                        data[filteredOutColId] = params.aggFunc ? undefined : 0;
+                        data[filteredOutColId] = params.aggFunc || params.isScatter ? undefined : 0;
                     } else {
-                        data[colId] = params.aggFunc ? undefined : 0;
+                        data[colId] = params.aggFunc || params.isScatter ? undefined : 0;
                         data[filteredOutColId] = actualValue;
                     }
 

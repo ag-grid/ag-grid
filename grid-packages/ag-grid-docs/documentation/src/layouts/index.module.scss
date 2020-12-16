@@ -2,7 +2,9 @@
 @import "~bootstrap/scss/alert";
 
 html {
-    scroll-padding-top: 64px;
+    @include media-breakpoint-up(lg) {
+        scroll-padding-top: 64px;
+    }
     overflow-x: hidden;
 }
 
@@ -43,14 +45,16 @@ html {
     background-color: transparentize($light, 0.05);
     border-bottom: 1px solid lighten($secondary, 40%);
 
-    @supports (position: sticky) {
-        position: sticky;
-        top: 0;
-        z-index: 3;
+    @include media-breakpoint-up(lg) {
+        @supports (position: sticky) {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+        }
     }
 
     &__wrapper {
-        composes: d-flex w-100 justify-content-between container-lg px-0 from global;
+        composes: d-flex w-100 justify-content-end justify-content-lg-between flex-wrap container-lg px-0 from global;
     }
 
     &__search {

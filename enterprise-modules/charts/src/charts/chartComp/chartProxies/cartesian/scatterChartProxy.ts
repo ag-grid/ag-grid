@@ -190,14 +190,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                     });
                 }
 
-                series.marker.size = 10;
-                (series as ScatterSeries).marker.formatter = p => {
-                    return {
-                        fill: p.highlighted ? 'yellow' : p.fill,
-                        size: p.highlighted ? 12 : p.size
-                    };
-                }
-
                 chart.tooltip.delay = 500;
 
                 // hide 'filtered out' legend items
