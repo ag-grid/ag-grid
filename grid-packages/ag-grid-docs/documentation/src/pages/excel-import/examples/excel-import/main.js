@@ -3,13 +3,13 @@ var gridOptions = {
         { field: "athlete", minWidth: 180 },
         { field: "age" },
         { field: "country", minWidth: 150 },
-        { field: "year"},
+        { field: "year" },
         { field: "date", minWidth: 130 },
-        { field: "sport", minWidth: 100},
-        { field: "gold"},
-        { field: "silver"},
-        { field: "bronze"},
-        { field: "total"}
+        { field: "sport", minWidth: 100 },
+        { field: "gold" },
+        { field: "silver" },
+        { field: "bronze" },
+        { field: "total" }
     ],
 
     defaultColDef: {
@@ -28,10 +28,10 @@ function makeRequest(method, url, success, error) {
     httpRequest.responseType = "arraybuffer";
 
     httpRequest.open(method, url);
-    httpRequest.onload = function () {
+    httpRequest.onload = function() {
         success(httpRequest.response);
     };
-    httpRequest.onerror = function () {
+    httpRequest.onerror = function() {
         error(httpRequest.response);
     };
     httpRequest.send();
@@ -49,7 +49,7 @@ function convertDataToWorkbook(data) {
 
     var bstr = arr.join("");
 
-    return XLSX.read(bstr, {type: "binary"});
+    return XLSX.read(bstr, { type: "binary" });
 }
 
 // pull out the values we're after, converting it into an array of rowData
@@ -96,15 +96,15 @@ function populateGrid(workbook) {
 
 function importExcel() {
     makeRequest('GET',
-        '/data/OlymicData.xlsx',
+        'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/grid-packages/ag-grid-docs/documentation/src/pages/excel-import/OlympicData.xlsx',
         // success
-        function (data) {
+        function(data) {
             var workbook = convertDataToWorkbook(data);
 
             populateGrid(workbook);
         },
         // error
-        function (error) {
+        function(error) {
             throw error;
         }
     );
@@ -112,7 +112,7 @@ function importExcel() {
 
 // wait for the document to be loaded, otherwise
 // ag-Grid will not find the div in the document.
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
 
     // lookup the container we want the Grid to use
     var eGridDiv = document.querySelector('#myGrid');

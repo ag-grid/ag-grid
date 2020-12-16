@@ -54,6 +54,9 @@ var SeriesMarker = /** @class */ (function (_super) {
     ], SeriesMarker.prototype, "maxSize", void 0);
     __decorate([
         reactive('change')
+    ], SeriesMarker.prototype, "domain", void 0);
+    __decorate([
+        reactive('change')
     ], SeriesMarker.prototype, "fill", void 0);
     __decorate([
         reactive('change')

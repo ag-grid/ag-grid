@@ -74,7 +74,7 @@ var FullStore = /** @class */ (function (_super) {
     };
     FullStore.prototype.getBlockStateJson = function () {
         return {
-            id: this.nodeIdPrefix,
+            id: this.nodeIdPrefix ? this.nodeIdPrefix : '',
             state: this.getState()
         };
     };
@@ -105,12 +105,20 @@ var FullStore = /** @class */ (function (_super) {
         else {
             this.allRowNodes.push(rowNode);
         }
-        var defaultId = this.nodeIdPrefix + this.nodeIdSequence.next();
+        var defaultId = this.prefixId(this.nodeIdSequence.next());
         this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
         this.nodeManager.addRowNode(rowNode);
         this.blockUtils.checkOpenByDefault(rowNode);
         this.allNodesMap[rowNode.id] = rowNode;
         return rowNode;
+    };
+    FullStore.prototype.prefixId = function (id) {
+        if (this.nodeIdPrefix) {
+            return this.nodeIdPrefix + '-' + id;
+        }
+        else {
+            return id.toString();
+        }
     };
     FullStore.prototype.processServerFail = function () {
         this.initialiseRowNodes(1, true);

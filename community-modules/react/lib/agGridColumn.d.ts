@@ -1,6 +1,5 @@
 // @ag-grid-community/react v25.0.0
 import { Component } from "react";
-import * as AgGrid from "@ag-grid-community/core";
 import { ColDef, ColGroupDef } from "@ag-grid-community/core";
 export interface AgGridColumnProps extends ColDef {
 }
@@ -10,7 +9,7 @@ export declare class AgGridColumn extends Component<AgGridColumnProps | AgGridCo
     props: any;
     constructor(props: any);
     render(): any;
-    static mapChildColumnDefs(children: any): AgGrid.ColDef[];
+    static mapChildColumnDefs(children: any): any;
     static toColDef(columnProps: any): ColDef;
     static hasChildColumns(children: any): boolean;
 }

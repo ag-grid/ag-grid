@@ -88,6 +88,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         }
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
+        var domain = this.addDataDomainForCrossFiltering(seriesDefinitions, params);
         var chart = this.chart;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = _.findIndex(seriesDefinitions, function (s) {
@@ -145,22 +146,6 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             series.data = params.data;
             series.fill = fills[index % fills.length];
             series.stroke = strokes[index % strokes.length];
-            var isFilteredOutYKey = yFieldDefinition.colId.indexOf('-filtered-out') > -1;
-            if (_this.crossFiltering) {
-                if (!isFilteredOutYKey) {
-                    // sync toggling of legend item with hidden 'filtered out' item
-                    chart.legend.addEventListener('click', function (event) {
-                        series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
-                    });
-                }
-                chart.tooltip.delay = 500;
-                // hide 'filtered out' legend items
-                if (isFilteredOutYKey) {
-                    series.showInLegend = false;
-                }
-                // add node click cross filtering callback to series
-                series.addEventListener('nodeClick', _this.crossFilterCallback);
-            }
             if (sizeFieldDefinition) {
                 series.sizeKey = sizeFieldDefinition.colId;
                 series.sizeName = sizeFieldDefinition.displayName;
@@ -174,6 +159,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
             else {
                 series.labelKey = series.labelName = undefined;
+            }
+            var isFilteredOutYKey = yFieldDefinition.colId.indexOf('-filtered-out') > -1;
+            if (_this.crossFiltering) {
+                if (!isFilteredOutYKey) {
+                    // sync toggling of legend item with hidden 'filtered out' item
+                    chart.legend.addEventListener('click', function (event) {
+                        series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                    });
+                }
+                if (domain) {
+                    series.marker.domain = domain;
+                }
+                chart.tooltip.delay = 500;
+                // hide 'filtered out' legend items
+                if (isFilteredOutYKey) {
+                    series.showInLegend = false;
+                }
+                // add node click cross filtering callback to series
+                series.addEventListener('nodeClick', _this.crossFilterCallback);
             }
             if (!existingSeries) {
                 chart.addSeriesAfter(series, previousSeries);
@@ -227,6 +231,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 .filter(function (x) { return x && x.sizeField; });
         }
         return fields.filter(function (value, i) { return i > 0; }).map(function (yField) { return ({ xField: xField, yField: yField }); });
+    };
+    ScatterChartProxy.prototype.addDataDomainForCrossFiltering = function (seriesDefinitions, params) {
+        var domain;
+        if (seriesDefinitions[0]) {
+            var sizeColId_1 = seriesDefinitions[0].sizeField.colId;
+            var allSizePoints_1 = [];
+            params.data.forEach(function (d) {
+                if (typeof d[sizeColId_1] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1]);
+                }
+                if (typeof d[sizeColId_1 + '-filtered-out'] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1 + '-filtered-out']);
+                }
+            });
+            if (allSizePoints_1.length > 0) {
+                domain = [Math.min.apply(Math, allSizePoints_1), Math.max.apply(Math, allSizePoints_1)];
+            }
+        }
+        return domain;
     };
     return ScatterChartProxy;
 }(CartesianChartProxy));

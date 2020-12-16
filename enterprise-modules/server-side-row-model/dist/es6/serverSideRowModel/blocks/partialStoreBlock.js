@@ -73,9 +73,17 @@ var PartialStoreBlock = /** @class */ (function (_super) {
     PartialStoreBlock.prototype.getGroupField = function () {
         return this.groupField;
     };
+    PartialStoreBlock.prototype.prefixId = function (id) {
+        if (this.nodeIdPrefix) {
+            return this.nodeIdPrefix + '-' + id;
+        }
+        else {
+            return id.toString();
+        }
+    };
     PartialStoreBlock.prototype.getBlockStateJson = function () {
         return {
-            id: this.nodeIdPrefix + this.getId(),
+            id: this.prefixId(this.getId()),
             state: {
                 blockNumber: this.getId(),
                 startRow: this.startRow,
@@ -148,7 +156,7 @@ var PartialStoreBlock = /** @class */ (function (_super) {
             var dataLoadedForThisRow = i < rows.length;
             if (dataLoadedForThisRow) {
                 var data = rows[i];
-                var defaultId = this.nodeIdPrefix + (this.startRow + i);
+                var defaultId = this.prefixId(this.startRow + i);
                 this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
                 var newId = rowNode.id;
                 this.parentStore.removeDuplicateNode(newId);

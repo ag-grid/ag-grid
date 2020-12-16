@@ -3,8 +3,8 @@ title: "Polymer Grid"
 frameworks: ["javascript"]
 ---
 
-This section documents how to get started with ag-Grid and Polymer as quickly as possible. You will 
-start off with a simple application and section by section add Grid features to the application ending 
+This section documents how to get started with ag-Grid and Polymer as quickly as possible. You will
+start off with a simple application and section by section add Grid features to the application ending
 up with a fully fledged application, with ag-Grid and Polymer at the heart of it.
 
 [[note]]
@@ -16,7 +16,7 @@ up with a fully fledged application, with ag-Grid and Polymer at the heart of it
 
 We'll be using the Polymer CLI to scaffold and run our application.
 
-Please refer to the [Polymer CLI](https://www.polymer-project.org/3.0/docs/tools/polymer-cli#install) 
+Please refer to the [Polymer CLI](https://www.polymer-project.org/3.0/docs/tools/polymer-cli#install)
 installation instructions to get this installed.
 
 ## Scaffolding
@@ -38,7 +38,7 @@ We can now test our application with the following command:
 polymer serve --open
 ```
 
-This should build and serve the skeleton project that the Polymer CLI provides, 
+This should build and serve the skeleton project that the Polymer CLI provides,
 opening your default browser at the same time.
 
 ## Adding ag-Grid
@@ -58,10 +58,10 @@ We need to reference the ag-Grid library in the root `index.html`:
 + <script src="/node_modules/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
 ```
 
-You'll note that we're referencing the UMD bundle without styles - we do this as we'll 
+You'll note that we're referencing the UMD bundle without styles - we do this as we'll
 reference the styles when we define our grid in the next step.
 
-Next we need to update the CLI generated element with our code. First we need to import 
+Next we need to update the CLI generated element with our code. First we need to import
 the `ag-grid-polymer` element so that we can use it:
 
 ```diff
@@ -91,16 +91,16 @@ Next we'll add our ag-Grid element along with the styles we'd like to use in the
   }
 ```
 
-The lines above import the `AgGrid` component, the grid "structure" stylesheet (`ag-grid.css`), 
-and one of the available grid themes: (`ag-theme-alpine.css`). The grid ships several different 
+The lines above import the `AgGrid` component, the grid "structure" stylesheet (`ag-grid.css`),
+and one of the available grid themes: (`ag-theme-alpine.css`). The grid ships several different
 themes; pick one that matches your project design.
 
 
-We've also defined 4 bound properties - two data properties (`rowData` and `columnDefs`) and 
+We've also defined 4 bound properties - two data properties (`rowData` and `columnDefs`) and
 one event (`on-first-data-rendered)`.
 
-The data properties define the data to render and the columns to display. We'll use the 
-`firstDataRendered` event to space the columns out evenly once the data has been rendered 
+The data properties define the data to render and the columns to display. We'll use the
+`firstDataRendered` event to space the columns out evenly once the data has been rendered
 within the grid.
 
 Now let's add the data properties and event we reference above:
@@ -180,7 +180,7 @@ class PolymerGettingStartedApp extends PolymerElement {
 window.customElements.define('polymer-getting-started-app', PolymerGettingStartedApp);
 ```
 
-With this in place if we serve the application once again (`polymer serve --open`) we 
+With this in place if we serve the application once again (`polymer serve --open`) we
 should see our first grid:
 
 <img src="../getting-started/resources/step1.png" alt="ag-Grid in its simplest form"/>
@@ -188,12 +188,12 @@ should see our first grid:
 
 ## Adding Features
 
-Ok, great - so far so good. But wouldn't it be nice to be able to sort the data to help 
+Ok, great - so far so good. But wouldn't it be nice to be able to sort the data to help
 us see which car is the most expensive (or least!)?
 
 ### Sorting
 
-Adding sorting to our application is very easy - all you need to do is let the Grid know 
+Adding sorting to our application is very easy - all you need to do is let the Grid know
 you want sorting to be enabled by setting a Grid property to true:
 
 ```js
@@ -240,10 +240,10 @@ With the `filter` property set we are now able to filter any column by clicking 
 
 ## Summary
 
-We've only scratched the surface with what you can do with the Grid - please refer to the full set 
+We've only scratched the surface with what you can do with the Grid - please refer to the full set
 of features on the left hand navigation for an idea of what's on offer.
 
-Please read the [More Details](../polymer-more-details) section next to get a deeper understanding of 
+Please read the [More Details](../polymer-more-details/) section next to get a deeper understanding of
 how to use ag-Grid and Polymer, as well the **Enterprise Features**.
 
 [[note]]

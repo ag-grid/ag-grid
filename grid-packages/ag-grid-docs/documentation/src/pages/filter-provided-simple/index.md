@@ -27,20 +27,17 @@ Remember Filtering works with all frameworks (e.g. Angular and React) as well as
 
 ## Simple Filter Parts
 
-
 Each Simple Filter follows the same layout. The only layout difference is the type of input field presented to the user: for Text and Number Filters a text field is displayed, whereas for Date Filters a date picker field is displayed.
 
-<image-caption src="filter-provided-simple/resources/filter-panel-components.png" alt="Filter Panel Component" width="40rem" centered="true">
-</image-caption>
+<image-caption src="filter-provided-simple/resources/filter-panel-components.png" alt="Filter Panel Component" width="40rem" centered="true"></image-caption>
 
 ### Filter Options
 
 Each filter provides a dropdown list of filter options to select from. Each filter option represents a filtering strategy, e.g. 'equals', 'not equals', etc.
 
-Each filter's default [Filter Options](#filterOptions) are listed below, as well as information on [Defining Custom Filter Options](#custom-filter-options).
+Each filter's default [Filter Options](#simple-filter-options) are listed below, as well as information on [Defining Custom Filter Options](#custom-filter-options).
 
 ### Filter Value
-
 
 Each filter option takes zero (a possibility with custom options), one (for most) or two (for 'in range') values. The value type depends on the filter type, e.g. the Date Filter takes Date values.
 
@@ -57,7 +54,6 @@ The Join Operator decides how Condition 1 and Condition 2 are joined, using eith
 Simple Filters are configured though the `filterParams` attribute of the column definition. All of the parameters from Provided Filters are available:
 
 <api-documentation source='filter-provided/resources/providedFilters.json' section="filterParams"></api-documentation>
-
 
 In addition, the following parameters are also available, depending on the type of filter being used:
 
@@ -77,9 +73,9 @@ The following example demonstrates those configuration options that can be appli
 
 <grid-example title='Simple Filter Options' name='simple-filter-options' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
-## Filter Options
+## Simple Filter Options
 
-Each filter presents a list of options to the user. The list of options for each filter are as follows:
+Each simple filter presents a list of options to the user. The list of options for each filter are as follows:
 
 | Option Name             | Option Key            | Supported Filters   |
 | ----------------------- | --------------------- | ------------------- |
@@ -96,7 +92,7 @@ Each filter presents a list of options to the user. The list of options for each
 | In Range                | `inRange`             | Number, Date        |
 | Choose One              | `empty`               | Text, Number, Date  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](../filter-provided-simple/#customFilterOptions). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](../filter-provided-simple/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
 
 ### Default Filter Options
 

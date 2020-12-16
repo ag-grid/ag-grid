@@ -267,11 +267,11 @@ var BlockUtils = /** @class */ (function (_super) {
             rowNode = rowNode.parent;
         }
         if (parts.length > 0) {
-            return parts.reverse().join('-') + '-';
+            return parts.reverse().join('-');
         }
         else {
             // no prefix, so node id's are left as they are
-            return '';
+            return undefined;
         }
     };
     BlockUtils.prototype.checkOpenByDefault = function (rowNode) {

@@ -688,21 +688,21 @@
             "displayName": "Full Width Renderers"
         },
         "groupRowRenderer<br />groupRowRendererFramework<br />groupRowRendererParams": {
-            "description": "Sets the <a href='../component-cell-renderer'>Cell Renderer</a> to use when `groupUseEntireRow=true`.",
+            "description": "Sets the <a href='../component-cell-renderer/'>Cell Renderer</a> to use when `groupUseEntireRow=true`.",
             "more": {
                 "name": "Row Grouping",
                 "url": "../grouping/#reference-callbacks"
             }
         },
         "groupRowInnerRenderer<br />groupRowInnerRendererFramework": {
-            "description": "Sets the inner <a href='../component-cell-renderer'>Cell Renderer</a> to use when `groupUseEntireRow=true`.",
+            "description": "Sets the inner <a href='../component-cell-renderer/'>Cell Renderer</a> to use when `groupUseEntireRow=true`.",
             "more": {
                 "name": "Row Grouping",
                 "url": "../grouping/#reference-callbacks"
             }
         },
         "fullWidthCellRenderer<br />fullWidthCellRendererFramework<br />fullWidthCellRendererParams": {
-            "description": "Sets the <a href='../component-cell-renderer'>Cell Renderer</a> to use for <a href='../full-width-rows/'>Full Width Rows</a>."
+            "description": "Sets the <a href='../component-cell-renderer/'>Cell Renderer</a> to use for <a href='../full-width-rows/'>Full Width Rows</a>."
         }
     },
     "masterDetail": {

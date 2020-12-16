@@ -12,7 +12,6 @@ Below shows a complex example making use of value getters (using expressions) an
 
 Notice that the example (including calculating the expression on the fly, the grid only calculates what's needed to be displayed) runs very fast (once the data is loaded) despite over 6,000 rows.
 
-This example is best viewed by opening it in a new tab (click the link on the top right of the example).
+This example is best viewed by opening it in a new tab.
 
 <grid-example title='Monthly Sales' name='monthly-sales' type='vanilla' options='{ "enterprise": true, "extras": ["fontawesome", "bootstrap"] }'></grid-example>
-

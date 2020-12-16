@@ -44,6 +44,7 @@ export declare class FullStore extends RowNodeBlock implements IServerSideStore 
     getStartRow(): number;
     getEndRow(): number;
     private createDataNode;
+    private prefixId;
     protected processServerFail(): void;
     protected processServerResult(params: LoadSuccessParams): void;
     private createOrRecycleNodes;

@@ -120,7 +120,7 @@ You can override the menu width by overriding the corresponding CSS:
 
 ## Hiding the Column Menu
 
-Hide the column menu with the grid API `hidePopupMenu()`, which will hide either the [context menu](../context-menu) or the column menu, whichever is showing.
+Hide the column menu with the grid API `hidePopupMenu()`, which will hide either the [context menu](../context-menu/) or the column menu, whichever is showing.
 
 ## Example Column Menu
 

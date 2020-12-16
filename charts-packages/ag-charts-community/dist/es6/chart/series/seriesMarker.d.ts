@@ -15,6 +15,7 @@ export declare class SeriesMarker extends Observable {
      * and the lowest to the `size`.
      */
     maxSize: number;
+    domain?: [number, number];
     fill?: string;
     stroke?: string;
     strokeWidth?: number;

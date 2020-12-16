@@ -7,7 +7,7 @@
             "description": "If the Apply button is present, the filter popup will be closed immediately when the Apply or Reset button is clicked if this is set to `true`."
         },
         "debounceMs": {
-            "description": "By default the <a href='../filter-text'>Text</a> and <a href='../filter-number'>Number</a> filters will debounce by 500ms. This is because these filters have text field inputs, so time is given to the user to type items in before the input is formatted and the filtering applied. The <a href='../filter-set/'>Set</a> and <a href='../filter-date'>Date</a> will execute immediately (no debounce). To override these defaults, set `debounceMs` to the number of milliseconds to debounce by."
+            "description": "By default the <a href='../filter-text/'>Text</a> and <a href='../filter-number/'>Number</a> filters will debounce by 500ms. This is because these filters have text field inputs, so time is given to the user to type items in before the input is formatted and the filtering applied. The <a href='../filter-set/'>Set</a> and <a href='../filter-date/'>Date</a> will execute immediately (no debounce). To override these defaults, set `debounceMs` to the number of milliseconds to debounce by."
         },
         "newRowsAction": {
             "default": "clear",

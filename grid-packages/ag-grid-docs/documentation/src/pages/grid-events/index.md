@@ -35,8 +35,8 @@ interface CellValueChangedEvent {
     │     <span class="event-hierarchy__attribute">type</span>: string, // the event type, eg 'sortChanged' or 'columnResized'
     │   }</span>
     └── AgGridEvent
-        │     <span class="event-hierarchy__attribute">api</span>: GridAPI, // see [Grid API](../javascript-grid-api/)
-        │     <span class="event-hierarchy__attribute">columnApi</span>: ColumnAPI // see [Column API](../javascript-grid-column-api/)
+        │     <span class="event-hierarchy__attribute">api</span>: GridAPI, // see [Grid API](../grid-api/)
+        │     <span class="event-hierarchy__attribute">columnApi</span>: ColumnAPI // see [Column API](../column-api/)
         │   }</span>
         ├── GridReadyEvent <span class="event-hierarchy__property">{}</span>
         ├── SelectionChangedEvent <span class="event-hierarchy__property">{}</span>
@@ -156,7 +156,7 @@ interface CellValueChangedEvent {
             │     <span class="event-hierarchy__attribute">data</span>: any, // the user provided data for the row in question
             │     <span class="event-hierarchy__attribute">rowIndex</span>: number, // the visible row index for the row in question
             │     <span class="event-hierarchy__attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined / null (if not pinned)
-            │     <span class="event-hierarchy__attribute">context</span>: any, // bag of attributes, provided by user, see [Context](../javascript-grid-context/)
+            │     <span class="event-hierarchy__attribute">context</span>: any, // bag of attributes, provided by user, see [Context](../context/)
             │     <span class="event-hierarchy__attribute">event?</span>: Event // if event was due to browser event (eg click), this is browser event
             │   }</span>
             ├── RowSelectedEvent <span class="event-hierarchy__property">{}</span>

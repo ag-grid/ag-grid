@@ -30,7 +30,7 @@ The following example demonstrates this behaviour. Note the following:
 
 - The Athlete column's Set Filter shows the Mini Filter with default behaviour. Try typing in the Mini Filter to search the Filter List, and then hit the `Enter` key and notice how the grid is filtered using the displayed values.
 
-- The Country column's Set Filter applies the Mini Filter as you type as `'filterParams applyMiniFilterWhileTyping = true`.
+- The Country column's Set Filter applies the Mini Filter as you type because `filterParams.applyMiniFilterWhileTyping = true`.
 
 <grid-example title='Mini Filter Keyboard Shortcuts' name='mini-filter-keyboard-shortcuts' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "setfilter", "menu"] }'></grid-example>
 
@@ -105,11 +105,9 @@ The following example demonstrates hiding the mini filter. Note the following:
 
 - The Athlete column's Set Filter shows the Mini Filter by default.
 - The Country column's Set Filter does not have a Mini Filter as `filterParams.suppressMiniFilter = true`.
-</ul>
 
 <grid-example title='Hiding the Mini Filter' name='mini-filter-hiding' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "setfilter", "menu"] }'></grid-example>
 
 ## Next Up
 
 Continue to the next section: [Excel Mode](../filter-set-excel-mode/).
-

@@ -13953,7 +13953,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (!expandableGroup) {
             return false;
         }
-        var displayingForOneColumnOnly = typeof this.params.column.getColDef().showRowGroup === 'string';
+        // column is null for fullWidthRows
+        var column = this.params.column;
+        var displayingForOneColumnOnly = column != null && typeof column.getColDef().showRowGroup === 'string';
         if (displayingForOneColumnOnly) {
             var showing = this.isShowRowGroupForThisRow();
             return showing;
@@ -13965,7 +13967,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (!rowGroupColumn) {
             return false;
         }
-        var thisColumnIsInterested = this.params.column.isRowGroupDisplayed(rowGroupColumn.getId());
+        // column is null for fullWidthRows
+        var column = this.params.column;
+        var thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
         return thisColumnIsInterested;
     };
     GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
@@ -42186,11 +42190,11 @@ var BlockUtils = /** @class */ (function (_super) {
             rowNode = rowNode.parent;
         }
         if (parts.length > 0) {
-            return parts.reverse().join('-') + '-';
+            return parts.reverse().join('-');
         }
         else {
             // no prefix, so node id's are left as they are
-            return '';
+            return undefined;
         }
     };
     BlockUtils.prototype.checkOpenByDefault = function (rowNode) {
@@ -42780,9 +42784,17 @@ var PartialStoreBlock = /** @class */ (function (_super) {
     PartialStoreBlock.prototype.getGroupField = function () {
         return this.groupField;
     };
+    PartialStoreBlock.prototype.prefixId = function (id) {
+        if (this.nodeIdPrefix) {
+            return this.nodeIdPrefix + '-' + id;
+        }
+        else {
+            return id.toString();
+        }
+    };
     PartialStoreBlock.prototype.getBlockStateJson = function () {
         return {
-            id: this.nodeIdPrefix + this.getId(),
+            id: this.prefixId(this.getId()),
             state: {
                 blockNumber: this.getId(),
                 startRow: this.startRow,
@@ -42855,7 +42867,7 @@ var PartialStoreBlock = /** @class */ (function (_super) {
             var dataLoadedForThisRow = i < rows.length;
             if (dataLoadedForThisRow) {
                 var data = rows[i];
-                var defaultId = this.nodeIdPrefix + (this.startRow + i);
+                var defaultId = this.prefixId(this.startRow + i);
                 this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
                 var newId = rowNode.id;
                 this.parentStore.removeDuplicateNode(newId);
@@ -43670,7 +43682,7 @@ var FullStore = /** @class */ (function (_super) {
     };
     FullStore.prototype.getBlockStateJson = function () {
         return {
-            id: this.nodeIdPrefix,
+            id: this.nodeIdPrefix ? this.nodeIdPrefix : '',
             state: this.getState()
         };
     };
@@ -43701,12 +43713,20 @@ var FullStore = /** @class */ (function (_super) {
         else {
             this.allRowNodes.push(rowNode);
         }
-        var defaultId = this.nodeIdPrefix + this.nodeIdSequence.next();
+        var defaultId = this.prefixId(this.nodeIdSequence.next());
         this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
         this.nodeManager.addRowNode(rowNode);
         this.blockUtils.checkOpenByDefault(rowNode);
         this.allNodesMap[rowNode.id] = rowNode;
         return rowNode;
+    };
+    FullStore.prototype.prefixId = function (id) {
+        if (this.nodeIdPrefix) {
+            return this.nodeIdPrefix + '-' + id;
+        }
+        else {
+            return id.toString();
+        }
     };
     FullStore.prototype.processServerFail = function () {
         this.initialiseRowNodes(1, true);

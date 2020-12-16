@@ -19831,6 +19831,9 @@ var SeriesMarker = /** @class */ (function (_super) {
     ], SeriesMarker.prototype, "maxSize", void 0);
     __decorate$I([
         reactive('change')
+    ], SeriesMarker.prototype, "domain", void 0);
+    __decorate$I([
+        reactive('change')
     ], SeriesMarker.prototype, "fill", void 0);
     __decorate$I([
         reactive('change')
@@ -24092,7 +24095,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         this.marker.stroke = strokes[0];
     };
     ScatterSeries.prototype.processData = function () {
-        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis, marker = _a.marker;
         var data = xKey && yKey && this.data ? this.data : [];
         this.xData = data.map(function (d) { return d[xKey]; });
         this.yData = data.map(function (d) { return d[yKey]; });
@@ -24102,7 +24105,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         else {
             this.sizeData = [];
         }
-        this.sizeScale.domain = finiteExtent(this.sizeData) || [1, 1];
+        this.sizeScale.domain = marker.domain ? marker.domain : finiteExtent(this.sizeData) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
             this.xDomain = this.fixNumericExtent(finiteExtent(this.xData), 'x');
         }
@@ -30304,6 +30307,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         }
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
+        var domain = this.addDataDomainForCrossFiltering(seriesDefinitions, params);
         var chart = this.chart;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = agGridCommunity._.findIndex(seriesDefinitions, function (s) {
@@ -30361,22 +30365,6 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             series.data = params.data;
             series.fill = fills[index % fills.length];
             series.stroke = strokes[index % strokes.length];
-            var isFilteredOutYKey = yFieldDefinition.colId.indexOf('-filtered-out') > -1;
-            if (_this.crossFiltering) {
-                if (!isFilteredOutYKey) {
-                    // sync toggling of legend item with hidden 'filtered out' item
-                    chart.legend.addEventListener('click', function (event) {
-                        series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
-                    });
-                }
-                chart.tooltip.delay = 500;
-                // hide 'filtered out' legend items
-                if (isFilteredOutYKey) {
-                    series.showInLegend = false;
-                }
-                // add node click cross filtering callback to series
-                series.addEventListener('nodeClick', _this.crossFilterCallback);
-            }
             if (sizeFieldDefinition) {
                 series.sizeKey = sizeFieldDefinition.colId;
                 series.sizeName = sizeFieldDefinition.displayName;
@@ -30390,6 +30378,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
             else {
                 series.labelKey = series.labelName = undefined;
+            }
+            var isFilteredOutYKey = yFieldDefinition.colId.indexOf('-filtered-out') > -1;
+            if (_this.crossFiltering) {
+                if (!isFilteredOutYKey) {
+                    // sync toggling of legend item with hidden 'filtered out' item
+                    chart.legend.addEventListener('click', function (event) {
+                        series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                    });
+                }
+                if (domain) {
+                    series.marker.domain = domain;
+                }
+                chart.tooltip.delay = 500;
+                // hide 'filtered out' legend items
+                if (isFilteredOutYKey) {
+                    series.showInLegend = false;
+                }
+                // add node click cross filtering callback to series
+                series.addEventListener('nodeClick', _this.crossFilterCallback);
             }
             if (!existingSeries) {
                 chart.addSeriesAfter(series, previousSeries);
@@ -30443,6 +30450,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 .filter(function (x) { return x && x.sizeField; });
         }
         return fields.filter(function (value, i) { return i > 0; }).map(function (yField) { return ({ xField: xField, yField: yField }); });
+    };
+    ScatterChartProxy.prototype.addDataDomainForCrossFiltering = function (seriesDefinitions, params) {
+        var domain;
+        if (seriesDefinitions[0]) {
+            var sizeColId_1 = seriesDefinitions[0].sizeField.colId;
+            var allSizePoints_1 = [];
+            params.data.forEach(function (d) {
+                if (typeof d[sizeColId_1] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1]);
+                }
+                if (typeof d[sizeColId_1 + '-filtered-out'] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1 + '-filtered-out']);
+                }
+            });
+            if (allSizePoints_1.length > 0) {
+                domain = [Math.min.apply(Math, allSizePoints_1), Math.max.apply(Math, allSizePoints_1)];
+            }
+        }
+        return domain;
     };
     return ScatterChartProxy;
 }(CartesianChartProxy));
@@ -40063,11 +40089,11 @@ var BlockUtils = /** @class */ (function (_super) {
             rowNode = rowNode.parent;
         }
         if (parts.length > 0) {
-            return parts.reverse().join('-') + '-';
+            return parts.reverse().join('-');
         }
         else {
             // no prefix, so node id's are left as they are
-            return '';
+            return undefined;
         }
     };
     BlockUtils.prototype.checkOpenByDefault = function (rowNode) {
@@ -40657,9 +40683,17 @@ var PartialStoreBlock = /** @class */ (function (_super) {
     PartialStoreBlock.prototype.getGroupField = function () {
         return this.groupField;
     };
+    PartialStoreBlock.prototype.prefixId = function (id) {
+        if (this.nodeIdPrefix) {
+            return this.nodeIdPrefix + '-' + id;
+        }
+        else {
+            return id.toString();
+        }
+    };
     PartialStoreBlock.prototype.getBlockStateJson = function () {
         return {
-            id: this.nodeIdPrefix + this.getId(),
+            id: this.prefixId(this.getId()),
             state: {
                 blockNumber: this.getId(),
                 startRow: this.startRow,
@@ -40732,7 +40766,7 @@ var PartialStoreBlock = /** @class */ (function (_super) {
             var dataLoadedForThisRow = i < rows.length;
             if (dataLoadedForThisRow) {
                 var data = rows[i];
-                var defaultId = this.nodeIdPrefix + (this.startRow + i);
+                var defaultId = this.prefixId(this.startRow + i);
                 this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
                 var newId = rowNode.id;
                 this.parentStore.removeDuplicateNode(newId);
@@ -41547,7 +41581,7 @@ var FullStore = /** @class */ (function (_super) {
     };
     FullStore.prototype.getBlockStateJson = function () {
         return {
-            id: this.nodeIdPrefix,
+            id: this.nodeIdPrefix ? this.nodeIdPrefix : '',
             state: this.getState()
         };
     };
@@ -41578,12 +41612,20 @@ var FullStore = /** @class */ (function (_super) {
         else {
             this.allRowNodes.push(rowNode);
         }
-        var defaultId = this.nodeIdPrefix + this.nodeIdSequence.next();
+        var defaultId = this.prefixId(this.nodeIdSequence.next());
         this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
         this.nodeManager.addRowNode(rowNode);
         this.blockUtils.checkOpenByDefault(rowNode);
         this.allNodesMap[rowNode.id] = rowNode;
         return rowNode;
+    };
+    FullStore.prototype.prefixId = function (id) {
+        if (this.nodeIdPrefix) {
+            return this.nodeIdPrefix + '-' + id;
+        }
+        else {
+            return id.toString();
+        }
     };
     FullStore.prototype.processServerFail = function () {
         this.initialiseRowNodes(1, true);

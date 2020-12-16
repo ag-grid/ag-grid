@@ -47,7 +47,7 @@ The example below shows getting and setting all the filter models in action.
 - `Restore Saved Filter Model` restores the saved filter state back into the grid.
 - `Set Custom Filter Model` takes a custom hard-coded filter model and applies it to the grid.
 - `Reset Filters` will clear all active filters.
-- `Destroy Filter` destroys the filter for the **Athlete** column by calling `gridApi destroyFilter('athlete')`. This removes any active filter from that column, and will cause the filter to be created with new initialisation values the next time it is interacted with.
+- `Destroy Filter` destroys the filter for the **Athlete** column by calling `gridApi.destroyFilter('athlete')`. This removes any active filter from that column, and will cause the filter to be created with new initialisation values the next time it is interacted with.
 
 (Note: the example uses the Enterprise-only [Set Filter](../filter-set/)).
 

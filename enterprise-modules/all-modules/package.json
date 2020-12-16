@@ -87,6 +87,7 @@
     "@ag-grid-enterprise/date-time-cell-editor": "~25.0.0"
   },
   "devDependencies": {
+    "@babel/types": "7.12.7",
     "@ag-grid-community/core": "~25.0.0",
     "@types/jest": "^25.2.1",
     "css-loader": "^3.2.0",

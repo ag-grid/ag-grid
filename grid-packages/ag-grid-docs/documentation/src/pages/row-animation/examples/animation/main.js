@@ -88,35 +88,35 @@ function getActions() {
     return [
         function(api, columnApi) {
             columnApi.applyColumnState({
-                state: [{colId: 'country', sort: 'asc'}],
-                defaultState: {sort: null}
+                state: [{ colId: 'country', sort: 'asc' }],
+                defaultState: { sort: null }
             });
             setTitleFormatted("api", "applyColumnState", "country: 'asc'");
         },
         function(api, columnApi) {
             columnApi.applyColumnState({
-                state: [{colId: 'year', sort: 'asc'},{colId: 'country', sort: 'asc'}],
-                defaultState: {sort: null}
+                state: [{ colId: 'year', sort: 'asc' }, { colId: 'country', sort: 'asc' }],
+                defaultState: { sort: null }
             });
             setTitleFormatted("api", "applyColumnState", "year: 'asc', country 'asc'");
         },
         function(api, columnApi) {
             columnApi.applyColumnState({
-                state: [{colId: 'year', sort: 'asc'},{colId: 'country', sort: 'desc'}],
-                defaultState: {sort: null}
+                state: [{ colId: 'year', sort: 'asc' }, { colId: 'country', sort: 'desc' }],
+                defaultState: { sort: null }
             });
             setTitleFormatted("api", "applyColumnState", "year: 'asc', country: 'desc'");
         },
         function(api, columnApi) {
             columnApi.applyColumnState({
-                defaultState: {sort: null}
+                defaultState: { sort: null }
             });
             setTitleFormatted("api", "applyColumnState", "clear sort");
         }
     ];
 }
 
-// from actual demo page (/javascript-grid-animation)
+// from actual demo page (/animation/)
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector("#myGrid") || document.querySelector("#animationGrid");
 
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
         .then(function(data) {
-            gridOptions.api.setRowData(data.slice(0,50));
+            gridOptions.api.setRowData(data.slice(0, 50));
             startInterval(gridOptions.api, gridOptions.columnApi);
         });
 });

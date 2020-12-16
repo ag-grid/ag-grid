@@ -13953,7 +13953,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (!expandableGroup) {
             return false;
         }
-        var displayingForOneColumnOnly = typeof this.params.column.getColDef().showRowGroup === 'string';
+        // column is null for fullWidthRows
+        var column = this.params.column;
+        var displayingForOneColumnOnly = column != null && typeof column.getColDef().showRowGroup === 'string';
         if (displayingForOneColumnOnly) {
             var showing = this.isShowRowGroupForThisRow();
             return showing;
@@ -13965,7 +13967,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (!rowGroupColumn) {
             return false;
         }
-        var thisColumnIsInterested = this.params.column.isRowGroupDisplayed(rowGroupColumn.getId());
+        // column is null for fullWidthRows
+        var column = this.params.column;
+        var thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
         return thisColumnIsInterested;
     };
     GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
@@ -51462,6 +51466,9 @@ var SeriesMarker = /** @class */ (function (_super) {
     ], SeriesMarker.prototype, "maxSize", void 0);
     __decorate$1$([
         reactive('change')
+    ], SeriesMarker.prototype, "domain", void 0);
+    __decorate$1$([
+        reactive('change')
     ], SeriesMarker.prototype, "fill", void 0);
     __decorate$1$([
         reactive('change')
@@ -55723,7 +55730,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         this.marker.stroke = strokes[0];
     };
     ScatterSeries.prototype.processData = function () {
-        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis, marker = _a.marker;
         var data = xKey && yKey && this.data ? this.data : [];
         this.xData = data.map(function (d) { return d[xKey]; });
         this.yData = data.map(function (d) { return d[yKey]; });
@@ -55733,7 +55740,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         else {
             this.sizeData = [];
         }
-        this.sizeScale.domain = finiteExtent(this.sizeData) || [1, 1];
+        this.sizeScale.domain = marker.domain ? marker.domain : finiteExtent(this.sizeData) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
             this.xDomain = this.fixNumericExtent(finiteExtent(this.xData), 'x');
         }
@@ -61935,6 +61942,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         }
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
+        var domain = this.addDataDomainForCrossFiltering(seriesDefinitions, params);
         var chart = this.chart;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = _.findIndex(seriesDefinitions, function (s) {
@@ -61992,22 +62000,6 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             series.data = params.data;
             series.fill = fills[index % fills.length];
             series.stroke = strokes[index % strokes.length];
-            var isFilteredOutYKey = yFieldDefinition.colId.indexOf('-filtered-out') > -1;
-            if (_this.crossFiltering) {
-                if (!isFilteredOutYKey) {
-                    // sync toggling of legend item with hidden 'filtered out' item
-                    chart.legend.addEventListener('click', function (event) {
-                        series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
-                    });
-                }
-                chart.tooltip.delay = 500;
-                // hide 'filtered out' legend items
-                if (isFilteredOutYKey) {
-                    series.showInLegend = false;
-                }
-                // add node click cross filtering callback to series
-                series.addEventListener('nodeClick', _this.crossFilterCallback);
-            }
             if (sizeFieldDefinition) {
                 series.sizeKey = sizeFieldDefinition.colId;
                 series.sizeName = sizeFieldDefinition.displayName;
@@ -62021,6 +62013,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
             else {
                 series.labelKey = series.labelName = undefined;
+            }
+            var isFilteredOutYKey = yFieldDefinition.colId.indexOf('-filtered-out') > -1;
+            if (_this.crossFiltering) {
+                if (!isFilteredOutYKey) {
+                    // sync toggling of legend item with hidden 'filtered out' item
+                    chart.legend.addEventListener('click', function (event) {
+                        series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                    });
+                }
+                if (domain) {
+                    series.marker.domain = domain;
+                }
+                chart.tooltip.delay = 500;
+                // hide 'filtered out' legend items
+                if (isFilteredOutYKey) {
+                    series.showInLegend = false;
+                }
+                // add node click cross filtering callback to series
+                series.addEventListener('nodeClick', _this.crossFilterCallback);
             }
             if (!existingSeries) {
                 chart.addSeriesAfter(series, previousSeries);
@@ -62074,6 +62085,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 .filter(function (x) { return x && x.sizeField; });
         }
         return fields.filter(function (value, i) { return i > 0; }).map(function (yField) { return ({ xField: xField, yField: yField }); });
+    };
+    ScatterChartProxy.prototype.addDataDomainForCrossFiltering = function (seriesDefinitions, params) {
+        var domain;
+        if (seriesDefinitions[0]) {
+            var sizeColId_1 = seriesDefinitions[0].sizeField.colId;
+            var allSizePoints_1 = [];
+            params.data.forEach(function (d) {
+                if (typeof d[sizeColId_1] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1]);
+                }
+                if (typeof d[sizeColId_1 + '-filtered-out'] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1 + '-filtered-out']);
+                }
+            });
+            if (allSizePoints_1.length > 0) {
+                domain = [Math.min.apply(Math, allSizePoints_1), Math.max.apply(Math, allSizePoints_1)];
+            }
+        }
+        return domain;
     };
     return ScatterChartProxy;
 }(CartesianChartProxy));

@@ -43,6 +43,7 @@ export declare class PartialStoreBlock extends RowNodeBlock {
     getBlockTopPx(): number;
     isGroupLevel(): boolean | undefined;
     getGroupField(): string;
+    private prefixId;
     getBlockStateJson(): {
         id: string;
         state: any;

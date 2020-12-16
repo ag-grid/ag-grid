@@ -38476,7 +38476,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (!expandableGroup) {
             return false;
         }
-        var displayingForOneColumnOnly = typeof this.params.column.getColDef().showRowGroup === 'string';
+        // column is null for fullWidthRows
+        var column = this.params.column;
+        var displayingForOneColumnOnly = column != null && typeof column.getColDef().showRowGroup === 'string';
         if (displayingForOneColumnOnly) {
             var showing = this.isShowRowGroupForThisRow();
             return showing;
@@ -38488,7 +38490,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (!rowGroupColumn) {
             return false;
         }
-        var thisColumnIsInterested = this.params.column.isRowGroupDisplayed(rowGroupColumn.getId());
+        // column is null for fullWidthRows
+        var column = this.params.column;
+        var thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
         return thisColumnIsInterested;
     };
     GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
