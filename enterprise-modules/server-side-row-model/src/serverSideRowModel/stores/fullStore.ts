@@ -67,7 +67,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     private groupField: string;
     private rowGroupColumn: Column;
-    private nodeIdPrefix: string;
+    private nodeIdPrefix: string | undefined;
 
     private displayIndexStart: number | undefined;
     private displayIndexEnd: number | undefined;
@@ -134,7 +134,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     public getBlockStateJson(): { id: string, state: any } {
         return {
-            id: this.nodeIdPrefix,
+            id: this.nodeIdPrefix ? this.nodeIdPrefix : '',
             state: this.getState()
         };
     }
@@ -172,7 +172,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             this.allRowNodes.push(rowNode);
         }
 
-        const defaultId = this.nodeIdPrefix + this.nodeIdSequence.next();
+        const defaultId = this.prefixId(this.nodeIdSequence.next());
         this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
         this.nodeManager.addRowNode(rowNode);
 
@@ -181,6 +181,14 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.allNodesMap[rowNode.id!] = rowNode;
 
         return rowNode;
+    }
+
+    private prefixId(id: number): string {
+        if (this.nodeIdPrefix) {
+            return this.nodeIdPrefix + '-' + id;
+        } else {
+            return id.toString();
+        }
     }
 
     protected processServerFail(): void {

@@ -19,7 +19,7 @@ The full list of stateful attributes of Columns are as follows:
 - Pivot
 - Column Order
 
-This section details how such state items can be changed.
+This section details how such state items can be manipulated without having to update Column Definitions.
 
 ## Save and Apply State {#save-and-apply}
 

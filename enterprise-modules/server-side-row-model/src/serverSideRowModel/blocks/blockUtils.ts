@@ -294,7 +294,7 @@ export class BlockUtils extends BeanStub {
         // pixel is not within this row node or it's children / detail, so return undefined
     }
 
-    public createNodeIdPrefix(parentRowNode: RowNode): string {
+    public createNodeIdPrefix(parentRowNode: RowNode): string | undefined {
         const parts: string[] = [];
         let rowNode : RowNode | null = parentRowNode;
 
@@ -305,10 +305,10 @@ export class BlockUtils extends BeanStub {
         }
 
         if (parts.length > 0) {
-            return parts.reverse().join('-') + '-';
+            return parts.reverse().join('-');
         } else {
             // no prefix, so node id's are left as they are
-            return '';
+            return undefined;
         }
     }
 

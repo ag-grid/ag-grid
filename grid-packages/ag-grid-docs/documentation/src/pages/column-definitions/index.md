@@ -2,7 +2,7 @@
 title: "Column Definitions"
 ---
 Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the
-grid according to the order the `ColDef`s are specified in the grid options.
+grid according to the order the Column Definitions are specified in the Grid Options.
 
 The following example shows a simple grid with 3 columns defined:
 
@@ -47,8 +47,7 @@ Groups are explained in more detail in the section [Column Groups](../column-gro
 ## Declarative Columns
 
 If you're using either Angular (`ag-grid-column`) or React (`AgGridColumn`) you additionally have
-the option to declare your column definitions declaratively; please refer to the [Angular](../angular-markup/)
-and [React](../react-column-configuration/) documentation for more information.
+the option to declare your column definitions declaratively.
 
 ## Custom Column Types {#default-column-definitions}
 
@@ -135,9 +134,7 @@ The following example demonstrates the different configuration properties in act
 
 <grid-example title="Column Definition Example" name="column-definition" type="generated"></grid-example>
 
-## Provided Column Types
-
-### Right Aligned and Numeric Columns
+## Right Aligned and Numeric Columns
 
 The grid provides a handy shortcut for aligning columns to the right.
 Setting the column definition type to `rightAligned` aligns the column header and contents to the right,
