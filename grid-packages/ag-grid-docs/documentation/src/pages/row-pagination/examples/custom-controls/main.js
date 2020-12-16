@@ -68,7 +68,6 @@ function onBtFirst() {
 }
 
 function onBtLast() {
-    console.log("here");
     gridOptions.api.paginationGoToLastPage();
 }
 
