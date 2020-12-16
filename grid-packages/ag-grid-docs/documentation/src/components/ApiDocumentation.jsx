@@ -171,7 +171,7 @@ const Breadcrumbs = ({ breadcrumbs }) => {
         if (index < breadcrumbsLength - 1) {
             links.push(<React.Fragment key={key}><a href={`#${href}`} title={text}>{key}</a> &gt; </React.Fragment>);
         } else {
-            links.push(<React.Fragment key={key}>key</React.Fragment>);
+            links.push(<React.Fragment key={key}>{key}</React.Fragment>);
         }
 
         index++;
