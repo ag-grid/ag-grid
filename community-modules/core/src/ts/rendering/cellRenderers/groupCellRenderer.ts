@@ -542,7 +542,9 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         if (!expandableGroup) { return false; }
 
-        const displayingForOneColumnOnly = typeof this.params.column.getColDef().showRowGroup === 'string';
+        // column is null for fullWidthRows
+        const column = this.params.column;
+        const displayingForOneColumnOnly = column!=null && typeof column.getColDef().showRowGroup === 'string';
 
         if (displayingForOneColumnOnly) {
             const showing = this.isShowRowGroupForThisRow();
@@ -557,7 +559,9 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         if (!rowGroupColumn) { return false; }
 
-        const thisColumnIsInterested = this.params.column.isRowGroupDisplayed(rowGroupColumn.getId());
+        // column is null for fullWidthRows
+        const column = this.params.column;
+        const thisColumnIsInterested = column==null || column.isRowGroupDisplayed(rowGroupColumn.getId());
 
         return thisColumnIsInterested;
     }
