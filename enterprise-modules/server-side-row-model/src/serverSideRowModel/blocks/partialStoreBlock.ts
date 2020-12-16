@@ -70,7 +70,7 @@ export class PartialStoreBlock extends RowNodeBlock {
 
     private groupField: string;
     private rowGroupColumn: Column;
-    private nodeIdPrefix: string;
+    private nodeIdPrefix: string | undefined;
 
     constructor(blockNumber: number, parentRowNode: RowNode, ssrmParams: SSRMParams,
                 storeParams: ServerSideStoreParams, parentStore: PartialStore) {
@@ -138,9 +138,17 @@ export class PartialStoreBlock extends RowNodeBlock {
         return this.groupField;
     }
 
+    private prefixId(id: number): string {
+        if (this.nodeIdPrefix) {
+            return this.nodeIdPrefix + '-' + id;
+        } else {
+            return id.toString();
+        }
+    }
+
     public getBlockStateJson(): {id: string, state: any} {
         return {
-            id: this.nodeIdPrefix + this.getId(),
+            id: this.prefixId(this.getId()),
             state: {
                 blockNumber: this.getId(),
                 startRow: this.startRow,
@@ -230,7 +238,7 @@ export class PartialStoreBlock extends RowNodeBlock {
             const dataLoadedForThisRow = i < rows.length;
             if (dataLoadedForThisRow) {
                 const data = rows[i];
-                const defaultId = this.nodeIdPrefix + (this.startRow + i);
+                const defaultId = this.prefixId(this.startRow + i);
                 this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
                 const newId = rowNode.id;
                 this.parentStore.removeDuplicateNode(newId!);

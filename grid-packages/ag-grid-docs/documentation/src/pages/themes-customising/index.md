@@ -291,15 +291,15 @@ cell-horizontal-border: solid transparent,
 
 // Separator between columns in the header. Displays between all header cells For best UX, use either this or header-column-resize-handle but not both
 header-column-separator: false,
-    header-column-separator-height: 100%,
-    header-column-separator-width: 1px,
-    header-column-separator-color: ag-derived(border-color, $opacity: 0.5),
+header-column-separator-height: 100%,
+header-column-separator-width: 1px,
+header-column-separator-color: ag-derived(border-color, $opacity: 0.5),
 
 // Visible marker for resizeable columns. Displays in the same position as the column separator, but only when the column is resizeable. For best UX, use either this or header-column-separator but not both
 header-column-resize-handle: false,
-    header-column-resize-handle-height: 50%,
-    header-column-resize-handle-width: 1px,
-    header-column-resize-handle-color: ag-derived(border-color, $opacity: 0.5),
+header-column-resize-handle-height: 50%,
+header-column-resize-handle-width: 1px,
+header-column-resize-handle-color: ag-derived(border-color, $opacity: 0.5),
 
 //
 // INPUTS

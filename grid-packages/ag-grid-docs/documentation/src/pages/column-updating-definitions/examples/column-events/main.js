@@ -51,7 +51,6 @@ var gridOptions = {
         enablePivot: true,
         enableValue: true
     },
-    debug: true,
     columnDefs: getColumnDefs(),
     rowData: null,
     onSortChanged: onSortChanged,

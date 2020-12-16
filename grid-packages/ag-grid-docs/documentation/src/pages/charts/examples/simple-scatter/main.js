@@ -14,11 +14,11 @@ var options = {
             type: 'scatter',
             xKey: 'weight',
             yKey: 'height',
-            fill: '#002D72',
             fillOpacity: 0.5,
             strokeOpacity: 0,
             marker: {
                 size: 12,
+                fill: '#002D72'
             }
         }
     ],

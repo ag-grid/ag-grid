@@ -35,7 +35,7 @@ The `params` object can contain all the [common export options](../export/), as 
 
 ## Defining styles
 
-The main reason to export to Excel instead of CSV is so that the look and feel remain as consistent as possible with your ag-Grid application. In order to simplify the configuration the Excel Export reuses the [cellClassRules](../cell-styles/#cell-class-rules) and the [cellClass](../cell-styles/#cell-class) from the column definition. Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the ExcelStyles property in the [gridOptions](../grid-properties/).
+The main reason to export to Excel instead of CSV is so that the look and feel remain as consistent as possible with your ag-Grid application. In order to simplify the configuration the Excel Export reuses the [cellClassRules](../cell-styles/#cell-class-rules) and the [cellClass](../cell-styles/#cell-class) from the column definition. Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the `excelStyles` property in the [gridOptions](../grid-properties/).
 
 An Excel style object has the following properties:
 
@@ -114,7 +114,7 @@ var columnDef = {
 
 var gridOptions = {
     ...,
-    ExcelStyles: [
+    excelStyles: [
         // The base style, red font.
         {
             id: "redFont",

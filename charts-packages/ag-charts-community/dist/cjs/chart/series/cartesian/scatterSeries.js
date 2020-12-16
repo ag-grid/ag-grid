@@ -157,7 +157,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         this.marker.stroke = strokes[0];
     };
     ScatterSeries.prototype.processData = function () {
-        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis, marker = _a.marker;
         var data = xKey && yKey && this.data ? this.data : [];
         this.xData = data.map(function (d) { return d[xKey]; });
         this.yData = data.map(function (d) { return d[yKey]; });
@@ -167,7 +167,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         else {
             this.sizeData = [];
         }
-        this.sizeScale.domain = array_1.finiteExtent(this.sizeData) || [1, 1];
+        this.sizeScale.domain = marker.domain ? marker.domain : array_1.finiteExtent(this.sizeData) || [1, 1];
         if (xAxis.scale instanceof continuousScale_1.default) {
             this.xDomain = this.fixNumericExtent(array_1.finiteExtent(this.xData), 'x');
         }

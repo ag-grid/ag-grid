@@ -21,9 +21,9 @@ var options = {
             marker: {
                 size: 5,
                 maxSize: 100,
+                fill: '#41874b',
+                stroke: '#41874b',
             },
-            fill: '#41874b',
-            stroke: '#41874b',
             fillOpacity: 0.5,
         }
     ],

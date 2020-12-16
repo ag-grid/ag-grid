@@ -89,6 +89,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         }
 
         let fields = params.fields;
+
         if (this.crossFiltering) {
             // add additional filtered out field
             fields.forEach(field => {
@@ -100,6 +101,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         const { seriesDefaults } = this.chartOptions as any;
         const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
+        let domain = this.addDataDomainForCrossFiltering(seriesDefinitions, params);
 
         const { chart } = this;
 
@@ -179,28 +181,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             series.fill = fills[index % fills.length];
             series.stroke = strokes[index % strokes.length];
 
-            const isFilteredOutYKey =  yFieldDefinition.colId.indexOf('-filtered-out') > -1;
-
-            if (this.crossFiltering) {
-
-                if (!isFilteredOutYKey) {
-                    // sync toggling of legend item with hidden 'filtered out' item
-                    chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-                        series!.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
-                    });
-                }
-
-                chart.tooltip.delay = 500;
-
-                // hide 'filtered out' legend items
-                if (isFilteredOutYKey) {
-                    series!.showInLegend = false;
-                }
-
-                // add node click cross filtering callback to series
-                series!.addEventListener('nodeClick', this.crossFilterCallback);
-            }
-
             if (sizeFieldDefinition) {
                 series.sizeKey = sizeFieldDefinition.colId;
                 series.sizeName = sizeFieldDefinition.displayName;
@@ -214,6 +194,32 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             } else {
                 series.labelKey = series.labelName = undefined;
             }
+
+            const isFilteredOutYKey =  yFieldDefinition.colId.indexOf('-filtered-out') > -1;
+            if (this.crossFiltering) {
+
+                if (!isFilteredOutYKey) {
+                    // sync toggling of legend item with hidden 'filtered out' item
+                    chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                        series!.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                    });
+                }
+
+                if (domain) {
+                    series.marker.domain = domain;
+                }
+
+                chart.tooltip.delay = 500;
+
+                // hide 'filtered out' legend items
+                if (isFilteredOutYKey) {
+                    series!.showInLegend = false;
+                }
+
+                // add node click cross filtering callback to series
+                series!.addEventListener('nodeClick', this.crossFilterCallback);
+            }
+
 
             if (!existingSeries) {
                 chart.addSeriesAfter(series, previousSeries);
@@ -292,4 +298,25 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         return fields.filter((value, i) => i > 0).map(yField => ({ xField, yField }));
     }
+
+    private addDataDomainForCrossFiltering(seriesDefinitions: (SeriesDefinition | null)[], params: UpdateChartParams) {
+        let domain;
+        if (seriesDefinitions[0]) {
+            const sizeColId = seriesDefinitions[0].sizeField!.colId;
+            let allSizePoints: any[] = [];
+            params.data.forEach(d => {
+                if (typeof d[sizeColId] !== 'undefined') {
+                    allSizePoints.push(d[sizeColId]);
+                }
+                if (typeof d[sizeColId + '-filtered-out'] !== 'undefined') {
+                    allSizePoints.push(d[sizeColId + '-filtered-out']);
+                }
+            })
+            if (allSizePoints.length > 0) {
+                domain = [Math.min(...allSizePoints), Math.max(...allSizePoints)];
+            }
+        }
+        return domain;
+    }
+
 }

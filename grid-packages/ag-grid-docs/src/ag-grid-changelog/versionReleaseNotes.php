@@ -1,3 +1,18 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_25_0_0">
+    <p><b>Release 25.0.0 (18th Dec 2020)</b></p>
+
+    <p><b>Feature Highlights:</b></p>
+
+    <ul>
+        <li>
+            AG-4787 - Integrated Charts Cross Filtering (see <a href="https://www.ag-grid.com/documentation/javascript/integrated-charts-cross-filtering/">Cross Filtering</a>)
+        </li>
+    </ul>
+
+    <p><b>Breaking Changes:</b></p>
+
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_24_1_0">
     <p><b>Release 24.1.0 (12th Sep 2020)</b></p>
 

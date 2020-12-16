@@ -22,8 +22,8 @@ var options = {
             marker: {
                 size: 0,
                 maxSize: 30,
+                fill: '#cc5b58',
             },
-            fill: '#cc5b58',
             fillOpacity: 0.85,
         }
     ],
