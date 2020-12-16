@@ -10,17 +10,17 @@ frameworks: ["javascript"]
 
 ### Downloading the ag-Grid Enterprise Dependency
 
-If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid Polymer dependency 
+If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid Polymer dependency
 above, you also require the ag-Grid Polymer Enterprise dependency:
 
 ```bash
 npm install ag-grid-enterprise --save
 ```
 
-Note that this is in addition to the `ag-grid-community` dependency. The `ag-grid-community` 
+Note that this is in addition to the `ag-grid-community` dependency. The `ag-grid-community`
 dependency will be required for the CSS styles.
 
-Using our application from the [Polymer Getting Started](../polymer-getting-started) section as a 
+Using our application from the [Polymer Getting Started](../polymer-getting-started/) section as a
 starting point, we'll replace the `ag-grid-community` reference with the `ag-grid-enterprise` dependency:
 
 ```diff
@@ -28,13 +28,13 @@ starting point, we'll replace the `ag-grid-community` reference with the `ag-gri
 + <script src="/node_modules/ag-grid-enterprise/dist/ag-grid-enterprise.min.noStyle.js"></script>
 ```
 
-Although we've removed the reference to `ag-grid-community` here, we'll still reference the 
+Although we've removed the reference to `ag-grid-community` here, we'll still reference the
 styles within it when defining the ag-Grid element later.
 
 ## ag-Grid Polymer Features
 
-Every feature of ag-Grid is available when using the ag-Grid Polymer Component. The Polymer Component 
-wraps the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core 
+Every feature of ag-Grid is available when using the ag-Grid Polymer Component. The Polymer Component
+wraps the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core
 ag-Grid and Polymer ag-Grid when it comes to features.
 
 
@@ -65,12 +65,12 @@ You can specify the properties in the following ways:
 </ag-grid-polymer>
 ```
 
-Here we've specified 3 properties: `rowData` is provided with two-way binding. `rowAnimation` 
+Here we've specified 3 properties: `rowData` is provided with two-way binding. `rowAnimation`
 and `pivot-mode` illustrate how you can specify properties in different cases.
 
 ### Events
 
-All data out of the grid comes through events. You can specify the events you want to listen 
+All data out of the grid comes through events. You can specify the events you want to listen
 to in the following ways:
 
 - On the `ag-grid-polymer`component at declaration time
@@ -91,9 +91,9 @@ to in the following ways:
 Here we're listening to the `gridReady` event - as with most events we need to add the "on" prefix.
 
 [[note]]
-| When defining event listeners in this way it's important to note that the `this` context 
-| will be `ag-grid-polymer`, not the containing application element. You will have access 
-| to the grids properties directly, but not the application element itself. The `api` 
+| When defining event listeners in this way it's important to note that the `this` context
+| will be `ag-grid-polymer`, not the containing application element. You will have access
+| to the grids properties directly, but not the application element itself. The `api`
 | and `columnApi` are available directly via `this.api` and `this.columnApi`.
 
 ### Events via the `gridOptions` property
@@ -127,7 +127,7 @@ this.$.myGrid.addEventListener('columnresized', (event) => {
 })
 ```
 
-In this case we need to specify an id on the `ag-grid-polymer` component in order to access it. 
+In this case we need to specify an id on the `ag-grid-polymer` component in order to access it.
 The grid's payload will be available on the events `agGridDetails` property.
 
 ### Events via direct property access on an instance of ag-grid-polymer
@@ -145,7 +145,7 @@ this.$.myGrid.oncolumnresized = (event) => {
 }
 ```
 
-In this case we need to specify an id on the `ag-grid-polymer` component in order to access it. 
+In this case we need to specify an id on the `ag-grid-polymer` component in order to access it.
 The grid's payload will be available on the events `agGridDetails` property.
 
 ### Grid Api
@@ -159,9 +159,9 @@ You can access the APIs in the following ways:
 
 ### Child to Parent Communication
 
-There are a variety of ways to manage component communication in Polymer (shared service, local variables, etc), 
-but you often need a simple way to let a "parent" component know that something has happened on a "child" 
-component. In this case the simplest route is to use the `gridOptions.context` to hold a reference to the 
+There are a variety of ways to manage component communication in Polymer (shared service, local variables, etc),
+but you often need a simple way to let a "parent" component know that something has happened on a "child"
+component. In this case the simplest route is to use the `gridOptions.context` to hold a reference to the
 parent, which the child can then access.
 
 ```js
@@ -179,5 +179,5 @@ constructor() {
 this.params.context.componentParent
 ```
 
-Note that although we've used `componentParent` as the property name here it can be anything - the 
+Note that although we've used `componentParent` as the property name here it can be anything - the
 main point is that you can use the `context` mechanism to share information between the components.

@@ -62,9 +62,9 @@ Below shows calling `api.refreshCells()` with different scenarios using a mixtur
 [[note]]
 | You may be wondering why would you want to force refresh, what is the point in refreshing a cell that
 | has no changes? The answer is to do with cells that don't show underlying data or depend on something other
-| than just the underlying data. One example is a cell that might contain action buttons (add, delete, send 
-| etc) and you might want to disable the action buttons if the logged in user changes role (if roles are tied 
-| to the functions), or if it's past 5pm and you don't want to allow such operations past a certain time. In 
+| than just the underlying data. One example is a cell that might contain action buttons (add, delete, send
+| etc) and you might want to disable the action buttons if the logged in user changes role (if roles are tied
+| to the functions), or if it's past 5pm and you don't want to allow such operations past a certain time. In
 | this case you may wish to update the cells even though the underlying data has not changed.
 
 ## Redraw Rows
@@ -74,7 +74,7 @@ Redraw rows is a much heavier operation than refreshing cells. If refreshing cel
 Use redraw row if you want to create the row again from scratch. This is useful when you have changed property that only gets used when the row is created for the first time such as:
 
 
-- Whether the row is [fullWidth](../full-width-rows) or not.
+- Whether the row is [fullWidth](../full-width-rows/) or not.
 - The cellRenderer used for any cell (as this is specified once when the cell is created).
 - You want to specify different styles for the row via the callbacks `getRowStyle()` or `getRowClass()`.
 

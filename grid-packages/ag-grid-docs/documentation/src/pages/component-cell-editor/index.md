@@ -423,7 +423,7 @@ if (instances.length > 0) {
 | Using Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
 |
 | A Component can be defined in a few different ways (please see
-| [Defining VueJS Components](../vuejs-misc#define_component) for all the options), but in this example we're
+| [Defining VueJS Components](../vuejs-misc/#define_component) for all the options), but in this example we're
 | going to define our editor as a Single File Component:
 |
 | <grid-example title='Vue Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>

@@ -10,7 +10,7 @@
             ]
         },
         "filterOptions": {
-            "description": "Array of <a href='../filter-provided-simple/#filterOptions'>Filter Options</a> to present to the user.",
+            "description": "Array of <a href='../filter-provided-simple/#simple-filter-options'>Filter Options</a> to present to the user.",
             "options": [
                 "equals",
                 "notEqual",
@@ -32,7 +32,7 @@
             ]
         },
         "defaultOption": {
-            "description": "The default <a href='../filter-provided-simple/#filterOptions'>Filter Option</a> to be selected.",
+            "description": "The default <a href='../filter-provided-simple/#simple-filter-options'>Filter Option</a> to be selected.",
             "options": [
                 "equals",
                 "notEqual",

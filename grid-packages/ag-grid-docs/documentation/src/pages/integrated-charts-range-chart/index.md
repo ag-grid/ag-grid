@@ -21,7 +21,7 @@ To see how chart ranges are created from a cell range, using our [demo page](/ex
 
 - Select a [Cell Range](../range-selection/) of numeric values in the grid by dragging the mouse over a range of cells.
 
-- Bring up the [Context Menu](../context-menu) and select the desired chart type from the 'Chart Range' sub menu.
+- Bring up the [Context Menu](../context-menu/) and select the desired chart type from the 'Chart Range' sub menu.
 
 <gif src="charting-ranges.gif" alt="Charting Ranges"></gif>
 
@@ -78,7 +78,7 @@ The following column definitions show how the different `ColDef.chartDataType` v
 { field: 'silver', width: 100 } // contains numbers
 ```
 
-See the [Time Series](../integrated-charts-time-series) section for details on the `'time'` chart data type.
+See the [Time Series](../integrated-charts-time-series/) section for details on the `'time'` chart data type.
 
 ### Inferred by the Grid
 

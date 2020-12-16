@@ -305,7 +305,7 @@ title: "Get Started with ag-Grid"
 | During the last couple of years, we are witnessing a Cambrian Explosion of JavaScript project stacks.
 | It seems like everyday there is a new, better way for JavaScript developers to build and distribute their apps.
 | However,  for the purposes of this setup, we are going to stick to tried-and-true no-build, single HTML file setup
-| which loads the ag-Grid scripts from CDN (our favorite one is [unpkg](https://unpkg.com/#/)). Let's start from
+| which loads the ag-Grid scripts from CDN (our favorite one is [unpkg](https://unpkg.com/)). Let's start from
 | this clean html file:
 |
 | ```html
@@ -498,7 +498,7 @@ title: "Get Started with ag-Grid"
 | Here, we replaced the `rowData` assignment  with a data fetch from a remote service. The remote data is the
 | same as the one we initially had, so you should not notice any actual changes to the grid.
 |
-| Notice that we also did something new - we accessed the [grid Api](../grid-api) instance through the
+| Notice that we also did something new - we accessed the [grid API](../grid-api/) instance through the
 | `gridOptions.api`. The api object exposes plethora of methods that allow us to implement complex scenarios
 | with the grid.
 |

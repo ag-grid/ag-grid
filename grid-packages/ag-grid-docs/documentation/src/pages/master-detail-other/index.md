@@ -62,7 +62,7 @@ The Master / Detail feature organises the grid in a way which overlaps with othe
 
 ### Tree Data
 
-Master / Detail is not supported with [Tree Data](../tree-data). This is because the concept of tree data conflicts with Master / Detail, in that in tree data, any row can expand to show child rows, which would result in a clash when a row has child rows in addition to having Master / Detail at the same row.
+Master / Detail is not supported with [Tree Data](../tree-data/). This is because the concept of tree data conflicts with Master / Detail, in that in tree data, any row can expand to show child rows, which would result in a clash when a row has child rows in addition to having Master / Detail at the same row.
 
 ### Layouts
 
