@@ -47,8 +47,6 @@ There are two types of Row Stores, which differ in their strategy for loading an
     The name "Partial Store" comes from the fact rows are partially loaded using blocks, 
     one block at a time.
 
-    [Transactions](../server-side-model-transactions/)).
-
 <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
     <img src="resources/full-vs-partial-store.svg" style="width: 80%;"/>
     <div>Fig 2. Partial Store vs Full Store</div>
@@ -61,7 +59,7 @@ Below shows a simple example using Partial Store. Note the following:
 
 - Open the console to observe when the server is called to load rows.
 - Rows are loaded back 100 rows at a time. As the user scrolls down, more rows will be loaded.
-- Sorting the data is not possible by the grid adn requires the data to be retrieved from the server again.
+- Sorting the data is not possible by the grid and requires the data to be retrieved from the server again.
 Sorting on the server side is explained in [Server-Side Sorting](../server-side-model-sorting/).
 
 <grid-example title='Partial Store' name='partial-store' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
@@ -76,7 +74,7 @@ the entire dataset is loaded into the grid.
 <grid-example title='Full Store' name='full-store' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
 [[note]]
-| At this point you might be wondering the advantage of the Full store with just using
+| At this point you might be wondering what’s the advantage of using the Full store versus
 | the standard [Client-Side Row Model](../client-side-model/).
 | The difference is when Row Grouping, the children of the row groups are loaded as the
 | groups are expanded. For Client-Side Row Model, all data needs to be loaded up front.
@@ -86,7 +84,7 @@ the entire dataset is loaded into the grid.
 
 So when is it best to use Partial Store? And when is it best to use Full Store?
 
-Use Full Store when all of the data comfortable fit's inside the browsers memory. It is possible to present big 
+Use Full Store when all of the data comfortably fits inside the browsers memory. It is possible to present big 
 data inside an application using a combination of Full Store and Row Grouping. For example a dataset could have 
 10 million rows, however due to grouping only 200 rows are brought back at any group level - in this case 
 Full Store would work fine.
@@ -103,11 +101,13 @@ and using infinite scrolling to load the blocks as the users scrolls. However it
 
 - **In Grid Sorting**
     Because data is read back in blocks from the Partial Store, the grid cannot sort the data,
-    as it does not have all the data loaded. All sorting must be done on the server.
+    as it does not have all the data loaded. All sorting must be done on the server
+    as described in [Sorting](../server-side-model-sorting/).
 
 - **In Grid Filtering**
     Because data is read back in blocks from the Partial Store, the grid cannot filter the data,
-    as it does not have all the data loaded. All filtering must be done on the server.
+    as it does not have all the data loaded. All filtering must be done on the server
+    as described in [Filtering](../server-side-model-filtering/).
 
 - **Updating Data**
     Updating data in the grid using [Transactions](../server-side-model-transactions/) is not supported
