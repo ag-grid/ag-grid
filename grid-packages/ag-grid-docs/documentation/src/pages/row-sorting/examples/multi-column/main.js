@@ -20,10 +20,11 @@ var gridOptions = {
     multiSortKey: 'ctrl',
     onGridReady: function(params) {
         var defaultSortModel = [
-            { colId: "country", sort: "asc" },
-            { colId: "athlete", sort: "asc" }
+            { colId: "country", sort: "asc", sortIndex: 0 },
+            { colId: "athlete", sort: "asc", sortIndex: 1 }
         ];
-        params.api.setSortModel(defaultSortModel);
+
+        params.columnApi.applyColumnState({ state: defaultSortModel });
     }
 };
 
