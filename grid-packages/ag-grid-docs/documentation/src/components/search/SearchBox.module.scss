@@ -16,6 +16,11 @@
     &__icon {
         composes: ml-2 from global;
 
+        @media all and (-ms-high-contrast:none) { // IE 11 
+            top: 0.75rem;
+            left: 0px;
+        }
+
         position: absolute;
     }
 }
