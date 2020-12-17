@@ -8,6 +8,10 @@ html {
     overflow-x: hidden;
 }
 
+main {
+    flex: 1 1 auto;
+}
+
 .main-container {
     composes: container-fluid p-0 d-flex flex-column from global;
     -webkit-font-smoothing: antialiased;
