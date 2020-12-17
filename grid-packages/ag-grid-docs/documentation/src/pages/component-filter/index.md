@@ -157,7 +157,7 @@ If you don't provide either of these two options for your custom filter, the dis
 
 The example below shows two custom filters. The first is on the Athlete column and the second is on the Year column.
 
-<grid-example title='Filter Component' name='custom-filter' type='generated'></grid-example>
+<grid-example title='Filter Component' name='custom-filter' type='vanilla'></grid-example>
 
 ## Custom Filters Containing a Popup Element
 
