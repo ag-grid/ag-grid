@@ -28,7 +28,6 @@ The example below demonstrates the differences between the different modes:
 - The **Excel (Windows)** column demonstrates the behaviour of the Set Filter in Windows Excel Mode.
 - The **Excel (Mac)** column demonstrates the behaviour of the Set Filter in Mac Excel Mode.
 
-
 <grid-example title='Excel Mode' name='excel-mode' type='generated' options='{ "enterprise": true, "exampleHeight": 640, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>
 
 ## Differences Between Modes
