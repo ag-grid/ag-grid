@@ -219,13 +219,11 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.createOrRecycleNodes(nodesToRecycle, params.rowData);
 
         if (nodesToRecycle) {
-            this.blockUtils.destroyRowNodes(Object.values(nodesToRecycle));
+            this.blockUtils.destroyRowNodes(_.getAllValuesInObject(nodesToRecycle));
         }
 
         this.filterAndSortNodes();
-
         this.fireStoreUpdatedEvent();
-
         this.flushAsyncTransactions();
     }
 
