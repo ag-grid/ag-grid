@@ -556,7 +556,7 @@
         },
         "serverSideStoreType": {
             "description": "Whether to use Full Store or Partial Store for storing rows. See <a href='../server-side-model-row-stores/'>Row Stores</a>",
-            "default": "partial",
+            "default": "full",
             "options": [
                 "full",
                 "partial"
