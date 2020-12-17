@@ -28,7 +28,7 @@ var gridOptions = {
 
     getServerSideStoreParams: function(params) {
 
-        var noGroupingActive = params.rowGroupColumns.length==0;
+        var noGroupingActive = params.rowGroupColumns.length == 0;
         var res;
         if (noGroupingActive) {
             res = {
@@ -40,10 +40,10 @@ var gridOptions = {
                 maxBlocksInCache: 2
             };
         } else {
-            var topLevelRows = params.level==0;
+            var topLevelRows = params.level == 0;
             res = {
                 storeType: topLevelRows ? 'full' : 'infinite',
-                cacheBlockSize: params.level==1 ? 5 : 2,
+                cacheBlockSize: params.level == 1 ? 5 : 2,
                 maxBlocksInCache: -1 // never purge blocks
             };
         }
@@ -82,7 +82,7 @@ function ServerSideDatasource(server) {
                     params.success({
                         rowData: response.rows,
                         rowCount: response.lastRow,
-                        storeInfo: {lastLoadedTime: new Date().toLocaleString(), randomValue: Math.random()}
+                        storeInfo: { lastLoadedTime: new Date().toLocaleString(), randomValue: Math.random() }
                     });
                 } else {
                     // inform the grid request failed
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
         // setup the fake server with entire dataset
         var fakeServer = new FakeServer(data);
 

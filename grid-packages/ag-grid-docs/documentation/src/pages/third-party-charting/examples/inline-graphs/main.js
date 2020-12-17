@@ -236,14 +236,14 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/summaryExpanded.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/stocks/summary-expanded.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });
 });
 
 function renderLineGraph(symbol) {
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/' + symbol + '-close-trend.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/stocks/' + symbol + '-close-trend.json' })
         .then(function(responseData) {
             var noRowsMessage = document.querySelector('.centerInline');
             noRowsMessage.style.display = "None";

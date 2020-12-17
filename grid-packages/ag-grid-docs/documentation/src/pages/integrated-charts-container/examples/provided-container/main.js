@@ -48,23 +48,23 @@ function createChartContainer(chartRef) {
 
     eChartWrapper
         .querySelector('.chart-wrapper-close')
-        .addEventListener('click', function () {
+        .addEventListener('click', function() {
             chartRef.destroyChart();
             eParent.removeChild(eChartWrapper);
         });
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid
         .simpleHttpRequest({
             url:
-                'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/wideSpreadOfSports.json',
+                'https://www.ag-grid.com/example-assets/wide-spread-of-sports.json',
         })
-        .then(function (data) {
+        .then(function(data) {
             gridOptions.api.setRowData(data);
         });
 });

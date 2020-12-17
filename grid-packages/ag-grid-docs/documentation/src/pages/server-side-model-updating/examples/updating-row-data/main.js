@@ -28,7 +28,7 @@ function isRowSelectable(rowNode) {
 }
 
 function refreshStore() {
-  gridOptions.api.refreshServerSideStore({purge: true});
+  gridOptions.api.refreshServerSideStore({ purge: true });
 }
 
 function updateSelectedRows() {
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
 
-  agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
+  agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
 
     allData = data;
 
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
           var response = getMockServerResponse(params.request);
 
           // call the success callback
-          params.success({rowData: response.rowsThisBlock, rowCount: response.lastRow});
+          params.success({ rowData: response.rowsThisBlock, rowCount: response.lastRow });
         }, 500);
       }
     };

@@ -16,16 +16,16 @@ var gridOptions = {
 
         template: function(params) {
             return '<div class="ag-details-row ag-details-row-fixed-height">' +
-                        '<div style="padding: 4px; font-weight: bold;">'+params.data.name+' '+params.data.calls+' calls</div>' +
-                        '<div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>' +
-                    '</div>';
+                '<div style="padding: 4px; font-weight: bold;">' + params.data.name + ' ' + params.data.calls + ' calls</div>' +
+                '<div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>' +
+                '</div>';
         },
 
         detailGridOptions: {
             rowSelection: 'multiple',
             enableCellChangeFlash: true,
             immutableData: true,
-            getRowNodeId: function(data) {return data.callId;},
+            getRowNodeId: function(data) { return data.callId; },
             columnDefs: [
                 { field: 'callId', checkboxSelection: true },
                 { field: 'direction' },
@@ -62,7 +62,7 @@ function onFirstDataRendered(params) {
         var data = allRowData[0];
 
         var newCallRecords = [];
-        data.callRecords.forEach( function(record, index) {
+        data.callRecords.forEach(function(record, index) {
             newCallRecords.push({
                 name: record.name,
                 callId: record.callId,
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
     agGrid
         .simpleHttpRequest({
             url:
-                'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/simple/data/data.json',
+                'https://www.ag-grid.com/example-assets/master-detail-data.json',
         })
         .then(function(data) {
             allRowData = data;

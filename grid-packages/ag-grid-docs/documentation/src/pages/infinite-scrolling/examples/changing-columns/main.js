@@ -1,10 +1,10 @@
 var gridOptions = {
     columnDefs: [
-        {field: 'athlete', colId: 'athlete', minWidth: 180},
-        {field: 'age', colId: 'age'},
-        {field: 'country', colId: 'country', minWidth: 180},
-        {field: 'year', colId: 'year'},
-        {field: 'sport', colId: 'sport', minWidth: 180}
+        { field: 'athlete', colId: 'athlete', minWidth: 180 },
+        { field: 'age', colId: 'age' },
+        { field: 'country', colId: 'country', minWidth: 180 },
+        { field: 'year', colId: 'year' },
+        { field: 'sport', colId: 'sport', minWidth: 180 }
     ],
     defaultColDef: {
         flex: 1,
@@ -17,20 +17,20 @@ var gridOptions = {
 
 function onBtShowYearColumn() {
     gridOptions.api.setColumnDefs([
-        {field: 'athlete', colId: 'athlete'},
-        {field: 'age', colId: 'age'},
-        {field: 'country', colId: 'country'},
-        {field: 'year', colId: 'year'},
-        {field: 'sport', colId: 'sport'}
+        { field: 'athlete', colId: 'athlete' },
+        { field: 'age', colId: 'age' },
+        { field: 'country', colId: 'country' },
+        { field: 'year', colId: 'year' },
+        { field: 'sport', colId: 'sport' }
     ]);
 }
 
 function onBtHideYearColumn() {
     gridOptions.api.setColumnDefs([
-        {field: 'athlete', colId: 'athlete'},
-        {field: 'age', colId: 'age'},
-        {field: 'country', colId: 'country'},
-        {field: 'sport', colId: 'sport'}
+        { field: 'athlete', colId: 'athlete' },
+        { field: 'age', colId: 'age' },
+        { field: 'country', colId: 'country' },
+        { field: 'sport', colId: 'sport' }
     ]);
 }
 
@@ -80,7 +80,7 @@ function filterData(filterModel, data) {
         var filterFails = false;
 
         var filterKeys = Object.keys(filterModel);
-        filterKeys.forEach( function(filterKey) {
+        filterKeys.forEach(function(filterKey) {
             var filterValue = filterModel[filterKey].filter;
 
             var valueForRow = item[filterKey];
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
         // give each row an id
         data.forEach(function(data, index) {
             data.id = 'R' + (index + 1);

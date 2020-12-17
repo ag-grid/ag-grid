@@ -1,34 +1,34 @@
 'use strict';
 
-import React, {useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
+import React, { useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridColumn, AgGridReact } from '@ag-grid-community/react';
 
-import {AllModules} from "@ag-grid-enterprise/all-modules";
+import { AllModules } from "@ag-grid-enterprise/all-modules";
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 const GridExample = () => {
     const [columns, setColumns] = useState([
-            {field: 'athlete'},
-            {field: 'age'},
-            {field: 'country'},
-            {field: 'sport'},
-            {field: 'gold'},
-            {field: 'silver'},
-            {field: 'bronze'}
-        ]
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' }
+    ]
     );
     const [gridApi, setGridApi] = useState(null);
     const [gridColumnApi, setGridColumnApi] = useState(null);
     const [rowData, setRowData] = useState([]);
- 
+
     const onGridReady = (params) => {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
 
         const httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
+        httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
         httpRequest.send();
         httpRequest.onreadystatechange = () => {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
@@ -47,7 +47,7 @@ const GridExample = () => {
                 colDef.sort = 'asc';
             }
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtSortOff = () => {
@@ -55,7 +55,7 @@ const GridExample = () => {
         columnDefs.forEach(colDef => {
             colDef.sort = null;
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtWidthNarrow = () => {
@@ -65,7 +65,7 @@ const GridExample = () => {
                 colDef.width = 100;
             }
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtWidthNormal = () => {
@@ -73,7 +73,7 @@ const GridExample = () => {
         columnDefs.forEach(colDef => {
             colDef.width = 200;
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtHide = () => {
@@ -83,7 +83,7 @@ const GridExample = () => {
                 colDef.hide = true;
             }
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtShow = () => {
@@ -91,7 +91,7 @@ const GridExample = () => {
         columnDefs.forEach(colDef => {
             colDef.hide = false;
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtPivotOn = () => {
@@ -103,7 +103,7 @@ const GridExample = () => {
                 colDef.pivot = true;
             }
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtPivotOff = () => {
@@ -113,7 +113,7 @@ const GridExample = () => {
         columnDefs.forEach(colDef => {
             colDef.pivot = false;
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtRowGroupOn = () => {
@@ -123,7 +123,7 @@ const GridExample = () => {
                 colDef.rowGroup = true;
             }
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtRowGroupOff = () => {
@@ -131,7 +131,7 @@ const GridExample = () => {
         columnDefs.forEach(colDef => {
             colDef.rowGroup = false;
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtAggFuncOn = () => {
@@ -141,7 +141,7 @@ const GridExample = () => {
                 colDef.aggFunc = 'sum';
             }
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtAggFuncOff = () => {
@@ -149,7 +149,7 @@ const GridExample = () => {
         columnDefs.forEach(colDef => {
             colDef.aggFunc = null;
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtPinnedOn = () => {
@@ -162,7 +162,7 @@ const GridExample = () => {
                 colDef.pinned = 'right';
             }
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     const onBtPinnedOff = () => {
@@ -170,47 +170,47 @@ const GridExample = () => {
         columnDefs.forEach(colDef => {
             colDef.pinned = null;
         });
-        setColumns(columnDefs)
+        setColumns(columnDefs);
     };
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div className="test-container">
                 <div className="test-header">
                     <div className="test-button-row">
                         <div className="test-button-group">
                             <button onClick={() => onBtSortOn()}>Sort On</button>
-                            <br/>
+                            <br />
                             <button onClick={() => onBtSortOff()}>Sort Off</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtWidthNarrow()}>Width Narrow</button>
-                            <br/>
+                            <br />
                             <button onClick={() => onBtWidthNormal()}>Width Normal</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtHide()}>Hide Cols</button>
-                            <br/>
+                            <br />
                             <button onClick={() => onBtShow()}>Show Cols</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtPivotOn()}>Pivot On</button>
-                            <br/>
+                            <br />
                             <button onClick={() => onBtPivotOff()}>Pivot Off</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtRowGroupOn()}>Row Group On</button>
-                            <br/>
+                            <br />
                             <button onClick={() => onBtRowGroupOff()}>Row Group Off</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtAggFuncOn()}>Agg Func On</button>
-                            <br/>
+                            <br />
                             <button onClick={() => onBtAggFuncOff()}>Agg Func Off</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtPinnedOn()}>Pinned On</button>
-                            <br/>
+                            <br />
                             <button onClick={() => onBtPinnedOff()}>Pinned Off</button>
                         </div>
                     </div>
@@ -241,7 +241,7 @@ const GridExample = () => {
                         onColumnValueChanged={e => console.log('Event Value Changed', e)}
                         onColumnMoved={e => console.log('Event Column Moved', e)}
                         onColumnPinned={e => console.log('Event Column Pinned', e)}>
-                        { columns.map(column => <AgGridColumn {...column}></AgGridColumn>)}
+                        {columns.map(column => <AgGridColumn {...column}></AgGridColumn>)}
                     </AgGridReact>
                 </div>
             </div>
@@ -250,6 +250,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample/>,
+    <GridExample />,
     document.querySelector('#root')
 );

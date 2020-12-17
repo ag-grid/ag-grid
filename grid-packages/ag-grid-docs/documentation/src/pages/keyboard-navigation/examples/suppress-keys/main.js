@@ -7,11 +7,11 @@ var columnDefs = [
     },
     { field: "age" },
     {
-        field: "country", 
+        field: "country",
         minWidth: 130,
-        suppressHeaderKeyboardEvent: function (params) {
+        suppressHeaderKeyboardEvent: function(params) {
             var key = params.event.key;
-      
+
             return (key === 'ArrowLeft' || key === 'ArrowRight' || key === 'Enter');
         }
     },
@@ -77,7 +77,7 @@ function suppressNavigation(params) {
         return false;
     }
 
-    var suppress = keysToSuppress.some(function (suppressedKey) {
+    var suppress = keysToSuppress.some(function(suppressedKey) {
         return suppressedKey === key || key.toUpperCase() === suppressedKey;
     });
 
@@ -86,7 +86,7 @@ function suppressNavigation(params) {
 
 function suppressUpDownNavigation(params) {
     var key = params.event.key;
-  
+
     return (key === 'ArrowUp' || key === 'ArrowDown');
 }
 
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

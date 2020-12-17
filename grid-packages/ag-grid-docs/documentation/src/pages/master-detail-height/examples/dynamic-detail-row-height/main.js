@@ -34,7 +34,7 @@ var gridOptions = {
     getRowHeight: function(params) {
         if (params.node && params.node.detail) {
             var offset = 80;
-            var allDetailRowHeight = params.data.callRecords.length  * params.api.getSizesForCurrentTheme().rowHeight;
+            var allDetailRowHeight = params.data.callRecords.length * params.api.getSizesForCurrentTheme().rowHeight;
             var gridSizes = params.api.getSizesForCurrentTheme();
             return allDetailRowHeight + gridSizes.headerHeight + offset;
         }
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/dynamic-detail-row-height/data/data.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/master-detail-dynamic-row-height-data.json' }).then(function(data) {
         gridOptions.api.setRowData(data);
     });
 });

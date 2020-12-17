@@ -34,8 +34,8 @@ export default class MoodEditor extends PolymerElement {
             }
         </style>
         <div id="container" class="mood" tabindex="0" on-keydown="onKeyDown">
-            <img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley.png" on-click="onHappy" class$="{{classForHappy}}">
-            <img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley-sad.png" on-click="onSad" class$="{{classForSad}}">
+            <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" on-click="onHappy" class$="{{classForHappy}}">
+            <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" on-click="onSad" class$="{{classForSad}}">
         </div>
         `;
     }

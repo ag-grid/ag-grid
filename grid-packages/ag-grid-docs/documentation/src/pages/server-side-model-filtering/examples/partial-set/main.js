@@ -91,7 +91,7 @@ function ServerSideDatasource(server) {
             setTimeout(function() {
                 if (response.success) {
                     // supply rows for requested block to grid
-                    params.success({rowData: response.rows, rowCount: response.lastRow});
+                    params.success({ rowData: response.rows, rowCount: response.lastRow });
                 } else {
                     params.fail();
                 }
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     agGrid
         .simpleHttpRequest({
-            url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json',
+            url: 'https://www.ag-grid.com/example-assets/olympic-winners.json',
         })
         .then(function(data) {
             // setup the fake server with entire dataset

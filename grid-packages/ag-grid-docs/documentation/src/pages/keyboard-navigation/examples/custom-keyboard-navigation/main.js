@@ -7,7 +7,7 @@ var columnDefs = [
             { field: 'country' },
         ]
     },
-    
+
     { field: 'year' },
     { field: 'sport' },
     {
@@ -72,7 +72,7 @@ function moveHeaderFocusUpDown(previousHeader, headerRowCount, isUp) {
         lastRowIndex = previousHeader.headerRowIndex,
         nextRowIndex = isUp ? lastRowIndex - 1 : lastRowIndex + 1,
         nextColumn, parentColumn;
-    
+
     if (nextRowIndex === -1) { return previousHeader; }
     if (nextRowIndex === headerRowCount) { nextRowIndex = -1; }
 
@@ -122,7 +122,7 @@ function navigateToNextCell(params) {
         case KEY_DOWN:
             // return the cell above
             nextRowIndex = previousCell.rowIndex - 1;
-            if (nextRowIndex < -1) { return null; } // returning null means don't navigate 
+            if (nextRowIndex < -1) { return null; } // returning null means don't navigate
 
             return { rowIndex: nextRowIndex, column: previousCell.column, floating: previousCell.floating };
         case KEY_UP:
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

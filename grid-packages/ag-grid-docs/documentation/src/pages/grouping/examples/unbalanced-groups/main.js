@@ -1,25 +1,25 @@
 var rowData = [
-    {country: 'Ireland', state: null, city: 'Dublin'},
-    {country: 'Ireland', state: null, city: 'Galway'},
-    {country: 'Ireland', state: null, city: 'Cork'},
+    { country: 'Ireland', state: null, city: 'Dublin' },
+    { country: 'Ireland', state: null, city: 'Galway' },
+    { country: 'Ireland', state: null, city: 'Cork' },
 
-    {country: 'United Kingdom', state: null, city: 'London'},
-    {country: 'United Kingdom', state: null, city: 'Manchester'},
-    {country: 'United Kingdom', state: null, city: 'Liverpool'},
+    { country: 'United Kingdom', state: null, city: 'London' },
+    { country: 'United Kingdom', state: null, city: 'Manchester' },
+    { country: 'United Kingdom', state: null, city: 'Liverpool' },
 
-    {country: 'USA', state: 'New York', city: 'New York'},
-    {country: 'USA', state: 'New York', city: 'Albany'},
-    {country: 'USA', state: 'New York', city: 'Onondaga'},
-    {country: 'USA', state: 'New York', city: 'Westchester'},
+    { country: 'USA', state: 'New York', city: 'New York' },
+    { country: 'USA', state: 'New York', city: 'Albany' },
+    { country: 'USA', state: 'New York', city: 'Onondaga' },
+    { country: 'USA', state: 'New York', city: 'Westchester' },
 
-    {country: 'USA', state: 'California', city: 'San Diego'},
-    {country: 'USA', state: 'California', city: 'San Francisco'}
+    { country: 'USA', state: 'California', city: 'San Diego' },
+    { country: 'USA', state: 'California', city: 'San Francisco' }
 ];
 
-rowData.forEach( function(item, i) {
+rowData.forEach(function(item, i) {
     item.val1 = ((i + 13) * 17 * 33) % 1000;
     item.val2 = ((i + 23) * 17 * 33) % 1000;
-} );
+});
 
 var gridOptions = {
     columnDefs: [
@@ -50,7 +50,7 @@ var gridOptions = {
             enablePivot: true,
         }
     },
-    components:{
+    components: {
         cityCellRenderer: cityCellRenderer,
         countryCellRenderer: countryCellRenderer,
         stateCellRenderer: stateCellRenderer
@@ -75,7 +75,7 @@ function countryCellRenderer(params) {
     if (params.value === undefined || params.value === null) {
         return '';
     } else {
-        var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
+        var flag = '<img border="0" width="15" height="10" src="https://flagcdn.com/h20/' + COUNTRY_CODES[params.value] + '.png">';
         return flag + ' ' + params.value;
     }
 }
@@ -84,7 +84,7 @@ function stateCellRenderer(params) {
     if (params.value === undefined || params.value === null) {
         return '';
     } else {
-        var flag = '<img border="0" width="15" height="10" src="https://www.ag-grid.com/images/goldStar.png">';
+        var flag = '<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/gold-star.png">';
         return flag + ' ' + params.value;
     }
 }
@@ -93,7 +93,7 @@ function cityCellRenderer(params) {
     if (params.value === undefined || params.value === null) {
         return '';
     } else {
-        var flag = '<img border="0" width="15" height="10" src="https://www.ag-grid.com/images/sun.png">';
+        var flag = '<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/weather/sun.png">';
         return flag + ' ' + params.value;
     }
 }

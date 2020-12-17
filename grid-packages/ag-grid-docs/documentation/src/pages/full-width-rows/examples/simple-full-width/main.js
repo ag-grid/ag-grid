@@ -26,7 +26,7 @@ var rowData = [
         population: 4000000,
         summary: 'Center of the World'
     },
-    {name: 'France', continent: 'Europe', language: 'French', code: 'fr', population: 4000000, summary: 'Best Lovers'},
+    { name: 'France', continent: 'Europe', language: 'French', code: 'fr', population: 4000000, summary: 'Best Lovers' },
     {
         name: 'Germany',
         continent: 'Europe',
@@ -51,8 +51,8 @@ var rowData = [
         population: 4000000,
         summary: 'Best Vikings'
     },
-    {name: 'Italy', continent: 'Europe', language: 'Italian', code: 'it', population: 4000000, summary: 'Pizza Pizza'},
-    {name: 'Greece', continent: 'Europe', language: 'Greek', code: 'gr', population: 4000000, summary: 'Many Gods'},
+    { name: 'Italy', continent: 'Europe', language: 'Italian', code: 'it', population: 4000000, summary: 'Pizza Pizza' },
+    { name: 'Greece', continent: 'Europe', language: 'Greek', code: 'gr', population: 4000000, summary: 'Many Gods' },
     {
         name: 'Iceland',
         continent: 'Europe',
@@ -69,7 +69,7 @@ var rowData = [
         population: 4000000,
         summary: 'Ship Builders'
     },
-    {name: 'Malta', continent: 'Europe', language: 'Maltese', code: 'mt', population: 4000000, summary: 'Fishermen'},
+    { name: 'Malta', continent: 'Europe', language: 'Maltese', code: 'mt', population: 4000000, summary: 'Fishermen' },
     {
         name: 'Brazil',
         continent: 'South America',
@@ -122,9 +122,9 @@ var rowData = [
 
 var gridOptions = {
     columnDefs: [
-        { field: 'name', cellRenderer: countryCellRenderer},
-        { field: 'continent'},
-        { field: 'language'}
+        { field: 'name', cellRenderer: countryCellRenderer },
+        { field: 'continent' },
+        { field: 'language' }
     ],
     defaultColDef: {
         flex: 1,
@@ -136,13 +136,13 @@ var gridOptions = {
         fullWidthCellRenderer: FullWidthCellRenderer
     },
     rowData: rowData,
-    getRowHeight: function (params) {
+    getRowHeight: function(params) {
         // return 100px height for full width rows
         if (isFullWidth(params.data)) {
             return 100;
         }
     },
-    isFullWidthCell: function (rowNode) {
+    isFullWidthCell: function(rowNode) {
         return isFullWidth(rowNode.data);
     },
     // see ag-Grid docs cellRenderer for details on how to build cellRenderers
@@ -151,7 +151,7 @@ var gridOptions = {
 
 function countryCellRenderer(params) {
     var flag =
-        '<img border="0" width="15" height="10" src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/flags/' +
+        '<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/flags/' +
         params.data.code +
         '.png">';
     return '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
@@ -163,7 +163,7 @@ function isFullWidth(data) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

@@ -30,26 +30,26 @@ function turnOnPivotMode() {
 }
 function addPivotColumn() {
     gridOptions.columnApi.applyColumnState({
-        state: [{colId: 'country', pivot: true}],
-        defaultState: {pivot: false}
+        state: [{ colId: 'country', pivot: true }],
+        defaultState: { pivot: false }
     });
 }
 function addPivotColumns() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            {colId: 'year', pivot: true},
-            {colId: 'country', pivot: true}],
-        defaultState: {pivot: false}
+            { colId: 'year', pivot: true },
+            { colId: 'country', pivot: true }],
+        defaultState: { pivot: false }
     });
 }
 function removePivotColumn() {
     gridOptions.columnApi.applyColumnState({
-        state: [{colId: 'country', pivot: false}]
+        state: [{ colId: 'country', pivot: false }]
     });
 }
 function emptyPivotColumns() {
     gridOptions.columnApi.applyColumnState({
-        defaultState: {pivot: false}
+        defaultState: { pivot: false }
     });
 }
 function exportToCsv() {
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

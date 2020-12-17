@@ -1,0 +1,8218 @@
+[
+  {
+    "Date": "2-Mar-17",
+    "Close": 64.01
+  },
+  {
+    "Date": "1-Mar-17",
+    "Close": 64.94
+  },
+  {
+    "Date": "28-Feb-17",
+    "Close": 63.98
+  },
+  {
+    "Date": "27-Feb-17",
+    "Close": 64.23
+  },
+  {
+    "Date": "24-Feb-17",
+    "Close": 64.62
+  },
+  {
+    "Date": "23-Feb-17",
+    "Close": 64.62
+  },
+  {
+    "Date": "22-Feb-17",
+    "Close": 64.36
+  },
+  {
+    "Date": "21-Feb-17",
+    "Close": 64.49
+  },
+  {
+    "Date": "17-Feb-17",
+    "Close": 64.62
+  },
+  {
+    "Date": "16-Feb-17",
+    "Close": 64.52
+  },
+  {
+    "Date": "15-Feb-17",
+    "Close": 64.53
+  },
+  {
+    "Date": "14-Feb-17",
+    "Close": 64.57
+  },
+  {
+    "Date": "13-Feb-17",
+    "Close": 64.72
+  },
+  {
+    "Date": "10-Feb-17",
+    "Close": 64
+  },
+  {
+    "Date": "9-Feb-17",
+    "Close": 64.06
+  },
+  {
+    "Date": "8-Feb-17",
+    "Close": 63.34
+  },
+  {
+    "Date": "7-Feb-17",
+    "Close": 63.43
+  },
+  {
+    "Date": "6-Feb-17",
+    "Close": 63.64
+  },
+  {
+    "Date": "3-Feb-17",
+    "Close": 63.68
+  },
+  {
+    "Date": "2-Feb-17",
+    "Close": 63.17
+  },
+  {
+    "Date": "1-Feb-17",
+    "Close": 63.58
+  },
+  {
+    "Date": "31-Jan-17",
+    "Close": 64.65
+  },
+  {
+    "Date": "30-Jan-17",
+    "Close": 65.13
+  },
+  {
+    "Date": "27-Jan-17",
+    "Close": 65.78
+  },
+  {
+    "Date": "26-Jan-17",
+    "Close": 64.27
+  },
+  {
+    "Date": "25-Jan-17",
+    "Close": 63.68
+  },
+  {
+    "Date": "24-Jan-17",
+    "Close": 63.52
+  },
+  {
+    "Date": "23-Jan-17",
+    "Close": 62.96
+  },
+  {
+    "Date": "20-Jan-17",
+    "Close": 62.74
+  },
+  {
+    "Date": "19-Jan-17",
+    "Close": 62.3
+  },
+  {
+    "Date": "18-Jan-17",
+    "Close": 62.5
+  },
+  {
+    "Date": "17-Jan-17",
+    "Close": 62.53
+  },
+  {
+    "Date": "13-Jan-17",
+    "Close": 62.7
+  },
+  {
+    "Date": "12-Jan-17",
+    "Close": 62.61
+  },
+  {
+    "Date": "11-Jan-17",
+    "Close": 63.19
+  },
+  {
+    "Date": "10-Jan-17",
+    "Close": 62.62
+  },
+  {
+    "Date": "9-Jan-17",
+    "Close": 62.64
+  },
+  {
+    "Date": "6-Jan-17",
+    "Close": 62.84
+  },
+  {
+    "Date": "5-Jan-17",
+    "Close": 62.3
+  },
+  {
+    "Date": "4-Jan-17",
+    "Close": 62.3
+  },
+  {
+    "Date": "3-Jan-17",
+    "Close": 62.58
+  },
+  {
+    "Date": "30-Dec-16",
+    "Close": 62.14
+  },
+  {
+    "Date": "29-Dec-16",
+    "Close": 62.9
+  },
+  {
+    "Date": "28-Dec-16",
+    "Close": 62.99
+  },
+  {
+    "Date": "27-Dec-16",
+    "Close": 63.28
+  },
+  {
+    "Date": "23-Dec-16",
+    "Close": 63.24
+  },
+  {
+    "Date": "22-Dec-16",
+    "Close": 63.55
+  },
+  {
+    "Date": "21-Dec-16",
+    "Close": 63.54
+  },
+  {
+    "Date": "20-Dec-16",
+    "Close": 63.54
+  },
+  {
+    "Date": "19-Dec-16",
+    "Close": 63.62
+  },
+  {
+    "Date": "16-Dec-16",
+    "Close": 62.3
+  },
+  {
+    "Date": "15-Dec-16",
+    "Close": 62.58
+  },
+  {
+    "Date": "14-Dec-16",
+    "Close": 62.68
+  },
+  {
+    "Date": "13-Dec-16",
+    "Close": 62.98
+  },
+  {
+    "Date": "12-Dec-16",
+    "Close": 62.17
+  },
+  {
+    "Date": "9-Dec-16",
+    "Close": 61.97
+  },
+  {
+    "Date": "8-Dec-16",
+    "Close": 61.01
+  },
+  {
+    "Date": "7-Dec-16",
+    "Close": 61.37
+  },
+  {
+    "Date": "6-Dec-16",
+    "Close": 59.95
+  },
+  {
+    "Date": "5-Dec-16",
+    "Close": 60.22
+  },
+  {
+    "Date": "2-Dec-16",
+    "Close": 59.25
+  },
+  {
+    "Date": "1-Dec-16",
+    "Close": 59.2
+  },
+  {
+    "Date": "30-Nov-16",
+    "Close": 60.26
+  },
+  {
+    "Date": "29-Nov-16",
+    "Close": 61.09
+  },
+  {
+    "Date": "28-Nov-16",
+    "Close": 60.61
+  },
+  {
+    "Date": "25-Nov-16",
+    "Close": 60.53
+  },
+  {
+    "Date": "23-Nov-16",
+    "Close": 60.4
+  },
+  {
+    "Date": "22-Nov-16",
+    "Close": 61.12
+  },
+  {
+    "Date": "21-Nov-16",
+    "Close": 60.86
+  },
+  {
+    "Date": "18-Nov-16",
+    "Close": 60.35
+  },
+  {
+    "Date": "17-Nov-16",
+    "Close": 60.64
+  },
+  {
+    "Date": "16-Nov-16",
+    "Close": 59.65
+  },
+  {
+    "Date": "15-Nov-16",
+    "Close": 58.87
+  },
+  {
+    "Date": "14-Nov-16",
+    "Close": 58.12
+  },
+  {
+    "Date": "11-Nov-16",
+    "Close": 59.02
+  },
+  {
+    "Date": "10-Nov-16",
+    "Close": 58.7
+  },
+  {
+    "Date": "9-Nov-16",
+    "Close": 60.17
+  },
+  {
+    "Date": "8-Nov-16",
+    "Close": 60.47
+  },
+  {
+    "Date": "7-Nov-16",
+    "Close": 60.42
+  },
+  {
+    "Date": "4-Nov-16",
+    "Close": 58.71
+  },
+  {
+    "Date": "3-Nov-16",
+    "Close": 59.21
+  },
+  {
+    "Date": "2-Nov-16",
+    "Close": 59.43
+  },
+  {
+    "Date": "1-Nov-16",
+    "Close": 59.8
+  },
+  {
+    "Date": "31-Oct-16",
+    "Close": 59.92
+  },
+  {
+    "Date": "28-Oct-16",
+    "Close": 59.87
+  },
+  {
+    "Date": "27-Oct-16",
+    "Close": 60.1
+  },
+  {
+    "Date": "26-Oct-16",
+    "Close": 60.63
+  },
+  {
+    "Date": "25-Oct-16",
+    "Close": 60.99
+  },
+  {
+    "Date": "24-Oct-16",
+    "Close": 61
+  },
+  {
+    "Date": "21-Oct-16",
+    "Close": 59.66
+  },
+  {
+    "Date": "20-Oct-16",
+    "Close": 57.25
+  },
+  {
+    "Date": "19-Oct-16",
+    "Close": 57.53
+  },
+  {
+    "Date": "18-Oct-16",
+    "Close": 57.66
+  },
+  {
+    "Date": "17-Oct-16",
+    "Close": 57.22
+  },
+  {
+    "Date": "14-Oct-16",
+    "Close": 57.42
+  },
+  {
+    "Date": "13-Oct-16",
+    "Close": 56.92
+  },
+  {
+    "Date": "12-Oct-16",
+    "Close": 57.11
+  },
+  {
+    "Date": "11-Oct-16",
+    "Close": 57.19
+  },
+  {
+    "Date": "10-Oct-16",
+    "Close": 58.04
+  },
+  {
+    "Date": "7-Oct-16",
+    "Close": 57.8
+  },
+  {
+    "Date": "6-Oct-16",
+    "Close": 57.74
+  },
+  {
+    "Date": "5-Oct-16",
+    "Close": 57.64
+  },
+  {
+    "Date": "4-Oct-16",
+    "Close": 57.24
+  },
+  {
+    "Date": "3-Oct-16",
+    "Close": 57.42
+  },
+  {
+    "Date": "30-Sep-16",
+    "Close": 57.6
+  },
+  {
+    "Date": "29-Sep-16",
+    "Close": 57.4
+  },
+  {
+    "Date": "28-Sep-16",
+    "Close": 58.03
+  },
+  {
+    "Date": "27-Sep-16",
+    "Close": 57.95
+  },
+  {
+    "Date": "26-Sep-16",
+    "Close": 56.9
+  },
+  {
+    "Date": "23-Sep-16",
+    "Close": 57.43
+  },
+  {
+    "Date": "22-Sep-16",
+    "Close": 57.82
+  },
+  {
+    "Date": "21-Sep-16",
+    "Close": 57.76
+  },
+  {
+    "Date": "20-Sep-16",
+    "Close": 56.81
+  },
+  {
+    "Date": "19-Sep-16",
+    "Close": 56.93
+  },
+  {
+    "Date": "16-Sep-16",
+    "Close": 57.25
+  },
+  {
+    "Date": "15-Sep-16",
+    "Close": 57.19
+  },
+  {
+    "Date": "14-Sep-16",
+    "Close": 56.26
+  },
+  {
+    "Date": "13-Sep-16",
+    "Close": 56.53
+  },
+  {
+    "Date": "12-Sep-16",
+    "Close": 57.05
+  },
+  {
+    "Date": "9-Sep-16",
+    "Close": 56.21
+  },
+  {
+    "Date": "8-Sep-16",
+    "Close": 57.43
+  },
+  {
+    "Date": "7-Sep-16",
+    "Close": 57.66
+  },
+  {
+    "Date": "6-Sep-16",
+    "Close": 57.61
+  },
+  {
+    "Date": "2-Sep-16",
+    "Close": 57.67
+  },
+  {
+    "Date": "1-Sep-16",
+    "Close": 57.59
+  },
+  {
+    "Date": "31-Aug-16",
+    "Close": 57.46
+  },
+  {
+    "Date": "30-Aug-16",
+    "Close": 57.89
+  },
+  {
+    "Date": "29-Aug-16",
+    "Close": 58.1
+  },
+  {
+    "Date": "26-Aug-16",
+    "Close": 58.03
+  },
+  {
+    "Date": "25-Aug-16",
+    "Close": 58.17
+  },
+  {
+    "Date": "24-Aug-16",
+    "Close": 57.95
+  },
+  {
+    "Date": "23-Aug-16",
+    "Close": 57.89
+  },
+  {
+    "Date": "22-Aug-16",
+    "Close": 57.67
+  },
+  {
+    "Date": "19-Aug-16",
+    "Close": 57.62
+  },
+  {
+    "Date": "18-Aug-16",
+    "Close": 57.6
+  },
+  {
+    "Date": "17-Aug-16",
+    "Close": 57.56
+  },
+  {
+    "Date": "16-Aug-16",
+    "Close": 57.44
+  },
+  {
+    "Date": "15-Aug-16",
+    "Close": 58.12
+  },
+  {
+    "Date": "12-Aug-16",
+    "Close": 57.94
+  },
+  {
+    "Date": "11-Aug-16",
+    "Close": 58.3
+  },
+  {
+    "Date": "10-Aug-16",
+    "Close": 58.02
+  },
+  {
+    "Date": "9-Aug-16",
+    "Close": 58.2
+  },
+  {
+    "Date": "8-Aug-16",
+    "Close": 58.06
+  },
+  {
+    "Date": "5-Aug-16",
+    "Close": 57.96
+  },
+  {
+    "Date": "4-Aug-16",
+    "Close": 57.39
+  },
+  {
+    "Date": "3-Aug-16",
+    "Close": 56.97
+  },
+  {
+    "Date": "2-Aug-16",
+    "Close": 56.58
+  },
+  {
+    "Date": "1-Aug-16",
+    "Close": 56.58
+  },
+  {
+    "Date": "29-Jul-16",
+    "Close": 56.68
+  },
+  {
+    "Date": "28-Jul-16",
+    "Close": 56.21
+  },
+  {
+    "Date": "27-Jul-16",
+    "Close": 56.19
+  },
+  {
+    "Date": "26-Jul-16",
+    "Close": 56.76
+  },
+  {
+    "Date": "25-Jul-16",
+    "Close": 56.73
+  },
+  {
+    "Date": "22-Jul-16",
+    "Close": 56.57
+  },
+  {
+    "Date": "21-Jul-16",
+    "Close": 55.8
+  },
+  {
+    "Date": "20-Jul-16",
+    "Close": 55.91
+  },
+  {
+    "Date": "19-Jul-16",
+    "Close": 53.09
+  },
+  {
+    "Date": "18-Jul-16",
+    "Close": 53.96
+  },
+  {
+    "Date": "15-Jul-16",
+    "Close": 53.7
+  },
+  {
+    "Date": "14-Jul-16",
+    "Close": 53.74
+  },
+  {
+    "Date": "13-Jul-16",
+    "Close": 53.51
+  },
+  {
+    "Date": "12-Jul-16",
+    "Close": 53.21
+  },
+  {
+    "Date": "11-Jul-16",
+    "Close": 52.59
+  },
+  {
+    "Date": "8-Jul-16",
+    "Close": 52.3
+  },
+  {
+    "Date": "7-Jul-16",
+    "Close": 51.38
+  },
+  {
+    "Date": "6-Jul-16",
+    "Close": 51.38
+  },
+  {
+    "Date": "5-Jul-16",
+    "Close": 51.17
+  },
+  {
+    "Date": "1-Jul-16",
+    "Close": 51.16
+  },
+  {
+    "Date": "30-Jun-16",
+    "Close": 51.17
+  },
+  {
+    "Date": "29-Jun-16",
+    "Close": 50.54
+  },
+  {
+    "Date": "28-Jun-16",
+    "Close": 49.44
+  },
+  {
+    "Date": "27-Jun-16",
+    "Close": 48.43
+  },
+  {
+    "Date": "24-Jun-16",
+    "Close": 49.83
+  },
+  {
+    "Date": "23-Jun-16",
+    "Close": 51.91
+  },
+  {
+    "Date": "22-Jun-16",
+    "Close": 50.99
+  },
+  {
+    "Date": "21-Jun-16",
+    "Close": 51.19
+  },
+  {
+    "Date": "20-Jun-16",
+    "Close": 50.07
+  },
+  {
+    "Date": "17-Jun-16",
+    "Close": 50.13
+  },
+  {
+    "Date": "16-Jun-16",
+    "Close": 50.39
+  },
+  {
+    "Date": "15-Jun-16",
+    "Close": 49.69
+  },
+  {
+    "Date": "14-Jun-16",
+    "Close": 49.83
+  },
+  {
+    "Date": "13-Jun-16",
+    "Close": 50.14
+  },
+  {
+    "Date": "10-Jun-16",
+    "Close": 51.48
+  },
+  {
+    "Date": "9-Jun-16",
+    "Close": 51.62
+  },
+  {
+    "Date": "8-Jun-16",
+    "Close": 52.04
+  },
+  {
+    "Date": "7-Jun-16",
+    "Close": 52.1
+  },
+  {
+    "Date": "6-Jun-16",
+    "Close": 52.13
+  },
+  {
+    "Date": "3-Jun-16",
+    "Close": 51.79
+  },
+  {
+    "Date": "2-Jun-16",
+    "Close": 52.48
+  },
+  {
+    "Date": "1-Jun-16",
+    "Close": 52.85
+  },
+  {
+    "Date": "31-May-16",
+    "Close": 53
+  },
+  {
+    "Date": "27-May-16",
+    "Close": 52.32
+  },
+  {
+    "Date": "26-May-16",
+    "Close": 51.89
+  },
+  {
+    "Date": "25-May-16",
+    "Close": 52.12
+  },
+  {
+    "Date": "24-May-16",
+    "Close": 51.59
+  },
+  {
+    "Date": "23-May-16",
+    "Close": 50.03
+  },
+  {
+    "Date": "20-May-16",
+    "Close": 50.62
+  },
+  {
+    "Date": "19-May-16",
+    "Close": 50.32
+  },
+  {
+    "Date": "18-May-16",
+    "Close": 50.81
+  },
+  {
+    "Date": "17-May-16",
+    "Close": 50.51
+  },
+  {
+    "Date": "16-May-16",
+    "Close": 51.83
+  },
+  {
+    "Date": "13-May-16",
+    "Close": 51.08
+  },
+  {
+    "Date": "12-May-16",
+    "Close": 51.51
+  },
+  {
+    "Date": "11-May-16",
+    "Close": 51.05
+  },
+  {
+    "Date": "10-May-16",
+    "Close": 51.02
+  },
+  {
+    "Date": "9-May-16",
+    "Close": 50.07
+  },
+  {
+    "Date": "6-May-16",
+    "Close": 50.39
+  },
+  {
+    "Date": "5-May-16",
+    "Close": 49.94
+  },
+  {
+    "Date": "4-May-16",
+    "Close": 49.87
+  },
+  {
+    "Date": "3-May-16",
+    "Close": 49.78
+  },
+  {
+    "Date": "2-May-16",
+    "Close": 50.61
+  },
+  {
+    "Date": "29-Apr-16",
+    "Close": 49.87
+  },
+  {
+    "Date": "28-Apr-16",
+    "Close": 49.9
+  },
+  {
+    "Date": "27-Apr-16",
+    "Close": 50.94
+  },
+  {
+    "Date": "26-Apr-16",
+    "Close": 51.44
+  },
+  {
+    "Date": "25-Apr-16",
+    "Close": 52.11
+  },
+  {
+    "Date": "22-Apr-16",
+    "Close": 51.78
+  },
+  {
+    "Date": "21-Apr-16",
+    "Close": 55.78
+  },
+  {
+    "Date": "20-Apr-16",
+    "Close": 55.59
+  },
+  {
+    "Date": "19-Apr-16",
+    "Close": 56.39
+  },
+  {
+    "Date": "18-Apr-16",
+    "Close": 56.46
+  },
+  {
+    "Date": "15-Apr-16",
+    "Close": 55.65
+  },
+  {
+    "Date": "14-Apr-16",
+    "Close": 55.36
+  },
+  {
+    "Date": "13-Apr-16",
+    "Close": 55.35
+  },
+  {
+    "Date": "12-Apr-16",
+    "Close": 54.65
+  },
+  {
+    "Date": "11-Apr-16",
+    "Close": 54.31
+  },
+  {
+    "Date": "8-Apr-16",
+    "Close": 54.42
+  },
+  {
+    "Date": "7-Apr-16",
+    "Close": 54.46
+  },
+  {
+    "Date": "6-Apr-16",
+    "Close": 55.12
+  },
+  {
+    "Date": "5-Apr-16",
+    "Close": 54.56
+  },
+  {
+    "Date": "4-Apr-16",
+    "Close": 55.43
+  },
+  {
+    "Date": "1-Apr-16",
+    "Close": 55.57
+  },
+  {
+    "Date": "31-Mar-16",
+    "Close": 55.23
+  },
+  {
+    "Date": "30-Mar-16",
+    "Close": 55.05
+  },
+  {
+    "Date": "29-Mar-16",
+    "Close": 54.71
+  },
+  {
+    "Date": "28-Mar-16",
+    "Close": 53.54
+  },
+  {
+    "Date": "24-Mar-16",
+    "Close": 54.21
+  },
+  {
+    "Date": "23-Mar-16",
+    "Close": 53.97
+  },
+  {
+    "Date": "22-Mar-16",
+    "Close": 54.07
+  },
+  {
+    "Date": "21-Mar-16",
+    "Close": 53.86
+  },
+  {
+    "Date": "18-Mar-16",
+    "Close": 53.49
+  },
+  {
+    "Date": "17-Mar-16",
+    "Close": 54.66
+  },
+  {
+    "Date": "16-Mar-16",
+    "Close": 54.35
+  },
+  {
+    "Date": "15-Mar-16",
+    "Close": 53.59
+  },
+  {
+    "Date": "14-Mar-16",
+    "Close": 53.17
+  },
+  {
+    "Date": "11-Mar-16",
+    "Close": 53.07
+  },
+  {
+    "Date": "10-Mar-16",
+    "Close": 52.05
+  },
+  {
+    "Date": "9-Mar-16",
+    "Close": 52.84
+  },
+  {
+    "Date": "8-Mar-16",
+    "Close": 51.65
+  },
+  {
+    "Date": "7-Mar-16",
+    "Close": 51.03
+  },
+  {
+    "Date": "4-Mar-16",
+    "Close": 52.03
+  },
+  {
+    "Date": "3-Mar-16",
+    "Close": 52.35
+  },
+  {
+    "Date": "2-Mar-16",
+    "Close": 52.95
+  },
+  {
+    "Date": "1-Mar-16",
+    "Close": 52.58
+  },
+  {
+    "Date": "29-Feb-16",
+    "Close": 50.88
+  },
+  {
+    "Date": "26-Feb-16",
+    "Close": 51.3
+  },
+  {
+    "Date": "25-Feb-16",
+    "Close": 52.1
+  },
+  {
+    "Date": "24-Feb-16",
+    "Close": 51.36
+  },
+  {
+    "Date": "23-Feb-16",
+    "Close": 51.18
+  },
+  {
+    "Date": "22-Feb-16",
+    "Close": 52.65
+  },
+  {
+    "Date": "19-Feb-16",
+    "Close": 51.82
+  },
+  {
+    "Date": "18-Feb-16",
+    "Close": 52.19
+  },
+  {
+    "Date": "17-Feb-16",
+    "Close": 52.42
+  },
+  {
+    "Date": "16-Feb-16",
+    "Close": 51.09
+  },
+  {
+    "Date": "12-Feb-16",
+    "Close": 50.5
+  },
+  {
+    "Date": "11-Feb-16",
+    "Close": 49.69
+  },
+  {
+    "Date": "10-Feb-16",
+    "Close": 49.71
+  },
+  {
+    "Date": "9-Feb-16",
+    "Close": 49.28
+  },
+  {
+    "Date": "8-Feb-16",
+    "Close": 49.41
+  },
+  {
+    "Date": "5-Feb-16",
+    "Close": 50.16
+  },
+  {
+    "Date": "4-Feb-16",
+    "Close": 52
+  },
+  {
+    "Date": "3-Feb-16",
+    "Close": 52.16
+  },
+  {
+    "Date": "2-Feb-16",
+    "Close": 53
+  },
+  {
+    "Date": "1-Feb-16",
+    "Close": 54.71
+  },
+  {
+    "Date": "29-Jan-16",
+    "Close": 55.09
+  },
+  {
+    "Date": "28-Jan-16",
+    "Close": 52.06
+  },
+  {
+    "Date": "27-Jan-16",
+    "Close": 51.22
+  },
+  {
+    "Date": "26-Jan-16",
+    "Close": 52.17
+  },
+  {
+    "Date": "25-Jan-16",
+    "Close": 51.79
+  },
+  {
+    "Date": "22-Jan-16",
+    "Close": 52.29
+  },
+  {
+    "Date": "21-Jan-16",
+    "Close": 50.48
+  },
+  {
+    "Date": "20-Jan-16",
+    "Close": 50.79
+  },
+  {
+    "Date": "19-Jan-16",
+    "Close": 50.56
+  },
+  {
+    "Date": "15-Jan-16",
+    "Close": 50.99
+  },
+  {
+    "Date": "14-Jan-16",
+    "Close": 53.11
+  },
+  {
+    "Date": "13-Jan-16",
+    "Close": 51.64
+  },
+  {
+    "Date": "12-Jan-16",
+    "Close": 52.78
+  },
+  {
+    "Date": "11-Jan-16",
+    "Close": 52.3
+  },
+  {
+    "Date": "8-Jan-16",
+    "Close": 52.33
+  },
+  {
+    "Date": "7-Jan-16",
+    "Close": 52.17
+  },
+  {
+    "Date": "6-Jan-16",
+    "Close": 54.05
+  },
+  {
+    "Date": "5-Jan-16",
+    "Close": 55.05
+  },
+  {
+    "Date": "4-Jan-16",
+    "Close": 54.8
+  },
+  {
+    "Date": "31-Dec-15",
+    "Close": 55.48
+  },
+  {
+    "Date": "30-Dec-15",
+    "Close": 56.31
+  },
+  {
+    "Date": "29-Dec-15",
+    "Close": 56.55
+  },
+  {
+    "Date": "28-Dec-15",
+    "Close": 55.95
+  },
+  {
+    "Date": "24-Dec-15",
+    "Close": 55.67
+  },
+  {
+    "Date": "23-Dec-15",
+    "Close": 55.82
+  },
+  {
+    "Date": "22-Dec-15",
+    "Close": 55.35
+  },
+  {
+    "Date": "21-Dec-15",
+    "Close": 54.83
+  },
+  {
+    "Date": "18-Dec-15",
+    "Close": 54.13
+  },
+  {
+    "Date": "17-Dec-15",
+    "Close": 55.7
+  },
+  {
+    "Date": "16-Dec-15",
+    "Close": 56.13
+  },
+  {
+    "Date": "15-Dec-15",
+    "Close": 55.2
+  },
+  {
+    "Date": "14-Dec-15",
+    "Close": 55.14
+  },
+  {
+    "Date": "11-Dec-15",
+    "Close": 54.06
+  },
+  {
+    "Date": "10-Dec-15",
+    "Close": 55.27
+  },
+  {
+    "Date": "9-Dec-15",
+    "Close": 54.98
+  },
+  {
+    "Date": "8-Dec-15",
+    "Close": 55.79
+  },
+  {
+    "Date": "7-Dec-15",
+    "Close": 55.81
+  },
+  {
+    "Date": "4-Dec-15",
+    "Close": 55.91
+  },
+  {
+    "Date": "3-Dec-15",
+    "Close": 54.2
+  },
+  {
+    "Date": "2-Dec-15",
+    "Close": 55.21
+  },
+  {
+    "Date": "1-Dec-15",
+    "Close": 55.22
+  },
+  {
+    "Date": "30-Nov-15",
+    "Close": 54.35
+  },
+  {
+    "Date": "27-Nov-15",
+    "Close": 53.93
+  },
+  {
+    "Date": "25-Nov-15",
+    "Close": 53.69
+  },
+  {
+    "Date": "24-Nov-15",
+    "Close": 54.25
+  },
+  {
+    "Date": "23-Nov-15",
+    "Close": 54.19
+  },
+  {
+    "Date": "20-Nov-15",
+    "Close": 54.19
+  },
+  {
+    "Date": "19-Nov-15",
+    "Close": 53.94
+  },
+  {
+    "Date": "18-Nov-15",
+    "Close": 53.85
+  },
+  {
+    "Date": "17-Nov-15",
+    "Close": 52.97
+  },
+  {
+    "Date": "16-Nov-15",
+    "Close": 53.76
+  },
+  {
+    "Date": "13-Nov-15",
+    "Close": 52.84
+  },
+  {
+    "Date": "12-Nov-15",
+    "Close": 53.32
+  },
+  {
+    "Date": "11-Nov-15",
+    "Close": 53.65
+  },
+  {
+    "Date": "10-Nov-15",
+    "Close": 53.51
+  },
+  {
+    "Date": "9-Nov-15",
+    "Close": 54.16
+  },
+  {
+    "Date": "6-Nov-15",
+    "Close": 54.92
+  },
+  {
+    "Date": "5-Nov-15",
+    "Close": 54.38
+  },
+  {
+    "Date": "4-Nov-15",
+    "Close": 54.4
+  },
+  {
+    "Date": "3-Nov-15",
+    "Close": 54.15
+  },
+  {
+    "Date": "2-Nov-15",
+    "Close": 53.24
+  },
+  {
+    "Date": "30-Oct-15",
+    "Close": 52.64
+  },
+  {
+    "Date": "29-Oct-15",
+    "Close": 53.36
+  },
+  {
+    "Date": "28-Oct-15",
+    "Close": 53.98
+  },
+  {
+    "Date": "27-Oct-15",
+    "Close": 53.69
+  },
+  {
+    "Date": "26-Oct-15",
+    "Close": 54.25
+  },
+  {
+    "Date": "23-Oct-15",
+    "Close": 52.87
+  },
+  {
+    "Date": "22-Oct-15",
+    "Close": 48.03
+  },
+  {
+    "Date": "21-Oct-15",
+    "Close": 47.2
+  },
+  {
+    "Date": "20-Oct-15",
+    "Close": 47.77
+  },
+  {
+    "Date": "19-Oct-15",
+    "Close": 47.62
+  },
+  {
+    "Date": "16-Oct-15",
+    "Close": 47.51
+  },
+  {
+    "Date": "15-Oct-15",
+    "Close": 47.01
+  },
+  {
+    "Date": "14-Oct-15",
+    "Close": 46.68
+  },
+  {
+    "Date": "13-Oct-15",
+    "Close": 46.89
+  },
+  {
+    "Date": "12-Oct-15",
+    "Close": 47
+  },
+  {
+    "Date": "9-Oct-15",
+    "Close": 47.11
+  },
+  {
+    "Date": "8-Oct-15",
+    "Close": 47.45
+  },
+  {
+    "Date": "7-Oct-15",
+    "Close": 46.8
+  },
+  {
+    "Date": "6-Oct-15",
+    "Close": 46.75
+  },
+  {
+    "Date": "5-Oct-15",
+    "Close": 46.63
+  },
+  {
+    "Date": "2-Oct-15",
+    "Close": 45.57
+  },
+  {
+    "Date": "1-Oct-15",
+    "Close": 44.61
+  },
+  {
+    "Date": "30-Sep-15",
+    "Close": 44.26
+  },
+  {
+    "Date": "29-Sep-15",
+    "Close": 43.44
+  },
+  {
+    "Date": "28-Sep-15",
+    "Close": 43.29
+  },
+  {
+    "Date": "25-Sep-15",
+    "Close": 43.94
+  },
+  {
+    "Date": "24-Sep-15",
+    "Close": 43.91
+  },
+  {
+    "Date": "23-Sep-15",
+    "Close": 43.87
+  },
+  {
+    "Date": "22-Sep-15",
+    "Close": 43.9
+  },
+  {
+    "Date": "21-Sep-15",
+    "Close": 44.11
+  },
+  {
+    "Date": "18-Sep-15",
+    "Close": 43.48
+  },
+  {
+    "Date": "17-Sep-15",
+    "Close": 44.25
+  },
+  {
+    "Date": "16-Sep-15",
+    "Close": 44.3
+  },
+  {
+    "Date": "15-Sep-15",
+    "Close": 43.98
+  },
+  {
+    "Date": "14-Sep-15",
+    "Close": 43.04
+  },
+  {
+    "Date": "11-Sep-15",
+    "Close": 43.48
+  },
+  {
+    "Date": "10-Sep-15",
+    "Close": 43.29
+  },
+  {
+    "Date": "9-Sep-15",
+    "Close": 43.07
+  },
+  {
+    "Date": "8-Sep-15",
+    "Close": 43.89
+  },
+  {
+    "Date": "4-Sep-15",
+    "Close": 42.61
+  },
+  {
+    "Date": "3-Sep-15",
+    "Close": 43.5
+  },
+  {
+    "Date": "2-Sep-15",
+    "Close": 43.36
+  },
+  {
+    "Date": "1-Sep-15",
+    "Close": 41.82
+  },
+  {
+    "Date": "31-Aug-15",
+    "Close": 43.52
+  },
+  {
+    "Date": "28-Aug-15",
+    "Close": 43.93
+  },
+  {
+    "Date": "27-Aug-15",
+    "Close": 43.9
+  },
+  {
+    "Date": "26-Aug-15",
+    "Close": 42.71
+  },
+  {
+    "Date": "25-Aug-15",
+    "Close": 40.47
+  },
+  {
+    "Date": "24-Aug-15",
+    "Close": 41.68
+  },
+  {
+    "Date": "21-Aug-15",
+    "Close": 43.07
+  },
+  {
+    "Date": "20-Aug-15",
+    "Close": 45.66
+  },
+  {
+    "Date": "19-Aug-15",
+    "Close": 46.61
+  },
+  {
+    "Date": "18-Aug-15",
+    "Close": 47.27
+  },
+  {
+    "Date": "17-Aug-15",
+    "Close": 47.32
+  },
+  {
+    "Date": "14-Aug-15",
+    "Close": 47
+  },
+  {
+    "Date": "13-Aug-15",
+    "Close": 46.73
+  },
+  {
+    "Date": "12-Aug-15",
+    "Close": 46.74
+  },
+  {
+    "Date": "11-Aug-15",
+    "Close": 46.41
+  },
+  {
+    "Date": "10-Aug-15",
+    "Close": 47.33
+  },
+  {
+    "Date": "7-Aug-15",
+    "Close": 46.74
+  },
+  {
+    "Date": "6-Aug-15",
+    "Close": 46.62
+  },
+  {
+    "Date": "5-Aug-15",
+    "Close": 47.58
+  },
+  {
+    "Date": "4-Aug-15",
+    "Close": 47.54
+  },
+  {
+    "Date": "3-Aug-15",
+    "Close": 46.81
+  },
+  {
+    "Date": "31-Jul-15",
+    "Close": 46.7
+  },
+  {
+    "Date": "30-Jul-15",
+    "Close": 46.88
+  },
+  {
+    "Date": "29-Jul-15",
+    "Close": 46.29
+  },
+  {
+    "Date": "28-Jul-15",
+    "Close": 45.34
+  },
+  {
+    "Date": "27-Jul-15",
+    "Close": 45.35
+  },
+  {
+    "Date": "24-Jul-15",
+    "Close": 45.94
+  },
+  {
+    "Date": "23-Jul-15",
+    "Close": 46.11
+  },
+  {
+    "Date": "22-Jul-15",
+    "Close": 45.54
+  },
+  {
+    "Date": "21-Jul-15",
+    "Close": 47.28
+  },
+  {
+    "Date": "20-Jul-15",
+    "Close": 46.92
+  },
+  {
+    "Date": "17-Jul-15",
+    "Close": 46.62
+  },
+  {
+    "Date": "16-Jul-15",
+    "Close": 46.66
+  },
+  {
+    "Date": "15-Jul-15",
+    "Close": 45.76
+  },
+  {
+    "Date": "14-Jul-15",
+    "Close": 45.62
+  },
+  {
+    "Date": "13-Jul-15",
+    "Close": 45.54
+  },
+  {
+    "Date": "10-Jul-15",
+    "Close": 44.61
+  },
+  {
+    "Date": "9-Jul-15",
+    "Close": 44.52
+  },
+  {
+    "Date": "8-Jul-15",
+    "Close": 44.24
+  },
+  {
+    "Date": "7-Jul-15",
+    "Close": 44.3
+  },
+  {
+    "Date": "6-Jul-15",
+    "Close": 44.39
+  },
+  {
+    "Date": "2-Jul-15",
+    "Close": 44.4
+  },
+  {
+    "Date": "1-Jul-15",
+    "Close": 44.44
+  },
+  {
+    "Date": "30-Jun-15",
+    "Close": 44.15
+  },
+  {
+    "Date": "29-Jun-15",
+    "Close": 44.37
+  },
+  {
+    "Date": "26-Jun-15",
+    "Close": 45.26
+  },
+  {
+    "Date": "25-Jun-15",
+    "Close": 45.65
+  },
+  {
+    "Date": "24-Jun-15",
+    "Close": 45.64
+  },
+  {
+    "Date": "23-Jun-15",
+    "Close": 45.91
+  },
+  {
+    "Date": "22-Jun-15",
+    "Close": 46.23
+  },
+  {
+    "Date": "19-Jun-15",
+    "Close": 46.1
+  },
+  {
+    "Date": "18-Jun-15",
+    "Close": 46.72
+  },
+  {
+    "Date": "17-Jun-15",
+    "Close": 45.97
+  },
+  {
+    "Date": "16-Jun-15",
+    "Close": 45.83
+  },
+  {
+    "Date": "15-Jun-15",
+    "Close": 45.48
+  },
+  {
+    "Date": "12-Jun-15",
+    "Close": 45.97
+  },
+  {
+    "Date": "11-Jun-15",
+    "Close": 46.44
+  },
+  {
+    "Date": "10-Jun-15",
+    "Close": 46.61
+  },
+  {
+    "Date": "9-Jun-15",
+    "Close": 45.65
+  },
+  {
+    "Date": "8-Jun-15",
+    "Close": 45.73
+  },
+  {
+    "Date": "5-Jun-15",
+    "Close": 46.14
+  },
+  {
+    "Date": "4-Jun-15",
+    "Close": 46.36
+  },
+  {
+    "Date": "3-Jun-15",
+    "Close": 46.85
+  },
+  {
+    "Date": "2-Jun-15",
+    "Close": 46.92
+  },
+  {
+    "Date": "1-Jun-15",
+    "Close": 47.23
+  },
+  {
+    "Date": "29-May-15",
+    "Close": 46.86
+  },
+  {
+    "Date": "28-May-15",
+    "Close": 47.45
+  },
+  {
+    "Date": "27-May-15",
+    "Close": 47.61
+  },
+  {
+    "Date": "26-May-15",
+    "Close": 46.59
+  },
+  {
+    "Date": "22-May-15",
+    "Close": 46.9
+  },
+  {
+    "Date": "21-May-15",
+    "Close": 47.42
+  },
+  {
+    "Date": "20-May-15",
+    "Close": 47.58
+  },
+  {
+    "Date": "19-May-15",
+    "Close": 47.58
+  },
+  {
+    "Date": "18-May-15",
+    "Close": 48.01
+  },
+  {
+    "Date": "15-May-15",
+    "Close": 48.3
+  },
+  {
+    "Date": "14-May-15",
+    "Close": 48.72
+  },
+  {
+    "Date": "13-May-15",
+    "Close": 47.62
+  },
+  {
+    "Date": "12-May-15",
+    "Close": 47.35
+  },
+  {
+    "Date": "11-May-15",
+    "Close": 47.37
+  },
+  {
+    "Date": "8-May-15",
+    "Close": 47.75
+  },
+  {
+    "Date": "7-May-15",
+    "Close": 46.7
+  },
+  {
+    "Date": "6-May-15",
+    "Close": 46.28
+  },
+  {
+    "Date": "5-May-15",
+    "Close": 47.6
+  },
+  {
+    "Date": "4-May-15",
+    "Close": 48.24
+  },
+  {
+    "Date": "1-May-15",
+    "Close": 48.66
+  },
+  {
+    "Date": "30-Apr-15",
+    "Close": 48.64
+  },
+  {
+    "Date": "29-Apr-15",
+    "Close": 49.06
+  },
+  {
+    "Date": "28-Apr-15",
+    "Close": 49.16
+  },
+  {
+    "Date": "27-Apr-15",
+    "Close": 48.03
+  },
+  {
+    "Date": "24-Apr-15",
+    "Close": 47.87
+  },
+  {
+    "Date": "23-Apr-15",
+    "Close": 43.34
+  },
+  {
+    "Date": "22-Apr-15",
+    "Close": 42.98
+  },
+  {
+    "Date": "21-Apr-15",
+    "Close": 42.64
+  },
+  {
+    "Date": "20-Apr-15",
+    "Close": 42.9
+  },
+  {
+    "Date": "17-Apr-15",
+    "Close": 41.62
+  },
+  {
+    "Date": "16-Apr-15",
+    "Close": 42.16
+  },
+  {
+    "Date": "15-Apr-15",
+    "Close": 42.26
+  },
+  {
+    "Date": "14-Apr-15",
+    "Close": 41.65
+  },
+  {
+    "Date": "13-Apr-15",
+    "Close": 41.76
+  },
+  {
+    "Date": "10-Apr-15",
+    "Close": 41.72
+  },
+  {
+    "Date": "9-Apr-15",
+    "Close": 41.48
+  },
+  {
+    "Date": "8-Apr-15",
+    "Close": 41.42
+  },
+  {
+    "Date": "7-Apr-15",
+    "Close": 41.53
+  },
+  {
+    "Date": "6-Apr-15",
+    "Close": 41.54
+  },
+  {
+    "Date": "2-Apr-15",
+    "Close": 40.29
+  },
+  {
+    "Date": "1-Apr-15",
+    "Close": 40.72
+  },
+  {
+    "Date": "31-Mar-15",
+    "Close": 40.66
+  },
+  {
+    "Date": "30-Mar-15",
+    "Close": 40.96
+  },
+  {
+    "Date": "27-Mar-15",
+    "Close": 40.97
+  },
+  {
+    "Date": "26-Mar-15",
+    "Close": 41.21
+  },
+  {
+    "Date": "25-Mar-15",
+    "Close": 41.46
+  },
+  {
+    "Date": "24-Mar-15",
+    "Close": 42.9
+  },
+  {
+    "Date": "23-Mar-15",
+    "Close": 42.86
+  },
+  {
+    "Date": "20-Mar-15",
+    "Close": 42.88
+  },
+  {
+    "Date": "19-Mar-15",
+    "Close": 42.28
+  },
+  {
+    "Date": "18-Mar-15",
+    "Close": 42.5
+  },
+  {
+    "Date": "17-Mar-15",
+    "Close": 41.7
+  },
+  {
+    "Date": "16-Mar-15",
+    "Close": 41.56
+  },
+  {
+    "Date": "13-Mar-15",
+    "Close": 41.38
+  },
+  {
+    "Date": "12-Mar-15",
+    "Close": 41.02
+  },
+  {
+    "Date": "11-Mar-15",
+    "Close": 41.98
+  },
+  {
+    "Date": "10-Mar-15",
+    "Close": 42.03
+  },
+  {
+    "Date": "9-Mar-15",
+    "Close": 42.85
+  },
+  {
+    "Date": "6-Mar-15",
+    "Close": 42.36
+  },
+  {
+    "Date": "5-Mar-15",
+    "Close": 43.11
+  },
+  {
+    "Date": "4-Mar-15",
+    "Close": 43.06
+  },
+  {
+    "Date": "3-Mar-15",
+    "Close": 43.28
+  },
+  {
+    "Date": "2-Mar-15",
+    "Close": 43.88
+  },
+  {
+    "Date": "27-Feb-15",
+    "Close": 43.85
+  },
+  {
+    "Date": "26-Feb-15",
+    "Close": 44.06
+  },
+  {
+    "Date": "25-Feb-15",
+    "Close": 43.99
+  },
+  {
+    "Date": "24-Feb-15",
+    "Close": 44.09
+  },
+  {
+    "Date": "23-Feb-15",
+    "Close": 44.15
+  },
+  {
+    "Date": "20-Feb-15",
+    "Close": 43.86
+  },
+  {
+    "Date": "19-Feb-15",
+    "Close": 43.5
+  },
+  {
+    "Date": "18-Feb-15",
+    "Close": 43.53
+  },
+  {
+    "Date": "17-Feb-15",
+    "Close": 43.58
+  },
+  {
+    "Date": "13-Feb-15",
+    "Close": 43.87
+  },
+  {
+    "Date": "12-Feb-15",
+    "Close": 43.09
+  },
+  {
+    "Date": "11-Feb-15",
+    "Close": 42.38
+  },
+  {
+    "Date": "10-Feb-15",
+    "Close": 42.6
+  },
+  {
+    "Date": "9-Feb-15",
+    "Close": 42.36
+  },
+  {
+    "Date": "6-Feb-15",
+    "Close": 42.41
+  },
+  {
+    "Date": "5-Feb-15",
+    "Close": 42.45
+  },
+  {
+    "Date": "4-Feb-15",
+    "Close": 41.84
+  },
+  {
+    "Date": "3-Feb-15",
+    "Close": 41.6
+  },
+  {
+    "Date": "2-Feb-15",
+    "Close": 41.28
+  },
+  {
+    "Date": "30-Jan-15",
+    "Close": 40.4
+  },
+  {
+    "Date": "29-Jan-15",
+    "Close": 42.01
+  },
+  {
+    "Date": "28-Jan-15",
+    "Close": 41.19
+  },
+  {
+    "Date": "27-Jan-15",
+    "Close": 42.66
+  },
+  {
+    "Date": "26-Jan-15",
+    "Close": 47.01
+  },
+  {
+    "Date": "23-Jan-15",
+    "Close": 47.18
+  },
+  {
+    "Date": "22-Jan-15",
+    "Close": 47.13
+  },
+  {
+    "Date": "21-Jan-15",
+    "Close": 45.92
+  },
+  {
+    "Date": "20-Jan-15",
+    "Close": 46.39
+  },
+  {
+    "Date": "16-Jan-15",
+    "Close": 46.24
+  },
+  {
+    "Date": "15-Jan-15",
+    "Close": 45.48
+  },
+  {
+    "Date": "14-Jan-15",
+    "Close": 45.96
+  },
+  {
+    "Date": "13-Jan-15",
+    "Close": 46.36
+  },
+  {
+    "Date": "12-Jan-15",
+    "Close": 46.6
+  },
+  {
+    "Date": "9-Jan-15",
+    "Close": 47.19
+  },
+  {
+    "Date": "8-Jan-15",
+    "Close": 47.59
+  },
+  {
+    "Date": "7-Jan-15",
+    "Close": 46.23
+  },
+  {
+    "Date": "6-Jan-15",
+    "Close": 45.65
+  },
+  {
+    "Date": "5-Jan-15",
+    "Close": 46.32
+  },
+  {
+    "Date": "2-Jan-15",
+    "Close": 46.76
+  },
+  {
+    "Date": "31-Dec-14",
+    "Close": 46.45
+  },
+  {
+    "Date": "30-Dec-14",
+    "Close": 47.02
+  },
+  {
+    "Date": "29-Dec-14",
+    "Close": 47.45
+  },
+  {
+    "Date": "26-Dec-14",
+    "Close": 47.88
+  },
+  {
+    "Date": "24-Dec-14",
+    "Close": 48.14
+  },
+  {
+    "Date": "23-Dec-14",
+    "Close": 48.45
+  },
+  {
+    "Date": "22-Dec-14",
+    "Close": 47.98
+  },
+  {
+    "Date": "19-Dec-14",
+    "Close": 47.66
+  },
+  {
+    "Date": "18-Dec-14",
+    "Close": 47.52
+  },
+  {
+    "Date": "17-Dec-14",
+    "Close": 45.74
+  },
+  {
+    "Date": "16-Dec-14",
+    "Close": 45.16
+  },
+  {
+    "Date": "15-Dec-14",
+    "Close": 46.67
+  },
+  {
+    "Date": "12-Dec-14",
+    "Close": 46.95
+  },
+  {
+    "Date": "11-Dec-14",
+    "Close": 47.17
+  },
+  {
+    "Date": "10-Dec-14",
+    "Close": 46.9
+  },
+  {
+    "Date": "9-Dec-14",
+    "Close": 47.59
+  },
+  {
+    "Date": "8-Dec-14",
+    "Close": 47.7
+  },
+  {
+    "Date": "5-Dec-14",
+    "Close": 48.42
+  },
+  {
+    "Date": "4-Dec-14",
+    "Close": 48.84
+  },
+  {
+    "Date": "3-Dec-14",
+    "Close": 48.08
+  },
+  {
+    "Date": "2-Dec-14",
+    "Close": 48.46
+  },
+  {
+    "Date": "1-Dec-14",
+    "Close": 48.62
+  },
+  {
+    "Date": "28-Nov-14",
+    "Close": 47.81
+  },
+  {
+    "Date": "26-Nov-14",
+    "Close": 47.75
+  },
+  {
+    "Date": "25-Nov-14",
+    "Close": 47.47
+  },
+  {
+    "Date": "24-Nov-14",
+    "Close": 47.59
+  },
+  {
+    "Date": "21-Nov-14",
+    "Close": 47.98
+  },
+  {
+    "Date": "20-Nov-14",
+    "Close": 48.7
+  },
+  {
+    "Date": "19-Nov-14",
+    "Close": 48.22
+  },
+  {
+    "Date": "18-Nov-14",
+    "Close": 48.74
+  },
+  {
+    "Date": "17-Nov-14",
+    "Close": 49.46
+  },
+  {
+    "Date": "14-Nov-14",
+    "Close": 49.58
+  },
+  {
+    "Date": "13-Nov-14",
+    "Close": 49.61
+  },
+  {
+    "Date": "12-Nov-14",
+    "Close": 48.78
+  },
+  {
+    "Date": "11-Nov-14",
+    "Close": 48.87
+  },
+  {
+    "Date": "10-Nov-14",
+    "Close": 48.89
+  },
+  {
+    "Date": "7-Nov-14",
+    "Close": 48.68
+  },
+  {
+    "Date": "6-Nov-14",
+    "Close": 48.7
+  },
+  {
+    "Date": "5-Nov-14",
+    "Close": 47.86
+  },
+  {
+    "Date": "4-Nov-14",
+    "Close": 47.57
+  },
+  {
+    "Date": "3-Nov-14",
+    "Close": 47.44
+  },
+  {
+    "Date": "31-Oct-14",
+    "Close": 46.95
+  },
+  {
+    "Date": "30-Oct-14",
+    "Close": 46.05
+  },
+  {
+    "Date": "29-Oct-14",
+    "Close": 46.62
+  },
+  {
+    "Date": "28-Oct-14",
+    "Close": 46.49
+  },
+  {
+    "Date": "27-Oct-14",
+    "Close": 45.91
+  },
+  {
+    "Date": "24-Oct-14",
+    "Close": 46.13
+  },
+  {
+    "Date": "23-Oct-14",
+    "Close": 45.02
+  },
+  {
+    "Date": "22-Oct-14",
+    "Close": 44.38
+  },
+  {
+    "Date": "21-Oct-14",
+    "Close": 44.88
+  },
+  {
+    "Date": "20-Oct-14",
+    "Close": 44.08
+  },
+  {
+    "Date": "17-Oct-14",
+    "Close": 43.63
+  },
+  {
+    "Date": "16-Oct-14",
+    "Close": 42.74
+  },
+  {
+    "Date": "15-Oct-14",
+    "Close": 43.22
+  },
+  {
+    "Date": "14-Oct-14",
+    "Close": 43.73
+  },
+  {
+    "Date": "13-Oct-14",
+    "Close": 43.65
+  },
+  {
+    "Date": "10-Oct-14",
+    "Close": 44.03
+  },
+  {
+    "Date": "9-Oct-14",
+    "Close": 45.85
+  },
+  {
+    "Date": "8-Oct-14",
+    "Close": 46.78
+  },
+  {
+    "Date": "7-Oct-14",
+    "Close": 45.53
+  },
+  {
+    "Date": "6-Oct-14",
+    "Close": 46.09
+  },
+  {
+    "Date": "3-Oct-14",
+    "Close": 46.09
+  },
+  {
+    "Date": "2-Oct-14",
+    "Close": 45.76
+  },
+  {
+    "Date": "1-Oct-14",
+    "Close": 45.9
+  },
+  {
+    "Date": "30-Sep-14",
+    "Close": 46.36
+  },
+  {
+    "Date": "29-Sep-14",
+    "Close": 46.44
+  },
+  {
+    "Date": "26-Sep-14",
+    "Close": 46.41
+  },
+  {
+    "Date": "25-Sep-14",
+    "Close": 46.04
+  },
+  {
+    "Date": "24-Sep-14",
+    "Close": 47.08
+  },
+  {
+    "Date": "23-Sep-14",
+    "Close": 46.56
+  },
+  {
+    "Date": "22-Sep-14",
+    "Close": 47.06
+  },
+  {
+    "Date": "19-Sep-14",
+    "Close": 47.52
+  },
+  {
+    "Date": "18-Sep-14",
+    "Close": 46.68
+  },
+  {
+    "Date": "17-Sep-14",
+    "Close": 46.52
+  },
+  {
+    "Date": "16-Sep-14",
+    "Close": 46.76
+  },
+  {
+    "Date": "15-Sep-14",
+    "Close": 46.24
+  },
+  {
+    "Date": "12-Sep-14",
+    "Close": 46.7
+  },
+  {
+    "Date": "11-Sep-14",
+    "Close": 47
+  },
+  {
+    "Date": "10-Sep-14",
+    "Close": 46.84
+  },
+  {
+    "Date": "9-Sep-14",
+    "Close": 46.76
+  },
+  {
+    "Date": "8-Sep-14",
+    "Close": 46.47
+  },
+  {
+    "Date": "5-Sep-14",
+    "Close": 45.91
+  },
+  {
+    "Date": "4-Sep-14",
+    "Close": 45.26
+  },
+  {
+    "Date": "3-Sep-14",
+    "Close": 44.96
+  },
+  {
+    "Date": "2-Sep-14",
+    "Close": 45.09
+  },
+  {
+    "Date": "29-Aug-14",
+    "Close": 45.43
+  },
+  {
+    "Date": "28-Aug-14",
+    "Close": 44.88
+  },
+  {
+    "Date": "27-Aug-14",
+    "Close": 44.87
+  },
+  {
+    "Date": "26-Aug-14",
+    "Close": 45
+  },
+  {
+    "Date": "25-Aug-14",
+    "Close": 45.17
+  },
+  {
+    "Date": "22-Aug-14",
+    "Close": 45.15
+  },
+  {
+    "Date": "21-Aug-14",
+    "Close": 45.22
+  },
+  {
+    "Date": "20-Aug-14",
+    "Close": 44.95
+  },
+  {
+    "Date": "19-Aug-14",
+    "Close": 45.33
+  },
+  {
+    "Date": "18-Aug-14",
+    "Close": 45.11
+  },
+  {
+    "Date": "15-Aug-14",
+    "Close": 44.79
+  },
+  {
+    "Date": "14-Aug-14",
+    "Close": 44.27
+  },
+  {
+    "Date": "13-Aug-14",
+    "Close": 44.08
+  },
+  {
+    "Date": "12-Aug-14",
+    "Close": 43.52
+  },
+  {
+    "Date": "11-Aug-14",
+    "Close": 43.2
+  },
+  {
+    "Date": "8-Aug-14",
+    "Close": 43.2
+  },
+  {
+    "Date": "7-Aug-14",
+    "Close": 43.23
+  },
+  {
+    "Date": "6-Aug-14",
+    "Close": 42.74
+  },
+  {
+    "Date": "5-Aug-14",
+    "Close": 43.08
+  },
+  {
+    "Date": "4-Aug-14",
+    "Close": 43.37
+  },
+  {
+    "Date": "1-Aug-14",
+    "Close": 42.86
+  },
+  {
+    "Date": "31-Jul-14",
+    "Close": 43.16
+  },
+  {
+    "Date": "30-Jul-14",
+    "Close": 43.58
+  },
+  {
+    "Date": "29-Jul-14",
+    "Close": 43.88
+  },
+  {
+    "Date": "28-Jul-14",
+    "Close": 43.97
+  },
+  {
+    "Date": "25-Jul-14",
+    "Close": 44.5
+  },
+  {
+    "Date": "24-Jul-14",
+    "Close": 44.4
+  },
+  {
+    "Date": "23-Jul-14",
+    "Close": 44.87
+  },
+  {
+    "Date": "22-Jul-14",
+    "Close": 44.83
+  },
+  {
+    "Date": "21-Jul-14",
+    "Close": 44.84
+  },
+  {
+    "Date": "18-Jul-14",
+    "Close": 44.69
+  },
+  {
+    "Date": "17-Jul-14",
+    "Close": 44.53
+  },
+  {
+    "Date": "16-Jul-14",
+    "Close": 44.08
+  },
+  {
+    "Date": "15-Jul-14",
+    "Close": 42.45
+  },
+  {
+    "Date": "14-Jul-14",
+    "Close": 42.14
+  },
+  {
+    "Date": "11-Jul-14",
+    "Close": 42.09
+  },
+  {
+    "Date": "10-Jul-14",
+    "Close": 41.68
+  },
+  {
+    "Date": "9-Jul-14",
+    "Close": 41.67
+  },
+  {
+    "Date": "8-Jul-14",
+    "Close": 41.78
+  },
+  {
+    "Date": "7-Jul-14",
+    "Close": 41.99
+  },
+  {
+    "Date": "3-Jul-14",
+    "Close": 41.8
+  },
+  {
+    "Date": "2-Jul-14",
+    "Close": 41.9
+  },
+  {
+    "Date": "1-Jul-14",
+    "Close": 41.87
+  },
+  {
+    "Date": "30-Jun-14",
+    "Close": 41.7
+  },
+  {
+    "Date": "27-Jun-14",
+    "Close": 42.25
+  },
+  {
+    "Date": "26-Jun-14",
+    "Close": 41.72
+  },
+  {
+    "Date": "25-Jun-14",
+    "Close": 42.03
+  },
+  {
+    "Date": "24-Jun-14",
+    "Close": 41.74
+  },
+  {
+    "Date": "23-Jun-14",
+    "Close": 41.99
+  },
+  {
+    "Date": "20-Jun-14",
+    "Close": 41.68
+  },
+  {
+    "Date": "19-Jun-14",
+    "Close": 41.51
+  },
+  {
+    "Date": "18-Jun-14",
+    "Close": 41.65
+  },
+  {
+    "Date": "17-Jun-14",
+    "Close": 41.68
+  },
+  {
+    "Date": "16-Jun-14",
+    "Close": 41.5
+  },
+  {
+    "Date": "13-Jun-14",
+    "Close": 41.23
+  },
+  {
+    "Date": "12-Jun-14",
+    "Close": 40.58
+  },
+  {
+    "Date": "11-Jun-14",
+    "Close": 40.86
+  },
+  {
+    "Date": "10-Jun-14",
+    "Close": 41.11
+  },
+  {
+    "Date": "9-Jun-14",
+    "Close": 41.27
+  },
+  {
+    "Date": "6-Jun-14",
+    "Close": 41.48
+  },
+  {
+    "Date": "5-Jun-14",
+    "Close": 41.21
+  },
+  {
+    "Date": "4-Jun-14",
+    "Close": 40.32
+  },
+  {
+    "Date": "3-Jun-14",
+    "Close": 40.29
+  },
+  {
+    "Date": "2-Jun-14",
+    "Close": 40.79
+  },
+  {
+    "Date": "30-May-14",
+    "Close": 40.94
+  },
+  {
+    "Date": "29-May-14",
+    "Close": 40.34
+  },
+  {
+    "Date": "28-May-14",
+    "Close": 40.01
+  },
+  {
+    "Date": "27-May-14",
+    "Close": 40.19
+  },
+  {
+    "Date": "23-May-14",
+    "Close": 40.12
+  },
+  {
+    "Date": "22-May-14",
+    "Close": 40.1
+  },
+  {
+    "Date": "21-May-14",
+    "Close": 40.35
+  },
+  {
+    "Date": "20-May-14",
+    "Close": 39.68
+  },
+  {
+    "Date": "19-May-14",
+    "Close": 39.75
+  },
+  {
+    "Date": "16-May-14",
+    "Close": 39.83
+  },
+  {
+    "Date": "15-May-14",
+    "Close": 39.6
+  },
+  {
+    "Date": "14-May-14",
+    "Close": 40.24
+  },
+  {
+    "Date": "13-May-14",
+    "Close": 40.42
+  },
+  {
+    "Date": "12-May-14",
+    "Close": 39.97
+  },
+  {
+    "Date": "9-May-14",
+    "Close": 39.54
+  },
+  {
+    "Date": "8-May-14",
+    "Close": 39.64
+  },
+  {
+    "Date": "7-May-14",
+    "Close": 39.42
+  },
+  {
+    "Date": "6-May-14",
+    "Close": 39.06
+  },
+  {
+    "Date": "5-May-14",
+    "Close": 39.43
+  },
+  {
+    "Date": "2-May-14",
+    "Close": 39.69
+  },
+  {
+    "Date": "1-May-14",
+    "Close": 40
+  },
+  {
+    "Date": "30-Apr-14",
+    "Close": 40.4
+  },
+  {
+    "Date": "29-Apr-14",
+    "Close": 40.51
+  },
+  {
+    "Date": "28-Apr-14",
+    "Close": 40.87
+  },
+  {
+    "Date": "25-Apr-14",
+    "Close": 39.91
+  },
+  {
+    "Date": "24-Apr-14",
+    "Close": 39.86
+  },
+  {
+    "Date": "23-Apr-14",
+    "Close": 39.69
+  },
+  {
+    "Date": "22-Apr-14",
+    "Close": 39.99
+  },
+  {
+    "Date": "21-Apr-14",
+    "Close": 39.94
+  },
+  {
+    "Date": "17-Apr-14",
+    "Close": 40.01
+  },
+  {
+    "Date": "16-Apr-14",
+    "Close": 40.4
+  },
+  {
+    "Date": "15-Apr-14",
+    "Close": 39.75
+  },
+  {
+    "Date": "14-Apr-14",
+    "Close": 39.18
+  },
+  {
+    "Date": "11-Apr-14",
+    "Close": 39.21
+  },
+  {
+    "Date": "10-Apr-14",
+    "Close": 39.36
+  },
+  {
+    "Date": "9-Apr-14",
+    "Close": 40.47
+  },
+  {
+    "Date": "8-Apr-14",
+    "Close": 39.82
+  },
+  {
+    "Date": "7-Apr-14",
+    "Close": 39.8
+  },
+  {
+    "Date": "4-Apr-14",
+    "Close": 39.87
+  },
+  {
+    "Date": "3-Apr-14",
+    "Close": 41.01
+  },
+  {
+    "Date": "2-Apr-14",
+    "Close": 41.35
+  },
+  {
+    "Date": "1-Apr-14",
+    "Close": 41.42
+  },
+  {
+    "Date": "31-Mar-14",
+    "Close": 40.99
+  },
+  {
+    "Date": "28-Mar-14",
+    "Close": 40.3
+  },
+  {
+    "Date": "27-Mar-14",
+    "Close": 39.36
+  },
+  {
+    "Date": "26-Mar-14",
+    "Close": 39.79
+  },
+  {
+    "Date": "25-Mar-14",
+    "Close": 40.34
+  },
+  {
+    "Date": "24-Mar-14",
+    "Close": 40.5
+  },
+  {
+    "Date": "21-Mar-14",
+    "Close": 40.16
+  },
+  {
+    "Date": "20-Mar-14",
+    "Close": 40.33
+  },
+  {
+    "Date": "19-Mar-14",
+    "Close": 39.27
+  },
+  {
+    "Date": "18-Mar-14",
+    "Close": 39.55
+  },
+  {
+    "Date": "17-Mar-14",
+    "Close": 38.05
+  },
+  {
+    "Date": "14-Mar-14",
+    "Close": 37.7
+  },
+  {
+    "Date": "13-Mar-14",
+    "Close": 37.89
+  },
+  {
+    "Date": "12-Mar-14",
+    "Close": 38.27
+  },
+  {
+    "Date": "11-Mar-14",
+    "Close": 38.02
+  },
+  {
+    "Date": "10-Mar-14",
+    "Close": 37.82
+  },
+  {
+    "Date": "7-Mar-14",
+    "Close": 37.9
+  },
+  {
+    "Date": "6-Mar-14",
+    "Close": 38.15
+  },
+  {
+    "Date": "5-Mar-14",
+    "Close": 38.11
+  },
+  {
+    "Date": "4-Mar-14",
+    "Close": 38.41
+  },
+  {
+    "Date": "3-Mar-14",
+    "Close": 37.78
+  },
+  {
+    "Date": "28-Feb-14",
+    "Close": 38.31
+  },
+  {
+    "Date": "27-Feb-14",
+    "Close": 37.86
+  },
+  {
+    "Date": "26-Feb-14",
+    "Close": 37.47
+  },
+  {
+    "Date": "25-Feb-14",
+    "Close": 37.54
+  },
+  {
+    "Date": "24-Feb-14",
+    "Close": 37.69
+  },
+  {
+    "Date": "21-Feb-14",
+    "Close": 37.98
+  },
+  {
+    "Date": "20-Feb-14",
+    "Close": 37.75
+  },
+  {
+    "Date": "19-Feb-14",
+    "Close": 37.51
+  },
+  {
+    "Date": "18-Feb-14",
+    "Close": 37.42
+  },
+  {
+    "Date": "14-Feb-14",
+    "Close": 37.62
+  },
+  {
+    "Date": "13-Feb-14",
+    "Close": 37.61
+  },
+  {
+    "Date": "12-Feb-14",
+    "Close": 37.47
+  },
+  {
+    "Date": "11-Feb-14",
+    "Close": 37.18
+  },
+  {
+    "Date": "10-Feb-14",
+    "Close": 36.8
+  },
+  {
+    "Date": "7-Feb-14",
+    "Close": 36.56
+  },
+  {
+    "Date": "6-Feb-14",
+    "Close": 36.18
+  },
+  {
+    "Date": "5-Feb-14",
+    "Close": 35.82
+  },
+  {
+    "Date": "4-Feb-14",
+    "Close": 36.35
+  },
+  {
+    "Date": "3-Feb-14",
+    "Close": 36.48
+  },
+  {
+    "Date": "31-Jan-14",
+    "Close": 37.84
+  },
+  {
+    "Date": "30-Jan-14",
+    "Close": 36.86
+  },
+  {
+    "Date": "29-Jan-14",
+    "Close": 36.66
+  },
+  {
+    "Date": "28-Jan-14",
+    "Close": 36.27
+  },
+  {
+    "Date": "27-Jan-14",
+    "Close": 36.03
+  },
+  {
+    "Date": "24-Jan-14",
+    "Close": 36.8
+  },
+  {
+    "Date": "23-Jan-14",
+    "Close": 36.06
+  },
+  {
+    "Date": "22-Jan-14",
+    "Close": 35.93
+  },
+  {
+    "Date": "21-Jan-14",
+    "Close": 36.17
+  },
+  {
+    "Date": "17-Jan-14",
+    "Close": 36.38
+  },
+  {
+    "Date": "16-Jan-14",
+    "Close": 36.89
+  },
+  {
+    "Date": "15-Jan-14",
+    "Close": 36.76
+  },
+  {
+    "Date": "14-Jan-14",
+    "Close": 35.78
+  },
+  {
+    "Date": "13-Jan-14",
+    "Close": 34.98
+  },
+  {
+    "Date": "10-Jan-14",
+    "Close": 36.04
+  },
+  {
+    "Date": "9-Jan-14",
+    "Close": 35.53
+  },
+  {
+    "Date": "8-Jan-14",
+    "Close": 35.76
+  },
+  {
+    "Date": "7-Jan-14",
+    "Close": 36.41
+  },
+  {
+    "Date": "6-Jan-14",
+    "Close": 36.13
+  },
+  {
+    "Date": "3-Jan-14",
+    "Close": 36.91
+  },
+  {
+    "Date": "2-Jan-14",
+    "Close": 37.16
+  },
+  {
+    "Date": "31-Dec-13",
+    "Close": 37.41
+  },
+  {
+    "Date": "30-Dec-13",
+    "Close": 37.29
+  },
+  {
+    "Date": "27-Dec-13",
+    "Close": 37.29
+  },
+  {
+    "Date": "26-Dec-13",
+    "Close": 37.44
+  },
+  {
+    "Date": "24-Dec-13",
+    "Close": 37.08
+  },
+  {
+    "Date": "23-Dec-13",
+    "Close": 36.62
+  },
+  {
+    "Date": "20-Dec-13",
+    "Close": 36.8
+  },
+  {
+    "Date": "19-Dec-13",
+    "Close": 36.25
+  },
+  {
+    "Date": "18-Dec-13",
+    "Close": 36.58
+  },
+  {
+    "Date": "17-Dec-13",
+    "Close": 36.52
+  },
+  {
+    "Date": "16-Dec-13",
+    "Close": 36.88
+  },
+  {
+    "Date": "13-Dec-13",
+    "Close": 36.69
+  },
+  {
+    "Date": "12-Dec-13",
+    "Close": 37.22
+  },
+  {
+    "Date": "11-Dec-13",
+    "Close": 37.61
+  },
+  {
+    "Date": "10-Dec-13",
+    "Close": 38.11
+  },
+  {
+    "Date": "9-Dec-13",
+    "Close": 38.7
+  },
+  {
+    "Date": "6-Dec-13",
+    "Close": 38.36
+  },
+  {
+    "Date": "5-Dec-13",
+    "Close": 38
+  },
+  {
+    "Date": "4-Dec-13",
+    "Close": 38.94
+  },
+  {
+    "Date": "3-Dec-13",
+    "Close": 38.31
+  },
+  {
+    "Date": "2-Dec-13",
+    "Close": 38.45
+  },
+  {
+    "Date": "29-Nov-13",
+    "Close": 38.13
+  },
+  {
+    "Date": "27-Nov-13",
+    "Close": 37.6
+  },
+  {
+    "Date": "26-Nov-13",
+    "Close": 37.35
+  },
+  {
+    "Date": "25-Nov-13",
+    "Close": 37.64
+  },
+  {
+    "Date": "22-Nov-13",
+    "Close": 37.57
+  },
+  {
+    "Date": "21-Nov-13",
+    "Close": 37.4
+  },
+  {
+    "Date": "20-Nov-13",
+    "Close": 37.08
+  },
+  {
+    "Date": "19-Nov-13",
+    "Close": 36.74
+  },
+  {
+    "Date": "18-Nov-13",
+    "Close": 37.2
+  },
+  {
+    "Date": "15-Nov-13",
+    "Close": 37.84
+  },
+  {
+    "Date": "14-Nov-13",
+    "Close": 38.02
+  },
+  {
+    "Date": "13-Nov-13",
+    "Close": 38.16
+  },
+  {
+    "Date": "12-Nov-13",
+    "Close": 37.36
+  },
+  {
+    "Date": "11-Nov-13",
+    "Close": 37.59
+  },
+  {
+    "Date": "8-Nov-13",
+    "Close": 37.78
+  },
+  {
+    "Date": "7-Nov-13",
+    "Close": 37.5
+  },
+  {
+    "Date": "6-Nov-13",
+    "Close": 38.18
+  },
+  {
+    "Date": "5-Nov-13",
+    "Close": 36.64
+  },
+  {
+    "Date": "4-Nov-13",
+    "Close": 35.94
+  },
+  {
+    "Date": "1-Nov-13",
+    "Close": 35.52
+  },
+  {
+    "Date": "31-Oct-13",
+    "Close": 35.4
+  },
+  {
+    "Date": "30-Oct-13",
+    "Close": 35.54
+  },
+  {
+    "Date": "29-Oct-13",
+    "Close": 35.52
+  },
+  {
+    "Date": "28-Oct-13",
+    "Close": 35.57
+  },
+  {
+    "Date": "25-Oct-13",
+    "Close": 35.73
+  },
+  {
+    "Date": "24-Oct-13",
+    "Close": 33.72
+  },
+  {
+    "Date": "23-Oct-13",
+    "Close": 33.76
+  },
+  {
+    "Date": "22-Oct-13",
+    "Close": 34.58
+  },
+  {
+    "Date": "21-Oct-13",
+    "Close": 34.99
+  },
+  {
+    "Date": "18-Oct-13",
+    "Close": 34.96
+  },
+  {
+    "Date": "17-Oct-13",
+    "Close": 34.92
+  },
+  {
+    "Date": "16-Oct-13",
+    "Close": 34.64
+  },
+  {
+    "Date": "15-Oct-13",
+    "Close": 34.49
+  },
+  {
+    "Date": "14-Oct-13",
+    "Close": 34.45
+  },
+  {
+    "Date": "11-Oct-13",
+    "Close": 34.13
+  },
+  {
+    "Date": "10-Oct-13",
+    "Close": 33.76
+  },
+  {
+    "Date": "9-Oct-13",
+    "Close": 33.07
+  },
+  {
+    "Date": "8-Oct-13",
+    "Close": 33.01
+  },
+  {
+    "Date": "7-Oct-13",
+    "Close": 33.3
+  },
+  {
+    "Date": "4-Oct-13",
+    "Close": 33.88
+  },
+  {
+    "Date": "3-Oct-13",
+    "Close": 33.86
+  },
+  {
+    "Date": "2-Oct-13",
+    "Close": 33.92
+  },
+  {
+    "Date": "1-Oct-13",
+    "Close": 33.58
+  },
+  {
+    "Date": "30-Sep-13",
+    "Close": 33.28
+  },
+  {
+    "Date": "27-Sep-13",
+    "Close": 33.27
+  },
+  {
+    "Date": "26-Sep-13",
+    "Close": 32.77
+  },
+  {
+    "Date": "25-Sep-13",
+    "Close": 32.5
+  },
+  {
+    "Date": "24-Sep-13",
+    "Close": 32.46
+  },
+  {
+    "Date": "23-Sep-13",
+    "Close": 32.74
+  },
+  {
+    "Date": "20-Sep-13",
+    "Close": 32.79
+  },
+  {
+    "Date": "19-Sep-13",
+    "Close": 33.64
+  },
+  {
+    "Date": "18-Sep-13",
+    "Close": 33.32
+  },
+  {
+    "Date": "17-Sep-13",
+    "Close": 32.93
+  },
+  {
+    "Date": "16-Sep-13",
+    "Close": 32.8
+  },
+  {
+    "Date": "13-Sep-13",
+    "Close": 33.03
+  },
+  {
+    "Date": "12-Sep-13",
+    "Close": 32.69
+  },
+  {
+    "Date": "11-Sep-13",
+    "Close": 32.74
+  },
+  {
+    "Date": "10-Sep-13",
+    "Close": 32.39
+  },
+  {
+    "Date": "9-Sep-13",
+    "Close": 31.66
+  },
+  {
+    "Date": "6-Sep-13",
+    "Close": 31.15
+  },
+  {
+    "Date": "5-Sep-13",
+    "Close": 31.24
+  },
+  {
+    "Date": "4-Sep-13",
+    "Close": 31.2
+  },
+  {
+    "Date": "3-Sep-13",
+    "Close": 31.88
+  },
+  {
+    "Date": "30-Aug-13",
+    "Close": 33.4
+  },
+  {
+    "Date": "29-Aug-13",
+    "Close": 33.55
+  },
+  {
+    "Date": "28-Aug-13",
+    "Close": 33.02
+  },
+  {
+    "Date": "27-Aug-13",
+    "Close": 33.26
+  },
+  {
+    "Date": "26-Aug-13",
+    "Close": 34.15
+  },
+  {
+    "Date": "23-Aug-13",
+    "Close": 34.75
+  },
+  {
+    "Date": "22-Aug-13",
+    "Close": 32.39
+  },
+  {
+    "Date": "21-Aug-13",
+    "Close": 31.61
+  },
+  {
+    "Date": "20-Aug-13",
+    "Close": 31.62
+  },
+  {
+    "Date": "19-Aug-13",
+    "Close": 31.39
+  },
+  {
+    "Date": "16-Aug-13",
+    "Close": 31.8
+  },
+  {
+    "Date": "15-Aug-13",
+    "Close": 31.79
+  },
+  {
+    "Date": "14-Aug-13",
+    "Close": 32.35
+  },
+  {
+    "Date": "13-Aug-13",
+    "Close": 32.23
+  },
+  {
+    "Date": "12-Aug-13",
+    "Close": 32.87
+  },
+  {
+    "Date": "9-Aug-13",
+    "Close": 32.7
+  },
+  {
+    "Date": "8-Aug-13",
+    "Close": 32.89
+  },
+  {
+    "Date": "7-Aug-13",
+    "Close": 32.06
+  },
+  {
+    "Date": "6-Aug-13",
+    "Close": 31.58
+  },
+  {
+    "Date": "5-Aug-13",
+    "Close": 31.7
+  },
+  {
+    "Date": "2-Aug-13",
+    "Close": 31.89
+  },
+  {
+    "Date": "1-Aug-13",
+    "Close": 31.67
+  },
+  {
+    "Date": "31-Jul-13",
+    "Close": 31.84
+  },
+  {
+    "Date": "30-Jul-13",
+    "Close": 31.85
+  },
+  {
+    "Date": "29-Jul-13",
+    "Close": 31.54
+  },
+  {
+    "Date": "26-Jul-13",
+    "Close": 31.62
+  },
+  {
+    "Date": "25-Jul-13",
+    "Close": 31.39
+  },
+  {
+    "Date": "24-Jul-13",
+    "Close": 31.96
+  },
+  {
+    "Date": "23-Jul-13",
+    "Close": 31.82
+  },
+  {
+    "Date": "22-Jul-13",
+    "Close": 32.01
+  },
+  {
+    "Date": "19-Jul-13",
+    "Close": 31.4
+  },
+  {
+    "Date": "18-Jul-13",
+    "Close": 35.44
+  },
+  {
+    "Date": "17-Jul-13",
+    "Close": 35.74
+  },
+  {
+    "Date": "16-Jul-13",
+    "Close": 36.27
+  },
+  {
+    "Date": "15-Jul-13",
+    "Close": 36.17
+  },
+  {
+    "Date": "12-Jul-13",
+    "Close": 35.67
+  },
+  {
+    "Date": "11-Jul-13",
+    "Close": 35.68
+  },
+  {
+    "Date": "10-Jul-13",
+    "Close": 34.7
+  },
+  {
+    "Date": "9-Jul-13",
+    "Close": 34.35
+  },
+  {
+    "Date": "8-Jul-13",
+    "Close": 34.32
+  },
+  {
+    "Date": "5-Jul-13",
+    "Close": 34.21
+  },
+  {
+    "Date": "3-Jul-13",
+    "Close": 34.01
+  },
+  {
+    "Date": "2-Jul-13",
+    "Close": 33.94
+  },
+  {
+    "Date": "1-Jul-13",
+    "Close": 34.36
+  },
+  {
+    "Date": "28-Jun-13",
+    "Close": 34.54
+  },
+  {
+    "Date": "27-Jun-13",
+    "Close": 34.62
+  },
+  {
+    "Date": "26-Jun-13",
+    "Close": 34.35
+  },
+  {
+    "Date": "25-Jun-13",
+    "Close": 33.67
+  },
+  {
+    "Date": "24-Jun-13",
+    "Close": 33.72
+  },
+  {
+    "Date": "21-Jun-13",
+    "Close": 33.26
+  },
+  {
+    "Date": "20-Jun-13",
+    "Close": 33.49
+  },
+  {
+    "Date": "19-Jun-13",
+    "Close": 34.59
+  },
+  {
+    "Date": "18-Jun-13",
+    "Close": 34.98
+  },
+  {
+    "Date": "17-Jun-13",
+    "Close": 35
+  },
+  {
+    "Date": "14-Jun-13",
+    "Close": 34.4
+  },
+  {
+    "Date": "13-Jun-13",
+    "Close": 34.72
+  },
+  {
+    "Date": "12-Jun-13",
+    "Close": 35
+  },
+  {
+    "Date": "11-Jun-13",
+    "Close": 34.84
+  },
+  {
+    "Date": "10-Jun-13",
+    "Close": 35.47
+  },
+  {
+    "Date": "7-Jun-13",
+    "Close": 35.67
+  },
+  {
+    "Date": "6-Jun-13",
+    "Close": 34.96
+  },
+  {
+    "Date": "5-Jun-13",
+    "Close": 34.78
+  },
+  {
+    "Date": "4-Jun-13",
+    "Close": 34.99
+  },
+  {
+    "Date": "3-Jun-13",
+    "Close": 35.59
+  },
+  {
+    "Date": "31-May-13",
+    "Close": 34.9
+  },
+  {
+    "Date": "30-May-13",
+    "Close": 35.03
+  },
+  {
+    "Date": "29-May-13",
+    "Close": 34.88
+  },
+  {
+    "Date": "28-May-13",
+    "Close": 35.02
+  },
+  {
+    "Date": "24-May-13",
+    "Close": 34.27
+  },
+  {
+    "Date": "23-May-13",
+    "Close": 34.15
+  },
+  {
+    "Date": "22-May-13",
+    "Close": 34.61
+  },
+  {
+    "Date": "21-May-13",
+    "Close": 34.85
+  },
+  {
+    "Date": "20-May-13",
+    "Close": 35.08
+  },
+  {
+    "Date": "17-May-13",
+    "Close": 34.87
+  },
+  {
+    "Date": "16-May-13",
+    "Close": 34.08
+  },
+  {
+    "Date": "15-May-13",
+    "Close": 33.84
+  },
+  {
+    "Date": "14-May-13",
+    "Close": 33.53
+  },
+  {
+    "Date": "13-May-13",
+    "Close": 33.03
+  },
+  {
+    "Date": "10-May-13",
+    "Close": 32.69
+  },
+  {
+    "Date": "9-May-13",
+    "Close": 32.66
+  },
+  {
+    "Date": "8-May-13",
+    "Close": 32.99
+  },
+  {
+    "Date": "7-May-13",
+    "Close": 33.31
+  },
+  {
+    "Date": "6-May-13",
+    "Close": 33.75
+  },
+  {
+    "Date": "3-May-13",
+    "Close": 33.49
+  },
+  {
+    "Date": "2-May-13",
+    "Close": 33.16
+  },
+  {
+    "Date": "1-May-13",
+    "Close": 32.72
+  },
+  {
+    "Date": "30-Apr-13",
+    "Close": 33.1
+  },
+  {
+    "Date": "29-Apr-13",
+    "Close": 32.61
+  },
+  {
+    "Date": "26-Apr-13",
+    "Close": 31.79
+  },
+  {
+    "Date": "25-Apr-13",
+    "Close": 31.94
+  },
+  {
+    "Date": "24-Apr-13",
+    "Close": 31.76
+  },
+  {
+    "Date": "23-Apr-13",
+    "Close": 30.6
+  },
+  {
+    "Date": "22-Apr-13",
+    "Close": 30.83
+  },
+  {
+    "Date": "19-Apr-13",
+    "Close": 29.76
+  },
+  {
+    "Date": "18-Apr-13",
+    "Close": 28.79
+  },
+  {
+    "Date": "17-Apr-13",
+    "Close": 28.82
+  },
+  {
+    "Date": "16-Apr-13",
+    "Close": 28.97
+  },
+  {
+    "Date": "15-Apr-13",
+    "Close": 28.69
+  },
+  {
+    "Date": "12-Apr-13",
+    "Close": 28.79
+  },
+  {
+    "Date": "11-Apr-13",
+    "Close": 28.94
+  },
+  {
+    "Date": "10-Apr-13",
+    "Close": 30.28
+  },
+  {
+    "Date": "9-Apr-13",
+    "Close": 29.61
+  },
+  {
+    "Date": "8-Apr-13",
+    "Close": 28.59
+  },
+  {
+    "Date": "5-Apr-13",
+    "Close": 28.7
+  },
+  {
+    "Date": "4-Apr-13",
+    "Close": 28.6
+  },
+  {
+    "Date": "3-Apr-13",
+    "Close": 28.56
+  },
+  {
+    "Date": "2-Apr-13",
+    "Close": 28.8
+  },
+  {
+    "Date": "1-Apr-13",
+    "Close": 28.61
+  },
+  {
+    "Date": "28-Mar-13",
+    "Close": 28.6
+  },
+  {
+    "Date": "27-Mar-13",
+    "Close": 28.37
+  },
+  {
+    "Date": "26-Mar-13",
+    "Close": 28.16
+  },
+  {
+    "Date": "25-Mar-13",
+    "Close": 28.16
+  },
+  {
+    "Date": "22-Mar-13",
+    "Close": 28.25
+  },
+  {
+    "Date": "21-Mar-13",
+    "Close": 28.11
+  },
+  {
+    "Date": "20-Mar-13",
+    "Close": 28.32
+  },
+  {
+    "Date": "19-Mar-13",
+    "Close": 28.18
+  },
+  {
+    "Date": "18-Mar-13",
+    "Close": 28.1
+  },
+  {
+    "Date": "15-Mar-13",
+    "Close": 28.04
+  },
+  {
+    "Date": "14-Mar-13",
+    "Close": 28.14
+  },
+  {
+    "Date": "13-Mar-13",
+    "Close": 27.92
+  },
+  {
+    "Date": "12-Mar-13",
+    "Close": 27.91
+  },
+  {
+    "Date": "11-Mar-13",
+    "Close": 27.87
+  },
+  {
+    "Date": "8-Mar-13",
+    "Close": 28
+  },
+  {
+    "Date": "7-Mar-13",
+    "Close": 28.14
+  },
+  {
+    "Date": "6-Mar-13",
+    "Close": 28.09
+  },
+  {
+    "Date": "5-Mar-13",
+    "Close": 28.35
+  },
+  {
+    "Date": "4-Mar-13",
+    "Close": 28.15
+  },
+  {
+    "Date": "1-Mar-13",
+    "Close": 27.95
+  },
+  {
+    "Date": "28-Feb-13",
+    "Close": 27.8
+  },
+  {
+    "Date": "27-Feb-13",
+    "Close": 27.81
+  },
+  {
+    "Date": "26-Feb-13",
+    "Close": 27.37
+  },
+  {
+    "Date": "25-Feb-13",
+    "Close": 27.37
+  },
+  {
+    "Date": "22-Feb-13",
+    "Close": 27.76
+  },
+  {
+    "Date": "21-Feb-13",
+    "Close": 27.49
+  },
+  {
+    "Date": "20-Feb-13",
+    "Close": 27.87
+  },
+  {
+    "Date": "19-Feb-13",
+    "Close": 28.04
+  },
+  {
+    "Date": "15-Feb-13",
+    "Close": 28.01
+  },
+  {
+    "Date": "14-Feb-13",
+    "Close": 28.04
+  },
+  {
+    "Date": "13-Feb-13",
+    "Close": 28.03
+  },
+  {
+    "Date": "12-Feb-13",
+    "Close": 27.88
+  },
+  {
+    "Date": "11-Feb-13",
+    "Close": 27.86
+  },
+  {
+    "Date": "8-Feb-13",
+    "Close": 27.55
+  },
+  {
+    "Date": "7-Feb-13",
+    "Close": 27.28
+  },
+  {
+    "Date": "6-Feb-13",
+    "Close": 27.34
+  },
+  {
+    "Date": "5-Feb-13",
+    "Close": 27.5
+  },
+  {
+    "Date": "4-Feb-13",
+    "Close": 27.44
+  },
+  {
+    "Date": "1-Feb-13",
+    "Close": 27.93
+  },
+  {
+    "Date": "31-Jan-13",
+    "Close": 27.45
+  },
+  {
+    "Date": "30-Jan-13",
+    "Close": 27.85
+  },
+  {
+    "Date": "29-Jan-13",
+    "Close": 28.01
+  },
+  {
+    "Date": "28-Jan-13",
+    "Close": 27.91
+  },
+  {
+    "Date": "25-Jan-13",
+    "Close": 27.88
+  },
+  {
+    "Date": "24-Jan-13",
+    "Close": 27.63
+  },
+  {
+    "Date": "23-Jan-13",
+    "Close": 27.61
+  },
+  {
+    "Date": "22-Jan-13",
+    "Close": 27.15
+  },
+  {
+    "Date": "18-Jan-13",
+    "Close": 27.25
+  },
+  {
+    "Date": "17-Jan-13",
+    "Close": 27.25
+  },
+  {
+    "Date": "16-Jan-13",
+    "Close": 27.04
+  },
+  {
+    "Date": "15-Jan-13",
+    "Close": 27.21
+  },
+  {
+    "Date": "14-Jan-13",
+    "Close": 26.89
+  },
+  {
+    "Date": "11-Jan-13",
+    "Close": 26.83
+  },
+  {
+    "Date": "10-Jan-13",
+    "Close": 26.46
+  },
+  {
+    "Date": "9-Jan-13",
+    "Close": 26.7
+  },
+  {
+    "Date": "8-Jan-13",
+    "Close": 26.55
+  },
+  {
+    "Date": "7-Jan-13",
+    "Close": 26.69
+  },
+  {
+    "Date": "4-Jan-13",
+    "Close": 26.74
+  },
+  {
+    "Date": "3-Jan-13",
+    "Close": 27.25
+  },
+  {
+    "Date": "2-Jan-13",
+    "Close": 27.62
+  },
+  {
+    "Date": "31-Dec-12",
+    "Close": 26.71
+  },
+  {
+    "Date": "28-Dec-12",
+    "Close": 26.55
+  },
+  {
+    "Date": "27-Dec-12",
+    "Close": 26.96
+  },
+  {
+    "Date": "26-Dec-12",
+    "Close": 26.86
+  },
+  {
+    "Date": "24-Dec-12",
+    "Close": 27.06
+  },
+  {
+    "Date": "21-Dec-12",
+    "Close": 27.45
+  },
+  {
+    "Date": "20-Dec-12",
+    "Close": 27.68
+  },
+  {
+    "Date": "19-Dec-12",
+    "Close": 27.31
+  },
+  {
+    "Date": "18-Dec-12",
+    "Close": 27.56
+  },
+  {
+    "Date": "17-Dec-12",
+    "Close": 27.1
+  },
+  {
+    "Date": "14-Dec-12",
+    "Close": 26.81
+  },
+  {
+    "Date": "13-Dec-12",
+    "Close": 27.11
+  },
+  {
+    "Date": "12-Dec-12",
+    "Close": 27.24
+  },
+  {
+    "Date": "11-Dec-12",
+    "Close": 27.32
+  },
+  {
+    "Date": "10-Dec-12",
+    "Close": 26.94
+  },
+  {
+    "Date": "7-Dec-12",
+    "Close": 26.46
+  },
+  {
+    "Date": "6-Dec-12",
+    "Close": 26.72
+  },
+  {
+    "Date": "5-Dec-12",
+    "Close": 26.67
+  },
+  {
+    "Date": "4-Dec-12",
+    "Close": 26.37
+  },
+  {
+    "Date": "3-Dec-12",
+    "Close": 26.43
+  },
+  {
+    "Date": "30-Nov-12",
+    "Close": 26.62
+  },
+  {
+    "Date": "29-Nov-12",
+    "Close": 26.95
+  },
+  {
+    "Date": "28-Nov-12",
+    "Close": 27.36
+  },
+  {
+    "Date": "27-Nov-12",
+    "Close": 27.08
+  },
+  {
+    "Date": "26-Nov-12",
+    "Close": 27.38
+  },
+  {
+    "Date": "23-Nov-12",
+    "Close": 27.7
+  },
+  {
+    "Date": "21-Nov-12",
+    "Close": 26.95
+  },
+  {
+    "Date": "20-Nov-12",
+    "Close": 26.71
+  },
+  {
+    "Date": "19-Nov-12",
+    "Close": 26.73
+  },
+  {
+    "Date": "16-Nov-12",
+    "Close": 26.52
+  },
+  {
+    "Date": "15-Nov-12",
+    "Close": 26.66
+  },
+  {
+    "Date": "14-Nov-12",
+    "Close": 26.84
+  },
+  {
+    "Date": "13-Nov-12",
+    "Close": 27.09
+  },
+  {
+    "Date": "12-Nov-12",
+    "Close": 28.22
+  },
+  {
+    "Date": "9-Nov-12",
+    "Close": 28.83
+  },
+  {
+    "Date": "8-Nov-12",
+    "Close": 28.81
+  },
+  {
+    "Date": "7-Nov-12",
+    "Close": 29.08
+  },
+  {
+    "Date": "6-Nov-12",
+    "Close": 29.86
+  },
+  {
+    "Date": "5-Nov-12",
+    "Close": 29.63
+  },
+  {
+    "Date": "2-Nov-12",
+    "Close": 29.5
+  },
+  {
+    "Date": "1-Nov-12",
+    "Close": 29.52
+  },
+  {
+    "Date": "31-Oct-12",
+    "Close": 28.54
+  },
+  {
+    "Date": "26-Oct-12",
+    "Close": 28.21
+  },
+  {
+    "Date": "25-Oct-12",
+    "Close": 27.88
+  },
+  {
+    "Date": "24-Oct-12",
+    "Close": 27.9
+  },
+  {
+    "Date": "23-Oct-12",
+    "Close": 28.05
+  },
+  {
+    "Date": "22-Oct-12",
+    "Close": 28
+  },
+  {
+    "Date": "19-Oct-12",
+    "Close": 28.64
+  },
+  {
+    "Date": "18-Oct-12",
+    "Close": 29.5
+  },
+  {
+    "Date": "17-Oct-12",
+    "Close": 29.59
+  },
+  {
+    "Date": "16-Oct-12",
+    "Close": 29.49
+  },
+  {
+    "Date": "15-Oct-12",
+    "Close": 29.51
+  },
+  {
+    "Date": "12-Oct-12",
+    "Close": 29.2
+  },
+  {
+    "Date": "11-Oct-12",
+    "Close": 28.95
+  },
+  {
+    "Date": "10-Oct-12",
+    "Close": 28.98
+  },
+  {
+    "Date": "9-Oct-12",
+    "Close": 29.28
+  },
+  {
+    "Date": "8-Oct-12",
+    "Close": 29.78
+  },
+  {
+    "Date": "5-Oct-12",
+    "Close": 29.85
+  },
+  {
+    "Date": "4-Oct-12",
+    "Close": 30.03
+  },
+  {
+    "Date": "3-Oct-12",
+    "Close": 29.86
+  },
+  {
+    "Date": "2-Oct-12",
+    "Close": 29.66
+  },
+  {
+    "Date": "1-Oct-12",
+    "Close": 29.49
+  },
+  {
+    "Date": "28-Sep-12",
+    "Close": 29.76
+  },
+  {
+    "Date": "27-Sep-12",
+    "Close": 30.16
+  },
+  {
+    "Date": "26-Sep-12",
+    "Close": 30.16
+  },
+  {
+    "Date": "25-Sep-12",
+    "Close": 30.39
+  },
+  {
+    "Date": "24-Sep-12",
+    "Close": 30.78
+  },
+  {
+    "Date": "21-Sep-12",
+    "Close": 31.19
+  },
+  {
+    "Date": "20-Sep-12",
+    "Close": 31.45
+  },
+  {
+    "Date": "19-Sep-12",
+    "Close": 31.05
+  },
+  {
+    "Date": "18-Sep-12",
+    "Close": 31.18
+  },
+  {
+    "Date": "17-Sep-12",
+    "Close": 31.21
+  },
+  {
+    "Date": "14-Sep-12",
+    "Close": 31.21
+  },
+  {
+    "Date": "13-Sep-12",
+    "Close": 30.94
+  },
+  {
+    "Date": "12-Sep-12",
+    "Close": 30.78
+  },
+  {
+    "Date": "11-Sep-12",
+    "Close": 30.79
+  },
+  {
+    "Date": "10-Sep-12",
+    "Close": 30.72
+  },
+  {
+    "Date": "7-Sep-12",
+    "Close": 30.95
+  },
+  {
+    "Date": "6-Sep-12",
+    "Close": 31.34
+  },
+  {
+    "Date": "5-Sep-12",
+    "Close": 30.39
+  },
+  {
+    "Date": "4-Sep-12",
+    "Close": 30.38
+  },
+  {
+    "Date": "31-Aug-12",
+    "Close": 30.82
+  },
+  {
+    "Date": "30-Aug-12",
+    "Close": 30.32
+  },
+  {
+    "Date": "29-Aug-12",
+    "Close": 30.65
+  },
+  {
+    "Date": "28-Aug-12",
+    "Close": 30.63
+  },
+  {
+    "Date": "27-Aug-12",
+    "Close": 30.69
+  },
+  {
+    "Date": "24-Aug-12",
+    "Close": 30.56
+  },
+  {
+    "Date": "23-Aug-12",
+    "Close": 30.26
+  },
+  {
+    "Date": "22-Aug-12",
+    "Close": 30.54
+  },
+  {
+    "Date": "21-Aug-12",
+    "Close": 30.8
+  },
+  {
+    "Date": "20-Aug-12",
+    "Close": 30.74
+  },
+  {
+    "Date": "17-Aug-12",
+    "Close": 30.9
+  },
+  {
+    "Date": "16-Aug-12",
+    "Close": 30.78
+  },
+  {
+    "Date": "15-Aug-12",
+    "Close": 30.2
+  },
+  {
+    "Date": "14-Aug-12",
+    "Close": 30.13
+  },
+  {
+    "Date": "13-Aug-12",
+    "Close": 30.39
+  },
+  {
+    "Date": "10-Aug-12",
+    "Close": 30.42
+  },
+  {
+    "Date": "9-Aug-12",
+    "Close": 30.5
+  },
+  {
+    "Date": "8-Aug-12",
+    "Close": 30.33
+  },
+  {
+    "Date": "7-Aug-12",
+    "Close": 30.26
+  },
+  {
+    "Date": "6-Aug-12",
+    "Close": 29.95
+  },
+  {
+    "Date": "3-Aug-12",
+    "Close": 29.75
+  },
+  {
+    "Date": "2-Aug-12",
+    "Close": 29.19
+  },
+  {
+    "Date": "1-Aug-12",
+    "Close": 29.41
+  },
+  {
+    "Date": "31-Jul-12",
+    "Close": 29.47
+  },
+  {
+    "Date": "30-Jul-12",
+    "Close": 29.64
+  },
+  {
+    "Date": "27-Jul-12",
+    "Close": 29.76
+  },
+  {
+    "Date": "26-Jul-12",
+    "Close": 29.16
+  },
+  {
+    "Date": "25-Jul-12",
+    "Close": 28.83
+  },
+  {
+    "Date": "24-Jul-12",
+    "Close": 29.15
+  },
+  {
+    "Date": "23-Jul-12",
+    "Close": 29.28
+  },
+  {
+    "Date": "20-Jul-12",
+    "Close": 30.12
+  },
+  {
+    "Date": "19-Jul-12",
+    "Close": 30.66
+  },
+  {
+    "Date": "18-Jul-12",
+    "Close": 30.45
+  },
+  {
+    "Date": "17-Jul-12",
+    "Close": 29.66
+  },
+  {
+    "Date": "16-Jul-12",
+    "Close": 29.44
+  },
+  {
+    "Date": "13-Jul-12",
+    "Close": 29.39
+  },
+  {
+    "Date": "12-Jul-12",
+    "Close": 28.63
+  },
+  {
+    "Date": "11-Jul-12",
+    "Close": 29.3
+  },
+  {
+    "Date": "10-Jul-12",
+    "Close": 29.74
+  },
+  {
+    "Date": "9-Jul-12",
+    "Close": 30
+  },
+  {
+    "Date": "6-Jul-12",
+    "Close": 30.18
+  },
+  {
+    "Date": "5-Jul-12",
+    "Close": 30.7
+  },
+  {
+    "Date": "3-Jul-12",
+    "Close": 30.76
+  },
+  {
+    "Date": "2-Jul-12",
+    "Close": 30.56
+  },
+  {
+    "Date": "29-Jun-12",
+    "Close": 30.59
+  },
+  {
+    "Date": "28-Jun-12",
+    "Close": 29.91
+  },
+  {
+    "Date": "27-Jun-12",
+    "Close": 30.17
+  },
+  {
+    "Date": "26-Jun-12",
+    "Close": 30.02
+  },
+  {
+    "Date": "25-Jun-12",
+    "Close": 29.86
+  },
+  {
+    "Date": "22-Jun-12",
+    "Close": 30.7
+  },
+  {
+    "Date": "21-Jun-12",
+    "Close": 30.14
+  },
+  {
+    "Date": "20-Jun-12",
+    "Close": 30.93
+  },
+  {
+    "Date": "19-Jun-12",
+    "Close": 30.7
+  },
+  {
+    "Date": "18-Jun-12",
+    "Close": 29.84
+  },
+  {
+    "Date": "15-Jun-12",
+    "Close": 30.02
+  },
+  {
+    "Date": "14-Jun-12",
+    "Close": 29.34
+  },
+  {
+    "Date": "13-Jun-12",
+    "Close": 29.13
+  },
+  {
+    "Date": "12-Jun-12",
+    "Close": 29.29
+  },
+  {
+    "Date": "11-Jun-12",
+    "Close": 28.9
+  },
+  {
+    "Date": "8-Jun-12",
+    "Close": 29.65
+  },
+  {
+    "Date": "7-Jun-12",
+    "Close": 29.23
+  },
+  {
+    "Date": "6-Jun-12",
+    "Close": 29.35
+  },
+  {
+    "Date": "5-Jun-12",
+    "Close": 28.5
+  },
+  {
+    "Date": "4-Jun-12",
+    "Close": 28.55
+  },
+  {
+    "Date": "1-Jun-12",
+    "Close": 28.45
+  },
+  {
+    "Date": "31-May-12",
+    "Close": 29.19
+  },
+  {
+    "Date": "30-May-12",
+    "Close": 29.34
+  },
+  {
+    "Date": "29-May-12",
+    "Close": 29.56
+  },
+  {
+    "Date": "25-May-12",
+    "Close": 29.06
+  },
+  {
+    "Date": "24-May-12",
+    "Close": 29.07
+  },
+  {
+    "Date": "23-May-12",
+    "Close": 29.11
+  },
+  {
+    "Date": "22-May-12",
+    "Close": 29.76
+  },
+  {
+    "Date": "21-May-12",
+    "Close": 29.75
+  },
+  {
+    "Date": "18-May-12",
+    "Close": 29.27
+  },
+  {
+    "Date": "17-May-12",
+    "Close": 29.72
+  },
+  {
+    "Date": "16-May-12",
+    "Close": 29.9
+  },
+  {
+    "Date": "15-May-12",
+    "Close": 30.21
+  },
+  {
+    "Date": "14-May-12",
+    "Close": 30.68
+  },
+  {
+    "Date": "11-May-12",
+    "Close": 31.16
+  },
+  {
+    "Date": "10-May-12",
+    "Close": 30.74
+  },
+  {
+    "Date": "9-May-12",
+    "Close": 30.76
+  },
+  {
+    "Date": "8-May-12",
+    "Close": 30.5
+  },
+  {
+    "Date": "7-May-12",
+    "Close": 30.65
+  },
+  {
+    "Date": "4-May-12",
+    "Close": 30.98
+  },
+  {
+    "Date": "3-May-12",
+    "Close": 31.76
+  },
+  {
+    "Date": "2-May-12",
+    "Close": 31.8
+  },
+  {
+    "Date": "1-May-12",
+    "Close": 32.01
+  },
+  {
+    "Date": "30-Apr-12",
+    "Close": 32.02
+  },
+  {
+    "Date": "27-Apr-12",
+    "Close": 31.98
+  },
+  {
+    "Date": "26-Apr-12",
+    "Close": 32.11
+  },
+  {
+    "Date": "25-Apr-12",
+    "Close": 32.2
+  },
+  {
+    "Date": "24-Apr-12",
+    "Close": 31.92
+  },
+  {
+    "Date": "23-Apr-12",
+    "Close": 32.12
+  },
+  {
+    "Date": "20-Apr-12",
+    "Close": 32.42
+  },
+  {
+    "Date": "19-Apr-12",
+    "Close": 31.01
+  },
+  {
+    "Date": "18-Apr-12",
+    "Close": 31.14
+  },
+  {
+    "Date": "17-Apr-12",
+    "Close": 31.44
+  },
+  {
+    "Date": "16-Apr-12",
+    "Close": 31.08
+  },
+  {
+    "Date": "13-Apr-12",
+    "Close": 30.81
+  },
+  {
+    "Date": "12-Apr-12",
+    "Close": 30.98
+  },
+  {
+    "Date": "11-Apr-12",
+    "Close": 30.34
+  },
+  {
+    "Date": "10-Apr-12",
+    "Close": 30.47
+  },
+  {
+    "Date": "9-Apr-12",
+    "Close": 31.1
+  },
+  {
+    "Date": "5-Apr-12",
+    "Close": 31.52
+  },
+  {
+    "Date": "4-Apr-12",
+    "Close": 31.21
+  },
+  {
+    "Date": "3-Apr-12",
+    "Close": 31.94
+  },
+  {
+    "Date": "2-Apr-12",
+    "Close": 32.29
+  },
+  {
+    "Date": "30-Mar-12",
+    "Close": 32.26
+  },
+  {
+    "Date": "29-Mar-12",
+    "Close": 32.12
+  },
+  {
+    "Date": "28-Mar-12",
+    "Close": 32.19
+  },
+  {
+    "Date": "27-Mar-12",
+    "Close": 32.52
+  },
+  {
+    "Date": "26-Mar-12",
+    "Close": 32.59
+  },
+  {
+    "Date": "23-Mar-12",
+    "Close": 32.01
+  },
+  {
+    "Date": "22-Mar-12",
+    "Close": 32
+  },
+  {
+    "Date": "21-Mar-12",
+    "Close": 31.91
+  },
+  {
+    "Date": "20-Mar-12",
+    "Close": 31.99
+  },
+  {
+    "Date": "19-Mar-12",
+    "Close": 32.2
+  },
+  {
+    "Date": "16-Mar-12",
+    "Close": 32.6
+  },
+  {
+    "Date": "15-Mar-12",
+    "Close": 32.85
+  },
+  {
+    "Date": "14-Mar-12",
+    "Close": 32.77
+  },
+  {
+    "Date": "13-Mar-12",
+    "Close": 32.67
+  },
+  {
+    "Date": "12-Mar-12",
+    "Close": 32.04
+  },
+  {
+    "Date": "9-Mar-12",
+    "Close": 31.99
+  },
+  {
+    "Date": "8-Mar-12",
+    "Close": 32.01
+  },
+  {
+    "Date": "7-Mar-12",
+    "Close": 31.84
+  },
+  {
+    "Date": "6-Mar-12",
+    "Close": 31.56
+  },
+  {
+    "Date": "5-Mar-12",
+    "Close": 31.8
+  },
+  {
+    "Date": "2-Mar-12",
+    "Close": 32.08
+  },
+  {
+    "Date": "1-Mar-12",
+    "Close": 32.29
+  },
+  {
+    "Date": "29-Feb-12",
+    "Close": 31.74
+  },
+  {
+    "Date": "28-Feb-12",
+    "Close": 31.87
+  },
+  {
+    "Date": "27-Feb-12",
+    "Close": 31.35
+  },
+  {
+    "Date": "24-Feb-12",
+    "Close": 31.48
+  },
+  {
+    "Date": "23-Feb-12",
+    "Close": 31.37
+  },
+  {
+    "Date": "22-Feb-12",
+    "Close": 31.27
+  },
+  {
+    "Date": "21-Feb-12",
+    "Close": 31.44
+  },
+  {
+    "Date": "17-Feb-12",
+    "Close": 31.25
+  },
+  {
+    "Date": "16-Feb-12",
+    "Close": 31.28
+  },
+  {
+    "Date": "15-Feb-12",
+    "Close": 30.05
+  },
+  {
+    "Date": "14-Feb-12",
+    "Close": 30.25
+  },
+  {
+    "Date": "13-Feb-12",
+    "Close": 30.58
+  },
+  {
+    "Date": "10-Feb-12",
+    "Close": 30.5
+  },
+  {
+    "Date": "9-Feb-12",
+    "Close": 30.77
+  },
+  {
+    "Date": "8-Feb-12",
+    "Close": 30.66
+  },
+  {
+    "Date": "7-Feb-12",
+    "Close": 30.35
+  },
+  {
+    "Date": "6-Feb-12",
+    "Close": 30.2
+  },
+  {
+    "Date": "3-Feb-12",
+    "Close": 30.24
+  },
+  {
+    "Date": "2-Feb-12",
+    "Close": 29.95
+  },
+  {
+    "Date": "1-Feb-12",
+    "Close": 29.89
+  },
+  {
+    "Date": "31-Jan-12",
+    "Close": 29.53
+  },
+  {
+    "Date": "30-Jan-12",
+    "Close": 29.61
+  },
+  {
+    "Date": "27-Jan-12",
+    "Close": 29.23
+  },
+  {
+    "Date": "26-Jan-12",
+    "Close": 29.5
+  },
+  {
+    "Date": "25-Jan-12",
+    "Close": 29.56
+  },
+  {
+    "Date": "24-Jan-12",
+    "Close": 29.34
+  },
+  {
+    "Date": "23-Jan-12",
+    "Close": 29.73
+  },
+  {
+    "Date": "20-Jan-12",
+    "Close": 29.71
+  },
+  {
+    "Date": "19-Jan-12",
+    "Close": 28.12
+  },
+  {
+    "Date": "18-Jan-12",
+    "Close": 28.23
+  },
+  {
+    "Date": "17-Jan-12",
+    "Close": 28.26
+  },
+  {
+    "Date": "13-Jan-12",
+    "Close": 28.25
+  },
+  {
+    "Date": "12-Jan-12",
+    "Close": 28
+  },
+  {
+    "Date": "11-Jan-12",
+    "Close": 27.72
+  },
+  {
+    "Date": "10-Jan-12",
+    "Close": 27.84
+  },
+  {
+    "Date": "9-Jan-12",
+    "Close": 27.74
+  },
+  {
+    "Date": "6-Jan-12",
+    "Close": 28.1
+  },
+  {
+    "Date": "5-Jan-12",
+    "Close": 27.68
+  },
+  {
+    "Date": "4-Jan-12",
+    "Close": 27.4
+  },
+  {
+    "Date": "3-Jan-12",
+    "Close": 26.76
+  },
+  {
+    "Date": "30-Dec-11",
+    "Close": 25.96
+  },
+  {
+    "Date": "29-Dec-11",
+    "Close": 26.02
+  },
+  {
+    "Date": "28-Dec-11",
+    "Close": 25.82
+  },
+  {
+    "Date": "27-Dec-11",
+    "Close": 26.04
+  },
+  {
+    "Date": "23-Dec-11",
+    "Close": 26.03
+  },
+  {
+    "Date": "22-Dec-11",
+    "Close": 25.81
+  },
+  {
+    "Date": "21-Dec-11",
+    "Close": 25.76
+  },
+  {
+    "Date": "20-Dec-11",
+    "Close": 26.02
+  },
+  {
+    "Date": "19-Dec-11",
+    "Close": 25.53
+  },
+  {
+    "Date": "16-Dec-11",
+    "Close": 26
+  },
+  {
+    "Date": "15-Dec-11",
+    "Close": 25.56
+  },
+  {
+    "Date": "14-Dec-11",
+    "Close": 25.59
+  },
+  {
+    "Date": "13-Dec-11",
+    "Close": 25.76
+  },
+  {
+    "Date": "12-Dec-11",
+    "Close": 25.51
+  },
+  {
+    "Date": "9-Dec-11",
+    "Close": 25.7
+  },
+  {
+    "Date": "8-Dec-11",
+    "Close": 25.4
+  },
+  {
+    "Date": "7-Dec-11",
+    "Close": 25.6
+  },
+  {
+    "Date": "6-Dec-11",
+    "Close": 25.66
+  },
+  {
+    "Date": "5-Dec-11",
+    "Close": 25.7
+  },
+  {
+    "Date": "2-Dec-11",
+    "Close": 25.22
+  },
+  {
+    "Date": "1-Dec-11",
+    "Close": 25.28
+  },
+  {
+    "Date": "30-Nov-11",
+    "Close": 25.58
+  },
+  {
+    "Date": "29-Nov-11",
+    "Close": 24.84
+  },
+  {
+    "Date": "28-Nov-11",
+    "Close": 24.87
+  },
+  {
+    "Date": "25-Nov-11",
+    "Close": 24.3
+  },
+  {
+    "Date": "23-Nov-11",
+    "Close": 24.47
+  },
+  {
+    "Date": "22-Nov-11",
+    "Close": 24.79
+  },
+  {
+    "Date": "21-Nov-11",
+    "Close": 25
+  },
+  {
+    "Date": "18-Nov-11",
+    "Close": 25.3
+  },
+  {
+    "Date": "17-Nov-11",
+    "Close": 25.54
+  },
+  {
+    "Date": "16-Nov-11",
+    "Close": 26.07
+  },
+  {
+    "Date": "15-Nov-11",
+    "Close": 26.74
+  },
+  {
+    "Date": "14-Nov-11",
+    "Close": 26.76
+  },
+  {
+    "Date": "11-Nov-11",
+    "Close": 26.91
+  },
+  {
+    "Date": "10-Nov-11",
+    "Close": 26.28
+  },
+  {
+    "Date": "9-Nov-11",
+    "Close": 26.2
+  },
+  {
+    "Date": "8-Nov-11",
+    "Close": 27.16
+  },
+  {
+    "Date": "7-Nov-11",
+    "Close": 26.8
+  },
+  {
+    "Date": "4-Nov-11",
+    "Close": 26.25
+  },
+  {
+    "Date": "3-Nov-11",
+    "Close": 26.53
+  },
+  {
+    "Date": "2-Nov-11",
+    "Close": 26.01
+  },
+  {
+    "Date": "1-Nov-11",
+    "Close": 25.99
+  },
+  {
+    "Date": "31-Oct-11",
+    "Close": 26.63
+  },
+  {
+    "Date": "28-Oct-11",
+    "Close": 26.98
+  },
+  {
+    "Date": "27-Oct-11",
+    "Close": 27.25
+  },
+  {
+    "Date": "26-Oct-11",
+    "Close": 26.59
+  },
+  {
+    "Date": "25-Oct-11",
+    "Close": 26.81
+  },
+  {
+    "Date": "24-Oct-11",
+    "Close": 27.19
+  },
+  {
+    "Date": "21-Oct-11",
+    "Close": 27.16
+  },
+  {
+    "Date": "20-Oct-11",
+    "Close": 27.04
+  },
+  {
+    "Date": "19-Oct-11",
+    "Close": 27.13
+  },
+  {
+    "Date": "18-Oct-11",
+    "Close": 27.31
+  },
+  {
+    "Date": "17-Oct-11",
+    "Close": 26.98
+  },
+  {
+    "Date": "14-Oct-11",
+    "Close": 27.27
+  },
+  {
+    "Date": "13-Oct-11",
+    "Close": 27.18
+  },
+  {
+    "Date": "12-Oct-11",
+    "Close": 26.96
+  },
+  {
+    "Date": "11-Oct-11",
+    "Close": 27
+  },
+  {
+    "Date": "10-Oct-11",
+    "Close": 26.94
+  },
+  {
+    "Date": "7-Oct-11",
+    "Close": 26.25
+  },
+  {
+    "Date": "6-Oct-11",
+    "Close": 26.34
+  },
+  {
+    "Date": "5-Oct-11",
+    "Close": 25.89
+  },
+  {
+    "Date": "4-Oct-11",
+    "Close": 25.34
+  },
+  {
+    "Date": "3-Oct-11",
+    "Close": 24.53
+  },
+  {
+    "Date": "30-Sep-11",
+    "Close": 24.89
+  },
+  {
+    "Date": "29-Sep-11",
+    "Close": 25.45
+  },
+  {
+    "Date": "28-Sep-11",
+    "Close": 25.58
+  },
+  {
+    "Date": "27-Sep-11",
+    "Close": 25.67
+  },
+  {
+    "Date": "26-Sep-11",
+    "Close": 25.44
+  },
+  {
+    "Date": "23-Sep-11",
+    "Close": 25.06
+  },
+  {
+    "Date": "22-Sep-11",
+    "Close": 25.06
+  },
+  {
+    "Date": "21-Sep-11",
+    "Close": 25.99
+  },
+  {
+    "Date": "20-Sep-11",
+    "Close": 26.98
+  },
+  {
+    "Date": "19-Sep-11",
+    "Close": 27.21
+  },
+  {
+    "Date": "16-Sep-11",
+    "Close": 27.12
+  },
+  {
+    "Date": "15-Sep-11",
+    "Close": 26.99
+  },
+  {
+    "Date": "14-Sep-11",
+    "Close": 26.5
+  },
+  {
+    "Date": "13-Sep-11",
+    "Close": 26.04
+  },
+  {
+    "Date": "12-Sep-11",
+    "Close": 25.89
+  },
+  {
+    "Date": "9-Sep-11",
+    "Close": 25.74
+  },
+  {
+    "Date": "8-Sep-11",
+    "Close": 26.22
+  },
+  {
+    "Date": "7-Sep-11",
+    "Close": 26
+  },
+  {
+    "Date": "6-Sep-11",
+    "Close": 25.51
+  },
+  {
+    "Date": "2-Sep-11",
+    "Close": 25.8
+  },
+  {
+    "Date": "1-Sep-11",
+    "Close": 26.21
+  },
+  {
+    "Date": "31-Aug-11",
+    "Close": 26.6
+  },
+  {
+    "Date": "30-Aug-11",
+    "Close": 26.23
+  },
+  {
+    "Date": "29-Aug-11",
+    "Close": 25.84
+  },
+  {
+    "Date": "26-Aug-11",
+    "Close": 25.25
+  },
+  {
+    "Date": "25-Aug-11",
+    "Close": 24.57
+  },
+  {
+    "Date": "24-Aug-11",
+    "Close": 24.9
+  },
+  {
+    "Date": "23-Aug-11",
+    "Close": 24.72
+  },
+  {
+    "Date": "22-Aug-11",
+    "Close": 23.98
+  },
+  {
+    "Date": "19-Aug-11",
+    "Close": 24.05
+  },
+  {
+    "Date": "18-Aug-11",
+    "Close": 24.67
+  },
+  {
+    "Date": "17-Aug-11",
+    "Close": 25.24
+  },
+  {
+    "Date": "16-Aug-11",
+    "Close": 25.35
+  },
+  {
+    "Date": "15-Aug-11",
+    "Close": 25.51
+  },
+  {
+    "Date": "12-Aug-11",
+    "Close": 25.1
+  },
+  {
+    "Date": "11-Aug-11",
+    "Close": 25.19
+  },
+  {
+    "Date": "10-Aug-11",
+    "Close": 24.2
+  },
+  {
+    "Date": "9-Aug-11",
+    "Close": 25.58
+  },
+  {
+    "Date": "8-Aug-11",
+    "Close": 24.48
+  },
+  {
+    "Date": "5-Aug-11",
+    "Close": 25.68
+  },
+  {
+    "Date": "4-Aug-11",
+    "Close": 25.94
+  },
+  {
+    "Date": "3-Aug-11",
+    "Close": 26.92
+  },
+  {
+    "Date": "2-Aug-11",
+    "Close": 26.64
+  },
+  {
+    "Date": "1-Aug-11",
+    "Close": 27.27
+  },
+  {
+    "Date": "29-Jul-11",
+    "Close": 27.4
+  },
+  {
+    "Date": "28-Jul-11",
+    "Close": 27.72
+  },
+  {
+    "Date": "27-Jul-11",
+    "Close": 27.33
+  },
+  {
+    "Date": "26-Jul-11",
+    "Close": 28.08
+  },
+  {
+    "Date": "25-Jul-11",
+    "Close": 27.91
+  },
+  {
+    "Date": "22-Jul-11",
+    "Close": 27.53
+  },
+  {
+    "Date": "21-Jul-11",
+    "Close": 27.1
+  },
+  {
+    "Date": "20-Jul-11",
+    "Close": 27.06
+  },
+  {
+    "Date": "19-Jul-11",
+    "Close": 27.54
+  },
+  {
+    "Date": "18-Jul-11",
+    "Close": 26.59
+  },
+  {
+    "Date": "15-Jul-11",
+    "Close": 26.78
+  },
+  {
+    "Date": "14-Jul-11",
+    "Close": 26.47
+  },
+  {
+    "Date": "13-Jul-11",
+    "Close": 26.63
+  },
+  {
+    "Date": "12-Jul-11",
+    "Close": 26.54
+  },
+  {
+    "Date": "11-Jul-11",
+    "Close": 26.63
+  },
+  {
+    "Date": "8-Jul-11",
+    "Close": 26.92
+  },
+  {
+    "Date": "7-Jul-11",
+    "Close": 26.77
+  },
+  {
+    "Date": "6-Jul-11",
+    "Close": 26.33
+  },
+  {
+    "Date": "5-Jul-11",
+    "Close": 26.03
+  },
+  {
+    "Date": "1-Jul-11",
+    "Close": 26.02
+  },
+  {
+    "Date": "30-Jun-11",
+    "Close": 26
+  },
+  {
+    "Date": "29-Jun-11",
+    "Close": 25.62
+  },
+  {
+    "Date": "28-Jun-11",
+    "Close": 25.8
+  },
+  {
+    "Date": "27-Jun-11",
+    "Close": 25.2
+  },
+  {
+    "Date": "24-Jun-11",
+    "Close": 24.3
+  },
+  {
+    "Date": "23-Jun-11",
+    "Close": 24.63
+  },
+  {
+    "Date": "22-Jun-11",
+    "Close": 24.65
+  },
+  {
+    "Date": "21-Jun-11",
+    "Close": 24.76
+  },
+  {
+    "Date": "20-Jun-11",
+    "Close": 24.47
+  },
+  {
+    "Date": "17-Jun-11",
+    "Close": 24.26
+  },
+  {
+    "Date": "16-Jun-11",
+    "Close": 24
+  },
+  {
+    "Date": "15-Jun-11",
+    "Close": 23.74
+  },
+  {
+    "Date": "14-Jun-11",
+    "Close": 24.22
+  },
+  {
+    "Date": "13-Jun-11",
+    "Close": 24.04
+  },
+  {
+    "Date": "10-Jun-11",
+    "Close": 23.7
+  },
+  {
+    "Date": "9-Jun-11",
+    "Close": 23.96
+  },
+  {
+    "Date": "8-Jun-11",
+    "Close": 23.94
+  },
+  {
+    "Date": "7-Jun-11",
+    "Close": 24.06
+  },
+  {
+    "Date": "6-Jun-11",
+    "Close": 24.01
+  },
+  {
+    "Date": "3-Jun-11",
+    "Close": 23.9
+  },
+  {
+    "Date": "2-Jun-11",
+    "Close": 24.22
+  },
+  {
+    "Date": "1-Jun-11",
+    "Close": 24.43
+  },
+  {
+    "Date": "31-May-11",
+    "Close": 25.01
+  },
+  {
+    "Date": "27-May-11",
+    "Close": 24.76
+  },
+  {
+    "Date": "26-May-11",
+    "Close": 24.67
+  },
+  {
+    "Date": "25-May-11",
+    "Close": 24.19
+  },
+  {
+    "Date": "24-May-11",
+    "Close": 24.15
+  },
+  {
+    "Date": "23-May-11",
+    "Close": 24.17
+  },
+  {
+    "Date": "20-May-11",
+    "Close": 24.49
+  },
+  {
+    "Date": "19-May-11",
+    "Close": 24.72
+  },
+  {
+    "Date": "18-May-11",
+    "Close": 24.69
+  },
+  {
+    "Date": "17-May-11",
+    "Close": 24.52
+  },
+  {
+    "Date": "16-May-11",
+    "Close": 24.57
+  },
+  {
+    "Date": "13-May-11",
+    "Close": 25.03
+  },
+  {
+    "Date": "12-May-11",
+    "Close": 25.32
+  },
+  {
+    "Date": "11-May-11",
+    "Close": 25.36
+  },
+  {
+    "Date": "10-May-11",
+    "Close": 25.67
+  },
+  {
+    "Date": "9-May-11",
+    "Close": 25.83
+  },
+  {
+    "Date": "6-May-11",
+    "Close": 25.87
+  },
+  {
+    "Date": "5-May-11",
+    "Close": 25.79
+  },
+  {
+    "Date": "4-May-11",
+    "Close": 26.06
+  },
+  {
+    "Date": "3-May-11",
+    "Close": 25.81
+  },
+  {
+    "Date": "2-May-11",
+    "Close": 25.66
+  },
+  {
+    "Date": "29-Apr-11",
+    "Close": 25.92
+  },
+  {
+    "Date": "28-Apr-11",
+    "Close": 26.71
+  },
+  {
+    "Date": "27-Apr-11",
+    "Close": 26.38
+  },
+  {
+    "Date": "26-Apr-11",
+    "Close": 26.19
+  },
+  {
+    "Date": "25-Apr-11",
+    "Close": 25.61
+  },
+  {
+    "Date": "21-Apr-11",
+    "Close": 25.52
+  },
+  {
+    "Date": "20-Apr-11",
+    "Close": 25.76
+  },
+  {
+    "Date": "19-Apr-11",
+    "Close": 25.15
+  },
+  {
+    "Date": "18-Apr-11",
+    "Close": 25.08
+  },
+  {
+    "Date": "15-Apr-11",
+    "Close": 25.37
+  },
+  {
+    "Date": "14-Apr-11",
+    "Close": 25.42
+  },
+  {
+    "Date": "13-Apr-11",
+    "Close": 25.63
+  },
+  {
+    "Date": "12-Apr-11",
+    "Close": 25.64
+  },
+  {
+    "Date": "11-Apr-11",
+    "Close": 25.98
+  },
+  {
+    "Date": "8-Apr-11",
+    "Close": 26.07
+  },
+  {
+    "Date": "7-Apr-11",
+    "Close": 26.2
+  },
+  {
+    "Date": "6-Apr-11",
+    "Close": 26.15
+  },
+  {
+    "Date": "5-Apr-11",
+    "Close": 25.78
+  },
+  {
+    "Date": "4-Apr-11",
+    "Close": 25.55
+  },
+  {
+    "Date": "1-Apr-11",
+    "Close": 25.48
+  },
+  {
+    "Date": "31-Mar-11",
+    "Close": 25.39
+  },
+  {
+    "Date": "30-Mar-11",
+    "Close": 25.61
+  },
+  {
+    "Date": "29-Mar-11",
+    "Close": 25.49
+  },
+  {
+    "Date": "28-Mar-11",
+    "Close": 25.41
+  },
+  {
+    "Date": "25-Mar-11",
+    "Close": 25.62
+  },
+  {
+    "Date": "24-Mar-11",
+    "Close": 25.81
+  },
+  {
+    "Date": "23-Mar-11",
+    "Close": 25.54
+  },
+  {
+    "Date": "22-Mar-11",
+    "Close": 25.3
+  },
+  {
+    "Date": "21-Mar-11",
+    "Close": 25.33
+  },
+  {
+    "Date": "18-Mar-11",
+    "Close": 24.8
+  },
+  {
+    "Date": "17-Mar-11",
+    "Close": 24.78
+  },
+  {
+    "Date": "16-Mar-11",
+    "Close": 24.79
+  },
+  {
+    "Date": "15-Mar-11",
+    "Close": 25.39
+  },
+  {
+    "Date": "14-Mar-11",
+    "Close": 25.69
+  },
+  {
+    "Date": "11-Mar-11",
+    "Close": 25.68
+  },
+  {
+    "Date": "10-Mar-11",
+    "Close": 25.41
+  },
+  {
+    "Date": "9-Mar-11",
+    "Close": 25.89
+  },
+  {
+    "Date": "8-Mar-11",
+    "Close": 25.91
+  },
+  {
+    "Date": "7-Mar-11",
+    "Close": 25.72
+  },
+  {
+    "Date": "4-Mar-11",
+    "Close": 25.95
+  },
+  {
+    "Date": "3-Mar-11",
+    "Close": 26.2
+  },
+  {
+    "Date": "2-Mar-11",
+    "Close": 26.08
+  },
+  {
+    "Date": "1-Mar-11",
+    "Close": 26.16
+  },
+  {
+    "Date": "28-Feb-11",
+    "Close": 26.58
+  },
+  {
+    "Date": "25-Feb-11",
+    "Close": 26.55
+  },
+  {
+    "Date": "24-Feb-11",
+    "Close": 26.77
+  },
+  {
+    "Date": "23-Feb-11",
+    "Close": 26.59
+  },
+  {
+    "Date": "22-Feb-11",
+    "Close": 26.59
+  },
+  {
+    "Date": "18-Feb-11",
+    "Close": 27.06
+  },
+  {
+    "Date": "17-Feb-11",
+    "Close": 27.21
+  },
+  {
+    "Date": "16-Feb-11",
+    "Close": 27.02
+  },
+  {
+    "Date": "15-Feb-11",
+    "Close": 26.96
+  },
+  {
+    "Date": "14-Feb-11",
+    "Close": 27.23
+  },
+  {
+    "Date": "11-Feb-11",
+    "Close": 27.25
+  },
+  {
+    "Date": "10-Feb-11",
+    "Close": 27.5
+  },
+  {
+    "Date": "9-Feb-11",
+    "Close": 27.97
+  },
+  {
+    "Date": "8-Feb-11",
+    "Close": 28.28
+  },
+  {
+    "Date": "7-Feb-11",
+    "Close": 28.2
+  },
+  {
+    "Date": "4-Feb-11",
+    "Close": 27.77
+  },
+  {
+    "Date": "3-Feb-11",
+    "Close": 27.65
+  },
+  {
+    "Date": "2-Feb-11",
+    "Close": 27.94
+  },
+  {
+    "Date": "1-Feb-11",
+    "Close": 27.99
+  },
+  {
+    "Date": "31-Jan-11",
+    "Close": 27.72
+  },
+  {
+    "Date": "28-Jan-11",
+    "Close": 27.75
+  },
+  {
+    "Date": "27-Jan-11",
+    "Close": 28.87
+  },
+  {
+    "Date": "26-Jan-11",
+    "Close": 28.78
+  },
+  {
+    "Date": "25-Jan-11",
+    "Close": 28.45
+  },
+  {
+    "Date": "24-Jan-11",
+    "Close": 28.38
+  },
+  {
+    "Date": "21-Jan-11",
+    "Close": 28.02
+  },
+  {
+    "Date": "20-Jan-11",
+    "Close": 28.35
+  },
+  {
+    "Date": "19-Jan-11",
+    "Close": 28.47
+  },
+  {
+    "Date": "18-Jan-11",
+    "Close": 28.66
+  },
+  {
+    "Date": "14-Jan-11",
+    "Close": 28.3
+  },
+  {
+    "Date": "13-Jan-11",
+    "Close": 28.19
+  },
+  {
+    "Date": "12-Jan-11",
+    "Close": 28.55
+  },
+  {
+    "Date": "11-Jan-11",
+    "Close": 28.11
+  },
+  {
+    "Date": "10-Jan-11",
+    "Close": 28.22
+  },
+  {
+    "Date": "7-Jan-11",
+    "Close": 28.6
+  },
+  {
+    "Date": "6-Jan-11",
+    "Close": 28.82
+  },
+  {
+    "Date": "5-Jan-11",
+    "Close": 28
+  },
+  {
+    "Date": "4-Jan-11",
+    "Close": 28.09
+  },
+  {
+    "Date": "3-Jan-11",
+    "Close": 27.98
+  },
+  {
+    "Date": "31-Dec-10",
+    "Close": 27.91
+  },
+  {
+    "Date": "30-Dec-10",
+    "Close": 27.85
+  },
+  {
+    "Date": "29-Dec-10",
+    "Close": 27.97
+  },
+  {
+    "Date": "28-Dec-10",
+    "Close": 28.01
+  },
+  {
+    "Date": "27-Dec-10",
+    "Close": 28.07
+  },
+  {
+    "Date": "23-Dec-10",
+    "Close": 28.3
+  },
+  {
+    "Date": "22-Dec-10",
+    "Close": 28.19
+  },
+  {
+    "Date": "21-Dec-10",
+    "Close": 28.07
+  },
+  {
+    "Date": "20-Dec-10",
+    "Close": 27.81
+  },
+  {
+    "Date": "17-Dec-10",
+    "Close": 27.9
+  },
+  {
+    "Date": "16-Dec-10",
+    "Close": 27.99
+  },
+  {
+    "Date": "15-Dec-10",
+    "Close": 27.85
+  },
+  {
+    "Date": "14-Dec-10",
+    "Close": 27.62
+  },
+  {
+    "Date": "13-Dec-10",
+    "Close": 27.24
+  },
+  {
+    "Date": "10-Dec-10",
+    "Close": 27.34
+  },
+  {
+    "Date": "9-Dec-10",
+    "Close": 27.08
+  },
+  {
+    "Date": "8-Dec-10",
+    "Close": 27.23
+  },
+  {
+    "Date": "7-Dec-10",
+    "Close": 26.87
+  },
+  {
+    "Date": "6-Dec-10",
+    "Close": 26.84
+  },
+  {
+    "Date": "3-Dec-10",
+    "Close": 27.02
+  },
+  {
+    "Date": "2-Dec-10",
+    "Close": 26.89
+  },
+  {
+    "Date": "1-Dec-10",
+    "Close": 26.04
+  },
+  {
+    "Date": "30-Nov-10",
+    "Close": 25.26
+  },
+  {
+    "Date": "29-Nov-10",
+    "Close": 25.31
+  },
+  {
+    "Date": "26-Nov-10",
+    "Close": 25.25
+  },
+  {
+    "Date": "24-Nov-10",
+    "Close": 25.37
+  },
+  {
+    "Date": "23-Nov-10",
+    "Close": 25.12
+  },
+  {
+    "Date": "22-Nov-10",
+    "Close": 25.73
+  },
+  {
+    "Date": "19-Nov-10",
+    "Close": 25.69
+  },
+  {
+    "Date": "18-Nov-10",
+    "Close": 25.84
+  },
+  {
+    "Date": "17-Nov-10",
+    "Close": 25.57
+  },
+  {
+    "Date": "16-Nov-10",
+    "Close": 25.81
+  },
+  {
+    "Date": "15-Nov-10",
+    "Close": 26.2
+  },
+  {
+    "Date": "12-Nov-10",
+    "Close": 26.27
+  },
+  {
+    "Date": "11-Nov-10",
+    "Close": 26.68
+  },
+  {
+    "Date": "10-Nov-10",
+    "Close": 26.94
+  },
+  {
+    "Date": "9-Nov-10",
+    "Close": 26.95
+  },
+  {
+    "Date": "8-Nov-10",
+    "Close": 26.81
+  },
+  {
+    "Date": "5-Nov-10",
+    "Close": 26.85
+  },
+  {
+    "Date": "4-Nov-10",
+    "Close": 27.14
+  },
+  {
+    "Date": "3-Nov-10",
+    "Close": 27.03
+  },
+  {
+    "Date": "2-Nov-10",
+    "Close": 27.39
+  },
+  {
+    "Date": "1-Nov-10",
+    "Close": 26.95
+  },
+  {
+    "Date": "29-Oct-10",
+    "Close": 26.66
+  },
+  {
+    "Date": "28-Oct-10",
+    "Close": 26.28
+  },
+  {
+    "Date": "27-Oct-10",
+    "Close": 26.05
+  },
+  {
+    "Date": "26-Oct-10",
+    "Close": 25.9
+  },
+  {
+    "Date": "25-Oct-10",
+    "Close": 25.19
+  },
+  {
+    "Date": "22-Oct-10",
+    "Close": 25.38
+  },
+  {
+    "Date": "21-Oct-10",
+    "Close": 25.42
+  },
+  {
+    "Date": "20-Oct-10",
+    "Close": 25.31
+  },
+  {
+    "Date": "19-Oct-10",
+    "Close": 25.1
+  },
+  {
+    "Date": "18-Oct-10",
+    "Close": 25.82
+  },
+  {
+    "Date": "15-Oct-10",
+    "Close": 25.54
+  },
+  {
+    "Date": "14-Oct-10",
+    "Close": 25.23
+  },
+  {
+    "Date": "13-Oct-10",
+    "Close": 25.34
+  },
+  {
+    "Date": "12-Oct-10",
+    "Close": 24.83
+  },
+  {
+    "Date": "11-Oct-10",
+    "Close": 24.59
+  },
+  {
+    "Date": "8-Oct-10",
+    "Close": 24.57
+  },
+  {
+    "Date": "7-Oct-10",
+    "Close": 24.53
+  },
+  {
+    "Date": "6-Oct-10",
+    "Close": 24.43
+  },
+  {
+    "Date": "5-Oct-10",
+    "Close": 24.35
+  },
+  {
+    "Date": "4-Oct-10",
+    "Close": 23.91
+  },
+  {
+    "Date": "1-Oct-10",
+    "Close": 24.38
+  },
+  {
+    "Date": "30-Sep-10",
+    "Close": 24.49
+  },
+  {
+    "Date": "29-Sep-10",
+    "Close": 24.5
+  },
+  {
+    "Date": "28-Sep-10",
+    "Close": 24.68
+  },
+  {
+    "Date": "27-Sep-10",
+    "Close": 24.73
+  },
+  {
+    "Date": "24-Sep-10",
+    "Close": 24.78
+  },
+  {
+    "Date": "23-Sep-10",
+    "Close": 24.43
+  },
+  {
+    "Date": "22-Sep-10",
+    "Close": 24.61
+  },
+  {
+    "Date": "21-Sep-10",
+    "Close": 25.15
+  },
+  {
+    "Date": "20-Sep-10",
+    "Close": 25.43
+  },
+  {
+    "Date": "17-Sep-10",
+    "Close": 25.22
+  },
+  {
+    "Date": "16-Sep-10",
+    "Close": 25.33
+  },
+  {
+    "Date": "15-Sep-10",
+    "Close": 25.12
+  },
+  {
+    "Date": "14-Sep-10",
+    "Close": 25.03
+  },
+  {
+    "Date": "13-Sep-10",
+    "Close": 25.11
+  },
+  {
+    "Date": "10-Sep-10",
+    "Close": 23.85
+  },
+  {
+    "Date": "9-Sep-10",
+    "Close": 24.01
+  },
+  {
+    "Date": "8-Sep-10",
+    "Close": 23.93
+  },
+  {
+    "Date": "7-Sep-10",
+    "Close": 23.96
+  },
+  {
+    "Date": "3-Sep-10",
+    "Close": 24.29
+  },
+  {
+    "Date": "2-Sep-10",
+    "Close": 23.94
+  },
+  {
+    "Date": "1-Sep-10",
+    "Close": 23.9
+  },
+  {
+    "Date": "31-Aug-10",
+    "Close": 23.46
+  },
+  {
+    "Date": "30-Aug-10",
+    "Close": 23.64
+  },
+  {
+    "Date": "27-Aug-10",
+    "Close": 23.93
+  },
+  {
+    "Date": "26-Aug-10",
+    "Close": 23.82
+  },
+  {
+    "Date": "25-Aug-10",
+    "Close": 24.1
+  },
+  {
+    "Date": "24-Aug-10",
+    "Close": 24.04
+  },
+  {
+    "Date": "23-Aug-10",
+    "Close": 24.28
+  },
+  {
+    "Date": "20-Aug-10",
+    "Close": 24.23
+  },
+  {
+    "Date": "19-Aug-10",
+    "Close": 24.44
+  },
+  {
+    "Date": "18-Aug-10",
+    "Close": 24.82
+  },
+  {
+    "Date": "17-Aug-10",
+    "Close": 24.71
+  },
+  {
+    "Date": "16-Aug-10",
+    "Close": 24.5
+  },
+  {
+    "Date": "13-Aug-10",
+    "Close": 24.4
+  },
+  {
+    "Date": "12-Aug-10",
+    "Close": 24.49
+  },
+  {
+    "Date": "11-Aug-10",
+    "Close": 24.86
+  },
+  {
+    "Date": "10-Aug-10",
+    "Close": 25.07
+  },
+  {
+    "Date": "9-Aug-10",
+    "Close": 25.61
+  },
+  {
+    "Date": "6-Aug-10",
+    "Close": 25.55
+  },
+  {
+    "Date": "5-Aug-10",
+    "Close": 25.37
+  },
+  {
+    "Date": "4-Aug-10",
+    "Close": 25.73
+  },
+  {
+    "Date": "3-Aug-10",
+    "Close": 26.16
+  },
+  {
+    "Date": "2-Aug-10",
+    "Close": 26.33
+  },
+  {
+    "Date": "30-Jul-10",
+    "Close": 25.81
+  },
+  {
+    "Date": "29-Jul-10",
+    "Close": 26.03
+  },
+  {
+    "Date": "28-Jul-10",
+    "Close": 25.95
+  },
+  {
+    "Date": "27-Jul-10",
+    "Close": 26.16
+  },
+  {
+    "Date": "26-Jul-10",
+    "Close": 26.1
+  },
+  {
+    "Date": "23-Jul-10",
+    "Close": 25.81
+  },
+  {
+    "Date": "22-Jul-10",
+    "Close": 25.84
+  },
+  {
+    "Date": "21-Jul-10",
+    "Close": 25.12
+  },
+  {
+    "Date": "20-Jul-10",
+    "Close": 25.48
+  },
+  {
+    "Date": "19-Jul-10",
+    "Close": 25.23
+  },
+  {
+    "Date": "16-Jul-10",
+    "Close": 24.89
+  },
+  {
+    "Date": "15-Jul-10",
+    "Close": 25.51
+  },
+  {
+    "Date": "14-Jul-10",
+    "Close": 25.44
+  },
+  {
+    "Date": "13-Jul-10",
+    "Close": 25.13
+  },
+  {
+    "Date": "12-Jul-10",
+    "Close": 24.83
+  },
+  {
+    "Date": "9-Jul-10",
+    "Close": 24.27
+  },
+  {
+    "Date": "8-Jul-10",
+    "Close": 24.41
+  },
+  {
+    "Date": "7-Jul-10",
+    "Close": 24.3
+  },
+  {
+    "Date": "6-Jul-10",
+    "Close": 23.82
+  },
+  {
+    "Date": "2-Jul-10",
+    "Close": 23.27
+  },
+  {
+    "Date": "1-Jul-10",
+    "Close": 23.16
+  },
+  {
+    "Date": "30-Jun-10",
+    "Close": 23.01
+  },
+  {
+    "Date": "29-Jun-10",
+    "Close": 23.31
+  },
+  {
+    "Date": "28-Jun-10",
+    "Close": 24.31
+  },
+  {
+    "Date": "25-Jun-10",
+    "Close": 24.53
+  },
+  {
+    "Date": "24-Jun-10",
+    "Close": 25
+  },
+  {
+    "Date": "23-Jun-10",
+    "Close": 25.31
+  },
+  {
+    "Date": "22-Jun-10",
+    "Close": 25.77
+  },
+  {
+    "Date": "21-Jun-10",
+    "Close": 25.95
+  },
+  {
+    "Date": "18-Jun-10",
+    "Close": 26.44
+  },
+  {
+    "Date": "17-Jun-10",
+    "Close": 26.37
+  },
+  {
+    "Date": "16-Jun-10",
+    "Close": 26.32
+  },
+  {
+    "Date": "15-Jun-10",
+    "Close": 26.58
+  },
+  {
+    "Date": "14-Jun-10",
+    "Close": 25.5
+  },
+  {
+    "Date": "11-Jun-10",
+    "Close": 25.66
+  },
+  {
+    "Date": "10-Jun-10",
+    "Close": 25
+  },
+  {
+    "Date": "9-Jun-10",
+    "Close": 24.79
+  },
+  {
+    "Date": "8-Jun-10",
+    "Close": 25.11
+  },
+  {
+    "Date": "7-Jun-10",
+    "Close": 25.29
+  },
+  {
+    "Date": "4-Jun-10",
+    "Close": 25.79
+  },
+  {
+    "Date": "3-Jun-10",
+    "Close": 26.86
+  },
+  {
+    "Date": "2-Jun-10",
+    "Close": 26.46
+  },
+  {
+    "Date": "1-Jun-10",
+    "Close": 25.89
+  },
+  {
+    "Date": "28-May-10",
+    "Close": 25.8
+  },
+  {
+    "Date": "27-May-10",
+    "Close": 26
+  },
+  {
+    "Date": "26-May-10",
+    "Close": 25.01
+  },
+  {
+    "Date": "25-May-10",
+    "Close": 26.07
+  },
+  {
+    "Date": "24-May-10",
+    "Close": 26.27
+  },
+  {
+    "Date": "21-May-10",
+    "Close": 26.84
+  },
+  {
+    "Date": "20-May-10",
+    "Close": 27.11
+  },
+  {
+    "Date": "19-May-10",
+    "Close": 28.24
+  },
+  {
+    "Date": "18-May-10",
+    "Close": 28.6
+  },
+  {
+    "Date": "17-May-10",
+    "Close": 28.94
+  },
+  {
+    "Date": "14-May-10",
+    "Close": 28.93
+  },
+  {
+    "Date": "13-May-10",
+    "Close": 29.24
+  },
+  {
+    "Date": "12-May-10",
+    "Close": 29.44
+  },
+  {
+    "Date": "11-May-10",
+    "Close": 28.88
+  },
+  {
+    "Date": "10-May-10",
+    "Close": 28.94
+  },
+  {
+    "Date": "7-May-10",
+    "Close": 28.21
+  },
+  {
+    "Date": "6-May-10",
+    "Close": 28.98
+  },
+  {
+    "Date": "5-May-10",
+    "Close": 29.85
+  },
+  {
+    "Date": "4-May-10",
+    "Close": 30.13
+  },
+  {
+    "Date": "3-May-10",
+    "Close": 30.86
+  },
+  {
+    "Date": "30-Apr-10",
+    "Close": 30.54
+  },
+  {
+    "Date": "29-Apr-10",
+    "Close": 31
+  },
+  {
+    "Date": "28-Apr-10",
+    "Close": 30.91
+  },
+  {
+    "Date": "27-Apr-10",
+    "Close": 30.84
+  },
+  {
+    "Date": "26-Apr-10",
+    "Close": 31.11
+  },
+  {
+    "Date": "23-Apr-10",
+    "Close": 30.96
+  },
+  {
+    "Date": "22-Apr-10",
+    "Close": 31.39
+  },
+  {
+    "Date": "21-Apr-10",
+    "Close": 31.33
+  },
+  {
+    "Date": "20-Apr-10",
+    "Close": 31.36
+  },
+  {
+    "Date": "19-Apr-10",
+    "Close": 31.04
+  },
+  {
+    "Date": "16-Apr-10",
+    "Close": 30.67
+  },
+  {
+    "Date": "15-Apr-10",
+    "Close": 30.87
+  },
+  {
+    "Date": "14-Apr-10",
+    "Close": 30.82
+  },
+  {
+    "Date": "13-Apr-10",
+    "Close": 30.45
+  },
+  {
+    "Date": "12-Apr-10",
+    "Close": 30.32
+  },
+  {
+    "Date": "9-Apr-10",
+    "Close": 30.34
+  },
+  {
+    "Date": "8-Apr-10",
+    "Close": 29.92
+  },
+  {
+    "Date": "7-Apr-10",
+    "Close": 29.35
+  },
+  {
+    "Date": "6-Apr-10",
+    "Close": 29.32
+  },
+  {
+    "Date": "5-Apr-10",
+    "Close": 29.27
+  },
+  {
+    "Date": "31-Mar-10",
+    "Close": 29.29
+  },
+  {
+    "Date": "30-Mar-10",
+    "Close": 29.77
+  },
+  {
+    "Date": "29-Mar-10",
+    "Close": 29.59
+  },
+  {
+    "Date": "26-Mar-10",
+    "Close": 29.66
+  },
+  {
+    "Date": "25-Mar-10",
+    "Close": 30.01
+  },
+  {
+    "Date": "24-Mar-10",
+    "Close": 29.65
+  },
+  {
+    "Date": "23-Mar-10",
+    "Close": 29.88
+  },
+  {
+    "Date": "22-Mar-10",
+    "Close": 29.6
+  },
+  {
+    "Date": "19-Mar-10",
+    "Close": 29.59
+  },
+  {
+    "Date": "18-Mar-10",
+    "Close": 29.61
+  },
+  {
+    "Date": "17-Mar-10",
+    "Close": 29.63
+  },
+  {
+    "Date": "16-Mar-10",
+    "Close": 29.37
+  },
+  {
+    "Date": "15-Mar-10",
+    "Close": 29.29
+  },
+  {
+    "Date": "12-Mar-10",
+    "Close": 29.27
+  },
+  {
+    "Date": "11-Mar-10",
+    "Close": 29.18
+  },
+  {
+    "Date": "10-Mar-10",
+    "Close": 28.97
+  },
+  {
+    "Date": "9-Mar-10",
+    "Close": 28.8
+  },
+  {
+    "Date": "8-Mar-10",
+    "Close": 28.63
+  },
+  {
+    "Date": "5-Mar-10",
+    "Close": 28.59
+  },
+  {
+    "Date": "4-Mar-10",
+    "Close": 28.63
+  },
+  {
+    "Date": "3-Mar-10",
+    "Close": 28.46
+  },
+  {
+    "Date": "2-Mar-10",
+    "Close": 28.46
+  },
+  {
+    "Date": "1-Mar-10",
+    "Close": 29.02
+  },
+  {
+    "Date": "26-Feb-10",
+    "Close": 28.67
+  },
+  {
+    "Date": "25-Feb-10",
+    "Close": 28.6
+  },
+  {
+    "Date": "24-Feb-10",
+    "Close": 28.63
+  },
+  {
+    "Date": "23-Feb-10",
+    "Close": 28.33
+  },
+  {
+    "Date": "22-Feb-10",
+    "Close": 28.73
+  },
+  {
+    "Date": "19-Feb-10",
+    "Close": 28.77
+  },
+  {
+    "Date": "18-Feb-10",
+    "Close": 28.97
+  },
+  {
+    "Date": "17-Feb-10",
+    "Close": 28.59
+  },
+  {
+    "Date": "16-Feb-10",
+    "Close": 28.35
+  },
+  {
+    "Date": "12-Feb-10",
+    "Close": 27.93
+  },
+  {
+    "Date": "11-Feb-10",
+    "Close": 28.12
+  },
+  {
+    "Date": "10-Feb-10",
+    "Close": 27.99
+  },
+  {
+    "Date": "9-Feb-10",
+    "Close": 28.01
+  },
+  {
+    "Date": "8-Feb-10",
+    "Close": 27.72
+  },
+  {
+    "Date": "5-Feb-10",
+    "Close": 28.02
+  },
+  {
+    "Date": "4-Feb-10",
+    "Close": 27.84
+  },
+  {
+    "Date": "3-Feb-10",
+    "Close": 28.63
+  },
+  {
+    "Date": "2-Feb-10",
+    "Close": 28.46
+  },
+  {
+    "Date": "1-Feb-10",
+    "Close": 28.41
+  },
+  {
+    "Date": "29-Jan-10",
+    "Close": 28.18
+  },
+  {
+    "Date": "28-Jan-10",
+    "Close": 29.16
+  },
+  {
+    "Date": "27-Jan-10",
+    "Close": 29.67
+  },
+  {
+    "Date": "26-Jan-10",
+    "Close": 29.5
+  },
+  {
+    "Date": "25-Jan-10",
+    "Close": 29.32
+  },
+  {
+    "Date": "22-Jan-10",
+    "Close": 28.96
+  },
+  {
+    "Date": "21-Jan-10",
+    "Close": 30.01
+  },
+  {
+    "Date": "20-Jan-10",
+    "Close": 30.58
+  },
+  {
+    "Date": "19-Jan-10",
+    "Close": 31.1
+  },
+  {
+    "Date": "15-Jan-10",
+    "Close": 30.86
+  },
+  {
+    "Date": "14-Jan-10",
+    "Close": 30.96
+  },
+  {
+    "Date": "13-Jan-10",
+    "Close": 30.35
+  },
+  {
+    "Date": "12-Jan-10",
+    "Close": 30.07
+  },
+  {
+    "Date": "11-Jan-10",
+    "Close": 30.27
+  },
+  {
+    "Date": "8-Jan-10",
+    "Close": 30.66
+  },
+  {
+    "Date": "7-Jan-10",
+    "Close": 30.45
+  },
+  {
+    "Date": "6-Jan-10",
+    "Close": 30.77
+  },
+  {
+    "Date": "5-Jan-10",
+    "Close": 30.96
+  },
+  {
+    "Date": "4-Jan-10",
+    "Close": 30.95
+  },
+  {
+    "Date": "31-Dec-09",
+    "Close": 30.48
+  },
+  {
+    "Date": "30-Dec-09",
+    "Close": 30.96
+  },
+  {
+    "Date": "29-Dec-09",
+    "Close": 31.39
+  },
+  {
+    "Date": "28-Dec-09",
+    "Close": 31.17
+  },
+  {
+    "Date": "24-Dec-09",
+    "Close": 31
+  },
+  {
+    "Date": "23-Dec-09",
+    "Close": 30.92
+  },
+  {
+    "Date": "22-Dec-09",
+    "Close": 30.82
+  },
+  {
+    "Date": "21-Dec-09",
+    "Close": 30.52
+  },
+  {
+    "Date": "18-Dec-09",
+    "Close": 30.36
+  },
+  {
+    "Date": "17-Dec-09",
+    "Close": 29.6
+  },
+  {
+    "Date": "16-Dec-09",
+    "Close": 30.1
+  },
+  {
+    "Date": "15-Dec-09",
+    "Close": 30.02
+  },
+  {
+    "Date": "14-Dec-09",
+    "Close": 30.11
+  },
+  {
+    "Date": "11-Dec-09",
+    "Close": 29.85
+  },
+  {
+    "Date": "10-Dec-09",
+    "Close": 29.87
+  },
+  {
+    "Date": "9-Dec-09",
+    "Close": 29.71
+  },
+  {
+    "Date": "8-Dec-09",
+    "Close": 29.57
+  },
+  {
+    "Date": "7-Dec-09",
+    "Close": 29.79
+  },
+  {
+    "Date": "4-Dec-09",
+    "Close": 29.98
+  },
+  {
+    "Date": "3-Dec-09",
+    "Close": 29.83
+  },
+  {
+    "Date": "2-Dec-09",
+    "Close": 29.78
+  },
+  {
+    "Date": "1-Dec-09",
+    "Close": 30.01
+  },
+  {
+    "Date": "30-Nov-09",
+    "Close": 29.41
+  },
+  {
+    "Date": "27-Nov-09",
+    "Close": 29.22
+  },
+  {
+    "Date": "25-Nov-09",
+    "Close": 29.79
+  },
+  {
+    "Date": "24-Nov-09",
+    "Close": 29.91
+  },
+  {
+    "Date": "23-Nov-09",
+    "Close": 29.94
+  },
+  {
+    "Date": "20-Nov-09",
+    "Close": 29.62
+  },
+  {
+    "Date": "19-Nov-09",
+    "Close": 29.78
+  },
+  {
+    "Date": "18-Nov-09",
+    "Close": 30.11
+  },
+  {
+    "Date": "17-Nov-09",
+    "Close": 30
+  },
+  {
+    "Date": "16-Nov-09",
+    "Close": 29.54
+  },
+  {
+    "Date": "13-Nov-09",
+    "Close": 29.63
+  },
+  {
+    "Date": "12-Nov-09",
+    "Close": 29.36
+  },
+  {
+    "Date": "11-Nov-09",
+    "Close": 29.12
+  },
+  {
+    "Date": "10-Nov-09",
+    "Close": 29.01
+  },
+  {
+    "Date": "9-Nov-09",
+    "Close": 28.99
+  },
+  {
+    "Date": "6-Nov-09",
+    "Close": 28.52
+  },
+  {
+    "Date": "5-Nov-09",
+    "Close": 28.47
+  },
+  {
+    "Date": "4-Nov-09",
+    "Close": 28.06
+  },
+  {
+    "Date": "3-Nov-09",
+    "Close": 27.53
+  },
+  {
+    "Date": "2-Nov-09",
+    "Close": 27.88
+  },
+  {
+    "Date": "30-Oct-09",
+    "Close": 27.73
+  },
+  {
+    "Date": "29-Oct-09",
+    "Close": 28.22
+  },
+  {
+    "Date": "28-Oct-09",
+    "Close": 28.02
+  },
+  {
+    "Date": "27-Oct-09",
+    "Close": 28.59
+  },
+  {
+    "Date": "26-Oct-09",
+    "Close": 28.68
+  },
+  {
+    "Date": "23-Oct-09",
+    "Close": 28.02
+  },
+  {
+    "Date": "22-Oct-09",
+    "Close": 26.59
+  },
+  {
+    "Date": "21-Oct-09",
+    "Close": 26.58
+  },
+  {
+    "Date": "20-Oct-09",
+    "Close": 26.37
+  },
+  {
+    "Date": "19-Oct-09",
+    "Close": 26.36
+  },
+  {
+    "Date": "16-Oct-09",
+    "Close": 26.5
+  },
+  {
+    "Date": "15-Oct-09",
+    "Close": 26.71
+  },
+  {
+    "Date": "14-Oct-09",
+    "Close": 25.96
+  },
+  {
+    "Date": "13-Oct-09",
+    "Close": 25.81
+  },
+  {
+    "Date": "12-Oct-09",
+    "Close": 25.72
+  },
+  {
+    "Date": "9-Oct-09",
+    "Close": 25.55
+  },
+  {
+    "Date": "8-Oct-09",
+    "Close": 25.67
+  },
+  {
+    "Date": "7-Oct-09",
+    "Close": 25.1
+  },
+  {
+    "Date": "6-Oct-09",
+    "Close": 25.11
+  },
+  {
+    "Date": "5-Oct-09",
+    "Close": 24.64
+  },
+  {
+    "Date": "2-Oct-09",
+    "Close": 24.96
+  },
+  {
+    "Date": "1-Oct-09",
+    "Close": 24.88
+  },
+  {
+    "Date": "30-Sep-09",
+    "Close": 25.72
+  },
+  {
+    "Date": "29-Sep-09",
+    "Close": 25.75
+  },
+  {
+    "Date": "28-Sep-09",
+    "Close": 25.83
+  },
+  {
+    "Date": "25-Sep-09",
+    "Close": 25.55
+  },
+  {
+    "Date": "24-Sep-09",
+    "Close": 25.94
+  },
+  {
+    "Date": "23-Sep-09",
+    "Close": 25.71
+  },
+  {
+    "Date": "22-Sep-09",
+    "Close": 25.77
+  },
+  {
+    "Date": "21-Sep-09",
+    "Close": 25.3
+  },
+  {
+    "Date": "18-Sep-09",
+    "Close": 25.26
+  },
+  {
+    "Date": "17-Sep-09",
+    "Close": 25.3
+  },
+  {
+    "Date": "16-Sep-09",
+    "Close": 25.2
+  },
+  {
+    "Date": "15-Sep-09",
+    "Close": 25.2
+  },
+  {
+    "Date": "14-Sep-09",
+    "Close": 25
+  },
+  {
+    "Date": "11-Sep-09",
+    "Close": 24.86
+  },
+  {
+    "Date": "10-Sep-09",
+    "Close": 25
+  },
+  {
+    "Date": "9-Sep-09",
+    "Close": 24.78
+  },
+  {
+    "Date": "8-Sep-09",
+    "Close": 24.82
+  },
+  {
+    "Date": "4-Sep-09",
+    "Close": 24.62
+  },
+  {
+    "Date": "3-Sep-09",
+    "Close": 24.11
+  },
+  {
+    "Date": "2-Sep-09",
+    "Close": 23.86
+  },
+  {
+    "Date": "1-Sep-09",
+    "Close": 24
+  },
+  {
+    "Date": "31-Aug-09",
+    "Close": 24.65
+  },
+  {
+    "Date": "28-Aug-09",
+    "Close": 24.68
+  },
+  {
+    "Date": "27-Aug-09",
+    "Close": 24.69
+  },
+  {
+    "Date": "26-Aug-09",
+    "Close": 24.55
+  },
+  {
+    "Date": "25-Aug-09",
+    "Close": 24.64
+  },
+  {
+    "Date": "24-Aug-09",
+    "Close": 24.64
+  },
+  {
+    "Date": "21-Aug-09",
+    "Close": 24.41
+  },
+  {
+    "Date": "20-Aug-09",
+    "Close": 23.67
+  },
+  {
+    "Date": "19-Aug-09",
+    "Close": 23.65
+  },
+  {
+    "Date": "18-Aug-09",
+    "Close": 23.58
+  },
+  {
+    "Date": "17-Aug-09",
+    "Close": 23.25
+  },
+  {
+    "Date": "14-Aug-09",
+    "Close": 23.69
+  },
+  {
+    "Date": "13-Aug-09",
+    "Close": 23.62
+  },
+  {
+    "Date": "12-Aug-09",
+    "Close": 23.53
+  },
+  {
+    "Date": "11-Aug-09",
+    "Close": 23.13
+  },
+  {
+    "Date": "10-Aug-09",
+    "Close": 23.42
+  },
+  {
+    "Date": "7-Aug-09",
+    "Close": 23.56
+  },
+  {
+    "Date": "6-Aug-09",
+    "Close": 23.46
+  },
+  {
+    "Date": "5-Aug-09",
+    "Close": 23.81
+  },
+  {
+    "Date": "4-Aug-09",
+    "Close": 23.77
+  },
+  {
+    "Date": "3-Aug-09",
+    "Close": 23.83
+  },
+  {
+    "Date": "31-Jul-09",
+    "Close": 23.52
+  },
+  {
+    "Date": "30-Jul-09",
+    "Close": 23.81
+  },
+  {
+    "Date": "29-Jul-09",
+    "Close": 23.8
+  },
+  {
+    "Date": "28-Jul-09",
+    "Close": 23.47
+  },
+  {
+    "Date": "27-Jul-09",
+    "Close": 23.11
+  },
+  {
+    "Date": "24-Jul-09",
+    "Close": 23.45
+  },
+  {
+    "Date": "23-Jul-09",
+    "Close": 25.56
+  },
+  {
+    "Date": "22-Jul-09",
+    "Close": 24.8
+  },
+  {
+    "Date": "21-Jul-09",
+    "Close": 24.83
+  },
+  {
+    "Date": "20-Jul-09",
+    "Close": 24.53
+  },
+  {
+    "Date": "17-Jul-09",
+    "Close": 24.29
+  },
+  {
+    "Date": "16-Jul-09",
+    "Close": 24.44
+  },
+  {
+    "Date": "15-Jul-09",
+    "Close": 24.12
+  },
+  {
+    "Date": "14-Jul-09",
+    "Close": 23.11
+  },
+  {
+    "Date": "13-Jul-09",
+    "Close": 23.23
+  },
+  {
+    "Date": "10-Jul-09",
+    "Close": 22.39
+  },
+  {
+    "Date": "9-Jul-09",
+    "Close": 22.44
+  },
+  {
+    "Date": "8-Jul-09",
+    "Close": 22.56
+  },
+  {
+    "Date": "7-Jul-09",
+    "Close": 22.53
+  },
+  {
+    "Date": "6-Jul-09",
+    "Close": 23.2
+  },
+  {
+    "Date": "2-Jul-09",
+    "Close": 23.37
+  },
+  {
+    "Date": "1-Jul-09",
+    "Close": 24.04
+  },
+  {
+    "Date": "30-Jun-09",
+    "Close": 23.77
+  },
+  {
+    "Date": "29-Jun-09",
+    "Close": 23.86
+  },
+  {
+    "Date": "26-Jun-09",
+    "Close": 23.35
+  },
+  {
+    "Date": "25-Jun-09",
+    "Close": 23.79
+  },
+  {
+    "Date": "24-Jun-09",
+    "Close": 23.47
+  },
+  {
+    "Date": "23-Jun-09",
+    "Close": 23.34
+  },
+  {
+    "Date": "22-Jun-09",
+    "Close": 23.28
+  },
+  {
+    "Date": "19-Jun-09",
+    "Close": 24.07
+  },
+  {
+    "Date": "18-Jun-09",
+    "Close": 23.5
+  },
+  {
+    "Date": "17-Jun-09",
+    "Close": 23.68
+  },
+  {
+    "Date": "16-Jun-09",
+    "Close": 23.45
+  },
+  {
+    "Date": "15-Jun-09",
+    "Close": 23.42
+  },
+  {
+    "Date": "12-Jun-09",
+    "Close": 23.33
+  },
+  {
+    "Date": "11-Jun-09",
+    "Close": 22.83
+  },
+  {
+    "Date": "10-Jun-09",
+    "Close": 22.55
+  },
+  {
+    "Date": "9-Jun-09",
+    "Close": 22.08
+  },
+  {
+    "Date": "8-Jun-09",
+    "Close": 22.05
+  },
+  {
+    "Date": "5-Jun-09",
+    "Close": 22.14
+  },
+  {
+    "Date": "4-Jun-09",
+    "Close": 21.83
+  },
+  {
+    "Date": "3-Jun-09",
+    "Close": 21.73
+  },
+  {
+    "Date": "2-Jun-09",
+    "Close": 21.4
+  },
+  {
+    "Date": "1-Jun-09",
+    "Close": 21.4
+  },
+  {
+    "Date": "29-May-09",
+    "Close": 20.89
+  },
+  {
+    "Date": "28-May-09",
+    "Close": 20.45
+  },
+  {
+    "Date": "27-May-09",
+    "Close": 20.13
+  },
+  {
+    "Date": "26-May-09",
+    "Close": 20.34
+  },
+  {
+    "Date": "22-May-09",
+    "Close": 19.75
+  },
+  {
+    "Date": "21-May-09",
+    "Close": 19.82
+  },
+  {
+    "Date": "20-May-09",
+    "Close": 20.38
+  },
+  {
+    "Date": "19-May-09",
+    "Close": 20.31
+  },
+  {
+    "Date": "18-May-09",
+    "Close": 20.6
+  },
+  {
+    "Date": "15-May-09",
+    "Close": 20.22
+  },
+  {
+    "Date": "14-May-09",
+    "Close": 20.06
+  },
+  {
+    "Date": "13-May-09",
+    "Close": 19.75
+  },
+  {
+    "Date": "12-May-09",
+    "Close": 19.89
+  },
+  {
+    "Date": "11-May-09",
+    "Close": 19.32
+  },
+  {
+    "Date": "8-May-09",
+    "Close": 19.42
+  },
+  {
+    "Date": "7-May-09",
+    "Close": 19.32
+  },
+  {
+    "Date": "6-May-09",
+    "Close": 19.79
+  },
+  {
+    "Date": "5-May-09",
+    "Close": 19.79
+  },
+  {
+    "Date": "4-May-09",
+    "Close": 20.19
+  },
+  {
+    "Date": "1-May-09",
+    "Close": 20.24
+  },
+  {
+    "Date": "30-Apr-09",
+    "Close": 20.26
+  },
+  {
+    "Date": "29-Apr-09",
+    "Close": 20.25
+  },
+  {
+    "Date": "28-Apr-09",
+    "Close": 19.93
+  },
+  {
+    "Date": "27-Apr-09",
+    "Close": 20.4
+  },
+  {
+    "Date": "24-Apr-09",
+    "Close": 20.91
+  },
+  {
+    "Date": "23-Apr-09",
+    "Close": 18.92
+  },
+  {
+    "Date": "22-Apr-09",
+    "Close": 18.78
+  },
+  {
+    "Date": "21-Apr-09",
+    "Close": 18.97
+  },
+  {
+    "Date": "20-Apr-09",
+    "Close": 18.61
+  },
+  {
+    "Date": "17-Apr-09",
+    "Close": 19.2
+  },
+  {
+    "Date": "16-Apr-09",
+    "Close": 19.76
+  },
+  {
+    "Date": "15-Apr-09",
+    "Close": 18.83
+  },
+  {
+    "Date": "14-Apr-09",
+    "Close": 19.35
+  },
+  {
+    "Date": "13-Apr-09",
+    "Close": 19.59
+  },
+  {
+    "Date": "9-Apr-09",
+    "Close": 19.67
+  },
+  {
+    "Date": "8-Apr-09",
+    "Close": 19.19
+  },
+  {
+    "Date": "7-Apr-09",
+    "Close": 18.76
+  },
+  {
+    "Date": "6-Apr-09",
+    "Close": 18.76
+  },
+  {
+    "Date": "3-Apr-09",
+    "Close": 18.75
+  },
+  {
+    "Date": "2-Apr-09",
+    "Close": 19.29
+  },
+  {
+    "Date": "1-Apr-09",
+    "Close": 19.31
+  },
+  {
+    "Date": "31-Mar-09",
+    "Close": 18.37
+  },
+  {
+    "Date": "30-Mar-09",
+    "Close": 17.48
+  },
+  {
+    "Date": "27-Mar-09",
+    "Close": 18.13
+  },
+  {
+    "Date": "26-Mar-09",
+    "Close": 18.83
+  },
+  {
+    "Date": "25-Mar-09",
+    "Close": 17.88
+  },
+  {
+    "Date": "24-Mar-09",
+    "Close": 17.93
+  },
+  {
+    "Date": "23-Mar-09",
+    "Close": 18.33
+  },
+  {
+    "Date": "20-Mar-09",
+    "Close": 17.06
+  },
+  {
+    "Date": "19-Mar-09",
+    "Close": 17.14
+  },
+  {
+    "Date": "18-Mar-09",
+    "Close": 16.96
+  },
+  {
+    "Date": "17-Mar-09",
+    "Close": 16.9
+  },
+  {
+    "Date": "16-Mar-09",
+    "Close": 16.25
+  },
+  {
+    "Date": "13-Mar-09",
+    "Close": 16.65
+  },
+  {
+    "Date": "12-Mar-09",
+    "Close": 17.01
+  },
+  {
+    "Date": "11-Mar-09",
+    "Close": 17.11
+  },
+  {
+    "Date": "10-Mar-09",
+    "Close": 16.48
+  },
+  {
+    "Date": "9-Mar-09",
+    "Close": 15.15
+  },
+  {
+    "Date": "6-Mar-09",
+    "Close": 15.28
+  },
+  {
+    "Date": "5-Mar-09",
+    "Close": 15.27
+  },
+  {
+    "Date": "4-Mar-09",
+    "Close": 16.12
+  },
+  {
+    "Date": "3-Mar-09",
+    "Close": 15.88
+  },
+  {
+    "Date": "2-Mar-09",
+    "Close": 15.79
+  },
+  {
+    "Date": "27-Feb-09",
+    "Close": 16.15
+  },
+  {
+    "Date": "26-Feb-09",
+    "Close": 16.42
+  },
+  {
+    "Date": "25-Feb-09",
+    "Close": 16.96
+  },
+  {
+    "Date": "24-Feb-09",
+    "Close": 17.17
+  },
+  {
+    "Date": "23-Feb-09",
+    "Close": 17.21
+  },
+  {
+    "Date": "20-Feb-09",
+    "Close": 18
+  },
+  {
+    "Date": "19-Feb-09",
+    "Close": 17.91
+  },
+  {
+    "Date": "18-Feb-09",
+    "Close": 18.12
+  },
+  {
+    "Date": "17-Feb-09",
+    "Close": 18.09
+  },
+  {
+    "Date": "13-Feb-09",
+    "Close": 19.09
+  },
+  {
+    "Date": "12-Feb-09",
+    "Close": 19.26
+  },
+  {
+    "Date": "11-Feb-09",
+    "Close": 19.21
+  },
+  {
+    "Date": "10-Feb-09",
+    "Close": 18.8
+  },
+  {
+    "Date": "9-Feb-09",
+    "Close": 19.44
+  },
+  {
+    "Date": "6-Feb-09",
+    "Close": 19.66
+  },
+  {
+    "Date": "5-Feb-09",
+    "Close": 19.04
+  },
+  {
+    "Date": "4-Feb-09",
+    "Close": 18.63
+  },
+  {
+    "Date": "3-Feb-09",
+    "Close": 18.5
+  },
+  {
+    "Date": "2-Feb-09",
+    "Close": 17.83
+  },
+  {
+    "Date": "30-Jan-09",
+    "Close": 17.1
+  },
+  {
+    "Date": "29-Jan-09",
+    "Close": 17.59
+  },
+  {
+    "Date": "28-Jan-09",
+    "Close": 18.04
+  },
+  {
+    "Date": "27-Jan-09",
+    "Close": 17.66
+  },
+  {
+    "Date": "26-Jan-09",
+    "Close": 17.63
+  },
+  {
+    "Date": "23-Jan-09",
+    "Close": 17.2
+  },
+  {
+    "Date": "22-Jan-09",
+    "Close": 17.11
+  },
+  {
+    "Date": "21-Jan-09",
+    "Close": 19.38
+  },
+  {
+    "Date": "20-Jan-09",
+    "Close": 18.48
+  },
+  {
+    "Date": "16-Jan-09",
+    "Close": 19.71
+  },
+  {
+    "Date": "15-Jan-09",
+    "Close": 19.24
+  },
+  {
+    "Date": "14-Jan-09",
+    "Close": 19.09
+  },
+  {
+    "Date": "13-Jan-09",
+    "Close": 19.82
+  },
+  {
+    "Date": "12-Jan-09",
+    "Close": 19.47
+  },
+  {
+    "Date": "9-Jan-09",
+    "Close": 19.52
+  },
+  {
+    "Date": "8-Jan-09",
+    "Close": 20.12
+  },
+  {
+    "Date": "7-Jan-09",
+    "Close": 19.51
+  },
+  {
+    "Date": "6-Jan-09",
+    "Close": 20.76
+  },
+  {
+    "Date": "5-Jan-09",
+    "Close": 20.52
+  },
+  {
+    "Date": "2-Jan-09",
+    "Close": 20.33
+  }
+]

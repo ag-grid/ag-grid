@@ -26,7 +26,7 @@ function navigateToNextCell(params) {
     var KEY_UP = 38;
     var KEY_DOWN = 40;
 
-    var noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
+    var noUpOrDownKeyPressed = params.key !== KEY_DOWN && params.key !== KEY_UP;
     if (noUpOrDownKeyPressed) {
         return suggestedNextCell;
     }
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

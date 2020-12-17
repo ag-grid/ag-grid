@@ -24,8 +24,8 @@ function onBtNormal() {
     gridOptions.columnApi.setPivotMode(false);
     gridOptions.columnApi.applyColumnState({
         state: [
-            {colId: 'country', rowGroup: true},
-            {colId: 'year', rowGroup: true}
+            { colId: 'country', rowGroup: true },
+            { colId: 'year', rowGroup: true }
         ],
         defaultState: {
             pivot: false,
@@ -38,8 +38,8 @@ function onBtPivotMode() {
     gridOptions.columnApi.setPivotMode(true);
     gridOptions.columnApi.applyColumnState({
         state: [
-            {colId: 'country', rowGroup: true},
-            {colId: 'year', rowGroup: true}
+            { colId: 'country', rowGroup: true },
+            { colId: 'year', rowGroup: true }
         ],
         defaultState: {
             pivot: false,
@@ -52,8 +52,8 @@ function onBtFullPivot() {
     gridOptions.columnApi.setPivotMode(true);
     gridOptions.columnApi.applyColumnState({
         state: [
-            {colId: 'country', rowGroup: true},
-            {colId: 'year', pivot: true}
+            { colId: 'country', rowGroup: true },
+            { colId: 'year', pivot: true }
         ],
         defaultState: {
             pivot: false,
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

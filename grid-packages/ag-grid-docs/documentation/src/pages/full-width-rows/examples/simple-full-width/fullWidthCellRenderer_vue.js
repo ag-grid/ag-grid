@@ -26,7 +26,7 @@ export default Vue.extend({
                 </div>
             </div>
     `,
-    data: function () {
+    data: function() {
         return {
             maxValue: 0,
             currentValue: 0,
@@ -35,7 +35,7 @@ export default Vue.extend({
     },
     beforeMount() {
         this.maxValue = this.params.maxValue;
-        this.imgSrc = `https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/largeFlags/${this.params.node.data.code}.png`;
+        this.imgSrc = `https://www.ag-grid.com/example-assets/large-flags/${this.params.node.data.code}.png`;
     },
     mounted() {
     },

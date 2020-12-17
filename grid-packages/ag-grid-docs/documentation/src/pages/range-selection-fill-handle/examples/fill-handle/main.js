@@ -21,7 +21,7 @@ var gridOptions = {
 };
 
 function fillHandleAxis(direction) {
-    // call Array slice because IE querySelectorAll returns an 
+    // call Array slice because IE querySelectorAll returns an
     // Array like object that doesn't support forEach
     var buttons = Array.prototype.slice.call(document.querySelectorAll('.ag-fill-direction'));
     var button = document.querySelector('.ag-fill-direction.' + direction);
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

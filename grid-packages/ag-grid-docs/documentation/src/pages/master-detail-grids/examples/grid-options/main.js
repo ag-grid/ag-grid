@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/simple/data/data.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/master-detail-data.json' }).then(function(data) {
         gridOptions.api.setRowData(data);
     });
 });

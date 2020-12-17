@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/monthlySales.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/monthly-sales.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

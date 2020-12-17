@@ -5,7 +5,7 @@ var myIcons = {
     sortDescending: function() {
         return 'DESC';
     }
-}
+};
 
 var columnDefs = [
     {
@@ -78,8 +78,8 @@ var gridOptions = {
         sortAscending: '<i class="fa fa-long-arrow-alt-down"/>',
         sortDescending: '<i class="fa fa-long-arrow-alt-up"/>',
         // use some strings from group
-        groupExpanded: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-icons/minus.png" style="height: 12px; width: 12px;padding-right: 2px"/>',
-        groupContracted: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-icons/plus.png" style="height: 12px; width: 12px;padding-right: 2px"/>',
+        groupExpanded: '<img src="https://www.ag-grid.com/example-assets/group/contract.png" style="height: 12px; width: 12px;padding-right: 2px"/>',
+        groupContracted: '<img src="https://www.ag-grid.com/example-assets/group/expand.png" style="height: 12px; width: 12px;padding-right: 2px"/>',
         columnMovePin: '<i class="far fa-hand-rock"/>',
         columnMoveAdd: '<i class="fa fa-plus-square"/>',
         columnMoveHide: '<i class="fa fa-times"/>',
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

@@ -74,7 +74,7 @@ export default class extends Component {
     onGridReady(params) {
         this.topGrid = params;
         var httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
+        httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
         httpRequest.send();
         httpRequest.onreadystatechange = function() {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {

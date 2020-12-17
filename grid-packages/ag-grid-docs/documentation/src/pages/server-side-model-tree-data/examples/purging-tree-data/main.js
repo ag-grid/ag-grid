@@ -1,8 +1,8 @@
 var columnDefs = [
-    {field: "employeeId", hide: true},
-    {field: "employeeName", hide: true},
-    {field: "employmentType"},
-    {field: "startDate"},
+    { field: "employeeId", hide: true },
+    { field: "employeeName", hide: true },
+    { field: "employmentType" },
+    { field: "startDate" },
 ];
 
 var gridOptions = {
@@ -21,21 +21,21 @@ var gridOptions = {
     rowSelection: 'multiple',
     animateRows: true,
     cacheBlockSize: 10,
-    isServerSideGroup: function (dataItem) {
+    isServerSideGroup: function(dataItem) {
         // indicate if node is a group
         return dataItem.group;
     },
-    getServerSideGroupKey: function (dataItem) {
+    getServerSideGroupKey: function(dataItem) {
         // specify which group key to use
         return dataItem.employeeName;
     },
-    onGridReady: function (params) {
+    onGridReady: function(params) {
         // initialise with the first 2 groups arbitrarily expanded
-        setTimeout(function () {
+        setTimeout(function() {
             // expands first node
             params.api.getDisplayedRowAtIndex(0).setExpanded(true);
         }, 1000);
-        setTimeout(function () {
+        setTimeout(function() {
             // expands second node
             params.api.getDisplayedRowAtIndex(1).setExpanded(true);
         }, 2000);
@@ -43,15 +43,15 @@ var gridOptions = {
 };
 
 function refreshCache(route) {
-    gridOptions.api.refreshServerSideStore({route: route, purge: true});
+    gridOptions.api.refreshServerSideStore({ route: route, purge: true });
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-server-side-model-tree-data/purging-tree-data/data/data.json'}).then(function (data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/tree-data.json' }).then(function(data) {
         var fakeServer = createFakeServer(data);
         var datasource = createServerSideDatasource(fakeServer);
         gridOptions.api.setServerSideDatasource(datasource);
@@ -63,7 +63,7 @@ function createFakeServer(data) {
         this.data = allData;
     }
 
-    FakeServer.prototype.getData = function (request) {
+    FakeServer.prototype.getData = function(request) {
         function extractRowsFromData(groupKeys, data) {
             if (groupKeys.length === 0) {
                 return data.map(function(d) {
@@ -73,7 +73,7 @@ function createFakeServer(data) {
                         employeeName: d.employeeName,
                         employmentType: d.employmentType,
                         startDate: d.startDate
-                    }
+                    };
                 });
             }
 
@@ -88,7 +88,7 @@ function createFakeServer(data) {
         return extractRowsFromData(request.groupKeys, this.data);
     };
 
-    return new FakeServer(data)
+    return new FakeServer(data);
 }
 
 function createServerSideDatasource(fakeServer) {
@@ -96,16 +96,16 @@ function createServerSideDatasource(fakeServer) {
         this.fakeServer = fakeServer;
     }
 
-    ServerSideDatasource.prototype.getRows = function (params) {
+    ServerSideDatasource.prototype.getRows = function(params) {
         console.log('ServerSideDatasource.getRows: params = ', params);
         var request = params.request;
         var allRows = this.fakeServer.getData(request);
         var doingInfinite = request.startRow != null && request.endRow != null;
         var result = doingInfinite ?
-            {rowData: allRows.slice(request.startRow, request.endRow), rowCount: allRows.length} :
-            {rowData: allRows};
+            { rowData: allRows.slice(request.startRow, request.endRow), rowCount: allRows.length } :
+            { rowData: allRows };
         console.log('getRows: result = ', result);
-        setTimeout(function () {
+        setTimeout(function() {
             params.success(result);
         }, 500);
     };

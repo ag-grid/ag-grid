@@ -73,11 +73,11 @@ document.addEventListener('DOMContentLoaded', function() {
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid
-        .simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'})
+        .simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             // only return data that has corresponding country codes
             var dataWithFlags = data.filter(function(d) {
-                return COUNTRY_CODES[d.country]
+                return COUNTRY_CODES[d.country];
             });
 
             gridOptions.api.setRowData(dataWithFlags);

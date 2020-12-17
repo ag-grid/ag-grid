@@ -42,7 +42,7 @@ var gridOptions = {
 function onFirstDataRendered(params) {
     // expand the first two rows
     setTimeout(function() {
-        params.api.forEachNode( function(node) {
+        params.api.forEachNode(function(node) {
             node.setExpanded(true);
         });
     }, 0);
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/cell-editing/data/data.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/master-detail-data.json' }).then(function(data) {
         gridOptions.api.setRowData(data);
     });
 });

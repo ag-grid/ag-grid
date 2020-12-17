@@ -1,33 +1,33 @@
 'use strict';
 
-import React, {useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
+import React, { useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridColumn, AgGridReact } from '@ag-grid-community/react';
 
-import {AllCommunityModules} from "@ag-grid-community/all-modules";
+import { AllCommunityModules } from "@ag-grid-community/all-modules";
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 const colDefsMedalsIncluded = [
-    {field: 'athlete'},
-    {field: 'age'},
-    {field: 'country'},
-    {field: 'sport'},
-    {field: 'year'},
-    {field: 'date'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'}
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'sport' },
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' }
 ];
 
 const colDefsMedalsExcluded = [
-    {field: 'athlete'},
-    {field: 'age'},
-    {field: 'country'},
-    {field: 'sport'},
-    {field: 'year'},
-    {field: 'date'}
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'sport' },
+    { field: 'year' },
+    { field: 'date' }
 ];
 
 const GridExample = () => {
@@ -36,7 +36,7 @@ const GridExample = () => {
 
     const onGridReady = (params) => {
         const httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
+        httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
         httpRequest.send();
         httpRequest.onreadystatechange = () => {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
@@ -54,7 +54,7 @@ const GridExample = () => {
     };
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div className="test-container">
                 <div className="test-header">
                     <button onClick={onBtExcludeMedalColumns}>Exclude Medal Columns</button>
@@ -74,7 +74,7 @@ const GridExample = () => {
                                 sortable: true,
                                 resizable: true
                             }}>
-                            {columns.map(column => (<AgGridColumn {...column} key={column.field}/>))}
+                            {columns.map(column => (<AgGridColumn {...column} key={column.field} />))}
                         </AgGridReact>
                     </div>
                 </div>
@@ -84,6 +84,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample/>,
+    <GridExample />,
     document.querySelector('#root')
 );

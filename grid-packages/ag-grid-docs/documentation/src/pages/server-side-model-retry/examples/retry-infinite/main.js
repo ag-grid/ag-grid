@@ -49,7 +49,7 @@ function ServerSideDatasource(server) {
             setTimeout(function() {
                 if (response.success) {
                     // call the success callback
-                    params.success({rowData: response.rows, rowCount: response.lastRow});
+                    params.success({ rowData: response.rows, rowCount: response.lastRow });
                 } else {
                     // inform the grid request failed
                     params.fail();
@@ -64,7 +64,7 @@ function onBtRetry() {
 }
 
 function onBtReset() {
-    gridOptions.api.refreshServerSideStore({purge: true});
+    gridOptions.api.refreshServerSideStore({ purge: true });
 }
 
 
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
         // setup the fake server with entire dataset
         var fakeServer = new FakeServer(data);
 

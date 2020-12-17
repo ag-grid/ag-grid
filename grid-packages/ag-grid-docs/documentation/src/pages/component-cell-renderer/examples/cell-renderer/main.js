@@ -2,7 +2,7 @@ function createImageSpan(imageMultiplier, image) {
     var resultElement = document.createElement("span");
     for (var i = 0; i < imageMultiplier; i++) {
         var imageElement = document.createElement("img");
-        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/" + image;
+        imageElement.src = "https://www.ag-grid.com/example-assets/weather/" + image;
         resultElement.appendChild(imageElement);
     }
     return resultElement;
@@ -30,9 +30,9 @@ function deltaIndicator(params) {
 
     // visually indicate if this months value is higher or lower than last months value
     if (params.value > 15) {
-        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/fire-plus.png";
+        imageElement.src = "https://www.ag-grid.com/example-assets/weather/fire-plus.png";
     } else {
-        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/fire-minus.png";
+        imageElement.src = "https://www.ag-grid.com/example-assets/weather/fire-minus.png";
     }
     element.appendChild(imageElement);
     element.appendChild(document.createTextNode(params.value));
@@ -54,7 +54,7 @@ DaysFrostRenderer.prototype.updateImages = function() {
     var daysFrost = this.value;
     for (var i = 0; i < daysFrost; i++) {
         var imageElement = document.createElement("img");
-        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/" + this.rendererImage;
+        imageElement.src = "https://www.ag-grid.com/example-assets/weather/" + this.rendererImage;
         this.eGui.appendChild(imageElement);
     }
 };
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/weather_se_england.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/weather-se-england.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

@@ -25,7 +25,7 @@ const GridExample = () => {
 
     const onGridReady = (params) => {
         const httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
+        httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
         httpRequest.send();
         httpRequest.onreadystatechange = () => {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {

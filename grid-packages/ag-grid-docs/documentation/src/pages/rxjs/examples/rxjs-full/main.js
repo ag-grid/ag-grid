@@ -50,7 +50,7 @@ var gridOptions = {
         var mockServer = createMockServer(),
             initialLoad$ = mockServer.initialLoad(),
             updates$ = mockServer.allDataUpdates();
-        
+
         initialLoad$.subscribe(function(rowData) {
             // the initial full set of data
             // note that we don't need to un-subscribe here as it's a one off data load
@@ -76,12 +76,12 @@ function createMockServer() {
     }
 
     // provides the initial (or current state) of the data
-    MockServer.prototype.initialLoad = function () {
+    MockServer.prototype.initialLoad = function() {
         return Rx.Observable.fromPromise(new Promise((resolve, reject) => {
             // do http request to get our sample data - not using any framework to keep the example self contained.
             // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
             let httpRequest = new XMLHttpRequest();
-            httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/stocks.json');
+            httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/stocks.json');
             httpRequest.send();
             httpRequest.onreadystatechange = () => {
                 if (httpRequest.readyState === 4 && httpRequest.status === 200) {
@@ -113,7 +113,7 @@ function createMockServer() {
                 observer.next(changes);
             }, 1000);
 
-            return function() { window.clearInterval(interval); }
+            return function() { window.clearInterval(interval); };
         });
     };
 
@@ -135,7 +135,7 @@ function createMockServer() {
                 observer.next(_.cloneDeep(that.rowData));
             }, 1000);
 
-            return function() { window.clearInterval(interval); }
+            return function() { window.clearInterval(interval); };
         });
     };
 

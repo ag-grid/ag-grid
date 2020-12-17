@@ -1,8 +1,8 @@
 var columnDefs = [
-    {field: "employeeId", hide: true},
-    {field: "employeeName", hide: true},
-    {field: "jobTitle"},
-    {field: "employmentType"}
+    { field: "employeeId", hide: true },
+    { field: "employeeName", hide: true },
+    { field: "jobTitle" },
+    { field: "employmentType" }
 ];
 
 var gridOptions = {
@@ -14,7 +14,7 @@ var gridOptions = {
     autoGroupColumnDef: {
         field: 'employeeName',
         cellRendererParams: {
-            innerRenderer: function (params) {
+            innerRenderer: function(params) {
                 // display employeeName rather than group key (employeeId)
                 return params.data.employeeName;
             }
@@ -25,21 +25,21 @@ var gridOptions = {
     treeData: true,
     columnDefs: columnDefs,
     animateRows: true,
-    isServerSideGroup: function (dataItem) {
+    isServerSideGroup: function(dataItem) {
         // indicate if node is a group
         return dataItem.group;
     },
-    getServerSideGroupKey: function (dataItem) {
+    getServerSideGroupKey: function(dataItem) {
         // specify which group key to use
         return dataItem.employeeId;
     },
 
-    onGridReady: function (params) {
+    onGridReady: function(params) {
         // initialise with the first group arbitrarily expanded
-        setTimeout(function () {
+        setTimeout(function() {
             params.api.getDisplayedRowAtIndex(0).setExpanded(true);
         }, 1500);
-        setTimeout(function () {
+        setTimeout(function() {
             // expands second node
             params.api.getDisplayedRowAtIndex(1).setExpanded(true);
         }, 2000);
@@ -47,11 +47,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-server-side-model-tree-data/tree-data/data/data.json'}).then(function (data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/small-tree-data.json' }).then(function(data) {
         var fakeServer = createFakeServer(data);
         var datasource = createServerSideDatasource(fakeServer);
         gridOptions.api.setServerSideDatasource(datasource);
@@ -63,7 +63,7 @@ function createFakeServer(fakeServerData) {
         this.data = allData;
     }
 
-    FakeServer.prototype.getData = function (request) {
+    FakeServer.prototype.getData = function(request) {
         function extractRowsFromData(groupKeys, data) {
             if (groupKeys.length === 0) {
                 return data.map(function(d) {
@@ -73,7 +73,7 @@ function createFakeServer(fakeServerData) {
                         employeeName: d.employeeName,
                         employmentType: d.employmentType,
                         jobTitle: d.jobTitle
-                    }
+                    };
                 });
             }
 
@@ -87,8 +87,8 @@ function createFakeServer(fakeServerData) {
 
         return extractRowsFromData(request.groupKeys, this.data);
     };
-    
-    return new FakeServer(fakeServerData)
+
+    return new FakeServer(fakeServerData);
 }
 
 function createServerSideDatasource(fakeServer) {
@@ -96,7 +96,7 @@ function createServerSideDatasource(fakeServer) {
         this.fakeServer = fakeServer;
     }
 
-    ServerSideDatasource.prototype.getRows = function (params) {
+    ServerSideDatasource.prototype.getRows = function(params) {
         console.log('ServerSideDatasource.getRows: params = ', params);
 
         var allRows = this.fakeServer.getData(params.request);
@@ -104,10 +104,10 @@ function createServerSideDatasource(fakeServer) {
         var request = params.request;
         var doingInfinite = request.startRow != null && request.endRow != null;
         var result = doingInfinite ?
-            {rowData: allRows.slice(request.startRow, request.endRow), rowCount: allRows.length} :
-            {rowData: allRows};
+            { rowData: allRows.slice(request.startRow, request.endRow), rowCount: allRows.length } :
+            { rowData: allRows };
         console.log('getRows: result = ', result);
-        setTimeout(function () {
+        setTimeout(function() {
             params.success(result);
         }, 200);
     };
