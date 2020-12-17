@@ -192,8 +192,10 @@ html {
         font-size: 1.3rem;
 
         &.before {
-            top: 0.4rem;
-            padding-right: 6px;
+            height: 100%;
+            width: 1.5rem;
+            display: flex;
+            align-items: center;
         }
     }
 }
