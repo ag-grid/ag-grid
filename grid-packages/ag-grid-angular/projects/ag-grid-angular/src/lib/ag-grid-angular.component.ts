@@ -123,9 +123,17 @@ export class AgGridAngular implements AfterViewInit {
         }
     }
 
+    // we'll emit the emit if a user is listening for a given event either on the component via normal angular binding
+    // or via gridOptions
     protected isEmitterUsed(eventType: string): boolean {
         const emitter = <EventEmitter<any>>(<any>this)[eventType];
-        return !!emitter && emitter.observers && emitter.observers.length > 0;
+        const hasEmitter = !!emitter && emitter.observers && emitter.observers.length > 0;
+
+        // gridReady => onGridReady
+        const asEventName = `on${eventType.charAt(0).toUpperCase()}${eventType.substring(1)}`
+        const hasGridOptionListener = !!this.gridOptions && !!this.gridOptions[asEventName];
+
+        return hasEmitter || hasGridOptionListener;
     }
 
     private globalEventListener(eventType: string, event: any): void {
