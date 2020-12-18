@@ -40450,7 +40450,7 @@ var SortListener = /** @class */ (function (_super) {
     };
     SortListener.prototype.replaceAutoGroupColumnWithActualRowGroupColumns = function (sortModel) {
         // find index of auto group column in sort model
-        var autoGroupSortModel = sortModel.find(function (sm) { return sm.colId == agGridCommunity.Constants.GROUP_AUTO_COLUMN_ID; });
+        var autoGroupSortModel = agGridCommunity._.find(sortModel, function (sm) { return sm.colId == agGridCommunity.Constants.GROUP_AUTO_COLUMN_ID; });
         // replace auto column with individual group columns
         if (autoGroupSortModel) {
             // remove auto group column
@@ -41650,7 +41650,7 @@ var FullStore = /** @class */ (function (_super) {
         }
         this.createOrRecycleNodes(nodesToRecycle, params.rowData);
         if (nodesToRecycle) {
-            this.blockUtils.destroyRowNodes(Object.values(nodesToRecycle));
+            this.blockUtils.destroyRowNodes(agGridCommunity._.getAllValuesInObject(nodesToRecycle));
         }
         this.filterAndSortNodes();
         this.fireStoreUpdatedEvent();

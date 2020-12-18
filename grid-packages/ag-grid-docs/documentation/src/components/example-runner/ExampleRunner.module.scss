@@ -14,11 +14,18 @@
     }
 
     &__title {
-        flex: 1;
+        display: flex;
+        flex: 1 1 0px;
+        align-items: center;
         font-weight: bold;
         color: $light !important;
         line-height: 2rem;
         font-size: 1rem;
+
+        > svg {
+            height: 1rem;
+            width: 1rem;
+        }
     }
 
     &__import-type,

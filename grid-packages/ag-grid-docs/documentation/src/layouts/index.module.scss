@@ -8,6 +8,11 @@ html {
     overflow-x: hidden;
 }
 
+main {
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+
 .main-container {
     composes: container-fluid p-0 d-flex flex-column from global;
     -webkit-font-smoothing: antialiased;
@@ -192,8 +197,10 @@ html {
         font-size: 1.3rem;
 
         &.before {
-            top: 0.4rem;
-            padding-right: 6px;
+            height: 100%;
+            width: 1.5rem;
+            display: flex;
+            align-items: center;
         }
     }
 }

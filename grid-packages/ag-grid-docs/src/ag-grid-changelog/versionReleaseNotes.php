@@ -5,10 +5,7 @@
 
     <ul>
         <li>
-            AG-4787 - Integrated Charts Cross Filtering (see <a href="https://www.ag-grid.com/documentation/javascript/integrated-charts-cross-filtering/">Cross Filtering</a>)
-        </li>
-        <li>
-            AG-AG-2837 - Major Server-side Row Model improvements including:
+            AG-2837 - Major Server-side Row Model enhancements including:
             <ul>
                 <li>
                     Full CRUD support via Transactions, including Asynchronous Transactions for
@@ -35,6 +32,9 @@
             </ul>
             As the changes to SSRM are major, we recommend SSRM users to review the
             <a href="https://www.ag-grid.com/documentation/javascript/server-side-model/">SSRM documentation</a>.
+        </li>
+        <li>
+            AG-4787 - Integrated Charts Cross Filtering (see <a href="https://www.ag-grid.com/documentation/javascript/integrated-charts-cross-filtering/">Cross Filtering</a>)
         </li>
         <li>
             AG-4600 - Clipboard performance improvement, as grid now uses native Clipboard API.

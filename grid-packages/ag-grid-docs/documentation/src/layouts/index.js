@@ -51,7 +51,7 @@ export const Layout = ({ path, children, pageContext: { frameworks, framework = 
                 <aside className={`${styles['main-menu']}`}>
                     <Menu currentFramework={framework} currentPage={pageName} />
                 </aside>
-                <main className={styles['content']}>
+                <main is="div" className={styles['content']}>
                     {children}
                 </main>
             </div>

@@ -3108,6 +3108,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "copyPropertiesIfPresent", function() { return copyPropertiesIfPresent; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "copyPropertyIfPresent", function() { return copyPropertyIfPresent; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAllKeysInObjects", function() { return getAllKeysInObjects; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAllValuesInObject", function() { return getAllValuesInObject; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mergeDeep", function() { return mergeDeep; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assign", function() { return assign; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "missingOrEmptyObject", function() { return missingOrEmptyObject; });
@@ -3213,6 +3214,21 @@ function getAllKeysInObjects(objects) {
         Object(_array__WEBPACK_IMPORTED_MODULE_1__["forEach"])(Object.keys(obj), function (key) { return allValues[key] = null; });
     });
     return Object.keys(allValues);
+}
+function getAllValuesInObject(obj) {
+    if (!obj) {
+        return [];
+    }
+    if (typeof Object.values === 'function') {
+        return Object.values(obj);
+    }
+    var ret = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && obj.propertyIsEnumerable(key)) {
+            ret.push(obj[key]);
+        }
+    }
+    return ret;
 }
 function mergeDeep(dest, source, copyUndefined, makeCopyOfSimpleObjects) {
     if (copyUndefined === void 0) { copyUndefined = true; }

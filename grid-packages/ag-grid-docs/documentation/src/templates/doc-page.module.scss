@@ -23,7 +23,7 @@
 
     @include media-breakpoint-up(xl) {
         &:not(&--with-side-menu) {
-            margin-right: calc(300px + 3rem);
+            margin-right: 1rem;
         }
     }
 

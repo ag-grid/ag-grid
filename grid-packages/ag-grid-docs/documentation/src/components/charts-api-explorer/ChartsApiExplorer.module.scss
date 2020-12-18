@@ -1,7 +1,7 @@
 .explorer-container {
     composes: pt-1 from global;
 
-    height: calc(100vh - 310px);
+    height: calc(100vh - 210px);
     border: solid 1px lighten($secondary, 40%);
     border-radius: 5px;
     display: flex;

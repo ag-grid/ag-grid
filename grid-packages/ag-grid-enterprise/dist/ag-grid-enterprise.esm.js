@@ -584,6 +584,21 @@ function getAllKeysInObjects(objects) {
     });
     return Object.keys(allValues);
 }
+function getAllValuesInObject(obj) {
+    if (!obj) {
+        return [];
+    }
+    if (typeof Object.values === 'function') {
+        return Object.values(obj);
+    }
+    var ret = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && obj.propertyIsEnumerable(key)) {
+            ret.push(obj[key]);
+        }
+    }
+    return ret;
+}
 function mergeDeep(dest, source, copyUndefined, makeCopyOfSimpleObjects) {
     if (copyUndefined === void 0) { copyUndefined = true; }
     if (makeCopyOfSimpleObjects === void 0) { makeCopyOfSimpleObjects = false; }
@@ -728,6 +743,7 @@ var ObjectUtils = /*#__PURE__*/Object.freeze({
     copyPropertiesIfPresent: copyPropertiesIfPresent,
     copyPropertyIfPresent: copyPropertyIfPresent,
     getAllKeysInObjects: getAllKeysInObjects,
+    getAllValuesInObject: getAllValuesInObject,
     mergeDeep: mergeDeep,
     assign: assign,
     missingOrEmptyObject: missingOrEmptyObject,
@@ -85184,7 +85200,7 @@ var SortListener = /** @class */ (function (_super) {
     };
     SortListener.prototype.replaceAutoGroupColumnWithActualRowGroupColumns = function (sortModel) {
         // find index of auto group column in sort model
-        var autoGroupSortModel = sortModel.find(function (sm) { return sm.colId == Constants.GROUP_AUTO_COLUMN_ID; });
+        var autoGroupSortModel = _.find(sortModel, function (sm) { return sm.colId == Constants.GROUP_AUTO_COLUMN_ID; });
         // replace auto column with individual group columns
         if (autoGroupSortModel) {
             // remove auto group column
@@ -86384,7 +86400,7 @@ var FullStore = /** @class */ (function (_super) {
         }
         this.createOrRecycleNodes(nodesToRecycle, params.rowData);
         if (nodesToRecycle) {
-            this.blockUtils.destroyRowNodes(Object.values(nodesToRecycle));
+            this.blockUtils.destroyRowNodes(_.getAllValuesInObject(nodesToRecycle));
         }
         this.filterAndSortNodes();
         this.fireStoreUpdatedEvent();

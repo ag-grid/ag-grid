@@ -373,6 +373,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     position: absolute;
     height: 100%;
+    overflow: hidden;
 }
 
 .ag-header-cell.ag-header-active .ag-header-cell-menu-button {
@@ -727,7 +728,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-filter-filter {
-    flex: 1 1 auto;
+    flex: 1 1 0px;
 }
 
 .ag-filter-condition {

@@ -143,7 +143,7 @@ var FullStore = /** @class */ (function (_super) {
         }
         this.createOrRecycleNodes(nodesToRecycle, params.rowData);
         if (nodesToRecycle) {
-            this.blockUtils.destroyRowNodes(Object.values(nodesToRecycle));
+            this.blockUtils.destroyRowNodes(core_1._.getAllValuesInObject(nodesToRecycle));
         }
         this.filterAndSortNodes();
         this.fireStoreUpdatedEvent();

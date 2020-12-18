@@ -62,11 +62,10 @@ export class SortListener extends BeanStub {
 
     private replaceAutoGroupColumnWithActualRowGroupColumns(sortModel: SortModelItem[]): void {
         // find index of auto group column in sort model
-        const autoGroupSortModel = sortModel.find(sm => sm.colId == Constants.GROUP_AUTO_COLUMN_ID);
+        const autoGroupSortModel = _.find(sortModel, sm => sm.colId == Constants.GROUP_AUTO_COLUMN_ID);
 
         // replace auto column with individual group columns
         if (autoGroupSortModel) {
-
             // remove auto group column
             const autoGroupIndex = sortModel.indexOf(autoGroupSortModel);
             _.removeFromArray(sortModel, autoGroupSortModel);

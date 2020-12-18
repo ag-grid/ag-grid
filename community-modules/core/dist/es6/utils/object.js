@@ -93,6 +93,21 @@ export function getAllKeysInObjects(objects) {
     });
     return Object.keys(allValues);
 }
+export function getAllValuesInObject(obj) {
+    if (!obj) {
+        return [];
+    }
+    if (typeof Object.values === 'function') {
+        return Object.values(obj);
+    }
+    var ret = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && obj.propertyIsEnumerable(key)) {
+            ret.push(obj[key]);
+        }
+    }
+    return ret;
+}
 export function mergeDeep(dest, source, copyUndefined, makeCopyOfSimpleObjects) {
     if (copyUndefined === void 0) { copyUndefined = true; }
     if (makeCopyOfSimpleObjects === void 0) { makeCopyOfSimpleObjects = false; }

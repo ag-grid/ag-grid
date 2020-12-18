@@ -98,6 +98,23 @@ export function getAllKeysInObjects(objects: any[]): string[] {
     return Object.keys(allValues);
 }
 
+export function getAllValuesInObject<T extends Object>(obj: T): any[] {
+    if (!obj) { return [] }
+
+    if (typeof Object.values === 'function') {
+        return Object.values(obj);
+    }
+
+    const ret: any[] = [];
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key) && obj.propertyIsEnumerable(key)) {
+            ret.push(obj[key]);
+        }
+    }
+
+    return ret;
+}
+
 export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopyOfSimpleObjects = false): void {
     if (!exists(source)) { return; }
 

@@ -57,7 +57,7 @@ var SortListener = /** @class */ (function (_super) {
     };
     SortListener.prototype.replaceAutoGroupColumnWithActualRowGroupColumns = function (sortModel) {
         // find index of auto group column in sort model
-        var autoGroupSortModel = sortModel.find(function (sm) { return sm.colId == core_1.Constants.GROUP_AUTO_COLUMN_ID; });
+        var autoGroupSortModel = core_1._.find(sortModel, function (sm) { return sm.colId == core_1.Constants.GROUP_AUTO_COLUMN_ID; });
         // replace auto column with individual group columns
         if (autoGroupSortModel) {
             // remove auto group column

@@ -1104,9 +1104,15 @@ var AgGridAngular = /** @class */ (function () {
             }
         }
     };
+    // we'll emit the emit if a user is listening for a given event either on the component via normal angular binding
+    // or via gridOptions
     AgGridAngular.prototype.isEmitterUsed = function (eventType) {
         var emitter = this[eventType];
-        return !!emitter && emitter.observers && emitter.observers.length > 0;
+        var hasEmitter = !!emitter && emitter.observers && emitter.observers.length > 0;
+        // gridReady => onGridReady
+        var asEventName = "on" + eventType.charAt(0).toUpperCase() + eventType.substring(1);
+        var hasGridOptionListener = !!this.gridOptions && !!this.gridOptions[asEventName];
+        return hasEmitter || hasGridOptionListener;
     };
     AgGridAngular.prototype.globalEventListener = function (eventType, event) {
         // if we are tearing down, don't emit angular events, as this causes

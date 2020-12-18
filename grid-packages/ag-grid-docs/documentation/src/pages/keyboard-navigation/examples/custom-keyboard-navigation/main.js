@@ -46,56 +46,7 @@ var gridOptions = {
     navigateToNextHeader: this.navigateToNextHeader.bind(this),
     tabToNextHeader: this.tabToNextHeader.bind(this),
 
-    columnDefs: columnDefs,
-    onGridReady: function(params) {
-        // note that the columns can be added/removed as the viewport changes
-        // be sure to remove old listeners when they're removed, and add new listeners when columns
-        // are added (using virtualColumnsChanged for example)
-
-        // store the colIds so that we can go along the columns
-        var columns = params.columnApi.getAllDisplayedVirtualColumns(),
-            tabIndex = 0,
-            colIds = columns.map(function(column) {
-                return column.colId;
-            });
-            
-        columns.forEach(function(column) {
-            // for each column set a tabindex, otherwise it wont be able to get focus
-            var element = document.querySelector('div[col-id=' + column.colId + '] div.ag-header-cell-label');
-            element.setAttribute('tabindex', tabIndex++);
-
-            // register a listener for when a key is pressed on a column
-            element.addEventListener('keydown', function(e) {
-                // if a tab, navigate to the next column and focus on it
-                // we loop back to the first column if the user is at the last visible column
-                var index, nextElement, sort;
-
-                if (e.key === 'Tab') {
-                    index = colIds.findIndex(function(colId) {
-                        return colId === column.colId;
-                    });
-                    if (index === -1 || index === colIds.length - 1) {
-                        index = 0;
-                    } else {
-                        index = index + 1;
-                    }
-
-                    nextElement = document.querySelector('div[col-id=' + colIds[index] + '] div.ag-header-cell-label');
-                    nextElement.focus();
-
-                    // otherwise it'll leap forward two columns
-                    e.preventDefault();
-                } else if (e.key === 'Enter') {
-                    // on enter sort the column
-                    // you'll probably want to cycle through asc/desc/none here for each enter pressed
-                    sort = [
-                        { colId: column.colId, sort: 'asc' }
-                    ];
-                    params.api.setSortModel(sort);
-                }
-            });
-        });
-    }
+    columnDefs: columnDefs
 };
 
 function navigateToNextHeader(params) {

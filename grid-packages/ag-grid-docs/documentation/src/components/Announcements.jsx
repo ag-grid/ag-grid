@@ -8,25 +8,19 @@ import enterpriseSvg from '../images/enterprise.svg';
 import flags from '../images/flags';
 
 const Announcements = () => <div className={styles['announcements']}>
-    <Announcement date="Oct 12" version="24.1.0">
-        <p className="card-text">Minor release with bug fixes.</p>
-    </Announcement>
-    <Announcement date="Sep 9" version="24.0.0">
+    <Announcement date="Dec 18" version="25.0.0">
         <p className="card-text">
             Major release with new features and bug fixes:
         </p>
         <ul>
             <li className={styles['announcement__list-item']}>
-                <a href="../filter-multi/">Multi Filter</a>
+                <a href="../server-side-model/">Major SSRM Enhancements</a>
             </li>
             <li className={styles['announcement__list-item']}>
-                <a href="../column-updating-definitions/">Reactive Columns</a>
+                <a href="../integrated-charts-cross-filtering/">Integrated Cross Filtering</a>
             </li>
             <li className={styles['announcement__list-item']}>
-                <a href="../accessibility/">Accessibility Enhancements</a>
-            </li>
-            <li className={styles['announcement__list-item']}>
-                <a href="../charts-themes/">Chart Themes</a>
+                <a href="../clipboard/">Clipboard Performance Improvements</a>
             </li>
         </ul>
     </Announcement>
