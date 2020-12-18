@@ -9,7 +9,7 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
 
     const nodes = useExampleFileNodes();
-    const { name, appLocation, framework, type, library } = exampleInfo;
+    const { pageName, name, appLocation, framework, internalFramework, type, library, importType } = exampleInfo;
     const indexHtml = getIndexHtml(nodes, exampleInfo, true);
 
     if (isServerSideRendering()) {
@@ -56,7 +56,11 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
         iframeDoc.close();
     }, [shouldExecute, indexHtml]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    return <iframe ref={iframeRef} title={name} className={styles['example-runner-result']}></iframe>;
+    return <iframe
+        key={`${pageName}_${name}_${internalFramework}_${importType}`}
+        ref={iframeRef}
+        title={name}
+        className={styles['example-runner-result']}></iframe>;
 };
 
 export default ExampleRunnerResult;
