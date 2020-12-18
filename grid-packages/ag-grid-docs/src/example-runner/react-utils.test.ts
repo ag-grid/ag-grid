@@ -61,6 +61,13 @@ describe('convertTemplate', () => {
         expect(converted).toBe('<input type="text" defaultValue="foo" maxLength="20" />');
     });
 
+    it('does not change value attributes for other elements', () => {
+        const template = '<option value="bob">';
+        const converted = convertTemplate(template);
+
+        expect(converted).toBe('<option value="bob">');
+    });
+
     it('replaces class with className', () => {
         const template = '<div class="foo">Hello!</div>';
         const converted = convertTemplate(template);
