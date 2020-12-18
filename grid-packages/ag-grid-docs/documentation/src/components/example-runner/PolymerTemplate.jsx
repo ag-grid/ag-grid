@@ -14,7 +14,7 @@ const PolymerTemplate = ({ appLocation, options }) => {
 
     return <html lang="en">
         <head>
-            <script src="https://unpkg.com/browse/@webcomponents/webcomponentsjs@2.5.0/webcomponents-loader.js"></script>
+            <script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.5.0/webcomponents-loader.js"></script>
             <script src={options.enterprise ? enterpriseScriptPath : communityScriptPath}></script>
             <script type="module" src={`${appLocation}main.js`}></script>
             <ExampleStyle />
