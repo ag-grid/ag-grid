@@ -736,7 +736,7 @@ const readModulesState = () => {
     return modulesState;
 };
 
-module.exports = async (skipFrameworks, skipExampleFormatting, done, websiteOnly) => {
+module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
     tcpPortUsed.check(EXPRESS_PORT)
         .then(async (inUse) => {
             if (inUse) {
@@ -794,9 +794,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done, websiteOnly
                 console.log(`ag-Grid dev server now available on http://${HOST}:${EXPRESS_PORT}`);
             });
 
-            if (!websiteOnly) {
-                launchGatsby();
-            }
+            launchGatsby();
 
             done();
         });
