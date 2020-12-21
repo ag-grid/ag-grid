@@ -323,3 +323,69 @@ describe("common overrides", () => {
         expect((polarChart.series[0] as PieSeries).tooltip.renderer).toBe(pieTooltipRenderer);
     });
 });
+
+describe('Position specific axis styling', () => {
+    const theme: AgChartTheme = {
+        baseTheme: 'ag-default',
+        overrides: {
+            cartesian: {
+                axes: {
+                    category: {
+                        line: {
+                            color: 'red',
+                        },
+                        label: {
+                            fontSize: 12
+                        },
+                        top: {
+                        },
+                        right: {
+                            line: {
+                                color: 'green',
+                            },
+                            label: {
+                                fontSize: 14
+                            }
+                        },
+                        bottom: {
+                            line: {
+                                color: 'blue',
+                            },
+                            label: {
+                                fontSize: 18
+                            }
+                        },
+                        left: {
+                            line: {
+                                color: 'gold',
+                            },
+                            label: {
+                                fontSize: 20
+                            }
+                        }
+                    },
+                    number: {
+
+                    }
+                }
+            }
+        }
+    };
+    const cartesianChartOptions: AgCartesianChartOptions = {
+        theme,
+        data,
+        series: [{
+            type: 'area',
+            xKey: 'label',
+            yKeys: ['v1', 'v2', 'v3', 'v4', 'v5']
+        }]
+    };
+
+    const serializedOptions = JSON.stringify(cartesianChartOptions);
+    const chart = AgChart.create(cartesianChartOptions);
+
+    expect(chart.axes[1].type).toBe('category');
+    expect(chart.axes[1].position).toBe('bottom');
+    expect(chart.axes[1].line.color).toBe('blue');
+    expect(chart.axes[1].label.fontSize).toBe(18);
+});

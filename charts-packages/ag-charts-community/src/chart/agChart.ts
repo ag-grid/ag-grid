@@ -176,6 +176,8 @@ function save(component: any, target: any = {}, mapping: any = mappings) {
     });
 }
 
+const cartesianAxisPositions = ['top', 'right', 'bottom', 'left'];
+
 function create(options: any, path?: string, component?: any, theme?: ChartTheme) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
     options = Object.create(options);
@@ -227,7 +229,22 @@ function create(options: any, path?: string, component?: any, theme?: ChartTheme
                     if (Array.isArray(value)) {
                         const subComponents = value
                             .map(config => {
-                                return create(config, path + '.' + key, undefined, theme);
+                                const axis = create(config, path + '.' + key, undefined, theme);
+                                if (theme && key === 'axes') {
+                                    const fakeTheme: any = {
+                                        getConfig(path: string): any {
+                                            const parts = path.split('.');
+                                            let modifiedPath = parts.slice(0, 3).join('.') + '.' + axis.position;
+                                            const after = parts.slice(3);
+                                            if (after.length) {
+                                                modifiedPath += '.' + after.join('.');
+                                            }
+                                            return theme.getConfig(modifiedPath);
+                                        }
+                                    };
+                                    update(axis, config, path + '.' + key, fakeTheme);
+                                }
+                                return axis;
                             })
                             .filter(instance => !!instance);
                         component[key] = subComponents;

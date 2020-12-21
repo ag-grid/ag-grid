@@ -37,11 +37,23 @@ export interface AgChartThemeOverrides {
     common?: any;
 }
 
+interface AgCartesianAxisThemeOptions<T> {
+    top?: Omit<Omit<T, 'top'>, 'type'>;
+    right?: Omit<Omit<T, 'right'>, 'type'>;
+    bottom?: Omit<Omit<T, 'bottom'>, 'type'>;
+    left?: Omit<Omit<T, 'left'>, 'type'>;
+}
+
+export interface AgNumberAxisThemeOptions extends Omit<AgNumberAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgNumberAxisOptions> {}
+export interface AgCategoryAxisThemeOptions extends Omit<AgCategoryAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgCategoryAxisOptions> {}
+export interface AgGroupedCategoryAxisThemeOptions extends Omit<AgGroupedCategoryAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions> {}
+export interface AgTimeAxisThemeOptions extends Omit<AgTimeAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgTimeAxisOptions> {}
+
 export interface AgCartesianAxesTheme {
-    number?: Omit<AgNumberAxisOptions, 'type'>;
-    category?: Omit<AgCategoryAxisOptions, 'type'>;
-    groupedCategory?: Omit<AgGroupedCategoryAxisOptions, 'type'>;
-    time?: Omit<AgTimeAxisOptions, 'type'>;
+    number?: AgNumberAxisThemeOptions;
+    category?: AgCategoryAxisThemeOptions;
+    groupedCategory?: AgGroupedCategoryAxisThemeOptions;
+    time?: AgTimeAxisThemeOptions;
 }
 
 export interface AgCartesianSeriesTheme {
