@@ -10,7 +10,7 @@ html {
 
 main {
     flex: 1 1 auto;
-    overflow: hidden;
+    min-width: 0px;
 }
 
 .main-container {
