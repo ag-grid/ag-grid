@@ -260,7 +260,7 @@ describe('values from grid', () => {
     });
 
     it('can sort values using provided comparator', () => {
-        const comparator = (a: string, b: string) => parseInt(a) - parseInt(b);
+        const comparator = (a: string, b: string) => parseInt(a, 10) - parseInt(b, 10);
         const model = createSetValueModel(['1', '10', '5', '50'], { comparator });
 
         expect(getDisplayedValues(model)).toStrictEqual(['1', '5', '10', '50']);
@@ -348,7 +348,7 @@ describe('provided values list', () => {
     });
 
     it('can sort provided values using provided comparator', () => {
-        const comparator = (a: string, b: string) => parseInt(a) - parseInt(b);
+        const comparator = (a: string, b: string) => parseInt(a, 10) - parseInt(b, 10);
         const model = createSetValueModel(undefined, { values: ['1', '10', '5', '50'], comparator });
 
         expect(getDisplayedValues(model)).toStrictEqual(['1', '5', '10', '50']);
@@ -385,7 +385,7 @@ describe('provided callback values', () => {
     });
 
     it('can sort provided callback values using provided comparator', done => {
-        const comparator = (a: string, b: string) => parseInt(a) - parseInt(b);
+        const comparator = (a: string, b: string) => parseInt(a, 10) - parseInt(b, 10);
         const model = createSetValueModel(undefined, { values: (params: any) => params.success(['1', '10', '5', '50']), comparator });
 
         delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(['1', '5', '10', '50']));
