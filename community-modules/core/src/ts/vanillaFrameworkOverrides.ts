@@ -1,5 +1,5 @@
-import {IFrameworkOverrides} from "./interfaces/iFrameworkOverrides";
-import {includes} from "./utils/array";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import { includes } from "./utils/array";
 
 const OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
 

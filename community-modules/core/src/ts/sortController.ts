@@ -147,7 +147,7 @@ export class SortController extends BeanStub {
         // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
         // cols is sorted by first.
         const allColsIndexes: {[id:string]:number} = {};
-        allColumnsIncludingAuto.forEach( (col: Column, index: number) => allColsIndexes[col.getId()] = index);
+        allColumnsIncludingAuto.forEach((col: Column, index: number) => allColsIndexes[col.getId()] = index);
 
         // put the columns in order of which one got sorted first
         columnsWithSorting.sort((a: Column, b: Column) => {

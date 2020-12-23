@@ -1,9 +1,9 @@
-import {Logger, LoggerFactory} from "./logger";
-import {Bean, Qualifier} from "./context/context";
-import {IEventEmitter} from "./interfaces/iEventEmitter";
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {AgEvent} from "./events";
-import {IFrameworkOverrides} from "./interfaces/iFrameworkOverrides";
+import { Logger, LoggerFactory } from "./logger";
+import { Bean, Qualifier } from "./context/context";
+import { IEventEmitter } from "./interfaces/iEventEmitter";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { AgEvent } from "./events";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 
 @Bean('eventService')
 export class EventService implements IEventEmitter {

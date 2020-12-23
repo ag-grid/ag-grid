@@ -45,7 +45,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
 
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(`${displayName} ${translate('ariaFilterInput','Filter Input')}`)
+            .setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`)
             .addGuiEventListener('click', () => params.showParentFilter());
 
         this.params = params;

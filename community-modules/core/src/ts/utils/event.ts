@@ -1,7 +1,7 @@
-import {GridOptionsWrapper} from '../gridOptionsWrapper';
-import {CellComp} from '../rendering/cellComp';
-import {IFrameworkOverrides} from '../interfaces/iFrameworkOverrides';
-import {includes} from './array';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { CellComp } from '../rendering/cellComp';
+import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import { includes } from './array';
 
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
