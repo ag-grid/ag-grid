@@ -106,7 +106,7 @@ export function getAllValuesInObject<T extends Object>(obj: T): any[] {
     }
 
     const ret: any[] = [];
-    for (let key in obj) {
+    for (const key in obj) {
         if (obj.hasOwnProperty(key) && obj.propertyIsEnumerable(key)) {
             ret.push(obj[key]);
         }

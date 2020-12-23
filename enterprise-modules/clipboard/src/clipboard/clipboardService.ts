@@ -125,10 +125,11 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             this.removeLastLineIfBlank(parsedData!);
         }
 
-        const pasteOperation = (cellsToFlash: any,
-                                updatedRowNodes: RowNode[],
-                                focusedCell: CellPosition,
-                                changedPath: ChangedPath | undefined) => {
+        const pasteOperation = (
+            cellsToFlash: any,
+            updatedRowNodes: RowNode[],
+            focusedCell: CellPosition,
+            changedPath: ChangedPath | undefined) => {
 
             const rangeActive = this.rangeController && this.rangeController.isMoreThanOneCell();
             const pasteIntoRange = rangeActive && !this.hasOnlyOneValueToPaste(parsedData!);
@@ -210,7 +211,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // true if clipboard data can be evenly pasted into range, otherwise false
         const abortRepeatingPasteIntoRows = this.getRangeSize() % clipboardData.length != 0;
 
-        let indexOffset = 0, dataRowIndex = 0;
+        let indexOffset = 0;
+        let dataRowIndex = 0;
 
         const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[], index: number) => {
             const atEndOfClipboardData = index - indexOffset >= clipboardData.length;
@@ -371,13 +373,13 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private pasteMultipleValues(
-                    clipboardGridData: string[][],
-                    currentRow: RowPosition | null,
-                    updatedRowNodes: RowNode[],
-                    columnsToPasteInto: Column[],
-                    cellsToFlash: any,
-                    type: string,
-                    changedPath: ChangedPath | undefined) {
+        clipboardGridData: string[][],
+        currentRow: RowPosition | null,
+        updatedRowNodes: RowNode[],
+        columnsToPasteInto: Column[],
+        cellsToFlash: any,
+        type: string,
+        changedPath: ChangedPath | undefined) {
 
         let rowPointer = currentRow;
 
@@ -644,12 +646,12 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.copyDataToClipboard(data);
     }
 
-    private  copyDataToClipboard(data: string): void {
+    private copyDataToClipboard(data: string): void {
         const userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
 
         // method 1 - user provided func
         if (userProvidedFunc) {
-            userProvidedFunc({data});
+            userProvidedFunc({ data });
             return;
         }
 
