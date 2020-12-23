@@ -56,11 +56,13 @@ var gridOptions = {
         }
     },
     groupDefaultExpanded: 1,
-    rowData: createRowData(),
     suppressAggFuncInHeader: true,
     animateRows: true,
     getRowNodeId: function(rowData) {
         return rowData.id;
+    },
+    onGridReady: function (params) {
+        gridOptions.api.setRowData(createRowData());
     }
 };
 
