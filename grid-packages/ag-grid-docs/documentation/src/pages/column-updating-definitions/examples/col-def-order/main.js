@@ -1,27 +1,27 @@
 var medalsLast = [
-    {field: 'athlete'},
-    {field: 'age'},
-    {field: 'country'},
-    {field: 'sport'},
-    {field: 'year'},
-    {field: 'date'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'}
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'sport' },
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' }
 ];
 
 var medalsFirst = [
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'},
-    {field: 'athlete'},
-    {field: 'age'},
-    {field: 'sport'},
-    {field: 'country'},
-    {field: 'year'},
-    {field: 'date'}
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' },
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'sport' },
+    { field: 'country' },
+    { field: 'year' },
+    { field: 'date' }
 ];
 
 var gridOptions = {
@@ -32,16 +32,16 @@ var gridOptions = {
     },
     applyColumnDefOrder: true,
     columnDefs: [
-        {field: 'athlete'},
-        {field: 'age'},
-        {field: 'country'},
-        {field: 'sport'},
-        {field: 'year'},
-        {field: 'date'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'}
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'sport' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' }
     ]
 };
 
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

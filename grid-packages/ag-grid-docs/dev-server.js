@@ -6,7 +6,7 @@ gracefulFs.gracefulify(fs);
 
 const cp = require('child_process');
 const glob = require('glob');
-const path = require('path');
+const resolve = require('path').resolve
 const rimraf = require('rimraf');
 const express = require('express');
 const realWebpack = require('webpack');
@@ -27,18 +27,6 @@ const EXPRESS_PORT = 8080;
 const PHP_PORT = 8888;
 const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
-
-// to be removed from the root package.json when this becomes the default
-// "chokidar": "^3.2.2",
-// "command-line-args": "^5.1.1",
-// "commander": "^3.0.2",
-// "execa": "^3.2.0",
-// "fs-extra": "^8.1.0",
-
-
-// if (!process.env.AG_EXAMPLE_THEME_OVERRIDE) {
-//     process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
-// }
 
 function reporter(middlewareOptions, options) {
     const { log, state, stats } = options;
@@ -72,7 +60,7 @@ function reporter(middlewareOptions, options) {
 }
 
 function addWebpackMiddlewareForConfig(app, configFile, prefix, bundleDescriptor) {
-    const webpackConfig = require(path.resolve(`./webpack-config/${configFile}`));
+    const webpackConfig = require(resolve(`./webpack-config/${configFile}`));
 
     const compiler = realWebpack(webpackConfig);
     const instance = webpackMiddleware(compiler, {
@@ -595,7 +583,7 @@ function moduleChanged(moduleRoot) {
     let changed = true;
 
     // Windows... convert c:\\xxx to /c/xxx - can only work in git bash
-    const resolvedPath = path.resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
+    const resolvedPath = resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
 
     const checkResult = cp.spawnSync('sh', ['../../scripts/hashChanged.sh', resolvedPath], {
         stdio: 'pipe',
@@ -612,7 +600,7 @@ function moduleChanged(moduleRoot) {
 function updateModuleChangedHash(moduleRoot) {
     // Windows... convert c:\\xxx to /c/xxx - can only work in git bash
     const npm = WINDOWS ? 'npm.cmd' : 'npm';
-    const resolvedPath = path.resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
+    const resolvedPath = resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
 
     cp.spawnSync(npm, ['run', 'hash'], { cwd: resolvedPath });
 }
@@ -679,18 +667,26 @@ const watchCoreModulesAndCss = async (skipFrameworks) => {
 
 const watchFrameworkModules = async () => {
     console.log("Watching Framework Modules");
+
+    const defaultIgnoreFolders = [
+        '**/node_modules/**/*',
+        '**/dist/**/*',
+        '**/bundles/**/*',
+        '.hash',
+    ];
+
     const moduleFrameworks = ['angular', 'vue', 'react'];
     const moduleRootDirectory = WINDOWS ? `..\\..\\community-modules\\` : `../../community-modules/`;
     moduleFrameworks.forEach(moduleFramework => {
-        const frameworkDirectory = `${moduleRootDirectory}${moduleFramework}`;
-        chokidar.watch([`${frameworkDirectory}`], {
-            ignored: [
-                '**/node_modules/**/*',
-                '**/lib/**/*',
-                '**/dist/**/*',
-                '**/bundles/**/*',
-                '.hash',
-            ],
+        const frameworkDirectory = resolve(`${moduleRootDirectory}${moduleFramework}`);
+
+        const ignoredFolders = [...defaultIgnoreFolders];
+        if(moduleFramework !== 'angular') {
+            ignoredFolders.push('**/lib/**/*')
+        }
+
+        chokidar.watch([`${frameworkDirectory}/**/*`], {
+            ignored: ignoredFolders,
             cwd: frameworkDirectory,
             persistent: true
         }).on('change', async (data) => {
@@ -736,7 +732,7 @@ const readModulesState = () => {
     return modulesState;
 };
 
-module.exports = async (skipFrameworks, skipExampleFormatting, done, websiteOnly) => {
+module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
     tcpPortUsed.check(EXPRESS_PORT)
         .then(async (inUse) => {
             if (inUse) {
@@ -794,9 +790,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done, websiteOnly
                 console.log(`ag-Grid dev server now available on http://${HOST}:${EXPRESS_PORT}`);
             });
 
-            if (!websiteOnly) {
-                launchGatsby();
-            }
+            launchGatsby();
 
             done();
         });

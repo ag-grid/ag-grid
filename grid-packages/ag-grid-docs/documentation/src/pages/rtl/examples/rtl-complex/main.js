@@ -760,7 +760,7 @@ function ratingRendererGeneral(value, forFilter) {
 
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/goldStar.png"/>';
+            result += '<img src="https://www.ag-grid.com/example-assets/gold-star.png" />';
         }
     }
 

@@ -1,147 +1,135 @@
-import React, { Component } from 'react';
-import { AgGridReact } from '@ag-grid-community/react';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import React, {useState} from 'react';
+
+import {AgGridReact} from '@ag-grid-community/react';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
-export default class extends Component {
-    constructor(props) {
-        super(props);
-
-        this.athleteVisible = true;
-        this.ageVisible = true;
-        this.countryVisible = true;
-        this.rowData = null;
-
-        this.state = this.createState();
+const topOptions = {
+    alignedGrids: [],
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
     }
+};
+const bottomOptions = {
+    alignedGrids: [],
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
+    }
+};
 
-    createState() {
-        const topOptions = {
-            alignedGrids: [],
-            defaultColDef: {
-                editable: true,
-                sortable: true,
-                resizable: true,
-                filter: true,
-                flex: 1,
-                minWidth: 100
-            }
-        };
-        const bottomOptions = {
-            alignedGrids: [],
-            defaultColDef: {
-                editable: true,
-                sortable: true,
-                resizable: true,
-                filter: true,
-                flex: 1,
-                minWidth: 100
-            }
-        };
+topOptions.alignedGrids.push(bottomOptions);
+bottomOptions.alignedGrids.push(topOptions);
 
-        topOptions.alignedGrids.push(bottomOptions);
-        bottomOptions.alignedGrids.push(topOptions);
+export default () => {
+    const [topGrid, setTopGrid] = useState(null);
 
-        return {
-            topOptions,
-            bottomOptions,
-            columnDefs: [
-                { field: 'athlete', hide: !this.athleteVisible },
-                { field: 'age', hide: !this.ageVisible },
-                { field: 'country', hide: !this.countryVisible },
-                { field: 'year' },
-                { field: 'date' },
-                { field: 'sport' },
+    const [columnDefs, setColumnDefs] = useState([
+        {field: 'athlete'},
+        {field: 'age'},
+        {field: 'country'},
+        {field: 'year'},
+        {field: 'date'},
+        {field: 'sport'},
+        {
+            headerName: 'Medals',
+            children: [
                 {
-                    headerName: 'Medals',
-                    children: [
-                        {
-                            columnGroupShow: 'closed', field: "total",
-                            valueGetter: "data.gold + data.silver + data.bronze"
-                        },
-                        { columnGroupShow: 'open', field: "gold" },
-                        { columnGroupShow: 'open', field: "silver" },
-                        { columnGroupShow: 'open', field: "bronze" }
-                    ]
-                }
-            ],
-            rowData: this.rowData
-        };
-    }
+                    columnGroupShow: 'closed', field: "total",
+                    valueGetter: "data.gold + data.silver + data.bronze", width: 200
+                },
+                {columnGroupShow: 'open', field: "gold", width: 100},
+                {columnGroupShow: 'open', field: "silver", width: 100},
+                {columnGroupShow: 'open', field: "bronze", width: 100}
+            ]
+        }
+    ]);
 
-    onGridReady(params) {
-        this.topGrid = params;
+    const [rowData, setRowData] = useState([]);
+
+    function onGridReady(params) {
+        setTopGrid(params);
         var httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
+        httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
         httpRequest.send();
-        httpRequest.onreadystatechange = function() {
+        httpRequest.onreadystatechange = function () {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
                 var httpResult = JSON.parse(httpRequest.responseText);
-                this.rowData = httpResult;
-                this.setState(this.createState.bind(this));
+                setRowData(httpResult)
             }
-        }.bind(this);
+        };
     }
 
-    // Warning - mutating the state is not recommended from react, doing it for example purposes
-    onCbAthlete(e) {
-        this.athleteVisible = !this.athleteVisible;
-        this.setState(this.createState.bind(this));
+    function onFirstDataRendered(params) {
+        params.api.sizeColumnsToFit();
     }
 
-    onCbAge(e) {
-        this.ageVisible = !this.ageVisible;
-        this.setState(this.createState.bind(this));
+    function onCbAthlete(event) {
+        // we only need to update one grid, as the other is a slave
+        topGrid.columnApi.setColumnVisible('athlete', event.target.checked);
     }
 
-    onCbCountry(e) {
-        this.countryVisible = !this.countryVisible;
-        this.setState(this.createState.bind(this));
+    function onCbAge(event) {
+        // we only need to update one grid, as the other is a slave
+        topGrid.columnApi.setColumnVisible('age', event.target.checked);
     }
 
-    render() {
-        return (
-            <div className="container">
-                <div className="header">
-                    <label>
-                        <input
-                            type="checkbox"
-                            onChange={this.onCbAthlete.bind(this)}
-                            checked={!this.state.columnDefs[0].hide} />Athlete
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            onChange={this.onCbAge.bind(this)}
-                            checked={!this.state.columnDefs[1].hide} />Age
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            onChange={this.onCbCountry.bind(this)}
-                            checked={!this.state.columnDefs[2].hide} />Country
-                    </label>
-                </div>
+    function onCbCountry(event) {
+        // we only need to update one grid, as the other is a slave
+        topGrid.columnApi.setColumnVisible('country', event.target.checked);
+    }
 
-                <div className="grid ag-theme-alpine">
-                    <AgGridReact
-                        rowData={this.state.rowData}
-                        gridOptions={this.state.topOptions}
-                        columnDefs={this.state.columnDefs}
-                        onGridReady={this.onGridReady.bind(this)}
-                        modules={AllCommunityModules} />
-                </div>
-
-                <div className="grid ag-theme-alpine">
-                    <AgGridReact
-                        rowData={this.state.rowData}
-                        gridOptions={this.state.bottomOptions}
-                        columnDefs={this.state.columnDefs}
-                        modules={AllCommunityModules} />
-                </div>
+    return (
+        <div className="container">
+            <div className="header">
+                <label>
+                    <input
+                        type="checkbox"
+                        defaultChecked={true}
+                        onChange={(event) => onCbAthlete(event)}/>Athlete
+                </label>
+                <label>
+                    <input
+                        type="checkbox"
+                        defaultChecked={true}
+                        onChange={event => onCbAge(event)}/>Age
+                </label>
+                <label>
+                    <input
+                        type="checkbox"
+                        defaultChecked={true}
+                        onChange={event => onCbCountry(event)}/>Country
+                </label>
             </div>
-        );
-    }
-}
+
+            <div className="grid ag-theme-alpine">
+                <AgGridReact
+                    rowData={rowData}
+                    gridOptions={topOptions}
+                    columnDefs={columnDefs}
+                    onGridReady={params => onGridReady(params)}
+                    onFirstDataRendered={params => onFirstDataRendered(params)}
+                    modules={AllCommunityModules}/>
+            </div>
+
+            <div className="grid ag-theme-alpine">
+                <AgGridReact
+                    rowData={rowData}
+                    gridOptions={bottomOptions}
+                    columnDefs={columnDefs}
+                    modules={AllCommunityModules}/>
+            </div>
+        </div>
+    );
+};

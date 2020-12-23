@@ -1,9 +1,9 @@
 var columnDefs = [
-    { 
+    {
         headerName: ' ',
         headerCheckboxSelection: true,
         checkboxSelection: true,
-        floatingFilter: false, 
+        floatingFilter: false,
         suppressMenu: true,
         minWidth: 50,
         maxWidth: 50,
@@ -29,10 +29,10 @@ var columnDefs = [
             { field: 'total', columnGroupShow: 'closed', filter: 'agNumberColumnFilter', width: 120, flex: 0 },
             { field: 'gold', columnGroupShow: 'open', filter: 'agNumberColumnFilter', width: 100, flex: 0 },
             { field: 'silver', columnGroupShow: 'open', filter: 'agNumberColumnFilter', width: 100, flex: 0 },
-            { field: 'bronze', columnGroupShow: 'open', filter: 'agNumberColumnFilter',  width: 100, flex: 0 },
+            { field: 'bronze', columnGroupShow: 'open', filter: 'agNumberColumnFilter', width: 100, flex: 0 },
         ]
     },
-    { field: 'year', filter: 'agNumberColumnFilter'}
+    { field: 'year', filter: 'agNumberColumnFilter' }
 ];
 
 var gridOptions = {
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

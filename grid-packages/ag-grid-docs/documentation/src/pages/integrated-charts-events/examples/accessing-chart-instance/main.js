@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
     agGrid
         .simpleHttpRequest({
             url:
-                'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/weather_se_england.json',
+                'https://www.ag-grid.com/example-assets/weather-se-england.json',
         })
         .then(function(data) {
             gridOptions.api.setRowData(data);

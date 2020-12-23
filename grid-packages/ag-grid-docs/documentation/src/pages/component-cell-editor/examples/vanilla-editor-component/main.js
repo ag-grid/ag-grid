@@ -2,30 +2,30 @@ var students = [
     {
         first_name: 'Bob', last_name: 'Harrison', gender: 'Male',
         address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763',
-        mood: "Happy", country: {name: 'Ireland', code: 'IE'}
+        mood: "Happy", country: { name: 'Ireland', code: 'IE' }
     }, {
         first_name: 'Mary', last_name: 'Wilson', gender: 'Female',
         age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
-        mood: "Sad", country: {name: 'Ireland', code: 'IE'}
+        mood: "Sad", country: { name: 'Ireland', code: 'IE' }
     }, {
         first_name: 'Sadiq', last_name: 'Khan', gender: 'Male', age: 12,
         address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186',
-        mood: "Happy", country: {name: 'Ireland', code: 'IE'}
+        mood: "Happy", country: { name: 'Ireland', code: 'IE' }
     }, {
         first_name: 'Jerry', last_name: 'Mane', gender: 'Male', age: 12,
         address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634',
-        mood: "Happy", country: {name: 'Ireland', code: 'IE'}
+        mood: "Happy", country: { name: 'Ireland', code: 'IE' }
     }
 ];
 
 // double the array twice, make more data!
-students.forEach(function (item) {
+students.forEach(function(item) {
     students.push(cloneObject(item));
 });
-students.forEach(function (item) {
+students.forEach(function(item) {
     students.push(cloneObject(item));
 });
-students.forEach(function (item) {
+students.forEach(function(item) {
     students.push(cloneObject(item));
 });
 
@@ -34,8 +34,8 @@ function cloneObject(obj) {
 }
 
 var columnDefs = [
-    {field: "first_name", headerName: "First Name", width: 120, editable: true},
-    {field: "last_name", headerName: "Last Name", width: 120, editable: true},
+    { field: "first_name", headerName: "First Name", width: 120, editable: true },
+    { field: "last_name", headerName: "Last Name", width: 120, editable: true },
     {
         field: "gender",
         width: 100,
@@ -65,15 +65,15 @@ var columnDefs = [
         width: 110,
         cellRenderer: 'countryCellRenderer',
         cellEditor: 'agRichSelectCellEditor',
-        keyCreator: function (country) {
+        keyCreator: function(country) {
             return country.name;
         },
         cellEditorParams: {
             cellRenderer: 'countryCellRenderer',
             values: [
-                {name: 'Ireland', code: 'IE'},
-                {name: 'UK', code: 'UK'},
-                {name: 'France', code: 'FR'}
+                { name: 'Ireland', code: 'IE' },
+                { name: 'UK', code: 'UK' },
+                { name: 'France', code: 'FR' }
             ]
         },
         editable: true
@@ -101,16 +101,16 @@ var gridOptions = {
         filter: true,
         resizable: true
     },
-    onRowEditingStarted: function (event) {
+    onRowEditingStarted: function(event) {
         console.log('never called - not doing row editing');
     },
-    onRowEditingStopped: function (event) {
+    onRowEditingStopped: function(event) {
         console.log('never called - not doing row editing');
     },
-    onCellEditingStarted: function (event) {
+    onCellEditingStarted: function(event) {
         console.log('cellEditingStarted');
     },
-    onCellEditingStopped: function (event) {
+    onCellEditingStopped: function(event) {
         console.log('cellEditingStopped');
     },
     components: {
@@ -147,7 +147,7 @@ function NumericCellEditor() {
 }
 
 // gets called once before the renderer is used
-NumericCellEditor.prototype.init = function (params) {
+NumericCellEditor.prototype.init = function(params) {
     // create the cell
     this.eInput = document.createElement('input');
 
@@ -160,7 +160,7 @@ NumericCellEditor.prototype.init = function (params) {
     }
 
     var that = this;
-    this.eInput.addEventListener('keypress', function (event) {
+    this.eInput.addEventListener('keypress', function(event) {
         if (!isKeyPressedNumeric(event)) {
             that.eInput.focus();
             if (event.preventDefault) event.preventDefault();
@@ -174,46 +174,46 @@ NumericCellEditor.prototype.init = function (params) {
     this.cancelBeforeStart = charPressIsNotANumber;
 };
 
-NumericCellEditor.prototype.isKeyPressedNavigation = function (event) {
+NumericCellEditor.prototype.isKeyPressedNavigation = function(event) {
     return event.keyCode === 39
         || event.keyCode === 37;
 };
 
 
 // gets called once when grid ready to insert the element
-NumericCellEditor.prototype.getGui = function () {
+NumericCellEditor.prototype.getGui = function() {
     return this.eInput;
 };
 
 // focus and select can be done after the gui is attached
-NumericCellEditor.prototype.afterGuiAttached = function () {
+NumericCellEditor.prototype.afterGuiAttached = function() {
     this.eInput.focus();
 };
 
 // returns the new value after editing
-NumericCellEditor.prototype.isCancelBeforeStart = function () {
+NumericCellEditor.prototype.isCancelBeforeStart = function() {
     return this.cancelBeforeStart;
 };
 
 // example - will reject the number if it contains the value 007
 // - not very practical, but demonstrates the method.
-NumericCellEditor.prototype.isCancelAfterEnd = function () {
+NumericCellEditor.prototype.isCancelAfterEnd = function() {
     var value = this.getValue();
     return value.indexOf('007') >= 0;
 };
 
 // returns the new value after editing
-NumericCellEditor.prototype.getValue = function () {
+NumericCellEditor.prototype.getValue = function() {
     return this.eInput.value;
 };
 
 // any cleanup we need to be done here
-NumericCellEditor.prototype.destroy = function () {
+NumericCellEditor.prototype.destroy = function() {
     // but this example is simple, no cleanup, we could  even leave this method out as it's optional
 };
 
-// if true, then this editor will appear in a popup 
-NumericCellEditor.prototype.isPopup = function () {
+// if true, then this editor will appear in a popup
+NumericCellEditor.prototype.isPopup = function() {
     // and we could leave this method out also, false is the default
     return false;
 };
@@ -222,30 +222,30 @@ NumericCellEditor.prototype.isPopup = function () {
 function GenderCellRenderer() {
 }
 
-GenderCellRenderer.prototype.init = function (params) {
+GenderCellRenderer.prototype.init = function(params) {
     this.eGui = document.createElement('span');
     if (params.value !== "" || params.value !== undefined || params.value !== null) {
-        var gender = '<img border="0" width="15" height="10" src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/' + params.value.toLowerCase() + '.png">';
+        var gender = '<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/genders/' + params.value.toLowerCase() + '.png">';
         this.eGui.innerHTML = gender + ' ' + params.value;
     }
 };
 
-GenderCellRenderer.prototype.getGui = function () {
+GenderCellRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 
 function MoodCellRenderer() {
 }
 
-MoodCellRenderer.prototype.init = function (params) {
+MoodCellRenderer.prototype.init = function(params) {
     this.eGui = document.createElement('span');
     if (params.value !== "" || params.value !== undefined || params.value !== null) {
-        var imgForMood = params.value === 'Happy' ? 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/smiley.png' : 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/smiley-sad.png';
+        var imgForMood = params.value === 'Happy' ? 'https://www.ag-grid.com/example-assets/smileys/happy.png' : 'https://www.ag-grid.com/example-assets/smileys/sad.png';
         this.eGui.innerHTML = '<img width="20px" src="' + imgForMood + '" />';
     }
 };
 
-MoodCellRenderer.prototype.getGui = function () {
+MoodCellRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 
@@ -254,7 +254,7 @@ function MoodEditor() {
     this.selectedImgStyle = 'padding-left:10px; padding-right:10px; border: 1px solid lightgreen; padding: 4px;';
 }
 
-MoodEditor.prototype.onKeyDown = function (event) {
+MoodEditor.prototype.onKeyDown = function(event) {
     var key = event.which || event.keyCode;
     if (key == 37 ||  // left
         key == 39) {  // right
@@ -263,71 +263,71 @@ MoodEditor.prototype.onKeyDown = function (event) {
     }
 };
 
-MoodEditor.prototype.toggleMood = function () {
+MoodEditor.prototype.toggleMood = function() {
     this.selectMood(this.mood === 'Happy' ? 'Sad' : 'Happy');
 };
 
-MoodEditor.prototype.init = function (params) {
+MoodEditor.prototype.init = function(params) {
     this.container = document.createElement('div');
     this.container.style = "border-radius: 15px; border: 1px solid grey;background: #e6e6e6;padding: 15px; text-align:center;display:inline-block;outline:none";
     this.container.tabIndex = "0";                // to allow the div to capture keypresses
 
     this.happyImg = document.createElement('img');
-    this.happyImg.src = 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/smiley.png';
+    this.happyImg.src = 'https://www.ag-grid.com/example-assets/smileys/happy.png';
     this.happyImg.style = this.defaultImgStyle;
 
     this.sadImg = document.createElement('img');
-    this.sadImg.src = 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/smiley-sad.png';
+    this.sadImg.src = 'https://www.ag-grid.com/example-assets/smileys/sad.png';
     this.sadImg.style = this.defaultImgStyle;
 
     this.container.appendChild(this.happyImg);
     this.container.appendChild(this.sadImg);
 
     var that = this;
-    this.happyImg.addEventListener('click', function (event) {
+    this.happyImg.addEventListener('click', function(event) {
         that.selectMood('Happy');
         params.stopEditing();
     });
-    this.sadImg.addEventListener('click', function (event) {
+    this.sadImg.addEventListener('click', function(event) {
         that.selectMood('Sad');
         params.stopEditing();
     });
-    this.container.addEventListener('keydown', function (event) {
-        that.onKeyDown(event)
+    this.container.addEventListener('keydown', function(event) {
+        that.onKeyDown(event);
     });
 
     this.selectMood(params.value);
 };
 
-MoodEditor.prototype.selectMood = function (mood) {
+MoodEditor.prototype.selectMood = function(mood) {
     this.mood = mood;
     this.happyImg.style = (mood === 'Happy') ? this.selectedImgStyle : this.defaultImgStyle;
     this.sadImg.style = (mood === 'Sad') ? this.selectedImgStyle : this.defaultImgStyle;
 };
 
 // gets called once when grid ready to insert the element
-MoodEditor.prototype.getGui = function () {
+MoodEditor.prototype.getGui = function() {
     return this.container;
 };
 
-MoodEditor.prototype.afterGuiAttached = function () {
+MoodEditor.prototype.afterGuiAttached = function() {
     this.container.focus();
 };
 
-MoodEditor.prototype.getValue = function () {
+MoodEditor.prototype.getValue = function() {
     return this.mood;
 };
 
 // any cleanup we need to be done here
-MoodEditor.prototype.destroy = function () {
+MoodEditor.prototype.destroy = function() {
 };
 
-MoodEditor.prototype.isPopup = function () {
+MoodEditor.prototype.isPopup = function() {
     return true;
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

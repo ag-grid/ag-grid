@@ -77,9 +77,9 @@ export default class extends Component {
     onGridReady(params) {
         this.topGrid = params;
         var httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
+        httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
         httpRequest.send();
-        httpRequest.onreadystatechange = function() {
+        httpRequest.onreadystatechange = function () {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
                 var httpResult = JSON.parse(httpRequest.responseText);
                 this.rowData = httpResult;
@@ -90,22 +90,6 @@ export default class extends Component {
 
     onFirstDataRendered() {
         this.topGrid.columnApi.autoSizeAllColumns();
-    }
-
-    // Warning - mutating the state is not recommended from react, doing it for example purposes
-    onCbAthlete(e) {
-        this.athleteVisible = !this.athleteVisible;
-        this.setState(this.createState.bind(this));
-    }
-
-    onCbAge(e) {
-        this.ageVisible = !this.ageVisible;
-        this.setState(this.createState.bind(this));
-    }
-
-    onCbCountry(e) {
-        this.countryVisible = !this.countryVisible;
-        this.setState(this.createState.bind(this));
     }
 
     render() {

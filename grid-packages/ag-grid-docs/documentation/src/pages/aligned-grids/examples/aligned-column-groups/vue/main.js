@@ -123,7 +123,7 @@ const VueExample = {
 
             httpRequest.open(
                 'GET',
-                'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'
+                'https://www.ag-grid.com/example-assets/olympic-winners.json'
             );
             httpRequest.send();
             httpRequest.onreadystatechange = () => {
@@ -139,8 +139,8 @@ const VueExample = {
 };
 
 new Vue({
-  el: '#app',
-  components: {
-    'my-component': VueExample,
-  },
+    el: '#app',
+    components: {
+        'my-component': VueExample,
+    },
 });

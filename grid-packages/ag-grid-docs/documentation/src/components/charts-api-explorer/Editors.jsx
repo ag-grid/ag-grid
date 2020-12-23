@@ -5,7 +5,7 @@ import { doOnEnter } from '../key-handlers';
 import styles from './Editors.module.scss';
 
 export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
-    const [stateValue, setValueChange] = useState(value);
+    const [stateValue, setValueChange] = useState(value || '');
     const inputOnChange = event => {
         const { value } = event.target;
         const newValue = value == null || value.trim() === '' ? undefined : step % 1 > 0 ? parseFloat(value) : parseInt(value);
@@ -15,7 +15,7 @@ export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
 
     const props = {
         value: stateValue,
-        onChange: inputOnChange
+        onChange: inputOnChange,
     };
 
     if (min != null) {

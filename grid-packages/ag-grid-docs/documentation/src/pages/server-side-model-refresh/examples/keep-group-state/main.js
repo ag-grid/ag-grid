@@ -20,13 +20,13 @@ var gridOptions = {
     },
     getRowNodeId: function(data) {
         var parts = [];
-        if (data.country!=null) {
+        if (data.country != null) {
             parts.push(data.country);
         }
-        if (data.year!=null) {
+        if (data.year != null) {
             parts.push(data.year);
         }
-        if (data.id!=null) {
+        if (data.id != null) {
             parts.push(data.id);
         }
         return parts.join('-');
@@ -45,8 +45,8 @@ var gridOptions = {
 var versionCounter = 1;
 function refreshCache(route) {
     versionCounter++;
-    var purge = document.querySelector('#purge').checked === true
-    gridOptions.api.refreshServerSideStore({route: route, purge: purge} );
+    var purge = document.querySelector('#purge').checked === true;
+    gridOptions.api.refreshServerSideStore({ route: route, purge: purge });
 }
 
 function getBlockState() {
@@ -68,7 +68,7 @@ function ServerSideDatasource(server) {
 
                 // for unique-id purposes in the client, we also want to attached
                 // the parent group keys
-                params.request.groupKeys.forEach( function(groupKey, index) {
+                params.request.groupKeys.forEach(function(groupKey, index) {
                     var col = params.request.rowGroupCols[index];
                     var field = col.id;
                     res[field] = groupKey;
@@ -81,7 +81,7 @@ function ServerSideDatasource(server) {
             setTimeout(function() {
                 if (response.success) {
                     // call the success callback
-                    params.success({rowData: response.rows, rowCount: response.lastRow});
+                    params.success({ rowData: response.rows, rowCount: response.lastRow });
                 } else {
                     // inform the grid request failed
                     params.fail();
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
         // give each data item an ID
         data.forEach(function(dataItem, index) {
             dataItem.id = index;

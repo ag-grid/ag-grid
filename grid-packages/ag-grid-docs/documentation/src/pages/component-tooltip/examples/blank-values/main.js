@@ -1,4 +1,4 @@
-var toolTipValueGetter = function(params) { return { value: params.value }; }
+var toolTipValueGetter = function(params) { return { value: params.value }; };
 
 var columnDefs = [
     { headerName: "Athlete Col 1", field: "athlete", width: 150, tooltipField: 'athlete' },
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

@@ -1,14 +1,14 @@
 var columnDefs = [
-    { field: "athlete"},
-    { field: "age"},
-    { field: "country"},
-    { field: "year"},
-    { field: "date"},
-    { field: "sport"},
-    { field: "gold"},
-    { field: "silver"},
-    { field: "bronze"},
-    { field: "total"}
+    { field: "athlete" },
+    { field: "age" },
+    { field: "country" },
+    { field: "year" },
+    { field: "date" },
+    { field: "sport" },
+    { field: "gold" },
+    { field: "silver" },
+    { field: "bronze" },
+    { field: "total" }
 ];
 
 var gridOptions = {
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

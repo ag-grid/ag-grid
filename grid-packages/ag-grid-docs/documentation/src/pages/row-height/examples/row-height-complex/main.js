@@ -4,15 +4,15 @@ var latinText =
 
 var gridOptions = {
     columnDefs: [
-        {field: 'latinText', width: 350, wrapText: true},
-        {field: 'athlete'},
-        {field: 'country'},
-        {field: 'date'},
-        {field: 'sport'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'}
+        { field: 'latinText', width: 350, wrapText: true },
+        { field: 'athlete' },
+        { field: 'country' },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' }
     ],
     rowHeight: 120,
     defaultColDef: {
@@ -25,13 +25,13 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'})
-        .then(function (data) {
-            data.forEach(function (dataItem) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
+        .then(function(data) {
+            data.forEach(function(dataItem) {
                 dataItem.latinText = latinText;
             });
 

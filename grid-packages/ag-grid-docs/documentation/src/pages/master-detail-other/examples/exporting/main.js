@@ -47,10 +47,10 @@ var gridOptions = {
                         cell(record.number, 'body'),
                         cell(record.duration, 'body'),
                         cell(record.switchCode, 'body'),
-                    ]
+                    ];
                 }),
                 [[]]
-            )
+            );
         },
         columnWidth: 120
     },
@@ -75,7 +75,7 @@ var gridOptions = {
 function cell(text, styleId) {
     return {
         styleId: styleId,
-        data: {type: /^\d+$/.test(text) ? 'Number' : 'String', value: String(text)}
+        data: { type: /^\d+$/.test(text) ? 'Number' : 'String', value: String(text) }
     };
 }
 
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/simple/data/data.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/master-detail-data.json' }).then(function(data) {
         gridOptions.api.setRowData(data);
     });
 });

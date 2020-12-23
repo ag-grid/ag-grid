@@ -14,15 +14,15 @@ var columnDefs = [
         checkboxSelection: checkboxSelection,
         headerCheckboxSelection: headerCheckboxSelection
     },
-    {field: 'age'},
-    {field: 'country'},
-    {field: 'year'},
-    {field: 'date'},
-    {field: 'sport'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'}
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'sport' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' }
 ];
 
 var autoGroupColumnDef = {
@@ -38,7 +38,7 @@ var autoGroupColumnDef = {
     },
     headerCheckboxSelection: true,
     // headerCheckboxSelectionFilteredOnly: true,
-    cellRenderer:'agGroupCellRenderer',
+    cellRenderer: 'agGroupCellRenderer',
     cellRendererParams: {
         checkbox: true
     }
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
         gridOptions.api.setRowData(data);
         gridOptions.api.paginationGoToPage(4);
     });

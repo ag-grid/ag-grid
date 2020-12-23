@@ -1,10 +1,11 @@
 var gridOptions = {
   columnDefs: [
     { field: 'athlete', minWidth: 220, filter: 'agTextColumnFilter' },
-    { field: 'country', minWidth: 200,
+    {
+      field: 'country', minWidth: 200,
       filter: 'agSetColumnFilter',
       filterParams: {
-        values: ['United States','Ireland','United Kingdom','Russia','Australia','Canada','Norway']
+        values: ['United States', 'Ireland', 'United Kingdom', 'Russia', 'Australia', 'Canada', 'Norway']
       }
     },
     { field: 'year', filter: 'agNumberColumnFilter' },
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
   agGrid
     .simpleHttpRequest({
       url:
-        'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json',
+        'https://www.ag-grid.com/example-assets/olympic-winners.json',
     })
     .then(function(data) {
       // setup the fake server with entire dataset
@@ -56,10 +57,10 @@ function createServerSideDatasource(server) {
       var response = server.getData();
 
       // simulating real server call with a 500ms delay
-      setTimeout(function () {
+      setTimeout(function() {
         if (response.success) {
           // supply rows for requested block to grid
-          params.success({rowData: response.rows});
+          params.success({ rowData: response.rows });
         } else {
           params.fail();
         }

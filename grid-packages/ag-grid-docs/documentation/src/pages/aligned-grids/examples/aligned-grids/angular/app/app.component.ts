@@ -95,7 +95,7 @@ export class AppComponent {
     }
 
     ngOnInit() {
-        this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json')
+        this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .subscribe(data => {
                 this.rowData = data;
             });

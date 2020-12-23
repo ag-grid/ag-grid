@@ -35,4 +35,3 @@ For compatibility with earlier versions of the Grid you can also pass a string, 
 - Setting `customHeader=string` causes a string to be inserted into the CSV file without any processing, and without being affected by `suppressQuotes` and `columnSeparator`. It contains commas and quotes what will not be visible in Excel.
 
 <grid-example title='CSV Export Options' name='csv-export' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
-

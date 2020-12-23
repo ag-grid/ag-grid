@@ -26,11 +26,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function (data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
         // setup the fake server with entire dataset
         var fakeServer = new FakeServer(data);
 
@@ -54,10 +54,10 @@ function ServerSideDatasource(server) {
             addPivotColDefs(response, params.columnApi);
 
             // simulating real server call with a 500ms delay
-            setTimeout(function () {
+            setTimeout(function() {
                 if (response.success) {
                     // supply data to grid
-                    params.success({rowData: response.rows, rowCount: response.lastRow});
+                    params.success({ rowData: response.rows, rowCount: response.lastRow });
                 } else {
                     params.fail();
                 }
@@ -76,7 +76,7 @@ function addPivotColDefs(response, columnApi) {
     // create colDefs
     var pivotColDefs = response.pivotFields.map(function(field) {
         var headerName = field.split('_')[0];
-        return {headerName: headerName, field: field};
+        return { headerName: headerName, field: field };
     });
 
     // supply secondary columns to the grid

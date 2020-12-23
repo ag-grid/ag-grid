@@ -8,7 +8,7 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 const VueExample = {
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine"> 
+        <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
             <ag-grid-vue style="flex: 1 1 auto;"
                          :gridOptions="topGridOptions"
                          @grid-ready="onGridReady"
@@ -109,7 +109,7 @@ const VueExample = {
 
             httpRequest.open(
                 "GET",
-                'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'
+                'https://www.ag-grid.com/example-assets/olympic-winners.json'
             );
             httpRequest.send();
             httpRequest.onreadystatechange = () => {

@@ -50,7 +50,7 @@ var gridOptions = {
     },
 
     columnDefs: columnDefs,
-    rowSelection: 'multiple', 
+    rowSelection: 'multiple',
     groupIncludeFooter: true,
     groupIncludeTotalFooter: true,
 
@@ -137,7 +137,7 @@ function validateSelection(params, api) {
 function onBtnExportDataAsCsv() {
     var api = gridOptions.api,
         params = getParams();
-        
+
     if (validateSelection(params, api)) { return; }
     api.exportDataAsCsv(params);
 }
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
             gridOptions.api.forEachNode(function(node) {

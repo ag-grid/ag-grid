@@ -46,26 +46,26 @@ function onColumnPinned(event) {
     var pinFixed = pinnedCount > 0;
 
     var columnStates = [];
-    allFixedCols.forEach(function (col) {
+    allFixedCols.forEach(function(col) {
         if (pinFixed !== col.isPinned()) {
             columnStates.push({
                 colId: col.getId(),
                 pinned: pinFixed ? 'left' : null
-            })
+            });
         }
     });
 
-    if (columnStates.length>0) {
-        event.columnApi.applyColumnState({state: columnStates});
+    if (columnStates.length > 0) {
+        event.columnApi.applyColumnState({ state: columnStates });
     }
 }
 
 function onPinAthlete() {
-    gridOptions.columnApi.applyColumnState({state: [{colId: 'athlete', pinned: 'left'}]});
+    gridOptions.columnApi.applyColumnState({ state: [{ colId: 'athlete', pinned: 'left' }] });
 }
 
 function onUnpinAthlete() {
-    gridOptions.columnApi.applyColumnState({state: [{colId: 'athlete', pinned: null}]});
+    gridOptions.columnApi.applyColumnState({ state: [{ colId: 'athlete', pinned: null }] });
 }
 
 // simple cell renderer returns dummy buttons. in a real application, a component would probably
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

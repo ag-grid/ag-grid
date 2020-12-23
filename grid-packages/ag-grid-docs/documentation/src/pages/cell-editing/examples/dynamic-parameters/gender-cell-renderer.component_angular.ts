@@ -5,7 +5,7 @@ import { INoRowsOverlayAngularComp } from "@ag-grid-community/angular";
     selector: 'app-gender-renderer',
     template: `
             <span>
-                <img [src]="imageSource" >{{value}}    
+                <img [src]="imageSource" >{{value}}
             </span>
     `
 })
@@ -15,7 +15,7 @@ export class GenderCellRenderer implements INoRowsOverlayAngularComp {
 
     agInit(params): void {
         const image = params.value === 'Male' ? 'male.png' : 'female.png';;
-        this.imageSource = `../images/${image}`
+        this.imageSource = `https://www.ag-grid.com/example-assets/genders/${image}`;
         this.value = params.value;
     }
 }

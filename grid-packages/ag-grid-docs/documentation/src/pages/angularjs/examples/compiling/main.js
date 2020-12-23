@@ -6,17 +6,17 @@ var module = angular.module("example", ["agGrid"]);
 module.controller("exampleCtrl", function($scope, $http) {
 
     var columnDefs = [
-        {headerName: "Athlete", field: "athlete", width: 150, cellRenderer: athleteCellRendererFunc},
-        {headerName: "Age", field: "age", width: 90, cellRenderer: ageCellRendererFunc},
-        {headerName: "Country", field: "country", width: 160, cellRenderer: countryCellRendererFunc},
-        {headerName: "Selected", width: 120, cellRenderer: selectedCellRendererFunc},
-        {headerName: "Year", field: "year", width: 90},
-        {headerName: "Date", field: "date", width: 110},
-        {headerName: "Sport", field: "sport", width: 110},
-        {headerName: "Gold", field: "gold", width: 100},
-        {headerName: "Silver", field: "silver", width: 100},
-        {headerName: "Bronze", field: "bronze", width: 100},
-        {headerName: "Total", field: "total", width: 100}
+        { headerName: "Athlete", field: "athlete", width: 150, cellRenderer: athleteCellRendererFunc },
+        { headerName: "Age", field: "age", width: 90, cellRenderer: ageCellRendererFunc },
+        { headerName: "Country", field: "country", width: 160, cellRenderer: countryCellRendererFunc },
+        { headerName: "Selected", width: 120, cellRenderer: selectedCellRendererFunc },
+        { headerName: "Year", field: "year", width: 90 },
+        { headerName: "Date", field: "date", width: 110 },
+        { headerName: "Sport", field: "sport", width: 110 },
+        { headerName: "Gold", field: "gold", width: 100 },
+        { headerName: "Silver", field: "silver", width: 100 },
+        { headerName: "Bronze", field: "bronze", width: 100 },
+        { headerName: "Total", field: "total", width: 100 }
     ];
 
     $scope.gridOptions = {
@@ -51,20 +51,20 @@ module.controller("exampleCtrl", function($scope, $http) {
     }
 
     function countryCellRendererFunc(params) {
-        return '<country name="'+params.value+'"></country>';
+        return '<country name="' + params.value + '"></country>';
     }
 
     function selectedCellRendererFunc() {
         return '<span ng-if="rowNode.selected">Selected</span><span ng-if="!rowNode.selected">Not Selected</span>';
     }
 
-    $http.get("https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json")
-        .then(function(res){
+    $http.get("https://www.ag-grid.com/example-assets/olympic-winners.json")
+        .then(function(res) {
             $scope.gridOptions.api.setRowData(res.data);
         });
 });
 
-module.directive('country', function () {
+module.directive('country', function() {
 
     var FLAG_CODES = {
         'Great Britain': 'gb',

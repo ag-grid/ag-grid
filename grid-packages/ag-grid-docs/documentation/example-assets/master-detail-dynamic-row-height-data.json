@@ -1,0 +1,540 @@
+[{
+    "name": "Nora Thomas",
+    "account": 177000,
+    "calls": 24,
+    "minutes": 25.65,
+    "callRecords": [{
+        "name": "susan",
+        "callId": 555,
+        "duration": 72,
+        "switchCode": "SW3",
+        "direction": "Out",
+        "number": "(00) 88542069"
+    }, {
+        "name": "susan",
+        "callId": 573,
+        "duration": 44,
+        "switchCode": "SW7",
+        "direction": "In",
+        "number": "(01) 180304"
+    }, {
+        "name": "susan",
+        "callId": 574,
+        "duration": 24,
+        "switchCode": "SW4",
+        "direction": "In",
+        "number": "(05) 33983060"
+    }, {
+        "name": "susan",
+        "callId": 577,
+        "duration": 36,
+        "switchCode": "SW5",
+        "direction": "In",
+        "number": "(09) 13139104"
+    }, {
+        "name": "susan",
+        "callId": 578,
+        "duration": 46,
+        "switchCode": "SW6",
+        "direction": "In",
+        "number": "(06) 8486087"
+    }]
+},
+    {
+        "name": "Mila Smith",
+        "account": 177001,
+        "calls": 24,
+        "minutes": 26.216666666666665,
+        "callRecords": [{
+            "name": "susan",
+            "callId": 579,
+            "duration": 23,
+            "switchCode": "SW5",
+            "direction": "Out",
+            "number": "(02) 47485405"
+        }, {
+            "name": "susan",
+            "callId": 587,
+            "duration": 21,
+            "switchCode": "SW8",
+            "direction": "In",
+            "number": "(05) 10830657"
+        }, {
+            "name": "susan",
+            "callId": 593,
+            "duration": 114,
+            "switchCode": "SW6",
+            "direction": "In",
+            "number": "(03) 3221324"
+        }, {
+            "name": "susan",
+            "callId": 594,
+            "duration": 26,
+            "switchCode": "SW2",
+            "direction": "Out",
+            "number": "(03) 15136907"
+        }, {
+            "name": "susan",
+            "callId": 595,
+            "duration": 109,
+            "switchCode": "SW2",
+            "direction": "In",
+            "number": "(08) 36133013"
+        }, {
+            "name": "susan",
+            "callId": 597,
+            "duration": 100,
+            "switchCode": "SW3",
+            "direction": "Out",
+            "number": "(02) 2011270"
+        }, {
+            "name": "susan",
+            "callId": 599,
+            "duration": 43,
+            "switchCode": "SW8",
+            "direction": "In",
+            "number": "(01) 56297516"
+        }, {
+            "name": "susan",
+            "callId": 600,
+            "duration": 99,
+            "switchCode": "SW2",
+            "direction": "In",
+            "number": "(00) 30313801"
+        }, {
+            "name": "susan",
+            "callId": 601,
+            "duration": 95,
+            "switchCode": "SW4",
+            "direction": "In",
+            "number": "(01) 75205393"
+        }, {
+            "name": "susan",
+            "callId": 602,
+            "duration": 46,
+            "switchCode": "SW0",
+            "direction": "In",
+            "number": "(09) 48865412"
+        }]
+    },
+    {
+        "name": "Evelyn Taylor",
+        "account": 177002,
+        "calls": 25,
+        "minutes": 30.633333333333333,
+        "callRecords": [{
+            "name": "susan",
+            "callId": 603,
+            "duration": 80,
+            "switchCode": "SW8",
+            "direction": "Out",
+            "number": "(05) 35713044"
+        }, {
+            "name": "susan",
+            "callId": 604,
+            "duration": 33,
+            "switchCode": "SW2",
+            "direction": "Out",
+            "number": "(01) 66861341"
+        }, {
+            "name": "susan",
+            "callId": 620,
+            "duration": 80,
+            "switchCode": "SW2",
+            "direction": "Out",
+            "number": "(04) 73077815"
+        }, {
+            "name": "susan",
+            "callId": 621,
+            "duration": 75,
+            "switchCode": "SW5",
+            "direction": "In",
+            "number": "(05) 9811378"
+        }, {
+            "name": "susan",
+            "callId": 622,
+            "duration": 100,
+            "switchCode": "SW5",
+            "direction": "Out",
+            "number": "(09) 15120539"
+        }, {
+            "name": "susan",
+            "callId": 623,
+            "duration": 114,
+            "switchCode": "SW6",
+            "direction": "In",
+            "number": "(00) 95177099"
+        }, {
+            "name": "susan",
+            "callId": 624,
+            "duration": 78,
+            "switchCode": "SW7",
+            "direction": "In",
+            "number": "(08) 69263227"
+        }, {
+            "name": "susan",
+            "callId": 625,
+            "duration": 71,
+            "switchCode": "SW8",
+            "direction": "In",
+            "number": "(04) 65395799"
+        }, {
+            "name": "susan",
+            "callId": 626,
+            "duration": 117,
+            "switchCode": "SW5",
+            "direction": "In",
+            "number": "(02) 7721832"
+        }, {
+            "name": "susan",
+            "callId": 627,
+            "duration": 39,
+            "switchCode": "SW8",
+            "direction": "In",
+            "number": "(04) 83980663"
+        }]
+    },
+    {
+        "name": "Harper Johnson",
+        "account": 177003,
+        "calls": 24,
+        "minutes": 26.483333333333334,
+        "callRecords": [{
+            "name": "susan",
+            "callId": 628,
+            "duration": 43,
+            "switchCode": "SW6",
+            "direction": "In",
+            "number": "(03) 99309192"
+        }, {
+            "name": "susan",
+            "callId": 629,
+            "duration": 117,
+            "switchCode": "SW5",
+            "direction": "Out",
+            "number": "(08) 59342105"
+        }, {
+            "name": "susan",
+            "callId": 630,
+            "duration": 31,
+            "switchCode": "SW9",
+            "direction": "Out",
+            "number": "(08) 12325526"
+        }, {
+            "name": "susan",
+            "callId": 631,
+            "duration": 47,
+            "switchCode": "SW3",
+            "direction": "Out",
+            "number": "(05) 95756786"
+        }, {
+            "name": "susan",
+            "callId": 632,
+            "duration": 88,
+            "switchCode": "SW9",
+            "direction": "Out",
+            "number": "(08) 57663903"
+        }, {
+            "name": "susan",
+            "callId": 633,
+            "duration": 48,
+            "switchCode": "SW9",
+            "direction": "In",
+            "number": "(05) 2223124"
+        }, {
+            "name": "susan",
+            "callId": 634,
+            "duration": 87,
+            "switchCode": "SW5",
+            "direction": "In",
+            "number": "(03) 91770582"
+        }, {
+            "name": "susan",
+            "callId": 635,
+            "duration": 33,
+            "switchCode": "SW6",
+            "direction": "Out",
+            "number": "(05) 18642775"
+        }, {
+            "name": "susan",
+            "callId": 636,
+            "duration": 29,
+            "switchCode": "SW8",
+            "direction": "Out",
+            "number": "(02) 8142481"
+        }, {
+            "name": "susan",
+            "callId": 637,
+            "duration": 98,
+            "switchCode": "SW2",
+            "direction": "In",
+            "number": "(02) 60222030"
+        }, {
+            "name": "susan",
+            "callId": 638,
+            "duration": 31,
+            "switchCode": "SW9",
+            "direction": "Out",
+            "number": "(05) 61042088"
+        }, {
+            "name": "susan",
+            "callId": 639,
+            "duration": 54,
+            "switchCode": "SW5",
+            "direction": "In",
+            "number": "(02) 81673712"
+        }, {
+            "name": "susan",
+            "callId": 640,
+            "duration": 57,
+            "switchCode": "SW6",
+            "direction": "In",
+            "number": "(05) 53777339"
+        }, {
+            "name": "susan",
+            "callId": 641,
+            "duration": 38,
+            "switchCode": "SW3",
+            "direction": "In",
+            "number": "(02) 19669515"
+        }, {
+            "name": "susan",
+            "callId": 642,
+            "duration": 108,
+            "switchCode": "SW7",
+            "direction": "Out",
+            "number": "(08) 94952980"
+        }, {
+            "name": "susan",
+            "callId": 643,
+            "duration": 84,
+            "switchCode": "SW9",
+            "direction": "Out",
+            "number": "(07) 27865463"
+        }, {
+            "name": "susan",
+            "callId": 644,
+            "duration": 85,
+            "switchCode": "SW7",
+            "direction": "In",
+            "number": "(04) 4150028"
+        }, {
+            "name": "susan",
+            "callId": 645,
+            "duration": 41,
+            "switchCode": "SW3",
+            "direction": "Out",
+            "number": "(00) 34497134"
+        }, {
+            "name": "susan",
+            "callId": 646,
+            "duration": 56,
+            "switchCode": "SW1",
+            "direction": "In",
+            "number": "(02) 14349051"
+        }, {
+            "name": "susan",
+            "callId": 647,
+            "duration": 101,
+            "switchCode": "SW3",
+            "direction": "In",
+            "number": "(09) 72617109"
+        }, {
+            "name": "susan",
+            "callId": 648,
+            "duration": 90,
+            "switchCode": "SW2",
+            "direction": "Out",
+            "number": "(04) 34028257"
+        }, {
+            "name": "susan",
+            "callId": 649,
+            "duration": 47,
+            "switchCode": "SW5",
+            "direction": "In",
+            "number": "(00) 585245"
+        }, {
+            "name": "susan",
+            "callId": 650,
+            "duration": 117,
+            "switchCode": "SW8",
+            "direction": "Out",
+            "number": "(08) 70074008"
+        }, {
+            "name": "susan",
+            "callId": 651,
+            "duration": 59,
+            "switchCode": "SW0",
+            "direction": "In",
+            "number": "(06) 32750750"
+        }]
+    },
+    {
+        "name": "Addison Wilson",
+        "account": 177004,
+        "calls": 23,
+        "minutes": 24.4,
+        "callRecords": [{
+            "name": "susan",
+            "callId": 652,
+            "duration": 32,
+            "switchCode": "SW9",
+            "direction": "Out",
+            "number": "(04) 77524120"
+        }, {
+            "name": "susan",
+            "callId": 653,
+            "duration": 44,
+            "switchCode": "SW3",
+            "direction": "Out",
+            "number": "(06) 477252"
+        }, {
+            "name": "susan",
+            "callId": 654,
+            "duration": 86,
+            "switchCode": "SW1",
+            "direction": "In",
+            "number": "(01) 15955397"
+        }, {
+            "name": "susan",
+            "callId": 655,
+            "duration": 85,
+            "switchCode": "SW4",
+            "direction": "Out",
+            "number": "(07) 25298377"
+        }, {
+            "name": "susan",
+            "callId": 656,
+            "duration": 71,
+            "switchCode": "SW5",
+            "direction": "In",
+            "number": "(07) 63477321"
+        }, {
+            "name": "susan",
+            "callId": 657,
+            "duration": 72,
+            "switchCode": "SW6",
+            "direction": "Out",
+            "number": "(03) 22235015"
+        }, {
+            "name": "susan",
+            "callId": 658,
+            "duration": 109,
+            "switchCode": "SW2",
+            "direction": "Out",
+            "number": "(09) 82619737"
+        }, {
+            "name": "susan",
+            "callId": 659,
+            "duration": 100,
+            "switchCode": "SW1",
+            "direction": "Out",
+            "number": "(09) 8153754"
+        }, {
+            "name": "susan",
+            "callId": 660,
+            "duration": 28,
+            "switchCode": "SW4",
+            "direction": "Out",
+            "number": "(04) 25341354"
+        }, {
+            "name": "susan",
+            "callId": 661,
+            "duration": 50,
+            "switchCode": "SW2",
+            "direction": "Out",
+            "number": "(01) 76439655"
+        }, {
+            "name": "susan",
+            "callId": 662,
+            "duration": 62,
+            "switchCode": "SW3",
+            "direction": "In",
+            "number": "(09) 66176396"
+        }, {
+            "name": "susan",
+            "callId": 663,
+            "duration": 65,
+            "switchCode": "SW8",
+            "direction": "In",
+            "number": "(04) 90800721"
+        }, {
+            "name": "susan",
+            "callId": 664,
+            "duration": 66,
+            "switchCode": "SW9",
+            "direction": "In",
+            "number": "(04) 91569849"
+        }, {
+            "name": "susan",
+            "callId": 665,
+            "duration": 63,
+            "switchCode": "SW5",
+            "direction": "Out",
+            "number": "(07) 33873629"
+        }, {
+            "name": "susan",
+            "callId": 666,
+            "duration": 62,
+            "switchCode": "SW9",
+            "direction": "In",
+            "number": "(06) 66194544"
+        }, {
+            "name": "susan",
+            "callId": 667,
+            "duration": 34,
+            "switchCode": "SW8",
+            "direction": "In",
+            "number": "(03) 32839115"
+        }, {
+            "name": "susan",
+            "callId": 668,
+            "duration": 106,
+            "switchCode": "SW8",
+            "direction": "Out",
+            "number": "(01) 91033174"
+        }, {
+            "name": "susan",
+            "callId": 669,
+            "duration": 76,
+            "switchCode": "SW6",
+            "direction": "Out",
+            "number": "(06) 57975290"
+        }, {
+            "name": "susan",
+            "callId": 670,
+            "duration": 44,
+            "switchCode": "SW0",
+            "direction": "In",
+            "number": "(01) 59390834"
+        }, {
+            "name": "susan",
+            "callId": 671,
+            "duration": 96,
+            "switchCode": "SW2",
+            "direction": "In",
+            "number": "(07) 44947033"
+        }, {
+            "name": "susan",
+            "callId": 672,
+            "duration": 57,
+            "switchCode": "SW4",
+            "direction": "In",
+            "number": "(00) 71164015"
+        }, {
+            "name": "susan",
+            "callId": 673,
+            "duration": 21,
+            "switchCode": "SW4",
+            "direction": "In",
+            "number": "(01) 35648857"
+        }, {
+            "name": "susan",
+            "callId": 674,
+            "duration": 35,
+            "switchCode": "SW4",
+            "direction": "Out",
+            "number": "(06) 44609564"
+        }]
+    }
+]

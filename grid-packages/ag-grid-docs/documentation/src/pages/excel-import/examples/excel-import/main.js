@@ -96,7 +96,7 @@ function populateGrid(workbook) {
 
 function importExcel() {
     makeRequest('GET',
-        'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/grid-packages/ag-grid-docs/documentation/src/pages/excel-import/OlympicData.xlsx',
+        'https://www.ag-grid.com/example-assets/olympic-data.xlsx',
         // success
         function(data) {
             var workbook = convertDataToWorkbook(data);

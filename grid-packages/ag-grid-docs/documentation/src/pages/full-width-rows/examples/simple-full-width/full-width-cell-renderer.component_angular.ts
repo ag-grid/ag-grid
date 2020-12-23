@@ -1,32 +1,32 @@
-import {Component, ViewChild, ViewContainerRef} from "@angular/core";
+import { Component, ViewChild, ViewContainerRef } from "@angular/core";
 
-import {IFilterParams} from "@ag-grid-community/all-modules";
-import {IFilterAngularComp} from "@ag-grid-community/angular";
+import { IFilterParams } from "@ag-grid-community/all-modules";
+import { IFilterAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'filter-cell',
     template: `
-        <div class="full-width-panel"> 
-            <div class="full-width-flag"> 
-                <img border="0" [src]="flag"> 
-            </div> 
-            <div class="full-width-summary"> 
+        <div class="full-width-panel">
+            <div class="full-width-flag">
+                <img border="0" [src]="flag">
+            </div>
+            <div class="full-width-summary">
                 <span class="full-width-title">{{data.name}}</span>
                 <br/>
                 <label>
                     <b>Population:</b>
-                    {{data.population}} 
+                    {{data.population}}
                 </label>
-                <br/> 
+                <br/>
                 <label>
-                    <b>Known For:</b>  
-                    {{data.summary}} 
+                    <b>Known For:</b>
+                    {{data.summary}}
                 </label>
-                <br/> 
-            </div> 
-            <div class="full-width-center" (mousewheel)="mouseWheelListener($event)" (DOMMouseScroll)="mouseWheelListener($event)"> 
-                {{latinText()}} 
-            </div> 
+                <br/>
+            </div>
+            <div class="full-width-center" (mousewheel)="mouseWheelListener($event)" (DOMMouseScroll)="mouseWheelListener($event)">
+                {{latinText()}}
+            </div>
         </div>
     `, styles: [
         `
@@ -77,7 +77,7 @@ export class FullWidthCellRenderer implements IFilterAngularComp {
 
     agInit(params: IFilterParams): void {
         this.data = params.node.data;
-        this.flag = `https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/largeFlags/${this.data.code}.png`;
+        this.flag = `https://www.ag-grid.com/example-assets/large-flags/${this.data.code}.png`;
     }
 
     mouseWheelListener(event) {

@@ -36,24 +36,24 @@
         };
 
         var countries = [
-            {country: "Ireland", continent: "Europe", language: "English"},
-            {country: "Spain", continent: "Europe", language: "Spanish"},
-            {country: "United Kingdom", continent: "Europe", language: "English"},
-            {country: "France", continent: "Europe", language: "French"},
-            {country: "Germany", continent: "Europe", language: "(other)"},
-            {country: "Sweden", continent: "Europe", language: "(other)"},
-            {country: "Norway", continent: "Europe", language: "(other)"},
-            {country: "Italy", continent: "Europe", language: "(other)"},
-            {country: "Greece", continent: "Europe", language: "(other)"},
-            {country: "Iceland", continent: "Europe", language: "(other)"},
-            {country: "Portugal", continent: "Europe", language: "Portuguese"},
-            {country: "Malta", continent: "Europe", language: "(other)"},
-            {country: "Brazil", continent: "South America", language: "Portuguese"},
-            {country: "Argentina", continent: "South America", language: "Spanish"},
-            {country: "Colombia", continent: "South America", language: "Spanish"},
-            {country: "Peru", continent: "South America", language: "Spanish"},
-            {country: "Venezuela", continent: "South America", language: "Spanish"},
-            {country: "Uruguay", continent: "South America", language: "Spanish"}
+            { country: "Ireland", continent: "Europe", language: "English" },
+            { country: "Spain", continent: "Europe", language: "Spanish" },
+            { country: "United Kingdom", continent: "Europe", language: "English" },
+            { country: "France", continent: "Europe", language: "French" },
+            { country: "Germany", continent: "Europe", language: "(other)" },
+            { country: "Sweden", continent: "Europe", language: "(other)" },
+            { country: "Norway", continent: "Europe", language: "(other)" },
+            { country: "Italy", continent: "Europe", language: "(other)" },
+            { country: "Greece", continent: "Europe", language: "(other)" },
+            { country: "Iceland", continent: "Europe", language: "(other)" },
+            { country: "Portugal", continent: "Europe", language: "Portuguese" },
+            { country: "Malta", continent: "Europe", language: "(other)" },
+            { country: "Brazil", continent: "South America", language: "Portuguese" },
+            { country: "Argentina", continent: "South America", language: "Spanish" },
+            { country: "Colombia", continent: "South America", language: "Spanish" },
+            { country: "Peru", continent: "South America", language: "Spanish" },
+            { country: "Venezuela", continent: "South America", language: "Spanish" },
+            { country: "Uruguay", continent: "South America", language: "Spanish" }
         ];
 
         var addresses = [
@@ -112,31 +112,37 @@
         var IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
         var columnDefs = [
-            {headerName: '', width: 30, checkboxSelection: true, sortable: false,
-                suppressMenu: true, pinned: true},
+            {
+                headerName: '', width: 30, checkboxSelection: true, sortable: false,
+                suppressMenu: true, pinned: true
+            },
             {
                 headerName: 'Employee',
                 children: [
-                    {headerName: "Name", field: "name",
-                        minWidth: 150, pinned: true},
-                    {headerName: "Country", field: "country", minWidth: 170,
+                    {
+                        headerName: "Name", field: "name",
+                        minWidth: 150, pinned: true
+                    },
+                    {
+                        headerName: "Country", field: "country", minWidth: 170,
                         cellRenderer: countryCellRenderer, pinned: true,
-                        filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},
+                        filterParams: { cellRenderer: countryCellRenderer, cellHeight: 20 }
+                    },
                 ]
             },
             {
                 headerName: 'IT Skills',
                 children: [
-                    {headerName: "Skills", minWidth: 125, sortable: false, cellRenderer: skillsCellRenderer, filter: SkillFilter},
-                    {headerName: "Proficiency", field: "proficiency", filter: 'agNumberColumnFilter', minWidth: 140, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
+                    { headerName: "Skills", minWidth: 125, sortable: false, cellRenderer: skillsCellRenderer, filter: SkillFilter },
+                    { headerName: "Proficiency", field: "proficiency", filter: 'agNumberColumnFilter', minWidth: 140, cellRenderer: percentCellRenderer, filter: ProficiencyFilter },
                 ]
             },
             {
                 headerName: 'Contact',
                 children: [
-                    {headerName: "Mobile", field: "mobile", minWidth: 150, filter: 'agTextColumnFilter'},
-                    {headerName: "Land-line", field: "landline", minWidth: 150, filter: 'agTextColumnFilter'},
-                    {headerName: "Address", field: "address", width: 500, filter: 'agTextColumnFilter'}
+                    { headerName: "Mobile", field: "mobile", minWidth: 150, filter: 'agTextColumnFilter' },
+                    { headerName: "Land-line", field: "landline", minWidth: 150, filter: 'agTextColumnFilter' },
+                    { headerName: "Address", field: "address", width: 500, filter: 'agTextColumnFilter' }
                 ]
             }
         ];
@@ -195,16 +201,16 @@
         function skillsCellRenderer(params) {
             var data = params.data;
             var skills = [];
-            IT_SKILLS.forEach(function (skill) {
+            IT_SKILLS.forEach(function(skill) {
                 if (data && data.skills[skill]) {
-                    skills.push('<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+                    skills.push('<img src="https://www.ag-grid.com/example-assets/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
                 }
             });
             return skills.join(' ');
         }
 
         function countryCellRenderer(params) {
-            var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/flags/" + COUNTRY_CODES[params.value] + ".png'>";
+            var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://www.ag-grid.com/example-assets/flags/" + COUNTRY_CODES[params.value] + ".png'>";
             return flag + " " + params.value;
         }
 
@@ -251,7 +257,7 @@
             '    <div style="text-align: center;">SKILL_NAME</div>' +
             '    <div>' +
             '      <input type="checkbox"/>' +
-            '      <img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/skills/SKILL.png" width="30px"/>' +
+            '      <img src="https://www.ag-grid.com/example-assets/skills/SKILL.png" width="30px"/>' +
             '    </div>' +
             '  </span>' +
             '</label>';
@@ -264,7 +270,7 @@
         function SkillFilter() {
         }
 
-        SkillFilter.prototype.init = function (params) {
+        SkillFilter.prototype.init = function(params) {
             this.filterChangedCallback = params.filterChangedCallback;
             this.model = {
                 android: false,
@@ -275,15 +281,15 @@
             };
         };
 
-        SkillFilter.prototype.getModel = function () {
+        SkillFilter.prototype.getModel = function() {
 
         };
 
-        SkillFilter.prototype.setModel = function (model) {
+        SkillFilter.prototype.setModel = function(model) {
 
         };
 
-        SkillFilter.prototype.getGui = function () {
+        SkillFilter.prototype.getGui = function() {
             var eGui = document.createElement('div');
             var eInstructions = document.createElement('div');
             eInstructions.innerHTML = FILTER_TITLE.replace('TITLE_NAME', 'Custom Skills Filter');
@@ -291,14 +297,14 @@
 
             var that = this;
 
-            IT_SKILLS.forEach(function (skill, index) {
+            IT_SKILLS.forEach(function(skill, index) {
                 var skillName = IT_SKILLS_NAMES[index];
                 var eSpan = document.createElement('span');
                 var html = SKILL_TEMPLATE.replace("SKILL_NAME", skillName).replace("SKILL", skill);
                 eSpan.innerHTML = html;
 
                 var eCheckbox = eSpan.querySelector('input');
-                eCheckbox.addEventListener('click', function () {
+                eCheckbox.addEventListener('click', function() {
                     that.model[skill] = eCheckbox.checked;
                     that.filterChangedCallback();
                 });
@@ -309,13 +315,13 @@
             return eGui;
         };
 
-        SkillFilter.prototype.doesFilterPass = function (params) {
+        SkillFilter.prototype.doesFilterPass = function(params) {
 
             var rowSkills = params.data.skills;
             var model = this.model;
             var passed = true;
 
-            IT_SKILLS.forEach(function (skill) {
+            IT_SKILLS.forEach(function(skill) {
                 if (model[skill]) {
                     if (!rowSkills[skill]) {
                         passed = false;
@@ -326,7 +332,7 @@
             return passed;
         };
 
-        SkillFilter.prototype.isFilterActive = function () {
+        SkillFilter.prototype.isFilterActive = function() {
             var model = this.model;
             var somethingSelected = model.android || model.css || model.html5 || model.mac || model.windows;
             return somethingSelected;
@@ -349,21 +355,21 @@
         function ProficiencyFilter() {
         }
 
-        ProficiencyFilter.prototype.init = function (params) {
+        ProficiencyFilter.prototype.init = function(params) {
             this.filterChangedCallback = params.filterChangedCallback;
             this.selected = PROFICIENCY_NONE;
             this.valueGetter = params.valueGetter;
         };
 
-        ProficiencyFilter.prototype.getModel = function () {
+        ProficiencyFilter.prototype.getModel = function() {
 
         };
 
-        ProficiencyFilter.prototype.setModel = function (model) {
+        ProficiencyFilter.prototype.setModel = function(model) {
 
         };
 
-        ProficiencyFilter.prototype.getGui = function () {
+        ProficiencyFilter.prototype.getGui = function() {
             var eGui = document.createElement('div');
             var eInstructions = document.createElement('div');
             eInstructions.innerHTML = FILTER_TITLE.replace('TITLE_NAME', 'Custom Proficiency Filter');
@@ -372,7 +378,7 @@
             var random = '' + Math.random();
 
             var that = this;
-            PROFICIENCY_NAMES.forEach( function (name, index) {
+            PROFICIENCY_NAMES.forEach(function(name, index) {
                 var eFilter = document.createElement('div');
                 var html = PROFICIENCY_TEMPLATE.replace('PROFICIENCY_NAME', name).replace('RANDOM', random);
                 eFilter.innerHTML = html;
@@ -382,7 +388,7 @@
                 }
                 eGui.appendChild(eFilter);
 
-                eRadio.addEventListener('click', function () {
+                eRadio.addEventListener('click', function() {
                     that.selected = PROFICIENCY_VALUES[index];
                     that.filterChangedCallback();
                 });
@@ -391,21 +397,21 @@
             return eGui;
         };
 
-        ProficiencyFilter.prototype.doesFilterPass = function (params) {
+        ProficiencyFilter.prototype.doesFilterPass = function(params) {
 
             var value = this.valueGetter(params);
             var valueAsNumber = parseFloat(value);
 
             switch (this.selected) {
-                case PROFICIENCY_ABOVE40 : return valueAsNumber >= 40;
-                case PROFICIENCY_ABOVE60 : return valueAsNumber >= 60;
-                case PROFICIENCY_ABOVE80 : return valueAsNumber >= 80;
-                default : return true;
+                case PROFICIENCY_ABOVE40: return valueAsNumber >= 40;
+                case PROFICIENCY_ABOVE60: return valueAsNumber >= 60;
+                case PROFICIENCY_ABOVE80: return valueAsNumber >= 80;
+                default: return true;
             }
 
         };
 
-        ProficiencyFilter.prototype.isFilterActive = function () {
+        ProficiencyFilter.prototype.isFilterActive = function() {
             return this.selected !== PROFICIENCY_NONE;
         };
 

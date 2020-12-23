@@ -33,7 +33,7 @@ export function convertTemplate(template: string) {
     template = template
         .replace(/,\s+event([),])/g, '$1')
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
-        .replace(/ value=/g, ' defaultValue=')
+        .replace(/<input (.*)value=/g, '<input $1defaultValue=')
         .replace(/ class=/g, ' className=');
 
     return convertStyles(template);

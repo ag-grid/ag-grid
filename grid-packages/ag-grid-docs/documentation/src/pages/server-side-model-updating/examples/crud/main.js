@@ -1,12 +1,12 @@
 var columnDefs = [
-    {field: "athlete", width: 150},
-    {field: "age"},
-    {field: "country", width: 150},
-    {field: "year"},
-    {field: "sport"},
-    {field: "gold"},
-    {field: "silver"},
-    {field: "bronze"}
+    { field: "athlete", width: 150 },
+    { field: "age" },
+    { field: "country", width: 150 },
+    { field: "year" },
+    { field: "sport" },
+    { field: "gold" },
+    { field: "silver" },
+    { field: "bronze" }
 ];
 
 var gridOptions = {
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
         var datasource = createMyDataSource(data);
         gridOptions.api.setServerSideDatasource(datasource);
     });
@@ -66,11 +66,11 @@ function createMyDataSource(data) {
     function MyDatasource() {
     }
 
-    MyDatasource.prototype.getRows = function (params) {
+    MyDatasource.prototype.getRows = function(params) {
         // take a slice of the total rows
         var rowsThisPage = data.slice(params.request.startRow, params.request.endRow);
         // call the success callback
-        params.success({rowData: rowsThisPage, rowCount: window.rowDataServerSide.length});
+        params.success({ rowData: rowsThisPage, rowCount: window.rowDataServerSide.length });
     };
 
     return new MyDatasource();

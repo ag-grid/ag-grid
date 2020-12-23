@@ -243,5 +243,4 @@ gulp.task('serve-dist', serveDist);
 
 gulp.task('serve', require('./dev-server').bind(null, false, true));
 gulp.task('serve-core-only', require('./dev-server').bind(null, true, true));
-gulp.task('serve-website', require('./dev-server').bind(null, false, true, true)); // will not start gatsby
 gulp.task('serve-with-formatting', require('./dev-server').bind(null, false, false));

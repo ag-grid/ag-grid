@@ -102,7 +102,7 @@ var publishSelectedSymbols = function() {
         var gridDiv = document.querySelector('#myGrid');
         new agGrid.Grid(gridDiv, gridOptions);
 
-        agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/grid-packages/ag-grid-docs/documentation/src/pages/third-party-charting/examples/stocks-master-detail/stocks/summary.json' })
+        agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/stocks/summary.json' })
             .then(function(data) {
                 gridOptions.api.setRowData(data);
             });
@@ -140,7 +140,7 @@ var requestStockDataLoad = function(stockSymbols) {
     var promises = [];
     stockSymbols.forEach(function(stockSymbol) {
         "use strict";
-        promises.push(makeRequest('https://raw.githubusercontent.com/ag-grid/ag-grid/latest/grid-packages/ag-grid-docs/documentation/src/pages/third-party-charting/examples/stocks-master-detail/stocks/' + stockSymbol + '.json'));
+        promises.push(makeRequest('https://www.ag-grid.com/example-assets/stocks/' + stockSymbol + '.json'));
     });
     return promises;
 };

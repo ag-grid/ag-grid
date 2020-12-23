@@ -1,17 +1,17 @@
 var ragCellClassRules = {
-    'rag-green-outer': function (params) {
+    'rag-green-outer': function(params) {
         return params.value === 2008;
     },
-    'rag-amber-outer': function (params) {
+    'rag-amber-outer': function(params) {
         return params.value === 2004;
     },
-    'rag-red-outer': function (params) {
+    'rag-red-outer': function(params) {
         return params.value === 2000;
     }
 };
 
 var columnDefs = [
-    {field: "athlete"},
+    { field: "athlete" },
     {
         field: "age",
         maxWidth: 90,
@@ -22,7 +22,7 @@ var columnDefs = [
             'rag-red': 'x >= 25'
         }
     },
-    {field: "country"},
+    { field: "country" },
     {
         field: "year",
         maxWidth: 90,
@@ -30,7 +30,7 @@ var columnDefs = [
         cellClassRules: ragCellClassRules,
         cellRenderer: ragRenderer
     },
-    {field: "date", cellClass: 'rag-amber'},
+    { field: "date", cellClass: 'rag-amber' },
     {
         field: "sport",
         cellClass: cellClass
@@ -105,12 +105,12 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'})
-        .then(function (data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
+        .then(function(data) {
             gridOptions.api.setRowData(data);
         });
 });

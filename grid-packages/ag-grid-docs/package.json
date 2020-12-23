@@ -6,7 +6,6 @@
     "postinstall": "webdriver-manager update",
     "build": "npm run hash",
     "start": "gulp serve",
-    "website-only": "gulp serve-website",
     "serve-core-only": "gulp serve-core-only",
     "serve-with-formatting": "gulp serve-with-formatting",
     "tsc": "tsc -p tests/config/tsconfig.json",

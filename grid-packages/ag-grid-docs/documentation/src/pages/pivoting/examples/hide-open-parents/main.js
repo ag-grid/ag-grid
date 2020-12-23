@@ -12,10 +12,10 @@ var columnDefs = [
     },
 
     // aggregation columns
-    { field: 'gold', aggFunc: 'sum'},
-    { field: 'silver', aggFunc: 'sum'},
-    { field: 'bronze', aggFunc: 'sum'},
-    { field: 'total', aggFunc: 'sum'}
+    { field: 'gold', aggFunc: 'sum' },
+    { field: 'silver', aggFunc: 'sum' },
+    { field: 'bronze', aggFunc: 'sum' },
+    { field: 'total', aggFunc: 'sum' }
 ];
 
 var gridOptions = {
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
         gridOptions.api.setRowData(data);
     });
 });

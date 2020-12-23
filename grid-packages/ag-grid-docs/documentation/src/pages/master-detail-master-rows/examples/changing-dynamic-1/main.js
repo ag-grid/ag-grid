@@ -43,7 +43,7 @@ function onBtClearMilaCalls() {
     var milaSmithRowNode = gridOptions.api.getRowNode('177001');
     var milaSmithData = milaSmithRowNode.data;
     milaSmithData.callRecords = [];
-    gridOptions.api.applyTransaction({update: [milaSmithData]});
+    gridOptions.api.applyTransaction({ update: [milaSmithData] });
 }
 
 function onBtSetMilaCalls() {
@@ -64,7 +64,7 @@ function onBtSetMilaCalls() {
         "direction": "In",
         "number": "(02) 32367069"
     }];
-    gridOptions.api.applyTransaction({update: [milaSmithData]});
+    gridOptions.api.applyTransaction({ update: [milaSmithData] });
 }
 
 // setup the grid after the page has finished loading
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/dynamic-master-nodes/data/data.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/master-detail-dynamic-data.json' }).then(function(data) {
         gridOptions.api.setRowData(data);
     });
 });

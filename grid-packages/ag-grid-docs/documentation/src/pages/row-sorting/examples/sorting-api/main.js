@@ -67,11 +67,11 @@ var savedSort;
 function saveSort() {
     var colState = gridOptions.columnApi.getColumnState();
     var sortState = colState
-        .filter( function(s) {
+        .filter(function(s) {
             return s.sort != null;
         })
-        .map( function(s) {
-            return {colId: s.colId, sort: s.sort, sortIndex: s.sortIndex}
+        .map(function(s) {
+            return { colId: s.colId, sort: s.sort, sortIndex: s.sortIndex };
         });
     savedSort = sortState;
     console.log('saved sort', sortState);
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

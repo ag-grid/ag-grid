@@ -95,7 +95,7 @@ function addGridDropZone(params) {
             var deselectCheck = document.querySelector('input#deselect').checked;
             var moveCheck = document.querySelector('input#move').checked;
             var nodes = params.nodes;
-            
+
             if (moveCheck) {
                 leftGridOptions.api.applyTransaction({
                     remove: nodes.map(function(node) { return node.data; })
@@ -124,7 +124,7 @@ function loadGrid(options, side, data) {
 
 function resetInputs() {
     var inputs = document.querySelectorAll('.example-toolbar input');
-    var checkbox = inputs[inputs.length  -1];
+    var checkbox = inputs[inputs.length - 1];
 
     if (!checkbox.checked) {
         checkbox.click();
@@ -134,7 +134,7 @@ function resetInputs() {
 }
 
 function loadGrids() {
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
         .then(function(data) {
             var athletes = [];
             var i = 0;

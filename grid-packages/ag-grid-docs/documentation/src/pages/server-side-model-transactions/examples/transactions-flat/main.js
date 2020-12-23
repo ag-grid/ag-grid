@@ -8,7 +8,7 @@ var gridOptions = {
     width: 250,
     resizable: true
   },
-  getRowNodeId: function(data) {return data.product; },
+  getRowNodeId: function(data) { return data.product; },
   rowSelection: 'multiple',
   serverSideStoreType: 'full',
   enableCellChangeFlash: true,
@@ -19,14 +19,14 @@ var gridOptions = {
   animateRows: true
 };
 
-var products = ['Palm Oil','Rubber','Wool','Amber','Copper'];
+var products = ['Palm Oil', 'Rubber', 'Wool', 'Amber', 'Copper'];
 
 var newProductSequence = 0;
 
-var all_products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
-  'Aluminium Alloy','Nickel','Cobalt','Molybdenum','Recycled Steel','Corn','Oats','Rough Rice',
-  'Soybeans','Rapeseed','Soybean Meal','Soybean Oil','Wheat','Milk','Coca','Coffee C',
-  'Cotton No.2','Sugar No.11','Sugar No.14'];
+var all_products = ['Palm Oil', 'Rubber', 'Wool', 'Amber', 'Copper', 'Lead', 'Zinc', 'Tin', 'Aluminium',
+  'Aluminium Alloy', 'Nickel', 'Cobalt', 'Molybdenum', 'Recycled Steel', 'Corn', 'Oats', 'Rough Rice',
+  'Soybeans', 'Rapeseed', 'Soybean Meal', 'Soybean Oil', 'Wheat', 'Milk', 'Coca', 'Coffee C',
+  'Cotton No.2', 'Sugar No.11', 'Sugar No.14'];
 
 function onRemoveSelected() {
   var rowsToRemove = gridOptions.api.getSelectedRows();
@@ -43,15 +43,15 @@ function onRemoveRandom() {
   var firstRow;
 
   gridOptions.api.forEachNode(function(node) {
-    if (firstRow==null) {
+    if (firstRow == null) {
       firstRow = node.data;
     }
     // skip half the nodes at random
-    if (Math.random()<0.75) { return; }
+    if (Math.random() < 0.75) { return; }
     rowsToRemove.push(node.data);
   });
 
-  if (rowsToRemove.length==0 && firstRow!=null) {
+  if (rowsToRemove.length == 0 && firstRow != null) {
     rowsToRemove.push(firstRow);
   }
 
@@ -80,7 +80,7 @@ function onUpdateRandom() {
 
   gridOptions.api.forEachNode(function(node) {
     // skip half the nodes at random
-    if (Math.random()>0.5) { return; }
+    if (Math.random() > 0.5) { return; }
     var data = node.data;
     data.value = getNextValue();
     rowsToUpdate.push(data);
@@ -94,13 +94,13 @@ function onUpdateRandom() {
 }
 
 function onAdd(index) {
-  var newProductName = all_products[Math.floor(all_products.length*Math.random())];
+  var newProductName = all_products[Math.floor(all_products.length * Math.random())];
   var itemsToAdd = [];
-  for (var i = 0; i<5; i++) {
-    itemsToAdd.push(      {
-          product: newProductName + ' ' + newProductSequence++,
-          value: getNextValue()
-        }
+  for (var i = 0; i < 5; i++) {
+    itemsToAdd.push({
+      product: newProductName + ' ' + newProductSequence++,
+      value: getNextValue()
+    }
     );
   }
   var tx = {
@@ -113,7 +113,7 @@ function onAdd(index) {
 var valueCounter = 0;
 function getNextValue() {
   valueCounter++;
-  return (Math.floor((valueCounter*987654321)/7)) % 10000;
+  return (Math.floor((valueCounter * 987654321) / 7)) % 10000;
 }
 
 // setup the grid after the page has finished loading
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
 
-  agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
+  agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
 
     var dataSource = {
       getRows: function(params) {
@@ -130,15 +130,15 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
 
           var rows = [];
-          products.forEach( function(product, index) {
+          products.forEach(function(product, index) {
             rows.push({
               product: product,
               value: getNextValue()
-            })
+            });
           });
 
           // call the success callback
-          params.success({rowData: rows, rowCount: rows.length});
+          params.success({ rowData: rows, rowCount: rows.length });
         }, 500);
       }
     };

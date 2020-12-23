@@ -20,8 +20,8 @@ export default class MoodRenderer extends PolymerElement {
     setMood(params) {
         this.mood = params.value;
         this.imgForMood = this.mood === 'Happy' ?
-            'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley.png' :
-            'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley-sad.png';
+            'https://www.ag-grid.com/example-assets/smileys/happy.png' :
+            'https://www.ag-grid.com/example-assets/smileys/sad.png';
     };
 
     static get properties() {
