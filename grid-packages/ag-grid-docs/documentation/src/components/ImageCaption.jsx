@@ -34,7 +34,7 @@ const ImageCaption = ({ pageName, src, alt, centered, children, constrained, des
 
     const description = children &&
         <div className={classnames(styles['image-caption__body'], { [styles['image-caption__body--description-top']]: descriptionTop })}>
-            <p className={styles['image-caption__body-text']}>{children}</p>
+            <div className={styles['image-caption__body-text']}>{children}</div>
         </div>;
 
     const imageClasses = classnames(
