@@ -395,9 +395,11 @@ var FillHandle = /** @class */ (function (_super) {
             if (this.rowPositionUtils.sameRow(row, endPosition)) {
                 break;
             }
-        } while (row = isMovingUp ?
-            this.cellNavigationService.getRowAbove(row) :
-            this.cellNavigationService.getRowBelow(row));
+        } while (
+        // tslint:disable-next-line
+        row = isMovingUp
+            ? this.cellNavigationService.getRowAbove(row)
+            : this.cellNavigationService.getRowBelow(row));
     };
     FillHandle.prototype.reduceVertical = function (initialPosition, endPosition) {
         var row = initialPosition;
@@ -418,6 +420,7 @@ var FillHandle = /** @class */ (function (_super) {
             if (isLastRow) {
                 break;
             }
+            // tslint:disable-next-line
         } while (row = this.cellNavigationService.getRowAbove(row));
     };
     FillHandle.prototype.extendHorizontal = function (initialPosition, endPosition, isMovingLeft) {

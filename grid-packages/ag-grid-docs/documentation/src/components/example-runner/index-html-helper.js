@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { withPrefix } from 'gatsby';
+import {withPrefix} from 'gatsby';
 import VanillaTemplate from './VanillaTemplate';
 import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
@@ -8,20 +8,21 @@ import VueTemplate from './VueTemplate';
 import PolymerTemplate from './PolymerTemplate';
 
 export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
-    const { sourcePath, options, library } = exampleInfo;
-    let { boilerplatePath, appLocation, framework } = exampleInfo;
+    const {sourcePath, options, library} = exampleInfo;
+    let {boilerplatePath, appLocation, framework} = exampleInfo;
 
     const getFileUrl = file => isExecuting ?
         file.publicURL : file.relativePath.replace(sourcePath, '').replace(boilerplatePath, '');
 
-    const getExampleFileUrls = (extension, exclude) => nodes
+    const getExampleFileUrls = (extension, exclude = () => false) => nodes
         .filter(file => file.relativePath.startsWith(sourcePath) &&
             file.base.endsWith(`.${extension}`) &&
-            file.base !== exclude)
+            !exclude(file)
+        )
         .map(file => getFileUrl(file))
         .sort();
 
-    const scriptFiles = getExampleFileUrls('js', 'main.js');
+    const scriptFiles = getExampleFileUrls('js', (file) => file.base === 'main.js' || file.base.endsWith('Vue.js'));
     const styleFiles = getExampleFileUrls('css');
 
     if (isExecuting) {
@@ -35,7 +36,7 @@ export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
     let element;
 
     if (exampleInfo.type === 'polymer') {
-        element = <PolymerTemplate appLocation={appLocation} options={options} />;
+        element = <PolymerTemplate appLocation={appLocation} options={options}/>;
     } else {
         switch (framework) {
             case 'javascript': {
@@ -51,7 +52,7 @@ export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
                     options={options}
                     indexFragment={indexHtml.childHtmlRehype.html}
                     scriptFiles={[...scriptFiles, getFileUrl(exampleInfo.getFile('main.js'))]}
-                    styleFiles={styleFiles} />;
+                    styleFiles={styleFiles}/>;
 
                 break;
             }
@@ -67,23 +68,25 @@ export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
 
                 const FrameworkTemplate = frameworkTemplates[framework];
 
+
                 element = <FrameworkTemplate
                     library={library}
                     boilerplatePath={boilerplatePath}
                     appLocation={appLocation}
                     options={options}
                     scriptFiles={scriptFiles}
-                    styleFiles={styleFiles} />;
+                    styleFiles={styleFiles}/>;
 
                 break;
             }
 
-            default: element =
-                <html lang="en">
+            default:
+                element =
+                    <html lang="en">
                     <body>
-                        <div>An unknown framework "{framework}" was requested.</div>
+                    <div>An unknown framework "{framework}" was requested.</div>
                     </body>
-                </html>;
+                    </html>;
                 break;
         }
     }

@@ -2,12 +2,13 @@ import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 
 const coreFactory: ExcelOOXMLTemplate = {
     getTemplate() {
-        const dt = new Date(),
-            jsonDate = dt.toJSON();
+        const dt = new Date();
+        const jsonDate = dt.toJSON();
+
         return {
             name: 'cp:coreProperties',
             properties: {
-                prefixedAttributes:[{
+                prefixedAttributes: [{
                     prefix: "xmlns:",
                     map: {
                         cp: "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",

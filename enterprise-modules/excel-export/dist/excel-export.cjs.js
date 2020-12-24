@@ -41444,7 +41444,8 @@ var EnterpriseCoreModule = {
 
 var coreFactory = {
     getTemplate: function () {
-        var dt = new Date(), jsonDate = dt.toJSON();
+        var dt = new Date();
+        var jsonDate = dt.toJSON();
         return {
             name: 'cp:coreProperties',
             properties: {
@@ -42510,8 +42511,14 @@ var registerNumberFmt = function (format) {
 };
 var registerBorders = function (borders) {
     var borderBottom = borders.borderBottom, borderTop = borders.borderTop, borderLeft = borders.borderLeft, borderRight = borders.borderRight;
-    var bottomStyle, topStyle, leftStyle, rightStyle;
-    var bottomColor, topColor, leftColor, rightColor;
+    var bottomStyle;
+    var topStyle;
+    var leftStyle;
+    var rightStyle;
+    var bottomColor;
+    var topColor;
+    var leftColor;
+    var rightColor;
     if (borderLeft) {
         leftStyle = convertLegacyBorder(borderLeft.lineStyle, borderLeft.weight);
         leftColor = convertLegacyColor(borderLeft.color);

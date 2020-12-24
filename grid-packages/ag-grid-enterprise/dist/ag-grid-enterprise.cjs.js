@@ -5339,7 +5339,8 @@ var ColumnsToolPanelModule = {
 
 var coreFactory = {
     getTemplate: function () {
-        var dt = new Date(), jsonDate = dt.toJSON();
+        var dt = new Date();
+        var jsonDate = dt.toJSON();
         return {
             name: 'cp:coreProperties',
             properties: {
@@ -6405,8 +6406,14 @@ var registerNumberFmt = function (format) {
 };
 var registerBorders = function (borders) {
     var borderBottom = borders.borderBottom, borderTop = borders.borderTop, borderLeft = borders.borderLeft, borderRight = borders.borderRight;
-    var bottomStyle, topStyle, leftStyle, rightStyle;
-    var bottomColor, topColor, leftColor, rightColor;
+    var bottomStyle;
+    var topStyle;
+    var leftStyle;
+    var rightStyle;
+    var bottomColor;
+    var topColor;
+    var leftColor;
+    var rightColor;
     if (borderLeft) {
         leftStyle = convertLegacyBorder(borderLeft.lineStyle, borderLeft.weight);
         leftColor = convertLegacyColor(borderLeft.color);
@@ -36470,9 +36477,11 @@ var FillHandle = /** @class */ (function (_super) {
             if (this.rowPositionUtils.sameRow(row, endPosition)) {
                 break;
             }
-        } while (row = isMovingUp ?
-            this.cellNavigationService.getRowAbove(row) :
-            this.cellNavigationService.getRowBelow(row));
+        } while (
+        // tslint:disable-next-line
+        row = isMovingUp
+            ? this.cellNavigationService.getRowAbove(row)
+            : this.cellNavigationService.getRowBelow(row));
     };
     FillHandle.prototype.reduceVertical = function (initialPosition, endPosition) {
         var row = initialPosition;
@@ -36493,6 +36502,7 @@ var FillHandle = /** @class */ (function (_super) {
             if (isLastRow) {
                 break;
             }
+            // tslint:disable-next-line
         } while (row = this.cellNavigationService.getRowAbove(row));
     };
     FillHandle.prototype.extendHorizontal = function (initialPosition, endPosition, isMovingLeft) {
@@ -44647,7 +44657,8 @@ var ClipboardService = /** @class */ (function (_super) {
         var _this = this;
         // true if clipboard data can be evenly pasted into range, otherwise false
         var abortRepeatingPasteIntoRows = this.getRangeSize() % clipboardData.length != 0;
-        var indexOffset = 0, dataRowIndex = 0;
+        var indexOffset = 0;
+        var dataRowIndex = 0;
         var rowCallback = function (currentRow, rowNode, columns, index) {
             var atEndOfClipboardData = index - indexOffset >= clipboardData.length;
             if (atEndOfClipboardData) {

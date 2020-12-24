@@ -59,8 +59,8 @@ function createSetFilter(filterParams) {
     setFilter.eMiniFilter = eMiniFilter;
     setFilter.eSelectAll = eSelectAll;
     setFilter.setParams(params);
-    setFilter['virtualList'] = virtualList;
-    setFilter['valueModel'] = setValueModel;
+    setFilter.virtualList = virtualList;
+    setFilter.valueModel = setValueModel;
     return setFilter;
 }
 describe('applyModel', function () {

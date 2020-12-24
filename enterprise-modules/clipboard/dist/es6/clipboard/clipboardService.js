@@ -125,7 +125,8 @@ var ClipboardService = /** @class */ (function (_super) {
         var _this = this;
         // true if clipboard data can be evenly pasted into range, otherwise false
         var abortRepeatingPasteIntoRows = this.getRangeSize() % clipboardData.length != 0;
-        var indexOffset = 0, dataRowIndex = 0;
+        var indexOffset = 0;
+        var dataRowIndex = 0;
         var rowCallback = function (currentRow, rowNode, columns, index) {
             var atEndOfClipboardData = index - indexOffset >= clipboardData.length;
             if (atEndOfClipboardData) {

@@ -544,7 +544,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         // column is null for fullWidthRows
         const column = this.params.column;
-        const displayingForOneColumnOnly = column!=null && typeof column.getColDef().showRowGroup === 'string';
+        const displayingForOneColumnOnly = column != null && typeof column.getColDef().showRowGroup === 'string';
 
         if (displayingForOneColumnOnly) {
             const showing = this.isShowRowGroupForThisRow();
@@ -561,7 +561,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         // column is null for fullWidthRows
         const column = this.params.column;
-        const thisColumnIsInterested = column==null || column.isRowGroupDisplayed(rowGroupColumn.getId());
+        const thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
 
         return thisColumnIsInterested;
     }

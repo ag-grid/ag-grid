@@ -101,8 +101,14 @@ var registerNumberFmt = function (format) {
 };
 var registerBorders = function (borders) {
     var borderBottom = borders.borderBottom, borderTop = borders.borderTop, borderLeft = borders.borderLeft, borderRight = borders.borderRight;
-    var bottomStyle, topStyle, leftStyle, rightStyle;
-    var bottomColor, topColor, leftColor, rightColor;
+    var bottomStyle;
+    var topStyle;
+    var leftStyle;
+    var rightStyle;
+    var bottomColor;
+    var topColor;
+    var leftColor;
+    var rightColor;
     if (borderLeft) {
         leftStyle = border_1.convertLegacyBorder(borderLeft.lineStyle, borderLeft.weight);
         leftColor = exports.convertLegacyColor(borderLeft.color);

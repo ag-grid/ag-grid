@@ -210,7 +210,7 @@ describe('values from grid', function () {
         expect(getDisplayedValues(model)).toStrictEqual(['1', '10', '5', '50']);
     });
     it('can sort values using provided comparator', function () {
-        var comparator = function (a, b) { return parseInt(a) - parseInt(b); };
+        var comparator = function (a, b) { return parseInt(a, 10) - parseInt(b, 10); };
         var model = createSetValueModel(['1', '10', '5', '50'], { comparator: comparator });
         expect(getDisplayedValues(model)).toStrictEqual(['1', '5', '10', '50']);
     });
@@ -273,7 +273,7 @@ describe('provided values list', function () {
         expect(getDisplayedValues(model)).toStrictEqual(['1', '10', '5', '50']);
     });
     it('can sort provided values using provided comparator', function () {
-        var comparator = function (a, b) { return parseInt(a) - parseInt(b); };
+        var comparator = function (a, b) { return parseInt(a, 10) - parseInt(b, 10); };
         var model = createSetValueModel(undefined, { values: ['1', '10', '5', '50'], comparator: comparator });
         expect(getDisplayedValues(model)).toStrictEqual(['1', '5', '10', '50']);
     });
@@ -300,7 +300,7 @@ describe('provided callback values', function () {
         delayAssert(done, function () { return expect(getDisplayedValues(model)).toStrictEqual(['1', '10', '5', '50']); });
     });
     it('can sort provided callback values using provided comparator', function (done) {
-        var comparator = function (a, b) { return parseInt(a) - parseInt(b); };
+        var comparator = function (a, b) { return parseInt(a, 10) - parseInt(b, 10); };
         var model = createSetValueModel(undefined, { values: function (params) { return params.success(['1', '10', '5', '50']); }, comparator: comparator });
         delayAssert(done, function () { return expect(getDisplayedValues(model)).toStrictEqual(['1', '5', '10', '50']); });
     });
