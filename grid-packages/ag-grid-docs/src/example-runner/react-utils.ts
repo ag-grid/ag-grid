@@ -34,7 +34,8 @@ export function convertTemplate(template: string) {
         .replace(/,\s+event([),])/g, '$1')
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
         .replace(/<input (.*)value=/g, '<input $1defaultValue=')
-        .replace(/ class=/g, ' className=');
+        .replace(/ class=/g, ' className=')
+        .replace(/ \<option (.*)selected=\"\"/g, '<option $1selected={true}')
 
     return convertStyles(template);
 }
