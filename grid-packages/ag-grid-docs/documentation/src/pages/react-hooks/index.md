@@ -81,115 +81,167 @@ but is a common issue with JavaScript in general, but it is something that is mo
 An example of this (in the context of using ag-Grid) would be something like this:
 
 ```jsx
-const Grid = (props) => {
-  const [rowData, setRowData] = useState([]);
-  
-  const columns = [
-    { field: 'firstName' },
-    { 
-      field: 'lastName', 
-      valueSetter: params => handleLastNameChanging(params.data, params.newValue),
-      editable: true 
-    },
-  ];
+const KEY_LEFT = 37;
+const KEY_UP = 38;
+const KEY_RIGHT = 39;
+const KEY_DOWN = 40;
+
+const GridExample = () => {
+    const [gridApi, setGridApi] = useState(null);
+    const [rowData, setRowData] = useState([
+        { athlete: "Michael Phelps", age: 25 },
+        { athlete: "Michael Phelps", age: 30 }
+    ]);
+
+    function useDynamicCallback(callback) {
+        const ref = useRef();
+        ref.current = callback;
+        return useCallback((...args) => ref.current.apply(this, args), []);
+    }
+
+    const onGridReady = params => {
+        setGridApi(params.api);
+    };
+
+    const navigateToNextCell = params => {
+        var previousCell = params.previousCellPosition,
+            suggestedNextCell = params.nextCellPosition,
+            nextRowIndex,
+            renderedRowCount;
+        switch (params.key) {
+            case KEY_DOWN:
+                nextRowIndex = previousCell.rowIndex - 1;
+                if (nextRowIndex < -1) {
+                    return null;
+                }
+                return {
+                    rowIndex: nextRowIndex,
+                    column: previousCell.column,
+                    floating: previousCell.floating
+                };
+            case KEY_UP:
+                nextRowIndex = previousCell.rowIndex + 1;
+                renderedRowCount = gridApi.getModel().getRowCount();
+                if (nextRowIndex >= renderedRowCount) {
+                    return null;
+                }
+                return {
+                    rowIndex: nextRowIndex,
+                    column: previousCell.column,
+                    floating: previousCell.floating
+                };
+            case KEY_LEFT:
+            case KEY_RIGHT:
+                return suggestedNextCell;
+            default:
+                throw "this will never happen, navigation is always one of the 4 keys above";
+        }
+    };
 
     return (
-    <div className="ag-theme-balham" style={{ height: '500px' }}>
-        <AgGridReact
-          onGridReady={handleGridReady}
-          rowData={rowData || []}
-          columnDefs={columns}
-        />
-    </div>
-  );
-
-  function handleLastNameChanging(item, nextValue) {
-    const nextData = rowData.map(dataItem => {
-      if (dataItem.id !== item.id) {
-        return dataItem;
-      }
-
-      return {
-        ...dataItem,
-        lastName: nextValue,
-      };
-    });
-    
-    setRowData(nextData);
-
-    return true;
-  }
+        <div
+            style={{ width: "500px", height: "500px" }}
+            className="ag-theme-alpine"
+        >
+            <AgGridReact
+                rowData={rowData}
+                navigateToNextCell={navigateToNextCell}
+                onGridReady={onGridReady}
+            >
+                <AgGridColumn field="athlete" headerName="Name" minWidth={170} />
+                <AgGridColumn field="age" />
+            </AgGridReact>
+        </div>
+    );
 };
 ```
 
-Here the expectation is that on editing a `lastName` cell the data the `rowData` data set would be updated and this would
-eventually flow back down through the hook and update the Grid.
+Here the expectation is that on up key the focus would move down, and on the down key the focus would move up.
 
-The problem here is that the `rowData` in `handleLastNameChanging` has been "captured" (or "closed over") and subsequent updates to it
-will not be reflected in later calls.
+The problem here is that the `gridApi` in `navigateToNextCell` has been "captured" (or "closed over") before it's been set
+and subsequent updates to it will not be reflected in later calls.
 
-What we need to do to resolve this is to think about our approach slightly differently - let's leverage what hooks offer us 
-with `useEffect` and let that do our updates for us.
+What we need to do to resolve this is to alter about our approach slightly - in the case of callbacks like this we want to have
+a "dynamic" callback which will always capture the latest values used:
 
 ```jsx
-const Grid = (props) => {
-  const [rowData, setRowData] = useState([]);
-  const [editingState, setEditingState] = useState(null);
+const KEY_LEFT = 37;
+const KEY_UP = 38;
+const KEY_RIGHT = 39;
+const KEY_DOWN = 40;
 
-  const columns = [
-    { field: 'firstName' },
-    { 
-      field: 'lastName', 
-      valueSetter: params => setEditingState({ item: params.data, newValue: params.newValue }),
-      editable: true 
-    },
-  ];
-  
-  useEffect(() => {
-    if (!!editingState) {
-      handleLastNameChanging(
-        rowData,
-        editingState.item,
-        editingState.newValue
-      );
+const GridExample = () => {
+    const [gridApi, setGridApi] = useState(null);
+    const [rowData, setRowData] = useState([
+        { athlete: "Michael Phelps", age: 25 },
+        { athlete: "Michael Phelps", age: 30 }
+    ]);
+
+    function useDynamicCallback(callback) {
+        const ref = useRef();
+        ref.current = callback;
+        return useCallback((...args) => ref.current.apply(this, args), []);
     }
-  }, [editingState]);
 
-  return (
-    <div className="ag-theme-balham" style={{ height: '500px' }}>
-        <AgGridReact
-          onGridReady={handleGridReady}
-          rowData={rowData || []}
-          columnDefs={columns}
-        />
-    </div>
-  );
+    const onGridReady = params => {
+        setGridApi(params.api);
+    };
 
-  function handleLastNameChanging(currentRowData, item, nextValue) {
-    const nextData = currentRowData.map(dataItem => {
-      if (dataItem.id !== item.id) {
-        return dataItem;
-      }
-
-      return {
-        ...dataItem,
-        lastName: nextValue,
-      };
+    const navigateToNextCell = useDynamicCallback((params) => {
+        var previousCell = params.previousCellPosition,
+            suggestedNextCell = params.nextCellPosition,
+            nextRowIndex,
+            renderedRowCount;
+        switch (params.key) {
+            case KEY_DOWN:
+                nextRowIndex = previousCell.rowIndex - 1;
+                if (nextRowIndex < -1) {
+                    return null;
+                }
+                return {
+                    rowIndex: nextRowIndex,
+                    column: previousCell.column,
+                    floating: previousCell.floating
+                };
+            case KEY_UP:
+                nextRowIndex = previousCell.rowIndex + 1;
+                renderedRowCount = gridApi.getModel().getRowCount();
+                if (nextRowIndex >= renderedRowCount) {
+                    return null;
+                }
+                return {
+                    rowIndex: nextRowIndex,
+                    column: previousCell.column,
+                    floating: previousCell.floating
+                };
+            case KEY_LEFT:
+            case KEY_RIGHT:
+                return suggestedNextCell;
+            default:
+                throw "this will never happen, navigation is always one of the 4 keys above";
+        }
     });
-    
-    setRowData(nextData);
 
-    return true;
-  }
+    return (
+        <div
+            style={{ width: "500px", height: "500px" }}
+            className="ag-theme-alpine"
+        >
+            <AgGridReact
+                rowData={rowData}
+                navigateToNextCell={navigateToNextCell}
+                onGridReady={onGridReady}
+            >
+                <AgGridColumn field="athlete" headerName="Name" minWidth={170} />
+                <AgGridColumn field="age" />
+            </AgGridReact>
+        </div>
+    );
 };
 ```
 
-What we're doing here is updating `editingState` when our `valueSetter` is invoked, and making use of a `useEffect` to trigger when this 
-state changes.
-
-This allows `handleLastNameChanging` to be passed the latest data and update `rowData` correctly.
-
-This is a fairly common React pattern - you could achieve the same thing with `useCallback` or `useRef`. 
+By making use of `useRef` and `useCallback` in our new method `useDynamicCallback` we ensure that all values within the
+supplied function will be the latest value.
 
 ## Rendering Null
 
@@ -209,3 +261,4 @@ function myRenderer({ data }) {
     );
 }
 ```
+

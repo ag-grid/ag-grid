@@ -396,7 +396,7 @@ if (instances.length > 0) {
 |
 | ### React Hook Cell Renderer
 |
-| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](https://www.ag-grid.com/react-hooks/) for more information.
+| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](https://www.ag-grid.com/react/react-hooks/) for more information.
 |
 | <grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "enterprise": false, "extras": ["fontawesome", "bootstrap"] }'></grid-example>
 

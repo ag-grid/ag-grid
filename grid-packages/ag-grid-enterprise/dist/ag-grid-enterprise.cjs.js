@@ -30314,7 +30314,10 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         }
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
-        var domain = this.addDataDomainForCrossFiltering(seriesDefinitions, params);
+        var dataDomain;
+        if (this.crossFiltering) {
+            dataDomain = this.getCrossFilteringDataDomain(seriesDefinitions, params);
+        }
         var chart = this.chart;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = agGridCommunity._.findIndex(seriesDefinitions, function (s) {
@@ -30394,8 +30397,8 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                         series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
                     });
                 }
-                if (domain) {
-                    series.marker.domain = domain;
+                if (dataDomain) {
+                    series.marker.domain = dataDomain;
                 }
                 chart.tooltip.delay = 500;
                 // hide 'filtered out' legend items
@@ -30458,9 +30461,9 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         }
         return fields.filter(function (value, i) { return i > 0; }).map(function (yField) { return ({ xField: xField, yField: yField }); });
     };
-    ScatterChartProxy.prototype.addDataDomainForCrossFiltering = function (seriesDefinitions, params) {
+    ScatterChartProxy.prototype.getCrossFilteringDataDomain = function (seriesDefinitions, params) {
         var domain;
-        if (seriesDefinitions[0]) {
+        if (seriesDefinitions[0] && seriesDefinitions[0].sizeField) {
             var sizeColId_1 = seriesDefinitions[0].sizeField.colId;
             var allSizePoints_1 = [];
             params.data.forEach(function (d) {

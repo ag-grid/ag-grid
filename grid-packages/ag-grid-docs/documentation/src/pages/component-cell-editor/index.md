@@ -379,7 +379,7 @@ if (instances.length > 0) {
 | <grid-example title='React Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
 |
 | Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see
-| [here](https://www.ag-grid.com/react-hooks/) for more information.
+| [here](https://www.ag-grid.com/react/react-hooks/) for more information.
 
 
 [[only-vue]]

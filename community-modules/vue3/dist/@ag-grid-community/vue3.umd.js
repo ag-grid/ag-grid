@@ -19056,8 +19056,10 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         var eGui = this.getGui();
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        if (eGui.contains(document.activeElement)) {
-            eGui.focus();
+        if (eGui.contains(document.activeElement) && !Object(browser["isBrowserIE"])()) {
+            eGui.focus({
+                preventScroll: true
+            });
         }
         Object(dom["clearElement"])(eGui);
     };
@@ -39068,6 +39070,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         return true;
     };
     GroupCellRenderer.prototype.isShowRowGroupForThisRow = function () {
+        if (this.gridOptionsWrapper.isTreeData()) {
+            return true;
+        }
         var rowGroupColumn = this.displayedGroup.rowGroupColumn;
         if (!rowGroupColumn) {
             return false;

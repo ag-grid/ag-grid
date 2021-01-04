@@ -1818,8 +1818,10 @@ var CellComp = /** @class */ (function (_super) {
         var eGui = this.getGui();
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        if (eGui.contains(document.activeElement)) {
-            eGui.focus();
+        if (eGui.contains(document.activeElement) && !browser_1.isBrowserIE()) {
+            eGui.focus({
+                preventScroll: true
+            });
         }
         dom_1.clearElement(eGui);
     };

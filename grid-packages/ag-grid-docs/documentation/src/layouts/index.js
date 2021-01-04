@@ -30,7 +30,7 @@ const TopBar = ({ frameworks, framework, path }) => (
     </div>
 );
 
-export const Layout = ({ path, children, pageContext: { frameworks, framework = 'javascript', layout } }) => {
+export const Layout = ({ children, pageContext: { frameworks, framework = 'javascript', layout }, location: { pathname: path } }) => {
     if (layout === 'bare') {
         return children;
     }

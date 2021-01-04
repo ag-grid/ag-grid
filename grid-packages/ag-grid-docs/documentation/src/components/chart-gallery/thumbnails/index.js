@@ -64,6 +64,6 @@ const thumbnails = {
     'stacked-column': thumbnailStackedColumn,
     'time-axis-with-irregular-intervals': thumbnailTimeAxisWithIrregularIntervals,
     'xy-histogram-with-mean-aggregation': thumbnailXYHistogramWithMeanAggregation,
-};
+}
 
 export default thumbnails;

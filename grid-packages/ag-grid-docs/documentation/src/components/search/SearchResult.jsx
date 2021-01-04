@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'gatsby';
 import {
     connectStateResults,
     Highlight,
@@ -20,12 +21,12 @@ const HitCount = connectStateResults(({ searchResults }) => {
 });
 
 const PageHit = ({ hit }) => (
-    <a href={hit.path}>
+    <Link to={hit.path}>
         <h4>
             <Highlight attribute="title" hit={hit} tagName="mark" />
         </h4>
         <Snippet attribute="text" hit={hit} tagName="mark" />
-    </a>
+    </Link>
 );
 
 const HitsInIndex = ({ index }) => (

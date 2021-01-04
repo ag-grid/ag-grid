@@ -445,6 +445,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         return true;
     };
     GroupCellRenderer.prototype.isShowRowGroupForThisRow = function () {
+        if (this.gridOptionsWrapper.isTreeData()) {
+            return true;
+        }
         var rowGroupColumn = this.displayedGroup.rowGroupColumn;
         if (!rowGroupColumn) {
             return false;

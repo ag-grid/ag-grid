@@ -24,7 +24,7 @@ function pageToAlgoliaRecord({ id: objectID, frontmatter: { title }, fields: { p
   return {
     objectID,
     title,
-    path: `../../${framework}${path}/`,
+    path: `/${framework}${path}/`,
     text,
   };
 }
