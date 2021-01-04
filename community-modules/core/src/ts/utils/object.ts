@@ -99,7 +99,7 @@ export function getAllKeysInObjects(objects: any[]): string[] {
 }
 
 export function getAllValuesInObject<T extends Object>(obj: T): any[] {
-    if (!obj) { return [] }
+    if (!obj) { return []; }
 
     if (typeof Object.values === 'function') {
         return Object.values(obj);
@@ -260,7 +260,7 @@ export function removeAllReferences(obj: any, objectName: string): void {
                      when the grid is destroyed.`
                 );
             };
-            properties[key] = {value: func, writable: true};
+            properties[key] = { value: func, writable: true };
         }
     });
 

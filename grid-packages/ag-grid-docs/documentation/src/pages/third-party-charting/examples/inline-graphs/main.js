@@ -64,7 +64,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowSelection: 'single',
     rowHeight: 95,
-    onCellClicked: function(params) {
+    onCellClicked: function (params) {
         if (params.colDef.field !== "CloseTrends") {
             return;
         }
@@ -78,42 +78,59 @@ var gridOptions = {
     }
 };
 
+function getAllValuesInObject(obj) {
+    if (!obj) { return []; }
+
+    if (typeof Object.values === 'function') {
+        return Object.values(obj);
+    }
+
+    var ret = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && obj.propertyIsEnumerable(key)) {
+            ret.push(obj[key]);
+        }
+    }
+
+    return ret;
+}
+
 
 function LineChartLineRenderer() {
 }
 
-LineChartLineRenderer.prototype.init = function(params) {
+LineChartLineRenderer.prototype.init = function (params) {
 
     var eGui = document.createElement('div');
     this.eGui = eGui;
 
     // sparklines requires the eGui to be in the dom - so we put into a timeout to allow
     // the grid to complete it's job of placing the cell into the browser.
-    setTimeout(function() {
+    setTimeout(function () {
         var values = params.value
-            .sort(function(a, b) { return new Date(a.Date).getTime() - new Date(b.Date).getTime(); })
-            .map(function(datum) { return datum.Close; });
+            .sort(function (a, b) { return new Date(a.Date).getTime() - new Date(b.Date).getTime(); })
+            .map(function (datum) { return datum.Close; });
         $(eGui).sparkline(values, { height: CELL_DIMENSION_SIZE, width: CELL_DIMENSION_SIZE });
     }, 0);
 };
 
-LineChartLineRenderer.prototype.getGui = function() {
+LineChartLineRenderer.prototype.getGui = function () {
     return this.eGui;
 };
 
 function BarChartLineRenderer() {
 }
 
-BarChartLineRenderer.prototype.init = function(params) {
+BarChartLineRenderer.prototype.init = function (params) {
     var eGui = document.createElement('div');
     this.eGui = eGui;
 
     // sparklines requires the eGui to be in the dom - so we put into a timeout to allow
     // the grid to complete it's job of placing the cell into the browser.
-    setTimeout(function() {
+    setTimeout(function () {
         var values = params.value
-            .sort(function(a, b) { return a.Year - b.Year; })
-            .map(function(datum) { return datum.AverageVolume.toFixed(); });
+            .sort(function (a, b) { return a.Year - b.Year; })
+            .map(function (datum) { return datum.AverageVolume.toFixed(); });
         $(eGui).sparkline(values, {
             type: 'bar',
             barColor: 'green',
@@ -125,36 +142,36 @@ BarChartLineRenderer.prototype.init = function(params) {
     }, 0);
 };
 
-BarChartLineRenderer.prototype.getGui = function() {
+BarChartLineRenderer.prototype.getGui = function () {
     return this.eGui;
 };
 
 function PieChartLineRenderer() {
 }
 
-PieChartLineRenderer.prototype.init = function(params) {
+PieChartLineRenderer.prototype.init = function (params) {
 
     var eGui = document.createElement('div');
     this.eGui = eGui;
 
     // sparklines requires the eGui to be in the dom - so we put into a timeout to allow
     // the grid to complete it's job of placing the cell into the browser.
-    setTimeout(function() {
+    setTimeout(function () {
 
         var segments = params.segments;
 
         var colourToNames = _.invert(segments);
-        var values = Object.keys(segments).map(function(segment) {
+        var values = Object.keys(segments).map(function (segment) {
             return params.value[segment];
         });
-        var sliceColours = Object.values(segments);
+        var sliceColours = getAllValuesInObject(segments);
         $(eGui).sparkline(values,
             {
                 type: 'pie',
                 height: CELL_DIMENSION_SIZE,
                 width: CELL_DIMENSION_SIZE,
                 sliceColors: sliceColours,
-                tooltipFormatter: function(sparklines, options, segment) {
+                tooltipFormatter: function (sparklines, options, segment) {
                     return '<div class="jqsfield"><span style="color: ' + segment.color + '"</span>' + colourToNames[segment.color] + ': ' + Math.round(segment.percent) + '%</div>';
                 }
             }
@@ -162,14 +179,14 @@ PieChartLineRenderer.prototype.init = function(params) {
     });
 };
 
-PieChartLineRenderer.prototype.getGui = function() {
+PieChartLineRenderer.prototype.getGui = function () {
     return this.eGui;
 };
 
 function PieChartLineEditor() {
 }
 
-PieChartLineEditor.prototype.init = function(params) {
+PieChartLineEditor.prototype.init = function (params) {
     this.params = params;
     this.value = this.params.value;
     this.parentGui = document.createElement('div');
@@ -186,19 +203,19 @@ PieChartLineEditor.prototype.init = function(params) {
     this.parentGui.appendChild(this.eGui);
 };
 
-PieChartLineEditor.prototype.getGui = function() {
+PieChartLineEditor.prototype.getGui = function () {
     return this.parentGui;
 };
 
 // editors have afterGuiAttached callback to know when the dom
 // element is attached. so we can use this instead of using timeouts.
-PieChartLineEditor.prototype.afterGuiAttached = function() {
+PieChartLineEditor.prototype.afterGuiAttached = function () {
     var segments = this.params.segments;
     var colourToNames = _.invert(segments);
-    var values = Object.keys(segments).map(function(segment) {
+    var values = Object.keys(segments).map(function (segment) {
         return this.params.node.data[this.params.colToUseForRendering][segment];
     });
-    var sliceColours = Object.values(segments);
+    var sliceColours = getAllValuesInObject(segments);
 
     var thisSparkline = $(this.eGui);
     thisSparkline.sparkline(values,
@@ -207,44 +224,44 @@ PieChartLineEditor.prototype.afterGuiAttached = function() {
             height: CELL_DIMENSION_SIZE,
             width: CELL_DIMENSION_SIZE,
             sliceColors: sliceColours,
-            tooltipFormatter: function(sparklines, options, segment) {
+            tooltipFormatter: function (sparklines, options, segment) {
                 return '<div class="jqsfield"><span style="color: ' + segment.color + '"</span>' + colourToNames[segment.color] + ': ' + Math.round(segment.percent) + '%</div>';
             }
         }
     );
 
-    thisSparkline.bind('sparklineClick', function(ev) {
+    thisSparkline.bind('sparklineClick', function (ev) {
         var segmentClicked = ev.sparklines[0].getCurrentRegionFields();
         this.value = colourToNames[segmentClicked.color];
         this.params.api.stopEditing();
     });
 };
 
-PieChartLineEditor.prototype.getValue = function() {
+PieChartLineEditor.prototype.getValue = function () {
     return this.value;
 };
 
-PieChartLineEditor.prototype.isPopup = function() {
+PieChartLineEditor.prototype.isPopup = function () {
     return true;
 };
 
-PieChartLineEditor.prototype.destroy = function() {
+PieChartLineEditor.prototype.destroy = function () {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/stocks/summary-expanded.json' })
-        .then(function(data) {
+        .then(function (data) {
             gridOptions.api.setRowData(data);
         });
 });
 
 function renderLineGraph(symbol) {
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/stocks/' + symbol + '-close-trend.json' })
-        .then(function(responseData) {
+        .then(function (responseData) {
             var noRowsMessage = document.querySelector('.centerInline');
             noRowsMessage.style.display = "None";
 
@@ -264,24 +281,24 @@ function renderLineGraph(symbol) {
                 .rangeRound([height, 0]);
 
             var line = d3.line()
-                .x(function(d) {
+                .x(function (d) {
                     return x(d.Date);
                 })
-                .y(function(d) {
+                .y(function (d) {
                     return y(d.Close);
                 });
 
             var data = responseData
-                .map(function(datum) {
+                .map(function (datum) {
                     return {
                         Date: parseTime(datum.Date),
                         Close: +datum.Close
                     };
                 });
-            x.domain(d3.extent(data, function(d) {
+            x.domain(d3.extent(data, function (d) {
                 return d.Date;
             }));
-            y.domain(d3.extent(data, function(d) {
+            y.domain(d3.extent(data, function (d) {
                 return d.Close;
             }));
 
