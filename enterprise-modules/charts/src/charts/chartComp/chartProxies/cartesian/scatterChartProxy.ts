@@ -101,7 +101,11 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         const { seriesDefaults } = this.chartOptions as any;
         const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
-        let domain = this.addDataDomainForCrossFiltering(seriesDefinitions, params);
+
+        let dataDomain: number[] | undefined;
+        if (this.crossFiltering) {
+            dataDomain = this.getCrossFilteringDataDomain(seriesDefinitions, params);
+        }
 
         const { chart } = this;
 
@@ -205,8 +209,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                     });
                 }
 
-                if (domain) {
-                    series.marker.domain = domain;
+                if (dataDomain) {
+                    series.marker.domain = dataDomain;
                 }
 
                 chart.tooltip.delay = 500;
@@ -299,9 +303,9 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         return fields.filter((value, i) => i > 0).map(yField => ({ xField, yField }));
     }
 
-    private addDataDomainForCrossFiltering(seriesDefinitions: (SeriesDefinition | null)[], params: UpdateChartParams) {
+    private getCrossFilteringDataDomain(seriesDefinitions: (SeriesDefinition | null)[], params: UpdateChartParams) {
         let domain;
-        if (seriesDefinitions[0]) {
+        if (seriesDefinitions[0] && seriesDefinitions[0].sizeField) {
             const sizeColId = seriesDefinitions[0].sizeField!.colId;
             let allSizePoints: any[] = [];
             params.data.forEach(d => {
