@@ -292,7 +292,7 @@ The example below shows a header component in action. The following can be obser
 | [React Example](https://github.com/ag-grid/ag-grid-react-example).
 |
 |
-| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](https://www.ag-grid.com/react-hooks/) for more information.
+| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](https://www.ag-grid.com/react/react-hooks/) for more information.
 
 [[only-vue]]
 | ## VueJS Header Rendering

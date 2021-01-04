@@ -209,7 +209,7 @@ Note the following:
 - When a header cell in the last header row is focused, pressing the up arrow will navigate  to the first grid row by passing **headerRowIndex: -1**.
 - Tabbing/Shift tabbing will move the focus until the first header or the last grid row, but focus will not leave the grid.
 
-<grid-example title='Custom Keyboard Navigation' name='custom-keyboard-navigation' type='generated'></grid-example>
+<grid-example title='Custom Keyboard Navigation' name='custom-keyboard-navigation' type='mixed'></grid-example>
 
 ## Tabbing into the Grid
 

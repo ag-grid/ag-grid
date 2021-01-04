@@ -188,7 +188,7 @@ Note that:
 | <grid-example title='React Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "onlyShow": "react", "extras": ["bootstrap"] }'></grid-example>
 |
 | Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please
-| see [here](https://www.ag-grid.com/react-hooks/) for more information.
+| see [here](https://www.ag-grid.com/react/react-hooks/) for more information.
 
 [[only-vue]]
 | ## Vue Floating Filters
