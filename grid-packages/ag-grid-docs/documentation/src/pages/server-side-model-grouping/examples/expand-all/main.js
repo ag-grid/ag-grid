@@ -1,6 +1,6 @@
 var gridOptions = {
     columnDefs: [
-        { field: "year", enableRowGroup: true, rowGroup: true, minWidth: 100 },
+        { field: "year", enableRowGroup: true, rowGroup: true, hide: true, minWidth: 100 },
         { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
         { field: "sport", enableRowGroup: true, rowGroup: true, hide: true },
         { field: "gold", aggFunc: 'sum' },

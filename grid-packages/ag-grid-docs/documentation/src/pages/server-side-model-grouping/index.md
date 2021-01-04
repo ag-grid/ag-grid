@@ -159,7 +159,7 @@ enum ServerSideStoreType {
 The example below demonstrates the `getServerSideStoreParams()` callback. Note the following:
 
 - The grid is configured differently depending on whether grouping is active or not by implementing 
-the `getServerSideStoreParams()` callback. The callback logs it's results to the dev console.
+the `getServerSideStoreParams()` callback. The callback logs its results to the dev console.
 
 - When grouping is active, the stores are configured as follows:
     - Level 0 - Full Store (no infinite scrolling)
