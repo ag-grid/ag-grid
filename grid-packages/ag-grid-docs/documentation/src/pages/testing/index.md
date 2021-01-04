@@ -835,3 +835,19 @@ title: "Testing ag-Grid"
 |
 | We use the Grid API to initiate and end testing as we're can't readily perform double clicks in a
 | unit testing environment (but could if doing e2e with something like Protractor for example).
+|
+| # Jest Configuration
+| 
+| ### `SyntaxError: Cannot use import statement outside a module`
+|
+| If you experience the error above then depending on your build configuration you may need to exclude either 
+| `ag-grid-vue` or `@ag-grid-community/vue` in your Jest configuration:
+|
+| ```
+| module.exports = {
+|   ...other configuration...
+|   transformIgnorePatterns: ["/node_modules/(?!ag-grid-vue)"],
+|   ..or, if using modules:
+|   transformIgnorePatterns: ["/node_modules/(?!@ag-grid-community/vue)"],
+| }
+| ```
