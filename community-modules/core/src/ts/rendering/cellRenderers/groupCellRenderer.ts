@@ -555,6 +555,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private isShowRowGroupForThisRow(): boolean {
+        if (this.gridOptionsWrapper.isTreeData()) { return true; }
+
         const rowGroupColumn = this.displayedGroup.rowGroupColumn;
 
         if (!rowGroupColumn) { return false; }
