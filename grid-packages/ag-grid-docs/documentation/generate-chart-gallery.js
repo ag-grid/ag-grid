@@ -92,18 +92,23 @@ function generateThumbnails(galleryConfig) {
 
     const startTime = Date.now();
     const { thumbnailDirectory } = options;
-
     const tempDirectory = Path.join(thumbnailDirectory, '..', 'thumbnails-temp');
 
-    if (fs.existsSync(tempDirectory)) {
-        fs.emptyDirSync(tempDirectory);
-    } else {
-        fs.mkdirSync(tempDirectory);
+    if (shouldGenerateAllScreenshots) {
+        // to avoid upsetting Gatsby while we're processing thumbnails, we generate everything to a temp directory and
+        // then switch them over
+
+        if (fs.existsSync(tempDirectory)) {
+            fs.emptyDirSync(tempDirectory);
+        } else {
+            fs.mkdirSync(tempDirectory);
+        }
     }
 
     const chrome = '"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"';
     const changedDirectories = getChangedDirectories();
     const names = getExampleNames(galleryConfig);
+    const outputDirectory = shouldGenerateAllScreenshots ? tempDirectory : thumbnailDirectory;
 
     names
         .sort()
@@ -113,7 +118,7 @@ function generateThumbnails(galleryConfig) {
             try {
                 const url = `http://localhost:8000/example-runner/?library=charts&pageName=${options.rootPageName}&name=${name}&importType=packages&framework=javascript`;
                 execSync(`${chrome} --headless --disable-gpu --screenshot --window-size=800,570 "${url}"`, { stdio: 'pipe' });
-                fs.renameSync('screenshot.png', Path.join(tempDirectory, `${name}.png`));
+                fs.renameSync('screenshot.png', Path.join(outputDirectory, `${name}.png`));
                 console.log(`Generated thumbnail for ${name}`);
             } catch (e) {
                 console.error(`Failed to generate thumbnail for ${name}`, e);
@@ -131,11 +136,13 @@ ${names.map(name => `    '${toKebabCase(name)}': ${getThumbnailName(name)},`).jo
 
 export default thumbnails;`;
 
-    writeFile(Path.join(tempDirectory, 'index.js'), indexFile);
+    writeFile(Path.join(outputDirectory, 'index.js'), indexFile);
 
-    fs.emptyDirSync(thumbnailDirectory);
-    fs.rmdirSync(thumbnailDirectory);
-    fs.renameSync(tempDirectory, thumbnailDirectory);
+    if (shouldGenerateAllScreenshots) {
+        fs.emptyDirSync(thumbnailDirectory);
+        fs.rmdirSync(thumbnailDirectory);
+        fs.renameSync(tempDirectory, thumbnailDirectory);
+    }
 
     console.log(`Finished generating thumbnails in ${(Date.now() - startTime) / 1000}s`);
 }
