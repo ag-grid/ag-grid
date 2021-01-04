@@ -20,13 +20,15 @@ const SocialMediaButtons = () => (
     </div>
 );
 
-const MenuColumns = () => footerItems.map(item => (
-    <div key={item.title.replace(/\s/g, '_').toLocaleLowerCase()} className={styles['footer__links']}>
-        <h3>{item.title}</h3>
+const MenuColumns = () => footerItems.map(({ title, links }) => (
+    <div key={title.replace(/\s/g, '_').toLocaleLowerCase()} className={styles['footer__links']}>
+        <h3>{title}</h3>
         <ul className={styles['footer__links__list']}>
-            {item.links.map(link => (
-                <li key={`${item.title}_${link.name}`.replace(/\s/g, '_').toLocaleLowerCase()}>
-                    <a href={link.url} target={link.newTab ? '_blank' : ''}>{link.name}</a>
+            {links.map(({ name, url, newTab }) => (
+                <li key={`${title}_${name}`.replace(/\s/g, '_').toLocaleLowerCase()}>
+                    <a href={url} {...newTab ? { target: '_blank', rel: 'noreferrer' } : {}}>
+                        {name}
+                    </a>
                 </li>
             ))}
         </ul>
