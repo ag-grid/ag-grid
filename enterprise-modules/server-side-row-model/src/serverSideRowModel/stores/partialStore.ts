@@ -29,7 +29,7 @@ import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
 import { PartialStoreBlock } from "../blocks/partialStoreBlock";
 
-enum FindResult {FOUND, CONTINUE_FIND, BREAK_FIND}
+enum FindResult { FOUND, CONTINUE_FIND, BREAK_FIND }
 
 export class PartialStore extends BeanStub implements IServerSideStore {
 
@@ -81,7 +81,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
     @PostConstruct
     private postConstruct(): void {
-        this.defaultRowHeight  = this.gridOptionsWrapper.getRowHeightAsNumber();
+        this.defaultRowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
     }
 
     @PreDestroy
@@ -215,7 +215,8 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     public getBlocksInOrder(): PartialStoreBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
         const blockComparator = (a: PartialStoreBlock, b: PartialStoreBlock) => a.getId() - b.getId();
-        const blocks = Object.values(this.blocks).sort(blockComparator);
+        const blocks = _.getAllValuesInObject(this.blocks).sort(blockComparator)
+
         return blocks;
     }
 
@@ -322,9 +323,9 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     }
 
     private findBlockAndExecute<T>(matchBlockFunc: (block: PartialStoreBlock) => FindResult,
-                                blockFoundFunc: (foundBlock: PartialStoreBlock) => T,
-                                blockNotFoundFunc: (previousBlock: PartialStoreBlock) => T | undefined,
-                 ): T {
+        blockFoundFunc: (foundBlock: PartialStoreBlock) => T,
+        blockNotFoundFunc: (previousBlock: PartialStoreBlock) => T | undefined,
+    ): T {
 
         let blockFound = false;
         let breakSearch = false;
@@ -438,7 +439,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     }
 
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
-                             nextRowTop: { value: number }): void {
+        nextRowTop: { value: number }): void {
         this.displayIndexStart = displayIndexSeq.peek();
 
         this.cacheTopPixel = nextRowTop.value;
@@ -552,7 +553,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
             this.logger.log(`block missing, rowIndex = ${displayRowIndex}, creating #${blockNumber}, displayIndexStart = ${displayIndexStart}`);
 
-            const newBlock = this.createBlock(blockNumber, displayIndexStart, {value: nextRowTop});
+            const newBlock = this.createBlock(blockNumber, displayIndexStart, { value: nextRowTop });
             return newBlock.getRowUsingDisplayIndex(displayRowIndex)!;
         };
 
@@ -655,7 +656,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        return {status: ServerSideTransactionResultStatus.StoreWrongType};
+        return { status: ServerSideTransactionResultStatus.StoreWrongType };
     }
 
     public getChildStore(keys: string[]): IServerSideStore | null {

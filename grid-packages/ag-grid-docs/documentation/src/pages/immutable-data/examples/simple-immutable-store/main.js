@@ -162,11 +162,6 @@ var gridOptions = {
         resizable: true,
     },
     immutableData: true,
-    statusBar: {
-        items: [
-            { component: 'agAggregationComponent' }
-        ]
-    },
     animateRows: true,
     rowSelection: 'multiple',
     autoGroupColumnDef: {

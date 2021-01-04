@@ -18,7 +18,11 @@ export class CodeSnippet extends React.Component {
 
     highlight = () => {
         if (this.ref && this.ref.current) {
-            Prism.highlightElement(this.ref.current);
+            try {
+                Prism.highlightElement(this.ref.current);
+            } catch {
+                // no highlighting
+            }
         }
     };
 

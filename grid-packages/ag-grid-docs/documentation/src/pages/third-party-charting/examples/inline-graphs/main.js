@@ -78,6 +78,23 @@ var gridOptions = {
     }
 };
 
+function getAllValuesInObject(obj) {
+    if (!obj) { return []; }
+
+    if (typeof Object.values === 'function') {
+        return Object.values(obj);
+    }
+
+    var ret = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && obj.propertyIsEnumerable(key)) {
+            ret.push(obj[key]);
+        }
+    }
+
+    return ret;
+}
+
 
 function LineChartLineRenderer() {
 }
@@ -147,7 +164,7 @@ PieChartLineRenderer.prototype.init = function(params) {
         var values = Object.keys(segments).map(function(segment) {
             return params.value[segment];
         });
-        var sliceColours = Object.values(segments);
+        var sliceColours = getAllValuesInObject(segments);
         $(eGui).sparkline(values,
             {
                 type: 'pie',
@@ -198,7 +215,7 @@ PieChartLineEditor.prototype.afterGuiAttached = function() {
     var values = Object.keys(segments).map(function(segment) {
         return this.params.node.data[this.params.colToUseForRendering][segment];
     });
-    var sliceColours = Object.values(segments);
+    var sliceColours = getAllValuesInObject(segments);
 
     var thisSparkline = $(this.eGui);
     thisSparkline.sparkline(values,

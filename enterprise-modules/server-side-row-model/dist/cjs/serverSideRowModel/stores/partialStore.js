@@ -162,7 +162,7 @@ var PartialStore = /** @class */ (function (_super) {
     PartialStore.prototype.getBlocksInOrder = function () {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
         var blockComparator = function (a, b) { return a.getId() - b.getId(); };
-        var blocks = Object.values(this.blocks).sort(blockComparator);
+        var blocks = core_1._.getAllValuesInObject(this.blocks).sort(blockComparator);
         return blocks;
     };
     PartialStore.prototype.destroyBlock = function (block) {
