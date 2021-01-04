@@ -15,10 +15,6 @@
         "tran",
         "trans"
     ],
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-        "source.fixAll": true
-    },
     "files.exclude": {
         "grid-packages/ag-grid-community": true,
         "grid-packages/ag-grid-enterprise": true,
