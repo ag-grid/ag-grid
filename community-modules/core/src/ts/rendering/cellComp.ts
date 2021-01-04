@@ -2236,8 +2236,10 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        if (eGui.contains(document.activeElement)) {
-            eGui.focus();
+        if (eGui.contains(document.activeElement) && !isBrowserIE()) {
+            eGui.focus({
+                preventScroll: true
+            });
         }
 
         clearElement(eGui);

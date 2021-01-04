@@ -1,4 +1,3 @@
-import { Link } from 'gatsby';
 import React from 'react';
 import classnames from 'classnames';
 import fwLogos from '../images/fw-logos';
@@ -10,14 +9,14 @@ export default function FrameworkSelector({ frameworks, path, currentFramework }
 
     return <div className={styles['framework-selector']}>
         Framework:
-        {supportedFrameworks.filter(f => !frameworks || frameworks.includes(f)).map(framework => {
-        const isSelected = framework === currentFramework;
+        {supportedFrameworks
+            .filter(f => !frameworks || frameworks.includes(f))
+            .map(framework => {
+                const isSelected = framework === currentFramework;
 
-        return <div key={framework} className={classnames(styles['framework-selector__option'], { [styles['framework-selector__option--selected']]: isSelected })}>
-            <Link to={path.replace(`/${currentFramework}/`, `/${framework}/`)}>
-                <img src={fwLogos[framework]} alt={framework} />
-            </Link>
-        </div>;
-    })}
+                return <a href={path.replace(`/${currentFramework}/`, `/${framework}/`)} key={framework} className={classnames(styles['framework-selector__option'], { [styles['framework-selector__option--selected']]: isSelected })}>
+                    <img src={fwLogos[framework]} alt={framework} />
+                </a>;
+            })}
     </div>;
 }
