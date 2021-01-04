@@ -9,37 +9,38 @@ var gridOptions = {
     width: 250,
     resizable: true
   },
-  getRowNodeId: function(data) {return data.id; },
+  getRowNodeId: function(data) { return data.id; },
   rowModelType: 'serverSide',
   serverSideStoreType: 'full',
   columnDefs: columnDefs,
   animateRows: true,
   purgeClosedRowNodes: true,
-  onGridReady: function (params) {
+  onGridReady: function(params) {
 
     setupData();
 
     var dataSource = {
-      getRows: function (params2) {
+      getRows: function(params2) {
         // To make the demo look real, wait for 500ms before returning
-        setTimeout(function () {
-          let doingTopLevel = params2.request.groupKeys.length == 0;
+        setTimeout(function() {
+          var doingTopLevel = params2.request.groupKeys.length == 0;
+
           if (doingTopLevel) {
-            params2.success({rowData: products.slice(), rowCount: products.length});
+            params2.success({ rowData: products.slice(), rowCount: products.length });
           } else {
             var key = params2.request.groupKeys[0];
             var foundProduct;
-            products.forEach(function (product) {
+            products.forEach(function(product) {
               if (product.productName == key) {
                 foundProduct = product;
               }
             });
-            params2.success({rowData: foundProduct.trades});
+            params2.success({ rowData: foundProduct.trades });
           }
 
         }, 2000);
       }
-    }
+    };
 
     params.api.setServerSideDatasource(dataSource);
   },
@@ -51,21 +52,19 @@ var gridOptions = {
   }
 };
 
-var productsNames = ['Palm Oil','Rubber','Wool','Amber','Copper'];
-
+var productsNames = ['Palm Oil', 'Rubber', 'Wool', 'Amber', 'Copper'];
 var products = [];
-
 var idSequence = 0;
 
 function createOneTrade() {
-  return {id: idSequence++, tradeName: 'TRD-'+Math.floor(Math.random()*20000), value: Math.floor(Math.random()*20000)};
+  return { id: idSequence++, tradeName: 'TRD-' + Math.floor(Math.random() * 20000), value: Math.floor(Math.random() * 20000) };
 }
 
 function setupData() {
   productsNames.forEach(function(productName) {
-    var product = {id: idSequence++, productName: productName, trades: []};
+    var product = { id: idSequence++, productName: productName, trades: [] };
     products.push(product);
-    for (var i = 0; i<2; i++) {
+    for (var i = 0; i < 2; i++) {
       product.trades.push(createOneTrade());
     }
   });
@@ -92,23 +91,23 @@ function onBtNewRubber() {
 function onBtNewWoolAmber() {
   var transactions = [];
   transactions.push({
-        route: ['Wool'],
-        add: [createOneTrade()]
-      });
+    route: ['Wool'],
+    add: [createOneTrade()]
+  });
   transactions.push({
-        route: ['Amber'],
-        add: [createOneTrade()]
-      });
+    route: ['Amber'],
+    add: [createOneTrade()]
+  });
   transactions.forEach(function(tx) {
     var res = gridOptions.api.applyServerSideTransaction(tx);
-    console.log('New '+tx.route[0]+', result = ' + res.status);
+    console.log('New ' + tx.route[0] + ', result = ' + res.status);
   });
 }
 
 function onBtNewProduct() {
   var transaction = {
     route: [],
-    add: [{id: idSequence++, productName: 'Rice', trades: []}]
+    add: [{ id: idSequence++, productName: 'Rice', trades: [] }]
   };
   var res = gridOptions.api.applyServerSideTransaction(transaction);
   console.log('New Product, result = ' + res.status);
