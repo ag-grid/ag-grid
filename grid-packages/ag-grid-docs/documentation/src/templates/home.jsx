@@ -60,7 +60,7 @@ const GettingStarted = ({ framework, data }) => {
                     style={{ gridTemplateColumns: `repeat(${numberOfColumns}, 1fr)` }}>
                     {linksToRender.map(link => <Link
                         key={link.title.replace(/\s/, '_').toLowerCase()}
-                        to={link.url.replace('../', `/${framework}/`)}>{link.title}</Link>)}
+                        to={link.url.replace('../', `./`)}>{link.title}</Link>)}
                 </div>
             </div>
         </div>
