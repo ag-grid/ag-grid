@@ -8,7 +8,7 @@ import enterpriseSvg from '../images/enterprise.svg';
 import flags from '../images/flags';
 
 const Announcements = () => <div className={styles['announcements']}>
-    <Announcement date="Jan 5" version="25.0.0">
+    <Announcement date="Jan 6" version="25.0.0">
         <p className="card-text">
             Major release with new features and bug fixes:
         </p>
