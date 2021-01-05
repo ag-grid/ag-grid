@@ -78,9 +78,6 @@ const localConfiguration = {
         "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`
     },
     chartMap: {
-        /* START OF CHART MODULES DEV - DO NOT DELETE */
-        "ag-charts-community": `${localPrefix}/ag-charts-community`,
-        /* END OF CHART MODULES DEV - DO NOT DELETE */
         "ag-charts-react": `${localPrefix}/ag-charts-react`,
         "ag-charts-angular": `${localPrefix}/ag-charts-angular`,
         "ag-charts-vue": `${localPrefix}/ag-charts-vue`
@@ -161,9 +158,9 @@ const publishedConfiguration = {
         /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
     },
     chartMap: {
-        "ag-charts-react": `npm:ag-charts-react@${agChartsVersion}/`,
-        "ag-charts-angular": `npm:ag-charts-angular@${agChartsVersion}/`,
-        "ag-charts-vue": `npm:ag-charts-vue@${agChartsVersion}/`,
+        "ag-charts-react": `https://unpkg.com/ag-charts-react@${agChartsVersion}/`,
+        "ag-charts-angular": `https://unpkg.com/ag-charts-angular@${agChartsVersion}/`,
+        "ag-charts-vue": `https://unpkg.com/ag-charts-vue@${agChartsVersion}/`,
         "ag-charts-community": `https://unpkg.com/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.cjs.js`,
     },
     chartPaths: {}
@@ -204,6 +201,11 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options })
             "@ag-grid-enterprise/status-bar": `${localPrefix}/@ag-grid-enterprise/status-bar`,
             "@ag-grid-enterprise/viewport-row-model": `${localPrefix}/@ag-grid-enterprise/viewport-row-model`,
             /* END OF GRID MODULES DEV - DO NOT DELETE */
+        };
+
+        configuration.chartMap = {
+            ...configuration.chartMap,
+            "ag-charts-community": `${localPrefix}/ag-charts-community`,
         };
     }
 
