@@ -483,6 +483,7 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 
 [[only-javascript]]
 | This time, let's choose another series type to plot the data: stacked columns. Here's the chart factory configuration we can use to do that:
+|
 | ```js
 | agCharts.AgChart.create({
 |     data: data,
