@@ -25,7 +25,7 @@ npx gulp release
 cd dist
 
 FILENAME=release_"$ZIP_PREFIX"_v"$VERSION".zip
-zip -r ../../../$FILENAME *
+zip -r ../../../$FILENAME .
 
 cd ../../../
 
