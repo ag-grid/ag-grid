@@ -1,11 +1,12 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from 'gatsby';
-import styles from './home.module.scss';
+import { withPrefix } from 'gatsby';
+import { getHeaderTitle } from '../utils/page-header';
 import fwLogos from '../images/fw-logos';
 import supportedFrameworks from '../utils/supported-frameworks';
 import MenuView from '../components/menu-view/MenuView';
 import menuData from '../pages/licensing/menu.json';
+import styles from './home.module.scss';
 
 const backgroundColor = {
     javascript: '#f8df1e',
@@ -48,19 +49,19 @@ const GettingStarted = ({ framework, data }) => {
             <h2 className={styles['docs-home__getting-started__title']}>Getting Started</h2>
             <div className={styles['docs-home__getting-started__row']}>
                 <div className={styles['docs-home__getting-started__framework_overview']}>
-                    <Link to='./getting-started/' className={styles['docs-home__getting-started__framework_logo']}>
+                    <a href="./getting-started/" className={styles['docs-home__getting-started__framework_logo']}>
                         <img
                             style={{ backgroundColor: backgroundColor[framework] }}
                             alt={framework}
                             src={logos[framework]} />
-                    </Link>
+                    </a>
                 </div>
                 <div
                     className={styles['docs-home__getting-started__items']}
                     style={{ gridTemplateColumns: `repeat(${numberOfColumns}, 1fr)` }}>
-                    {linksToRender.map(link => <Link
-                        key={link.title.replace(/\s/, '_').toLowerCase()}
-                        to={link.url.replace('../', `./`)}>{link.title}</Link>)}
+                    {linksToRender.map(link => <a
+                        key={link.title}
+                        href={withPrefix(link.url.replace('../', `/${framework}/`))}>{link.title}</a>)}
                 </div>
             </div>
         </div>
@@ -68,13 +69,13 @@ const GettingStarted = ({ framework, data }) => {
 };
 
 const HomePage = ({ pageContext }) => {
-    const { framework: currentFramework } = pageContext;
+    const { framework } = pageContext;
 
     return (
         <div className={styles['docs-home']}>
-            <Helmet title="AG-Grid - Documentation" />
-            <GettingStarted framework={currentFramework} data={menuData[0].items[0].items} />
-            <MenuView framework={currentFramework} data={menuData} />
+            <Helmet title={getHeaderTitle('Documentation', framework)} />
+            <GettingStarted framework={framework} data={menuData[0].items[0].items} />
+            <MenuView framework={framework} data={menuData} />
         </div>
     );
 };

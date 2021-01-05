@@ -1,4 +1,6 @@
-<h1>Legend</h1>
+---
+title: "Legend"
+---
 
 A legend makes it easier to tell at a glance which series or series items correspond to which pieces of data. This section describes the legend options and layout behaviour.
 

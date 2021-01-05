@@ -13,15 +13,17 @@ const getInternalFramework = (framework, useFunctionalReact) => {
 };
 
 export const getExampleInfo = (nodes, library, pageName, name, title, type, options, framework, importType, useFunctionalReact) => {
+    if (library === 'charts') {
+        // no support for modules or React Hooks in charts yet
+        importType = 'packages';
+        useFunctionalReact = false;
+    }
+
     const internalFramework = getInternalFramework(framework, useFunctionalReact);
     const boilerplatePath = `/example-runner/${library}-${framework}-boilerplate/`;
 
     let sourcePath = `${pageName}/examples/${name}/`;
     let appLocation = `/examples/${pageName}/${name}/`;
-
-    if (library === 'charts') {
-        importType = 'packages';
-    }
 
     switch (type) {
         case 'generated':
