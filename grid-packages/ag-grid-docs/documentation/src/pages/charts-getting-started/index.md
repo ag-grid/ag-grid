@@ -1,5 +1,5 @@
 ---
-title: "Get Started With AG-Charts"
+title: "Get Started with ag-Charts"
 ---
 
 ag-Charts is an exciting new addition to the ag-Grid family, offering both integrated as well as standalone fully functional charting capabilities.

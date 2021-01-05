@@ -7,6 +7,7 @@ import ExampleRunner from '../components/example-runner/ExampleRunner';
 import SideMenu from '../components/SideMenu';
 import processFrameworkSpecificSections from '../utils/framework-specific-sections';
 import { getPageName } from '../utils/get-page-name';
+import { getHeaderTitle } from '../utils/page-header';
 import { ApiDocumentation } from '../components/ApiDocumentation';
 import FeatureOverview from '../components/FeatureOverview';
 import IconsPanel from '../components/IconsPanel';
@@ -61,11 +62,14 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     },
   }).Compiler;
 
+  const { title } = page.frontmatter;
+  const headerTitle = getHeaderTitle(title, framework, pageName === 'charts' || pageName.indexOf('charts-') === 0);
+
   return (
     <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
       <div id="doc-content" className={classnames(styles['doc-page'], { [styles['doc-page--with-side-menu']]: showSideMenu })}>
-        <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
-        <h1 id="top" className={classnames(styles['doc-page__title'], { [styles['doc-page__title--enterprise']]: page.frontmatter.enterprise })}>{page.frontmatter.title}</h1>
+        <Helmet title={headerTitle} />
+        <h1 id="top" className={classnames(styles['doc-page__title'], { [styles['doc-page__title--enterprise']]: page.frontmatter.enterprise })}>{title}</h1>
         {renderAst(ast)}
       </div>
       <SideMenu headings={page.headings || []} pageName={pageName} hideMenu={() => setShowSideMenu(false)} />

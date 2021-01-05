@@ -1,11 +1,12 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'gatsby';
-import styles from './home.module.scss';
+import { getHeaderTitle } from '../utils/page-header';
 import fwLogos from '../images/fw-logos';
 import supportedFrameworks from '../utils/supported-frameworks';
 import MenuView from '../components/menu-view/MenuView';
 import menuData from '../pages/licensing/menu.json';
+import styles from './home.module.scss';
 
 const backgroundColor = {
     javascript: '#f8df1e',
@@ -68,13 +69,13 @@ const GettingStarted = ({ framework, data }) => {
 };
 
 const HomePage = ({ pageContext }) => {
-    const { framework: currentFramework } = pageContext;
+    const { framework } = pageContext;
 
     return (
         <div className={styles['docs-home']}>
-            <Helmet title="AG-Grid - Documentation" />
-            <GettingStarted framework={currentFramework} data={menuData[0].items[0].items} />
-            <MenuView framework={currentFramework} data={menuData} />
+            <Helmet title={getHeaderTitle('Documentation', framework)} />
+            <GettingStarted framework={framework} data={menuData[0].items[0].items} />
+            <MenuView framework={framework} data={menuData} />
         </div>
     );
 };
