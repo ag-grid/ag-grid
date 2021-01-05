@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from 'gatsby';
+import { withPrefix } from 'gatsby';
 import { getHeaderTitle } from '../utils/page-header';
 import fwLogos from '../images/fw-logos';
 import supportedFrameworks from '../utils/supported-frameworks';
@@ -49,19 +49,19 @@ const GettingStarted = ({ framework, data }) => {
             <h2 className={styles['docs-home__getting-started__title']}>Getting Started</h2>
             <div className={styles['docs-home__getting-started__row']}>
                 <div className={styles['docs-home__getting-started__framework_overview']}>
-                    <Link to='./getting-started/' className={styles['docs-home__getting-started__framework_logo']}>
+                    <a href="./getting-started/" className={styles['docs-home__getting-started__framework_logo']}>
                         <img
                             style={{ backgroundColor: backgroundColor[framework] }}
                             alt={framework}
                             src={logos[framework]} />
-                    </Link>
+                    </a>
                 </div>
                 <div
                     className={styles['docs-home__getting-started__items']}
                     style={{ gridTemplateColumns: `repeat(${numberOfColumns}, 1fr)` }}>
-                    {linksToRender.map(link => <Link
-                        key={link.title.replace(/\s/, '_').toLowerCase()}
-                        to={link.url.replace('../', `./`)}>{link.title}</Link>)}
+                    {linksToRender.map(link => <a
+                        key={link.title}
+                        href={withPrefix(link.url.replace('../', `/${framework}/`))}>{link.title}</a>)}
                 </div>
             </div>
         </div>
