@@ -67,7 +67,6 @@ A shorter approach is to refer to the component class directly.
 ```js
 gridOptions = {
 
-    // then refer to the component by name
     columnDefs: [
         {
             field: 'country',
@@ -132,7 +131,6 @@ You can also refer to the component classes directly using the `framework` varia
 ```js
 gridOptions = {
 
-    // then refer to the component by name
     columnDefs: [
         {
             field: 'country',
