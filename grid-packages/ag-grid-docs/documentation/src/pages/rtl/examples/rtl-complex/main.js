@@ -179,7 +179,7 @@ function getContextMenuItems(params) {
     result.push(
         {
             name: 'Custom Menu Item',
-            icon: '<img src="../../images/lab.png" style="width: 14px;"/>',
+            icon: '<img src="https://www.ag-grid.com/examples-assets/lab.png" style="width: 14px;" />',
             //shortcut: 'Alt + M',
             action: function() {
                 var value = params.value ? params.value : '<empty>';

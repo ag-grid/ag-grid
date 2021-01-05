@@ -134,7 +134,7 @@ function getContextMenuItems(params) {
             action: function() {
                 console.log('Windows Item Selected');
             },
-            icon: '<img src="../images/skills/windows.png"/>'
+            icon: '<img src="https://www.ag-grid.com/example-assets/skills/windows.png" />'
         },
         {
             // custom item
@@ -143,7 +143,7 @@ function getContextMenuItems(params) {
             action: function() {
                 console.log('Mac Item Selected');
             },
-            icon: '<img src="../images/skills/mac.png"/>'
+            icon: '<img src="https://www.ag-grid.com/example-assets/skills/mac.png"/>'
         }, // built in separator
         'separator',
         {
@@ -153,7 +153,7 @@ function getContextMenuItems(params) {
             action: function() {
                 console.log('Checked Selected');
             },
-            icon: '<img src="../images/skills/mac.png"/>'
+            icon: '<img src="https://www.ag-grid.com/example-assets/skills/mac.png"/>'
         }, // built in copy item
         'copy',
         'separator',

@@ -1,8 +1,8 @@
 'use strict';
 
-import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
-import ReactDOM, {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from 'ag-grid-react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import ReactDOM, { render } from 'react-dom';
+import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -15,7 +15,7 @@ const KEY_ENTER = 13;
 const KEY_TAB = 9;
 
 const MoodRenderer = forwardRef((props, ref) => {
-    const imageForMood = mood => mood === 'Happy' ? 'https://www.ag-grid.com/images/smiley.png' : 'https://www.ag-grid.com/images/smiley-sad.png';
+    const imageForMood = mood => 'https://www.ag-grid.com/example-assets/smileys/' + (mood === 'Happy' ? 'happy.png' : 'sad.png');
 
     const [mood, setMood] = useState(imageForMood(props.value));
 
@@ -24,16 +24,16 @@ const MoodRenderer = forwardRef((props, ref) => {
             refresh(params) {
                 setMood(imageForMood(params.value));
             }
-        }
+        };
     });
 
     return (
-        <img width="20px" src={mood}/>
+        <img width="20px" src={mood} />
     );
 });
 
 const MoodEditor = forwardRef((props, ref) => {
-    const isHappy = value => value === "Happy";
+    const isHappy = value => value === 'Happy';
 
     const [happy, setHappy] = useState(isHappy(props.value));
     const [editing, setEditing] = useState(true);
@@ -61,18 +61,18 @@ const MoodEditor = forwardRef((props, ref) => {
     useImperativeHandle(ref, () => {
         return {
             getValue() {
-                return happy ? "Happy" : "Sad";
+                return happy ? 'Happy' : 'Sad';
             },
 
             isPopup() {
                 return true;
             }
-        }
+        };
     });
 
     useEffect(() => {
         if (!editing) {
-            props.api.stopEditing()
+            props.api.stopEditing();
         }
     }, [editing]);
 
@@ -82,29 +82,29 @@ const MoodEditor = forwardRef((props, ref) => {
             if (container) {
                 container.focus();
             }
-        })
+        });
     };
 
     const mood = {
         borderRadius: 15,
-        border: "1px solid grey",
-        background: "#e6e6e6",
+        border: '1px solid grey',
+        background: '#e6e6e6',
         padding: 15,
-        textAlign: "center",
-        display: "inline-block"
+        textAlign: 'center',
+        display: 'inline-block'
     };
 
     const unselected = {
         paddingLeft: 10,
         paddingRight: 10,
-        border: "1px solid transparent",
+        border: '1px solid transparent',
         padding: 4
     };
 
     const selected = {
         paddingLeft: 10,
         paddingRight: 10,
-        border: "1px solid lightgreen",
+        border: '1px solid lightgreen',
         padding: 4
     };
 
@@ -113,17 +113,17 @@ const MoodEditor = forwardRef((props, ref) => {
 
     return (
         <div ref={refContainer}
-             style={mood}
-             tabIndex={1} // important - without this the key presses wont be caught
+            style={mood}
+            tabIndex={1} // important - without this the key presses wont be caught
         >
-            <img src="https://www.ag-grid.com/images/smiley.png" onClick={() => {
+            <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => {
                 setHappy(true);
                 setEditing(false);
-            }} style={happyStyle}/>
-            <img src="https://www.ag-grid.com/images/smiley-sad.png" onClick={() => {
+            }} style={happyStyle} />
+            <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => {
                 setHappy(false);
                 setEditing(false);
-            }} style={sadStyle}/>
+            }} style={sadStyle} />
         </div>
     );
 });
@@ -151,7 +151,7 @@ const NumericEditor = forwardRef((props, ref) => {
         return {
             value: startValue,
             highlightAllOnFocus
-        }
+        };
     };
 
     const initialState = createInitialState();
@@ -243,37 +243,37 @@ const NumericEditor = forwardRef((props, ref) => {
             isCancelAfterEnd() {
                 return value > 1000000;
             }
-        }
+        };
     });
 
     return (
         <input ref={refInput}
-               value={value}
-               onChange={event => setValue(event.target.value)}
-               style={{width: "100%"}}
+            value={value}
+            onChange={event => setValue(event.target.value)}
+            style={{ width: "100%" }}
         />
     );
 });
 
 const GridExample = () => {
     const rowData = [
-        {name: "Bob", mood: "Happy", number: 10},
-        {name: "Harry", mood: "Sad", number: 3},
-        {name: "Sally", mood: "Happy", number: 20},
-        {name: "Mary", mood: "Sad", number: 5},
-        {name: "John", mood: "Happy", number: 15},
-        {name: "Jack", mood: "Happy", number: 25},
-        {name: "Sue", mood: "Sad", number: 43},
-        {name: "Sean", mood: "Sad", number: 1335},
-        {name: "Niall", mood: "Happy", number: 2},
-        {name: "Alberto", mood: "Happy", number: 123},
-        {name: "Fred", mood: "Sad", number: 532},
-        {name: "Jenny", mood: "Happy", number: 34},
-        {name: "Larry", mood: "Happy", number: 13},
+        { name: "Bob", mood: "Happy", number: 10 },
+        { name: "Harry", mood: "Sad", number: 3 },
+        { name: "Sally", mood: "Happy", number: 20 },
+        { name: "Mary", mood: "Sad", number: 5 },
+        { name: "John", mood: "Happy", number: 15 },
+        { name: "Jack", mood: "Happy", number: 25 },
+        { name: "Sue", mood: "Sad", number: 43 },
+        { name: "Sean", mood: "Sad", number: 1335 },
+        { name: "Niall", mood: "Happy", number: 2 },
+        { name: "Alberto", mood: "Happy", number: 123 },
+        { name: "Fred", mood: "Sad", number: 532 },
+        { name: "Jenny", mood: "Happy", number: 34 },
+        { name: "Larry", mood: "Happy", number: 13 },
     ];
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div
                 style={{
                     height: '100%',
@@ -296,36 +296,36 @@ const GridExample = () => {
                         resizable: true
                     }}>
                     <AgGridColumn field="name"
-                                  width={300}
-                                  editable={true}
-                                  cellEditor="agRichSelectCellEditor"
-                                  cellEditorParams={{
-                                      values: [
-                                          "Bob",
-                                          "Harry",
-                                          "Sally",
-                                          "Mary",
-                                          "John",
-                                          "Jack",
-                                          "Sue",
-                                          "Sean",
-                                          "Niall",
-                                          "Albert",
-                                          "Fred",
-                                          "Jenny",
-                                          "Larry"
-                                      ]
-                                  }}/>
+                        width={300}
+                        editable={true}
+                        cellEditor="agRichSelectCellEditor"
+                        cellEditorParams={{
+                            values: [
+                                "Bob",
+                                "Harry",
+                                "Sally",
+                                "Mary",
+                                "John",
+                                "Jack",
+                                "Sue",
+                                "Sean",
+                                "Niall",
+                                "Albert",
+                                "Fred",
+                                "Jenny",
+                                "Larry"
+                            ]
+                        }} />
                     <AgGridColumn field="mood"
-                                  cellRenderer="moodRenderer"
-                                  cellEditor="moodEditor"
-                                  editable={true}
-                                  width={300}/>
+                        cellRenderer="moodRenderer"
+                        cellEditor="moodEditor"
+                        editable={true}
+                        width={300} />
                     <AgGridColumn headerName="Numeric"
-                                  field="number"
-                                  cellEditor="numericEditor"
-                                  editable={true}
-                                  width={280}/>
+                        field="number"
+                        cellEditor="numericEditor"
+                        editable={true}
+                        width={280} />
                 </AgGridReact>
             </div>
         </div>
@@ -333,6 +333,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample/>,
+    <GridExample />,
     document.querySelector('#root')
 );

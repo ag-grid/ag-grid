@@ -253,7 +253,7 @@
             var img;
             if (data && data.skills[skill]) {
                 img = document.createElement('img');
-                img.src = '/images/skills/' + skill + '.png';
+                img.src = 'https://www.ag-grid.com/example-assets/skills/' + skill + '.png';
                 img.style.width = '16px';
                 img.style.margin = '2px';
                 img.title = skill;
@@ -325,7 +325,7 @@
         '    <div style="text-align: center;">SKILL_NAME</div>' +
         "    <div>" +
         '      <input type="checkbox"/>' +
-        '      <img src="/images/skills/SKILL.png" width="30px" alt="skill" />' +
+        '      <img src="https://www.ag-grid.com/example-assets/skills/SKILL.png" width="30px" alt="skill" />' +
         "    </div>" +
         "  </span>" +
         "</label>";
