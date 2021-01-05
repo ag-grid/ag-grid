@@ -687,7 +687,7 @@ title: "Testing ag-Grid"
 | });
 | ```
 |
-| We can no use this utility method before each test or in the `beforeEach` to ensure the Grid is fully ready
+| We can now use this utility method before each test or in the `beforeEach` to ensure the Grid is fully ready
 | before continuing with out test:
 |
 | ```js
