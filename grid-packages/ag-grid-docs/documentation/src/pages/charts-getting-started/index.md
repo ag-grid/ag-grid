@@ -2,9 +2,411 @@
 title: "Get Started with ag-Charts"
 ---
 
+<style>
+    .gatsby-resp-image-wrapper {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 1rem;
+    }
+    .gatsby-resp-image-image {
+        box-shadow: none !important;
+    }
+
+    .code-tab pre {
+        margin-top: 0;
+    }
+
+    .code-tab .nav-item {
+        margin-bottom: 0 !important;
+    }
+</style>
+
 ag-Charts is an exciting new addition to the ag-Grid family, offering both integrated as well as standalone fully functional charting capabilities.
 
-<?php include './intro.php'; ?>
+<section class="code-tab mb-3">
+<div class="card">
+<div class="card-header">Quick Look Code Example</div>
+<div class="card-body">
+<ul class="nav nav-tabs">
+<li class="nav-item">
+<a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
+
+[[only-javascript]]
+| main.js
+
+[[only-angular]]
+| app.component.ts
+
+[[only-react]]
+| index.js
+
+[[only-vue]]
+| App.vue
+
+</a>
+</li>
+
+[[only-angular]]
+| <li class="nav-item">
+| <a class="nav-link" id="module-tab" data-toggle="tab" href="#module" role="tab" aria-controls="module" aria-selected="false">
+| <p>app.module.ts</p>
+| </a>
+| </li>
+
+<li class="nav-item">
+<a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
+
+[[only-javascript]]
+| index.html
+
+[[only-angular]]
+| app.component.html
+
+[[only-react]]
+| index.html
+
+[[only-vue]]
+| main.js
+
+</a>
+</li>
+</ul>
+<div class="tab-content">
+<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
+
+[[only-javascript]]
+| ```js
+| var data = [
+|     {
+|         beverage: 'Coffee',
+|         Q1: 450,
+|         Q2: 560,
+|         Q3: 600,
+|         Q4: 700
+|     },
+|     {
+|         beverage: 'Tea',
+|         Q1: 270,
+|         Q2: 380,
+|         Q3: 450,
+|         Q4: 520
+|     },
+|     {
+|         beverage: 'Milk',
+|         Q1: 180,
+|         Q2: 170,
+|         Q3: 190,
+|         Q4: 200
+|     }
+| ];
+|
+| var options = {
+|     container: document.querySelector('#myChart'),
+|     data: data,
+|     title: {
+|         text: 'Beverage Expenses'
+|     },
+|     subtitle: {
+|         text: 'per quarter'
+|     },
+|     padding: {
+|         top: 40,
+|         right: 40,
+|         bottom: 40,
+|         left: 40
+|     },
+|     series: [{
+|         type: 'column',
+|         xKey: 'beverage',
+|         yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
+|     }],
+|     legend: {
+|         spacing: 40
+|     }
+| };
+|
+| agCharts.AgChart.create(options);
+| ```
+
+[[only-angular]]
+| ```jsx
+| import { Component } from '@angular/core';
+| 
+| @Component({
+|     selector: 'my-app',
+|     templateUrl: './app.component.html'
+| })
+| export class AppComponent {
+|     private options: any;
+| 
+|     beverageSpending = [
+|         {
+|             beverage: 'Coffee',
+|             Q1: 450,
+|             Q2: 560,
+|             Q3: 600,
+|             Q4: 700,
+|         },
+|         {
+|             beverage: 'Tea',
+|             Q1: 270,
+|             Q2: 380,
+|             Q3: 450,
+|             Q4: 520,
+|         },
+|         {
+|             beverage: 'Milk',
+|             Q1: 180,
+|             Q2: 170,
+|             Q3: 190,
+|             Q4: 200,
+|         },
+|     ];
+|     constructor() {
+|         this.options = {
+|             data: this.beverageSpending,
+|             title: {
+|                 text: 'Beverage Expenses',
+|             },
+|             subtitle: {
+|                 text: 'per quarter',
+|             },
+|             series: [{
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
+|                 label: {},
+|             }],
+|         };
+|     }
+| }
+| ```
+
+[[only-react]]
+| ```jsx
+| import React, { Component } from 'react';
+| import { AgChartsReact } from 'ag-charts-react';
+| 
+| export default class ChartExample extends Component {
+|     data = [
+|         {
+|             beverage: 'Coffee',
+|             Q1: 450,
+|             Q2: 560,
+|             Q3: 600,
+|             Q4: 700,
+|         },
+|         {
+|             beverage: 'Tea',
+|             Q1: 270,
+|             Q2: 380,
+|             Q3: 450,
+|             Q4: 520,
+|         },
+|         {
+|             beverage: 'Milk',
+|             Q1: 180,
+|             Q2: 170,
+|             Q3: 190,
+|             Q4: 200,
+|         },
+|     ];
+| 
+|     constructor(props) {
+|         super(props);
+| 
+|         this.state = {
+|             options: {
+|                 data: this.data,
+|                 title: { text: 'Beverage Expenses' },
+|                 subtitle: { text: 'per quarter' },
+|                 padding: {
+|                     top: 40,
+|                     right: 40,
+|                     bottom: 40,
+|                     left: 40,
+|                 },
+|                 series: [
+|                     {
+|                         type: 'column',
+|                         xKey: 'beverage',
+|                         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
+|                     },
+|                 ],
+|                 legend: { spacing: 40 },
+|             },
+|         };
+|     }
+| 
+|     render() {
+|         return <AgChartsReact options={this.state.options} />;
+|     }
+| }
+| ```
+
+[[only-vue]]
+| ```html
+| <template>
+|     <div id="app">
+|         <ag-charts-vue :options="options"></ag-charts-vue>
+|     </div>
+| </template>
+| 
+| <script>
+|     import {AgChartsVue} from 'ag-charts-vue';
+| 
+|     export default {
+|         name: 'App',
+|         components: {
+|             AgChartsVue,
+|         },
+|         data() {
+|             return {
+|                 options: null,
+|                 data: [
+|                     {
+|                         beverage: 'Coffee',
+|                         Q1: 450,
+|                         Q2: 560,
+|                         Q3: 600,
+|                         Q4: 700,
+|                     },
+|                     {
+|                         beverage: 'Tea',
+|                         Q1: 270,
+|                         Q2: 380,
+|                         Q3: 450,
+|                         Q4: 520,
+|                     },
+|                     {
+|                         beverage: 'Milk',
+|                         Q1: 180,
+|                         Q2: 170,
+|                         Q3: 190,
+|                         Q4: 200,
+|                     },
+|                 ]
+|             };
+|         },
+|         beforeMount() {
+|             this.options = {
+|                 data: this.data,
+|                 title: {
+|                     text: 'Beverage Expenses',
+|                 },
+|                 subtitle: {
+|                     text: 'per quarter',
+|                 }, series: [{
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
+|                     label: {},
+|                 }],
+|             };
+|         }
+|     };
+| </script>
+| 
+| <style>
+| </style>
+| ```
+
+</div>
+
+[[only-angular]]
+| <div class="tab-pane" id="module" role="tabpanel" aria-labelledby="module-tab">
+|
+| ```jsx
+| import { BrowserModule } from '@angular/platform-browser';
+| import { NgModule } from '@angular/core';
+| import { AgChartsAngularModule } from 'ag-charts-angular';
+| import { AppComponent } from './app.component';
+| 
+| @NgModule({
+|     imports: [
+|         BrowserModule,
+|         AgChartsAngularModule
+|     ],
+|     declarations: [AppComponent],
+|     bootstrap: [AppComponent],
+| })
+| export class AppModule {
+| }
+| ```
+| </div>
+
+<div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
+
+[[only-javascript]]
+| ```html
+| <!DOCTYPE html>
+| <html lang="en">
+|     <head>
+|         <title>ag-Charts Basic Example</title>
+|         <script src="https://unpkg.com/ag-charts-community/dist/ag-charts-community.min.js">
+|         </script>
+|     </head>
+|     <body>
+|         <div id="myChart" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;"></div>
+|         <script src="main.js"></script>
+|     </body>
+| </html>
+| ```
+
+[[only-angular]]
+| ```html
+| <ag-charts-angular
+|     style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;"
+|     [options]="options">
+| </ag-charts-angular>
+| ```
+
+[[only-react]]
+| ```html
+| <div id="root"></div>
+| ```
+
+[[only-vue]]
+| ```jsx
+| import Vue from 'vue'
+| import App from './App.vue'
+| 
+| Vue.config.productionTip = false
+| 
+| new Vue({
+|   render: h => h(App),
+| }).$mount('#app')
+| ```
+
+</div>
+</div>
+</div>
+<div class="text-right" style="margin-top: -1.5rem;">
+
+[[only-javascript]]
+| <a class="btn btn-dark mb-2 mr-3" href="https://plnkr.co/edit/OYoLfV7OfOXHyOAOiR86?p=preview" target="_blank">
+|     Open in <img src="plunker_icon.svg" alt="Open in Plunker" style="width: 2.5rem" /> Plunker
+| </a>
+
+[[only-angular]]
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-cxth9c" target="_blank">
+|     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
+| </a>
+
+[[only-react]]
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-react-hello-world-daq5bw" target="_blank">
+|     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
+| </a>
+
+
+[[only-vue]]
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-vue-hello-world-uqr6hk" target="_blank">
+|     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
+| </a>
+
+</div>
+</div>
+</section>
 
 ## Getting Started
 
