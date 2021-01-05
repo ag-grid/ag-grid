@@ -440,6 +440,42 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
+export interface AgOHLCTooltipRendererParams extends AgSeriesTooltipRendererParams {
+    dateKey?: string;
+    dateName?: string;
+
+    openKey?: string;
+    openName?: string;
+
+    highKey?: string;
+    highName?: string;
+
+    lowKey?: string;
+    lowName?: string;
+
+    closeKey?: string;
+    closeName?: string;
+}
+
+export interface AgOHLCSeriesTooltip extends AgSeriesTooltip {
+    renderer?: (params: AgOHLCTooltipRendererParams) => string | AgTooltipRendererResult;
+}
+
+export interface AgOHLCSeriesOptions extends AgBaseSeriesOptions {
+    type?: 'ohlc';
+    dateKey?: string;
+    openKey?: string;
+    highKey?: string;
+    lowKey?: string;
+    closeKey?: string;
+    labelKey?: string;
+    highlightStyle?: {
+        fill?: string;
+        stroke?: string;
+    };
+    tooltip?: AgOHLCSeriesTooltip;
+}
+
 export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
@@ -663,12 +699,13 @@ type AgCartesianSeriesOptions =
     AgScatterSeriesOptions |
     AgAreaSeriesOptions |
     AgBarSeriesOptions |
-    AgHistogramSeriesOptions;
+    AgHistogramSeriesOptions |
+    AgOHLCSeriesOptions;
 
 type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export interface AgCartesianChartOptions<TAxisOptions = AgCartesianAxisOptions[], TSeriesOptions = AgCartesianSeriesOptions[]> extends AgBaseChartOptions {
-    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter';
+    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc';
     axes?: TAxisOptions;
     series?: TSeriesOptions;
 }
