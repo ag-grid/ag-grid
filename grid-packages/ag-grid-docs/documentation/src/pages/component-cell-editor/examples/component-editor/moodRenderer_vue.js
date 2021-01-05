@@ -6,7 +6,7 @@ export default Vue.extend({
         return {
             mood: 'Happy',
             imgForMood: null
-        }
+        };
     },
     methods: {
         refresh(params) {
@@ -16,10 +16,10 @@ export default Vue.extend({
 
         setMood(params) {
             this.mood = params.value;
-            this.imgForMood = this.mood === 'Happy' ? '../images/smiley.png' : '../images/smiley-sad.png';
+            this.imgForMood = 'https://www.ag-grid.com/example-assets/smileys/' + (this.mood === 'Happy' ? 'happy.png' : 'sad.png');
         }
     },
     created() {
         this.setMood(this.params);
     }
-})
+});

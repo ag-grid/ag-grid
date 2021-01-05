@@ -1,13 +1,12 @@
-import {AfterViewInit, Component, ViewChild, ViewContainerRef} from "@angular/core";
-
-import {ICellEditorAngularComp} from "@ag-grid-community/angular";
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
+import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'editor-cell',
     template: `
         <div #container class="mood" tabindex="0" (keydown)="onKeyDown($event)">
-            <img src="https://www.ag-grid.com/images/smiley.png" (click)="onClick(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
-            <img src="https://www.ag-grid.com/images/smiley-sad.png" (click)="onClick(false)"
+            <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" (click)="onClick(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
+            <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" (click)="onClick(false)"
                  [ngClass]="{'selected' : !happy, 'default' : happy}">
         </div>
     `,
@@ -40,14 +39,14 @@ import {ICellEditorAngularComp} from "@ag-grid-community/angular";
 export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
 
-    @ViewChild('container', {read: ViewContainerRef}) public container;
+    @ViewChild('container', { read: ViewContainerRef }) public container;
     public happy: boolean = false;
 
     // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
         window.setTimeout(() => {
             this.container.element.nativeElement.focus();
-        })
+        });
     }
 
     agInit(params: any): void {

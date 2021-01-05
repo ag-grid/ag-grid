@@ -1,6 +1,6 @@
-import {Component, ViewEncapsulation} from "@angular/core";
+import { Component, ViewEncapsulation } from "@angular/core";
 
-import {GridOptions, Module, AllModules, GridApi} from "@ag-grid-enterprise/all-modules";
+import { GridOptions, Module, AllModules, GridApi } from "@ag-grid-enterprise/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
@@ -10,9 +10,9 @@ import ProficiencyFilter from "./filters/proficiencyFilter";
 import SkillFilter from "./filters/skillFilter";
 import RefData from "./data/refData";
 
-import {HeaderGroupComponent} from "./header-group-component/header-group.component";
-import {DateComponent} from "./date-component/date.component";
-import {HeaderComponent} from "./header-component/header.component";
+import { HeaderGroupComponent } from "./header-group-component/header-group.component";
+import { DateComponent } from "./date-component/date.component";
+import { HeaderComponent } from "./header-component/header.component";
 
 @Component({
     selector: 'my-app',
@@ -39,11 +39,11 @@ export class RichGridDeclarativeComponent {
         this.showGrid = true;
         this.gridOptions.dateComponentFramework = DateComponent;
         this.gridOptions.defaultColDef = {
-            headerComponentFramework: <{ new(): HeaderComponent }>HeaderComponent,
+            headerComponentFramework: <{ new(): HeaderComponent; }>HeaderComponent,
             headerComponentParams: {
                 menuIcon: 'fa-bars'
             }
-        }
+        };
     }
 
     private createRowData() {
@@ -110,7 +110,7 @@ export class RichGridDeclarativeComponent {
     }
 
     private countryCellRenderer(params: any) {
-        const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://www.ag-grid.com/images/flags/" + (RefData as any).COUNTRY_CODES[params.value] + ".png'>";
+        const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://www.ag-grid.com/example-assets/flags/" + (RefData as any).COUNTRY_CODES[params.value] + ".png'>";
         return flag + " " + params.value;
     }
 
@@ -118,9 +118,9 @@ export class RichGridDeclarativeComponent {
     private skillsCellRenderer(params: any) {
         const data = params.data;
         const skills: string[] = [];
-        RefData.IT_SKILLS.forEach(function (skill) {
+        RefData.IT_SKILLS.forEach(function(skill) {
             if (data && data.skills && data.skills[skill]) {
-                skills.push('<img src="https://www.ag-grid.com/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+                skills.push('<img src="https://www.ag-grid.com/example-assets/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
             }
         });
         return skills.join(' ');
@@ -168,7 +168,7 @@ export class RichGridDeclarativeComponent {
         return {
             cellRenderer: this.countryCellRenderer,
             cellHeight: 20
-        }
+        };
     }
 
     private createRandomPhoneNumber() {

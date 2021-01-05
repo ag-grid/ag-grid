@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
 export default class MoodEditor extends Component {
     constructor(props) {
@@ -10,11 +10,11 @@ export default class MoodEditor extends Component {
 
         this.state = {
             happy: false
-        }
+        };
     }
 
     componentWillMount() {
-        this.setHappy(this.props.value === "Happy");
+        this.setHappy(this.props.value === 'Happy');
     }
 
     componentDidMount() {
@@ -43,11 +43,11 @@ export default class MoodEditor extends Component {
             if (container) {
                 container.focus();
             }
-        }, 10)
+        }, 10);
     }
 
     getValue() {
-        return this.state.happy ? "Happy" : "Sad";
+        return this.state.happy ? 'Happy' : 'Sad';
     }
 
     isPopup() {
@@ -62,16 +62,16 @@ export default class MoodEditor extends Component {
 
     onHappyClick() {
         this.setState({
-                happy: true
-            },
+            happy: true
+        },
             () => this.props.api.stopEditing()
         );
     }
 
     onSadClick() {
         this.setState({
-                happy: false
-            },
+            happy: false
+        },
             () => this.props.api.stopEditing()
         );
     }
@@ -83,37 +83,37 @@ export default class MoodEditor extends Component {
     render() {
         let mood = {
             borderRadius: 15,
-            border: "1px solid grey",
-            background: "#e6e6e6",
+            border: '1px solid grey',
+            background: '#e6e6e6',
             padding: 15,
-            textAlign: "center",
-            display: "inline-block"
+            textAlign: 'center',
+            display: 'inline-block'
         };
 
         let unselected = {
             paddingLeft: 10,
             paddingRight: 10,
-            border: "1px solid transparent",
+            border: '1px solid transparent',
             padding: 4
         };
 
         let selected = {
             paddingLeft: 10,
             paddingRight: 10,
-            border: "1px solid lightgreen",
+            border: '1px solid lightgreen',
             padding: 4
         };
 
         let happyStyle = this.state.happy ? selected : unselected;
-        let sadStyle = !this.state.happy  ? selected : unselected;
+        let sadStyle = !this.state.happy ? selected : unselected;
 
         return (
             <div ref="container"
-                 style={mood}
-                 tabIndex={1} // important - without this the keypresses wont be caught
+                style={mood}
+                tabIndex={1} // important - without this the keypresses wont be caught
             >
-                <img src="https://www.ag-grid.com/images/smiley.png" onClick={this.onHappyClick} style={happyStyle}/>
-                <img src="https://www.ag-grid.com/images/smiley-sad.png" onClick={this.onSadClick} style={sadStyle}/>
+                <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={this.onHappyClick} style={happyStyle} />
+                <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={this.onSadClick} style={sadStyle} />
             </div>
         );
     }

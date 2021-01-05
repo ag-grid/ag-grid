@@ -139,7 +139,6 @@
         "title": "Column Spanning",
         "enterprise": false,
         "description": "<span class=\"feature-highlight\">Column Spanning</span> allows cells to span columns, similar to cell span in Excel",
-        "src": "../grid-features/resources/images/columnSpanning.gif",
         "snippet": "colDef = {\n    field: 'country',\n    colSpan: function(params) {\n        // span 2 cols for Russia, otherwise 1\n        var country = params.data.country;\n        return country==='Russia' ? 2 : 1;\n    }\n    ...\n};",
         "level": 0,
         "url": "../column-spanning/"

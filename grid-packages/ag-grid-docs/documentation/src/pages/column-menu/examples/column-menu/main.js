@@ -80,7 +80,7 @@ function getMainMenuItems(params) {
                 { // our own item with an icon
                     name: 'Joe Abercrombie',
                     action: function() { console.log('He wrote a book'); },
-                    icon: '<img src="../images/lab.png" style="width: 14px;"/>'
+                    icon: '<img src="https://www.ag-grid.com/examples-assets/lab.png" style="width: 14px;" />'
                 },
                 { // our own icon with a check box
                     name: 'Larsson',
@@ -90,7 +90,7 @@ function getMainMenuItems(params) {
                 'resetColumns' // a built in item
             ];
 
-        // return all the default items, but remove app seperators and the two sub menus
+        // return all the default items, but remove app separators and the two sub menus
         case 'country':
             var countryMenuItems = [];
             var itemsToExclude = ['separator', 'pinSubMenu', 'valueAggSubMenu'];

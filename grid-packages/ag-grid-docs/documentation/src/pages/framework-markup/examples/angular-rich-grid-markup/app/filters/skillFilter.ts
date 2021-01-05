@@ -1,5 +1,5 @@
-import RefData from "../data/refData";
-import {IFilter, IFilterParams} from "@ag-grid-community/all-modules";
+import RefData from '../data/refData';
+import { IFilter, IFilterParams } from '@ag-grid-community/all-modules';
 
 const SKILL_TEMPLATE =
     '<label style="border: 1px solid lightgrey; margin: 4px; padding: 4px; display: inline-block;">' +
@@ -7,7 +7,7 @@ const SKILL_TEMPLATE =
     '    <div style="text-align: center;">SKILL_NAME</div>' +
     '    <div>' +
     '      <input type="checkbox"/>' +
-    '      <img src="https://www.ag-grid.com/images/skills/SKILL.png" width="30px"/>' +
+    '      <img src="https://www.ag-grid.com/example-assets/skills/SKILL.png" width="30px" />' +
     '    </div>' +
     '  </span>' +
     '</label>';
@@ -41,14 +41,14 @@ export default class SkillFilter implements IFilter {
 
         const that = this;
 
-        RefData.IT_SKILLS.forEach(function (skill, index) {
+        RefData.IT_SKILLS.forEach(function(skill, index) {
             const skillName = RefData.IT_SKILLS_NAMES[index];
             const eSpan = document.createElement('span');
             const html = SKILL_TEMPLATE.replace("SKILL_NAME", skillName).replace("SKILL", skill);
             eSpan.innerHTML = html;
 
-            const eCheckbox = <HTMLInputElement> eSpan.querySelector('input');
-            eCheckbox.addEventListener('click', function () {
+            const eCheckbox = <HTMLInputElement>eSpan.querySelector('input');
+            eCheckbox.addEventListener('click', function() {
                 that.model[skill] = eCheckbox.checked;
                 that.filterChangedCallback();
             });
@@ -65,7 +65,7 @@ export default class SkillFilter implements IFilter {
         const model = this.model;
         let passed = true;
 
-        RefData.IT_SKILLS.forEach(function (skill) {
+        RefData.IT_SKILLS.forEach(function(skill) {
             if (model[skill]) {
                 if (!rowSkills[skill]) {
                     passed = false;
