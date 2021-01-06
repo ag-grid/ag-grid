@@ -436,8 +436,3 @@ Header add Access-Control-Allow-Origin "*"
 Header add Access-Control-Allow-Methods: "GET,POST,OPTIONS,DELETE,PUT"
 
 Options -Indexes
-
-# Set the "ea-php56" package as the default "PHP" programming language.
-<IfModule mime_module>
-  AddHandler application/x-httpd-ea-php56 .php .php5 .phtml
-</IfModule>
