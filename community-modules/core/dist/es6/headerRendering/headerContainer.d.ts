@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { HeaderRowComp } from './headerRowComp';
@@ -6,7 +6,6 @@ import { Component } from '../widgets/component';
 import { BeanStub } from "../context/beanStub";
 import { GridPanel } from '../gridPanel/gridPanel';
 export declare class HeaderContainer extends BeanStub {
-    private gridOptionsWrapper;
     private columnController;
     private scrollVisibleService;
     private eContainer;

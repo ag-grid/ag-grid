@@ -1,4 +1,4 @@
-import { Column, Component } from "@ag-grid-community/core";
+import { Column, Component, ITooltipParams } from "@ag-grid-community/core";
 export declare class ToolPanelColumnComp extends Component {
     private readonly column;
     private readonly columnDept;
@@ -6,7 +6,6 @@ export declare class ToolPanelColumnComp extends Component {
     private readonly groupsExist;
     private readonly focusWrapper;
     private static TEMPLATE;
-    private gridOptionsWrapper;
     private columnController;
     private dragAndDropService;
     private modelItemUtils;
@@ -17,6 +16,8 @@ export declare class ToolPanelColumnComp extends Component {
     private processingColumnStateChange;
     constructor(column: Column, columnDept: number, allowDragging: boolean, groupsExist: boolean, focusWrapper: HTMLElement);
     init(): void;
+    private setupTooltip;
+    getTooltipParams(): ITooltipParams;
     protected handleKeyDown(e: KeyboardEvent): void;
     private onLabelClicked;
     private onCheckboxChanged;

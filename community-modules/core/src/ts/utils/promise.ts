@@ -2,17 +2,17 @@ import { forEach } from './array';
 
 export type ResolveAndRejectCallback<T> = (resolve: (value: T) => void, reject: (params: any) => void) => void;
 
-export enum PromiseStatus {
+export enum AgPromiseStatus {
     IN_PROGRESS, RESOLVED
 }
 
-export class Promise<T> {
-    private status: PromiseStatus = PromiseStatus.IN_PROGRESS;
+export class AgPromise<T> {
+    private status: AgPromiseStatus = AgPromiseStatus.IN_PROGRESS;
     private resolution: T | null = null;
     private waiters: ((value: T) => void)[] = [];
 
-    static all<T>(promises: Promise<T>[]): Promise<T[]> {
-        return new Promise(resolve => {
+    static all<T>(promises: AgPromise<T | null>[]): AgPromise<(T | null)[]> {
+        return new AgPromise(resolve => {
             let remainingToResolve = promises.length;
             const combinedValues = new Array<T>(remainingToResolve);
 
@@ -29,17 +29,17 @@ export class Promise<T> {
         });
     }
 
-    static resolve<T>(value: T = null): Promise<T> {
-        return new Promise<T>(resolve => resolve(value));
+    static resolve<T>(value: T | null = null): AgPromise<T> {
+        return new AgPromise<T>(resolve => resolve(value));
     }
 
     constructor(callback: ResolveAndRejectCallback<T>) {
         callback(value => this.onDone(value), params => this.onReject(params));
     }
 
-    public then<V>(func: (result: T) => V): Promise<V> {
-        return new Promise(resolve => {
-            if (this.status === PromiseStatus.RESOLVED) {
+    public then<V>(func: (result: T | null) => V): AgPromise<V> {
+        return new AgPromise(resolve => {
+            if (this.status === AgPromiseStatus.RESOLVED) {
                 resolve(func(this.resolution));
             } else {
                 this.waiters.push(value => resolve(func(value)));
@@ -48,11 +48,11 @@ export class Promise<T> {
     }
 
     public resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T | null) => Z): Z {
-        return this.status === PromiseStatus.RESOLVED ? ifResolved(this.resolution) : ifNotResolvedValue;
+        return this.status === AgPromiseStatus.RESOLVED ? ifResolved(this.resolution) : ifNotResolvedValue;
     }
 
-    private onDone(value: T): void {
-        this.status = PromiseStatus.RESOLVED;
+    private onDone(value: T | null): void {
+        this.status = AgPromiseStatus.RESOLVED;
         this.resolution = value;
 
         forEach(this.waiters, waiter => waiter(value));

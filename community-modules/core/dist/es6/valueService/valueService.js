@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -89,7 +89,31 @@ var ValueService = /** @class */ (function (_super) {
             var cellValueGetter = result.substring(1);
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }
+        if (result == null) {
+            var openedGroup = this.getOpenedGroup(rowNode, column);
+            if (openedGroup != null) {
+                return openedGroup;
+            }
+        }
         return result;
+    };
+    ValueService.prototype.getOpenedGroup = function (rowNode, column) {
+        if (!this.gridOptionsWrapper.isShowOpenedGroup()) {
+            return;
+        }
+        var colDef = column.getColDef();
+        if (!colDef.showRowGroup) {
+            return;
+        }
+        var showRowGroup = column.getColDef().showRowGroup;
+        var pointer = rowNode.parent;
+        while (pointer != null) {
+            if (pointer.rowGroupColumn && (showRowGroup === true || showRowGroup === pointer.rowGroupColumn.getId())) {
+                return pointer.key;
+            }
+            pointer = pointer.parent;
+        }
+        return undefined;
     };
     ValueService.prototype.setValue = function (rowNode, colKey, newValue, eventSource) {
         var column = this.columnController.getPrimaryColumn(colKey);
@@ -255,9 +279,6 @@ var ValueService = /** @class */ (function (_super) {
         }
         return result;
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ValueService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('expressionService')
     ], ValueService.prototype, "expressionService", void 0);

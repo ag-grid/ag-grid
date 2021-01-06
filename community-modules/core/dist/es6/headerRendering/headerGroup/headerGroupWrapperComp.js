@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,7 +31,6 @@ import { CssClassApplier } from "../cssClassApplier";
 import { DragAndDropService, DragSourceType } from "../../dragAndDrop/dragAndDropService";
 import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
 import { HoverFeature } from "../hoverFeature";
-import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { AbstractHeaderWrapper } from "../header/abstractHeaderWrapper";
 import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
 import { setAriaExpanded } from "../../utils/aria";
@@ -115,28 +114,20 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     HeaderGroupWrapperComp.prototype.getComponentHolder = function () {
         return this.column.getColGroupDef();
     };
-    HeaderGroupWrapperComp.prototype.getTooltipText = function () {
-        var colGroupDef = this.getComponentHolder();
-        return colGroupDef && colGroupDef.headerTooltip;
-    };
     HeaderGroupWrapperComp.prototype.getTooltipParams = function () {
-        return {
-            location: 'headerGroup',
-            colDef: this.getComponentHolder(),
-            column: this.getColumn(),
-            value: this.getTooltipText()
-        };
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'headerGroup';
+        // this is wrong, but leaving it as i don't want to change code,
+        // but the ColumnGroup does not have a ColDef or a Column (although it does have GroupDef and ColumnGroup)
+        res.colDef = this.getComponentHolder();
+        res.column = this.getColumn();
+        return res;
     };
     HeaderGroupWrapperComp.prototype.setupTooltip = function () {
-        var tooltipText = this.getTooltipText();
-        if (tooltipText == null) {
-            return;
-        }
-        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.getGui().setAttribute('title', tooltipText);
-        }
-        else {
-            this.createManagedBean(new TooltipFeature(this));
+        var colGroupDef = this.getComponentHolder();
+        var tooltipText = colGroupDef && colGroupDef.headerTooltip;
+        if (tooltipText != null) {
+            this.setTooltip(tooltipText);
         }
     };
     HeaderGroupWrapperComp.prototype.onColumnMovingChanged = function () {
@@ -384,9 +375,6 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         return result;
     };
     HeaderGroupWrapperComp.TEMPLATE = "<div class=\"ag-header-group-cell\" role=\"columnheader\" tabindex=\"-1\">\n            <div ref=\"agResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n        </div>";
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], HeaderGroupWrapperComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('columnController')
     ], HeaderGroupWrapperComp.prototype, "columnController", void 0);

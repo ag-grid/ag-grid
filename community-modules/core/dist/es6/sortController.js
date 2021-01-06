@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -146,8 +146,31 @@ var SortController = /** @class */ (function (_super) {
         // pull out all the columns that have sorting set
         var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
         var columnsWithSorting = allColumnsIncludingAuto.filter(function (column) { return !!column.getSort(); });
+        // when both cols are missing sortIndex, we use the position of the col in all cols list.
+        // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
+        // cols is sorted by first.
+        var allColsIndexes = {};
+        allColumnsIncludingAuto.forEach(function (col, index) { return allColsIndexes[col.getId()] = index; });
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort(function (a, b) { return a.getSortIndex() - b.getSortIndex(); });
+        columnsWithSorting.sort(function (a, b) {
+            var iA = a.getSortIndex();
+            var iB = b.getSortIndex();
+            if (iA != null && iB != null) {
+                return iA - iB; // both present, normal comparison
+            }
+            else if (iA == null && iB == null) {
+                // both missing, compare using column positions
+                var posA = allColsIndexes[a.getId()];
+                var posB = allColsIndexes[b.getId()];
+                return posA > posB ? 1 : -1;
+            }
+            else if (iB == null) {
+                return -1; // iB missing
+            }
+            else {
+                return 1; // iA missing
+            }
+        });
         return columnsWithSorting;
     };
     // used by row controller, when doing the sorting
@@ -162,9 +185,6 @@ var SortController = /** @class */ (function (_super) {
     };
     var SortController_1;
     SortController.DEFAULT_SORTING_ORDER = [Constants.SORT_ASC, Constants.SORT_DESC, null];
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], SortController.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('columnController')
     ], SortController.prototype, "columnController", void 0);

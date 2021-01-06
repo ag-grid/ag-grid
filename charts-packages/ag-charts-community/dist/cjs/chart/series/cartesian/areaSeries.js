@@ -190,7 +190,7 @@ var AreaSeries = /** @class */ (function (_super) {
         // ]
         var _b = this, yData = _b.yData, normalizedTo = _b.normalizedTo;
         var yMinMax = yData.map(function (values) { return array_1.findMinMax(values); }); // used for normalization
-        var yLargestMinMax = array_1.findLargestMinMax(yMinMax);
+        var yLargestMinMax = this.findLargestMinMax(yMinMax);
         var yMin;
         var yMax;
         if (normalizedTo && isFinite(normalizedTo)) {
@@ -215,6 +215,20 @@ var AreaSeries = /** @class */ (function (_super) {
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
         this.fireEvent({ type: 'dataProcessed' });
         return true;
+    };
+    AreaSeries.prototype.findLargestMinMax = function (totals) {
+        var min = 0;
+        var max = 0;
+        for (var _i = 0, totals_1 = totals; _i < totals_1.length; _i++) {
+            var total = totals_1[_i];
+            if (total.min < min) {
+                min = total.min;
+            }
+            if (total.max > max) {
+                max = total.max;
+            }
+        }
+        return { min: min, max: max };
     };
     AreaSeries.prototype.getDomain = function (direction) {
         if (direction === chartAxis_1.ChartAxisDirection.X) {
@@ -418,9 +432,10 @@ var AreaSeries = /** @class */ (function (_super) {
     AreaSeries.prototype.getNodeData = function () {
         return this.markerSelectionData;
     };
-    AreaSeries.prototype.fireNodeClickEvent = function (datum) {
+    AreaSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -446,7 +461,7 @@ var AreaSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipFormat || tooltipRenderer) {

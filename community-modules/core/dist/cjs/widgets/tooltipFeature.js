@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -174,9 +174,12 @@ var TooltipFeature = /** @class */ (function (_super) {
         if (!dom_1.containsClass(eGui, 'ag-tooltip')) {
             dom_1.addCssClass(eGui, 'ag-tooltip-custom');
         }
-        this.tooltipPopupDestroyFunc = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             eChild: eGui
         });
+        if (addPopupRes) {
+            this.tooltipPopupDestroyFunc = addPopupRes.hideFunc;
+        }
         // this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
         this.positionTooltipUnderLastMouseEvent();
         this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
@@ -211,9 +214,6 @@ var TooltipFeature = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('gridApi')
     ], TooltipFeature.prototype, "gridApi", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], TooltipFeature.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.PostConstruct
     ], TooltipFeature.prototype, "postConstruct", null);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,6 +27,7 @@ import { PostConstruct, Autowired } from '../context/context';
 import { Component } from './component';
 import { isNodeOrElement, addCssClass, clearElement } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
+import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from '../utils/event';
 /**
  * This provides logic to override the default browser focus logic.
  *
@@ -171,7 +172,11 @@ var ManagedFocusComponent = /** @class */ (function (_super) {
     ManagedFocusComponent.prototype.addKeyDownListeners = function (eGui) {
         var _this = this;
         this.addManagedListener(eGui, 'keydown', function (e) {
-            if (e.defaultPrevented) {
+            if (e.defaultPrevented || isStopPropagationForAgGrid(e)) {
+                return;
+            }
+            if (_this.shouldStopEventPropagation(e)) {
+                stopPropagationForAgGrid(e);
                 return;
             }
             if (e.keyCode === KeyCode.TAB) {
@@ -181,6 +186,9 @@ var ManagedFocusComponent = /** @class */ (function (_super) {
                 _this.handleKeyDown(e);
             }
         });
+    };
+    ManagedFocusComponent.prototype.shouldStopEventPropagation = function (e) {
+        return false;
     };
     ManagedFocusComponent.prototype.onFocus = function (e) {
         if (this.skipTabGuardFocus) {

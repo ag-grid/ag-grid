@@ -4,7 +4,6 @@ export declare class RangeController extends BeanStub implements IRangeControlle
     private rowModel;
     private columnController;
     private mouseEventService;
-    private gridOptionsWrapper;
     private columnApi;
     private gridApi;
     private cellNavigationService;

@@ -1,7 +1,6 @@
 import { ManagedFocusComponent, MenuItemDef } from "@ag-grid-community/core";
 export declare class MenuList extends ManagedFocusComponent {
     private readonly level;
-    private readonly gridOptionsWrapper;
     private menuItems;
     private activeMenuItem;
     constructor(level?: number);

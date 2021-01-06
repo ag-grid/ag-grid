@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "./context/beanStub";
@@ -6,7 +6,6 @@ import { Column } from "./entities/column";
 import { ColumnEventType } from "./events";
 export declare class SortController extends BeanStub {
     private static DEFAULT_SORTING_ORDER;
-    private gridOptionsWrapper;
     private columnController;
     private columnApi;
     private gridApi;

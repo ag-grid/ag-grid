@@ -7,7 +7,6 @@ export declare class AggFuncService extends BeanStub implements IAggFuncService 
     private static AGG_MAX;
     private static AGG_COUNT;
     private static AGG_AVG;
-    private readonly gridOptionsWrapper;
     private aggFuncsMap;
     private initialised;
     private init;

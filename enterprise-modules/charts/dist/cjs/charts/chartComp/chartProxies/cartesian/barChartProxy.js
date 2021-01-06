@@ -47,19 +47,22 @@ var BarChartProxy = /** @class */ (function (_super) {
             shadow: seriesDefaults.shadow,
             label: seriesDefaults.label,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
-                colors: theme.palette.fills,
+                colors: seriesDefaults.fills || theme.palette.fills,
                 opacity: seriesDefaults.fillOpacity
             },
             stroke: {
-                colors: theme.palette.strokes,
+                colors: seriesDefaults.strokes || theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -74,23 +77,64 @@ var BarChartProxy = /** @class */ (function (_super) {
         }
         agChartOptions.autoSize = true;
         agChartOptions.axes = [__assign(__assign({}, (isColumn ? options.xAxis : options.yAxis)), { position: isColumn ? 'bottom' : 'left', type: grouping ? 'groupedCategory' : 'category' }), __assign(__assign({}, (isColumn ? options.yAxis : options.xAxis)), { position: isColumn ? 'left' : 'bottom', type: 'number' })];
-        agChartOptions.series = [__assign(__assign({}, this.getSeriesDefaults()), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer })];
+        agChartOptions.series = [__assign(__assign({}, this.getSeriesDefaults()), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                } })];
         agChartOptions.container = parentElement;
         return ag_charts_community_1.AgChart.create(agChartOptions);
     };
     BarChartProxy.prototype.update = function (params) {
+        var _this = this;
         this.chartProxyParams.grouping = params.grouping;
         this.updateAxes('category', !this.isColumnChart());
         var chart = this.chart;
         var barSeries = chart.series[0];
         var palette = this.getPalette();
+        var fields = params.fields;
+        if (this.crossFiltering) {
+            // add additional filtered out field
+            fields.forEach(function (field) {
+                var crossFilteringField = __assign({}, field);
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+            // introduce cross filtering transparent fills
+            var fills_1 = [];
+            palette.fills.forEach(function (fill) {
+                fills_1.push(fill);
+                fills_1.push(_this.hexToRGBA(fill, '0.3'));
+            });
+            barSeries.fills = fills_1;
+            // introduce cross filtering transparent strokes
+            var strokes = [];
+            palette.strokes.forEach(function (stroke) {
+                fills_1.push(stroke);
+                fills_1.push(_this.hexToRGBA(stroke, '0.3'));
+            });
+            barSeries.strokes = strokes;
+            // disable series highlighting by default
+            barSeries.highlightStyle.fill = undefined;
+            // hide 'filtered out' legend items
+            var colIds = params.fields.map(function (f) { return f.colId; });
+            barSeries.hideInLegend = colIds.filter(function (colId) { return colId.includes('-filtered-out'); });
+            // sync toggling of legend item with hidden 'filtered out' item
+            chart.legend.addEventListener('click', function (event) {
+                barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+            });
+            chart.tooltip.delay = 500;
+            // add node click cross filtering callback to series
+            barSeries.addEventListener('nodeClick', this.crossFilterCallback);
+        }
+        else {
+            barSeries.fills = palette.fills;
+            barSeries.strokes = palette.strokes;
+        }
         barSeries.data = this.transformData(params.data, params.category.id);
         barSeries.xKey = params.category.id;
         barSeries.xName = params.category.name;
         barSeries.yKeys = params.fields.map(function (f) { return f.colId; });
         barSeries.yNames = params.fields.map(function (f) { return f.displayName; });
-        barSeries.fills = palette.fills;
-        barSeries.strokes = palette.strokes;
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     };
     BarChartProxy.prototype.getDefaultOptions = function () {
@@ -102,13 +146,13 @@ var BarChartProxy = /** @class */ (function (_super) {
         return options;
     };
     BarChartProxy.prototype.isColumnChart = function () {
-        return core_1._.includes([core_1.ChartType.GroupedColumn, core_1.ChartType.StackedColumn, core_1.ChartType.NormalizedColumn], this.chartType);
+        return core_1._.includes([core_1.ChartType.Column, core_1.ChartType.GroupedColumn, core_1.ChartType.StackedColumn, core_1.ChartType.NormalizedColumn], this.chartType);
     };
     BarChartProxy.prototype.getSeriesDefaults = function () {
         var chartType = this.chartType;
         var isColumn = this.isColumnChart();
-        var isGrouped = chartType === core_1.ChartType.GroupedColumn || chartType === core_1.ChartType.GroupedBar;
-        var isNormalized = chartType === core_1.ChartType.NormalizedColumn || chartType === core_1.ChartType.NormalizedBar;
+        var isGrouped = !this.crossFiltering && (chartType === core_1.ChartType.GroupedColumn || chartType === core_1.ChartType.GroupedBar);
+        var isNormalized = !this.crossFiltering && (chartType === core_1.ChartType.NormalizedColumn || chartType === core_1.ChartType.NormalizedBar);
         return __assign(__assign({}, this.chartOptions.seriesDefaults), { type: isColumn ? 'column' : 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
     };
     return BarChartProxy;

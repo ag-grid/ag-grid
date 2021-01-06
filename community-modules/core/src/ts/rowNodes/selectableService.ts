@@ -1,14 +1,11 @@
 import { RowNode } from "../entities/rowNode";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Bean, PostConstruct } from "../context/context";
 import { IsRowSelectable } from "../entities/gridOptions";
 import { BeanStub } from "../context/beanStub";
 import { find, exists } from "../utils/generic";
 
 @Bean('selectableService')
 export class SelectableService extends BeanStub {
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private groupSelectsChildren: boolean;
     private isRowSelectableFunc?: IsRowSelectable;

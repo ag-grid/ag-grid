@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -91,6 +91,7 @@ var ColumnController = /** @class */ (function (_super) {
         return this.colDefVersion;
     };
     ColumnController.prototype.setColumnDefs = function (columnDefs, source) {
+        var _this = this;
         if (source === void 0) { source = 'api'; }
         var colsPreviouslyExisted = !!this.columnDefs;
         this.colDefVersion++;
@@ -108,6 +109,8 @@ var ColumnController = /** @class */ (function (_super) {
         this.primaryColumnTree = balancedTreeResult.columnTree;
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
         this.primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
+        this.primaryColumnsMap = {};
+        this.primaryColumns.forEach(function (col) { return _this.primaryColumnsMap[col.getId()] = col; });
         this.extractRowGroupColumns(source, oldPrimaryColumns);
         this.extractPivotColumns(source, oldPrimaryColumns);
         this.extractValueColumns(source, oldPrimaryColumns);
@@ -118,6 +121,23 @@ var ColumnController = /** @class */ (function (_super) {
         }
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
+        // this event is not used by ag-Grid, but left here for backwards compatibility,
+        // in case applications use it
+        this.dispatchEverythingChanged(source);
+        raiseEventsFunc();
+        this.dispatchNewColumnsLoaded();
+    };
+    ColumnController.prototype.dispatchNewColumnsLoaded = function () {
+        var newColumnsLoadedEvent = {
+            type: Events.EVENT_NEW_COLUMNS_LOADED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(newColumnsLoadedEvent);
+    };
+    // this event is legacy, no grid code listens to it. instead the grid listens to New Columns Loaded
+    ColumnController.prototype.dispatchEverythingChanged = function (source) {
+        if (source === void 0) { source = 'api'; }
         var eventEverythingChanged = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             api: this.gridApi,
@@ -125,13 +145,6 @@ var ColumnController = /** @class */ (function (_super) {
             source: source
         };
         this.eventService.dispatchEvent(eventEverythingChanged);
-        var newColumnsLoadedEvent = {
-            type: Events.EVENT_NEW_COLUMNS_LOADED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        raiseEventsFunc();
-        this.eventService.dispatchEvent(newColumnsLoadedEvent);
     };
     ColumnController.prototype.orderGridColumnsLikePrimary = function () {
         var _this = this;
@@ -1384,51 +1397,56 @@ var ColumnController = /** @class */ (function (_super) {
         // THEN result will be ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=1000
         var letRowGroupIndex = 1000;
         var letPivotIndex = 1000;
-        if (primaryColumns) {
-            primaryColumns.forEach(function (column) {
-                var colDef = column.getColDef();
-                var sort = colDef.sort != null ? colDef.sort : null;
-                var sortIndex = colDef.sortIndex;
-                var hide = colDef.hide ? true : false;
-                var pinned = colDef.pinned ? colDef.pinned : null;
-                var width = colDef.width;
-                var flex = colDef.flex != null ? colDef.flex : null;
-                var rowGroupIndex = colDef.rowGroupIndex;
-                var rowGroup = colDef.rowGroup;
-                if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
-                    rowGroupIndex = null;
-                    rowGroup = null;
-                }
-                var pivotIndex = colDef.pivotIndex;
-                var pivot = colDef.pivot;
-                if (pivotIndex == null && (pivot == null || pivot == false)) {
-                    pivotIndex = null;
-                    pivot = null;
-                }
-                var aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
-                var stateItem = {
-                    colId: column.getColId(),
-                    sort: sort,
-                    sortIndex: sortIndex,
-                    hide: hide,
-                    pinned: pinned,
-                    width: width,
-                    flex: flex,
-                    rowGroup: rowGroup,
-                    rowGroupIndex: rowGroupIndex,
-                    pivot: pivot,
-                    pivotIndex: pivotIndex,
-                    aggFunc: aggFunc,
-                };
-                if (missing(rowGroupIndex) && rowGroup) {
-                    stateItem.rowGroupIndex = letRowGroupIndex++;
-                }
-                if (missing(pivotIndex) && pivot) {
-                    stateItem.pivotIndex = letPivotIndex++;
-                }
-                columnStates.push(stateItem);
-            });
+        var colsToProcess = [];
+        if (this.groupAutoColumns) {
+            colsToProcess = colsToProcess.concat(this.groupAutoColumns);
         }
+        if (primaryColumns) {
+            colsToProcess = colsToProcess.concat(primaryColumns);
+        }
+        colsToProcess.forEach(function (column) {
+            var colDef = column.getColDef();
+            var sort = colDef.sort != null ? colDef.sort : null;
+            var sortIndex = colDef.sortIndex;
+            var hide = colDef.hide ? true : false;
+            var pinned = colDef.pinned ? colDef.pinned : null;
+            var width = colDef.width;
+            var flex = colDef.flex != null ? colDef.flex : null;
+            var rowGroupIndex = colDef.rowGroupIndex;
+            var rowGroup = colDef.rowGroup;
+            if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
+                rowGroupIndex = null;
+                rowGroup = null;
+            }
+            var pivotIndex = colDef.pivotIndex;
+            var pivot = colDef.pivot;
+            if (pivotIndex == null && (pivot == null || pivot == false)) {
+                pivotIndex = null;
+                pivot = null;
+            }
+            var aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
+            var stateItem = {
+                colId: column.getColId(),
+                sort: sort,
+                sortIndex: sortIndex,
+                hide: hide,
+                pinned: pinned,
+                width: width,
+                flex: flex,
+                rowGroup: rowGroup,
+                rowGroupIndex: rowGroupIndex,
+                pivot: pivot,
+                pivotIndex: pivotIndex,
+                aggFunc: aggFunc,
+            };
+            if (missing(rowGroupIndex) && rowGroup) {
+                stateItem.rowGroupIndex = letRowGroupIndex++;
+            }
+            if (missing(pivotIndex) && pivot) {
+                stateItem.pivotIndex = letPivotIndex++;
+            }
+            columnStates.push(stateItem);
+        });
         this.applyColumnState({ state: columnStates, applyOrder: true }, source);
     };
     ColumnController.prototype.applyColumnState = function (params, source) {
@@ -1543,13 +1561,7 @@ var ColumnController = /** @class */ (function (_super) {
             this.putFixedColumnsFirst();
         }
         this.updateDisplayedColumns(source);
-        var event = {
-            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source: source
-        };
-        this.eventService.dispatchEvent(event);
+        this.dispatchEverythingChanged(source);
         raiseEventsFunc();
         this.columnAnimationService.finish();
         return success;
@@ -1841,14 +1853,19 @@ var ColumnController = /** @class */ (function (_super) {
         return column;
     };
     ColumnController.prototype.getPrimaryColumn = function (key) {
-        return this.getColumn(key, this.primaryColumns);
+        return this.getColumn(key, this.primaryColumns, this.primaryColumnsMap);
     };
     ColumnController.prototype.getGridColumn = function (key) {
-        return this.getColumn(key, this.gridColumns);
+        return this.getColumn(key, this.gridColumns, this.gridColumnsMap);
     };
-    ColumnController.prototype.getColumn = function (key, columnList) {
+    ColumnController.prototype.getColumn = function (key, columnList, columnMap) {
         if (!key) {
             return null;
+        }
+        // most of the time this method gets called the key is a string, so we put this shortcut in
+        // for performance reasons, to see if we can match for ID (it doesn't do auto columns, that's done below)
+        if (typeof key == 'string' && columnMap[key]) {
+            return columnMap[key];
         }
         for (var i = 0; i < columnList.length; i++) {
             if (this.columnsMatch(columnList[i], key)) {
@@ -2374,6 +2391,7 @@ var ColumnController = /** @class */ (function (_super) {
     };
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     ColumnController.prototype.updateGridColumns = function () {
+        var _this = this;
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         }
@@ -2399,6 +2417,8 @@ var ColumnController = /** @class */ (function (_super) {
         this.setupQuickFilterColumns();
         this.clearDisplayedColumns();
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
+        this.gridColumnsMap = {};
+        this.gridColumns.forEach(function (col) { return _this.gridColumnsMap[col.getId()] = col; });
         var event = {
             type: Events.EVENT_GRID_COLUMNS_CHANGED,
             api: this.gridApi,
@@ -2954,9 +2974,6 @@ var ColumnController = /** @class */ (function (_super) {
         }
         return null;
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ColumnController.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('expressionService')
     ], ColumnController.prototype, "expressionService", void 0);

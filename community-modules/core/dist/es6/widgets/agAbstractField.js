@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,6 +43,9 @@ var AgAbstractField = /** @class */ (function (_super) {
         setFixedWidth(this.getGui(), width);
         return this;
     };
+    AgAbstractField.prototype.getPreviousValue = function () {
+        return this.previousValue;
+    };
     AgAbstractField.prototype.getValue = function () {
         return this.value;
     };
@@ -50,6 +53,7 @@ var AgAbstractField = /** @class */ (function (_super) {
         if (this.value === value) {
             return this;
         }
+        this.previousValue = this.value;
         this.value = value;
         if (!silent) {
             this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });

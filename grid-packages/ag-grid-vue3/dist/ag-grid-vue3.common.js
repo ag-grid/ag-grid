@@ -981,7 +981,7 @@ var external_commonjs_vue_commonjs2_vue_root_Vue_ = __webpack_require__("8bbf");
 
 // CONCATENATED MODULE: ./node_modules/vue-class-component/dist/vue-class-component.esm-bundler.js
 /**
-  * vue-class-component v8.0.0-beta.4
+  * vue-class-component v8.0.0-rc.1
   * (c) 2015-present Evan You
   * @license MIT
   */
@@ -1218,6 +1218,10 @@ function getSuper(Ctor) {
   return superProto.constructor;
 }
 
+function getOwn(value, key) {
+  return value.hasOwnProperty(key) ? value[key] : undefined;
+}
+
 var vue_class_component_esm_bundler_VueImpl = /*#__PURE__*/function () {
   function VueImpl(props, ctx) {
     var _this = this;
@@ -1245,27 +1249,17 @@ var vue_class_component_esm_bundler_VueImpl = /*#__PURE__*/function () {
       });
     });
   }
-  /** @internal */
-
 
   _createClass(VueImpl, null, [{
-    key: "__vccExtend",
-    value: function __vccExtend(options) {
-      options.mixins = options.mixins || [];
-      options.mixins.push(this.__vccOpts);
-    }
-    /** @internal */
-
-  }, {
     key: "registerHooks",
     value: function registerHooks(keys) {
-      var _this$__vccHooks;
+      var _this$__h;
 
-      (_this$__vccHooks = this.__vccHooks).push.apply(_this$__vccHooks, _toConsumableArray(keys));
+      (_this$__h = this.__h).push.apply(_this$__h, _toConsumableArray(keys));
     }
   }, {
-    key: "props",
-    value: function props(Props) {
+    key: "with",
+    value: function _with(Props) {
       var propsMeta = new Props();
       var props = {};
       Object.keys(propsMeta).forEach(function (key) {
@@ -1284,16 +1278,12 @@ var vue_class_component_esm_bundler_VueImpl = /*#__PURE__*/function () {
           return _super.apply(this, arguments);
         }
 
-        _createClass(PropsMixin, null, [{
-          key: "__vccExtend",
-          value: function __vccExtend(options) {
-            options.props = props;
-          }
-        }]);
-
         return PropsMixin;
       }(this);
 
+      PropsMixin.__b = {
+        props: props
+      };
       return PropsMixin;
     }
   }, {
@@ -1304,20 +1294,30 @@ var vue_class_component_esm_bundler_VueImpl = /*#__PURE__*/function () {
         return {};
       }
 
-      var cache = this.hasOwnProperty('__vccCache') && this.__vccCache;
+      var Ctor = this;
+      var cache = getOwn(Ctor, '__c');
 
       if (cache) {
         return cache;
-      }
+      } // If the options are provided via decorator use it as a base
 
-      var Ctor = this; // If the options are provided via decorator use it as a base
 
-      var options = this.__vccCache = this.hasOwnProperty('__vccBase') ? _objectSpread2({}, this.__vccBase) : {}; // Handle super class options
+      var options = _objectSpread2({}, getOwn(Ctor, '__o'));
+
+      Ctor.__c = options; // Handle super class options
 
       var Super = getSuper(Ctor);
 
       if (Super) {
-        Super.__vccExtend(options);
+        options["extends"] = Super.__vccOpts;
+      } // Inject base options as a mixin
+
+
+      var base = getOwn(Ctor, '__b');
+
+      if (base) {
+        options.mixins = options.mixins || [];
+        options.mixins.unshift(base);
       }
 
       options.methods = _objectSpread2({}, options.methods);
@@ -1329,7 +1329,7 @@ var vue_class_component_esm_bundler_VueImpl = /*#__PURE__*/function () {
         } // hooks
 
 
-        if (Ctor.__vccHooks.indexOf(key) > -1) {
+        if (Ctor.__h.indexOf(key) > -1) {
           options[key] = proto[key];
           return;
         }
@@ -1393,7 +1393,7 @@ var vue_class_component_esm_bundler_VueImpl = /*#__PURE__*/function () {
         return (_promise = promise) !== null && _promise !== void 0 ? _promise : plainData;
       };
 
-      var decorators = this.hasOwnProperty('__vccDecorators') && this.__vccDecorators;
+      var decorators = getOwn(Ctor, '__d');
 
       if (decorators) {
         decorators.forEach(function (fn) {
@@ -1414,15 +1414,13 @@ var vue_class_component_esm_bundler_VueImpl = /*#__PURE__*/function () {
 
   return VueImpl;
 }();
-/** @internal */
 
-
-vue_class_component_esm_bundler_VueImpl.__vccHooks = ['data', 'beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeUnmount', 'unmounted', 'beforeUpdate', 'updated', 'activated', 'deactivated', 'render', 'errorCaptured', 'serverPrefetch'];
+vue_class_component_esm_bundler_VueImpl.__h = ['data', 'beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeUnmount', 'unmounted', 'beforeUpdate', 'updated', 'activated', 'deactivated', 'render', 'errorCaptured', 'serverPrefetch'];
 var Vue = vue_class_component_esm_bundler_VueImpl;
 
 function Options(options) {
   return function (Component) {
-    Component.__vccBase = options;
+    Component.__o = options;
     return Component;
   };
 }
@@ -1430,15 +1428,15 @@ function createDecorator(factory) {
   return function (target, key, index) {
     var Ctor = typeof target === 'function' ? target : target.constructor;
 
-    if (!Ctor.__vccDecorators) {
-      Ctor.__vccDecorators = [];
+    if (!Ctor.__d) {
+      Ctor.__d = [];
     }
 
     if (typeof index !== 'number') {
       index = undefined;
     }
 
-    Ctor.__vccDecorators.push(function (options) {
+    Ctor.__d.push(function (options) {
       return factory(options, key, index);
     });
   };
@@ -1448,19 +1446,12 @@ function mixins() {
     Ctors[_key] = arguments[_key];
   }
 
-  return /*#__PURE__*/function (_Vue) {
+  var _a;
+
+  return _a = /*#__PURE__*/function (_Vue) {
     _inherits(MixedVue, _Vue);
 
     var _super = _createSuper(MixedVue);
-
-    _createClass(MixedVue, null, [{
-      key: "__vccExtend",
-      value: function __vccExtend(options) {
-        Ctors.forEach(function (Ctor) {
-          return Ctor.__vccExtend(options);
-        });
-      }
-    }]);
 
     function MixedVue() {
       var _this;
@@ -1483,7 +1474,11 @@ function mixins() {
     }
 
     return MixedVue;
-  }(Vue);
+  }(Vue), _a.__b = {
+    mixins: Ctors.map(function (Ctor) {
+      return Ctor.__vccOpts;
+    })
+  }, _a;
 }
 function setup(setupFn) {
   // Hack to delay the invocation of setup function.

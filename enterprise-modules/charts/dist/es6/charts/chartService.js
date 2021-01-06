@@ -27,6 +27,10 @@ var ChartService = /** @class */ (function (_super) {
         // those in developer provided containers.
         _this.activeCharts = new Set();
         _this.activeChartComps = new Set();
+        // this shared (singleton) context is used by cross filtering in line and area charts
+        _this.crossFilteringContext = {
+            lastSelectedChartId: '',
+        };
         return _this;
     }
     ChartService.prototype.getChartModels = function () {
@@ -67,11 +71,25 @@ var ChartService = /** @class */ (function (_super) {
         }
         return this.createChart(cellRange, params.chartType, params.chartThemeName, true, true, params.chartContainer, undefined, params.chartThemeOverrides, params.unlinkChart, params.processChartOptions);
     };
-    ChartService.prototype.createChart = function (cellRange, chartType, chartThemeName, pivotChart, suppressChartRanges, container, aggFunc, chartThemeOverrides, unlinkChart, processChartOptions) {
+    ChartService.prototype.createCrossFilterChart = function (params) {
+        var cellRange = this.rangeController
+            ? this.rangeController.createCellRangeFromCellRangeParams(params.cellRange)
+            : undefined;
+        if (!cellRange) {
+            console.warn("ag-Grid - unable to create chart as no range is selected");
+            return;
+        }
+        var crossFiltering = true;
+        var suppressChartRangesSupplied = typeof params.suppressChartRanges !== 'undefined' && params.suppressChartRanges !== null;
+        var suppressChartRanges = suppressChartRangesSupplied ? params.suppressChartRanges : true;
+        return this.createChart(cellRange, params.chartType, params.chartThemeName, false, suppressChartRanges, params.chartContainer, params.aggFunc, params.chartThemeOverrides, params.unlinkChart, undefined, crossFiltering);
+    };
+    ChartService.prototype.createChart = function (cellRange, chartType, chartThemeName, pivotChart, suppressChartRanges, container, aggFunc, chartThemeOverrides, unlinkChart, processChartOptions, crossFiltering) {
         var _this = this;
         if (pivotChart === void 0) { pivotChart = false; }
         if (suppressChartRanges === void 0) { suppressChartRanges = false; }
         if (unlinkChart === void 0) { unlinkChart = false; }
+        if (crossFiltering === void 0) { crossFiltering = false; }
         var createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
         var params = {
             pivotChart: pivotChart,
@@ -83,7 +101,9 @@ var ChartService = /** @class */ (function (_super) {
             aggFunc: aggFunc,
             chartThemeOverrides: chartThemeOverrides,
             processChartOptions: processChartOptions,
-            unlinkChart: unlinkChart
+            unlinkChart: unlinkChart,
+            crossFiltering: crossFiltering,
+            crossFilteringContext: this.crossFilteringContext
         };
         var chartComp = new GridChartComp(params);
         this.context.createBean(chartComp);
@@ -146,9 +166,6 @@ var ChartService = /** @class */ (function (_super) {
     __decorate([
         Autowired('environment')
     ], ChartService.prototype, "environment", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ChartService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         PreDestroy
     ], ChartService.prototype, "destroyAllActiveCharts", null);

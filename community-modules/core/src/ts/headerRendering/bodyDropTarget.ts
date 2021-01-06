@@ -5,7 +5,6 @@ import { GridPanel } from "../gridPanel/gridPanel";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnController } from "../columnController/columnController";
 import { Constants } from "../constants/constants";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BeanStub } from "../context/beanStub";
 
 export interface DropListener {
@@ -22,7 +21,6 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private gridPanel: GridPanel;
     private pinned: string;

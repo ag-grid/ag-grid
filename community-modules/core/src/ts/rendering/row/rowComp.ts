@@ -906,7 +906,7 @@ export class RowComp extends Component {
                 }
             } else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({ newValue: true, clearSelection: true });
+                this.rowNode.setSelectedParams({ newValue: !shiftKeyPressed, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed });
             }
         } else {
             const clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
@@ -1221,7 +1221,13 @@ export class RowComp extends Component {
             return;
         }
 
-        setAriaLabel(node, `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`);
+        const translate = this.beans.gridOptionsWrapper.getLocaleTextFunc();
+        const label = translate(
+            selected ? 'ariaRowDeselect' : 'ariaRowSelect',
+            `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`
+        );
+
+        setAriaLabel(node, label);
     }
 
     // called:

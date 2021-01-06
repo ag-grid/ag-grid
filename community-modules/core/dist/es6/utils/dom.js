@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8,6 +8,7 @@ import { isBrowserChrome, isBrowserSafari } from './browser';
 import { exists } from './generic';
 import { isNonNullObject } from './object';
 import { hyphenToCamelCase } from './string';
+import { Constants } from '../constants/constants';
 var rtlNegativeScroll;
 export function addCssClass(element, className) {
     if (!element || !className || className.length === 0) {
@@ -97,6 +98,14 @@ export function containsClass(element, className) {
     }
     // if item is not a node
     return false;
+}
+export function isFocusableFormField(element) {
+    var matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
+    var isFocusable = matches.call(element, Constants.INPUT_SELECTOR);
+    var isNotFocusable = matches.call(element, Constants.FOCUSABLE_EXCLUDE);
+    var isElementVisible = isVisible(element);
+    var focusable = isFocusable && !isNotFocusable && isElementVisible;
+    return focusable;
 }
 export function setDisplayed(element, displayed) {
     addOrRemoveCssClass(element, 'ag-hidden', !displayed);

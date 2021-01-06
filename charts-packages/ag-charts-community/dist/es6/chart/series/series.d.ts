@@ -68,7 +68,7 @@ export declare abstract class Series extends Observable {
     abstract update(): void;
     abstract getTooltipHtml(seriesDatum: any): string;
     getNodeData(): SeriesNodeDatum[];
-    fireNodeClickEvent(datum: SeriesNodeDatum): void;
+    fireNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): void;
     /**
      * @private
      * Populates the given {@param data} array with the items of this series
@@ -82,5 +82,5 @@ export declare abstract class Series extends Observable {
     onHighlightChange(): void;
     readonly scheduleLayout: () => void;
     readonly scheduleData: () => void;
-    protected fixNumericExtent(extent?: [number, number], type?: string): [number, number];
+    protected fixNumericExtent(extent?: [number | Date, number | Date], type?: string): [number, number];
 }

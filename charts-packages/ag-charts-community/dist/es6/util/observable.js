@@ -113,6 +113,7 @@ var Observable = /** @class */ (function () {
             }
         });
     };
+    // 'source' is added automatically and is always the object this method belongs to.
     Observable.prototype.fireEvent = function (event) {
         var _this = this;
         var listeners = this.allEventListeners.get(event.type);

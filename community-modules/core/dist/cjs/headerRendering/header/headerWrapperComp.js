@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,7 +36,6 @@ var setLeftFeature_1 = require("../../rendering/features/setLeftFeature");
 var selectAllFeature_1 = require("./selectAllFeature");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var touchListener_1 = require("../../widgets/touchListener");
-var tooltipFeature_1 = require("../../widgets/tooltipFeature");
 var abstractHeaderWrapper_1 = require("./abstractHeaderWrapper");
 var aria_1 = require("../../utils/aria");
 var dom_1 = require("../../utils/dom");
@@ -55,7 +54,6 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         _super.prototype.postConstruct.call(this);
         this.colDefVersion = this.columnController.getColDefVersion();
         this.updateState();
-        this.appendHeaderComp();
         this.setupWidth();
         this.setupMovingCss();
         this.setupTooltip();
@@ -73,8 +71,20 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
         this.addManagedListener(this.eventService, events_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
+        this.appendHeaderComp();
+    };
+    HeaderWrapperComp.prototype.onColumnRowGroupChanged = function () {
+        this.checkDisplayName();
+    };
+    HeaderWrapperComp.prototype.onColumnPivotChanged = function () {
+        this.checkDisplayName();
     };
     HeaderWrapperComp.prototype.onColumnValueChanged = function () {
+        this.checkDisplayName();
+    };
+    HeaderWrapperComp.prototype.checkDisplayName = function () {
         // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
         if (this.displayName !== this.calculateDisplayName()) {
             this.refresh();
@@ -257,7 +267,8 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
             },
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsWrapper.getContext()
+            context: this.gridOptionsWrapper.getContext(),
+            eGridHeader: this.getGui()
         };
         return params;
     };
@@ -382,54 +393,18 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         dom_1.addCssClass(this.getGui(), 'ag-column-resizing');
     };
     HeaderWrapperComp.prototype.getTooltipParams = function () {
-        var colDef = this.getComponentHolder();
-        return {
-            location: 'header',
-            colDef: colDef,
-            column: this.getColumn(),
-            value: this.getTooltipText(),
-        };
-    };
-    HeaderWrapperComp.prototype.getTooltipText = function () {
-        return this.getComponentHolder().headerTooltip;
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'header';
+        res.colDef = this.column.getColDef();
+        return res;
     };
     HeaderWrapperComp.prototype.setupTooltip = function () {
         var _this = this;
-        var tooltipFeature;
-        var tooltipText;
-        var usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
-        var removeTooltip = function () {
-            if (usingBrowserTooltips) {
-                _this.getGui().removeAttribute('title');
-            }
-            else {
-                if (tooltipFeature) {
-                    tooltipFeature = _this.destroyBean(tooltipFeature);
-                }
-            }
-        };
-        var addTooltip = function () {
-            if (usingBrowserTooltips) {
-                _this.getGui().setAttribute('title', tooltipText);
-            }
-            else {
-                tooltipFeature = _this.createBean(new tooltipFeature_1.TooltipFeature(_this));
-            }
-        };
         var refresh = function () {
-            var newTooltipText = _this.getTooltipText();
-            if (tooltipText != newTooltipText) {
-                if (tooltipText) {
-                    removeTooltip();
-                }
-                tooltipText = newTooltipText;
-                if (tooltipText) {
-                    addTooltip();
-                }
-            }
+            var newTooltipText = _this.column.getColDef().headerTooltip;
+            _this.setTooltip(newTooltipText);
         };
         refresh();
-        this.addDestroyFunc(removeTooltip);
         this.refreshFunctions.push(refresh);
     };
     HeaderWrapperComp.prototype.setupMovingCss = function () {
@@ -471,9 +446,6 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         return result;
     };
     HeaderWrapperComp.TEMPLATE = "<div class=\"ag-header-cell\" role=\"columnheader\" unselectable=\"on\" tabindex=\"-1\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n            <ag-checkbox ref=\"cbSelectAll\" class=\"ag-header-select-all\" role=\"presentation\"></ag-checkbox>\n        </div>";
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], HeaderWrapperComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('dragAndDropService')
     ], HeaderWrapperComp.prototype, "dragAndDropService", void 0);

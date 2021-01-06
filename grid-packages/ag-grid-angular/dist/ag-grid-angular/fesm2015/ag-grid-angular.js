@@ -1,6 +1,6 @@
 import { __rest, __decorate, __metadata } from 'tslib';
 import { ContentChildren, QueryList, Input, Component, NgZone, Injectable, EventEmitter, ElementRef, ViewContainerRef, ComponentFactoryResolver, Output, ViewEncapsulation, ANALYZE_FOR_ENTRY_COMPONENTS, NgModule } from '@angular/core';
-import { VanillaFrameworkOverrides, BaseComponentWrapper, Promise, ComponentUtil, Grid } from 'ag-grid-community';
+import { VanillaFrameworkOverrides, BaseComponentWrapper, AgPromise, ComponentUtil, Grid } from 'ag-grid-community';
 
 var AgGridColumn_1;
 let AgGridColumn = AgGridColumn_1 = class AgGridColumn {
@@ -561,6 +561,9 @@ let AngularFrameworkOverrides = class AngularFrameworkOverrides extends VanillaF
         super();
         this._ngZone = _ngZone;
     }
+    setEmitterUsedCallback(isEmitterUsed) {
+        this.isEmitterUsed = isEmitterUsed;
+    }
     setTimeout(action, timeout) {
         this._ngZone.runOutsideAngular(() => {
             window.setTimeout(() => {
@@ -568,10 +571,29 @@ let AngularFrameworkOverrides = class AngularFrameworkOverrides extends VanillaF
             }, timeout);
         });
     }
-    addEventListenerOutsideAngular(element, type, listener, useCapture) {
-        this._ngZone.runOutsideAngular(() => {
-            super.addEventListenerOutsideAngular(element, type, listener, useCapture);
-        });
+    addEventListener(element, eventType, listener, useCapture) {
+        if (this.isOutsideAngular(eventType)) {
+            this._ngZone.runOutsideAngular(() => {
+                element.addEventListener(eventType, listener, useCapture);
+            });
+        }
+        else {
+            element.addEventListener(eventType, listener, useCapture);
+        }
+    }
+    dispatchEvent(eventType, listener) {
+        if (this.isOutsideAngular(eventType)) {
+            this._ngZone.runOutsideAngular(listener);
+        }
+        else if (this.isEmitterUsed(eventType)) {
+            // only trigger off events (and potentially change detection) if actually used
+            if (!NgZone.isInAngularZone()) {
+                this._ngZone.run(listener);
+            }
+            else {
+                listener();
+            }
+        }
     }
 };
 AngularFrameworkOverrides.ctorParameters = () => [
@@ -647,15 +669,15 @@ class BaseGuiComponent {
 }
 
 let AgGridAngular = class AgGridAngular {
-    constructor(elementDef, viewContainerRef, angularFrameworkOverrides, frameworkComponentWrapper, _componentFactoryResolver) {
+    constructor(elementDef, viewContainerRef, angularFrameworkOverrides, frameworkComponentWrapper, componentFactoryResolver) {
         this.viewContainerRef = viewContainerRef;
         this.angularFrameworkOverrides = angularFrameworkOverrides;
         this.frameworkComponentWrapper = frameworkComponentWrapper;
-        this._componentFactoryResolver = _componentFactoryResolver;
+        this.componentFactoryResolver = componentFactoryResolver;
         this._initialised = false;
         this._destroyed = false;
         // in order to ensure firing of gridReady is deterministic
-        this._fullyReady = Promise.resolve(true);
+        this._fullyReady = AgPromise.resolve(true);
         // @START@
         this.alignedGrids = undefined;
         this.rowData = undefined;
@@ -710,6 +732,7 @@ let AgGridAngular = class AgGridAngular {
         this.pivotRowTotals = undefined;
         this.pivotPanelShow = undefined;
         this.fillHandleDirection = undefined;
+        this.serverSideStoreType = undefined;
         this.rowHeight = undefined;
         this.detailRowHeight = undefined;
         this.rowBuffer = undefined;
@@ -799,6 +822,9 @@ let AgGridAngular = class AgGridAngular {
         this.processChartOptions = undefined;
         this.getChartToolbarItems = undefined;
         this.fillOperation = undefined;
+        this.isApplyServerSideTransaction = undefined;
+        this.getServerSideStoreParams = undefined;
+        this.isServerSideGroupOpenByDefault = undefined;
         this.suppressMakeColumnVisibleAfterUnGroup = undefined;
         this.suppressRowClickSelection = undefined;
         this.suppressCellSelection = undefined;
@@ -921,6 +947,10 @@ let AgGridAngular = class AgGridAngular {
         this.applyColumnDefOrder = undefined;
         this.debounceVerticalScrollbar = undefined;
         this.detailRowAutoHeight = undefined;
+        this.serverSideFilteringAlwaysResets = undefined;
+        this.suppressAggFilteredOnly = undefined;
+        this.showOpenedGroup = undefined;
+        this.suppressClipboardApi = undefined;
         this.columnEverythingChanged = new EventEmitter();
         this.newColumnsLoaded = new EventEmitter();
         this.columnPivotModeChanged = new EventEmitter();
@@ -936,6 +966,7 @@ let AgGridAngular = class AgGridAngular {
         this.columnResized = new EventEmitter();
         this.displayedColumnsChanged = new EventEmitter();
         this.virtualColumnsChanged = new EventEmitter();
+        this.asyncTransactionsFlushed = new EventEmitter();
         this.rowGroupOpened = new EventEmitter();
         this.rowDataChanged = new EventEmitter();
         this.rowDataUpdated = new EventEmitter();
@@ -1006,10 +1037,11 @@ let AgGridAngular = class AgGridAngular {
         this.keyboardFocus = new EventEmitter();
         this.mouseFocus = new EventEmitter();
         this._nativeElement = elementDef.nativeElement;
-        this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
-        this.frameworkComponentWrapper.setComponentFactoryResolver(this._componentFactoryResolver);
     }
     ngAfterViewInit() {
+        this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
+        this.frameworkComponentWrapper.setComponentFactoryResolver(this.componentFactoryResolver);
+        this.angularFrameworkOverrides.setEmitterUsedCallback(this.isEmitterUsed.bind(this));
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
@@ -1053,6 +1085,16 @@ let AgGridAngular = class AgGridAngular {
             }
         }
     }
+    // we'll emit the emit if a user is listening for a given event either on the component via normal angular binding
+    // or via gridOptions
+    isEmitterUsed(eventType) {
+        const emitter = this[eventType];
+        const hasEmitter = !!emitter && emitter.observers && emitter.observers.length > 0;
+        // gridReady => onGridReady
+        const asEventName = `on${eventType.charAt(0).toUpperCase()}${eventType.substring(1)}`;
+        const hasGridOptionListener = !!this.gridOptions && !!this.gridOptions[asEventName];
+        return hasEmitter || hasGridOptionListener;
+    }
     globalEventListener(eventType, event) {
         // if we are tearing down, don't emit angular events, as this causes
         // problems with the angular router
@@ -1060,8 +1102,8 @@ let AgGridAngular = class AgGridAngular {
             return;
         }
         // generically look up the eventType
-        let emitter = this[eventType];
-        if (emitter) {
+        const emitter = this[eventType];
+        if (emitter && this.isEmitterUsed(eventType)) {
             if (eventType === 'gridReady') {
                 // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit the
                 // gridReady event
@@ -1309,6 +1351,10 @@ __decorate([
     Input(),
     __metadata("design:type", Object)
 ], AgGridAngular.prototype, "fillHandleDirection", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "serverSideStoreType", void 0);
 __decorate([
     Input(),
     __metadata("design:type", Object)
@@ -1665,6 +1711,18 @@ __decorate([
     Input(),
     __metadata("design:type", Object)
 ], AgGridAngular.prototype, "fillOperation", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "isApplyServerSideTransaction", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "getServerSideStoreParams", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "isServerSideGroupOpenByDefault", void 0);
 __decorate([
     Input(),
     __metadata("design:type", Object)
@@ -2154,6 +2212,22 @@ __decorate([
     __metadata("design:type", Object)
 ], AgGridAngular.prototype, "detailRowAutoHeight", void 0);
 __decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "serverSideFilteringAlwaysResets", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "suppressAggFilteredOnly", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "showOpenedGroup", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "suppressClipboardApi", void 0);
+__decorate([
     Output(),
     __metadata("design:type", EventEmitter)
 ], AgGridAngular.prototype, "columnEverythingChanged", void 0);
@@ -2213,6 +2287,10 @@ __decorate([
     Output(),
     __metadata("design:type", EventEmitter)
 ], AgGridAngular.prototype, "virtualColumnsChanged", void 0);
+__decorate([
+    Output(),
+    __metadata("design:type", EventEmitter)
+], AgGridAngular.prototype, "asyncTransactionsFlushed", void 0);
 __decorate([
     Output(),
     __metadata("design:type", EventEmitter)

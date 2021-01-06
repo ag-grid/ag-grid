@@ -40,7 +40,6 @@ export class RowRenderer extends BeanStub {
 
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnController") private columnController: ColumnController;
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("$scope") private $scope: any;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
@@ -758,7 +757,8 @@ export class RowRenderer extends BeanStub {
         const indexesToDraw = createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
 
         const checkRowToDraw = (indexStr: string, rowComp: RowComp) => {
-            const index = Number(indexStr);
+            const index = rowComp.getRowNode().rowIndex;
+            if (index == null) { return; }
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
                 if (this.doNotUnVirtualiseRow(rowComp)) {
                     indexesToDraw.push(index);

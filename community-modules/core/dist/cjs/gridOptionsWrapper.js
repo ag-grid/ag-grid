@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -449,6 +449,12 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.rowClassRules = function () {
         return this.gridOptions.rowClassRules;
     };
+    GridOptionsWrapper.prototype.getServerSideStoreType = function () {
+        return this.gridOptions.serverSideStoreType;
+    };
+    GridOptionsWrapper.prototype.getServerSideStoreParamsFunc = function () {
+        return this.gridOptions.getServerSideStoreParams;
+    };
     GridOptionsWrapper.prototype.getCreateChartContainerFunc = function () {
         return this.gridOptions.createChartContainer;
     };
@@ -669,6 +675,12 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isSuppressAggAtRootLevel = function () {
         return isTrue(this.gridOptions.suppressAggAtRootLevel);
     };
+    GridOptionsWrapper.prototype.isSuppressAggFilteredOnly = function () {
+        return isTrue(this.gridOptions.suppressAggFilteredOnly);
+    };
+    GridOptionsWrapper.prototype.isShowOpenedGroup = function () {
+        return isTrue(this.gridOptions.showOpenedGroup);
+    };
     GridOptionsWrapper.prototype.isEnableRangeSelection = function () {
         return moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
     };
@@ -755,6 +767,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isSuppressParentsInRowNodes = function () {
         return isTrue(this.gridOptions.suppressParentsInRowNodes);
     };
+    GridOptionsWrapper.prototype.isSuppressClipboardApi = function () {
+        return isTrue(this.gridOptions.suppressClipboardApi);
+    };
     GridOptionsWrapper.prototype.isFunctionsReadOnly = function () {
         return isTrue(this.gridOptions.functionsReadOnly);
     };
@@ -793,6 +808,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.getIsServerSideGroupFunc = function () {
         return this.gridOptions.isServerSideGroup;
+    };
+    GridOptionsWrapper.prototype.getIsServerSideGroupOpenByDefaultFunc = function () {
+        return this.gridOptions.isServerSideGroupOpenByDefault;
     };
     GridOptionsWrapper.prototype.getServerSideGroupKeyFunc = function () {
         return this.gridOptions.getServerSideGroupKey;
@@ -871,6 +889,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.isServerSideSortingAlwaysResets = function () {
         return isTrue(this.gridOptions.serverSideSortingAlwaysResets);
+    };
+    GridOptionsWrapper.prototype.isServerSideFilteringAlwaysResets = function () {
+        return isTrue(this.gridOptions.serverSideFilteringAlwaysResets);
     };
     GridOptionsWrapper.prototype.getPostSortFunc = function () {
         return this.gridOptions.postSort;

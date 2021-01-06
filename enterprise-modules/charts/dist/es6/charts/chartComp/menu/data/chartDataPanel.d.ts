@@ -3,7 +3,6 @@ import { ChartController } from "../../chartController";
 export declare class ChartDataPanel extends Component {
     static TEMPLATE: string;
     private dragAndDropService;
-    private gridOptionsWrapper;
     private chartTranslator;
     private categoriesGroupComp?;
     private seriesGroupComp?;

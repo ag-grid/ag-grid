@@ -36,14 +36,17 @@ var ChartDataModel = /** @class */ (function (_super) {
         _this.valueColState = [];
         _this.detached = false;
         _this.grouping = false;
+        _this.crossFiltering = false;
         _this.columnNames = {};
         _this.pivotChart = params.pivotChart;
         _this.chartType = params.chartType;
         _this.chartThemeName = params.chartThemeName;
         _this.aggFunc = params.aggFunc;
         _this.referenceCellRange = params.cellRange;
+        _this.suppliedCellRange = params.cellRange;
         _this.suppressChartRanges = params.suppressChartRanges;
-        _this.detached = !!params.unlinkChart;
+        _this.unlinked = !!params.unlinkChart;
+        _this.crossFiltering = !!params.crossFiltering;
         // this is used to associate chart ranges with charts
         _this.chartId = _this.generateId();
         return _this;
@@ -289,9 +292,11 @@ var ChartDataModel = /** @class */ (function (_super) {
             dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
+            crossFiltering: this.crossFiltering,
             valueCols: this.getSelectedValueCols(),
             startRow: startRow,
-            endRow: endRow
+            endRow: endRow,
+            isScatter: core_1._.includes([core_1.ChartType.Scatter, core_1.ChartType.Bubble], this.chartType)
         };
         var result = this.datasource.getData(params);
         this.chartData = result.data;
@@ -306,9 +311,18 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.valueColState = [];
         var hasSelectedDimension = false;
         var order = 1;
+        var aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
         dimensionCols.forEach(function (column) {
             var isAutoGroupCol = column.getColId() === 'ag-Grid-AutoColumn';
-            var selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+            var selected = false;
+            if (_this.crossFiltering && _this.aggFunc) {
+                if (aggFuncDimension.getColId() === column.getColId()) {
+                    selected = true;
+                }
+            }
+            else {
+                selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+            }
             _this.dimensionColState.push({
                 column: column,
                 colId: column.getColId(),
@@ -391,7 +405,11 @@ var ChartDataModel = /** @class */ (function (_super) {
             return;
         }
         var selectedDimensionColState = updatedColState;
-        if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column)) {
+        if (this.crossFiltering && this.aggFunc) {
+            var aggFuncDimension_1 = this.suppliedCellRange.columns[0]; //TODO
+            selectedDimensionColState = this.dimensionColState.filter(function (cs) { return cs.colId === aggFuncDimension_1.getColId(); })[0];
+        }
+        else if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column)) {
             selectedDimensionColState = this.dimensionColState.filter(function (cs) { return cs.selected; })[0];
         }
         if (selectedDimensionColState && selectedDimensionColState.colId !== ChartDataModel.DEFAULT_CATEGORY) {
@@ -433,9 +451,6 @@ var ChartDataModel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], ChartDataModel.prototype, "columnController", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ChartDataModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('valueService')
     ], ChartDataModel.prototype, "valueService", void 0);

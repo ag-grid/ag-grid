@@ -24,6 +24,7 @@ export class BeanStub implements IEventEmitter {
     @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
     @Autowired('context') protected readonly context: Context;
     @Autowired('eventService') protected readonly eventService: EventService;
+    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
     // not destroyed. to use, create a new grid, then api.destroy() before 5 seconds. then anything that gets printed

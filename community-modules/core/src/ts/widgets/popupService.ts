@@ -1,7 +1,5 @@
-import { Constants } from "../constants/constants";
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Autowired, Bean } from "../context/context";
 import { GridCore } from "../gridCore";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { PostProcessPopupParams } from "../entities/gridOptions";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
@@ -22,7 +20,8 @@ export interface PopupEventParams {
 
 interface AgPopup {
     element: HTMLElement;
-    hideFunc: (params: PopupEventParams) => void;
+    hideFunc: () => void;
+    stopAnchoringFunc?: () => void;
 }
 
 interface Rect {
@@ -32,7 +31,11 @@ interface Rect {
     bottom: number;
 }
 
-interface AddPopupParams {
+export interface AfterGuiAttachedParams {
+    hidePopup: () => void;
+}
+
+export interface AddPopupParams {
     // if true then listens to background checking for clicks, so that when the background is clicked,
     // the child is removed again, giving a model look to popups.
     modal?: boolean;
@@ -45,6 +48,7 @@ interface AddPopupParams {
     // if a clicked caused the popup (eg click a button) then the click that caused it
     click?: MouseEvent | Touch | null;
     alwaysOnTop?: boolean;
+    afterGuiAttached?: (params: AfterGuiAttachedParams) => void;
     // this gets called after the popup is created. the called could just call positionCallback themselves,
     // however it needs to be called first before anchorToElement is called, so must provide this callback
     // here if setting anchorToElement
@@ -57,30 +61,31 @@ interface AddPopupParams {
     anchorToElement?: HTMLElement;
 }
 
+export interface AddPopupResult {
+    hideFunc: () => void;
+    stopAnchoringFunc?: () => void;
+}
+
 @Bean('popupService')
 export class PopupService extends BeanStub {
 
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
 
     private gridCore: GridCore;
     private popupList: AgPopup[] = [];
 
-    @PostConstruct
-    private init(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
+
+        this.addManagedListener(this.gridCore, Events.EVENT_KEYBOARD_FOCUS, () => {
             forEach(this.popupList, popup => addCssClass(popup.element, 'ag-keyboard-focus'));
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
+        this.addManagedListener(this.gridCore, Events.EVENT_MOUSE_FOCUS, () => {
             forEach(this.popupList, popup => removeCssClass(popup.element, 'ag-keyboard-focus'));
         });
-    }
-
-    public registerGridCore(gridCore: GridCore): void {
-        this.gridCore = gridCore;
     }
 
     public getPopupParent(): HTMLElement {
@@ -374,57 +379,86 @@ export class PopupService extends BeanStub {
 
     private keepPopupPositionedRelativeTo(params: {
         ePopup: HTMLElement,
-        element: HTMLElement
+        element: HTMLElement,
+        hidePopup: () => void;
     }): () => void {
         const eParent = this.getPopupParent();
         const parentRect = eParent.getBoundingClientRect();
 
         const sourceRect = params.element.getBoundingClientRect();
         const initialDiffTop = parentRect.top - sourceRect.top;
+        const initialDiffLeft = parentRect.left - sourceRect.left;
 
         let lastDiffTop = initialDiffTop;
+        let lastDiffLeft = initialDiffLeft;
 
         const topPx = params.ePopup.style.top;
         const top = parseInt(topPx.substring(0, topPx.length - 1), 10);
 
-        const intervalId = window.setInterval(() => {
+        const leftPx = params.ePopup.style.left;
+        const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
 
-            const parentRect = eParent.getBoundingClientRect();
-            const sourceRect = params.element.getBoundingClientRect();
+        let intervalId: number | undefined = window.setInterval(() => {
+            const pRect = eParent.getBoundingClientRect();
+            const sRect = params.element.getBoundingClientRect();
 
-            const currentDiffTop = parentRect.top - sourceRect.top;
+            const elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
+            if (elementNotInDom) {
+                params.hidePopup();
+                return;
+            }
+
+            const currentDiffTop = pRect.top - sRect.top;
             if (currentDiffTop != lastDiffTop) {
                 const newTop = top + initialDiffTop - currentDiffTop;
                 params.ePopup.style.top = `${newTop}px`;
             }
-
             lastDiffTop = currentDiffTop;
+
+            const currentDiffLeft = pRect.left - sRect.left;
+            if (currentDiffLeft != lastDiffLeft) {
+                const newLeft = left + initialDiffLeft - currentDiffLeft;
+                params.ePopup.style.left = `${newLeft}px`;
+            }
+            lastDiffLeft = currentDiffLeft;
 
         }, 200);
 
         const res = () => {
-            window.clearInterval(intervalId);
+            if (intervalId != null) {
+                window.clearInterval(intervalId);
+            }
+            intervalId = undefined;
         };
 
         return res;
     }
 
-    public addPopup(params: AddPopupParams): (params?: PopupEventParams) => void {
-
-        const {modal, eChild, closeOnEsc, closedCallback, click, alwaysOnTop, positionCallback, anchorToElement} = params;
+    public addPopup(params: AddPopupParams): AddPopupResult | undefined {
+        const {
+            modal,
+            eChild,
+            closeOnEsc,
+            closedCallback,
+            click,
+            alwaysOnTop,
+            afterGuiAttached,
+            positionCallback,
+            anchorToElement
+        } = params;
 
         const eDocument = this.gridOptionsWrapper.getDocument();
 
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
-            return () => { };
+            return;
         }
 
         const pos = findIndex(this.popupList, popup => popup.element === eChild);
 
         if (pos !== -1) {
             const popup = this.popupList[pos];
-            return popup.hideFunc;
+            return { hideFunc: popup.hideFunc, stopAnchoringFunc: popup.stopAnchoringFunc };
         }
 
         const ePopupParent = this.getPopupParent();
@@ -454,7 +488,6 @@ export class PopupService extends BeanStub {
         addCssClass(eChild, 'ag-popup-child');
 
         eWrapper.appendChild(eChild);
-
         ePopupParent.appendChild(eWrapper);
 
         if (alwaysOnTop) {
@@ -478,7 +511,7 @@ export class PopupService extends BeanStub {
         const hidePopupOnMouseEvent = (event: MouseEvent) => hidePopup({ mouseEvent: event });
         const hidePopupOnTouchEvent = (event: TouchEvent) => hidePopup({ touchEvent: event });
 
-        let destroyPositionTracker: () => void;
+        let destroyPositionTracker: (() => void) | undefined;
 
         const hidePopup = (params: PopupEventParams = {}) => {
             const { mouseEvent, touchEvent, keyboardEvent } = params;
@@ -517,6 +550,10 @@ export class PopupService extends BeanStub {
             }
         };
 
+        if (afterGuiAttached) {
+            afterGuiAttached({ hidePopup });
+        }
+
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
         window.setTimeout(() => {
@@ -532,11 +569,6 @@ export class PopupService extends BeanStub {
             }
         }, 0);
 
-        this.popupList.push({
-            element: eChild,
-            hideFunc: hidePopup
-        });
-
         if (positionCallback) {
             positionCallback();
         }
@@ -546,11 +578,21 @@ export class PopupService extends BeanStub {
             // using touchpad and the cell moves, it moves the popup to keep it with the cell.
             destroyPositionTracker = this.keepPopupPositionedRelativeTo({
                 element: anchorToElement,
-                ePopup: eChild
+                ePopup: eChild,
+                hidePopup
             });
         }
 
-        return hidePopup;
+        this.popupList.push({
+            element: eChild,
+            hideFunc: hidePopup,
+            stopAnchoringFunc: destroyPositionTracker
+        });
+
+        return {
+            hideFunc: hidePopup,
+            stopAnchoringFunc: destroyPositionTracker
+        };
     }
 
     private isEventFromCurrentPopup(params: PopupEventParams, target: HTMLElement): boolean {

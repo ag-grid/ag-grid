@@ -150,9 +150,6 @@ var FlattenStage = /** @class */ (function (_super) {
         return detailNode;
     };
     __decorate([
-        Autowired('gridOptionsWrapper')
-    ], FlattenStage.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         Autowired('selectionController')
     ], FlattenStage.prototype, "selectionController", void 0);
     __decorate([

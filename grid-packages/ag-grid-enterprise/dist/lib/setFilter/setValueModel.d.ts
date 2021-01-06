@@ -1,4 +1,4 @@
-import { ColDef, Column, IRowModel, ISetFilterParams, Promise, ValueFormatterService, IEventEmitter, RowNode } from 'ag-grid-community';
+import { ISetFilterParams, AgPromise, ValueFormatterService, IEventEmitter } from 'ag-grid-community';
 import { ISetFilterLocaleText } from './localeText';
 export declare enum SetFilterModelValuesType {
     PROVIDED_LIST = 0,
@@ -40,14 +40,14 @@ export declare class SetValueModel implements IEventEmitter {
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    refreshValues(keepSelection?: boolean): Promise<void>;
+    refreshValues(keepSelection?: boolean): AgPromise<void>;
     /**
      * Overrides the current values being used for the set filter.
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    overrideValues(valuesToUse: string[], keepSelection?: boolean): Promise<void>;
-    refreshAfterAnyFilterChanged(): Promise<void>;
+    overrideValues(valuesToUse: (string | null)[], keepSelection?: boolean): AgPromise<void>;
+    refreshAfterAnyFilterChanged(): AgPromise<void>;
     private updateAllValues;
     setValuesType(value: SetFilterModelValuesType): void;
     getValuesType(): SetFilterModelValuesType;
@@ -73,7 +73,7 @@ export declare class SetValueModel implements IEventEmitter {
     isValueSelected(value: string): boolean;
     isEverythingVisibleSelected(): boolean;
     isNothingVisibleSelected(): boolean;
-    getModel(): string[] | null;
-    setModel(model: string[]): Promise<void>;
+    getModel(): (string | null)[] | null;
+    setModel(model: (string | null)[] | null): AgPromise<void>;
     private resetSelectionState;
 }

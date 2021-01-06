@@ -17,10 +17,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, BeanStub, Constants, Events, ModuleNames, ModuleRegistry, PostConstruct, Promise, TabbedLayout } from "@ag-grid-community/core";
-import { MenuList } from "./menuList";
-import { MenuItemComponent } from "./menuItemComponent";
-import { PrimaryColsPanel } from "@ag-grid-enterprise/column-tool-panel";
+import { _, Autowired, Bean, BeanStub, Column, Constants, Events, ModuleNames, ModuleRegistry, PostConstruct, AgPromise, TabbedLayout } from '@ag-grid-community/core';
+import { MenuList } from './menuList';
+import { MenuItemComponent } from './menuItemComponent';
+import { PrimaryColsPanel } from '@ag-grid-enterprise/column-tool-panel';
 var EnterpriseMenuFactory = /** @class */ (function (_super) {
     __extends(EnterpriseMenuFactory, _super);
     function EnterpriseMenuFactory() {
@@ -80,34 +80,53 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
         var _this = this;
         var menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         var eMenuGui = menu.getGui();
+        var anchorToElement = eventSource ? eventSource : this.gridPanel.getGui();
+        var closedFuncs = [];
+        closedFuncs.push(function (e) {
+            _this.destroyBean(menu);
+            column.setMenuVisible(false, 'contextMenu');
+            var isKeyboardEvent = e instanceof KeyboardEvent;
+            if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
+                var focusableEl = _this.focusController.findTabbableParent(eventSource);
+                if (focusableEl) {
+                    focusableEl.focus();
+                }
+            }
+        });
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: function (e) {
-                _this.destroyBean(menu);
-                column.setMenuVisible(false, 'contextMenu');
-                var isKeyboardEvent = e instanceof KeyboardEvent;
-                if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
-                    var focusableEl = _this.focusController.findTabbableParent(eventSource);
-                    if (focusableEl) {
-                        focusableEl.focus();
-                    }
-                }
+                closedFuncs.forEach(function (f) { return f(e); });
             },
-            positionCallback: function () { positionCallback(menu); },
-            anchorToElement: this.gridPanel.getGui()
+            afterGuiAttached: function (params) { return menu.afterGuiAttached(params); },
+            positionCallback: function () { return positionCallback(menu); },
+            anchorToElement: anchorToElement,
         });
-        menu.afterGuiAttached({ hidePopup: hidePopup });
+        if (addPopupRes) {
+            // if user starts showing / hiding columns, or otherwise move the underlying column
+            // for this menu, we want to stop tracking the menu with the column position. otherwise
+            // the menu would move as the user is using the columns tab inside the menu.
+            var stopAnchoringFunc_1 = addPopupRes.stopAnchoringFunc;
+            if (stopAnchoringFunc_1) {
+                column.addEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc_1);
+                column.addEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc_1);
+                closedFuncs.push(function () {
+                    column.removeEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc_1);
+                    column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc_1);
+                });
+            }
+        }
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
         }
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, function (event) {
             _this.lastSelectedTab = event.key;
         });
-        column.setMenuVisible(true, "contextMenu");
+        column.setMenuVisible(true, 'contextMenu');
         this.activeMenu = menu;
         menu.addEventListener(BeanStub.EVENT_DESTROYED, function () {
             if (_this.activeMenu === menu) {
@@ -121,9 +140,6 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
     __decorate([
         Autowired('popupService')
     ], EnterpriseMenuFactory.prototype, "popupService", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('focusController')
     ], EnterpriseMenuFactory.prototype, "focusController", void 0);
@@ -326,7 +342,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
             titleLabel: EnterpriseMenu.TAB_GENERAL.replace('MenuTab', ''),
-            bodyPromise: Promise.resolve(this.mainMenuList.getGui()),
+            bodyPromise: AgPromise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
         };
         return this.tabItemGeneral;
@@ -392,36 +408,16 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         this.tabItemColumns = {
             title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
             titleLabel: EnterpriseMenu.TAB_COLUMNS.replace('MenuTab', ''),
-            bodyPromise: Promise.resolve(eWrapperDiv),
+            bodyPromise: AgPromise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS
         };
         return this.tabItemColumns;
     };
     EnterpriseMenu.prototype.afterGuiAttached = function (params) {
-        var _this = this;
-        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup: params.hidePopup });
-        this.hidePopupFunc = params.hidePopup;
-        var initialScroll = this.gridApi.getHorizontalPixelRange().left;
-        // if the user scrolls the grid horizontally, we want to hide the menu, as the menu will not appear in the right location anymore
-        var onBodyScroll = function (event) {
-            // If the user hides columns using the columns tab in this menu, it will change the size of the
-            // grid content and lead to a bodyScroll event. But we don't want to hide the menu for that kind
-            // of indirect scrolling. Assume that any bodyScroll that happens right after a column change is
-            // caused by that change, and ignore it.
-            var msSinceLastColumnChange = Date.now() - _this.timeOfLastColumnChange;
-            if (msSinceLastColumnChange < 500) {
-                return;
-            }
-            // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal') {
-                var newScroll = _this.gridApi.getHorizontalPixelRange().left;
-                if (Math.abs(newScroll - initialScroll) > _this.gridOptionsWrapper.getScrollbarWidth()) {
-                    params.hidePopup();
-                }
-            }
-        };
-        this.addDestroyFunc(params.hidePopup);
-        this.addManagedListener(this.eventService, 'bodyScroll', onBodyScroll);
+        var hidePopup = params.hidePopup;
+        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup: hidePopup });
+        this.hidePopupFunc = hidePopup;
+        this.addDestroyFunc(hidePopup);
     };
     EnterpriseMenu.prototype.getGui = function () {
         return this.tabbedLayout.getGui();
@@ -447,9 +443,6 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnApi')
     ], EnterpriseMenu.prototype, "columnApi", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('menuItemMapper')
     ], EnterpriseMenu.prototype, "menuItemMapper", void 0);

@@ -194,9 +194,6 @@ var ChartController = /** @class */ (function (_super) {
         Autowired('rangeController')
     ], ChartController.prototype, "rangeController", void 0);
     __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ChartController.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         Autowired('gridApi')
     ], ChartController.prototype, "gridApi", void 0);
     __decorate([

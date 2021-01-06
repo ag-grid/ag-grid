@@ -7,7 +7,6 @@ import { LoggerFactory } from "./logger";
 import { Events, SelectionChangedEvent } from "./events";
 import { Autowired } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { PostConstruct } from "./context/context";
 import { Constants } from "./constants/constants";
 import { ColumnApi } from "./columnController/columnApi";
@@ -21,7 +20,6 @@ import { exists } from "./utils/generic";
 export class SelectionController extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

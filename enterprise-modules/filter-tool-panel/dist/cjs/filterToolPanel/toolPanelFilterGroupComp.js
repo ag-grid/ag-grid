@@ -23,12 +23,13 @@ var core_1 = require("@ag-grid-community/core");
 var toolPanelFilterComp_1 = require("./toolPanelFilterComp");
 var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
     __extends(ToolPanelFilterGroupComp, _super);
-    function ToolPanelFilterGroupComp(columnGroup, childFilterComps, expandedCallback, depth) {
+    function ToolPanelFilterGroupComp(columnGroup, childFilterComps, expandedCallback, depth, showingColumn) {
         var _this = _super.call(this) || this;
         _this.columnGroup = columnGroup;
         _this.childFilterComps = childFilterComps;
         _this.depth = depth;
         _this.expandedCallback = expandedCallback;
+        _this.showingColumn = showingColumn;
         return _this;
     }
     ToolPanelFilterGroupComp.prototype.preConstruct = function () {
@@ -50,6 +51,28 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         });
         this.addExpandCollapseListeners();
         this.addFilterChangedListeners();
+        this.setupTooltip();
+    };
+    ToolPanelFilterGroupComp.prototype.setupTooltip = function () {
+        var _this = this;
+        // we don't show tooltips for groups, as when the group expands, it's div contains the columns which also
+        // have tooltips, so the tooltips would clash. Eg mouse over group, tooltip shows, mouse over column, another
+        // tooltip shows but cos we didn't leave the group the group tooltip remains. this should be fixed in the future,
+        // maye the group shouldn't contain the children form a DOM perspective.
+        if (!this.showingColumn) {
+            return;
+        }
+        var refresh = function () {
+            var newTooltipText = _this.columnGroup.getColDef().headerTooltip;
+            _this.setTooltip(newTooltipText);
+        };
+        refresh();
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    };
+    ToolPanelFilterGroupComp.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'filterToolPanelColumnGroup';
+        return res;
     };
     ToolPanelFilterGroupComp.prototype.addCssClassToTitleBar = function (cssClass) {
         this.filterGroupComp.addCssClassToTitleBar(cssClass);
@@ -148,10 +171,10 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         this.filterGroupComp.setTitle(this.filterGroupName);
     };
     ToolPanelFilterGroupComp.prototype.getColumnGroupName = function (columnGroup) {
-        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
+        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'filterToolPanel');
     };
     ToolPanelFilterGroupComp.prototype.getColumnName = function (column) {
-        return this.columnController.getDisplayNameForColumn(column, 'header', false);
+        return this.columnController.getDisplayNameForColumn(column, 'filterToolPanel', false);
     };
     ToolPanelFilterGroupComp.prototype.destroyFilters = function () {
         this.childFilterComps = this.destroyBeans(this.childFilterComps);

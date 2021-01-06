@@ -13,6 +13,6 @@ export interface IFrameworkOverrides {
      *
      * This was done by Niall and Sean. The problematic events are mouseover, mouseout, mouseenter and mouseleave.
      */
-    addEventListenerOutsideAngular(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-
+    addEventListener(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+    dispatchEvent(eventType: string, listener: () => {}): void;
 }

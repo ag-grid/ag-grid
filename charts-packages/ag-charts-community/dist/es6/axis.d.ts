@@ -37,6 +37,7 @@ export interface AxisLabelFormatterParams {
     index: number;
     fractionDigits?: number;
     formatter?: (x: any) => string;
+    axis?: any;
 }
 export declare class AxisLabel {
     fontStyle?: FontStyle;
@@ -101,6 +102,7 @@ export declare class AxisLabel {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 export declare class Axis<S extends Scale<D, number>, D = any> {
+    readonly id: string;
     private groupSelection;
     private lineNode;
     readonly scale: S;
@@ -123,6 +125,7 @@ export declare class Axis<S extends Scale<D, number>, D = any> {
         y: number;
     };
     rotation: number;
+    getMeta(): any;
     constructor(scale: S);
     protected updateRange(): void;
     /**

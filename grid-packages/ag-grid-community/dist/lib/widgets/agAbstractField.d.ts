@@ -3,15 +3,17 @@ export declare type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTe
 export declare abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabel> extends AgAbstractLabel<TConfig> {
     protected readonly className?: string;
     static EVENT_CHANGED: string;
-    protected value: TValue;
+    protected previousValue: TValue | null | undefined;
+    protected value: TValue | null | undefined;
     protected disabled: boolean;
     constructor(config?: TConfig, template?: string, className?: string);
     protected postConstruct(): void;
     onValueChange(callbackFn: (newValue: TValue) => void): this;
     getWidth(): number;
     setWidth(width: number): this;
-    getValue(): TValue;
-    setValue(value: TValue, silent?: boolean): this;
+    getPreviousValue(): TValue | null | undefined;
+    getValue(): TValue | null | undefined;
+    setValue(value?: TValue | null, silent?: boolean): this;
     setDisabled(disabled: boolean): this;
     isDisabled(): boolean;
 }

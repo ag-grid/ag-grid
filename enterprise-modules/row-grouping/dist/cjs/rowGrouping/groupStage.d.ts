@@ -1,6 +1,5 @@
 import { BeanStub, IRowNodeStage, StageExecuteParams } from "@ag-grid-community/core";
 export declare class GroupStage extends BeanStub implements IRowNodeStage {
-    private gridOptionsWrapper;
     private columnController;
     private selectableService;
     private valueService;

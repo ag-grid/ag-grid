@@ -116,7 +116,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             if (depth > 0) {
                 return filterComp;
             }
-            var filterGroupComp = _this.createBean(new ToolPanelFilterGroupComp(column, [filterComp], _this.onGroupExpanded.bind(_this), depth));
+            var filterGroupComp = _this.createBean(new ToolPanelFilterGroupComp(column, [filterComp], _this.onGroupExpanded.bind(_this), depth, true));
             filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
             filterGroupComp.collapse();
             return filterGroupComp;
@@ -132,7 +132,8 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         var childFilterComps = _.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth));
         if (columnGroup.isPadding())
             return childFilterComps;
-        var filterGroupComp = new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth);
+        }
+        var filterGroupComp = new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth, false);
         this.getContext().createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
         return [filterGroupComp];

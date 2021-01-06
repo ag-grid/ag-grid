@@ -1,6 +1,10 @@
 import { CartesianChart } from "../cartesianChart";
 import { NavigatorMask } from "./navigatorMask";
 import { NavigatorHandle } from "./navigatorHandle";
+interface Offset {
+    offsetX: number;
+    offsetY: number;
+}
 export declare class Navigator {
     private readonly rs;
     private readonly chart;
@@ -21,9 +25,9 @@ export declare class Navigator {
     max: number;
     constructor(chart: CartesianChart);
     updateAxes(min: number, max: number): void;
-    onMouseDown(event: MouseEvent): void;
-    onMouseMove(event: MouseEvent): void;
-    onMouseOut(event: MouseEvent): void;
-    onMouseUp(event: MouseEvent): void;
+    onDragStart(offset: Offset): void;
+    onDrag(offset: Offset): void;
+    onDragStop(): void;
     stopHandleDragging(): void;
 }
+export {};

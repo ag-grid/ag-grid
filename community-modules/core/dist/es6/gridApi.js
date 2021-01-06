@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -95,10 +95,23 @@ var GridApi = /** @class */ (function () {
         console.warn("ag-grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()");
         this.setServerSideDatasource(datasource);
     };
+    GridApi.prototype.setGridAriaProperty = function (property, value) {
+        if (!property) {
+            return;
+        }
+        var eGrid = this.gridPanel.getGui();
+        var ariaProperty = "aria-" + property;
+        if (value === null) {
+            eGrid.removeAttribute(ariaProperty);
+        }
+        else {
+            eGrid.setAttribute(ariaProperty, value);
+        }
+    };
     GridApi.prototype.setServerSideDatasource = function (datasource) {
-        if (this.gridOptionsWrapper.isRowModelServerSide()) {
+        if (this.serverSideRowModel) {
             // should really have an IEnterpriseRowModel interface, so we are not casting to any
-            this.rowModel.setDatasource(datasource);
+            this.serverSideRowModel.setDatasource(datasource);
         }
         else {
             console.warn("ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '" + Constants.ROW_MODEL_TYPE_SERVER_SIDE + "'");
@@ -389,18 +402,26 @@ var GridApi = /** @class */ (function () {
         };
     };
     GridApi.prototype.expandAll = function () {
-        if (missing(this.clientSideRowModel)) {
-            console.warn('ag-Grid: cannot call expandAll unless using normal row model');
-            return;
+        if (this.clientSideRowModel) {
+            this.clientSideRowModel.expandOrCollapseAll(true);
         }
-        this.clientSideRowModel.expandOrCollapseAll(true);
+        else if (this.serverSideRowModel) {
+            this.serverSideRowModel.expandAll(true);
+        }
+        else {
+            console.warn('ag-Grid: expandAll only works with Client Side Row Model and Server Side Row Model');
+        }
     };
     GridApi.prototype.collapseAll = function () {
-        if (missing(this.clientSideRowModel)) {
-            console.warn('ag-Grid: cannot call collapseAll unless using normal row model');
-            return;
+        if (this.clientSideRowModel) {
+            this.clientSideRowModel.expandOrCollapseAll(false);
         }
-        this.clientSideRowModel.expandOrCollapseAll(false);
+        else if (this.serverSideRowModel) {
+            this.serverSideRowModel.expandAll(false);
+        }
+        else {
+            console.warn('ag-Grid: collapseAll only works with Client Side Row Model and Server Side Row Model');
+        }
     };
     GridApi.prototype.getToolPanelInstance = function (id) {
         return this.gridCore.getToolPanelInstance(id);
@@ -846,6 +867,18 @@ var GridApi = /** @class */ (function () {
             return this.chartService.createRangeChart(params);
         }
     };
+    GridApi.prototype.createCrossFilterChart = function (params) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createCrossFilterChart') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart')) {
+            return this.chartService.createCrossFilterChart(params);
+        }
+    };
+    GridApi.prototype.restoreChart = function (chartModel, chartContainer) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.restoreChart') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart')) {
+            return this.chartService.restoreChart(chartModel, chartContainer);
+        }
+    };
     GridApi.prototype.createPivotChart = function (params) {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createPivotChart') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart')) {
@@ -962,10 +995,19 @@ var GridApi = /** @class */ (function () {
         if (this.clientSideRowModel) {
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         }
-        else if (this.infiniteRowModel) {
-            var message_1 = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
-            doOnce(function () { return console.warn(message_1); }, 'applyTransaction infiniteRowModel deprecated');
-            this.infiniteRowModel.updateRowData(rowDataTransaction);
+        return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
+    };
+    GridApi.prototype.retryServerSideLoads = function () {
+        if (!this.serverSideRowModel) {
+            console.warn('ag-Grid: API retryServerSideLoads() can only be used when using Server-Side Row Model.');
+            return;
+        }
+        this.serverSideRowModel.retryLoads();
+    };
+    GridApi.prototype.flushServerSideAsyncTransactions = function () {
+        if (!this.serverSideTransactionManager) {
+            console.warn('ag-Grid: Cannot flush Server Side Transaction if not using the Server Side Row Model.');
+            return;
         }
         else {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel.');
@@ -1058,12 +1100,35 @@ var GridApi = /** @class */ (function () {
         console.warn("ag-grid: since version 18.x, api.purgeEnterpriseCache() should be replaced with api.purgeServerSideCache()");
         this.purgeServerSideCache(route);
     };
+    /** @deprecated */
     GridApi.prototype.purgeServerSideCache = function (route) {
+        if (route === void 0) { route = []; }
         if (this.serverSideRowModel) {
-            this.serverSideRowModel.purgeCache(route);
+            console.warn("ag-Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSideStore({purge: true}) instead.");
+            this.refreshServerSideStore({
+                route: route,
+                purge: true
+            });
         }
         else {
-            console.warn("ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.");
+            console.warn("ag-Grid: api.purgeServerSideCache is only available when rowModelType='serverSide'.");
+        }
+    };
+    GridApi.prototype.refreshServerSideStore = function (params) {
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.refreshStore(params);
+        }
+        else {
+            console.warn("ag-Grid: api.refreshServerSideStore is only available when rowModelType='serverSide'.");
+        }
+    };
+    GridApi.prototype.getServerSideStoreState = function () {
+        if (this.serverSideRowModel) {
+            return this.serverSideRowModel.getStoreState();
+        }
+        else {
+            console.warn("ag-Grid: api.getServerSideStoreState is only available when rowModelType='serverSide'.");
+            return [];
         }
     };
     GridApi.prototype.getVirtualRowCount = function () {
@@ -1243,9 +1308,6 @@ var GridApi = /** @class */ (function () {
         Optional('contextMenuFactory')
     ], GridApi.prototype, "contextMenuFactory", void 0);
     __decorate([
-        Autowired('cellRendererFactory')
-    ], GridApi.prototype, "cellRendererFactory", void 0);
-    __decorate([
         Autowired('valueCache')
     ], GridApi.prototype, "valueCache", void 0);
     __decorate([
@@ -1260,6 +1322,12 @@ var GridApi = /** @class */ (function () {
     __decorate([
         Optional('undoRedoService')
     ], GridApi.prototype, "undoRedoService", void 0);
+    __decorate([
+        Optional('rowNodeBlockLoader')
+    ], GridApi.prototype, "rowNodeBlockLoader", void 0);
+    __decorate([
+        Optional('ssrmTransactionManager')
+    ], GridApi.prototype, "serverSideTransactionManager", void 0);
     __decorate([
         PostConstruct
     ], GridApi.prototype, "init", null);

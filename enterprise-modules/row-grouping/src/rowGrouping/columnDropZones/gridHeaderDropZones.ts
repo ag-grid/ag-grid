@@ -4,8 +4,6 @@ import {
     Component,
     Constants,
     Events,
-    EventService,
-    GridOptionsWrapper,
     PostConstruct,
     _
 } from "@ag-grid-community/core";
@@ -14,7 +12,6 @@ import {PivotDropZonePanel} from "./pivotDropZonePanel";
 
 export class GridHeaderDropZones extends Component {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
 
     private rowGroupComp: Component;
@@ -29,7 +26,7 @@ export class GridHeaderDropZones extends Component {
         this.setGui(this.createNorthPanel());
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onRowGroupChanged.bind(this));
 
         this.onRowGroupChanged();
     }
@@ -49,13 +46,8 @@ export class GridHeaderDropZones extends Component {
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
 
-        this.rowGroupComp.addEventListener(Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        this.pivotComp.addEventListener(Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-
-        this.addDestroyFunc(() => {
-            this.rowGroupComp.removeEventListener(Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-            this.pivotComp.removeEventListener(Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        });
+        this.addManagedListener(this.rowGroupComp, Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+        this.addManagedListener(this.pivotComp, Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
 
         this.onDropPanelVisible();
 

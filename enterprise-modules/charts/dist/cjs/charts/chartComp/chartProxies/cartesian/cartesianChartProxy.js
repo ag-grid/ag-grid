@@ -46,7 +46,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
         var standaloneChartType = this.getStandaloneChartType();
         var flipXY = standaloneChartType === 'bar';
-        var xAxisType = 'category';
+        var xAxisType = (standaloneChartType === 'scatter' || standaloneChartType === 'histogram') ? 'number' : 'category';
         var yAxisType = 'number';
         if (flipXY) {
             _a = [yAxisType, xAxisType], xAxisType = _a[0], yAxisType = _a[1];
@@ -179,6 +179,48 @@ var CartesianChartProxy = /** @class */ (function (_super) {
     };
     CartesianChartProxy.prototype.getYAxis = function () {
         return ag_charts_community_1.find(this.chart.axes, function (a) { return a.position === ag_charts_community_1.ChartAxisPosition.Left; });
+    };
+    CartesianChartProxy.prototype.processDataForCrossFiltering = function (data, colId, params) {
+        var yKey = colId;
+        var atLeastOneSelectedPoint = false;
+        if (this.crossFiltering) {
+            data.forEach(function (d) {
+                d[colId + '-total'] = d[colId] + d[colId + '-filtered-out'];
+                if (d[colId + '-filtered-out'] > 0) {
+                    atLeastOneSelectedPoint = true;
+                }
+            });
+            var lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
+            if (lastSelectedChartId === params.chartId) {
+                yKey = colId + '-total';
+            }
+        }
+        return { yKey: yKey, atLeastOneSelectedPoint: atLeastOneSelectedPoint };
+    };
+    CartesianChartProxy.prototype.updateSeriesForCrossFiltering = function (series, colId, chart, params, atLeastOneSelectedPoint) {
+        if (this.crossFiltering) {
+            // special custom marker handling to show and hide points
+            series.marker.enabled = true;
+            series.marker.formatter = function (p) {
+                return {
+                    fill: p.highlighted ? 'yellow' : p.fill,
+                    size: p.highlighted ? 12 : p.datum[colId] > 0 ? 8 : 0,
+                };
+            };
+            chart.tooltip.delay = 500;
+            // make line opaque when some points are deselected
+            var ctx = params.getCrossFilteringContext();
+            var lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
+            var deselectedPoints = lastSelectionOnThisChart && atLeastOneSelectedPoint;
+            if (series instanceof ag_charts_community_1.AreaSeries) {
+                series.fillOpacity = deselectedPoints ? 0.3 : 1;
+            }
+            if (series instanceof ag_charts_community_1.LineSeries) {
+                series.strokeOpacity = deselectedPoints ? 0.3 : 1;
+            }
+            // add node click cross filtering callback to series
+            series.addEventListener('nodeClick', this.crossFilterCallback);
+        }
     };
     return CartesianChartProxy;
 }(chartProxy_1.ChartProxy));

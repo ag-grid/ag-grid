@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Autowired, PostConstruct, PreDestroy } from '../context/context';
 import { ColumnController } from '../columnController/columnController';
 import { Events } from '../events';
@@ -14,7 +13,6 @@ import { NumberSequence } from "../utils";
 
 export class HeaderContainer extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 

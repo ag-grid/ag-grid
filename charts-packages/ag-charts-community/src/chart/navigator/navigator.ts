@@ -5,6 +5,11 @@ import { BBox } from "../../scene/bbox";
 import { NavigatorMask } from "./navigatorMask";
 import { NavigatorHandle } from "./navigatorHandle";
 
+interface Offset {
+    offsetX: number;
+    offsetY: number;
+}
+
 export class Navigator {
     private readonly rs = new RangeSelector();
     private readonly chart: CartesianChart;
@@ -100,12 +105,12 @@ export class Navigator {
         chart.series.forEach(series => series.update());
     }
 
-    onMouseDown(event: MouseEvent) {
+    onDragStart(offset: Offset) {
         if (!this.enabled) {
             return;
         }
 
-        const { offsetX, offsetY } = event;
+        const { offsetX, offsetY } = offset;
         const { rs } = this;
         const { minHandle, maxHandle, x, width, min } = rs;
         const visibleRange = rs.computeVisibleRangeBBox();
@@ -121,7 +126,7 @@ export class Navigator {
         }
     }
 
-    onMouseMove(event: MouseEvent) {
+    onDrag(offset: Offset) {
         if (!this.enabled) {
             return;
         }
@@ -129,7 +134,7 @@ export class Navigator {
         const { rs, panHandleOffset } = this;
         const { x, y, width, height, minHandle, maxHandle } = rs;
         const { style } = this.chart.element;
-        const { offsetX, offsetY } = event;
+        const { offsetX, offsetY } = offset;
         const minX = x + width * rs.min;
         const maxX = x + width * rs.max;
         const visibleRange = new BBox(minX, y, maxX - minX, height);
@@ -165,11 +170,7 @@ export class Navigator {
         }
     }
 
-    onMouseOut(event: MouseEvent) {
-        this.stopHandleDragging();
-    }
-
-    onMouseUp(event: MouseEvent) {
+    onDragStop() {
         this.stopHandleDragging();
     }
 

@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct, RefSelector, TooltipFeature, _ } from '@ag-grid-community/core';
+import { _, Autowired, Component, PostConstruct, RefSelector } from '@ag-grid-community/core';
 var SetFilterListItem = /** @class */ (function (_super) {
     __extends(SetFilterListItem, _super);
     function SetFilterListItem(value, params, translate, isSelected) {
@@ -46,7 +46,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
         this.eCheckbox.setValue(this.isSelected);
     };
     SetFilterListItem.prototype.render = function () {
-        var _a = this.params, column = _a.column, colDef = _a.colDef;
+        var column = this.params.column;
         var value = this.value;
         var formattedValue = null;
         if (typeof value === 'function') {
@@ -56,14 +56,12 @@ var SetFilterListItem = /** @class */ (function (_super) {
             formattedValue = this.getFormattedValue(this.params, column, value);
         }
         if (this.params.showTooltips) {
-            this.tooltipText = _.escapeString(formattedValue != null ? formattedValue : value);
-            if (_.exists(this.tooltipText)) {
-                if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
-                    this.getGui().setAttribute('title', this.tooltipText);
-                }
-                else {
-                    this.createManagedBean(new TooltipFeature(this));
-                }
+            var tooltipText = _.escapeString(formattedValue != null ? formattedValue : value);
+            if (tooltipText == null) {
+                this.setTooltip(undefined);
+            }
+            else {
+                this.setTooltip(tooltipText);
             }
         }
         var params = {
@@ -72,23 +70,21 @@ var SetFilterListItem = /** @class */ (function (_super) {
             api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext()
         };
-        this.renderCell(colDef, params);
+        this.renderCell(params);
     };
     SetFilterListItem.prototype.getTooltipParams = function () {
-        return {
-            location: 'setFilterValue',
-            colDef: this.getComponentHolder(),
-            value: this.tooltipText
-        };
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'setFilterValue';
+        res.colDef = this.getComponentHolder();
+        return res;
     };
     SetFilterListItem.prototype.getFormattedValue = function (filterParams, column, value) {
         var formatter = filterParams == null ? null : filterParams.valueFormatter;
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     };
-    SetFilterListItem.prototype.renderCell = function (target, params) {
+    SetFilterListItem.prototype.renderCell = function (params) {
         var _this = this;
-        var filterParams = target.filterParams;
-        var cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(filterParams, params);
+        var cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(this.params, params);
         if (cellRendererPromise == null) {
             var valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
             this.eCheckbox.setLabel(valueToRender == null ? this.translate('blanks') : valueToRender);
@@ -104,9 +100,6 @@ var SetFilterListItem = /** @class */ (function (_super) {
     };
     SetFilterListItem.EVENT_SELECTION_CHANGED = 'selectionChanged';
     SetFilterListItem.TEMPLATE = "\n        <div class=\"ag-set-filter-item\">\n            <ag-checkbox ref=\"eCheckbox\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox>\n        </div>";
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('valueFormatterService')
     ], SetFilterListItem.prototype, "valueFormatterService", void 0);

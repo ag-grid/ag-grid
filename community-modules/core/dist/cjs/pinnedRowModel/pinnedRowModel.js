@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -146,9 +146,6 @@ var PinnedRowModel = /** @class */ (function (_super) {
         var lastNode = array_1.last(rowNodes);
         return lastNode.rowTop + lastNode.rowHeight;
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], PinnedRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('columnApi')
     ], PinnedRowModel.prototype, "columnApi", void 0);

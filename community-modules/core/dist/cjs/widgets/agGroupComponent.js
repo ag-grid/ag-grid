@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -202,9 +202,6 @@ var AgGroupComponent = /** @class */ (function (_super) {
     };
     AgGroupComponent.EVENT_EXPANDED = 'expanded';
     AgGroupComponent.EVENT_COLLAPSED = 'collapsed';
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], AgGroupComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         componentAnnotations_1.RefSelector('eTitleBar')
     ], AgGroupComponent.prototype, "eTitleBar", void 0);

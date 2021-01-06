@@ -13,7 +13,6 @@ import { ColumnAnimationService } from "./columnAnimationService";
 import { IRangeController, ISelectionHandleFactory } from "../interfaces/iRangeController";
 import { FocusController } from "../focusController";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
-import { CellRendererFactory } from "./cellRendererFactory";
 import { PopupService } from "../widgets/popupService";
 import { ValueFormatterService } from "./valueFormatterService";
 import { StylingService } from "../styling/stylingService";
@@ -63,7 +62,6 @@ export class Beans {
     @Optional('rangeController') public rangeController: IRangeController;
     @Autowired('focusController') public focusController: FocusController;
     @Optional('contextMenuFactory') public contextMenuFactory: IContextMenuFactory;
-    @Autowired('cellRendererFactory') public cellRendererFactory: CellRendererFactory;
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('valueFormatterService') public valueFormatterService: ValueFormatterService;
     @Autowired('stylingService') public stylingService: StylingService;

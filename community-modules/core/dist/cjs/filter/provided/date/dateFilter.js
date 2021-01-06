@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,6 +37,10 @@ var DateFilter = /** @class */ (function (_super) {
     function DateFilter() {
         return _super.call(this, 'dateFilter') || this;
     }
+    DateFilter.prototype.afterGuiAttached = function (params) {
+        _super.prototype.afterGuiAttached.call(this, params);
+        this.dateCondition1FromComp.afterGuiAttached(params);
+    };
     DateFilter.prototype.mapRangeFromModel = function (filterModel) {
         // unlike the other filters, we do two things here:
         // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
@@ -95,15 +99,16 @@ var DateFilter = /** @class */ (function (_super) {
     };
     DateFilter.prototype.createDateComponents = function () {
         var _this = this;
-        // params to pass to all four date comps
-        var dateComponentParams = {
-            onDateChanged: function () { return _this.onUiChanged(); },
-            filterParams: this.dateFilterParams
+        var createDateCompWrapper = function (element) {
+            return new dateCompWrapper_1.DateCompWrapper(_this.getContext(), _this.userComponentFactory, {
+                onDateChanged: function () { return _this.onUiChanged(); },
+                filterParams: _this.dateFilterParams
+            }, element);
         };
-        this.dateCondition1FromComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition1PanelFrom);
-        this.dateCondition1ToComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition1PanelTo);
-        this.dateCondition2FromComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition2PanelFrom);
-        this.dateCondition2ToComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition2PanelTo);
+        this.dateCondition1FromComp = createDateCompWrapper(this.eCondition1PanelFrom);
+        this.dateCondition1ToComp = createDateCompWrapper(this.eCondition1PanelTo);
+        this.dateCondition2FromComp = createDateCompWrapper(this.eCondition2PanelFrom);
+        this.dateCondition2ToComp = createDateCompWrapper(this.eCondition2PanelTo);
         this.addDestroyFunc(function () {
             _this.dateCondition1FromComp.destroy();
             _this.dateCondition1ToComp.destroy();
@@ -152,8 +157,9 @@ var DateFilter = /** @class */ (function (_super) {
         };
     };
     DateFilter.prototype.resetPlaceholder = function () {
+        var globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
         var placeholder = this.translate('dateFormatOoo');
-        var ariaLabel = 'Filter value';
+        var ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
         this.dateCondition1FromComp.setInputPlaceholder(placeholder);
         this.dateCondition1FromComp.setInputAriaLabel(ariaLabel);
         this.dateCondition1ToComp.setInputPlaceholder(placeholder);

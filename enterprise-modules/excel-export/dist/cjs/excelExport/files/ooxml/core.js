@@ -2,7 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var coreFactory = {
     getTemplate: function () {
-        var dt = new Date(), jsonDate = dt.toJSON();
+        var dt = new Date();
+        var jsonDate = dt.toJSON();
         return {
             name: 'cp:coreProperties',
             properties: {

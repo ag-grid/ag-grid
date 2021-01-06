@@ -1,13 +1,17 @@
 import { Scene } from "../scene/scene";
 import { Series, SeriesNodeDatum } from "./series/series";
 import { Padding } from "../util/padding";
+import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
 import { Rect } from "../scene/shape/rect";
 import { Legend } from "./legend";
 import { BBox } from "../scene/bbox";
 import { Caption } from "../caption";
-import { Observable } from "../util/observable";
+import { Observable, SourceEvent } from "../util/observable";
 import { ChartAxis } from "./chartAxis";
+export interface ChartClickEvent extends SourceEvent<Chart> {
+    event: MouseEvent;
+}
 export interface TooltipMeta {
     pageX: number;
     pageY: number;
@@ -15,10 +19,34 @@ export interface TooltipMeta {
 export interface TooltipRendererResult {
     content?: string;
     title?: string;
-    titleColor?: string;
-    titleBackgroundColor?: string;
+    color?: string;
+    backgroundColor?: string;
 }
 export declare function toTooltipHtml(input: string | TooltipRendererResult, defaults?: TooltipRendererResult): string;
+export declare class ChartTooltip extends Observable {
+    chart: Chart;
+    element: HTMLDivElement;
+    private observer?;
+    enabled: boolean;
+    class: string;
+    delay: number;
+    /**
+     * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
+     * Only has effect on series with markers.
+     */
+    tracking: boolean;
+    isVisible(): boolean;
+    updateClass(visible?: boolean, constrained?: boolean): void;
+    private showTimeout;
+    /**
+     * Shows tooltip at the given event's coordinates.
+     * If the `html` parameter is missing, moves the existing tooltip to the new position.
+     */
+    show(meta: TooltipMeta, html?: string, instantly?: boolean): void;
+    toggle(visible?: boolean): void;
+    constructor(chart: Chart);
+    destroy(): void;
+}
 export declare abstract class Chart extends Observable {
     readonly id: string;
     readonly scene: Scene;
@@ -26,16 +54,25 @@ export declare abstract class Chart extends Observable {
     readonly legend: Legend;
     protected legendAutoPadding: Padding;
     protected captionAutoPadding: number;
-    private tooltipElement;
     static readonly defaultTooltipClass = "ag-chart-tooltip";
     private _container;
-    container: HTMLElement | undefined;
+    container: HTMLElement | undefined | null;
     private _data;
     data: any[];
     width: number;
     height: number;
     protected _autoSize: boolean;
     autoSize: boolean;
+    readonly tooltip: ChartTooltip;
+    private _tooltipClass;
+    /**
+     * @deprecated Please use {@link tooltip.class} instead.
+     */
+    tooltipClass: string;
+    /**
+     * @deprecated Please use {@link tooltip.tracking} instead.
+     */
+    tooltipTracking: boolean;
     download(fileName?: string): void;
     padding: Padding;
     title?: Caption;
@@ -88,7 +125,11 @@ export declare abstract class Chart extends Observable {
     protected cleanupDomListeners(chartElement: HTMLCanvasElement): void;
     protected seriesRect?: BBox;
     private pickSeriesNode;
-    private lastPick?;
+    lastPick?: {
+        datum: SeriesNodeDatum;
+        node?: Shape;
+        event?: MouseEvent;
+    };
     private pickClosestSeriesNodeDatum;
     private _onMouseDown;
     private _onMouseUp;
@@ -96,6 +137,7 @@ export declare abstract class Chart extends Observable {
     private _onMouseOut;
     private _onClick;
     protected onMouseMove(event: MouseEvent): void;
+    protected handleTooltip(event: MouseEvent): void;
     protected onMouseDown(event: MouseEvent): void;
     protected onMouseUp(event: MouseEvent): void;
     protected onMouseOut(event: MouseEvent): void;
@@ -107,19 +149,4 @@ export declare abstract class Chart extends Observable {
     highlightedDatum?: SeriesNodeDatum;
     highlightDatum(datum: SeriesNodeDatum): void;
     dehighlightDatum(): void;
-    private _tooltipClass;
-    tooltipClass: string;
-    /**
-     * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
-     * Only has effect on series with markers.
-     */
-    tooltipTracking: boolean;
-    private toggleTooltip;
-    private updateTooltipClass;
-    /**
-     * Shows tooltip at the given event's coordinates.
-     * If the `html` parameter is missing, moves the existing tooltip to the new position.
-     */
-    private showTooltip;
-    private hideTooltip;
 }

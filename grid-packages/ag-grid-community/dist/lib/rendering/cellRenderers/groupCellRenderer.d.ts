@@ -20,7 +20,6 @@ export interface GroupCellRendererParams extends ICellRendererParams {
 }
 export declare class GroupCellRenderer extends Component implements ICellRendererComp {
     private static TEMPLATE;
-    private gridOptionsWrapper;
     private expressionService;
     private valueFormatterService;
     private columnController;
@@ -44,13 +43,12 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private setPaddingDeprecatedWay;
     private setupIndent;
     private addValueElement;
-    private createFooterCell;
-    private createGroupCell;
+    private addFooterValue;
+    private addGroupValue;
     private useInnerRenderer;
     private useFullWidth;
     private addChildCount;
     private updateChildCount;
-    private createLeafCell;
     private isUserWantsSelected;
     private addCheckboxIfNeeded;
     private addExpandAndContract;
@@ -61,6 +59,7 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     onCellDblClicked(mouseEvent: MouseEvent): void;
     onExpandOrContract(): void;
     private isExpandable;
+    private isShowRowGroupForThisRow;
     private showExpandAndContractIcons;
     destroy(): void;
     refresh(): boolean;

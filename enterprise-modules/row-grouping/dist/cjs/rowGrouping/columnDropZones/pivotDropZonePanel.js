@@ -43,10 +43,15 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
         this.refresh();
+    };
+    PivotDropZonePanel.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'pivotColumnsList';
+        return res;
     };
     PivotDropZonePanel.prototype.refresh = function () {
         this.checkVisibility();
@@ -106,9 +111,6 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], PivotDropZonePanel.prototype, "columnController", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], PivotDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('loggerFactory')
     ], PivotDropZonePanel.prototype, "loggerFactory", void 0);

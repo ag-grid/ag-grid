@@ -7,5 +7,6 @@ export declare class DoughnutChartProxy extends PolarChartProxy {
     protected getDefaultOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions>;
     protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart;
     update(params: UpdateChartParams): void;
+    private updateSeries;
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions>;
 }

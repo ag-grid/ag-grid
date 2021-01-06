@@ -2,7 +2,6 @@ import {
     Autowired,
     AgEvent,
     Component,
-    GridOptionsWrapper,
     PostConstruct,
     ToolPanelDef,
     RefSelector,
@@ -81,8 +80,6 @@ export class SideBarButtonsComp extends Component {
 class SideBarButtonComp extends Component {
 
     public static EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
-
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eToggleButton') private eToggleButton: HTMLButtonElement;
     @RefSelector('eIconWrapper') private eIconWrapper: HTMLElement;

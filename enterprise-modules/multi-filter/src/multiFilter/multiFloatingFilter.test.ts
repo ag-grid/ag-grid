@@ -2,7 +2,7 @@ import {
     UserComponentFactory,
     IFloatingFilterComp,
     IFloatingFilterParams,
-    Promise,
+    AgPromise,
     FilterChangedEvent,
     IFilterComp,
 } from '@ag-grid-community/core';
@@ -17,8 +17,8 @@ let floatingFilter2: jest.Mocked<IFloatingFilterComp>;
 
 function createFloatingFilter(filterParams: any = {}): MultiFloatingFilterComp {
     userComponentFactory.newFloatingFilterComponent
-        .mockReturnValueOnce(Promise.resolve(floatingFilter1))
-        .mockReturnValueOnce(Promise.resolve(floatingFilter2));
+        .mockReturnValueOnce(AgPromise.resolve(floatingFilter1))
+        .mockReturnValueOnce(AgPromise.resolve(floatingFilter2));
 
     const params: IFloatingFilterParams = {
         column: null,

@@ -1,6 +1,11 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+export var ServerSideStoreType;
+(function (ServerSideStoreType) {
+    ServerSideStoreType["Full"] = "full";
+    ServerSideStoreType["Partial"] = "partial";
+})(ServerSideStoreType || (ServerSideStoreType = {}));

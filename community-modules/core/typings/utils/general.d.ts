@@ -1,5 +1,5 @@
 import { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
-import { Promise } from './promise';
+import { AgPromise } from './promise';
 /** @deprecated */
 export declare function getNameOfClass(theClass: any): string;
 export declare function findLineByLeastSquares(values: number[]): any[];
@@ -20,7 +20,7 @@ export declare function message(msg: string): void;
 /**
  * cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they
  * can return back strings (instead of html elemnt) in the getGui() method. common code placed here to handle that.
- * @param {Promise<ICellRendererComp>} cellRendererPromise
+ * @param {AgPromise<ICellRendererComp>} cellRendererPromise
  * @param {HTMLElement} eTarget
  */
-export declare function bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement): void;
+export declare function bindCellRendererToHtmlElement(cellRendererPromise: AgPromise<ICellRendererComp>, eTarget: HTMLElement): void;

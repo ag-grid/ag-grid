@@ -4,6 +4,7 @@ const frameworkModules = [
     'react',
     'angular',
     'vue',
+    'vue3',
     'polymer'
 ];
 
@@ -36,7 +37,7 @@ const getAllModules = () => {
                 sourceDir,
                 rootDir,
                 moduleDirName
-            }
+            };
         });
 
     const gridCommunityModules = mapModules('community-modules');
@@ -44,16 +45,17 @@ const getAllModules = () => {
 
     const chartCommunityModules = mapModules('charts-packages');
 
-    return {gridCommunityModules, gridEnterpriseModules, chartCommunityModules};
+    return { gridCommunityModules, gridEnterpriseModules, chartCommunityModules };
 };
 
-function updateBetweenStrings(fileContents,
-                              startString,
-                              endString,
-                              gridCommunityModules,
-                              gridEnterpriseModules,
-                              communityMappingFunc,
-                              enterpriseMappingFunc) {
+function updateBetweenStrings(
+    fileContents,
+    startString,
+    endString,
+    gridCommunityModules,
+    gridEnterpriseModules,
+    communityMappingFunc,
+    enterpriseMappingFunc) {
 
     const startIndex = fileContents.indexOf(startString) + startString.length;
     const endIndex = fileContents.indexOf(endString);
@@ -62,6 +64,7 @@ function updateBetweenStrings(fileContents,
     const enterpriseModuleEntries = gridEnterpriseModules.map(enterpriseMappingFunc);
 
     const fragmentToBeInserted = communityModuleEntries.concat(enterpriseModuleEntries).join('\n');
+
     return `${fileContents.substring(0, startIndex)}\n${fragmentToBeInserted}\n${fileContents.substring(endIndex)}`;
 }
 

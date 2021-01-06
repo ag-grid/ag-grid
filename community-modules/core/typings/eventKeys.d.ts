@@ -1,5 +1,6 @@
 export declare class Events {
-    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
+    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState() */
+    /** @deprecated - grid no longer uses this, and setSate() also fires individual events */
     static EVENT_COLUMN_EVERYTHING_CHANGED: string;
     /** User has set in new columns. */
     static EVENT_NEW_COLUMNS_LOADED: string;
@@ -29,6 +30,8 @@ export declare class Events {
     static EVENT_DISPLAYED_COLUMNS_CHANGED: string;
     /** The list of virtual columns has changed, results from viewport changing */
     static EVENT_VIRTUAL_COLUMNS_CHANGED: string;
+    /** Async Transactions Executed */
+    static EVENT_ASYNC_TRANSACTIONS_FLUSHED: string;
     /** A row group was opened / closed */
     static EVENT_ROW_GROUP_OPENED: string;
     /** The client has set new data into the grid */

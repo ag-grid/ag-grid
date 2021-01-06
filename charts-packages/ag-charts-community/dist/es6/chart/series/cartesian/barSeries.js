@@ -17,13 +17,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 import { Group } from "../../../scene/group";
 import { Selection } from "../../../scene/selection";
 import { Rect } from "../../../scene/shape/rect";
@@ -34,7 +27,7 @@ import { PointerEvents } from "../../../scene/node";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 import { toTooltipHtml } from "../../chart";
-import { findLargestMinMax, findMinMax } from "../../../util/array";
+import { findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive } from "../../../util/observable";
@@ -106,15 +99,23 @@ var BarSeries = /** @class */ (function (_super) {
             _a);
         _this._xKey = '';
         _this._xName = '';
+        _this.cumYKeyCount = [];
+        _this.flatYKeys = undefined; // only set when a user used a flat array for yKeys
+        _this.hideInLegend = [];
         /**
-         * With a single value in the `yKeys` array we get the regular bar series.
-         * With multiple values, we get the stacked bar series.
-         * If the {@link grouped} set to `true`, we get the grouped bar series.
-         * @param values
+         * yKeys: [['coffee']] - regular bars, each category has a single bar that shows a value for coffee
+         * yKeys: [['coffee'], ['tea'], ['milk']] - each category has three bars that show values for coffee, tea and milk
+         * yKeys: [['coffee', 'tea', 'milk']] - each category has a single bar with three stacks that show values for coffee, tea and milk
+         * yKeys: [['coffee', 'tea', 'milk'], ['paper', 'ink']] - each category has 2 stacked bars,
+         *     first showing values for coffee, tea and milk and second values for paper and ink
          */
         _this._yKeys = [];
-        _this._yNames = [];
-        _this.grouped = false;
+        _this._grouped = false;
+        /**
+         * A map of `yKeys` to their names (used in legends and tooltips).
+         * For example, if a key is `product_name` it's name can be a more presentable `Product Name`.
+         */
+        _this._yNames = {};
         _this._strokeWidth = 1;
         _this.highlightStyle = { fill: 'yellow' };
         _this.addEventListener('update', _this.update);
@@ -173,18 +174,59 @@ var BarSeries = /** @class */ (function (_super) {
         get: function () {
             return this._yKeys;
         },
-        set: function (values) {
-            if (!equal(this._yKeys, values)) {
-                this._yKeys = values;
+        set: function (yKeys) {
+            var _this = this;
+            if (!equal(this._yKeys, yKeys)) {
+                // Convert from flat y-keys to grouped y-keys.
+                if (yKeys.length && !Array.isArray(yKeys[0])) {
+                    var keys = this.flatYKeys = yKeys;
+                    if (this.grouped) {
+                        yKeys = keys.map(function (k) { return [k]; });
+                    }
+                    else {
+                        yKeys = [keys];
+                    }
+                }
+                else {
+                    this.flatYKeys = undefined;
+                }
+                this._yKeys = yKeys;
+                var prevYKeyCount_1 = 0;
+                this.cumYKeyCount = [];
+                var visibleStacks_1 = [];
+                yKeys.forEach(function (stack, index) {
+                    if (stack.length > 0) {
+                        visibleStacks_1.push(String(index));
+                    }
+                    _this.cumYKeyCount.push(prevYKeyCount_1);
+                    prevYKeyCount_1 += stack.length;
+                });
                 this.yData = [];
                 var seriesItemEnabled_1 = this.seriesItemEnabled;
                 seriesItemEnabled_1.clear();
-                values.forEach(function (key) { return seriesItemEnabled_1.set(key, true); });
+                yKeys.forEach(function (stack) {
+                    stack.forEach(function (yKey) { return seriesItemEnabled_1.set(yKey, true); });
+                });
                 var groupScale = this.groupScale;
-                groupScale.domain = values;
+                groupScale.domain = visibleStacks_1;
                 groupScale.padding = 0.1;
                 groupScale.round = true;
                 this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BarSeries.prototype, "grouped", {
+        get: function () {
+            return this._grouped;
+        },
+        set: function (value) {
+            if (this._grouped !== value) {
+                this._grouped = value;
+                if (this.flatYKeys) {
+                    this.yKeys = this.flatYKeys;
+                }
             }
         },
         enumerable: true,
@@ -195,6 +237,13 @@ var BarSeries = /** @class */ (function (_super) {
             return this._yNames;
         },
         set: function (values) {
+            if (Array.isArray(values) && this.flatYKeys) {
+                var map_1 = {};
+                this.flatYKeys.forEach(function (k, i) {
+                    map_1[k] = values[i];
+                });
+                values = map_1;
+            }
             this._yNames = values;
             this.scheduleData();
         },
@@ -251,20 +300,6 @@ var BarSeries = /** @class */ (function (_super) {
     BarSeries.prototype.processData = function () {
         var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, seriesItemEnabled = _a.seriesItemEnabled;
         var data = xKey && yKeys.length && this.data ? this.data : [];
-        // If the data is an array of rows like so:
-        //
-        // [{
-        //   xKey: 'Jan',
-        //   yKey1: 5,
-        //   yKey2: 7,
-        //   yKey3: -9,
-        // }, {
-        //   xKey: 'Feb',
-        //   yKey1: 10,
-        //   yKey2: -15,
-        //   yKey3: 20
-        // }]
-        //
         var keysFound = true; // only warn once
         this.xData = data.map(function (datum) {
             if (keysFound && !(xKey in datum)) {
@@ -273,55 +308,64 @@ var BarSeries = /** @class */ (function (_super) {
             }
             return datum[xKey];
         });
-        this.yData = data.map(function (datum) { return yKeys.map(function (yKey) {
-            if (keysFound && !(yKey in datum)) {
-                keysFound = false;
-                console.warn("The key '" + yKey + "' was not found in the data: ", datum);
-            }
-            var value = datum[yKey];
-            return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+        this.yData = data.map(function (datum) { return yKeys.map(function (stack) {
+            return stack.map(function (yKey) {
+                if (keysFound && !(yKey in datum)) {
+                    keysFound = false;
+                    console.warn("The key '" + yKey + "' was not found in the data: ", datum);
+                }
+                var value = datum[yKey];
+                return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+            });
         }); });
-        // xData: ['Jan', 'Feb']
-        //
-        // yData: [
-        //   [5, 7, -9],
-        //   [10, -15, 20]
-        // ]
-        var yMinMax = this.yData.map(function (values) { return findMinMax(values); }); // used for normalization of stacked bars
+        // Used for normalization of stacked bars. Contains min/max values for each stack in each group,
+        // where min is zero and max is a positive total of all values in the stack
+        // or min is a negative total of all values in the stack and max is zero.
+        var yMinMax = this.yData.map(function (group) { return group.map(function (stack) { return findMinMax(stack); }); });
         var _b = this, yData = _b.yData, normalizedTo = _b.normalizedTo;
-        var yMin = Infinity;
-        var yMax = -Infinity;
-        if (this.grouped) {
-            // Find the tallest positive/negative bar in each group,
-            // then find the tallest positive/negative bar overall.
-            // The `yMin` should always be <= 0,
-            // otherwise with the `yData` like [300, 200, 100] the last bar
-            // will have zero height, because the y-axis range is [100, 300].
-            yMin = Math.min.apply(Math, __spreadArrays([0], yData.map(function (values) { return Math.min.apply(Math, values); })));
-            yMax = Math.max.apply(Math, yData.map(function (values) { return Math.max.apply(Math, values); }));
+        var yLargestMinMax = this.findLargestMinMax(yMinMax);
+        var yMin;
+        var yMax;
+        if (normalizedTo && isFinite(normalizedTo)) {
+            yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
+            yMax = normalizedTo;
+            yData.forEach(function (group, i) {
+                group.forEach(function (stack, j) {
+                    stack.forEach(function (y, k) {
+                        if (y < 0) {
+                            stack[k] = -y / yMinMax[i][j].min * normalizedTo;
+                        }
+                        else {
+                            stack[k] = y / yMinMax[i][j].max * normalizedTo;
+                        }
+                    });
+                });
+            });
         }
-        else { // stacked or regular
-            var yLargestMinMax = findLargestMinMax(yMinMax);
-            if (normalizedTo && isFinite(normalizedTo)) {
-                yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-                yMax = normalizedTo;
-                yData.forEach(function (stackValues, i) { return stackValues.forEach(function (y, j) {
-                    if (y < 0) {
-                        stackValues[j] = -y / yMinMax[i].min * normalizedTo;
-                    }
-                    else {
-                        stackValues[j] = y / yMinMax[i].max * normalizedTo;
-                    }
-                }); });
-            }
-            else {
-                yMin = yLargestMinMax.min;
-                yMax = yLargestMinMax.max;
-            }
+        else {
+            yMin = yLargestMinMax.min;
+            yMax = yLargestMinMax.max;
         }
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
         this.fireEvent({ type: 'dataProcessed' });
         return true;
+    };
+    BarSeries.prototype.findLargestMinMax = function (groups) {
+        var tallestStackMin = 0;
+        var tallestStackMax = 0;
+        for (var _i = 0, groups_1 = groups; _i < groups_1.length; _i++) {
+            var group = groups_1[_i];
+            for (var _a = 0, group_1 = group; _a < group_1.length; _a++) {
+                var stack = group_1[_a];
+                if (stack.min < tallestStackMin) {
+                    tallestStackMin = stack.min;
+                }
+                if (stack.max > tallestStackMax) {
+                    tallestStackMax = stack.max;
+                }
+            }
+        }
+        return { min: tallestStackMin, max: tallestStackMax };
     };
     BarSeries.prototype.getDomain = function (direction) {
         if (this.flipXY) {
@@ -334,9 +378,10 @@ var BarSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    BarSeries.prototype.fireNodeClickEvent = function (datum) {
+    BarSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -353,7 +398,7 @@ var BarSeries = /** @class */ (function (_super) {
         var yAxis = flipXY ? this.xAxis : this.yAxis;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
-        var _a = this, groupScale = _a.groupScale, yKeys = _a.yKeys, fills = _a.fills, strokes = _a.strokes, grouped = _a.grouped, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, data = _a.data, xData = _a.xData, yData = _a.yData;
+        var _a = this, groupScale = _a.groupScale, yKeys = _a.yKeys, cumYKeyCount = _a.cumYKeyCount, fills = _a.fills, strokes = _a.strokes, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, data = _a.data, xData = _a.xData, yData = _a.yData;
         var label = this.label;
         var labelFontStyle = label.fontStyle;
         var labelFontWeight = label.fontWeight;
@@ -362,62 +407,67 @@ var BarSeries = /** @class */ (function (_super) {
         var labelColor = label.color;
         var labelFormatter = label.formatter;
         groupScale.range = [0, xScale.bandwidth];
+        var grouped = true;
         var barWidth = grouped ? groupScale.bandwidth : xScale.bandwidth;
         var nodeData = [];
-        xData.forEach(function (category, i) {
-            var yDatum = yData[i];
-            var seriesDatum = data[i];
-            var x = xScale.convert(category);
-            var prevMin = 0;
-            var prevMax = 0;
-            for (var j = 0; j < yDatum.length; j++) {
-                var curr = yDatum[j];
-                var yKey = yKeys[j];
-                var barX = grouped ? x + groupScale.convert(yKey) : x;
-                if (!xAxis.inRange(barX, barWidth)) {
-                    continue;
-                }
-                var prev = curr < 0 ? prevMin : prevMax;
-                var y = yScale.convert(grouped ? curr : prev + curr);
-                var bottomY = yScale.convert(grouped ? 0 : prev);
-                var yValue = seriesDatum[yKey]; // unprocessed y-value
-                var yValueIsNumber = typeof yValue === 'number';
-                var labelText = void 0;
-                if (labelFormatter) {
-                    labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
-                }
-                else {
-                    labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
-                }
-                nodeData.push({
-                    series: _this,
-                    seriesDatum: seriesDatum,
-                    yValue: yValue,
-                    yKey: yKey,
-                    x: flipXY ? Math.min(y, bottomY) : barX,
-                    y: flipXY ? barX : Math.min(y, bottomY),
-                    width: flipXY ? Math.abs(bottomY - y) : barWidth,
-                    height: flipXY ? barWidth : Math.abs(bottomY - y),
-                    fill: fills[j % fills.length],
-                    stroke: strokes[j % strokes.length],
-                    strokeWidth: strokeWidth,
-                    label: seriesItemEnabled.get(yKey) && labelText ? {
-                        text: labelText,
-                        fontStyle: labelFontStyle,
-                        fontWeight: labelFontWeight,
-                        fontSize: labelFontSize,
-                        fontFamily: labelFontFamily,
-                        fill: labelColor,
-                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
-                        y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
-                    } : undefined
-                });
-                if (!grouped) {
-                    if (curr < 0) {
-                        prevMin += curr;
+        xData.forEach(function (group, groupIndex) {
+            var seriesDatum = data[groupIndex];
+            var x = xScale.convert(group);
+            var groupYs = yData[groupIndex]; // y-data for groups of stacks
+            for (var stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
+                var stackYs = groupYs[stackIndex]; // y-data for a stack withing a group
+                var prevMinY = 0;
+                var prevMaxY = 0;
+                for (var levelIndex = 0; levelIndex < stackYs.length; levelIndex++) {
+                    var currY = stackYs[levelIndex];
+                    var yKey = yKeys[stackIndex][levelIndex];
+                    var barX = grouped ? x + groupScale.convert(String(stackIndex)) : x;
+                    // Bars outside of visible range are not rendered, so we generate node data
+                    // only for the visible subset of user data.
+                    if (!xAxis.inRange(barX, barWidth)) {
+                        continue;
+                    }
+                    var prevY = currY < 0 ? prevMinY : prevMaxY;
+                    var y = yScale.convert(prevY + currY);
+                    var bottomY = yScale.convert(prevY);
+                    var yValue = seriesDatum[yKey]; // unprocessed y-value
+                    var yValueIsNumber = typeof yValue === 'number';
+                    var labelText = void 0;
+                    if (labelFormatter) {
+                        labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
                     }
                     else {
-                        prevMax += curr;
+                        labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
+                    }
+                    var colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                    nodeData.push({
+                        series: _this,
+                        seriesDatum: seriesDatum,
+                        yValue: yValue,
+                        yKey: yKey,
+                        x: flipXY ? Math.min(y, bottomY) : barX,
+                        y: flipXY ? barX : Math.min(y, bottomY),
+                        width: flipXY ? Math.abs(bottomY - y) : barWidth,
+                        height: flipXY ? barWidth : Math.abs(bottomY - y),
+                        fill: fills[colorIndex % fills.length],
+                        stroke: strokes[colorIndex % strokes.length],
+                        strokeWidth: strokeWidth,
+                        label: seriesItemEnabled.get(yKey) && labelText ? {
+                            text: labelText,
+                            fontStyle: labelFontStyle,
+                            fontWeight: labelFontWeight,
+                            fontSize: labelFontSize,
+                            fontFamily: labelFontFamily,
+                            fill: labelColor,
+                            x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
+                            y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
+                        } : undefined
+                    });
+                    if (currY < 0) {
+                        prevMinY += currY;
+                    }
+                    else {
+                        prevMaxY += currY;
                     }
                 }
             }
@@ -517,15 +567,25 @@ var BarSeries = /** @class */ (function (_super) {
         });
     };
     BarSeries.prototype.getTooltipHtml = function (nodeDatum) {
-        var xKey = this.xKey;
+        var _a = this, xKey = _a.xKey, yKeys = _a.yKeys;
         var yKey = nodeDatum.yKey;
         if (!xKey || !yKey) {
             return '';
         }
-        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer;
+        var yKeyIndex = 0;
+        for (var _i = 0, yKeys_1 = yKeys; _i < yKeys_1.length; _i++) {
+            var stack = yKeys_1[_i];
+            var i = stack.indexOf(yKey);
+            if (i >= 0) {
+                yKeyIndex += i;
+                break;
+            }
+            yKeyIndex += stack.length;
+        }
+        var _b = this, xName = _b.xName, yNames = _b.yNames, fills = _b.fills, tooltip = _b.tooltip;
+        var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c; // TODO: remove deprecated tooltipRenderer
         var datum = nodeDatum.seriesDatum;
-        var yKeyIndex = yKeys.indexOf(yKey);
-        var yName = yNames[yKeyIndex];
+        var yName = yNames[yKey];
         var color = fills[yKeyIndex % fills.length];
         var xValue = datum[xKey];
         var yValue = datum[yKey];
@@ -535,7 +595,7 @@ var BarSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -553,21 +613,26 @@ var BarSeries = /** @class */ (function (_super) {
         return toTooltipHtml(defaults);
     };
     BarSeries.prototype.listSeriesItems = function (legendData) {
-        var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, seriesItemEnabled = _a.seriesItemEnabled, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
+        var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, cumYKeyCount = _a.cumYKeyCount, seriesItemEnabled = _a.seriesItemEnabled, hideInLegend = _a.hideInLegend, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
         if (data && data.length && xKey && yKeys.length) {
-            yKeys.forEach(function (yKey, index) {
-                legendData.push({
-                    id: id,
-                    itemId: yKey,
-                    enabled: seriesItemEnabled.get(yKey) || false,
-                    label: {
-                        text: yNames[index] || yKeys[index]
-                    },
-                    marker: {
-                        fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length],
-                        fillOpacity: fillOpacity,
-                        strokeOpacity: strokeOpacity
+            this.yKeys.forEach(function (stack, stackIndex) {
+                stack.forEach(function (yKey, levelIndex) {
+                    if (hideInLegend.indexOf(yKey) < 0) {
+                        var colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                        legendData.push({
+                            id: id,
+                            itemId: yKey,
+                            enabled: seriesItemEnabled.get(yKey) || false,
+                            label: {
+                                text: yNames[yKey] || yKey
+                            },
+                            marker: {
+                                fill: fills[colorIndex % fills.length],
+                                stroke: strokes[colorIndex % strokes.length],
+                                fillOpacity: fillOpacity,
+                                strokeOpacity: strokeOpacity
+                            }
+                        });
                     }
                 });
             });
@@ -575,14 +640,25 @@ var BarSeries = /** @class */ (function (_super) {
     };
     BarSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
         var seriesItemEnabled = this.seriesItemEnabled;
-        var enabledSeriesItems = [];
         seriesItemEnabled.set(itemId, enabled);
+        var yKeys = this.yKeys.map(function (stack) { return stack.slice(); }); // deep clone
         seriesItemEnabled.forEach(function (enabled, yKey) {
-            if (enabled) {
-                enabledSeriesItems.push(yKey);
+            if (!enabled) {
+                yKeys.forEach(function (stack) {
+                    var index = stack.indexOf(yKey);
+                    if (index >= 0) {
+                        stack.splice(index, 1);
+                    }
+                });
             }
         });
-        this.groupScale.domain = enabledSeriesItems;
+        var visibleStacks = [];
+        yKeys.forEach(function (stack, index) {
+            if (stack.length > 0) {
+                visibleStacks.push(String(index));
+            }
+        });
+        this.groupScale.domain = visibleStacks;
         this.scheduleData();
     };
     BarSeries.className = 'BarSeries';
@@ -612,8 +688,8 @@ var BarSeries = /** @class */ (function (_super) {
         reactive('update')
     ], BarSeries.prototype, "formatter", void 0);
     __decorate([
-        reactive('dataChange')
-    ], BarSeries.prototype, "grouped", void 0);
+        reactive('layoutChange')
+    ], BarSeries.prototype, "hideInLegend", void 0);
     return BarSeries;
 }(CartesianSeries));
 export { BarSeries };

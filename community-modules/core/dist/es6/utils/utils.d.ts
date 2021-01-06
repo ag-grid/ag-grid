@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare const _: {
@@ -25,10 +25,11 @@ export declare const _: {
     copyPropertiesIfPresent<S, T_7 extends S, K_2 extends keyof S>(source: S, target: T_7, ...properties: K_2[]): void;
     copyPropertyIfPresent<S_1, T_8 extends S_1, K_3 extends keyof S_1>(source: S_1, target: T_8, property: K_3, transform?: (value: S_1[K_3]) => any): void;
     getAllKeysInObjects(objects: any[]): string[];
+    getAllValuesInObject<T_9 extends Object>(obj: T_9): any[];
     mergeDeep(dest: any, source: any, copyUndefined?: boolean, makeCopyOfSimpleObjects?: boolean): void;
-    assign<T_9, U>(target: T_9, source: U): T_9 & U;
-    assign<T_10, U_1, V>(target: T_10, source1: U_1, source2: V): T_10 & U_1 & V;
-    assign<T_11, U_2, V_1, W>(target: T_11, source1: U_2, source2: V_1, source3: W): T_11 & U_2 & V_1 & W;
+    assign<T_10, U>(target: T_10, source: U): T_10 & U;
+    assign<T_11, U_1, V>(target: T_11, source1: U_1, source2: V): T_11 & U_1 & V;
+    assign<T_12, U_2, V_1, W>(target: T_12, source1: U_2, source2: V_1, source3: W): T_12 & U_2 & V_1 & W;
     missingOrEmptyObject(value: any): boolean;
     get(source: any, expression: string, defaultValue: any): any;
     set(target: any, expression: string, value: any): void;
@@ -48,7 +49,7 @@ export declare const _: {
     normalizeWheel(event: any): any;
     isLeftClick(mouseEvent: MouseEvent): boolean;
     areEventsNear(e1: Touch | MouseEvent, e2: Touch | MouseEvent, pixelCount: number): boolean;
-    keys<T_12>(map: Map<T_12, any>): T_12[];
+    keys<T_13>(map: Map<T_13, any>): T_13[];
     isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
     isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
     isUserSuppressingKeyboardEvent(gridOptionsWrapper: import("../gridOptionsWrapper").GridOptionsWrapper, keyboardEvent: KeyboardEvent, rowNode: import("../main").RowNode, column: import("../main").Column, editing: boolean): boolean;
@@ -58,23 +59,24 @@ export declare const _: {
     iconNameClassMap: {
         [key: string]: string;
     };
-    makeNull<T_13>(value?: T_13): T_13;
-    exists<T_14>(value: T_14, allowEmptyString?: boolean): boolean;
-    missing<T_15>(value: T_15): boolean;
-    missingOrEmpty<T_16>(value?: string | T_16[]): boolean;
+    makeNull<T_14 extends unknown>(value?: T_14): T_14;
+    exists(value: string, allowEmptyString?: boolean): value is string;
+    exists<T_15>(value: T_15): value is NonNullable<T_15>;
+    missing<T_16>(value: T_16): value is Exclude<null, T_16>;
+    missingOrEmpty<T_17>(value?: string | T_17[]): boolean;
     toStringOrNull(value: any): string;
-    attrToNumber(value: string | number): number;
-    attrToBoolean(value: string | boolean): boolean;
-    attrToString(value: string): string;
-    referenceCompare<T_17>(left: T_17, right: T_17): boolean;
+    attrToNumber(value?: string | number): number;
+    attrToBoolean(value?: string | boolean): boolean;
+    attrToString(value?: string): string;
+    referenceCompare<T_18>(left: T_18, right: T_18): boolean;
     jsonEquals<T1, T2>(val1: T1, val2: T2): boolean;
     defaultComparator(valueA: any, valueB: any, accentedCompare?: boolean): number;
-    find<T_18>(collection: {
-        [id: string]: T_18;
-    } | T_18[], predicate: string | boolean | ((item: T_18) => boolean), value?: any): T_18;
-    values<T_19>(object: {
-        [key: string]: T_19;
-    } | Set<T_19> | Map<any, T_19>): T_19[];
+    find<T_19>(collection: {
+        [id: string]: T_19;
+    } | T_19[], predicate: string | boolean | ((item: T_19) => boolean), value?: any): T_19;
+    values<T_20>(object: {
+        [key: string]: T_20;
+    } | Set<T_20> | Map<any, T_20>): T_20[];
     fuzzyCheckStrings(inputValues: string[], validValues: string[], allSuggestions: string[]): {
         [p: string]: string[];
     };
@@ -108,6 +110,7 @@ export declare const _: {
     addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean): void;
     radioCssClass(element: HTMLElement, elementClass: string, otherElementClass?: string): void;
     containsClass(element: HTMLElement, className: string): boolean;
+    isFocusableFormField(element: HTMLElement): boolean;
     setDisplayed(element: HTMLElement, displayed: boolean): void;
     setVisible(element: HTMLElement, visible: boolean): void;
     setDisabled(element: HTMLElement, disabled: boolean): void;
@@ -160,7 +163,7 @@ export declare const _: {
     iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     setCheckboxState(eCheckbox: HTMLInputElement, state: any): void;
     addOrRemoveAttribute(element: HTMLElement, name: string, value: any): void;
-    nodeListForEach<T_20 extends Node>(nodeList: NodeListOf<T_20>, action: (value: T_20) => void): void;
+    nodeListForEach<T_21 extends Node>(nodeList: NodeListOf<T_21>, action: (value: T_21) => void): void;
     serialiseDate(date: Date, includeTime?: boolean, separator?: string): string;
     parseDateTimeFromString(value: string): Date;
     stringToArray(strData: string, delimiter?: string): string[][];
@@ -178,31 +181,32 @@ export declare const _: {
     getBodyHeight(): number;
     firstExistingValue<A>(...values: A[]): A;
     anyExists(values: any[]): boolean;
-    existsAndNotEmpty<T_21>(value?: T_21[]): boolean;
-    last<T_22>(arr: T_22[]): T_22;
-    areEqual<T_23>(a: T_23[], b: T_23[], comparator?: (a: T_23, b: T_23) => boolean): boolean;
+    existsAndNotEmpty<T_22>(value?: T_22[]): boolean;
+    last<T_23>(arr: T_23[]): T_23;
+    last<T_24 extends Node>(arr: NodeListOf<T_24>): T_24;
+    areEqual<T_25>(a?: T_25[], b?: T_25[], comparator?: (a: T_25, b: T_25) => boolean): boolean;
     compareArrays(array1?: any[], array2?: any[]): boolean;
     shallowCompare(arr1: any[], arr2: any[]): boolean;
     sortNumerically(array: number[]): number[];
-    removeRepeatsFromArray<T_24>(array: T_24[], object: T_24): void;
-    removeFromArray<T_25>(array: T_25[], object: T_25): void;
-    removeAllFromArray<T_26>(array: T_26[], toRemove: T_26[]): void;
-    insertIntoArray<T_27>(array: T_27[], object: T_27, toIndex: number): void;
-    insertArrayIntoArray<T_28>(dest: T_28[], src: T_28[], toIndex: number): void;
-    moveInArray<T_29>(array: T_29[], objectsToMove: T_29[], toIndex: number): void;
-    includes<T_30>(array: T_30[], value: T_30): boolean;
+    removeRepeatsFromArray<T_26>(array: T_26[], object: T_26): void;
+    removeFromArray<T_27>(array: T_27[], object: T_27): void;
+    removeAllFromArray<T_28>(array: T_28[], toRemove: T_28[]): void;
+    insertIntoArray<T_29>(array: T_29[], object: T_29, toIndex: number): void;
+    insertArrayIntoArray<T_30>(dest: T_30[], src: T_30[], toIndex: number): void;
+    moveInArray<T_31>(array: T_31[], objectsToMove: T_31[], toIndex: number): void;
+    includes<T_32>(array: T_32[], value: T_32): boolean;
     flatten(arrayOfArrays: any[]): any[];
-    pushAll<T_31>(target: T_31[], source: T_31[]): void;
-    toStrings<T_32>(array: T_32[]): string[];
-    findIndex<T_33>(collection: T_33[], predicate: (item: T_33, idx: number, collection: T_33[]) => boolean): number;
-    every<T_34>(list: T_34[], predicate: (value: T_34, index: number) => boolean): boolean;
-    some<T_35>(list: T_35[], predicate: (value: T_35, index: number) => boolean): boolean;
-    forEach<T_36>(list: T_36[], action: (value: T_36, index: number) => void): void;
-    forEachReverse<T_37>(list: T_37[], action: (value: T_37, index: number) => void): void;
-    map<T_38, V_2>(list: T_38[], process: (value: T_38, index: number) => V_2): V_2[];
-    filter<T_39>(list: T_39[], predicate: (value: T_39, index: number) => boolean): T_39[];
-    reduce<T_40, V_3>(list: T_40[], step: (acc: V_3, value: T_40, index: number) => V_3, initial: V_3): V_3;
-    forEachSnapshotFirst<T_41>(list: T_41[], callback: (item: T_41) => void): void;
+    pushAll<T_33>(target: T_33[], source: T_33[]): void;
+    toStrings<T_34>(array: T_34[]): string[];
+    findIndex<T_35>(collection: T_35[], predicate: (item: T_35, idx: number, collection: T_35[]) => boolean): number;
+    every<T_36>(list: T_36[], predicate: (value: T_36, index: number) => boolean): boolean;
+    some<T_37>(list: T_37[], predicate: (value: T_37, index: number) => boolean): boolean;
+    forEach<T_38>(list: T_38[], action: (value: T_38, index: number) => void): void;
+    forEachReverse<T_39>(list: T_39[], action: (value: T_39, index: number) => void): void;
+    map<T_40, V_2>(list: T_40[], process: (value: T_40, index: number) => V_2): V_2[];
+    filter<T_41>(list: T_41[], predicate: (value: T_41, index: number) => boolean): T_41[];
+    reduce<T_42, V_3>(list: T_42[], step: (acc: V_3, value: T_42, index: number) => V_3, initial: V_3): V_3;
+    forEachSnapshotFirst<T_43>(list: T_43[], callback: (item: T_43) => void): void;
     getAriaSortState(column: import("../main").Column): "none" | "ascending" | "descending";
     getAriaLevel(element: HTMLElement): number;
     getAriaPosInSet(element: HTMLElement): number;
@@ -229,5 +233,5 @@ export declare const _: {
     findLineByLeastSquares(values: number[]): number[];
     cssStyleObjectToMarkup(stylesToUse: any): string;
     message(msg: string): void;
-    bindCellRendererToHtmlElement(cellRendererPromise: import("./promise").Promise<import("../main").ICellRendererComp>, eTarget: HTMLElement): void;
+    bindCellRendererToHtmlElement(cellRendererPromise: import("./promise").AgPromise<import("../main").ICellRendererComp>, eTarget: HTMLElement): void;
 };

@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Bean, BeanStub, PostConstruct, _ } from '@ag-grid-community/core';
+import { Bean, BeanStub, PostConstruct, _ } from '@ag-grid-community/core';
 var AggFuncService = /** @class */ (function (_super) {
     __extends(AggFuncService, _super);
     function AggFuncService() {
@@ -81,9 +81,6 @@ var AggFuncService = /** @class */ (function (_super) {
     AggFuncService.AGG_MAX = 'max';
     AggFuncService.AGG_COUNT = 'count';
     AggFuncService.AGG_AVG = 'avg';
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], AggFuncService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         PostConstruct
     ], AggFuncService.prototype, "init", null);

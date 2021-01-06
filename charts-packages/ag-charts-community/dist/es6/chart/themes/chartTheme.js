@@ -12,6 +12,7 @@ var __assign = (this && this.__assign) || function () {
 import { deepMerge, getValue, isObject } from "../../util/object";
 import { copy } from "../../util/array";
 import { Padding } from "../../util/padding";
+import { Chart } from "../chart";
 var palette = {
     fills: [
         '#f3622d',
@@ -43,7 +44,7 @@ var ChartTheme = /** @class */ (function () {
             var overrides_1 = options.overrides;
             if (overrides_1) {
                 if (isObject(overrides_1.common)) {
-                    ChartTheme.seriesTypes.forEach(function (seriesType) {
+                    ChartTheme.seriesTypes.concat(['cartesian', 'polar']).forEach(function (seriesType) {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrides_1.common, mergeOptions_1);
                     });
                 }
@@ -222,6 +223,12 @@ var ChartTheme = /** @class */ (function () {
                         fontFamily: this.fontFamily
                     }
                 }
+            },
+            tooltip: {
+                enabled: true,
+                tracking: true,
+                delay: 0,
+                class: Chart.defaultTooltipClass
             }
         };
     };

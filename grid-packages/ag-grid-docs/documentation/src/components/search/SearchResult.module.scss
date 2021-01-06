@@ -1,0 +1,79 @@
+@import "~bootstrap/scss/list-group";
+@import "~bootstrap/scss/utilities/display";
+@import "~bootstrap/scss/utilities/spacing";
+
+.search-result {
+    composes: card from global;
+
+    position: absolute !important;
+    z-index: 99999;
+    width: 400px;
+    margin-top: 0.25rem;
+    display: none !important;
+
+    &__hit-wrapper {
+        composes: card-header p-1 from global;
+
+        text-align: end;
+    }
+
+    &__hit-count {
+        composes: badge badge-pill badge-primary from global;
+    }
+
+    &--show {
+        display: block !important;
+    }
+}
+
+:global(.ais-Hits-list) {
+    @extend .list-group, .list-group-flush;
+}
+
+:global(.ais-Hits-item) {
+    @extend .list-group-item, .list-group-item-action;
+    overflow: hidden;
+
+    a {
+        color: $dark;
+        font-size: 0.85rem;
+        @extend .d-block, .my-1;
+    }
+
+    .ais-Snippet {
+        white-space: normal;
+        font-size: 0.9rem;
+    }
+
+    mark {
+        @extend .p-0;
+        background-color: transparent;
+        color: $primary;
+        font-weight: bold;
+    }
+
+    &:hover {
+        background-color: $secondary;
+
+        a {
+            text-decoration: none;
+            color: $light;
+        }
+
+        mark {
+            color: $light;
+        }
+    }
+
+    h4 {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+}
+
+:global {
+    .ais-Hits {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+}

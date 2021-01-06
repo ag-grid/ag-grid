@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -79,7 +79,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     };
     HeaderGroupComp.prototype.addTouchAndClickListeners = function (eElement, action) {
-        var touchListener = new TouchListener(eElement);
+        var touchListener = new TouchListener(eElement, true);
         this.addManagedListener(touchListener, TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(function () { return touchListener.destroy(); });
         this.addManagedListener(eElement, "click", action);
@@ -119,9 +119,6 @@ var HeaderGroupComp = /** @class */ (function (_super) {
     __decorate([
         Autowired("columnController")
     ], HeaderGroupComp.prototype, "columnController", void 0);
-    __decorate([
-        Autowired("gridOptionsWrapper")
-    ], HeaderGroupComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         RefSelector("agOpened")
     ], HeaderGroupComp.prototype, "eOpenIcon", void 0);

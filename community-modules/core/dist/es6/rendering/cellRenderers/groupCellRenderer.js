@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,7 +36,7 @@ import { bindCellRendererToHtmlElement } from "../../utils/general";
 import { addOrRemoveCssClass, setDisplayed } from "../../utils/dom";
 import { createIconNoSpan } from "../../utils/icon";
 import { isKeyPressed } from "../../utils/keyboard";
-import { missing, exists } from "../../utils/generic";
+import { missing } from "../../utils/generic";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventPath } from "../../utils/event";
 import { setAriaExpanded, removeAriaExpanded } from "../../utils/aria";
 import { KeyCode } from '../../constants/keyCode';
@@ -142,22 +142,15 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
     };
     GroupCellRenderer.prototype.addValueElement = function () {
-        var params = this.params;
-        var rowNode = this.displayedGroup;
-        if (rowNode.footer) {
-            this.createFooterCell();
-        }
-        else if (rowNode.hasChildren() ||
-            get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
-            get(params.colDef, 'cellRendererParams.innerRendererFramework', null)) {
-            this.createGroupCell();
-            this.addChildCount();
+        if (this.displayedGroup.footer) {
+            this.addFooterValue();
         }
         else {
-            this.createLeafCell();
+            this.addGroupValue();
+            this.addChildCount();
         }
     };
-    GroupCellRenderer.prototype.createFooterCell = function () {
+    GroupCellRenderer.prototype.addFooterValue = function () {
         var footerValueGetter = this.params.footerValueGetter;
         var footerValue;
         if (footerValueGetter) {
@@ -179,7 +172,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
         this.eValue.innerHTML = footerValue;
     };
-    GroupCellRenderer.prototype.createGroupCell = function () {
+    GroupCellRenderer.prototype.addGroupValue = function () {
         var _this = this;
         var params = this.params;
         var rowGroupColumn = this.displayedGroup.rowGroupColumn;
@@ -281,14 +274,10 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     };
     GroupCellRenderer.prototype.updateChildCount = function () {
         var allChildrenCount = this.displayedGroup.allChildrenCount;
-        var showCount = allChildrenCount != null && allChildrenCount >= 0;
+        var showingGroupForThisNode = this.isShowRowGroupForThisRow();
+        var showCount = showingGroupForThisNode && allChildrenCount != null && allChildrenCount >= 0;
         var countString = showCount ? "(" + allChildrenCount + ")" : "";
         this.eChildCount.innerHTML = countString;
-    };
-    GroupCellRenderer.prototype.createLeafCell = function () {
-        if (exists(this.params.value)) {
-            this.eValue.innerText = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
-        }
     };
     GroupCellRenderer.prototype.isUserWantsSelected = function () {
         var paramsCheckbox = this.params.checkbox;
@@ -431,10 +420,36 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         setAriaExpanded(params.eGridCell, nextExpandState);
     };
     GroupCellRenderer.prototype.isExpandable = function () {
-        var rowNode = this.params.node;
+        if (this.draggedFromHideOpenParents) {
+            return true;
+        }
+        var rowNode = this.displayedGroup;
         var reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-        return this.draggedFromHideOpenParents ||
-            (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
+        var expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
+        if (!expandableGroup) {
+            return false;
+        }
+        // column is null for fullWidthRows
+        var column = this.params.column;
+        var displayingForOneColumnOnly = column != null && typeof column.getColDef().showRowGroup === 'string';
+        if (displayingForOneColumnOnly) {
+            var showing = this.isShowRowGroupForThisRow();
+            return showing;
+        }
+        return true;
+    };
+    GroupCellRenderer.prototype.isShowRowGroupForThisRow = function () {
+        if (this.gridOptionsWrapper.isTreeData()) {
+            return true;
+        }
+        var rowGroupColumn = this.displayedGroup.rowGroupColumn;
+        if (!rowGroupColumn) {
+            return false;
+        }
+        // column is null for fullWidthRows
+        var column = this.params.column;
+        var thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
+        return thisColumnIsInterested;
     };
     GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
         var _a = this, eContracted = _a.eContracted, eExpanded = _a.eExpanded, params = _a.params, displayedGroup = _a.displayedGroup, columnController = _a.columnController;
@@ -454,10 +469,11 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
         var pivotModeAndLeafGroup = columnController.isPivotMode() && displayedGroup.leafGroup;
-        var notExpandable = !displayedGroup.isExpandable();
-        var addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
-        this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
-        this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
+        var expandable = displayedGroup.isExpandable() && this.isShowRowGroupForThisRow();
+        var addExpandableCss = expandable && !displayedGroup.footer && !pivotModeAndLeafGroup;
+        this.addOrRemoveCssClass('ag-cell-expandable', addExpandableCss);
+        this.addOrRemoveCssClass('ag-row-group', addExpandableCss);
+        this.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
     };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to have public here instead of private or protected
@@ -469,9 +485,6 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         return false;
     };
     GroupCellRenderer.TEMPLATE = "<span class=\"ag-cell-wrapper\">\n            <span class=\"ag-group-expanded\" ref=\"eExpanded\"></span>\n            <span class=\"ag-group-contracted\" ref=\"eContracted\"></span>\n            <span class=\"ag-group-checkbox ag-invisible\" ref=\"eCheckbox\"></span>\n            <span class=\"ag-group-value\" ref=\"eValue\"></span>\n            <span class=\"ag-group-child-count\" ref=\"eChildCount\"></span>\n        </span>";
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], GroupCellRenderer.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('expressionService')
     ], GroupCellRenderer.prototype, "expressionService", void 0);

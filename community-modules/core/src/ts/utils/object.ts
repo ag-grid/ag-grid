@@ -48,7 +48,7 @@ export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T {
         // NOT include the following:
         // 1) arrays
         // 2) functions or classes (eg ColumnAPI instance)
-        const sourceIsSimpleObject = typeof value === 'object' && value.constructor === Object;
+        const sourceIsSimpleObject = isNonNullObject(value) && value.constructor === Object;
 
         if (sourceIsSimpleObject) {
             res[key] = deepCloneDefinition(value);
@@ -96,6 +96,23 @@ export function getAllKeysInObjects(objects: any[]): string[] {
     });
 
     return Object.keys(allValues);
+}
+
+export function getAllValuesInObject<T extends Object>(obj: T): any[] {
+    if (!obj) { return []; }
+
+    if (typeof Object.values === 'function') {
+        return Object.values(obj);
+    }
+
+    const ret: any[] = [];
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key) && obj.propertyIsEnumerable(key)) {
+            ret.push(obj[key]);
+        }
+    }
+
+    return ret;
 }
 
 export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopyOfSimpleObjects = false): void {
@@ -208,8 +225,8 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
     let currentObject = data;
 
     for (let i = 0; i < fields.length; i++) {
-        if (missing(currentObject)) {
-            return null;
+        if (currentObject == null) {
+            return undefined;
         }
         currentObject = currentObject[fields[i]];
     }
@@ -241,7 +258,7 @@ destroyed. Please don't call grid API functions on destroyed grids - as a matter
 shouldn't be keeping the API reference, your application has a memory leak! Remove the API reference 
 when the grid is destroyed.`);
             };
-            properties[key] = {value: func, writable: true};
+            properties[key] = { value: func, writable: true };
         }
     });
 

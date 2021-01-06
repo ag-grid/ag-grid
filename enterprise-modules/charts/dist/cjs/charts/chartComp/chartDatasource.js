@@ -27,6 +27,16 @@ var ChartDatasource = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ChartDatasource.prototype.getData = function (params) {
+        if (params.crossFiltering) {
+            if (params.grouping) {
+                console.warn("ag-grid: crossing filtering with row grouping is not supported.");
+                return { data: [], columnNames: {} };
+            }
+            if (!this.gridOptionsWrapper.isRowModelDefault()) {
+                console.warn("ag-grid: crossing filtering is only supported in the client side row model.");
+                return { data: [], columnNames: {} };
+            }
+        }
         var isServerSide = this.gridOptionsWrapper.isRowModelServerSide();
         if (isServerSide && params.pivoting) {
             this.updatePivotKeysForSSRM();
@@ -42,14 +52,25 @@ var ChartDatasource = /** @class */ (function (_super) {
         // maps used to keep track of expanded groups that need to be removed
         var groupNodeIndexes = {};
         var groupsToRemove = {};
-        // make sure enough rows in range to chart. if user filters and less rows, then end row will be
-        // the last displayed row, not where the range ends.
-        var modelLastRow = this.gridRowModel.getRowCount() - 1;
-        var rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
-        var numRows = rangeLastRow - params.startRow + 1;
+        // only used when cross filtering
+        var filteredNodes = {};
+        var allRowNodes = [];
+        var numRows;
+        if (params.crossFiltering) {
+            filteredNodes = this.getFilteredRowNodes();
+            allRowNodes = this.getAllRowNodes();
+            numRows = allRowNodes.length;
+        }
+        else {
+            // make sure enough rows in range to chart. if user filters and less rows, then end row will be
+            // the last displayed row, not where the range ends.
+            var modelLastRow = this.gridRowModel.getRowCount() - 1;
+            var rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
+            numRows = rangeLastRow - params.startRow + 1;
+        }
         var _loop_1 = function (i) {
             var data = {};
-            var rowNode = this_1.gridRowModel.getRow(i + params.startRow);
+            var rowNode = params.crossFiltering ? allRowNodes[i] : this_1.gridRowModel.getRow(i + params.startRow);
             // first get data for dimensions columns
             params.dimensionCols.forEach(function (col) {
                 var colId = col.colId;
@@ -103,9 +124,26 @@ var ChartDatasource = /** @class */ (function (_super) {
                 if (columnNamesArr.length > 0) {
                     columnNames[col.getId()] = columnNamesArr;
                 }
-                // add data value to value column
-                var value = _this.valueService.getValue(col, rowNode);
-                data[col.getId()] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                var colId = col.getColId();
+                if (params.crossFiltering) {
+                    var filteredOutColId = colId + '-filtered-out';
+                    // add data value to value column
+                    var value = _this.valueService.getValue(col, rowNode);
+                    var actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                    if (filteredNodes[rowNode.id]) {
+                        data[colId] = actualValue;
+                        data[filteredOutColId] = params.aggFunc || params.isScatter ? undefined : 0;
+                    }
+                    else {
+                        data[colId] = params.aggFunc || params.isScatter ? undefined : 0;
+                        data[filteredOutColId] = actualValue;
+                    }
+                }
+                else {
+                    // add data value to value column
+                    var value = _this.valueService.getValue(col, rowNode);
+                    data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                }
             });
             // add data to results
             extractedRowData.push(data);
@@ -157,14 +195,35 @@ var ChartDatasource = /** @class */ (function (_super) {
                 }
             });
         });
-        dataAggregated.forEach(function (groupItem) { return params.valueCols.forEach(function (col) {
-            var dataToAgg = groupItem.__children.map(function (child) { return child[col.getId()]; });
-            var aggResult = 0;
-            if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
-                aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
-            }
-            groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
-        }); });
+        if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+            dataAggregated.forEach(function (groupItem) { return params.valueCols.forEach(function (col) {
+                if (params.crossFiltering) {
+                    params.valueCols.forEach(function (valueCol) {
+                        // filtered data
+                        var dataToAgg = groupItem.__children
+                            .filter(function (child) { return typeof child[valueCol.getColId()] !== 'undefined'; })
+                            .map(function (child) { return child[valueCol.getColId()]; });
+                        var aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
+                        groupItem[valueCol.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                        // filtered out data
+                        var filteredOutColId = valueCol.getId() + '-filtered-out';
+                        var dataToAggFiltered = groupItem.__children
+                            .filter(function (child) { return typeof child[filteredOutColId] !== 'undefined'; })
+                            .map(function (child) { return child[filteredOutColId]; });
+                        var aggResultFiltered = _this.aggregationStage.aggregateValues(dataToAggFiltered, params.aggFunc);
+                        groupItem[filteredOutColId] = aggResultFiltered && typeof aggResultFiltered.value !== 'undefined' ? aggResultFiltered.value : aggResultFiltered;
+                    });
+                }
+                else {
+                    var dataToAgg = groupItem.__children.map(function (child) { return child[col.getId()]; });
+                    var aggResult = 0;
+                    if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+                        aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
+                    }
+                    groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                }
+            }); });
+        }
         return dataAggregated;
     };
     ChartDatasource.prototype.updatePivotKeysForSSRM = function () {
@@ -205,6 +264,27 @@ var ChartDatasource = /** @class */ (function (_super) {
         }
         return labels;
     };
+    ChartDatasource.prototype.getFilteredRowNodes = function () {
+        var filteredNodes = {};
+        this.gridRowModel.forEachNodeAfterFilterAndSort(function (rowNode) {
+            filteredNodes[rowNode.id] = rowNode;
+        });
+        return filteredNodes;
+    };
+    ChartDatasource.prototype.getAllRowNodes = function () {
+        var allRowNodes = [];
+        this.gridRowModel.forEachNode(function (rowNode) {
+            allRowNodes.push(rowNode);
+        });
+        return this.sortRowNodes(allRowNodes);
+    };
+    ChartDatasource.prototype.sortRowNodes = function (rowNodes) {
+        var sortOptions = this.sortController.getSortOptions();
+        var noSort = !sortOptions || sortOptions.length == 0;
+        if (noSort)
+            return rowNodes;
+        return this.rowNodeSorter.doFullSort(rowNodes, sortOptions);
+    };
     __decorate([
         core_1.Autowired('rowModel')
     ], ChartDatasource.prototype, "gridRowModel", void 0);
@@ -215,8 +295,11 @@ var ChartDatasource = /** @class */ (function (_super) {
         core_1.Autowired('columnController')
     ], ChartDatasource.prototype, "columnController", void 0);
     __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ChartDatasource.prototype, "gridOptionsWrapper", void 0);
+        core_1.Autowired('rowNodeSorter')
+    ], ChartDatasource.prototype, "rowNodeSorter", void 0);
+    __decorate([
+        core_1.Autowired('sortController')
+    ], ChartDatasource.prototype, "sortController", void 0);
     __decorate([
         core_1.Optional('aggregationStage')
     ], ChartDatasource.prototype, "aggregationStage", void 0);

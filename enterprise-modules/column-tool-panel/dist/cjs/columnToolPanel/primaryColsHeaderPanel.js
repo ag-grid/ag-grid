@@ -44,8 +44,9 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         this.eFilterTextField.onValueChange(function () { return _this.onFilterTextChanged(); });
         this.addManagedListener(this.eFilterTextField.getInputElement(), 'keypress', this.onMiniFilterKeyPress.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
-        this.eSelect.setInputAriaLabel('Toggle Select All Columns');
-        this.eFilterTextField.setInputAriaLabel('Filter Columns Input');
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
+        this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
     };
     PrimaryColsHeaderPanel.prototype.init = function (params) {
         this.params = params;
@@ -107,9 +108,6 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     };
     PrimaryColsHeaderPanel.DEBOUNCE_DELAY = 300;
     PrimaryColsHeaderPanel.TEMPLATE = "<div class=\"ag-column-select-header\" role=\"presentation\" tabindex=\"-1\">\n            <div ref=\"eExpand\" class=\"ag-column-select-header-icon\" tabindex=\"0\"></div>\n            <ag-checkbox ref=\"eSelect\" class=\"ag-column-select-header-checkbox\"></ag-checkbox>\n            <ag-input-text-field class=\"ag-column-select-header-filter-wrapper\" ref=\"eFilterTextField\"></ag-input-text-field>\n        </div>";
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], PrimaryColsHeaderPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnController')
     ], PrimaryColsHeaderPanel.prototype, "columnController", void 0);

@@ -1,5 +1,10 @@
 import {
-    GridOptionsWrapper,
+    _,
+    Autowired,
+    IGetRowsParams,
+    NumberSequence,
+    PostConstruct,
+    PreDestroy,
     RowNode,
     Autowired,
     PostConstruct,
@@ -13,7 +18,7 @@ import { InfiniteCacheParams } from "./infiniteCache";
 
 export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private cacheParams: InfiniteCacheParams;
 
@@ -74,12 +79,11 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         return this.getRowUsingLocalIndex(displayIndex);
     }
 
-    private setIndexAndTopOnRowNode(rowNode: RowNode, rowIndex: number): void {
-        rowNode.setRowIndex(rowIndex);
-        rowNode.rowTop = this.cacheParams.rowHeight * rowIndex;
+    protected processServerFail(): void {
+        // todo - this method has better handling in SSRM
     }
 
-    protected loadFromDatasource(): void {
+    protected createLoadParams(): any {
         // PROBLEM . . . . when the user sets sort via colDef.sort, then this code
         // is executing before the sort is set up, so server is not getting the sort
         // model. need to change with regards order - so the server side request is
@@ -88,20 +92,87 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
             startRow: this.getStartRow(),
             endRow: this.getEndRow(),
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this),
-            sortModel: this.cacheParams.sortModel,
-            filterModel: this.cacheParams.filterModel,
+            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
+            sortModel: this.params.sortModel,
+            filterModel: this.params.filterModel,
             context: this.gridOptionsWrapper.getContext()
         };
 
-        if (_.missing(this.cacheParams.datasource.getRows)) {
-            console.warn(`ag-Grid: datasource is missing getRows method`);
-            return;
+    public forEachNode(callback: (rowNode: RowNode, index: number) => void,
+                       sequence: NumberSequence,
+                       rowCount: number): void {
+        this.rowNodes.forEach((rowNode: RowNode, index: number) => {
+            const rowIndex = this.startRow + index;
+            if (rowIndex < rowCount) {
+                callback(rowNode, sequence.next());
+            }
+        });
+    }
+
+    public getLastAccessed(): number {
+        return this.lastAccessed;
+    }
+
+    public getRow(rowIndex: number, dontTouchLastAccessed = false): RowNode {
+        if (!dontTouchLastAccessed) {
+            this.lastAccessed = this.params.lastAccessedSequence.next();
+        }
+        const localIndex = rowIndex - this.startRow;
+        return this.rowNodes[localIndex];
+    }
+
+    public getStartRow(): number {
+        return this.startRow;
+    }
+
+    public getEndRow(): number {
+        return this.endRow;
+    }
+
+    // creates empty row nodes, data is missing as not loaded yet
+    protected createRowNodes(): void {
+        this.rowNodes = [];
+        for (let i = 0; i < this.params.blockSize!; i++) {
+            const rowIndex = this.startRow + i;
+
+            const rowNode = this.getContext().createBean(new RowNode());
+
+            rowNode.setRowHeight(this.params.rowHeight);
+            rowNode.uiLevel = 0;
+            rowNode.setRowIndex(rowIndex);
+            rowNode.rowTop = this.params.rowHeight * rowIndex;
+
+            this.rowNodes.push(rowNode);
+        }
+    }
+
+    protected processServerResult(params: LoadSuccessParams): void {
+        const rowNodesToRefresh: RowNode[] = [];
+
+        this.rowNodes.forEach((rowNode: RowNode, index: number) => {
+            const data = params.rowData ? params.rowData[index] : undefined;
+            if (rowNode.stub) {
+                rowNodesToRefresh.push(rowNode);
+            }
+            this.setDataAndId(rowNode, data, this.startRow + index);
+        });
+
+        if (rowNodesToRefresh.length > 0) {
+            this.rowRenderer.redrawRows(rowNodesToRefresh);
         }
 
-        // put in timeout, to force result to be async
-        window.setTimeout(() => {
-            this.cacheParams.datasource.getRows(params);
-        }, 0);
+        const finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
+
+        this.parentCache.pageLoaded(this, finalRowCount);
+    }
+
+    @PreDestroy
+    private destroyRowNodes(): void {
+        this.rowNodes.forEach(rowNode => {
+            // this is needed, so row render knows to fade out the row, otherwise it
+            // sees row top is present, and thinks the row should be shown. maybe
+            // rowNode should have a flag on whether it is visible???
+            rowNode.clearRowTop();
+        });
     }
 }

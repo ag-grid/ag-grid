@@ -4,7 +4,6 @@ import { RowNode } from "../entities/rowNode";
 import { RowPosition } from "../entities/rowPosition";
 export declare class PaginationProxy extends BeanStub {
     private rowModel;
-    private gridOptionsWrapper;
     private columnApi;
     private gridApi;
     private active;

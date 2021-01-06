@@ -1,6 +1,5 @@
 import { Component } from "./component";
 import { PopupService } from "./popupService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 export interface PanelOptions {
     component?: Component;
     hideTitleBar?: boolean;
@@ -18,7 +17,6 @@ export interface PanelOptions {
 export declare class AgPanel extends Component {
     protected static CLOSE_BTN_TEMPLATE: string;
     protected readonly popupService: PopupService;
-    protected readonly gridOptionsWrapper: GridOptionsWrapper;
     protected closable: boolean;
     protected config: PanelOptions | undefined;
     protected closeButtonComp: Component;

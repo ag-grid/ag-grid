@@ -1,4 +1,4 @@
-import { Promise, ProvidedFilterModel, IDoesFilterPassParams, IAfterGuiAttachedParams, IFilterComp, IFilterDef, IFilterParams, ManagedFocusComponent } from '@ag-grid-community/core';
+import { AgPromise, ProvidedFilterModel, IDoesFilterPassParams, IAfterGuiAttachedParams, IFilterComp, IFilterDef, IFilterParams, ManagedFocusComponent } from '@ag-grid-community/core';
 export interface IMultiFilterDef extends IFilterDef {
     display?: 'inline' | 'accordion' | 'subMenu';
     title?: string;
@@ -24,7 +24,7 @@ export declare class MultiFilter extends ManagedFocusComponent implements IFilte
     private lastActivatedMenuItem;
     constructor();
     static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[];
-    init(params: IMultiFilterParams): Promise<void>;
+    init(params: IMultiFilterParams): AgPromise<void>;
     private refreshGui;
     private getFilterTitle;
     private destroyChildren;
@@ -34,9 +34,9 @@ export declare class MultiFilter extends ManagedFocusComponent implements IFilte
     getLastActiveFilterIndex(): number | null;
     doesFilterPass(params: IDoesFilterPassParams, filterToSkip?: IFilterComp): boolean;
     private getFilterType;
-    getModelFromUi(): IMultiFilterModel;
-    getModel(): ProvidedFilterModel;
-    setModel(model: IMultiFilterModel): Promise<void>;
+    getModelFromUi(): IMultiFilterModel | null;
+    getModel(): ProvidedFilterModel | null;
+    setModel(model: IMultiFilterModel | null): AgPromise<void>;
     getChildFilterInstance(index: number): IFilterComp;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
     onAnyFilterChanged(): void;

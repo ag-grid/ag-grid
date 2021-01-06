@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from './entities/rowNode';
@@ -68,7 +68,7 @@ export interface FilterModifiedEvent extends AgGridEvent {
     column: Column;
 }
 export interface FilterOpenedEvent extends AgGridEvent {
-    column: Column;
+    column: Column | OriginalColumnGroup;
     source: FilterRequestSource;
     eGui: HTMLElement;
 }
@@ -285,6 +285,9 @@ export interface CellValueChangedEvent extends CellEvent {
     oldValue: any;
     newValue: any;
     source: string | undefined;
+}
+export interface AsyncTransactionsFlushed extends AgGridEvent {
+    results: (RowNodeTransaction | ServerSideTransactionResult)[];
 }
 export interface ColumnRequestEvent extends AgGridEvent {
     columns: Column[];

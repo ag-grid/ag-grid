@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -73,7 +73,7 @@ function isUserSuppressingKeyboardEvent(gridOptionsWrapper, keyboardEvent, rowNo
 exports.isUserSuppressingKeyboardEvent = isUserSuppressingKeyboardEvent;
 function isUserSuppressingHeaderKeyboardEvent(gridOptionsWrapper, keyboardEvent, headerRowIndex, column) {
     var colDef = column.getDefinition();
-    var colDefFunc = colDef.suppressHeaderKeyboardEvent;
+    var colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
     if (!generic_1.exists(colDefFunc)) {
         return false;
     }

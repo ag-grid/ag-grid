@@ -4,11 +4,10 @@ import { Column } from '../../entities/column';
 import { SetLeftFeature } from '../../rendering/features/setLeftFeature';
 import { IFloatingFilterComp, IFloatingFilterParams } from './../floating/floatingFilter';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { HoverFeature } from '../../headerRendering/hoverFeature';
 import { Events, FilterChangedEvent } from '../../events';
 import { ColumnHoverService } from '../../rendering/columnHoverService';
-import { Promise } from '../../utils';
+import { AgPromise } from '../../utils';
 import { ColDef } from '../../entities/colDef';
 import { IFilterComp, IFilterDef } from '../../interfaces/iFilter';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';
@@ -35,25 +34,24 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
             </div>
         </div>`;
 
-    @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('menuFactory') private menuFactory: IMenuFactory;
-    @Autowired('beans') protected beans: Beans;
+    @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
+    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('columnApi') private readonly columnApi: ColumnApi;
+    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
+    @Autowired('beans') protected readonly beans: Beans;
 
-    @RefSelector('eFloatingFilterBody') private eFloatingFilterBody: HTMLElement;
-    @RefSelector('eButtonWrapper') private eButtonWrapper: HTMLElement;
-    @RefSelector('eButtonShowMainFilter') private eButtonShowMainFilter: HTMLElement;
+    @RefSelector('eFloatingFilterBody') private readonly eFloatingFilterBody: HTMLElement;
+    @RefSelector('eButtonWrapper') private readonly eButtonWrapper: HTMLElement;
+    @RefSelector('eButtonShowMainFilter') private readonly eButtonShowMainFilter: HTMLElement;
 
     protected readonly column: Column;
     protected readonly pinned: string;
 
     private suppressFilterButton: boolean;
 
-    private floatingFilterCompPromise: Promise<IFloatingFilterComp>;
+    private floatingFilterCompPromise: AgPromise<IFloatingFilterComp> | null;
 
     constructor(column: Column, pinned: string) {
         super(FloatingFilterWrapper.TEMPLATE);
@@ -221,7 +219,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         this.getFilterComponent().then(callback);
     }
 
-    private getFilterComponent(createIfDoesNotExist = true): Promise<IFilterComp> {
+    private getFilterComponent(createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
         return this.filterManager.getFilterComponent(this.column, 'NO_UI', createIfDoesNotExist);
     }
 
@@ -247,7 +245,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         return defaultFloatingFilterType;
     }
 
-    private getFloatingFilterInstance(): Promise<IFloatingFilterComp> {
+    private getFloatingFilterInstance(): AgPromise<IFloatingFilterComp> | null {
         const colDef = this.column.getColDef();
         const defaultFloatingFilterType = FloatingFilterWrapper.getDefaultFloatingFilterType(colDef);
         const filterParams = this.filterManager.createFilterParams(this.column, colDef);
@@ -278,7 +276,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
                 const compInstance =
                     this.userComponentFactory.createUserComponentFromConcreteClass(ReadOnlyFloatingFilter, params);
 
-                promise = Promise.resolve(compInstance);
+                promise = AgPromise.resolve(compInstance);
             }
         }
 

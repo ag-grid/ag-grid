@@ -1,7 +1,6 @@
 import { AgSelect } from "../../widgets/agSelect";
 import { Autowired } from "../../context/context";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ValueFormatterService } from "../valueFormatterService";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
@@ -17,7 +16,6 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
 
     private focusAfterAttached: boolean;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @RefSelector('eSelect') private eSelect: AgSelect;
 

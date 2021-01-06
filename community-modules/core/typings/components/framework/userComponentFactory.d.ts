@@ -5,7 +5,7 @@ import { AgGridRegisteredComponentInput } from "./userComponentRegistry";
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
 import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
 import { ToolPanelDef } from "../../entities/sideBar";
-import { Promise } from "../../utils";
+import { AgPromise } from "../../utils";
 import { IDateComp, IDateParams } from "../../rendering/dateComponent";
 import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
 import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroup/headerGroupComp";
@@ -52,22 +52,22 @@ export declare class UserComponentFactory extends BeanStub {
     private readonly componentMetadataProvider;
     private readonly userComponentRegistry;
     private readonly frameworkComponentWrapper;
-    newDateComponent(params: IDateParams): Promise<IDateComp>;
-    newHeaderComponent(params: IHeaderParams): Promise<IHeaderComp>;
-    newHeaderGroupComponent(params: IHeaderGroupParams): Promise<IHeaderGroupComp>;
-    newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): Promise<ICellRendererComp>;
-    newFullWidthCellRenderer(params: ICellRendererParams, cellRendererType: string, cellRendererName: string): Promise<ICellRendererComp>;
-    newCellRenderer(target: ColDef | IRichCellEditorParams, params: ICellRendererParams, isPinned?: boolean): Promise<ICellRendererComp>;
-    newCellEditor(colDef: ColDef, params: ICellEditorParams): Promise<ICellEditorComp>;
-    newInnerCellRenderer(target: GroupCellRendererParams, params: ICellRendererParams): Promise<ICellRendererComp>;
-    newLoadingOverlayComponent(params: ILoadingOverlayParams): Promise<ILoadingOverlayComp>;
-    newNoRowsOverlayComponent(params: INoRowsOverlayParams): Promise<INoRowsOverlayComp>;
-    newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp>;
-    newFilterComponent(def: IFilterDef, params: IFilterParams, defaultFilter: string): Promise<IFilterComp>;
-    newSetFilterCellRenderer(target: ISetFilterParams, params: ISetFilterCellRendererParams): Promise<ICellRendererComp>;
-    newFloatingFilterComponent(def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string): Promise<IFloatingFilterComp>;
-    newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): Promise<IToolPanelComp>;
-    newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): Promise<IStatusPanelComp>;
+    newDateComponent(params: IDateParams): AgPromise<IDateComp> | null;
+    newHeaderComponent(params: IHeaderParams): AgPromise<IHeaderComp> | null;
+    newHeaderGroupComponent(params: IHeaderGroupParams): AgPromise<IHeaderGroupComp> | null;
+    newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): AgPromise<ICellRendererComp> | null;
+    newFullWidthCellRenderer(params: ICellRendererParams, cellRendererType: string, cellRendererName: string): AgPromise<ICellRendererComp> | null;
+    newCellRenderer(target: ColDef | IRichCellEditorParams, params: ICellRendererParams, isPinned?: boolean): AgPromise<ICellRendererComp> | null;
+    newCellEditor(colDef: ColDef, params: ICellEditorParams): AgPromise<ICellEditorComp> | null;
+    newInnerCellRenderer(target: GroupCellRendererParams, params: ICellRendererParams): AgPromise<ICellRendererComp> | null;
+    newLoadingOverlayComponent(params: ILoadingOverlayParams): AgPromise<ILoadingOverlayComp> | null;
+    newNoRowsOverlayComponent(params: INoRowsOverlayParams): AgPromise<INoRowsOverlayComp> | null;
+    newTooltipComponent(params: ITooltipParams): AgPromise<ITooltipComp> | null;
+    newFilterComponent(def: IFilterDef, params: IFilterParams, defaultFilter: string): AgPromise<IFilterComp> | null;
+    newSetFilterCellRenderer(target: ISetFilterParams, params: ISetFilterCellRendererParams): AgPromise<ICellRendererComp> | null;
+    newFloatingFilterComponent(def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string | null): AgPromise<IFloatingFilterComp> | null;
+    newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): AgPromise<IToolPanelComp> | null;
+    newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): AgPromise<IStatusPanelComp> | null;
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
@@ -82,7 +82,7 @@ export declare class UserComponentFactory extends BeanStub {
      *  @param optional: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
      */
-    createAndInitUserComponent<A extends IComponent<TParams>, TParams>(definitionObject: DefinitionObject, paramsFromGrid: TParams, componentType: ComponentType, defaultComponentName?: string, optional?: boolean): Promise<A>;
+    createAndInitUserComponent<A extends IComponent<TParams>, TParams>(definitionObject: DefinitionObject | null, paramsFromGrid: TParams, componentType: ComponentType, defaultComponentName?: string | null, optional?: boolean): AgPromise<A> | null;
     private addReactHacks;
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated

@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, DragAndDropService, PostConstruct, Events, _ } from "@ag-grid-community/core";
+import { _, Autowired, DragAndDropService, Events, PostConstruct } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 var RowGroupDropZonePanel = /** @class */ (function (_super) {
     __extends(RowGroupDropZonePanel, _super);
@@ -42,6 +42,11 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
             title: title
         });
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
+    };
+    RowGroupDropZonePanel.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'rowGroupColumnsList';
+        return res;
     };
     RowGroupDropZonePanel.prototype.isColumnDroppable = function (column) {
         // we never allow grouping of secondary columns
@@ -73,9 +78,6 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnController')
     ], RowGroupDropZonePanel.prototype, "columnController", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], RowGroupDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('loggerFactory')
     ], RowGroupDropZonePanel.prototype, "loggerFactory", void 0);

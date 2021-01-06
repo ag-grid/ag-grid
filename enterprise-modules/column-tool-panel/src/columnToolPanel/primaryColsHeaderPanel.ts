@@ -3,7 +3,6 @@ import {
     Autowired,
     ColumnController,
     Events,
-    GridOptionsWrapper,
     RefSelector,
     ToolPanelColumnCompParams,
     AgCheckbox,
@@ -16,7 +15,6 @@ import {
 export enum ExpandState { EXPANDED, COLLAPSED, INDETERMINATE }
 
 export class PrimaryColsHeaderPanel extends Component {
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private readonly columnController: ColumnController;
 
     @RefSelector('eExpand') private readonly eExpand: HTMLElement;
@@ -71,8 +69,10 @@ export class PrimaryColsHeaderPanel extends Component {
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
 
-        this.eSelect.setInputAriaLabel('Toggle Select All Columns');
-        this.eFilterTextField.setInputAriaLabel('Filter Columns Input');
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
+        this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
     }
 
     public init(params: ToolPanelColumnCompParams): void {

@@ -1,9 +1,7 @@
-import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { Component } from '../../widgets/component';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 export declare class OverlayWrapperComponent extends Component {
     private static TEMPLATE;
-    gridOptionsWrapper: GridOptionsWrapper;
     userComponentFactory: UserComponentFactory;
     eOverlayWrapper: HTMLElement;
     private activeOverlay;

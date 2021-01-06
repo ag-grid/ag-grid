@@ -29,9 +29,6 @@ var FilterStage = /** @class */ (function (_super) {
         this.selectableService.updateSelectableAfterFiltering(rowNode);
     };
     __decorate([
-        Autowired('gridOptionsWrapper')
-    ], FilterStage.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         Autowired('selectableService')
     ], FilterStage.prototype, "selectableService", void 0);
     __decorate([

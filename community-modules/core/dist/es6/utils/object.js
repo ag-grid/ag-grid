@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,7 +49,7 @@ export function deepCloneDefinition(object, keysToSkip) {
         // NOT include the following:
         // 1) arrays
         // 2) functions or classes (eg ColumnAPI instance)
-        var sourceIsSimpleObject = typeof value === 'object' && value.constructor === Object;
+        var sourceIsSimpleObject = isNonNullObject(value) && value.constructor === Object;
         if (sourceIsSimpleObject) {
             res[key] = deepCloneDefinition(value);
         }
@@ -92,6 +92,21 @@ export function getAllKeysInObjects(objects) {
         forEach(Object.keys(obj), function (key) { return allValues[key] = null; });
     });
     return Object.keys(allValues);
+}
+export function getAllValuesInObject(obj) {
+    if (!obj) {
+        return [];
+    }
+    if (typeof Object.values === 'function') {
+        return Object.values(obj);
+    }
+    var ret = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && obj.propertyIsEnumerable(key)) {
+            ret.push(obj[key]);
+        }
+    }
+    return ret;
 }
 export function mergeDeep(dest, source, copyUndefined, makeCopyOfSimpleObjects) {
     if (copyUndefined === void 0) { copyUndefined = true; }
@@ -190,8 +205,8 @@ export function getValueUsingField(data, field, fieldContainsDots) {
     var fields = field.split('.');
     var currentObject = data;
     for (var i = 0; i < fields.length; i++) {
-        if (missing(currentObject)) {
-            return null;
+        if (currentObject == null) {
+            return undefined;
         }
         currentObject = currentObject[fields[i]];
     }

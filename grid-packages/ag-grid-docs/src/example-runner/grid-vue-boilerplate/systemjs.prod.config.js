@@ -55,7 +55,7 @@
                 defaultExtension: 'js'
             },
             'ag-grid-vue': {
-                main: './lib/legacy/AgGridVue.js',
+                main: './lib/AgGridVue.js',
                 defaultExtension: 'js'
             },
             'ag-grid-community': {
@@ -67,7 +67,7 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-community/vue': {
-                main: './lib/legacy/AgGridVue.js',
+                main: './lib/AgGridVue.js',
                 defaultExtension: 'js'
             }
         },

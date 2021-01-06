@@ -41,7 +41,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
             keepRenderedRows: true,
             animate: true
         });
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc);
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, refreshEverythingAfterColsChangedFunc);
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: core_1.Constants.STEP_PIVOT }));
@@ -643,21 +643,36 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         this.valueCache.onDataChanged();
         var callbackFuncsBound = [];
         var rowNodeTrans = [];
+        // The rowGroup stage uses rowNodeOrder if order was provided. if we didn't pass 'true' to
+        // commonUpdateRowData, using addIndex would have no effect when grouping.
+        var forceRowNodeOrder = false;
         if (this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch.forEach(function (tranItem) {
-                var rowNodeTran = _this.nodeManager.updateRowData(tranItem.rowDataTransaction, null);
+                var rowNodeTran = _this.nodeManager.updateRowData(tranItem.rowDataTransaction, undefined);
                 rowNodeTrans.push(rowNodeTran);
                 if (tranItem.callback) {
                     callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
                 }
+                if (typeof tranItem.rowDataTransaction.addIndex === 'number') {
+                    forceRowNodeOrder = true;
+                }
             });
         }
-        this.commonUpdateRowData(rowNodeTrans);
+        this.commonUpdateRowData(rowNodeTrans, undefined, forceRowNodeOrder);
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
             window.setTimeout(function () {
                 callbackFuncsBound.forEach(function (func) { return func(); });
             }, 0);
+        }
+        if (rowNodeTrans.length > 0) {
+            var event_1 = {
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                type: core_1.Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
+                results: rowNodeTrans
+            };
+            this.eventService.dispatchEvent(event_1);
         }
         this.rowDataTransactionBatch = null;
         this.applyAsyncTransactionsTimeout = undefined;
@@ -668,10 +683,8 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         // if doing immutableData, addIndex is never present. however if doing standard transaction, and user
         // provided addIndex, then this is used in updateRowData. However if doing Enterprise, then the rowGroup
         // stage also uses the
-        if (typeof rowDataTran.addIndex === 'number') {
-            rowNodeOrder = this.createRowNodeOrder();
-        }
-        this.commonUpdateRowData([rowNodeTran], rowNodeOrder);
+        var forceRowNodeOrder = typeof rowDataTran.addIndex === 'number';
+        this.commonUpdateRowData([rowNodeTran], rowNodeOrder, forceRowNodeOrder);
         return rowNodeTran;
     };
     ClientSideRowModel.prototype.createRowNodeOrder = function () {
@@ -689,7 +702,10 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         return orderMap;
     };
     // common to updateRowData and batchUpdateRowData
-    ClientSideRowModel.prototype.commonUpdateRowData = function (rowNodeTrans, rowNodeOrder) {
+    ClientSideRowModel.prototype.commonUpdateRowData = function (rowNodeTrans, rowNodeOrder, forceRowNodeOrder) {
+        if (forceRowNodeOrder) {
+            rowNodeOrder = this.createRowNodeOrder();
+        }
         this.refreshModel({
             step: core_1.Constants.STEP_EVERYTHING,
             rowNodeTransactions: rowNodeTrans,
@@ -728,9 +744,6 @@ var ClientSideRowModel = /** @class */ (function (_super) {
             this.onRowHeightChanged();
         }
     };
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ClientSideRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnController')
     ], ClientSideRowModel.prototype, "columnController", void 0);

@@ -3,7 +3,6 @@ export interface IToolPanelChildComp extends IComponent<any> {
     refresh(): void;
 }
 export declare class SideBarComp extends Component implements ISideBar {
-    private gridOptionsWrapper;
     private sideBarButtonsComp;
     private toolPanelWrappers;
     private static readonly TEMPLATE;

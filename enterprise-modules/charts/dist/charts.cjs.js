@@ -1,5 +1,5 @@
 /**
- * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components * @version v24.1.0
+ * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components * @version v25.0.0
  * @link http://www.ag-grid.com/
 ' * @license Commercial
  */
@@ -10,7 +10,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -190,7 +190,7 @@ var GenericUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -236,7 +236,7 @@ var ColumnKeyCreator = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -494,7 +494,7 @@ var ArrayUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -541,7 +541,7 @@ function deepCloneDefinition(object, keysToSkip) {
         // NOT include the following:
         // 1) arrays
         // 2) functions or classes (eg ColumnAPI instance)
-        var sourceIsSimpleObject = typeof value === 'object' && value.constructor === Object;
+        var sourceIsSimpleObject = isNonNullObject(value) && value.constructor === Object;
         if (sourceIsSimpleObject) {
             res[key] = deepCloneDefinition(value);
         }
@@ -584,6 +584,21 @@ function getAllKeysInObjects(objects) {
         forEach(Object.keys(obj), function (key) { return allValues[key] = null; });
     });
     return Object.keys(allValues);
+}
+function getAllValuesInObject(obj) {
+    if (!obj) {
+        return [];
+    }
+    if (typeof Object.values === 'function') {
+        return Object.values(obj);
+    }
+    var ret = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && obj.propertyIsEnumerable(key)) {
+            ret.push(obj[key]);
+        }
+    }
+    return ret;
 }
 function mergeDeep(dest, source, copyUndefined, makeCopyOfSimpleObjects) {
     if (copyUndefined === void 0) { copyUndefined = true; }
@@ -682,8 +697,8 @@ function getValueUsingField(data, field, fieldContainsDots) {
     var fields = field.split('.');
     var currentObject = data;
     for (var i = 0; i < fields.length; i++) {
-        if (missing(currentObject)) {
-            return null;
+        if (currentObject == null) {
+            return undefined;
         }
         currentObject = currentObject[fields[i]];
     }
@@ -729,6 +744,7 @@ var ObjectUtils = /*#__PURE__*/Object.freeze({
     copyPropertiesIfPresent: copyPropertiesIfPresent,
     copyPropertyIfPresent: copyPropertyIfPresent,
     getAllKeysInObjects: getAllKeysInObjects,
+    getAllValuesInObject: getAllValuesInObject,
     mergeDeep: mergeDeep,
     assign: assign,
     missingOrEmptyObject: missingOrEmptyObject,
@@ -742,7 +758,7 @@ var ObjectUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -867,7 +883,7 @@ var FunctionUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -962,7 +978,7 @@ function getOrCreateProps(target) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -995,9 +1011,10 @@ var EventService = /** @class */ (function () {
     //
     // the times when this class is used outside of the context (eg RowNode has an instance of this
     // class) then it is not a bean, and this setBeans method is not called.
-    EventService.prototype.setBeans = function (loggerFactory, gridOptionsWrapper, globalEventListener) {
+    EventService.prototype.setBeans = function (loggerFactory, gridOptionsWrapper, globalEventListener, frameworkOverrides) {
         if (globalEventListener === void 0) { globalEventListener = null; }
         this.logger = loggerFactory.create('EventService');
+        this.frameworkOverrides = frameworkOverrides;
         if (globalEventListener) {
             var async = gridOptionsWrapper.useAsyncEvents();
             this.addGlobalListener(globalEventListener, async);
@@ -1053,10 +1070,10 @@ var EventService = /** @class */ (function () {
         var globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
         globalListeners.forEach(function (listener) {
             if (async) {
-                _this.dispatchAsync(function () { return listener(eventType, event); });
+                _this.dispatchAsync(function () { return _this.frameworkOverrides.dispatchEvent(eventType, function () { return listener(eventType, event); }); });
             }
             else {
-                listener(eventType, event);
+                _this.frameworkOverrides.dispatchEvent(eventType, function () { return listener(eventType, event); });
             }
         });
     };
@@ -1094,7 +1111,8 @@ var EventService = /** @class */ (function () {
     __decorate([
         __param(0, Qualifier('loggerFactory')),
         __param(1, Qualifier('gridOptionsWrapper')),
-        __param(2, Qualifier('globalEventListener'))
+        __param(2, Qualifier('globalEventListener')),
+        __param(3, Qualifier('frameworkOverrides'))
     ], EventService.prototype, "setBeans", null);
     EventService = __decorate([
         Bean('eventService')
@@ -1104,7 +1122,7 @@ var EventService = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1141,12 +1159,15 @@ var Constants = /** @class */ (function () {
     Constants.PINNED_LEFT = 'left';
     Constants.SORT_ASC = 'asc';
     Constants.SORT_DESC = 'desc';
+    Constants.INPUT_SELECTOR = 'input, select, button, textarea';
+    Constants.FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
+    Constants.FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *';
     return Constants;
 }());
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1196,7 +1217,7 @@ var ModuleNames;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1213,7 +1234,7 @@ var ModuleRegistry = /** @class */ (function () {
             if (ModuleRegistry.moduleBased !== moduleBased) {
                 doOnce(function () {
                     console.warn("ag-Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.");
-                    console.warn('Please see https://www.ag-grid.com/javascript-grid-packages-modules/ for more information.');
+                    console.warn('Please see https://www.ag-grid.com/documentation/javascript/packages-modules/ for more information.');
                 }, 'ModulePackageCheck');
             }
         }
@@ -1231,7 +1252,7 @@ var ModuleRegistry = /** @class */ (function () {
             return true;
         }
         var warningKey = reason + moduleName;
-        var warningMessage = "ag-Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid-modules/";
+        var warningMessage = "ag-Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/documentation/javascript/modules/";
         doOnce(function () {
             console.warn(warningMessage);
         }, warningKey);
@@ -1253,7 +1274,7 @@ var ModuleRegistry = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1359,13 +1380,14 @@ var Column = /** @class */ (function () {
     Column.prototype.initialise = function () {
         var minColWidth = this.gridOptionsWrapper.getMinColWidth();
         var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
-        if (this.colDef.minWidth) {
-            this.minWidth = this.colDef.minWidth;
+        if (this.colDef.minWidth != null) {
+            // we force min width to be at least one pixel, otherwise column will disappear
+            this.minWidth = Math.max(this.colDef.minWidth, 1);
         }
         else {
             this.minWidth = minColWidth;
         }
-        if (this.colDef.maxWidth) {
+        if (this.colDef.maxWidth != null) {
             this.maxWidth = this.colDef.maxWidth;
         }
         else {
@@ -1896,7 +1918,7 @@ var Column = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2182,7 +2204,7 @@ var ColumnGroup = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2343,7 +2365,7 @@ var OriginalColumnGroup = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2360,13 +2382,12 @@ var DefaultColumnTypes = {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 var PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
-var OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
 var supports = {};
 /**
  * a user once raised an issue - they said that when you opened a popup (eg context menu)
@@ -2501,18 +2522,11 @@ function getEventPath(event) {
 }
 function addSafePassiveEventListener(frameworkOverrides, eElement, event, listener) {
     var isPassive = includes(PASSIVE_EVENTS, event);
-    var isOutsideAngular = includes(OUTSIDE_ANGULAR_EVENTS, event);
     var options = isPassive ? { passive: true } : undefined;
-    if (isOutsideAngular) {
-        // this happens in certain scenarios where I believe the user must be destroying the grid somehow but continuing
-        // for it to be used
-        // don't fall through to the else part either - just don't add the listener
-        if (frameworkOverrides && frameworkOverrides.addEventListenerOutsideAngular) {
-            frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
-        }
-    }
-    else {
-        eElement.addEventListener(event, listener, options);
+    // this check is here for certain scenarios where I believe the user must be destroying
+    // the grid somehow but continuing for it to be used
+    if (frameworkOverrides && frameworkOverrides.addEventListener) {
+        frameworkOverrides.addEventListener(eElement, event, listener, options);
     }
 }
 
@@ -2533,7 +2547,7 @@ var EventUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2659,6 +2673,9 @@ var BeanStub = /** @class */ (function () {
         Autowired('eventService')
     ], BeanStub.prototype, "eventService", void 0);
     __decorate$3([
+        Autowired('gridOptionsWrapper')
+    ], BeanStub.prototype, "gridOptionsWrapper", void 0);
+    __decorate$3([
         PreDestroy
     ], BeanStub.prototype, "destroy", null);
     return BeanStub;
@@ -2666,7 +2683,7 @@ var BeanStub = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3030,9 +3047,6 @@ var ColumnFactory = /** @class */ (function (_super) {
         return abstractColDef.children !== undefined;
     };
     __decorate$4([
-        Autowired('gridOptionsWrapper')
-    ], ColumnFactory.prototype, "gridOptionsWrapper", void 0);
-    __decorate$4([
         Autowired('columnUtils')
     ], ColumnFactory.prototype, "columnUtils", void 0);
     __decorate$4([
@@ -3046,14 +3060,15 @@ var ColumnFactory = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var Events = /** @class */ (function () {
     function Events() {
     }
-    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
+    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState() */
+    /** @deprecated - grid no longer uses this, and setSate() also fires individual events */
     Events.EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
     /** User has set in new columns. */
     Events.EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
@@ -3083,6 +3098,8 @@ var Events = /** @class */ (function () {
     Events.EVENT_DISPLAYED_COLUMNS_CHANGED = 'displayedColumnsChanged';
     /** The list of virtual columns has changed, results from viewport changing */
     Events.EVENT_VIRTUAL_COLUMNS_CHANGED = 'virtualColumnsChanged';
+    /** Async Transactions Executed */
+    Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED = 'asyncTransactionsFlushed';
     /** A row group was opened / closed */
     Events.EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
     /** The client has set new data into the grid */
@@ -3191,7 +3208,7 @@ var Events = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3228,7 +3245,7 @@ var GroupInstanceIdCreator = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3383,7 +3400,7 @@ var StringUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3463,6 +3480,7 @@ var ColumnController = /** @class */ (function (_super) {
         return this.colDefVersion;
     };
     ColumnController.prototype.setColumnDefs = function (columnDefs, source) {
+        var _this = this;
         if (source === void 0) { source = 'api'; }
         var colsPreviouslyExisted = !!this.columnDefs;
         this.colDefVersion++;
@@ -3480,6 +3498,8 @@ var ColumnController = /** @class */ (function (_super) {
         this.primaryColumnTree = balancedTreeResult.columnTree;
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
         this.primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
+        this.primaryColumnsMap = {};
+        this.primaryColumns.forEach(function (col) { return _this.primaryColumnsMap[col.getId()] = col; });
         this.extractRowGroupColumns(source, oldPrimaryColumns);
         this.extractPivotColumns(source, oldPrimaryColumns);
         this.extractValueColumns(source, oldPrimaryColumns);
@@ -3490,6 +3510,23 @@ var ColumnController = /** @class */ (function (_super) {
         }
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
+        // this event is not used by ag-Grid, but left here for backwards compatibility,
+        // in case applications use it
+        this.dispatchEverythingChanged(source);
+        raiseEventsFunc();
+        this.dispatchNewColumnsLoaded();
+    };
+    ColumnController.prototype.dispatchNewColumnsLoaded = function () {
+        var newColumnsLoadedEvent = {
+            type: Events.EVENT_NEW_COLUMNS_LOADED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(newColumnsLoadedEvent);
+    };
+    // this event is legacy, no grid code listens to it. instead the grid listens to New Columns Loaded
+    ColumnController.prototype.dispatchEverythingChanged = function (source) {
+        if (source === void 0) { source = 'api'; }
         var eventEverythingChanged = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             api: this.gridApi,
@@ -3497,13 +3534,6 @@ var ColumnController = /** @class */ (function (_super) {
             source: source
         };
         this.eventService.dispatchEvent(eventEverythingChanged);
-        var newColumnsLoadedEvent = {
-            type: Events.EVENT_NEW_COLUMNS_LOADED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        raiseEventsFunc();
-        this.eventService.dispatchEvent(newColumnsLoadedEvent);
     };
     ColumnController.prototype.orderGridColumnsLikePrimary = function () {
         var _this = this;
@@ -4750,51 +4780,56 @@ var ColumnController = /** @class */ (function (_super) {
         // THEN result will be ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=1000
         var letRowGroupIndex = 1000;
         var letPivotIndex = 1000;
-        if (primaryColumns) {
-            primaryColumns.forEach(function (column) {
-                var colDef = column.getColDef();
-                var sort = colDef.sort != null ? colDef.sort : null;
-                var sortIndex = colDef.sortIndex;
-                var hide = colDef.hide ? true : false;
-                var pinned = colDef.pinned ? colDef.pinned : null;
-                var width = colDef.width;
-                var flex = colDef.flex != null ? colDef.flex : null;
-                var rowGroupIndex = colDef.rowGroupIndex;
-                var rowGroup = colDef.rowGroup;
-                if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
-                    rowGroupIndex = null;
-                    rowGroup = null;
-                }
-                var pivotIndex = colDef.pivotIndex;
-                var pivot = colDef.pivot;
-                if (pivotIndex == null && (pivot == null || pivot == false)) {
-                    pivotIndex = null;
-                    pivot = null;
-                }
-                var aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
-                var stateItem = {
-                    colId: column.getColId(),
-                    sort: sort,
-                    sortIndex: sortIndex,
-                    hide: hide,
-                    pinned: pinned,
-                    width: width,
-                    flex: flex,
-                    rowGroup: rowGroup,
-                    rowGroupIndex: rowGroupIndex,
-                    pivot: pivot,
-                    pivotIndex: pivotIndex,
-                    aggFunc: aggFunc,
-                };
-                if (missing(rowGroupIndex) && rowGroup) {
-                    stateItem.rowGroupIndex = letRowGroupIndex++;
-                }
-                if (missing(pivotIndex) && pivot) {
-                    stateItem.pivotIndex = letPivotIndex++;
-                }
-                columnStates.push(stateItem);
-            });
+        var colsToProcess = [];
+        if (this.groupAutoColumns) {
+            colsToProcess = colsToProcess.concat(this.groupAutoColumns);
         }
+        if (primaryColumns) {
+            colsToProcess = colsToProcess.concat(primaryColumns);
+        }
+        colsToProcess.forEach(function (column) {
+            var colDef = column.getColDef();
+            var sort = colDef.sort != null ? colDef.sort : null;
+            var sortIndex = colDef.sortIndex;
+            var hide = colDef.hide ? true : false;
+            var pinned = colDef.pinned ? colDef.pinned : null;
+            var width = colDef.width;
+            var flex = colDef.flex != null ? colDef.flex : null;
+            var rowGroupIndex = colDef.rowGroupIndex;
+            var rowGroup = colDef.rowGroup;
+            if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
+                rowGroupIndex = null;
+                rowGroup = null;
+            }
+            var pivotIndex = colDef.pivotIndex;
+            var pivot = colDef.pivot;
+            if (pivotIndex == null && (pivot == null || pivot == false)) {
+                pivotIndex = null;
+                pivot = null;
+            }
+            var aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
+            var stateItem = {
+                colId: column.getColId(),
+                sort: sort,
+                sortIndex: sortIndex,
+                hide: hide,
+                pinned: pinned,
+                width: width,
+                flex: flex,
+                rowGroup: rowGroup,
+                rowGroupIndex: rowGroupIndex,
+                pivot: pivot,
+                pivotIndex: pivotIndex,
+                aggFunc: aggFunc,
+            };
+            if (missing(rowGroupIndex) && rowGroup) {
+                stateItem.rowGroupIndex = letRowGroupIndex++;
+            }
+            if (missing(pivotIndex) && pivot) {
+                stateItem.pivotIndex = letPivotIndex++;
+            }
+            columnStates.push(stateItem);
+        });
         this.applyColumnState({ state: columnStates, applyOrder: true }, source);
     };
     ColumnController.prototype.applyColumnState = function (params, source) {
@@ -4909,13 +4944,7 @@ var ColumnController = /** @class */ (function (_super) {
             this.putFixedColumnsFirst();
         }
         this.updateDisplayedColumns(source);
-        var event = {
-            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source: source
-        };
-        this.eventService.dispatchEvent(event);
+        this.dispatchEverythingChanged(source);
         raiseEventsFunc();
         this.columnAnimationService.finish();
         return success;
@@ -5207,14 +5236,19 @@ var ColumnController = /** @class */ (function (_super) {
         return column;
     };
     ColumnController.prototype.getPrimaryColumn = function (key) {
-        return this.getColumn(key, this.primaryColumns);
+        return this.getColumn(key, this.primaryColumns, this.primaryColumnsMap);
     };
     ColumnController.prototype.getGridColumn = function (key) {
-        return this.getColumn(key, this.gridColumns);
+        return this.getColumn(key, this.gridColumns, this.gridColumnsMap);
     };
-    ColumnController.prototype.getColumn = function (key, columnList) {
+    ColumnController.prototype.getColumn = function (key, columnList, columnMap) {
         if (!key) {
             return null;
+        }
+        // most of the time this method gets called the key is a string, so we put this shortcut in
+        // for performance reasons, to see if we can match for ID (it doesn't do auto columns, that's done below)
+        if (typeof key == 'string' && columnMap[key]) {
+            return columnMap[key];
         }
         for (var i = 0; i < columnList.length; i++) {
             if (this.columnsMatch(columnList[i], key)) {
@@ -5740,6 +5774,7 @@ var ColumnController = /** @class */ (function (_super) {
     };
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     ColumnController.prototype.updateGridColumns = function () {
+        var _this = this;
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         }
@@ -5765,6 +5800,8 @@ var ColumnController = /** @class */ (function (_super) {
         this.setupQuickFilterColumns();
         this.clearDisplayedColumns();
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
+        this.gridColumnsMap = {};
+        this.gridColumns.forEach(function (col) { return _this.gridColumnsMap[col.getId()] = col; });
         var event = {
             type: Events.EVENT_GRID_COLUMNS_CHANGED,
             api: this.gridApi,
@@ -6321,9 +6358,6 @@ var ColumnController = /** @class */ (function (_super) {
         return null;
     };
     __decorate$5([
-        Autowired('gridOptionsWrapper')
-    ], ColumnController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$5([
         Autowired('expressionService')
     ], ColumnController.prototype, "expressionService", void 0);
     __decorate$5([
@@ -6382,7 +6416,7 @@ var ColumnController = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6470,7 +6504,7 @@ var NumberUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6578,9 +6612,6 @@ var ColumnUtils = /** @class */ (function (_super) {
             callback(child);
         });
     };
-    __decorate$6([
-        Autowired('gridOptionsWrapper')
-    ], ColumnUtils.prototype, "gridOptionsWrapper", void 0);
     ColumnUtils = __decorate$6([
         Bean('columnUtils')
     ], ColumnUtils);
@@ -6589,7 +6620,7 @@ var ColumnUtils = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6763,7 +6794,7 @@ var DisplayedGroupCreator = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6784,7 +6815,8 @@ var PropertyKeys = /** @class */ (function () {
     PropertyKeys.STRING_PROPERTIES = [
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate',
         'quickFilterText', 'rowModelType', 'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow',
-        'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection'
+        'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
+        'serverSideStoreType'
     ];
     PropertyKeys.OBJECT_PROPERTIES = [
         'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'localeText', 'icons',
@@ -6831,7 +6863,8 @@ var PropertyKeys = /** @class */ (function () {
         'enableCellTextSelection', 'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction',
         'excludeChildrenWhenTreeDataFiltering', 'tooltipMouseTrack', 'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu',
         'undoRedoCellEditing', 'allowDragFromColumnsToolPanel', 'immutableData', 'immutableColumns', 'pivotSuppressAutoColumn',
-        'suppressExpandablePivotGroups', 'applyColumnDefOrder', 'debounceVerticalScrollbar', 'detailRowAutoHeight'
+        'suppressExpandablePivotGroups', 'applyColumnDefOrder', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
+        'serverSideFilteringAlwaysResets', 'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi'
     ];
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
     PropertyKeys.FUNCTION_PROPERTIES = [
@@ -6844,7 +6877,8 @@ var PropertyKeys = /** @class */ (function () {
         'loadingCellRenderer', 'loadingCellRendererFramework', 'loadingOverlayComponent', 'loadingOverlayComponentFramework', 'noRowsOverlayComponent',
         'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework', 'defaultGroupSortComparator', 'isRowMaster',
         'isRowSelectable', 'postSort', 'processHeaderForClipboard', 'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey',
-        'isServerSideGroup', 'suppressKeyboardEvent', 'createChartContainer', 'processChartOptions', 'getChartToolbarItems', 'fillOperation'
+        'isServerSideGroup', 'suppressKeyboardEvent', 'createChartContainer', 'processChartOptions', 'getChartToolbarItems', 'fillOperation',
+        'isApplyServerSideTransaction', 'getServerSideStoreParams', 'isServerSideGroupOpenByDefault'
     ];
     PropertyKeys.ALL_PROPERTIES = __spreadArrays(PropertyKeys.ARRAY_PROPERTIES, PropertyKeys.OBJECT_PROPERTIES, PropertyKeys.STRING_PROPERTIES, PropertyKeys.NUMBER_PROPERTIES, PropertyKeys.FUNCTION_PROPERTIES, PropertyKeys.BOOLEAN_PROPERTIES);
     /**
@@ -6859,7 +6893,7 @@ var PropertyKeys = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7023,7 +7057,7 @@ ComponentUtil.EVENTS = values(Events);
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7196,7 +7230,7 @@ var ColDefUtil = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7611,7 +7645,7 @@ var Color = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7699,7 +7733,7 @@ var CsvUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7728,11 +7762,8 @@ function isBrowserEdge() {
 }
 function isBrowserSafari() {
     if (isSafari === undefined) {
-        // taken from https://github.com/ag-grid/ag-grid/issues/550
-        var anyWindow = window;
-        var hasNotification = function (p) { return p && p.toString() === '[object SafariRemoteNotification]'; };
-        isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-            || hasNotification(anyWindow.safari && anyWindow.safari.pushNotification);
+        // taken from https://stackoverflow.com/a/23522755/1388233
+        isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     }
     return isSafari;
 }
@@ -7910,7 +7941,7 @@ var BrowserUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8003,6 +8034,14 @@ function containsClass(element, className) {
     }
     // if item is not a node
     return false;
+}
+function isFocusableFormField(element) {
+    var matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
+    var isFocusable = matches.call(element, Constants.INPUT_SELECTOR);
+    var isNotFocusable = matches.call(element, Constants.FOCUSABLE_EXCLUDE);
+    var isElementVisible = isVisible(element);
+    var focusable = isFocusable && !isNotFocusable && isElementVisible;
+    return focusable;
 }
 function setDisplayed(element, displayed) {
     addOrRemoveCssClass(element, 'ag-hidden', !displayed);
@@ -8370,6 +8409,7 @@ var DomUtils = /*#__PURE__*/Object.freeze({
     addOrRemoveCssClass: addOrRemoveCssClass,
     radioCssClass: radioCssClass,
     containsClass: containsClass,
+    isFocusableFormField: isFocusableFormField,
     setDisplayed: setDisplayed,
     setVisible: setVisible,
     setDisabled: setDisabled,
@@ -8415,7 +8455,7 @@ var DomUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8498,7 +8538,7 @@ function message(msg) {
 /**
  * cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they
  * can return back strings (instead of html elemnt) in the getGui() method. common code placed here to handle that.
- * @param {Promise<ICellRendererComp>} cellRendererPromise
+ * @param {AgPromise<ICellRendererComp>} cellRendererPromise
  * @param {HTMLElement} eTarget
  */
 function bindCellRendererToHtmlElement(cellRendererPromise, eTarget) {
@@ -8526,7 +8566,7 @@ var GeneralUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8653,7 +8693,7 @@ var AriaUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8723,7 +8763,7 @@ var DateUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8827,7 +8867,7 @@ var FuzzyMatchUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9022,7 +9062,7 @@ var IconUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9088,7 +9128,7 @@ function isUserSuppressingKeyboardEvent(gridOptionsWrapper, keyboardEvent, rowNo
 }
 function isUserSuppressingHeaderKeyboardEvent(gridOptionsWrapper, keyboardEvent, headerRowIndex, column) {
     var colDef = column.getDefinition();
-    var colDefFunc = colDef.suppressHeaderKeyboardEvent;
+    var colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
     if (!exists(colDefFunc)) {
         return false;
     }
@@ -9119,7 +9159,7 @@ var KeyboardUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9136,7 +9176,7 @@ var MapUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9345,7 +9385,7 @@ var MouseUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9431,7 +9471,7 @@ var RowNodeUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9448,7 +9488,7 @@ var SetUtils = /*#__PURE__*/Object.freeze({
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9468,7 +9508,7 @@ var _ = utils;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9495,25 +9535,25 @@ var NumberSequence = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var PromiseStatus;
-(function (PromiseStatus) {
-    PromiseStatus[PromiseStatus["IN_PROGRESS"] = 0] = "IN_PROGRESS";
-    PromiseStatus[PromiseStatus["RESOLVED"] = 1] = "RESOLVED";
-})(PromiseStatus || (PromiseStatus = {}));
-var Promise = /** @class */ (function () {
-    function Promise(callback) {
+var AgPromiseStatus;
+(function (AgPromiseStatus) {
+    AgPromiseStatus[AgPromiseStatus["IN_PROGRESS"] = 0] = "IN_PROGRESS";
+    AgPromiseStatus[AgPromiseStatus["RESOLVED"] = 1] = "RESOLVED";
+})(AgPromiseStatus || (AgPromiseStatus = {}));
+var AgPromise = /** @class */ (function () {
+    function AgPromise(callback) {
         var _this = this;
-        this.status = PromiseStatus.IN_PROGRESS;
+        this.status = AgPromiseStatus.IN_PROGRESS;
         this.resolution = null;
         this.waiters = [];
         callback(function (value) { return _this.onDone(value); }, function (params) { return _this.onReject(params); });
     }
-    Promise.all = function (promises) {
-        return new Promise(function (resolve) {
+    AgPromise.all = function (promises) {
+        return new AgPromise(function (resolve) {
             var remainingToResolve = promises.length;
             var combinedValues = new Array(remainingToResolve);
             forEach(promises, function (promise, index) {
@@ -9527,14 +9567,14 @@ var Promise = /** @class */ (function () {
             });
         });
     };
-    Promise.resolve = function (value) {
+    AgPromise.resolve = function (value) {
         if (value === void 0) { value = null; }
-        return new Promise(function (resolve) { return resolve(value); });
+        return new AgPromise(function (resolve) { return resolve(value); });
     };
-    Promise.prototype.then = function (func) {
+    AgPromise.prototype.then = function (func) {
         var _this = this;
-        return new Promise(function (resolve) {
-            if (_this.status === PromiseStatus.RESOLVED) {
+        return new AgPromise(function (resolve) {
+            if (_this.status === AgPromiseStatus.RESOLVED) {
                 resolve(func(_this.resolution));
             }
             else {
@@ -9542,23 +9582,23 @@ var Promise = /** @class */ (function () {
             }
         });
     };
-    Promise.prototype.resolveNow = function (ifNotResolvedValue, ifResolved) {
-        return this.status === PromiseStatus.RESOLVED ? ifResolved(this.resolution) : ifNotResolvedValue;
+    AgPromise.prototype.resolveNow = function (ifNotResolvedValue, ifResolved) {
+        return this.status === AgPromiseStatus.RESOLVED ? ifResolved(this.resolution) : ifNotResolvedValue;
     };
-    Promise.prototype.onDone = function (value) {
-        this.status = PromiseStatus.RESOLVED;
+    AgPromise.prototype.onDone = function (value) {
+        this.status = AgPromiseStatus.RESOLVED;
         this.resolution = value;
         forEach(this.waiters, function (waiter) { return waiter(value); });
     };
-    Promise.prototype.onReject = function (params) {
+    AgPromise.prototype.onReject = function (params) {
         console.warn('TBI');
     };
-    return Promise;
+    return AgPromise;
 }());
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9575,7 +9615,223 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign$1 = (undefined && undefined.__assign) || function () {
+    __assign$1 = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$1.apply(this, arguments);
+};
 var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var TooltipStates;
+(function (TooltipStates) {
+    TooltipStates[TooltipStates["NOTHING"] = 0] = "NOTHING";
+    TooltipStates[TooltipStates["WAITING_TO_SHOW"] = 1] = "WAITING_TO_SHOW";
+    TooltipStates[TooltipStates["SHOWING"] = 2] = "SHOWING";
+})(TooltipStates || (TooltipStates = {}));
+var TooltipFeature = /** @class */ (function (_super) {
+    __extends$4(TooltipFeature, _super);
+    function TooltipFeature(parentComp) {
+        var _this = _super.call(this) || this;
+        _this.DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
+        _this.SHOW_QUICK_TOOLTIP_DIFF = 1000;
+        _this.FADE_OUT_TOOLTIP_TIMEOUT = 1000;
+        _this.state = TooltipStates.NOTHING;
+        // when showing the tooltip, we need to make sure it's the most recent instance we request, as due to
+        // async we could request two tooltips before the first instance returns, in which case we should
+        // disregard the second instance.
+        _this.tooltipInstanceCount = 0;
+        _this.tooltipMouseTrack = false;
+        _this.parentComp = parentComp;
+        return _this;
+    }
+    TooltipFeature.prototype.postConstruct = function () {
+        this.tooltipShowDelay = this.gridOptionsWrapper.getTooltipShowDelay() || 2000;
+        this.tooltipMouseTrack = this.gridOptionsWrapper.isTooltipMouseTrack();
+        var el = this.parentComp.getGui();
+        this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
+        this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
+        this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
+        this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
+        this.addManagedListener(el, 'keydown', this.onKeyDown.bind(this));
+    };
+    TooltipFeature.prototype.destroy = function () {
+        // if this component gets destroyed while tooltip is showing, need to make sure
+        // we don't end with no mouseLeave event resulting in zombie tooltip
+        this.setToDoNothing();
+        _super.prototype.destroy.call(this);
+    };
+    TooltipFeature.prototype.onMouseEnter = function (e) {
+        // every mouseenter should be following by a mouseleave, however for some unkonwn, it's possible for
+        // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
+        // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
+        // state is !=nothing, then we know mouseenter was already received.
+        if (this.state != TooltipStates.NOTHING) {
+            return;
+        }
+        // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
+        var delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
+        this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
+        this.lastMouseEvent = e;
+        this.state = TooltipStates.WAITING_TO_SHOW;
+    };
+    TooltipFeature.prototype.onMouseLeave = function () {
+        this.setToDoNothing();
+    };
+    TooltipFeature.prototype.onKeyDown = function () {
+        this.setToDoNothing();
+    };
+    TooltipFeature.prototype.setToDoNothing = function () {
+        if (this.state === TooltipStates.SHOWING) {
+            this.hideTooltip();
+        }
+        this.clearTimeouts();
+        this.state = TooltipStates.NOTHING;
+    };
+    TooltipFeature.prototype.onMouseMove = function (e) {
+        // there is a delay from the time we mouseOver a component and the time the
+        // tooltip is displayed, so we need to track mousemove to be able to correctly
+        // position the tooltip when showTooltip is called.
+        this.lastMouseEvent = e;
+        if (this.tooltipMouseTrack &&
+            this.state === TooltipStates.SHOWING &&
+            this.tooltipComp) {
+            this.positionTooltipUnderLastMouseEvent();
+        }
+    };
+    TooltipFeature.prototype.onMouseDown = function () {
+        this.setToDoNothing();
+    };
+    TooltipFeature.prototype.hideTooltip = function () {
+        // check if comp exists - due to async, although we asked for
+        // one, the instance may not be back yet
+        if (this.tooltipComp) {
+            this.destroyTooltipComp();
+            TooltipFeature.lastTooltipHideTime = new Date().getTime();
+        }
+        this.state = TooltipStates.NOTHING;
+    };
+    TooltipFeature.prototype.destroyTooltipComp = function () {
+        var _this = this;
+        // add class to fade out the tooltip
+        addCssClass(this.tooltipComp.getGui(), 'ag-tooltip-hiding');
+        // make local copies of these variables, as we use them in the async function below,
+        // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
+        var tooltipPopupDestroyFunc = this.tooltipPopupDestroyFunc;
+        var tooltipComp = this.tooltipComp;
+        window.setTimeout(function () {
+            tooltipPopupDestroyFunc();
+            _this.getContext().destroyBean(tooltipComp);
+        }, this.FADE_OUT_TOOLTIP_TIMEOUT);
+        this.tooltipPopupDestroyFunc = undefined;
+        this.tooltipComp = undefined;
+    };
+    TooltipFeature.prototype.isLastTooltipHiddenRecently = function () {
+        // return true if <1000ms since last time we hid a tooltip
+        var now = new Date().getTime();
+        var then = TooltipFeature.lastTooltipHideTime;
+        return (now - then) < this.SHOW_QUICK_TOOLTIP_DIFF;
+    };
+    TooltipFeature.prototype.showTooltip = function () {
+        var params = __assign$1({ api: this.gridApi, columnApi: this.columnApi, context: this.gridOptionsWrapper.getContext() }, this.parentComp.getTooltipParams());
+        if (!exists(params.value)) {
+            this.setToDoNothing();
+            return;
+        }
+        this.state = TooltipStates.SHOWING;
+        this.tooltipInstanceCount++;
+        // we pass in tooltipInstanceCount so the callback knows what the count was when
+        // we requested the tooltip, so if another tooltip was requested in the mean time
+        // we disregard it
+        var callback = this.newTooltipComponentCallback.bind(this, this.tooltipInstanceCount);
+        this.userComponentFactory.newTooltipComponent(params).then(callback);
+    };
+    TooltipFeature.prototype.newTooltipComponentCallback = function (tooltipInstanceCopy, tooltipComp) {
+        var compNoLongerNeeded = this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
+        if (compNoLongerNeeded) {
+            this.getContext().destroyBean(tooltipComp);
+            return;
+        }
+        var eGui = tooltipComp.getGui();
+        this.tooltipComp = tooltipComp;
+        if (!containsClass(eGui, 'ag-tooltip')) {
+            addCssClass(eGui, 'ag-tooltip-custom');
+        }
+        var addPopupRes = this.popupService.addPopup({
+            eChild: eGui
+        });
+        if (addPopupRes) {
+            this.tooltipPopupDestroyFunc = addPopupRes.hideFunc;
+        }
+        // this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
+        this.positionTooltipUnderLastMouseEvent();
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
+    };
+    TooltipFeature.prototype.positionTooltipUnderLastMouseEvent = function () {
+        this.popupService.positionPopupUnderMouseEvent({
+            type: 'tooltip',
+            mouseEvent: this.lastMouseEvent,
+            ePopup: this.tooltipComp.getGui(),
+            nudgeY: 18
+        });
+    };
+    TooltipFeature.prototype.clearTimeouts = function () {
+        if (this.showTooltipTimeoutId) {
+            window.clearTimeout(this.showTooltipTimeoutId);
+            this.showTooltipTimeoutId = undefined;
+        }
+        if (this.hideTooltipTimeoutId) {
+            window.clearTimeout(this.hideTooltipTimeoutId);
+            this.hideTooltipTimeoutId = undefined;
+        }
+    };
+    __decorate$8([
+        Autowired('popupService')
+    ], TooltipFeature.prototype, "popupService", void 0);
+    __decorate$8([
+        Autowired('userComponentFactory')
+    ], TooltipFeature.prototype, "userComponentFactory", void 0);
+    __decorate$8([
+        Autowired('columnApi')
+    ], TooltipFeature.prototype, "columnApi", void 0);
+    __decorate$8([
+        Autowired('gridApi')
+    ], TooltipFeature.prototype, "gridApi", void 0);
+    __decorate$8([
+        PostConstruct
+    ], TooltipFeature.prototype, "postConstruct", null);
+    return TooltipFeature;
+}(BeanStub));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$5 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -9583,7 +9839,7 @@ var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, 
 };
 var compIdSequence = new NumberSequence();
 var Component = /** @class */ (function (_super) {
-    __extends$4(Component, _super);
+    __extends$5(Component, _super);
     function Component(template) {
         var _this = _super.call(this) || this;
         _this.annotatedGuiListeners = [];
@@ -9603,8 +9859,45 @@ var Component = /** @class */ (function (_super) {
         }
         return _this;
     }
+    Component.prototype.postConstructOnComponent = function () {
+        this.usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
+    };
     Component.prototype.getCompId = function () {
         return this.compId;
+    };
+    Component.prototype.getTooltipParams = function () {
+        return {
+            value: this.tooltipText,
+            location: 'UNKNOWN'
+        };
+    };
+    Component.prototype.setTooltip = function (newTooltipText) {
+        var _this = this;
+        var removeTooltip = function () {
+            if (_this.usingBrowserTooltips) {
+                _this.getGui().removeAttribute('title');
+            }
+            else {
+                _this.tooltipFeature = _this.destroyBean(_this.tooltipFeature);
+            }
+        };
+        var addTooltip = function () {
+            if (_this.usingBrowserTooltips) {
+                _this.getGui().setAttribute('title', _this.tooltipText);
+            }
+            else {
+                _this.tooltipFeature = _this.createBean(new TooltipFeature(_this));
+            }
+        };
+        if (this.tooltipText != newTooltipText) {
+            if (this.tooltipText) {
+                removeTooltip();
+            }
+            this.tooltipText = newTooltipText;
+            if (this.tooltipText) {
+                addTooltip();
+            }
+        }
     };
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
     Component.prototype.createChildComponentsFromTags = function (parentNode, paramsMap) {
@@ -9827,6 +10120,9 @@ var Component = /** @class */ (function (_super) {
     };
     Component.prototype.destroy = function () {
         this.removeAnnotatedGuiEventListeners();
+        if (this.tooltipFeature) {
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+        }
         _super.prototype.destroy.call(this);
     };
     Component.prototype.addGuiEventListener = function (event, listener) {
@@ -9863,13 +10159,16 @@ var Component = /** @class */ (function (_super) {
         return this.queryForHtmlElement("[ref=\"" + refName + "\"]");
     };
     Component.EVENT_DISPLAYED_CHANGED = 'displayedChanged';
-    __decorate$8([
+    __decorate$9([
         Autowired('agStackComponentsRegistry')
     ], Component.prototype, "agStackComponentsRegistry", void 0);
-    __decorate$8([
+    __decorate$9([
+        PostConstruct
+    ], Component.prototype, "postConstructOnComponent", null);
+    __decorate$9([
         PreConstruct
     ], Component.prototype, "createChildComponentsPreConstruct", null);
-    __decorate$8([
+    __decorate$9([
         PostConstruct
     ], Component.prototype, "addAnnotatedGridEventListeners", null);
     return Component;
@@ -9877,11 +10176,11 @@ var Component = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$5 = (undefined && undefined.__extends) || (function () {
+var __extends$6 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9895,7 +10194,7 @@ var __extends$5 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PopupComponent = /** @class */ (function (_super) {
-    __extends$5(PopupComponent, _super);
+    __extends$6(PopupComponent, _super);
     function PopupComponent() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -9919,7 +10218,7 @@ var PopupComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9976,7 +10275,7 @@ function getOrCreateProps$1(target, instanceName) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10010,11 +10309,11 @@ var KeyCode = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$6 = (undefined && undefined.__extends) || (function () {
+var __extends$7 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10027,14 +10326,14 @@ var __extends$6 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TextCellEditor = /** @class */ (function (_super) {
-    __extends$6(TextCellEditor, _super);
+    __extends$7(TextCellEditor, _super);
     function TextCellEditor() {
         return _super.call(this, TextCellEditor.TEMPLATE) || this;
     }
@@ -10073,8 +10372,9 @@ var TextCellEditor = /** @class */ (function (_super) {
         });
     };
     TextCellEditor.prototype.afterGuiAttached = function () {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var eInput = this.eInput;
-        eInput.setInputAriaLabel('Input Editor');
+        eInput.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
         if (!this.focusAfterAttached) {
             return;
         }
@@ -10126,7 +10426,7 @@ var TextCellEditor = /** @class */ (function (_super) {
         return false;
     };
     TextCellEditor.TEMPLATE = '<div class="ag-cell-edit-wrapper"><ag-input-text-field class="ag-cell-editor" ref="eInput"></ag-input-text-field></div>';
-    __decorate$9([
+    __decorate$a([
         RefSelector('eInput')
     ], TextCellEditor.prototype, "eInput", void 0);
     return TextCellEditor;
@@ -10134,7 +10434,7 @@ var TextCellEditor = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10186,12 +10486,17 @@ var DateCompWrapper = /** @class */ (function () {
             this.dateComp.setInputAriaLabel(label);
         }
     };
+    DateCompWrapper.prototype.afterGuiAttached = function (params) {
+        if (this.dateComp && typeof this.dateComp.afterGuiAttached === 'function') {
+            this.dateComp.afterGuiAttached(params);
+        }
+    };
     return DateCompWrapper;
 }());
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10260,7 +10565,7 @@ var OptionsFactory = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10295,11 +10600,11 @@ var DEFAULT_FILTER_LOCALE_TEXT = {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$7 = (undefined && undefined.__extends) || (function () {
+var __extends$8 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10312,7 +10617,7 @@ var __extends$7 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -10329,7 +10634,7 @@ var __decorate$a = (undefined && undefined.__decorate) || function (decorators, 
  * that focus goes to the first cell of the first header row.
  */
 var ManagedFocusComponent = /** @class */ (function (_super) {
-    __extends$7(ManagedFocusComponent, _super);
+    __extends$8(ManagedFocusComponent, _super);
     /*
      * Set isFocusableContainer to true if this component will contain multiple focus-managed
      * elements within. When set to true, this component will add tabGuards that will be responsible
@@ -10462,7 +10767,11 @@ var ManagedFocusComponent = /** @class */ (function (_super) {
     ManagedFocusComponent.prototype.addKeyDownListeners = function (eGui) {
         var _this = this;
         this.addManagedListener(eGui, 'keydown', function (e) {
-            if (e.defaultPrevented) {
+            if (e.defaultPrevented || isStopPropagationForAgGrid(e)) {
+                return;
+            }
+            if (_this.shouldStopEventPropagation(e)) {
+                stopPropagationForAgGrid(e);
                 return;
             }
             if (e.keyCode === KeyCode.TAB) {
@@ -10472,6 +10781,9 @@ var ManagedFocusComponent = /** @class */ (function (_super) {
                 _this.handleKeyDown(e);
             }
         });
+    };
+    ManagedFocusComponent.prototype.shouldStopEventPropagation = function (e) {
+        return false;
     };
     ManagedFocusComponent.prototype.onFocus = function (e) {
         if (this.skipTabGuardFocus) {
@@ -10500,10 +10812,10 @@ var ManagedFocusComponent = /** @class */ (function (_super) {
         }
     };
     ManagedFocusComponent.FOCUS_MANAGED_CLASS = 'ag-focus-managed';
-    __decorate$a([
+    __decorate$b([
         Autowired('focusController')
     ], ManagedFocusComponent.prototype, "focusController", void 0);
-    __decorate$a([
+    __decorate$b([
         PostConstruct
     ], ManagedFocusComponent.prototype, "postConstruct", null);
     return ManagedFocusComponent;
@@ -10511,11 +10823,11 @@ var ManagedFocusComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$8 = (undefined && undefined.__extends) || (function () {
+var __extends$9 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10528,7 +10840,7 @@ var __extends$8 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -10540,7 +10852,7 @@ var __decorate$b = (undefined && undefined.__decorate) || function (decorators, 
  * extend this class.
  */
 var ProvidedFilter = /** @class */ (function (_super) {
-    __extends$8(ProvidedFilter, _super);
+    __extends$9(ProvidedFilter, _super);
     function ProvidedFilter(filterNameKey) {
         var _this = _super.call(this) || this;
         _this.filterNameKey = filterNameKey;
@@ -10679,9 +10991,9 @@ var ProvidedFilter = /** @class */ (function (_super) {
         var promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
         return promise.then(function () {
             _this.updateUiVisibility();
-            // we set the model from the gui, rather than the provided model,
-            // so the model is consistent. eg handling of null/undefined will be the same,
-            // of if model is case insensitive, then casing is removed.
+            // we set the model from the GUI, rather than the provided model,
+            // so the model is consistent, e.g. handling of null/undefined will be the same,
+            // or if model is case insensitive, then casing is removed.
             _this.applyModel();
         });
     };
@@ -10805,13 +11117,10 @@ var ProvidedFilter = /** @class */ (function (_super) {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
     };
-    __decorate$b([
-        Autowired('gridOptionsWrapper')
-    ], ProvidedFilter.prototype, "gridOptionsWrapper", void 0);
-    __decorate$b([
+    __decorate$c([
         Autowired('rowModel')
     ], ProvidedFilter.prototype, "rowModel", void 0);
-    __decorate$b([
+    __decorate$c([
         PostConstruct
     ], ProvidedFilter.prototype, "postConstruct", null);
     return ProvidedFilter;
@@ -10819,11 +11128,11 @@ var ProvidedFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$9 = (undefined && undefined.__extends) || (function () {
+var __extends$a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10836,7 +11145,7 @@ var __extends$9 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -10851,7 +11160,7 @@ var ConditionPosition;
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
 var SimpleFilter = /** @class */ (function (_super) {
-    __extends$9(SimpleFilter, _super);
+    __extends$a(SimpleFilter, _super);
     function SimpleFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -10950,7 +11259,7 @@ var SimpleFilter = /** @class */ (function (_super) {
             this.setConditionIntoUi(simpleModel, ConditionPosition.One);
             this.setConditionIntoUi(null, ConditionPosition.Two);
         }
-        return Promise.resolve();
+        return AgPromise.resolve();
     };
     SimpleFilter.prototype.doesFilterPass = function (params) {
         var _this = this;
@@ -10996,7 +11305,9 @@ var SimpleFilter = /** @class */ (function (_super) {
             else {
                 value = option.displayKey;
                 var customOption = _this.optionsFactory.getCustomOption(value);
-                text = customOption ? customOption.displayName : _this.translate(value);
+                text = customOption ?
+                    _this.gridOptionsWrapper.getLocaleTextFunc()(customOption.displayKey, customOption.displayName) :
+                    _this.translate(value);
             }
             var createOption = function () { return ({ value: value, text: text }); };
             _this.eType1.addOption(createOption());
@@ -11033,10 +11344,12 @@ var SimpleFilter = /** @class */ (function (_super) {
         return this.allowTwoConditions && this.isConditionUiComplete(ConditionPosition.One);
     };
     SimpleFilter.prototype.resetUiToDefaults = function (silent) {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        var filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         var uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
         var defaultOption = this.optionsFactory.getDefaultOption();
-        this.eType1.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
-        this.eType2.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
+        this.eType1.setValue(defaultOption, silent).setAriaLabel(filteringLabel);
+        this.eType2.setValue(defaultOption, silent).setAriaLabel(filteringLabel);
         this.eJoinOperatorAnd
             .setValue(this.isDefaultOperator('AND'), silent)
             .setName(uniqueGroupId)
@@ -11045,7 +11358,7 @@ var SimpleFilter = /** @class */ (function (_super) {
             .setValue(this.isDefaultOperator('OR'), silent)
             .setName(uniqueGroupId)
             .setLabel(this.translate('orCondition'));
-        return Promise.resolve();
+        return AgPromise.resolve();
     };
     SimpleFilter.prototype.isDefaultOperator = function (operator) {
         return operator === this.defaultJoinOperator;
@@ -11074,25 +11387,25 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.NOT_CONTAINS = 'notContains';
     SimpleFilter.STARTS_WITH = 'startsWith';
     SimpleFilter.ENDS_WITH = 'endsWith';
-    __decorate$c([
+    __decorate$d([
         RefSelector('eOptions1')
     ], SimpleFilter.prototype, "eType1", void 0);
-    __decorate$c([
+    __decorate$d([
         RefSelector('eOptions2')
     ], SimpleFilter.prototype, "eType2", void 0);
-    __decorate$c([
+    __decorate$d([
         RefSelector('eJoinOperatorPanel')
     ], SimpleFilter.prototype, "eJoinOperatorPanel", void 0);
-    __decorate$c([
+    __decorate$d([
         RefSelector('eJoinOperatorAnd')
     ], SimpleFilter.prototype, "eJoinOperatorAnd", void 0);
-    __decorate$c([
+    __decorate$d([
         RefSelector('eJoinOperatorOr')
     ], SimpleFilter.prototype, "eJoinOperatorOr", void 0);
-    __decorate$c([
+    __decorate$d([
         RefSelector('eCondition1Body')
     ], SimpleFilter.prototype, "eCondition1Body", void 0);
-    __decorate$c([
+    __decorate$d([
         RefSelector('eCondition2Body')
     ], SimpleFilter.prototype, "eCondition2Body", void 0);
     return SimpleFilter;
@@ -11100,11 +11413,11 @@ var SimpleFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$a = (undefined && undefined.__extends) || (function () {
+var __extends$b = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11118,7 +11431,7 @@ var __extends$a = (undefined && undefined.__extends) || (function () {
     };
 })();
 var ScalarFilter = /** @class */ (function (_super) {
-    __extends$a(ScalarFilter, _super);
+    __extends$b(ScalarFilter, _super);
     function ScalarFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -11208,11 +11521,11 @@ var ScalarFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$b = (undefined && undefined.__extends) || (function () {
+var __extends$c = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11225,17 +11538,21 @@ var __extends$b = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var DateFilter = /** @class */ (function (_super) {
-    __extends$b(DateFilter, _super);
+    __extends$c(DateFilter, _super);
     function DateFilter() {
         return _super.call(this, 'dateFilter') || this;
     }
+    DateFilter.prototype.afterGuiAttached = function (params) {
+        _super.prototype.afterGuiAttached.call(this, params);
+        this.dateCondition1FromComp.afterGuiAttached(params);
+    };
     DateFilter.prototype.mapRangeFromModel = function (filterModel) {
         // unlike the other filters, we do two things here:
         // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
@@ -11294,15 +11611,16 @@ var DateFilter = /** @class */ (function (_super) {
     };
     DateFilter.prototype.createDateComponents = function () {
         var _this = this;
-        // params to pass to all four date comps
-        var dateComponentParams = {
-            onDateChanged: function () { return _this.onUiChanged(); },
-            filterParams: this.dateFilterParams
+        var createDateCompWrapper = function (element) {
+            return new DateCompWrapper(_this.getContext(), _this.userComponentFactory, {
+                onDateChanged: function () { return _this.onUiChanged(); },
+                filterParams: _this.dateFilterParams
+            }, element);
         };
-        this.dateCondition1FromComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition1PanelFrom);
-        this.dateCondition1ToComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition1PanelTo);
-        this.dateCondition2FromComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition2PanelFrom);
-        this.dateCondition2ToComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition2PanelTo);
+        this.dateCondition1FromComp = createDateCompWrapper(this.eCondition1PanelFrom);
+        this.dateCondition1ToComp = createDateCompWrapper(this.eCondition1PanelTo);
+        this.dateCondition2FromComp = createDateCompWrapper(this.eCondition2PanelFrom);
+        this.dateCondition2ToComp = createDateCompWrapper(this.eCondition2PanelTo);
         this.addDestroyFunc(function () {
             _this.dateCondition1FromComp.destroy();
             _this.dateCondition1ToComp.destroy();
@@ -11351,8 +11669,9 @@ var DateFilter = /** @class */ (function (_super) {
         };
     };
     DateFilter.prototype.resetPlaceholder = function () {
+        var globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
         var placeholder = this.translate('dateFormatOoo');
-        var ariaLabel = 'Filter value';
+        var ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
         this.dateCondition1FromComp.setInputPlaceholder(placeholder);
         this.dateCondition1FromComp.setInputAriaLabel(ariaLabel);
         this.dateCondition1ToComp.setInputPlaceholder(placeholder);
@@ -11384,19 +11703,19 @@ var DateFilter = /** @class */ (function (_super) {
         ScalarFilter.NOT_EQUAL,
         ScalarFilter.IN_RANGE
     ];
-    __decorate$d([
+    __decorate$e([
         RefSelector('eCondition1PanelFrom')
     ], DateFilter.prototype, "eCondition1PanelFrom", void 0);
-    __decorate$d([
+    __decorate$e([
         RefSelector('eCondition1PanelTo')
     ], DateFilter.prototype, "eCondition1PanelTo", void 0);
-    __decorate$d([
+    __decorate$e([
         RefSelector('eCondition2PanelFrom')
     ], DateFilter.prototype, "eCondition2PanelFrom", void 0);
-    __decorate$d([
+    __decorate$e([
         RefSelector('eCondition2PanelTo')
     ], DateFilter.prototype, "eCondition2PanelTo", void 0);
-    __decorate$d([
+    __decorate$e([
         Autowired('userComponentFactory')
     ], DateFilter.prototype, "userComponentFactory", void 0);
     return DateFilter;
@@ -11404,7 +11723,7 @@ var DateFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11534,11 +11853,11 @@ var TouchListener = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$c = (undefined && undefined.__extends) || (function () {
+var __extends$d = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11551,14 +11870,14 @@ var __extends$c = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var HeaderComp = /** @class */ (function (_super) {
-    __extends$c(HeaderComp, _super);
+    __extends$d(HeaderComp, _super);
     function HeaderComp() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.lastMovingChanged = 0;
@@ -11782,37 +12101,34 @@ var HeaderComp = /** @class */ (function (_super) {
         addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
     };
     HeaderComp.TEMPLATE = "<div class=\"ag-cell-label-container\">\n            <span ref=\"eMenu\" class=\"ag-header-icon ag-header-cell-menu-button\" aria-hidden=\"true\"></span>\n            <div ref=\"eLabel\" class=\"ag-header-cell-label\" role=\"presentation\" unselectable=\"on\">\n                <span ref=\"eText\" class=\"ag-header-cell-text\" unselectable=\"on\"></span>\n                <span ref=\"eFilter\" class=\"ag-header-icon ag-header-label-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortOrder\" class=\"ag-header-icon ag-header-label-icon ag-sort-order\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortAsc\" class=\"ag-header-icon ag-header-label-icon ag-sort-ascending-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortDesc\" class=\"ag-header-icon ag-header-label-icon ag-sort-descending-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortNone\" class=\"ag-header-icon ag-header-label-icon ag-sort-none-icon\" aria-hidden=\"true\"></span>\n            </div>\n        </div>";
-    __decorate$e([
-        Autowired('gridOptionsWrapper')
-    ], HeaderComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$e([
+    __decorate$f([
         Autowired('sortController')
     ], HeaderComp.prototype, "sortController", void 0);
-    __decorate$e([
+    __decorate$f([
         Autowired('menuFactory')
     ], HeaderComp.prototype, "menuFactory", void 0);
-    __decorate$e([
+    __decorate$f([
         RefSelector('eFilter')
     ], HeaderComp.prototype, "eFilter", void 0);
-    __decorate$e([
+    __decorate$f([
         RefSelector('eSortAsc')
     ], HeaderComp.prototype, "eSortAsc", void 0);
-    __decorate$e([
+    __decorate$f([
         RefSelector('eSortDesc')
     ], HeaderComp.prototype, "eSortDesc", void 0);
-    __decorate$e([
+    __decorate$f([
         RefSelector('eSortNone')
     ], HeaderComp.prototype, "eSortNone", void 0);
-    __decorate$e([
+    __decorate$f([
         RefSelector('eSortOrder')
     ], HeaderComp.prototype, "eSortOrder", void 0);
-    __decorate$e([
+    __decorate$f([
         RefSelector('eMenu')
     ], HeaderComp.prototype, "eMenu", void 0);
-    __decorate$e([
+    __decorate$f([
         RefSelector('eLabel')
     ], HeaderComp.prototype, "eLabel", void 0);
-    __decorate$e([
+    __decorate$f([
         RefSelector('eText')
     ], HeaderComp.prototype, "eText", void 0);
     return HeaderComp;
@@ -11820,11 +12136,11 @@ var HeaderComp = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$d = (undefined && undefined.__extends) || (function () {
+var __extends$e = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11837,14 +12153,14 @@ var __extends$d = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var HeaderGroupComp = /** @class */ (function (_super) {
-    __extends$d(HeaderGroupComp, _super);
+    __extends$e(HeaderGroupComp, _super);
     function HeaderGroupComp() {
         return _super.call(this, HeaderGroupComp.TEMPLATE) || this;
     }
@@ -11889,7 +12205,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     };
     HeaderGroupComp.prototype.addTouchAndClickListeners = function (eElement, action) {
-        var touchListener = new TouchListener(eElement);
+        var touchListener = new TouchListener(eElement, true);
         this.addManagedListener(touchListener, TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(function () { return touchListener.destroy(); });
         this.addManagedListener(eElement, "click", action);
@@ -11926,16 +12242,13 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         }
     };
     HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\" ref=\"agContainer\" role=\"presentation\">\n            <span ref=\"agLabel\" class=\"ag-header-group-text\" role=\"presentation\"></span>\n            <span ref=\"agOpened\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded\"></span>\n            <span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>\n        </div>";
-    __decorate$f([
+    __decorate$g([
         Autowired("columnController")
     ], HeaderGroupComp.prototype, "columnController", void 0);
-    __decorate$f([
-        Autowired("gridOptionsWrapper")
-    ], HeaderGroupComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$f([
+    __decorate$g([
         RefSelector("agOpened")
     ], HeaderGroupComp.prototype, "eOpenIcon", void 0);
-    __decorate$f([
+    __decorate$g([
         RefSelector("agClosed")
     ], HeaderGroupComp.prototype, "eCloseIcon", void 0);
     return HeaderGroupComp;
@@ -11943,11 +12256,11 @@ var HeaderGroupComp = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __decorate$g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -12017,7 +12330,7 @@ var RowNode = /** @class */ (function () {
         if (this.rowPinned === Constants.PINNED_TOP) {
             return 't-' + this.rowIndex;
         }
-        else if (this.rowPinned === Constants.PINNED_BOTTOM) {
+        if (this.rowPinned === Constants.PINNED_BOTTOM) {
             return 'b-' + this.rowIndex;
         }
         return this.rowIndex.toString();
@@ -12399,7 +12712,9 @@ var RowNode = /** @class */ (function () {
             var newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             var allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (newRowClicked && allowMultiSelect) {
-                return this.doRowRangeSelection();
+                var nodesChanged = this.doRowRangeSelection(params.newValue);
+                this.selectionController.setLastSelectedNode(this);
+                return nodesChanged;
             }
         }
         var updatedCount = 0;
@@ -12445,16 +12760,18 @@ var RowNode = /** @class */ (function () {
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    RowNode.prototype.doRowRangeSelection = function () {
+    RowNode.prototype.doRowRangeSelection = function (value) {
+        var _this = this;
+        if (value === void 0) { value = true; }
         var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         var lastSelectedNode = this.selectionController.getLastSelectedNode();
         var nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
         var updatedCount = 0;
         nodesToSelect.forEach(function (rowNode) {
-            if (rowNode.group && groupsSelectChildren) {
+            if (rowNode.group && groupsSelectChildren || (value === false && _this === rowNode)) {
                 return;
             }
-            var nodeWasSelected = rowNode.selectThisNode(true);
+            var nodeWasSelected = rowNode.selectThisNode(value);
             if (nodeWasSelected) {
                 updatedCount++;
             }
@@ -12552,6 +12869,18 @@ var RowNode = /** @class */ (function () {
         var isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
     };
+    RowNode.prototype.getRoute = function () {
+        if (this.key == null) {
+            return;
+        }
+        var res = [];
+        var pointer = this;
+        while (pointer.key != null) {
+            res.push(pointer.key);
+            pointer = pointer.parent;
+        }
+        return res.reverse();
+    };
     RowNode.ID_PREFIX_ROW_GROUP = 'row-group-';
     RowNode.ID_PREFIX_TOP_PINNED = 't-';
     RowNode.ID_PREFIX_BOTTOM_PINNED = 'b-';
@@ -12575,34 +12904,34 @@ var RowNode = /** @class */ (function () {
     RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
     RowNode.EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';
     RowNode.EVENT_DRAGGING_CHANGED = 'draggingChanged';
-    __decorate$g([
+    __decorate$h([
         Autowired('eventService')
     ], RowNode.prototype, "mainEventService", void 0);
-    __decorate$g([
+    __decorate$h([
         Autowired('gridOptionsWrapper')
     ], RowNode.prototype, "gridOptionsWrapper", void 0);
-    __decorate$g([
+    __decorate$h([
         Autowired('selectionController')
     ], RowNode.prototype, "selectionController", void 0);
-    __decorate$g([
+    __decorate$h([
         Autowired('columnController')
     ], RowNode.prototype, "columnController", void 0);
-    __decorate$g([
+    __decorate$h([
         Autowired('valueService')
     ], RowNode.prototype, "valueService", void 0);
-    __decorate$g([
+    __decorate$h([
         Autowired('rowModel')
     ], RowNode.prototype, "rowModel", void 0);
-    __decorate$g([
+    __decorate$h([
         Autowired('context')
     ], RowNode.prototype, "context", void 0);
-    __decorate$g([
+    __decorate$h([
         Autowired('valueCache')
     ], RowNode.prototype, "valueCache", void 0);
-    __decorate$g([
+    __decorate$h([
         Autowired('columnApi')
     ], RowNode.prototype, "columnApi", void 0);
-    __decorate$g([
+    __decorate$h([
         Autowired('gridApi')
     ], RowNode.prototype, "gridApi", void 0);
     return RowNode;
@@ -12610,11 +12939,11 @@ var RowNode = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$e = (undefined && undefined.__extends) || (function () {
+var __extends$f = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -12627,14 +12956,14 @@ var __extends$e = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
-    __extends$e(CheckboxSelectionComponent, _super);
+    __extends$f(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
         return _super.call(this, /* html*/ "\n            <div class=\"ag-selection-checkbox\">\n                <ag-checkbox role=\"presentation\" ref=\"eCheckbox\"></ag-checkbox>\n            </div>") || this;
     }
@@ -12650,14 +12979,20 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         this.showOrHideSelect();
     };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var state = this.rowNode.isSelected();
-        var stateName = state === undefined ? 'indeterminate' : (state === true ? 'checked' : 'unchecked');
+        var stateName = state === undefined
+            ? translate('ariaIndeterminate', 'indeterminate')
+            : (state === true
+                ? translate('ariaChecked', 'checked')
+                : translate('ariaUnchecked', 'unchecked'));
+        var ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel("Press Space to toggle row selection (" + stateName + ")");
+        this.eCheckbox.setInputAriaLabel(ariaLabel + " (" + stateName + ")");
     };
-    CheckboxSelectionComponent.prototype.onCheckedClicked = function () {
+    CheckboxSelectionComponent.prototype.onCheckedClicked = function (event) {
         var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        var updatedCount = this.rowNode.setSelectedParams({ newValue: false, groupSelectsFiltered: groupSelectsFiltered });
+        var updatedCount = this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
         return updatedCount;
     };
     CheckboxSelectionComponent.prototype.onUncheckedClicked = function (event) {
@@ -12675,18 +13010,20 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         this.addGuiEventListener('click', function (event) { return stopPropagationForAgGrid(event); });
         // likewise we don't want double click on this icon to open a group
         this.addGuiEventListener('dblclick', function (event) { return stopPropagationForAgGrid(event); });
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', function (params) {
-            if (params.previousValue === undefined) { // indeterminate
-                var result = _this.onUncheckedClicked(params.event || {});
+        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', function (event) {
+            var isSelected = _this.eCheckbox.getValue();
+            var previousValue = _this.eCheckbox.getPreviousValue();
+            if (previousValue === undefined) { // indeterminate
+                var result = _this.onUncheckedClicked(event || {});
                 if (result === 0) {
-                    _this.onCheckedClicked();
+                    _this.onCheckedClicked(event);
                 }
             }
-            else if (params.selected) {
-                _this.onUncheckedClicked(params.event || {});
+            else if (isSelected) {
+                _this.onCheckedClicked(event);
             }
             else {
-                _this.onCheckedClicked();
+                _this.onUncheckedClicked(event || {});
             }
         });
         this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
@@ -12717,13 +13054,10 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         var colDef = this.column ? this.column.getColDef() : null;
         return colDef && typeof colDef.checkboxSelection === 'function';
     };
-    __decorate$h([
-        Autowired('gridOptionsWrapper')
-    ], CheckboxSelectionComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate$h([
+    __decorate$i([
         RefSelector('eCheckbox')
     ], CheckboxSelectionComponent.prototype, "eCheckbox", void 0);
-    __decorate$h([
+    __decorate$i([
         PostConstruct
     ], CheckboxSelectionComponent.prototype, "postConstruct", null);
     return CheckboxSelectionComponent;
@@ -12731,7 +13065,7 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12794,11 +13128,11 @@ var StatusPanelComponent = {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$f = (undefined && undefined.__extends) || (function () {
+var __extends$g = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -12811,7 +13145,7 @@ var __extends$f = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -12824,7 +13158,7 @@ var ComponentSource;
     ComponentSource[ComponentSource["HARDCODED"] = 2] = "HARDCODED";
 })(ComponentSource || (ComponentSource = {}));
 var UserComponentFactory = /** @class */ (function (_super) {
-    __extends$f(UserComponentFactory, _super);
+    __extends$g(UserComponentFactory, _super);
     function UserComponentFactory() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -12911,7 +13245,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         this.addReactHacks(params);
         var deferredInit = this.initComponent(componentInstance, params);
         if (deferredInit == null) {
-            return Promise.resolve(componentInstance);
+            return AgPromise.resolve(componentInstance);
         }
         else {
             return deferredInit.then(function () { return componentInstance; });
@@ -13158,22 +13492,22 @@ var UserComponentFactory = /** @class */ (function (_super) {
         }
         return component.init(params);
     };
-    __decorate$i([
+    __decorate$j([
         Autowired('gridOptions')
     ], UserComponentFactory.prototype, "gridOptions", void 0);
-    __decorate$i([
+    __decorate$j([
         Autowired('agComponentUtils')
     ], UserComponentFactory.prototype, "agComponentUtils", void 0);
-    __decorate$i([
+    __decorate$j([
         Autowired('componentMetadataProvider')
     ], UserComponentFactory.prototype, "componentMetadataProvider", void 0);
-    __decorate$i([
+    __decorate$j([
         Autowired('userComponentRegistry')
     ], UserComponentFactory.prototype, "userComponentRegistry", void 0);
-    __decorate$i([
+    __decorate$j([
         Optional('frameworkComponentWrapper')
     ], UserComponentFactory.prototype, "frameworkComponentWrapper", void 0);
-    UserComponentFactory = __decorate$i([
+    UserComponentFactory = __decorate$j([
         Bean('userComponentFactory')
     ], UserComponentFactory);
     return UserComponentFactory;
@@ -13181,11 +13515,11 @@ var UserComponentFactory = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$g = (undefined && undefined.__extends) || (function () {
+var __extends$h = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -13198,14 +13532,14 @@ var __extends$g = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var GroupCellRenderer = /** @class */ (function (_super) {
-    __extends$g(GroupCellRenderer, _super);
+    __extends$h(GroupCellRenderer, _super);
     function GroupCellRenderer() {
         return _super.call(this, GroupCellRenderer.TEMPLATE) || this;
     }
@@ -13306,22 +13640,15 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
     };
     GroupCellRenderer.prototype.addValueElement = function () {
-        var params = this.params;
-        var rowNode = this.displayedGroup;
-        if (rowNode.footer) {
-            this.createFooterCell();
-        }
-        else if (rowNode.hasChildren() ||
-            get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
-            get(params.colDef, 'cellRendererParams.innerRendererFramework', null)) {
-            this.createGroupCell();
-            this.addChildCount();
+        if (this.displayedGroup.footer) {
+            this.addFooterValue();
         }
         else {
-            this.createLeafCell();
+            this.addGroupValue();
+            this.addChildCount();
         }
     };
-    GroupCellRenderer.prototype.createFooterCell = function () {
+    GroupCellRenderer.prototype.addFooterValue = function () {
         var footerValueGetter = this.params.footerValueGetter;
         var footerValue;
         if (footerValueGetter) {
@@ -13343,7 +13670,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
         this.eValue.innerHTML = footerValue;
     };
-    GroupCellRenderer.prototype.createGroupCell = function () {
+    GroupCellRenderer.prototype.addGroupValue = function () {
         var _this = this;
         var params = this.params;
         var rowGroupColumn = this.displayedGroup.rowGroupColumn;
@@ -13445,14 +13772,10 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     };
     GroupCellRenderer.prototype.updateChildCount = function () {
         var allChildrenCount = this.displayedGroup.allChildrenCount;
-        var showCount = allChildrenCount != null && allChildrenCount >= 0;
+        var showingGroupForThisNode = this.isShowRowGroupForThisRow();
+        var showCount = showingGroupForThisNode && allChildrenCount != null && allChildrenCount >= 0;
         var countString = showCount ? "(" + allChildrenCount + ")" : "";
         this.eChildCount.innerHTML = countString;
-    };
-    GroupCellRenderer.prototype.createLeafCell = function () {
-        if (exists(this.params.value)) {
-            this.eValue.innerText = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
-        }
     };
     GroupCellRenderer.prototype.isUserWantsSelected = function () {
         var paramsCheckbox = this.params.checkbox;
@@ -13595,10 +13918,36 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         setAriaExpanded(params.eGridCell, nextExpandState);
     };
     GroupCellRenderer.prototype.isExpandable = function () {
-        var rowNode = this.params.node;
+        if (this.draggedFromHideOpenParents) {
+            return true;
+        }
+        var rowNode = this.displayedGroup;
         var reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-        return this.draggedFromHideOpenParents ||
-            (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
+        var expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
+        if (!expandableGroup) {
+            return false;
+        }
+        // column is null for fullWidthRows
+        var column = this.params.column;
+        var displayingForOneColumnOnly = column != null && typeof column.getColDef().showRowGroup === 'string';
+        if (displayingForOneColumnOnly) {
+            var showing = this.isShowRowGroupForThisRow();
+            return showing;
+        }
+        return true;
+    };
+    GroupCellRenderer.prototype.isShowRowGroupForThisRow = function () {
+        if (this.gridOptionsWrapper.isTreeData()) {
+            return true;
+        }
+        var rowGroupColumn = this.displayedGroup.rowGroupColumn;
+        if (!rowGroupColumn) {
+            return false;
+        }
+        // column is null for fullWidthRows
+        var column = this.params.column;
+        var thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
+        return thisColumnIsInterested;
     };
     GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
         var _a = this, eContracted = _a.eContracted, eExpanded = _a.eExpanded, params = _a.params, displayedGroup = _a.displayedGroup, columnController = _a.columnController;
@@ -13618,10 +13967,11 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
         var pivotModeAndLeafGroup = columnController.isPivotMode() && displayedGroup.leafGroup;
-        var notExpandable = !displayedGroup.isExpandable();
-        var addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
-        this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
-        this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
+        var expandable = displayedGroup.isExpandable() && this.isShowRowGroupForThisRow();
+        var addExpandableCss = expandable && !displayedGroup.footer && !pivotModeAndLeafGroup;
+        this.addOrRemoveCssClass('ag-cell-expandable', addExpandableCss);
+        this.addOrRemoveCssClass('ag-row-group', addExpandableCss);
+        this.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
     };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to have public here instead of private or protected
@@ -13633,34 +13983,31 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         return false;
     };
     GroupCellRenderer.TEMPLATE = "<span class=\"ag-cell-wrapper\">\n            <span class=\"ag-group-expanded\" ref=\"eExpanded\"></span>\n            <span class=\"ag-group-contracted\" ref=\"eContracted\"></span>\n            <span class=\"ag-group-checkbox ag-invisible\" ref=\"eCheckbox\"></span>\n            <span class=\"ag-group-value\" ref=\"eValue\"></span>\n            <span class=\"ag-group-child-count\" ref=\"eChildCount\"></span>\n        </span>";
-    __decorate$j([
-        Autowired('gridOptionsWrapper')
-    ], GroupCellRenderer.prototype, "gridOptionsWrapper", void 0);
-    __decorate$j([
+    __decorate$k([
         Autowired('expressionService')
     ], GroupCellRenderer.prototype, "expressionService", void 0);
-    __decorate$j([
+    __decorate$k([
         Autowired('valueFormatterService')
     ], GroupCellRenderer.prototype, "valueFormatterService", void 0);
-    __decorate$j([
+    __decorate$k([
         Autowired('columnController')
     ], GroupCellRenderer.prototype, "columnController", void 0);
-    __decorate$j([
+    __decorate$k([
         Autowired('userComponentFactory')
     ], GroupCellRenderer.prototype, "userComponentFactory", void 0);
-    __decorate$j([
+    __decorate$k([
         RefSelector('eExpanded')
     ], GroupCellRenderer.prototype, "eExpanded", void 0);
-    __decorate$j([
+    __decorate$k([
         RefSelector('eContracted')
     ], GroupCellRenderer.prototype, "eContracted", void 0);
-    __decorate$j([
+    __decorate$k([
         RefSelector('eCheckbox')
     ], GroupCellRenderer.prototype, "eCheckbox", void 0);
-    __decorate$j([
+    __decorate$k([
         RefSelector('eValue')
     ], GroupCellRenderer.prototype, "eValue", void 0);
-    __decorate$j([
+    __decorate$k([
         RefSelector('eChildCount')
     ], GroupCellRenderer.prototype, "eChildCount", void 0);
     return GroupCellRenderer;
@@ -13668,11 +14015,11 @@ var GroupCellRenderer = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$h = (undefined && undefined.__extends) || (function () {
+var __extends$i = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -13685,7 +14032,7 @@ var __extends$h = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -13694,7 +14041,7 @@ var __decorate$k = (undefined && undefined.__decorate) || function (decorators, 
 var ARROW_UP = '\u2191';
 var ARROW_DOWN = '\u2193';
 var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
-    __extends$h(AnimateShowChangeCellRenderer, _super);
+    __extends$i(AnimateShowChangeCellRenderer, _super);
     function AnimateShowChangeCellRenderer() {
         var _this = _super.call(this, AnimateShowChangeCellRenderer.TEMPLATE) || this;
         _this.refreshCount = 0;
@@ -13774,7 +14121,7 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
         '<span class="ag-value-change-delta"></span>' +
         '<span class="ag-value-change-value"></span>' +
         '</span>';
-    __decorate$k([
+    __decorate$l([
         Autowired('filterManager')
     ], AnimateShowChangeCellRenderer.prototype, "filterManager", void 0);
     return AnimateShowChangeCellRenderer;
@@ -13782,11 +14129,11 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$i = (undefined && undefined.__extends) || (function () {
+var __extends$j = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -13799,14 +14146,14 @@ var __extends$i = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AnimateSlideCellRenderer = /** @class */ (function (_super) {
-    __extends$i(AnimateSlideCellRenderer, _super);
+    __extends$j(AnimateSlideCellRenderer, _super);
     function AnimateSlideCellRenderer() {
         var _this = _super.call(this, AnimateSlideCellRenderer.TEMPLATE) || this;
         _this.refreshCount = 0;
@@ -13877,7 +14224,7 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
     AnimateSlideCellRenderer.TEMPLATE = '<span>' +
         '<span class="ag-value-slide-current"></span>' +
         '</span>';
-    __decorate$l([
+    __decorate$m([
         Autowired('filterManager')
     ], AnimateSlideCellRenderer.prototype, "filterManager", void 0);
     return AnimateSlideCellRenderer;
@@ -13885,59 +14232,7 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$j = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var LoadingCellRenderer = /** @class */ (function (_super) {
-    __extends$j(LoadingCellRenderer, _super);
-    function LoadingCellRenderer() {
-        return _super.call(this, LoadingCellRenderer.TEMPLATE) || this;
-    }
-    LoadingCellRenderer.prototype.init = function (params) {
-        var eLoadingIcon = createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
-        this.eLoadingIcon.appendChild(eLoadingIcon);
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
-    };
-    LoadingCellRenderer.prototype.refresh = function (params) {
-        return false;
-    };
-    LoadingCellRenderer.TEMPLATE = "<div class=\"ag-loading\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
-    __decorate$m([
-        Autowired('gridOptionsWrapper')
-    ], LoadingCellRenderer.prototype, "gridOptionsWrapper", void 0);
-    __decorate$m([
-        RefSelector('eLoadingIcon')
-    ], LoadingCellRenderer.prototype, "eLoadingIcon", void 0);
-    __decorate$m([
-        RefSelector('eLoadingText')
-    ], LoadingCellRenderer.prototype, "eLoadingText", void 0);
-    return LoadingCellRenderer;
-}(Component));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13960,8 +14255,63 @@ var __decorate$n = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var LoadingCellRenderer = /** @class */ (function (_super) {
+    __extends$k(LoadingCellRenderer, _super);
+    function LoadingCellRenderer() {
+        return _super.call(this, LoadingCellRenderer.TEMPLATE) || this;
+    }
+    LoadingCellRenderer.prototype.init = function (params) {
+        params.node.failedLoad ? this.setupFailed() : this.setupLoading();
+    };
+    LoadingCellRenderer.prototype.setupFailed = function () {
+        this.eLoadingText.innerText = 'ERR';
+    };
+    LoadingCellRenderer.prototype.setupLoading = function () {
+        var eLoadingIcon = createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
+        this.eLoadingIcon.appendChild(eLoadingIcon);
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
+    };
+    LoadingCellRenderer.prototype.refresh = function (params) {
+        return false;
+    };
+    LoadingCellRenderer.TEMPLATE = "<div class=\"ag-loading\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
+    __decorate$n([
+        RefSelector('eLoadingIcon')
+    ], LoadingCellRenderer.prototype, "eLoadingIcon", void 0);
+    __decorate$n([
+        RefSelector('eLoadingText')
+    ], LoadingCellRenderer.prototype, "eLoadingText", void 0);
+    return LoadingCellRenderer;
+}(Component));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$l = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var SelectCellEditor = /** @class */ (function (_super) {
-    __extends$k(SelectCellEditor, _super);
+    __extends$l(SelectCellEditor, _super);
     function SelectCellEditor() {
         var _this = _super.call(this, '<div class="ag-cell-edit-wrapper"><ag-select class="ag-cell-editor" ref="eSelect"></ag-select></div>') || this;
         _this.startedByEnter = false;
@@ -14013,13 +14363,10 @@ var SelectCellEditor = /** @class */ (function (_super) {
     SelectCellEditor.prototype.isPopup = function () {
         return false;
     };
-    __decorate$n([
-        Autowired('gridOptionsWrapper')
-    ], SelectCellEditor.prototype, "gridOptionsWrapper", void 0);
-    __decorate$n([
+    __decorate$o([
         Autowired('valueFormatterService')
     ], SelectCellEditor.prototype, "valueFormatterService", void 0);
-    __decorate$n([
+    __decorate$o([
         RefSelector('eSelect')
     ], SelectCellEditor.prototype, "eSelect", void 0);
     return SelectCellEditor;
@@ -14027,37 +14374,7 @@ var SelectCellEditor = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$l = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var PopupTextCellEditor = /** @class */ (function (_super) {
-    __extends$l(PopupTextCellEditor, _super);
-    function PopupTextCellEditor() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    PopupTextCellEditor.prototype.isPopup = function () {
-        return true;
-    };
-    return PopupTextCellEditor;
-}(TextCellEditor));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14074,20 +14391,20 @@ var __extends$m = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var PopupSelectCellEditor = /** @class */ (function (_super) {
-    __extends$m(PopupSelectCellEditor, _super);
-    function PopupSelectCellEditor() {
+var PopupTextCellEditor = /** @class */ (function (_super) {
+    __extends$m(PopupTextCellEditor, _super);
+    function PopupTextCellEditor() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    PopupSelectCellEditor.prototype.isPopup = function () {
+    PopupTextCellEditor.prototype.isPopup = function () {
         return true;
     };
-    return PopupSelectCellEditor;
-}(SelectCellEditor));
+    return PopupTextCellEditor;
+}(TextCellEditor));
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14104,14 +14421,44 @@ var __extends$n = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var PopupSelectCellEditor = /** @class */ (function (_super) {
+    __extends$n(PopupSelectCellEditor, _super);
+    function PopupSelectCellEditor() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    PopupSelectCellEditor.prototype.isPopup = function () {
+        return true;
+    };
+    return PopupSelectCellEditor;
+}(SelectCellEditor));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$o = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var LargeTextCellEditor = /** @class */ (function (_super) {
-    __extends$n(LargeTextCellEditor, _super);
+    __extends$o(LargeTextCellEditor, _super);
     function LargeTextCellEditor() {
         return _super.call(this, LargeTextCellEditor.TEMPLATE) || this;
     }
@@ -14138,7 +14485,8 @@ var LargeTextCellEditor = /** @class */ (function (_super) {
         }
     };
     LargeTextCellEditor.prototype.afterGuiAttached = function () {
-        this.eTextArea.setInputAriaLabel('Input Editor');
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eTextArea.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
         if (this.focusAfterAttached) {
             this.eTextArea.getFocusableElement().focus();
         }
@@ -14147,7 +14495,7 @@ var LargeTextCellEditor = /** @class */ (function (_super) {
         return this.params.parseValue(this.eTextArea.getValue());
     };
     LargeTextCellEditor.TEMPLATE = "<div class=\"ag-large-text\" tabindex=\"0\">\n            <ag-input-text-area ref=\"eTextArea\" class=\"ag-large-text-input\"></ag-input-text-area>\n        </div>";
-    __decorate$o([
+    __decorate$p([
         RefSelector("eTextArea")
     ], LargeTextCellEditor.prototype, "eTextArea", void 0);
     return LargeTextCellEditor;
@@ -14155,11 +14503,11 @@ var LargeTextCellEditor = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$o = (undefined && undefined.__extends) || (function () {
+var __extends$p = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14172,14 +14520,14 @@ var __extends$o = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var NumberFilter = /** @class */ (function (_super) {
-    __extends$o(NumberFilter, _super);
+    __extends$p(NumberFilter, _super);
     function NumberFilter() {
         return _super.call(this, 'numberFilter') || this;
     }
@@ -14223,7 +14571,7 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.prototype.setParams = function (params) {
         this.numberFilterParams = params;
-        var allowedCharPattern = params.allowedCharPattern;
+        var allowedCharPattern = this.getAllowedCharPattern();
         if (allowedCharPattern) {
             var config = { allowedCharPattern: allowedCharPattern };
             this.resetTemplate({
@@ -14245,16 +14593,21 @@ var NumberFilter = /** @class */ (function (_super) {
         this.eValueTo2.onValueChange(listener);
     };
     NumberFilter.prototype.resetPlaceholder = function () {
+        var globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
         var isRange1 = this.showValueTo(this.getCondition1Type());
         var isRange2 = this.showValueTo(this.getCondition2Type());
         this.eValueFrom1.setInputPlaceholder(this.translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueFrom1.setInputAriaLabel(isRange1 ? 'Filter from value' : 'Filter value');
+        this.eValueFrom1.setInputAriaLabel(isRange1
+            ? globalTranslate('ariaFilterFromValue', 'Filter from value')
+            : globalTranslate('ariaFilterValue', 'Filter Value'));
         this.eValueTo1.setInputPlaceholder(this.translate('inRangeEnd'));
-        this.eValueTo1.setInputAriaLabel('Filter to value');
+        this.eValueTo1.setInputAriaLabel(globalTranslate('ariaFilterToValue', 'Filter to Value'));
         this.eValueFrom2.setInputPlaceholder(this.translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueFrom2.setInputAriaLabel(isRange2 ? 'Filter from value' : 'Filter value');
+        this.eValueFrom2.setInputAriaLabel(isRange2
+            ? globalTranslate('ariaFilterFromValue', 'Filter from value')
+            : globalTranslate('ariaFilterValue', 'Filter Value'));
         this.eValueTo2.setInputPlaceholder(this.translate('inRangeEnd'));
-        this.eValueTo2.setInputAriaLabel('Filter to value');
+        this.eValueTo2.setInputAriaLabel(globalTranslate('ariaFilterToValue', 'Filter to Value'));
     };
     NumberFilter.prototype.afterGuiAttached = function (params) {
         _super.prototype.afterGuiAttached.call(this, params);
@@ -14268,7 +14621,7 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.prototype.createValueTemplate = function (position) {
         var pos = position === ConditionPosition.One ? '1' : '2';
-        var allowedCharPattern = (this.numberFilterParams || {}).allowedCharPattern;
+        var allowedCharPattern = this.getAllowedCharPattern();
         var agElementTag = allowedCharPattern ? 'ag-input-text-field' : 'ag-input-number-field';
         return /* html */ "\n            <div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\" role=\"presentation\">\n                <" + agElementTag + " class=\"ag-filter-from ag-filter-filter\" ref=\"eValueFrom" + pos + "\"></" + agElementTag + ">\n                <" + agElementTag + " class=\"ag-filter-to ag-filter-filter\" ref=\"eValueTo" + pos + "\"></" + agElementTag + ">\n            </div>";
     };
@@ -14336,6 +14689,18 @@ var NumberFilter = /** @class */ (function (_super) {
         setDisplayed(this.eValueFrom2.getGui(), this.showValueFrom(condition2Type));
         setDisplayed(this.eValueTo2.getGui(), this.showValueTo(condition2Type));
     };
+    NumberFilter.prototype.getAllowedCharPattern = function () {
+        var allowedCharPattern = (this.numberFilterParams || {}).allowedCharPattern;
+        if (allowedCharPattern) {
+            return allowedCharPattern;
+        }
+        if (!isBrowserChrome() && !isBrowserEdge()) {
+            // only Chrome and Edge support the HTML5 number field, so for other browsers we provide an equivalent
+            // constraint instead
+            return '\\d\\-\\.';
+        }
+        return null;
+    };
     NumberFilter.DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
         ScalarFilter.NOT_EQUAL,
@@ -14345,16 +14710,16 @@ var NumberFilter = /** @class */ (function (_super) {
         ScalarFilter.GREATER_THAN_OR_EQUAL,
         ScalarFilter.IN_RANGE
     ];
-    __decorate$p([
+    __decorate$q([
         RefSelector('eValueFrom1')
     ], NumberFilter.prototype, "eValueFrom1", void 0);
-    __decorate$p([
+    __decorate$q([
         RefSelector('eValueTo1')
     ], NumberFilter.prototype, "eValueTo1", void 0);
-    __decorate$p([
+    __decorate$q([
         RefSelector('eValueFrom2')
     ], NumberFilter.prototype, "eValueFrom2", void 0);
-    __decorate$p([
+    __decorate$q([
         RefSelector('eValueTo2')
     ], NumberFilter.prototype, "eValueTo2", void 0);
     return NumberFilter;
@@ -14362,11 +14727,11 @@ var NumberFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$p = (undefined && undefined.__extends) || (function () {
+var __extends$q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14379,14 +14744,8 @@ var __extends$p = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var LoadingOverlayComponent$1 = /** @class */ (function (_super) {
-    __extends$p(LoadingOverlayComponent, _super);
+    __extends$q(LoadingOverlayComponent, _super);
     function LoadingOverlayComponent() {
         return _super.call(this) || this;
     }
@@ -14403,19 +14762,88 @@ var LoadingOverlayComponent$1 = /** @class */ (function (_super) {
         this.setTemplate(localisedTemplate);
     };
     LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
-    __decorate$q([
-        Autowired('gridOptionsWrapper')
-    ], LoadingOverlayComponent.prototype, "gridOptionsWrapper", void 0);
     return LoadingOverlayComponent;
 }(Component));
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$q = (undefined && undefined.__extends) || (function () {
+var __extends$r = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var NoRowsOverlayComponent$1 = /** @class */ (function (_super) {
+    __extends$r(NoRowsOverlayComponent, _super);
+    function NoRowsOverlayComponent() {
+        return _super.call(this) || this;
+    }
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    NoRowsOverlayComponent.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
+    NoRowsOverlayComponent.prototype.init = function (params) {
+        var template = this.gridOptionsWrapper.getOverlayNoRowsTemplate() ?
+            this.gridOptionsWrapper.getOverlayNoRowsTemplate() : NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        var localisedTemplate = template.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
+        this.setTemplate(localisedTemplate);
+    };
+    NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
+    return NoRowsOverlayComponent;
+}(Component));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$s = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var TooltipComponent$1 = /** @class */ (function (_super) {
+    __extends$s(TooltipComponent, _super);
+    function TooltipComponent() {
+        return _super.call(this, /* html */ "<div class=\"ag-tooltip\"></div>") || this;
+    }
+    // will need to type params
+    TooltipComponent.prototype.init = function (params) {
+        var value = params.value;
+        this.getGui().innerHTML = value;
+    };
+    return TooltipComponent;
+}(PopupComponent));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$t = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14434,89 +14862,8 @@ var __decorate$r = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var NoRowsOverlayComponent$1 = /** @class */ (function (_super) {
-    __extends$q(NoRowsOverlayComponent, _super);
-    function NoRowsOverlayComponent() {
-        return _super.call(this) || this;
-    }
-    // this is a user component, and IComponent has "public destroy()" as part of the interface.
-    // so we need to override destroy() just to make the method public.
-    NoRowsOverlayComponent.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
-    };
-    NoRowsOverlayComponent.prototype.init = function (params) {
-        var template = this.gridOptionsWrapper.getOverlayNoRowsTemplate() ?
-            this.gridOptionsWrapper.getOverlayNoRowsTemplate() : NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var localisedTemplate = template.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
-        this.setTemplate(localisedTemplate);
-    };
-    NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
-    __decorate$r([
-        Autowired('gridOptionsWrapper')
-    ], NoRowsOverlayComponent.prototype, "gridOptionsWrapper", void 0);
-    return NoRowsOverlayComponent;
-}(Component));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$r = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var TooltipComponent$1 = /** @class */ (function (_super) {
-    __extends$r(TooltipComponent, _super);
-    function TooltipComponent() {
-        return _super.call(this, /* html */ "<div class=\"ag-tooltip\"></div>") || this;
-    }
-    // will need to type params
-    TooltipComponent.prototype.init = function (params) {
-        var value = params.value;
-        this.getGui().innerHTML = value;
-    };
-    return TooltipComponent;
-}(PopupComponent));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$s = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var DefaultDateComponent = /** @class */ (function (_super) {
-    __extends$s(DefaultDateComponent, _super);
+    __extends$t(DefaultDateComponent, _super);
     function DefaultDateComponent() {
         return _super.call(this, /* html */ "\n            <div class=\"ag-filter-filter\">\n                <ag-input-text-field class=\"ag-date-filter\" ref=\"eDateInput\"></ag-input-text-field>\n            </div>") || this;
     }
@@ -14526,21 +14873,22 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     DefaultDateComponent.prototype.init = function (params) {
-        var _this = this;
+        var inputElement = this.eDateInput.getInputElement();
         if (this.shouldUseBrowserDatePicker(params)) {
             if (isBrowserIE()) {
-                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
+                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11; reverting to text date picker');
             }
             else {
-                this.eDateInput.getInputElement().type = 'date';
+                inputElement.type = 'date';
             }
         }
-        this.listener = params.onDateChanged;
+        // ensures that the input element is focussed when a clear button is clicked
+        this.addManagedListener(inputElement, 'mousedown', function () { return inputElement.focus(); });
         this.addManagedListener(this.eDateInput.getInputElement(), 'input', function (e) {
             if (e.target !== document.activeElement) {
                 return;
             }
-            _this.listener();
+            params.onDateChanged();
         });
     };
     DefaultDateComponent.prototype.getDate = function () {
@@ -14552,6 +14900,11 @@ var DefaultDateComponent = /** @class */ (function (_super) {
     DefaultDateComponent.prototype.setInputPlaceholder = function (placeholder) {
         this.eDateInput.setInputPlaceholder(placeholder);
     };
+    DefaultDateComponent.prototype.afterGuiAttached = function (params) {
+        if (!params || !params.suppressFocus) {
+            this.eDateInput.getInputElement().focus();
+        }
+    };
     DefaultDateComponent.prototype.shouldUseBrowserDatePicker = function (params) {
         if (params.filterParams && params.filterParams.browserDatePicker != null) {
             return params.filterParams.browserDatePicker;
@@ -14560,7 +14913,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
             return isBrowserChrome() || isBrowserFirefox();
         }
     };
-    __decorate$s([
+    __decorate$r([
         RefSelector('eDateInput')
     ], DefaultDateComponent.prototype, "eDateInput", void 0);
     return DefaultDateComponent;
@@ -14568,11 +14921,11 @@ var DefaultDateComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$t = (undefined && undefined.__extends) || (function () {
+var __extends$u = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14586,7 +14939,7 @@ var __extends$t = (undefined && undefined.__extends) || (function () {
     };
 })();
 var SimpleFloatingFilter = /** @class */ (function (_super) {
-    __extends$t(SimpleFloatingFilter, _super);
+    __extends$u(SimpleFloatingFilter, _super);
     function SimpleFloatingFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -14680,11 +15033,11 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$u = (undefined && undefined.__extends) || (function () {
+var __extends$v = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14697,14 +15050,14 @@ var __extends$u = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var DateFloatingFilter = /** @class */ (function (_super) {
-    __extends$u(DateFloatingFilter, _super);
+    __extends$v(DateFloatingFilter, _super);
     function DateFloatingFilter() {
         return _super.call(this, /* html */ "\n            <div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eReadOnlyText\"></ag-input-text-field>\n                <div ref=\"eDateWrapper\" style=\"display: flex;\"></div>\n            </div>") || this;
     }
@@ -14712,19 +15065,23 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         return DateFilter.DEFAULT_FILTER_OPTIONS;
     };
     DateFloatingFilter.prototype.conditionToString = function (condition) {
-        if (condition.type === SimpleFilter.IN_RANGE) {
-            return condition.dateFrom + "-" + condition.dateTo;
+        var type = condition.type;
+        var dateFrom = parseDateTimeFromString(condition.dateFrom);
+        if (type === SimpleFilter.IN_RANGE) {
+            var dateTo = parseDateTimeFromString(condition.dateTo);
+            return serialiseDate(dateFrom, false) + "-" + serialiseDate(dateTo, false);
         }
         // cater for when the type doesn't need a value
-        return condition.dateFrom == null ? "" + condition.type : "" + condition.dateFrom;
+        return dateFrom == null ? "" + type : "" + serialiseDate(dateFrom, false);
     };
     DateFloatingFilter.prototype.init = function (params) {
         _super.prototype.init.call(this, params);
         this.params = params;
         this.createDateComponent();
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eReadOnlyText
             .setDisabled(true)
-            .setInputAriaLabel('Date Filter Input');
+            .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
     };
     DateFloatingFilter.prototype.setEditable = function (editable) {
         setDisplayed(this.eDateWrapper, editable);
@@ -14776,13 +15133,13 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         this.dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eDateWrapper);
         this.addDestroyFunc(function () { return _this.dateComp.destroy(); });
     };
-    __decorate$t([
+    __decorate$s([
         Autowired('userComponentFactory')
     ], DateFloatingFilter.prototype, "userComponentFactory", void 0);
-    __decorate$t([
+    __decorate$s([
         RefSelector('eReadOnlyText')
     ], DateFloatingFilter.prototype, "eReadOnlyText", void 0);
-    __decorate$t([
+    __decorate$s([
         RefSelector('eDateWrapper')
     ], DateFloatingFilter.prototype, "eDateWrapper", void 0);
     return DateFloatingFilter;
@@ -14790,11 +15147,11 @@ var DateFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$v = (undefined && undefined.__extends) || (function () {
+var __extends$w = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14807,14 +15164,14 @@ var __extends$v = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TextFilter = /** @class */ (function (_super) {
-    __extends$v(TextFilter, _super);
+    __extends$w(TextFilter, _super);
     function TextFilter() {
         return _super.call(this, 'textFilter') || this;
     }
@@ -14879,10 +15236,11 @@ var TextFilter = /** @class */ (function (_super) {
         });
     };
     TextFilter.prototype.resetPlaceholder = function () {
+        var globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
         var placeholder = this.translate('filterOoo');
         this.forEachInput(function (field) {
             field.setInputPlaceholder(placeholder);
-            field.setInputAriaLabel('Filter value');
+            field.setInputAriaLabel(globalTranslate('ariaFilterValue', 'Filter Value'));
         });
     };
     TextFilter.prototype.forEachInput = function (action) {
@@ -14973,10 +15331,10 @@ var TextFilter = /** @class */ (function (_super) {
                 return false;
         }
     };
-    __decorate$u([
+    __decorate$t([
         RefSelector('eValue1')
     ], TextFilter.prototype, "eValue1", void 0);
-    __decorate$u([
+    __decorate$t([
         RefSelector('eValue2')
     ], TextFilter.prototype, "eValue2", void 0);
     return TextFilter;
@@ -14984,11 +15342,11 @@ var TextFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$w = (undefined && undefined.__extends) || (function () {
+var __extends$x = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -15001,14 +15359,14 @@ var __extends$w = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TextInputFloatingFilter = /** @class */ (function (_super) {
-    __extends$w(TextInputFloatingFilter, _super);
+    __extends$x(TextInputFloatingFilter, _super);
     function TextInputFloatingFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -15045,7 +15403,8 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
             this.eFloatingFilterInput.setDisabled(true);
         }
         var displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
-        this.eFloatingFilterInput.setInputAriaLabel(displayName + " Filter Input");
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eFloatingFilterInput.setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'));
     };
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;
@@ -15065,13 +15424,13 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
     TextInputFloatingFilter.prototype.setEditable = function (editable) {
         this.eFloatingFilterInput.setDisabled(!editable);
     };
-    __decorate$v([
+    __decorate$u([
         Autowired('columnController')
     ], TextInputFloatingFilter.prototype, "columnController", void 0);
-    __decorate$v([
+    __decorate$u([
         RefSelector('eFloatingFilterInput')
     ], TextInputFloatingFilter.prototype, "eFloatingFilterInput", void 0);
-    __decorate$v([
+    __decorate$u([
         PostConstruct
     ], TextInputFloatingFilter.prototype, "postConstruct", null);
     return TextInputFloatingFilter;
@@ -15079,11 +15438,11 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$x = (undefined && undefined.__extends) || (function () {
+var __extends$y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -15097,7 +15456,7 @@ var __extends$x = (undefined && undefined.__extends) || (function () {
     };
 })();
 var NumberFloatingFilter = /** @class */ (function (_super) {
-    __extends$x(NumberFloatingFilter, _super);
+    __extends$y(NumberFloatingFilter, _super);
     function NumberFloatingFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -15120,11 +15479,11 @@ var NumberFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$y = (undefined && undefined.__extends) || (function () {
+var __extends$z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -15138,7 +15497,7 @@ var __extends$y = (undefined && undefined.__extends) || (function () {
     };
 })();
 var TextFloatingFilter = /** @class */ (function (_super) {
-    __extends$y(TextFloatingFilter, _super);
+    __extends$z(TextFloatingFilter, _super);
     function TextFloatingFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -15160,11 +15519,11 @@ var TextFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$z = (undefined && undefined.__extends) || (function () {
+var __extends$A = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -15177,7 +15536,7 @@ var __extends$z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -15189,7 +15548,7 @@ var RegisteredComponentSource;
     RegisteredComponentSource[RegisteredComponentSource["REGISTERED"] = 1] = "REGISTERED";
 })(RegisteredComponentSource || (RegisteredComponentSource = {}));
 var UserComponentRegistry = /** @class */ (function (_super) {
-    __extends$z(UserComponentRegistry, _super);
+    __extends$A(UserComponentRegistry, _super);
     function UserComponentRegistry() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.agGridDefaults = {
@@ -15365,13 +15724,13 @@ var UserComponentRegistry = /** @class */ (function (_super) {
         }
         return raw;
     };
-    __decorate$w([
+    __decorate$v([
         Autowired('gridOptions')
     ], UserComponentRegistry.prototype, "gridOptions", void 0);
-    __decorate$w([
+    __decorate$v([
         PostConstruct
     ], UserComponentRegistry.prototype, "init", null);
-    UserComponentRegistry = __decorate$w([
+    UserComponentRegistry = __decorate$v([
         Bean('userComponentRegistry')
     ], UserComponentRegistry);
     return UserComponentRegistry;
@@ -15379,7 +15738,7 @@ var UserComponentRegistry = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15470,11 +15829,11 @@ var SideBarDefParser = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __decorate$x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -15901,6 +16260,12 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.rowClassRules = function () {
         return this.gridOptions.rowClassRules;
     };
+    GridOptionsWrapper.prototype.getServerSideStoreType = function () {
+        return this.gridOptions.serverSideStoreType;
+    };
+    GridOptionsWrapper.prototype.getServerSideStoreParamsFunc = function () {
+        return this.gridOptions.getServerSideStoreParams;
+    };
     GridOptionsWrapper.prototype.getCreateChartContainerFunc = function () {
         return this.gridOptions.createChartContainer;
     };
@@ -16121,6 +16486,12 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isSuppressAggAtRootLevel = function () {
         return isTrue(this.gridOptions.suppressAggAtRootLevel);
     };
+    GridOptionsWrapper.prototype.isSuppressAggFilteredOnly = function () {
+        return isTrue(this.gridOptions.suppressAggFilteredOnly);
+    };
+    GridOptionsWrapper.prototype.isShowOpenedGroup = function () {
+        return isTrue(this.gridOptions.showOpenedGroup);
+    };
     GridOptionsWrapper.prototype.isEnableRangeSelection = function () {
         return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
     };
@@ -16207,6 +16578,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isSuppressParentsInRowNodes = function () {
         return isTrue(this.gridOptions.suppressParentsInRowNodes);
     };
+    GridOptionsWrapper.prototype.isSuppressClipboardApi = function () {
+        return isTrue(this.gridOptions.suppressClipboardApi);
+    };
     GridOptionsWrapper.prototype.isFunctionsReadOnly = function () {
         return isTrue(this.gridOptions.functionsReadOnly);
     };
@@ -16245,6 +16619,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.getIsServerSideGroupFunc = function () {
         return this.gridOptions.isServerSideGroup;
+    };
+    GridOptionsWrapper.prototype.getIsServerSideGroupOpenByDefaultFunc = function () {
+        return this.gridOptions.isServerSideGroupOpenByDefault;
     };
     GridOptionsWrapper.prototype.getServerSideGroupKeyFunc = function () {
         return this.gridOptions.getServerSideGroupKey;
@@ -16323,6 +16700,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.isServerSideSortingAlwaysResets = function () {
         return isTrue(this.gridOptions.serverSideSortingAlwaysResets);
+    };
+    GridOptionsWrapper.prototype.isServerSideFilteringAlwaysResets = function () {
+        return isTrue(this.gridOptions.serverSideFilteringAlwaysResets);
     };
     GridOptionsWrapper.prototype.getPostSortFunc = function () {
         return this.gridOptions.postSort;
@@ -16718,31 +17098,31 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.PROP_POPUP_PARENT = 'popupParent';
     GridOptionsWrapper.PROP_DOM_LAYOUT = 'domLayout';
     GridOptionsWrapper.PROP_FILL_HANDLE_DIRECTION = 'fillHandleDirection';
-    __decorate$x([
+    __decorate$w([
         Autowired('gridOptions')
     ], GridOptionsWrapper.prototype, "gridOptions", void 0);
-    __decorate$x([
+    __decorate$w([
         Autowired('columnController')
     ], GridOptionsWrapper.prototype, "columnController", void 0);
-    __decorate$x([
+    __decorate$w([
         Autowired('eventService')
     ], GridOptionsWrapper.prototype, "eventService", void 0);
-    __decorate$x([
+    __decorate$w([
         Autowired('environment')
     ], GridOptionsWrapper.prototype, "environment", void 0);
-    __decorate$x([
+    __decorate$w([
         Autowired('autoHeightCalculator')
     ], GridOptionsWrapper.prototype, "autoHeightCalculator", void 0);
-    __decorate$x([
+    __decorate$w([
         __param$3(0, Qualifier('gridApi')), __param$3(1, Qualifier('columnApi'))
     ], GridOptionsWrapper.prototype, "agWire", null);
-    __decorate$x([
+    __decorate$w([
         PreDestroy
     ], GridOptionsWrapper.prototype, "destroy", null);
-    __decorate$x([
+    __decorate$w([
         PostConstruct
     ], GridOptionsWrapper.prototype, "init", null);
-    GridOptionsWrapper = GridOptionsWrapper_1 = __decorate$x([
+    GridOptionsWrapper = GridOptionsWrapper_1 = __decorate$w([
         Bean('gridOptionsWrapper')
     ], GridOptionsWrapper);
     return GridOptionsWrapper;
@@ -16750,7 +17130,7 @@ var GridOptionsWrapper = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16913,11 +17293,11 @@ var ChangedPath = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$A = (undefined && undefined.__extends) || (function () {
+var __extends$B = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16930,7 +17310,7 @@ var __extends$A = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -16940,7 +17320,7 @@ var __param$4 = (undefined && undefined.__param) || function (paramIndex, decora
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var SelectionController = /** @class */ (function (_super) {
-    __extends$A(SelectionController, _super);
+    __extends$B(SelectionController, _super);
     function SelectionController() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -17230,25 +17610,22 @@ var SelectionController = /** @class */ (function (_super) {
         var node = this.rowModel.getRow(index);
         this.selectNode(node, tryMulti);
     };
-    __decorate$y([
+    __decorate$x([
         Autowired('rowModel')
     ], SelectionController.prototype, "rowModel", void 0);
-    __decorate$y([
-        Autowired('gridOptionsWrapper')
-    ], SelectionController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$y([
+    __decorate$x([
         Autowired('columnApi')
     ], SelectionController.prototype, "columnApi", void 0);
-    __decorate$y([
+    __decorate$x([
         Autowired('gridApi')
     ], SelectionController.prototype, "gridApi", void 0);
-    __decorate$y([
+    __decorate$x([
         __param$4(0, Qualifier('loggerFactory'))
     ], SelectionController.prototype, "setBeans", null);
-    __decorate$y([
+    __decorate$x([
         PostConstruct
     ], SelectionController.prototype, "init", null);
-    SelectionController = __decorate$y([
+    SelectionController = __decorate$x([
         Bean('selectionController')
     ], SelectionController);
     return SelectionController;
@@ -17256,11 +17633,11 @@ var SelectionController = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __decorate$z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -17427,13 +17804,13 @@ var ColumnApi = /** @class */ (function () {
     ColumnApi.prototype.setColumnState = function (columnState) {
         return this.columnController.applyColumnState({ state: columnState, applyOrder: true }, 'api');
     };
-    __decorate$z([
+    __decorate$y([
         Autowired('columnController')
     ], ColumnApi.prototype, "columnController", void 0);
-    __decorate$z([
+    __decorate$y([
         PreDestroy
     ], ColumnApi.prototype, "cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid", null);
-    ColumnApi = __decorate$z([
+    ColumnApi = __decorate$y([
         Bean('columnApi')
     ], ColumnApi);
     return ColumnApi;
@@ -17441,7 +17818,7 @@ var ColumnApi = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17458,11 +17835,11 @@ var CellRangeType;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$B = (undefined && undefined.__extends) || (function () {
+var __extends$C = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -17475,7 +17852,7 @@ var __extends$B = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -17499,7 +17876,7 @@ var HorizontalDirection;
     HorizontalDirection[HorizontalDirection["Right"] = 1] = "Right";
 })(HorizontalDirection || (HorizontalDirection = {}));
 var DragAndDropService = /** @class */ (function (_super) {
-    __extends$B(DragAndDropService, _super);
+    __extends$C(DragAndDropService, _super);
     function DragAndDropService() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.dragSourceAndParamsList = [];
@@ -17573,12 +17950,33 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.removeGhost();
     };
     DragAndDropService.prototype.onDragging = function (mouseEvent, fromNudge) {
+        var _this = this;
         var hDirection = this.getHorizontalDirection(mouseEvent);
         var vDirection = this.getVerticalDirection(mouseEvent);
         this.eventLastTime = mouseEvent;
         this.positionGhost(mouseEvent);
         // check if mouseEvent intersects with any of the drop targets
-        var dropTarget = find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
+        var validDropTargets = this.dropTargets.filter(function (dropTarget) { return _this.isMouseOnDropTarget(mouseEvent, dropTarget); });
+        var len = validDropTargets.length;
+        if (len === 0) {
+            return;
+        }
+        var dropTarget = len === 1
+            ? validDropTargets[0]
+            // the current mouse position could intersect with more than 1 element
+            // if they are nested. In that case we need to get the most specific
+            // container, which is the one that does not contain any other targets.
+            : validDropTargets.reduce(function (prevTarget, currTarget) {
+                if (!prevTarget) {
+                    return currTarget;
+                }
+                var prevContainer = prevTarget.getContainer();
+                var currContainer = currTarget.getContainer();
+                if (prevContainer.contains(currContainer)) {
+                    return currTarget;
+                }
+                return prevTarget;
+            });
         if (dropTarget !== this.lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
@@ -17791,28 +18189,25 @@ var DragAndDropService = /** @class */ (function (_super) {
     DragAndDropService.ICON_NOT_ALLOWED = 'notAllowed';
     DragAndDropService.ICON_HIDE = 'hide';
     DragAndDropService.GHOST_TEMPLATE = "<div class=\"ag-dnd-ghost ag-unselectable\">\n            <span class=\"ag-dnd-ghost-icon ag-shake-left-to-right\"></span>\n            <div class=\"ag-dnd-ghost-label\"></div>\n        </div>";
-    __decorate$A([
-        Autowired('gridOptionsWrapper')
-    ], DragAndDropService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$A([
+    __decorate$z([
         Autowired('dragService')
     ], DragAndDropService.prototype, "dragService", void 0);
-    __decorate$A([
+    __decorate$z([
         Autowired('environment')
     ], DragAndDropService.prototype, "environment", void 0);
-    __decorate$A([
+    __decorate$z([
         Autowired('columnApi')
     ], DragAndDropService.prototype, "columnApi", void 0);
-    __decorate$A([
+    __decorate$z([
         Autowired('gridApi')
     ], DragAndDropService.prototype, "gridApi", void 0);
-    __decorate$A([
+    __decorate$z([
         PostConstruct
     ], DragAndDropService.prototype, "init", null);
-    __decorate$A([
+    __decorate$z([
         PreDestroy
     ], DragAndDropService.prototype, "clearDragSourceParamsList", null);
-    DragAndDropService = DragAndDropService_1 = __decorate$A([
+    DragAndDropService = DragAndDropService_1 = __decorate$z([
         Bean('dragAndDropService')
     ], DragAndDropService);
     return DragAndDropService;
@@ -17820,11 +18215,11 @@ var DragAndDropService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$C = (undefined && undefined.__extends) || (function () {
+var __extends$D = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -17837,14 +18232,14 @@ var __extends$C = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RowDragComp = /** @class */ (function (_super) {
-    __extends$C(RowDragComp, _super);
+    __extends$D(RowDragComp, _super);
     function RowDragComp(rowNode, column, cellValueFn, beans) {
         var _this = _super.call(this, /* html */ "<div class=\"ag-drag-handle ag-row-drag\" aria-hidden=\"true\"></div>") || this;
         _this.rowNode = rowNode;
@@ -17906,13 +18301,13 @@ var RowDragComp = /** @class */ (function (_super) {
         this.beans.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(function () { return _this.beans.dragAndDropService.removeDragSource(dragSource); });
     };
-    __decorate$B([
+    __decorate$A([
         PostConstruct
     ], RowDragComp.prototype, "postConstruct", null);
     return RowDragComp;
 }(Component));
 var VisibilityStrategy = /** @class */ (function (_super) {
-    __extends$C(VisibilityStrategy, _super);
+    __extends$D(VisibilityStrategy, _super);
     function VisibilityStrategy(parent, rowNode, column) {
         var _this = _super.call(this) || this;
         _this.parent = parent;
@@ -17943,7 +18338,7 @@ var VisibilityStrategy = /** @class */ (function (_super) {
 }(BeanStub));
 // when non managed, the visibility depends on suppressRowDrag property only
 var NonManagedVisibilityStrategy = /** @class */ (function (_super) {
-    __extends$C(NonManagedVisibilityStrategy, _super);
+    __extends$D(NonManagedVisibilityStrategy, _super);
     function NonManagedVisibilityStrategy(parent, beans, rowNode, column) {
         var _this = _super.call(this, parent, rowNode, column) || this;
         _this.beans = beans;
@@ -17964,14 +18359,14 @@ var NonManagedVisibilityStrategy = /** @class */ (function (_super) {
         var neverDisplayed = this.beans.gridOptionsWrapper.isSuppressRowDrag();
         this.setDisplayedOrVisible(neverDisplayed);
     };
-    __decorate$B([
+    __decorate$A([
         PostConstruct
     ], NonManagedVisibilityStrategy.prototype, "postConstruct", null);
     return NonManagedVisibilityStrategy;
 }(VisibilityStrategy));
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 var ManagedVisibilityStrategy = /** @class */ (function (_super) {
-    __extends$C(ManagedVisibilityStrategy, _super);
+    __extends$D(ManagedVisibilityStrategy, _super);
     function ManagedVisibilityStrategy(parent, beans, rowNode, column) {
         var _this = _super.call(this, parent, rowNode, column) || this;
         _this.beans = beans;
@@ -18000,7 +18395,7 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
         var neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag;
         this.setDisplayedOrVisible(neverDisplayed);
     };
-    __decorate$B([
+    __decorate$A([
         PostConstruct
     ], ManagedVisibilityStrategy.prototype, "postConstruct", null);
     return ManagedVisibilityStrategy;
@@ -18008,11 +18403,11 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$D = (undefined && undefined.__extends) || (function () {
+var __extends$E = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -18025,14 +18420,8 @@ var __extends$D = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var PopupEditorWrapper = /** @class */ (function (_super) {
-    __extends$D(PopupEditorWrapper, _super);
+    __extends$E(PopupEditorWrapper, _super);
     function PopupEditorWrapper(cellEditor) {
         var _this = _super.call(this, "<div class=\"ag-popup-editor\" tabindex=\"-1\"/>") || this;
         _this.getGuiCalledOnChild = false;
@@ -18098,19 +18487,16 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
         }
     };
     PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
-    __decorate$C([
-        Autowired('gridOptionsWrapper')
-    ], PopupEditorWrapper.prototype, "gridOptionsWrapper", void 0);
     return PopupEditorWrapper;
 }(PopupComponent));
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$E = (undefined && undefined.__extends) || (function () {
+var __extends$F = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -18123,14 +18509,14 @@ var __extends$E = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var DndSourceComp = /** @class */ (function (_super) {
-    __extends$E(DndSourceComp, _super);
+    __extends$F(DndSourceComp, _super);
     function DndSourceComp(rowNode, column, cellValue, beans, eCell) {
         var _this = _super.call(this, "<div class=\"ag-drag-handle ag-row-drag\" draggable=\"true\"></div>") || this;
         _this.rowNode = rowNode;
@@ -18187,7 +18573,7 @@ var DndSourceComp = /** @class */ (function (_super) {
         var visible = this.column.isDndSource(this.rowNode);
         this.setDisplayed(visible);
     };
-    __decorate$D([
+    __decorate$B([
         PostConstruct
     ], DndSourceComp.prototype, "postConstruct", null);
     return DndSourceComp;
@@ -18195,223 +18581,7 @@ var DndSourceComp = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$F = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign$1 = (undefined && undefined.__assign) || function () {
-    __assign$1 = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign$1.apply(this, arguments);
-};
-var __decorate$E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var TooltipStates;
-(function (TooltipStates) {
-    TooltipStates[TooltipStates["NOTHING"] = 0] = "NOTHING";
-    TooltipStates[TooltipStates["WAITING_TO_SHOW"] = 1] = "WAITING_TO_SHOW";
-    TooltipStates[TooltipStates["SHOWING"] = 2] = "SHOWING";
-})(TooltipStates || (TooltipStates = {}));
-var TooltipFeature = /** @class */ (function (_super) {
-    __extends$F(TooltipFeature, _super);
-    function TooltipFeature(parentComp) {
-        var _this = _super.call(this) || this;
-        _this.DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
-        _this.SHOW_QUICK_TOOLTIP_DIFF = 1000;
-        _this.FADE_OUT_TOOLTIP_TIMEOUT = 1000;
-        _this.state = TooltipStates.NOTHING;
-        // when showing the tooltip, we need to make sure it's the most recent instance we request, as due to
-        // async we could request two tooltips before the first instance returns, in which case we should
-        // disregard the second instance.
-        _this.tooltipInstanceCount = 0;
-        _this.tooltipMouseTrack = false;
-        _this.parentComp = parentComp;
-        return _this;
-    }
-    TooltipFeature.prototype.postConstruct = function () {
-        this.tooltipShowDelay = this.gridOptionsWrapper.getTooltipShowDelay() || 2000;
-        this.tooltipMouseTrack = this.gridOptionsWrapper.isTooltipMouseTrack();
-        var el = this.parentComp.getGui();
-        this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
-        this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
-        this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
-        this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
-        this.addManagedListener(el, 'keydown', this.onKeyDown.bind(this));
-    };
-    TooltipFeature.prototype.destroy = function () {
-        // if this component gets destroyed while tooltip is showing, need to make sure
-        // we don't end with no mouseLeave event resulting in zombie tooltip
-        this.setToDoNothing();
-        _super.prototype.destroy.call(this);
-    };
-    TooltipFeature.prototype.onMouseEnter = function (e) {
-        // every mouseenter should be following by a mouseleave, however for some unkonwn, it's possible for
-        // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
-        // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
-        // state is !=nothing, then we know mouseenter was already received.
-        if (this.state != TooltipStates.NOTHING) {
-            return;
-        }
-        // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
-        var delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
-        this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
-        this.lastMouseEvent = e;
-        this.state = TooltipStates.WAITING_TO_SHOW;
-    };
-    TooltipFeature.prototype.onMouseLeave = function () {
-        this.setToDoNothing();
-    };
-    TooltipFeature.prototype.onKeyDown = function () {
-        this.setToDoNothing();
-    };
-    TooltipFeature.prototype.setToDoNothing = function () {
-        if (this.state === TooltipStates.SHOWING) {
-            this.hideTooltip();
-        }
-        this.clearTimeouts();
-        this.state = TooltipStates.NOTHING;
-    };
-    TooltipFeature.prototype.onMouseMove = function (e) {
-        // there is a delay from the time we mouseOver a component and the time the
-        // tooltip is displayed, so we need to track mousemove to be able to correctly
-        // position the tooltip when showTooltip is called.
-        this.lastMouseEvent = e;
-        if (this.tooltipMouseTrack &&
-            this.state === TooltipStates.SHOWING &&
-            this.tooltipComp) {
-            this.positionTooltipUnderLastMouseEvent();
-        }
-    };
-    TooltipFeature.prototype.onMouseDown = function () {
-        this.setToDoNothing();
-    };
-    TooltipFeature.prototype.hideTooltip = function () {
-        // check if comp exists - due to async, although we asked for
-        // one, the instance may not be back yet
-        if (this.tooltipComp) {
-            this.destroyTooltipComp();
-            TooltipFeature.lastTooltipHideTime = new Date().getTime();
-        }
-        this.state = TooltipStates.NOTHING;
-    };
-    TooltipFeature.prototype.destroyTooltipComp = function () {
-        var _this = this;
-        // add class to fade out the tooltip
-        addCssClass(this.tooltipComp.getGui(), 'ag-tooltip-hiding');
-        // make local copies of these variables, as we use them in the async function below,
-        // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
-        var tooltipPopupDestroyFunc = this.tooltipPopupDestroyFunc;
-        var tooltipComp = this.tooltipComp;
-        window.setTimeout(function () {
-            tooltipPopupDestroyFunc();
-            _this.getContext().destroyBean(tooltipComp);
-        }, this.FADE_OUT_TOOLTIP_TIMEOUT);
-        this.tooltipPopupDestroyFunc = undefined;
-        this.tooltipComp = undefined;
-    };
-    TooltipFeature.prototype.isLastTooltipHiddenRecently = function () {
-        // return true if <1000ms since last time we hid a tooltip
-        var now = new Date().getTime();
-        var then = TooltipFeature.lastTooltipHideTime;
-        return (now - then) < this.SHOW_QUICK_TOOLTIP_DIFF;
-    };
-    TooltipFeature.prototype.showTooltip = function () {
-        var params = __assign$1({ api: this.gridApi, columnApi: this.columnApi, context: this.gridOptionsWrapper.getContext() }, this.parentComp.getTooltipParams());
-        if (!exists(params.value)) {
-            this.setToDoNothing();
-            return;
-        }
-        this.state = TooltipStates.SHOWING;
-        this.tooltipInstanceCount++;
-        // we pass in tooltipInstanceCount so the callback knows what the count was when
-        // we requested the tooltip, so if another tooltip was requested in the mean time
-        // we disregard it
-        var callback = this.newTooltipComponentCallback.bind(this, this.tooltipInstanceCount);
-        this.userComponentFactory.newTooltipComponent(params).then(callback);
-    };
-    TooltipFeature.prototype.newTooltipComponentCallback = function (tooltipInstanceCopy, tooltipComp) {
-        var compNoLongerNeeded = this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
-        if (compNoLongerNeeded) {
-            this.getContext().destroyBean(tooltipComp);
-            return;
-        }
-        var eGui = tooltipComp.getGui();
-        this.tooltipComp = tooltipComp;
-        if (!containsClass(eGui, 'ag-tooltip')) {
-            addCssClass(eGui, 'ag-tooltip-custom');
-        }
-        this.tooltipPopupDestroyFunc = this.popupService.addPopup({
-            eChild: eGui
-        });
-        // this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
-        this.positionTooltipUnderLastMouseEvent();
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
-    };
-    TooltipFeature.prototype.positionTooltipUnderLastMouseEvent = function () {
-        this.popupService.positionPopupUnderMouseEvent({
-            type: 'tooltip',
-            mouseEvent: this.lastMouseEvent,
-            ePopup: this.tooltipComp.getGui(),
-            nudgeY: 18
-        });
-    };
-    TooltipFeature.prototype.clearTimeouts = function () {
-        if (this.showTooltipTimeoutId) {
-            window.clearTimeout(this.showTooltipTimeoutId);
-            this.showTooltipTimeoutId = undefined;
-        }
-        if (this.hideTooltipTimeoutId) {
-            window.clearTimeout(this.hideTooltipTimeoutId);
-            this.hideTooltipTimeoutId = undefined;
-        }
-    };
-    __decorate$E([
-        Autowired('popupService')
-    ], TooltipFeature.prototype, "popupService", void 0);
-    __decorate$E([
-        Autowired('userComponentFactory')
-    ], TooltipFeature.prototype, "userComponentFactory", void 0);
-    __decorate$E([
-        Autowired('columnApi')
-    ], TooltipFeature.prototype, "columnApi", void 0);
-    __decorate$E([
-        Autowired('gridApi')
-    ], TooltipFeature.prototype, "gridApi", void 0);
-    __decorate$E([
-        Autowired('gridOptionsWrapper')
-    ], TooltipFeature.prototype, "gridOptionsWrapper", void 0);
-    __decorate$E([
-        PostConstruct
-    ], TooltipFeature.prototype, "postConstruct", null);
-    return TooltipFeature;
-}(BeanStub));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18686,7 +18856,8 @@ var CellComp = /** @class */ (function (_super) {
         if (!this.usingWrapper) {
             cssClasses.push(CSS_CELL_VALUE);
         }
-        if (this.column.getColDef().wrapText) {
+        this.wrapText = this.column.getColDef().wrapText == true;
+        if (this.wrapText) {
             cssClasses.push(CSS_CELL_WRAP_TEXT);
         }
         return cssClasses;
@@ -18725,6 +18896,17 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.getCellEditor = function () {
         return this.cellEditor;
+    };
+    CellComp.prototype.onNewColumnsLoaded = function () {
+        this.postProcessWrapText();
+        this.postProcessCellClassRules();
+    };
+    CellComp.prototype.postProcessWrapText = function () {
+        var newValue = this.column.getColDef().wrapText == true;
+        if (newValue !== this.wrapText) {
+            this.wrapText = newValue;
+            this.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, this.wrapText);
+        }
     };
     // + stop editing {forceRefresh: true, suppressFlash: true}
     // + event cellChanged {}
@@ -19180,7 +19362,8 @@ var CellComp = /** @class */ (function (_super) {
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         var ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
-        return this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
+        var value = this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
+        return value;
     };
     CellComp.prototype.onMouseEvent = function (eventName, mouseEvent) {
         if (isStopPropagationForAgGrid(mouseEvent)) {
@@ -19359,22 +19542,27 @@ var CellComp = /** @class */ (function (_super) {
         this.beans.eventService.dispatchEvent(event);
     };
     CellComp.prototype.addInCellEditor = function () {
-        clearElement(this.getGui());
+        var eGui = this.getGui();
+        // if focus is inside the cell, we move focus to the cell itself
+        // before removing it's contents, otherwise errors could be thrown.
+        if (eGui.contains(document.activeElement)) {
+            eGui.focus();
+        }
+        this.clearCellElement();
         if (this.cellEditor) {
-            this.getGui().appendChild(this.cellEditor.getGui());
+            eGui.appendChild(this.cellEditor.getGui());
         }
         this.angular1Compile();
     };
     CellComp.prototype.addPopupCellEditor = function () {
         var _this = this;
-        var ePopupGui = this.cellEditor ? this.cellEditor.getGui() : null;
+        var ePopupGui = this.cellEditor && this.cellEditor.getGui();
+        if (!ePopupGui) {
+            return;
+        }
+        var popupService = this.beans.popupService;
         var useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenGridLosesFocus();
-        this.hideEditorPopup = this.beans.popupService.addPopup({
-            modal: useModelPopup,
-            eChild: ePopupGui,
-            closeOnEsc: true,
-            closedCallback: function () { _this.onPopupEditorClosed(); }
-        });
+        var position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
         var params = {
             column: this.column,
             rowNode: this.rowNode,
@@ -19383,12 +19571,19 @@ var CellComp = /** @class */ (function (_super) {
             ePopup: ePopupGui,
             keepWithinBounds: true
         };
-        var position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
-        if (position === 'under') {
-            this.beans.popupService.positionPopupUnderComponent(params);
-        }
-        else {
-            this.beans.popupService.positionPopupOverComponent(params);
+        var positionCallback = position === 'under' ?
+            popupService.positionPopupUnderComponent.bind(popupService, params)
+            : popupService.positionPopupOverComponent.bind(popupService, params);
+        var addPopupRes = popupService.addPopup({
+            modal: useModelPopup,
+            eChild: ePopupGui,
+            closeOnEsc: true,
+            closedCallback: function () { _this.onPopupEditorClosed(); },
+            anchorToElement: this.getGui(),
+            positionCallback: positionCallback
+        });
+        if (addPopupRes) {
+            this.hideEditorPopup = addPopupRes.hideFunc;
         }
         this.angular1Compile();
     };
@@ -19397,17 +19592,12 @@ var CellComp = /** @class */ (function (_super) {
         // it's possible the popup called 'stop editing'
         // before this, eg if 'enter key' was pressed on
         // the editor.
-        if (this.editingCell) {
-            // note: this only happens when use clicks outside of the grid. if use clicks on another
-            // cell, then the editing will have already stopped on this cell
-            this.stopRowOrCellEdit();
-            // we only focus cell again if this cell is still focused. it is possible
-            // it is not focused if the user cancelled the edit by clicking on another
-            // cell outside of this one
-            if (this.beans.focusController.isCellFocused(this.cellPosition)) {
-                this.focusCell(true);
-            }
+        if (!this.editingCell) {
+            return;
         }
+        // note: this only happens when use clicks outside of the grid. if use clicks on another
+        // cell, then the editing will have already stopped on this cell
+        this.stopRowOrCellEdit();
     };
     // if we are editing inline, then we don't have the padding in the cell (set in the themes)
     // to allow the text editor full access to the entire cell
@@ -19659,7 +19849,7 @@ var CellComp = /** @class */ (function (_super) {
             // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
-            var forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell;
+            var forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell && !isFocusableFormField(target);
             this.focusCell(forceBrowserFocus);
         }
         else if (rangeController) {
@@ -20142,11 +20332,12 @@ var CellComp = /** @class */ (function (_super) {
             this.hideEditorPopup = null;
         }
         else {
-            clearElement(this.getGui());
+            this.clearCellElement();
+            var eGui = this.getGui();
             // put the cell back the way it was before editing
             if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back
-                this.getGui().appendChild(this.eCellWrapper);
+                eGui.appendChild(this.eCellWrapper);
             }
             else if (this.cellRenderer) {
                 // if cellRenderer, then put the gui back in. if the renderer has
@@ -20158,7 +20349,7 @@ var CellComp = /** @class */ (function (_super) {
                 // can be null if cell was previously null / contained empty string,
                 // this will result in new value not being rendered.
                 if (eCell) {
-                    this.getGui().appendChild(eCell);
+                    eGui.appendChild(eCell);
                 }
             }
         }
@@ -20181,6 +20372,17 @@ var CellComp = /** @class */ (function (_super) {
             newValue: newValue });
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
     };
+    CellComp.prototype.clearCellElement = function () {
+        var eGui = this.getGui();
+        // if focus is inside the cell, we move focus to the cell itself
+        // before removing it's contents, otherwise errors could be thrown.
+        if (eGui.contains(document.activeElement) && !isBrowserIE()) {
+            eGui.focus({
+                preventScroll: true
+            });
+        }
+        clearElement(eGui);
+    };
     CellComp.DOM_DATA_KEY_CELL_COMP = 'cellComp';
     CellComp.CELL_RENDERER_TYPE_NORMAL = 'cellRenderer';
     CellComp.CELL_RENDERER_TYPE_PINNED = 'pinnedRowCellRenderer';
@@ -20189,7 +20391,7 @@ var CellComp = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20232,7 +20434,7 @@ var AngularRowUtils = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20941,7 +21143,7 @@ var RowComp = /** @class */ (function (_super) {
             }
             else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({ newValue: true, clearSelection: true });
+                this.rowNode.setSelectedParams({ newValue: !shiftKeyPressed, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed });
             }
         }
         else {
@@ -21223,7 +21425,9 @@ var RowComp = /** @class */ (function (_super) {
             node.removeAttribute('aria-label');
             return;
         }
-        setAriaLabel(node, "Press SPACE to " + (selected ? 'deselect' : 'select') + " this row.");
+        var translate = this.beans.gridOptionsWrapper.getLocaleTextFunc();
+        var label = translate(selected ? 'ariaRowDeselect' : 'ariaRowSelect', "Press SPACE to " + (selected ? 'deselect' : 'select') + " this row.");
+        setAriaLabel(node, label);
     };
     // called:
     // + after row created for first time
@@ -21527,7 +21731,7 @@ var RowComp = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21544,7 +21748,7 @@ var __extends$I = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -22108,7 +22312,10 @@ var RowRenderer = /** @class */ (function (_super) {
         // all in all indexes in the viewport
         var indexesToDraw = createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
         var checkRowToDraw = function (indexStr, rowComp) {
-            var index = Number(indexStr);
+            var index = rowComp.getRowNode().rowIndex;
+            if (index == null) {
+                return;
+            }
             if (index < _this.firstRenderedRow || index > _this.lastRenderedRow) {
                 if (_this.doNotUnVirtualiseRow(rowComp)) {
                     indexesToDraw.push(index);
@@ -22817,58 +23024,68 @@ var RowRenderer = /** @class */ (function (_super) {
         }
         return this.paginationProxy.getRow(cell.rowIndex);
     };
-    __decorate$F([
+    // returns true if any row between startIndex and endIndex is rendered. used by
+    // SSRM or IRM, as they don't want to purge visible blocks from cache.
+    RowRenderer.prototype.isRangeInRenderedViewport = function (startIndex, endIndex) {
+        // parent closed means the parent node is not expanded, thus these blocks are not visible
+        var parentClosed = startIndex == null || endIndex == null;
+        if (parentClosed) {
+            return false;
+        }
+        var blockAfterViewport = startIndex > this.lastRenderedRow;
+        var blockBeforeViewport = endIndex < this.firstRenderedRow;
+        var blockInsideViewport = !blockBeforeViewport && !blockAfterViewport;
+        return blockInsideViewport;
+    };
+    __decorate$C([
         Autowired("paginationProxy")
     ], RowRenderer.prototype, "paginationProxy", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("columnController")
     ], RowRenderer.prototype, "columnController", void 0);
-    __decorate$F([
-        Autowired("gridOptionsWrapper")
-    ], RowRenderer.prototype, "gridOptionsWrapper", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("$scope")
     ], RowRenderer.prototype, "$scope", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("pinnedRowModel")
     ], RowRenderer.prototype, "pinnedRowModel", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("rowModel")
     ], RowRenderer.prototype, "rowModel", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("loggerFactory")
     ], RowRenderer.prototype, "loggerFactory", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("focusController")
     ], RowRenderer.prototype, "focusController", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("cellNavigationService")
     ], RowRenderer.prototype, "cellNavigationService", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("columnApi")
     ], RowRenderer.prototype, "columnApi", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("gridApi")
     ], RowRenderer.prototype, "gridApi", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("beans")
     ], RowRenderer.prototype, "beans", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("maxDivHeightScaler")
     ], RowRenderer.prototype, "maxDivHeightScaler", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("animationFrameService")
     ], RowRenderer.prototype, "animationFrameService", void 0);
-    __decorate$F([
+    __decorate$C([
         Autowired("rowPositionUtils")
     ], RowRenderer.prototype, "rowPositionUtils", void 0);
-    __decorate$F([
+    __decorate$C([
         Optional("rangeController")
     ], RowRenderer.prototype, "rangeController", void 0);
-    __decorate$F([
+    __decorate$C([
         __param$5(0, Qualifier("loggerFactory"))
     ], RowRenderer.prototype, "agWire", null);
-    RowRenderer = __decorate$F([
+    RowRenderer = __decorate$C([
         Bean("rowRenderer")
     ], RowRenderer);
     return RowRenderer;
@@ -22876,7 +23093,7 @@ var RowRenderer = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22931,7 +23148,7 @@ var CssClassApplier = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22948,7 +23165,7 @@ var __extends$J = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -22975,10 +23192,10 @@ var HoverFeature = /** @class */ (function (_super) {
     HoverFeature.prototype.onMouseOver = function () {
         this.columnHoverService.setMouseOver(this.columns);
     };
-    __decorate$G([
+    __decorate$D([
         Autowired('columnHoverService')
     ], HoverFeature.prototype, "columnHoverService", void 0);
-    __decorate$G([
+    __decorate$D([
         PostConstruct
     ], HoverFeature.prototype, "postConstruct", null);
     return HoverFeature;
@@ -22986,7 +23203,7 @@ var HoverFeature = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23003,7 +23220,7 @@ var __extends$K = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -23111,7 +23328,7 @@ var SetLeftFeature = /** @class */ (function (_super) {
         var index = this.beans.columnController.getAriaColumnIndex(indexColumn);
         setAriaColIndex(this.ariaEl, index);
     };
-    __decorate$H([
+    __decorate$E([
         PostConstruct
     ], SetLeftFeature.prototype, "postConstruct", null);
     return SetLeftFeature;
@@ -23119,7 +23336,7 @@ var SetLeftFeature = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23136,7 +23353,7 @@ var __extends$L = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -23217,7 +23434,7 @@ var AgAbstractLabel = /** @class */ (function (_super) {
         setElementWidth(this.eLabel, width);
         return this;
     };
-    __decorate$I([
+    __decorate$F([
         PostConstruct
     ], AgAbstractLabel.prototype, "postConstruct", null);
     return AgAbstractLabel;
@@ -23225,7 +23442,7 @@ var AgAbstractLabel = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23266,6 +23483,9 @@ var AgAbstractField = /** @class */ (function (_super) {
         setFixedWidth(this.getGui(), width);
         return this;
     };
+    AgAbstractField.prototype.getPreviousValue = function () {
+        return this.previousValue;
+    };
     AgAbstractField.prototype.getValue = function () {
         return this.value;
     };
@@ -23273,6 +23493,7 @@ var AgAbstractField = /** @class */ (function (_super) {
         if (this.value === value) {
             return this;
         }
+        this.previousValue = this.value;
         this.value = value;
         if (!silent) {
             this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
@@ -23296,7 +23517,7 @@ var AgAbstractField = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23313,7 +23534,7 @@ var __extends$N = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -23395,13 +23616,13 @@ var AgAbstractInputField = /** @class */ (function (_super) {
         setDisabled(this.eInput, disabled);
         return _super.prototype.setDisabled.call(this, disabled);
     };
-    __decorate$J([
+    __decorate$G([
         RefSelector('eLabel')
     ], AgAbstractInputField.prototype, "eLabel", void 0);
-    __decorate$J([
+    __decorate$G([
         RefSelector('eWrapper')
     ], AgAbstractInputField.prototype, "eWrapper", void 0);
-    __decorate$J([
+    __decorate$G([
         RefSelector('eInput')
     ], AgAbstractInputField.prototype, "eInput", void 0);
     return AgAbstractInputField;
@@ -23409,7 +23630,7 @@ var AgAbstractInputField = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23426,12 +23647,6 @@ var __extends$O = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var AgCheckbox = /** @class */ (function (_super) {
     __extends$O(AgCheckbox, _super);
     function AgCheckbox(config, className, inputType) {
@@ -23496,12 +23711,12 @@ var AgCheckbox = /** @class */ (function (_super) {
         if (this.isSelected() === selected) {
             return;
         }
-        var previousValue = this.isSelected();
+        this.previousValue = this.isSelected();
         selected = this.selected = typeof selected === 'boolean' ? selected : undefined;
         this.eInput.checked = selected;
         this.eInput.indeterminate = selected === undefined;
         if (!silent) {
-            this.dispatchChange(this.selected, previousValue);
+            this.dispatchChange(this.selected, this.previousValue);
         }
     };
     AgCheckbox.prototype.dispatchChange = function (selected, previousValue, event) {
@@ -23529,15 +23744,12 @@ var AgCheckbox = /** @class */ (function (_super) {
         addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
         addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
     };
-    __decorate$K([
-        Autowired('gridOptionsWrapper')
-    ], AgCheckbox.prototype, "gridOptionsWrapper", void 0);
     return AgCheckbox;
 }(AgAbstractInputField));
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23554,7 +23766,7 @@ var __extends$P = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -23632,8 +23844,11 @@ var SelectAllFeature = /** @class */ (function (_super) {
         this.processingEventFromCheckbox = false;
     };
     SelectAllFeature.prototype.refreshSelectAllLabel = function () {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var checked = this.cbSelectAll.getValue();
-        this.cbSelectAll.setInputAriaLabel("Press Space to toggle all rows selection (" + (checked ? 'checked' : 'unchecked') + ")");
+        var ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
+        var ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
+        this.cbSelectAll.setInputAriaLabel(ariaLabel + " (" + ariaStatus + ")");
     };
     SelectAllFeature.prototype.getSelectionCount = function () {
         var _this = this;
@@ -23713,22 +23928,19 @@ var SelectAllFeature = /** @class */ (function (_super) {
         }
         return false;
     };
-    __decorate$L([
+    __decorate$H([
         Autowired('gridApi')
     ], SelectAllFeature.prototype, "gridApi", void 0);
-    __decorate$L([
+    __decorate$H([
         Autowired('columnApi')
     ], SelectAllFeature.prototype, "columnApi", void 0);
-    __decorate$L([
+    __decorate$H([
         Autowired('rowModel')
     ], SelectAllFeature.prototype, "rowModel", void 0);
-    __decorate$L([
+    __decorate$H([
         Autowired('selectionController')
     ], SelectAllFeature.prototype, "selectionController", void 0);
-    __decorate$L([
-        Autowired('gridOptionsWrapper')
-    ], SelectAllFeature.prototype, "gridOptionsWrapper", void 0);
-    __decorate$L([
+    __decorate$H([
         PostConstruct
     ], SelectAllFeature.prototype, "postConstruct", null);
     return SelectAllFeature;
@@ -23736,7 +23948,7 @@ var SelectAllFeature = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23758,6 +23970,10 @@ var AbstractHeaderWrapper = /** @class */ (function (_super) {
     function AbstractHeaderWrapper() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    AbstractHeaderWrapper.prototype.shouldStopEventPropagation = function (e) {
+        var _a = this.focusController.getFocusedHeader(), headerRowIndex = _a.headerRowIndex, column = _a.column;
+        return isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column);
+    };
     AbstractHeaderWrapper.prototype.getColumn = function () {
         return this.column;
     };
@@ -23769,7 +23985,7 @@ var AbstractHeaderWrapper = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23786,7 +24002,7 @@ var __extends$R = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -23806,7 +24022,6 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         _super.prototype.postConstruct.call(this);
         this.colDefVersion = this.columnController.getColDefVersion();
         this.updateState();
-        this.appendHeaderComp();
         this.setupWidth();
         this.setupMovingCss();
         this.setupTooltip();
@@ -23824,8 +24039,20 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
+        this.appendHeaderComp();
+    };
+    HeaderWrapperComp.prototype.onColumnRowGroupChanged = function () {
+        this.checkDisplayName();
+    };
+    HeaderWrapperComp.prototype.onColumnPivotChanged = function () {
+        this.checkDisplayName();
     };
     HeaderWrapperComp.prototype.onColumnValueChanged = function () {
+        this.checkDisplayName();
+    };
+    HeaderWrapperComp.prototype.checkDisplayName = function () {
         // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
         if (this.displayName !== this.calculateDisplayName()) {
             this.refresh();
@@ -24008,7 +24235,8 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
             },
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsWrapper.getContext()
+            context: this.gridOptionsWrapper.getContext(),
+            eGridHeader: this.getGui()
         };
         return params;
     };
@@ -24133,54 +24361,18 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         addCssClass(this.getGui(), 'ag-column-resizing');
     };
     HeaderWrapperComp.prototype.getTooltipParams = function () {
-        var colDef = this.getComponentHolder();
-        return {
-            location: 'header',
-            colDef: colDef,
-            column: this.getColumn(),
-            value: this.getTooltipText(),
-        };
-    };
-    HeaderWrapperComp.prototype.getTooltipText = function () {
-        return this.getComponentHolder().headerTooltip;
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'header';
+        res.colDef = this.column.getColDef();
+        return res;
     };
     HeaderWrapperComp.prototype.setupTooltip = function () {
         var _this = this;
-        var tooltipFeature;
-        var tooltipText;
-        var usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
-        var removeTooltip = function () {
-            if (usingBrowserTooltips) {
-                _this.getGui().removeAttribute('title');
-            }
-            else {
-                if (tooltipFeature) {
-                    tooltipFeature = _this.destroyBean(tooltipFeature);
-                }
-            }
-        };
-        var addTooltip = function () {
-            if (usingBrowserTooltips) {
-                _this.getGui().setAttribute('title', tooltipText);
-            }
-            else {
-                tooltipFeature = _this.createBean(new TooltipFeature(_this));
-            }
-        };
         var refresh = function () {
-            var newTooltipText = _this.getTooltipText();
-            if (tooltipText != newTooltipText) {
-                if (tooltipText) {
-                    removeTooltip();
-                }
-                tooltipText = newTooltipText;
-                if (tooltipText) {
-                    addTooltip();
-                }
-            }
+            var newTooltipText = _this.column.getColDef().headerTooltip;
+            _this.setTooltip(newTooltipText);
         };
         refresh();
-        this.addDestroyFunc(removeTooltip);
         this.refreshFunctions.push(refresh);
     };
     HeaderWrapperComp.prototype.setupMovingCss = function () {
@@ -24222,46 +24414,43 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         return result;
     };
     HeaderWrapperComp.TEMPLATE = "<div class=\"ag-header-cell\" role=\"columnheader\" unselectable=\"on\" tabindex=\"-1\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n            <ag-checkbox ref=\"cbSelectAll\" class=\"ag-header-select-all\" role=\"presentation\"></ag-checkbox>\n        </div>";
-    __decorate$M([
-        Autowired('gridOptionsWrapper')
-    ], HeaderWrapperComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$M([
+    __decorate$I([
         Autowired('dragAndDropService')
     ], HeaderWrapperComp.prototype, "dragAndDropService", void 0);
-    __decorate$M([
+    __decorate$I([
         Autowired('columnController')
     ], HeaderWrapperComp.prototype, "columnController", void 0);
-    __decorate$M([
+    __decorate$I([
         Autowired('horizontalResizeService')
     ], HeaderWrapperComp.prototype, "horizontalResizeService", void 0);
-    __decorate$M([
+    __decorate$I([
         Autowired('menuFactory')
     ], HeaderWrapperComp.prototype, "menuFactory", void 0);
-    __decorate$M([
+    __decorate$I([
         Autowired('gridApi')
     ], HeaderWrapperComp.prototype, "gridApi", void 0);
-    __decorate$M([
+    __decorate$I([
         Autowired('columnApi')
     ], HeaderWrapperComp.prototype, "columnApi", void 0);
-    __decorate$M([
+    __decorate$I([
         Autowired('sortController')
     ], HeaderWrapperComp.prototype, "sortController", void 0);
-    __decorate$M([
+    __decorate$I([
         Autowired('userComponentFactory')
     ], HeaderWrapperComp.prototype, "userComponentFactory", void 0);
-    __decorate$M([
+    __decorate$I([
         Autowired('columnHoverService')
     ], HeaderWrapperComp.prototype, "columnHoverService", void 0);
-    __decorate$M([
+    __decorate$I([
         Autowired('beans')
     ], HeaderWrapperComp.prototype, "beans", void 0);
-    __decorate$M([
+    __decorate$I([
         RefSelector('eResize')
     ], HeaderWrapperComp.prototype, "eResize", void 0);
-    __decorate$M([
+    __decorate$I([
         RefSelector('cbSelectAll')
     ], HeaderWrapperComp.prototype, "cbSelectAll", void 0);
-    __decorate$M([
+    __decorate$I([
         PreDestroy
     ], HeaderWrapperComp.prototype, "destroyHeaderComp", null);
     return HeaderWrapperComp;
@@ -24269,7 +24458,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24286,7 +24475,7 @@ var __extends$S = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -24369,28 +24558,20 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     HeaderGroupWrapperComp.prototype.getComponentHolder = function () {
         return this.column.getColGroupDef();
     };
-    HeaderGroupWrapperComp.prototype.getTooltipText = function () {
-        var colGroupDef = this.getComponentHolder();
-        return colGroupDef && colGroupDef.headerTooltip;
-    };
     HeaderGroupWrapperComp.prototype.getTooltipParams = function () {
-        return {
-            location: 'headerGroup',
-            colDef: this.getComponentHolder(),
-            column: this.getColumn(),
-            value: this.getTooltipText()
-        };
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'headerGroup';
+        // this is wrong, but leaving it as i don't want to change code,
+        // but the ColumnGroup does not have a ColDef or a Column (although it does have GroupDef and ColumnGroup)
+        res.colDef = this.getComponentHolder();
+        res.column = this.getColumn();
+        return res;
     };
     HeaderGroupWrapperComp.prototype.setupTooltip = function () {
-        var tooltipText = this.getTooltipText();
-        if (tooltipText == null) {
-            return;
-        }
-        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.getGui().setAttribute('title', tooltipText);
-        }
-        else {
-            this.createManagedBean(new TooltipFeature(this));
+        var colGroupDef = this.getComponentHolder();
+        var tooltipText = colGroupDef && colGroupDef.headerTooltip;
+        if (tooltipText != null) {
+            this.setTooltip(tooltipText);
         }
     };
     HeaderGroupWrapperComp.prototype.onColumnMovingChanged = function () {
@@ -24638,28 +24819,25 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         return result;
     };
     HeaderGroupWrapperComp.TEMPLATE = "<div class=\"ag-header-group-cell\" role=\"columnheader\" tabindex=\"-1\">\n            <div ref=\"agResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n        </div>";
-    __decorate$N([
-        Autowired('gridOptionsWrapper')
-    ], HeaderGroupWrapperComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$N([
+    __decorate$J([
         Autowired('columnController')
     ], HeaderGroupWrapperComp.prototype, "columnController", void 0);
-    __decorate$N([
+    __decorate$J([
         Autowired('horizontalResizeService')
     ], HeaderGroupWrapperComp.prototype, "horizontalResizeService", void 0);
-    __decorate$N([
+    __decorate$J([
         Autowired('dragAndDropService')
     ], HeaderGroupWrapperComp.prototype, "dragAndDropService", void 0);
-    __decorate$N([
+    __decorate$J([
         Autowired('userComponentFactory')
     ], HeaderGroupWrapperComp.prototype, "userComponentFactory", void 0);
-    __decorate$N([
+    __decorate$J([
         Autowired('beans')
     ], HeaderGroupWrapperComp.prototype, "beans", void 0);
-    __decorate$N([
+    __decorate$J([
         Autowired('gridApi')
     ], HeaderGroupWrapperComp.prototype, "gridApi", void 0);
-    __decorate$N([
+    __decorate$J([
         Autowired('columnApi')
     ], HeaderGroupWrapperComp.prototype, "columnApi", void 0);
     return HeaderGroupWrapperComp;
@@ -24667,7 +24845,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24684,7 +24862,7 @@ var __extends$T = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -24706,9 +24884,10 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
     ReadOnlyFloatingFilter.prototype.init = function (params) {
         this.params = params;
         var displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(displayName + " Filter Input");
+            .setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'));
     };
     ReadOnlyFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
         var _this = this;
@@ -24725,10 +24904,10 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
             }
         });
     };
-    __decorate$O([
+    __decorate$K([
         RefSelector('eFloatingFilterText')
     ], ReadOnlyFloatingFilter.prototype, "eFloatingFilterText", void 0);
-    __decorate$O([
+    __decorate$K([
         Autowired('columnController')
     ], ReadOnlyFloatingFilter.prototype, "columnController", void 0);
     return ReadOnlyFloatingFilter;
@@ -24736,7 +24915,7 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24763,7 +24942,7 @@ var FloatingFilterMapper = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24780,7 +24959,7 @@ var __extends$U = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -24973,7 +25152,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
             var getModelAsStringExists = filterComponent && filterComponent.prototype && filterComponent.prototype.getModelAsString;
             if (getModelAsStringExists) {
                 var compInstance = this.userComponentFactory.createUserComponentFromConcreteClass(ReadOnlyFloatingFilter, params);
-                promise = Promise.resolve(compInstance);
+                promise = AgPromise.resolve(compInstance);
             }
         }
         return promise;
@@ -25006,37 +25185,34 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
             'params.parentFilterInstance() and then set a value on the parent filter directly.');
     };
     FloatingFilterWrapper.TEMPLATE = "<div class=\"ag-header-cell\" role=\"columnheader\" tabindex=\"-1\">\n            <div class=\"ag-floating-filter-full-body\" ref=\"eFloatingFilterBody\" role=\"presentation\"></div>\n            <div class=\"ag-floating-filter-button ag-hidden\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" aria-label=\"Open Filter Menu\" class=\"ag-floating-filter-button-button\" ref=\"eButtonShowMainFilter\" tabindex=\"-1\"></button>\n            </div>\n        </div>";
-    __decorate$P([
+    __decorate$L([
         Autowired('columnHoverService')
     ], FloatingFilterWrapper.prototype, "columnHoverService", void 0);
-    __decorate$P([
-        Autowired('gridOptionsWrapper')
-    ], FloatingFilterWrapper.prototype, "gridOptionsWrapper", void 0);
-    __decorate$P([
+    __decorate$L([
         Autowired('userComponentFactory')
     ], FloatingFilterWrapper.prototype, "userComponentFactory", void 0);
-    __decorate$P([
+    __decorate$L([
         Autowired('gridApi')
     ], FloatingFilterWrapper.prototype, "gridApi", void 0);
-    __decorate$P([
+    __decorate$L([
         Autowired('columnApi')
     ], FloatingFilterWrapper.prototype, "columnApi", void 0);
-    __decorate$P([
+    __decorate$L([
         Autowired('filterManager')
     ], FloatingFilterWrapper.prototype, "filterManager", void 0);
-    __decorate$P([
+    __decorate$L([
         Autowired('menuFactory')
     ], FloatingFilterWrapper.prototype, "menuFactory", void 0);
-    __decorate$P([
+    __decorate$L([
         Autowired('beans')
     ], FloatingFilterWrapper.prototype, "beans", void 0);
-    __decorate$P([
+    __decorate$L([
         RefSelector('eFloatingFilterBody')
     ], FloatingFilterWrapper.prototype, "eFloatingFilterBody", void 0);
-    __decorate$P([
+    __decorate$L([
         RefSelector('eButtonWrapper')
     ], FloatingFilterWrapper.prototype, "eButtonWrapper", void 0);
-    __decorate$P([
+    __decorate$L([
         RefSelector('eButtonShowMainFilter')
     ], FloatingFilterWrapper.prototype, "eButtonShowMainFilter", void 0);
     return FloatingFilterWrapper;
@@ -25044,7 +25220,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25061,7 +25237,7 @@ var __extends$V = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -25295,19 +25471,16 @@ var HeaderRowComp = /** @class */ (function (_super) {
     HeaderRowComp.prototype.getHeaderComps = function () {
         return this.headerComps;
     };
-    __decorate$Q([
-        Autowired('gridOptionsWrapper')
-    ], HeaderRowComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$Q([
+    __decorate$M([
         Autowired('columnController')
     ], HeaderRowComp.prototype, "columnController", void 0);
-    __decorate$Q([
+    __decorate$M([
         Autowired('focusController')
     ], HeaderRowComp.prototype, "focusController", void 0);
-    __decorate$Q([
+    __decorate$M([
         PreDestroy
     ], HeaderRowComp.prototype, "destroyAllChildComponents", null);
-    __decorate$Q([
+    __decorate$M([
         PostConstruct
     ], HeaderRowComp.prototype, "init", null);
     return HeaderRowComp;
@@ -25315,11 +25488,11 @@ var HeaderRowComp = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __decorate$R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -25688,19 +25861,19 @@ var MoveColumnController = /** @class */ (function () {
             }
         }
     };
-    __decorate$R([
+    __decorate$N([
         Autowired('loggerFactory')
     ], MoveColumnController.prototype, "loggerFactory", void 0);
-    __decorate$R([
+    __decorate$N([
         Autowired('columnController')
     ], MoveColumnController.prototype, "columnController", void 0);
-    __decorate$R([
+    __decorate$N([
         Autowired('dragAndDropService')
     ], MoveColumnController.prototype, "dragAndDropService", void 0);
-    __decorate$R([
+    __decorate$N([
         Autowired('gridOptionsWrapper')
     ], MoveColumnController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$R([
+    __decorate$N([
         PostConstruct
     ], MoveColumnController.prototype, "init", null);
     return MoveColumnController;
@@ -25708,11 +25881,11 @@ var MoveColumnController = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __decorate$S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -25787,10 +25960,10 @@ var BodyDropPivotTarget = /** @class */ (function () {
             this.columnController.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
         }
     };
-    __decorate$S([
+    __decorate$O([
         Autowired('columnController')
     ], BodyDropPivotTarget.prototype, "columnController", void 0);
-    __decorate$S([
+    __decorate$O([
         Autowired('gridOptionsWrapper')
     ], BodyDropPivotTarget.prototype, "gridOptionsWrapper", void 0);
     return BodyDropPivotTarget;
@@ -25798,7 +25971,7 @@ var BodyDropPivotTarget = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25815,7 +25988,7 @@ var __extends$W = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -25905,16 +26078,13 @@ var BodyDropTarget = /** @class */ (function (_super) {
     BodyDropTarget.prototype.onDragStop = function (params) {
         this.currentDropListener.onDragStop(params);
     };
-    __decorate$T([
+    __decorate$P([
         Autowired('dragAndDropService')
     ], BodyDropTarget.prototype, "dragAndDropService", void 0);
-    __decorate$T([
+    __decorate$P([
         Autowired('columnController')
     ], BodyDropTarget.prototype, "columnController", void 0);
-    __decorate$T([
-        Autowired('gridOptionsWrapper')
-    ], BodyDropTarget.prototype, "gridOptionsWrapper", void 0);
-    __decorate$T([
+    __decorate$P([
         PostConstruct
     ], BodyDropTarget.prototype, "init", null);
     return BodyDropTarget;
@@ -25922,7 +26092,7 @@ var BodyDropTarget = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25939,7 +26109,7 @@ var __extends$X = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -26094,19 +26264,16 @@ var HeaderContainer = /** @class */ (function (_super) {
         // taking it out of the last position and re-inserting relative to the other rows.
         this.getRowComps().forEach(function (rowComp) { return _this.eContainer.appendChild(rowComp.getGui()); });
     };
-    __decorate$U([
-        Autowired('gridOptionsWrapper')
-    ], HeaderContainer.prototype, "gridOptionsWrapper", void 0);
-    __decorate$U([
+    __decorate$Q([
         Autowired('columnController')
     ], HeaderContainer.prototype, "columnController", void 0);
-    __decorate$U([
+    __decorate$Q([
         Autowired('scrollVisibleService')
     ], HeaderContainer.prototype, "scrollVisibleService", void 0);
-    __decorate$U([
+    __decorate$Q([
         PostConstruct
     ], HeaderContainer.prototype, "init", null);
-    __decorate$U([
+    __decorate$Q([
         PreDestroy
     ], HeaderContainer.prototype, "destroyRowComps", null);
     return HeaderContainer;
@@ -26114,7 +26281,7 @@ var HeaderContainer = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26131,7 +26298,7 @@ var __extends$Y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -26279,19 +26446,16 @@ var HeaderNavigationService = /** @class */ (function (_super) {
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();
     };
-    __decorate$V([
-        Autowired('gridOptionsWrapper')
-    ], HeaderNavigationService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$V([
+    __decorate$R([
         Autowired('focusController')
     ], HeaderNavigationService.prototype, "focusController", void 0);
-    __decorate$V([
+    __decorate$R([
         Autowired('headerPositionUtils')
     ], HeaderNavigationService.prototype, "headerPositionUtils", void 0);
-    __decorate$V([
+    __decorate$R([
         Autowired('animationFrameService')
     ], HeaderNavigationService.prototype, "animationFrameService", void 0);
-    HeaderNavigationService = __decorate$V([
+    HeaderNavigationService = __decorate$R([
         Bean('headerNavigationService')
     ], HeaderNavigationService);
     return HeaderNavigationService;
@@ -26299,7 +26463,7 @@ var HeaderNavigationService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26335,7 +26499,7 @@ var KeyName = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26352,7 +26516,7 @@ var __extends$Z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -26398,21 +26562,13 @@ var HeaderRootComp = /** @class */ (function (_super) {
         var direction = e.shiftKey !== isRtl
             ? HeaderNavigationDirection.LEFT
             : HeaderNavigationDirection.RIGHT;
-        var _a = this.focusController.getFocusedHeader(), headerRowIndex = _a.headerRowIndex, column = _a.column;
-        if (isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
-            return;
-        }
         if (this.headerNavigationService.navigateHorizontally(direction, true, e) ||
             this.focusController.focusNextGridCoreContainer(e.shiftKey)) {
             e.preventDefault();
         }
     };
     HeaderRootComp.prototype.handleKeyDown = function (e) {
-        var direction;
-        var _a = this.focusController.getFocusedHeader(), headerRowIndex = _a.headerRowIndex, column = _a.column;
-        if (isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
-            return;
-        }
+        var direction = null;
         switch (e.key) {
             case KeyName.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
@@ -26503,31 +26659,28 @@ var HeaderRootComp = /** @class */ (function (_super) {
         setDisplayed(this.ePinnedRightHeader, visible);
     };
     HeaderRootComp.TEMPLATE = "<div class=\"ag-header\" role=\"presentation\">\n            <div class=\"ag-pinned-left-header\" ref=\"ePinnedLeftHeader\" role=\"presentation\"></div>\n            <div class=\"ag-header-viewport\" ref=\"eHeaderViewport\" role=\"presentation\">\n                <div class=\"ag-header-container\" ref=\"eHeaderContainer\" role=\"rowgroup\"></div>\n            </div>\n            <div class=\"ag-pinned-right-header\" ref=\"ePinnedRightHeader\" role=\"presentation\"></div>\n        </div>";
-    __decorate$W([
+    __decorate$S([
         RefSelector('ePinnedLeftHeader')
     ], HeaderRootComp.prototype, "ePinnedLeftHeader", void 0);
-    __decorate$W([
+    __decorate$S([
         RefSelector('ePinnedRightHeader')
     ], HeaderRootComp.prototype, "ePinnedRightHeader", void 0);
-    __decorate$W([
+    __decorate$S([
         RefSelector('eHeaderContainer')
     ], HeaderRootComp.prototype, "eHeaderContainer", void 0);
-    __decorate$W([
+    __decorate$S([
         RefSelector('eHeaderViewport')
     ], HeaderRootComp.prototype, "eHeaderViewport", void 0);
-    __decorate$W([
-        Autowired('gridOptionsWrapper')
-    ], HeaderRootComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$W([
+    __decorate$S([
         Autowired('columnController')
     ], HeaderRootComp.prototype, "columnController", void 0);
-    __decorate$W([
+    __decorate$S([
         Autowired('gridApi')
     ], HeaderRootComp.prototype, "gridApi", void 0);
-    __decorate$W([
+    __decorate$S([
         Autowired('autoWidthCalculator')
     ], HeaderRootComp.prototype, "autoWidthCalculator", void 0);
-    __decorate$W([
+    __decorate$S([
         Autowired('headerNavigationService')
     ], HeaderRootComp.prototype, "headerNavigationService", void 0);
     return HeaderRootComp;
@@ -26535,7 +26688,7 @@ var HeaderRootComp = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26563,7 +26716,7 @@ var __assign$4 = (undefined && undefined.__assign) || function () {
     };
     return __assign$4.apply(this, arguments);
 };
-var __decorate$X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -26625,16 +26778,16 @@ var FilterManager = /** @class */ (function (_super) {
                 allPromises.push(_this.setModelOnFilterWrapper(filterWrapper.filterPromise, null));
             });
         }
-        Promise.all(allPromises).then(function () { return _this.onFilterChanged(); });
+        AgPromise.all(allPromises).then(function () { return _this.onFilterChanged(); });
     };
     FilterManager.prototype.setModelOnFilterWrapper = function (filterPromise, newModel) {
-        return new Promise(function (resolve) {
+        return new AgPromise(function (resolve) {
             filterPromise.then(function (filter) {
                 if (typeof filter.setModel !== 'function') {
                     console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
                     resolve();
                 }
-                (filter.setModel(newModel) || Promise.resolve()).then(function () { return resolve(); });
+                (filter.setModel(newModel) || AgPromise.resolve()).then(function () { return resolve(); });
             });
         });
     };
@@ -26915,7 +27068,7 @@ var FilterManager = /** @class */ (function (_super) {
             filterPromise: null,
             scope: null,
             compiledElement: null,
-            guiPromise: Promise.resolve(null)
+            guiPromise: AgPromise.resolve(null)
         };
         filterWrapper.scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
         filterWrapper.filterPromise = this.createFilterInstance(column, filterWrapper.scope);
@@ -26928,7 +27081,7 @@ var FilterManager = /** @class */ (function (_super) {
         var _this = this;
         var eFilterGui = document.createElement('div');
         eFilterGui.className = 'ag-filter';
-        filterWrapper.guiPromise = new Promise(function (resolve) {
+        filterWrapper.guiPromise = new AgPromise(function (resolve) {
             filterWrapper.filterPromise.then(function (filter) {
                 var guiFromFilter = filter.getGui();
                 if (!exists(guiFromFilter)) {
@@ -26985,7 +27138,7 @@ var FilterManager = /** @class */ (function (_super) {
     FilterManager.prototype.disposeFilterWrapper = function (filterWrapper, source) {
         var _this = this;
         filterWrapper.filterPromise.then(function (filter) {
-            (filter.setModel(null) || Promise.resolve()).then(function () {
+            (filter.setModel(null) || AgPromise.resolve()).then(function () {
                 _this.getContext().destroyBean(filter);
                 filterWrapper.column.setFilterActive(false, source);
                 if (filterWrapper.scope) {
@@ -27005,40 +27158,37 @@ var FilterManager = /** @class */ (function (_super) {
     };
     var FilterManager_1;
     FilterManager.QUICK_FILTER_SEPARATOR = '\n';
-    __decorate$X([
+    __decorate$T([
         Autowired('$compile')
     ], FilterManager.prototype, "$compile", void 0);
-    __decorate$X([
+    __decorate$T([
         Autowired('$scope')
     ], FilterManager.prototype, "$scope", void 0);
-    __decorate$X([
-        Autowired('gridOptionsWrapper')
-    ], FilterManager.prototype, "gridOptionsWrapper", void 0);
-    __decorate$X([
+    __decorate$T([
         Autowired('valueService')
     ], FilterManager.prototype, "valueService", void 0);
-    __decorate$X([
+    __decorate$T([
         Autowired('columnController')
     ], FilterManager.prototype, "columnController", void 0);
-    __decorate$X([
+    __decorate$T([
         Autowired('rowModel')
     ], FilterManager.prototype, "rowModel", void 0);
-    __decorate$X([
+    __decorate$T([
         Autowired('columnApi')
     ], FilterManager.prototype, "columnApi", void 0);
-    __decorate$X([
+    __decorate$T([
         Autowired('gridApi')
     ], FilterManager.prototype, "gridApi", void 0);
-    __decorate$X([
+    __decorate$T([
         Autowired('userComponentFactory')
     ], FilterManager.prototype, "userComponentFactory", void 0);
-    __decorate$X([
+    __decorate$T([
         PostConstruct
     ], FilterManager.prototype, "init", null);
-    __decorate$X([
+    __decorate$T([
         PreDestroy
     ], FilterManager.prototype, "destroy", null);
-    FilterManager = FilterManager_1 = __decorate$X([
+    FilterManager = FilterManager_1 = __decorate$T([
         Bean('filterManager')
     ], FilterManager);
     return FilterManager;
@@ -27046,7 +27196,7 @@ var FilterManager = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27063,7 +27213,7 @@ var __extends$$ = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27129,7 +27279,31 @@ var ValueService = /** @class */ (function (_super) {
             var cellValueGetter = result.substring(1);
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }
+        if (result == null) {
+            var openedGroup = this.getOpenedGroup(rowNode, column);
+            if (openedGroup != null) {
+                return openedGroup;
+            }
+        }
         return result;
+    };
+    ValueService.prototype.getOpenedGroup = function (rowNode, column) {
+        if (!this.gridOptionsWrapper.isShowOpenedGroup()) {
+            return;
+        }
+        var colDef = column.getColDef();
+        if (!colDef.showRowGroup) {
+            return;
+        }
+        var showRowGroup = column.getColDef().showRowGroup;
+        var pointer = rowNode.parent;
+        while (pointer != null) {
+            if (pointer.rowGroupColumn && (showRowGroup === true || showRowGroup === pointer.rowGroupColumn.getId())) {
+                return pointer.key;
+            }
+            pointer = pointer.parent;
+        }
+        return undefined;
     };
     ValueService.prototype.setValue = function (rowNode, colKey, newValue, eventSource) {
         var column = this.columnController.getPrimaryColumn(colKey);
@@ -27295,22 +27469,19 @@ var ValueService = /** @class */ (function (_super) {
         }
         return result;
     };
-    __decorate$Y([
-        Autowired('gridOptionsWrapper')
-    ], ValueService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$Y([
+    __decorate$U([
         Autowired('expressionService')
     ], ValueService.prototype, "expressionService", void 0);
-    __decorate$Y([
+    __decorate$U([
         Autowired('columnController')
     ], ValueService.prototype, "columnController", void 0);
-    __decorate$Y([
+    __decorate$U([
         Autowired('valueCache')
     ], ValueService.prototype, "valueCache", void 0);
-    __decorate$Y([
+    __decorate$U([
         PostConstruct
     ], ValueService.prototype, "init", null);
-    ValueService = __decorate$Y([
+    ValueService = __decorate$U([
         Bean('valueService')
     ], ValueService);
     return ValueService;
@@ -27318,11 +27489,11 @@ var ValueService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __decorate$Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27440,10 +27611,10 @@ var RowContainerComponent = /** @class */ (function () {
         var millisSinceVisible = now - this.lastMadeVisibleTime;
         return millisSinceVisible < 500;
     };
-    __decorate$Z([
+    __decorate$V([
         Autowired('gridOptionsWrapper')
     ], RowContainerComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate$Z([
+    __decorate$V([
         PostConstruct
     ], RowContainerComponent.prototype, "postConstruct", null);
     return RowContainerComponent;
@@ -27451,7 +27622,7 @@ var RowContainerComponent = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27479,7 +27650,7 @@ var __assign$5 = (undefined && undefined.__assign) || function () {
     };
     return __assign$5.apply(this, arguments);
 };
-var __decorate$_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27853,37 +28024,37 @@ var RowDragFeature = /** @class */ (function (_super) {
             rowNode.setDragging(false);
         });
     };
-    __decorate$_([
+    __decorate$W([
         Autowired('dragAndDropService')
     ], RowDragFeature.prototype, "dragAndDropService", void 0);
-    __decorate$_([
+    __decorate$W([
         Autowired('rowModel')
     ], RowDragFeature.prototype, "rowModel", void 0);
-    __decorate$_([
+    __decorate$W([
+        Autowired('paginationProxy')
+    ], RowDragFeature.prototype, "paginationProxy", void 0);
+    __decorate$W([
         Autowired('columnController')
     ], RowDragFeature.prototype, "columnController", void 0);
-    __decorate$_([
+    __decorate$W([
         Autowired('focusController')
     ], RowDragFeature.prototype, "focusController", void 0);
-    __decorate$_([
+    __decorate$W([
         Autowired('sortController')
     ], RowDragFeature.prototype, "sortController", void 0);
-    __decorate$_([
+    __decorate$W([
         Autowired('filterManager')
     ], RowDragFeature.prototype, "filterManager", void 0);
-    __decorate$_([
-        Autowired('gridOptionsWrapper')
-    ], RowDragFeature.prototype, "gridOptionsWrapper", void 0);
-    __decorate$_([
+    __decorate$W([
         Autowired('selectionController')
     ], RowDragFeature.prototype, "selectionController", void 0);
-    __decorate$_([
+    __decorate$W([
         Optional('rangeController')
     ], RowDragFeature.prototype, "rangeController", void 0);
-    __decorate$_([
+    __decorate$W([
         Autowired('mouseEventService')
     ], RowDragFeature.prototype, "mouseEventService", void 0);
-    __decorate$_([
+    __decorate$W([
         PostConstruct
     ], RowDragFeature.prototype, "postConstruct", null);
     return RowDragFeature;
@@ -27891,7 +28062,7 @@ var RowDragFeature = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27908,7 +28079,7 @@ var __extends$11 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27957,6 +28128,10 @@ var GridPanel = /** @class */ (function (_super) {
         if (this.columnController.isReady() && !this.paginationProxy.isEmpty()) {
             this.hideOverlay();
         }
+        // we don't want each cellComp to register for events, as would increase rendering time.
+        // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
+        // each cell if / when event was fired.
+        this.rowRenderer.forEachCellComp(function (cellComp) { return cellComp.onNewColumnsLoaded(); });
     };
     GridPanel.prototype.init = function () {
         var _this = this;
@@ -28211,7 +28386,7 @@ var GridPanel = /** @class */ (function (_super) {
             var target = getTarget(mouseEvent);
             if (target === _this.eBodyViewport || target === _this.eCenterViewport) {
                 // show it
-                _this.onContextMenu(mouseEvent, null, null, null, null);
+                _this.onContextMenu(mouseEvent, null, null, null, null, _this.getGui());
                 _this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
@@ -28352,9 +28527,11 @@ var GridPanel = /** @class */ (function (_super) {
             cellComp.dispatchCellContextMenuEvent(event_1);
             value = this.valueService.getValue(column, rowNode);
         }
-        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value);
+        // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
+        var anchorToElement = cellComp ? cellComp.getGui() : this.getGui();
+        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
     };
-    GridPanel.prototype.onContextMenu = function (mouseEvent, touchEvent, rowNode, column, value) {
+    GridPanel.prototype.onContextMenu = function (mouseEvent, touchEvent, rowNode, column, value, anchorToElement) {
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
         if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
@@ -28365,7 +28542,7 @@ var GridPanel = /** @class */ (function (_super) {
         }
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
             var eventOrTouch = mouseEvent ? mouseEvent : touchEvent.touches[0];
-            if (this.contextMenuFactory.showMenu(rowNode, column, value, eventOrTouch)) {
+            if (this.contextMenuFactory.showMenu(rowNode, column, value, eventOrTouch, anchorToElement)) {
                 var event_2 = mouseEvent ? mouseEvent : touchEvent;
                 event_2.preventDefault();
             }
@@ -28987,7 +29164,7 @@ var GridPanel = /** @class */ (function (_super) {
         // could be 10px before the max position, and then current scroll event could be 20px after the max position).
         // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
         // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
-        if (touchOnly && !isIOSUserAgent) {
+        if (touchOnly && !isIOSUserAgent()) {
             return false;
         }
         if (direction === 'vertical') {
@@ -29102,175 +29279,172 @@ var GridPanel = /** @class */ (function (_super) {
     GridPanel.prototype.removeScrollEventListener = function (listener) {
         this.eBodyViewport.removeEventListener('scroll', listener);
     };
-    __decorate$$([
+    __decorate$X([
         Autowired('alignedGridsService')
     ], GridPanel.prototype, "alignedGridsService", void 0);
-    __decorate$$([
-        Autowired('gridOptionsWrapper')
-    ], GridPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('rowRenderer')
     ], GridPanel.prototype, "rowRenderer", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('pinnedRowModel')
     ], GridPanel.prototype, "pinnedRowModel", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('animationFrameService')
     ], GridPanel.prototype, "animationFrameService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('navigationService')
     ], GridPanel.prototype, "navigationService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('autoHeightCalculator')
     ], GridPanel.prototype, "autoHeightCalculator", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('columnAnimationService')
     ], GridPanel.prototype, "columnAnimationService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('autoWidthCalculator')
     ], GridPanel.prototype, "autoWidthCalculator", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('paginationAutoPageSizeService')
     ], GridPanel.prototype, "paginationAutoPageSizeService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('beans')
     ], GridPanel.prototype, "beans", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('paginationProxy')
     ], GridPanel.prototype, "paginationProxy", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('columnApi')
     ], GridPanel.prototype, "columnApi", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('gridApi')
     ], GridPanel.prototype, "gridApi", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('dragService')
     ], GridPanel.prototype, "dragService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('mouseEventService')
     ], GridPanel.prototype, "mouseEventService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('$scope')
     ], GridPanel.prototype, "$scope", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('scrollVisibleService')
     ], GridPanel.prototype, "scrollVisibleService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('valueService')
     ], GridPanel.prototype, "valueService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('dragAndDropService')
     ], GridPanel.prototype, "dragAndDropService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('maxDivHeightScaler')
     ], GridPanel.prototype, "heightScaler", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('resizeObserverService')
     ], GridPanel.prototype, "resizeObserverService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('undoRedoService')
     ], GridPanel.prototype, "undoRedoService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('columnController')
     ], GridPanel.prototype, "columnController", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('headerNavigationService')
     ], GridPanel.prototype, "headerNavigationService", void 0);
-    __decorate$$([
+    __decorate$X([
         Autowired('popupService')
     ], GridPanel.prototype, "popupService", void 0);
-    __decorate$$([
+    __decorate$X([
         Optional('rangeController')
     ], GridPanel.prototype, "rangeController", void 0);
-    __decorate$$([
+    __decorate$X([
         Optional('contextMenuFactory')
     ], GridPanel.prototype, "contextMenuFactory", void 0);
-    __decorate$$([
+    __decorate$X([
         Optional('menuFactory')
     ], GridPanel.prototype, "menuFactory", void 0);
-    __decorate$$([
+    __decorate$X([
         Optional('clipboardService')
     ], GridPanel.prototype, "clipboardService", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eBodyViewport')
     ], GridPanel.prototype, "eBodyViewport", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eCenterContainer')
     ], GridPanel.prototype, "eCenterContainer", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eCenterViewport')
     ], GridPanel.prototype, "eCenterViewport", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eLeftContainer')
     ], GridPanel.prototype, "eLeftContainer", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eRightContainer')
     ], GridPanel.prototype, "eRightContainer", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eCenterColsClipper')
     ], GridPanel.prototype, "eCenterColsClipper", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eHorizontalScrollBody')
     ], GridPanel.prototype, "eHorizontalScrollBody", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eHorizontalLeftSpacer')
     ], GridPanel.prototype, "eHorizontalLeftSpacer", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eHorizontalRightSpacer')
     ], GridPanel.prototype, "eHorizontalRightSpacer", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eBodyHorizontalScrollViewport')
     ], GridPanel.prototype, "eBodyHorizontalScrollViewport", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eBodyHorizontalScrollContainer')
     ], GridPanel.prototype, "eBodyHorizontalScrollContainer", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eFullWidthContainer')
     ], GridPanel.prototype, "eFullWidthContainer", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eTop')
     ], GridPanel.prototype, "eTop", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eLeftTop')
     ], GridPanel.prototype, "eLeftTop", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eRightTop')
     ], GridPanel.prototype, "eRightTop", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eTopContainer')
     ], GridPanel.prototype, "eTopContainer", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eTopViewport')
     ], GridPanel.prototype, "eTopViewport", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eTopFullWidthContainer')
     ], GridPanel.prototype, "eTopFullWidthContainer", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eBottom')
     ], GridPanel.prototype, "eBottom", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eLeftBottom')
     ], GridPanel.prototype, "eLeftBottom", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eRightBottom')
     ], GridPanel.prototype, "eRightBottom", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eBottomContainer')
     ], GridPanel.prototype, "eBottomContainer", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eBottomViewport')
     ], GridPanel.prototype, "eBottomViewport", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('eBottomFullWidthContainer')
     ], GridPanel.prototype, "eBottomFullWidthContainer", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('headerRoot')
     ], GridPanel.prototype, "headerRootComp", void 0);
-    __decorate$$([
+    __decorate$X([
         RefSelector('overlayWrapper')
     ], GridPanel.prototype, "overlayWrapper", void 0);
-    __decorate$$([
+    __decorate$X([
         PostConstruct
     ], GridPanel.prototype, "init", null);
     return GridPanel;
@@ -29278,11 +29452,11 @@ var GridPanel = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __decorate$10 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -29363,10 +29537,23 @@ var GridApi = /** @class */ (function () {
         console.warn("ag-grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()");
         this.setServerSideDatasource(datasource);
     };
+    GridApi.prototype.setGridAriaProperty = function (property, value) {
+        if (!property) {
+            return;
+        }
+        var eGrid = this.gridPanel.getGui();
+        var ariaProperty = "aria-" + property;
+        if (value === null) {
+            eGrid.removeAttribute(ariaProperty);
+        }
+        else {
+            eGrid.setAttribute(ariaProperty, value);
+        }
+    };
     GridApi.prototype.setServerSideDatasource = function (datasource) {
-        if (this.gridOptionsWrapper.isRowModelServerSide()) {
+        if (this.serverSideRowModel) {
             // should really have an IEnterpriseRowModel interface, so we are not casting to any
-            this.rowModel.setDatasource(datasource);
+            this.serverSideRowModel.setDatasource(datasource);
         }
         else {
             console.warn("ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '" + Constants.ROW_MODEL_TYPE_SERVER_SIDE + "'");
@@ -29656,18 +29843,26 @@ var GridApi = /** @class */ (function () {
         };
     };
     GridApi.prototype.expandAll = function () {
-        if (missing(this.clientSideRowModel)) {
-            console.warn('ag-Grid: cannot call expandAll unless using normal row model');
-            return;
+        if (this.clientSideRowModel) {
+            this.clientSideRowModel.expandOrCollapseAll(true);
         }
-        this.clientSideRowModel.expandOrCollapseAll(true);
+        else if (this.serverSideRowModel) {
+            this.serverSideRowModel.expandAll(true);
+        }
+        else {
+            console.warn('ag-Grid: expandAll only works with Client Side Row Model and Server Side Row Model');
+        }
     };
     GridApi.prototype.collapseAll = function () {
-        if (missing(this.clientSideRowModel)) {
-            console.warn('ag-Grid: cannot call collapseAll unless using normal row model');
-            return;
+        if (this.clientSideRowModel) {
+            this.clientSideRowModel.expandOrCollapseAll(false);
         }
-        this.clientSideRowModel.expandOrCollapseAll(false);
+        else if (this.serverSideRowModel) {
+            this.serverSideRowModel.expandAll(false);
+        }
+        else {
+            console.warn('ag-Grid: collapseAll only works with Client Side Row Model and Server Side Row Model');
+        }
     };
     GridApi.prototype.getToolPanelInstance = function (id) {
         return this.gridCore.getToolPanelInstance(id);
@@ -30112,6 +30307,18 @@ var GridApi = /** @class */ (function () {
             return this.chartService.createRangeChart(params);
         }
     };
+    GridApi.prototype.createCrossFilterChart = function (params) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createCrossFilterChart') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart')) {
+            return this.chartService.createCrossFilterChart(params);
+        }
+    };
+    GridApi.prototype.restoreChart = function (chartModel, chartContainer) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.restoreChart') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart')) {
+            return this.chartService.restoreChart(chartModel, chartContainer);
+        }
+    };
     GridApi.prototype.createPivotChart = function (params) {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createPivotChart') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart')) {
@@ -30228,10 +30435,19 @@ var GridApi = /** @class */ (function () {
         if (this.clientSideRowModel) {
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         }
-        else if (this.infiniteRowModel) {
-            var message_1 = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
-            doOnce(function () { return console.warn(message_1); }, 'applyTransaction infiniteRowModel deprecated');
-            this.infiniteRowModel.updateRowData(rowDataTransaction);
+        return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
+    };
+    GridApi.prototype.retryServerSideLoads = function () {
+        if (!this.serverSideRowModel) {
+            console.warn('ag-Grid: API retryServerSideLoads() can only be used when using Server-Side Row Model.');
+            return;
+        }
+        this.serverSideRowModel.retryLoads();
+    };
+    GridApi.prototype.flushServerSideAsyncTransactions = function () {
+        if (!this.serverSideTransactionManager) {
+            console.warn('ag-Grid: Cannot flush Server Side Transaction if not using the Server Side Row Model.');
+            return;
         }
         else {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel.');
@@ -30321,12 +30537,35 @@ var GridApi = /** @class */ (function () {
         console.warn("ag-grid: since version 18.x, api.purgeEnterpriseCache() should be replaced with api.purgeServerSideCache()");
         this.purgeServerSideCache(route);
     };
+    /** @deprecated */
     GridApi.prototype.purgeServerSideCache = function (route) {
+        if (route === void 0) { route = []; }
         if (this.serverSideRowModel) {
-            this.serverSideRowModel.purgeCache(route);
+            console.warn("ag-Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSideStore({purge: true}) instead.");
+            this.refreshServerSideStore({
+                route: route,
+                purge: true
+            });
         }
         else {
-            console.warn("ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.");
+            console.warn("ag-Grid: api.purgeServerSideCache is only available when rowModelType='serverSide'.");
+        }
+    };
+    GridApi.prototype.refreshServerSideStore = function (params) {
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.refreshStore(params);
+        }
+        else {
+            console.warn("ag-Grid: api.refreshServerSideStore is only available when rowModelType='serverSide'.");
+        }
+    };
+    GridApi.prototype.getServerSideStoreState = function () {
+        if (this.serverSideRowModel) {
+            return this.serverSideRowModel.getStoreState();
+        }
+        else {
+            console.warn("ag-Grid: api.getServerSideStoreState is only available when rowModelType='serverSide'.");
+            return [];
         }
     };
     GridApi.prototype.getVirtualRowCount = function () {
@@ -30436,100 +30675,103 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.paginationGoToPage = function (page) {
         this.paginationProxy.goToPage(page);
     };
-    __decorate$10([
+    __decorate$Y([
         Optional('immutableService')
     ], GridApi.prototype, "immutableService", void 0);
-    __decorate$10([
+    __decorate$Y([
         Optional('csvCreator')
     ], GridApi.prototype, "csvCreator", void 0);
-    __decorate$10([
+    __decorate$Y([
         Optional('excelCreator')
     ], GridApi.prototype, "excelCreator", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('rowRenderer')
     ], GridApi.prototype, "rowRenderer", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('filterManager')
     ], GridApi.prototype, "filterManager", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('columnController')
     ], GridApi.prototype, "columnController", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('selectionController')
     ], GridApi.prototype, "selectionController", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('gridOptionsWrapper')
     ], GridApi.prototype, "gridOptionsWrapper", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('valueService')
     ], GridApi.prototype, "valueService", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('alignedGridsService')
     ], GridApi.prototype, "alignedGridsService", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('eventService')
     ], GridApi.prototype, "eventService", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('pinnedRowModel')
     ], GridApi.prototype, "pinnedRowModel", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('context')
     ], GridApi.prototype, "context", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('rowModel')
     ], GridApi.prototype, "rowModel", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('sortController')
     ], GridApi.prototype, "sortController", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('paginationProxy')
     ], GridApi.prototype, "paginationProxy", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('focusController')
     ], GridApi.prototype, "focusController", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('dragAndDropService')
     ], GridApi.prototype, "dragAndDropService", void 0);
-    __decorate$10([
+    __decorate$Y([
         Optional('rangeController')
     ], GridApi.prototype, "rangeController", void 0);
-    __decorate$10([
+    __decorate$Y([
         Optional('clipboardService')
     ], GridApi.prototype, "clipboardService", void 0);
-    __decorate$10([
+    __decorate$Y([
         Optional('aggFuncService')
     ], GridApi.prototype, "aggFuncService", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('menuFactory')
     ], GridApi.prototype, "menuFactory", void 0);
-    __decorate$10([
+    __decorate$Y([
         Optional('contextMenuFactory')
     ], GridApi.prototype, "contextMenuFactory", void 0);
-    __decorate$10([
-        Autowired('cellRendererFactory')
-    ], GridApi.prototype, "cellRendererFactory", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('valueCache')
     ], GridApi.prototype, "valueCache", void 0);
-    __decorate$10([
+    __decorate$Y([
         Autowired('animationFrameService')
     ], GridApi.prototype, "animationFrameService", void 0);
-    __decorate$10([
+    __decorate$Y([
         Optional('statusBarService')
     ], GridApi.prototype, "statusBarService", void 0);
-    __decorate$10([
+    __decorate$Y([
         Optional('chartService')
     ], GridApi.prototype, "chartService", void 0);
-    __decorate$10([
+    __decorate$Y([
         Optional('undoRedoService')
     ], GridApi.prototype, "undoRedoService", void 0);
-    __decorate$10([
+    __decorate$Y([
+        Optional('rowNodeBlockLoader')
+    ], GridApi.prototype, "rowNodeBlockLoader", void 0);
+    __decorate$Y([
+        Optional('ssrmTransactionManager')
+    ], GridApi.prototype, "serverSideTransactionManager", void 0);
+    __decorate$Y([
         PostConstruct
     ], GridApi.prototype, "init", null);
-    __decorate$10([
+    __decorate$Y([
         PreDestroy
     ], GridApi.prototype, "cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid", null);
-    GridApi = __decorate$10([
+    GridApi = __decorate$Y([
         Bean('gridApi')
     ], GridApi);
     return GridApi;
@@ -30537,7 +30779,7 @@ var GridApi = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30554,7 +30796,7 @@ var __extends$12 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$11 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -30632,10 +30874,10 @@ var ExpressionService = /** @class */ (function (_super) {
             return 'return ' + expression + ';';
         }
     };
-    __decorate$11([
+    __decorate$Z([
         __param$6(0, Qualifier('loggerFactory'))
     ], ExpressionService.prototype, "setBeans", null);
-    ExpressionService = __decorate$11([
+    ExpressionService = __decorate$Z([
         Bean('expressionService')
     ], ExpressionService);
     return ExpressionService;
@@ -30643,7 +30885,7 @@ var ExpressionService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30660,7 +30902,7 @@ var __extends$13 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$12 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -30726,10 +30968,10 @@ var TemplateService = /** @class */ (function (_super) {
             }, 0);
         }
     };
-    __decorate$12([
+    __decorate$_([
         Autowired('$scope')
     ], TemplateService.prototype, "$scope", void 0);
-    TemplateService = __decorate$12([
+    TemplateService = __decorate$_([
         Bean('templateService')
     ], TemplateService);
     return TemplateService;
@@ -30737,7 +30979,7 @@ var TemplateService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30754,7 +30996,7 @@ var __extends$14 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$13 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -30767,17 +31009,15 @@ var PopupService = /** @class */ (function (_super) {
         _this.popupList = [];
         return _this;
     }
-    PopupService.prototype.init = function () {
+    PopupService.prototype.registerGridCore = function (gridCore) {
         var _this = this;
-        this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, function () {
+        this.gridCore = gridCore;
+        this.addManagedListener(this.gridCore, Events.EVENT_KEYBOARD_FOCUS, function () {
             forEach(_this.popupList, function (popup) { return addCssClass(popup.element, 'ag-keyboard-focus'); });
         });
-        this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, function () {
+        this.addManagedListener(this.gridCore, Events.EVENT_MOUSE_FOCUS, function () {
             forEach(_this.popupList, function (popup) { return removeCssClass(popup.element, 'ag-keyboard-focus'); });
         });
-    };
-    PopupService.prototype.registerGridCore = function (gridCore) {
-        this.gridCore = gridCore;
     };
     PopupService.prototype.getPopupParent = function () {
         var ePopupParent = this.gridOptionsWrapper.getPopupParent();
@@ -30987,36 +31227,54 @@ var PopupService = /** @class */ (function (_super) {
         var parentRect = eParent.getBoundingClientRect();
         var sourceRect = params.element.getBoundingClientRect();
         var initialDiffTop = parentRect.top - sourceRect.top;
+        var initialDiffLeft = parentRect.left - sourceRect.left;
         var lastDiffTop = initialDiffTop;
+        var lastDiffLeft = initialDiffLeft;
         var topPx = params.ePopup.style.top;
         var top = parseInt(topPx.substring(0, topPx.length - 1), 10);
+        var leftPx = params.ePopup.style.left;
+        var left = parseInt(leftPx.substring(0, leftPx.length - 1), 10);
         var intervalId = window.setInterval(function () {
-            var parentRect = eParent.getBoundingClientRect();
-            var sourceRect = params.element.getBoundingClientRect();
-            var currentDiffTop = parentRect.top - sourceRect.top;
+            var pRect = eParent.getBoundingClientRect();
+            var sRect = params.element.getBoundingClientRect();
+            var elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
+            if (elementNotInDom) {
+                params.hidePopup();
+                return;
+            }
+            var currentDiffTop = pRect.top - sRect.top;
             if (currentDiffTop != lastDiffTop) {
                 var newTop = top + initialDiffTop - currentDiffTop;
                 params.ePopup.style.top = newTop + "px";
             }
             lastDiffTop = currentDiffTop;
+            var currentDiffLeft = pRect.left - sRect.left;
+            if (currentDiffLeft != lastDiffLeft) {
+                var newLeft = left + initialDiffLeft - currentDiffLeft;
+                params.ePopup.style.left = newLeft + "px";
+            }
+            lastDiffLeft = currentDiffLeft;
         }, 200);
         var res = function () {
-            window.clearInterval(intervalId);
+            if (intervalId != null) {
+                window.clearInterval(intervalId);
+            }
+            intervalId = undefined;
         };
         return res;
     };
     PopupService.prototype.addPopup = function (params) {
         var _this = this;
-        var modal = params.modal, eChild = params.eChild, closeOnEsc = params.closeOnEsc, closedCallback = params.closedCallback, click = params.click, alwaysOnTop = params.alwaysOnTop, positionCallback = params.positionCallback, anchorToElement = params.anchorToElement;
+        var modal = params.modal, eChild = params.eChild, closeOnEsc = params.closeOnEsc, closedCallback = params.closedCallback, click = params.click, alwaysOnTop = params.alwaysOnTop, afterGuiAttached = params.afterGuiAttached, positionCallback = params.positionCallback, anchorToElement = params.anchorToElement;
         var eDocument = this.gridOptionsWrapper.getDocument();
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
-            return function () { };
+            return;
         }
         var pos = findIndex(this.popupList, function (popup) { return popup.element === eChild; });
         if (pos !== -1) {
             var popup = this.popupList[pos];
-            return popup.hideFunc;
+            return { hideFunc: popup.hideFunc, stopAnchoringFunc: popup.stopAnchoringFunc };
         }
         var ePopupParent = this.getPopupParent();
         // for angular specifically, but shouldn't cause an issue with js or other fw's
@@ -31088,6 +31346,9 @@ var PopupService = /** @class */ (function (_super) {
                 destroyPositionTracker();
             }
         };
+        if (afterGuiAttached) {
+            afterGuiAttached({ hidePopup: hidePopup });
+        }
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
         window.setTimeout(function () {
@@ -31101,10 +31362,6 @@ var PopupService = /** @class */ (function (_super) {
                 eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
             }
         }, 0);
-        this.popupList.push({
-            element: eChild,
-            hideFunc: hidePopup
-        });
         if (positionCallback) {
             positionCallback();
         }
@@ -31113,10 +31370,19 @@ var PopupService = /** @class */ (function (_super) {
             // using touchpad and the cell moves, it moves the popup to keep it with the cell.
             destroyPositionTracker = this.keepPopupPositionedRelativeTo({
                 element: anchorToElement,
-                ePopup: eChild
+                ePopup: eChild,
+                hidePopup: hidePopup
             });
         }
-        return hidePopup;
+        this.popupList.push({
+            element: eChild,
+            hideFunc: hidePopup,
+            stopAnchoringFunc: destroyPositionTracker
+        });
+        return {
+            hideFunc: hidePopup,
+            stopAnchoringFunc: destroyPositionTracker
+        };
     };
     PopupService.prototype.isEventFromCurrentPopup = function (params, target) {
         var mouseEvent = params.mouseEvent, touchEvent = params.touchEvent;
@@ -31230,16 +31496,10 @@ var PopupService = /** @class */ (function (_super) {
         };
         this.eventService.dispatchEvent(params);
     };
-    __decorate$13([
-        Autowired('gridOptionsWrapper')
-    ], PopupService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$13([
+    __decorate$$([
         Autowired('environment')
     ], PopupService.prototype, "environment", void 0);
-    __decorate$13([
-        PostConstruct
-    ], PopupService.prototype, "init", null);
-    PopupService = __decorate$13([
+    PopupService = __decorate$$([
         Bean('popupService')
     ], PopupService);
     return PopupService;
@@ -31247,7 +31507,7 @@ var PopupService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31264,7 +31524,7 @@ var __extends$15 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$14 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$10 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31287,10 +31547,10 @@ var LoggerFactory = /** @class */ (function (_super) {
     LoggerFactory.prototype.isLogging = function () {
         return this.logging;
     };
-    __decorate$14([
+    __decorate$10([
         __param$7(0, Qualifier('gridOptionsWrapper'))
     ], LoggerFactory.prototype, "setBeans", null);
-    LoggerFactory = __decorate$14([
+    LoggerFactory = __decorate$10([
         Bean('loggerFactory')
     ], LoggerFactory);
     return LoggerFactory;
@@ -31314,7 +31574,7 @@ var Logger = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31331,7 +31591,7 @@ var __extends$16 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$15 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$11 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31431,13 +31691,10 @@ var AutoWidthCalculator = /** @class */ (function (_super) {
         eCloneParent.appendChild(eCellClone);
         eDummyContainer.appendChild(eCloneParent);
     };
-    __decorate$15([
+    __decorate$11([
         Autowired('rowRenderer')
     ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
-    __decorate$15([
-        Autowired('gridOptionsWrapper')
-    ], AutoWidthCalculator.prototype, "gridOptionsWrapper", void 0);
-    AutoWidthCalculator = __decorate$15([
+    AutoWidthCalculator = __decorate$11([
         Bean('autoWidthCalculator')
     ], AutoWidthCalculator);
     return AutoWidthCalculator;
@@ -31445,7 +31702,7 @@ var AutoWidthCalculator = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31462,7 +31719,7 @@ var __extends$17 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$16 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$12 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31518,13 +31775,13 @@ var HorizontalResizeService = /** @class */ (function (_super) {
         this.resizeAmount = mouseEvent.clientX - this.dragStartX;
         params.onResizing(this.resizeAmount);
     };
-    __decorate$16([
+    __decorate$12([
         Autowired('dragService')
     ], HorizontalResizeService.prototype, "dragService", void 0);
-    __decorate$16([
+    __decorate$12([
         Autowired('eGridDiv')
     ], HorizontalResizeService.prototype, "eGridDiv", void 0);
-    HorizontalResizeService = __decorate$16([
+    HorizontalResizeService = __decorate$12([
         Bean('horizontalResizeService')
     ], HorizontalResizeService);
     return HorizontalResizeService;
@@ -31532,7 +31789,7 @@ var HorizontalResizeService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31549,7 +31806,7 @@ var __extends$18 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$17 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$13 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31593,10 +31850,10 @@ var GridCore = /** @class */ (function (_super) {
         var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
         var eGui = this.getGui();
-        this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, function () {
+        this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, function () {
             addCssClass(eGui, 'ag-keyboard-focus');
         });
-        this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, function () {
+        this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, function () {
             removeCssClass(eGui, 'ag-keyboard-focus');
         });
         _super.prototype.postConstruct.call(this);
@@ -31783,58 +32040,55 @@ var GridCore = /** @class */ (function (_super) {
         }
     };
     GridCore.prototype.onTabKeyDown = function () { };
-    __decorate$17([
+    __decorate$13([
         Autowired('gridOptions')
     ], GridCore.prototype, "gridOptions", void 0);
-    __decorate$17([
-        Autowired('gridOptionsWrapper')
-    ], GridCore.prototype, "gridOptionsWrapper", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('rowModel')
     ], GridCore.prototype, "rowModel", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('resizeObserverService')
     ], GridCore.prototype, "resizeObserverService", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('rowRenderer')
     ], GridCore.prototype, "rowRenderer", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('filterManager')
     ], GridCore.prototype, "filterManager", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('eGridDiv')
     ], GridCore.prototype, "eGridDiv", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('$scope')
     ], GridCore.prototype, "$scope", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('quickFilterOnScope')
     ], GridCore.prototype, "quickFilterOnScope", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('popupService')
     ], GridCore.prototype, "popupService", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('columnController')
     ], GridCore.prototype, "columnController", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('loggerFactory')
     ], GridCore.prototype, "loggerFactory", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('columnApi')
     ], GridCore.prototype, "columnApi", void 0);
-    __decorate$17([
+    __decorate$13([
         Autowired('gridApi')
     ], GridCore.prototype, "gridApi", void 0);
-    __decorate$17([
+    __decorate$13([
         Optional('clipboardService')
     ], GridCore.prototype, "clipboardService", void 0);
-    __decorate$17([
+    __decorate$13([
         RefSelector('gridPanel')
     ], GridCore.prototype, "gridPanel", void 0);
-    __decorate$17([
+    __decorate$13([
         RefSelector('sideBar')
     ], GridCore.prototype, "sideBarComp", void 0);
-    __decorate$17([
+    __decorate$13([
         RefSelector('rootWrapperBody')
     ], GridCore.prototype, "eRootWrapperBody", void 0);
     return GridCore;
@@ -31842,7 +32096,7 @@ var GridCore = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31859,7 +32113,7 @@ var __extends$19 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$18 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$14 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31912,7 +32166,7 @@ var StandardMenuFactory = /** @class */ (function (_super) {
         var hidePopup;
         var bodyScrollListener = function (event) {
             // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal') {
+            if (event.direction === 'horizontal' && hidePopup) {
                 hidePopup();
             }
         };
@@ -31931,12 +32185,15 @@ var StandardMenuFactory = /** @class */ (function (_super) {
                 }
             }
         };
-        hidePopup = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,
             closedCallback: closedCallback
         });
+        if (addPopupRes) {
+            this.hidePopup = hidePopup = addPopupRes.hideFunc;
+        }
         filterWrapper.filterPromise.then(function (filter) {
             // need to make sure the filter is present before positioning, as only
             // after filter it is visible can we find out what the width of it is
@@ -31945,7 +32202,6 @@ var StandardMenuFactory = /** @class */ (function (_super) {
                 filter.afterGuiAttached({ container: 'columnMenu', hidePopup: hidePopup });
             }
         });
-        this.hidePopup = hidePopup;
         column.setMenuVisible(true, 'contextMenu');
     };
     StandardMenuFactory.prototype.trapFocusWithin = function (e, menu) {
@@ -31961,16 +32217,16 @@ var StandardMenuFactory = /** @class */ (function (_super) {
         // for standard, we show menu if filter is enabled, and the menu is not suppressed
         return column.isFilterAllowed();
     };
-    __decorate$18([
+    __decorate$14([
         Autowired('filterManager')
     ], StandardMenuFactory.prototype, "filterManager", void 0);
-    __decorate$18([
+    __decorate$14([
         Autowired('popupService')
     ], StandardMenuFactory.prototype, "popupService", void 0);
-    __decorate$18([
+    __decorate$14([
         Autowired('focusController')
     ], StandardMenuFactory.prototype, "focusController", void 0);
-    StandardMenuFactory = __decorate$18([
+    StandardMenuFactory = __decorate$14([
         Bean('menuFactory')
     ], StandardMenuFactory);
     return StandardMenuFactory;
@@ -31978,7 +32234,7 @@ var StandardMenuFactory = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31995,7 +32251,7 @@ var __extends$1a = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$19 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$15 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -32245,25 +32501,22 @@ var DragService = /** @class */ (function (_super) {
         this.dragEndFunctions.forEach(function (func) { return func(); });
         this.dragEndFunctions.length = 0;
     };
-    __decorate$19([
+    __decorate$15([
         Autowired('loggerFactory')
     ], DragService.prototype, "loggerFactory", void 0);
-    __decorate$19([
-        Autowired('gridOptionsWrapper')
-    ], DragService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$19([
+    __decorate$15([
         Autowired('columnApi')
     ], DragService.prototype, "columnApi", void 0);
-    __decorate$19([
+    __decorate$15([
         Autowired('gridApi')
     ], DragService.prototype, "gridApi", void 0);
-    __decorate$19([
+    __decorate$15([
         PostConstruct
     ], DragService.prototype, "init", null);
-    __decorate$19([
+    __decorate$15([
         PreDestroy
     ], DragService.prototype, "removeAllListeners", null);
-    DragService = __decorate$19([
+    DragService = __decorate$15([
         Bean('dragService')
     ], DragService);
     return DragService;
@@ -32271,7 +32524,7 @@ var DragService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32288,7 +32541,7 @@ var __extends$1b = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$16 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -32413,8 +32666,31 @@ var SortController = /** @class */ (function (_super) {
         // pull out all the columns that have sorting set
         var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
         var columnsWithSorting = allColumnsIncludingAuto.filter(function (column) { return !!column.getSort(); });
+        // when both cols are missing sortIndex, we use the position of the col in all cols list.
+        // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
+        // cols is sorted by first.
+        var allColsIndexes = {};
+        allColumnsIncludingAuto.forEach(function (col, index) { return allColsIndexes[col.getId()] = index; });
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort(function (a, b) { return a.getSortIndex() - b.getSortIndex(); });
+        columnsWithSorting.sort(function (a, b) {
+            var iA = a.getSortIndex();
+            var iB = b.getSortIndex();
+            if (iA != null && iB != null) {
+                return iA - iB; // both present, normal comparison
+            }
+            else if (iA == null && iB == null) {
+                // both missing, compare using column positions
+                var posA = allColsIndexes[a.getId()];
+                var posB = allColsIndexes[b.getId()];
+                return posA > posB ? 1 : -1;
+            }
+            else if (iB == null) {
+                return -1; // iB missing
+            }
+            else {
+                return 1; // iA missing
+            }
+        });
         return columnsWithSorting;
     };
     // used by row controller, when doing the sorting
@@ -32429,19 +32705,16 @@ var SortController = /** @class */ (function (_super) {
     };
     var SortController_1;
     SortController.DEFAULT_SORTING_ORDER = [Constants.SORT_ASC, Constants.SORT_DESC, null];
-    __decorate$1a([
-        Autowired('gridOptionsWrapper')
-    ], SortController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1a([
+    __decorate$16([
         Autowired('columnController')
     ], SortController.prototype, "columnController", void 0);
-    __decorate$1a([
+    __decorate$16([
         Autowired('columnApi')
     ], SortController.prototype, "columnApi", void 0);
-    __decorate$1a([
+    __decorate$16([
         Autowired('gridApi')
     ], SortController.prototype, "gridApi", void 0);
-    SortController = SortController_1 = __decorate$1a([
+    SortController = SortController_1 = __decorate$16([
         Bean('sortController')
     ], SortController);
     return SortController;
@@ -32449,7 +32722,7 @@ var SortController = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32466,61 +32739,121 @@ var __extends$1c = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$17 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __spreadArrays$5 = (undefined && undefined.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var FocusController = /** @class */ (function (_super) {
     __extends$1c(FocusController, _super);
     function FocusController() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.keyboardFocusActive = false;
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     FocusController_1 = FocusController;
-    FocusController.prototype.init = function () {
-        var eDocument = this.gridOptionsWrapper.getDocument();
-        var clearFocusedCellListener = this.clearFocusedCell.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverythingChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
-        this.addManagedListener(eDocument, 'keydown', this.activateKeyboardMode.bind(this));
-        this.addManagedListener(eDocument, 'mousedown', this.activateMouseMode.bind(this));
-    };
-    FocusController.prototype.registerGridCore = function (gridCore) {
-        this.gridCore = gridCore;
-    };
-    FocusController.prototype.onColumnEverythingChanged = function () {
-        // if the columns change, check and see if this column still exists. if it does,
-        // then we can keep the focused cell. if it doesn't, then we need to drop the focused
-        // cell.
-        if (this.focusedCellPosition) {
-            var col = this.focusedCellPosition.column;
-            var colFromColumnController = this.columnController.getGridColumn(col.getId());
-            if (col !== colFromColumnController) {
-                this.clearFocusedCell();
+    /**
+     * Adds a gridCore to the list of the gridCores monitoring Keyboard Mode
+     * in a specific HTMLDocument.
+     *
+     * @param doc {Document} - The Document containing the gridCore.
+     * @param gridCore {GridCore} - The GridCore to be monitored.
+     */
+    FocusController.addKeyboardModeEvents = function (doc, gridCore) {
+        var gridCoresForDocument = FocusController_1.instancesMonitored.get(doc);
+        if (gridCoresForDocument && gridCoresForDocument.length > 0) {
+            if (gridCoresForDocument.indexOf(gridCore) === -1) {
+                gridCoresForDocument.push(gridCore);
             }
         }
+        else {
+            FocusController_1.instancesMonitored.set(doc, [gridCore]);
+            doc.addEventListener('keydown', FocusController_1.toggleKeyboardMode);
+            doc.addEventListener('mousedown', FocusController_1.toggleKeyboardMode);
+        }
     };
-    FocusController.prototype.isKeyboardFocus = function () {
-        return this.keyboardFocusActive;
+    /**
+     * Removes a gridCore from the list of the gridCores monitoring Keyboard Mode
+     * in a specific HTMLDocument.
+     *
+     * @param doc {Document} - The Document containing the gridCore.
+     * @param gridCore {GridCore} - The GridCore to be removed.
+     */
+    FocusController.removeKeyboardModeEvents = function (doc, gridCore) {
+        var gridCoresForDocument = FocusController_1.instancesMonitored.get(doc);
+        var newGridCoresForDocument = [];
+        if (gridCoresForDocument && gridCoresForDocument.length) {
+            newGridCoresForDocument = __spreadArrays$5(gridCoresForDocument).filter(function (currentGridCore) { return currentGridCore !== gridCore; });
+            FocusController_1.instancesMonitored.set(doc, newGridCoresForDocument);
+        }
+        if (newGridCoresForDocument.length === 0) {
+            doc.removeEventListener('keydown', FocusController_1.toggleKeyboardMode);
+            doc.removeEventListener('mousedown', FocusController_1.toggleKeyboardMode);
+        }
     };
-    FocusController.prototype.activateMouseMode = function () {
-        if (!this.keyboardFocusActive) {
+    /**
+     * This method will be called by `keydown` and `mousedown` events on all Documents monitoring
+     * KeyboardMode. It will then fire a KEYBOARD_FOCUS, MOUSE_FOCUS on each gridCore present in
+     * the Document allowing each gridCore to maintain a state for KeyboardMode.
+     *
+     * @param event {KeyboardEvent | MouseEvent | TouchEvent} - The event triggered.
+     */
+    FocusController.toggleKeyboardMode = function (event) {
+        var isKeyboardActive = FocusController_1.keyboardModeActive;
+        var isKeyboardEvent = event.type === 'keydown';
+        if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) {
             return;
         }
-        this.keyboardFocusActive = false;
-        this.eventService.dispatchEvent({ type: Events.EVENT_MOUSE_FOCUS });
-    };
-    FocusController.prototype.activateKeyboardMode = function () {
-        if (this.keyboardFocusActive) {
+        FocusController_1.keyboardModeActive = isKeyboardEvent;
+        var doc = event.target.ownerDocument;
+        if (!doc) {
             return;
         }
-        this.keyboardFocusActive = true;
-        this.eventService.dispatchEvent({ type: Events.EVENT_KEYBOARD_FOCUS });
+        var gridCoresForDocument = FocusController_1.instancesMonitored.get(doc);
+        if (gridCoresForDocument) {
+            gridCoresForDocument.forEach(function (gridCore) {
+                gridCore.dispatchEvent({ type: isKeyboardEvent ? Events.EVENT_KEYBOARD_FOCUS : Events.EVENT_MOUSE_FOCUS });
+            });
+        }
+    };
+    FocusController.prototype.init = function () {
+        var clearFocusedCellListener = this.clearFocusedCell.bind(this);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverythingChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
+    };
+    FocusController.prototype.registerGridCore = function (gridCore) {
+        var _this = this;
+        this.gridCore = gridCore;
+        var doc = this.gridOptionsWrapper.getDocument();
+        FocusController_1.addKeyboardModeEvents(doc, gridCore);
+        this.addDestroyFunc(function () { return _this.unregisterGridCore(gridCore); });
+    };
+    FocusController.prototype.unregisterGridCore = function (gridCore) {
+        var doc = this.gridOptionsWrapper.getDocument();
+        FocusController_1.removeKeyboardModeEvents(doc, gridCore);
+    };
+    FocusController.prototype.onColumnEverythingChanged = function () {
+        // if the columns change, check and see if this column still exists. if it does, then
+        // we can keep the focused cell. if it doesn't, then we need to drop the focused cell.
+        if (!this.focusedCellPosition) {
+            return;
+        }
+        var col = this.focusedCellPosition.column;
+        var colFromColumnController = this.columnController.getGridColumn(col.getId());
+        if (col !== colFromColumnController) {
+            this.clearFocusedCell();
+        }
+    };
+    FocusController.prototype.isKeyboardMode = function () {
+        return FocusController_1.keyboardModeActive;
     };
     // we check if the browser is focusing something, and if it is, and
     // it's the cell we think is focused, then return the cell. so this
@@ -32666,8 +32999,8 @@ var FocusController = /** @class */ (function (_super) {
     };
     FocusController.prototype.findFocusableElements = function (rootNode, exclude, onlyUnmanaged) {
         if (onlyUnmanaged === void 0) { onlyUnmanaged = false; }
-        var focusableString = FocusController_1.FOCUSABLE_SELECTOR;
-        var excludeString = FocusController_1.FOCUSABLE_EXCLUDE;
+        var focusableString = Constants.FOCUSABLE_SELECTOR;
+        var excludeString = Constants.FOCUSABLE_EXCLUDE;
         if (exclude) {
             excludeString += ', ' + exclude;
         }
@@ -32781,36 +33114,33 @@ var FocusController = /** @class */ (function (_super) {
         }
     };
     var FocusController_1;
-    FocusController.FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
-    FocusController.FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
-    __decorate$1b([
-        Autowired('gridOptionsWrapper')
-    ], FocusController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1b([
+    FocusController.keyboardModeActive = false;
+    FocusController.instancesMonitored = new Map();
+    __decorate$17([
         Autowired('columnController')
     ], FocusController.prototype, "columnController", void 0);
-    __decorate$1b([
+    __decorate$17([
         Autowired('headerNavigationService')
     ], FocusController.prototype, "headerNavigationService", void 0);
-    __decorate$1b([
+    __decorate$17([
         Autowired('columnApi')
     ], FocusController.prototype, "columnApi", void 0);
-    __decorate$1b([
+    __decorate$17([
         Autowired('gridApi')
     ], FocusController.prototype, "gridApi", void 0);
-    __decorate$1b([
+    __decorate$17([
         Autowired('rowRenderer')
     ], FocusController.prototype, "rowRenderer", void 0);
-    __decorate$1b([
+    __decorate$17([
         Autowired('rowPositionUtils')
     ], FocusController.prototype, "rowPositionUtils", void 0);
-    __decorate$1b([
+    __decorate$17([
         Optional('rangeController')
     ], FocusController.prototype, "rangeController", void 0);
-    __decorate$1b([
+    __decorate$17([
         PostConstruct
     ], FocusController.prototype, "init", null);
-    FocusController = FocusController_1 = __decorate$1b([
+    FocusController = FocusController_1 = __decorate$17([
         Bean('focusController')
     ], FocusController);
     return FocusController;
@@ -32818,7 +33148,7 @@ var FocusController = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32835,7 +33165,7 @@ var __extends$1d = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$18 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -32907,16 +33237,13 @@ var MouseEventService = /** @class */ (function (_super) {
     var MouseEventService_1;
     MouseEventService.gridInstanceSequence = new NumberSequence();
     MouseEventService.GRID_DOM_KEY = '__ag_grid_instance';
-    __decorate$1c([
-        Autowired('gridOptionsWrapper')
-    ], MouseEventService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1c([
+    __decorate$18([
         Autowired('eGridDiv')
     ], MouseEventService.prototype, "eGridDiv", void 0);
-    __decorate$1c([
+    __decorate$18([
         PostConstruct
     ], MouseEventService.prototype, "init", null);
-    MouseEventService = MouseEventService_1 = __decorate$1c([
+    MouseEventService = MouseEventService_1 = __decorate$18([
         Bean('mouseEventService')
     ], MouseEventService);
     return MouseEventService;
@@ -32924,7 +33251,7 @@ var MouseEventService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32941,7 +33268,7 @@ var __extends$1e = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$19 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33203,22 +33530,19 @@ var CellNavigationService = /** @class */ (function (_super) {
         }
         return { rowIndex: newRowIndex, column: newColumn, rowPinned: newFloating };
     };
-    __decorate$1d([
+    __decorate$19([
         Autowired('columnController')
     ], CellNavigationService.prototype, "columnController", void 0);
-    __decorate$1d([
+    __decorate$19([
         Autowired('rowModel')
     ], CellNavigationService.prototype, "rowModel", void 0);
-    __decorate$1d([
+    __decorate$19([
         Autowired('pinnedRowModel')
     ], CellNavigationService.prototype, "pinnedRowModel", void 0);
-    __decorate$1d([
-        Autowired('gridOptionsWrapper')
-    ], CellNavigationService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1d([
+    __decorate$19([
         Autowired('paginationProxy')
     ], CellNavigationService.prototype, "paginationProxy", void 0);
-    CellNavigationService = __decorate$1d([
+    CellNavigationService = __decorate$19([
         Bean('cellNavigationService')
     ], CellNavigationService);
     return CellNavigationService;
@@ -33226,69 +33550,7 @@ var CellNavigationService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __decorate$1e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var CellRendererFactory = /** @class */ (function () {
-    function CellRendererFactory() {
-        this.cellRendererMap = {};
-    }
-    CellRendererFactory_1 = CellRendererFactory;
-    CellRendererFactory.prototype.init = function () {
-        this.cellRendererMap[CellRendererFactory_1.ANIMATE_SLIDE] = AnimateSlideCellRenderer;
-        this.cellRendererMap[CellRendererFactory_1.ANIMATE_SHOW_CHANGE] = AnimateShowChangeCellRenderer;
-        this.cellRendererMap[CellRendererFactory_1.GROUP] = GroupCellRenderer;
-        // this.registerRenderersFromGridOptions();
-    };
-    // private registerRenderersFromGridOptions(): void {
-    //     let userProvidedCellRenderers = this.gridOptionsWrapper.getCellRenderers();
-    //     iterateObject(userProvidedCellRenderers, (key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc)=> {
-    //         this.addCellRenderer(key, cellRenderer);
-    //     });
-    // }
-    CellRendererFactory.prototype.addCellRenderer = function (key, cellRenderer) {
-        this.cellRendererMap[key] = cellRenderer;
-    };
-    CellRendererFactory.prototype.getCellRenderer = function (key) {
-        var result = this.cellRendererMap[key];
-        if (missing(result)) {
-            console.warn('ag-Grid: unable to find cellRenderer for key ' + key);
-            return null;
-        }
-        return result;
-    };
-    var CellRendererFactory_1;
-    CellRendererFactory.ANIMATE_SLIDE = 'animateSlide';
-    CellRendererFactory.ANIMATE_SHOW_CHANGE = 'animateShowChange';
-    CellRendererFactory.GROUP = 'group';
-    __decorate$1e([
-        Autowired('gridOptionsWrapper')
-    ], CellRendererFactory.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1e([
-        Autowired('expressionService')
-    ], CellRendererFactory.prototype, "expressionService", void 0);
-    __decorate$1e([
-        Autowired('eventService')
-    ], CellRendererFactory.prototype, "eventService", void 0);
-    __decorate$1e([
-        PostConstruct
-    ], CellRendererFactory.prototype, "init", null);
-    CellRendererFactory = CellRendererFactory_1 = __decorate$1e([
-        Bean('cellRendererFactory')
-    ], CellRendererFactory);
-    return CellRendererFactory;
-}());
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33305,7 +33567,7 @@ var __extends$1f = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33358,13 +33620,10 @@ var ValueFormatterService = /** @class */ (function (_super) {
         }
         return result;
     };
-    __decorate$1f([
-        Autowired('gridOptionsWrapper')
-    ], ValueFormatterService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1f([
+    __decorate$1a([
         Autowired('expressionService')
     ], ValueFormatterService.prototype, "expressionService", void 0);
-    ValueFormatterService = __decorate$1f([
+    ValueFormatterService = __decorate$1a([
         Bean('valueFormatterService')
     ], ValueFormatterService);
     return ValueFormatterService;
@@ -33372,7 +33631,7 @@ var ValueFormatterService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33428,7 +33687,7 @@ var AgRadioButton = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33445,7 +33704,7 @@ var __extends$1h = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33478,19 +33737,13 @@ var ScrollVisibleService = /** @class */ (function (_super) {
     ScrollVisibleService.prototype.isVerticalScrollShowing = function () {
         return this.verticalScrollShowing;
     };
-    __decorate$1g([
-        Autowired('columnController')
-    ], ScrollVisibleService.prototype, "columnController", void 0);
-    __decorate$1g([
+    __decorate$1b([
         Autowired('columnApi')
     ], ScrollVisibleService.prototype, "columnApi", void 0);
-    __decorate$1g([
+    __decorate$1b([
         Autowired('gridApi')
     ], ScrollVisibleService.prototype, "gridApi", void 0);
-    __decorate$1g([
-        Autowired('gridOptionsWrapper')
-    ], ScrollVisibleService.prototype, "gridOptionsWrapper", void 0);
-    ScrollVisibleService = __decorate$1g([
+    ScrollVisibleService = __decorate$1b([
         Bean('scrollVisibleService')
     ], ScrollVisibleService);
     return ScrollVisibleService;
@@ -33498,7 +33751,7 @@ var ScrollVisibleService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33515,7 +33768,7 @@ var __extends$1i = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33573,10 +33826,10 @@ var StylingService = /** @class */ (function (_super) {
             }
         }
     };
-    __decorate$1h([
+    __decorate$1c([
         Autowired('expressionService')
     ], StylingService.prototype, "expressionService", void 0);
-    StylingService = __decorate$1h([
+    StylingService = __decorate$1c([
         Bean('stylingService')
     ], StylingService);
     return StylingService;
@@ -33584,7 +33837,7 @@ var StylingService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33601,7 +33854,7 @@ var __extends$1j = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33633,13 +33886,13 @@ var ColumnHoverService = /** @class */ (function (_super) {
     ColumnHoverService.prototype.isHovered = function (column) {
         return this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
     };
-    __decorate$1i([
+    __decorate$1d([
         Autowired('columnApi')
     ], ColumnHoverService.prototype, "columnApi", void 0);
-    __decorate$1i([
+    __decorate$1d([
         Autowired('gridApi')
     ], ColumnHoverService.prototype, "gridApi", void 0);
-    ColumnHoverService = __decorate$1i([
+    ColumnHoverService = __decorate$1d([
         Bean('columnHoverService')
     ], ColumnHoverService);
     return ColumnHoverService;
@@ -33647,7 +33900,7 @@ var ColumnHoverService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33664,7 +33917,7 @@ var __extends$1k = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33750,10 +34003,7 @@ var ColumnAnimationService = /** @class */ (function (_super) {
         window.setTimeout(function () { return nowFuncs.forEach(function (func) { return func(); }); }, 0);
         window.setTimeout(function () { return waitFuncs.forEach(function (func) { return func(); }); }, 300);
     };
-    __decorate$1j([
-        Autowired('gridOptionsWrapper')
-    ], ColumnAnimationService.prototype, "gridOptionsWrapper", void 0);
-    ColumnAnimationService = __decorate$1j([
+    ColumnAnimationService = __decorate$1e([
         Bean('columnAnimationService')
     ], ColumnAnimationService);
     return ColumnAnimationService;
@@ -33761,7 +34011,7 @@ var ColumnAnimationService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33778,7 +34028,7 @@ var __extends$1l = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33881,16 +34131,13 @@ var AutoGroupColService = /** @class */ (function (_super) {
     };
     var AutoGroupColService_1;
     AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID = Constants.GROUP_AUTO_COLUMN_ID;
-    __decorate$1k([
-        Autowired('gridOptionsWrapper')
-    ], AutoGroupColService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1k([
+    __decorate$1f([
         Autowired('columnController')
     ], AutoGroupColService.prototype, "columnController", void 0);
-    __decorate$1k([
+    __decorate$1f([
         Autowired('columnFactory')
     ], AutoGroupColService.prototype, "columnFactory", void 0);
-    AutoGroupColService = AutoGroupColService_1 = __decorate$1k([
+    AutoGroupColService = AutoGroupColService_1 = __decorate$1f([
         Bean('autoGroupColService')
     ], AutoGroupColService);
     return AutoGroupColService;
@@ -33898,7 +34145,7 @@ var AutoGroupColService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33915,7 +34162,7 @@ var __extends$1m = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34090,7 +34337,7 @@ var PaginationProxy = /** @class */ (function (_super) {
     PaginationProxy.prototype.setPageSize = function () {
         // show put this into super class
         this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
-        if (!(this.pageSize >= 1)) {
+        if (this.pageSize == null || this.pageSize < 1) {
             this.pageSize = 100;
         }
     };
@@ -34198,22 +34445,19 @@ var PaginationProxy = /** @class */ (function (_super) {
         this.topDisplayedRowIndex = 0;
         this.bottomDisplayedRowIndex = this.rowModel.getRowCount() - 1;
     };
-    __decorate$1l([
+    __decorate$1g([
         Autowired('rowModel')
     ], PaginationProxy.prototype, "rowModel", void 0);
-    __decorate$1l([
-        Autowired('gridOptionsWrapper')
-    ], PaginationProxy.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1l([
+    __decorate$1g([
         Autowired('columnApi')
     ], PaginationProxy.prototype, "columnApi", void 0);
-    __decorate$1l([
+    __decorate$1g([
         Autowired('gridApi')
     ], PaginationProxy.prototype, "gridApi", void 0);
-    __decorate$1l([
+    __decorate$1g([
         PostConstruct
     ], PaginationProxy.prototype, "postConstruct", null);
-    PaginationProxy = __decorate$1l([
+    PaginationProxy = __decorate$1g([
         Bean('paginationProxy')
     ], PaginationProxy);
     return PaginationProxy;
@@ -34221,7 +34465,7 @@ var PaginationProxy = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34238,7 +34482,7 @@ var __extends$1n = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34275,10 +34519,7 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
             this.gridOptionsWrapper.setProperty('paginationPageSize', newPageSize);
         }
     };
-    __decorate$1m([
-        Autowired('gridOptionsWrapper')
-    ], PaginationAutoPageSizeService.prototype, "gridOptionsWrapper", void 0);
-    PaginationAutoPageSizeService = __decorate$1m([
+    PaginationAutoPageSizeService = __decorate$1h([
         Bean('paginationAutoPageSizeService')
     ], PaginationAutoPageSizeService);
     return PaginationAutoPageSizeService;
@@ -34286,7 +34527,7 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34303,7 +34544,7 @@ var __extends$1o = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34344,13 +34585,10 @@ var ValueCache = /** @class */ (function (_super) {
         }
         return rowNode.__cacheData[colId];
     };
-    __decorate$1n([
-        Autowired('gridOptionsWrapper')
-    ], ValueCache.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1n([
+    __decorate$1i([
         PostConstruct
     ], ValueCache.prototype, "init", null);
-    ValueCache = __decorate$1n([
+    ValueCache = __decorate$1i([
         Bean('valueCache')
     ], ValueCache);
     return ValueCache;
@@ -34358,7 +34596,7 @@ var ValueCache = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34375,7 +34613,7 @@ var __extends$1p = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34418,19 +34656,16 @@ var ChangeDetectionService = /** @class */ (function (_super) {
         // step 2 of change detection is to refresh the cells
         this.rowRenderer.refreshCells();
     };
-    __decorate$1o([
-        Autowired('gridOptionsWrapper')
-    ], ChangeDetectionService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1o([
+    __decorate$1j([
         Autowired('rowModel')
     ], ChangeDetectionService.prototype, "rowModel", void 0);
-    __decorate$1o([
+    __decorate$1j([
         Autowired('rowRenderer')
     ], ChangeDetectionService.prototype, "rowRenderer", void 0);
-    __decorate$1o([
+    __decorate$1j([
         PostConstruct
     ], ChangeDetectionService.prototype, "init", null);
-    ChangeDetectionService = __decorate$1o([
+    ChangeDetectionService = __decorate$1j([
         Bean('changeDetectionService')
     ], ChangeDetectionService);
     return ChangeDetectionService;
@@ -34438,7 +34673,7 @@ var ChangeDetectionService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34455,7 +34690,7 @@ var __extends$1q = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34643,19 +34878,16 @@ var AlignedGridsService = /** @class */ (function (_super) {
             grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
         });
     };
-    __decorate$1p([
-        Autowired('gridOptionsWrapper')
-    ], AlignedGridsService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1p([
+    __decorate$1k([
         Autowired('columnController')
     ], AlignedGridsService.prototype, "columnController", void 0);
-    __decorate$1p([
+    __decorate$1k([
         __param$8(0, Qualifier('loggerFactory'))
     ], AlignedGridsService.prototype, "setBeans", null);
-    __decorate$1p([
+    __decorate$1k([
         PostConstruct
     ], AlignedGridsService.prototype, "init", null);
-    AlignedGridsService = __decorate$1p([
+    AlignedGridsService = __decorate$1k([
         Bean('alignedGridsService')
     ], AlignedGridsService);
     return AlignedGridsService;
@@ -34663,7 +34895,7 @@ var AlignedGridsService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34680,7 +34912,7 @@ var __extends$1r = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34739,10 +34971,10 @@ var AgComponentUtils = /** @class */ (function (_super) {
         }
         return candidate.prototype && 'getGui' in candidate.prototype;
     };
-    __decorate$1q([
+    __decorate$1l([
         Autowired("componentMetadataProvider")
     ], AgComponentUtils.prototype, "componentMetadataProvider", void 0);
-    AgComponentUtils = __decorate$1q([
+    AgComponentUtils = __decorate$1l([
         Bean("agComponentUtils")
     ], AgComponentUtils);
     return AgComponentUtils;
@@ -34750,7 +34982,7 @@ var AgComponentUtils = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34767,7 +34999,7 @@ var __extends$1s = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34870,13 +35102,13 @@ var ComponentMetadataProvider = /** @class */ (function (_super) {
     ComponentMetadataProvider.prototype.retrieve = function (name) {
         return this.componentMetaData[name];
     };
-    __decorate$1r([
+    __decorate$1m([
         Autowired("agComponentUtils")
     ], ComponentMetadataProvider.prototype, "agComponentUtils", void 0);
-    __decorate$1r([
+    __decorate$1m([
         PostConstruct
     ], ComponentMetadataProvider.prototype, "postConstruct", null);
-    ComponentMetadataProvider = __decorate$1r([
+    ComponentMetadataProvider = __decorate$1m([
         Bean("componentMetadataProvider")
     ], ComponentMetadataProvider);
     return ComponentMetadataProvider;
@@ -34884,11 +35116,11 @@ var ComponentMetadataProvider = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34914,121 +35146,118 @@ var Beans = /** @class */ (function () {
             this.serverSideRowModel = this.rowModel;
         }
     };
-    __decorate$1s([
+    __decorate$1n([
         Autowired('resizeObserverService')
     ], Beans.prototype, "resizeObserverService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('paginationProxy')
     ], Beans.prototype, "paginationProxy", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('context')
     ], Beans.prototype, "context", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('columnApi')
     ], Beans.prototype, "columnApi", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('gridApi')
     ], Beans.prototype, "gridApi", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('gridOptionsWrapper')
     ], Beans.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('expressionService')
     ], Beans.prototype, "expressionService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('rowRenderer')
     ], Beans.prototype, "rowRenderer", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('$compile')
     ], Beans.prototype, "$compile", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('templateService')
     ], Beans.prototype, "templateService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('valueService')
     ], Beans.prototype, "valueService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('eventService')
     ], Beans.prototype, "eventService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('columnController')
     ], Beans.prototype, "columnController", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('headerNavigationService')
     ], Beans.prototype, "headerNavigationService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('columnAnimationService')
     ], Beans.prototype, "columnAnimationService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Optional('rangeController')
     ], Beans.prototype, "rangeController", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('focusController')
     ], Beans.prototype, "focusController", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Optional('contextMenuFactory')
     ], Beans.prototype, "contextMenuFactory", void 0);
-    __decorate$1s([
-        Autowired('cellRendererFactory')
-    ], Beans.prototype, "cellRendererFactory", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('popupService')
     ], Beans.prototype, "popupService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('valueFormatterService')
     ], Beans.prototype, "valueFormatterService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('stylingService')
     ], Beans.prototype, "stylingService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('columnHoverService')
     ], Beans.prototype, "columnHoverService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('userComponentFactory')
     ], Beans.prototype, "userComponentFactory", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('animationFrameService')
     ], Beans.prototype, "taskQueue", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('dragAndDropService')
     ], Beans.prototype, "dragAndDropService", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('sortController')
     ], Beans.prototype, "sortController", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('filterManager')
     ], Beans.prototype, "filterManager", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('maxDivHeightScaler')
     ], Beans.prototype, "maxDivHeightScaler", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('frameworkOverrides')
     ], Beans.prototype, "frameworkOverrides", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('detailRowCompCache')
     ], Beans.prototype, "detailRowCompCache", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('cellPositionUtils')
     ], Beans.prototype, "cellPositionUtils", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('rowPositionUtils')
     ], Beans.prototype, "rowPositionUtils", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('selectionController')
     ], Beans.prototype, "selectionController", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Optional('selectionHandleFactory')
     ], Beans.prototype, "selectionHandleFactory", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('rowCssClassCalculator')
     ], Beans.prototype, "rowCssClassCalculator", void 0);
-    __decorate$1s([
+    __decorate$1n([
         Autowired('rowModel')
     ], Beans.prototype, "rowModel", void 0);
-    __decorate$1s([
+    __decorate$1n([
         PostConstruct
     ], Beans.prototype, "postConstruct", null);
-    Beans = __decorate$1s([
+    Beans = __decorate$1n([
         Bean('beans')
     ], Beans);
     return Beans;
@@ -35036,7 +35265,7 @@ var Beans = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35053,7 +35282,7 @@ var __extends$1t = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -35181,10 +35410,10 @@ var Environment = /** @class */ (function (_super) {
         }
         return { theme: theme, el: el, themeFamily: theme.replace(/-dark$/, '') };
     };
-    __decorate$1t([
+    __decorate$1o([
         Autowired('eGridDiv')
     ], Environment.prototype, "eGridDiv", void 0);
-    Environment = __decorate$1t([
+    Environment = __decorate$1o([
         Bean('environment')
     ], Environment);
     return Environment;
@@ -35192,7 +35421,7 @@ var Environment = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35209,7 +35438,7 @@ var __extends$1u = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -35362,13 +35591,10 @@ var AnimationFrameService = /** @class */ (function (_super) {
     AnimationFrameService.prototype.isQueueEmpty = function () {
         return !this.ticking;
     };
-    __decorate$1u([
-        Autowired('gridOptionsWrapper')
-    ], AnimationFrameService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1u([
+    __decorate$1p([
         PostConstruct
     ], AnimationFrameService.prototype, "init", null);
-    AnimationFrameService = __decorate$1u([
+    AnimationFrameService = __decorate$1p([
         Bean('animationFrameService')
     ], AnimationFrameService);
     return AnimationFrameService;
@@ -35376,7 +35602,7 @@ var AnimationFrameService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35393,7 +35619,7 @@ var __extends$1v = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -35576,28 +35802,25 @@ var NavigationService = /** @class */ (function (_super) {
         var rowIndexToScrollTo = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
         this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);
     };
-    __decorate$1v([
+    __decorate$1q([
         Autowired('mouseEventService')
     ], NavigationService.prototype, "mouseEventService", void 0);
-    __decorate$1v([
+    __decorate$1q([
         Autowired('paginationProxy')
     ], NavigationService.prototype, "paginationProxy", void 0);
-    __decorate$1v([
+    __decorate$1q([
         Autowired('focusController')
     ], NavigationService.prototype, "focusController", void 0);
-    __decorate$1v([
+    __decorate$1q([
         Autowired('animationFrameService')
     ], NavigationService.prototype, "animationFrameService", void 0);
-    __decorate$1v([
+    __decorate$1q([
         Optional('rangeController')
     ], NavigationService.prototype, "rangeController", void 0);
-    __decorate$1v([
+    __decorate$1q([
         Autowired('columnController')
     ], NavigationService.prototype, "columnController", void 0);
-    __decorate$1v([
-        Autowired('gridOptionsWrapper')
-    ], NavigationService.prototype, "gridOptionsWrapper", void 0);
-    NavigationService = __decorate$1v([
+    NavigationService = __decorate$1q([
         Bean('navigationService')
     ], NavigationService);
     return NavigationService;
@@ -35605,7 +35828,7 @@ var NavigationService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35622,7 +35845,7 @@ var __extends$1w = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -35718,10 +35941,10 @@ var MaxDivHeightScaler = /** @class */ (function (_super) {
         var scrollPixel = this.maxScrollY * scrollPercent;
         return scrollPixel;
     };
-    __decorate$1w([
+    __decorate$1r([
         PostConstruct
     ], MaxDivHeightScaler.prototype, "postConstruct", null);
-    MaxDivHeightScaler = __decorate$1w([
+    MaxDivHeightScaler = __decorate$1r([
         Bean('maxDivHeightScaler')
     ], MaxDivHeightScaler);
     return MaxDivHeightScaler;
@@ -35729,7 +35952,7 @@ var MaxDivHeightScaler = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35746,7 +35969,7 @@ var __extends$1x = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -35795,13 +36018,10 @@ var SelectableService = /** @class */ (function (_super) {
             child.setRowSelectable(rowSelectable);
         });
     };
-    __decorate$1x([
-        Autowired('gridOptionsWrapper')
-    ], SelectableService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1x([
+    __decorate$1s([
         PostConstruct
     ], SelectableService.prototype, "init", null);
-    SelectableService = __decorate$1x([
+    SelectableService = __decorate$1s([
         Bean('selectableService')
     ], SelectableService);
     return SelectableService;
@@ -35809,7 +36029,7 @@ var SelectableService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35826,7 +36046,7 @@ var __extends$1y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -35905,22 +36125,22 @@ var AutoHeightCalculator = /** @class */ (function (_super) {
         var classes = this.rowCssClassCalculator.getInitialRowClasses(params);
         addCssClass(eDummyContainer, classes.join(' '));
     };
-    __decorate$1y([
+    __decorate$1t([
         Autowired('beans')
     ], AutoHeightCalculator.prototype, "beans", void 0);
-    __decorate$1y([
+    __decorate$1t([
         Autowired("$scope")
     ], AutoHeightCalculator.prototype, "$scope", void 0);
-    __decorate$1y([
+    __decorate$1t([
         Autowired("columnController")
     ], AutoHeightCalculator.prototype, "columnController", void 0);
-    __decorate$1y([
+    __decorate$1t([
         Autowired("rowCssClassCalculator")
     ], AutoHeightCalculator.prototype, "rowCssClassCalculator", void 0);
-    __decorate$1y([
+    __decorate$1t([
         Autowired('$compile')
     ], AutoHeightCalculator.prototype, "$compile", void 0);
-    AutoHeightCalculator = __decorate$1y([
+    AutoHeightCalculator = __decorate$1t([
         Bean('autoHeightCalculator')
     ], AutoHeightCalculator);
     return AutoHeightCalculator;
@@ -35928,7 +36148,7 @@ var AutoHeightCalculator = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35945,7 +36165,7 @@ var __extends$1z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36112,43 +36332,43 @@ var PaginationComp = /** @class */ (function (_super) {
             this.lbRecordCount.innerHTML = moreText;
         }
     };
-    __decorate$1z([
-        Autowired('gridOptionsWrapper')
-    ], PaginationComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1z([
+    __decorate$1u([
         Autowired('paginationProxy')
     ], PaginationComp.prototype, "paginationProxy", void 0);
-    __decorate$1z([
+    __decorate$1u([
         Autowired('rowModel')
     ], PaginationComp.prototype, "rowModel", void 0);
-    __decorate$1z([
+    __decorate$1u([
+        Autowired('rowNodeBlockLoader')
+    ], PaginationComp.prototype, "rowNodeBlockLoader", void 0);
+    __decorate$1u([
         RefSelector('btFirst')
     ], PaginationComp.prototype, "btFirst", void 0);
-    __decorate$1z([
+    __decorate$1u([
         RefSelector('btPrevious')
     ], PaginationComp.prototype, "btPrevious", void 0);
-    __decorate$1z([
+    __decorate$1u([
         RefSelector('btNext')
     ], PaginationComp.prototype, "btNext", void 0);
-    __decorate$1z([
+    __decorate$1u([
         RefSelector('btLast')
     ], PaginationComp.prototype, "btLast", void 0);
-    __decorate$1z([
+    __decorate$1u([
         RefSelector('lbRecordCount')
     ], PaginationComp.prototype, "lbRecordCount", void 0);
-    __decorate$1z([
+    __decorate$1u([
         RefSelector('lbFirstRowOnPage')
     ], PaginationComp.prototype, "lbFirstRowOnPage", void 0);
-    __decorate$1z([
+    __decorate$1u([
         RefSelector('lbLastRowOnPage')
     ], PaginationComp.prototype, "lbLastRowOnPage", void 0);
-    __decorate$1z([
+    __decorate$1u([
         RefSelector('lbCurrent')
     ], PaginationComp.prototype, "lbCurrent", void 0);
-    __decorate$1z([
+    __decorate$1u([
         RefSelector('lbTotal')
     ], PaginationComp.prototype, "lbTotal", void 0);
-    __decorate$1z([
+    __decorate$1u([
         PostConstruct
     ], PaginationComp.prototype, "postConstruct", null);
     return PaginationComp;
@@ -36156,7 +36376,7 @@ var PaginationComp = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36173,7 +36393,7 @@ var __extends$1A = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36228,10 +36448,7 @@ var ResizeObserverService = /** @class */ (function (_super) {
             return usePolyfill();
         }
     };
-    __decorate$1A([
-        Autowired('gridOptionsWrapper')
-    ], ResizeObserverService.prototype, "gridOptionsWrapper", void 0);
-    ResizeObserverService = __decorate$1A([
+    ResizeObserverService = __decorate$1v([
         Bean('resizeObserverService')
     ], ResizeObserverService);
     return ResizeObserverService;
@@ -36239,7 +36456,7 @@ var ResizeObserverService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36256,7 +36473,7 @@ var __extends$1B = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36336,16 +36553,13 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
     OverlayWrapperComponent.TEMPLATE = "\n        <div class=\"ag-overlay\" aria-hidden=\"true\">\n            <div class=\"ag-overlay-panel\">\n                <div class=\"ag-overlay-wrapper\" ref=\"eOverlayWrapper\"></div>\n            </div>\n        </div>";
-    __decorate$1B([
-        Autowired('gridOptionsWrapper')
-    ], OverlayWrapperComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1B([
+    __decorate$1w([
         Autowired('userComponentFactory')
     ], OverlayWrapperComponent.prototype, "userComponentFactory", void 0);
-    __decorate$1B([
+    __decorate$1w([
         RefSelector('eOverlayWrapper')
     ], OverlayWrapperComponent.prototype, "eOverlayWrapper", void 0);
-    __decorate$1B([
+    __decorate$1w([
         PostConstruct
     ], OverlayWrapperComponent.prototype, "postConstruct", null);
     return OverlayWrapperComponent;
@@ -36353,7 +36567,7 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36370,7 +36584,7 @@ var __extends$1C = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36547,31 +36761,28 @@ var AgGroupComponent = /** @class */ (function (_super) {
     };
     AgGroupComponent.EVENT_EXPANDED = 'expanded';
     AgGroupComponent.EVENT_COLLAPSED = 'collapsed';
-    __decorate$1C([
-        Autowired('gridOptionsWrapper')
-    ], AgGroupComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1C([
+    __decorate$1x([
         RefSelector('eTitleBar')
     ], AgGroupComponent.prototype, "eTitleBar", void 0);
-    __decorate$1C([
+    __decorate$1x([
         RefSelector('eGroupOpenedIcon')
     ], AgGroupComponent.prototype, "eGroupOpenedIcon", void 0);
-    __decorate$1C([
+    __decorate$1x([
         RefSelector('eGroupClosedIcon')
     ], AgGroupComponent.prototype, "eGroupClosedIcon", void 0);
-    __decorate$1C([
+    __decorate$1x([
         RefSelector('eToolbar')
     ], AgGroupComponent.prototype, "eToolbar", void 0);
-    __decorate$1C([
+    __decorate$1x([
         RefSelector('cbGroupEnabled')
     ], AgGroupComponent.prototype, "cbGroupEnabled", void 0);
-    __decorate$1C([
+    __decorate$1x([
         RefSelector('eTitle')
     ], AgGroupComponent.prototype, "eTitle", void 0);
-    __decorate$1C([
+    __decorate$1x([
         RefSelector('eContainer')
     ], AgGroupComponent.prototype, "eContainer", void 0);
-    __decorate$1C([
+    __decorate$1x([
         PostConstruct
     ], AgGroupComponent.prototype, "postConstruct", null);
     return AgGroupComponent;
@@ -36579,7 +36790,7 @@ var AgGroupComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36596,7 +36807,7 @@ var __extends$1D = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36914,25 +37125,22 @@ var AgPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     AgPanel.CLOSE_BTN_TEMPLATE = "<div class=\"ag-button\"></div>";
-    __decorate$1D([
+    __decorate$1y([
         Autowired('popupService')
     ], AgPanel.prototype, "popupService", void 0);
-    __decorate$1D([
-        Autowired('gridOptionsWrapper')
-    ], AgPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1D([
+    __decorate$1y([
         RefSelector('eContentWrapper')
     ], AgPanel.prototype, "eContentWrapper", void 0);
-    __decorate$1D([
+    __decorate$1y([
         RefSelector('eTitleBar')
     ], AgPanel.prototype, "eTitleBar", void 0);
-    __decorate$1D([
+    __decorate$1y([
         RefSelector('eTitleBarButtons')
     ], AgPanel.prototype, "eTitleBarButtons", void 0);
-    __decorate$1D([
+    __decorate$1y([
         RefSelector('eTitle')
     ], AgPanel.prototype, "eTitle", void 0);
-    __decorate$1D([
+    __decorate$1y([
         PostConstruct
     ], AgPanel.prototype, "postConstruct", null);
     return AgPanel;
@@ -36940,7 +37148,7 @@ var AgPanel = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36957,7 +37165,7 @@ var __extends$1E = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37011,13 +37219,16 @@ var AgDialog = /** @class */ (function (_super) {
     AgDialog.prototype.renderComponent = function () {
         var eGui = this.getGui();
         var _a = this.config, alwaysOnTop = _a.alwaysOnTop, modal = _a.modal;
-        this.close = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: modal,
             eChild: eGui,
             closeOnEsc: true,
             closedCallback: this.destroy.bind(this),
             alwaysOnTop: alwaysOnTop
         });
+        if (addPopupRes) {
+            this.close = addPopupRes.hideFunc;
+        }
     };
     AgDialog.prototype.addResizers = function () {
         var eGui = this.getGui();
@@ -37257,7 +37468,7 @@ var AgDialog = /** @class */ (function (_super) {
             _this.refreshMaximizeIcon();
         });
     };
-    __decorate$1E([
+    __decorate$1z([
         Autowired('dragService')
     ], AgDialog.prototype, "dragService", void 0);
     return AgDialog;
@@ -37265,7 +37476,7 @@ var AgDialog = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37322,7 +37533,7 @@ var AgInputTextField = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37362,7 +37573,7 @@ var AgInputTextArea = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37379,7 +37590,7 @@ var __extends$1H = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37446,16 +37657,16 @@ var AgSlider = /** @class */ (function (_super) {
         return this;
     };
     AgSlider.TEMPLATE = "<div class=\"ag-slider\">\n            <label ref=\"eLabel\"></label>\n            <div class=\"ag-wrapper ag-slider-wrapper\">\n                <ag-input-range ref=\"eSlider\"></ag-input-range>\n                <ag-input-number-field ref=\"eText\"></ag-input-number-field>\n            </div>\n        </div>";
-    __decorate$1F([
+    __decorate$1A([
         RefSelector('eLabel')
     ], AgSlider.prototype, "eLabel", void 0);
-    __decorate$1F([
+    __decorate$1A([
         RefSelector('eSlider')
     ], AgSlider.prototype, "eSlider", void 0);
-    __decorate$1F([
+    __decorate$1A([
         RefSelector('eText')
     ], AgSlider.prototype, "eText", void 0);
-    __decorate$1F([
+    __decorate$1A([
         PostConstruct
     ], AgSlider.prototype, "init", null);
     return AgSlider;
@@ -37463,7 +37674,7 @@ var AgSlider = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37480,7 +37691,7 @@ var __extends$1I = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37683,31 +37894,31 @@ var AgColorPanel = /** @class */ (function (_super) {
     AgColorPanel.maxRecentColors = 8;
     AgColorPanel.recentColors = [];
     AgColorPanel.TEMPLATE = "<div class=\"ag-color-panel\">\n            <div ref=\"spectrumColor\" class=\"ag-spectrum-color\">\n                <div class=\"ag-spectrum-sat ag-spectrum-fill\">\n                    <div ref=\"spectrumVal\" class=\"ag-spectrum-val ag-spectrum-fill\">\n                        <div ref=\"spectrumDragger\" class=\"ag-spectrum-dragger\"></div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"ag-spectrum-tools\">\n                <div ref=\"spectrumHue\" class=\"ag-spectrum-hue ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-hue-background\"></div>\n                    <div ref=\"spectrumHueSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"spectrumAlpha\" class=\"ag-spectrum-alpha ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-alpha-background\"></div>\n                    <div ref=\"spectrumAlphaSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"recentColors\" class=\"ag-recent-colors\"></div>\n            </div>\n        </div>";
-    __decorate$1G([
+    __decorate$1B([
         RefSelector('spectrumColor')
     ], AgColorPanel.prototype, "spectrumColor", void 0);
-    __decorate$1G([
+    __decorate$1B([
         RefSelector('spectrumVal')
     ], AgColorPanel.prototype, "spectrumVal", void 0);
-    __decorate$1G([
+    __decorate$1B([
         RefSelector('spectrumDragger')
     ], AgColorPanel.prototype, "spectrumDragger", void 0);
-    __decorate$1G([
+    __decorate$1B([
         RefSelector('spectrumHue')
     ], AgColorPanel.prototype, "spectrumHue", void 0);
-    __decorate$1G([
+    __decorate$1B([
         RefSelector('spectrumHueSlider')
     ], AgColorPanel.prototype, "spectrumHueSlider", void 0);
-    __decorate$1G([
+    __decorate$1B([
         RefSelector('spectrumAlpha')
     ], AgColorPanel.prototype, "spectrumAlpha", void 0);
-    __decorate$1G([
+    __decorate$1B([
         RefSelector('spectrumAlphaSlider')
     ], AgColorPanel.prototype, "spectrumAlphaSlider", void 0);
-    __decorate$1G([
+    __decorate$1B([
         RefSelector('recentColors')
     ], AgColorPanel.prototype, "recentColors", void 0);
-    __decorate$1G([
+    __decorate$1B([
         PostConstruct
     ], AgColorPanel.prototype, "postConstruct", null);
     return AgColorPanel;
@@ -37715,7 +37926,7 @@ var AgColorPanel = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37732,7 +37943,7 @@ var __extends$1J = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37814,19 +38025,16 @@ var AgPickerField = /** @class */ (function (_super) {
     AgPickerField.prototype.getFocusableElement = function () {
         return this.eWrapper;
     };
-    __decorate$1H([
-        Autowired('gridOptionsWrapper')
-    ], AgPickerField.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1H([
+    __decorate$1C([
         RefSelector('eLabel')
     ], AgPickerField.prototype, "eLabel", void 0);
-    __decorate$1H([
+    __decorate$1C([
         RefSelector('eWrapper')
     ], AgPickerField.prototype, "eWrapper", void 0);
-    __decorate$1H([
+    __decorate$1C([
         RefSelector('eDisplayField')
     ], AgPickerField.prototype, "eDisplayField", void 0);
-    __decorate$1H([
+    __decorate$1C([
         RefSelector('eIcon')
     ], AgPickerField.prototype, "eIcon", void 0);
     return AgPickerField;
@@ -37834,7 +38042,7 @@ var AgPickerField = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37913,10 +38121,8 @@ var AgColorPicker = /** @class */ (function (_super) {
         if (this.value === color) {
             return this;
         }
-        this.value = color;
         this.eDisplayField.style.backgroundColor = color;
-        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
-        return this;
+        return _super.prototype.setValue.call(this, color);
     };
     AgColorPicker.prototype.getValue = function () {
         return this.value;
@@ -37926,7 +38132,7 @@ var AgColorPicker = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38023,7 +38229,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38095,7 +38301,7 @@ var AgInputRange = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38112,7 +38318,7 @@ var __extends$1N = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38179,7 +38385,7 @@ var AgList = /** @class */ (function (_super) {
         itemEl.setAttribute('role', 'option');
         addCssClass(itemEl, 'ag-list-item');
         addCssClass(itemEl, "ag-" + this.cssIdentifier + "-list-item");
-        itemEl.innerHTML = text;
+        itemEl.innerHTML = "<span>" + text + "</span>";
         itemEl.tabIndex = -1;
         this.itemEls.push(itemEl);
         this.addManagedListener(itemEl, 'mouseover', function () { return _this.highlightItem(itemEl); });
@@ -38258,7 +38464,7 @@ var AgList = /** @class */ (function (_super) {
     };
     AgList.EVENT_ITEM_SELECTED = 'selectedItem';
     AgList.ACTIVE_CLASS = 'ag-active-item';
-    __decorate$1I([
+    __decorate$1D([
         PostConstruct
     ], AgList.prototype, "init", null);
     return AgList;
@@ -38266,7 +38472,7 @@ var AgList = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38283,7 +38489,7 @@ var __extends$1O = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38322,7 +38528,7 @@ var AgSelect = /** @class */ (function (_super) {
                 _this.hideList();
             }
         });
-        this.hideList = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: listGui,
             closeOnEsc: true,
@@ -38336,6 +38542,9 @@ var AgSelect = /** @class */ (function (_super) {
                 }
             }
         });
+        if (addPopupRes) {
+            this.hideList = addPopupRes.hideFunc;
+        }
         this.isPickerDisplayed = true;
         setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
         listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
@@ -38379,10 +38588,10 @@ var AgSelect = /** @class */ (function (_super) {
         this.destroyBean(this.listComponent);
         _super.prototype.destroy.call(this);
     };
-    __decorate$1J([
+    __decorate$1E([
         Autowired('popupService')
     ], AgSelect.prototype, "popupService", void 0);
-    __decorate$1J([
+    __decorate$1E([
         PostConstruct
     ], AgSelect.prototype, "init", null);
     return AgSelect;
@@ -38390,7 +38599,7 @@ var AgSelect = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38407,7 +38616,7 @@ var __extends$1P = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38582,19 +38791,19 @@ var AgAngleSelect = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     AgAngleSelect.TEMPLATE = "<div class=\"ag-angle-select\">\n            <div ref=\"eLabel\"></div>\n            <div class=\"ag-wrapper ag-angle-select-wrapper\">\n                <div ref=\"eAngleSelectField\" class=\"ag-angle-select-field\">\n                    <div ref=\"eParentCircle\" class=\"ag-angle-select-parent-circle\">\n                        <div ref=\"eChildCircle\" class=\"ag-angle-select-child-circle\"></div>\n                    </div>\n                </div>\n                <ag-input-number-field ref=\"eAngleValue\"></ag-input-number-field>\n            </div>\n        </div>";
-    __decorate$1K([
+    __decorate$1F([
         RefSelector('eLabel')
     ], AgAngleSelect.prototype, "eLabel", void 0);
-    __decorate$1K([
+    __decorate$1F([
         RefSelector('eParentCircle')
     ], AgAngleSelect.prototype, "eParentCircle", void 0);
-    __decorate$1K([
+    __decorate$1F([
         RefSelector('eChildCircle')
     ], AgAngleSelect.prototype, "eChildCircle", void 0);
-    __decorate$1K([
+    __decorate$1F([
         RefSelector('eAngleValue')
     ], AgAngleSelect.prototype, "eAngleValue", void 0);
-    __decorate$1K([
+    __decorate$1F([
         Autowired('dragService')
     ], AgAngleSelect.prototype, "dragService", void 0);
     return AgAngleSelect;
@@ -38602,7 +38811,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38634,7 +38843,7 @@ var AgToggleButton = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38651,7 +38860,7 @@ var __extends$1R = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38781,16 +38990,13 @@ var DetailRowCompCache = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
         this.purgeCache(0);
     };
-    __decorate$1L([
-        Autowired('gridOptionsWrapper')
-    ], DetailRowCompCache.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1L([
+    __decorate$1G([
         PostConstruct
     ], DetailRowCompCache.prototype, "postConstruct", null);
-    __decorate$1L([
+    __decorate$1G([
         PreDestroy
     ], DetailRowCompCache.prototype, "destroy", null);
-    DetailRowCompCache = __decorate$1L([
+    DetailRowCompCache = __decorate$1G([
         Bean('detailRowCompCache')
     ], DetailRowCompCache);
     return DetailRowCompCache;
@@ -38798,7 +39004,7 @@ var DetailRowCompCache = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38815,7 +39021,7 @@ var __extends$1S = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38906,16 +39112,16 @@ var RowPositionUtils = /** @class */ (function (_super) {
         }
         return rowA.rowIndex < rowB.rowIndex;
     };
-    __decorate$1M([
+    __decorate$1H([
         Autowired('rowModel')
     ], RowPositionUtils.prototype, "rowModel", void 0);
-    __decorate$1M([
+    __decorate$1H([
         Autowired('pinnedRowModel')
     ], RowPositionUtils.prototype, "pinnedRowModel", void 0);
-    __decorate$1M([
+    __decorate$1H([
         Autowired('paginationProxy')
     ], RowPositionUtils.prototype, "paginationProxy", void 0);
-    RowPositionUtils = __decorate$1M([
+    RowPositionUtils = __decorate$1H([
         Bean('rowPositionUtils')
     ], RowPositionUtils);
     return RowPositionUtils;
@@ -38923,7 +39129,7 @@ var RowPositionUtils = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38940,7 +39146,7 @@ var __extends$1T = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38964,7 +39170,7 @@ var CellPositionUtils = /** @class */ (function (_super) {
         var indexMatch = cellA.rowIndex === cellB.rowIndex;
         return colsMatch && floatingMatch && indexMatch;
     };
-    CellPositionUtils = __decorate$1N([
+    CellPositionUtils = __decorate$1I([
         Bean('cellPositionUtils')
     ], CellPositionUtils);
     return CellPositionUtils;
@@ -38972,7 +39178,7 @@ var CellPositionUtils = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38989,7 +39195,7 @@ var __extends$1U = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39109,19 +39315,16 @@ var PinnedRowModel = /** @class */ (function (_super) {
         var lastNode = last(rowNodes);
         return lastNode.rowTop + lastNode.rowHeight;
     };
-    __decorate$1O([
-        Autowired('gridOptionsWrapper')
-    ], PinnedRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1O([
+    __decorate$1J([
         Autowired('columnApi')
     ], PinnedRowModel.prototype, "columnApi", void 0);
-    __decorate$1O([
+    __decorate$1J([
         Autowired('gridApi')
     ], PinnedRowModel.prototype, "gridApi", void 0);
-    __decorate$1O([
+    __decorate$1J([
         PostConstruct
     ], PinnedRowModel.prototype, "init", null);
-    PinnedRowModel = __decorate$1O([
+    PinnedRowModel = __decorate$1J([
         Bean('pinnedRowModel')
     ], PinnedRowModel);
     return PinnedRowModel;
@@ -39129,7 +39332,7 @@ var PinnedRowModel = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39193,7 +39396,7 @@ var UndoRedoStack = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39210,7 +39413,7 @@ var __extends$1W = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39265,7 +39468,7 @@ var UndoRedoService = /** @class */ (function (_super) {
         // performed that change the order of the row / cols.
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.clearStacks);
@@ -39429,25 +39632,22 @@ var UndoRedoService = /** @class */ (function (_super) {
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
     };
-    __decorate$1P([
-        Autowired('gridOptionsWrapper')
-    ], UndoRedoService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1P([
+    __decorate$1K([
         Autowired('focusController')
     ], UndoRedoService.prototype, "focusController", void 0);
-    __decorate$1P([
+    __decorate$1K([
         Autowired('gridApi')
     ], UndoRedoService.prototype, "gridApi", void 0);
-    __decorate$1P([
+    __decorate$1K([
         Autowired('rowModel')
     ], UndoRedoService.prototype, "rowModel", void 0);
-    __decorate$1P([
+    __decorate$1K([
         Autowired('pinnedRowModel')
     ], UndoRedoService.prototype, "pinnedRowModel", void 0);
-    __decorate$1P([
+    __decorate$1K([
         PostConstruct
     ], UndoRedoService.prototype, "init", null);
-    UndoRedoService = __decorate$1P([
+    UndoRedoService = __decorate$1K([
         Bean('undoRedoService')
     ], UndoRedoService);
     return UndoRedoService;
@@ -39455,7 +39655,7 @@ var UndoRedoService = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39472,7 +39672,7 @@ var __extends$1X = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39505,7 +39705,7 @@ var AgStackComponentsRegistry = /** @class */ (function (_super) {
     AgStackComponentsRegistry.prototype.getComponentClass = function (htmlTag) {
         return this.componentsMappedByName[htmlTag];
     };
-    AgStackComponentsRegistry = __decorate$1Q([
+    AgStackComponentsRegistry = __decorate$1L([
         Bean('agStackComponentsRegistry')
     ], AgStackComponentsRegistry);
     return AgStackComponentsRegistry;
@@ -39513,7 +39713,7 @@ var AgStackComponentsRegistry = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39530,7 +39730,7 @@ var __extends$1Y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39581,13 +39781,13 @@ var HeaderPositionUtils = /** @class */ (function (_super) {
             column: column
         };
     };
-    __decorate$1R([
+    __decorate$1M([
         Autowired('columnController')
     ], HeaderPositionUtils.prototype, "columnController", void 0);
-    __decorate$1R([
+    __decorate$1M([
         Autowired('headerNavigationService')
     ], HeaderPositionUtils.prototype, "headerNavigationService", void 0);
-    HeaderPositionUtils = __decorate$1R([
+    HeaderPositionUtils = __decorate$1M([
         Bean('headerPositionUtils')
     ], HeaderPositionUtils);
     return HeaderPositionUtils;
@@ -39595,11 +39795,11 @@ var HeaderPositionUtils = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __decorate$1S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39669,7 +39869,7 @@ var ColumnDefFactory = /** @class */ (function () {
         colDefCloned.sortIndex = col.getSortIndex() != null ? col.getSortIndex() : null;
         return colDefCloned;
     };
-    ColumnDefFactory = __decorate$1S([
+    ColumnDefFactory = __decorate$1N([
         Bean('columnDefFactory')
     ], ColumnDefFactory);
     return ColumnDefFactory;
@@ -39677,11 +39877,11 @@ var ColumnDefFactory = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __decorate$1T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39803,13 +40003,13 @@ var RowCssClassCalculator = /** @class */ (function () {
         // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
         return rowNode.parent ? (rowNode.parent.level + 1) : 0;
     };
-    __decorate$1T([
+    __decorate$1O([
         Autowired('stylingService')
     ], RowCssClassCalculator.prototype, "stylingService", void 0);
-    __decorate$1T([
+    __decorate$1O([
         Autowired('gridOptionsWrapper')
     ], RowCssClassCalculator.prototype, "gridOptionsWrapper", void 0);
-    RowCssClassCalculator = __decorate$1T([
+    RowCssClassCalculator = __decorate$1O([
         Bean('rowCssClassCalculator')
     ], RowCssClassCalculator);
     return RowCssClassCalculator;
@@ -39817,7 +40017,7 @@ var RowCssClassCalculator = /** @class */ (function () {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40110,48 +40310,13 @@ var RowNodeBlock = /** @class */ (function (_super) {
     RowNodeBlock.prototype.getState = function () {
         return this.state;
     };
-    RowNodeBlock.prototype.setRowNode = function (rowIndex, rowNode) {
-        var localIndex = rowIndex - this.startRow;
-        this.rowNodes[localIndex] = rowNode;
-    };
-    RowNodeBlock.prototype.setBlankRowNode = function (rowIndex) {
-        var newRowNode = this.createBlankRowNode(rowIndex);
-        var localIndex = rowIndex - this.startRow;
-        this.rowNodes[localIndex] = newRowNode;
-        return newRowNode;
-    };
-    RowNodeBlock.prototype.setNewData = function (rowIndex, dataItem) {
-        var newRowNode = this.setBlankRowNode(rowIndex);
-        this.setDataAndId(newRowNode, dataItem, this.startRow + rowIndex);
-        return newRowNode;
-    };
-    RowNodeBlock.prototype.createBlankRowNode = function (rowIndex) {
-        var rowNode = this.getContext().createBean(new RowNode());
-        rowNode.setRowHeight(this.rowNodeCacheParams.rowHeight);
-        return rowNode;
-    };
-    // creates empty row nodes, data is missing as not loaded yet
-    RowNodeBlock.prototype.createRowNodes = function () {
-        this.rowNodes = [];
-        for (var i = 0; i < this.rowNodeCacheParams.blockSize; i++) {
-            var rowIndex = this.startRow + i;
-            var rowNode = this.createBlankRowNode(rowIndex);
-            this.rowNodes.push(rowNode);
+    RowNodeBlock.prototype.pageLoadFailed = function (version) {
+        var requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
+        if (requestMostRecentAndLive) {
+            this.state = RowNodeBlock.STATE_FAILED;
+            this.processServerFail();
         }
-    };
-    RowNodeBlock.prototype.load = function () {
-        this.state = RowNodeBlock.STATE_LOADING;
-        this.loadFromDatasource();
-    };
-    RowNodeBlock.prototype.pageLoadFailed = function () {
-        this.state = RowNodeBlock.STATE_FAILED;
-        var event = {
-            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
-            success: false,
-            page: this,
-            lastRow: null
-        };
-        this.dispatchEvent(event);
+        this.dispatchLoadCompleted(false);
     };
     RowNodeBlock.prototype.populateWithRowData = function (rows) {
         var _this = this;
@@ -40167,34 +40332,34 @@ var RowNodeBlock = /** @class */ (function (_super) {
             this.rowRenderer.redrawRows(rowNodesToRefresh);
         }
     };
-    RowNodeBlock.prototype.destroyRowNodes = function () {
-        var _this = this;
-        this.rowNodes.forEach(function (rowNode) {
-            if (rowNode.childrenCache) {
-                _this.destroyBean(rowNode.childrenCache);
-                rowNode.childrenCache = null;
-            }
-            // this is needed, so row render knows to fade out the row, otherwise it
-            // sees row top is present, and thinks the row should be shown. maybe
-            // rowNode should have a flag on whether it is visible???
-            rowNode.clearRowTop();
-        });
-    };
     RowNodeBlock.prototype.pageLoaded = function (version, rows, lastRow) {
-        // we need to check the version, in case there was an old request
-        // from the server that was sent before we refreshed the cache,
-        // if the load was done as a result of a cache refresh
-        if (version === this.version) {
+        this.successCommon(version, { rowData: rows, rowCount: lastRow });
+    };
+    RowNodeBlock.prototype.isRequestMostRecentAndLive = function (version) {
+        // thisIsMostRecentRequest - if block was refreshed, then another request
+        // could of been sent after this one.
+        var thisIsMostRecentRequest = version === this.version;
+        // weAreNotDestroyed - if InfiniteStore is purged, then blocks are destroyed
+        // and new blocks created. so data loads of old blocks are discarded.
+        var weAreNotDestroyed = this.isAlive();
+        return thisIsMostRecentRequest && weAreNotDestroyed;
+    };
+    RowNodeBlock.prototype.successCommon = function (version, params) {
+        var requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
+        if (requestMostRecentAndLive) {
             this.state = RowNodeBlock.STATE_LOADED;
             this.populateWithRowData(rows);
         }
-        lastRow = cleanNumber(lastRow);
-        // check here if lastRow should be set
+        this.dispatchLoadCompleted();
+    };
+    RowNodeBlock.prototype.dispatchLoadCompleted = function (success) {
+        if (success === void 0) { success = true; }
+        // we fire event regardless of processing data or now, as we want
+        // the concurrentLoadRequests count to be reduced in BlockLoader
         var event = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,
-            success: true,
-            page: this,
-            lastRow: lastRow
+            success: success,
+            block: this
         };
         this.dispatchEvent(event);
     };
@@ -40217,7 +40382,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40234,7 +40399,7 @@ var __extends$1$ = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -40333,19 +40498,91 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
     RowNodeBlockLoader.prototype.isLoading = function () {
         return this.activeBlockLoadsCount > 0;
     };
-    __decorate$1W([
+    var RowNodeBlockLoader_1;
+    RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
+    __decorate$1P([
+        PostConstruct
+    ], RowNodeBlockLoader.prototype, "postConstruct", null);
+    __decorate$1P([
         __param$9(0, Qualifier('loggerFactory'))
     ], RowNodeBlockLoader.prototype, "setBeans", null);
+    RowNodeBlockLoader = RowNodeBlockLoader_1 = __decorate$1P([
+        Bean('rowNodeBlockLoader')
+    ], RowNodeBlockLoader);
     return RowNodeBlockLoader;
 }(BeanStub));
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-var __extends$20 = (undefined && undefined.__extends) || (function () {
+var __decorate$1Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+// this logic is used by both SSRM and CSRM
+var RowNodeSorter = /** @class */ (function () {
+    function RowNodeSorter() {
+    }
+    RowNodeSorter.prototype.doFullSort = function (rowNodes, sortOptions) {
+        var mapper = function (rowNode, pos) { return ({ currentPos: pos, rowNode: rowNode }); };
+        var sortedRowNodes = rowNodes.map(mapper);
+        sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
+        return sortedRowNodes.map(function (item) { return item.rowNode; });
+    };
+    RowNodeSorter.prototype.compareRowNodes = function (sortOptions, sortedNodeA, sortedNodeB) {
+        var nodeA = sortedNodeA.rowNode;
+        var nodeB = sortedNodeB.rowNode;
+        // Iterate columns, return the first that doesn't match
+        for (var i = 0, len = sortOptions.length; i < len; i++) {
+            var sortOption = sortOptions[i];
+            // let compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
+            var isInverted = sortOption.sort === Constants.SORT_DESC;
+            var valueA = this.getValue(nodeA, sortOption.column);
+            var valueB = this.getValue(nodeB, sortOption.column);
+            var comparatorResult = void 0;
+            var providedComparator = sortOption.column.getColDef().comparator;
+            if (providedComparator) {
+                //if comparator provided, use it
+                comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isInverted);
+            }
+            else {
+                //otherwise do our own comparison
+                comparatorResult = _.defaultComparator(valueA, valueB, this.gridOptionsWrapper.isAccentedSort());
+            }
+            if (comparatorResult !== 0) {
+                return sortOption.sort === Constants.SORT_ASC ? comparatorResult : comparatorResult * -1;
+            }
+        }
+        // All matched, we make is so that the original sort order is kept:
+        return sortedNodeA.currentPos - sortedNodeB.currentPos;
+    };
+    RowNodeSorter.prototype.getValue = function (nodeA, column) {
+        return this.valueService.getValue(column, nodeA);
+    };
+    __decorate$1Q([
+        Autowired('gridOptionsWrapper')
+    ], RowNodeSorter.prototype, "gridOptionsWrapper", void 0);
+    __decorate$1Q([
+        Autowired('valueService')
+    ], RowNodeSorter.prototype, "valueService", void 0);
+    RowNodeSorter = __decorate$1Q([
+        Bean('rowNodeSorter')
+    ], RowNodeSorter);
+    return RowNodeSorter;
+}());
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$1$ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -40358,7 +40595,7 @@ var __extends$20 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -40526,137 +40763,65 @@ var RowNodeCache = /** @class */ (function (_super) {
         if (sequence === void 0) { sequence = new NumberSequence(); }
         this.forEachBlockInOrder(function (block) { return block.forEachNodeDeep(callback, sequence, _this.virtualRowCount); });
     };
-    RowNodeCache.prototype.forEachBlockInOrder = function (callback) {
-        var ids = this.getBlockIdsSorted();
-        this.forEachBlockId(ids, callback);
-    };
-    RowNodeCache.prototype.forEachBlockInReverseOrder = function (callback) {
-        var ids = this.getBlockIdsSorted().reverse();
-        this.forEachBlockId(ids, callback);
-    };
-    RowNodeCache.prototype.forEachBlockId = function (ids, callback) {
-        var _this = this;
-        ids.forEach(function (id) {
-            var block = _this.blocks[id];
-            callback(block, id);
-        });
-    };
-    RowNodeCache.prototype.getBlockIdsSorted = function () {
-        // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
-        var numberComparator = function (a, b) { return a - b; }; // default comparator for array is string comparison
-        var blockIds = Object.keys(this.blocks).map(function (idStr) { return parseInt(idStr, 10); }).sort(numberComparator);
-        return blockIds;
-    };
-    RowNodeCache.prototype.getBlock = function (blockId) {
-        return this.blocks[blockId];
-    };
-    RowNodeCache.prototype.setBlock = function (id, block) {
-        this.blocks[id] = block;
-        this.blockCount++;
-        this.cacheParams.rowNodeBlockLoader.addBlock(block);
-    };
-    RowNodeCache.prototype.destroyBlock = function (block) {
-        delete this.blocks[block.getBlockNumber()];
-        this.destroyBean(block);
-        this.blockCount--;
-        this.cacheParams.rowNodeBlockLoader.removeBlock(block);
-    };
-    // gets called 1) row count changed 2) cache purged 3) items inserted
-    RowNodeCache.prototype.onCacheUpdated = function () {
-        if (this.isActive()) {
-            // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
-            // in the valid range. so we must remove these. this can happen if user explicitly sets
-            // the virtual row count, or the datasource returns a result and sets lastRow to something
-            // less than virtualRowCount (can happen if user scrolls down, server reduces dataset size).
-            this.destroyAllBlocksPastVirtualRowCount();
-            // this results in both row models (infinite and server side) firing ModelUpdated,
-            // however server side row model also updates the row indexes first
-            var event_1 = {
-                type: RowNodeCache.EVENT_CACHE_UPDATED
-            };
-            this.dispatchEvent(event_1);
+    TabbedLayout.prototype.showItem = function (tabbedItem) {
+        var itemWrapper = find(this.items, function (wrapper) { return wrapper.tabbedItem === tabbedItem; });
+        if (itemWrapper) {
+            this.showItemWrapper(itemWrapper);
         }
     };
     RowNodeCache.prototype.destroyAllBlocksPastVirtualRowCount = function () {
         var _this = this;
-        var blocksToDestroy = [];
-        this.forEachBlockInOrder(function (block, id) {
-            var startRow = id * _this.cacheParams.blockSize;
-            if (startRow >= _this.virtualRowCount) {
-                blocksToDestroy.push(block);
+        if (this.params.onItemClicked) {
+            this.params.onItemClicked({ item: wrapper.tabbedItem });
+        }
+        if (this.activeItem === wrapper) {
+            callIfPresent(this.params.onActiveItemClicked);
+            return;
+        }
+        clearElement(this.eBody);
+        wrapper.tabbedItem.bodyPromise.then(function (body) {
+            _this.eBody.appendChild(body);
+            var onlyUnmanaged = !_this.focusController.isKeyboardMode();
+            _this.focusController.focusInto(_this.eBody, false, onlyUnmanaged);
+            if (wrapper.tabbedItem.afterAttachedCallback) {
+                wrapper.tabbedItem.afterAttachedCallback(_this.afterAttachedParams);
             }
         });
-        if (blocksToDestroy.length > 0) {
-            blocksToDestroy.forEach(function (block) { return _this.destroyBlock(block); });
+        if (this.activeItem) {
+            removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
         }
+        addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
+        this.activeItem = wrapper;
     };
-    RowNodeCache.prototype.purgeCache = function () {
-        var _this = this;
-        this.forEachBlockInOrder(function (block) { return _this.removeBlockFromCache(block); });
-        this.maxRowFound = false;
-        // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
-        // otherwise if set to zero rows last time, and we don't update the row count, then after
-        // the purge there will still be zero rows, meaning the SSRM won't request any rows.
-        // to kick things off, at least one row needs to be asked for.
-        if (this.virtualRowCount === 0) {
-            this.virtualRowCount = this.cacheParams.initialRowCount;
-        }
-        this.onCacheUpdated();
-    };
-    RowNodeCache.prototype.getRowNodesInRange = function (firstInRange, lastInRange) {
-        var _this = this;
-        var result = [];
-        var lastBlockId = -1;
-        var inActiveRange = false;
-        var numberSequence = new NumberSequence();
-        // if only one node passed, we start the selection at the top
-        if (missing(firstInRange)) {
-            inActiveRange = true;
-        }
-        var foundGapInSelection = false;
-        this.forEachBlockInOrder(function (block, id) {
-            if (foundGapInSelection) {
-                return;
-            }
-            if (inActiveRange && (lastBlockId + 1 !== id)) {
-                foundGapInSelection = true;
-                return;
-            }
-            lastBlockId = id;
-            block.forEachNodeShallow(function (rowNode) {
-                var hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
-                if (inActiveRange || hitFirstOrLast) {
-                    result.push(rowNode);
-                }
-                if (hitFirstOrLast) {
-                    inActiveRange = !inActiveRange;
-                }
-            }, numberSequence, _this.virtualRowCount);
-        });
-        // inActiveRange will be still true if we never hit the second rowNode
-        var invalidRange = foundGapInSelection || inActiveRange;
-        return invalidRange ? [] : result;
-    };
-    RowNodeCache.EVENT_CACHE_UPDATED = 'cacheUpdated';
-    // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
-    // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
-    // scrolled over are not needed to be loaded.
-    RowNodeCache.MAX_EMPTY_BLOCKS_TO_KEEP = 2;
-    __decorate$1X([
-        Autowired('rowRenderer')
-    ], RowNodeCache.prototype, "rowRenderer", void 0);
-    __decorate$1X([
-        PreDestroy
-    ], RowNodeCache.prototype, "destroyAllBlocks", null);
-    __decorate$1X([
-        PostConstruct
-    ], RowNodeCache.prototype, "init", null);
-    return RowNodeCache;
-}(BeanStub));
+    __decorate$1R([
+        RefSelector('eHeader')
+    ], TabbedLayout.prototype, "eHeader", void 0);
+    __decorate$1R([
+        RefSelector('eBody')
+    ], TabbedLayout.prototype, "eBody", void 0);
+    return TabbedLayout;
+}(ManagedFocusComponent));
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var ServerSideTransactionResultStatus;
+(function (ServerSideTransactionResultStatus) {
+    ServerSideTransactionResultStatus["StoreNotFound"] = "StoreNotFound";
+    ServerSideTransactionResultStatus["StoreLoading"] = "StoreLoading";
+    ServerSideTransactionResultStatus["StoreWaitingToLoad"] = "StoreWaitingToLoad";
+    ServerSideTransactionResultStatus["StoreLoadingFailed"] = "StoreLoadingFailed";
+    ServerSideTransactionResultStatus["StoreWrongType"] = "StoreWrongType";
+    ServerSideTransactionResultStatus["Applied"] = "Applied";
+    ServerSideTransactionResultStatus["Cancelled"] = "Cancelled";
+})(ServerSideTransactionResultStatus || (ServerSideTransactionResultStatus = {}));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40673,7 +40838,7 @@ var __extends$21 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -40909,13 +41074,10 @@ var VirtualList = /** @class */ (function (_super) {
         this.isDestroyed = true;
         _super.prototype.destroy.call(this);
     };
-    __decorate$1Y([
-        Autowired('gridOptionsWrapper')
-    ], VirtualList.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1Y([
+    __decorate$1S([
         Autowired('resizeObserverService')
     ], VirtualList.prototype, "resizeObserverService", void 0);
-    __decorate$1Y([
+    __decorate$1S([
         RefSelector('eContainer')
     ], VirtualList.prototype, "eContainer", void 0);
     return VirtualList;
@@ -40923,15 +41085,29 @@ var VirtualList = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var ServerSideStoreType;
+(function (ServerSideStoreType) {
+    ServerSideStoreType["Full"] = "full";
+    ServerSideStoreType["Partial"] = "partial";
+})(ServerSideStoreType || (ServerSideStoreType = {}));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var ChartType;
 (function (ChartType) {
+    ChartType["Column"] = "column";
     ChartType["GroupedColumn"] = "groupedColumn";
     ChartType["StackedColumn"] = "stackedColumn";
     ChartType["NormalizedColumn"] = "normalizedColumn";
+    ChartType["Bar"] = "bar";
     ChartType["GroupedBar"] = "groupedBar";
     ChartType["StackedBar"] = "stackedBar";
     ChartType["NormalizedBar"] = "normalizedBar";
@@ -40955,7 +41131,7 @@ var LegendPosition;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40980,7 +41156,7 @@ var __extends$22 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41229,14 +41405,14 @@ var LicenseManager = /** @class */ (function (_super) {
         this.watermarkMessage = "License Expired";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTYwMjA3NjI1MjU3OA==';
-    __decorate$1Z([
+    LicenseManager.RELEASE_INFORMATION = 'MTYwNzkzMzg4MjIzNg==';
+    __decorate$1T([
         Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);
-    __decorate$1Z([
+    __decorate$1T([
         PreConstruct
     ], LicenseManager.prototype, "validateLicense", null);
-    LicenseManager = LicenseManager_1 = __decorate$1Z([
+    LicenseManager = LicenseManager_1 = __decorate$1T([
         Bean('licenseManager')
     ], LicenseManager);
     return LicenseManager;
@@ -41255,7 +41431,7 @@ var __extends$23 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41430,10 +41606,10 @@ var MD5 = /** @class */ (function (_super) {
         var lsw = (x & 0xFFFF) + (y & 0xFFFF), msw = (x >> 16) + (y >> 16) + (lsw >> 16);
         return (msw << 16) | (lsw & 0xFFFF);
     };
-    __decorate$1_([
+    __decorate$1U([
         PostConstruct
     ], MD5.prototype, "init", null);
-    MD5 = __decorate$1_([
+    MD5 = __decorate$1U([
         Bean('md5')
     ], MD5);
     return MD5;
@@ -41452,7 +41628,7 @@ var __extends$24 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41479,13 +41655,13 @@ var WatermarkComp = /** @class */ (function (_super) {
         var isForceWatermark = location.search.indexOf('forceWatermark') !== -1;
         return isForceWatermark || (isDisplayWatermark && !isWhiteListURL);
     };
-    __decorate$1$([
+    __decorate$1V([
         Autowired('licenseManager')
     ], WatermarkComp.prototype, "licenseManager", void 0);
-    __decorate$1$([
+    __decorate$1V([
         RefSelector('eLicenseTextRef')
     ], WatermarkComp.prototype, "eLicenseTextRef", void 0);
-    __decorate$1$([
+    __decorate$1V([
         PostConstruct
     ], WatermarkComp.prototype, "postConstruct", null);
     return WatermarkComp;
@@ -41512,7 +41688,7 @@ var __extends$25 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$20 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41524,6 +41700,16 @@ var ChartDatasource = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ChartDatasource.prototype.getData = function (params) {
+        if (params.crossFiltering) {
+            if (params.grouping) {
+                console.warn("ag-grid: crossing filtering with row grouping is not supported.");
+                return { data: [], columnNames: {} };
+            }
+            if (!this.gridOptionsWrapper.isRowModelDefault()) {
+                console.warn("ag-grid: crossing filtering is only supported in the client side row model.");
+                return { data: [], columnNames: {} };
+            }
+        }
         var isServerSide = this.gridOptionsWrapper.isRowModelServerSide();
         if (isServerSide && params.pivoting) {
             this.updatePivotKeysForSSRM();
@@ -41539,14 +41725,25 @@ var ChartDatasource = /** @class */ (function (_super) {
         // maps used to keep track of expanded groups that need to be removed
         var groupNodeIndexes = {};
         var groupsToRemove = {};
-        // make sure enough rows in range to chart. if user filters and less rows, then end row will be
-        // the last displayed row, not where the range ends.
-        var modelLastRow = this.gridRowModel.getRowCount() - 1;
-        var rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
-        var numRows = rangeLastRow - params.startRow + 1;
+        // only used when cross filtering
+        var filteredNodes = {};
+        var allRowNodes = [];
+        var numRows;
+        if (params.crossFiltering) {
+            filteredNodes = this.getFilteredRowNodes();
+            allRowNodes = this.getAllRowNodes();
+            numRows = allRowNodes.length;
+        }
+        else {
+            // make sure enough rows in range to chart. if user filters and less rows, then end row will be
+            // the last displayed row, not where the range ends.
+            var modelLastRow = this.gridRowModel.getRowCount() - 1;
+            var rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
+            numRows = rangeLastRow - params.startRow + 1;
+        }
         var _loop_1 = function (i) {
             var data = {};
-            var rowNode = this_1.gridRowModel.getRow(i + params.startRow);
+            var rowNode = params.crossFiltering ? allRowNodes[i] : this_1.gridRowModel.getRow(i + params.startRow);
             // first get data for dimensions columns
             params.dimensionCols.forEach(function (col) {
                 var colId = col.colId;
@@ -41600,9 +41797,26 @@ var ChartDatasource = /** @class */ (function (_super) {
                 if (columnNamesArr.length > 0) {
                     columnNames[col.getId()] = columnNamesArr;
                 }
-                // add data value to value column
-                var value = _this.valueService.getValue(col, rowNode);
-                data[col.getId()] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                var colId = col.getColId();
+                if (params.crossFiltering) {
+                    var filteredOutColId = colId + '-filtered-out';
+                    // add data value to value column
+                    var value = _this.valueService.getValue(col, rowNode);
+                    var actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                    if (filteredNodes[rowNode.id]) {
+                        data[colId] = actualValue;
+                        data[filteredOutColId] = params.aggFunc || params.isScatter ? undefined : 0;
+                    }
+                    else {
+                        data[colId] = params.aggFunc || params.isScatter ? undefined : 0;
+                        data[filteredOutColId] = actualValue;
+                    }
+                }
+                else {
+                    // add data value to value column
+                    var value = _this.valueService.getValue(col, rowNode);
+                    data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                }
             });
             // add data to results
             extractedRowData.push(data);
@@ -41654,14 +41868,35 @@ var ChartDatasource = /** @class */ (function (_super) {
                 }
             });
         });
-        dataAggregated.forEach(function (groupItem) { return params.valueCols.forEach(function (col) {
-            var dataToAgg = groupItem.__children.map(function (child) { return child[col.getId()]; });
-            var aggResult = 0;
-            if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
-                aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
-            }
-            groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
-        }); });
+        if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+            dataAggregated.forEach(function (groupItem) { return params.valueCols.forEach(function (col) {
+                if (params.crossFiltering) {
+                    params.valueCols.forEach(function (valueCol) {
+                        // filtered data
+                        var dataToAgg = groupItem.__children
+                            .filter(function (child) { return typeof child[valueCol.getColId()] !== 'undefined'; })
+                            .map(function (child) { return child[valueCol.getColId()]; });
+                        var aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
+                        groupItem[valueCol.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                        // filtered out data
+                        var filteredOutColId = valueCol.getId() + '-filtered-out';
+                        var dataToAggFiltered = groupItem.__children
+                            .filter(function (child) { return typeof child[filteredOutColId] !== 'undefined'; })
+                            .map(function (child) { return child[filteredOutColId]; });
+                        var aggResultFiltered = _this.aggregationStage.aggregateValues(dataToAggFiltered, params.aggFunc);
+                        groupItem[filteredOutColId] = aggResultFiltered && typeof aggResultFiltered.value !== 'undefined' ? aggResultFiltered.value : aggResultFiltered;
+                    });
+                }
+                else {
+                    var dataToAgg = groupItem.__children.map(function (child) { return child[col.getId()]; });
+                    var aggResult = 0;
+                    if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+                        aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
+                    }
+                    groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                }
+            }); });
+        }
         return dataAggregated;
     };
     ChartDatasource.prototype.updatePivotKeysForSSRM = function () {
@@ -41702,19 +41937,43 @@ var ChartDatasource = /** @class */ (function (_super) {
         }
         return labels;
     };
-    __decorate$20([
+    ChartDatasource.prototype.getFilteredRowNodes = function () {
+        var filteredNodes = {};
+        this.gridRowModel.forEachNodeAfterFilterAndSort(function (rowNode) {
+            filteredNodes[rowNode.id] = rowNode;
+        });
+        return filteredNodes;
+    };
+    ChartDatasource.prototype.getAllRowNodes = function () {
+        var allRowNodes = [];
+        this.gridRowModel.forEachNode(function (rowNode) {
+            allRowNodes.push(rowNode);
+        });
+        return this.sortRowNodes(allRowNodes);
+    };
+    ChartDatasource.prototype.sortRowNodes = function (rowNodes) {
+        var sortOptions = this.sortController.getSortOptions();
+        var noSort = !sortOptions || sortOptions.length == 0;
+        if (noSort)
+            return rowNodes;
+        return this.rowNodeSorter.doFullSort(rowNodes, sortOptions);
+    };
+    __decorate$1W([
         Autowired('rowModel')
     ], ChartDatasource.prototype, "gridRowModel", void 0);
-    __decorate$20([
+    __decorate$1W([
         Autowired('valueService')
     ], ChartDatasource.prototype, "valueService", void 0);
-    __decorate$20([
+    __decorate$1W([
         Autowired('columnController')
     ], ChartDatasource.prototype, "columnController", void 0);
-    __decorate$20([
-        Autowired('gridOptionsWrapper')
-    ], ChartDatasource.prototype, "gridOptionsWrapper", void 0);
-    __decorate$20([
+    __decorate$1W([
+        Autowired('rowNodeSorter')
+    ], ChartDatasource.prototype, "rowNodeSorter", void 0);
+    __decorate$1W([
+        Autowired('sortController')
+    ], ChartDatasource.prototype, "sortController", void 0);
+    __decorate$1W([
         Optional('aggregationStage')
     ], ChartDatasource.prototype, "aggregationStage", void 0);
     return ChartDatasource;
@@ -41733,13 +41992,13 @@ var __extends$26 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$21 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays$5 = (undefined && undefined.__spreadArrays) || function () {
+var __spreadArrays$6 = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -41754,14 +42013,17 @@ var ChartDataModel = /** @class */ (function (_super) {
         _this.valueColState = [];
         _this.detached = false;
         _this.grouping = false;
+        _this.crossFiltering = false;
         _this.columnNames = {};
         _this.pivotChart = params.pivotChart;
         _this.chartType = params.chartType;
         _this.chartThemeName = params.chartThemeName;
         _this.aggFunc = params.aggFunc;
         _this.referenceCellRange = params.cellRange;
+        _this.suppliedCellRange = params.cellRange;
         _this.suppressChartRanges = params.suppressChartRanges;
-        _this.detached = !!params.unlinkChart;
+        _this.unlinked = !!params.unlinkChart;
+        _this.crossFiltering = !!params.crossFiltering;
         // this is used to associate chart ranges with charts
         _this.chartId = _this.generateId();
         return _this;
@@ -41996,9 +42258,11 @@ var ChartDataModel = /** @class */ (function (_super) {
             dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
+            crossFiltering: this.crossFiltering,
             valueCols: this.getSelectedValueCols(),
             startRow: startRow,
-            endRow: endRow
+            endRow: endRow,
+            isScatter: _.includes([ChartType.Scatter, ChartType.Bubble], this.chartType)
         };
         var result = this.datasource.getData(params);
         this.chartData = result.data;
@@ -42013,9 +42277,18 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.valueColState = [];
         var hasSelectedDimension = false;
         var order = 1;
+        var aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
         dimensionCols.forEach(function (column) {
             var isAutoGroupCol = column.getColId() === 'ag-Grid-AutoColumn';
-            var selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+            var selected = false;
+            if (_this.crossFiltering && _this.aggFunc) {
+                if (aggFuncDimension.getColId() === column.getColId()) {
+                    selected = true;
+                }
+            }
+            else {
+                selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+            }
             _this.dimensionColState.push({
                 column: column,
                 colId: column.getColId(),
@@ -42060,7 +42333,7 @@ var ChartDataModel = /** @class */ (function (_super) {
             // just update the selected value on the supplied value column
             valueColState.filter(idsMatch).forEach(function (cs) { return cs.selected = updatedCol.selected; });
         }
-        var allColumns = __spreadArrays$5(dimensionColState, valueColState);
+        var allColumns = __spreadArrays$6(dimensionColState, valueColState);
         var orderedColIds = [];
         // calculate new order
         allColumns.forEach(function (col, i) {
@@ -42098,7 +42371,11 @@ var ChartDataModel = /** @class */ (function (_super) {
             return;
         }
         var selectedDimensionColState = updatedColState;
-        if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column)) {
+        if (this.crossFiltering && this.aggFunc) {
+            var aggFuncDimension_1 = this.suppliedCellRange.columns[0]; //TODO
+            selectedDimensionColState = this.dimensionColState.filter(function (cs) { return cs.colId === aggFuncDimension_1.getColId(); })[0];
+        }
+        else if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column)) {
             selectedDimensionColState = this.dimensionColState.filter(function (cs) { return cs.selected; })[0];
         }
         if (selectedDimensionColState && selectedDimensionColState.colId !== ChartDataModel.DEFAULT_CATEGORY) {
@@ -42127,7 +42404,7 @@ var ChartDataModel = /** @class */ (function (_super) {
                 colsInRange.forEach(function (c) { return orderedColIds_1.push(c.getColId()); });
             }
             selectedValueCols.sort(function (a, b) { return orderedColIds_1.indexOf(a.getColId()) - orderedColIds_1.indexOf(b.getColId()); });
-            this.valueCellRange = this.createCellRange.apply(this, __spreadArrays$5([CellRangeType.VALUE], selectedValueCols));
+            this.valueCellRange = this.createCellRange.apply(this, __spreadArrays$6([CellRangeType.VALUE], selectedValueCols));
         }
     };
     ChartDataModel.prototype.syncDimensionCellRange = function () {
@@ -42137,25 +42414,22 @@ var ChartDataModel = /** @class */ (function (_super) {
         }
     };
     ChartDataModel.DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
-    __decorate$21([
+    __decorate$1X([
         Autowired('columnController')
     ], ChartDataModel.prototype, "columnController", void 0);
-    __decorate$21([
-        Autowired('gridOptionsWrapper')
-    ], ChartDataModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$21([
+    __decorate$1X([
         Autowired('valueService')
     ], ChartDataModel.prototype, "valueService", void 0);
-    __decorate$21([
+    __decorate$1X([
         Autowired('rangeController')
     ], ChartDataModel.prototype, "rangeController", void 0);
-    __decorate$21([
+    __decorate$1X([
         Autowired('rowRenderer')
     ], ChartDataModel.prototype, "rowRenderer", void 0);
-    __decorate$21([
+    __decorate$1X([
         Autowired('chartTranslator')
     ], ChartDataModel.prototype, "chartTranslator", void 0);
-    __decorate$21([
+    __decorate$1X([
         PostConstruct
     ], ChartDataModel.prototype, "init", null);
     return ChartDataModel;
@@ -42709,8 +42983,8 @@ var Node$1 = /** @class */ (function () {
             if (i >= 0) {
                 this._children.splice(i, 1);
                 delete this.childSet[node.id];
-                node._setParent(undefined);
-                node._setScene(undefined);
+                node._setParent();
+                node._setScene();
                 this.dirty = true;
                 return node;
             }
@@ -44303,6 +44577,7 @@ var Observable = /** @class */ (function () {
             }
         });
     };
+    // 'source' is added automatically and is always the object this method belongs to.
     Observable.prototype.fireEvent = function (event) {
         var _this = this;
         var listeners = this.allEventListeners.get(event.type);
@@ -44370,7 +44645,7 @@ var __extends$29 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$22 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44467,10 +44742,10 @@ var Caption = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    __decorate$22([
+    __decorate$1Y([
         reactive('change')
     ], Caption.prototype, "enabled", void 0);
-    __decorate$22([
+    __decorate$1Y([
         reactive('change')
     ], Caption.prototype, "padding", void 0);
     return Caption;
@@ -44480,16 +44755,16 @@ var constant = (function (x) { return function () { return x; }; });
 
 function interpolateNumber (a, b) {
     a = +a;
-    b -= a;
-    return function (t) { return a + b * t; };
+    b = +b;
+    return function (t) { return a * (1 - t) + b * t; };
 }
 
 function date (a, b) {
     var date = new Date;
     var msA = +a;
-    var msB = +b - msA;
+    var msB = +b;
     return function (t) {
-        date.setTime(msA + msB * t);
+        date.setTime(msA * (1 - t) + msB * t);
         return date;
     };
 }
@@ -45876,15 +46151,6 @@ var Path2D = /** @class */ (function () {
         // }
         this.cubicArc(cx, cy, rx, ry, rotation, theta1, theta1 + deltaTheta, 1 - fS);
     };
-    Path2D.prototype.arcToAlt = function (rx, ry, rotation, fA, fS, x2, y2) {
-        // Convert from endpoint to center parametrization. See:
-        // https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
-        if (!this.xy) {
-            return;
-        }
-        var x1 = this.xy[0];
-        var y1 = this.xy[1];
-    };
     /**
      * Approximates an elliptical arc with up to four cubic Bézier curves.
      * @param commands The string array to write SVG command letters to.
@@ -46827,6 +47093,16 @@ var AxisLabel = /** @class */ (function () {
  */
 var Axis = /** @class */ (function () {
     function Axis(scale) {
+        // debug (bbox)
+        // private bboxRect = (() => {
+        //     const rect = new Rect();
+        //     rect.fill = undefined;
+        //     rect.stroke = 'red';
+        //     rect.strokeWidth = 1;
+        //     rect.strokeOpacity = 0.2;
+        //     return rect;
+        // })();
+        this.id = createId(this);
         this.lineNode = new Line();
         this.group = new Group();
         this.line = {
@@ -46869,6 +47145,7 @@ var Axis = /** @class */ (function () {
         this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
+    Axis.prototype.getMeta = function () { };
     Axis.prototype.updateRange = function () {
         var _a = this, rr = _a.requestedRange, vr = _a.visibleRange, scale = _a.scale;
         var span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
@@ -47110,6 +47387,7 @@ var Axis = /** @class */ (function () {
             });
         }
         var tickFormatter = this.tickFormatter;
+        var meta = this.getMeta();
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         var fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
         var labelSelection = groupSelection.selectByClass(Text)
@@ -47127,7 +47405,8 @@ var Axis = /** @class */ (function () {
                     value: fractionDigits >= 0 ? datum : String(datum),
                     index: index,
                     fractionDigits: fractionDigits,
-                    formatter: tickFormatter
+                    formatter: tickFormatter,
+                    axis: meta
                 })
                 : fractionDigits
                     // the `datum` is a floating point number
@@ -47293,6 +47572,13 @@ var ChartAxis = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    ChartAxis.prototype.getMeta = function () {
+        return {
+            id: this.id,
+            direction: this.direction,
+            boundSeries: this.boundSeries,
+        };
+    };
     Object.defineProperty(ChartAxis.prototype, "position", {
         get: function () {
             return this._position;
@@ -47719,20 +48005,6 @@ function findMinMax(values) {
         }
         else {
             max += value;
-        }
-    }
-    return { min: min, max: max };
-}
-function findLargestMinMax(totals) {
-    var min = 0;
-    var max = 0;
-    for (var _i = 0, totals_1 = totals; _i < totals_1.length; _i++) {
-        var total = totals_1[_i];
-        if (total.min < min) {
-            min = total.min;
-        }
-        if (total.max > max) {
-            max = total.max;
         }
     }
     return { min: min, max: max };
@@ -49578,7 +49850,6 @@ var TimeScale = /** @class */ (function (_super) {
      */
     TimeScale.prototype.tickInterval = function (interval, start, stop, step) {
         var _a;
-        if (interval === void 0) { interval = 10; }
         if (typeof interval === 'number') {
             var tickCount = interval;
             var tickIntervals = this.tickIntervals;
@@ -49843,7 +50114,7 @@ var Scene = /** @class */ (function () {
                 return;
             }
             if (this._root) {
-                this._root._setScene(undefined);
+                this._root._setScene();
             }
             this._root = node;
             if (node) {
@@ -50702,7 +50973,7 @@ var __extends$2x = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$23 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -50729,19 +51000,19 @@ var LegendLabel = /** @class */ (function (_super) {
         _this.fontFamily = 'Verdana, sans-serif';
         return _this;
     }
-    __decorate$23([
+    __decorate$1Z([
         reactive('change')
     ], LegendLabel.prototype, "color", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], LegendLabel.prototype, "fontStyle", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], LegendLabel.prototype, "fontWeight", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], LegendLabel.prototype, "fontSize", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], LegendLabel.prototype, "fontFamily", void 0);
     return LegendLabel;
@@ -50758,16 +51029,16 @@ var LegendMarker = /** @class */ (function (_super) {
         _this.strokeWidth = 1;
         return _this;
     }
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], LegendMarker.prototype, "size", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], LegendMarker.prototype, "shape", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], LegendMarker.prototype, "padding", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('change')
     ], LegendMarker.prototype, "strokeWidth", void 0);
     return LegendMarker;
@@ -50798,10 +51069,10 @@ var LegendItem = /** @class */ (function (_super) {
         _this.label.addEventListener('layoutChange', layoutChangeListener);
         return _this;
     }
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], LegendItem.prototype, "paddingX", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], LegendItem.prototype, "paddingY", void 0);
     return LegendItem;
@@ -51167,7 +51438,7 @@ var Legend = /** @class */ (function (_super) {
             markerLabel.markerFillOpacity = marker.fillOpacity;
             markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
-            markerLabel.color = _this.color;
+            markerLabel.color = _this.item.label.color;
         });
     };
     Legend.prototype.getDatumForPoint = function (x, y) {
@@ -51177,19 +51448,19 @@ var Legend = /** @class */ (function (_super) {
         }
     };
     Legend.className = 'Legend';
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], Legend.prototype, "data", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], Legend.prototype, "enabled", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], Legend.prototype, "orientation", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], Legend.prototype, "position", void 0);
-    __decorate$23([
+    __decorate$1Z([
         reactive('layoutChange')
     ], Legend.prototype, "spacing", void 0);
     return Legend;
@@ -51266,12 +51537,24 @@ var __extends$2y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$24 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var SeriesTooltip = /** @class */ (function (_super) {
+    __extends$2x(SeriesTooltip, _super);
+    function SeriesTooltip() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.enabled = true;
+        return _this;
+    }
+    __decorate$1_([
+        reactive('change')
+    ], SeriesTooltip.prototype, "enabled", void 0);
+    return SeriesTooltip;
+}(Observable));
 var Series = /** @class */ (function (_super) {
     __extends$2y(Series, _super);
     function Series() {
@@ -51329,7 +51612,7 @@ var Series = /** @class */ (function (_super) {
     Series.prototype.getNodeData = function () {
         return [];
     };
-    Series.prototype.fireNodeClickEvent = function (datum) { };
+    Series.prototype.fireNodeClickEvent = function (event, datum) { };
     Series.prototype.toggleSeriesItem = function (itemId, enabled) {
         this.visible = enabled;
     };
@@ -51344,6 +51627,12 @@ var Series = /** @class */ (function (_super) {
             return [0, 1];
         }
         var min = extent[0], max = extent[1];
+        if (min instanceof Date) {
+            min = min.getTime();
+        }
+        if (max instanceof Date) {
+            max = max.getTime();
+        }
         if (min === max) {
             var padding = Math.abs(min * 0.01);
             min -= padding;
@@ -51362,13 +51651,13 @@ var Series = /** @class */ (function (_super) {
         }
         return [min, max];
     };
-    __decorate$24([
+    __decorate$1_([
         reactive('dataChange')
     ], Series.prototype, "data", void 0);
-    __decorate$24([
+    __decorate$1_([
         reactive('dataChange')
     ], Series.prototype, "visible", void 0);
-    __decorate$24([
+    __decorate$1_([
         reactive('layoutChange')
     ], Series.prototype, "showInLegend", void 0);
     return Series;
@@ -51387,7 +51676,7 @@ var __extends$2z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$25 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -51414,25 +51703,28 @@ var SeriesMarker = /** @class */ (function (_super) {
         _this.strokeWidth = 1;
         return _this;
     }
-    __decorate$25([
+    __decorate$1$([
         reactive('change')
     ], SeriesMarker.prototype, "enabled", void 0);
-    __decorate$25([
+    __decorate$1$([
         reactive('change')
     ], SeriesMarker.prototype, "shape", void 0);
-    __decorate$25([
+    __decorate$1$([
         reactive('change')
     ], SeriesMarker.prototype, "size", void 0);
-    __decorate$25([
+    __decorate$1$([
         reactive('change')
     ], SeriesMarker.prototype, "maxSize", void 0);
-    __decorate$25([
+    __decorate$1$([
+        reactive('change')
+    ], SeriesMarker.prototype, "domain", void 0);
+    __decorate$1$([
         reactive('change')
     ], SeriesMarker.prototype, "fill", void 0);
-    __decorate$25([
+    __decorate$1$([
         reactive('change')
     ], SeriesMarker.prototype, "stroke", void 0);
-    __decorate$25([
+    __decorate$1$([
         reactive('change')
     ], SeriesMarker.prototype, "strokeWidth", void 0);
     return SeriesMarker;
@@ -51496,22 +51788,151 @@ var __assign$7 = (undefined && undefined.__assign) || function () {
     };
     return __assign$7.apply(this, arguments);
 };
-var __decorate$26 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$20 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: table;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-hidden {\n    top: -10000px !important;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
 function toTooltipHtml(input, defaults) {
     if (typeof input === 'string') {
         return input;
     }
     defaults = defaults || {};
-    var _a = input.content, content = _a === void 0 ? defaults.content || '' : _a, _b = input.title, title = _b === void 0 ? defaults.title || undefined : _b, _c = input.titleColor, titleColor = _c === void 0 ? defaults.titleColor || 'white' : _c, _d = input.titleBackgroundColor, titleBackgroundColor = _d === void 0 ? defaults.titleBackgroundColor || '#888' : _d;
-    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n        style=\"color: " + titleColor + "; background-color: " + titleBackgroundColor + "\">" + title + "</div>" : '';
+    var _a = input.content, content = _a === void 0 ? defaults.content || '' : _a, _b = input.title, title = _b === void 0 ? defaults.title || undefined : _b, _c = input.color, color = _c === void 0 ? defaults.color || 'white' : _c, _d = input.backgroundColor, backgroundColor = _d === void 0 ? defaults.backgroundColor || '#888' : _d;
+    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n        style=\"color: " + color + "; background-color: " + backgroundColor + "\">" + title + "</div>" : '';
     return titleHtml + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + content + "</div>";
 }
+var ChartTooltip = /** @class */ (function (_super) {
+    __extends$2A(ChartTooltip, _super);
+    function ChartTooltip(chart) {
+        var _this = _super.call(this) || this;
+        _this.element = document.createElement('div');
+        _this.enabled = true;
+        _this.class = Chart.defaultTooltipClass;
+        _this.delay = 0;
+        /**
+         * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
+         * Only has effect on series with markers.
+         */
+        _this.tracking = true;
+        _this.showTimeout = 0;
+        _this.chart = chart;
+        _this.class = '';
+        var tooltipRoot = document.body;
+        tooltipRoot.appendChild(_this.element);
+        // Detect when the chart becomes invisible and hide the tooltip as well.
+        if (window.IntersectionObserver) {
+            var target_1 = _this.chart.scene.canvas.element;
+            var observer = new IntersectionObserver(function (entries) {
+                for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
+                    var entry = entries_1[_i];
+                    if (entry.target === target_1 && entry.intersectionRatio === 0) {
+                        _this.toggle(false);
+                    }
+                }
+            }, { root: tooltipRoot });
+            observer.observe(target_1);
+            _this.observer = observer;
+        }
+        return _this;
+    }
+    ChartTooltip.prototype.isVisible = function () {
+        var element = this.element;
+        if (element.classList) { // if not IE11
+            return !element.classList.contains(Chart.defaultTooltipClass + '-hidden');
+        }
+        // IE11 part.
+        var classes = element.getAttribute('class');
+        if (classes) {
+            return classes.split(' ').indexOf(Chart.defaultTooltipClass + '-hidden') < 0;
+        }
+        return false;
+    };
+    ChartTooltip.prototype.updateClass = function (visible, constrained) {
+        var classList = [Chart.defaultTooltipClass, this.class];
+        if (visible !== true) {
+            classList.push(Chart.defaultTooltipClass + "-hidden");
+        }
+        if (constrained !== true) {
+            classList.push(Chart.defaultTooltipClass + "-arrow");
+        }
+        this.element.setAttribute('class', classList.join(' '));
+    };
+    /**
+     * Shows tooltip at the given event's coordinates.
+     * If the `html` parameter is missing, moves the existing tooltip to the new position.
+     */
+    ChartTooltip.prototype.show = function (meta, html, instantly) {
+        var _this = this;
+        if (instantly === void 0) { instantly = false; }
+        var el = this.element;
+        if (html !== undefined) {
+            el.innerHTML = html;
+        }
+        else if (!el.innerHTML) {
+            return;
+        }
+        var left = meta.pageX - el.clientWidth / 2;
+        var top = meta.pageY - el.clientHeight - 8;
+        if (this.chart.container) {
+            var tooltipRect = el.getBoundingClientRect();
+            var minLeft = 0;
+            var maxLeft = window.innerWidth - tooltipRect.width;
+            if (left < minLeft) {
+                left = minLeft;
+                this.updateClass(true, true);
+            }
+            else if (left > maxLeft) {
+                left = maxLeft;
+                this.updateClass(true, true);
+            }
+        }
+        el.style.left = left + "px";
+        el.style.top = top + "px";
+        if (this.delay > 0 && !instantly) {
+            this.toggle(false);
+            this.showTimeout = window.setTimeout(function () {
+                _this.toggle(true);
+            }, this.delay);
+            return;
+        }
+        this.toggle(true);
+    };
+    ChartTooltip.prototype.toggle = function (visible) {
+        if (!visible) {
+            window.clearTimeout(this.showTimeout);
+            if (this.chart.lastPick && !this.delay) {
+                this.chart.dehighlightDatum();
+                this.chart.lastPick = undefined;
+            }
+        }
+        this.updateClass(visible);
+    };
+    ChartTooltip.prototype.destroy = function () {
+        var parentNode = this.element.parentNode;
+        if (parentNode) {
+            parentNode.removeChild(this.element);
+        }
+        if (this.observer) {
+            this.observer.unobserve(this.chart.scene.canvas.element);
+        }
+    };
+    __decorate$20([
+        reactive()
+    ], ChartTooltip.prototype, "enabled", void 0);
+    __decorate$20([
+        reactive()
+    ], ChartTooltip.prototype, "class", void 0);
+    __decorate$20([
+        reactive()
+    ], ChartTooltip.prototype, "delay", void 0);
+    __decorate$20([
+        reactive()
+    ], ChartTooltip.prototype, "tracking", void 0);
+    return ChartTooltip;
+}(Observable));
 var Chart = /** @class */ (function (_super) {
     __extends$2B(Chart, _super);
     function Chart(document) {
@@ -51525,6 +51946,11 @@ var Chart = /** @class */ (function (_super) {
         _this._container = undefined;
         _this._data = [];
         _this._autoSize = false;
+        _this._tooltipClass = Chart.defaultTooltipClass;
+        /**
+         * @deprecated Please use {@link tooltip.tracking} instead.
+         */
+        _this.tooltipTracking = true;
         _this.padding = new Padding(20);
         _this._axes = [];
         _this._series = [];
@@ -51546,12 +51972,6 @@ var Chart = /** @class */ (function (_super) {
         _this._onMouseMove = _this.onMouseMove.bind(_this);
         _this._onMouseOut = _this.onMouseOut.bind(_this);
         _this._onClick = _this.onClick.bind(_this);
-        _this._tooltipClass = Chart.defaultTooltipClass;
-        /**
-         * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
-         * Only has effect on series with markers.
-         */
-        _this.tooltipTracking = true;
         var root = new Group();
         var background = _this.background;
         background.fill = 'white';
@@ -51566,9 +51986,8 @@ var Chart = /** @class */ (function (_super) {
         var legend = _this.legend;
         legend.addEventListener('layoutChange', _this.onLayoutChange, _this);
         legend.addPropertyListener('position', _this.onLegendPositionChange, _this);
-        _this.tooltipElement = document.createElement('div');
-        _this.tooltipClass = '';
-        document.body.appendChild(_this.tooltipElement);
+        _this.tooltip = new ChartTooltip(_this);
+        _this.tooltip.addPropertyListener('class', function () { return _this.tooltip.toggle(); });
         if (Chart.tooltipDocuments.indexOf(document) < 0) {
             var styleElement = document.createElement('style');
             styleElement.innerHTML = defaultTooltipCss;
@@ -51671,14 +52090,24 @@ var Chart = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Chart.prototype, "tooltipClass", {
+        get: function () {
+            return this.tooltip.class;
+        },
+        /**
+         * @deprecated Please use {@link tooltip.class} instead.
+         */
+        set: function (value) {
+            this.tooltip.class = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Chart.prototype.download = function (fileName) {
         this.scene.download(fileName);
     };
     Chart.prototype.destroy = function () {
-        var tooltipParent = this.tooltipElement.parentNode;
-        if (tooltipParent) {
-            tooltipParent.removeChild(this.tooltipElement);
-        }
+        this.tooltip.destroy();
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
         this.cleanupDomListeners(this.scene.canvas.element);
@@ -52133,24 +52562,34 @@ var Chart = /** @class */ (function (_super) {
         }
     };
     Chart.prototype.onMouseMove = function (event) {
-        var _a = this, lastPick = _a.lastPick, tooltipTracking = _a.tooltipTracking;
-        var pick = this.pickSeriesNode(event.offsetX, event.offsetY);
+        if (this.tooltip.enabled) {
+            if (this.tooltip.delay > 0) {
+                this.tooltip.toggle(false);
+            }
+            this.handleTooltip(event);
+        }
+    };
+    Chart.prototype.handleTooltip = function (event) {
+        var _a = this, lastPick = _a.lastPick, tooltipTracking = _a.tooltip.tracking;
+        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var pick = this.pickSeriesNode(offsetX, offsetY);
         var nodeDatum;
         if (pick && pick.node instanceof Shape) {
             var node = pick.node;
             nodeDatum = node.datum;
             if (lastPick && lastPick.datum === nodeDatum) {
                 lastPick.node = node;
+                lastPick.event = event;
             }
             // Marker nodes will have the `point` info in their datums.
             // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
             if ((!node.datum.point || !tooltipTracking)) {
                 if (!lastPick // cursor moved from empty space to a node
                     || lastPick.node !== node) { // cursor moved from one node to another
-                    this.onSeriesDatumPick(event, node.datum, node);
+                    this.onSeriesDatumPick(event, node.datum, node, event);
                 }
-                else if (pick.series.tooltipEnabled) { // cursor moved within the same node
-                    this.showTooltip(event);
+                else if (pick.series.tooltip.enabled) { // cursor moved within the same node
+                    this.tooltip.show(event);
                 }
                 // A non-marker node (takes precedence over marker nodes) was highlighted.
                 // Or we are not in the tracking mode.
@@ -52164,7 +52603,7 @@ var Chart = /** @class */ (function (_super) {
         // and also gives the ability to show tooltips even when the series were configured
         // to not render markers.
         if (tooltipTracking) {
-            var closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+            var closestDatum = this.pickClosestSeriesNodeDatum(offsetX, offsetY);
             if (closestDatum && closestDatum.point) {
                 var _b = closestDatum.point, x = _b.x, y = _b.y;
                 var canvas = this.scene.canvas;
@@ -52173,34 +52612,44 @@ var Chart = /** @class */ (function (_super) {
                 this.onSeriesDatumPick({
                     pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
                     pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
-                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node : undefined);
+                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node : undefined, event);
             }
             else {
                 hideTooltip = true;
             }
         }
         if (lastPick && (hideTooltip || !tooltipTracking)) {
-            // cursor moved from a non-marker node to empty space
+            // Cursor moved from a non-marker node to empty space.
             this.dehighlightDatum();
-            this.hideTooltip();
+            this.tooltip.toggle(false);
             this.lastPick = undefined;
         }
     };
     Chart.prototype.onMouseDown = function (event) { };
     Chart.prototype.onMouseUp = function (event) { };
     Chart.prototype.onMouseOut = function (event) {
-        this.toggleTooltip(false);
+        this.tooltip.toggle(false);
     };
     Chart.prototype.onClick = function (event) {
-        this.checkSeriesNodeClick();
-        this.checkLegendClick(event);
+        if (this.checkSeriesNodeClick()) {
+            return;
+        }
+        if (this.checkLegendClick(event)) {
+            return;
+        }
+        this.fireEvent({
+            type: 'click',
+            event: event
+        });
     };
     Chart.prototype.checkSeriesNodeClick = function () {
         var lastPick = this.lastPick;
-        if (lastPick && lastPick.node) {
-            var datum = lastPick.datum;
-            datum.series.fireNodeClickEvent(datum);
+        if (lastPick && lastPick.event && lastPick.node) {
+            var event_1 = lastPick.event, datum = lastPick.datum;
+            datum.series.fireNodeClickEvent(event_1, datum);
+            return true;
         }
+        return false;
     };
     Chart.prototype.onSeriesNodeClick = function (event) {
         this.fireEvent(__assign$7(__assign$7({}, event), { type: 'seriesNodeClick' }));
@@ -52213,24 +52662,32 @@ var Chart = /** @class */ (function (_super) {
             if (series) {
                 series.toggleSeriesItem(itemId, !enabled);
                 if (enabled) {
-                    this.hideTooltip();
+                    this.tooltip.toggle(false);
                 }
+                this.legend.fireEvent({
+                    type: 'click',
+                    event: event,
+                    itemId: itemId,
+                    enabled: !enabled
+                });
+                return true;
             }
         }
+        return false;
     };
-    Chart.prototype.onSeriesDatumPick = function (meta, datum, node) {
+    Chart.prototype.onSeriesDatumPick = function (meta, datum, node, event) {
         if (this.lastPick) {
-            // this.lastPick.datum.series.dehighlightDatum();
             this.dehighlightDatum();
         }
         this.lastPick = {
             datum: datum,
-            node: node
+            node: node,
+            event: event
         };
         this.highlightDatum(datum);
         var html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
         if (html) {
-            this.showTooltip(meta, html);
+            this.tooltip.show(meta, html);
         }
     };
     Chart.prototype.highlightDatum = function (datum) {
@@ -52243,82 +52700,15 @@ var Chart = /** @class */ (function (_super) {
             this.series.forEach(function (s) { return s.onHighlightChange(); });
         }
     };
-    Object.defineProperty(Chart.prototype, "tooltipClass", {
-        get: function () {
-            return this._tooltipClass;
-        },
-        set: function (value) {
-            if (this._tooltipClass !== value) {
-                this._tooltipClass = value;
-                this.toggleTooltip();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Chart.prototype.toggleTooltip = function (visible) {
-        if (!visible && this.lastPick) {
-            this.dehighlightDatum();
-            this.lastPick = undefined;
-        }
-        this.updateTooltipClass(visible);
-    };
-    Chart.prototype.updateTooltipClass = function (visible, constrained) {
-        var classList = [Chart.defaultTooltipClass, this.tooltipClass];
-        if (visible === true) {
-            classList.push(Chart.defaultTooltipClass + "-visible");
-        }
-        if (constrained !== true) {
-            classList.push(Chart.defaultTooltipClass + "-arrow");
-        }
-        this.tooltipElement.setAttribute('class', classList.join(' '));
-    };
-    /**
-     * Shows tooltip at the given event's coordinates.
-     * If the `html` parameter is missing, moves the existing tooltip to the new position.
-     */
-    Chart.prototype.showTooltip = function (meta, html) {
-        var el = this.tooltipElement;
-        var container = this.container;
-        if (html !== undefined) {
-            el.innerHTML = html;
-        }
-        else if (!el.innerHTML) {
-            return;
-        }
-        if (html) {
-            this.toggleTooltip(true);
-        }
-        var left = meta.pageX - el.clientWidth / 2;
-        var top = meta.pageY - el.clientHeight - 8;
-        if (container) {
-            var tooltipRect = el.getBoundingClientRect();
-            var minLeft = 0;
-            var maxLeft = window.innerWidth - tooltipRect.width;
-            if (left < minLeft) {
-                left = minLeft;
-                this.updateTooltipClass(true, true);
-            }
-            else if (left > maxLeft) {
-                left = maxLeft;
-                this.updateTooltipClass(true, true);
-            }
-        }
-        el.style.left = left + "px";
-        el.style.top = top + "px";
-    };
-    Chart.prototype.hideTooltip = function () {
-        this.toggleTooltip(false);
-    };
     Chart.defaultTooltipClass = 'ag-chart-tooltip';
     Chart.tooltipDocuments = [];
-    __decorate$26([
+    __decorate$20([
         reactive('layoutChange')
     ], Chart.prototype, "padding", void 0);
-    __decorate$26([
+    __decorate$20([
         reactive('layoutChange')
     ], Chart.prototype, "title", void 0);
-    __decorate$26([
+    __decorate$20([
         reactive('layoutChange')
     ], Chart.prototype, "subtitle", void 0);
     return Chart;
@@ -53172,11 +53562,11 @@ var Navigator = /** @class */ (function () {
         chart.seriesRoot.enabled = clipSeries;
         chart.series.forEach(function (series) { return series.update(); });
     };
-    Navigator.prototype.onMouseDown = function (event) {
+    Navigator.prototype.onDragStart = function (offset) {
         if (!this.enabled) {
             return;
         }
-        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var offsetX = offset.offsetX, offsetY = offset.offsetY;
         var rs = this.rs;
         var minHandle = rs.minHandle, maxHandle = rs.maxHandle, x = rs.x, width = rs.width, min = rs.min;
         var visibleRange = rs.computeVisibleRangeBBox();
@@ -53192,14 +53582,14 @@ var Navigator = /** @class */ (function () {
             }
         }
     };
-    Navigator.prototype.onMouseMove = function (event) {
+    Navigator.prototype.onDrag = function (offset) {
         if (!this.enabled) {
             return;
         }
         var _a = this, rs = _a.rs, panHandleOffset = _a.panHandleOffset;
         var x = rs.x, y = rs.y, width = rs.width, height = rs.height, minHandle = rs.minHandle, maxHandle = rs.maxHandle;
         var style = this.chart.element.style;
-        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var offsetX = offset.offsetX, offsetY = offset.offsetY;
         var minX = x + width * rs.min;
         var maxX = x + width * rs.max;
         var visibleRange = new BBox(minX, y, maxX - minX, height);
@@ -53237,10 +53627,7 @@ var Navigator = /** @class */ (function () {
             }
         }
     };
-    Navigator.prototype.onMouseOut = function (event) {
-        this.stopHandleDragging();
-    };
-    Navigator.prototype.onMouseUp = function (event) {
+    Navigator.prototype.onDragStop = function () {
         this.stopHandleDragging();
     };
     Navigator.prototype.stopHandleDragging = function () {
@@ -53359,26 +53746,13 @@ var CartesianChart = /** @class */ (function (_super) {
         axes.forEach(function (axis) {
             switch (axis.position) {
                 case ChartAxisPosition.Top:
-                    axis.translation.x = Math.floor(shrinkRect.x);
-                    axis.range = [0, shrinkRect.width];
-                    axis.gridLength = shrinkRect.height;
-                    break;
-                case ChartAxisPosition.Right:
-                    axis.translation.y = Math.floor(shrinkRect.y);
-                    if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
-                        axis.range = [0, shrinkRect.height];
-                    }
-                    else {
-                        axis.range = [shrinkRect.height, 0];
-                    }
-                    axis.gridLength = shrinkRect.width;
-                    break;
                 case ChartAxisPosition.Bottom:
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.range = [0, shrinkRect.width];
                     axis.gridLength = shrinkRect.height;
                     break;
                 case ChartAxisPosition.Left:
+                case ChartAxisPosition.Right:
                     axis.translation.y = Math.floor(shrinkRect.y);
                     if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
                         axis.range = [0, shrinkRect.height];
@@ -53416,21 +53790,65 @@ var CartesianChart = /** @class */ (function (_super) {
         _super.prototype.freeSeries.call(this, series);
         series.removeEventListener('dataProcessed', this.updateAxes, this);
     };
+    CartesianChart.prototype.setupDomListeners = function (chartElement) {
+        _super.prototype.setupDomListeners.call(this, chartElement);
+        this._onTouchStart = this.onTouchStart.bind(this);
+        this._onTouchMove = this.onTouchMove.bind(this);
+        this._onTouchEnd = this.onTouchEnd.bind(this);
+        this._onTouchCancel = this.onTouchCancel.bind(this);
+        chartElement.addEventListener('touchstart', this._onTouchStart);
+        chartElement.addEventListener('touchmove', this._onTouchMove);
+        chartElement.addEventListener('touchend', this._onTouchEnd);
+        chartElement.addEventListener('touchcancel', this._onTouchCancel);
+    };
+    CartesianChart.prototype.cleanupDomListeners = function (chartElement) {
+        _super.prototype.cleanupDomListeners.call(this, chartElement);
+        chartElement.removeEventListener('touchstart', this._onTouchStart);
+        chartElement.removeEventListener('touchmove', this._onTouchMove);
+        chartElement.removeEventListener('touchend', this._onTouchEnd);
+        chartElement.removeEventListener('touchcancel', this._onTouchCancel);
+    };
+    CartesianChart.prototype.getTouchOffset = function (event) {
+        var rect = this.scene.canvas.element.getBoundingClientRect();
+        var touch = event.touches[0];
+        return touch ? {
+            offsetX: touch.clientX - rect.left,
+            offsetY: touch.clientY - rect.top
+        } : undefined;
+    };
+    CartesianChart.prototype.onTouchStart = function (event) {
+        var offset = this.getTouchOffset(event);
+        if (offset) {
+            this.navigator.onDragStart(offset);
+        }
+    };
+    CartesianChart.prototype.onTouchMove = function (event) {
+        var offset = this.getTouchOffset(event);
+        if (offset) {
+            this.navigator.onDrag(offset);
+        }
+    };
+    CartesianChart.prototype.onTouchEnd = function (event) {
+        this.navigator.onDragStop();
+    };
+    CartesianChart.prototype.onTouchCancel = function (event) {
+        this.navigator.onDragStop();
+    };
     CartesianChart.prototype.onMouseDown = function (event) {
         _super.prototype.onMouseDown.call(this, event);
-        this.navigator.onMouseDown(event);
+        this.navigator.onDragStart(event);
     };
     CartesianChart.prototype.onMouseMove = function (event) {
         _super.prototype.onMouseMove.call(this, event);
-        this.navigator.onMouseMove(event);
+        this.navigator.onDrag(event);
     };
     CartesianChart.prototype.onMouseUp = function (event) {
         _super.prototype.onMouseUp.call(this, event);
-        this.navigator.onMouseUp(event);
+        this.navigator.onDragStop();
     };
     CartesianChart.prototype.onMouseOut = function (event) {
         _super.prototype.onMouseOut.call(this, event);
-        this.navigator.onMouseUp(event);
+        this.navigator.onDragStop();
     };
     CartesianChart.prototype.updateAxes = function () {
         var navigator = this.navigator;
@@ -53576,7 +53994,7 @@ var __extends$2J = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$27 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$21 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -53649,7 +54067,7 @@ var PolarChart = /** @class */ (function (_super) {
     };
     PolarChart.className = 'PolarChart';
     PolarChart.type = 'polar';
-    __decorate$27([
+    __decorate$21([
         reactive('layoutChange')
     ], PolarChart.prototype, "padding", void 0);
     return PolarChart;
@@ -53760,12 +54178,25 @@ var __extends$2K = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$28 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$22 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var AreaSeriesTooltip = /** @class */ (function (_super) {
+    __extends$2J(AreaSeriesTooltip, _super);
+    function AreaSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$22([
+        reactive('change')
+    ], AreaSeriesTooltip.prototype, "renderer", void 0);
+    __decorate$22([
+        reactive('change')
+    ], AreaSeriesTooltip.prototype, "format", void 0);
+    return AreaSeriesTooltip;
+}(SeriesTooltip));
 var AreaSeries = /** @class */ (function (_super) {
     __extends$2K(AreaSeries, _super);
     function AreaSeries() {
@@ -53924,7 +54355,7 @@ var AreaSeries = /** @class */ (function (_super) {
         // ]
         var _b = this, yData = _b.yData, normalizedTo = _b.normalizedTo;
         var yMinMax = yData.map(function (values) { return findMinMax(values); }); // used for normalization
-        var yLargestMinMax = findLargestMinMax(yMinMax);
+        var yLargestMinMax = this.findLargestMinMax(yMinMax);
         var yMin;
         var yMax;
         if (normalizedTo && isFinite(normalizedTo)) {
@@ -53949,6 +54380,20 @@ var AreaSeries = /** @class */ (function (_super) {
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
         this.fireEvent({ type: 'dataProcessed' });
         return true;
+    };
+    AreaSeries.prototype.findLargestMinMax = function (totals) {
+        var min = 0;
+        var max = 0;
+        for (var _i = 0, totals_1 = totals; _i < totals_1.length; _i++) {
+            var total = totals_1[_i];
+            if (total.min < min) {
+                min = total.min;
+            }
+            if (total.max > max) {
+                max = total.max;
+            }
+        }
+        return { min: min, max: max };
     };
     AreaSeries.prototype.getDomain = function (direction) {
         if (direction === ChartAxisDirection.X) {
@@ -54152,9 +54597,10 @@ var AreaSeries = /** @class */ (function (_super) {
     AreaSeries.prototype.getNodeData = function () {
         return this.markerSelectionData;
     };
-    AreaSeries.prototype.fireNodeClickEvent = function (datum) {
+    AreaSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -54180,7 +54626,7 @@ var AreaSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipFormat || tooltipRenderer) {
@@ -54233,34 +54679,34 @@ var AreaSeries = /** @class */ (function (_super) {
     };
     AreaSeries.className = 'AreaSeries';
     AreaSeries.type = 'area';
-    __decorate$28([
+    __decorate$22([
         reactive('dataChange')
     ], AreaSeries.prototype, "fills", void 0);
-    __decorate$28([
+    __decorate$22([
         reactive('dataChange')
     ], AreaSeries.prototype, "strokes", void 0);
-    __decorate$28([
+    __decorate$22([
         reactive('update')
     ], AreaSeries.prototype, "fillOpacity", void 0);
-    __decorate$28([
+    __decorate$22([
         reactive('update')
     ], AreaSeries.prototype, "strokeOpacity", void 0);
-    __decorate$28([
+    __decorate$22([
         reactive('update')
     ], AreaSeries.prototype, "lineDash", void 0);
-    __decorate$28([
+    __decorate$22([
         reactive('update')
     ], AreaSeries.prototype, "lineDashOffset", void 0);
-    __decorate$28([
+    __decorate$22([
         reactive('update')
     ], AreaSeries.prototype, "xName", void 0);
-    __decorate$28([
+    __decorate$22([
         reactive('update')
     ], AreaSeries.prototype, "yNames", void 0);
-    __decorate$28([
+    __decorate$22([
         reactive('update')
     ], AreaSeries.prototype, "strokeWidth", void 0);
-    __decorate$28([
+    __decorate$22([
         reactive('update')
     ], AreaSeries.prototype, "shadow", void 0);
     return AreaSeries;
@@ -54279,7 +54725,7 @@ var __extends$2L = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$29 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$23 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -54295,22 +54741,22 @@ var Label = /** @class */ (function (_super) {
         _this.color = 'rgba(70, 70, 70, 1)';
         return _this;
     }
-    __decorate$29([
+    __decorate$23([
         reactive('change', 'dataChange')
     ], Label.prototype, "enabled", void 0);
-    __decorate$29([
+    __decorate$23([
         reactive('change')
     ], Label.prototype, "fontStyle", void 0);
-    __decorate$29([
+    __decorate$23([
         reactive('change')
     ], Label.prototype, "fontWeight", void 0);
-    __decorate$29([
+    __decorate$23([
         reactive('change')
     ], Label.prototype, "fontSize", void 0);
-    __decorate$29([
+    __decorate$23([
         reactive('change')
     ], Label.prototype, "fontFamily", void 0);
-    __decorate$29([
+    __decorate$23([
         reactive('change')
     ], Label.prototype, "color", void 0);
     return Label;
@@ -54329,18 +54775,11 @@ var __extends$2M = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$24 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __spreadArrays$6 = (undefined && undefined.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
 };
 var BarSeriesNodeTag;
 (function (BarSeriesNodeTag) {
@@ -54352,11 +54791,21 @@ var BarSeriesLabel = /** @class */ (function (_super) {
     function BarSeriesLabel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    __decorate$2a([
+    __decorate$24([
         reactive('change')
     ], BarSeriesLabel.prototype, "formatter", void 0);
     return BarSeriesLabel;
 }(Label));
+var BarSeriesTooltip = /** @class */ (function (_super) {
+    __extends$2L(BarSeriesTooltip, _super);
+    function BarSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$24([
+        reactive('change')
+    ], BarSeriesTooltip.prototype, "renderer", void 0);
+    return BarSeriesTooltip;
+}(SeriesTooltip));
 var BarSeries = /** @class */ (function (_super) {
     __extends$2M(BarSeries, _super);
     function BarSeries() {
@@ -54410,15 +54859,23 @@ var BarSeries = /** @class */ (function (_super) {
             _a);
         _this._xKey = '';
         _this._xName = '';
+        _this.cumYKeyCount = [];
+        _this.flatYKeys = undefined; // only set when a user used a flat array for yKeys
+        _this.hideInLegend = [];
         /**
-         * With a single value in the `yKeys` array we get the regular bar series.
-         * With multiple values, we get the stacked bar series.
-         * If the {@link grouped} set to `true`, we get the grouped bar series.
-         * @param values
+         * yKeys: [['coffee']] - regular bars, each category has a single bar that shows a value for coffee
+         * yKeys: [['coffee'], ['tea'], ['milk']] - each category has three bars that show values for coffee, tea and milk
+         * yKeys: [['coffee', 'tea', 'milk']] - each category has a single bar with three stacks that show values for coffee, tea and milk
+         * yKeys: [['coffee', 'tea', 'milk'], ['paper', 'ink']] - each category has 2 stacked bars,
+         *     first showing values for coffee, tea and milk and second values for paper and ink
          */
         _this._yKeys = [];
-        _this._yNames = [];
-        _this.grouped = false;
+        _this._grouped = false;
+        /**
+         * A map of `yKeys` to their names (used in legends and tooltips).
+         * For example, if a key is `product_name` it's name can be a more presentable `Product Name`.
+         */
+        _this._yNames = {};
         _this._strokeWidth = 1;
         _this.highlightStyle = { fill: 'yellow' };
         _this.addEventListener('update', _this.update);
@@ -54477,18 +54934,59 @@ var BarSeries = /** @class */ (function (_super) {
         get: function () {
             return this._yKeys;
         },
-        set: function (values) {
-            if (!equal(this._yKeys, values)) {
-                this._yKeys = values;
+        set: function (yKeys) {
+            var _this = this;
+            if (!equal(this._yKeys, yKeys)) {
+                // Convert from flat y-keys to grouped y-keys.
+                if (yKeys.length && !Array.isArray(yKeys[0])) {
+                    var keys = this.flatYKeys = yKeys;
+                    if (this.grouped) {
+                        yKeys = keys.map(function (k) { return [k]; });
+                    }
+                    else {
+                        yKeys = [keys];
+                    }
+                }
+                else {
+                    this.flatYKeys = undefined;
+                }
+                this._yKeys = yKeys;
+                var prevYKeyCount_1 = 0;
+                this.cumYKeyCount = [];
+                var visibleStacks_1 = [];
+                yKeys.forEach(function (stack, index) {
+                    if (stack.length > 0) {
+                        visibleStacks_1.push(String(index));
+                    }
+                    _this.cumYKeyCount.push(prevYKeyCount_1);
+                    prevYKeyCount_1 += stack.length;
+                });
                 this.yData = [];
                 var seriesItemEnabled_1 = this.seriesItemEnabled;
                 seriesItemEnabled_1.clear();
-                values.forEach(function (key) { return seriesItemEnabled_1.set(key, true); });
+                yKeys.forEach(function (stack) {
+                    stack.forEach(function (yKey) { return seriesItemEnabled_1.set(yKey, true); });
+                });
                 var groupScale = this.groupScale;
-                groupScale.domain = values;
+                groupScale.domain = visibleStacks_1;
                 groupScale.padding = 0.1;
                 groupScale.round = true;
                 this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BarSeries.prototype, "grouped", {
+        get: function () {
+            return this._grouped;
+        },
+        set: function (value) {
+            if (this._grouped !== value) {
+                this._grouped = value;
+                if (this.flatYKeys) {
+                    this.yKeys = this.flatYKeys;
+                }
             }
         },
         enumerable: true,
@@ -54499,6 +54997,13 @@ var BarSeries = /** @class */ (function (_super) {
             return this._yNames;
         },
         set: function (values) {
+            if (Array.isArray(values) && this.flatYKeys) {
+                var map_1 = {};
+                this.flatYKeys.forEach(function (k, i) {
+                    map_1[k] = values[i];
+                });
+                values = map_1;
+            }
             this._yNames = values;
             this.scheduleData();
         },
@@ -54555,20 +55060,6 @@ var BarSeries = /** @class */ (function (_super) {
     BarSeries.prototype.processData = function () {
         var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, seriesItemEnabled = _a.seriesItemEnabled;
         var data = xKey && yKeys.length && this.data ? this.data : [];
-        // If the data is an array of rows like so:
-        //
-        // [{
-        //   xKey: 'Jan',
-        //   yKey1: 5,
-        //   yKey2: 7,
-        //   yKey3: -9,
-        // }, {
-        //   xKey: 'Feb',
-        //   yKey1: 10,
-        //   yKey2: -15,
-        //   yKey3: 20
-        // }]
-        //
         var keysFound = true; // only warn once
         this.xData = data.map(function (datum) {
             if (keysFound && !(xKey in datum)) {
@@ -54577,55 +55068,64 @@ var BarSeries = /** @class */ (function (_super) {
             }
             return datum[xKey];
         });
-        this.yData = data.map(function (datum) { return yKeys.map(function (yKey) {
-            if (keysFound && !(yKey in datum)) {
-                keysFound = false;
-                console.warn("The key '" + yKey + "' was not found in the data: ", datum);
-            }
-            var value = datum[yKey];
-            return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+        this.yData = data.map(function (datum) { return yKeys.map(function (stack) {
+            return stack.map(function (yKey) {
+                if (keysFound && !(yKey in datum)) {
+                    keysFound = false;
+                    console.warn("The key '" + yKey + "' was not found in the data: ", datum);
+                }
+                var value = datum[yKey];
+                return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+            });
         }); });
-        // xData: ['Jan', 'Feb']
-        //
-        // yData: [
-        //   [5, 7, -9],
-        //   [10, -15, 20]
-        // ]
-        var yMinMax = this.yData.map(function (values) { return findMinMax(values); }); // used for normalization of stacked bars
+        // Used for normalization of stacked bars. Contains min/max values for each stack in each group,
+        // where min is zero and max is a positive total of all values in the stack
+        // or min is a negative total of all values in the stack and max is zero.
+        var yMinMax = this.yData.map(function (group) { return group.map(function (stack) { return findMinMax(stack); }); });
         var _b = this, yData = _b.yData, normalizedTo = _b.normalizedTo;
-        var yMin = Infinity;
-        var yMax = -Infinity;
-        if (this.grouped) {
-            // Find the tallest positive/negative bar in each group,
-            // then find the tallest positive/negative bar overall.
-            // The `yMin` should always be <= 0,
-            // otherwise with the `yData` like [300, 200, 100] the last bar
-            // will have zero height, because the y-axis range is [100, 300].
-            yMin = Math.min.apply(Math, __spreadArrays$6([0], yData.map(function (values) { return Math.min.apply(Math, values); })));
-            yMax = Math.max.apply(Math, yData.map(function (values) { return Math.max.apply(Math, values); }));
+        var yLargestMinMax = this.findLargestMinMax(yMinMax);
+        var yMin;
+        var yMax;
+        if (normalizedTo && isFinite(normalizedTo)) {
+            yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
+            yMax = normalizedTo;
+            yData.forEach(function (group, i) {
+                group.forEach(function (stack, j) {
+                    stack.forEach(function (y, k) {
+                        if (y < 0) {
+                            stack[k] = -y / yMinMax[i][j].min * normalizedTo;
+                        }
+                        else {
+                            stack[k] = y / yMinMax[i][j].max * normalizedTo;
+                        }
+                    });
+                });
+            });
         }
-        else { // stacked or regular
-            var yLargestMinMax = findLargestMinMax(yMinMax);
-            if (normalizedTo && isFinite(normalizedTo)) {
-                yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-                yMax = normalizedTo;
-                yData.forEach(function (stackValues, i) { return stackValues.forEach(function (y, j) {
-                    if (y < 0) {
-                        stackValues[j] = -y / yMinMax[i].min * normalizedTo;
-                    }
-                    else {
-                        stackValues[j] = y / yMinMax[i].max * normalizedTo;
-                    }
-                }); });
-            }
-            else {
-                yMin = yLargestMinMax.min;
-                yMax = yLargestMinMax.max;
-            }
+        else {
+            yMin = yLargestMinMax.min;
+            yMax = yLargestMinMax.max;
         }
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
         this.fireEvent({ type: 'dataProcessed' });
         return true;
+    };
+    BarSeries.prototype.findLargestMinMax = function (groups) {
+        var tallestStackMin = 0;
+        var tallestStackMax = 0;
+        for (var _i = 0, groups_1 = groups; _i < groups_1.length; _i++) {
+            var group = groups_1[_i];
+            for (var _a = 0, group_1 = group; _a < group_1.length; _a++) {
+                var stack = group_1[_a];
+                if (stack.min < tallestStackMin) {
+                    tallestStackMin = stack.min;
+                }
+                if (stack.max > tallestStackMax) {
+                    tallestStackMax = stack.max;
+                }
+            }
+        }
+        return { min: tallestStackMin, max: tallestStackMax };
     };
     BarSeries.prototype.getDomain = function (direction) {
         if (this.flipXY) {
@@ -54638,9 +55138,10 @@ var BarSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    BarSeries.prototype.fireNodeClickEvent = function (datum) {
+    BarSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -54657,7 +55158,7 @@ var BarSeries = /** @class */ (function (_super) {
         var yAxis = flipXY ? this.xAxis : this.yAxis;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
-        var _a = this, groupScale = _a.groupScale, yKeys = _a.yKeys, fills = _a.fills, strokes = _a.strokes, grouped = _a.grouped, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, data = _a.data, xData = _a.xData, yData = _a.yData;
+        var _a = this, groupScale = _a.groupScale, yKeys = _a.yKeys, cumYKeyCount = _a.cumYKeyCount, fills = _a.fills, strokes = _a.strokes, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, data = _a.data, xData = _a.xData, yData = _a.yData;
         var label = this.label;
         var labelFontStyle = label.fontStyle;
         var labelFontWeight = label.fontWeight;
@@ -54666,62 +55167,66 @@ var BarSeries = /** @class */ (function (_super) {
         var labelColor = label.color;
         var labelFormatter = label.formatter;
         groupScale.range = [0, xScale.bandwidth];
-        var barWidth = grouped ? groupScale.bandwidth : xScale.bandwidth;
+        var barWidth =  groupScale.bandwidth ;
         var nodeData = [];
-        xData.forEach(function (category, i) {
-            var yDatum = yData[i];
-            var seriesDatum = data[i];
-            var x = xScale.convert(category);
-            var prevMin = 0;
-            var prevMax = 0;
-            for (var j = 0; j < yDatum.length; j++) {
-                var curr = yDatum[j];
-                var yKey = yKeys[j];
-                var barX = grouped ? x + groupScale.convert(yKey) : x;
-                if (!xAxis.inRange(barX, barWidth)) {
-                    continue;
-                }
-                var prev = curr < 0 ? prevMin : prevMax;
-                var y = yScale.convert(grouped ? curr : prev + curr);
-                var bottomY = yScale.convert(grouped ? 0 : prev);
-                var yValue = seriesDatum[yKey]; // unprocessed y-value
-                var yValueIsNumber = typeof yValue === 'number';
-                var labelText = void 0;
-                if (labelFormatter) {
-                    labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
-                }
-                else {
-                    labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
-                }
-                nodeData.push({
-                    series: _this,
-                    seriesDatum: seriesDatum,
-                    yValue: yValue,
-                    yKey: yKey,
-                    x: flipXY ? Math.min(y, bottomY) : barX,
-                    y: flipXY ? barX : Math.min(y, bottomY),
-                    width: flipXY ? Math.abs(bottomY - y) : barWidth,
-                    height: flipXY ? barWidth : Math.abs(bottomY - y),
-                    fill: fills[j % fills.length],
-                    stroke: strokes[j % strokes.length],
-                    strokeWidth: strokeWidth,
-                    label: seriesItemEnabled.get(yKey) && labelText ? {
-                        text: labelText,
-                        fontStyle: labelFontStyle,
-                        fontWeight: labelFontWeight,
-                        fontSize: labelFontSize,
-                        fontFamily: labelFontFamily,
-                        fill: labelColor,
-                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
-                        y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
-                    } : undefined
-                });
-                if (!grouped) {
-                    if (curr < 0) {
-                        prevMin += curr;
+        xData.forEach(function (group, groupIndex) {
+            var seriesDatum = data[groupIndex];
+            var x = xScale.convert(group);
+            var groupYs = yData[groupIndex]; // y-data for groups of stacks
+            for (var stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
+                var stackYs = groupYs[stackIndex]; // y-data for a stack withing a group
+                var prevMinY = 0;
+                var prevMaxY = 0;
+                for (var levelIndex = 0; levelIndex < stackYs.length; levelIndex++) {
+                    var currY = stackYs[levelIndex];
+                    var yKey = yKeys[stackIndex][levelIndex];
+                    var barX =  x + groupScale.convert(String(stackIndex)) ;
+                    // Bars outside of visible range are not rendered, so we generate node data
+                    // only for the visible subset of user data.
+                    if (!xAxis.inRange(barX, barWidth)) {
+                        continue;
+                    }
+                    var prevY = currY < 0 ? prevMinY : prevMaxY;
+                    var y = yScale.convert(prevY + currY);
+                    var bottomY = yScale.convert(prevY);
+                    var yValue = seriesDatum[yKey]; // unprocessed y-value
+                    var yValueIsNumber = typeof yValue === 'number';
+                    var labelText = void 0;
+                    if (labelFormatter) {
+                        labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
                     }
                     else {
-                        prevMax += curr;
+                        labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
+                    }
+                    var colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                    nodeData.push({
+                        series: _this,
+                        seriesDatum: seriesDatum,
+                        yValue: yValue,
+                        yKey: yKey,
+                        x: flipXY ? Math.min(y, bottomY) : barX,
+                        y: flipXY ? barX : Math.min(y, bottomY),
+                        width: flipXY ? Math.abs(bottomY - y) : barWidth,
+                        height: flipXY ? barWidth : Math.abs(bottomY - y),
+                        fill: fills[colorIndex % fills.length],
+                        stroke: strokes[colorIndex % strokes.length],
+                        strokeWidth: strokeWidth,
+                        label: seriesItemEnabled.get(yKey) && labelText ? {
+                            text: labelText,
+                            fontStyle: labelFontStyle,
+                            fontWeight: labelFontWeight,
+                            fontSize: labelFontSize,
+                            fontFamily: labelFontFamily,
+                            fill: labelColor,
+                            x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
+                            y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
+                        } : undefined
+                    });
+                    if (currY < 0) {
+                        prevMinY += currY;
+                    }
+                    else {
+                        prevMaxY += currY;
                     }
                 }
             }
@@ -54821,15 +55326,25 @@ var BarSeries = /** @class */ (function (_super) {
         });
     };
     BarSeries.prototype.getTooltipHtml = function (nodeDatum) {
-        var xKey = this.xKey;
+        var _a = this, xKey = _a.xKey, yKeys = _a.yKeys;
         var yKey = nodeDatum.yKey;
         if (!xKey || !yKey) {
             return '';
         }
-        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer;
+        var yKeyIndex = 0;
+        for (var _i = 0, yKeys_1 = yKeys; _i < yKeys_1.length; _i++) {
+            var stack = yKeys_1[_i];
+            var i = stack.indexOf(yKey);
+            if (i >= 0) {
+                yKeyIndex += i;
+                break;
+            }
+            yKeyIndex += stack.length;
+        }
+        var _b = this, xName = _b.xName, yNames = _b.yNames, fills = _b.fills, tooltip = _b.tooltip;
+        var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c; // TODO: remove deprecated tooltipRenderer
         var datum = nodeDatum.seriesDatum;
-        var yKeyIndex = yKeys.indexOf(yKey);
-        var yName = yNames[yKeyIndex];
+        var yName = yNames[yKey];
         var color = fills[yKeyIndex % fills.length];
         var xValue = datum[xKey];
         var yValue = datum[yKey];
@@ -54839,7 +55354,7 @@ var BarSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -54857,21 +55372,26 @@ var BarSeries = /** @class */ (function (_super) {
         return toTooltipHtml(defaults);
     };
     BarSeries.prototype.listSeriesItems = function (legendData) {
-        var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, seriesItemEnabled = _a.seriesItemEnabled, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
+        var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, cumYKeyCount = _a.cumYKeyCount, seriesItemEnabled = _a.seriesItemEnabled, hideInLegend = _a.hideInLegend, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
         if (data && data.length && xKey && yKeys.length) {
-            yKeys.forEach(function (yKey, index) {
-                legendData.push({
-                    id: id,
-                    itemId: yKey,
-                    enabled: seriesItemEnabled.get(yKey) || false,
-                    label: {
-                        text: yNames[index] || yKeys[index]
-                    },
-                    marker: {
-                        fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length],
-                        fillOpacity: fillOpacity,
-                        strokeOpacity: strokeOpacity
+            this.yKeys.forEach(function (stack, stackIndex) {
+                stack.forEach(function (yKey, levelIndex) {
+                    if (hideInLegend.indexOf(yKey) < 0) {
+                        var colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                        legendData.push({
+                            id: id,
+                            itemId: yKey,
+                            enabled: seriesItemEnabled.get(yKey) || false,
+                            label: {
+                                text: yNames[yKey] || yKey
+                            },
+                            marker: {
+                                fill: fills[colorIndex % fills.length],
+                                stroke: strokes[colorIndex % strokes.length],
+                                fillOpacity: fillOpacity,
+                                strokeOpacity: strokeOpacity
+                            }
+                        });
                     }
                 });
             });
@@ -54879,45 +55399,56 @@ var BarSeries = /** @class */ (function (_super) {
     };
     BarSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
         var seriesItemEnabled = this.seriesItemEnabled;
-        var enabledSeriesItems = [];
         seriesItemEnabled.set(itemId, enabled);
+        var yKeys = this.yKeys.map(function (stack) { return stack.slice(); }); // deep clone
         seriesItemEnabled.forEach(function (enabled, yKey) {
-            if (enabled) {
-                enabledSeriesItems.push(yKey);
+            if (!enabled) {
+                yKeys.forEach(function (stack) {
+                    var index = stack.indexOf(yKey);
+                    if (index >= 0) {
+                        stack.splice(index, 1);
+                    }
+                });
             }
         });
-        this.groupScale.domain = enabledSeriesItems;
+        var visibleStacks = [];
+        yKeys.forEach(function (stack, index) {
+            if (stack.length > 0) {
+                visibleStacks.push(String(index));
+            }
+        });
+        this.groupScale.domain = visibleStacks;
         this.scheduleData();
     };
     BarSeries.className = 'BarSeries';
     BarSeries.type = 'bar';
-    __decorate$2a([
+    __decorate$24([
         reactive('layoutChange')
     ], BarSeries.prototype, "flipXY", void 0);
-    __decorate$2a([
+    __decorate$24([
         reactive('dataChange')
     ], BarSeries.prototype, "fills", void 0);
-    __decorate$2a([
+    __decorate$24([
         reactive('dataChange')
     ], BarSeries.prototype, "strokes", void 0);
-    __decorate$2a([
+    __decorate$24([
         reactive('layoutChange')
     ], BarSeries.prototype, "fillOpacity", void 0);
-    __decorate$2a([
+    __decorate$24([
         reactive('layoutChange')
     ], BarSeries.prototype, "strokeOpacity", void 0);
-    __decorate$2a([
+    __decorate$24([
         reactive('update')
     ], BarSeries.prototype, "lineDash", void 0);
-    __decorate$2a([
+    __decorate$24([
         reactive('update')
     ], BarSeries.prototype, "lineDashOffset", void 0);
-    __decorate$2a([
+    __decorate$24([
         reactive('update')
     ], BarSeries.prototype, "formatter", void 0);
-    __decorate$2a([
-        reactive('dataChange')
-    ], BarSeries.prototype, "grouped", void 0);
+    __decorate$24([
+        reactive('layoutChange')
+    ], BarSeries.prototype, "hideInLegend", void 0);
     return BarSeries;
 }(CartesianSeries));
 
@@ -54934,12 +55465,25 @@ var __extends$2N = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$25 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var LineSeriesTooltip = /** @class */ (function (_super) {
+    __extends$2M(LineSeriesTooltip, _super);
+    function LineSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$25([
+        reactive('change')
+    ], LineSeriesTooltip.prototype, "renderer", void 0);
+    __decorate$25([
+        reactive('change')
+    ], LineSeriesTooltip.prototype, "format", void 0);
+    return LineSeriesTooltip;
+}(SeriesTooltip));
 var LineSeries = /** @class */ (function (_super) {
     __extends$2N(LineSeries, _super);
     function LineSeries() {
@@ -55188,9 +55732,10 @@ var LineSeries = /** @class */ (function (_super) {
     LineSeries.prototype.getNodeData = function () {
         return this.nodeData;
     };
-    LineSeries.prototype.fireNodeClickEvent = function (datum) {
+    LineSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -55212,7 +55757,7 @@ var LineSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -55253,28 +55798,28 @@ var LineSeries = /** @class */ (function (_super) {
     };
     LineSeries.className = 'LineSeries';
     LineSeries.type = 'line';
-    __decorate$2b([
+    __decorate$25([
         reactive('layoutChange')
     ], LineSeries.prototype, "title", void 0);
-    __decorate$2b([
+    __decorate$25([
         reactive('update')
     ], LineSeries.prototype, "stroke", void 0);
-    __decorate$2b([
+    __decorate$25([
         reactive('update')
     ], LineSeries.prototype, "lineDash", void 0);
-    __decorate$2b([
+    __decorate$25([
         reactive('update')
     ], LineSeries.prototype, "lineDashOffset", void 0);
-    __decorate$2b([
+    __decorate$25([
         reactive('update')
     ], LineSeries.prototype, "strokeWidth", void 0);
-    __decorate$2b([
+    __decorate$25([
         reactive('update')
     ], LineSeries.prototype, "strokeOpacity", void 0);
-    __decorate$2b([
+    __decorate$25([
         reactive('update')
     ], LineSeries.prototype, "xName", void 0);
-    __decorate$2b([
+    __decorate$25([
         reactive('update')
     ], LineSeries.prototype, "yName", void 0);
     return LineSeries;
@@ -55293,12 +55838,22 @@ var __extends$2O = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$26 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var ScatterSeriesTooltip = /** @class */ (function (_super) {
+    __extends$2N(ScatterSeriesTooltip, _super);
+    function ScatterSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$26([
+        reactive('change')
+    ], ScatterSeriesTooltip.prototype, "renderer", void 0);
+    return ScatterSeriesTooltip;
+}(SeriesTooltip));
 var ScatterSeries = /** @class */ (function (_super) {
     __extends$2O(ScatterSeries, _super);
     function ScatterSeries() {
@@ -55413,7 +55968,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         this.marker.stroke = strokes[0];
     };
     ScatterSeries.prototype.processData = function () {
-        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis, marker = _a.marker;
         var data = xKey && yKey && this.data ? this.data : [];
         this.xData = data.map(function (d) { return d[xKey]; });
         this.yData = data.map(function (d) { return d[yKey]; });
@@ -55423,7 +55978,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         else {
             this.sizeData = [];
         }
-        this.sizeScale.domain = finiteExtent(this.sizeData) || [1, 1];
+        this.sizeScale.domain = marker.domain ? marker.domain : finiteExtent(this.sizeData) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
             this.xDomain = this.fixNumericExtent(finiteExtent(this.xData), 'x');
         }
@@ -55449,9 +56004,10 @@ var ScatterSeries = /** @class */ (function (_super) {
     ScatterSeries.prototype.getNodeData = function () {
         return this.nodeData;
     };
-    ScatterSeries.prototype.fireNodeClickEvent = function (datum) {
+    ScatterSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -55466,6 +56022,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
+        var isContinuousX = xScale instanceof ContinuousScale;
+        var isContinuousY = yScale instanceof ContinuousScale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, sizeData = _b.sizeData, sizeScale = _b.sizeScale, marker = _b.marker;
@@ -55473,6 +56031,12 @@ var ScatterSeries = /** @class */ (function (_super) {
         var nodeData = [];
         for (var i = 0; i < xData.length; i++) {
             var xDatum = xData[i];
+            var yDatum = yData[i];
+            var noDatum = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            if (noDatum) {
+                continue;
+            }
             var x = xScale.convert(xDatum) + xOffset;
             if (!xAxis.inRange(x)) {
                 continue;
@@ -55571,7 +56135,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         }
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -55615,19 +56179,19 @@ var ScatterSeries = /** @class */ (function (_super) {
     };
     ScatterSeries.className = 'ScatterSeries';
     ScatterSeries.type = 'scatter';
-    __decorate$2c([
+    __decorate$26([
         reactive('layoutChange')
     ], ScatterSeries.prototype, "title", void 0);
-    __decorate$2c([
+    __decorate$26([
         reactive('dataChange')
     ], ScatterSeries.prototype, "xKey", void 0);
-    __decorate$2c([
+    __decorate$26([
         reactive('dataChange')
     ], ScatterSeries.prototype, "yKey", void 0);
-    __decorate$2c([
+    __decorate$26([
         reactive('dataChange')
     ], ScatterSeries.prototype, "sizeKey", void 0);
-    __decorate$2c([
+    __decorate$26([
         reactive('dataChange')
     ], ScatterSeries.prototype, "labelKey", void 0);
     return ScatterSeries;
@@ -55646,7 +56210,7 @@ var __extends$2P = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$27 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -55669,7 +56233,7 @@ var HistogramSeriesLabel = /** @class */ (function (_super) {
     function HistogramSeriesLabel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    __decorate$2d([
+    __decorate$27([
         reactive('change')
     ], HistogramSeriesLabel.prototype, "formatter", void 0);
     return HistogramSeriesLabel;
@@ -55720,6 +56284,16 @@ var HistogramBin = /** @class */ (function () {
     };
     return HistogramBin;
 }());
+var HistogramSeriesTooltip = /** @class */ (function (_super) {
+    __extends$2O(HistogramSeriesTooltip, _super);
+    function HistogramSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$27([
+        reactive('change')
+    ], HistogramSeriesTooltip.prototype, "renderer", void 0);
+    return HistogramSeriesTooltip;
+}(SeriesTooltip));
 var HistogramSeries = /** @class */ (function (_super) {
     __extends$2P(HistogramSeries, _super);
     function HistogramSeries() {
@@ -55990,9 +56564,10 @@ var HistogramSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    HistogramSeries.prototype.fireNodeClickEvent = function (datum) {
+    HistogramSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey
@@ -56121,15 +56696,15 @@ var HistogramSeries = /** @class */ (function (_super) {
         }
         var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
         var bin = nodeDatum.seriesDatum;
-        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _c = bin.domain, rangeMin = _c[0], rangeMax = _c[1];
-        var title = (xName || xKey) + " " + toFixed(rangeMin) + " - " + toFixed(rangeMax);
+        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _d = bin.domain, rangeMin = _d[0], rangeMax = _d[1];
+        var title = (xName || xKey) + ": " + toFixed(rangeMin) + " - " + toFixed(rangeMax);
         var content = yKey ?
             "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + toFixed(aggregatedValue) + "<br>" :
             '';
         content += "<b>Frequency</b>: " + frequency;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -56173,22 +56748,22 @@ var HistogramSeries = /** @class */ (function (_super) {
     };
     HistogramSeries.className = 'HistogramSeries';
     HistogramSeries.type = 'histogram';
-    __decorate$2d([
+    __decorate$27([
         reactive('dataChange')
     ], HistogramSeries.prototype, "fill", void 0);
-    __decorate$2d([
+    __decorate$27([
         reactive('dataChange')
     ], HistogramSeries.prototype, "stroke", void 0);
-    __decorate$2d([
+    __decorate$27([
         reactive('layoutChange')
     ], HistogramSeries.prototype, "fillOpacity", void 0);
-    __decorate$2d([
+    __decorate$27([
         reactive('layoutChange')
     ], HistogramSeries.prototype, "strokeOpacity", void 0);
-    __decorate$2d([
+    __decorate$27([
         reactive('update')
     ], HistogramSeries.prototype, "lineDash", void 0);
-    __decorate$2d([
+    __decorate$27([
         reactive('update')
     ], HistogramSeries.prototype, "lineDashOffset", void 0);
     return HistogramSeries;
@@ -56373,8 +56948,6 @@ var Sector = /** @class */ (function (_super) {
         var outerRadius = Math.max(this.innerRadius, this.outerRadius);
         var centerOffset = this.centerOffset;
         var fullPie = this.fullPie;
-        // const tipOffset = radiiGap / 3;
-        // const showTip = radiiGap < outerRadius / 2;
         var centerX = this.centerX;
         var centerY = this.centerY;
         path.clear();
@@ -56845,7 +57418,7 @@ var __extends$2R = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$28 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -56865,10 +57438,10 @@ var PieSeriesLabel = /** @class */ (function (_super) {
         _this.minAngle = 20; // in degrees
         return _this;
     }
-    __decorate$2e([
+    __decorate$28([
         reactive('change')
     ], PieSeriesLabel.prototype, "offset", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('dataChange')
     ], PieSeriesLabel.prototype, "minAngle", void 0);
     return PieSeriesLabel;
@@ -56882,17 +57455,27 @@ var PieSeriesCallout = /** @class */ (function (_super) {
         _this.strokeWidth = 1;
         return _this;
     }
-    __decorate$2e([
+    __decorate$28([
         reactive('change')
     ], PieSeriesCallout.prototype, "colors", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('change')
     ], PieSeriesCallout.prototype, "length", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('change')
     ], PieSeriesCallout.prototype, "strokeWidth", void 0);
     return PieSeriesCallout;
 }(Observable));
+var PieSeriesTooltip = /** @class */ (function (_super) {
+    __extends$2Q(PieSeriesTooltip, _super);
+    function PieSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$28([
+        reactive('change')
+    ], PieSeriesTooltip.prototype, "renderer", void 0);
+    return PieSeriesTooltip;
+}(SeriesTooltip));
 var PieSeries = /** @class */ (function (_super) {
     __extends$2R(PieSeries, _super);
     function PieSeries() {
@@ -56953,6 +57536,7 @@ var PieSeries = /** @class */ (function (_super) {
         _this.label.addEventListener('change', _this.scheduleLayout, _this);
         _this.label.addEventListener('dataChange', _this.scheduleData, _this);
         _this.callout.addEventListener('change', _this.scheduleLayout, _this);
+        _this.callout.colors = _this.strokes;
         _this.addPropertyListener('data', function (event) {
             if (event.value) {
                 event.source.seriesItemEnabled = event.value.map(function () { return true; });
@@ -57037,12 +57621,14 @@ var PieSeries = /** @class */ (function (_super) {
         })();
         var labelKey = this.label.enabled && this.labelKey;
         var labelData = labelKey ? data.map(function (datum) { return String(datum[labelKey]); }) : [];
-        var useRadiusKey = !!radiusKey && !this.innerRadiusOffset;
         var radiusData = [];
-        if (useRadiusKey) {
+        if (radiusKey) {
+            var _b = this, radiusMin = _b.radiusMin, radiusMax = _b.radiusMax;
             var radii = data.map(function (datum) { return Math.abs(datum[radiusKey]); });
-            var maxDatum_1 = Math.max.apply(Math, radii);
-            radiusData = radii.map(function (value) { return value / maxDatum_1; });
+            var min_1 = radiusMin !== undefined ? radiusMin : Math.min.apply(Math, radii);
+            var max = radiusMax !== undefined ? radiusMax : Math.max.apply(Math, radii);
+            var delta_1 = max - min_1;
+            radiusData = radii.map(function (value) { return delta_1 ? (value - min_1) / delta_1 : 1; });
         }
         groupSelectionData.length = 0;
         var rotation = toRadians(this.rotation);
@@ -57050,7 +57636,7 @@ var PieSeries = /** @class */ (function (_super) {
         var datumIndex = 0;
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce(function (start, end) {
-            var radius = useRadiusKey ? radiusData[datumIndex] : 1;
+            var radius = radiusKey ? radiusData[datumIndex] : 1;
             var startAngle = angleScale.convert(start) + rotation;
             var endAngle = angleScale.convert(end) + rotation;
             var midAngle = (startAngle + endAngle) / 2;
@@ -57107,12 +57693,15 @@ var PieSeries = /** @class */ (function (_super) {
         if (!visible || !chart || chart.dataPending || chart.layoutPending) {
             return;
         }
-        this.radiusScale.range = [0, this.radius];
+        var _a = this, radius = _a.radius, innerRadiusOffset = _a.innerRadiusOffset, outerRadiusOffset = _a.outerRadiusOffset, title = _a.title;
+        this.radiusScale.range = [
+            innerRadiusOffset ? radius + innerRadiusOffset : 0,
+            radius + (outerRadiusOffset || 0)
+        ];
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
-        var title = this.title;
         if (title) {
-            title.node.translationY = -this.radius - this.outerRadiusOffset - 2;
+            title.node.translationY = -radius - outerRadiusOffset - 2;
             title.node.visible = title.enabled;
         }
         this.updateGroupSelection();
@@ -57138,13 +57727,12 @@ var PieSeries = /** @class */ (function (_super) {
         if (!this.chart) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
         var highlightedDatum = this.chart.highlightedDatum;
-        var outerRadii = [];
         var centerOffsets = [];
+        var innerRadius = radiusScale.convert(0);
         this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
             var radius = radiusScale.convert(datum.radius);
-            var outerRadius = Math.max(0, radius + outerRadiusOffset);
             var highlighted = datum === highlightedDatum;
             var sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             var sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
@@ -57160,8 +57748,8 @@ var PieSeries = /** @class */ (function (_super) {
                     radiusKey: radiusKey
                 });
             }
-            sector.outerRadius = outerRadius;
-            sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
+            sector.innerRadius = innerRadius;
+            sector.outerRadius = radius;
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
             sector.fill = format && format.fill || sectorFill;
@@ -57174,19 +57762,18 @@ var PieSeries = /** @class */ (function (_super) {
             sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
             sector.lineJoin = 'round';
-            outerRadii.push(outerRadius);
             centerOffsets.push(sector.centerOffset);
         });
         var calloutColors = callout.colors, calloutLength = callout.length, calloutStrokeWidth = callout.strokeWidth;
         this.groupSelection.selectByTag(PieNodeTag.Callout).each(function (line, datum, index) {
             if (datum.label) {
-                var outerRadius = centerOffsets[index] + outerRadii[index];
+                var radius = radiusScale.convert(datum.radius);
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
-                line.x1 = datum.midCos * outerRadius;
-                line.y1 = datum.midSin * outerRadius;
-                line.x2 = datum.midCos * (outerRadius + calloutLength);
-                line.y2 = datum.midSin * (outerRadius + calloutLength);
+                line.x1 = datum.midCos * radius;
+                line.y1 = datum.midSin * radius;
+                line.x2 = datum.midCos * (radius + calloutLength);
+                line.y2 = datum.midSin * (radius + calloutLength);
             }
             else {
                 line.stroke = undefined;
@@ -57197,8 +57784,8 @@ var PieSeries = /** @class */ (function (_super) {
             this.groupSelection.selectByTag(PieNodeTag.Label).each(function (text, datum, index) {
                 var label = datum.label;
                 if (label) {
-                    var outerRadius = outerRadii[index];
-                    var labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset_1;
+                    var radius = radiusScale.convert(datum.radius);
+                    var labelRadius = centerOffsets[index] + radius + calloutLength + offset_1;
                     text.fontStyle = fontStyle_1;
                     text.fontWeight = fontWeight_1;
                     text.fontSize = fontSize_1;
@@ -57216,12 +57803,14 @@ var PieSeries = /** @class */ (function (_super) {
             });
         }
     };
-    PieSeries.prototype.fireNodeClickEvent = function (datum) {
+    PieSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             angleKey: this.angleKey,
+            labelKey: this.labelKey,
             radiusKey: this.radiusKey
         });
     };
@@ -57240,7 +57829,7 @@ var PieSeries = /** @class */ (function (_super) {
         var content = label + formattedAngleValue;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -57289,52 +57878,58 @@ var PieSeries = /** @class */ (function (_super) {
     };
     PieSeries.className = 'PieSeries';
     PieSeries.type = 'pie';
-    __decorate$2e([
+    __decorate$28([
         reactive('dataChange')
     ], PieSeries.prototype, "angleKey", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('update')
     ], PieSeries.prototype, "angleName", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('dataChange')
     ], PieSeries.prototype, "radiusKey", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('update')
     ], PieSeries.prototype, "radiusName", void 0);
-    __decorate$2e([
+    __decorate$28([
+        reactive('dataChange')
+    ], PieSeries.prototype, "radiusMin", void 0);
+    __decorate$28([
+        reactive('dataChange')
+    ], PieSeries.prototype, "radiusMax", void 0);
+    __decorate$28([
         reactive('dataChange')
     ], PieSeries.prototype, "labelKey", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('update')
     ], PieSeries.prototype, "labelName", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('layoutChange')
     ], PieSeries.prototype, "fillOpacity", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('layoutChange')
     ], PieSeries.prototype, "strokeOpacity", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('update')
     ], PieSeries.prototype, "lineDash", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('update')
     ], PieSeries.prototype, "lineDashOffset", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('update')
     ], PieSeries.prototype, "formatter", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('dataChange')
     ], PieSeries.prototype, "rotation", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('layoutChange')
     ], PieSeries.prototype, "outerRadiusOffset", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('dataChange')
     ], PieSeries.prototype, "innerRadiusOffset", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('layoutChange')
     ], PieSeries.prototype, "strokeWidth", void 0);
-    __decorate$2e([
+    __decorate$28([
         reactive('layoutChange')
     ], PieSeries.prototype, "shadow", void 0);
     return PieSeries;
@@ -57353,7 +57948,7 @@ var __extends$2S = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$29 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -57370,19 +57965,19 @@ var DropShadow = /** @class */ (function (_super) {
         _this.blur = 5;
         return _this;
     }
-    __decorate$2f([
+    __decorate$29([
         reactive('change')
     ], DropShadow.prototype, "enabled", void 0);
-    __decorate$2f([
+    __decorate$29([
         reactive('change')
     ], DropShadow.prototype, "color", void 0);
-    __decorate$2f([
+    __decorate$29([
         reactive('change')
     ], DropShadow.prototype, "xOffset", void 0);
-    __decorate$2f([
+    __decorate$29([
         reactive('change')
     ], DropShadow.prototype, "yOffset", void 0);
-    __decorate$2f([
+    __decorate$29([
         reactive('change')
     ], DropShadow.prototype, "blur", void 0);
     return DropShadow;
@@ -57473,7 +58068,7 @@ var ChartTheme = /** @class */ (function () {
             var overrides_1 = options.overrides;
             if (overrides_1) {
                 if (isObject(overrides_1.common)) {
-                    ChartTheme.seriesTypes.forEach(function (seriesType) {
+                    ChartTheme.seriesTypes.concat(['cartesian', 'polar']).forEach(function (seriesType) {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrides_1.common, mergeOptions_1);
                     });
                 }
@@ -57652,6 +58247,12 @@ var ChartTheme = /** @class */ (function () {
                         fontFamily: this.fontFamily
                     }
                 }
+            },
+            tooltip: {
+                enabled: true,
+                tracking: true,
+                delay: 0,
+                class: Chart.defaultTooltipClass
             }
         };
     };
@@ -57891,7 +58492,7 @@ var DarkTheme = /** @class */ (function (_super) {
         };
         var chartDefaults = {
             background: {
-                fill: 'rgb(52, 52, 52)'
+                fill: 'rgb(34, 38, 41)'
             },
             title: {
                 color: fontColor
@@ -58354,6 +58955,16 @@ var commonChartMappings = {
                 right: chartPadding,
                 bottom: chartPadding,
                 left: chartPadding
+            }
+        }
+    },
+    tooltip: {
+        meta: {
+            defaults: {
+                enabled: true,
+                tracking: true,
+                delay: 0,
+                class: Chart.defaultTooltipClass
             }
         }
     },
@@ -59276,7 +59887,7 @@ var __extends$30 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -59452,19 +60063,16 @@ var ChartController = /** @class */ (function (_super) {
         }
     };
     ChartController.EVENT_CHART_UPDATED = 'chartUpdated';
-    __decorate$2g([
+    __decorate$2a([
         Autowired('rangeController')
     ], ChartController.prototype, "rangeController", void 0);
-    __decorate$2g([
-        Autowired('gridOptionsWrapper')
-    ], ChartController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$2g([
+    __decorate$2a([
         Autowired('gridApi')
     ], ChartController.prototype, "gridApi", void 0);
-    __decorate$2g([
+    __decorate$2a([
         Autowired('columnApi')
     ], ChartController.prototype, "columnApi", void 0);
-    __decorate$2g([
+    __decorate$2a([
         PostConstruct
     ], ChartController.prototype, "init", null);
     return ChartController;
@@ -59483,7 +60091,7 @@ var __extends$31 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -59712,16 +60320,13 @@ var ChartDataPanel = /** @class */ (function (_super) {
         return type === DragSourceType.ChartPanel;
     };
     ChartDataPanel.TEMPLATE = "<div class=\"ag-chart-data-wrapper\"></div>";
-    __decorate$2h([
+    __decorate$2b([
         Autowired('dragAndDropService')
     ], ChartDataPanel.prototype, "dragAndDropService", void 0);
-    __decorate$2h([
-        Autowired('gridOptionsWrapper')
-    ], ChartDataPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$2h([
+    __decorate$2b([
         Autowired('chartTranslator')
     ], ChartDataPanel.prototype, "chartTranslator", void 0);
-    __decorate$2h([
+    __decorate$2b([
         PostConstruct
     ], ChartDataPanel.prototype, "init", null);
     return ChartDataPanel;
@@ -59740,7 +60345,7 @@ var __extends$32 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -59893,25 +60498,25 @@ var FontPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     FontPanel.TEMPLATE = "<div class=\"ag-font-panel\">\n            <ag-group-component ref=\"fontGroup\">\n                <ag-select ref=\"familySelect\"></ag-select>\n                <ag-select ref=\"weightStyleSelect\"></ag-select>\n                <div class=\"ag-charts-font-size-color\">\n                    <ag-select ref=\"sizeSelect\"></ag-select>\n                    <ag-color-picker ref=\"colorPicker\"></ag-color-picker>\n                </div>\n            </ag-group-component>\n        </div>";
-    __decorate$2i([
+    __decorate$2c([
         RefSelector('fontGroup')
     ], FontPanel.prototype, "fontGroup", void 0);
-    __decorate$2i([
+    __decorate$2c([
         RefSelector('familySelect')
     ], FontPanel.prototype, "familySelect", void 0);
-    __decorate$2i([
+    __decorate$2c([
         RefSelector('weightStyleSelect')
     ], FontPanel.prototype, "weightStyleSelect", void 0);
-    __decorate$2i([
+    __decorate$2c([
         RefSelector('sizeSelect')
     ], FontPanel.prototype, "sizeSelect", void 0);
-    __decorate$2i([
+    __decorate$2c([
         RefSelector('colorPicker')
     ], FontPanel.prototype, "colorPicker", void 0);
-    __decorate$2i([
+    __decorate$2c([
         Autowired('chartTranslator')
     ], FontPanel.prototype, "chartTranslator", void 0);
-    __decorate$2i([
+    __decorate$2c([
         PostConstruct
     ], FontPanel.prototype, "init", null);
     return FontPanel;
@@ -59930,7 +60535,7 @@ var __extends$33 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -60056,34 +60661,34 @@ var LegendPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     LegendPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"legendGroup\">\n                <ag-select ref=\"legendPositionSelect\"></ag-select>\n                <ag-slider ref=\"legendPaddingSlider\"></ag-slider>\n                <ag-slider ref=\"markerSizeSlider\"></ag-slider>\n                <ag-slider ref=\"markerStrokeSlider\"></ag-slider>\n                <ag-slider ref=\"markerPaddingSlider\"></ag-slider>\n                <ag-slider ref=\"itemPaddingXSlider\"></ag-slider>\n                <ag-slider ref=\"itemPaddingYSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2j([
+    __decorate$2d([
         RefSelector('legendGroup')
     ], LegendPanel.prototype, "legendGroup", void 0);
-    __decorate$2j([
+    __decorate$2d([
         RefSelector('legendPositionSelect')
     ], LegendPanel.prototype, "legendPositionSelect", void 0);
-    __decorate$2j([
+    __decorate$2d([
         RefSelector('legendPaddingSlider')
     ], LegendPanel.prototype, "legendPaddingSlider", void 0);
-    __decorate$2j([
+    __decorate$2d([
         RefSelector('markerSizeSlider')
     ], LegendPanel.prototype, "markerSizeSlider", void 0);
-    __decorate$2j([
+    __decorate$2d([
         RefSelector('markerStrokeSlider')
     ], LegendPanel.prototype, "markerStrokeSlider", void 0);
-    __decorate$2j([
+    __decorate$2d([
         RefSelector('markerPaddingSlider')
     ], LegendPanel.prototype, "markerPaddingSlider", void 0);
-    __decorate$2j([
+    __decorate$2d([
         RefSelector('itemPaddingXSlider')
     ], LegendPanel.prototype, "itemPaddingXSlider", void 0);
-    __decorate$2j([
+    __decorate$2d([
         RefSelector('itemPaddingYSlider')
     ], LegendPanel.prototype, "itemPaddingYSlider", void 0);
-    __decorate$2j([
+    __decorate$2d([
         Autowired('chartTranslator')
     ], LegendPanel.prototype, "chartTranslator", void 0);
-    __decorate$2j([
+    __decorate$2d([
         PostConstruct
     ], LegendPanel.prototype, "init", null);
     return LegendPanel;
@@ -60102,7 +60707,7 @@ var __extends$34 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -60153,25 +60758,25 @@ var ShadowPanel = /** @class */ (function (_super) {
         initInput(this.shadowYOffsetSlider, "yOffset", -10, 10);
     };
     ShadowPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"shadowGroup\">\n                <ag-color-picker ref=\"shadowColorPicker\"></ag-color-picker>\n                <ag-slider ref=\"shadowBlurSlider\"></ag-slider>\n                <ag-slider ref=\"shadowXOffsetSlider\"></ag-slider>\n                <ag-slider ref=\"shadowYOffsetSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2k([
+    __decorate$2e([
         RefSelector('shadowGroup')
     ], ShadowPanel.prototype, "shadowGroup", void 0);
-    __decorate$2k([
+    __decorate$2e([
         RefSelector('shadowColorPicker')
     ], ShadowPanel.prototype, "shadowColorPicker", void 0);
-    __decorate$2k([
+    __decorate$2e([
         RefSelector('shadowBlurSlider')
     ], ShadowPanel.prototype, "shadowBlurSlider", void 0);
-    __decorate$2k([
+    __decorate$2e([
         RefSelector('shadowXOffsetSlider')
     ], ShadowPanel.prototype, "shadowXOffsetSlider", void 0);
-    __decorate$2k([
+    __decorate$2e([
         RefSelector('shadowYOffsetSlider')
     ], ShadowPanel.prototype, "shadowYOffsetSlider", void 0);
-    __decorate$2k([
+    __decorate$2e([
         Autowired('chartTranslator')
     ], ShadowPanel.prototype, "chartTranslator", void 0);
-    __decorate$2k([
+    __decorate$2e([
         PostConstruct
     ], ShadowPanel.prototype, "init", null);
     return ShadowPanel;
@@ -60244,7 +60849,7 @@ var __extends$35 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -60322,26 +60927,29 @@ var BarSeriesPanel = /** @class */ (function (_super) {
         this.destroyActivePanels();
         _super.prototype.destroy.call(this);
     };
-    BarSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2l([
+    BarSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineDashSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    __decorate$2f([
         RefSelector('seriesGroup')
     ], BarSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$2l([
+    __decorate$2f([
         RefSelector('seriesTooltipsToggle')
     ], BarSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$2l([
+    __decorate$2f([
         RefSelector('seriesStrokeWidthSlider')
     ], BarSeriesPanel.prototype, "seriesStrokeWidthSlider", void 0);
-    __decorate$2l([
+    __decorate$2f([
+        RefSelector('seriesLineDashSlider')
+    ], BarSeriesPanel.prototype, "seriesLineDashSlider", void 0);
+    __decorate$2f([
         RefSelector('seriesLineOpacitySlider')
     ], BarSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);
-    __decorate$2l([
+    __decorate$2f([
         RefSelector('seriesFillOpacitySlider')
     ], BarSeriesPanel.prototype, "seriesFillOpacitySlider", void 0);
-    __decorate$2l([
+    __decorate$2f([
         Autowired('chartTranslator')
     ], BarSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$2l([
+    __decorate$2f([
         PostConstruct
     ], BarSeriesPanel.prototype, "init", null);
     return BarSeriesPanel;
@@ -60360,7 +60968,7 @@ var __extends$36 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -60408,22 +61016,22 @@ var AxisTicksPanel = /** @class */ (function (_super) {
         return this.chartController.getChartProxy();
     };
     AxisTicksPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"axisTicksGroup\">\n                <ag-color-picker ref=\"axisTicksColorPicker\"></ag-color-picker>\n                <ag-slider ref=\"axisTicksWidthSlider\"></ag-slider>\n                <ag-slider ref=\"axisTicksSizeSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2m([
+    __decorate$2g([
         RefSelector('axisTicksGroup')
     ], AxisTicksPanel.prototype, "axisTicksGroup", void 0);
-    __decorate$2m([
+    __decorate$2g([
         RefSelector('axisTicksColorPicker')
     ], AxisTicksPanel.prototype, "axisTicksColorPicker", void 0);
-    __decorate$2m([
+    __decorate$2g([
         RefSelector('axisTicksWidthSlider')
     ], AxisTicksPanel.prototype, "axisTicksWidthSlider", void 0);
-    __decorate$2m([
+    __decorate$2g([
         RefSelector('axisTicksSizeSlider')
     ], AxisTicksPanel.prototype, "axisTicksSizeSlider", void 0);
-    __decorate$2m([
+    __decorate$2g([
         Autowired('chartTranslator')
     ], AxisTicksPanel.prototype, "chartTranslator", void 0);
-    __decorate$2m([
+    __decorate$2g([
         PostConstruct
     ], AxisTicksPanel.prototype, "init", null);
     return AxisTicksPanel;
@@ -60442,7 +61050,7 @@ var __extends$37 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -60569,8 +61177,11 @@ var AxisPanel = /** @class */ (function (_super) {
             var axis = find$1(chart.axes, function (axis) { return axis.position === axisPosition; });
             if (axis) {
                 axis.label.rotation = newValue;
-                if (axis.position === ChartAxisPosition.Bottom) ;
-                else if (axis.position === ChartAxisPosition.Left) ;
+                // if (axis.position === ChartAxisPosition.Bottom) {
+                //     // _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
+                // } else if (axis.position === ChartAxisPosition.Left) {
+                //     // _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
+                // }
                 chart.performLayout();
             }
         }; };
@@ -60601,22 +61212,22 @@ var AxisPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     AxisPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"axisGroup\">\n                <ag-color-picker ref=\"axisColorInput\"></ag-color-picker>\n                <ag-slider ref=\"axisLineWidthSlider\"></ag-slider>\n                <ag-select ref=\"xAxisTypeSelect\"></ag-select>\n            </ag-group-component>\n        </div>";
-    __decorate$2n([
+    __decorate$2h([
         RefSelector('axisGroup')
     ], AxisPanel.prototype, "axisGroup", void 0);
-    __decorate$2n([
+    __decorate$2h([
         RefSelector('axisColorInput')
     ], AxisPanel.prototype, "axisColorInput", void 0);
-    __decorate$2n([
+    __decorate$2h([
         RefSelector('axisLineWidthSlider')
     ], AxisPanel.prototype, "axisLineWidthSlider", void 0);
-    __decorate$2n([
+    __decorate$2h([
         RefSelector('xAxisTypeSelect')
     ], AxisPanel.prototype, "xAxisTypeSelect", void 0);
-    __decorate$2n([
+    __decorate$2h([
         Autowired('chartTranslator')
     ], AxisPanel.prototype, "chartTranslator", void 0);
-    __decorate$2n([
+    __decorate$2h([
         PostConstruct
     ], AxisPanel.prototype, "init", null);
     return AxisPanel;
@@ -60635,7 +61246,7 @@ var __extends$38 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -60692,16 +61303,16 @@ var NavigatorPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     NavigatorPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"navigatorGroup\">\n                <ag-slider ref=\"navigatorHeightSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2o([
+    __decorate$2i([
         RefSelector('navigatorGroup')
     ], NavigatorPanel.prototype, "navigatorGroup", void 0);
-    __decorate$2o([
+    __decorate$2i([
         RefSelector('navigatorHeightSlider')
     ], NavigatorPanel.prototype, "navigatorHeightSlider", void 0);
-    __decorate$2o([
+    __decorate$2i([
         Autowired('chartTranslator')
     ], NavigatorPanel.prototype, "chartTranslator", void 0);
-    __decorate$2o([
+    __decorate$2i([
         PostConstruct
     ], NavigatorPanel.prototype, "init", null);
     return NavigatorPanel;
@@ -60829,12 +61440,20 @@ var ChartProxy = /** @class */ (function () {
         this.eventService = chartProxyParams.eventService;
         this.gridApi = chartProxyParams.gridApi;
         this.columnApi = chartProxyParams.columnApi;
+        this.crossFiltering = chartProxyParams.crossFiltering;
+        this.crossFilterCallback = chartProxyParams.crossFilterCallback;
     }
     ChartProxy.prototype.recreateChart = function (options) {
+        var _this = this;
         if (this.chart) {
             this.destroyChart();
         }
         this.chart = this.createChart(options);
+        if (this.crossFiltering) {
+            // add event listener to chart canvas to detect when user wishes to reset filters
+            var resetFilters_1 = true;
+            this.chart.addEventListener('click', function (e) { return _this.crossFilterCallback(e, resetFilters_1); });
+        }
     };
     ChartProxy.prototype.getChart = function () {
         return this.chart;
@@ -60967,8 +61586,12 @@ var ChartProxy = /** @class */ (function () {
         options.background = theme.getConfig(standaloneChartType + '.background');
         options.legend = theme.getConfig(standaloneChartType + '.legend');
         options.navigator = theme.getConfig(standaloneChartType + '.navigator');
-        options.tooltipClass = theme.getConfig(standaloneChartType + '.tooltipClass');
-        options.tooltipTracking = theme.getConfig(standaloneChartType + '.tooltipTracking');
+        options.tooltip = {
+            enabled: theme.getConfig(standaloneChartType + '.tooltip.enabled'),
+            tracking: theme.getConfig(standaloneChartType + '.tooltip.tracking'),
+            class: theme.getConfig(standaloneChartType + '.tooltip.class'),
+            delay: theme.getConfig(standaloneChartType + '.tooltip.delay')
+        };
         options.listeners = theme.getConfig(standaloneChartType + '.listeners');
         options.padding = theme.getConfig(standaloneChartType + '.padding');
         return options;
@@ -61024,7 +61647,6 @@ var ChartProxy = /** @class */ (function () {
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
-            'tooltip.enabled': 'tooltipEnabled',
             'callout.colors': 'calloutColors'
         };
         var series = this.chart.series;
@@ -61161,6 +61783,12 @@ var ChartProxy = /** @class */ (function () {
             return datum;
         });
     };
+    ChartProxy.prototype.hexToRGBA = function (hex, alpha) {
+        var r = parseInt(hex.slice(1, 3), 16);
+        var g = parseInt(hex.slice(3, 5), 16);
+        var b = parseInt(hex.slice(5, 7), 16);
+        return alpha ? "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")" : "rgba(" + r + ", " + g + ", " + b + ")";
+    };
     ChartProxy.prototype.destroy = function () {
         this.destroyChart();
     };
@@ -61218,7 +61846,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
         var standaloneChartType = this.getStandaloneChartType();
         var flipXY = standaloneChartType === 'bar';
-        var xAxisType = 'category';
+        var xAxisType = (standaloneChartType === 'scatter' || standaloneChartType === 'histogram') ? 'number' : 'category';
         var yAxisType = 'number';
         if (flipXY) {
             _a = [yAxisType, xAxisType], xAxisType = _a[0], yAxisType = _a[1];
@@ -61352,6 +61980,48 @@ var CartesianChartProxy = /** @class */ (function (_super) {
     CartesianChartProxy.prototype.getYAxis = function () {
         return find$1(this.chart.axes, function (a) { return a.position === ChartAxisPosition.Left; });
     };
+    CartesianChartProxy.prototype.processDataForCrossFiltering = function (data, colId, params) {
+        var yKey = colId;
+        var atLeastOneSelectedPoint = false;
+        if (this.crossFiltering) {
+            data.forEach(function (d) {
+                d[colId + '-total'] = d[colId] + d[colId + '-filtered-out'];
+                if (d[colId + '-filtered-out'] > 0) {
+                    atLeastOneSelectedPoint = true;
+                }
+            });
+            var lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
+            if (lastSelectedChartId === params.chartId) {
+                yKey = colId + '-total';
+            }
+        }
+        return { yKey: yKey, atLeastOneSelectedPoint: atLeastOneSelectedPoint };
+    };
+    CartesianChartProxy.prototype.updateSeriesForCrossFiltering = function (series, colId, chart, params, atLeastOneSelectedPoint) {
+        if (this.crossFiltering) {
+            // special custom marker handling to show and hide points
+            series.marker.enabled = true;
+            series.marker.formatter = function (p) {
+                return {
+                    fill: p.highlighted ? 'yellow' : p.fill,
+                    size: p.highlighted ? 12 : p.datum[colId] > 0 ? 8 : 0,
+                };
+            };
+            chart.tooltip.delay = 500;
+            // make line opaque when some points are deselected
+            var ctx = params.getCrossFilteringContext();
+            var lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
+            var deselectedPoints = lastSelectionOnThisChart && atLeastOneSelectedPoint;
+            if (series instanceof AreaSeries) {
+                series.fillOpacity = deselectedPoints ? 0.3 : 1;
+            }
+            if (series instanceof LineSeries) {
+                series.strokeOpacity = deselectedPoints ? 0.3 : 1;
+            }
+            // add node click cross filtering callback to series
+            series.addEventListener('nodeClick', this.crossFilterCallback);
+        }
+    };
     return CartesianChartProxy;
 }(ChartProxy));
 
@@ -61393,8 +62063,8 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         var seriesDefaults = theme.getConfig('scatter.series.scatter');
         options.seriesDefaults = {
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -61412,6 +62082,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 strokeWidth: seriesDefaults.marker.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners,
             paired: true
         };
         return options;
@@ -61424,13 +62095,26 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     ScatterChartProxy.prototype.update = function (params) {
+        var _this = this;
         if (params.fields.length < 2) {
             this.chart.removeAllSeries();
             return;
         }
         var fields = params.fields;
+        if (this.crossFiltering) {
+            // add additional filtered out field
+            fields.forEach(function (field) {
+                var crossFilteringField = __assign$e({}, field);
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+        }
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
+        var dataDomain;
+        if (this.crossFiltering) {
+            dataDomain = this.getCrossFilteringDataDomain(seriesDefinitions, params);
+        }
         var chart = this.chart;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = _.findIndex(seriesDefinitions, function (s) {
@@ -61447,6 +62131,22 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             return map;
         }, new Map());
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        if (this.crossFiltering) {
+            // introduce cross filtering transparent fills
+            var fillsMod_1 = [];
+            fills.forEach(function (fill) {
+                fillsMod_1.push(fill);
+                fillsMod_1.push(_this.hexToRGBA(fill, '0.3'));
+            });
+            fills = fillsMod_1;
+            // introduce cross filtering transparent strokes
+            var strokesMod_1 = [];
+            strokes.forEach(function (stroke) {
+                strokesMod_1.push(stroke);
+                strokesMod_1.push(_this.hexToRGBA(stroke, '0.3'));
+            });
+            strokes = strokesMod_1;
+        }
         var labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         var previousSeries = undefined;
         seriesDefinitions.forEach(function (seriesDefinition, index) {
@@ -61456,7 +62156,10 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 marker.shape = marker.type;
                 delete marker.type;
             }
-            var series = existingSeries || AgChart.createComponent(__assign$e(__assign$e({}, seriesDefaults), { type: 'scatter', fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer }), 'scatter.series');
+            var series = existingSeries || AgChart.createComponent(__assign$e(__assign$e({}, seriesDefaults), { type: 'scatter', fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                } }), 'scatter.series');
             if (!series) {
                 return;
             }
@@ -61482,6 +62185,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
             else {
                 series.labelKey = series.labelName = undefined;
+            }
+            var isFilteredOutYKey = yFieldDefinition.colId.indexOf('-filtered-out') > -1;
+            if (_this.crossFiltering) {
+                if (!isFilteredOutYKey) {
+                    // sync toggling of legend item with hidden 'filtered out' item
+                    chart.legend.addEventListener('click', function (event) {
+                        series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                    });
+                }
+                if (dataDomain) {
+                    series.marker.domain = dataDomain;
+                }
+                chart.tooltip.delay = 500;
+                // hide 'filtered out' legend items
+                if (isFilteredOutYKey) {
+                    series.showInLegend = false;
+                }
+                // add node click cross filtering callback to series
+                series.addEventListener('nodeClick', _this.crossFilterCallback);
             }
             if (!existingSeries) {
                 chart.addSeriesAfter(series, previousSeries);
@@ -61542,6 +62264,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
         }
     };
+    ScatterChartProxy.prototype.getCrossFilteringDataDomain = function (seriesDefinitions, params) {
+        var domain;
+        if (seriesDefinitions[0] && seriesDefinitions[0].sizeField) {
+            var sizeColId_1 = seriesDefinitions[0].sizeField.colId;
+            var allSizePoints_1 = [];
+            params.data.forEach(function (d) {
+                if (typeof d[sizeColId_1] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1]);
+                }
+                if (typeof d[sizeColId_1 + '-filtered-out'] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1 + '-filtered-out']);
+                }
+            });
+            if (allSizePoints_1.length > 0) {
+                domain = [Math.min.apply(Math, allSizePoints_1), Math.max.apply(Math, allSizePoints_1)];
+            }
+        }
+        return domain;
+    };
     return ScatterChartProxy;
 }(CartesianChartProxy));
 
@@ -61558,7 +62299,7 @@ var __extends$3b = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -61642,25 +62383,25 @@ var MarkersPanel = /** @class */ (function (_super) {
         initInput("marker.strokeWidth", this.seriesMarkerStrokeWidthSlider, "strokeWidth", 10);
     };
     MarkersPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesMarkersGroup\">\n                <ag-select ref=\"seriesMarkerShapeSelect\"></ag-select>\n                <ag-slider ref=\"seriesMarkerMinSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerStrokeWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2p([
+    __decorate$2j([
         RefSelector('seriesMarkersGroup')
     ], MarkersPanel.prototype, "seriesMarkersGroup", void 0);
-    __decorate$2p([
+    __decorate$2j([
         RefSelector('seriesMarkerShapeSelect')
     ], MarkersPanel.prototype, "seriesMarkerShapeSelect", void 0);
-    __decorate$2p([
+    __decorate$2j([
         RefSelector('seriesMarkerSizeSlider')
     ], MarkersPanel.prototype, "seriesMarkerSizeSlider", void 0);
-    __decorate$2p([
+    __decorate$2j([
         RefSelector('seriesMarkerMinSizeSlider')
     ], MarkersPanel.prototype, "seriesMarkerMinSizeSlider", void 0);
-    __decorate$2p([
+    __decorate$2j([
         RefSelector('seriesMarkerStrokeWidthSlider')
     ], MarkersPanel.prototype, "seriesMarkerStrokeWidthSlider", void 0);
-    __decorate$2p([
+    __decorate$2j([
         Autowired('chartTranslator')
     ], MarkersPanel.prototype, "chartTranslator", void 0);
-    __decorate$2p([
+    __decorate$2j([
         PostConstruct
     ], MarkersPanel.prototype, "init", null);
     return MarkersPanel;
@@ -61679,7 +62420,7 @@ var __extends$3c = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -61748,20 +62489,23 @@ var LineSeriesPanel = /** @class */ (function (_super) {
         this.destroyActivePanels();
         _super.prototype.destroy.call(this);
     };
-    LineSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2q([
+    LineSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineDashSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    __decorate$2k([
         RefSelector('seriesGroup')
     ], LineSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$2q([
+    __decorate$2k([
         RefSelector('seriesTooltipsToggle')
     ], LineSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$2q([
+    __decorate$2k([
         RefSelector('seriesLineWidthSlider')
     ], LineSeriesPanel.prototype, "seriesLineWidthSlider", void 0);
-    __decorate$2q([
+    __decorate$2k([
+        RefSelector('seriesLineDashSlider')
+    ], LineSeriesPanel.prototype, "seriesLineDashSlider", void 0);
+    __decorate$2k([
         Autowired('chartTranslator')
     ], LineSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$2q([
+    __decorate$2k([
         PostConstruct
     ], LineSeriesPanel.prototype, "init", null);
     return LineSeriesPanel;
@@ -61780,7 +62524,7 @@ var __extends$3d = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -61820,22 +62564,22 @@ var CalloutPanel = /** @class */ (function (_super) {
         initInput("label.offset", this.labelOffsetSlider, "offset", 30);
     };
     CalloutPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"calloutGroup\">\n                <ag-slider ref=\"calloutLengthSlider\"></ag-slider>\n                <ag-slider ref=\"calloutStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"labelOffsetSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2r([
+    __decorate$2l([
         RefSelector('calloutGroup')
     ], CalloutPanel.prototype, "calloutGroup", void 0);
-    __decorate$2r([
+    __decorate$2l([
         RefSelector('calloutLengthSlider')
     ], CalloutPanel.prototype, "calloutLengthSlider", void 0);
-    __decorate$2r([
+    __decorate$2l([
         RefSelector('calloutStrokeWidthSlider')
     ], CalloutPanel.prototype, "calloutStrokeWidthSlider", void 0);
-    __decorate$2r([
+    __decorate$2l([
         RefSelector('labelOffsetSlider')
     ], CalloutPanel.prototype, "labelOffsetSlider", void 0);
-    __decorate$2r([
+    __decorate$2l([
         Autowired('chartTranslator')
     ], CalloutPanel.prototype, "chartTranslator", void 0);
-    __decorate$2r([
+    __decorate$2l([
         PostConstruct
     ], CalloutPanel.prototype, "init", null);
     return CalloutPanel;
@@ -61854,7 +62598,7 @@ var __extends$3e = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -61986,25 +62730,25 @@ var PieSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     PieSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2s([
+    __decorate$2m([
         RefSelector('seriesGroup')
     ], PieSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$2s([
+    __decorate$2m([
         RefSelector('seriesTooltipsToggle')
     ], PieSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$2s([
+    __decorate$2m([
         RefSelector('seriesStrokeWidthSlider')
     ], PieSeriesPanel.prototype, "seriesStrokeWidthSlider", void 0);
-    __decorate$2s([
+    __decorate$2m([
         RefSelector('seriesLineOpacitySlider')
     ], PieSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);
-    __decorate$2s([
+    __decorate$2m([
         RefSelector('seriesFillOpacitySlider')
     ], PieSeriesPanel.prototype, "seriesFillOpacitySlider", void 0);
-    __decorate$2s([
+    __decorate$2m([
         Autowired('chartTranslator')
     ], PieSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$2s([
+    __decorate$2m([
         PostConstruct
     ], PieSeriesPanel.prototype, "init", null);
     return PieSeriesPanel;
@@ -62023,7 +62767,7 @@ var __extends$3f = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -62067,25 +62811,25 @@ var PaddingPanel = /** @class */ (function (_super) {
         initInput('left', this.paddingLeftSlider);
     };
     PaddingPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartPaddingGroup\">\n                <ag-slider ref=\"paddingTopSlider\"></ag-slider>\n                <ag-slider ref=\"paddingRightSlider\"></ag-slider>\n                <ag-slider ref=\"paddingBottomSlider\"></ag-slider>\n                <ag-slider ref=\"paddingLeftSlider\"></ag-slider>\n            </ag-group-component>\n        <div>";
-    __decorate$2t([
+    __decorate$2n([
         RefSelector('chartPaddingGroup')
     ], PaddingPanel.prototype, "chartPaddingGroup", void 0);
-    __decorate$2t([
+    __decorate$2n([
         RefSelector('paddingTopSlider')
     ], PaddingPanel.prototype, "paddingTopSlider", void 0);
-    __decorate$2t([
+    __decorate$2n([
         RefSelector('paddingRightSlider')
     ], PaddingPanel.prototype, "paddingRightSlider", void 0);
-    __decorate$2t([
+    __decorate$2n([
         RefSelector('paddingBottomSlider')
     ], PaddingPanel.prototype, "paddingBottomSlider", void 0);
-    __decorate$2t([
+    __decorate$2n([
         RefSelector('paddingLeftSlider')
     ], PaddingPanel.prototype, "paddingLeftSlider", void 0);
-    __decorate$2t([
+    __decorate$2n([
         Autowired('chartTranslator')
     ], PaddingPanel.prototype, "chartTranslator", void 0);
-    __decorate$2t([
+    __decorate$2n([
         PostConstruct
     ], PaddingPanel.prototype, "init", null);
     return PaddingPanel;
@@ -62104,7 +62848,7 @@ var __extends$3g = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -62146,16 +62890,16 @@ var BackgroundPanel = /** @class */ (function (_super) {
             .onValueChange(function (newColor) { return _this.chartController.getChartProxy().setChartOption('background.fill', newColor); });
     };
     BackgroundPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartBackgroundGroup\">\n                <ag-color-picker ref=\"colorPicker\"></ag-color-picker>\n            </ag-group-component>\n        <div>";
-    __decorate$2u([
+    __decorate$2o([
         RefSelector('chartBackgroundGroup')
     ], BackgroundPanel.prototype, "group", void 0);
-    __decorate$2u([
+    __decorate$2o([
         RefSelector('colorPicker')
     ], BackgroundPanel.prototype, "colorPicker", void 0);
-    __decorate$2u([
+    __decorate$2o([
         Autowired('chartTranslator')
     ], BackgroundPanel.prototype, "chartTranslator", void 0);
-    __decorate$2u([
+    __decorate$2o([
         PostConstruct
     ], BackgroundPanel.prototype, "init", null);
     return BackgroundPanel;
@@ -62174,7 +62918,7 @@ var __extends$3h = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -62219,11 +62963,11 @@ var TitlePanel = /** @class */ (function (_super) {
             }
         };
         var initialFont = {
-            family: hasTitle ? chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
-            style: hasTitle ? chartProxy.getChartOption('title.fontStyle') : undefined,
-            weight: hasTitle ? chartProxy.getChartOption('title.fontWeight') : undefined,
-            size: hasTitle ? chartProxy.getChartOption('title.fontSize') : 22,
-            color: hasTitle ? chartProxy.getChartOption('title.color') : 'black'
+            family: chartProxy.getChartOption('title.fontFamily'),
+            style: chartProxy.getChartOption('title.fontStyle'),
+            weight: chartProxy.getChartOption('title.fontWeight'),
+            size: chartProxy.getChartOption('title.fontSize'),
+            color: chartProxy.getChartOption('title.color')
         };
         if (!hasTitle) {
             setFont(initialFont);
@@ -62267,10 +63011,10 @@ var TitlePanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     TitlePanel.TEMPLATE = "<div></div>";
-    __decorate$2v([
+    __decorate$2p([
         Autowired('chartTranslator')
     ], TitlePanel.prototype, "chartTranslator", void 0);
-    __decorate$2v([
+    __decorate$2p([
         PostConstruct
     ], TitlePanel.prototype, "init", null);
     return TitlePanel;
@@ -62289,7 +63033,7 @@ var __extends$3i = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -62347,13 +63091,13 @@ var ChartPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ChartPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartGroup\"></ag-group-component>\n        </div>";
-    __decorate$2w([
+    __decorate$2q([
         RefSelector('chartGroup')
     ], ChartPanel.prototype, "chartGroup", void 0);
-    __decorate$2w([
+    __decorate$2q([
         Autowired('chartTranslator')
     ], ChartPanel.prototype, "chartTranslator", void 0);
-    __decorate$2w([
+    __decorate$2q([
         PostConstruct
     ], ChartPanel.prototype, "init", null);
     return ChartPanel;
@@ -62372,7 +63116,7 @@ var __extends$3j = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -62452,26 +63196,29 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
         this.destroyActivePanels();
         _super.prototype.destroy.call(this);
     };
-    AreaSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2x([
+    AreaSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineDashSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    __decorate$2r([
         RefSelector('seriesGroup')
     ], AreaSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$2x([
+    __decorate$2r([
         RefSelector('seriesTooltipsToggle')
     ], AreaSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$2x([
+    __decorate$2r([
         RefSelector('seriesLineWidthSlider')
     ], AreaSeriesPanel.prototype, "seriesLineWidthSlider", void 0);
-    __decorate$2x([
+    __decorate$2r([
+        RefSelector('seriesLineDashSlider')
+    ], AreaSeriesPanel.prototype, "seriesLineDashSlider", void 0);
+    __decorate$2r([
         RefSelector('seriesLineOpacitySlider')
     ], AreaSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);
-    __decorate$2x([
+    __decorate$2r([
         RefSelector('seriesFillOpacitySlider')
     ], AreaSeriesPanel.prototype, "seriesFillOpacitySlider", void 0);
-    __decorate$2x([
+    __decorate$2r([
         Autowired('chartTranslator')
     ], AreaSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$2x([
+    __decorate$2r([
         PostConstruct
     ], AreaSeriesPanel.prototype, "init", null);
     return AreaSeriesPanel;
@@ -62490,7 +63237,7 @@ var __extends$3k = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -62550,16 +63297,16 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ScatterSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n            </ag-group-component>\n        </div>";
-    __decorate$2y([
+    __decorate$2s([
         RefSelector('seriesGroup')
     ], ScatterSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$2y([
+    __decorate$2s([
         RefSelector('seriesTooltipsToggle')
     ], ScatterSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$2y([
+    __decorate$2s([
         Autowired('chartTranslator')
     ], ScatterSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$2y([
+    __decorate$2s([
         PostConstruct
     ], ScatterSeriesPanel.prototype, "init", null);
     return ScatterSeriesPanel;
@@ -62578,7 +63325,7 @@ var __extends$3l = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -62667,29 +63414,32 @@ var HistogramSeriesPanel = /** @class */ (function (_super) {
         this.destroyActivePanels();
         _super.prototype.destroy.call(this);
     };
-    HistogramSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"binCountSlider\"></ag-slider>\n                <ag-slider ref=\"seriesStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2z([
+    HistogramSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"binCountSlider\"></ag-slider>\n                <ag-slider ref=\"seriesStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineDashSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    __decorate$2t([
         RefSelector('seriesGroup')
     ], HistogramSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$2z([
+    __decorate$2t([
         RefSelector('seriesTooltipsToggle')
     ], HistogramSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$2z([
+    __decorate$2t([
         RefSelector('binCountSlider')
     ], HistogramSeriesPanel.prototype, "seriesBinCountSlider", void 0);
-    __decorate$2z([
+    __decorate$2t([
         RefSelector('seriesStrokeWidthSlider')
     ], HistogramSeriesPanel.prototype, "seriesStrokeWidthSlider", void 0);
-    __decorate$2z([
+    __decorate$2t([
         RefSelector('seriesLineOpacitySlider')
     ], HistogramSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);
-    __decorate$2z([
+    __decorate$2t([
+        RefSelector('seriesLineDashSlider')
+    ], HistogramSeriesPanel.prototype, "seriesLineDashSlider", void 0);
+    __decorate$2t([
         RefSelector('seriesFillOpacitySlider')
     ], HistogramSeriesPanel.prototype, "seriesFillOpacitySlider", void 0);
-    __decorate$2z([
+    __decorate$2t([
         Autowired('chartTranslator')
     ], HistogramSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$2z([
+    __decorate$2t([
         PostConstruct
     ], HistogramSeriesPanel.prototype, "init", null);
     return HistogramSeriesPanel;
@@ -62708,7 +63458,7 @@ var __extends$3m = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -62798,7 +63548,7 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ChartFormattingPanel.TEMPLATE = "<div class=\"ag-chart-format-wrapper\"></div>";
-    __decorate$2A([
+    __decorate$2u([
         PostConstruct
     ], ChartFormattingPanel.prototype, "init", null);
     return ChartFormattingPanel;
@@ -62817,7 +63567,7 @@ var __extends$3n = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -62841,10 +63591,10 @@ var MiniChart = /** @class */ (function (_super) {
     MiniChart.prototype.init = function () {
         this.scene.canvas.element.title = this.chartTranslator.translate(this.tooltipName);
     };
-    __decorate$2B([
+    __decorate$2v([
         Autowired('chartTranslator')
     ], MiniChart.prototype, "chartTranslator", void 0);
-    __decorate$2B([
+    __decorate$2v([
         PostConstruct
     ], MiniChart.prototype, "init", null);
     return MiniChart;
@@ -62863,7 +63613,7 @@ var __extends$3o = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -62896,7 +63646,7 @@ var MiniChartWithAxes = /** @class */ (function (_super) {
         root.append(leftAxis);
         root.append(bottomAxis);
     };
-    __decorate$2C([
+    __decorate$2w([
         PostConstruct
     ], MiniChartWithAxes.prototype, "addAxes", null);
     return MiniChartWithAxes;
@@ -63705,7 +64455,7 @@ var __extends$3E = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -63787,10 +64537,10 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         }
     };
     MiniChartsContainer.TEMPLATE = "<div class=\"ag-chart-settings-mini-wrapper\"></div>";
-    __decorate$2D([
+    __decorate$2x([
         Autowired('chartTranslator')
     ], MiniChartsContainer.prototype, "chartTranslator", void 0);
-    __decorate$2D([
+    __decorate$2x([
         PostConstruct
     ], MiniChartsContainer.prototype, "init", null);
     return MiniChartsContainer;
@@ -63809,7 +64559,7 @@ var __extends$3F = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -63933,25 +64683,22 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ChartSettingsPanel.TEMPLATE = "<div class=\"ag-chart-settings-wrapper\">\n            <div ref=\"eMiniChartsContainer\" class=\"ag-chart-settings-mini-charts-container\"></div>\n            <div ref=\"eNavBar\" class=\"ag-chart-settings-nav-bar\">\n                <div ref=\"ePrevBtn\" class=\"ag-chart-settings-prev\">\n                    <button type=\"button\" class=\"ag-chart-settings-prev-button\"></button>\n                </div>\n                <div ref=\"eCardSelector\" class=\"ag-chart-settings-card-selector\"></div>\n                <div ref=\"eNextBtn\" class=\"ag-chart-settings-next\">\n                    <button type=\"button\" class=\"ag-chart-settings-next-button\"></button>\n                </div>\n            </div>\n        </div>";
-    __decorate$2E([
-        Autowired('gridOptionsWrapper')
-    ], ChartSettingsPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$2E([
+    __decorate$2y([
         RefSelector('eMiniChartsContainer')
     ], ChartSettingsPanel.prototype, "eMiniChartsContainer", void 0);
-    __decorate$2E([
+    __decorate$2y([
         RefSelector('eNavBar')
     ], ChartSettingsPanel.prototype, "eNavBar", void 0);
-    __decorate$2E([
+    __decorate$2y([
         RefSelector('eCardSelector')
     ], ChartSettingsPanel.prototype, "eCardSelector", void 0);
-    __decorate$2E([
+    __decorate$2y([
         RefSelector('ePrevBtn')
     ], ChartSettingsPanel.prototype, "ePrevBtn", void 0);
-    __decorate$2E([
+    __decorate$2y([
         RefSelector('eNextBtn')
     ], ChartSettingsPanel.prototype, "eNextBtn", void 0);
-    __decorate$2E([
+    __decorate$2y([
         PostConstruct
     ], ChartSettingsPanel.prototype, "postConstruct", null);
     return ChartSettingsPanel;
@@ -63970,7 +64717,7 @@ var __extends$3G = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -64017,7 +64764,7 @@ var TabbedChartMenu = /** @class */ (function (_super) {
             tab: {
                 title: titleEl,
                 titleLabel: translatedTitle,
-                bodyPromise: Promise.resolve(eWrapperDiv),
+                bodyPromise: AgPromise.resolve(eWrapperDiv),
                 name: name
             }
         };
@@ -64057,10 +64804,10 @@ var TabbedChartMenu = /** @class */ (function (_super) {
     TabbedChartMenu.TAB_MAIN = 'settings';
     TabbedChartMenu.TAB_DATA = 'data';
     TabbedChartMenu.TAB_FORMAT = 'format';
-    __decorate$2F([
+    __decorate$2z([
         Autowired('chartTranslator')
     ], TabbedChartMenu.prototype, "chartTranslator", void 0);
-    __decorate$2F([
+    __decorate$2z([
         PostConstruct
     ], TabbedChartMenu.prototype, "init", null);
     return TabbedChartMenu;
@@ -64079,7 +64826,7 @@ var __extends$3H = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -64189,7 +64936,7 @@ var ChartMenu = /** @class */ (function (_super) {
             panels: this.tabs
         }));
         this.addManagedListener(menuPanel, Component.EVENT_DESTROYED, function () { return _this.destroyBean(_this.tabbedMenu); });
-        return new Promise(function (res) {
+        return new AgPromise(function (res) {
             window.setTimeout(function () {
                 menuPanel.setBodyComponent(_this.tabbedMenu);
                 _this.tabbedMenu.showTab(defaultTab);
@@ -64248,10 +64995,10 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.EVENT_DOWNLOAD_CHART = "downloadChart";
     ChartMenu.TEMPLATE = "<div class=\"ag-chart-menu\"></div>";
-    __decorate$2G([
-        Autowired("gridOptionsWrapper")
-    ], ChartMenu.prototype, "gridOptionsWrapper", void 0);
-    __decorate$2G([
+    __decorate$2A([
+        Autowired('chartTranslator')
+    ], ChartMenu.prototype, "chartTranslator", void 0);
+    __decorate$2A([
         PostConstruct
     ], ChartMenu.prototype, "postConstruct", null);
     return ChartMenu;
@@ -64281,7 +65028,7 @@ var __assign$f = (undefined && undefined.__assign) || function () {
     };
     return __assign$f.apply(this, arguments);
 };
-var __decorate$2H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -64334,7 +65081,7 @@ var TitleEdit = /** @class */ (function (_super) {
         ];
     };
     TitleEdit.prototype.startEditing = function (titleBBox) {
-        if (this.chartMenu.isVisible()) {
+        if (this.chartMenu && this.chartMenu.isVisible()) {
             // currently we ignore requests to edit the chart title while the chart menu is showing
             // because the click to edit the chart will also close the chart menu, making the position
             // of the title change.
@@ -64369,10 +65116,10 @@ var TitleEdit = /** @class */ (function (_super) {
         _.removeCssClass(this.getGui(), 'currently-editing');
     };
     TitleEdit.TEMPLATE = "<input\n            class=\"ag-chart-title-edit\"\n            style=\"padding:0; border:none; border-radius: 0; min-height: 0; text-align: center;\" />\n        ";
-    __decorate$2H([
+    __decorate$2B([
         Autowired('chartTranslator')
     ], TitleEdit.prototype, "chartTranslator", void 0);
-    __decorate$2H([
+    __decorate$2B([
         PostConstruct
     ], TitleEdit.prototype, "init", null);
     return TitleEdit;
@@ -64422,19 +65169,22 @@ var BarChartProxy = /** @class */ (function (_super) {
             shadow: seriesDefaults.shadow,
             label: seriesDefaults.label,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
-                colors: theme.palette.fills,
+                colors: seriesDefaults.fills || theme.palette.fills,
                 opacity: seriesDefaults.fillOpacity
             },
             stroke: {
-                colors: theme.palette.strokes,
+                colors: seriesDefaults.strokes || theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -64449,23 +65199,64 @@ var BarChartProxy = /** @class */ (function (_super) {
         }
         agChartOptions.autoSize = true;
         agChartOptions.axes = [__assign$g(__assign$g({}, (isColumn ? options.xAxis : options.yAxis)), { position: isColumn ? 'bottom' : 'left', type: grouping ? 'groupedCategory' : 'category' }), __assign$g(__assign$g({}, (isColumn ? options.yAxis : options.xAxis)), { position: isColumn ? 'left' : 'bottom', type: 'number' })];
-        agChartOptions.series = [__assign$g(__assign$g({}, this.getSeriesDefaults()), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer })];
+        agChartOptions.series = [__assign$g(__assign$g({}, this.getSeriesDefaults()), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                } })];
         agChartOptions.container = parentElement;
         return AgChart.create(agChartOptions);
     };
     BarChartProxy.prototype.update = function (params) {
+        var _this = this;
         this.chartProxyParams.grouping = params.grouping;
         this.updateAxes('category', !this.isColumnChart());
         var chart = this.chart;
         var barSeries = chart.series[0];
         var palette = this.getPalette();
+        var fields = params.fields;
+        if (this.crossFiltering) {
+            // add additional filtered out field
+            fields.forEach(function (field) {
+                var crossFilteringField = __assign$g({}, field);
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+            // introduce cross filtering transparent fills
+            var fills_1 = [];
+            palette.fills.forEach(function (fill) {
+                fills_1.push(fill);
+                fills_1.push(_this.hexToRGBA(fill, '0.3'));
+            });
+            barSeries.fills = fills_1;
+            // introduce cross filtering transparent strokes
+            var strokes = [];
+            palette.strokes.forEach(function (stroke) {
+                fills_1.push(stroke);
+                fills_1.push(_this.hexToRGBA(stroke, '0.3'));
+            });
+            barSeries.strokes = strokes;
+            // disable series highlighting by default
+            barSeries.highlightStyle.fill = undefined;
+            // hide 'filtered out' legend items
+            var colIds = params.fields.map(function (f) { return f.colId; });
+            barSeries.hideInLegend = colIds.filter(function (colId) { return colId.includes('-filtered-out'); });
+            // sync toggling of legend item with hidden 'filtered out' item
+            chart.legend.addEventListener('click', function (event) {
+                barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+            });
+            chart.tooltip.delay = 500;
+            // add node click cross filtering callback to series
+            barSeries.addEventListener('nodeClick', this.crossFilterCallback);
+        }
+        else {
+            barSeries.fills = palette.fills;
+            barSeries.strokes = palette.strokes;
+        }
         barSeries.data = this.transformData(params.data, params.category.id);
         barSeries.xKey = params.category.id;
         barSeries.xName = params.category.name;
         barSeries.yKeys = params.fields.map(function (f) { return f.colId; });
         barSeries.yNames = params.fields.map(function (f) { return f.displayName; });
-        barSeries.fills = palette.fills;
-        barSeries.strokes = palette.strokes;
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     };
     BarChartProxy.prototype.getDefaultOptions = function () {
@@ -64477,13 +65268,13 @@ var BarChartProxy = /** @class */ (function (_super) {
         return options;
     };
     BarChartProxy.prototype.isColumnChart = function () {
-        return _.includes([ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
+        return _.includes([ChartType.Column, ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
     };
     BarChartProxy.prototype.getSeriesDefaults = function () {
         var chartType = this.chartType;
         var isColumn = this.isColumnChart();
-        var isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
-        var isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
+        var isGrouped = !this.crossFiltering && (chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar);
+        var isNormalized = !this.crossFiltering && (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar);
         return __assign$g(__assign$g({}, this.chartOptions.seriesDefaults), { type: isColumn ? 'column' : 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
     };
     return BarChartProxy;
@@ -64537,7 +65328,10 @@ var AreaChartProxy = /** @class */ (function (_super) {
         }
         agChartOptions.autoSize = true;
         agChartOptions.axes = [__assign$h({ type: grouping ? 'groupedCategory' : xAxisType, position: 'bottom', paddingInner: 1, paddingOuter: 0 }, this.getXAxisDefaults(xAxisType, options)), __assign$h({ type: 'number', position: 'left' }, options.yAxis)];
-        agChartOptions.series = [__assign$h(__assign$h({}, seriesDefaults), { type: 'area', fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer, marker: marker })];
+        agChartOptions.series = [__assign$h(__assign$h({}, seriesDefaults), { type: 'area', fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
+                }, marker: marker })];
         return AgChart.create(agChartOptions, parentElement);
     };
     AreaChartProxy.prototype.update = function (params) {
@@ -64585,8 +65379,8 @@ var AreaChartProxy = /** @class */ (function (_super) {
             return;
         }
         var fieldIds = params.fields.map(function (f) { return f.colId; });
-        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
-        var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
+        var existingSeriesById = chart.series
+            .reduceRight(function (map, series, i) {
             var id = series.yKeys[0];
             if (fieldIds.indexOf(id) === i) {
                 map.set(id, series);
@@ -64597,8 +65391,10 @@ var AreaChartProxy = /** @class */ (function (_super) {
             return map;
         }, new Map());
         var data = this.transformData(params.data, params.category.id);
-        var previousSeries = undefined;
+        var previousSeries;
+        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
         params.fields.forEach(function (f, index) {
+            var _a = _this.processDataForCrossFiltering(data, f.colId, params), yKey = _a.yKey, atLeastOneSelectedPoint = _a.atLeastOneSelectedPoint;
             var areaSeries = existingSeriesById.get(f.colId);
             var fill = fills[index % fills.length];
             var stroke = strokes[index % strokes.length];
@@ -64606,7 +65402,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
                 areaSeries.data = data;
                 areaSeries.xKey = params.category.id;
                 areaSeries.xName = params.category.name;
-                areaSeries.yKeys = [f.colId];
+                areaSeries.yKeys = [yKey];
                 areaSeries.yNames = [f.displayName];
                 areaSeries.fills = [fill];
                 areaSeries.strokes = [stroke];
@@ -64618,10 +65414,11 @@ var AreaChartProxy = /** @class */ (function (_super) {
                     marker.shape = marker.type;
                     delete marker.type;
                 }
-                var options = __assign$h(__assign$h({}, seriesDefaults), { data: data, xKey: params.category.id, xName: params.category.name, yKeys: [f.colId], yNames: [f.displayName], fills: [fill], strokes: [stroke], fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker });
+                var options = __assign$h(__assign$h({}, seriesDefaults), { data: data, xKey: params.category.id, xName: params.category.name, yKeys: [yKey], yNames: [f.displayName], fills: [fill], strokes: [stroke], fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker });
                 areaSeries = AgChart.createComponent(options, 'area.series');
                 chart.addSeriesAfter(areaSeries, previousSeries);
             }
+            _this.updateSeriesForCrossFiltering(areaSeries, f.colId, chart, params, atLeastOneSelectedPoint);
             previousSeries = areaSeries;
         });
     };
@@ -64631,8 +65428,8 @@ var AreaChartProxy = /** @class */ (function (_super) {
         options.seriesDefaults = {
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -64647,9 +65444,13 @@ var AreaChartProxy = /** @class */ (function (_super) {
                 enabled: seriesDefaults.marker.enabled,
                 shape: seriesDefaults.marker.shape,
                 size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
+                strokeWidth: seriesDefaults.marker.strokeWidth,
+                formatter: seriesDefaults.marker.formatter
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -64726,8 +65527,8 @@ var LineChartProxy = /** @class */ (function (_super) {
         var axisType = this.isTimeAxis(params) ? 'time' : 'category';
         this.updateAxes(axisType);
         var chart = this.chart;
-        var fieldIds = params.fields.map(function (f) { return f.colId; });
-        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        var fields = params.fields;
+        var fieldIds = fields.map(function (f) { return f.colId; });
         var data = this.transformData(params.data, params.category.id);
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var id = series.yKey;
@@ -64739,8 +65540,10 @@ var LineChartProxy = /** @class */ (function (_super) {
             }
             return map;
         }, new Map());
-        var previousSeries = undefined;
-        params.fields.forEach(function (f, index) {
+        var previousSeries;
+        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        fields.forEach(function (f, index) {
+            var _a = _this.processDataForCrossFiltering(data, f.colId, params), yKey = _a.yKey, atLeastOneSelectedPoint = _a.atLeastOneSelectedPoint;
             var lineSeries = existingSeriesById.get(f.colId);
             var fill = fills[index % fills.length];
             var stroke = strokes[index % strokes.length];
@@ -64749,7 +65552,7 @@ var LineChartProxy = /** @class */ (function (_super) {
                 lineSeries.data = data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;
-                lineSeries.yKey = f.colId;
+                lineSeries.yKey = yKey;
                 lineSeries.yName = f.displayName;
                 lineSeries.marker.fill = fill;
                 lineSeries.marker.stroke = stroke;
@@ -64763,10 +65566,14 @@ var LineChartProxy = /** @class */ (function (_super) {
                     marker.shape = marker.type;
                     delete marker.type;
                 }
-                var options = __assign$i(__assign$i({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, xKey: params.category.id, xName: params.category.name, yKey: f.colId, yName: f.displayName, fill: fill, stroke: fill, fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer, marker: marker });
+                var options = __assign$i(__assign$i({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, xKey: params.category.id, xName: params.category.name, yKey: yKey, yName: f.displayName, fill: fill, stroke: fill, fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                        enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                        renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                    }, marker: marker });
                 lineSeries = AgChart.createComponent(options, 'line.series');
                 chart.addSeriesAfter(lineSeries, previousSeries);
             }
+            _this.updateSeriesForCrossFiltering(lineSeries, f.colId, chart, params, atLeastOneSelectedPoint);
             previousSeries = lineSeries;
         });
         this.updateLabelRotation(params.category.id, false, axisType);
@@ -64776,8 +65583,8 @@ var LineChartProxy = /** @class */ (function (_super) {
         var seriesDefaults = theme.getConfig('line.series.line');
         options.seriesDefaults = {
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: [],
@@ -64792,9 +65599,13 @@ var LineChartProxy = /** @class */ (function (_super) {
                 enabled: seriesDefaults.marker.enabled,
                 shape: seriesDefaults.marker.shape,
                 size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
+                strokeWidth: seriesDefaults.marker.strokeWidth,
+                formatter: seriesDefaults.marker.formatter
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -64867,6 +65678,14 @@ var PieChartProxy = /** @class */ (function (_super) {
         _this.recreateChart();
         return _this;
     }
+    PieChartProxy.prototype.createChart = function (options) {
+        options = options || this.chartOptions;
+        var seriesDefaults = options.seriesDefaults;
+        var agChartOptions = options;
+        agChartOptions.autoSize = true;
+        agChartOptions.series = [__assign$j(__assign$j({}, seriesDefaults), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, type: 'pie' })];
+        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
+    };
     PieChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
         var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
         var seriesDefaults = theme.getConfig('pie.series.pie');
@@ -64876,8 +65695,8 @@ var PieChartProxy = /** @class */ (function (_super) {
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -64889,16 +65708,9 @@ var PieChartProxy = /** @class */ (function (_super) {
                 width: seriesDefaults.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
-    };
-    PieChartProxy.prototype.createChart = function (options) {
-        options = options || this.chartOptions;
-        var seriesDefaults = options.seriesDefaults;
-        var agChartOptions = options;
-        agChartOptions.autoSize = true;
-        agChartOptions.series = [__assign$j(__assign$j({}, seriesDefaults), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, type: 'pie' })];
-        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     PieChartProxy.prototype.update = function (params) {
         var chart = this.chart;
@@ -64906,27 +65718,87 @@ var PieChartProxy = /** @class */ (function (_super) {
             chart.removeAllSeries();
             return;
         }
-        var existingSeries = chart.series[0];
-        var existingSeriesId = existingSeries && existingSeries.angleKey;
-        var pieSeriesField = params.fields[0];
+        var field = params.fields[0];
+        var angleField = field;
+        if (this.crossFiltering) {
+            // add additional filtered out field
+            var fields_1 = params.fields;
+            fields_1.forEach(function (field) {
+                var crossFilteringField = __assign$j({}, field);
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields_1.push(crossFilteringField);
+            });
+            var filteredOutField_1 = fields_1[1];
+            params.data.forEach(function (d) {
+                d[field.colId + '-total'] = d[field.colId] + d[filteredOutField_1.colId];
+                d[field.colId] = d[field.colId] / d[field.colId + '-total'];
+                d[filteredOutField_1.colId] = 1;
+            });
+            var opaqueSeries = chart.series[1];
+            var radiusField = filteredOutField_1;
+            opaqueSeries = this.updateSeries(chart, opaqueSeries, angleField, radiusField, params, undefined);
+            radiusField = angleField;
+            var filteredSeries = chart.series[0];
+            this.updateSeries(chart, filteredSeries, angleField, radiusField, params, opaqueSeries);
+        }
+        else {
+            var series = chart.series[0];
+            this.updateSeries(chart, series, angleField, angleField, params, undefined);
+        }
+    };
+    PieChartProxy.prototype.updateSeries = function (chart, series, angleField, field, params, opaqueSeries) {
+        var _this = this;
+        var existingSeriesId = series && series.angleKey;
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
         var seriesDefaults = this.chartOptions.seriesDefaults;
-        var pieSeries = existingSeries;
+        var pieSeries = series;
         var calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
-        if (existingSeriesId !== pieSeriesField.colId) {
-            chart.removeSeries(existingSeries);
-            pieSeries = AgChart.createComponent(__assign$j(__assign$j({}, seriesDefaults), { type: 'pie', angleKey: pieSeriesField.colId, title: __assign$j(__assign$j({}, seriesDefaults.title), { text: seriesDefaults.title.text || params.fields[0].displayName }), fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer }), 'pie.series');
+        if (existingSeriesId !== field.colId) {
+            chart.removeSeries(series);
+            pieSeries = AgChart.createComponent(__assign$j(__assign$j({}, seriesDefaults), { type: 'pie', angleKey: this.crossFiltering ? angleField.colId + '-total' : angleField.colId, radiusKey: this.crossFiltering ? field.colId : undefined, title: __assign$j(__assign$j({}, seriesDefaults.title), { text: seriesDefaults.title.text || params.fields[0].displayName }), fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                } }), 'pie.series');
         }
-        pieSeries.angleName = pieSeriesField.displayName;
+        pieSeries.angleName = field.displayName;
         pieSeries.labelKey = params.category.id;
         pieSeries.labelName = params.category.name;
         pieSeries.data = params.data;
-        pieSeries.fills = fills;
-        pieSeries.strokes = strokes;
-        if (calloutColors) {
-            pieSeries.callout.colors = strokes;
+        if (this.crossFiltering) {
+            pieSeries.radiusMin = 0;
+            pieSeries.radiusMax = 1;
+            var isOpaqueSeries = !opaqueSeries;
+            if (isOpaqueSeries) {
+                pieSeries.fills = fills.map(function (fill) { return _this.hexToRGBA(fill, '0.3'); });
+                pieSeries.strokes = strokes.map(function (stroke) { return _this.hexToRGBA(stroke, '0.3'); });
+                pieSeries.showInLegend = false;
+            }
+            else {
+                chart.legend.addEventListener('click', function (event) {
+                    if (opaqueSeries) {
+                        opaqueSeries.toggleSeriesItem(event.itemId, event.enabled);
+                    }
+                });
+                pieSeries.fills = fills;
+                pieSeries.strokes = strokes;
+                if (calloutColors) {
+                    pieSeries.callout.colors = strokes;
+                }
+            }
+            chart.tooltip.delay = 500;
+            // disable series highlighting by default
+            pieSeries.highlightStyle.fill = undefined;
+            pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
+        }
+        else {
+            pieSeries.fills = fills;
+            pieSeries.strokes = strokes;
+            if (calloutColors) {
+                pieSeries.callout.colors = strokes;
+            }
         }
         chart.addSeries(pieSeries);
+        return pieSeries;
     };
     PieChartProxy.prototype.getDefaultOptions = function () {
         var strokes = this.getPredefinedPalette().strokes;
@@ -64985,8 +65857,8 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -64998,6 +65870,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
                 width: seriesDefaults.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -65010,6 +65883,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     DoughnutChartProxy.prototype.update = function (params) {
+        var _this = this;
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
@@ -65026,47 +65900,141 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         });
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        var numFields = params.fields.length;
         var offset = 0;
-        params.fields.forEach(function (f, index) {
-            var existingSeries = seriesMap[f.colId];
-            var seriesOptions = __assign$k(__assign$k({}, seriesDefaults), { type: 'pie', angleKey: f.colId, showInLegend: index === 0, title: __assign$k(__assign$k({}, seriesDefaults.title), { text: seriesDefaults.title.text || f.displayName }), fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer });
-            var calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
-            var pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series');
-            pieSeries.angleName = f.displayName;
-            pieSeries.labelKey = params.category.id;
-            pieSeries.labelName = params.category.name;
-            pieSeries.data = params.data;
-            pieSeries.fills = fills;
-            pieSeries.strokes = strokes;
-            // Normally all series provide legend items for every slice.
-            // For our use case, where all series have the same number of slices in the same order with the same labels
-            // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
-            // so we only show legend items for the first series, and then when the user toggles the slices of the
-            // first series in the legend, we programmatically toggle the corresponding slices of other series.
-            if (index === 0) {
-                pieSeries.toggleSeriesItem = function (itemId, enabled) {
-                    if (doughnutChart) {
-                        doughnutChart.series.forEach(function (series) {
-                            series.seriesItemEnabled[itemId] = enabled;
-                        });
-                    }
-                    pieSeries.scheduleData();
-                };
-            }
-            pieSeries.outerRadiusOffset = offset;
-            offset -= 20;
-            pieSeries.innerRadiusOffset = offset;
-            offset -= 20;
-            if (calloutColors) {
-                pieSeries.callout.colors = strokes;
-            }
-            if (!existingSeries) {
-                seriesMap[f.colId] = pieSeries;
-            }
-        });
+        if (this.crossFiltering) {
+            params.fields.forEach(function (field, index) {
+                var filteredOutField = __assign$k({}, field);
+                filteredOutField.colId = field.colId + '-filtered-out';
+                params.data.forEach(function (d) {
+                    d[field.colId + '-total'] = d[field.colId] + d[filteredOutField.colId];
+                    d[field.colId] = d[field.colId] / d[field.colId + '-total'];
+                    d[filteredOutField.colId] = 1;
+                });
+                var _a = _this.updateSeries({
+                    seriesMap: seriesMap,
+                    angleField: field,
+                    field: filteredOutField,
+                    seriesDefaults: seriesDefaults,
+                    index: index,
+                    params: params,
+                    fills: fills,
+                    strokes: strokes,
+                    doughnutChart: doughnutChart,
+                    offset: offset,
+                    numFields: numFields,
+                    opaqueSeries: undefined
+                }), updatedOffset = _a.updatedOffset, pieSeries = _a.pieSeries;
+                _this.updateSeries({
+                    seriesMap: seriesMap,
+                    angleField: field,
+                    field: field,
+                    seriesDefaults: seriesDefaults,
+                    index: index,
+                    params: params,
+                    fills: fills,
+                    strokes: strokes,
+                    doughnutChart: doughnutChart,
+                    offset: offset,
+                    numFields: numFields,
+                    opaqueSeries: pieSeries
+                });
+                offset = updatedOffset;
+            });
+        }
+        else {
+            params.fields.forEach(function (f, index) {
+                var updatedOffset = _this.updateSeries({
+                    seriesMap: seriesMap,
+                    angleField: f,
+                    field: f,
+                    seriesDefaults: seriesDefaults,
+                    index: index,
+                    params: params,
+                    fills: fills,
+                    strokes: strokes,
+                    doughnutChart: doughnutChart,
+                    offset: offset,
+                    numFields: numFields,
+                    opaqueSeries: undefined
+                }).updatedOffset;
+                offset = updatedOffset;
+            });
+        }
         // Because repaints are automatic, it's important to remove/add/update series at once,
         // so that we don't get painted twice.
         doughnutChart.series = _.values(seriesMap);
+    };
+    DoughnutChartProxy.prototype.updateSeries = function (updateParams) {
+        var _this = this;
+        var existingSeries = updateParams.seriesMap[updateParams.field.colId];
+        var seriesOptions = __assign$k(__assign$k({}, updateParams.seriesDefaults), { type: 'pie', angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId, radiusKey: this.crossFiltering ? updateParams.field.colId : undefined, showInLegend: updateParams.index === 0, title: __assign$k(__assign$k({}, updateParams.seriesDefaults.title), { text: updateParams.seriesDefaults.title.text || updateParams.field.displayName }), fills: updateParams.seriesDefaults.fill.colors, fillOpacity: updateParams.seriesDefaults.fill.opacity, strokes: updateParams.seriesDefaults.stroke.colors, strokeOpacity: updateParams.seriesDefaults.stroke.opacity, strokeWidth: updateParams.seriesDefaults.stroke.width, tooltip: {
+                enabled: updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled,
+                renderer: (updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled && updateParams.seriesDefaults.tooltip.renderer) || undefined,
+            } });
+        var calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
+        var pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series');
+        pieSeries.angleName = updateParams.field.displayName;
+        pieSeries.labelKey = updateParams.params.category.id;
+        pieSeries.labelName = updateParams.params.category.name;
+        pieSeries.data = updateParams.params.data;
+        // Normally all series provide legend items for every slice.
+        // For our use case, where all series have the same number of slices in the same order with the same labels
+        // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
+        // so we only show legend items for the first series, and then when the user toggles the slices of the
+        // first series in the legend, we programmatically toggle the corresponding slices of other series.
+        if (updateParams.index === 0) {
+            pieSeries.toggleSeriesItem = function (itemId, enabled) {
+                if (updateParams.doughnutChart) {
+                    updateParams.doughnutChart.series.forEach(function (series) {
+                        series.seriesItemEnabled[itemId] = enabled;
+                    });
+                }
+                pieSeries.scheduleData();
+            };
+        }
+        if (this.crossFiltering) {
+            pieSeries.radiusMin = 0;
+            pieSeries.radiusMax = 1;
+            var isOpaqueSeries = !updateParams.opaqueSeries;
+            if (isOpaqueSeries) {
+                pieSeries.fills = updateParams.fills.map(function (fill) { return _this.hexToRGBA(fill, '0.3'); });
+                pieSeries.strokes = updateParams.strokes.map(function (stroke) { return _this.hexToRGBA(stroke, '0.3'); });
+                pieSeries.showInLegend = false;
+            }
+            else {
+                updateParams.doughnutChart.legend.addEventListener('click', function (event) {
+                    if (updateParams.opaqueSeries) {
+                        updateParams.opaqueSeries.toggleSeriesItem(event.itemId, event.enabled);
+                    }
+                });
+                pieSeries.fills = updateParams.fills;
+                pieSeries.strokes = updateParams.strokes;
+                if (calloutColors) {
+                    pieSeries.callout.colors = updateParams.strokes;
+                }
+            }
+            // disable series highlighting by default
+            pieSeries.highlightStyle.fill = undefined;
+            pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
+            updateParams.doughnutChart.tooltip.delay = 500;
+        }
+        else {
+            pieSeries.fills = updateParams.fills;
+            pieSeries.strokes = updateParams.strokes;
+            if (calloutColors) {
+                pieSeries.callout.colors = updateParams.strokes;
+            }
+        }
+        var offsetAmount = updateParams.numFields > 1 ? 20 : 40;
+        pieSeries.outerRadiusOffset = updateParams.offset;
+        updateParams.offset -= offsetAmount;
+        pieSeries.innerRadiusOffset = updateParams.offset;
+        updateParams.offset -= offsetAmount;
+        if (!existingSeries) {
+            updateParams.seriesMap[updateParams.field.colId] = pieSeries;
+        }
+        return { updatedOffset: updateParams.offset, pieSeries: pieSeries };
     };
     DoughnutChartProxy.prototype.getDefaultOptions = function () {
         var strokes = this.getPredefinedPalette().strokes;
@@ -65123,8 +66091,8 @@ var HistogramChartProxy = /** @class */ (function (_super) {
             shadow: this.getDefaultDropShadowOptions(),
             label: seriesDefaults.label,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -65135,7 +66103,10 @@ var HistogramChartProxy = /** @class */ (function (_super) {
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -65146,7 +66117,10 @@ var HistogramChartProxy = /** @class */ (function (_super) {
         var agChartOptions = options;
         agChartOptions.autoSize = true;
         agChartOptions.axes = [__assign$l({ type: 'number', position: 'bottom' }, options.xAxis), __assign$l({ type: 'number', position: 'left' }, options.yAxis)];
-        agChartOptions.series = [__assign$l(__assign$l({}, seriesDefaults), { fill: seriesDefaults.fill.colors[0], fillOpacity: seriesDefaults.fill.opacity, stroke: seriesDefaults.stroke.colors[0], strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer, type: 'histogram' })];
+        agChartOptions.series = [__assign$l(__assign$l({}, seriesDefaults), { fill: seriesDefaults.fill.colors[0], fillOpacity: seriesDefaults.fill.opacity, stroke: seriesDefaults.stroke.colors[0], strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: (seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer) || undefined,
+                }, type: 'histogram' })];
         return AgChart.create(agChartOptions, parentElement);
     };
     HistogramChartProxy.prototype.update = function (params) {
@@ -65191,7 +66165,7 @@ var __extends$3Q = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -65221,6 +66195,7 @@ var GridChartComp = /** @class */ (function (_super) {
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
             unlinkChart: this.params.unlinkChart,
+            crossFiltering: this.params.crossFiltering,
         };
         var isRtl = this.gridOptionsWrapper.isEnableRtl();
         _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
@@ -65236,7 +66211,10 @@ var GridChartComp = /** @class */ (function (_super) {
         this.addTitleEditComp();
         this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
-        this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        if (this.chartMenu) {
+            // chart menu may not exist, i.e. cross filtering
+            this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        }
         this.refresh();
         this.raiseChartCreatedEvent();
     };
@@ -65253,6 +66231,7 @@ var GridChartComp = /** @class */ (function (_super) {
         }
     };
     GridChartComp.prototype.createChart = function () {
+        var _this = this;
         var width, height;
         // if chart already exists, destroy it and remove it from DOM
         if (this.chartProxy) {
@@ -65268,6 +66247,11 @@ var GridChartComp = /** @class */ (function (_super) {
         var customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
         var chartType = this.model.getChartType();
         var isGrouping = this.model.isGrouping();
+        var crossFilterCallback = function (event, reset) {
+            var ctx = _this.params.crossFilteringContext;
+            ctx.lastSelectedChartId = reset ? '' : _this.model.getChartId();
+            _this.crossFilter.filter(event, reset);
+        };
         var chartProxyParams = {
             chartId: this.model.getChartId(),
             chartType: chartType,
@@ -65280,6 +66264,8 @@ var GridChartComp = /** @class */ (function (_super) {
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             allowPaletteOverride: !this.params.chartThemeName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
+            crossFiltering: this.params.crossFiltering,
+            crossFilterCallback: crossFilterCallback,
             parentElement: this.eChart,
             width: width,
             height: height,
@@ -65293,6 +66279,10 @@ var GridChartComp = /** @class */ (function (_super) {
         this.chartType = chartType;
         this.chartThemeName = this.model.getChartThemeName();
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
+        if (!this.chartProxy) {
+            console.warn('ag-Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            return;
+        }
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
         _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
         this.chartController.setChartProxy(this.chartProxy);
@@ -65308,6 +66298,8 @@ var GridChartComp = /** @class */ (function (_super) {
     };
     GridChartComp.createChartProxy = function (chartProxyParams) {
         switch (chartProxyParams.chartType) {
+            case ChartType.Column:
+            case ChartType.Bar:
             case ChartType.GroupedColumn:
             case ChartType.StackedColumn:
             case ChartType.NormalizedColumn:
@@ -65375,8 +66367,10 @@ var GridChartComp = /** @class */ (function (_super) {
         return { width: width, height: height };
     };
     GridChartComp.prototype.addMenu = function () {
-        this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
-        this.eChartContainer.appendChild(this.chartMenu.getGui());
+        if (!this.params.crossFiltering) {
+            this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
+            this.eChartContainer.appendChild(this.chartMenu.getGui());
+        }
     };
     GridChartComp.prototype.addTitleEditComp = function () {
         this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
@@ -65401,6 +66395,7 @@ var GridChartComp = /** @class */ (function (_super) {
         return this.chartController.getChartModel();
     };
     GridChartComp.prototype.updateChart = function () {
+        var _this = this;
         var _a = this, model = _a.model, chartProxy = _a.chartProxy;
         var selectedCols = model.getSelectedValueColState();
         var fields = selectedCols.map(function (c) { return ({ colId: c.colId, displayName: c.displayName }); });
@@ -65418,7 +66413,9 @@ var GridChartComp = /** @class */ (function (_super) {
                 name: selectedDimension.displayName,
                 chartDataType: this.getChartDataType(selectedDimension.colId)
             },
-            fields: fields
+            fields: fields,
+            chartId: this.model.getChartId(),
+            getCrossFilteringContext: function () { return _this.params.crossFilteringContext; },
         };
         chartProxy.update(chartUpdateParams);
         this.titleEdit.setChartProxy(this.chartProxy);
@@ -65518,43 +66515,43 @@ var GridChartComp = /** @class */ (function (_super) {
         this.raiseChartDestroyedEvent();
     };
     GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChartContainer\" tabindex=\"-1\" class=\"ag-chart-components-wrapper\">\n                <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\"></div>\n                <div ref=\"eEmpty\" class=\"ag-chart-empty-text ag-unselectable\"></div>\n            </div>\n            <div ref=\"eTitleEditContainer\"></div>\n            <div ref=\"eMenuContainer\" class=\"ag-chart-docked-container\"></div>\n        </div>";
-    __decorate$2I([
+    __decorate$2C([
         RefSelector('eChart')
     ], GridChartComp.prototype, "eChart", void 0);
-    __decorate$2I([
+    __decorate$2C([
         RefSelector('eChartContainer')
     ], GridChartComp.prototype, "eChartContainer", void 0);
-    __decorate$2I([
+    __decorate$2C([
         RefSelector('eMenuContainer')
     ], GridChartComp.prototype, "eMenuContainer", void 0);
-    __decorate$2I([
+    __decorate$2C([
         RefSelector('eEmpty')
     ], GridChartComp.prototype, "eEmpty", void 0);
-    __decorate$2I([
+    __decorate$2C([
         RefSelector('eTitleEditContainer')
     ], GridChartComp.prototype, "eTitleEditContainer", void 0);
-    __decorate$2I([
-        Autowired('gridOptionsWrapper')
-    ], GridChartComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$2I([
+    __decorate$2C([
         Autowired('environment')
     ], GridChartComp.prototype, "environment", void 0);
-    __decorate$2I([
+    __decorate$2C([
         Autowired('chartTranslator')
     ], GridChartComp.prototype, "chartTranslator", void 0);
-    __decorate$2I([
+    __decorate$2C([
         Autowired('columnController')
     ], GridChartComp.prototype, "columnController", void 0);
-    __decorate$2I([
+    __decorate$2C([
+        Autowired('chartCrossFilter')
+    ], GridChartComp.prototype, "crossFilter", void 0);
+    __decorate$2C([
         Autowired('gridApi')
     ], GridChartComp.prototype, "gridApi", void 0);
-    __decorate$2I([
+    __decorate$2C([
         Autowired('columnApi')
     ], GridChartComp.prototype, "columnApi", void 0);
-    __decorate$2I([
+    __decorate$2C([
         Autowired('popupService')
     ], GridChartComp.prototype, "popupService", void 0);
-    __decorate$2I([
+    __decorate$2C([
         PostConstruct
     ], GridChartComp.prototype, "init", null);
     return GridChartComp;
@@ -65573,7 +66570,7 @@ var __extends$3R = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -65587,6 +66584,10 @@ var ChartService = /** @class */ (function (_super) {
         // those in developer provided containers.
         _this.activeCharts = new Set();
         _this.activeChartComps = new Set();
+        // this shared (singleton) context is used by cross filtering in line and area charts
+        _this.crossFilteringContext = {
+            lastSelectedChartId: '',
+        };
         return _this;
     }
     ChartService.prototype.getChartModels = function () {
@@ -65627,11 +66628,25 @@ var ChartService = /** @class */ (function (_super) {
         }
         return this.createChart(cellRange, params.chartType, params.chartThemeName, true, true, params.chartContainer, undefined, params.chartThemeOverrides, params.unlinkChart, params.processChartOptions);
     };
-    ChartService.prototype.createChart = function (cellRange, chartType, chartThemeName, pivotChart, suppressChartRanges, container, aggFunc, chartThemeOverrides, unlinkChart, processChartOptions) {
+    ChartService.prototype.createCrossFilterChart = function (params) {
+        var cellRange = this.rangeController
+            ? this.rangeController.createCellRangeFromCellRangeParams(params.cellRange)
+            : undefined;
+        if (!cellRange) {
+            console.warn("ag-Grid - unable to create chart as no range is selected");
+            return;
+        }
+        var crossFiltering = true;
+        var suppressChartRangesSupplied = typeof params.suppressChartRanges !== 'undefined' && params.suppressChartRanges !== null;
+        var suppressChartRanges = suppressChartRangesSupplied ? params.suppressChartRanges : true;
+        return this.createChart(cellRange, params.chartType, params.chartThemeName, false, suppressChartRanges, params.chartContainer, params.aggFunc, params.chartThemeOverrides, params.unlinkChart, undefined, crossFiltering);
+    };
+    ChartService.prototype.createChart = function (cellRange, chartType, chartThemeName, pivotChart, suppressChartRanges, container, aggFunc, chartThemeOverrides, unlinkChart, processChartOptions, crossFiltering) {
         var _this = this;
         if (pivotChart === void 0) { pivotChart = false; }
         if (suppressChartRanges === void 0) { suppressChartRanges = false; }
         if (unlinkChart === void 0) { unlinkChart = false; }
+        if (crossFiltering === void 0) { crossFiltering = false; }
         var createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
         var params = {
             pivotChart: pivotChart,
@@ -65643,7 +66658,9 @@ var ChartService = /** @class */ (function (_super) {
             aggFunc: aggFunc,
             chartThemeOverrides: chartThemeOverrides,
             processChartOptions: processChartOptions,
-            unlinkChart: unlinkChart
+            unlinkChart: unlinkChart,
+            crossFiltering: crossFiltering,
+            crossFilteringContext: this.crossFilteringContext
         };
         var chartComp = new GridChartComp(params);
         this.context.createBean(chartComp);
@@ -65697,22 +66714,19 @@ var ChartService = /** @class */ (function (_super) {
     ChartService.prototype.destroyAllActiveCharts = function () {
         this.activeCharts.forEach(function (chart) { return chart.destroyChart(); });
     };
-    __decorate$2J([
+    __decorate$2D([
         Optional('rangeController')
     ], ChartService.prototype, "rangeController", void 0);
-    __decorate$2J([
+    __decorate$2D([
         Autowired('columnController')
     ], ChartService.prototype, "columnController", void 0);
-    __decorate$2J([
+    __decorate$2D([
         Autowired('environment')
     ], ChartService.prototype, "environment", void 0);
-    __decorate$2J([
-        Autowired('gridOptionsWrapper')
-    ], ChartService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$2J([
+    __decorate$2D([
         PreDestroy
     ], ChartService.prototype, "destroyAllActiveCharts", null);
-    ChartService = __decorate$2J([
+    ChartService = __decorate$2D([
         Bean('chartService')
     ], ChartService);
     return ChartService;
@@ -65731,7 +66745,7 @@ var __extends$3S = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -65845,10 +66859,7 @@ var ChartTranslator = /** @class */ (function (_super) {
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
     };
-    __decorate$2K([
-        Autowired('gridOptionsWrapper')
-    ], ChartTranslator.prototype, "gridOptionsWrapper", void 0);
-    ChartTranslator = ChartTranslator_1 = __decorate$2K([
+    ChartTranslator = ChartTranslator_1 = __decorate$2E([
         Bean("chartTranslator")
     ], ChartTranslator);
     return ChartTranslator;
@@ -65867,7 +66878,136 @@ var __extends$3T = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var ChartCrossFilter = /** @class */ (function (_super) {
+    __extends$3S(ChartCrossFilter, _super);
+    function ChartCrossFilter() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ChartCrossFilter_1 = ChartCrossFilter;
+    ChartCrossFilter.prototype.filter = function (event, reset) {
+        if (reset === void 0) { reset = false; }
+        var filterModel = this.gridApi.getFilterModel();
+        // filters should be reset when user clicks on canvas background
+        if (reset) {
+            this.resetFilters(filterModel);
+            return;
+        }
+        var colId = ChartCrossFilter_1.extractFilterColId(event);
+        if (this.isValidColumnFilter(colId)) {
+            // update filters based on current chart selections
+            this.updateFilters(filterModel, event);
+        }
+        else {
+            console.warn("ag-Grid: cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
+                "to be defined on the column with id: '" + colId + "'");
+        }
+    };
+    ChartCrossFilter.prototype.resetFilters = function (filterModel) {
+        var filtersExist = Object.keys(filterModel).length > 0;
+        if (filtersExist) {
+            // only reset filters / charts when necessary to prevent undesirable flickering effect
+            this.gridApi.setFilterModel(null);
+            this.gridApi.onFilterChanged();
+        }
+    };
+    ChartCrossFilter.prototype.updateFilters = function (filterModel, event) {
+        var _a;
+        var dataKey = ChartCrossFilter_1.extractFilterColId(event);
+        var rawValue = event.datum[dataKey];
+        if (rawValue === undefined) {
+            return;
+        }
+        var selectedValue = rawValue.toString();
+        var filterColId = dataKey.replace('-filtered-out', '');
+        if (event.event.metaKey || event.event.ctrlKey) {
+            var existingGridValues = this.getCurrentGridValuesForCategory(filterColId);
+            var valueAlreadyExists = _.includes(existingGridValues, selectedValue);
+            var updatedValues = void 0;
+            if (valueAlreadyExists) {
+                updatedValues = existingGridValues.filter(function (v) { return v !== selectedValue; });
+            }
+            else {
+                updatedValues = existingGridValues;
+                updatedValues.push(selectedValue);
+            }
+            filterModel[filterColId] = this.getUpdatedFilterModel(filterColId, updatedValues);
+        }
+        else {
+            var updatedValues = [selectedValue];
+            filterModel = (_a = {}, _a[filterColId] = this.getUpdatedFilterModel(filterColId, updatedValues), _a);
+        }
+        this.gridApi.setFilterModel(filterModel);
+    };
+    ChartCrossFilter.prototype.getUpdatedFilterModel = function (colId, updatedValues) {
+        var columnFilterType = this.getColumnFilterType(colId);
+        if (columnFilterType === 'agMultiColumnFilter') {
+            return { filterType: 'multi', filterModels: [null, { filterType: 'set', values: updatedValues }] };
+        }
+        return { filterType: 'set', values: updatedValues };
+    };
+    ChartCrossFilter.prototype.getCurrentGridValuesForCategory = function (dataKey) {
+        var filteredValues = [];
+        var gridContainsValue = _.includes;
+        this.gridApi.forEachNodeAfterFilter(function (rowNode) {
+            if (!rowNode.group) {
+                var value = rowNode.data[dataKey] + '';
+                if (!gridContainsValue(filteredValues, value)) {
+                    filteredValues.push(value);
+                }
+            }
+        });
+        return filteredValues;
+    };
+    ChartCrossFilter.extractFilterColId = function (event) {
+        return event.xKey ? event.xKey : event.labelKey;
+    };
+    ChartCrossFilter.prototype.isValidColumnFilter = function (colId) {
+        if (colId.indexOf('-filtered-out')) {
+            colId = colId.replace('-filtered-out', '');
+        }
+        var filterType = this.getColumnFilterType(colId);
+        if (typeof filterType === 'boolean') {
+            return filterType;
+        }
+        return _.includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
+    };
+    ChartCrossFilter.prototype.getColumnFilterType = function (colId) {
+        var gridColumn = this.columnController.getGridColumn(colId);
+        return gridColumn ? gridColumn.getColDef().filter : undefined;
+    };
+    var ChartCrossFilter_1;
+    __decorate$2F([
+        Autowired('gridApi')
+    ], ChartCrossFilter.prototype, "gridApi", void 0);
+    __decorate$2F([
+        Autowired('columnController')
+    ], ChartCrossFilter.prototype, "columnController", void 0);
+    ChartCrossFilter = ChartCrossFilter_1 = __decorate$2F([
+        Bean("chartCrossFilter")
+    ], ChartCrossFilter);
+    return ChartCrossFilter;
+}(BeanStub));
+
+var __extends$3T = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$2G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -65895,9 +67035,10 @@ var RangeController = /** @class */ (function (_super) {
     };
     RangeController.prototype.init = function () {
         this.logger = this.loggerFactory.create('RangeController');
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
@@ -66384,43 +67525,40 @@ var RangeController = /** @class */ (function (_super) {
         }
         return columns;
     };
-    __decorate$2L([
+    __decorate$2G([
         Autowired('loggerFactory')
     ], RangeController.prototype, "loggerFactory", void 0);
-    __decorate$2L([
+    __decorate$2G([
         Autowired('rowModel')
     ], RangeController.prototype, "rowModel", void 0);
-    __decorate$2L([
+    __decorate$2G([
         Autowired('columnController')
     ], RangeController.prototype, "columnController", void 0);
-    __decorate$2L([
+    __decorate$2G([
         Autowired('mouseEventService')
     ], RangeController.prototype, "mouseEventService", void 0);
-    __decorate$2L([
-        Autowired('gridOptionsWrapper')
-    ], RangeController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$2L([
+    __decorate$2G([
         Autowired('columnApi')
     ], RangeController.prototype, "columnApi", void 0);
-    __decorate$2L([
+    __decorate$2G([
         Autowired('gridApi')
     ], RangeController.prototype, "gridApi", void 0);
-    __decorate$2L([
+    __decorate$2G([
         Autowired('cellNavigationService')
     ], RangeController.prototype, "cellNavigationService", void 0);
-    __decorate$2L([
+    __decorate$2G([
         Autowired("pinnedRowModel")
     ], RangeController.prototype, "pinnedRowModel", void 0);
-    __decorate$2L([
+    __decorate$2G([
         Autowired('rowPositionUtils')
     ], RangeController.prototype, "rowPositionUtils", void 0);
-    __decorate$2L([
+    __decorate$2G([
         Autowired('cellPositionUtils')
     ], RangeController.prototype, "cellPositionUtils", void 0);
-    __decorate$2L([
+    __decorate$2G([
         PostConstruct
     ], RangeController.prototype, "init", null);
-    RangeController = __decorate$2L([
+    RangeController = __decorate$2G([
         Bean('rangeController')
     ], RangeController);
     return RangeController;
@@ -66497,7 +67635,7 @@ var __extends$3U = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -66645,28 +67783,28 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
             eGui.parentElement.removeChild(eGui);
         }
     };
-    __decorate$2M([
+    __decorate$2H([
         Autowired("rowRenderer")
     ], AbstractSelectionHandle.prototype, "rowRenderer", void 0);
-    __decorate$2M([
+    __decorate$2H([
         Autowired("dragService")
     ], AbstractSelectionHandle.prototype, "dragService", void 0);
-    __decorate$2M([
+    __decorate$2H([
         Autowired("rangeController")
     ], AbstractSelectionHandle.prototype, "rangeController", void 0);
-    __decorate$2M([
+    __decorate$2H([
         Autowired("mouseEventService")
     ], AbstractSelectionHandle.prototype, "mouseEventService", void 0);
-    __decorate$2M([
+    __decorate$2H([
         Autowired("columnController")
     ], AbstractSelectionHandle.prototype, "columnController", void 0);
-    __decorate$2M([
+    __decorate$2H([
         Autowired("cellNavigationService")
     ], AbstractSelectionHandle.prototype, "cellNavigationService", void 0);
-    __decorate$2M([
+    __decorate$2H([
         Autowired('rowPositionUtils')
     ], AbstractSelectionHandle.prototype, "rowPositionUtils", void 0);
-    __decorate$2M([
+    __decorate$2H([
         PostConstruct
     ], AbstractSelectionHandle.prototype, "init", null);
     return AbstractSelectionHandle;
@@ -66696,7 +67834,7 @@ var __assign$m = (undefined && undefined.__assign) || function () {
     };
     return __assign$m.apply(this, arguments);
 };
-var __decorate$2N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -67067,9 +68205,11 @@ var FillHandle = /** @class */ (function (_super) {
             if (this.rowPositionUtils.sameRow(row, endPosition)) {
                 break;
             }
-        } while (row = isMovingUp ?
-            this.cellNavigationService.getRowAbove(row) :
-            this.cellNavigationService.getRowBelow(row));
+        } while (
+        // tslint:disable-next-line
+        row = isMovingUp
+            ? this.cellNavigationService.getRowAbove(row)
+            : this.cellNavigationService.getRowBelow(row));
     };
     FillHandle.prototype.reduceVertical = function (initialPosition, endPosition) {
         var row = initialPosition;
@@ -67090,6 +68230,7 @@ var FillHandle = /** @class */ (function (_super) {
             if (isLastRow) {
                 break;
             }
+            // tslint:disable-next-line
         } while (row = this.cellNavigationService.getRowAbove(row));
     };
     FillHandle.prototype.extendHorizontal = function (initialPosition, endPosition, isMovingLeft) {
@@ -67165,12 +68306,9 @@ var FillHandle = /** @class */ (function (_super) {
         _super.prototype.refresh.call(this, cellComp);
     };
     FillHandle.TEMPLATE = "<div class=\"ag-fill-handle\"></div>";
-    __decorate$2N([
+    __decorate$2I([
         Autowired('valueService')
     ], FillHandle.prototype, "valueService", void 0);
-    __decorate$2N([
-        Autowired('gridOptionsWrapper')
-    ], FillHandle.prototype, "gridOptionsWrapper", void 0);
     return FillHandle;
 }(AbstractSelectionHandle));
 
@@ -67262,7 +68400,7 @@ var __extends$3X = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -67276,7 +68414,7 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
     SelectionHandleFactory.prototype.createSelectionHandle = function (type) {
         return this.createBean(type === SelectionHandleType.RANGE ? new RangeHandle$1() : new FillHandle());
     };
-    SelectionHandleFactory = __decorate$2O([
+    SelectionHandleFactory = __decorate$2J([
         Bean('selectionHandleFactory')
     ], SelectionHandleFactory);
     return SelectionHandleFactory;
@@ -67297,7 +68435,7 @@ var RangeSelectionModule = {
 var GridChartsModule = {
     moduleName: ModuleNames.GridChartsModule,
     beans: [
-        ChartService, ChartTranslator
+        ChartService, ChartTranslator, ChartCrossFilter
     ],
     dependantModules: [
         RangeSelectionModule,

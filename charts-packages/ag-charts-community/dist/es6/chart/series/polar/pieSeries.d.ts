@@ -9,9 +9,11 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult } from "../../chart";
 export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: PieSeries;
     readonly datum: any;
     readonly angleKey: string;
+    readonly labelKey?: string;
     readonly radiusKey?: string;
 }
 interface PieNodeDatum extends SeriesNodeDatum {
@@ -83,11 +85,12 @@ export declare class PieSeries extends PolarSeries {
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
      * The largest value will correspond to the full radius and smaller values to
-     * proportionally smaller radii. To prevent confusing visuals, this config only works
-     * if {@link innerRadiusOffset} is zero.
+     * proportionally smaller radii.
      */
     radiusKey?: string;
     radiusName?: string;
+    radiusMin?: number;
+    radiusMax?: number;
     labelKey?: string;
     labelName?: string;
     private _fills;
@@ -115,7 +118,7 @@ export declare class PieSeries extends PolarSeries {
     update(): void;
     private updateGroupSelection;
     private updateNodes;
-    fireNodeClickEvent(datum: PieNodeDatum): void;
+    fireNodeClickEvent(event: MouseEvent, datum: PieNodeDatum): void;
     getTooltipHtml(nodeDatum: PieNodeDatum): string;
     tooltipRenderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
     listSeriesItems(legendData: LegendDatum[]): void;

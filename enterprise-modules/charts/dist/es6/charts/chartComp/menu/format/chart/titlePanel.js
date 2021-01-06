@@ -58,11 +58,11 @@ var TitlePanel = /** @class */ (function (_super) {
             }
         };
         var initialFont = {
-            family: hasTitle ? chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
-            style: hasTitle ? chartProxy.getChartOption('title.fontStyle') : undefined,
-            weight: hasTitle ? chartProxy.getChartOption('title.fontWeight') : undefined,
-            size: hasTitle ? chartProxy.getChartOption('title.fontSize') : 22,
-            color: hasTitle ? chartProxy.getChartOption('title.color') : 'black'
+            family: chartProxy.getChartOption('title.fontFamily'),
+            style: chartProxy.getChartOption('title.fontStyle'),
+            weight: chartProxy.getChartOption('title.fontWeight'),
+            size: chartProxy.getChartOption('title.fontSize'),
+            color: chartProxy.getChartOption('title.color')
         };
         if (!hasTitle) {
             setFont(initialFont);

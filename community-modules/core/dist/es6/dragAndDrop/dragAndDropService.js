@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -124,12 +124,33 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.removeGhost();
     };
     DragAndDropService.prototype.onDragging = function (mouseEvent, fromNudge) {
+        var _this = this;
         var hDirection = this.getHorizontalDirection(mouseEvent);
         var vDirection = this.getVerticalDirection(mouseEvent);
         this.eventLastTime = mouseEvent;
         this.positionGhost(mouseEvent);
         // check if mouseEvent intersects with any of the drop targets
-        var dropTarget = find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
+        var validDropTargets = this.dropTargets.filter(function (dropTarget) { return _this.isMouseOnDropTarget(mouseEvent, dropTarget); });
+        var len = validDropTargets.length;
+        if (len === 0) {
+            return;
+        }
+        var dropTarget = len === 1
+            ? validDropTargets[0]
+            // the current mouse position could intersect with more than 1 element
+            // if they are nested. In that case we need to get the most specific
+            // container, which is the one that does not contain any other targets.
+            : validDropTargets.reduce(function (prevTarget, currTarget) {
+                if (!prevTarget) {
+                    return currTarget;
+                }
+                var prevContainer = prevTarget.getContainer();
+                var currContainer = currTarget.getContainer();
+                if (prevContainer.contains(currContainer)) {
+                    return currTarget;
+                }
+                return prevTarget;
+            });
         if (dropTarget !== this.lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
@@ -342,9 +363,6 @@ var DragAndDropService = /** @class */ (function (_super) {
     DragAndDropService.ICON_NOT_ALLOWED = 'notAllowed';
     DragAndDropService.ICON_HIDE = 'hide';
     DragAndDropService.GHOST_TEMPLATE = "<div class=\"ag-dnd-ghost ag-unselectable\">\n            <span class=\"ag-dnd-ghost-icon ag-shake-left-to-right\"></span>\n            <div class=\"ag-dnd-ghost-label\"></div>\n        </div>";
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], DragAndDropService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('dragService')
     ], DragAndDropService.prototype, "dragService", void 0);

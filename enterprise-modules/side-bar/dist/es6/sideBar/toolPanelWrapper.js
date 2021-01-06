@@ -71,9 +71,6 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
         Autowired("userComponentFactory")
     ], ToolPanelWrapper.prototype, "userComponentFactory", void 0);
     __decorate([
-        Autowired("gridOptionsWrapper")
-    ], ToolPanelWrapper.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         PostConstruct
     ], ToolPanelWrapper.prototype, "setupResize", null);
     return ToolPanelWrapper;

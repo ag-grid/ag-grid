@@ -1,7 +1,6 @@
 import { Bean, Autowired } from '../context/context';
 import { Column } from '../entities/column';
 import { RowNode } from '../entities/rowNode';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ExpressionService } from '../valueService/expressionService';
 import { ValueFormatterParams } from '../entities/colDef';
 import { BeanStub } from "../context/beanStub";
@@ -9,7 +8,6 @@ import { BeanStub } from "../context/beanStub";
 @Bean('valueFormatterService')
 export class ValueFormatterService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
 
     public formatValue(

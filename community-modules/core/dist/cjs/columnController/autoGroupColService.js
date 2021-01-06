@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -128,9 +128,6 @@ var AutoGroupColService = /** @class */ (function (_super) {
     };
     var AutoGroupColService_1;
     AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID = constants_1.Constants.GROUP_AUTO_COLUMN_ID;
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], AutoGroupColService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('columnController')
     ], AutoGroupColService.prototype, "columnController", void 0);

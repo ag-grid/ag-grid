@@ -5,7 +5,6 @@ import {
     ChangedPath,
     Column,
     ColumnController,
-    GridOptionsWrapper,
     PostConstruct,
     RowNode,
     SortController,
@@ -30,8 +29,7 @@ export class SortService extends BeanStub {
 
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
 
     private postSortFunc: ((rowNodes: RowNode[]) => void) | undefined;
 

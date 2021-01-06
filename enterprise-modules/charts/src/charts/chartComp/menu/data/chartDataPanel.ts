@@ -13,7 +13,6 @@ import {
     DragSource,
     DragSourceType,
     DropTarget,
-    GridOptionsWrapper,
     PostConstruct,
     VerticalDirection
 } from "@ag-grid-community/core";
@@ -25,7 +24,6 @@ export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper"></div>`;
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private categoriesGroupComp?: AgGroupComponent;

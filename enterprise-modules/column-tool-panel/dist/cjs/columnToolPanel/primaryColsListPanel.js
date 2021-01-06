@@ -56,9 +56,8 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         if (!this.params.suppressSyncLayoutWithGrid) {
             this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
         }
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnsChanged.bind(this));
         var eventsImpactingCheckedState = [
-            core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             core_1.Events.EVENT_COLUMN_PIVOT_CHANGED,
             core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
             core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
@@ -89,6 +88,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         return columnComp;
     };
     PrimaryColsListPanel.prototype.onColumnsChanged = function () {
+        var expandedStates = this.getExpandedStates();
         var pivotModeActive = this.columnController.isPivotMode();
         var shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         if (shouldSyncColumnLayoutWithGrid) {
@@ -97,8 +97,43 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         else {
             this.buildTreeFromProvidedColumnDefs();
         }
+        this.setExpandedStates(expandedStates);
         this.markFilteredColumns();
         this.flattenAndFilterModel();
+    };
+    PrimaryColsListPanel.prototype.getExpandedStates = function () {
+        if (!this.allColsTree) {
+            return {};
+        }
+        var res = {};
+        this.forEachItem(function (item) {
+            if (!item.isGroup()) {
+                return;
+            }
+            var colGroup = item.getColumnGroup();
+            if (colGroup) { // group should always exist, this is defensive
+                res[colGroup.getId()] = item.isExpanded();
+            }
+        });
+        return res;
+    };
+    PrimaryColsListPanel.prototype.setExpandedStates = function (states) {
+        if (!this.allColsTree) {
+            return;
+        }
+        this.forEachItem(function (item) {
+            if (!item.isGroup()) {
+                return;
+            }
+            var colGroup = item.getColumnGroup();
+            if (colGroup) { // group should always exist, this is defensive
+                var expanded = states[colGroup.getId()];
+                var groupExistedLastTime = expanded != null;
+                if (groupExistedLastTime) {
+                    item.setExpanded(expanded);
+                }
+            }
+        });
     };
     PrimaryColsListPanel.prototype.buildTreeFromWhatGridIsDisplaying = function () {
         this.colDefService.syncLayoutWithGrid(this.setColumnLayout.bind(this));
@@ -156,7 +191,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             if (skipThisColumn) {
                 return;
             }
-            var displayName = _this.columnController.getDisplayNameForColumn(column, 'toolPanel');
+            var displayName = _this.columnController.getDisplayNameForColumn(column, 'columnToolPanel');
             parentList.push(new columnModelItem_1.ColumnModelItem(displayName, column, dept));
         };
         this.destroyColumnTree();

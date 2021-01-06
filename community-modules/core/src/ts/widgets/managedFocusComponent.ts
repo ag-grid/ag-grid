@@ -3,6 +3,7 @@ import { Component } from './component';
 import { FocusController } from '../focusController';
 import { isNodeOrElement, addCssClass, clearElement } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
+import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from '../utils/event';
 
 /**
  * This provides logic to override the default browser focus logic.
@@ -165,7 +166,12 @@ export class ManagedFocusComponent extends Component {
 
     private addKeyDownListeners(eGui: HTMLElement): void {
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
-            if (e.defaultPrevented) { return; }
+            if (e.defaultPrevented || isStopPropagationForAgGrid(e)) { return; }
+
+            if (this.shouldStopEventPropagation(e)) {
+                stopPropagationForAgGrid(e);
+                return;
+            }
 
             if (e.keyCode === KeyCode.TAB) {
                 this.onTabKeyDown(e);
@@ -173,6 +179,10 @@ export class ManagedFocusComponent extends Component {
                 this.handleKeyDown(e);
             }
         });
+    }
+
+    protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
+        return false;
     }
 
     private onFocus(e: FocusEvent): void {

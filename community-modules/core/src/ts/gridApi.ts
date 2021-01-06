@@ -21,7 +21,6 @@ import { CellPosition } from "./entities/cellPosition";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
-import { CellRendererFactory } from "./rendering/cellRendererFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./interfaces/exportParams";
@@ -38,7 +37,7 @@ import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
+import { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
@@ -63,7 +62,9 @@ import { exists, missing } from "./utils/generic";
 import { camelCaseToHumanText } from "./utils/string";
 import { doOnce } from "./utils/function";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
-import {_} from "./utils";
+import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
+import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
+import { ServerSideStoreState } from "./interfaces/IServerSideStore";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -105,6 +106,7 @@ export interface CreateRangeChartParams {
     aggFunc?: string | IAggFunc;
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
+    /** @deprecated since v24.0.0, use `chartThemeOverrides` instead */
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
@@ -114,7 +116,19 @@ export interface CreatePivotChartParams {
     chartContainer?: HTMLElement;
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
+    /** @deprecated since v24.0.0, use `chartThemeOverrides` instead */
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
+}
+
+export interface CreateCrossFilterChartParams {
+    cellRange: CellRangeParams;
+    chartType: ChartType;
+    chartThemeName?: string;
+    chartContainer?: HTMLElement;
+    suppressChartRanges?: boolean;
+    aggFunc?: string | IAggFunc;
+    chartThemeOverrides?: AgChartThemeOverrides;
+    unlinkChart?: boolean;
 }
 
 export interface DetailGridInfo {
@@ -149,12 +163,13 @@ export class GridApi {
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
-    @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
     @Optional('chartService') private chartService: IChartService;
     @Optional('undoRedoService') private undoRedoService: UndoRedoService;
+    @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
+    @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
 
     private gridPanel: GridPanel;
     private gridCore: GridCore;
@@ -253,10 +268,23 @@ export class GridApi {
         this.setServerSideDatasource(datasource);
     }
 
+    public setGridAriaProperty(property: string, value: string | null): void {
+        if (!property) { return; }
+        const eGrid = this.gridPanel.getGui();
+        const ariaProperty = `aria-${property}`;
+
+        if (value === null) {
+            eGrid.removeAttribute(ariaProperty);
+        } else {
+            eGrid.setAttribute(ariaProperty, value);
+        }
+
+    }
+
     public setServerSideDatasource(datasource: IServerSideDatasource) {
-        if (this.gridOptionsWrapper.isRowModelServerSide()) {
+        if (this.serverSideRowModel) {
             // should really have an IEnterpriseRowModel interface, so we are not casting to any
-            (this.rowModel as any).setDatasource(datasource);
+            this.serverSideRowModel.setDatasource(datasource);
         } else {
             console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_SERVER_SIDE}'`);
         }
@@ -583,19 +611,23 @@ export class GridApi {
     }
 
     public expandAll() {
-        if (missing(this.clientSideRowModel)) {
-            console.warn('ag-Grid: cannot call expandAll unless using normal row model');
-            return;
+        if (this.clientSideRowModel) {
+            this.clientSideRowModel.expandOrCollapseAll(true);
+        } else if (this.serverSideRowModel) {
+            this.serverSideRowModel.expandAll(true);
+        } else {
+            console.warn('ag-Grid: expandAll only works with Client Side Row Model and Server Side Row Model');
         }
-        this.clientSideRowModel.expandOrCollapseAll(true);
     }
 
     public collapseAll() {
-        if (missing(this.clientSideRowModel)) {
-            console.warn('ag-Grid: cannot call collapseAll unless using normal row model');
-            return;
+        if (this.clientSideRowModel) {
+            this.clientSideRowModel.expandOrCollapseAll(false);
+        } else if (this.serverSideRowModel) {
+            this.serverSideRowModel.expandAll(false);
+        } else {
+            console.warn('ag-Grid: collapseAll only works with Client Side Row Model and Server Side Row Model');
         }
-        this.clientSideRowModel.expandOrCollapseAll(false);
     }
 
     public getToolPanelInstance(id: string): IToolPanel {
@@ -1131,6 +1163,20 @@ export class GridApi {
         }
     }
 
+    public createCrossFilterChart(params: CreateRangeChartParams): ChartRef | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createCrossFilterChart') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart')) {
+            return this.chartService.createCrossFilterChart(params);
+        }
+    }
+
+    public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.restoreChart') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart')) {
+            return this.chartService.restoreChart(chartModel, chartContainer);
+        }
+    }
+
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createPivotChart') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart')) {
@@ -1254,13 +1300,21 @@ export class GridApi {
         }
     }
 
-    public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
-        let res: RowNodeTransaction = null;
-        if (this.clientSideRowModel) {
-            res = this.clientSideRowModel.updateRowData(rowDataTransaction);
-        } else if (this.infiniteRowModel) {
-            const message = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
-            doOnce(() => console.warn(message), 'applyTransaction infiniteRowModel deprecated');
+    public retryServerSideLoads(): void {
+        if (!this.serverSideRowModel) {
+            console.warn('ag-Grid: API retryServerSideLoads() can only be used when using Server-Side Row Model.');
+            return;
+        }
+        this.serverSideRowModel.retryLoads();
+    }
+
+    public flushServerSideAsyncTransactions(): void {
+        if (!this.serverSideTransactionManager) {
+            console.warn('ag-Grid: Cannot flush Server Side Transaction if not using the Server Side Row Model.');
+            return;
+        }
+        return this.serverSideTransactionManager.flushAsyncTransactions();
+    }
 
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         } else {
@@ -1369,11 +1423,33 @@ export class GridApi {
         this.purgeServerSideCache(route);
     }
 
-    public purgeServerSideCache(route?: string[]): void {
+    /** @deprecated */
+    public purgeServerSideCache(route: string[] = []): void {
         if (this.serverSideRowModel) {
-            this.serverSideRowModel.purgeCache(route);
+            console.warn(`ag-Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSideStore({purge: true}) instead.`);
+            this.refreshServerSideStore({
+                route: route,
+                purge: true
+            });
         } else {
-            console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.`);
+            console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='serverSide'.`);
+        }
+    }
+
+    public refreshServerSideStore(params: RefreshStoreParams): void {
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.refreshStore(params);
+        } else {
+            console.warn(`ag-Grid: api.refreshServerSideStore is only available when rowModelType='serverSide'.`);
+        }
+    }
+
+    public getServerSideStoreState(): ServerSideStoreState[] {
+        if (this.serverSideRowModel) {
+            return this.serverSideRowModel.getStoreState();
+        } else {
+            console.warn(`ag-Grid: api.getServerSideStoreState is only available when rowModelType='serverSide'.`);
+            return [];
         }
     }
 

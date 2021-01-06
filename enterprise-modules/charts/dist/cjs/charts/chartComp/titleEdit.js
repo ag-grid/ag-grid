@@ -78,7 +78,7 @@ var TitleEdit = /** @class */ (function (_super) {
         ];
     };
     TitleEdit.prototype.startEditing = function (titleBBox) {
-        if (this.chartMenu.isVisible()) {
+        if (this.chartMenu && this.chartMenu.isVisible()) {
             // currently we ignore requests to edit the chart title while the chart menu is showing
             // because the click to edit the chart will also close the chart menu, making the position
             // of the title change.

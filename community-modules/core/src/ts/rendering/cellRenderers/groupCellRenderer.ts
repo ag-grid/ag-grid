@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ExpressionService } from "../../valueService/expressionService";
 import { Constants } from "../../constants/constants";
 import { Autowired } from "../../context/context";
@@ -16,14 +15,14 @@ import {
     ComponentSource,
     UserComponentFactory
 } from "../../components/framework/userComponentFactory";
-import { Promise } from "../../utils";
+import { AgPromise } from "../../utils";
 import { doOnce } from "../../utils/function";
 import { get, cloneObject } from "../../utils/object";
 import { bindCellRendererToHtmlElement } from "../../utils/general";
 import { addOrRemoveCssClass, setDisplayed } from "../../utils/dom";
 import { createIconNoSpan } from "../../utils/icon";
 import { isKeyPressed } from "../../utils/keyboard";
-import { missing, exists } from "../../utils/generic";
+import { missing } from "../../utils/generic";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventPath } from "../../utils/event";
 import { setAriaExpanded, removeAriaExpanded } from "../../utils/aria";
 import { KeyCode } from '../../constants/keyCode';
@@ -63,7 +62,6 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             <span class="ag-group-child-count" ref="eChildCount"></span>
         </span>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -212,24 +210,15 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private addValueElement(): void {
-        const params = this.params;
-        const rowNode = this.displayedGroup;
-
-        if (rowNode.footer) {
-            this.createFooterCell();
-        } else if (
-            rowNode.hasChildren() ||
-            get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
-            get(params.colDef, 'cellRendererParams.innerRendererFramework', null)
-        ) {
-            this.createGroupCell();
-            this.addChildCount();
+        if (this.displayedGroup.footer) {
+            this.addFooterValue();
         } else {
-            this.createLeafCell();
+            this.addGroupValue();
+            this.addChildCount();
         }
     }
 
-    private createFooterCell(): void {
+    private addFooterValue(): void {
         const footerValueGetter = this.params.footerValueGetter;
         let footerValue: string;
 
@@ -252,7 +241,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         this.eValue.innerHTML = footerValue;
     }
 
-    private createGroupCell(): void {
+    private addGroupValue(): void {
         const params = this.params;
         const rowGroupColumn = this.displayedGroup.rowGroupColumn;
         // we try and use the cellRenderer of the column used for the grouping if we can
@@ -263,7 +252,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         params.valueFormatted = valueFormatted;
 
-        let rendererPromise: Promise<ICellRendererComp>;
+        let rendererPromise: AgPromise<ICellRendererComp> | null;
 
         rendererPromise = params.fullWidth
             ? this.useFullWidth(params)
@@ -285,7 +274,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         groupCellRendererParams: GroupCellRendererParams,
         groupedColumnDef: ColDef, // the column this group row is for, eg 'Country'
         params: ICellRendererParams
-    ): Promise<ICellRendererComp> {
+    ): AgPromise<ICellRendererComp> | null {
         // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
         // and then rating, we will use the country cell renderer for each country group row and likewise the rating
         // cell renderer for each rating group row.
@@ -298,7 +287,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         // 1) thisColDef.cellRendererParams.innerRenderer of the column showing the groups (eg auto group column)
         // 2) groupedColDef.cellRenderer of the grouped column
         // 3) groupedColDef.cellRendererParams.innerRenderer
-        let cellRendererPromise: Promise<ICellRendererComp> = null;
+        let cellRendererPromise: AgPromise<ICellRendererComp> | null = null;
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
         const groupInnerRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
@@ -348,8 +337,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         return cellRendererPromise;
     }
 
-    private useFullWidth(params: ICellRendererParams): Promise<ICellRendererComp> {
-        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer(params);
+    private useFullWidth(params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
+        const cellRendererPromise: AgPromise<ICellRendererComp> | null = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer(params);
 
         if (cellRendererPromise != null) {
             bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);
@@ -373,15 +362,10 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     private updateChildCount(): void {
         const allChildrenCount = this.displayedGroup.allChildrenCount;
-        const showCount = allChildrenCount != null && allChildrenCount >= 0;
+        const showingGroupForThisNode = this.isShowRowGroupForThisRow();
+        const showCount = showingGroupForThisNode && allChildrenCount != null && allChildrenCount >= 0;
         const countString = showCount ? `(${allChildrenCount})` : ``;
         this.eChildCount.innerHTML = countString;
-    }
-
-    private createLeafCell(): void {
-        if (exists(this.params.value)) {
-            this.eValue.innerText = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
-        }
     }
 
     private isUserWantsSelected(): boolean {
@@ -544,11 +528,38 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private isExpandable(): boolean {
-        const rowNode = this.params.node;
-        const reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
+        if (this.draggedFromHideOpenParents) { return true; }
 
-        return this.draggedFromHideOpenParents ||
-            (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
+        const rowNode = this.displayedGroup;
+        const reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
+        const expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
+
+        if (!expandableGroup) { return false; }
+
+        // column is null for fullWidthRows
+        const column = this.params.column;
+        const displayingForOneColumnOnly = column != null && typeof column.getColDef().showRowGroup === 'string';
+
+        if (displayingForOneColumnOnly) {
+            const showing = this.isShowRowGroupForThisRow();
+            return showing;
+        }
+
+        return true;
+    }
+
+    private isShowRowGroupForThisRow(): boolean {
+        if (this.gridOptionsWrapper.isTreeData()) { return true; }
+
+        const rowGroupColumn = this.displayedGroup.rowGroupColumn;
+
+        if (!rowGroupColumn) { return false; }
+
+        // column is null for fullWidthRows
+        const column = this.params.column;
+        const thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
+
+        return thisColumnIsInterested;
     }
 
     private showExpandAndContractIcons(): void {
@@ -570,11 +581,12 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
         const pivotModeAndLeafGroup = columnController.isPivotMode() && displayedGroup.leafGroup;
-        const notExpandable = !displayedGroup.isExpandable();
-        const addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
+        const expandable = displayedGroup.isExpandable() && this.isShowRowGroupForThisRow();
+        const addExpandableCss = expandable && !displayedGroup.footer && !pivotModeAndLeafGroup;
 
-        this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
-        this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
+        this.addOrRemoveCssClass('ag-cell-expandable', addExpandableCss);
+        this.addOrRemoveCssClass('ag-row-group', addExpandableCss);
+        this.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

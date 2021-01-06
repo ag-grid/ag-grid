@@ -7,7 +7,6 @@ export declare class ChartController extends BeanStub {
     private readonly model;
     static EVENT_CHART_UPDATED: string;
     private readonly rangeController;
-    private readonly gridOptionsWrapper;
     private readonly gridApi;
     private readonly columnApi;
     private chartProxy;

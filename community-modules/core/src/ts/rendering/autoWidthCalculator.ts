@@ -2,7 +2,6 @@ import { RowRenderer } from "./rowRenderer";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { Column } from "../entities/column";
 import { Autowired, Bean } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
 import { Component } from "../widgets/component";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
@@ -13,7 +12,6 @@ import { containsClass, addCssClass } from "../utils/dom";
 export class AutoWidthCalculator extends BeanStub {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private gridPanel: GridPanel;
     private headerRootComp: HeaderRootComp;

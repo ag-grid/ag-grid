@@ -125,9 +125,6 @@ var FilterService = /** @class */ (function (_super) {
         Autowired('filterManager')
     ], FilterService.prototype, "filterManager", void 0);
     __decorate([
-        Autowired('gridOptionsWrapper')
-    ], FilterService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         PostConstruct
     ], FilterService.prototype, "postConstruct", null);
     FilterService = __decorate([

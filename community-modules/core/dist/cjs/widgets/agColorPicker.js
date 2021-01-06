@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,7 +22,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var agColorPanel_1 = require("./agColorPanel");
 var agDialog_1 = require("./agDialog");
 var agPickerField_1 = require("./agPickerField");
-var agAbstractField_1 = require("./agAbstractField");
 var dom_1 = require("../utils/dom");
 var AgColorPicker = /** @class */ (function (_super) {
     __extends(AgColorPicker, _super);
@@ -86,10 +85,8 @@ var AgColorPicker = /** @class */ (function (_super) {
         if (this.value === color) {
             return this;
         }
-        this.value = color;
         this.eDisplayField.style.backgroundColor = color;
-        this.dispatchEvent({ type: agAbstractField_1.AgAbstractField.EVENT_CHANGED });
-        return this;
+        return _super.prototype.setValue.call(this, color);
     };
     AgColorPicker.prototype.getValue = function () {
         return this.value;

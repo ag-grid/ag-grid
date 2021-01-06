@@ -20,7 +20,6 @@ export interface MenuItemComponentParams extends MenuItemDef {
 }
 export declare class MenuItemComponent extends Component {
     private readonly params;
-    private readonly gridOptionsWrapper;
     private readonly popupService;
     static EVENT_MENU_ITEM_SELECTED: string;
     static EVENT_MENU_ITEM_ACTIVATED: string;

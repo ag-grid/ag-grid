@@ -11,7 +11,6 @@ import {
     Events,
     GetChartImageDataUrlParams,
     GridApi,
-    GridOptionsWrapper,
     IRangeController,
     PostConstruct,
 } from "@ag-grid-community/core";
@@ -27,7 +26,6 @@ export class ChartController extends BeanStub {
     public static EVENT_CHART_UPDATED = 'chartUpdated';
 
     @Autowired('rangeController') private readonly rangeController: IRangeController;
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
 

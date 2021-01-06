@@ -4,7 +4,6 @@ import { IToolPanel } from "./interfaces/iToolPanel";
 import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 export declare class GridCore extends ManagedFocusComponent {
     private gridOptions;
-    private gridOptionsWrapper;
     private rowModel;
     private resizeObserverService;
     private rowRenderer;

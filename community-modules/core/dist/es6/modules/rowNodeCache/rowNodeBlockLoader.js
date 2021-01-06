@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,11 +27,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { RowNodeBlock } from "./rowNodeBlock";
-import { Qualifier } from "../../context/context";
-import { BeanStub } from "../../context/beanStub";
-import { debounce } from "../../utils/function";
-import { exists } from "../../utils/generic";
-import { removeFromArray } from "../../utils/array";
+import { Bean, PostConstruct, Qualifier } from "../context/context";
+import { BeanStub } from "../context/beanStub";
+import { _ } from "../utils";
 var RowNodeBlockLoader = /** @class */ (function (_super) {
     __extends(RowNodeBlockLoader, _super);
     function RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis) {
@@ -122,6 +120,11 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
     RowNodeBlockLoader.prototype.isLoading = function () {
         return this.activeBlockLoadsCount > 0;
     };
+    var RowNodeBlockLoader_1;
+    RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
+    __decorate([
+        PostConstruct
+    ], RowNodeBlockLoader.prototype, "postConstruct", null);
     __decorate([
         __param(0, Qualifier('loggerFactory'))
     ], RowNodeBlockLoader.prototype, "setBeans", null);

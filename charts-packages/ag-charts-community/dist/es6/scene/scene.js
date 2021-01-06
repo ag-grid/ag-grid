@@ -118,7 +118,7 @@ var Scene = /** @class */ (function () {
                 return;
             }
             if (this._root) {
-                this._root._setScene(undefined);
+                this._root._setScene();
             }
             this._root = node;
             if (node) {

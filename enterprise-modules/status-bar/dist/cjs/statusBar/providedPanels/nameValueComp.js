@@ -36,9 +36,6 @@ var NameValueComp = /** @class */ (function (_super) {
     };
     NameValueComp.TEMPLATE = "<div class=\"ag-status-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-status-name-value-value\"></span>\n        </div>";
     __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], NameValueComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         core_1.RefSelector('eLabel')
     ], NameValueComp.prototype, "eLabel", void 0);
     __decorate([

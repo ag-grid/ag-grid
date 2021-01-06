@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,7 +23,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Bean } from "../context/context";
+import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { debounce } from "../utils/function";
 import { offsetHeight, offsetWidth } from "../utils/dom";
@@ -76,9 +76,6 @@ var ResizeObserverService = /** @class */ (function (_super) {
             return usePolyfill();
         }
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ResizeObserverService.prototype, "gridOptionsWrapper", void 0);
     ResizeObserverService = __decorate([
         Bean('resizeObserverService')
     ], ResizeObserverService);

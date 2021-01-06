@@ -3,7 +3,6 @@ import { AgEvent, ColumnEvent } from "./events";
 import { Column } from "./entities/column";
 import { BeanStub } from "./context/beanStub";
 export declare class AlignedGridsService extends BeanStub {
-    private gridOptionsWrapper;
     private columnController;
     private logger;
     private gridPanel;

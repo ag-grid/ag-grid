@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -126,9 +126,6 @@ var AutoWidthCalculator = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('rowRenderer')
     ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], AutoWidthCalculator.prototype, "gridOptionsWrapper", void 0);
     AutoWidthCalculator = __decorate([
         context_1.Bean('autoWidthCalculator')
     ], AutoWidthCalculator);

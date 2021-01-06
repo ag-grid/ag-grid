@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, RefSelector } from '@ag-grid-community/core';
+import { Component, RefSelector } from '@ag-grid-community/core';
 var NameValueComp = /** @class */ (function (_super) {
     __extends(NameValueComp, _super);
     function NameValueComp() {
@@ -33,9 +33,6 @@ var NameValueComp = /** @class */ (function (_super) {
         this.eValue.innerHTML = value;
     };
     NameValueComp.TEMPLATE = "<div class=\"ag-status-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-status-name-value-value\"></span>\n        </div>";
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], NameValueComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         RefSelector('eLabel')
     ], NameValueComp.prototype, "eLabel", void 0);

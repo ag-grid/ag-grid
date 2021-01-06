@@ -210,14 +210,14 @@
                                 <img src='images/team/simon.jpg' alt="Simon Kenny, Customer Experience Manager"/>
                             </div>
                             <h3>Simon Kenny</h3>
-                            <h4>Sales Manager</h4>
+                            <h4>Sales Director</h4>
                         </div>
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/alex.jpg' alt="Alex Price, COO"/>
                             </div>
                             <h3>Alex Price</h3>
-                            <h4>Operations Manager</h4>
+                            <h4>Head of Customer Success</h4>
                         </div>
                     </div>
                     <div class="row">
@@ -253,9 +253,9 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/julia.jpg' alt="Julia O'Dell, Customer Experience Manager"/>
+                                <img src='images/team/sachshell.png' alt="Sachshell Rhoden, Customer Experience Manager"/>
                             </div>
-                            <h3>Julia O&#39;Dell</h3>
+                            <h3>Sachshell Rhoden</h3>
                             <h4>Customer Experience Manager</h4>
                         </div>
                         <div class="col-md-4">
@@ -287,15 +287,6 @@
                                 <img src='images/team/ryan.png' alt="Ryan Short, Customer Experience Manager"/>
                             </div>
                             <h3>Ryan Short</h3>
-                            <h4>Customer Experience Manager</h4>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/sachshell.png' alt="Sachshell Rhoden, Customer Experience Manager"/>
-                            </div>
-                            <h3>Sachshell Rhoden</h3>
                             <h4>Customer Experience Manager</h4>
                         </div>
                     </div>

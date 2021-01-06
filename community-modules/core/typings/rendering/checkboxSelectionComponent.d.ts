@@ -1,6 +1,5 @@
 import { Component } from '../widgets/component';
 export declare class CheckboxSelectionComponent extends Component {
-    private gridOptionsWrapper;
     private eCheckbox;
     private rowNode;
     private column;

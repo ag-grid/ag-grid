@@ -7,7 +7,6 @@ export declare class NavigationService extends BeanStub {
     private animationFrameService;
     private rangeController;
     private columnController;
-    private gridOptionsWrapper;
     private gridPanel;
     private timeLastPageEventProcessed;
     registerGridComp(gridPanel: GridPanel): void;

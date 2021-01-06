@@ -6,9 +6,8 @@ import {
     ICellRendererParams,
     IRichCellEditorParams,
     PopupComponent,
-    Promise,
+    AgPromise,
     UserComponentFactory,
-    GridOptionsWrapper,
     RefSelector,
     VirtualList,
     KeyName,
@@ -26,7 +25,6 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         </div>`;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eValue') private eValue: HTMLElement;
     @RefSelector('eList') private eList: HTMLElement;
@@ -195,7 +193,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             api: this.gridOptionsWrapper.getApi()
         } as ICellRendererParams;
 
-        const promise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer(this.params, params);
+        const promise: AgPromise<ICellRendererComp> | null = this.userComponentFactory.newCellRenderer(this.params, params);
 
         if (_.exists(promise)) {
             _.bindCellRendererToHtmlElement(promise, eValue);

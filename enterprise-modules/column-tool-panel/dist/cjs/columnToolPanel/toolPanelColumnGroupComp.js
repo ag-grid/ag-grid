@@ -60,7 +60,26 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.addVisibilityListenersToAllChildren();
         this.refreshAriaExpanded();
         this.refreshAriaLabel();
+        this.setupTooltip();
         core_1.CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+    };
+    ToolPanelColumnGroupComp.prototype.setupTooltip = function () {
+        var _this = this;
+        var colGroupDef = this.columnGroup.getColGroupDef();
+        if (!colGroupDef) {
+            return;
+        }
+        var refresh = function () {
+            var newTooltipText = colGroupDef.headerTooltip;
+            _this.setTooltip(newTooltipText);
+        };
+        refresh();
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    };
+    ToolPanelColumnGroupComp.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'columnToolPanelColumnGroup';
+        return res;
     };
     ToolPanelColumnGroupComp.prototype.handleKeyDown = function (e) {
         switch (e.keyCode) {
@@ -156,8 +175,10 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.modelItemUtils.selectAllChildren(this.modelItem.getChildren(), nextState, this.eventType);
     };
     ToolPanelColumnGroupComp.prototype.refreshAriaLabel = function () {
-        var state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        core_1._.setAriaLabel(this.focusWrapper, this.displayName + " column group toggle visibility (" + state + ")");
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        var state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
+        var label = translate('ariaColumnGroupToggleVisibility', 'column group toggle visibility');
+        core_1._.setAriaLabel(this.focusWrapper, this.displayName + " " + label + " (" + state + ")");
     };
     ToolPanelColumnGroupComp.prototype.onColumnStateChanged = function () {
         var selectedValue = this.workOutSelectedValue();
@@ -262,9 +283,6 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('dragAndDropService')
     ], ToolPanelColumnGroupComp.prototype, "dragAndDropService", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ToolPanelColumnGroupComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('modelItemUtils')
     ], ToolPanelColumnGroupComp.prototype, "modelItemUtils", void 0);

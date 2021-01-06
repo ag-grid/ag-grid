@@ -1,7 +1,29 @@
-import {AgChart, AgPieSeriesOptions, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart} from "ag-charts-community";
-import {_, HighlightOptions, PieSeriesOptions, PolarChartOptions} from "@ag-grid-community/core";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {PolarChartProxy} from "./polarChartProxy";
+import {
+    AgChart,
+    AgPieSeriesOptions,
+    AgPolarChartOptions,
+    ChartTheme, LegendClickEvent,
+    PieSeries,
+    PolarChart
+} from "ag-charts-community";
+import { _, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
+import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
+import { PolarChartProxy } from "./polarChartProxy";
+
+interface UpdateDoughnutSeriesParams {
+    seriesMap: { [p: string]: PieSeries };
+    angleField: FieldDefinition;
+    field: FieldDefinition;
+    seriesDefaults: PieSeriesOptions;
+    index: number;
+    params: UpdateChartParams;
+    fills: string[];
+    strokes: string[];
+    doughnutChart: PolarChart;
+    offset: number;
+    numFields: number;
+    opaqueSeries: PieSeries | undefined;
+}
 
 export class DoughnutChartProxy extends PolarChartProxy {
 
@@ -25,8 +47,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -38,6 +60,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 width: seriesDefaults.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners
         } as PieSeriesOptions;
 
         return options;
@@ -66,7 +89,6 @@ export class DoughnutChartProxy extends PolarChartProxy {
         doughnutChart.series.forEach((series: PieSeries) => {
             const pieSeries = series as PieSeries;
             const id = pieSeries.angleKey;
-
             if (_.includes(fieldIds, id)) {
                 seriesMap[id] = pieSeries;
             }
@@ -74,72 +96,175 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
         const { seriesDefaults } = this.chartOptions;
         const { fills, strokes } = this.getPalette();
+        const numFields = params.fields.length;
+
         let offset = 0;
+        if (this.crossFiltering) {
 
-        params.fields.forEach((f, index) => {
-            const existingSeries = seriesMap[f.colId];
+            params.fields.forEach((field: FieldDefinition, index: number) => {
+                const filteredOutField = {...field};
+                filteredOutField.colId = field.colId + '-filtered-out';
 
-            const seriesOptions: AgPieSeriesOptions = {
-                ...seriesDefaults,
-                type: 'pie',
-                angleKey: f.colId,
-                showInLegend: index === 0, // show legend items for the first series only
-                title: {
-                    ...seriesDefaults.title,
-                    text: seriesDefaults.title.text || f.displayName,
-                },
-                fills: seriesDefaults.fill.colors,
-                fillOpacity: seriesDefaults.fill.opacity,
-                strokes: seriesDefaults.stroke.colors,
-                strokeOpacity: seriesDefaults.stroke.opacity,
-                strokeWidth: seriesDefaults.stroke.width,
-                tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
-            };
+                params.data.forEach(d => {
+                    d[field.colId + '-total'] = d[field.colId] + d[filteredOutField.colId];
+                    d[field.colId] = d[field.colId] / d[field.colId + '-total'];
+                    d[filteredOutField.colId] = 1;
+                });
 
-            const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
-            const pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series') as PieSeries;
+                const {updatedOffset, pieSeries} =
+                    this.updateSeries({
+                        seriesMap,
+                        angleField: field,
+                        field: filteredOutField,
+                        seriesDefaults,
+                        index,
+                        params,
+                        fills,
+                        strokes,
+                        doughnutChart,
+                        offset,
+                        numFields,
+                        opaqueSeries: undefined
+                    });
 
-            pieSeries.angleName = f.displayName;
-            pieSeries.labelKey = params.category.id;
-            pieSeries.labelName = params.category.name;
-            pieSeries.data = params.data;
-            pieSeries.fills = fills;
-            pieSeries.strokes = strokes;
+                this.updateSeries({
+                    seriesMap,
+                    angleField: field,
+                    field: field,
+                    seriesDefaults,
+                    index,
+                    params,
+                    fills,
+                    strokes,
+                    doughnutChart,
+                    offset,
+                    numFields,
+                    opaqueSeries: pieSeries
+                });
 
-            // Normally all series provide legend items for every slice.
-            // For our use case, where all series have the same number of slices in the same order with the same labels
-            // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
-            // so we only show legend items for the first series, and then when the user toggles the slices of the
-            // first series in the legend, we programmatically toggle the corresponding slices of other series.
-            if (index === 0) {
-                pieSeries.toggleSeriesItem = (itemId: any, enabled: boolean) => {
-                    if (doughnutChart) {
-                        doughnutChart.series.forEach((series: any) => {
-                            (series as PieSeries).seriesItemEnabled[itemId] = enabled;
-                        });
-                    }
-
-                    pieSeries.scheduleData();
-                };
-            }
-
-            pieSeries.outerRadiusOffset = offset;
-            offset -= 20;
-            pieSeries.innerRadiusOffset = offset;
-            offset -= 20;
-
-            if (calloutColors) {
-                pieSeries.callout.colors = strokes;
-            }
-
-            if (!existingSeries) {
-                seriesMap[f.colId] = pieSeries;
-            }
-        });
+                offset = updatedOffset;
+            });
+        } else {
+            params.fields.forEach((f, index) => {
+                const {updatedOffset} = this.updateSeries({
+                    seriesMap,
+                    angleField: f,
+                    field: f,
+                    seriesDefaults,
+                    index,
+                    params,
+                    fills,
+                    strokes,
+                    doughnutChart,
+                    offset,
+                    numFields,
+                    opaqueSeries: undefined
+                });
+                offset = updatedOffset;
+            });
+        }
 
         // Because repaints are automatic, it's important to remove/add/update series at once,
         // so that we don't get painted twice.
         doughnutChart.series = _.values(seriesMap);
+    }
+
+    private updateSeries(updateParams: UpdateDoughnutSeriesParams) {
+        const existingSeries = updateParams.seriesMap[updateParams.field.colId];
+
+        const seriesOptions: AgPieSeriesOptions = {
+            ...updateParams.seriesDefaults,
+            type: 'pie',
+            angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId,
+            radiusKey: this.crossFiltering ? updateParams.field.colId : undefined,
+            showInLegend: updateParams.index === 0, // show legend items for the first series only
+            title: {
+                ...updateParams.seriesDefaults.title,
+                text: updateParams.seriesDefaults.title.text || updateParams.field.displayName!,
+            },
+            fills: updateParams.seriesDefaults.fill.colors,
+            fillOpacity: updateParams.seriesDefaults.fill.opacity,
+            strokes: updateParams.seriesDefaults.stroke.colors,
+            strokeOpacity: updateParams.seriesDefaults.stroke.opacity,
+            strokeWidth: updateParams.seriesDefaults.stroke.width,
+            tooltip: {
+                enabled: updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled,
+                renderer: (updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled && updateParams.seriesDefaults.tooltip.renderer) || undefined,
+            }
+        };
+
+        const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
+        const pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series') as PieSeries;
+
+        pieSeries.angleName = updateParams.field.displayName!;
+        pieSeries.labelKey = updateParams.params.category.id;
+        pieSeries.labelName = updateParams.params.category.name;
+        pieSeries.data = updateParams.params.data;
+
+        // Normally all series provide legend items for every slice.
+        // For our use case, where all series have the same number of slices in the same order with the same labels
+        // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
+        // so we only show legend items for the first series, and then when the user toggles the slices of the
+        // first series in the legend, we programmatically toggle the corresponding slices of other series.
+        if (updateParams.index === 0) {
+            pieSeries.toggleSeriesItem = (itemId: any, enabled: boolean) => {
+                if (updateParams.doughnutChart) {
+                    updateParams.doughnutChart.series.forEach((series: any) => {
+                        (series as PieSeries).seriesItemEnabled[itemId] = enabled;
+                    });
+                }
+
+                pieSeries.scheduleData();
+            };
+        }
+
+        if (this.crossFiltering) {
+            pieSeries.radiusMin = 0;
+            pieSeries.radiusMax = 1;
+
+            const isOpaqueSeries = !updateParams.opaqueSeries;
+            if (isOpaqueSeries) {
+                pieSeries.fills = updateParams.fills.map(fill => this.hexToRGBA(fill, '0.3'));
+                pieSeries.strokes = updateParams.strokes.map(stroke => this.hexToRGBA(stroke, '0.3'));
+                pieSeries.showInLegend = false;
+            } else {
+                updateParams.doughnutChart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                    if (updateParams.opaqueSeries) {
+                        updateParams.opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);
+                    }
+                });
+                pieSeries.fills = updateParams.fills;
+                pieSeries.strokes = updateParams.strokes;
+                if (calloutColors) {
+                    pieSeries.callout.colors = updateParams.strokes;
+                }
+            }
+
+            // disable series highlighting by default
+            pieSeries.highlightStyle.fill = undefined;
+
+            pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
+
+            updateParams.doughnutChart.tooltip.delay = 500;
+        } else {
+            pieSeries.fills = updateParams.fills;
+            pieSeries.strokes = updateParams.strokes;
+            if (calloutColors) {
+                pieSeries.callout.colors = updateParams.strokes;
+            }
+        }
+
+        const offsetAmount = updateParams. numFields > 1 ? 20 : 40;
+        pieSeries.outerRadiusOffset = updateParams.offset;
+        updateParams.offset -= offsetAmount;
+        pieSeries.innerRadiusOffset = updateParams.offset;
+        updateParams.offset -= offsetAmount;
+
+        if (!existingSeries) {
+            updateParams.seriesMap[updateParams.field.colId] = pieSeries;
+        }
+
+        return {updatedOffset: updateParams.offset, pieSeries};
     }
 
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {

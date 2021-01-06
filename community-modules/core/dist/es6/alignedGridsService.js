@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -211,9 +211,6 @@ var AlignedGridsService = /** @class */ (function (_super) {
             grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
         });
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], AlignedGridsService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('columnController')
     ], AlignedGridsService.prototype, "columnController", void 0);

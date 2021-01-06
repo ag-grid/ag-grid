@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -94,7 +94,7 @@ var AgList = /** @class */ (function (_super) {
         itemEl.setAttribute('role', 'option');
         dom_1.addCssClass(itemEl, 'ag-list-item');
         dom_1.addCssClass(itemEl, "ag-" + this.cssIdentifier + "-list-item");
-        itemEl.innerHTML = text;
+        itemEl.innerHTML = "<span>" + text + "</span>";
         itemEl.tabIndex = -1;
         this.itemEls.push(itemEl);
         this.addManagedListener(itemEl, 'mouseover', function () { return _this.highlightItem(itemEl); });

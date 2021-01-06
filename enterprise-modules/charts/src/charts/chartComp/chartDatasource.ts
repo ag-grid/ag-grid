@@ -2,16 +2,21 @@ import {
     _,
     Autowired,
     BeanStub,
+    CellRange,
     Column,
-    ColumnController, ColumnGroup, GridOptionsWrapper,
+    ColumnController,
+    ColumnGroup,
     IAggFunc,
     IAggregationStage,
+    IClientSideRowModel,
     IRowModel,
     ModuleNames,
     ModuleRegistry,
     Optional,
     RowNode,
-    ValueService
+    ValueService,
+    RowNodeSorter,
+    SortController,
 } from "@ag-grid-community/core";
 import {ChartDataModel, ColState} from "./chartDataModel";
 
@@ -19,10 +24,13 @@ export interface ChartDatasourceParams {
     dimensionCols: ColState[];
     grouping: boolean;
     pivoting: boolean;
+    crossFiltering: boolean;
     valueCols: Column[];
     startRow: number;
     endRow: number;
+    isScatter: boolean;
     aggFunc?: string | IAggFunc;
+    referenceCellRange?: CellRange;
 }
 
 interface IData {
@@ -34,10 +42,23 @@ export class ChartDatasource extends BeanStub {
     @Autowired('rowModel') private readonly gridRowModel: IRowModel;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('columnController') private readonly columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('rowNodeSorter') private readonly rowNodeSorter: RowNodeSorter;
+    @Autowired('sortController') private sortController: SortController;
     @Optional('aggregationStage') private readonly aggregationStage: IAggregationStage;
 
     public getData(params: ChartDatasourceParams): IData {
+        if (params.crossFiltering) {
+            if (params.grouping) {
+                console.warn("ag-grid: crossing filtering with row grouping is not supported.");
+                return {data: [], columnNames: {}};
+            }
+
+            if (!this.gridOptionsWrapper.isRowModelDefault()) {
+                console.warn("ag-grid: crossing filtering is only supported in the client side row model.");
+                return {data: [], columnNames: {}};
+            }
+        }
+
         const isServerSide = this.gridOptionsWrapper.isRowModelServerSide();
         if (isServerSide && params.pivoting) {
             this.updatePivotKeysForSSRM();
@@ -49,22 +70,34 @@ export class ChartDatasource extends BeanStub {
     }
 
     private extractRowsFromGridRowModel(params: ChartDatasourceParams): IData {
-        let extractedRowData = [];
+        let extractedRowData: any[] = [];
         const columnNames: { [key: string]: string[]; } = {};
 
         // maps used to keep track of expanded groups that need to be removed
         const groupNodeIndexes: { [key: string]: number; } = {};
         const groupsToRemove: { [key: string]: number; } = {};
 
-        // make sure enough rows in range to chart. if user filters and less rows, then end row will be
-        // the last displayed row, not where the range ends.
-        const modelLastRow = this.gridRowModel.getRowCount() - 1;
-        const rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
-        const numRows = rangeLastRow - params.startRow + 1;
+        // only used when cross filtering
+        let filteredNodes: { [key: string]: RowNode; } = {};
+        let allRowNodes: RowNode[] = [];
+
+        let numRows;
+        if (params.crossFiltering) {
+            filteredNodes = this.getFilteredRowNodes();
+            allRowNodes = this.getAllRowNodes();
+            numRows = allRowNodes.length;
+        } else {
+            // make sure enough rows in range to chart. if user filters and less rows, then end row will be
+            // the last displayed row, not where the range ends.
+            const modelLastRow = this.gridRowModel.getRowCount() - 1;
+            const rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
+            numRows = rangeLastRow - params.startRow + 1;
+        }
 
         for (let i = 0; i < numRows; i++) {
             const data: any = {};
-            const rowNode = this.gridRowModel.getRow(i + params.startRow)!;
+
+            const rowNode = params.crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + params.startRow)!;
 
             // first get data for dimensions columns
             params.dimensionCols.forEach(col => {
@@ -129,10 +162,27 @@ export class ChartDatasource extends BeanStub {
                     columnNames[col.getId()] = columnNamesArr;
                 }
 
-                // add data value to value column
-                const value = this.valueService.getValue(col, rowNode);
+                const colId = col.getColId();
+                if (params.crossFiltering) {
+                    const filteredOutColId = colId + '-filtered-out';
 
-                data[col.getId()] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                    // add data value to value column
+                    const value = this.valueService.getValue(col, rowNode);
+                    const actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+
+                    if (filteredNodes[rowNode.id as string]) {
+                        data[colId] = actualValue;
+                        data[filteredOutColId] = params.aggFunc || params.isScatter ? undefined : 0;
+                    } else {
+                        data[colId] = params.aggFunc || params.isScatter ? undefined : 0;
+                        data[filteredOutColId] = actualValue;
+                    }
+
+                } else {
+                    // add data value to value column
+                    const value = this.valueService.getValue(col, rowNode);
+                    data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                }
             });
 
             // add data to results
@@ -191,16 +241,40 @@ export class ChartDatasource extends BeanStub {
             });
         });
 
-        dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
-            const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
-            let aggResult: any = 0;
+        if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+            dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
 
-            if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
-                aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
-            }
+                if (params.crossFiltering) {
+                    params.valueCols.forEach(valueCol => {
+                        // filtered data
+                        const dataToAgg = groupItem.__children
+                            .filter((child: any) => typeof child[valueCol.getColId()] !== 'undefined')
+                            .map((child: any) => child[valueCol.getColId()]);
 
-            groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
-        }));
+                        let aggResult: any = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
+                        groupItem[valueCol.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+
+                        // filtered out data
+                        const filteredOutColId = valueCol.getId()+'-filtered-out';
+                        const dataToAggFiltered = groupItem.__children
+                            .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
+                            .map((child: any) => child[filteredOutColId]);
+
+                        let aggResultFiltered: any = this.aggregationStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
+                        groupItem[filteredOutColId] = aggResultFiltered && typeof aggResultFiltered.value !== 'undefined' ? aggResultFiltered.value : aggResultFiltered;
+                    });
+                } else {
+                    const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
+                    let aggResult: any = 0;
+
+                    if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+                        aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
+                    }
+
+                    groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                }
+            }));
+        }
 
         return dataAggregated;
     }
@@ -247,5 +321,28 @@ export class ChartDatasource extends BeanStub {
             }
         }
         return labels;
+    }
+
+    private getFilteredRowNodes() {
+        const filteredNodes: { [key: string]: RowNode; } = {};
+        (this.gridRowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort((rowNode: RowNode) => {
+            filteredNodes[rowNode.id as string] = rowNode;
+        });
+        return filteredNodes;
+    }
+
+    private getAllRowNodes() {
+        let allRowNodes: RowNode[] = [];
+        this.gridRowModel.forEachNode((rowNode: RowNode) => {
+            allRowNodes.push(rowNode);
+        });
+        return this.sortRowNodes(allRowNodes);
+    }
+
+    private sortRowNodes(rowNodes: RowNode[]): RowNode[] {
+        const sortOptions = this.sortController.getSortOptions();
+        const noSort = !sortOptions || sortOptions.length == 0;
+        if (noSort) return rowNodes;
+        return this.rowNodeSorter.doFullSort(rowNodes, sortOptions);
     }
 }

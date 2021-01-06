@@ -1,13 +1,10 @@
-import { Autowired, Bean } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Bean } from "../context/context";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
 
 @Bean('columnAnimationService')
 export class ColumnAnimationService extends BeanStub {
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private gridPanel: GridPanel;
 

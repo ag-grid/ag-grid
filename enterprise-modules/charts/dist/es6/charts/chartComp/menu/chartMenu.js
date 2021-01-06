@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, AgPanel, Autowired, Component, PostConstruct, Promise } from "@ag-grid-community/core";
+import { _, AgPanel, Autowired, Component, PostConstruct, AgPromise } from "@ag-grid-community/core";
 import { TabbedChartMenu } from "./tabbedChartMenu";
 var ChartMenu = /** @class */ (function (_super) {
     __extends(ChartMenu, _super);
@@ -123,7 +123,7 @@ var ChartMenu = /** @class */ (function (_super) {
             panels: this.tabs
         }));
         this.addManagedListener(menuPanel, Component.EVENT_DESTROYED, function () { return _this.destroyBean(_this.tabbedMenu); });
-        return new Promise(function (res) {
+        return new AgPromise(function (res) {
             window.setTimeout(function () {
                 menuPanel.setBodyComponent(_this.tabbedMenu);
                 _this.tabbedMenu.showTab(defaultTab);
@@ -183,8 +183,8 @@ var ChartMenu = /** @class */ (function (_super) {
     ChartMenu.EVENT_DOWNLOAD_CHART = "downloadChart";
     ChartMenu.TEMPLATE = "<div class=\"ag-chart-menu\"></div>";
     __decorate([
-        Autowired("gridOptionsWrapper")
-    ], ChartMenu.prototype, "gridOptionsWrapper", void 0);
+        Autowired('chartTranslator')
+    ], ChartMenu.prototype, "chartTranslator", void 0);
     __decorate([
         PostConstruct
     ], ChartMenu.prototype, "postConstruct", null);

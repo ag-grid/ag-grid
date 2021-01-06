@@ -397,9 +397,11 @@ var FillHandle = /** @class */ (function (_super) {
             if (this.rowPositionUtils.sameRow(row, endPosition)) {
                 break;
             }
-        } while (row = isMovingUp ?
-            this.cellNavigationService.getRowAbove(row) :
-            this.cellNavigationService.getRowBelow(row));
+        } while (
+        // tslint:disable-next-line
+        row = isMovingUp
+            ? this.cellNavigationService.getRowAbove(row)
+            : this.cellNavigationService.getRowBelow(row));
     };
     FillHandle.prototype.reduceVertical = function (initialPosition, endPosition) {
         var row = initialPosition;
@@ -420,6 +422,7 @@ var FillHandle = /** @class */ (function (_super) {
             if (isLastRow) {
                 break;
             }
+            // tslint:disable-next-line
         } while (row = this.cellNavigationService.getRowAbove(row));
     };
     FillHandle.prototype.extendHorizontal = function (initialPosition, endPosition, isMovingLeft) {
@@ -498,9 +501,6 @@ var FillHandle = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('valueService')
     ], FillHandle.prototype, "valueService", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], FillHandle.prototype, "gridOptionsWrapper", void 0);
     return FillHandle;
 }(abstractSelectionHandle_1.AbstractSelectionHandle));
 exports.FillHandle = FillHandle;

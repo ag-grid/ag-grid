@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,7 +23,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Bean } from "../context/context";
+import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 var ColumnAnimationService = /** @class */ (function (_super) {
     __extends(ColumnAnimationService, _super);
@@ -105,9 +105,6 @@ var ColumnAnimationService = /** @class */ (function (_super) {
         window.setTimeout(function () { return nowFuncs.forEach(function (func) { return func(); }); }, 0);
         window.setTimeout(function () { return waitFuncs.forEach(function (func) { return func(); }); }, 300);
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ColumnAnimationService.prototype, "gridOptionsWrapper", void 0);
     ColumnAnimationService = __decorate([
         Bean('columnAnimationService')
     ], ColumnAnimationService);

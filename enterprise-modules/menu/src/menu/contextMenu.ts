@@ -1,38 +1,40 @@
 import {
+    _,
+    AgEvent,
     Autowired,
     Bean,
     BeanStub,
     CellPosition,
+    CellPositionUtils,
     Column,
     ColumnController,
     Component,
     FocusController,
     GetContextMenuItems,
     GetContextMenuItemsParams,
-    GridOptionsWrapper,
+    GridPanel,
     IAfterGuiAttachedParams,
     IContextMenuFactory,
+    IRangeController,
     MenuItemDef,
     ModuleNames,
     ModuleRegistry,
+    Optional,
     PopupService,
     PostConstruct,
-    RowNode,
-    Optional,
-    IRangeController,
-    CellPositionUtils,
-    _,
-    GridPanel
+    RowNode
 } from "@ag-grid-community/core";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
 import { MenuItemMapper } from "./menuItemMapper";
 
+const CSS_MENU = 'ag-menu';
+const CSS_CONTEXT_MENU_OPEN = ' ag-context-menu-open';
+
 @Bean('contextMenuFactory')
 export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
 
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('columnController') private columnController: ColumnController;
 
@@ -100,7 +102,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         return defaultMenuOptions;
     }
 
-    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): boolean {
+    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch, anchorToElement: HTMLElement): boolean {
         const menuItems = this.getMenuItems(node, column, value);
 
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
@@ -123,20 +125,24 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         };
         const positionCallback = this.popupService.positionPopupUnderMouseEvent.bind(this.popupService, positionParams);
 
-        const hidePopup = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: () => {
-                this.destroyBean(menu)
+                _.removeCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
+                this.destroyBean(menu);
             },
             click: mouseEvent,
             positionCallback: positionCallback,
-            // so when browser is scrolled down, the context menu stays on the grid
-            anchorToElement: this.gridPanel.getGui()
+            // so when browser is scrolled down, or grid is scrolled, context menu stays with cell
+            anchorToElement: anchorToElement
         });
 
-        menu.afterGuiAttached({ container: 'contextMenu', hidePopup });
+        if (addPopupRes) {
+            _.addCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
+            menu.afterGuiAttached({ container: 'contextMenu', hidePopup: addPopupRes.hideFunc });
+        }
 
         // there should never be an active menu at this point, however it was found
         // that you could right click a second time just 1 or 2 pixels from the first
@@ -155,6 +161,11 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             }
         });
 
+        // hide the popup if something gets selected
+        if (addPopupRes) {
+            menu.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, addPopupRes.hideFunc);
+        }
+
         return true;
     }
 }
@@ -170,7 +181,7 @@ class ContextMenu extends Component {
     private focusedCell: CellPosition | null = null;
 
     constructor(menuItems: (MenuItemDef | string)[]) {
-        super('<div class="ag-menu" role="presentation"></div>');
+        super(/* html */`<div class="${CSS_MENU}" role="presentation"></div>`);
         this.menuItems = menuItems;
     }
 
@@ -184,7 +195,7 @@ class ContextMenu extends Component {
         this.appendChild(menuList);
         this.menuList = menuList;
 
-        menuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.destroy.bind(this));
+        menuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, (e:AgEvent) => this.dispatchEvent(e));
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
@@ -197,9 +208,6 @@ class ContextMenu extends Component {
         if (this.menuList) {
             this.focusController.focusInto(this.menuList.getGui());
         }
-
-        // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        this.addManagedListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     }
 
     protected destroy(): void {

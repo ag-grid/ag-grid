@@ -14,11 +14,11 @@ export interface ChartModelParams {
     cellRange: CellRange;
     suppressChartRanges: boolean;
     unlinkChart?: boolean;
+    crossFiltering?: boolean;
 }
 export declare class ChartDataModel extends BeanStub {
     static DEFAULT_CATEGORY: string;
     private readonly columnController;
-    private readonly gridOptionsWrapper;
     private readonly valueService;
     private readonly rangeController;
     private readonly rowRenderer;
@@ -28,6 +28,7 @@ export declare class ChartDataModel extends BeanStub {
     private readonly aggFunc?;
     private readonly suppressChartRanges;
     private referenceCellRange;
+    private suppliedCellRange;
     private dimensionCellRange?;
     private valueCellRange?;
     private dimensionColState;
@@ -38,6 +39,7 @@ export declare class ChartDataModel extends BeanStub {
     private datasource;
     private detached;
     private grouping;
+    private crossFiltering;
     private columnNames;
     constructor(params: ChartModelParams);
     private init;

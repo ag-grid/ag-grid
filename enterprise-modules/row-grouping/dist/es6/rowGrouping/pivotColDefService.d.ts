@@ -6,7 +6,6 @@ export interface PivotColDefServiceResult {
 export declare class PivotColDefService extends BeanStub {
     static PIVOT_ROW_TOTAL_PREFIX: string;
     private columnController;
-    private gridOptionsWrapper;
     createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult;
     private recursivelyAddGroup;
     private addExpandablePivotGroups;

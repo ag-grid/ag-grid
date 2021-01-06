@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,6 +28,7 @@ import { SimpleFilter, ConditionPosition } from '../simpleFilter';
 import { ScalarFilter } from '../scalarFilter';
 import { makeNull } from '../../../utils/generic';
 import { setDisplayed } from '../../../utils/dom';
+import { isBrowserChrome, isBrowserEdge } from '../../../utils/browser';
 var NumberFilter = /** @class */ (function (_super) {
     __extends(NumberFilter, _super);
     function NumberFilter() {
@@ -73,7 +74,7 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.prototype.setParams = function (params) {
         this.numberFilterParams = params;
-        var allowedCharPattern = params.allowedCharPattern;
+        var allowedCharPattern = this.getAllowedCharPattern();
         if (allowedCharPattern) {
             var config = { allowedCharPattern: allowedCharPattern };
             this.resetTemplate({
@@ -95,16 +96,21 @@ var NumberFilter = /** @class */ (function (_super) {
         this.eValueTo2.onValueChange(listener);
     };
     NumberFilter.prototype.resetPlaceholder = function () {
+        var globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
         var isRange1 = this.showValueTo(this.getCondition1Type());
         var isRange2 = this.showValueTo(this.getCondition2Type());
         this.eValueFrom1.setInputPlaceholder(this.translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueFrom1.setInputAriaLabel(isRange1 ? 'Filter from value' : 'Filter value');
+        this.eValueFrom1.setInputAriaLabel(isRange1
+            ? globalTranslate('ariaFilterFromValue', 'Filter from value')
+            : globalTranslate('ariaFilterValue', 'Filter Value'));
         this.eValueTo1.setInputPlaceholder(this.translate('inRangeEnd'));
-        this.eValueTo1.setInputAriaLabel('Filter to value');
+        this.eValueTo1.setInputAriaLabel(globalTranslate('ariaFilterToValue', 'Filter to Value'));
         this.eValueFrom2.setInputPlaceholder(this.translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueFrom2.setInputAriaLabel(isRange2 ? 'Filter from value' : 'Filter value');
+        this.eValueFrom2.setInputAriaLabel(isRange2
+            ? globalTranslate('ariaFilterFromValue', 'Filter from value')
+            : globalTranslate('ariaFilterValue', 'Filter Value'));
         this.eValueTo2.setInputPlaceholder(this.translate('inRangeEnd'));
-        this.eValueTo2.setInputAriaLabel('Filter to value');
+        this.eValueTo2.setInputAriaLabel(globalTranslate('ariaFilterToValue', 'Filter to Value'));
     };
     NumberFilter.prototype.afterGuiAttached = function (params) {
         _super.prototype.afterGuiAttached.call(this, params);
@@ -118,7 +124,7 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.prototype.createValueTemplate = function (position) {
         var pos = position === ConditionPosition.One ? '1' : '2';
-        var allowedCharPattern = (this.numberFilterParams || {}).allowedCharPattern;
+        var allowedCharPattern = this.getAllowedCharPattern();
         var agElementTag = allowedCharPattern ? 'ag-input-text-field' : 'ag-input-number-field';
         return /* html */ "\n            <div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\" role=\"presentation\">\n                <" + agElementTag + " class=\"ag-filter-from ag-filter-filter\" ref=\"eValueFrom" + pos + "\"></" + agElementTag + ">\n                <" + agElementTag + " class=\"ag-filter-to ag-filter-filter\" ref=\"eValueTo" + pos + "\"></" + agElementTag + ">\n            </div>";
     };
@@ -185,6 +191,18 @@ var NumberFilter = /** @class */ (function (_super) {
         setDisplayed(this.eValueTo1.getGui(), this.showValueTo(condition1Type));
         setDisplayed(this.eValueFrom2.getGui(), this.showValueFrom(condition2Type));
         setDisplayed(this.eValueTo2.getGui(), this.showValueTo(condition2Type));
+    };
+    NumberFilter.prototype.getAllowedCharPattern = function () {
+        var allowedCharPattern = (this.numberFilterParams || {}).allowedCharPattern;
+        if (allowedCharPattern) {
+            return allowedCharPattern;
+        }
+        if (!isBrowserChrome() && !isBrowserEdge()) {
+            // only Chrome and Edge support the HTML5 number field, so for other browsers we provide an equivalent
+            // constraint instead
+            return '\\d\\-\\.';
+        }
+        return null;
     };
     NumberFilter.DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,

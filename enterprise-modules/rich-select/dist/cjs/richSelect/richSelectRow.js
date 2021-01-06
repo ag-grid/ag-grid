@@ -75,9 +75,6 @@ var RichSelectRow = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('userComponentFactory')
     ], RichSelectRow.prototype, "userComponentFactory", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], RichSelectRow.prototype, "gridOptionsWrapper", void 0);
     return RichSelectRow;
 }(core_1.Component));
 exports.RichSelectRow = RichSelectRow;

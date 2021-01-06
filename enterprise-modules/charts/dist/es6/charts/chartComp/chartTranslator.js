@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Bean, BeanStub } from "@ag-grid-community/core";
+import { Bean, BeanStub } from "@ag-grid-community/core";
 var ChartTranslator = /** @class */ (function (_super) {
     __extends(ChartTranslator, _super);
     function ChartTranslator() {
@@ -126,9 +126,6 @@ var ChartTranslator = /** @class */ (function (_super) {
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ChartTranslator.prototype, "gridOptionsWrapper", void 0);
     ChartTranslator = ChartTranslator_1 = __decorate([
         Bean("chartTranslator")
     ], ChartTranslator);

@@ -40,8 +40,8 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         var seriesDefaults = theme.getConfig('scatter.series.scatter');
         options.seriesDefaults = {
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -59,6 +59,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 strokeWidth: seriesDefaults.marker.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners,
             paired: true
         };
         return options;
@@ -71,13 +72,26 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     ScatterChartProxy.prototype.update = function (params) {
+        var _this = this;
         if (params.fields.length < 2) {
             this.chart.removeAllSeries();
             return;
         }
         var fields = params.fields;
+        if (this.crossFiltering) {
+            // add additional filtered out field
+            fields.forEach(function (field) {
+                var crossFilteringField = __assign({}, field);
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+        }
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
+        var dataDomain;
+        if (this.crossFiltering) {
+            dataDomain = this.getCrossFilteringDataDomain(seriesDefinitions, params);
+        }
         var chart = this.chart;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = _.findIndex(seriesDefinitions, function (s) {
@@ -94,6 +108,22 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             return map;
         }, new Map());
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        if (this.crossFiltering) {
+            // introduce cross filtering transparent fills
+            var fillsMod_1 = [];
+            fills.forEach(function (fill) {
+                fillsMod_1.push(fill);
+                fillsMod_1.push(_this.hexToRGBA(fill, '0.3'));
+            });
+            fills = fillsMod_1;
+            // introduce cross filtering transparent strokes
+            var strokesMod_1 = [];
+            strokes.forEach(function (stroke) {
+                strokesMod_1.push(stroke);
+                strokesMod_1.push(_this.hexToRGBA(stroke, '0.3'));
+            });
+            strokes = strokesMod_1;
+        }
         var labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         var previousSeries = undefined;
         seriesDefinitions.forEach(function (seriesDefinition, index) {
@@ -103,7 +133,10 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 marker.shape = marker.type;
                 delete marker.type;
             }
-            var series = existingSeries || AgChart.createComponent(__assign(__assign({}, seriesDefaults), { type: 'scatter', fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer }), 'scatter.series');
+            var series = existingSeries || AgChart.createComponent(__assign(__assign({}, seriesDefaults), { type: 'scatter', fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                } }), 'scatter.series');
             if (!series) {
                 return;
             }
@@ -129,6 +162,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
             else {
                 series.labelKey = series.labelName = undefined;
+            }
+            var isFilteredOutYKey = yFieldDefinition.colId.indexOf('-filtered-out') > -1;
+            if (_this.crossFiltering) {
+                if (!isFilteredOutYKey) {
+                    // sync toggling of legend item with hidden 'filtered out' item
+                    chart.legend.addEventListener('click', function (event) {
+                        series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                    });
+                }
+                if (dataDomain) {
+                    series.marker.domain = dataDomain;
+                }
+                chart.tooltip.delay = 500;
+                // hide 'filtered out' legend items
+                if (isFilteredOutYKey) {
+                    series.showInLegend = false;
+                }
+                // add node click cross filtering callback to series
+                series.addEventListener('nodeClick', _this.crossFilterCallback);
             }
             if (!existingSeries) {
                 chart.addSeriesAfter(series, previousSeries);
@@ -188,6 +240,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 return fields.filter(function (_, i) { return i > 0; }).map(function (yField) { return ({ xField: xField_1, yField: yField }); });
             }
         }
+    };
+    ScatterChartProxy.prototype.getCrossFilteringDataDomain = function (seriesDefinitions, params) {
+        var domain;
+        if (seriesDefinitions[0] && seriesDefinitions[0].sizeField) {
+            var sizeColId_1 = seriesDefinitions[0].sizeField.colId;
+            var allSizePoints_1 = [];
+            params.data.forEach(function (d) {
+                if (typeof d[sizeColId_1] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1]);
+                }
+                if (typeof d[sizeColId_1 + '-filtered-out'] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1 + '-filtered-out']);
+                }
+            });
+            if (allSizePoints_1.length > 0) {
+                domain = [Math.min.apply(Math, allSizePoints_1), Math.max.apply(Math, allSizePoints_1)];
+            }
+        }
+        return domain;
     };
     return ScatterChartProxy;
 }(CartesianChartProxy));

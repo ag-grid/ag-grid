@@ -1,11 +1,10 @@
-import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { Autowired, PostConstruct } from '../../context/context';
 import { Component } from '../../widgets/component';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { ILoadingOverlayComp } from './loadingOverlayComponent';
 import { INoRowsOverlayComp } from './noRowsOverlayComponent';
-import { Promise } from '../../utils';
+import { AgPromise } from '../../utils';
 import { addOrRemoveCssClass, clearElement } from '../../utils/dom';
 
 enum LoadingType { Loading, NoRows }
@@ -21,7 +20,6 @@ export class OverlayWrapperComponent extends Component {
             </div>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('userComponentFactory') userComponentFactory: UserComponentFactory;
 
     @RefSelector('eOverlayWrapper') eOverlayWrapper: HTMLElement;
@@ -61,7 +59,7 @@ export class OverlayWrapperComponent extends Component {
         this.showOverlay(workItem, LoadingType.NoRows);
     }
 
-    private showOverlay(workItem: Promise<ILoadingOverlayComp | INoRowsOverlayComp>, type: LoadingType): void {
+    private showOverlay(workItem: AgPromise<ILoadingOverlayComp | INoRowsOverlayComp> | null, type: LoadingType): void {
         if (this.inProgress) {
             return;
         }

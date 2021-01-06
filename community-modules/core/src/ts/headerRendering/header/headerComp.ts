@@ -2,7 +2,6 @@ import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { Autowired } from "../../context/context";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { SortController } from "../../sortController";
 import { TapEvent, LongTapEvent, TouchListener } from "../../widgets/touchListener";
 import { IComponent } from "../../interfaces/iComponent";
@@ -22,10 +21,11 @@ export interface IHeaderParams {
     displayName: string;
     enableSorting: boolean;
     enableMenu: boolean;
-    showColumnMenu: (source:HTMLElement) => void;
+    showColumnMenu: (source: HTMLElement) => void;
     progressSort: (multiSort?: boolean) => void;
     setSort: (sort: string, multiSort?: boolean) => void;
     columnApi: ColumnApi;
+    eGridHeader: HTMLElement;
     api: GridApi;
     context: any;
     template: string;
@@ -53,7 +53,6 @@ export class HeaderComp extends Component implements IHeaderComp {
             </div>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
 
@@ -131,7 +130,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
     }
 
-    private setupIcons(column:Column): void {
+    private setupIcons(column: Column): void {
         this.addInIcon('sortAscending', this.eSortAsc, column);
         this.addInIcon('sortDescending', this.eSortDesc, column);
         this.addInIcon('sortUnSort', this.eSortNone, column);
@@ -220,6 +219,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (!eventSource) {
             eventSource = this.eMenu;
         }
+
         this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
     }
 
@@ -251,7 +251,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
-            this.addManagedListener(this.eLabel, 'click', (event:MouseEvent) => {
+            this.addManagedListener(this.eLabel, 'click', (event: MouseEvent) => {
 
                 // sometimes when moving a column via dragging, this was also firing a clicked event.
                 // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076

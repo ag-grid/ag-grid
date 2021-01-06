@@ -3,7 +3,6 @@ import { BeanStub } from "../context/beanStub";
 import { ColumnApi } from "../columnController/columnApi";
 import { Component } from "./component";
 import { GridApi } from "../gridApi";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
@@ -30,7 +29,6 @@ export class TooltipFeature extends BeanStub {
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private tooltipShowDelay: number;
 
@@ -207,9 +205,12 @@ export class TooltipFeature extends BeanStub {
             addCssClass(eGui, 'ag-tooltip-custom');
         }
 
-        this.tooltipPopupDestroyFunc = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             eChild: eGui
         });
+        if (addPopupRes) {
+            this.tooltipPopupDestroyFunc = addPopupRes.hideFunc;
+        }
         // this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
 
         this.positionTooltipUnderLastMouseEvent();

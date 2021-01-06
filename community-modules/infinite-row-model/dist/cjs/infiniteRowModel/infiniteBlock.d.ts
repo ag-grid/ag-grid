@@ -1,12 +1,19 @@
-import { RowNode, IEventEmitter, RowNodeBlock } from "@ag-grid-community/core";
-import { InfiniteCacheParams } from "./infiniteCache";
-export declare class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
-    private gridOptionsWrapper;
-    private cacheParams;
-    constructor(pageNumber: number, params: InfiniteCacheParams);
-    getDisplayIndexStart(): number;
-    getDisplayIndexEnd(): number;
-    protected createBlankRowNode(rowIndex: number): RowNode;
+import { NumberSequence, RowNode, RowNodeBlock, LoadSuccessParams } from "@ag-grid-community/core";
+import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
+export declare class InfiniteBlock extends RowNodeBlock {
+    private rowRenderer;
+    private readonly startRow;
+    private readonly endRow;
+    private readonly parentCache;
+    private params;
+    private lastAccessed;
+    rowNodes: RowNode[];
+    constructor(id: number, parentCache: InfiniteCache, params: InfiniteCacheParams);
+    protected postConstruct(): void;
+    getBlockStateJson(): {
+        id: string;
+        state: any;
+    };
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void;
     setRowNode(rowIndex: number, rowNode: RowNode): void;
     protected init(): void;
@@ -14,4 +21,14 @@ export declare class InfiniteBlock extends RowNodeBlock implements IEventEmitter
     getRow(displayIndex: number): RowNode;
     private setIndexAndTopOnRowNode;
     protected loadFromDatasource(): void;
+    protected processServerFail(): void;
+    protected createLoadParams(): any;
+    forEachNode(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void;
+    getLastAccessed(): number;
+    getRow(rowIndex: number, dontTouchLastAccessed?: boolean): RowNode;
+    getStartRow(): number;
+    getEndRow(): number;
+    protected createRowNodes(): void;
+    protected processServerResult(params: LoadSuccessParams): void;
+    private destroyRowNodes;
 }

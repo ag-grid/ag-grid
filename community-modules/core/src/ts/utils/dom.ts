@@ -2,6 +2,7 @@ import { isBrowserChrome, isBrowserSafari, isBrowserFirefox } from './browser';
 import { exists } from './generic';
 import { isNonNullObject } from './object';
 import { hyphenToCamelCase } from './string';
+import { Constants } from '../constants/constants';
 
 let rtlNegativeScroll: boolean;
 
@@ -100,6 +101,19 @@ export function containsClass(element: HTMLElement, className: string): boolean 
 
     // if item is not a node
     return false;
+}
+
+export function isFocusableFormField(element: HTMLElement): boolean {
+    const matches: (str: string) => boolean =
+        Element.prototype.matches || (Element as any).prototype.msMatchesSelector;
+
+    const isFocusable = matches.call(element, Constants.INPUT_SELECTOR);
+    const isNotFocusable = matches.call(element, Constants.FOCUSABLE_EXCLUDE);
+    const isElementVisible = isVisible(element);
+
+    const focusable = isFocusable && !isNotFocusable && isElementVisible;
+
+    return focusable;
 }
 
 export function setDisplayed(element: HTMLElement, displayed: boolean) {

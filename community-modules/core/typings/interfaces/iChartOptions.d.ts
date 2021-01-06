@@ -1,7 +1,9 @@
 export declare enum ChartType {
+    Column = "column",
     GroupedColumn = "groupedColumn",
     StackedColumn = "stackedColumn",
     NormalizedColumn = "normalizedColumn",
+    Bar = "bar",
     GroupedBar = "groupedBar",
     StackedBar = "stackedBar",
     NormalizedBar = "normalizedBar",
@@ -24,6 +26,12 @@ export interface SeriesOptions {
         [key in string]: Function;
     };
 }
+export interface ChartTooltip {
+    enabled?: boolean;
+    class?: string;
+    tracking?: boolean;
+    delay?: number;
+}
 export interface ChartOptions<T extends SeriesOptions> {
     document?: Document;
     seriesDefaults: T;
@@ -37,6 +45,7 @@ export interface ChartOptions<T extends SeriesOptions> {
     legend: LegendOptions;
     tooltipClass?: string;
     tooltipTracking?: boolean;
+    tooltip?: ChartTooltip;
     listeners?: {
         [key in string]: Function;
     };
@@ -224,6 +233,7 @@ export interface MarkerOptions {
     shape: MarkerShape;
     size: number;
     strokeWidth: number;
+    formatter?: Function;
 }
 export interface LineTooltipRendererParams extends CartesianTooltipRendererParams {
 }

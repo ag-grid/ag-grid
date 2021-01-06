@@ -144,7 +144,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         this.marker.stroke = strokes[0];
     };
     ScatterSeries.prototype.processData = function () {
-        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis, marker = _a.marker;
         var data = xKey && yKey && this.data ? this.data : [];
         this.xData = data.map(function (d) { return d[xKey]; });
         this.yData = data.map(function (d) { return d[yKey]; });
@@ -154,7 +154,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         else {
             this.sizeData = [];
         }
-        this.sizeScale.domain = array_1.finiteExtent(this.sizeData) || [1, 1];
+        this.sizeScale.domain = marker.domain ? marker.domain : array_1.finiteExtent(this.sizeData) || [1, 1];
         if (xAxis.scale instanceof continuousScale_1.default) {
             this.xDomain = this.fixNumericExtent(array_1.finiteExtent(this.xData), 'x');
         }
@@ -180,9 +180,10 @@ var ScatterSeries = /** @class */ (function (_super) {
     ScatterSeries.prototype.getNodeData = function () {
         return this.nodeData;
     };
-    ScatterSeries.prototype.fireNodeClickEvent = function (datum) {
+    ScatterSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -197,6 +198,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
+        var isContinuousX = xScale instanceof continuousScale_1.default;
+        var isContinuousY = yScale instanceof continuousScale_1.default;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, sizeData = _b.sizeData, sizeScale = _b.sizeScale, marker = _b.marker;
@@ -204,6 +207,12 @@ var ScatterSeries = /** @class */ (function (_super) {
         var nodeData = [];
         for (var i = 0; i < xData.length; i++) {
             var xDatum = xData[i];
+            var yDatum = yData[i];
+            var noDatum = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            if (noDatum) {
+                continue;
+            }
             var x = xScale.convert(xDatum) + xOffset;
             if (!xAxis.inRange(x)) {
                 continue;
@@ -302,7 +311,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         }
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {

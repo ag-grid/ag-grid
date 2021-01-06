@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -197,7 +197,7 @@ var PaginationProxy = /** @class */ (function (_super) {
     PaginationProxy.prototype.setPageSize = function () {
         // show put this into super class
         this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
-        if (!(this.pageSize >= 1)) {
+        if (this.pageSize == null || this.pageSize < 1) {
             this.pageSize = 100;
         }
     };
@@ -308,9 +308,6 @@ var PaginationProxy = /** @class */ (function (_super) {
     __decorate([
         Autowired('rowModel')
     ], PaginationProxy.prototype, "rowModel", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], PaginationProxy.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('columnApi')
     ], PaginationProxy.prototype, "columnApi", void 0);

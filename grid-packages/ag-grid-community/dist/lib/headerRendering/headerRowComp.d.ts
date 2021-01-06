@@ -6,7 +6,6 @@ export declare enum HeaderRowType {
     FLOATING_FILTER = 2
 }
 export declare class HeaderRowComp extends Component {
-    private gridOptionsWrapper;
     private columnController;
     private focusController;
     private readonly pinned;

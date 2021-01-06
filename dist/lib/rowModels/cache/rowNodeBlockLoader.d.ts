@@ -1,10 +1,12 @@
-// Type definitions for ag-grid-community v21.2.2
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNodeBlock } from "./rowNodeBlock";
-export declare class RowNodeBlockLoader {
-    private readonly maxConcurrentRequests;
-    private readonly checkBlockToLoadDebounce;
+import { BeanStub } from "../context/beanStub";
+export declare class RowNodeBlockLoader extends BeanStub {
+    static BLOCK_LOADER_FINISHED_EVENT: string;
+    private maxConcurrentRequests;
+    private checkBlockToLoadDebounce;
     private activeBlockLoadsCount;
     private blocks;
     private logger;

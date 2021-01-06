@@ -8,13 +8,19 @@ if [ "$#" -lt 1 ]
 fi
 
 ZIP_PREFIX=`date +%Y%m%d`
-
 RAW_VERSION=$1
 VERSION=""${RAW_VERSION//./}""
 
-echo "Building Docs Archive"
+echo "Starting Archive Docs Bundle Process"
 cd grid-packages/ag-grid-docs
 rm -rf dist
+
+echo "Gatsby Archive Package"
+cd documentation
+GATSBY_HOST=www.ag-grid.com GATSBY_ROOT_DIRECTORY="/archive/$RAW_VERSION" npm run package
+cd ..
+
+echo "Building Docs Archive"
 npx gulp release-archive
 cd ../../
 
@@ -22,3 +28,4 @@ OUTPUT=$(node scripts/release/createDocsArchiveBundle.js $RAW_VERSION | tee /dev
 ARCHIVE_FILENAME=`echo $OUTPUT | sed 's/.*Archive Complete://'`
 
 echo "Archive Created: $ARCHIVE_FILENAME"
+

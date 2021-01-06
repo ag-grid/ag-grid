@@ -37,34 +37,49 @@ var ClipboardService = /** @class */ (function (_super) {
     ClipboardService.prototype.pasteFromClipboard = function () {
         var _this = this;
         this.logger.log('pasteFromClipboard');
+        // Method 1 - native clipboard API, available in modern chrome browsers
+        var allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
+        if (allowNavigator && navigator.clipboard) {
+            navigator.clipboard.readText()
+                .then(this.processClipboardData.bind(this))
+                .catch(function () {
+                // no processing, if fails, do nothing, paste doesn't happen
+            });
+            return;
+        }
+        // Method 2 - if modern API fails, the old school hack
         this.executeOnTempElement(function (textArea) { return textArea.focus(); }, function (element) {
             var data = element.value;
-            if (core_1._.missingOrEmpty(data)) {
-                return;
-            }
-            var parsedData = core_1._.stringToArray(data, _this.gridOptionsWrapper.getClipboardDeliminator());
-            var userFunc = _this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
-            if (userFunc) {
-                parsedData = userFunc({ data: parsedData });
-            }
-            if (core_1._.missingOrEmpty(parsedData)) {
-                return;
-            }
-            if (_this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
-                _this.removeLastLineIfBlank(parsedData);
-            }
-            var pasteOperation = function (cellsToFlash, updatedRowNodes, focusedCell, changedPath) {
-                var rangeActive = _this.rangeController && _this.rangeController.isMoreThanOneCell();
-                var pasteIntoRange = rangeActive && !_this.hasOnlyOneValueToPaste(parsedData);
-                if (pasteIntoRange) {
-                    _this.pasteIntoActiveRange(parsedData, cellsToFlash, updatedRowNodes, changedPath);
-                }
-                else {
-                    _this.pasteStartingFromFocusedCell(parsedData, cellsToFlash, updatedRowNodes, focusedCell, changedPath);
-                }
-            };
-            _this.doPasteOperation(pasteOperation);
+            _this.processClipboardData(data);
         });
+    };
+    ClipboardService.prototype.processClipboardData = function (data) {
+        var _this = this;
+        if (core_1._.missingOrEmpty(data)) {
+            return;
+        }
+        var parsedData = core_1._.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
+        var userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
+        if (userFunc) {
+            parsedData = userFunc({ data: parsedData });
+        }
+        if (core_1._.missingOrEmpty(parsedData)) {
+            return;
+        }
+        if (this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
+            this.removeLastLineIfBlank(parsedData);
+        }
+        var pasteOperation = function (cellsToFlash, updatedRowNodes, focusedCell, changedPath) {
+            var rangeActive = _this.rangeController && _this.rangeController.isMoreThanOneCell();
+            var pasteIntoRange = rangeActive && !_this.hasOnlyOneValueToPaste(parsedData);
+            if (pasteIntoRange) {
+                _this.pasteIntoActiveRange(parsedData, cellsToFlash, updatedRowNodes, changedPath);
+            }
+            else {
+                _this.pasteStartingFromFocusedCell(parsedData, cellsToFlash, updatedRowNodes, focusedCell, changedPath);
+            }
+        };
+        this.doPasteOperation(pasteOperation);
     };
     // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
     ClipboardService.prototype.doPasteOperation = function (pasteOperationFunc) {
@@ -84,6 +99,8 @@ var ClipboardService = /** @class */ (function (_super) {
         }
         var cellsToFlash = {};
         var updatedRowNodes = [];
+        var doc = this.gridOptionsWrapper.getDocument();
+        var focusedElementBefore = doc.activeElement;
         var focusedCell = this.focusController.getFocusedCell();
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
         if (changedPath) {
@@ -92,7 +109,11 @@ var ClipboardService = /** @class */ (function (_super) {
         this.rowRenderer.refreshCells();
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
-        if (focusedCell) {
+        var focusedElementAfter = doc.activeElement;
+        // if using the clipboard hack with a temp element, then the focus has been lost,
+        // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
+        // navigation stops.
+        if (focusedCell && focusedElementBefore != focusedElementAfter) {
             this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
         this.eventService.dispatchEvent({
@@ -106,7 +127,8 @@ var ClipboardService = /** @class */ (function (_super) {
         var _this = this;
         // true if clipboard data can be evenly pasted into range, otherwise false
         var abortRepeatingPasteIntoRows = this.getRangeSize() % clipboardData.length != 0;
-        var indexOffset = 0, dataRowIndex = 0;
+        var indexOffset = 0;
+        var dataRowIndex = 0;
         var rowCallback = function (currentRow, rowNode, columns, index) {
             var atEndOfClipboardData = index - indexOffset >= clipboardData.length;
             if (atEndOfClipboardData) {
@@ -147,12 +169,7 @@ var ClipboardService = /** @class */ (function (_super) {
         }
         var currentRow = { rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned };
         var columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
-        if (this.hasOnlyOneValueToPaste(parsedData)) {
-            this.pasteSingleValue(parsedData, updatedRowNodes, cellsToFlash, changedPath);
-        }
-        else {
-            this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
-        }
+        this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
     };
     ClipboardService.prototype.hasOnlyOneValueToPaste = function (parsedData) {
         return parsedData.length === 1 && parsedData[0].length === 1;
@@ -226,33 +243,23 @@ var ClipboardService = /** @class */ (function (_super) {
     };
     ClipboardService.prototype.pasteMultipleValues = function (clipboardGridData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, type, changedPath) {
         var _this = this;
+        var rowPointer = currentRow;
         clipboardGridData.forEach(function (clipboardRowData) {
             // if we have come to end of rows in grid, then skip
-            if (!currentRow) {
+            if (!rowPointer) {
                 return;
             }
-            var rowNode = _this.rowPositionUtils.getRowNode(currentRow);
+            var rowNode = _this.rowPositionUtils.getRowNode(rowPointer);
             if (rowNode) {
                 updatedRowNodes.push(rowNode);
                 clipboardRowData.forEach(function (value, index) {
-                    return _this.updateCellValue(rowNode, columnsToPasteInto[index], value, currentRow, cellsToFlash, type, changedPath);
+                    return _this.updateCellValue(rowNode, columnsToPasteInto[index], value, rowPointer, cellsToFlash, type, changedPath);
                 });
                 // move to next row down for next set of values
-                currentRow = _this.cellNavigationService.getRowBelow({ rowPinned: currentRow.rowPinned, rowIndex: currentRow.rowIndex });
+                rowPointer = _this.cellNavigationService.getRowBelow({ rowPinned: rowPointer.rowPinned, rowIndex: rowPointer.rowIndex });
             }
         });
-        return currentRow;
-    };
-    ClipboardService.prototype.pasteSingleValue = function (parsedData, updatedRowNodes, cellsToFlash, changedPath) {
-        var _this = this;
-        var value = parsedData[0][0];
-        var rowCallback = function (currentRow, rowNode, columns) {
-            updatedRowNodes.push(rowNode);
-            columns.forEach(function (column) {
-                return _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
-            });
-        };
-        this.iterateActiveRanges(false, rowCallback);
+        return rowPointer;
     };
     ClipboardService.prototype.updateCellValue = function (rowNode, column, value, currentRow, cellsToFlash, type, changedPath) {
         if (!rowNode ||
@@ -276,7 +283,6 @@ var ClipboardService = /** @class */ (function (_super) {
         if (includeHeaders == null) {
             includeHeaders = this.gridOptionsWrapper.isCopyHeadersToClipboard();
         }
-        var focusedCell = this.focusController.getFocusedCell();
         var selectedRowsToCopy = !this.selectionController.isEmpty()
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
         // default is copy range if exists, otherwise rows
@@ -298,9 +304,6 @@ var ClipboardService = /** @class */ (function (_super) {
             // of exactly one cell (hence the first 'if' above didn't
             // get executed).
             this.copySelectedRangeToClipboard(includeHeaders);
-        }
-        if (focusedCell) {
-            this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
     };
     ClipboardService.prototype.iterateActiveRanges = function (onlyFirst, rowCallback, columnCallback) {
@@ -460,23 +463,37 @@ var ClipboardService = /** @class */ (function (_super) {
         this.copyDataToClipboard(data);
     };
     ClipboardService.prototype.copyDataToClipboard = function (data) {
+        var _this = this;
         var userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
+        // method 1 - user provided func
         if (userProvidedFunc) {
             userProvidedFunc({ data: data });
+            return;
         }
-        else {
-            this.executeOnTempElement(function (element) {
-                element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
-                element.select();
-                element.focus();
-                var result = document.execCommand('copy');
-                if (!result) {
-                    console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
-                        'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
-                        'the browser will prevent it for security reasons.');
-                }
+        // method 2 - native clipboard API, available in modern chrome browsers
+        var allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
+        if (allowNavigator && navigator.clipboard) {
+            navigator.clipboard.writeText(data).catch(function () {
+                // no processing, if fails, do nothing, copy doesn't happen
             });
+            return;
         }
+        // method 3 - if all else fails, the old school hack
+        this.executeOnTempElement(function (element) {
+            var focusedElementBefore = _this.gridOptionsWrapper.getDocument().activeElement;
+            element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
+            element.select();
+            element.focus();
+            var result = document.execCommand('copy');
+            if (!result) {
+                console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
+                    'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
+                    'the browser will prevent it for security reasons.');
+            }
+            if (focusedElementBefore != null && focusedElementBefore.focus != null) {
+                focusedElementBefore.focus();
+            }
+        });
     };
     ClipboardService.prototype.executeOnTempElement = function (callbackNow, callbackAfter) {
         var eTempInput = document.createElement('textarea');
@@ -545,9 +562,6 @@ var ClipboardService = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('cellNavigationService')
     ], ClipboardService.prototype, "cellNavigationService", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ClipboardService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnApi')
     ], ClipboardService.prototype, "columnApi", void 0);

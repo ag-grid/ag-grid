@@ -3,8 +3,6 @@ export declare class DetailCellRenderer extends Component implements ICellRender
     private static TEMPLATE;
     private environment;
     private eDetailGrid;
-    private resizeObserverService;
-    private gridOptionsWrapper;
     private detailGridOptions;
     private needRefresh;
     private params;

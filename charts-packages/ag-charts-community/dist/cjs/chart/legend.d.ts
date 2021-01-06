@@ -1,7 +1,7 @@
 import { Group } from "../scene/group";
 import { FontStyle, FontWeight } from "../scene/shape/text";
 import { Marker } from "./marker/marker";
-import { Observable, PropertyChangeEvent } from "../util/observable";
+import { Observable, PropertyChangeEvent, SourceEvent } from "../util/observable";
 export interface LegendDatum {
     id: string;
     itemId: any;
@@ -16,6 +16,11 @@ export interface LegendDatum {
     label: {
         text: string;
     };
+}
+export interface LegendClickEvent extends SourceEvent<Legend> {
+    event: MouseEvent;
+    itemId: string;
+    enabled: boolean;
 }
 export declare enum LegendOrientation {
     Vertical = 0,
@@ -128,7 +133,7 @@ export declare class Legend extends Observable {
     private _size;
     readonly size: Readonly<[number, number]>;
     protected onDataChange(event: PropertyChangeEvent<this, LegendDatum[]>): void;
-    protected onEnabledChange(event: PropertyChangeEvent<this, Boolean>): void;
+    protected onEnabledChange(event: PropertyChangeEvent<this, boolean>): void;
     protected onPositionChange(event: PropertyChangeEvent<this, LegendPosition>): void;
     protected onMarkerShapeChange(): void;
     /**

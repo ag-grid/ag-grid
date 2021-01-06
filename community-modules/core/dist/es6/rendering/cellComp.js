@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,7 +41,7 @@ import { setAriaColIndex, setAriaSelected } from "../utils/aria";
 import { get, getValueUsingField } from "../utils/object";
 import { escapeString } from "../utils/string";
 import { exists, missing } from "../utils/generic";
-import { addOrRemoveCssClass, clearElement, addStylesToElement, isElementChildOfClass } from "../utils/dom";
+import { addOrRemoveCssClass, clearElement, addStylesToElement, isElementChildOfClass, isFocusableFormField } from "../utils/dom";
 import { last, areEqual, pushAll, includes } from "../utils/array";
 import { cssStyleObjectToMarkup } from "../utils/general";
 import { isStopPropagationForAgGrid, getTarget, isEventSupported } from "../utils/event";
@@ -296,7 +296,8 @@ var CellComp = /** @class */ (function (_super) {
         if (!this.usingWrapper) {
             cssClasses.push(CSS_CELL_VALUE);
         }
-        if (this.column.getColDef().wrapText) {
+        this.wrapText = this.column.getColDef().wrapText == true;
+        if (this.wrapText) {
             cssClasses.push(CSS_CELL_WRAP_TEXT);
         }
         return cssClasses;
@@ -335,6 +336,17 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.getCellEditor = function () {
         return this.cellEditor;
+    };
+    CellComp.prototype.onNewColumnsLoaded = function () {
+        this.postProcessWrapText();
+        this.postProcessCellClassRules();
+    };
+    CellComp.prototype.postProcessWrapText = function () {
+        var newValue = this.column.getColDef().wrapText == true;
+        if (newValue !== this.wrapText) {
+            this.wrapText = newValue;
+            this.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, this.wrapText);
+        }
     };
     // + stop editing {forceRefresh: true, suppressFlash: true}
     // + event cellChanged {}
@@ -790,7 +802,8 @@ var CellComp = /** @class */ (function (_super) {
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         var ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
-        return this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
+        var value = this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
+        return value;
     };
     CellComp.prototype.onMouseEvent = function (eventName, mouseEvent) {
         if (isStopPropagationForAgGrid(mouseEvent)) {
@@ -969,22 +982,27 @@ var CellComp = /** @class */ (function (_super) {
         this.beans.eventService.dispatchEvent(event);
     };
     CellComp.prototype.addInCellEditor = function () {
-        clearElement(this.getGui());
+        var eGui = this.getGui();
+        // if focus is inside the cell, we move focus to the cell itself
+        // before removing it's contents, otherwise errors could be thrown.
+        if (eGui.contains(document.activeElement)) {
+            eGui.focus();
+        }
+        this.clearCellElement();
         if (this.cellEditor) {
-            this.getGui().appendChild(this.cellEditor.getGui());
+            eGui.appendChild(this.cellEditor.getGui());
         }
         this.angular1Compile();
     };
     CellComp.prototype.addPopupCellEditor = function () {
         var _this = this;
-        var ePopupGui = this.cellEditor ? this.cellEditor.getGui() : null;
+        var ePopupGui = this.cellEditor && this.cellEditor.getGui();
+        if (!ePopupGui) {
+            return;
+        }
+        var popupService = this.beans.popupService;
         var useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenGridLosesFocus();
-        this.hideEditorPopup = this.beans.popupService.addPopup({
-            modal: useModelPopup,
-            eChild: ePopupGui,
-            closeOnEsc: true,
-            closedCallback: function () { _this.onPopupEditorClosed(); }
-        });
+        var position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
         var params = {
             column: this.column,
             rowNode: this.rowNode,
@@ -993,12 +1011,19 @@ var CellComp = /** @class */ (function (_super) {
             ePopup: ePopupGui,
             keepWithinBounds: true
         };
-        var position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
-        if (position === 'under') {
-            this.beans.popupService.positionPopupUnderComponent(params);
-        }
-        else {
-            this.beans.popupService.positionPopupOverComponent(params);
+        var positionCallback = position === 'under' ?
+            popupService.positionPopupUnderComponent.bind(popupService, params)
+            : popupService.positionPopupOverComponent.bind(popupService, params);
+        var addPopupRes = popupService.addPopup({
+            modal: useModelPopup,
+            eChild: ePopupGui,
+            closeOnEsc: true,
+            closedCallback: function () { _this.onPopupEditorClosed(); },
+            anchorToElement: this.getGui(),
+            positionCallback: positionCallback
+        });
+        if (addPopupRes) {
+            this.hideEditorPopup = addPopupRes.hideFunc;
         }
         this.angular1Compile();
     };
@@ -1007,17 +1032,12 @@ var CellComp = /** @class */ (function (_super) {
         // it's possible the popup called 'stop editing'
         // before this, eg if 'enter key' was pressed on
         // the editor.
-        if (this.editingCell) {
-            // note: this only happens when use clicks outside of the grid. if use clicks on another
-            // cell, then the editing will have already stopped on this cell
-            this.stopRowOrCellEdit();
-            // we only focus cell again if this cell is still focused. it is possible
-            // it is not focused if the user cancelled the edit by clicking on another
-            // cell outside of this one
-            if (this.beans.focusController.isCellFocused(this.cellPosition)) {
-                this.focusCell(true);
-            }
+        if (!this.editingCell) {
+            return;
         }
+        // note: this only happens when use clicks outside of the grid. if use clicks on another
+        // cell, then the editing will have already stopped on this cell
+        this.stopRowOrCellEdit();
     };
     // if we are editing inline, then we don't have the padding in the cell (set in the themes)
     // to allow the text editor full access to the entire cell
@@ -1269,7 +1289,7 @@ var CellComp = /** @class */ (function (_super) {
             // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
-            var forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell;
+            var forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell && !isFocusableFormField(target);
             this.focusCell(forceBrowserFocus);
         }
         else if (rangeController) {
@@ -1752,11 +1772,12 @@ var CellComp = /** @class */ (function (_super) {
             this.hideEditorPopup = null;
         }
         else {
-            clearElement(this.getGui());
+            this.clearCellElement();
+            var eGui = this.getGui();
             // put the cell back the way it was before editing
             if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back
-                this.getGui().appendChild(this.eCellWrapper);
+                eGui.appendChild(this.eCellWrapper);
             }
             else if (this.cellRenderer) {
                 // if cellRenderer, then put the gui back in. if the renderer has
@@ -1768,7 +1789,7 @@ var CellComp = /** @class */ (function (_super) {
                 // can be null if cell was previously null / contained empty string,
                 // this will result in new value not being rendered.
                 if (eCell) {
-                    this.getGui().appendChild(eCell);
+                    eGui.appendChild(eCell);
                 }
             }
         }
@@ -1790,6 +1811,17 @@ var CellComp = /** @class */ (function (_super) {
         var editingStoppedEvent = __assign(__assign({}, this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED)), { oldValue: oldValue,
             newValue: newValue });
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
+    };
+    CellComp.prototype.clearCellElement = function () {
+        var eGui = this.getGui();
+        // if focus is inside the cell, we move focus to the cell itself
+        // before removing it's contents, otherwise errors could be thrown.
+        if (eGui.contains(document.activeElement) && !isBrowserIE()) {
+            eGui.focus({
+                preventScroll: true
+            });
+        }
+        clearElement(eGui);
     };
     CellComp.DOM_DATA_KEY_CELL_COMP = 'cellComp';
     CellComp.CELL_RENDERER_TYPE_NORMAL = 'cellRenderer';

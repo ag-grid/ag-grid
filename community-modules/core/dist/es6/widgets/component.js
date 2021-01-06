@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,7 @@ import { NumberSequence } from "../utils";
 import { isNodeOrElement, copyNodeList, iterateNamedNodeMap, loadTemplate, setVisible, setDisplayed, addCssClass, removeCssClass, addOrRemoveCssClass } from '../utils/dom';
 import { forEach } from '../utils/array';
 import { getFunctionName } from '../utils/function';
+import { TooltipFeature } from "./tooltipFeature";
 var compIdSequence = new NumberSequence();
 var Component = /** @class */ (function (_super) {
     __extends(Component, _super);
@@ -51,8 +52,45 @@ var Component = /** @class */ (function (_super) {
         }
         return _this;
     }
+    Component.prototype.postConstructOnComponent = function () {
+        this.usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
+    };
     Component.prototype.getCompId = function () {
         return this.compId;
+    };
+    Component.prototype.getTooltipParams = function () {
+        return {
+            value: this.tooltipText,
+            location: 'UNKNOWN'
+        };
+    };
+    Component.prototype.setTooltip = function (newTooltipText) {
+        var _this = this;
+        var removeTooltip = function () {
+            if (_this.usingBrowserTooltips) {
+                _this.getGui().removeAttribute('title');
+            }
+            else {
+                _this.tooltipFeature = _this.destroyBean(_this.tooltipFeature);
+            }
+        };
+        var addTooltip = function () {
+            if (_this.usingBrowserTooltips) {
+                _this.getGui().setAttribute('title', _this.tooltipText);
+            }
+            else {
+                _this.tooltipFeature = _this.createBean(new TooltipFeature(_this));
+            }
+        };
+        if (this.tooltipText != newTooltipText) {
+            if (this.tooltipText) {
+                removeTooltip();
+            }
+            this.tooltipText = newTooltipText;
+            if (this.tooltipText) {
+                addTooltip();
+            }
+        }
     };
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
     Component.prototype.createChildComponentsFromTags = function (parentNode, paramsMap) {
@@ -278,6 +316,9 @@ var Component = /** @class */ (function (_super) {
     };
     Component.prototype.destroy = function () {
         this.removeAnnotatedGuiEventListeners();
+        if (this.tooltipFeature) {
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+        }
         _super.prototype.destroy.call(this);
     };
     Component.prototype.addGuiEventListener = function (event, listener) {
@@ -317,6 +358,9 @@ var Component = /** @class */ (function (_super) {
     __decorate([
         Autowired('agStackComponentsRegistry')
     ], Component.prototype, "agStackComponentsRegistry", void 0);
+    __decorate([
+        PostConstruct
+    ], Component.prototype, "postConstructOnComponent", null);
     __decorate([
         PreConstruct
     ], Component.prototype, "createChildComponentsPreConstruct", null);

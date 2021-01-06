@@ -56,6 +56,9 @@ var SeriesMarker = /** @class */ (function (_super) {
     ], SeriesMarker.prototype, "maxSize", void 0);
     __decorate([
         observable_1.reactive('change')
+    ], SeriesMarker.prototype, "domain", void 0);
+    __decorate([
+        observable_1.reactive('change')
     ], SeriesMarker.prototype, "fill", void 0);
     __decorate([
         observable_1.reactive('change')

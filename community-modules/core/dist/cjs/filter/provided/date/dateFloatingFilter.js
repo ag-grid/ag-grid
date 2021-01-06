@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,19 +44,23 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         return dateFilter_1.DateFilter.DEFAULT_FILTER_OPTIONS;
     };
     DateFloatingFilter.prototype.conditionToString = function (condition) {
-        if (condition.type === simpleFilter_1.SimpleFilter.IN_RANGE) {
-            return condition.dateFrom + "-" + condition.dateTo;
+        var type = condition.type;
+        var dateFrom = date_1.parseDateTimeFromString(condition.dateFrom);
+        if (type === simpleFilter_1.SimpleFilter.IN_RANGE) {
+            var dateTo = date_1.parseDateTimeFromString(condition.dateTo);
+            return date_1.serialiseDate(dateFrom, false) + "-" + date_1.serialiseDate(dateTo, false);
         }
         // cater for when the type doesn't need a value
-        return condition.dateFrom == null ? "" + condition.type : "" + condition.dateFrom;
+        return dateFrom == null ? "" + type : "" + date_1.serialiseDate(dateFrom, false);
     };
     DateFloatingFilter.prototype.init = function (params) {
         _super.prototype.init.call(this, params);
         this.params = params;
         this.createDateComponent();
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eReadOnlyText
             .setDisabled(true)
-            .setInputAriaLabel('Date Filter Input');
+            .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
     };
     DateFloatingFilter.prototype.setEditable = function (editable) {
         dom_1.setDisplayed(this.eDateWrapper, editable);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -182,9 +182,6 @@ var HeaderContainer = /** @class */ (function (_super) {
         // taking it out of the last position and re-inserting relative to the other rows.
         this.getRowComps().forEach(function (rowComp) { return _this.eContainer.appendChild(rowComp.getGui()); });
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], HeaderContainer.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('columnController')
     ], HeaderContainer.prototype, "columnController", void 0);

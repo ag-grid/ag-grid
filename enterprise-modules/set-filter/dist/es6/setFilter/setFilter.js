@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Constants, Events, ProvidedFilter, RefSelector, VirtualList, Promise, _, KeyCode, } from '@ag-grid-community/core';
+import { Autowired, Constants, Events, ProvidedFilter, RefSelector, VirtualList, AgPromise, KeyCode, _ } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem } from './setFilterListItem';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
@@ -76,6 +76,10 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.getCssIdentifier = function () {
         return 'set-filter';
+    };
+    SetFilter.prototype.setModelAndRefresh = function (values) {
+        var _this = this;
+        return this.valueModel ? this.valueModel.setModel(values).then(function () { return _this.refresh(); }) : AgPromise.resolve();
     };
     SetFilter.prototype.resetUiToDefaults = function () {
         var _this = this;
@@ -195,7 +199,10 @@ var SetFilter = /** @class */ (function (_super) {
         var _this = this;
         if (refreshValues === void 0) { refreshValues = true; }
         if (keepSelection === void 0) { keepSelection = true; }
-        var promise = Promise.resolve();
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        var promise = AgPromise.resolve();
         if (refreshValues) {
             promise = this.valueModel.refreshValues(keepSelection);
         }
@@ -259,11 +266,18 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.initMiniFilter = function () {
         var _this = this;
-        var eMiniFilter = this.eMiniFilter;
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        var _a = this, eMiniFilter = _a.eMiniFilter, gridOptionsWrapper = _a.gridOptionsWrapper;
+        var translate = gridOptionsWrapper.getLocaleTextFunc();
         _.setDisplayed(eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(function () { return _this.onMiniFilterInput(); });
-        eMiniFilter.setInputAriaLabel('Search filter values');
+        eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
         this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', function (e) { return _this.onMiniFilterKeyPress(e); });
     };
     // we need to have the GUI attached before we can draw the virtual rows, as the

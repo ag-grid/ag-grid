@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,9 +74,6 @@ var ValueFormatterService = /** @class */ (function (_super) {
         }
         return result;
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], ValueFormatterService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('expressionService')
     ], ValueFormatterService.prototype, "expressionService", void 0);

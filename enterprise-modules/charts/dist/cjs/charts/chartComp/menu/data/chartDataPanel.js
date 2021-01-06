@@ -248,9 +248,6 @@ var ChartDataPanel = /** @class */ (function (_super) {
         core_1.Autowired('dragAndDropService')
     ], ChartDataPanel.prototype, "dragAndDropService", void 0);
     __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ChartDataPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         core_1.Autowired('chartTranslator')
     ], ChartDataPanel.prototype, "chartTranslator", void 0);
     __decorate([

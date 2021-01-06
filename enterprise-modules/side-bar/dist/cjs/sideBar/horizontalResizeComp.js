@@ -54,9 +54,6 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
         core_1.Autowired('horizontalResizeService')
     ], HorizontalResizeComp.prototype, "horizontalResizeService", void 0);
     __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], HorizontalResizeComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         core_1.PostConstruct
     ], HorizontalResizeComp.prototype, "postConstruct", null);
     return HorizontalResizeComp;

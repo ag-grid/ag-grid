@@ -13,8 +13,7 @@ import {
     VirtualList,
     VirtualListModel,
     IAfterGuiAttachedParams,
-    Promise,
-    _,
+    AgPromise,
     KeyCode,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
@@ -105,13 +104,17 @@ export class SetFilter extends ProvidedFilter {
         return 'set-filter';
     }
 
-    protected resetUiToDefaults(): Promise<void> {
+    private setModelAndRefresh(values: (string | null)[] | null): AgPromise<void> {
+        return this.valueModel ? this.valueModel.setModel(values).then(() => this.refresh()) : AgPromise.resolve();
+    }
+
+    protected resetUiToDefaults(): AgPromise<void> {
         this.setMiniFilter(null);
 
         return this.valueModel.setModel(null).then(() => this.refresh());
     }
 
-    protected setModelIntoUi(model: SetFilterModel): Promise<void> {
+    protected setModelIntoUi(model: SetFilterModel): AgPromise<void> {
         this.setMiniFilter(null);
 
         if (model instanceof Array) {
@@ -256,8 +259,10 @@ export class SetFilter extends ProvidedFilter {
             });
     }
 
-    private syncAfterDataChange(refreshValues = true, keepSelection = true): void {
-        let promise = Promise.resolve();
+    private syncAfterDataChange(refreshValues = true, keepSelection = true): AgPromise<void> {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
+        let promise: AgPromise<void> = AgPromise.resolve();
 
         if (refreshValues) {
             promise = this.valueModel.refreshValues(keepSelection);
@@ -350,13 +355,17 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initMiniFilter() {
-        const { eMiniFilter } = this;
+        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
+        const { eMiniFilter, gridOptionsWrapper } = this;
+        const translate = gridOptionsWrapper.getLocaleTextFunc();
 
         _.setDisplayed(eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
 
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
-        eMiniFilter.setInputAriaLabel('Search filter values');
+        eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
 
         this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', e => this.onMiniFilterKeyPress(e));
     }

@@ -1,11 +1,12 @@
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { Promise } from '../../../utils';
+import { AgPromise } from '../../../utils';
 import { SimpleFilter, ConditionPosition, ISimpleFilterModel } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { makeNull } from '../../../utils/generic';
 import { setDisplayed } from '../../../utils/dom';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { isBrowserChrome, isBrowserEdge } from '../../../utils/browser';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     filter?: number;
@@ -51,7 +52,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return 500;
     }
 
-    protected resetUiToDefaults(silent?: boolean): Promise<void> {
+    protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
         return super.resetUiToDefaults(silent).then(() => {
             const fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
 
@@ -88,7 +89,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     protected setParams(params: INumberFilterParams): void {
         this.numberFilterParams = params;
 
-        const { allowedCharPattern } = params;
+        const allowedCharPattern = this.getAllowedCharPattern();
 
         if (allowedCharPattern) {
             const config = { allowedCharPattern };
@@ -116,20 +117,29 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     private resetPlaceholder(): void {
+        const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
         const isRange1 = this.showValueTo(this.getCondition1Type());
         const isRange2 = this.showValueTo(this.getCondition2Type());
 
         this.eValueFrom1.setInputPlaceholder(this.translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueFrom1.setInputAriaLabel(isRange1 ? 'Filter from value' : 'Filter value');
+        this.eValueFrom1.setInputAriaLabel(
+            isRange1
+                ? globalTranslate('ariaFilterFromValue', 'Filter from value')
+                : globalTranslate('ariaFilterValue', 'Filter Value')
+        );
 
         this.eValueTo1.setInputPlaceholder(this.translate('inRangeEnd'));
-        this.eValueTo1.setInputAriaLabel('Filter to value');
+        this.eValueTo1.setInputAriaLabel(globalTranslate('ariaFilterToValue', 'Filter to Value'));
 
         this.eValueFrom2.setInputPlaceholder(this.translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueFrom2.setInputAriaLabel(isRange2 ? 'Filter from value' : 'Filter value');
+        this.eValueFrom2.setInputAriaLabel(
+            isRange2
+                ? globalTranslate('ariaFilterFromValue', 'Filter from value')
+                : globalTranslate('ariaFilterValue', 'Filter Value')
+        );
 
         this.eValueTo2.setInputPlaceholder(this.translate('inRangeEnd'));
-        this.eValueTo2.setInputAriaLabel('Filter to value');
+        this.eValueTo2.setInputAriaLabel(globalTranslate('ariaFilterToValue', 'Filter to Value'));
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
@@ -148,7 +158,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     protected createValueTemplate(position: ConditionPosition): string {
         const pos = position === ConditionPosition.One ? '1' : '2';
-        const { allowedCharPattern } = this.numberFilterParams || {};
+        const allowedCharPattern = this.getAllowedCharPattern();
         const agElementTag = allowedCharPattern ? 'ag-input-text-field' : 'ag-input-number-field';
 
         return /* html */`
@@ -240,5 +250,21 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         setDisplayed(this.eValueTo1.getGui(), this.showValueTo(condition1Type));
         setDisplayed(this.eValueFrom2.getGui(), this.showValueFrom(condition2Type));
         setDisplayed(this.eValueTo2.getGui(), this.showValueTo(condition2Type));
+    }
+
+    private getAllowedCharPattern(): string | null {
+        const { allowedCharPattern } = this.numberFilterParams || {};
+
+        if (allowedCharPattern) {
+            return allowedCharPattern;
+        }
+
+        if (!isBrowserChrome() && !isBrowserEdge()) {
+            // only Chrome and Edge support the HTML5 number field, so for other browsers we provide an equivalent
+            // constraint instead
+            return '\\d\\-\\.';
+        }
+
+        return null;
     }
 }

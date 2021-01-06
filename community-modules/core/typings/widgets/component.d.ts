@@ -1,6 +1,7 @@
 import { AgEvent } from "../events";
 import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
+import { ITooltipParams } from "../rendering/tooltipComponent";
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
@@ -14,8 +15,14 @@ export declare class Component extends BeanStub {
     protected parentComponent: Component | undefined;
     private compId;
     private cssClassStates;
+    protected usingBrowserTooltips: boolean;
+    private tooltipText;
+    private tooltipFeature;
     constructor(template?: string);
+    private postConstructOnComponent;
     getCompId(): number;
+    getTooltipParams(): ITooltipParams;
+    setTooltip(newTooltipText: string | undefined): void;
     private createChildComponentsFromTags;
     createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: {
         [key: string]: any;

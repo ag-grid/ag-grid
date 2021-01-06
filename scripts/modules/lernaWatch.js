@@ -66,8 +66,8 @@ const buildDependencyChain = async (packageName, buildChains, singleModule = fal
         await buildDependencies(buildChain["0"], command);
     } else {
         const buildBands = Object.values(buildChain);
-        for(let index = 0; index < buildBands.length; index++) {
-            await buildDependencies(buildBands[index], command)
+        for (let index = 0; index < buildBands.length; index++) {
+            await buildDependencies(buildBands[index], command);
         }
     }
 };
@@ -146,7 +146,7 @@ const filterAgGridOnly = dependencyTree => {
     const prunedDependencyTree = {};
     const agRoots = Object.keys(dependencyTree);
     agRoots.forEach(root => {
-        prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-")) : []
+        prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-")) : [];
     });
     return prunedDependencyTree;
 };
@@ -184,6 +184,7 @@ const buildBuildTree = (startingPackage, dependencyTree, dependenciesOrdered) =>
 const exclude = [
     'ag-grid-dev',
     'ag-grid-docs',
+    'ag-grid-documentation',
     'ag-grid-community',
     'ag-grid-enterprise'
 ];
@@ -195,7 +196,7 @@ const filterExcludedRoots = dependencyTree => {
     const agRoots = Object.keys(dependencyTree).filter(excludePackage);
 
     agRoots.forEach(root => {
-        prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-")) : []
+        prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-")) : [];
     });
 
     return prunedDependencyTree;
@@ -213,7 +214,7 @@ const getOrderedDependencies = async packageName => {
     return {
         paths,
         orderedPackageNames
-    }
+    };
 };
 
 const generateBuildChain = async (packageName, allPackagesOrdered) => {
@@ -250,8 +251,8 @@ const extractCssBuildChain = (buildChainInfo) => {
 
 const watch = async (singleModule = false) => {
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
-    if(!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
+    if (!fs.existsSync(cacheFilePath)) {
+        const { paths, orderedPackageNames } = await getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -277,8 +278,8 @@ const watch = async (singleModule = false) => {
 const watchBeta = async () => {
     console.log("Watching css...");
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
-    if(!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
+    if (!fs.existsSync(cacheFilePath)) {
+        const { paths, orderedPackageNames } = await getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -301,7 +302,7 @@ const watchBeta = async () => {
 const getBuildChainInfo = async () => {
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if (!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
+        const { paths, orderedPackageNames } = await getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -328,13 +329,13 @@ const build = async () => {
     await buildDependencyChain(packageName, buildChainInfo.buildChains);
 
     const cssBuildChain = extractCssBuildChain(buildChainInfo);
-    await buildDependencyChain(packageName, cssBuildChain.buildChains, false,'build-css');
+    await buildDependencyChain(packageName, cssBuildChain.buildChains, false, 'build-css');
 };
 
 const buildCssBeta = async () => {
     const buildChainInfo = await getBuildChainInfo();
     const cssBuildChain = extractCssBuildChain(buildChainInfo);
-    await buildDependencyChain("@ag-grid-community/core", cssBuildChain.buildChains, false,'build-css');
+    await buildDependencyChain("@ag-grid-community/core", cssBuildChain.buildChains, false, 'build-css');
 };
 
 if (commandLineOptions.watch) watch(false);

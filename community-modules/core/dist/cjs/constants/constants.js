@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,6 +39,9 @@ var Constants = /** @class */ (function () {
     Constants.PINNED_LEFT = 'left';
     Constants.SORT_ASC = 'asc';
     Constants.SORT_DESC = 'desc';
+    Constants.INPUT_SELECTOR = 'input, select, button, textarea';
+    Constants.FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
+    Constants.FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *';
     return Constants;
 }());
 exports.Constants = Constants;

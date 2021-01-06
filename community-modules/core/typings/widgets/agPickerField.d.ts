@@ -9,7 +9,6 @@ export declare abstract class AgPickerField<TElement extends HTMLElement, TValue
     protected isDestroyingPicker: boolean;
     private skipClick;
     private pickerComponent;
-    private readonly gridOptionsWrapper;
     protected readonly eLabel: HTMLElement;
     protected readonly eWrapper: HTMLElement;
     protected readonly eDisplayField: TElement;

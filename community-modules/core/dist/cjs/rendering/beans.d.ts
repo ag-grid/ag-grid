@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -16,7 +16,6 @@ import { ColumnAnimationService } from "./columnAnimationService";
 import { IRangeController, ISelectionHandleFactory } from "../interfaces/iRangeController";
 import { FocusController } from "../focusController";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
-import { CellRendererFactory } from "./cellRendererFactory";
 import { PopupService } from "../widgets/popupService";
 import { ValueFormatterService } from "./valueFormatterService";
 import { StylingService } from "../styling/stylingService";
@@ -63,7 +62,6 @@ export declare class Beans {
     rangeController: IRangeController;
     focusController: FocusController;
     contextMenuFactory: IContextMenuFactory;
-    cellRendererFactory: CellRendererFactory;
     popupService: PopupService;
     valueFormatterService: ValueFormatterService;
     stylingService: StylingService;

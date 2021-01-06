@@ -23,7 +23,6 @@ export declare class Path2D {
      * @param y2 The y coordinate to arc to.
      */
     arcTo(rx: number, ry: number, rotation: number, fA: number, fS: number, x2: number, y2: number): void;
-    arcToAlt(rx: number, ry: number, rotation: number, fA: number, fS: number, x2: number, y2: number): void;
     /**
      * Approximates an elliptical arc with up to four cubic Bézier curves.
      * @param commands The string array to write SVG command letters to.

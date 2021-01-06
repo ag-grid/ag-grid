@@ -49,6 +49,13 @@ var ChartAxis = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    ChartAxis.prototype.getMeta = function () {
+        return {
+            id: this.id,
+            direction: this.direction,
+            boundSeries: this.boundSeries,
+        };
+    };
     Object.defineProperty(ChartAxis.prototype, "position", {
         get: function () {
             return this._position;

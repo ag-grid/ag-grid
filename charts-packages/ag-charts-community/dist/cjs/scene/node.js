@@ -191,8 +191,8 @@ var Node = /** @class */ (function () {
             if (i >= 0) {
                 this._children.splice(i, 1);
                 delete this.childSet[node.id];
-                node._setParent(undefined);
-                node._setScene(undefined);
+                node._setParent();
+                node._setScene();
                 this.dirty = true;
                 return node;
             }

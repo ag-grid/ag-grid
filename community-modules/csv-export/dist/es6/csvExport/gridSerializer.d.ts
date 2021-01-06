@@ -59,7 +59,6 @@ export declare class GridSerializer extends BeanStub {
     private pinnedRowModel;
     private selectionController;
     private columnFactory;
-    private gridOptionsWrapper;
     serialize<T>(gridSerializingSession: GridSerializingSession<T>, params?: ExportParams<T>): string;
     recursivelyAddHeaderGroups<T>(displayedGroups: ColumnGroupChild[], gridSerializingSession: GridSerializingSession<T>, processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined): void;
     private doAddHeaderHeader;

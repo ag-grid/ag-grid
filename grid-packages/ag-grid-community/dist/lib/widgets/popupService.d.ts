@@ -8,22 +8,28 @@ export interface PopupEventParams {
     touchEvent?: TouchEvent;
     keyboardEvent?: KeyboardEvent;
 }
-interface AddPopupParams {
+export interface AfterGuiAttachedParams {
+    hidePopup: () => void;
+}
+export interface AddPopupParams {
     modal?: boolean;
     eChild: any;
     closeOnEsc?: boolean;
     closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void;
     click?: MouseEvent | Touch | null;
     alwaysOnTop?: boolean;
+    afterGuiAttached?: (params: AfterGuiAttachedParams) => void;
     positionCallback?: () => void;
     anchorToElement?: HTMLElement;
 }
+export interface AddPopupResult {
+    hideFunc: () => void;
+    stopAnchoringFunc?: () => void;
+}
 export declare class PopupService extends BeanStub {
-    private gridOptionsWrapper;
     private environment;
     private gridCore;
     private popupList;
-    private init;
     registerGridCore(gridCore: GridCore): void;
     getPopupParent(): HTMLElement;
     positionPopupForMenu(params: {
@@ -80,7 +86,7 @@ export declare class PopupService extends BeanStub {
     private keepYWithinBounds;
     private keepXWithinBounds;
     private keepPopupPositionedRelativeTo;
-    addPopup(params: AddPopupParams): (params?: PopupEventParams) => void;
+    addPopup(params: AddPopupParams): AddPopupResult | undefined;
     private isEventFromCurrentPopup;
     isElementWithinCustomPopup(el: HTMLElement): boolean;
     private isEventSameChainAsOriginalEvent;
@@ -88,4 +94,3 @@ export declare class PopupService extends BeanStub {
     setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void;
     bringPopupToFront(ePopup: HTMLElement): void;
 }
-export {};

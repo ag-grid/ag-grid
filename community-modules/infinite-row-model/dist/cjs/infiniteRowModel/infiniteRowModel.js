@@ -61,7 +61,8 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     InfiniteRowModel.prototype.addEventListeners = function () {
         this.addManagedListener(this.eventService, core_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
     };
     InfiniteRowModel.prototype.onFilterChanged = function () {
         this.reset();
@@ -246,7 +247,8 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         }
     };
     InfiniteRowModel.prototype.isRowPresent = function (rowNode) {
-        return false;
+        var foundRowNode = this.getRowNode(rowNode.id);
+        return !!foundRowNode;
     };
     InfiniteRowModel.prototype.refreshCache = function () {
         if (this.infiniteCache) {
@@ -284,9 +286,6 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             return null;
         }
     };
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], InfiniteRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('filterManager')
     ], InfiniteRowModel.prototype, "filterManager", void 0);

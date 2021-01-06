@@ -4,7 +4,6 @@ import {
     CellPosition,
     CellRange,
     Column,
-    GridOptionsWrapper,
     RowNode,
     RowPosition,
     ValueService,
@@ -26,7 +25,6 @@ type Direction = 'x' | 'y';
 export class FillHandle extends AbstractSelectionHandle {
 
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     static TEMPLATE = /* html */ `<div class="ag-fill-handle"></div>`;
 
@@ -368,17 +366,16 @@ export class FillHandle extends AbstractSelectionHandle {
             const rangeEndRow = this.getRangeEndRow();
 
             if (isBefore && (
-                    (
-                        currentPosition.rowPinned == rangeStartRow.rowPinned &&
-                        currentPosition.rowIndex >= rangeStartRow.rowIndex
-                    ) ||
-                    (
-                        rangeStartRow.rowPinned != rangeEndRow.rowPinned &&
-                        currentPosition.rowPinned == rangeEndRow.rowPinned &&
-                        currentPosition.rowIndex <= rangeEndRow.rowIndex
-                    )
+                (
+                    currentPosition.rowPinned == rangeStartRow.rowPinned &&
+                    currentPosition.rowIndex >= rangeStartRow.rowIndex
+                ) ||
+                (
+                    rangeStartRow.rowPinned != rangeEndRow.rowPinned &&
+                    currentPosition.rowPinned == rangeEndRow.rowPinned &&
+                    currentPosition.rowIndex <= rangeEndRow.rowIndex
                 )
-            ) {
+            )) {
                 this.reduceVertical(initialPosition, currentPosition);
                 this.isReduce = true;
             } else {
@@ -445,9 +442,10 @@ export class FillHandle extends AbstractSelectionHandle {
 
             if (this.rowPositionUtils.sameRow(row, endPosition)) { break; }
         } while (
-            row = isMovingUp ?
-                this.cellNavigationService.getRowAbove(row) :
-                this.cellNavigationService.getRowBelow(row)
+            // tslint:disable-next-line
+            row = isMovingUp
+                ? this.cellNavigationService.getRowAbove(row)
+                : this.cellNavigationService.getRowBelow(row)
         );
     }
 
@@ -477,6 +475,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 }
             }
             if (isLastRow) { break; }
+            // tslint:disable-next-line
         } while (row = this.cellNavigationService.getRowAbove(row));
     }
 

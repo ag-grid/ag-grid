@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -6,7 +6,6 @@ import { BeanStub } from "../context/beanStub";
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 export declare class DragService extends BeanStub {
     private loggerFactory;
-    private gridOptionsWrapper;
     private columnApi;
     private gridApi;
     private currentDragParams;

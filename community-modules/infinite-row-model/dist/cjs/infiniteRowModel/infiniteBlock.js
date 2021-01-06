@@ -74,6 +74,20 @@ var InfiniteBlock = /** @class */ (function (_super) {
     };
     InfiniteBlock.prototype.loadFromDatasource = function () {
         var _this = this;
+        var params = this.createLoadParams();
+        if (core_1._.missing(this.params.datasource.getRows)) {
+            console.warn("ag-Grid: datasource is missing getRows method");
+            return;
+        }
+        // put in timeout, to force result to be async
+        window.setTimeout(function () {
+            _this.params.datasource.getRows(params);
+        }, 0);
+    };
+    InfiniteBlock.prototype.processServerFail = function () {
+        // todo - this method has better handling in SSRM
+    };
+    InfiniteBlock.prototype.createLoadParams = function () {
         // PROBLEM . . . . when the user sets sort via colDef.sort, then this code
         // is executing before the sort is set up, so server is not getting the sort
         // model. need to change with regards order - so the server side request is
@@ -82,23 +96,85 @@ var InfiniteBlock = /** @class */ (function (_super) {
             startRow: this.getStartRow(),
             endRow: this.getEndRow(),
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this),
-            sortModel: this.cacheParams.sortModel,
-            filterModel: this.cacheParams.filterModel,
+            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
+            sortModel: this.params.sortModel,
+            filterModel: this.params.filterModel,
             context: this.gridOptionsWrapper.getContext()
         };
-        if (core_1._.missing(this.cacheParams.datasource.getRows)) {
-            console.warn("ag-Grid: datasource is missing getRows method");
-            return;
+        return params;
+    };
+    InfiniteBlock.prototype.forEachNode = function (callback, sequence, rowCount) {
+        var _this = this;
+        this.rowNodes.forEach(function (rowNode, index) {
+            var rowIndex = _this.startRow + index;
+            if (rowIndex < rowCount) {
+                callback(rowNode, sequence.next());
+            }
+        });
+    };
+    InfiniteBlock.prototype.getLastAccessed = function () {
+        return this.lastAccessed;
+    };
+    InfiniteBlock.prototype.getRow = function (rowIndex, dontTouchLastAccessed) {
+        if (dontTouchLastAccessed === void 0) { dontTouchLastAccessed = false; }
+        if (!dontTouchLastAccessed) {
+            this.lastAccessed = this.params.lastAccessedSequence.next();
         }
-        // put in timeout, to force result to be async
-        window.setTimeout(function () {
-            _this.cacheParams.datasource.getRows(params);
-        }, 0);
+        var localIndex = rowIndex - this.startRow;
+        return this.rowNodes[localIndex];
+    };
+    InfiniteBlock.prototype.getStartRow = function () {
+        return this.startRow;
+    };
+    InfiniteBlock.prototype.getEndRow = function () {
+        return this.endRow;
+    };
+    // creates empty row nodes, data is missing as not loaded yet
+    InfiniteBlock.prototype.createRowNodes = function () {
+        this.rowNodes = [];
+        for (var i = 0; i < this.params.blockSize; i++) {
+            var rowIndex = this.startRow + i;
+            var rowNode = this.getContext().createBean(new core_1.RowNode());
+            rowNode.setRowHeight(this.params.rowHeight);
+            rowNode.uiLevel = 0;
+            rowNode.setRowIndex(rowIndex);
+            rowNode.rowTop = this.params.rowHeight * rowIndex;
+            this.rowNodes.push(rowNode);
+        }
+    };
+    InfiniteBlock.prototype.processServerResult = function (params) {
+        var _this = this;
+        var rowNodesToRefresh = [];
+        this.rowNodes.forEach(function (rowNode, index) {
+            var data = params.rowData ? params.rowData[index] : undefined;
+            if (rowNode.stub) {
+                rowNodesToRefresh.push(rowNode);
+            }
+            _this.setDataAndId(rowNode, data, _this.startRow + index);
+        });
+        if (rowNodesToRefresh.length > 0) {
+            this.rowRenderer.redrawRows(rowNodesToRefresh);
+        }
+        var finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
+        this.parentCache.pageLoaded(this, finalRowCount);
+    };
+    InfiniteBlock.prototype.destroyRowNodes = function () {
+        this.rowNodes.forEach(function (rowNode) {
+            // this is needed, so row render knows to fade out the row, otherwise it
+            // sees row top is present, and thinks the row should be shown. maybe
+            // rowNode should have a flag on whether it is visible???
+            rowNode.clearRowTop();
+        });
     };
     __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], InfiniteBlock.prototype, "gridOptionsWrapper", void 0);
+        core_1.Autowired('rowRenderer')
+    ], InfiniteBlock.prototype, "rowRenderer", void 0);
+    __decorate([
+        core_1.PostConstruct
+    ], InfiniteBlock.prototype, "postConstruct", null);
+    __decorate([
+        core_1.PreDestroy
+    ], InfiniteBlock.prototype, "destroyRowNodes", null);
     return InfiniteBlock;
 }(core_1.RowNodeBlock));
 exports.InfiniteBlock = InfiniteBlock;

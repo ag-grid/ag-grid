@@ -216,9 +216,6 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         Autowired('userComponentFactory')
     ], RichSelectCellEditor.prototype, "userComponentFactory", void 0);
     __decorate([
-        Autowired('gridOptionsWrapper')
-    ], RichSelectCellEditor.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         RefSelector('eValue')
     ], RichSelectCellEditor.prototype, "eValue", void 0);
     __decorate([

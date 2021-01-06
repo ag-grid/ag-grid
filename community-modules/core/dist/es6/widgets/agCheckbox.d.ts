@@ -1,7 +1,6 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgEvent } from '../events';
 import { AgAbstractInputField, IInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
@@ -9,7 +8,6 @@ export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
 export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
-    protected readonly gridOptionsWrapper: GridOptionsWrapper;
     protected labelAlignment: LabelAlignment;
     private selected?;
     private readOnly;

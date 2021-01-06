@@ -48,11 +48,11 @@ export default class TitlePanel extends Component {
         };
 
         const initialFont = {
-            family: hasTitle ? chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
-            style: hasTitle ? chartProxy.getChartOption<FontStyle>('title.fontStyle') : undefined,
-            weight: hasTitle ? chartProxy.getChartOption<FontWeight>('title.fontWeight') : undefined,
-            size: hasTitle ? chartProxy.getChartOption<number>('title.fontSize') : 22,
-            color: hasTitle ? chartProxy.getChartOption('title.color') : 'black'
+            family: chartProxy.getChartOption('title.fontFamily'),
+            style: chartProxy.getChartOption<FontStyle>('title.fontStyle'),
+            weight: chartProxy.getChartOption<FontWeight>('title.fontWeight'),
+            size: chartProxy.getChartOption<number>('title.fontSize'),
+            color: chartProxy.getChartOption('title.color')
         };
 
         if (!hasTitle) {

@@ -38,7 +38,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         core_1._.addCssClass(this.eDragHandle, 'ag-drag-handle');
         core_1._.addCssClass(this.eDragHandle, 'ag-column-select-column-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
-        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnToolPanel');
         var displayNameSanitised = core_1._.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
@@ -59,7 +59,23 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.onColumnStateChanged();
         this.refreshAriaLabel();
+        this.setupTooltip();
         core_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+    };
+    ToolPanelColumnComp.prototype.setupTooltip = function () {
+        var _this = this;
+        var refresh = function () {
+            var newTooltipText = _this.column.getColDef().headerTooltip;
+            _this.setTooltip(newTooltipText);
+        };
+        refresh();
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    };
+    ToolPanelColumnComp.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'columnToolPanelColumn';
+        res.colDef = this.column.getColDef();
+        return res;
     };
     ToolPanelColumnComp.prototype.handleKeyDown = function (e) {
         if (e.keyCode === core_1.KeyCode.SPACE) {
@@ -93,8 +109,10 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         this.modelItemUtils.setColumn(this.column, nextState, 'toolPanelUi');
     };
     ToolPanelColumnComp.prototype.refreshAriaLabel = function () {
-        var state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        core_1._.setAriaLabel(this.focusWrapper, this.displayName + " column toggle visibility (" + state + ")");
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        var state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
+        var label = translate('ariaColumnToggleVisibility', 'column toggle visibility');
+        core_1._.setAriaLabel(this.focusWrapper, this.displayName + " " + label + " (" + state + ")");
     };
     ToolPanelColumnComp.prototype.setupDragging = function () {
         var _this = this;
@@ -173,9 +191,6 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         console.warn('ag-grid: can not expand a column item that does not represent a column group header');
     };
     ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\" aria-hidden=\"true\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ToolPanelColumnComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnController')
     ], ToolPanelColumnComp.prototype, "columnController", void 0);

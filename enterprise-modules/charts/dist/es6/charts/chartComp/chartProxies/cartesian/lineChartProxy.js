@@ -22,7 +22,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { AgChart } from "ag-charts-community";
+import { AgChart, } from "ag-charts-community";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 var LineChartProxy = /** @class */ (function (_super) {
     __extends(LineChartProxy, _super);
@@ -54,8 +54,8 @@ var LineChartProxy = /** @class */ (function (_super) {
         var axisType = this.isTimeAxis(params) ? 'time' : 'category';
         this.updateAxes(axisType);
         var chart = this.chart;
-        var fieldIds = params.fields.map(function (f) { return f.colId; });
-        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        var fields = params.fields;
+        var fieldIds = fields.map(function (f) { return f.colId; });
         var data = this.transformData(params.data, params.category.id);
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var id = series.yKey;
@@ -67,8 +67,10 @@ var LineChartProxy = /** @class */ (function (_super) {
             }
             return map;
         }, new Map());
-        var previousSeries = undefined;
-        params.fields.forEach(function (f, index) {
+        var previousSeries;
+        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        fields.forEach(function (f, index) {
+            var _a = _this.processDataForCrossFiltering(data, f.colId, params), yKey = _a.yKey, atLeastOneSelectedPoint = _a.atLeastOneSelectedPoint;
             var lineSeries = existingSeriesById.get(f.colId);
             var fill = fills[index % fills.length];
             var stroke = strokes[index % strokes.length];
@@ -77,7 +79,7 @@ var LineChartProxy = /** @class */ (function (_super) {
                 lineSeries.data = data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;
-                lineSeries.yKey = f.colId;
+                lineSeries.yKey = yKey;
                 lineSeries.yName = f.displayName;
                 lineSeries.marker.fill = fill;
                 lineSeries.marker.stroke = stroke;
@@ -91,10 +93,14 @@ var LineChartProxy = /** @class */ (function (_super) {
                     marker.shape = marker.type;
                     delete marker.type;
                 }
-                var options = __assign(__assign({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, xKey: params.category.id, xName: params.category.name, yKey: f.colId, yName: f.displayName, fill: fill, stroke: fill, fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer, marker: marker });
+                var options = __assign(__assign({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, xKey: params.category.id, xName: params.category.name, yKey: yKey, yName: f.displayName, fill: fill, stroke: fill, fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                        enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                        renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                    }, marker: marker });
                 lineSeries = AgChart.createComponent(options, 'line.series');
                 chart.addSeriesAfter(lineSeries, previousSeries);
             }
+            _this.updateSeriesForCrossFiltering(lineSeries, f.colId, chart, params, atLeastOneSelectedPoint);
             previousSeries = lineSeries;
         });
         this.updateLabelRotation(params.category.id, false, axisType);
@@ -104,8 +110,8 @@ var LineChartProxy = /** @class */ (function (_super) {
         var seriesDefaults = theme.getConfig('line.series.line');
         options.seriesDefaults = {
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: [],
@@ -120,9 +126,13 @@ var LineChartProxy = /** @class */ (function (_super) {
                 enabled: seriesDefaults.marker.enabled,
                 shape: seriesDefaults.marker.shape,
                 size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
+                strokeWidth: seriesDefaults.marker.strokeWidth,
+                formatter: seriesDefaults.marker.formatter
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };

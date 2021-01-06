@@ -120,7 +120,7 @@ export abstract class Series extends Observable {
         return [];
     }
 
-    fireNodeClickEvent(datum: SeriesNodeDatum): void {}
+    fireNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): void {}
 
     /**
      * @private
@@ -148,7 +148,7 @@ export abstract class Series extends Observable {
         this.fireEvent({ type: 'dataChange' });
     }
 
-    protected fixNumericExtent(extent?: [number, number], type?: string): [number, number] {
+    protected fixNumericExtent(extent?: [number | Date, number | Date], type?: string): [number, number] {
         if (!extent) {
             // if (type) {
             //     console.warn(`The ${type}-domain could not be found (no valid values), using the default of [0, 1].`);
@@ -157,6 +157,13 @@ export abstract class Series extends Observable {
         }
 
         let [min, max] = extent;
+
+        if (min instanceof Date) {
+            min = min.getTime();
+        }
+        if (max instanceof Date) {
+            max = max.getTime();
+        }
 
         if (min === max) {
             const padding = Math.abs(min * 0.01);

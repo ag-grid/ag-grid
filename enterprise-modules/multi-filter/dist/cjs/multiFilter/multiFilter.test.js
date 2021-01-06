@@ -39,8 +39,8 @@ function createFilter(filterParams) {
     };
     filterManager.createFilterParams.mockImplementation(function (_1, _2, _3) { return (__assign({}, baseFilterParams)); });
     userComponentFactory.newFilterComponent
-        .mockReturnValueOnce(core_1.Promise.resolve(filter1))
-        .mockReturnValueOnce(core_1.Promise.resolve(filter2));
+        .mockReturnValueOnce(core_1.AgPromise.resolve(filter1))
+        .mockReturnValueOnce(core_1.AgPromise.resolve(filter2));
     var params = __assign(__assign({}, baseFilterParams), filterParams);
     var multiFilter = new multiFilter_1.MultiFilter();
     multiFilter.eGui = eGui;

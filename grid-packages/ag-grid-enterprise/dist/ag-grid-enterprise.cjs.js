@@ -1,5 +1,5 @@
 /**
- * ag-grid-enterprise - ag-Grid Enterprise Features * @version v24.1.0
+ * ag-grid-enterprise - ag-Grid Enterprise Features * @version v25.0.0
  * @link http://www.ag-grid.com/
 ' * @license Commercial
  */
@@ -272,7 +272,7 @@ var LicenseManager = /** @class */ (function (_super) {
         this.watermarkMessage = "License Expired";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTYwMjA3NjI1MjU3OA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTYwNzkzMzg4MjIzNg==';
     __decorate([
         agGridCommunity.Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);
@@ -585,8 +585,9 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         this.eFilterTextField.onValueChange(function () { return _this.onFilterTextChanged(); });
         this.addManagedListener(this.eFilterTextField.getInputElement(), 'keypress', this.onMiniFilterKeyPress.bind(this));
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
-        this.eSelect.setInputAriaLabel('Toggle Select All Columns');
-        this.eFilterTextField.setInputAriaLabel('Filter Columns Input');
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle Select All Columns'));
+        this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
     };
     PrimaryColsHeaderPanel.prototype.init = function (params) {
         this.params = params;
@@ -648,9 +649,6 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     };
     PrimaryColsHeaderPanel.DEBOUNCE_DELAY = 300;
     PrimaryColsHeaderPanel.TEMPLATE = "<div class=\"ag-column-select-header\" role=\"presentation\" tabindex=\"-1\">\n            <div ref=\"eExpand\" class=\"ag-column-select-header-icon\" tabindex=\"0\"></div>\n            <ag-checkbox ref=\"eSelect\" class=\"ag-column-select-header-checkbox\"></ag-checkbox>\n            <ag-input-text-field class=\"ag-column-select-header-filter-wrapper\" ref=\"eFilterTextField\"></ag-input-text-field>\n        </div>";
-    __decorate$3([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], PrimaryColsHeaderPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate$3([
         agGridCommunity.Autowired('columnController')
     ], PrimaryColsHeaderPanel.prototype, "columnController", void 0);
@@ -771,7 +769,26 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.addVisibilityListenersToAllChildren();
         this.refreshAriaExpanded();
         this.refreshAriaLabel();
+        this.setupTooltip();
         agGridCommunity.CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+    };
+    ToolPanelColumnGroupComp.prototype.setupTooltip = function () {
+        var _this = this;
+        var colGroupDef = this.columnGroup.getColGroupDef();
+        if (!colGroupDef) {
+            return;
+        }
+        var refresh = function () {
+            var newTooltipText = colGroupDef.headerTooltip;
+            _this.setTooltip(newTooltipText);
+        };
+        refresh();
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    };
+    ToolPanelColumnGroupComp.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'columnToolPanelColumnGroup';
+        return res;
     };
     ToolPanelColumnGroupComp.prototype.handleKeyDown = function (e) {
         switch (e.keyCode) {
@@ -867,8 +884,10 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.modelItemUtils.selectAllChildren(this.modelItem.getChildren(), nextState, this.eventType);
     };
     ToolPanelColumnGroupComp.prototype.refreshAriaLabel = function () {
-        var state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        agGridCommunity._.setAriaLabel(this.focusWrapper, this.displayName + " column group toggle visibility (" + state + ")");
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        var state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
+        var label = translate('ariaColumnGroupToggleVisibility', 'column group toggle visibility');
+        agGridCommunity._.setAriaLabel(this.focusWrapper, this.displayName + " " + label + " (" + state + ")");
     };
     ToolPanelColumnGroupComp.prototype.onColumnStateChanged = function () {
         var selectedValue = this.workOutSelectedValue();
@@ -974,9 +993,6 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         agGridCommunity.Autowired('dragAndDropService')
     ], ToolPanelColumnGroupComp.prototype, "dragAndDropService", void 0);
     __decorate$4([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ToolPanelColumnGroupComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$4([
         agGridCommunity.Autowired('modelItemUtils')
     ], ToolPanelColumnGroupComp.prototype, "modelItemUtils", void 0);
     __decorate$4([
@@ -1037,7 +1053,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         agGridCommunity._.addCssClass(this.eDragHandle, 'ag-drag-handle');
         agGridCommunity._.addCssClass(this.eDragHandle, 'ag-column-select-column-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
-        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnToolPanel');
         var displayNameSanitised = agGridCommunity._.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
@@ -1058,7 +1074,23 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.onColumnStateChanged();
         this.refreshAriaLabel();
+        this.setupTooltip();
         agGridCommunity.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+    };
+    ToolPanelColumnComp.prototype.setupTooltip = function () {
+        var _this = this;
+        var refresh = function () {
+            var newTooltipText = _this.column.getColDef().headerTooltip;
+            _this.setTooltip(newTooltipText);
+        };
+        refresh();
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    };
+    ToolPanelColumnComp.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'columnToolPanelColumn';
+        res.colDef = this.column.getColDef();
+        return res;
     };
     ToolPanelColumnComp.prototype.handleKeyDown = function (e) {
         if (e.keyCode === agGridCommunity.KeyCode.SPACE) {
@@ -1092,8 +1124,10 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         this.modelItemUtils.setColumn(this.column, nextState, 'toolPanelUi');
     };
     ToolPanelColumnComp.prototype.refreshAriaLabel = function () {
-        var state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        agGridCommunity._.setAriaLabel(this.focusWrapper, this.displayName + " column toggle visibility (" + state + ")");
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        var state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
+        var label = translate('ariaColumnToggleVisibility', 'column toggle visibility');
+        agGridCommunity._.setAriaLabel(this.focusWrapper, this.displayName + " " + label + " (" + state + ")");
     };
     ToolPanelColumnComp.prototype.setupDragging = function () {
         var _this = this;
@@ -1173,9 +1207,6 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     };
     ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\" aria-hidden=\"true\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate$5([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ToolPanelColumnComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$5([
         agGridCommunity.Autowired('columnController')
     ], ToolPanelColumnComp.prototype, "columnController", void 0);
     __decorate$5([
@@ -1247,9 +1278,8 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         if (!this.params.suppressSyncLayoutWithGrid) {
             this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
         }
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnsChanged.bind(this));
         var eventsImpactingCheckedState = [
-            agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             agGridCommunity.Events.EVENT_COLUMN_PIVOT_CHANGED,
             agGridCommunity.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
             agGridCommunity.Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
@@ -1280,6 +1310,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         return columnComp;
     };
     PrimaryColsListPanel.prototype.onColumnsChanged = function () {
+        var expandedStates = this.getExpandedStates();
         var pivotModeActive = this.columnController.isPivotMode();
         var shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         if (shouldSyncColumnLayoutWithGrid) {
@@ -1288,8 +1319,43 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         else {
             this.buildTreeFromProvidedColumnDefs();
         }
+        this.setExpandedStates(expandedStates);
         this.markFilteredColumns();
         this.flattenAndFilterModel();
+    };
+    PrimaryColsListPanel.prototype.getExpandedStates = function () {
+        if (!this.allColsTree) {
+            return {};
+        }
+        var res = {};
+        this.forEachItem(function (item) {
+            if (!item.isGroup()) {
+                return;
+            }
+            var colGroup = item.getColumnGroup();
+            if (colGroup) { // group should always exist, this is defensive
+                res[colGroup.getId()] = item.isExpanded();
+            }
+        });
+        return res;
+    };
+    PrimaryColsListPanel.prototype.setExpandedStates = function (states) {
+        if (!this.allColsTree) {
+            return;
+        }
+        this.forEachItem(function (item) {
+            if (!item.isGroup()) {
+                return;
+            }
+            var colGroup = item.getColumnGroup();
+            if (colGroup) { // group should always exist, this is defensive
+                var expanded = states[colGroup.getId()];
+                var groupExistedLastTime = expanded != null;
+                if (groupExistedLastTime) {
+                    item.setExpanded(expanded);
+                }
+            }
+        });
     };
     PrimaryColsListPanel.prototype.buildTreeFromWhatGridIsDisplaying = function () {
         this.colDefService.syncLayoutWithGrid(this.setColumnLayout.bind(this));
@@ -1347,7 +1413,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             if (skipThisColumn) {
                 return;
             }
-            var displayName = _this.columnController.getDisplayNameForColumn(column, 'toolPanel');
+            var displayName = _this.columnController.getDisplayNameForColumn(column, 'columnToolPanel');
             parentList.push(new ColumnModelItem(displayName, column, dept));
         };
         this.destroyColumnTree();
@@ -1575,7 +1641,7 @@ var PivotModePanel = /** @class */ (function (_super) {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
         this.addManagedListener(this.cbPivotMode, agGridCommunity.AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, this.onPivotModeChanged.bind(this));
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     };
     PivotModePanel.prototype.onBtPivotMode = function () {
@@ -1595,9 +1661,6 @@ var PivotModePanel = /** @class */ (function (_super) {
     __decorate$7([
         agGridCommunity.Autowired('columnController')
     ], PivotModePanel.prototype, "columnController", void 0);
-    __decorate$7([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], PivotModePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate$7([
         agGridCommunity.RefSelector('cbPivotMode')
     ], PivotModePanel.prototype, "cbPivotMode", void 0);
@@ -1661,6 +1724,8 @@ var AggregationStage = /** @class */ (function (_super) {
     };
     AggregationStage.prototype.recursivelyCreateAggData = function (aggDetails) {
         var _this = this;
+        // update prop, in case changed since last time
+        this.filteredOnly = !this.gridOptionsWrapper.isSuppressAggFilteredOnly();
         var callback = function (rowNode) {
             var hasNoChildren = !rowNode.hasChildren();
             if (hasNoChildren) {
@@ -1797,9 +1862,10 @@ var AggregationStage = /** @class */ (function (_super) {
         var values = [];
         valueColumns.forEach(function () { return values.push([]); });
         var valueColumnCount = valueColumns.length;
-        var rowCount = rowNode.childrenAfterFilter.length;
+        var nodeList = this.filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup;
+        var rowCount = nodeList.length;
         for (var i = 0; i < rowCount; i++) {
-            var childNode = rowNode.childrenAfterFilter[i];
+            var childNode = nodeList[i];
             for (var j = 0; j < valueColumnCount; j++) {
                 var valueColumn = valueColumns[j];
                 // if the row is a group, then it will only have an agg result value,
@@ -1852,9 +1918,6 @@ var AggregationStage = /** @class */ (function (_super) {
         return aggFuncAny(params);
     };
     __decorate$8([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], AggregationStage.prototype, "gridOptionsWrapper", void 0);
-    __decorate$8([
         agGridCommunity.Autowired('columnController')
     ], AggregationStage.prototype, "columnController", void 0);
     __decorate$8([
@@ -1877,6 +1940,43 @@ var AggregationStage = /** @class */ (function (_super) {
     ], AggregationStage);
     return AggregationStage;
 }(agGridCommunity.BeanStub));
+
+var BatchRemover = /** @class */ (function () {
+    function BatchRemover() {
+        this.allSets = {};
+        this.allParents = [];
+    }
+    BatchRemover.prototype.removeFromChildrenAfterGroup = function (parent, child) {
+        var set = this.getSet(parent);
+        set.removeFromChildrenAfterGroup[child.id] = true;
+    };
+    BatchRemover.prototype.removeFromAllLeafChildren = function (parent, child) {
+        var set = this.getSet(parent);
+        set.removeFromAllLeafChildren[child.id] = true;
+    };
+    BatchRemover.prototype.getSet = function (parent) {
+        if (!this.allSets[parent.id]) {
+            this.allSets[parent.id] = {
+                removeFromAllLeafChildren: {},
+                removeFromChildrenAfterGroup: {}
+            };
+            this.allParents.push(parent);
+        }
+        return this.allSets[parent.id];
+    };
+    BatchRemover.prototype.flush = function () {
+        var _this = this;
+        this.allParents.forEach(function (parent) {
+            var nodeDetails = _this.allSets[parent.id];
+            parent.childrenAfterGroup = parent.childrenAfterGroup.filter(function (child) { return !nodeDetails.removeFromChildrenAfterGroup[child.id]; });
+            parent.allLeafChildren = parent.allLeafChildren.filter(function (child) { return !nodeDetails.removeFromAllLeafChildren[child.id]; });
+            parent.updateHasChildren();
+        });
+        this.allSets = {};
+        this.allParents.length = 0;
+    };
+    return BatchRemover;
+}());
 
 var __extends$9 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -1948,6 +2048,12 @@ var GroupStage = /** @class */ (function (_super) {
     GroupStage.prototype.handleTransaction = function (details) {
         var _this = this;
         details.transactions.forEach(function (tran) {
+            // we don't allow batch remover for tree data as tree data uses Filler Nodes,
+            // and creating/deleting filler nodes needs to be done alongside the node deleting
+            // and moving. if we want to Batch Remover working with tree data then would need
+            // to consider how Filler Nodes would be impacted (it's possible that it can be easily
+            // modified to work, however for now I don't have the brain energy to work it all out).
+            var batchRemover = _this.usingTreeData ? undefined : new BatchRemover();
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
@@ -1955,10 +2061,15 @@ var GroupStage = /** @class */ (function (_super) {
                 _this.insertNodes(tran.add, details, false);
             }
             if (agGridCommunity._.existsAndNotEmpty(tran.remove)) {
-                _this.removeNodes(tran.remove, details);
+                _this.removeNodes(tran.remove, details, batchRemover);
             }
             if (agGridCommunity._.existsAndNotEmpty(tran.update)) {
-                _this.moveNodesInWrongPath(tran.update, details);
+                _this.moveNodesInWrongPath(tran.update, details, batchRemover);
+            }
+            // must flush here, and not allow another transaction to be applied,
+            // as each transaction must finish leaving the data in a consistent state.
+            if (batchRemover) {
+                batchRemover.flush();
             }
         });
         if (details.rowNodeOrder) {
@@ -2006,7 +2117,7 @@ var GroupStage = /** @class */ (function (_super) {
         res.reverse();
         return res;
     };
-    GroupStage.prototype.moveNodesInWrongPath = function (childNodes, details) {
+    GroupStage.prototype.moveNodesInWrongPath = function (childNodes, details, batchRemover) {
         var _this = this;
         childNodes.forEach(function (childNode) {
             // we add node, even if parent has not changed, as the data could have
@@ -2019,12 +2130,12 @@ var GroupStage = /** @class */ (function (_super) {
             var newPath = _this.getGroupInfo(childNode, details).map(infoToKeyMapper);
             var nodeInCorrectPath = agGridCommunity._.areEqual(oldPath, newPath);
             if (!nodeInCorrectPath) {
-                _this.moveNode(childNode, details);
+                _this.moveNode(childNode, details, batchRemover);
             }
         });
     };
-    GroupStage.prototype.moveNode = function (childNode, details) {
-        this.removeNodesInStages([childNode], details);
+    GroupStage.prototype.moveNode = function (childNode, details, batchRemover) {
+        this.removeNodesInStages([childNode], details, batchRemover);
         this.insertOneNode(childNode, details, true);
         // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
         // refreshed into the gui.
@@ -2039,16 +2150,18 @@ var GroupStage = /** @class */ (function (_super) {
             details.changedPath.addParentNode(newParent);
         }
     };
-    GroupStage.prototype.removeNodes = function (leafRowNodes, details) {
-        this.removeNodesInStages(leafRowNodes, details);
+    GroupStage.prototype.removeNodes = function (leafRowNodes, details, batchRemover) {
+        this.removeNodesInStages(leafRowNodes, details, batchRemover);
         if (details.changedPath.isActive()) {
             leafRowNodes.forEach(function (rowNode) { return details.changedPath.addParentNode(rowNode.parent); });
         }
     };
-    GroupStage.prototype.removeNodesInStages = function (leafRowNodes, details) {
-        this.removeNodesFromParents(leafRowNodes, details);
-        this.postRemoveCreateFillerNodes(leafRowNodes, details);
-        this.postRemoveRemoveEmptyGroups(leafRowNodes, details);
+    GroupStage.prototype.removeNodesInStages = function (leafRowNodes, details, batchRemover) {
+        this.removeNodesFromParents(leafRowNodes, details, batchRemover);
+        if (this.usingTreeData) {
+            this.postRemoveCreateFillerNodes(leafRowNodes, details);
+            this.postRemoveRemoveEmptyGroups(leafRowNodes, details);
+        }
     };
     GroupStage.prototype.forEachParentGroup = function (details, child, callback) {
         var pointer = child.parent;
@@ -2057,18 +2170,21 @@ var GroupStage = /** @class */ (function (_super) {
             pointer = pointer.parent;
         }
     };
-    GroupStage.prototype.removeNodesFromParents = function (nodesToRemove, details) {
+    GroupStage.prototype.removeNodesFromParents = function (nodesToRemove, details, provided) {
         var _this = this;
-        var batchRemover = new BatchRemover();
+        var batchRemoverIsLocal = provided == null;
+        var batchRemoverToUse = provided ? provided : new BatchRemover();
         nodesToRemove.forEach(function (nodeToRemove) {
-            _this.removeFromParent(nodeToRemove, batchRemover);
+            _this.removeFromParent(nodeToRemove, batchRemoverToUse);
             // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
             // the ClientSideNodeManager is responsible for the Root Node.
             _this.forEachParentGroup(details, nodeToRemove, function (parentNode) {
-                batchRemover.removeFromAllLeafChildren(parentNode, nodeToRemove);
+                batchRemoverToUse.removeFromAllLeafChildren(parentNode, nodeToRemove);
             });
         });
-        batchRemover.flush();
+        if (batchRemoverIsLocal) {
+            batchRemoverToUse.flush();
+        }
     };
     GroupStage.prototype.postRemoveCreateFillerNodes = function (nodesToRemove, details) {
         var _this = this;
@@ -2366,9 +2482,6 @@ var GroupStage = /** @class */ (function (_super) {
         return res;
     };
     __decorate$9([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], GroupStage.prototype, "gridOptionsWrapper", void 0);
-    __decorate$9([
         agGridCommunity.Autowired('columnController')
     ], GroupStage.prototype, "columnController", void 0);
     __decorate$9([
@@ -2385,54 +2498,6 @@ var GroupStage = /** @class */ (function (_super) {
     ], GroupStage);
     return GroupStage;
 }(agGridCommunity.BeanStub));
-// doing _.removeFromArray() multiple times on a large list can be a bottleneck.
-// when doing large deletes (eg removing 1,000 rows) then we would be calling _.removeFromArray()
-// a thousands of times, in particular RootNode.allGroupChildren could be a large list, and
-// 1,000 removes is time consuming as each one requires traversing the full list.
-// to get around this, we do all the removes in a batch. this class manages the batch.
-//
-// This problem was brought to light by a client (AG-2879), with dataset of 20,000
-// in 10,000 groups (2 items per group), then deleting all rows with transaction,
-// it took about 20 seconds to delete. with the BathRemoved, the reduced to less than 1 second.
-var BatchRemover = /** @class */ (function () {
-    function BatchRemover() {
-        this.allSets = {};
-        this.allParents = [];
-    }
-    BatchRemover.prototype.removeFromChildrenAfterGroup = function (parent, child) {
-        var set = this.getSet(parent);
-        set.removeFromChildrenAfterGroup[child.id] = true;
-    };
-    BatchRemover.prototype.removeFromAllLeafChildren = function (parent, child) {
-        var set = this.getSet(parent);
-        set.removeFromAllLeafChildren[child.id] = true;
-    };
-    BatchRemover.prototype.getSet = function (parent) {
-        if (!this.allSets[parent.id]) {
-            this.allSets[parent.id] = {
-                removeFromAllLeafChildren: {},
-                removeFromChildrenAfterGroup: {}
-            };
-            this.allParents.push(parent);
-        }
-        return this.allSets[parent.id];
-    };
-    BatchRemover.prototype.flush = function () {
-        var _this = this;
-        this.allParents.forEach(function (parent) {
-            var nodeDetails = _this.allSets[parent.id];
-            parent.childrenAfterGroup = parent.childrenAfterGroup.filter(function (child) {
-                var res = !nodeDetails.removeFromChildrenAfterGroup[child.id];
-                return res;
-            });
-            parent.allLeafChildren = parent.allLeafChildren.filter(function (child) { return !nodeDetails.removeFromAllLeafChildren[child.id]; });
-            parent.updateHasChildren();
-        });
-        this.allSets = {};
-        this.allParents.length = 0;
-    };
-    return BatchRemover;
-}());
 
 var __extends$a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -2769,9 +2834,6 @@ var PivotColDefService = /** @class */ (function (_super) {
     __decorate$a([
         agGridCommunity.Autowired('columnController')
     ], PivotColDefService.prototype, "columnController", void 0);
-    __decorate$a([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], PivotColDefService.prototype, "gridOptionsWrapper", void 0);
     PivotColDefService = PivotColDefService_1 = __decorate$a([
         agGridCommunity.Bean('pivotColDefService')
     ], PivotColDefService);
@@ -3017,9 +3079,6 @@ var AggFuncService = /** @class */ (function (_super) {
     AggFuncService.AGG_COUNT = 'count';
     AggFuncService.AGG_AVG = 'avg';
     __decorate$c([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], AggFuncService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$c([
         agGridCommunity.PostConstruct
     ], AggFuncService.prototype, "init", null);
     AggFuncService = AggFuncService_1 = __decorate$c([
@@ -3195,6 +3254,16 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addDragSource();
         }
+        this.setupTooltip();
+    };
+    DropZoneColumnComp.prototype.setupTooltip = function () {
+        var _this = this;
+        var refresh = function () {
+            var newTooltipText = _this.column.getColDef().headerTooltip;
+            _this.setTooltip(newTooltipText);
+        };
+        refresh();
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     };
     DropZoneColumnComp.prototype.addDragSource = function () {
         var _this = this;
@@ -3281,13 +3350,15 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             _this.destroyBean(virtualList);
             _this.popupShowing = false;
         };
-        var hidePopup = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: ePopup,
             closeOnEsc: true,
             closedCallback: popupHiddenFunc
         });
-        virtualList.setComponentCreator(this.createAggSelect.bind(this, hidePopup));
+        if (addPopupRes) {
+            virtualList.setComponentCreator(this.createAggSelect.bind(this, addPopupRes.hideFunc));
+        }
         this.popupService.positionPopupUnderComponent({
             type: 'aggFuncSelect',
             eventSource: this.getGui(),
@@ -3341,9 +3412,6 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     __decorate$d([
         agGridCommunity.Optional('aggFuncService')
     ], DropZoneColumnComp.prototype, "aggFuncService", void 0);
-    __decorate$d([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], DropZoneColumnComp.prototype, "gridOptionsWrapper", void 0);
     __decorate$d([
         agGridCommunity.Autowired('columnApi')
     ], DropZoneColumnComp.prototype, "columnApi", void 0);
@@ -3422,7 +3490,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     };
     BaseDropZonePanel.prototype.init = function (params) {
         this.params = params;
-        this.addManagedListener(this.beans.eventService, agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        this.addManagedListener(this.beans.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
         this.addManagedListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
         this.setupDropTarget();
         // we don't know if this bean will be initialised before columnController.
@@ -3744,6 +3812,11 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         });
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     };
+    RowGroupDropZonePanel.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'rowGroupColumnsList';
+        return res;
+    };
     RowGroupDropZonePanel.prototype.isColumnDroppable = function (column) {
         // we never allow grouping of secondary columns
         if (this.gridOptionsWrapper.isFunctionsReadOnly() || !column.isPrimary()) {
@@ -3774,9 +3847,6 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
     __decorate$e([
         agGridCommunity.Autowired('columnController')
     ], RowGroupDropZonePanel.prototype, "columnController", void 0);
-    __decorate$e([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], RowGroupDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate$e([
         agGridCommunity.Autowired('loggerFactory')
     ], RowGroupDropZonePanel.prototype, "loggerFactory", void 0);
@@ -3836,10 +3906,15 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
         this.refresh();
+    };
+    PivotDropZonePanel.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'pivotColumnsList';
+        return res;
     };
     PivotDropZonePanel.prototype.refresh = function () {
         this.checkVisibility();
@@ -3900,9 +3975,6 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
         agGridCommunity.Autowired('columnController')
     ], PivotDropZonePanel.prototype, "columnController", void 0);
     __decorate$f([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], PivotDropZonePanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$f([
         agGridCommunity.Autowired('loggerFactory')
     ], PivotDropZonePanel.prototype, "loggerFactory", void 0);
     __decorate$f([
@@ -3947,11 +4019,10 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
     GridHeaderDropZones.prototype.postConstruct = function () {
         this.setGui(this.createNorthPanel());
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, this.onRowGroupChanged.bind(this));
         this.onRowGroupChanged();
     };
     GridHeaderDropZones.prototype.createNorthPanel = function () {
-        var _this = this;
         var topPanelGui = document.createElement('div');
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
         agGridCommunity._.addCssClass(topPanelGui, 'ag-column-drop-wrapper');
@@ -3961,12 +4032,8 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         this.createManagedBean(this.pivotComp);
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
-        this.rowGroupComp.addEventListener(agGridCommunity.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        this.pivotComp.addEventListener(agGridCommunity.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        this.addDestroyFunc(function () {
-            _this.rowGroupComp.removeEventListener(agGridCommunity.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-            _this.pivotComp.removeEventListener(agGridCommunity.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        });
+        this.addManagedListener(this.rowGroupComp, agGridCommunity.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+        this.addManagedListener(this.pivotComp, agGridCommunity.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
         this.onDropPanelVisible();
         return topPanelGui;
     };
@@ -3991,9 +4058,6 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
             this.rowGroupComp.setDisplayed(false);
         }
     };
-    __decorate$g([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], GridHeaderDropZones.prototype, "gridOptionsWrapper", void 0);
     __decorate$g([
         agGridCommunity.Autowired('columnController')
     ], GridHeaderDropZones.prototype, "columnController", void 0);
@@ -4057,6 +4121,11 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
         });
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     };
+    ValuesDropZonePanel.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'valueColumnsList';
+        return res;
+    };
     ValuesDropZonePanel.prototype.getIconName = function () {
         return this.isPotentialDndColumns() ? agGridCommunity.DragAndDropService.ICON_AGGREGATE : agGridCommunity.DragAndDropService.ICON_NOT_ALLOWED;
     };
@@ -4087,9 +4156,6 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
     __decorate$h([
         agGridCommunity.Autowired('columnController')
     ], ValuesDropZonePanel.prototype, "columnController", void 0);
-    __decorate$h([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ValuesDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate$h([
         agGridCommunity.Autowired('loggerFactory')
     ], ValuesDropZonePanel.prototype, "loggerFactory", void 0);
@@ -4438,9 +4504,6 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
         agGridCommunity.Autowired('horizontalResizeService')
     ], HorizontalResizeComp.prototype, "horizontalResizeService", void 0);
     __decorate$k([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], HorizontalResizeComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$k([
         agGridCommunity.PostConstruct
     ], HorizontalResizeComp.prototype, "postConstruct", null);
     return HorizontalResizeComp;
@@ -4560,9 +4623,6 @@ var SideBarButtonComp = /** @class */ (function (_super) {
     };
     SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
     __decorate$l([
-        agGridCommunity.Autowired("gridOptionsWrapper")
-    ], SideBarButtonComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$l([
         agGridCommunity.RefSelector('eToggleButton')
     ], SideBarButtonComp.prototype, "eToggleButton", void 0);
     __decorate$l([
@@ -4644,9 +4704,6 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     __decorate$m([
         agGridCommunity.Autowired("userComponentFactory")
     ], ToolPanelWrapper.prototype, "userComponentFactory", void 0);
-    __decorate$m([
-        agGridCommunity.Autowired("gridOptionsWrapper")
-    ], ToolPanelWrapper.prototype, "gridOptionsWrapper", void 0);
     __decorate$m([
         agGridCommunity.PostConstruct
     ], ToolPanelWrapper.prototype, "setupResize", null);
@@ -4827,9 +4884,6 @@ var SideBarComp = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     SideBarComp.TEMPLATE = "<div class=\"ag-side-bar ag-unselectable\">\n            <ag-side-bar-buttons ref=\"sideBarButtons\"></ag-side-bar-buttons>\n        </div>";
-    __decorate$n([
-        agGridCommunity.Autowired("gridOptionsWrapper")
-    ], SideBarComp.prototype, "gridOptionsWrapper", void 0);
     __decorate$n([
         agGridCommunity.RefSelector('sideBarButtons')
     ], SideBarComp.prototype, "sideBarButtonsComp", void 0);
@@ -5280,7 +5334,8 @@ var ColumnsToolPanelModule = {
 
 var coreFactory = {
     getTemplate: function () {
-        var dt = new Date(), jsonDate = dt.toJSON();
+        var dt = new Date();
+        var jsonDate = dt.toJSON();
         return {
             name: 'cp:coreProperties',
             properties: {
@@ -6346,8 +6401,14 @@ var registerNumberFmt = function (format) {
 };
 var registerBorders = function (borders) {
     var borderBottom = borders.borderBottom, borderTop = borders.borderTop, borderLeft = borders.borderLeft, borderRight = borders.borderRight;
-    var bottomStyle, topStyle, leftStyle, rightStyle;
-    var bottomColor, topColor, leftColor, rightColor;
+    var bottomStyle;
+    var topStyle;
+    var leftStyle;
+    var rightStyle;
+    var bottomColor;
+    var topColor;
+    var leftColor;
+    var rightColor;
     if (borderLeft) {
         leftStyle = convertLegacyBorder(borderLeft.lineStyle, borderLeft.weight);
         leftColor = convertLegacyColor(borderLeft.color);
@@ -7641,9 +7702,6 @@ var GridSerializer = /** @class */ (function (_super) {
     __decorate$s([
         agGridCommunity.Autowired('columnFactory')
     ], GridSerializer.prototype, "columnFactory", void 0);
-    __decorate$s([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], GridSerializer.prototype, "gridOptionsWrapper", void 0);
     GridSerializer = __decorate$s([
         agGridCommunity.Bean("gridSerializer")
     ], GridSerializer);
@@ -8808,8 +8866,9 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
         this.setTemplate(/* html */ "<div class=\"ag-filter-toolpanel-search\" role=\"presentation\">\n                <div ref=\"eExpand\" class=\"ag-filter-toolpanel-expand\"></div>\n                <ag-input-text-field ref=\"eFilterTextField\" class=\"ag-filter-toolpanel-search-input\"></ag-input-text-field>\n            </div>");
     };
     FiltersToolPanelHeaderPanel.prototype.postConstruct = function () {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eFilterTextField.onValueChange(this.onSearchTextChanged.bind(this));
-        this.eFilterTextField.setInputAriaLabel('Search');
+        this.eFilterTextField.setInputAriaLabel(translate('ariaSearch', 'Search'));
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
         this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
@@ -8856,9 +8915,6 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
         agGridCommunity._.setDisplayed(this.eExpandUnchecked, this.currentExpandState === EXPAND_STATE.COLLAPSED);
         agGridCommunity._.setDisplayed(this.eExpandIndeterminate, this.currentExpandState === EXPAND_STATE.INDETERMINATE);
     };
-    __decorate$y([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], FiltersToolPanelHeaderPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate$y([
         agGridCommunity.Autowired('columnController')
     ], FiltersToolPanelHeaderPanel.prototype, "columnController", void 0);
@@ -8914,7 +8970,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     ToolPanelFilterComp.prototype.setColumn = function (column) {
         var _this = this;
         this.column = column;
-        this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false);
+        this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', function (e) {
             if (e.keyCode === agGridCommunity.KeyCode.ENTER) {
@@ -8938,7 +8994,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         return this.column;
     };
     ToolPanelFilterComp.prototype.getColumnFilterName = function () {
-        return this.columnController.getDisplayNameForColumn(this.column, 'header', false);
+        return this.columnController.getDisplayNameForColumn(this.column, 'filterToolPanel', false);
     };
     ToolPanelFilterComp.prototype.addCssClassToTitleBar = function (cssClass) {
         agGridCommunity._.addCssClass(this.eFilterToolPanelHeader, cssClass);
@@ -9034,9 +9090,6 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         agGridCommunity.Autowired('filterManager')
     ], ToolPanelFilterComp.prototype, "filterManager", void 0);
     __decorate$z([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ToolPanelFilterComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$z([
         agGridCommunity.Autowired('columnController')
     ], ToolPanelFilterComp.prototype, "columnController", void 0);
     __decorate$z([
@@ -9066,12 +9119,13 @@ var __decorate$A = (undefined && undefined.__decorate) || function (decorators, 
 };
 var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
     __extends$B(ToolPanelFilterGroupComp, _super);
-    function ToolPanelFilterGroupComp(columnGroup, childFilterComps, expandedCallback, depth) {
+    function ToolPanelFilterGroupComp(columnGroup, childFilterComps, expandedCallback, depth, showingColumn) {
         var _this = _super.call(this) || this;
         _this.columnGroup = columnGroup;
         _this.childFilterComps = childFilterComps;
         _this.depth = depth;
         _this.expandedCallback = expandedCallback;
+        _this.showingColumn = showingColumn;
         return _this;
     }
     ToolPanelFilterGroupComp.prototype.preConstruct = function () {
@@ -9093,6 +9147,28 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         });
         this.addExpandCollapseListeners();
         this.addFilterChangedListeners();
+        this.setupTooltip();
+    };
+    ToolPanelFilterGroupComp.prototype.setupTooltip = function () {
+        var _this = this;
+        // we don't show tooltips for groups, as when the group expands, it's div contains the columns which also
+        // have tooltips, so the tooltips would clash. Eg mouse over group, tooltip shows, mouse over column, another
+        // tooltip shows but cos we didn't leave the group the group tooltip remains. this should be fixed in the future,
+        // maye the group shouldn't contain the children form a DOM perspective.
+        if (!this.showingColumn) {
+            return;
+        }
+        var refresh = function () {
+            var newTooltipText = _this.columnGroup.getColDef().headerTooltip;
+            _this.setTooltip(newTooltipText);
+        };
+        refresh();
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    };
+    ToolPanelFilterGroupComp.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'filterToolPanelColumnGroup';
+        return res;
     };
     ToolPanelFilterGroupComp.prototype.addCssClassToTitleBar = function (cssClass) {
         this.filterGroupComp.addCssClassToTitleBar(cssClass);
@@ -9191,10 +9267,10 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         this.filterGroupComp.setTitle(this.filterGroupName);
     };
     ToolPanelFilterGroupComp.prototype.getColumnGroupName = function (columnGroup) {
-        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
+        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'filterToolPanel');
     };
     ToolPanelFilterGroupComp.prototype.getColumnName = function (column) {
-        return this.columnController.getDisplayNameForColumn(column, 'header', false);
+        return this.columnController.getDisplayNameForColumn(column, 'filterToolPanel', false);
     };
     ToolPanelFilterGroupComp.prototype.destroyFilters = function () {
         this.childFilterComps = this.destroyBeans(this.childFilterComps);
@@ -9333,7 +9409,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             if (depth > 0) {
                 return filterComp;
             }
-            var filterGroupComp = _this.createBean(new ToolPanelFilterGroupComp(column, [filterComp], _this.onGroupExpanded.bind(_this), depth));
+            var filterGroupComp = _this.createBean(new ToolPanelFilterGroupComp(column, [filterComp], _this.onGroupExpanded.bind(_this), depth, true));
             filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
             filterGroupComp.collapse();
             return filterGroupComp;
@@ -9349,7 +9425,8 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         var childFilterComps = agGridCommunity._.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth));
         if (columnGroup.isPadding())
             return childFilterComps;
-        var filterGroupComp = new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth);
+        }
+        var filterGroupComp = new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth, false);
         this.getContext().createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
         return [filterGroupComp];
@@ -9723,6 +9800,16 @@ var ChartDatasource = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ChartDatasource.prototype.getData = function (params) {
+        if (params.crossFiltering) {
+            if (params.grouping) {
+                console.warn("ag-grid: crossing filtering with row grouping is not supported.");
+                return { data: [], columnNames: {} };
+            }
+            if (!this.gridOptionsWrapper.isRowModelDefault()) {
+                console.warn("ag-grid: crossing filtering is only supported in the client side row model.");
+                return { data: [], columnNames: {} };
+            }
+        }
         var isServerSide = this.gridOptionsWrapper.isRowModelServerSide();
         if (isServerSide && params.pivoting) {
             this.updatePivotKeysForSSRM();
@@ -9738,14 +9825,25 @@ var ChartDatasource = /** @class */ (function (_super) {
         // maps used to keep track of expanded groups that need to be removed
         var groupNodeIndexes = {};
         var groupsToRemove = {};
-        // make sure enough rows in range to chart. if user filters and less rows, then end row will be
-        // the last displayed row, not where the range ends.
-        var modelLastRow = this.gridRowModel.getRowCount() - 1;
-        var rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
-        var numRows = rangeLastRow - params.startRow + 1;
+        // only used when cross filtering
+        var filteredNodes = {};
+        var allRowNodes = [];
+        var numRows;
+        if (params.crossFiltering) {
+            filteredNodes = this.getFilteredRowNodes();
+            allRowNodes = this.getAllRowNodes();
+            numRows = allRowNodes.length;
+        }
+        else {
+            // make sure enough rows in range to chart. if user filters and less rows, then end row will be
+            // the last displayed row, not where the range ends.
+            var modelLastRow = this.gridRowModel.getRowCount() - 1;
+            var rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
+            numRows = rangeLastRow - params.startRow + 1;
+        }
         var _loop_1 = function (i) {
             var data = {};
-            var rowNode = this_1.gridRowModel.getRow(i + params.startRow);
+            var rowNode = params.crossFiltering ? allRowNodes[i] : this_1.gridRowModel.getRow(i + params.startRow);
             // first get data for dimensions columns
             params.dimensionCols.forEach(function (col) {
                 var colId = col.colId;
@@ -9799,9 +9897,26 @@ var ChartDatasource = /** @class */ (function (_super) {
                 if (columnNamesArr.length > 0) {
                     columnNames[col.getId()] = columnNamesArr;
                 }
-                // add data value to value column
-                var value = _this.valueService.getValue(col, rowNode);
-                data[col.getId()] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                var colId = col.getColId();
+                if (params.crossFiltering) {
+                    var filteredOutColId = colId + '-filtered-out';
+                    // add data value to value column
+                    var value = _this.valueService.getValue(col, rowNode);
+                    var actualValue = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                    if (filteredNodes[rowNode.id]) {
+                        data[colId] = actualValue;
+                        data[filteredOutColId] = params.aggFunc || params.isScatter ? undefined : 0;
+                    }
+                    else {
+                        data[colId] = params.aggFunc || params.isScatter ? undefined : 0;
+                        data[filteredOutColId] = actualValue;
+                    }
+                }
+                else {
+                    // add data value to value column
+                    var value = _this.valueService.getValue(col, rowNode);
+                    data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                }
             });
             // add data to results
             extractedRowData.push(data);
@@ -9853,14 +9968,35 @@ var ChartDatasource = /** @class */ (function (_super) {
                 }
             });
         });
-        dataAggregated.forEach(function (groupItem) { return params.valueCols.forEach(function (col) {
-            var dataToAgg = groupItem.__children.map(function (child) { return child[col.getId()]; });
-            var aggResult = 0;
-            if (agGridCommunity.ModuleRegistry.assertRegistered(agGridCommunity.ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
-                aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
-            }
-            groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
-        }); });
+        if (agGridCommunity.ModuleRegistry.assertRegistered(agGridCommunity.ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+            dataAggregated.forEach(function (groupItem) { return params.valueCols.forEach(function (col) {
+                if (params.crossFiltering) {
+                    params.valueCols.forEach(function (valueCol) {
+                        // filtered data
+                        var dataToAgg = groupItem.__children
+                            .filter(function (child) { return typeof child[valueCol.getColId()] !== 'undefined'; })
+                            .map(function (child) { return child[valueCol.getColId()]; });
+                        var aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
+                        groupItem[valueCol.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                        // filtered out data
+                        var filteredOutColId = valueCol.getId() + '-filtered-out';
+                        var dataToAggFiltered = groupItem.__children
+                            .filter(function (child) { return typeof child[filteredOutColId] !== 'undefined'; })
+                            .map(function (child) { return child[filteredOutColId]; });
+                        var aggResultFiltered = _this.aggregationStage.aggregateValues(dataToAggFiltered, params.aggFunc);
+                        groupItem[filteredOutColId] = aggResultFiltered && typeof aggResultFiltered.value !== 'undefined' ? aggResultFiltered.value : aggResultFiltered;
+                    });
+                }
+                else {
+                    var dataToAgg = groupItem.__children.map(function (child) { return child[col.getId()]; });
+                    var aggResult = 0;
+                    if (agGridCommunity.ModuleRegistry.assertRegistered(agGridCommunity.ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+                        aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
+                    }
+                    groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                }
+            }); });
+        }
         return dataAggregated;
     };
     ChartDatasource.prototype.updatePivotKeysForSSRM = function () {
@@ -9901,6 +10037,27 @@ var ChartDatasource = /** @class */ (function (_super) {
         }
         return labels;
     };
+    ChartDatasource.prototype.getFilteredRowNodes = function () {
+        var filteredNodes = {};
+        this.gridRowModel.forEachNodeAfterFilterAndSort(function (rowNode) {
+            filteredNodes[rowNode.id] = rowNode;
+        });
+        return filteredNodes;
+    };
+    ChartDatasource.prototype.getAllRowNodes = function () {
+        var allRowNodes = [];
+        this.gridRowModel.forEachNode(function (rowNode) {
+            allRowNodes.push(rowNode);
+        });
+        return this.sortRowNodes(allRowNodes);
+    };
+    ChartDatasource.prototype.sortRowNodes = function (rowNodes) {
+        var sortOptions = this.sortController.getSortOptions();
+        var noSort = !sortOptions || sortOptions.length == 0;
+        if (noSort)
+            return rowNodes;
+        return this.rowNodeSorter.doFullSort(rowNodes, sortOptions);
+    };
     __decorate$D([
         agGridCommunity.Autowired('rowModel')
     ], ChartDatasource.prototype, "gridRowModel", void 0);
@@ -9911,8 +10068,11 @@ var ChartDatasource = /** @class */ (function (_super) {
         agGridCommunity.Autowired('columnController')
     ], ChartDatasource.prototype, "columnController", void 0);
     __decorate$D([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ChartDatasource.prototype, "gridOptionsWrapper", void 0);
+        agGridCommunity.Autowired('rowNodeSorter')
+    ], ChartDatasource.prototype, "rowNodeSorter", void 0);
+    __decorate$D([
+        agGridCommunity.Autowired('sortController')
+    ], ChartDatasource.prototype, "sortController", void 0);
     __decorate$D([
         agGridCommunity.Optional('aggregationStage')
     ], ChartDatasource.prototype, "aggregationStage", void 0);
@@ -9953,14 +10113,17 @@ var ChartDataModel = /** @class */ (function (_super) {
         _this.valueColState = [];
         _this.detached = false;
         _this.grouping = false;
+        _this.crossFiltering = false;
         _this.columnNames = {};
         _this.pivotChart = params.pivotChart;
         _this.chartType = params.chartType;
         _this.chartThemeName = params.chartThemeName;
         _this.aggFunc = params.aggFunc;
         _this.referenceCellRange = params.cellRange;
+        _this.suppliedCellRange = params.cellRange;
         _this.suppressChartRanges = params.suppressChartRanges;
-        _this.detached = !!params.unlinkChart;
+        _this.unlinked = !!params.unlinkChart;
+        _this.crossFiltering = !!params.crossFiltering;
         // this is used to associate chart ranges with charts
         _this.chartId = _this.generateId();
         return _this;
@@ -10195,9 +10358,11 @@ var ChartDataModel = /** @class */ (function (_super) {
             dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
+            crossFiltering: this.crossFiltering,
             valueCols: this.getSelectedValueCols(),
             startRow: startRow,
-            endRow: endRow
+            endRow: endRow,
+            isScatter: agGridCommunity._.includes([agGridCommunity.ChartType.Scatter, agGridCommunity.ChartType.Bubble], this.chartType)
         };
         var result = this.datasource.getData(params);
         this.chartData = result.data;
@@ -10212,9 +10377,18 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.valueColState = [];
         var hasSelectedDimension = false;
         var order = 1;
+        var aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
         dimensionCols.forEach(function (column) {
             var isAutoGroupCol = column.getColId() === 'ag-Grid-AutoColumn';
-            var selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+            var selected = false;
+            if (_this.crossFiltering && _this.aggFunc) {
+                if (aggFuncDimension.getColId() === column.getColId()) {
+                    selected = true;
+                }
+            }
+            else {
+                selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+            }
             _this.dimensionColState.push({
                 column: column,
                 colId: column.getColId(),
@@ -10297,7 +10471,11 @@ var ChartDataModel = /** @class */ (function (_super) {
             return;
         }
         var selectedDimensionColState = updatedColState;
-        if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column)) {
+        if (this.crossFiltering && this.aggFunc) {
+            var aggFuncDimension_1 = this.suppliedCellRange.columns[0]; //TODO
+            selectedDimensionColState = this.dimensionColState.filter(function (cs) { return cs.colId === aggFuncDimension_1.getColId(); })[0];
+        }
+        else if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column)) {
             selectedDimensionColState = this.dimensionColState.filter(function (cs) { return cs.selected; })[0];
         }
         if (selectedDimensionColState && selectedDimensionColState.colId !== ChartDataModel.DEFAULT_CATEGORY) {
@@ -10339,9 +10517,6 @@ var ChartDataModel = /** @class */ (function (_super) {
     __decorate$E([
         agGridCommunity.Autowired('columnController')
     ], ChartDataModel.prototype, "columnController", void 0);
-    __decorate$E([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ChartDataModel.prototype, "gridOptionsWrapper", void 0);
     __decorate$E([
         agGridCommunity.Autowired('valueService')
     ], ChartDataModel.prototype, "valueService", void 0);
@@ -10908,8 +11083,8 @@ var Node = /** @class */ (function () {
             if (i >= 0) {
                 this._children.splice(i, 1);
                 delete this.childSet[node.id];
-                node._setParent(undefined);
-                node._setScene(undefined);
+                node._setParent();
+                node._setScene();
                 this.dirty = true;
                 return node;
             }
@@ -12502,6 +12677,7 @@ var Observable = /** @class */ (function () {
             }
         });
     };
+    // 'source' is added automatically and is always the object this method belongs to.
     Observable.prototype.fireEvent = function (event) {
         var _this = this;
         var listeners = this.allEventListeners.get(event.type);
@@ -12679,16 +12855,16 @@ var constant = (function (x) { return function () { return x; }; });
 
 function interpolateNumber (a, b) {
     a = +a;
-    b -= a;
-    return function (t) { return a + b * t; };
+    b = +b;
+    return function (t) { return a * (1 - t) + b * t; };
 }
 
 function date (a, b) {
     var date = new Date;
     var msA = +a;
-    var msB = +b - msA;
+    var msB = +b;
     return function (t) {
-        date.setTime(msA + msB * t);
+        date.setTime(msA * (1 - t) + msB * t);
         return date;
     };
 }
@@ -14075,15 +14251,6 @@ var Path2D = /** @class */ (function () {
         // }
         this.cubicArc(cx, cy, rx, ry, rotation, theta1, theta1 + deltaTheta, 1 - fS);
     };
-    Path2D.prototype.arcToAlt = function (rx, ry, rotation, fA, fS, x2, y2) {
-        // Convert from endpoint to center parametrization. See:
-        // https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
-        if (!this.xy) {
-            return;
-        }
-        var x1 = this.xy[0];
-        var y1 = this.xy[1];
-    };
     /**
      * Approximates an elliptical arc with up to four cubic Bézier curves.
      * @param commands The string array to write SVG command letters to.
@@ -15026,6 +15193,16 @@ var AxisLabel = /** @class */ (function () {
  */
 var Axis = /** @class */ (function () {
     function Axis(scale) {
+        // debug (bbox)
+        // private bboxRect = (() => {
+        //     const rect = new Rect();
+        //     rect.fill = undefined;
+        //     rect.stroke = 'red';
+        //     rect.strokeWidth = 1;
+        //     rect.strokeOpacity = 0.2;
+        //     return rect;
+        // })();
+        this.id = createId(this);
         this.lineNode = new Line();
         this.group = new Group();
         this.line = {
@@ -15068,6 +15245,7 @@ var Axis = /** @class */ (function () {
         this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
+    Axis.prototype.getMeta = function () { };
     Axis.prototype.updateRange = function () {
         var _a = this, rr = _a.requestedRange, vr = _a.visibleRange, scale = _a.scale;
         var span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
@@ -15309,6 +15487,7 @@ var Axis = /** @class */ (function () {
             });
         }
         var tickFormatter = this.tickFormatter;
+        var meta = this.getMeta();
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         var fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
         var labelSelection = groupSelection.selectByClass(Text)
@@ -15326,7 +15505,8 @@ var Axis = /** @class */ (function () {
                     value: fractionDigits >= 0 ? datum : String(datum),
                     index: index,
                     fractionDigits: fractionDigits,
-                    formatter: tickFormatter
+                    formatter: tickFormatter,
+                    axis: meta
                 })
                 : fractionDigits
                     // the `datum` is a floating point number
@@ -15492,6 +15672,13 @@ var ChartAxis = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    ChartAxis.prototype.getMeta = function () {
+        return {
+            id: this.id,
+            direction: this.direction,
+            boundSeries: this.boundSeries,
+        };
+    };
     Object.defineProperty(ChartAxis.prototype, "position", {
         get: function () {
             return this._position;
@@ -15918,20 +16105,6 @@ function findMinMax(values) {
         }
         else {
             max += value;
-        }
-    }
-    return { min: min, max: max };
-}
-function findLargestMinMax(totals) {
-    var min = 0;
-    var max = 0;
-    for (var _i = 0, totals_1 = totals; _i < totals_1.length; _i++) {
-        var total = totals_1[_i];
-        if (total.min < min) {
-            min = total.min;
-        }
-        if (total.max > max) {
-            max = total.max;
         }
     }
     return { min: min, max: max };
@@ -17777,7 +17950,6 @@ var TimeScale = /** @class */ (function (_super) {
      */
     TimeScale.prototype.tickInterval = function (interval, start, stop, step) {
         var _a;
-        if (interval === void 0) { interval = 10; }
         if (typeof interval === 'number') {
             var tickCount = interval;
             var tickIntervals = this.tickIntervals;
@@ -18042,7 +18214,7 @@ var Scene = /** @class */ (function () {
                 return;
             }
             if (this._root) {
-                this._root._setScene(undefined);
+                this._root._setScene();
             }
             this._root = node;
             if (node) {
@@ -19366,7 +19538,7 @@ var Legend = /** @class */ (function (_super) {
             markerLabel.markerFillOpacity = marker.fillOpacity;
             markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
-            markerLabel.color = _this.color;
+            markerLabel.color = _this.item.label.color;
         });
     };
     Legend.prototype.getDatumForPoint = function (x, y) {
@@ -19528,7 +19700,7 @@ var Series = /** @class */ (function (_super) {
     Series.prototype.getNodeData = function () {
         return [];
     };
-    Series.prototype.fireNodeClickEvent = function (datum) { };
+    Series.prototype.fireNodeClickEvent = function (event, datum) { };
     Series.prototype.toggleSeriesItem = function (itemId, enabled) {
         this.visible = enabled;
     };
@@ -19543,6 +19715,12 @@ var Series = /** @class */ (function (_super) {
             return [0, 1];
         }
         var min = extent[0], max = extent[1];
+        if (min instanceof Date) {
+            min = min.getTime();
+        }
+        if (max instanceof Date) {
+            max = max.getTime();
+        }
         if (min === max) {
             var padding = Math.abs(min * 0.01);
             min -= padding;
@@ -19627,6 +19805,9 @@ var SeriesMarker = /** @class */ (function (_super) {
     ], SeriesMarker.prototype, "maxSize", void 0);
     __decorate$I([
         reactive('change')
+    ], SeriesMarker.prototype, "domain", void 0);
+    __decorate$I([
+        reactive('change')
     ], SeriesMarker.prototype, "fill", void 0);
     __decorate$I([
         reactive('change')
@@ -19701,16 +19882,145 @@ var __decorate$J = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: table;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-hidden {\n    top: -10000px !important;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
 function toTooltipHtml(input, defaults) {
     if (typeof input === 'string') {
         return input;
     }
     defaults = defaults || {};
-    var _a = input.content, content = _a === void 0 ? defaults.content || '' : _a, _b = input.title, title = _b === void 0 ? defaults.title || undefined : _b, _c = input.titleColor, titleColor = _c === void 0 ? defaults.titleColor || 'white' : _c, _d = input.titleBackgroundColor, titleBackgroundColor = _d === void 0 ? defaults.titleBackgroundColor || '#888' : _d;
-    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n        style=\"color: " + titleColor + "; background-color: " + titleBackgroundColor + "\">" + title + "</div>" : '';
+    var _a = input.content, content = _a === void 0 ? defaults.content || '' : _a, _b = input.title, title = _b === void 0 ? defaults.title || undefined : _b, _c = input.color, color = _c === void 0 ? defaults.color || 'white' : _c, _d = input.backgroundColor, backgroundColor = _d === void 0 ? defaults.backgroundColor || '#888' : _d;
+    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n        style=\"color: " + color + "; background-color: " + backgroundColor + "\">" + title + "</div>" : '';
     return titleHtml + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + content + "</div>";
 }
+var ChartTooltip = /** @class */ (function (_super) {
+    __extends$18(ChartTooltip, _super);
+    function ChartTooltip(chart) {
+        var _this = _super.call(this) || this;
+        _this.element = document.createElement('div');
+        _this.enabled = true;
+        _this.class = Chart.defaultTooltipClass;
+        _this.delay = 0;
+        /**
+         * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
+         * Only has effect on series with markers.
+         */
+        _this.tracking = true;
+        _this.showTimeout = 0;
+        _this.chart = chart;
+        _this.class = '';
+        var tooltipRoot = document.body;
+        tooltipRoot.appendChild(_this.element);
+        // Detect when the chart becomes invisible and hide the tooltip as well.
+        if (window.IntersectionObserver) {
+            var target_1 = _this.chart.scene.canvas.element;
+            var observer = new IntersectionObserver(function (entries) {
+                for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
+                    var entry = entries_1[_i];
+                    if (entry.target === target_1 && entry.intersectionRatio === 0) {
+                        _this.toggle(false);
+                    }
+                }
+            }, { root: tooltipRoot });
+            observer.observe(target_1);
+            _this.observer = observer;
+        }
+        return _this;
+    }
+    ChartTooltip.prototype.isVisible = function () {
+        var element = this.element;
+        if (element.classList) { // if not IE11
+            return !element.classList.contains(Chart.defaultTooltipClass + '-hidden');
+        }
+        // IE11 part.
+        var classes = element.getAttribute('class');
+        if (classes) {
+            return classes.split(' ').indexOf(Chart.defaultTooltipClass + '-hidden') < 0;
+        }
+        return false;
+    };
+    ChartTooltip.prototype.updateClass = function (visible, constrained) {
+        var classList = [Chart.defaultTooltipClass, this.class];
+        if (visible !== true) {
+            classList.push(Chart.defaultTooltipClass + "-hidden");
+        }
+        if (constrained !== true) {
+            classList.push(Chart.defaultTooltipClass + "-arrow");
+        }
+        this.element.setAttribute('class', classList.join(' '));
+    };
+    /**
+     * Shows tooltip at the given event's coordinates.
+     * If the `html` parameter is missing, moves the existing tooltip to the new position.
+     */
+    ChartTooltip.prototype.show = function (meta, html, instantly) {
+        var _this = this;
+        if (instantly === void 0) { instantly = false; }
+        var el = this.element;
+        if (html !== undefined) {
+            el.innerHTML = html;
+        }
+        else if (!el.innerHTML) {
+            return;
+        }
+        var left = meta.pageX - el.clientWidth / 2;
+        var top = meta.pageY - el.clientHeight - 8;
+        if (this.chart.container) {
+            var tooltipRect = el.getBoundingClientRect();
+            var minLeft = 0;
+            var maxLeft = window.innerWidth - tooltipRect.width;
+            if (left < minLeft) {
+                left = minLeft;
+                this.updateClass(true, true);
+            }
+            else if (left > maxLeft) {
+                left = maxLeft;
+                this.updateClass(true, true);
+            }
+        }
+        el.style.left = left + "px";
+        el.style.top = top + "px";
+        if (this.delay > 0 && !instantly) {
+            this.toggle(false);
+            this.showTimeout = window.setTimeout(function () {
+                _this.toggle(true);
+            }, this.delay);
+            return;
+        }
+        this.toggle(true);
+    };
+    ChartTooltip.prototype.toggle = function (visible) {
+        if (!visible) {
+            window.clearTimeout(this.showTimeout);
+            if (this.chart.lastPick && !this.delay) {
+                this.chart.dehighlightDatum();
+                this.chart.lastPick = undefined;
+            }
+        }
+        this.updateClass(visible);
+    };
+    ChartTooltip.prototype.destroy = function () {
+        var parentNode = this.element.parentNode;
+        if (parentNode) {
+            parentNode.removeChild(this.element);
+        }
+        if (this.observer) {
+            this.observer.unobserve(this.chart.scene.canvas.element);
+        }
+    };
+    __decorate$J([
+        reactive()
+    ], ChartTooltip.prototype, "enabled", void 0);
+    __decorate$J([
+        reactive()
+    ], ChartTooltip.prototype, "class", void 0);
+    __decorate$J([
+        reactive()
+    ], ChartTooltip.prototype, "delay", void 0);
+    __decorate$J([
+        reactive()
+    ], ChartTooltip.prototype, "tracking", void 0);
+    return ChartTooltip;
+}(Observable));
 var Chart = /** @class */ (function (_super) {
     __extends$18(Chart, _super);
     function Chart(document) {
@@ -19724,6 +20034,11 @@ var Chart = /** @class */ (function (_super) {
         _this._container = undefined;
         _this._data = [];
         _this._autoSize = false;
+        _this._tooltipClass = Chart.defaultTooltipClass;
+        /**
+         * @deprecated Please use {@link tooltip.tracking} instead.
+         */
+        _this.tooltipTracking = true;
         _this.padding = new Padding(20);
         _this._axes = [];
         _this._series = [];
@@ -19745,12 +20060,6 @@ var Chart = /** @class */ (function (_super) {
         _this._onMouseMove = _this.onMouseMove.bind(_this);
         _this._onMouseOut = _this.onMouseOut.bind(_this);
         _this._onClick = _this.onClick.bind(_this);
-        _this._tooltipClass = Chart.defaultTooltipClass;
-        /**
-         * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
-         * Only has effect on series with markers.
-         */
-        _this.tooltipTracking = true;
         var root = new Group();
         var background = _this.background;
         background.fill = 'white';
@@ -19765,9 +20074,8 @@ var Chart = /** @class */ (function (_super) {
         var legend = _this.legend;
         legend.addEventListener('layoutChange', _this.onLayoutChange, _this);
         legend.addPropertyListener('position', _this.onLegendPositionChange, _this);
-        _this.tooltipElement = document.createElement('div');
-        _this.tooltipClass = '';
-        document.body.appendChild(_this.tooltipElement);
+        _this.tooltip = new ChartTooltip(_this);
+        _this.tooltip.addPropertyListener('class', function () { return _this.tooltip.toggle(); });
         if (Chart.tooltipDocuments.indexOf(document) < 0) {
             var styleElement = document.createElement('style');
             styleElement.innerHTML = defaultTooltipCss;
@@ -19870,14 +20178,24 @@ var Chart = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Chart.prototype, "tooltipClass", {
+        get: function () {
+            return this.tooltip.class;
+        },
+        /**
+         * @deprecated Please use {@link tooltip.class} instead.
+         */
+        set: function (value) {
+            this.tooltip.class = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Chart.prototype.download = function (fileName) {
         this.scene.download(fileName);
     };
     Chart.prototype.destroy = function () {
-        var tooltipParent = this.tooltipElement.parentNode;
-        if (tooltipParent) {
-            tooltipParent.removeChild(this.tooltipElement);
-        }
+        this.tooltip.destroy();
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
         this.cleanupDomListeners(this.scene.canvas.element);
@@ -20332,24 +20650,34 @@ var Chart = /** @class */ (function (_super) {
         }
     };
     Chart.prototype.onMouseMove = function (event) {
-        var _a = this, lastPick = _a.lastPick, tooltipTracking = _a.tooltipTracking;
-        var pick = this.pickSeriesNode(event.offsetX, event.offsetY);
+        if (this.tooltip.enabled) {
+            if (this.tooltip.delay > 0) {
+                this.tooltip.toggle(false);
+            }
+            this.handleTooltip(event);
+        }
+    };
+    Chart.prototype.handleTooltip = function (event) {
+        var _a = this, lastPick = _a.lastPick, tooltipTracking = _a.tooltip.tracking;
+        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var pick = this.pickSeriesNode(offsetX, offsetY);
         var nodeDatum;
         if (pick && pick.node instanceof Shape) {
             var node = pick.node;
             nodeDatum = node.datum;
             if (lastPick && lastPick.datum === nodeDatum) {
                 lastPick.node = node;
+                lastPick.event = event;
             }
             // Marker nodes will have the `point` info in their datums.
             // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
             if ((!node.datum.point || !tooltipTracking)) {
                 if (!lastPick // cursor moved from empty space to a node
                     || lastPick.node !== node) { // cursor moved from one node to another
-                    this.onSeriesDatumPick(event, node.datum, node);
+                    this.onSeriesDatumPick(event, node.datum, node, event);
                 }
-                else if (pick.series.tooltipEnabled) { // cursor moved within the same node
-                    this.showTooltip(event);
+                else if (pick.series.tooltip.enabled) { // cursor moved within the same node
+                    this.tooltip.show(event);
                 }
                 // A non-marker node (takes precedence over marker nodes) was highlighted.
                 // Or we are not in the tracking mode.
@@ -20363,7 +20691,7 @@ var Chart = /** @class */ (function (_super) {
         // and also gives the ability to show tooltips even when the series were configured
         // to not render markers.
         if (tooltipTracking) {
-            var closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+            var closestDatum = this.pickClosestSeriesNodeDatum(offsetX, offsetY);
             if (closestDatum && closestDatum.point) {
                 var _b = closestDatum.point, x = _b.x, y = _b.y;
                 var canvas = this.scene.canvas;
@@ -20372,34 +20700,44 @@ var Chart = /** @class */ (function (_super) {
                 this.onSeriesDatumPick({
                     pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
                     pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
-                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node : undefined);
+                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node : undefined, event);
             }
             else {
                 hideTooltip = true;
             }
         }
         if (lastPick && (hideTooltip || !tooltipTracking)) {
-            // cursor moved from a non-marker node to empty space
+            // Cursor moved from a non-marker node to empty space.
             this.dehighlightDatum();
-            this.hideTooltip();
+            this.tooltip.toggle(false);
             this.lastPick = undefined;
         }
     };
     Chart.prototype.onMouseDown = function (event) { };
     Chart.prototype.onMouseUp = function (event) { };
     Chart.prototype.onMouseOut = function (event) {
-        this.toggleTooltip(false);
+        this.tooltip.toggle(false);
     };
     Chart.prototype.onClick = function (event) {
-        this.checkSeriesNodeClick();
-        this.checkLegendClick(event);
+        if (this.checkSeriesNodeClick()) {
+            return;
+        }
+        if (this.checkLegendClick(event)) {
+            return;
+        }
+        this.fireEvent({
+            type: 'click',
+            event: event
+        });
     };
     Chart.prototype.checkSeriesNodeClick = function () {
         var lastPick = this.lastPick;
-        if (lastPick && lastPick.node) {
-            var datum = lastPick.datum;
-            datum.series.fireNodeClickEvent(datum);
+        if (lastPick && lastPick.event && lastPick.node) {
+            var event_1 = lastPick.event, datum = lastPick.datum;
+            datum.series.fireNodeClickEvent(event_1, datum);
+            return true;
         }
+        return false;
     };
     Chart.prototype.onSeriesNodeClick = function (event) {
         this.fireEvent(__assign$2(__assign$2({}, event), { type: 'seriesNodeClick' }));
@@ -20412,24 +20750,32 @@ var Chart = /** @class */ (function (_super) {
             if (series) {
                 series.toggleSeriesItem(itemId, !enabled);
                 if (enabled) {
-                    this.hideTooltip();
+                    this.tooltip.toggle(false);
                 }
+                this.legend.fireEvent({
+                    type: 'click',
+                    event: event,
+                    itemId: itemId,
+                    enabled: !enabled
+                });
+                return true;
             }
         }
+        return false;
     };
-    Chart.prototype.onSeriesDatumPick = function (meta, datum, node) {
+    Chart.prototype.onSeriesDatumPick = function (meta, datum, node, event) {
         if (this.lastPick) {
-            // this.lastPick.datum.series.dehighlightDatum();
             this.dehighlightDatum();
         }
         this.lastPick = {
             datum: datum,
-            node: node
+            node: node,
+            event: event
         };
         this.highlightDatum(datum);
         var html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
         if (html) {
-            this.showTooltip(meta, html);
+            this.tooltip.show(meta, html);
         }
     };
     Chart.prototype.highlightDatum = function (datum) {
@@ -20441,73 +20787,6 @@ var Chart = /** @class */ (function (_super) {
             this.highlightedDatum = undefined;
             this.series.forEach(function (s) { return s.onHighlightChange(); });
         }
-    };
-    Object.defineProperty(Chart.prototype, "tooltipClass", {
-        get: function () {
-            return this._tooltipClass;
-        },
-        set: function (value) {
-            if (this._tooltipClass !== value) {
-                this._tooltipClass = value;
-                this.toggleTooltip();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Chart.prototype.toggleTooltip = function (visible) {
-        if (!visible && this.lastPick) {
-            this.dehighlightDatum();
-            this.lastPick = undefined;
-        }
-        this.updateTooltipClass(visible);
-    };
-    Chart.prototype.updateTooltipClass = function (visible, constrained) {
-        var classList = [Chart.defaultTooltipClass, this.tooltipClass];
-        if (visible === true) {
-            classList.push(Chart.defaultTooltipClass + "-visible");
-        }
-        if (constrained !== true) {
-            classList.push(Chart.defaultTooltipClass + "-arrow");
-        }
-        this.tooltipElement.setAttribute('class', classList.join(' '));
-    };
-    /**
-     * Shows tooltip at the given event's coordinates.
-     * If the `html` parameter is missing, moves the existing tooltip to the new position.
-     */
-    Chart.prototype.showTooltip = function (meta, html) {
-        var el = this.tooltipElement;
-        var container = this.container;
-        if (html !== undefined) {
-            el.innerHTML = html;
-        }
-        else if (!el.innerHTML) {
-            return;
-        }
-        if (html) {
-            this.toggleTooltip(true);
-        }
-        var left = meta.pageX - el.clientWidth / 2;
-        var top = meta.pageY - el.clientHeight - 8;
-        if (container) {
-            var tooltipRect = el.getBoundingClientRect();
-            var minLeft = 0;
-            var maxLeft = window.innerWidth - tooltipRect.width;
-            if (left < minLeft) {
-                left = minLeft;
-                this.updateTooltipClass(true, true);
-            }
-            else if (left > maxLeft) {
-                left = maxLeft;
-                this.updateTooltipClass(true, true);
-            }
-        }
-        el.style.left = left + "px";
-        el.style.top = top + "px";
-    };
-    Chart.prototype.hideTooltip = function () {
-        this.toggleTooltip(false);
     };
     Chart.defaultTooltipClass = 'ag-chart-tooltip';
     Chart.tooltipDocuments = [];
@@ -21371,11 +21650,11 @@ var Navigator = /** @class */ (function () {
         chart.seriesRoot.enabled = clipSeries;
         chart.series.forEach(function (series) { return series.update(); });
     };
-    Navigator.prototype.onMouseDown = function (event) {
+    Navigator.prototype.onDragStart = function (offset) {
         if (!this.enabled) {
             return;
         }
-        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var offsetX = offset.offsetX, offsetY = offset.offsetY;
         var rs = this.rs;
         var minHandle = rs.minHandle, maxHandle = rs.maxHandle, x = rs.x, width = rs.width, min = rs.min;
         var visibleRange = rs.computeVisibleRangeBBox();
@@ -21391,14 +21670,14 @@ var Navigator = /** @class */ (function () {
             }
         }
     };
-    Navigator.prototype.onMouseMove = function (event) {
+    Navigator.prototype.onDrag = function (offset) {
         if (!this.enabled) {
             return;
         }
         var _a = this, rs = _a.rs, panHandleOffset = _a.panHandleOffset;
         var x = rs.x, y = rs.y, width = rs.width, height = rs.height, minHandle = rs.minHandle, maxHandle = rs.maxHandle;
         var style = this.chart.element.style;
-        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var offsetX = offset.offsetX, offsetY = offset.offsetY;
         var minX = x + width * rs.min;
         var maxX = x + width * rs.max;
         var visibleRange = new BBox(minX, y, maxX - minX, height);
@@ -21436,10 +21715,7 @@ var Navigator = /** @class */ (function () {
             }
         }
     };
-    Navigator.prototype.onMouseOut = function (event) {
-        this.stopHandleDragging();
-    };
-    Navigator.prototype.onMouseUp = function (event) {
+    Navigator.prototype.onDragStop = function () {
         this.stopHandleDragging();
     };
     Navigator.prototype.stopHandleDragging = function () {
@@ -21558,26 +21834,13 @@ var CartesianChart = /** @class */ (function (_super) {
         axes.forEach(function (axis) {
             switch (axis.position) {
                 case ChartAxisPosition.Top:
-                    axis.translation.x = Math.floor(shrinkRect.x);
-                    axis.range = [0, shrinkRect.width];
-                    axis.gridLength = shrinkRect.height;
-                    break;
-                case ChartAxisPosition.Right:
-                    axis.translation.y = Math.floor(shrinkRect.y);
-                    if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
-                        axis.range = [0, shrinkRect.height];
-                    }
-                    else {
-                        axis.range = [shrinkRect.height, 0];
-                    }
-                    axis.gridLength = shrinkRect.width;
-                    break;
                 case ChartAxisPosition.Bottom:
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.range = [0, shrinkRect.width];
                     axis.gridLength = shrinkRect.height;
                     break;
                 case ChartAxisPosition.Left:
+                case ChartAxisPosition.Right:
                     axis.translation.y = Math.floor(shrinkRect.y);
                     if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
                         axis.range = [0, shrinkRect.height];
@@ -21615,21 +21878,65 @@ var CartesianChart = /** @class */ (function (_super) {
         _super.prototype.freeSeries.call(this, series);
         series.removeEventListener('dataProcessed', this.updateAxes, this);
     };
+    CartesianChart.prototype.setupDomListeners = function (chartElement) {
+        _super.prototype.setupDomListeners.call(this, chartElement);
+        this._onTouchStart = this.onTouchStart.bind(this);
+        this._onTouchMove = this.onTouchMove.bind(this);
+        this._onTouchEnd = this.onTouchEnd.bind(this);
+        this._onTouchCancel = this.onTouchCancel.bind(this);
+        chartElement.addEventListener('touchstart', this._onTouchStart);
+        chartElement.addEventListener('touchmove', this._onTouchMove);
+        chartElement.addEventListener('touchend', this._onTouchEnd);
+        chartElement.addEventListener('touchcancel', this._onTouchCancel);
+    };
+    CartesianChart.prototype.cleanupDomListeners = function (chartElement) {
+        _super.prototype.cleanupDomListeners.call(this, chartElement);
+        chartElement.removeEventListener('touchstart', this._onTouchStart);
+        chartElement.removeEventListener('touchmove', this._onTouchMove);
+        chartElement.removeEventListener('touchend', this._onTouchEnd);
+        chartElement.removeEventListener('touchcancel', this._onTouchCancel);
+    };
+    CartesianChart.prototype.getTouchOffset = function (event) {
+        var rect = this.scene.canvas.element.getBoundingClientRect();
+        var touch = event.touches[0];
+        return touch ? {
+            offsetX: touch.clientX - rect.left,
+            offsetY: touch.clientY - rect.top
+        } : undefined;
+    };
+    CartesianChart.prototype.onTouchStart = function (event) {
+        var offset = this.getTouchOffset(event);
+        if (offset) {
+            this.navigator.onDragStart(offset);
+        }
+    };
+    CartesianChart.prototype.onTouchMove = function (event) {
+        var offset = this.getTouchOffset(event);
+        if (offset) {
+            this.navigator.onDrag(offset);
+        }
+    };
+    CartesianChart.prototype.onTouchEnd = function (event) {
+        this.navigator.onDragStop();
+    };
+    CartesianChart.prototype.onTouchCancel = function (event) {
+        this.navigator.onDragStop();
+    };
     CartesianChart.prototype.onMouseDown = function (event) {
         _super.prototype.onMouseDown.call(this, event);
-        this.navigator.onMouseDown(event);
+        this.navigator.onDragStart(event);
     };
     CartesianChart.prototype.onMouseMove = function (event) {
         _super.prototype.onMouseMove.call(this, event);
-        this.navigator.onMouseMove(event);
+        this.navigator.onDrag(event);
     };
     CartesianChart.prototype.onMouseUp = function (event) {
         _super.prototype.onMouseUp.call(this, event);
-        this.navigator.onMouseUp(event);
+        this.navigator.onDragStop();
     };
     CartesianChart.prototype.onMouseOut = function (event) {
         _super.prototype.onMouseOut.call(this, event);
-        this.navigator.onMouseUp(event);
+        this.navigator.onDragStop();
     };
     CartesianChart.prototype.updateAxes = function () {
         var navigator = this.navigator;
@@ -22123,7 +22430,7 @@ var AreaSeries = /** @class */ (function (_super) {
         // ]
         var _b = this, yData = _b.yData, normalizedTo = _b.normalizedTo;
         var yMinMax = yData.map(function (values) { return findMinMax(values); }); // used for normalization
-        var yLargestMinMax = findLargestMinMax(yMinMax);
+        var yLargestMinMax = this.findLargestMinMax(yMinMax);
         var yMin;
         var yMax;
         if (normalizedTo && isFinite(normalizedTo)) {
@@ -22148,6 +22455,20 @@ var AreaSeries = /** @class */ (function (_super) {
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
         this.fireEvent({ type: 'dataProcessed' });
         return true;
+    };
+    AreaSeries.prototype.findLargestMinMax = function (totals) {
+        var min = 0;
+        var max = 0;
+        for (var _i = 0, totals_1 = totals; _i < totals_1.length; _i++) {
+            var total = totals_1[_i];
+            if (total.min < min) {
+                min = total.min;
+            }
+            if (total.max > max) {
+                max = total.max;
+            }
+        }
+        return { min: min, max: max };
     };
     AreaSeries.prototype.getDomain = function (direction) {
         if (direction === ChartAxisDirection.X) {
@@ -22351,9 +22672,10 @@ var AreaSeries = /** @class */ (function (_super) {
     AreaSeries.prototype.getNodeData = function () {
         return this.markerSelectionData;
     };
-    AreaSeries.prototype.fireNodeClickEvent = function (datum) {
+    AreaSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -22379,7 +22701,7 @@ var AreaSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipFormat || tooltipRenderer) {
@@ -22534,13 +22856,6 @@ var __decorate$N = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays$4 = (undefined && undefined.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var BarSeriesNodeTag;
 (function (BarSeriesNodeTag) {
     BarSeriesNodeTag[BarSeriesNodeTag["Bar"] = 0] = "Bar";
@@ -22609,15 +22924,23 @@ var BarSeries = /** @class */ (function (_super) {
             _a);
         _this._xKey = '';
         _this._xName = '';
+        _this.cumYKeyCount = [];
+        _this.flatYKeys = undefined; // only set when a user used a flat array for yKeys
+        _this.hideInLegend = [];
         /**
-         * With a single value in the `yKeys` array we get the regular bar series.
-         * With multiple values, we get the stacked bar series.
-         * If the {@link grouped} set to `true`, we get the grouped bar series.
-         * @param values
+         * yKeys: [['coffee']] - regular bars, each category has a single bar that shows a value for coffee
+         * yKeys: [['coffee'], ['tea'], ['milk']] - each category has three bars that show values for coffee, tea and milk
+         * yKeys: [['coffee', 'tea', 'milk']] - each category has a single bar with three stacks that show values for coffee, tea and milk
+         * yKeys: [['coffee', 'tea', 'milk'], ['paper', 'ink']] - each category has 2 stacked bars,
+         *     first showing values for coffee, tea and milk and second values for paper and ink
          */
         _this._yKeys = [];
-        _this._yNames = [];
-        _this.grouped = false;
+        _this._grouped = false;
+        /**
+         * A map of `yKeys` to their names (used in legends and tooltips).
+         * For example, if a key is `product_name` it's name can be a more presentable `Product Name`.
+         */
+        _this._yNames = {};
         _this._strokeWidth = 1;
         _this.highlightStyle = { fill: 'yellow' };
         _this.addEventListener('update', _this.update);
@@ -22676,18 +22999,59 @@ var BarSeries = /** @class */ (function (_super) {
         get: function () {
             return this._yKeys;
         },
-        set: function (values) {
-            if (!equal(this._yKeys, values)) {
-                this._yKeys = values;
+        set: function (yKeys) {
+            var _this = this;
+            if (!equal(this._yKeys, yKeys)) {
+                // Convert from flat y-keys to grouped y-keys.
+                if (yKeys.length && !Array.isArray(yKeys[0])) {
+                    var keys = this.flatYKeys = yKeys;
+                    if (this.grouped) {
+                        yKeys = keys.map(function (k) { return [k]; });
+                    }
+                    else {
+                        yKeys = [keys];
+                    }
+                }
+                else {
+                    this.flatYKeys = undefined;
+                }
+                this._yKeys = yKeys;
+                var prevYKeyCount_1 = 0;
+                this.cumYKeyCount = [];
+                var visibleStacks_1 = [];
+                yKeys.forEach(function (stack, index) {
+                    if (stack.length > 0) {
+                        visibleStacks_1.push(String(index));
+                    }
+                    _this.cumYKeyCount.push(prevYKeyCount_1);
+                    prevYKeyCount_1 += stack.length;
+                });
                 this.yData = [];
                 var seriesItemEnabled_1 = this.seriesItemEnabled;
                 seriesItemEnabled_1.clear();
-                values.forEach(function (key) { return seriesItemEnabled_1.set(key, true); });
+                yKeys.forEach(function (stack) {
+                    stack.forEach(function (yKey) { return seriesItemEnabled_1.set(yKey, true); });
+                });
                 var groupScale = this.groupScale;
-                groupScale.domain = values;
+                groupScale.domain = visibleStacks_1;
                 groupScale.padding = 0.1;
                 groupScale.round = true;
                 this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BarSeries.prototype, "grouped", {
+        get: function () {
+            return this._grouped;
+        },
+        set: function (value) {
+            if (this._grouped !== value) {
+                this._grouped = value;
+                if (this.flatYKeys) {
+                    this.yKeys = this.flatYKeys;
+                }
             }
         },
         enumerable: true,
@@ -22698,6 +23062,13 @@ var BarSeries = /** @class */ (function (_super) {
             return this._yNames;
         },
         set: function (values) {
+            if (Array.isArray(values) && this.flatYKeys) {
+                var map_1 = {};
+                this.flatYKeys.forEach(function (k, i) {
+                    map_1[k] = values[i];
+                });
+                values = map_1;
+            }
             this._yNames = values;
             this.scheduleData();
         },
@@ -22754,20 +23125,6 @@ var BarSeries = /** @class */ (function (_super) {
     BarSeries.prototype.processData = function () {
         var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, seriesItemEnabled = _a.seriesItemEnabled;
         var data = xKey && yKeys.length && this.data ? this.data : [];
-        // If the data is an array of rows like so:
-        //
-        // [{
-        //   xKey: 'Jan',
-        //   yKey1: 5,
-        //   yKey2: 7,
-        //   yKey3: -9,
-        // }, {
-        //   xKey: 'Feb',
-        //   yKey1: 10,
-        //   yKey2: -15,
-        //   yKey3: 20
-        // }]
-        //
         var keysFound = true; // only warn once
         this.xData = data.map(function (datum) {
             if (keysFound && !(xKey in datum)) {
@@ -22776,55 +23133,64 @@ var BarSeries = /** @class */ (function (_super) {
             }
             return datum[xKey];
         });
-        this.yData = data.map(function (datum) { return yKeys.map(function (yKey) {
-            if (keysFound && !(yKey in datum)) {
-                keysFound = false;
-                console.warn("The key '" + yKey + "' was not found in the data: ", datum);
-            }
-            var value = datum[yKey];
-            return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+        this.yData = data.map(function (datum) { return yKeys.map(function (stack) {
+            return stack.map(function (yKey) {
+                if (keysFound && !(yKey in datum)) {
+                    keysFound = false;
+                    console.warn("The key '" + yKey + "' was not found in the data: ", datum);
+                }
+                var value = datum[yKey];
+                return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+            });
         }); });
-        // xData: ['Jan', 'Feb']
-        //
-        // yData: [
-        //   [5, 7, -9],
-        //   [10, -15, 20]
-        // ]
-        var yMinMax = this.yData.map(function (values) { return findMinMax(values); }); // used for normalization of stacked bars
+        // Used for normalization of stacked bars. Contains min/max values for each stack in each group,
+        // where min is zero and max is a positive total of all values in the stack
+        // or min is a negative total of all values in the stack and max is zero.
+        var yMinMax = this.yData.map(function (group) { return group.map(function (stack) { return findMinMax(stack); }); });
         var _b = this, yData = _b.yData, normalizedTo = _b.normalizedTo;
-        var yMin = Infinity;
-        var yMax = -Infinity;
-        if (this.grouped) {
-            // Find the tallest positive/negative bar in each group,
-            // then find the tallest positive/negative bar overall.
-            // The `yMin` should always be <= 0,
-            // otherwise with the `yData` like [300, 200, 100] the last bar
-            // will have zero height, because the y-axis range is [100, 300].
-            yMin = Math.min.apply(Math, __spreadArrays$4([0], yData.map(function (values) { return Math.min.apply(Math, values); })));
-            yMax = Math.max.apply(Math, yData.map(function (values) { return Math.max.apply(Math, values); }));
+        var yLargestMinMax = this.findLargestMinMax(yMinMax);
+        var yMin;
+        var yMax;
+        if (normalizedTo && isFinite(normalizedTo)) {
+            yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
+            yMax = normalizedTo;
+            yData.forEach(function (group, i) {
+                group.forEach(function (stack, j) {
+                    stack.forEach(function (y, k) {
+                        if (y < 0) {
+                            stack[k] = -y / yMinMax[i][j].min * normalizedTo;
+                        }
+                        else {
+                            stack[k] = y / yMinMax[i][j].max * normalizedTo;
+                        }
+                    });
+                });
+            });
         }
-        else { // stacked or regular
-            var yLargestMinMax = findLargestMinMax(yMinMax);
-            if (normalizedTo && isFinite(normalizedTo)) {
-                yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-                yMax = normalizedTo;
-                yData.forEach(function (stackValues, i) { return stackValues.forEach(function (y, j) {
-                    if (y < 0) {
-                        stackValues[j] = -y / yMinMax[i].min * normalizedTo;
-                    }
-                    else {
-                        stackValues[j] = y / yMinMax[i].max * normalizedTo;
-                    }
-                }); });
-            }
-            else {
-                yMin = yLargestMinMax.min;
-                yMax = yLargestMinMax.max;
-            }
+        else {
+            yMin = yLargestMinMax.min;
+            yMax = yLargestMinMax.max;
         }
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
         this.fireEvent({ type: 'dataProcessed' });
         return true;
+    };
+    BarSeries.prototype.findLargestMinMax = function (groups) {
+        var tallestStackMin = 0;
+        var tallestStackMax = 0;
+        for (var _i = 0, groups_1 = groups; _i < groups_1.length; _i++) {
+            var group = groups_1[_i];
+            for (var _a = 0, group_1 = group; _a < group_1.length; _a++) {
+                var stack = group_1[_a];
+                if (stack.min < tallestStackMin) {
+                    tallestStackMin = stack.min;
+                }
+                if (stack.max > tallestStackMax) {
+                    tallestStackMax = stack.max;
+                }
+            }
+        }
+        return { min: tallestStackMin, max: tallestStackMax };
     };
     BarSeries.prototype.getDomain = function (direction) {
         if (this.flipXY) {
@@ -22837,9 +23203,10 @@ var BarSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    BarSeries.prototype.fireNodeClickEvent = function (datum) {
+    BarSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -22856,7 +23223,7 @@ var BarSeries = /** @class */ (function (_super) {
         var yAxis = flipXY ? this.xAxis : this.yAxis;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
-        var _a = this, groupScale = _a.groupScale, yKeys = _a.yKeys, fills = _a.fills, strokes = _a.strokes, grouped = _a.grouped, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, data = _a.data, xData = _a.xData, yData = _a.yData;
+        var _a = this, groupScale = _a.groupScale, yKeys = _a.yKeys, cumYKeyCount = _a.cumYKeyCount, fills = _a.fills, strokes = _a.strokes, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, data = _a.data, xData = _a.xData, yData = _a.yData;
         var label = this.label;
         var labelFontStyle = label.fontStyle;
         var labelFontWeight = label.fontWeight;
@@ -22865,62 +23232,66 @@ var BarSeries = /** @class */ (function (_super) {
         var labelColor = label.color;
         var labelFormatter = label.formatter;
         groupScale.range = [0, xScale.bandwidth];
-        var barWidth = grouped ? groupScale.bandwidth : xScale.bandwidth;
+        var barWidth =  groupScale.bandwidth ;
         var nodeData = [];
-        xData.forEach(function (category, i) {
-            var yDatum = yData[i];
-            var seriesDatum = data[i];
-            var x = xScale.convert(category);
-            var prevMin = 0;
-            var prevMax = 0;
-            for (var j = 0; j < yDatum.length; j++) {
-                var curr = yDatum[j];
-                var yKey = yKeys[j];
-                var barX = grouped ? x + groupScale.convert(yKey) : x;
-                if (!xAxis.inRange(barX, barWidth)) {
-                    continue;
-                }
-                var prev = curr < 0 ? prevMin : prevMax;
-                var y = yScale.convert(grouped ? curr : prev + curr);
-                var bottomY = yScale.convert(grouped ? 0 : prev);
-                var yValue = seriesDatum[yKey]; // unprocessed y-value
-                var yValueIsNumber = typeof yValue === 'number';
-                var labelText = void 0;
-                if (labelFormatter) {
-                    labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
-                }
-                else {
-                    labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
-                }
-                nodeData.push({
-                    series: _this,
-                    seriesDatum: seriesDatum,
-                    yValue: yValue,
-                    yKey: yKey,
-                    x: flipXY ? Math.min(y, bottomY) : barX,
-                    y: flipXY ? barX : Math.min(y, bottomY),
-                    width: flipXY ? Math.abs(bottomY - y) : barWidth,
-                    height: flipXY ? barWidth : Math.abs(bottomY - y),
-                    fill: fills[j % fills.length],
-                    stroke: strokes[j % strokes.length],
-                    strokeWidth: strokeWidth,
-                    label: seriesItemEnabled.get(yKey) && labelText ? {
-                        text: labelText,
-                        fontStyle: labelFontStyle,
-                        fontWeight: labelFontWeight,
-                        fontSize: labelFontSize,
-                        fontFamily: labelFontFamily,
-                        fill: labelColor,
-                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
-                        y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
-                    } : undefined
-                });
-                if (!grouped) {
-                    if (curr < 0) {
-                        prevMin += curr;
+        xData.forEach(function (group, groupIndex) {
+            var seriesDatum = data[groupIndex];
+            var x = xScale.convert(group);
+            var groupYs = yData[groupIndex]; // y-data for groups of stacks
+            for (var stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
+                var stackYs = groupYs[stackIndex]; // y-data for a stack withing a group
+                var prevMinY = 0;
+                var prevMaxY = 0;
+                for (var levelIndex = 0; levelIndex < stackYs.length; levelIndex++) {
+                    var currY = stackYs[levelIndex];
+                    var yKey = yKeys[stackIndex][levelIndex];
+                    var barX =  x + groupScale.convert(String(stackIndex)) ;
+                    // Bars outside of visible range are not rendered, so we generate node data
+                    // only for the visible subset of user data.
+                    if (!xAxis.inRange(barX, barWidth)) {
+                        continue;
+                    }
+                    var prevY = currY < 0 ? prevMinY : prevMaxY;
+                    var y = yScale.convert(prevY + currY);
+                    var bottomY = yScale.convert(prevY);
+                    var yValue = seriesDatum[yKey]; // unprocessed y-value
+                    var yValueIsNumber = typeof yValue === 'number';
+                    var labelText = void 0;
+                    if (labelFormatter) {
+                        labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
                     }
                     else {
-                        prevMax += curr;
+                        labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
+                    }
+                    var colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                    nodeData.push({
+                        series: _this,
+                        seriesDatum: seriesDatum,
+                        yValue: yValue,
+                        yKey: yKey,
+                        x: flipXY ? Math.min(y, bottomY) : barX,
+                        y: flipXY ? barX : Math.min(y, bottomY),
+                        width: flipXY ? Math.abs(bottomY - y) : barWidth,
+                        height: flipXY ? barWidth : Math.abs(bottomY - y),
+                        fill: fills[colorIndex % fills.length],
+                        stroke: strokes[colorIndex % strokes.length],
+                        strokeWidth: strokeWidth,
+                        label: seriesItemEnabled.get(yKey) && labelText ? {
+                            text: labelText,
+                            fontStyle: labelFontStyle,
+                            fontWeight: labelFontWeight,
+                            fontSize: labelFontSize,
+                            fontFamily: labelFontFamily,
+                            fill: labelColor,
+                            x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
+                            y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
+                        } : undefined
+                    });
+                    if (currY < 0) {
+                        prevMinY += currY;
+                    }
+                    else {
+                        prevMaxY += currY;
                     }
                 }
             }
@@ -23020,15 +23391,25 @@ var BarSeries = /** @class */ (function (_super) {
         });
     };
     BarSeries.prototype.getTooltipHtml = function (nodeDatum) {
-        var xKey = this.xKey;
+        var _a = this, xKey = _a.xKey, yKeys = _a.yKeys;
         var yKey = nodeDatum.yKey;
         if (!xKey || !yKey) {
             return '';
         }
-        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer;
+        var yKeyIndex = 0;
+        for (var _i = 0, yKeys_1 = yKeys; _i < yKeys_1.length; _i++) {
+            var stack = yKeys_1[_i];
+            var i = stack.indexOf(yKey);
+            if (i >= 0) {
+                yKeyIndex += i;
+                break;
+            }
+            yKeyIndex += stack.length;
+        }
+        var _b = this, xName = _b.xName, yNames = _b.yNames, fills = _b.fills, tooltip = _b.tooltip;
+        var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c; // TODO: remove deprecated tooltipRenderer
         var datum = nodeDatum.seriesDatum;
-        var yKeyIndex = yKeys.indexOf(yKey);
-        var yName = yNames[yKeyIndex];
+        var yName = yNames[yKey];
         var color = fills[yKeyIndex % fills.length];
         var xValue = datum[xKey];
         var yValue = datum[yKey];
@@ -23038,7 +23419,7 @@ var BarSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -23056,21 +23437,26 @@ var BarSeries = /** @class */ (function (_super) {
         return toTooltipHtml(defaults);
     };
     BarSeries.prototype.listSeriesItems = function (legendData) {
-        var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, seriesItemEnabled = _a.seriesItemEnabled, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
+        var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, cumYKeyCount = _a.cumYKeyCount, seriesItemEnabled = _a.seriesItemEnabled, hideInLegend = _a.hideInLegend, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
         if (data && data.length && xKey && yKeys.length) {
-            yKeys.forEach(function (yKey, index) {
-                legendData.push({
-                    id: id,
-                    itemId: yKey,
-                    enabled: seriesItemEnabled.get(yKey) || false,
-                    label: {
-                        text: yNames[index] || yKeys[index]
-                    },
-                    marker: {
-                        fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length],
-                        fillOpacity: fillOpacity,
-                        strokeOpacity: strokeOpacity
+            this.yKeys.forEach(function (stack, stackIndex) {
+                stack.forEach(function (yKey, levelIndex) {
+                    if (hideInLegend.indexOf(yKey) < 0) {
+                        var colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                        legendData.push({
+                            id: id,
+                            itemId: yKey,
+                            enabled: seriesItemEnabled.get(yKey) || false,
+                            label: {
+                                text: yNames[yKey] || yKey
+                            },
+                            marker: {
+                                fill: fills[colorIndex % fills.length],
+                                stroke: strokes[colorIndex % strokes.length],
+                                fillOpacity: fillOpacity,
+                                strokeOpacity: strokeOpacity
+                            }
+                        });
                     }
                 });
             });
@@ -23078,14 +23464,25 @@ var BarSeries = /** @class */ (function (_super) {
     };
     BarSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
         var seriesItemEnabled = this.seriesItemEnabled;
-        var enabledSeriesItems = [];
         seriesItemEnabled.set(itemId, enabled);
+        var yKeys = this.yKeys.map(function (stack) { return stack.slice(); }); // deep clone
         seriesItemEnabled.forEach(function (enabled, yKey) {
-            if (enabled) {
-                enabledSeriesItems.push(yKey);
+            if (!enabled) {
+                yKeys.forEach(function (stack) {
+                    var index = stack.indexOf(yKey);
+                    if (index >= 0) {
+                        stack.splice(index, 1);
+                    }
+                });
             }
         });
-        this.groupScale.domain = enabledSeriesItems;
+        var visibleStacks = [];
+        yKeys.forEach(function (stack, index) {
+            if (stack.length > 0) {
+                visibleStacks.push(String(index));
+            }
+        });
+        this.groupScale.domain = visibleStacks;
         this.scheduleData();
     };
     BarSeries.className = 'BarSeries';
@@ -23115,8 +23512,8 @@ var BarSeries = /** @class */ (function (_super) {
         reactive('update')
     ], BarSeries.prototype, "formatter", void 0);
     __decorate$N([
-        reactive('dataChange')
-    ], BarSeries.prototype, "grouped", void 0);
+        reactive('layoutChange')
+    ], BarSeries.prototype, "hideInLegend", void 0);
     return BarSeries;
 }(CartesianSeries));
 
@@ -23387,9 +23784,10 @@ var LineSeries = /** @class */ (function (_super) {
     LineSeries.prototype.getNodeData = function () {
         return this.nodeData;
     };
-    LineSeries.prototype.fireNodeClickEvent = function (datum) {
+    LineSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -23411,7 +23809,7 @@ var LineSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -23612,7 +24010,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         this.marker.stroke = strokes[0];
     };
     ScatterSeries.prototype.processData = function () {
-        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis, marker = _a.marker;
         var data = xKey && yKey && this.data ? this.data : [];
         this.xData = data.map(function (d) { return d[xKey]; });
         this.yData = data.map(function (d) { return d[yKey]; });
@@ -23622,7 +24020,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         else {
             this.sizeData = [];
         }
-        this.sizeScale.domain = finiteExtent(this.sizeData) || [1, 1];
+        this.sizeScale.domain = marker.domain ? marker.domain : finiteExtent(this.sizeData) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
             this.xDomain = this.fixNumericExtent(finiteExtent(this.xData), 'x');
         }
@@ -23648,9 +24046,10 @@ var ScatterSeries = /** @class */ (function (_super) {
     ScatterSeries.prototype.getNodeData = function () {
         return this.nodeData;
     };
-    ScatterSeries.prototype.fireNodeClickEvent = function (datum) {
+    ScatterSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -23665,6 +24064,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
+        var isContinuousX = xScale instanceof ContinuousScale;
+        var isContinuousY = yScale instanceof ContinuousScale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, sizeData = _b.sizeData, sizeScale = _b.sizeScale, marker = _b.marker;
@@ -23672,6 +24073,12 @@ var ScatterSeries = /** @class */ (function (_super) {
         var nodeData = [];
         for (var i = 0; i < xData.length; i++) {
             var xDatum = xData[i];
+            var yDatum = yData[i];
+            var noDatum = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            if (noDatum) {
+                continue;
+            }
             var x = xScale.convert(xDatum) + xOffset;
             if (!xAxis.inRange(x)) {
                 continue;
@@ -23770,7 +24177,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         }
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -23851,7 +24258,7 @@ var __decorate$Q = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays$5 = (undefined && undefined.__spreadArrays) || function () {
+var __spreadArrays$4 = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -24125,7 +24532,7 @@ var HistogramSeries = /** @class */ (function (_super) {
         var binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
         var firstBinEnd = binStarts[0];
         var expandStartToBin = function (n) { return [n, n + binSize]; };
-        return __spreadArrays$5([
+        return __spreadArrays$4([
             [firstBinEnd - binSize, firstBinEnd]
         ], binStarts.map(expandStartToBin));
     };
@@ -24189,9 +24596,10 @@ var HistogramSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    HistogramSeries.prototype.fireNodeClickEvent = function (datum) {
+    HistogramSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey
@@ -24320,15 +24728,15 @@ var HistogramSeries = /** @class */ (function (_super) {
         }
         var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
         var bin = nodeDatum.seriesDatum;
-        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _c = bin.domain, rangeMin = _c[0], rangeMax = _c[1];
-        var title = (xName || xKey) + " " + toFixed(rangeMin) + " - " + toFixed(rangeMax);
+        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _d = bin.domain, rangeMin = _d[0], rangeMax = _d[1];
+        var title = (xName || xKey) + ": " + toFixed(rangeMin) + " - " + toFixed(rangeMax);
         var content = yKey ?
             "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + toFixed(aggregatedValue) + "<br>" :
             '';
         content += "<b>Frequency</b>: " + frequency;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -24572,8 +24980,6 @@ var Sector = /** @class */ (function (_super) {
         var outerRadius = Math.max(this.innerRadius, this.outerRadius);
         var centerOffset = this.centerOffset;
         var fullPie = this.fullPie;
-        // const tipOffset = radiiGap / 3;
-        // const showTip = radiiGap < outerRadius / 2;
         var centerX = this.centerX;
         var centerY = this.centerY;
         path.clear();
@@ -25152,6 +25558,7 @@ var PieSeries = /** @class */ (function (_super) {
         _this.label.addEventListener('change', _this.scheduleLayout, _this);
         _this.label.addEventListener('dataChange', _this.scheduleData, _this);
         _this.callout.addEventListener('change', _this.scheduleLayout, _this);
+        _this.callout.colors = _this.strokes;
         _this.addPropertyListener('data', function (event) {
             if (event.value) {
                 event.source.seriesItemEnabled = event.value.map(function () { return true; });
@@ -25236,12 +25643,14 @@ var PieSeries = /** @class */ (function (_super) {
         })();
         var labelKey = this.label.enabled && this.labelKey;
         var labelData = labelKey ? data.map(function (datum) { return String(datum[labelKey]); }) : [];
-        var useRadiusKey = !!radiusKey && !this.innerRadiusOffset;
         var radiusData = [];
-        if (useRadiusKey) {
+        if (radiusKey) {
+            var _b = this, radiusMin = _b.radiusMin, radiusMax = _b.radiusMax;
             var radii = data.map(function (datum) { return Math.abs(datum[radiusKey]); });
-            var maxDatum_1 = Math.max.apply(Math, radii);
-            radiusData = radii.map(function (value) { return value / maxDatum_1; });
+            var min_1 = radiusMin !== undefined ? radiusMin : Math.min.apply(Math, radii);
+            var max = radiusMax !== undefined ? radiusMax : Math.max.apply(Math, radii);
+            var delta_1 = max - min_1;
+            radiusData = radii.map(function (value) { return delta_1 ? (value - min_1) / delta_1 : 1; });
         }
         groupSelectionData.length = 0;
         var rotation = toRadians(this.rotation);
@@ -25249,7 +25658,7 @@ var PieSeries = /** @class */ (function (_super) {
         var datumIndex = 0;
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce(function (start, end) {
-            var radius = useRadiusKey ? radiusData[datumIndex] : 1;
+            var radius = radiusKey ? radiusData[datumIndex] : 1;
             var startAngle = angleScale.convert(start) + rotation;
             var endAngle = angleScale.convert(end) + rotation;
             var midAngle = (startAngle + endAngle) / 2;
@@ -25306,12 +25715,15 @@ var PieSeries = /** @class */ (function (_super) {
         if (!visible || !chart || chart.dataPending || chart.layoutPending) {
             return;
         }
-        this.radiusScale.range = [0, this.radius];
+        var _a = this, radius = _a.radius, innerRadiusOffset = _a.innerRadiusOffset, outerRadiusOffset = _a.outerRadiusOffset, title = _a.title;
+        this.radiusScale.range = [
+            innerRadiusOffset ? radius + innerRadiusOffset : 0,
+            radius + (outerRadiusOffset || 0)
+        ];
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
-        var title = this.title;
         if (title) {
-            title.node.translationY = -this.radius - this.outerRadiusOffset - 2;
+            title.node.translationY = -radius - outerRadiusOffset - 2;
             title.node.visible = title.enabled;
         }
         this.updateGroupSelection();
@@ -25337,13 +25749,12 @@ var PieSeries = /** @class */ (function (_super) {
         if (!this.chart) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
         var highlightedDatum = this.chart.highlightedDatum;
-        var outerRadii = [];
         var centerOffsets = [];
+        var innerRadius = radiusScale.convert(0);
         this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
             var radius = radiusScale.convert(datum.radius);
-            var outerRadius = Math.max(0, radius + outerRadiusOffset);
             var highlighted = datum === highlightedDatum;
             var sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             var sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
@@ -25359,8 +25770,8 @@ var PieSeries = /** @class */ (function (_super) {
                     radiusKey: radiusKey
                 });
             }
-            sector.outerRadius = outerRadius;
-            sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
+            sector.innerRadius = innerRadius;
+            sector.outerRadius = radius;
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
             sector.fill = format && format.fill || sectorFill;
@@ -25373,19 +25784,18 @@ var PieSeries = /** @class */ (function (_super) {
             sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
             sector.lineJoin = 'round';
-            outerRadii.push(outerRadius);
             centerOffsets.push(sector.centerOffset);
         });
         var calloutColors = callout.colors, calloutLength = callout.length, calloutStrokeWidth = callout.strokeWidth;
         this.groupSelection.selectByTag(PieNodeTag.Callout).each(function (line, datum, index) {
             if (datum.label) {
-                var outerRadius = centerOffsets[index] + outerRadii[index];
+                var radius = radiusScale.convert(datum.radius);
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
-                line.x1 = datum.midCos * outerRadius;
-                line.y1 = datum.midSin * outerRadius;
-                line.x2 = datum.midCos * (outerRadius + calloutLength);
-                line.y2 = datum.midSin * (outerRadius + calloutLength);
+                line.x1 = datum.midCos * radius;
+                line.y1 = datum.midSin * radius;
+                line.x2 = datum.midCos * (radius + calloutLength);
+                line.y2 = datum.midSin * (radius + calloutLength);
             }
             else {
                 line.stroke = undefined;
@@ -25396,8 +25806,8 @@ var PieSeries = /** @class */ (function (_super) {
             this.groupSelection.selectByTag(PieNodeTag.Label).each(function (text, datum, index) {
                 var label = datum.label;
                 if (label) {
-                    var outerRadius = outerRadii[index];
-                    var labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset_1;
+                    var radius = radiusScale.convert(datum.radius);
+                    var labelRadius = centerOffsets[index] + radius + calloutLength + offset_1;
                     text.fontStyle = fontStyle_1;
                     text.fontWeight = fontWeight_1;
                     text.fontSize = fontSize_1;
@@ -25415,12 +25825,14 @@ var PieSeries = /** @class */ (function (_super) {
             });
         }
     };
-    PieSeries.prototype.fireNodeClickEvent = function (datum) {
+    PieSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             angleKey: this.angleKey,
+            labelKey: this.labelKey,
             radiusKey: this.radiusKey
         });
     };
@@ -25439,7 +25851,7 @@ var PieSeries = /** @class */ (function (_super) {
         var content = label + formattedAngleValue;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -25500,6 +25912,12 @@ var PieSeries = /** @class */ (function (_super) {
     __decorate$R([
         reactive('update')
     ], PieSeries.prototype, "radiusName", void 0);
+    __decorate$R([
+        reactive('dataChange')
+    ], PieSeries.prototype, "radiusMin", void 0);
+    __decorate$R([
+        reactive('dataChange')
+    ], PieSeries.prototype, "radiusMax", void 0);
     __decorate$R([
         reactive('dataChange')
     ], PieSeries.prototype, "labelKey", void 0);
@@ -25672,7 +26090,7 @@ var ChartTheme = /** @class */ (function () {
             var overrides_1 = options.overrides;
             if (overrides_1) {
                 if (isObject(overrides_1.common)) {
-                    ChartTheme.seriesTypes.forEach(function (seriesType) {
+                    ChartTheme.seriesTypes.concat(['cartesian', 'polar']).forEach(function (seriesType) {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrides_1.common, mergeOptions_1);
                     });
                 }
@@ -25851,6 +26269,12 @@ var ChartTheme = /** @class */ (function () {
                         fontFamily: this.fontFamily
                     }
                 }
+            },
+            tooltip: {
+                enabled: true,
+                tracking: true,
+                delay: 0,
+                class: Chart.defaultTooltipClass
             }
         };
     };
@@ -26090,7 +26514,7 @@ var DarkTheme = /** @class */ (function (_super) {
         };
         var chartDefaults = {
             background: {
-                fill: 'rgb(52, 52, 52)'
+                fill: 'rgb(34, 38, 41)'
             },
             title: {
                 color: fontColor
@@ -26553,6 +26977,16 @@ var commonChartMappings = {
                 right: chartPadding,
                 bottom: chartPadding,
                 left: chartPadding
+            }
+        }
+    },
+    tooltip: {
+        meta: {
+            defaults: {
+                enabled: true,
+                tracking: true,
+                delay: 0,
+                class: Chart.defaultTooltipClass
             }
         }
     },
@@ -27043,7 +27477,7 @@ var __assign$6 = (undefined && undefined.__assign) || function () {
     };
     return __assign$6.apply(this, arguments);
 };
-var __spreadArrays$6 = (undefined && undefined.__spreadArrays) || function () {
+var __spreadArrays$5 = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -27185,7 +27619,7 @@ function create(options, path, component, theme) {
             .map(function (param) { return options[param]; })
             .filter(function (value) { return value !== undefined; });
         if (!component) {
-            component = new ((_a = meta.constructor).bind.apply(_a, __spreadArrays$6([void 0], constructorParamValues)))();
+            component = new ((_a = meta.constructor).bind.apply(_a, __spreadArrays$5([void 0], constructorParamValues)))();
             if (theme && component instanceof Series) {
                 firstColorIndex = theme.setSeriesColors(component, options, firstColorIndex);
             }
@@ -27655,9 +28089,6 @@ var ChartController = /** @class */ (function (_super) {
         agGridCommunity.Autowired('rangeController')
     ], ChartController.prototype, "rangeController", void 0);
     __decorate$T([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ChartController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$T([
         agGridCommunity.Autowired('gridApi')
     ], ChartController.prototype, "gridApi", void 0);
     __decorate$T([
@@ -27688,7 +28119,7 @@ var __decorate$U = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays$7 = (undefined && undefined.__spreadArrays) || function () {
+var __spreadArrays$6 = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -27719,7 +28150,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         this.chartType = this.chartController.getChartType();
         if (agGridCommunity._.areEqual(agGridCommunity._.keys(this.columnComps), colIds) && this.chartType === currentChartType) {
             // if possible, we just update existing components
-            __spreadArrays$7(dimensionCols, valueCols).forEach(function (col) {
+            __spreadArrays$6(dimensionCols, valueCols).forEach(function (col) {
                 _this.columnComps.get(col.colId).setValue(col.selected, true);
             });
             if (this.chartController.isActiveXYChart()) {
@@ -27883,7 +28314,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         if (this.checkInsertIndex(draggingEvent)) {
             var column_1 = draggingEvent.dragItem.columns[0];
             var _a = this.chartController.getColStateForMenu(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
-            __spreadArrays$7(dimensionCols, valueCols).filter(function (state) { return state.column === column_1; })
+            __spreadArrays$6(dimensionCols, valueCols).filter(function (state) { return state.column === column_1; })
                 .forEach(function (state) {
                 state.order = _this.insertIndex;
                 _this.chartController.updateForPanelChange(state);
@@ -27914,9 +28345,6 @@ var ChartDataPanel = /** @class */ (function (_super) {
     __decorate$U([
         agGridCommunity.Autowired('dragAndDropService')
     ], ChartDataPanel.prototype, "dragAndDropService", void 0);
-    __decorate$U([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ChartDataPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate$U([
         agGridCommunity.Autowired('chartTranslator')
     ], ChartDataPanel.prototype, "chartTranslator", void 0);
@@ -28768,8 +29196,11 @@ var AxisPanel = /** @class */ (function (_super) {
             var axis = find(chart.axes, function (axis) { return axis.position === axisPosition; });
             if (axis) {
                 axis.label.rotation = newValue;
-                if (axis.position === ChartAxisPosition.Bottom) ;
-                else if (axis.position === ChartAxisPosition.Left) ;
+                // if (axis.position === ChartAxisPosition.Bottom) {
+                //     // _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
+                // } else if (axis.position === ChartAxisPosition.Left) {
+                //     // _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
+                // }
                 chart.performLayout();
             }
         }; };
@@ -29028,12 +29459,20 @@ var ChartProxy = /** @class */ (function () {
         this.eventService = chartProxyParams.eventService;
         this.gridApi = chartProxyParams.gridApi;
         this.columnApi = chartProxyParams.columnApi;
+        this.crossFiltering = chartProxyParams.crossFiltering;
+        this.crossFilterCallback = chartProxyParams.crossFilterCallback;
     }
     ChartProxy.prototype.recreateChart = function (options) {
+        var _this = this;
         if (this.chart) {
             this.destroyChart();
         }
         this.chart = this.createChart(options);
+        if (this.crossFiltering) {
+            // add event listener to chart canvas to detect when user wishes to reset filters
+            var resetFilters_1 = true;
+            this.chart.addEventListener('click', function (e) { return _this.crossFilterCallback(e, resetFilters_1); });
+        }
     };
     ChartProxy.prototype.getChart = function () {
         return this.chart;
@@ -29166,8 +29605,12 @@ var ChartProxy = /** @class */ (function () {
         options.background = theme.getConfig(standaloneChartType + '.background');
         options.legend = theme.getConfig(standaloneChartType + '.legend');
         options.navigator = theme.getConfig(standaloneChartType + '.navigator');
-        options.tooltipClass = theme.getConfig(standaloneChartType + '.tooltipClass');
-        options.tooltipTracking = theme.getConfig(standaloneChartType + '.tooltipTracking');
+        options.tooltip = {
+            enabled: theme.getConfig(standaloneChartType + '.tooltip.enabled'),
+            tracking: theme.getConfig(standaloneChartType + '.tooltip.tracking'),
+            class: theme.getConfig(standaloneChartType + '.tooltip.class'),
+            delay: theme.getConfig(standaloneChartType + '.tooltip.delay')
+        };
         options.listeners = theme.getConfig(standaloneChartType + '.listeners');
         options.padding = theme.getConfig(standaloneChartType + '.padding');
         return options;
@@ -29223,7 +29666,6 @@ var ChartProxy = /** @class */ (function () {
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
-            'tooltip.enabled': 'tooltipEnabled',
             'callout.colors': 'calloutColors'
         };
         var series = this.chart.series;
@@ -29360,6 +29802,12 @@ var ChartProxy = /** @class */ (function () {
             return datum;
         });
     };
+    ChartProxy.prototype.hexToRGBA = function (hex, alpha) {
+        var r = parseInt(hex.slice(1, 3), 16);
+        var g = parseInt(hex.slice(3, 5), 16);
+        var b = parseInt(hex.slice(5, 7), 16);
+        return alpha ? "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")" : "rgba(" + r + ", " + g + ", " + b + ")";
+    };
     ChartProxy.prototype.destroy = function () {
         this.destroyChart();
     };
@@ -29417,7 +29865,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
         var standaloneChartType = this.getStandaloneChartType();
         var flipXY = standaloneChartType === 'bar';
-        var xAxisType = 'category';
+        var xAxisType = (standaloneChartType === 'scatter' || standaloneChartType === 'histogram') ? 'number' : 'category';
         var yAxisType = 'number';
         if (flipXY) {
             _a = [yAxisType, xAxisType], xAxisType = _a[0], yAxisType = _a[1];
@@ -29551,6 +29999,48 @@ var CartesianChartProxy = /** @class */ (function (_super) {
     CartesianChartProxy.prototype.getYAxis = function () {
         return find(this.chart.axes, function (a) { return a.position === ChartAxisPosition.Left; });
     };
+    CartesianChartProxy.prototype.processDataForCrossFiltering = function (data, colId, params) {
+        var yKey = colId;
+        var atLeastOneSelectedPoint = false;
+        if (this.crossFiltering) {
+            data.forEach(function (d) {
+                d[colId + '-total'] = d[colId] + d[colId + '-filtered-out'];
+                if (d[colId + '-filtered-out'] > 0) {
+                    atLeastOneSelectedPoint = true;
+                }
+            });
+            var lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
+            if (lastSelectedChartId === params.chartId) {
+                yKey = colId + '-total';
+            }
+        }
+        return { yKey: yKey, atLeastOneSelectedPoint: atLeastOneSelectedPoint };
+    };
+    CartesianChartProxy.prototype.updateSeriesForCrossFiltering = function (series, colId, chart, params, atLeastOneSelectedPoint) {
+        if (this.crossFiltering) {
+            // special custom marker handling to show and hide points
+            series.marker.enabled = true;
+            series.marker.formatter = function (p) {
+                return {
+                    fill: p.highlighted ? 'yellow' : p.fill,
+                    size: p.highlighted ? 12 : p.datum[colId] > 0 ? 8 : 0,
+                };
+            };
+            chart.tooltip.delay = 500;
+            // make line opaque when some points are deselected
+            var ctx = params.getCrossFilteringContext();
+            var lastSelectionOnThisChart = ctx.lastSelectedChartId === params.chartId;
+            var deselectedPoints = lastSelectionOnThisChart && atLeastOneSelectedPoint;
+            if (series instanceof AreaSeries) {
+                series.fillOpacity = deselectedPoints ? 0.3 : 1;
+            }
+            if (series instanceof LineSeries) {
+                series.strokeOpacity = deselectedPoints ? 0.3 : 1;
+            }
+            // add node click cross filtering callback to series
+            series.addEventListener('nodeClick', this.crossFilterCallback);
+        }
+    };
     return CartesianChartProxy;
 }(ChartProxy));
 
@@ -29592,8 +30082,8 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         var seriesDefaults = theme.getConfig('scatter.series.scatter');
         options.seriesDefaults = {
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -29611,6 +30101,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 strokeWidth: seriesDefaults.marker.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners,
             paired: true
         };
         return options;
@@ -29623,13 +30114,26 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     ScatterChartProxy.prototype.update = function (params) {
+        var _this = this;
         if (params.fields.length < 2) {
             this.chart.removeAllSeries();
             return;
         }
         var fields = params.fields;
+        if (this.crossFiltering) {
+            // add additional filtered out field
+            fields.forEach(function (field) {
+                var crossFilteringField = __assign$9({}, field);
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+        }
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
+        var dataDomain;
+        if (this.crossFiltering) {
+            dataDomain = this.getCrossFilteringDataDomain(seriesDefinitions, params);
+        }
         var chart = this.chart;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = agGridCommunity._.findIndex(seriesDefinitions, function (s) {
@@ -29646,6 +30150,22 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             return map;
         }, new Map());
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        if (this.crossFiltering) {
+            // introduce cross filtering transparent fills
+            var fillsMod_1 = [];
+            fills.forEach(function (fill) {
+                fillsMod_1.push(fill);
+                fillsMod_1.push(_this.hexToRGBA(fill, '0.3'));
+            });
+            fills = fillsMod_1;
+            // introduce cross filtering transparent strokes
+            var strokesMod_1 = [];
+            strokes.forEach(function (stroke) {
+                strokesMod_1.push(stroke);
+                strokesMod_1.push(_this.hexToRGBA(stroke, '0.3'));
+            });
+            strokes = strokesMod_1;
+        }
         var labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         var previousSeries = undefined;
         seriesDefinitions.forEach(function (seriesDefinition, index) {
@@ -29655,7 +30175,10 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 marker.shape = marker.type;
                 delete marker.type;
             }
-            var series = existingSeries || AgChart.createComponent(__assign$9(__assign$9({}, seriesDefaults), { type: 'scatter', fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer }), 'scatter.series');
+            var series = existingSeries || AgChart.createComponent(__assign$9(__assign$9({}, seriesDefaults), { type: 'scatter', fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                } }), 'scatter.series');
             if (!series) {
                 return;
             }
@@ -29681,6 +30204,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
             else {
                 series.labelKey = series.labelName = undefined;
+            }
+            var isFilteredOutYKey = yFieldDefinition.colId.indexOf('-filtered-out') > -1;
+            if (_this.crossFiltering) {
+                if (!isFilteredOutYKey) {
+                    // sync toggling of legend item with hidden 'filtered out' item
+                    chart.legend.addEventListener('click', function (event) {
+                        series.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                    });
+                }
+                if (dataDomain) {
+                    series.marker.domain = dataDomain;
+                }
+                chart.tooltip.delay = 500;
+                // hide 'filtered out' legend items
+                if (isFilteredOutYKey) {
+                    series.showInLegend = false;
+                }
+                // add node click cross filtering callback to series
+                series.addEventListener('nodeClick', _this.crossFilterCallback);
             }
             if (!existingSeries) {
                 chart.addSeriesAfter(series, previousSeries);
@@ -29740,6 +30282,25 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 return fields.filter(function (_, i) { return i > 0; }).map(function (yField) { return ({ xField: xField_1, yField: yField }); });
             }
         }
+    };
+    ScatterChartProxy.prototype.getCrossFilteringDataDomain = function (seriesDefinitions, params) {
+        var domain;
+        if (seriesDefinitions[0] && seriesDefinitions[0].sizeField) {
+            var sizeColId_1 = seriesDefinitions[0].sizeField.colId;
+            var allSizePoints_1 = [];
+            params.data.forEach(function (d) {
+                if (typeof d[sizeColId_1] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1]);
+                }
+                if (typeof d[sizeColId_1 + '-filtered-out'] !== 'undefined') {
+                    allSizePoints_1.push(d[sizeColId_1 + '-filtered-out']);
+                }
+            });
+            if (allSizePoints_1.length > 0) {
+                domain = [Math.min.apply(Math, allSizePoints_1), Math.max.apply(Math, allSizePoints_1)];
+            }
+        }
+        return domain;
     };
     return ScatterChartProxy;
 }(CartesianChartProxy));
@@ -30418,11 +30979,11 @@ var TitlePanel = /** @class */ (function (_super) {
             }
         };
         var initialFont = {
-            family: hasTitle ? chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
-            style: hasTitle ? chartProxy.getChartOption('title.fontStyle') : undefined,
-            weight: hasTitle ? chartProxy.getChartOption('title.fontWeight') : undefined,
-            size: hasTitle ? chartProxy.getChartOption('title.fontSize') : 22,
-            color: hasTitle ? chartProxy.getChartOption('title.color') : 'black'
+            family: chartProxy.getChartOption('title.fontFamily'),
+            style: chartProxy.getChartOption('title.fontStyle'),
+            weight: chartProxy.getChartOption('title.fontWeight'),
+            size: chartProxy.getChartOption('title.fontSize'),
+            color: chartProxy.getChartOption('title.color')
         };
         if (!hasTitle) {
             setFont(initialFont);
@@ -32133,9 +32694,6 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
     };
     ChartSettingsPanel.TEMPLATE = "<div class=\"ag-chart-settings-wrapper\">\n            <div ref=\"eMiniChartsContainer\" class=\"ag-chart-settings-mini-charts-container\"></div>\n            <div ref=\"eNavBar\" class=\"ag-chart-settings-nav-bar\">\n                <div ref=\"ePrevBtn\" class=\"ag-chart-settings-prev\">\n                    <button type=\"button\" class=\"ag-chart-settings-prev-button\"></button>\n                </div>\n                <div ref=\"eCardSelector\" class=\"ag-chart-settings-card-selector\"></div>\n                <div ref=\"eNextBtn\" class=\"ag-chart-settings-next\">\n                    <button type=\"button\" class=\"ag-chart-settings-next-button\"></button>\n                </div>\n            </div>\n        </div>";
     __decorate$1f([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ChartSettingsPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1f([
         agGridCommunity.RefSelector('eMiniChartsContainer')
     ], ChartSettingsPanel.prototype, "eMiniChartsContainer", void 0);
     __decorate$1f([
@@ -32216,7 +32774,7 @@ var TabbedChartMenu = /** @class */ (function (_super) {
             tab: {
                 title: titleEl,
                 titleLabel: translatedTitle,
-                bodyPromise: agGridCommunity.Promise.resolve(eWrapperDiv),
+                bodyPromise: agGridCommunity.AgPromise.resolve(eWrapperDiv),
                 name: name
             }
         };
@@ -32388,7 +32946,7 @@ var ChartMenu = /** @class */ (function (_super) {
             panels: this.tabs
         }));
         this.addManagedListener(menuPanel, agGridCommunity.Component.EVENT_DESTROYED, function () { return _this.destroyBean(_this.tabbedMenu); });
-        return new agGridCommunity.Promise(function (res) {
+        return new agGridCommunity.AgPromise(function (res) {
             window.setTimeout(function () {
                 menuPanel.setBodyComponent(_this.tabbedMenu);
                 _this.tabbedMenu.showTab(defaultTab);
@@ -32448,8 +33006,8 @@ var ChartMenu = /** @class */ (function (_super) {
     ChartMenu.EVENT_DOWNLOAD_CHART = "downloadChart";
     ChartMenu.TEMPLATE = "<div class=\"ag-chart-menu\"></div>";
     __decorate$1h([
-        agGridCommunity.Autowired("gridOptionsWrapper")
-    ], ChartMenu.prototype, "gridOptionsWrapper", void 0);
+        agGridCommunity.Autowired('chartTranslator')
+    ], ChartMenu.prototype, "chartTranslator", void 0);
     __decorate$1h([
         agGridCommunity.PostConstruct
     ], ChartMenu.prototype, "postConstruct", null);
@@ -32533,7 +33091,7 @@ var TitleEdit = /** @class */ (function (_super) {
         ];
     };
     TitleEdit.prototype.startEditing = function (titleBBox) {
-        if (this.chartMenu.isVisible()) {
+        if (this.chartMenu && this.chartMenu.isVisible()) {
             // currently we ignore requests to edit the chart title while the chart menu is showing
             // because the click to edit the chart will also close the chart menu, making the position
             // of the title change.
@@ -32621,19 +33179,22 @@ var BarChartProxy = /** @class */ (function (_super) {
             shadow: seriesDefaults.shadow,
             label: seriesDefaults.label,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
-                colors: theme.palette.fills,
+                colors: seriesDefaults.fills || theme.palette.fills,
                 opacity: seriesDefaults.fillOpacity
             },
             stroke: {
-                colors: theme.palette.strokes,
+                colors: seriesDefaults.strokes || theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -32648,23 +33209,64 @@ var BarChartProxy = /** @class */ (function (_super) {
         }
         agChartOptions.autoSize = true;
         agChartOptions.axes = [__assign$b(__assign$b({}, (isColumn ? options.xAxis : options.yAxis)), { position: isColumn ? 'bottom' : 'left', type: grouping ? 'groupedCategory' : 'category' }), __assign$b(__assign$b({}, (isColumn ? options.yAxis : options.xAxis)), { position: isColumn ? 'left' : 'bottom', type: 'number' })];
-        agChartOptions.series = [__assign$b(__assign$b({}, this.getSeriesDefaults()), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer })];
+        agChartOptions.series = [__assign$b(__assign$b({}, this.getSeriesDefaults()), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                } })];
         agChartOptions.container = parentElement;
         return AgChart.create(agChartOptions);
     };
     BarChartProxy.prototype.update = function (params) {
+        var _this = this;
         this.chartProxyParams.grouping = params.grouping;
         this.updateAxes('category', !this.isColumnChart());
         var chart = this.chart;
         var barSeries = chart.series[0];
         var palette = this.getPalette();
+        var fields = params.fields;
+        if (this.crossFiltering) {
+            // add additional filtered out field
+            fields.forEach(function (field) {
+                var crossFilteringField = __assign$b({}, field);
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+            // introduce cross filtering transparent fills
+            var fills_1 = [];
+            palette.fills.forEach(function (fill) {
+                fills_1.push(fill);
+                fills_1.push(_this.hexToRGBA(fill, '0.3'));
+            });
+            barSeries.fills = fills_1;
+            // introduce cross filtering transparent strokes
+            var strokes = [];
+            palette.strokes.forEach(function (stroke) {
+                fills_1.push(stroke);
+                fills_1.push(_this.hexToRGBA(stroke, '0.3'));
+            });
+            barSeries.strokes = strokes;
+            // disable series highlighting by default
+            barSeries.highlightStyle.fill = undefined;
+            // hide 'filtered out' legend items
+            var colIds = params.fields.map(function (f) { return f.colId; });
+            barSeries.hideInLegend = colIds.filter(function (colId) { return colId.includes('-filtered-out'); });
+            // sync toggling of legend item with hidden 'filtered out' item
+            chart.legend.addEventListener('click', function (event) {
+                barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+            });
+            chart.tooltip.delay = 500;
+            // add node click cross filtering callback to series
+            barSeries.addEventListener('nodeClick', this.crossFilterCallback);
+        }
+        else {
+            barSeries.fills = palette.fills;
+            barSeries.strokes = palette.strokes;
+        }
         barSeries.data = this.transformData(params.data, params.category.id);
         barSeries.xKey = params.category.id;
         barSeries.xName = params.category.name;
         barSeries.yKeys = params.fields.map(function (f) { return f.colId; });
         barSeries.yNames = params.fields.map(function (f) { return f.displayName; });
-        barSeries.fills = palette.fills;
-        barSeries.strokes = palette.strokes;
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     };
     BarChartProxy.prototype.getDefaultOptions = function () {
@@ -32676,13 +33278,13 @@ var BarChartProxy = /** @class */ (function (_super) {
         return options;
     };
     BarChartProxy.prototype.isColumnChart = function () {
-        return agGridCommunity._.includes([agGridCommunity.ChartType.GroupedColumn, agGridCommunity.ChartType.StackedColumn, agGridCommunity.ChartType.NormalizedColumn], this.chartType);
+        return agGridCommunity._.includes([agGridCommunity.ChartType.Column, agGridCommunity.ChartType.GroupedColumn, agGridCommunity.ChartType.StackedColumn, agGridCommunity.ChartType.NormalizedColumn], this.chartType);
     };
     BarChartProxy.prototype.getSeriesDefaults = function () {
         var chartType = this.chartType;
         var isColumn = this.isColumnChart();
-        var isGrouped = chartType === agGridCommunity.ChartType.GroupedColumn || chartType === agGridCommunity.ChartType.GroupedBar;
-        var isNormalized = chartType === agGridCommunity.ChartType.NormalizedColumn || chartType === agGridCommunity.ChartType.NormalizedBar;
+        var isGrouped = !this.crossFiltering && (chartType === agGridCommunity.ChartType.GroupedColumn || chartType === agGridCommunity.ChartType.GroupedBar);
+        var isNormalized = !this.crossFiltering && (chartType === agGridCommunity.ChartType.NormalizedColumn || chartType === agGridCommunity.ChartType.NormalizedBar);
         return __assign$b(__assign$b({}, this.chartOptions.seriesDefaults), { type: isColumn ? 'column' : 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
     };
     return BarChartProxy;
@@ -32736,7 +33338,10 @@ var AreaChartProxy = /** @class */ (function (_super) {
         }
         agChartOptions.autoSize = true;
         agChartOptions.axes = [__assign$c({ type: grouping ? 'groupedCategory' : xAxisType, position: 'bottom', paddingInner: 1, paddingOuter: 0 }, this.getXAxisDefaults(xAxisType, options)), __assign$c({ type: 'number', position: 'left' }, options.yAxis)];
-        agChartOptions.series = [__assign$c(__assign$c({}, seriesDefaults), { type: 'area', fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer, marker: marker })];
+        agChartOptions.series = [__assign$c(__assign$c({}, seriesDefaults), { type: 'area', fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
+                }, marker: marker })];
         return AgChart.create(agChartOptions, parentElement);
     };
     AreaChartProxy.prototype.update = function (params) {
@@ -32784,8 +33389,8 @@ var AreaChartProxy = /** @class */ (function (_super) {
             return;
         }
         var fieldIds = params.fields.map(function (f) { return f.colId; });
-        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
-        var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
+        var existingSeriesById = chart.series
+            .reduceRight(function (map, series, i) {
             var id = series.yKeys[0];
             if (fieldIds.indexOf(id) === i) {
                 map.set(id, series);
@@ -32796,8 +33401,10 @@ var AreaChartProxy = /** @class */ (function (_super) {
             return map;
         }, new Map());
         var data = this.transformData(params.data, params.category.id);
-        var previousSeries = undefined;
+        var previousSeries;
+        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
         params.fields.forEach(function (f, index) {
+            var _a = _this.processDataForCrossFiltering(data, f.colId, params), yKey = _a.yKey, atLeastOneSelectedPoint = _a.atLeastOneSelectedPoint;
             var areaSeries = existingSeriesById.get(f.colId);
             var fill = fills[index % fills.length];
             var stroke = strokes[index % strokes.length];
@@ -32805,7 +33412,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
                 areaSeries.data = data;
                 areaSeries.xKey = params.category.id;
                 areaSeries.xName = params.category.name;
-                areaSeries.yKeys = [f.colId];
+                areaSeries.yKeys = [yKey];
                 areaSeries.yNames = [f.displayName];
                 areaSeries.fills = [fill];
                 areaSeries.strokes = [stroke];
@@ -32817,10 +33424,11 @@ var AreaChartProxy = /** @class */ (function (_super) {
                     marker.shape = marker.type;
                     delete marker.type;
                 }
-                var options = __assign$c(__assign$c({}, seriesDefaults), { data: data, xKey: params.category.id, xName: params.category.name, yKeys: [f.colId], yNames: [f.displayName], fills: [fill], strokes: [stroke], fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker });
+                var options = __assign$c(__assign$c({}, seriesDefaults), { data: data, xKey: params.category.id, xName: params.category.name, yKeys: [yKey], yNames: [f.displayName], fills: [fill], strokes: [stroke], fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker });
                 areaSeries = AgChart.createComponent(options, 'area.series');
                 chart.addSeriesAfter(areaSeries, previousSeries);
             }
+            _this.updateSeriesForCrossFiltering(areaSeries, f.colId, chart, params, atLeastOneSelectedPoint);
             previousSeries = areaSeries;
         });
     };
@@ -32830,8 +33438,8 @@ var AreaChartProxy = /** @class */ (function (_super) {
         options.seriesDefaults = {
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -32846,9 +33454,13 @@ var AreaChartProxy = /** @class */ (function (_super) {
                 enabled: seriesDefaults.marker.enabled,
                 shape: seriesDefaults.marker.shape,
                 size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
+                strokeWidth: seriesDefaults.marker.strokeWidth,
+                formatter: seriesDefaults.marker.formatter
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -32925,8 +33537,8 @@ var LineChartProxy = /** @class */ (function (_super) {
         var axisType = this.isTimeAxis(params) ? 'time' : 'category';
         this.updateAxes(axisType);
         var chart = this.chart;
-        var fieldIds = params.fields.map(function (f) { return f.colId; });
-        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        var fields = params.fields;
+        var fieldIds = fields.map(function (f) { return f.colId; });
         var data = this.transformData(params.data, params.category.id);
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var id = series.yKey;
@@ -32938,8 +33550,10 @@ var LineChartProxy = /** @class */ (function (_super) {
             }
             return map;
         }, new Map());
-        var previousSeries = undefined;
-        params.fields.forEach(function (f, index) {
+        var previousSeries;
+        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        fields.forEach(function (f, index) {
+            var _a = _this.processDataForCrossFiltering(data, f.colId, params), yKey = _a.yKey, atLeastOneSelectedPoint = _a.atLeastOneSelectedPoint;
             var lineSeries = existingSeriesById.get(f.colId);
             var fill = fills[index % fills.length];
             var stroke = strokes[index % strokes.length];
@@ -32948,7 +33562,7 @@ var LineChartProxy = /** @class */ (function (_super) {
                 lineSeries.data = data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;
-                lineSeries.yKey = f.colId;
+                lineSeries.yKey = yKey;
                 lineSeries.yName = f.displayName;
                 lineSeries.marker.fill = fill;
                 lineSeries.marker.stroke = stroke;
@@ -32962,10 +33576,14 @@ var LineChartProxy = /** @class */ (function (_super) {
                     marker.shape = marker.type;
                     delete marker.type;
                 }
-                var options = __assign$d(__assign$d({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, xKey: params.category.id, xName: params.category.name, yKey: f.colId, yName: f.displayName, fill: fill, stroke: fill, fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer, marker: marker });
+                var options = __assign$d(__assign$d({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, xKey: params.category.id, xName: params.category.name, yKey: yKey, yName: f.displayName, fill: fill, stroke: fill, fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                        enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                        renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                    }, marker: marker });
                 lineSeries = AgChart.createComponent(options, 'line.series');
                 chart.addSeriesAfter(lineSeries, previousSeries);
             }
+            _this.updateSeriesForCrossFiltering(lineSeries, f.colId, chart, params, atLeastOneSelectedPoint);
             previousSeries = lineSeries;
         });
         this.updateLabelRotation(params.category.id, false, axisType);
@@ -32975,8 +33593,8 @@ var LineChartProxy = /** @class */ (function (_super) {
         var seriesDefaults = theme.getConfig('line.series.line');
         options.seriesDefaults = {
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: [],
@@ -32991,9 +33609,13 @@ var LineChartProxy = /** @class */ (function (_super) {
                 enabled: seriesDefaults.marker.enabled,
                 shape: seriesDefaults.marker.shape,
                 size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
+                strokeWidth: seriesDefaults.marker.strokeWidth,
+                formatter: seriesDefaults.marker.formatter
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -33066,6 +33688,14 @@ var PieChartProxy = /** @class */ (function (_super) {
         _this.recreateChart();
         return _this;
     }
+    PieChartProxy.prototype.createChart = function (options) {
+        options = options || this.chartOptions;
+        var seriesDefaults = options.seriesDefaults;
+        var agChartOptions = options;
+        agChartOptions.autoSize = true;
+        agChartOptions.series = [__assign$e(__assign$e({}, seriesDefaults), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, type: 'pie' })];
+        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
+    };
     PieChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
         var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
         var seriesDefaults = theme.getConfig('pie.series.pie');
@@ -33075,8 +33705,8 @@ var PieChartProxy = /** @class */ (function (_super) {
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -33088,16 +33718,9 @@ var PieChartProxy = /** @class */ (function (_super) {
                 width: seriesDefaults.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
-    };
-    PieChartProxy.prototype.createChart = function (options) {
-        options = options || this.chartOptions;
-        var seriesDefaults = options.seriesDefaults;
-        var agChartOptions = options;
-        agChartOptions.autoSize = true;
-        agChartOptions.series = [__assign$e(__assign$e({}, seriesDefaults), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, type: 'pie' })];
-        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     PieChartProxy.prototype.update = function (params) {
         var chart = this.chart;
@@ -33105,27 +33728,87 @@ var PieChartProxy = /** @class */ (function (_super) {
             chart.removeAllSeries();
             return;
         }
-        var existingSeries = chart.series[0];
-        var existingSeriesId = existingSeries && existingSeries.angleKey;
-        var pieSeriesField = params.fields[0];
+        var field = params.fields[0];
+        var angleField = field;
+        if (this.crossFiltering) {
+            // add additional filtered out field
+            var fields_1 = params.fields;
+            fields_1.forEach(function (field) {
+                var crossFilteringField = __assign$e({}, field);
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields_1.push(crossFilteringField);
+            });
+            var filteredOutField_1 = fields_1[1];
+            params.data.forEach(function (d) {
+                d[field.colId + '-total'] = d[field.colId] + d[filteredOutField_1.colId];
+                d[field.colId] = d[field.colId] / d[field.colId + '-total'];
+                d[filteredOutField_1.colId] = 1;
+            });
+            var opaqueSeries = chart.series[1];
+            var radiusField = filteredOutField_1;
+            opaqueSeries = this.updateSeries(chart, opaqueSeries, angleField, radiusField, params, undefined);
+            radiusField = angleField;
+            var filteredSeries = chart.series[0];
+            this.updateSeries(chart, filteredSeries, angleField, radiusField, params, opaqueSeries);
+        }
+        else {
+            var series = chart.series[0];
+            this.updateSeries(chart, series, angleField, angleField, params, undefined);
+        }
+    };
+    PieChartProxy.prototype.updateSeries = function (chart, series, angleField, field, params, opaqueSeries) {
+        var _this = this;
+        var existingSeriesId = series && series.angleKey;
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
         var seriesDefaults = this.chartOptions.seriesDefaults;
-        var pieSeries = existingSeries;
+        var pieSeries = series;
         var calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
-        if (existingSeriesId !== pieSeriesField.colId) {
-            chart.removeSeries(existingSeries);
-            pieSeries = AgChart.createComponent(__assign$e(__assign$e({}, seriesDefaults), { type: 'pie', angleKey: pieSeriesField.colId, title: __assign$e(__assign$e({}, seriesDefaults.title), { text: seriesDefaults.title.text || params.fields[0].displayName }), fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer }), 'pie.series');
+        if (existingSeriesId !== field.colId) {
+            chart.removeSeries(series);
+            pieSeries = AgChart.createComponent(__assign$e(__assign$e({}, seriesDefaults), { type: 'pie', angleKey: this.crossFiltering ? angleField.colId + '-total' : angleField.colId, radiusKey: this.crossFiltering ? field.colId : undefined, title: __assign$e(__assign$e({}, seriesDefaults.title), { text: seriesDefaults.title.text || params.fields[0].displayName }), fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                } }), 'pie.series');
         }
-        pieSeries.angleName = pieSeriesField.displayName;
+        pieSeries.angleName = field.displayName;
         pieSeries.labelKey = params.category.id;
         pieSeries.labelName = params.category.name;
         pieSeries.data = params.data;
-        pieSeries.fills = fills;
-        pieSeries.strokes = strokes;
-        if (calloutColors) {
-            pieSeries.callout.colors = strokes;
+        if (this.crossFiltering) {
+            pieSeries.radiusMin = 0;
+            pieSeries.radiusMax = 1;
+            var isOpaqueSeries = !opaqueSeries;
+            if (isOpaqueSeries) {
+                pieSeries.fills = fills.map(function (fill) { return _this.hexToRGBA(fill, '0.3'); });
+                pieSeries.strokes = strokes.map(function (stroke) { return _this.hexToRGBA(stroke, '0.3'); });
+                pieSeries.showInLegend = false;
+            }
+            else {
+                chart.legend.addEventListener('click', function (event) {
+                    if (opaqueSeries) {
+                        opaqueSeries.toggleSeriesItem(event.itemId, event.enabled);
+                    }
+                });
+                pieSeries.fills = fills;
+                pieSeries.strokes = strokes;
+                if (calloutColors) {
+                    pieSeries.callout.colors = strokes;
+                }
+            }
+            chart.tooltip.delay = 500;
+            // disable series highlighting by default
+            pieSeries.highlightStyle.fill = undefined;
+            pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
+        }
+        else {
+            pieSeries.fills = fills;
+            pieSeries.strokes = strokes;
+            if (calloutColors) {
+                pieSeries.callout.colors = strokes;
+            }
         }
         chart.addSeries(pieSeries);
+        return pieSeries;
     };
     PieChartProxy.prototype.getDefaultOptions = function () {
         var strokes = this.getPredefinedPalette().strokes;
@@ -33184,8 +33867,8 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -33197,6 +33880,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
                 width: seriesDefaults.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -33209,6 +33893,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     DoughnutChartProxy.prototype.update = function (params) {
+        var _this = this;
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
@@ -33225,47 +33910,141 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         });
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        var numFields = params.fields.length;
         var offset = 0;
-        params.fields.forEach(function (f, index) {
-            var existingSeries = seriesMap[f.colId];
-            var seriesOptions = __assign$f(__assign$f({}, seriesDefaults), { type: 'pie', angleKey: f.colId, showInLegend: index === 0, title: __assign$f(__assign$f({}, seriesDefaults.title), { text: seriesDefaults.title.text || f.displayName }), fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer });
-            var calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
-            var pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series');
-            pieSeries.angleName = f.displayName;
-            pieSeries.labelKey = params.category.id;
-            pieSeries.labelName = params.category.name;
-            pieSeries.data = params.data;
-            pieSeries.fills = fills;
-            pieSeries.strokes = strokes;
-            // Normally all series provide legend items for every slice.
-            // For our use case, where all series have the same number of slices in the same order with the same labels
-            // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
-            // so we only show legend items for the first series, and then when the user toggles the slices of the
-            // first series in the legend, we programmatically toggle the corresponding slices of other series.
-            if (index === 0) {
-                pieSeries.toggleSeriesItem = function (itemId, enabled) {
-                    if (doughnutChart) {
-                        doughnutChart.series.forEach(function (series) {
-                            series.seriesItemEnabled[itemId] = enabled;
-                        });
-                    }
-                    pieSeries.scheduleData();
-                };
-            }
-            pieSeries.outerRadiusOffset = offset;
-            offset -= 20;
-            pieSeries.innerRadiusOffset = offset;
-            offset -= 20;
-            if (calloutColors) {
-                pieSeries.callout.colors = strokes;
-            }
-            if (!existingSeries) {
-                seriesMap[f.colId] = pieSeries;
-            }
-        });
+        if (this.crossFiltering) {
+            params.fields.forEach(function (field, index) {
+                var filteredOutField = __assign$f({}, field);
+                filteredOutField.colId = field.colId + '-filtered-out';
+                params.data.forEach(function (d) {
+                    d[field.colId + '-total'] = d[field.colId] + d[filteredOutField.colId];
+                    d[field.colId] = d[field.colId] / d[field.colId + '-total'];
+                    d[filteredOutField.colId] = 1;
+                });
+                var _a = _this.updateSeries({
+                    seriesMap: seriesMap,
+                    angleField: field,
+                    field: filteredOutField,
+                    seriesDefaults: seriesDefaults,
+                    index: index,
+                    params: params,
+                    fills: fills,
+                    strokes: strokes,
+                    doughnutChart: doughnutChart,
+                    offset: offset,
+                    numFields: numFields,
+                    opaqueSeries: undefined
+                }), updatedOffset = _a.updatedOffset, pieSeries = _a.pieSeries;
+                _this.updateSeries({
+                    seriesMap: seriesMap,
+                    angleField: field,
+                    field: field,
+                    seriesDefaults: seriesDefaults,
+                    index: index,
+                    params: params,
+                    fills: fills,
+                    strokes: strokes,
+                    doughnutChart: doughnutChart,
+                    offset: offset,
+                    numFields: numFields,
+                    opaqueSeries: pieSeries
+                });
+                offset = updatedOffset;
+            });
+        }
+        else {
+            params.fields.forEach(function (f, index) {
+                var updatedOffset = _this.updateSeries({
+                    seriesMap: seriesMap,
+                    angleField: f,
+                    field: f,
+                    seriesDefaults: seriesDefaults,
+                    index: index,
+                    params: params,
+                    fills: fills,
+                    strokes: strokes,
+                    doughnutChart: doughnutChart,
+                    offset: offset,
+                    numFields: numFields,
+                    opaqueSeries: undefined
+                }).updatedOffset;
+                offset = updatedOffset;
+            });
+        }
         // Because repaints are automatic, it's important to remove/add/update series at once,
         // so that we don't get painted twice.
         doughnutChart.series = agGridCommunity._.values(seriesMap);
+    };
+    DoughnutChartProxy.prototype.updateSeries = function (updateParams) {
+        var _this = this;
+        var existingSeries = updateParams.seriesMap[updateParams.field.colId];
+        var seriesOptions = __assign$f(__assign$f({}, updateParams.seriesDefaults), { type: 'pie', angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId, radiusKey: this.crossFiltering ? updateParams.field.colId : undefined, showInLegend: updateParams.index === 0, title: __assign$f(__assign$f({}, updateParams.seriesDefaults.title), { text: updateParams.seriesDefaults.title.text || updateParams.field.displayName }), fills: updateParams.seriesDefaults.fill.colors, fillOpacity: updateParams.seriesDefaults.fill.opacity, strokes: updateParams.seriesDefaults.stroke.colors, strokeOpacity: updateParams.seriesDefaults.stroke.opacity, strokeWidth: updateParams.seriesDefaults.stroke.width, tooltip: {
+                enabled: updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled,
+                renderer: (updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled && updateParams.seriesDefaults.tooltip.renderer) || undefined,
+            } });
+        var calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
+        var pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series');
+        pieSeries.angleName = updateParams.field.displayName;
+        pieSeries.labelKey = updateParams.params.category.id;
+        pieSeries.labelName = updateParams.params.category.name;
+        pieSeries.data = updateParams.params.data;
+        // Normally all series provide legend items for every slice.
+        // For our use case, where all series have the same number of slices in the same order with the same labels
+        // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
+        // so we only show legend items for the first series, and then when the user toggles the slices of the
+        // first series in the legend, we programmatically toggle the corresponding slices of other series.
+        if (updateParams.index === 0) {
+            pieSeries.toggleSeriesItem = function (itemId, enabled) {
+                if (updateParams.doughnutChart) {
+                    updateParams.doughnutChart.series.forEach(function (series) {
+                        series.seriesItemEnabled[itemId] = enabled;
+                    });
+                }
+                pieSeries.scheduleData();
+            };
+        }
+        if (this.crossFiltering) {
+            pieSeries.radiusMin = 0;
+            pieSeries.radiusMax = 1;
+            var isOpaqueSeries = !updateParams.opaqueSeries;
+            if (isOpaqueSeries) {
+                pieSeries.fills = updateParams.fills.map(function (fill) { return _this.hexToRGBA(fill, '0.3'); });
+                pieSeries.strokes = updateParams.strokes.map(function (stroke) { return _this.hexToRGBA(stroke, '0.3'); });
+                pieSeries.showInLegend = false;
+            }
+            else {
+                updateParams.doughnutChart.legend.addEventListener('click', function (event) {
+                    if (updateParams.opaqueSeries) {
+                        updateParams.opaqueSeries.toggleSeriesItem(event.itemId, event.enabled);
+                    }
+                });
+                pieSeries.fills = updateParams.fills;
+                pieSeries.strokes = updateParams.strokes;
+                if (calloutColors) {
+                    pieSeries.callout.colors = updateParams.strokes;
+                }
+            }
+            // disable series highlighting by default
+            pieSeries.highlightStyle.fill = undefined;
+            pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
+            updateParams.doughnutChart.tooltip.delay = 500;
+        }
+        else {
+            pieSeries.fills = updateParams.fills;
+            pieSeries.strokes = updateParams.strokes;
+            if (calloutColors) {
+                pieSeries.callout.colors = updateParams.strokes;
+            }
+        }
+        var offsetAmount = updateParams.numFields > 1 ? 20 : 40;
+        pieSeries.outerRadiusOffset = updateParams.offset;
+        updateParams.offset -= offsetAmount;
+        pieSeries.innerRadiusOffset = updateParams.offset;
+        updateParams.offset -= offsetAmount;
+        if (!existingSeries) {
+            updateParams.seriesMap[updateParams.field.colId] = pieSeries;
+        }
+        return { updatedOffset: updateParams.offset, pieSeries: pieSeries };
     };
     DoughnutChartProxy.prototype.getDefaultOptions = function () {
         var strokes = this.getPredefinedPalette().strokes;
@@ -33322,8 +34101,8 @@ var HistogramChartProxy = /** @class */ (function (_super) {
             shadow: this.getDefaultDropShadowOptions(),
             label: seriesDefaults.label,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -33334,7 +34113,10 @@ var HistogramChartProxy = /** @class */ (function (_super) {
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -33345,7 +34127,10 @@ var HistogramChartProxy = /** @class */ (function (_super) {
         var agChartOptions = options;
         agChartOptions.autoSize = true;
         agChartOptions.axes = [__assign$g({ type: 'number', position: 'bottom' }, options.xAxis), __assign$g({ type: 'number', position: 'left' }, options.yAxis)];
-        agChartOptions.series = [__assign$g(__assign$g({}, seriesDefaults), { fill: seriesDefaults.fill.colors[0], fillOpacity: seriesDefaults.fill.opacity, stroke: seriesDefaults.stroke.colors[0], strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer, type: 'histogram' })];
+        agChartOptions.series = [__assign$g(__assign$g({}, seriesDefaults), { fill: seriesDefaults.fill.colors[0], fillOpacity: seriesDefaults.fill.opacity, stroke: seriesDefaults.stroke.colors[0], strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: (seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer) || undefined,
+                }, type: 'histogram' })];
         return AgChart.create(agChartOptions, parentElement);
     };
     HistogramChartProxy.prototype.update = function (params) {
@@ -33420,6 +34205,7 @@ var GridChartComp = /** @class */ (function (_super) {
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
             unlinkChart: this.params.unlinkChart,
+            crossFiltering: this.params.crossFiltering,
         };
         var isRtl = this.gridOptionsWrapper.isEnableRtl();
         agGridCommunity._.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
@@ -33435,7 +34221,10 @@ var GridChartComp = /** @class */ (function (_super) {
         this.addTitleEditComp();
         this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
-        this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        if (this.chartMenu) {
+            // chart menu may not exist, i.e. cross filtering
+            this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        }
         this.refresh();
         this.raiseChartCreatedEvent();
     };
@@ -33452,6 +34241,7 @@ var GridChartComp = /** @class */ (function (_super) {
         }
     };
     GridChartComp.prototype.createChart = function () {
+        var _this = this;
         var width, height;
         // if chart already exists, destroy it and remove it from DOM
         if (this.chartProxy) {
@@ -33467,6 +34257,11 @@ var GridChartComp = /** @class */ (function (_super) {
         var customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
         var chartType = this.model.getChartType();
         var isGrouping = this.model.isGrouping();
+        var crossFilterCallback = function (event, reset) {
+            var ctx = _this.params.crossFilteringContext;
+            ctx.lastSelectedChartId = reset ? '' : _this.model.getChartId();
+            _this.crossFilter.filter(event, reset);
+        };
         var chartProxyParams = {
             chartId: this.model.getChartId(),
             chartType: chartType,
@@ -33479,6 +34274,8 @@ var GridChartComp = /** @class */ (function (_super) {
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             allowPaletteOverride: !this.params.chartThemeName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
+            crossFiltering: this.params.crossFiltering,
+            crossFilterCallback: crossFilterCallback,
             parentElement: this.eChart,
             width: width,
             height: height,
@@ -33492,6 +34289,10 @@ var GridChartComp = /** @class */ (function (_super) {
         this.chartType = chartType;
         this.chartThemeName = this.model.getChartThemeName();
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
+        if (!this.chartProxy) {
+            console.warn('ag-Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            return;
+        }
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
         agGridCommunity._.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
         this.chartController.setChartProxy(this.chartProxy);
@@ -33507,6 +34308,8 @@ var GridChartComp = /** @class */ (function (_super) {
     };
     GridChartComp.createChartProxy = function (chartProxyParams) {
         switch (chartProxyParams.chartType) {
+            case agGridCommunity.ChartType.Column:
+            case agGridCommunity.ChartType.Bar:
             case agGridCommunity.ChartType.GroupedColumn:
             case agGridCommunity.ChartType.StackedColumn:
             case agGridCommunity.ChartType.NormalizedColumn:
@@ -33574,8 +34377,10 @@ var GridChartComp = /** @class */ (function (_super) {
         return { width: width, height: height };
     };
     GridChartComp.prototype.addMenu = function () {
-        this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
-        this.eChartContainer.appendChild(this.chartMenu.getGui());
+        if (!this.params.crossFiltering) {
+            this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
+            this.eChartContainer.appendChild(this.chartMenu.getGui());
+        }
     };
     GridChartComp.prototype.addTitleEditComp = function () {
         this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
@@ -33600,6 +34405,7 @@ var GridChartComp = /** @class */ (function (_super) {
         return this.chartController.getChartModel();
     };
     GridChartComp.prototype.updateChart = function () {
+        var _this = this;
         var _a = this, model = _a.model, chartProxy = _a.chartProxy;
         var selectedCols = model.getSelectedValueColState();
         var fields = selectedCols.map(function (c) { return ({ colId: c.colId, displayName: c.displayName }); });
@@ -33617,7 +34423,9 @@ var GridChartComp = /** @class */ (function (_super) {
                 name: selectedDimension.displayName,
                 chartDataType: this.getChartDataType(selectedDimension.colId)
             },
-            fields: fields
+            fields: fields,
+            chartId: this.model.getChartId(),
+            getCrossFilteringContext: function () { return _this.params.crossFilteringContext; },
         };
         chartProxy.update(chartUpdateParams);
         this.titleEdit.setChartProxy(this.chartProxy);
@@ -33733,9 +34541,6 @@ var GridChartComp = /** @class */ (function (_super) {
         agGridCommunity.RefSelector('eTitleEditContainer')
     ], GridChartComp.prototype, "eTitleEditContainer", void 0);
     __decorate$1j([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], GridChartComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1j([
         agGridCommunity.Autowired('environment')
     ], GridChartComp.prototype, "environment", void 0);
     __decorate$1j([
@@ -33744,6 +34549,9 @@ var GridChartComp = /** @class */ (function (_super) {
     __decorate$1j([
         agGridCommunity.Autowired('columnController')
     ], GridChartComp.prototype, "columnController", void 0);
+    __decorate$1j([
+        agGridCommunity.Autowired('chartCrossFilter')
+    ], GridChartComp.prototype, "crossFilter", void 0);
     __decorate$1j([
         agGridCommunity.Autowired('gridApi')
     ], GridChartComp.prototype, "gridApi", void 0);
@@ -33786,6 +34594,10 @@ var ChartService = /** @class */ (function (_super) {
         // those in developer provided containers.
         _this.activeCharts = new Set();
         _this.activeChartComps = new Set();
+        // this shared (singleton) context is used by cross filtering in line and area charts
+        _this.crossFilteringContext = {
+            lastSelectedChartId: '',
+        };
         return _this;
     }
     ChartService.prototype.getChartModels = function () {
@@ -33826,11 +34638,25 @@ var ChartService = /** @class */ (function (_super) {
         }
         return this.createChart(cellRange, params.chartType, params.chartThemeName, true, true, params.chartContainer, undefined, params.chartThemeOverrides, params.unlinkChart, params.processChartOptions);
     };
-    ChartService.prototype.createChart = function (cellRange, chartType, chartThemeName, pivotChart, suppressChartRanges, container, aggFunc, chartThemeOverrides, unlinkChart, processChartOptions) {
+    ChartService.prototype.createCrossFilterChart = function (params) {
+        var cellRange = this.rangeController
+            ? this.rangeController.createCellRangeFromCellRangeParams(params.cellRange)
+            : undefined;
+        if (!cellRange) {
+            console.warn("ag-Grid - unable to create chart as no range is selected");
+            return;
+        }
+        var crossFiltering = true;
+        var suppressChartRangesSupplied = typeof params.suppressChartRanges !== 'undefined' && params.suppressChartRanges !== null;
+        var suppressChartRanges = suppressChartRangesSupplied ? params.suppressChartRanges : true;
+        return this.createChart(cellRange, params.chartType, params.chartThemeName, false, suppressChartRanges, params.chartContainer, params.aggFunc, params.chartThemeOverrides, params.unlinkChart, undefined, crossFiltering);
+    };
+    ChartService.prototype.createChart = function (cellRange, chartType, chartThemeName, pivotChart, suppressChartRanges, container, aggFunc, chartThemeOverrides, unlinkChart, processChartOptions, crossFiltering) {
         var _this = this;
         if (pivotChart === void 0) { pivotChart = false; }
         if (suppressChartRanges === void 0) { suppressChartRanges = false; }
         if (unlinkChart === void 0) { unlinkChart = false; }
+        if (crossFiltering === void 0) { crossFiltering = false; }
         var createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
         var params = {
             pivotChart: pivotChart,
@@ -33842,7 +34668,9 @@ var ChartService = /** @class */ (function (_super) {
             aggFunc: aggFunc,
             chartThemeOverrides: chartThemeOverrides,
             processChartOptions: processChartOptions,
-            unlinkChart: unlinkChart
+            unlinkChart: unlinkChart,
+            crossFiltering: crossFiltering,
+            crossFilteringContext: this.crossFilteringContext
         };
         var chartComp = new GridChartComp(params);
         this.context.createBean(chartComp);
@@ -33905,9 +34733,6 @@ var ChartService = /** @class */ (function (_super) {
     __decorate$1k([
         agGridCommunity.Autowired('environment')
     ], ChartService.prototype, "environment", void 0);
-    __decorate$1k([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ChartService.prototype, "gridOptionsWrapper", void 0);
     __decorate$1k([
         agGridCommunity.PreDestroy
     ], ChartService.prototype, "destroyAllActiveCharts", null);
@@ -34044,9 +34869,6 @@ var ChartTranslator = /** @class */ (function (_super) {
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
     };
-    __decorate$1l([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ChartTranslator.prototype, "gridOptionsWrapper", void 0);
     ChartTranslator = ChartTranslator_1 = __decorate$1l([
         agGridCommunity.Bean("chartTranslator")
     ], ChartTranslator);
@@ -34072,7 +34894,136 @@ var __decorate$1m = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays$8 = (undefined && undefined.__spreadArrays) || function () {
+var ChartCrossFilter = /** @class */ (function (_super) {
+    __extends$2q(ChartCrossFilter, _super);
+    function ChartCrossFilter() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ChartCrossFilter_1 = ChartCrossFilter;
+    ChartCrossFilter.prototype.filter = function (event, reset) {
+        if (reset === void 0) { reset = false; }
+        var filterModel = this.gridApi.getFilterModel();
+        // filters should be reset when user clicks on canvas background
+        if (reset) {
+            this.resetFilters(filterModel);
+            return;
+        }
+        var colId = ChartCrossFilter_1.extractFilterColId(event);
+        if (this.isValidColumnFilter(colId)) {
+            // update filters based on current chart selections
+            this.updateFilters(filterModel, event);
+        }
+        else {
+            console.warn("ag-Grid: cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
+                "to be defined on the column with id: '" + colId + "'");
+        }
+    };
+    ChartCrossFilter.prototype.resetFilters = function (filterModel) {
+        var filtersExist = Object.keys(filterModel).length > 0;
+        if (filtersExist) {
+            // only reset filters / charts when necessary to prevent undesirable flickering effect
+            this.gridApi.setFilterModel(null);
+            this.gridApi.onFilterChanged();
+        }
+    };
+    ChartCrossFilter.prototype.updateFilters = function (filterModel, event) {
+        var _a;
+        var dataKey = ChartCrossFilter_1.extractFilterColId(event);
+        var rawValue = event.datum[dataKey];
+        if (rawValue === undefined) {
+            return;
+        }
+        var selectedValue = rawValue.toString();
+        var filterColId = dataKey.replace('-filtered-out', '');
+        if (event.event.metaKey || event.event.ctrlKey) {
+            var existingGridValues = this.getCurrentGridValuesForCategory(filterColId);
+            var valueAlreadyExists = agGridCommunity._.includes(existingGridValues, selectedValue);
+            var updatedValues = void 0;
+            if (valueAlreadyExists) {
+                updatedValues = existingGridValues.filter(function (v) { return v !== selectedValue; });
+            }
+            else {
+                updatedValues = existingGridValues;
+                updatedValues.push(selectedValue);
+            }
+            filterModel[filterColId] = this.getUpdatedFilterModel(filterColId, updatedValues);
+        }
+        else {
+            var updatedValues = [selectedValue];
+            filterModel = (_a = {}, _a[filterColId] = this.getUpdatedFilterModel(filterColId, updatedValues), _a);
+        }
+        this.gridApi.setFilterModel(filterModel);
+    };
+    ChartCrossFilter.prototype.getUpdatedFilterModel = function (colId, updatedValues) {
+        var columnFilterType = this.getColumnFilterType(colId);
+        if (columnFilterType === 'agMultiColumnFilter') {
+            return { filterType: 'multi', filterModels: [null, { filterType: 'set', values: updatedValues }] };
+        }
+        return { filterType: 'set', values: updatedValues };
+    };
+    ChartCrossFilter.prototype.getCurrentGridValuesForCategory = function (dataKey) {
+        var filteredValues = [];
+        var gridContainsValue = agGridCommunity._.includes;
+        this.gridApi.forEachNodeAfterFilter(function (rowNode) {
+            if (!rowNode.group) {
+                var value = rowNode.data[dataKey] + '';
+                if (!gridContainsValue(filteredValues, value)) {
+                    filteredValues.push(value);
+                }
+            }
+        });
+        return filteredValues;
+    };
+    ChartCrossFilter.extractFilterColId = function (event) {
+        return event.xKey ? event.xKey : event.labelKey;
+    };
+    ChartCrossFilter.prototype.isValidColumnFilter = function (colId) {
+        if (colId.indexOf('-filtered-out')) {
+            colId = colId.replace('-filtered-out', '');
+        }
+        var filterType = this.getColumnFilterType(colId);
+        if (typeof filterType === 'boolean') {
+            return filterType;
+        }
+        return agGridCommunity._.includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
+    };
+    ChartCrossFilter.prototype.getColumnFilterType = function (colId) {
+        var gridColumn = this.columnController.getGridColumn(colId);
+        return gridColumn ? gridColumn.getColDef().filter : undefined;
+    };
+    var ChartCrossFilter_1;
+    __decorate$1m([
+        agGridCommunity.Autowired('gridApi')
+    ], ChartCrossFilter.prototype, "gridApi", void 0);
+    __decorate$1m([
+        agGridCommunity.Autowired('columnController')
+    ], ChartCrossFilter.prototype, "columnController", void 0);
+    ChartCrossFilter = ChartCrossFilter_1 = __decorate$1m([
+        agGridCommunity.Bean("chartCrossFilter")
+    ], ChartCrossFilter);
+    return ChartCrossFilter;
+}(agGridCommunity.BeanStub));
+
+var __extends$2r = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __spreadArrays$7 = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -34080,7 +35031,7 @@ var __spreadArrays$8 = (undefined && undefined.__spreadArrays) || function () {
     return r;
 };
 var RangeController = /** @class */ (function (_super) {
-    __extends$2q(RangeController, _super);
+    __extends$2r(RangeController, _super);
     function RangeController() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.cellRanges = [];
@@ -34094,9 +35045,10 @@ var RangeController = /** @class */ (function (_super) {
     };
     RangeController.prototype.init = function () {
         this.logger = this.loggerFactory.create('RangeController');
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_PIVOT_CHANGED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
@@ -34242,7 +35194,7 @@ var RangeController = /** @class */ (function (_super) {
             var otherCols = cellRange.columns.filter(function (col) { return col !== colToMove; });
             if (colToMove) {
                 cellRange.startColumn = colToMove;
-                cellRange.columns = moveToFront ? __spreadArrays$8([colToMove], otherCols) : __spreadArrays$8(otherCols, [colToMove]);
+                cellRange.columns = moveToFront ? __spreadArrays$7([colToMove], otherCols) : __spreadArrays$7(otherCols, [colToMove]);
             }
             else {
                 cellRange.columns = otherCols;
@@ -34583,43 +35535,40 @@ var RangeController = /** @class */ (function (_super) {
         }
         return columns;
     };
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired('loggerFactory')
     ], RangeController.prototype, "loggerFactory", void 0);
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired('rowModel')
     ], RangeController.prototype, "rowModel", void 0);
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired('columnController')
     ], RangeController.prototype, "columnController", void 0);
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired('mouseEventService')
     ], RangeController.prototype, "mouseEventService", void 0);
-    __decorate$1m([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], RangeController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired('columnApi')
     ], RangeController.prototype, "columnApi", void 0);
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired('gridApi')
     ], RangeController.prototype, "gridApi", void 0);
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired('cellNavigationService')
     ], RangeController.prototype, "cellNavigationService", void 0);
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired("pinnedRowModel")
     ], RangeController.prototype, "pinnedRowModel", void 0);
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired('rowPositionUtils')
     ], RangeController.prototype, "rowPositionUtils", void 0);
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired('cellPositionUtils')
     ], RangeController.prototype, "cellPositionUtils", void 0);
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.PostConstruct
     ], RangeController.prototype, "init", null);
-    RangeController = __decorate$1m([
+    RangeController = __decorate$1n([
         agGridCommunity.Bean('rangeController')
     ], RangeController);
     return RangeController;
@@ -34683,7 +35632,7 @@ var AutoScrollService = /** @class */ (function () {
     return AutoScrollService;
 }());
 
-var __extends$2r = (undefined && undefined.__extends) || (function () {
+var __extends$2s = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -34696,14 +35645,14 @@ var __extends$2r = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AbstractSelectionHandle = /** @class */ (function (_super) {
-    __extends$2r(AbstractSelectionHandle, _super);
+    __extends$2s(AbstractSelectionHandle, _super);
     function AbstractSelectionHandle() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.changedCalculatedValues = false;
@@ -34844,34 +35793,34 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
             eGui.parentElement.removeChild(eGui);
         }
     };
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.Autowired("rowRenderer")
     ], AbstractSelectionHandle.prototype, "rowRenderer", void 0);
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.Autowired("dragService")
     ], AbstractSelectionHandle.prototype, "dragService", void 0);
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.Autowired("rangeController")
     ], AbstractSelectionHandle.prototype, "rangeController", void 0);
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.Autowired("mouseEventService")
     ], AbstractSelectionHandle.prototype, "mouseEventService", void 0);
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.Autowired("columnController")
     ], AbstractSelectionHandle.prototype, "columnController", void 0);
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.Autowired("cellNavigationService")
     ], AbstractSelectionHandle.prototype, "cellNavigationService", void 0);
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.Autowired('rowPositionUtils')
     ], AbstractSelectionHandle.prototype, "rowPositionUtils", void 0);
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.PostConstruct
     ], AbstractSelectionHandle.prototype, "init", null);
     return AbstractSelectionHandle;
 }(agGridCommunity.Component));
 
-var __extends$2s = (undefined && undefined.__extends) || (function () {
+var __extends$2t = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -34895,13 +35844,13 @@ var __assign$h = (undefined && undefined.__assign) || function () {
     };
     return __assign$h.apply(this, arguments);
 };
-var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays$9 = (undefined && undefined.__spreadArrays) || function () {
+var __spreadArrays$8 = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -34909,7 +35858,7 @@ var __spreadArrays$9 = (undefined && undefined.__spreadArrays) || function () {
     return r;
 };
 var FillHandle = /** @class */ (function (_super) {
-    __extends$2s(FillHandle, _super);
+    __extends$2t(FillHandle, _super);
     function FillHandle() {
         var _this = _super.call(this, FillHandle.TEMPLATE) || this;
         _this.markedCellComps = [];
@@ -35095,7 +36044,7 @@ var FillHandle = /** @class */ (function (_super) {
             });
         }
         else {
-            var columns = this.isLeft ? __spreadArrays$9(finalRange.columns).reverse() : finalRange.columns;
+            var columns = this.isLeft ? __spreadArrays$8(finalRange.columns).reverse() : finalRange.columns;
             iterateAcrossCells(undefined, columns);
         }
     };
@@ -35266,9 +36215,11 @@ var FillHandle = /** @class */ (function (_super) {
             if (this.rowPositionUtils.sameRow(row, endPosition)) {
                 break;
             }
-        } while (row = isMovingUp ?
-            this.cellNavigationService.getRowAbove(row) :
-            this.cellNavigationService.getRowBelow(row));
+        } while (
+        // tslint:disable-next-line
+        row = isMovingUp
+            ? this.cellNavigationService.getRowAbove(row)
+            : this.cellNavigationService.getRowBelow(row));
     };
     FillHandle.prototype.reduceVertical = function (initialPosition, endPosition) {
         var row = initialPosition;
@@ -35289,6 +36240,7 @@ var FillHandle = /** @class */ (function (_super) {
             if (isLastRow) {
                 break;
             }
+            // tslint:disable-next-line
         } while (row = this.cellNavigationService.getRowAbove(row));
     };
     FillHandle.prototype.extendHorizontal = function (initialPosition, endPosition, isMovingLeft) {
@@ -35364,16 +36316,13 @@ var FillHandle = /** @class */ (function (_super) {
         _super.prototype.refresh.call(this, cellComp);
     };
     FillHandle.TEMPLATE = "<div class=\"ag-fill-handle\"></div>";
-    __decorate$1o([
+    __decorate$1p([
         agGridCommunity.Autowired('valueService')
     ], FillHandle.prototype, "valueService", void 0);
-    __decorate$1o([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], FillHandle.prototype, "gridOptionsWrapper", void 0);
     return FillHandle;
 }(AbstractSelectionHandle));
 
-var __extends$2t = (undefined && undefined.__extends) || (function () {
+var __extends$2u = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35398,7 +36347,7 @@ var __assign$i = (undefined && undefined.__assign) || function () {
     return __assign$i.apply(this, arguments);
 };
 var RangeHandle$1 = /** @class */ (function (_super) {
-    __extends$2t(RangeHandle, _super);
+    __extends$2u(RangeHandle, _super);
     function RangeHandle() {
         var _this = _super.call(this, RangeHandle.TEMPLATE) || this;
         _this.type = agGridCommunity.SelectionHandleType.RANGE;
@@ -35448,7 +36397,7 @@ var RangeHandle$1 = /** @class */ (function (_super) {
     return RangeHandle;
 }(AbstractSelectionHandle));
 
-var __extends$2u = (undefined && undefined.__extends) || (function () {
+var __extends$2v = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35461,21 +36410,21 @@ var __extends$2u = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SelectionHandleFactory = /** @class */ (function (_super) {
-    __extends$2u(SelectionHandleFactory, _super);
+    __extends$2v(SelectionHandleFactory, _super);
     function SelectionHandleFactory() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     SelectionHandleFactory.prototype.createSelectionHandle = function (type) {
         return this.createBean(type === agGridCommunity.SelectionHandleType.RANGE ? new RangeHandle$1() : new FillHandle());
     };
-    SelectionHandleFactory = __decorate$1p([
+    SelectionHandleFactory = __decorate$1q([
         agGridCommunity.Bean('selectionHandleFactory')
     ], SelectionHandleFactory);
     return SelectionHandleFactory;
@@ -35496,7 +36445,7 @@ var RangeSelectionModule = {
 var GridChartsModule = {
     moduleName: agGridCommunity.ModuleNames.GridChartsModule,
     beans: [
-        ChartService, ChartTranslator
+        ChartService, ChartTranslator, ChartCrossFilter
     ],
     dependantModules: [
         RangeSelectionModule,
@@ -35504,7 +36453,7 @@ var GridChartsModule = {
     ]
 };
 
-var __extends$2v = (undefined && undefined.__extends) || (function () {
+var __extends$2w = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35517,14 +36466,14 @@ var __extends$2v = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var DetailCellRenderer = /** @class */ (function (_super) {
-    __extends$2v(DetailCellRenderer, _super);
+    __extends$2w(DetailCellRenderer, _super);
     function DetailCellRenderer() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.needRefresh = false;
@@ -35733,19 +36682,13 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             this.detailGridOptions.api.setRowData(rowData);
         }
     };
-    DetailCellRenderer.TEMPLATE = "<div class=\"ag-details-row\">\n            <div ref=\"eDetailGrid\" class=\"ag-details-grid\"/>\n        </div>";
-    __decorate$1q([
+    DetailCellRenderer.TEMPLATE = "<div class=\"ag-details-row\">\n            <div ref=\"eDetailGrid\" class=\"ag-details-grid\"></div>\n        </div>";
+    __decorate$1r([
         agGridCommunity.Autowired('environment')
     ], DetailCellRenderer.prototype, "environment", void 0);
-    __decorate$1q([
+    __decorate$1r([
         agGridCommunity.RefSelector('eDetailGrid')
     ], DetailCellRenderer.prototype, "eDetailGrid", void 0);
-    __decorate$1q([
-        agGridCommunity.Autowired('resizeObserverService')
-    ], DetailCellRenderer.prototype, "resizeObserverService", void 0);
-    __decorate$1q([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], DetailCellRenderer.prototype, "gridOptionsWrapper", void 0);
     return DetailCellRenderer;
 }(agGridCommunity.Component));
 
@@ -35760,7 +36703,7 @@ var MasterDetailModule = {
     ]
 };
 
-var __extends$2w = (undefined && undefined.__extends) || (function () {
+var __extends$2x = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35774,7 +36717,7 @@ var __extends$2w = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MenuPanel = /** @class */ (function (_super) {
-    __extends$2w(MenuPanel, _super);
+    __extends$2x(MenuPanel, _super);
     function MenuPanel(wrappedComponent) {
         var _this = _super.call(this, undefined, true) || this;
         _this.wrappedComponent = wrappedComponent;
@@ -35805,7 +36748,7 @@ var MenuPanel = /** @class */ (function (_super) {
     return MenuPanel;
 }(agGridCommunity.ManagedFocusComponent));
 
-var __extends$2x = (undefined && undefined.__extends) || (function () {
+var __extends$2y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35818,14 +36761,14 @@ var __extends$2x = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MenuItemComponent = /** @class */ (function (_super) {
-    __extends$2x(MenuItemComponent, _super);
+    __extends$2y(MenuItemComponent, _super);
     function MenuItemComponent(params) {
         var _this = _super.call(this) || this;
         _this.params = params;
@@ -35903,7 +36846,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
         }
         var eGui = this.getGui();
         var positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService, { eventSource: eGui, ePopup: ePopup });
-        var closePopup = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
@@ -35912,7 +36855,9 @@ var MenuItemComponent = /** @class */ (function (_super) {
         this.subMenuIsOpen = true;
         agGridCommunity._.setAriaExpanded(eGui, true);
         this.hideSubMenu = function () {
-            closePopup();
+            if (addPopupRes) {
+                addPopupRes.hideFunc();
+            }
             _this.subMenuIsOpen = false;
             agGridCommunity._.setAriaExpanded(eGui, false);
             destroySubMenu();
@@ -36096,19 +37041,16 @@ var MenuItemComponent = /** @class */ (function (_super) {
     MenuItemComponent.EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';
     MenuItemComponent.EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
     MenuItemComponent.ACTIVATION_DELAY = 80;
-    __decorate$1r([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1r([
+    __decorate$1s([
         agGridCommunity.Autowired('popupService')
     ], MenuItemComponent.prototype, "popupService", void 0);
-    __decorate$1r([
+    __decorate$1s([
         agGridCommunity.PostConstruct
     ], MenuItemComponent.prototype, "init", null);
     return MenuItemComponent;
 }(agGridCommunity.Component));
 
-var __extends$2y = (undefined && undefined.__extends) || (function () {
+var __extends$2z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -36132,14 +37074,8 @@ var __assign$j = (undefined && undefined.__assign) || function () {
     };
     return __assign$j.apply(this, arguments);
 };
-var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var MenuList = /** @class */ (function (_super) {
-    __extends$2y(MenuList, _super);
+    __extends$2z(MenuList, _super);
     function MenuList(level) {
         if (level === void 0) { level = 1; }
         var _this = _super.call(this, /* html */ "<div class=\"ag-menu-list\" role=\"tree\"></div>", true) || this;
@@ -36302,13 +37238,10 @@ var MenuList = /** @class */ (function (_super) {
         this.clearActiveItem();
         _super.prototype.destroy.call(this);
     };
-    __decorate$1s([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], MenuList.prototype, "gridOptionsWrapper", void 0);
     return MenuList;
 }(agGridCommunity.ManagedFocusComponent));
 
-var __extends$2z = (undefined && undefined.__extends) || (function () {
+var __extends$2A = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -36328,7 +37261,7 @@ var __decorate$1t = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var EnterpriseMenuFactory = /** @class */ (function (_super) {
-    __extends$2z(EnterpriseMenuFactory, _super);
+    __extends$2A(EnterpriseMenuFactory, _super);
     function EnterpriseMenuFactory() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -36386,34 +37319,53 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
         var _this = this;
         var menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         var eMenuGui = menu.getGui();
+        var anchorToElement = eventSource ? eventSource : this.gridPanel.getGui();
+        var closedFuncs = [];
+        closedFuncs.push(function (e) {
+            _this.destroyBean(menu);
+            column.setMenuVisible(false, 'contextMenu');
+            var isKeyboardEvent = e instanceof KeyboardEvent;
+            if (isKeyboardEvent && eventSource && agGridCommunity._.isVisible(eventSource)) {
+                var focusableEl = _this.focusController.findTabbableParent(eventSource);
+                if (focusableEl) {
+                    focusableEl.focus();
+                }
+            }
+        });
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: function (e) {
-                _this.destroyBean(menu);
-                column.setMenuVisible(false, 'contextMenu');
-                var isKeyboardEvent = e instanceof KeyboardEvent;
-                if (isKeyboardEvent && eventSource && agGridCommunity._.isVisible(eventSource)) {
-                    var focusableEl = _this.focusController.findTabbableParent(eventSource);
-                    if (focusableEl) {
-                        focusableEl.focus();
-                    }
-                }
+                closedFuncs.forEach(function (f) { return f(e); });
             },
-            positionCallback: function () { positionCallback(menu); },
-            anchorToElement: this.gridPanel.getGui()
+            afterGuiAttached: function (params) { return menu.afterGuiAttached(params); },
+            positionCallback: function () { return positionCallback(menu); },
+            anchorToElement: anchorToElement,
         });
-        menu.afterGuiAttached({ hidePopup: hidePopup });
+        if (addPopupRes) {
+            // if user starts showing / hiding columns, or otherwise move the underlying column
+            // for this menu, we want to stop tracking the menu with the column position. otherwise
+            // the menu would move as the user is using the columns tab inside the menu.
+            var stopAnchoringFunc_1 = addPopupRes.stopAnchoringFunc;
+            if (stopAnchoringFunc_1) {
+                column.addEventListener(agGridCommunity.Column.EVENT_LEFT_CHANGED, stopAnchoringFunc_1);
+                column.addEventListener(agGridCommunity.Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc_1);
+                closedFuncs.push(function () {
+                    column.removeEventListener(agGridCommunity.Column.EVENT_LEFT_CHANGED, stopAnchoringFunc_1);
+                    column.removeEventListener(agGridCommunity.Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc_1);
+                });
+            }
+        }
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
         }
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, function (event) {
             _this.lastSelectedTab = event.key;
         });
-        column.setMenuVisible(true, "contextMenu");
+        column.setMenuVisible(true, 'contextMenu');
         this.activeMenu = menu;
         menu.addEventListener(agGridCommunity.BeanStub.EVENT_DESTROYED, function () {
             if (_this.activeMenu === menu) {
@@ -36428,9 +37380,6 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
         agGridCommunity.Autowired('popupService')
     ], EnterpriseMenuFactory.prototype, "popupService", void 0);
     __decorate$1t([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1t([
         agGridCommunity.Autowired('focusController')
     ], EnterpriseMenuFactory.prototype, "focusController", void 0);
     EnterpriseMenuFactory = __decorate$1t([
@@ -36439,7 +37388,7 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
     return EnterpriseMenuFactory;
 }(agGridCommunity.BeanStub));
 var EnterpriseMenu = /** @class */ (function (_super) {
-    __extends$2z(EnterpriseMenu, _super);
+    __extends$2A(EnterpriseMenu, _super);
     function EnterpriseMenu(column, initialSelection, restrictTo) {
         var _this = _super.call(this) || this;
         _this.tabFactories = {};
@@ -36631,7 +37580,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         this.tabItemGeneral = {
             title: agGridCommunity._.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
             titleLabel: EnterpriseMenu.TAB_GENERAL.replace('MenuTab', ''),
-            bodyPromise: agGridCommunity.Promise.resolve(this.mainMenuList.getGui()),
+            bodyPromise: agGridCommunity.AgPromise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
         };
         return this.tabItemGeneral;
@@ -36697,36 +37646,16 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         this.tabItemColumns = {
             title: agGridCommunity._.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
             titleLabel: EnterpriseMenu.TAB_COLUMNS.replace('MenuTab', ''),
-            bodyPromise: agGridCommunity.Promise.resolve(eWrapperDiv),
+            bodyPromise: agGridCommunity.AgPromise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS
         };
         return this.tabItemColumns;
     };
     EnterpriseMenu.prototype.afterGuiAttached = function (params) {
-        var _this = this;
-        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup: params.hidePopup });
-        this.hidePopupFunc = params.hidePopup;
-        var initialScroll = this.gridApi.getHorizontalPixelRange().left;
-        // if the user scrolls the grid horizontally, we want to hide the menu, as the menu will not appear in the right location anymore
-        var onBodyScroll = function (event) {
-            // If the user hides columns using the columns tab in this menu, it will change the size of the
-            // grid content and lead to a bodyScroll event. But we don't want to hide the menu for that kind
-            // of indirect scrolling. Assume that any bodyScroll that happens right after a column change is
-            // caused by that change, and ignore it.
-            var msSinceLastColumnChange = Date.now() - _this.timeOfLastColumnChange;
-            if (msSinceLastColumnChange < 500) {
-                return;
-            }
-            // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal') {
-                var newScroll = _this.gridApi.getHorizontalPixelRange().left;
-                if (Math.abs(newScroll - initialScroll) > _this.gridOptionsWrapper.getScrollbarWidth()) {
-                    params.hidePopup();
-                }
-            }
-        };
-        this.addDestroyFunc(params.hidePopup);
-        this.addManagedListener(this.eventService, 'bodyScroll', onBodyScroll);
+        var hidePopup = params.hidePopup;
+        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup: hidePopup });
+        this.hidePopupFunc = hidePopup;
+        this.addDestroyFunc(hidePopup);
     };
     EnterpriseMenu.prototype.getGui = function () {
         return this.tabbedLayout.getGui();
@@ -36753,9 +37682,6 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         agGridCommunity.Autowired('columnApi')
     ], EnterpriseMenu.prototype, "columnApi", void 0);
     __decorate$1t([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1t([
         agGridCommunity.Autowired('menuItemMapper')
     ], EnterpriseMenu.prototype, "menuItemMapper", void 0);
     __decorate$1t([
@@ -36770,7 +37696,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     return EnterpriseMenu;
 }(agGridCommunity.BeanStub));
 
-var __extends$2A = (undefined && undefined.__extends) || (function () {
+var __extends$2B = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -36789,8 +37715,10 @@ var __decorate$1u = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var CSS_MENU = 'ag-menu';
+var CSS_CONTEXT_MENU_OPEN = ' ag-context-menu-open';
 var ContextMenuFactory = /** @class */ (function (_super) {
-    __extends$2A(ContextMenuFactory, _super);
+    __extends$2B(ContextMenuFactory, _super);
     function ContextMenuFactory() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -36845,7 +37773,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         }
         return defaultMenuOptions;
     };
-    ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent) {
+    ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent, anchorToElement) {
         var _this = this;
         var menuItems = this.getMenuItems(node, column, value);
         if (menuItems === undefined || agGridCommunity._.missingOrEmpty(menuItems)) {
@@ -36866,19 +37794,23 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             nudgeY: 1
         };
         var positionCallback = this.popupService.positionPopupUnderMouseEvent.bind(this.popupService, positionParams);
-        var hidePopup = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: function () {
+                agGridCommunity._.removeCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
                 _this.destroyBean(menu);
             },
             click: mouseEvent,
             positionCallback: positionCallback,
-            // so when browser is scrolled down, the context menu stays on the grid
-            anchorToElement: this.gridPanel.getGui()
+            // so when browser is scrolled down, or grid is scrolled, context menu stays with cell
+            anchorToElement: anchorToElement
         });
-        menu.afterGuiAttached({ container: 'contextMenu', hidePopup: hidePopup });
+        if (addPopupRes) {
+            agGridCommunity._.addCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
+            menu.afterGuiAttached({ container: 'contextMenu', hidePopup: addPopupRes.hideFunc });
+        }
         // there should never be an active menu at this point, however it was found
         // that you could right click a second time just 1 or 2 pixels from the first
         // click, and another menu would pop up. so somehow the logic for closing the
@@ -36893,14 +37825,15 @@ var ContextMenuFactory = /** @class */ (function (_super) {
                 _this.activeMenu = null;
             }
         });
+        // hide the popup if something gets selected
+        if (addPopupRes) {
+            menu.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, addPopupRes.hideFunc);
+        }
         return true;
     };
     __decorate$1u([
         agGridCommunity.Autowired('popupService')
     ], ContextMenuFactory.prototype, "popupService", void 0);
-    __decorate$1u([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
     __decorate$1u([
         agGridCommunity.Optional('rangeController')
     ], ContextMenuFactory.prototype, "rangeController", void 0);
@@ -36913,21 +37846,22 @@ var ContextMenuFactory = /** @class */ (function (_super) {
     return ContextMenuFactory;
 }(agGridCommunity.BeanStub));
 var ContextMenu = /** @class */ (function (_super) {
-    __extends$2A(ContextMenu, _super);
+    __extends$2B(ContextMenu, _super);
     function ContextMenu(menuItems) {
-        var _this = _super.call(this, '<div class="ag-menu" role="presentation"></div>') || this;
+        var _this = _super.call(this, /* html */ "<div class=\"" + CSS_MENU + "\" role=\"presentation\"></div>") || this;
         _this.menuList = null;
         _this.focusedCell = null;
         _this.menuItems = menuItems;
         return _this;
     }
     ContextMenu.prototype.addMenuItems = function () {
+        var _this = this;
         var menuList = this.createBean(new MenuList());
         var menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
         menuList.addMenuItems(menuItemsMapped);
         this.appendChild(menuList);
         this.menuList = menuList;
-        menuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.destroy.bind(this));
+        menuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, function (e) { return _this.dispatchEvent(e); });
     };
     ContextMenu.prototype.afterGuiAttached = function (params) {
         if (params.hidePopup) {
@@ -36937,8 +37871,6 @@ var ContextMenu = /** @class */ (function (_super) {
         if (this.menuList) {
             this.focusController.focusInto(this.menuList.getGui());
         }
-        // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        this.addManagedListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     };
     ContextMenu.prototype.destroy = function () {
         var currentFocusedCell = this.focusController.getFocusedCell();
@@ -36963,7 +37895,7 @@ var ContextMenu = /** @class */ (function (_super) {
     return ContextMenu;
 }(agGridCommunity.Component));
 
-var __extends$2B = (undefined && undefined.__extends) || (function () {
+var __extends$2C = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -36983,7 +37915,7 @@ var __decorate$1v = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MenuItemMapper = /** @class */ (function (_super) {
-    __extends$2B(MenuItemMapper, _super);
+    __extends$2C(MenuItemMapper, _super);
     function MenuItemMapper() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -37366,9 +38298,6 @@ var MenuItemMapper = /** @class */ (function (_super) {
         return result;
     };
     __decorate$1v([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], MenuItemMapper.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1v([
         agGridCommunity.Autowired('columnController')
     ], MenuItemMapper.prototype, "columnController", void 0);
     __decorate$1v([
@@ -37397,7 +38326,7 @@ var MenuModule = {
     ]
 };
 
-var __extends$2C = (undefined && undefined.__extends) || (function () {
+var __extends$2D = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -37428,7 +38357,7 @@ var __decorate$1w = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MultiFilter = /** @class */ (function (_super) {
-    __extends$2C(MultiFilter, _super);
+    __extends$2D(MultiFilter, _super);
     function MultiFilter() {
         var _this = _super.call(this, /* html */ "<div class=\"ag-multi-filter ag-menu-list-compact\"></div>", true) || this;
         _this.filterDefs = [];
@@ -37459,7 +38388,9 @@ var MultiFilter = /** @class */ (function (_super) {
             }
         });
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
-        return agGridCommunity.Promise.all(filterPromises).then(function (filters) { _this.filters = filters; _this.refreshGui('columnMenu'); });
+        return agGridCommunity.AgPromise
+            .all(filterPromises)
+            .then(function (filters) { _this.filters = filters; _this.refreshGui('columnMenu'); });
     };
     MultiFilter.prototype.refreshGui = function (container) {
         var _this = this;
@@ -37595,15 +38526,10 @@ var MultiFilter = /** @class */ (function (_super) {
         return model;
     };
     MultiFilter.prototype.setModel = function (model) {
-        var setFilterModel = function (filter, model) {
-            return new agGridCommunity.Promise(function (resolve) {
-                var promise = filter.setModel(model);
-                if (promise == null) {
-                    resolve();
-                }
-                else {
-                    promise.then(function () { return resolve(); });
-                }
+        var setFilterModel = function (filter, filterModel) {
+            return new agGridCommunity.AgPromise(function (resolve) {
+                var promise = filter.setModel(filterModel);
+                promise ? promise.then(function () { return resolve(); }) : resolve();
             });
         };
         var promises = [];
@@ -37616,7 +38542,7 @@ var MultiFilter = /** @class */ (function (_super) {
                 promises.push(setFilterModel(filter, filterModel));
             });
         }
-        return agGridCommunity.Promise.all(promises).then(function () { });
+        return agGridCommunity.AgPromise.all(promises).then(function () { });
     };
     MultiFilter.prototype.getChildFilterInstance = function (index) {
         return this.filters[index];
@@ -37707,7 +38633,7 @@ var MultiFilter = /** @class */ (function (_super) {
     return MultiFilter;
 }(agGridCommunity.ManagedFocusComponent));
 
-var __extends$2D = (undefined && undefined.__extends) || (function () {
+var __extends$2E = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -37738,7 +38664,7 @@ var __decorate$1x = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MultiFloatingFilterComp = /** @class */ (function (_super) {
-    __extends$2D(MultiFloatingFilterComp, _super);
+    __extends$2E(MultiFloatingFilterComp, _super);
     function MultiFloatingFilterComp() {
         var _this = _super.call(this, /* html */ "<div class=\"ag-multi-floating-filter ag-floating-filter-input\"></div>") || this;
         _this.floatingFilters = [];
@@ -37763,7 +38689,7 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
                 floatingFilterPromises.push(floatingFilterPromise);
             }
         });
-        return agGridCommunity.Promise.all(floatingFilterPromises).then(function (floatingFilters) {
+        return agGridCommunity.AgPromise.all(floatingFilterPromises).then(function (floatingFilters) {
             agGridCommunity._.forEach(floatingFilters, function (floatingFilter, index) {
                 _this.floatingFilters.push(floatingFilter);
                 var gui = floatingFilter.getGui();
@@ -37827,7 +38753,7 @@ var MultiFilterModule = {
     ]
 };
 
-var __extends$2E = (undefined && undefined.__extends) || (function () {
+var __extends$2F = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -37847,7 +38773,7 @@ var __decorate$1y = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RichSelectRow = /** @class */ (function (_super) {
-    __extends$2E(RichSelectRow, _super);
+    __extends$2F(RichSelectRow, _super);
     function RichSelectRow(params) {
         var _this = _super.call(this, /* html */ "<div class=\"ag-rich-select-row\"></div>") || this;
         _this.params = params;
@@ -37901,13 +38827,10 @@ var RichSelectRow = /** @class */ (function (_super) {
     __decorate$1y([
         agGridCommunity.Autowired('userComponentFactory')
     ], RichSelectRow.prototype, "userComponentFactory", void 0);
-    __decorate$1y([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], RichSelectRow.prototype, "gridOptionsWrapper", void 0);
     return RichSelectRow;
 }(agGridCommunity.Component));
 
-var __extends$2F = (undefined && undefined.__extends) || (function () {
+var __extends$2G = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -37927,7 +38850,7 @@ var __decorate$1z = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RichSelectCellEditor = /** @class */ (function (_super) {
-    __extends$2F(RichSelectCellEditor, _super);
+    __extends$2G(RichSelectCellEditor, _super);
     function RichSelectCellEditor() {
         var _this = _super.call(this, RichSelectCellEditor.TEMPLATE) || this;
         _this.selectionConfirmed = false;
@@ -38123,9 +39046,6 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         agGridCommunity.Autowired('userComponentFactory')
     ], RichSelectCellEditor.prototype, "userComponentFactory", void 0);
     __decorate$1z([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], RichSelectCellEditor.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1z([
         agGridCommunity.RefSelector('eValue')
     ], RichSelectCellEditor.prototype, "eValue", void 0);
     __decorate$1z([
@@ -38146,7 +39066,7 @@ var RichSelectModule = {
     ]
 };
 
-var __extends$2G = (undefined && undefined.__extends) || (function () {
+var __extends$2H = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -38168,16 +39088,11 @@ var __decorate$1A = (undefined && undefined.__decorate) || function (decorators,
 var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var ServerSideBlock = /** @class */ (function (_super) {
-    __extends$2G(ServerSideBlock, _super);
-    function ServerSideBlock(pageNumber, parentRowNode, params, parentCache) {
-        var _this = _super.call(this, pageNumber, params) || this;
-        _this.params = params;
-        _this.parentRowNode = parentRowNode;
-        _this.parentCache = parentCache;
-        _this.level = parentRowNode.level + 1;
-        _this.groupLevel = params.rowGroupCols ? _this.level < params.rowGroupCols.length : undefined;
-        _this.leafGroup = params.rowGroupCols ? _this.level === params.rowGroupCols.length - 1 : false;
+var ServerSideRowModel = /** @class */ (function (_super) {
+    __extends$2H(ServerSideRowModel, _super);
+    function ServerSideRowModel() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.pauseStoreUpdateListening = false;
         return _this;
     }
     // no need for @postConstruct, as attached to parent
@@ -38189,8 +39104,20 @@ var ServerSideBlock = /** @class */ (function (_super) {
             this.groupField = groupColVo.field;
             this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
         }
-        this.createNodeIdPrefix();
-        _super.prototype.init.call(this);
+        this.rowRenderer.datasourceChanged();
+        this.datasource = undefined;
+    };
+    ServerSideRowModel.prototype.setBeans = function (loggerFactory) {
+        this.logger = loggerFactory.create('ServerSideRowModel');
+    };
+    ServerSideRowModel.prototype.addEventListeners = function () {
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
+        var resetListener = this.resetRootStore.bind(this);
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_VALUE_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
     };
     ServerSideBlock.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ServerSideBlock');
@@ -38215,119 +39142,145 @@ var ServerSideBlock = /** @class */ (function (_super) {
             return index.toString();
         }
     };
-    ServerSideBlock.prototype.getNodeIdPrefix = function () {
-        return this.nodeIdPrefix;
-    };
-    ServerSideBlock.prototype.getRow = function (displayRowIndex) {
-        var bottomPointer = this.getStartRow();
-        // the end row depends on whether all this block is used or not. if the virtual row count
-        // is before the end, then not all the row is used
-        var virtualRowCount = this.parentCache.getVirtualRowCount();
-        var endRow = this.getEndRow();
-        var actualEnd = (virtualRowCount < endRow) ? virtualRowCount : endRow;
-        var topPointer = actualEnd - 1;
-        if (agGridCommunity._.missing(topPointer) || agGridCommunity._.missing(bottomPointer)) {
-            console.warn("ag-grid: error: topPointer = " + topPointer + ", bottomPointer = " + bottomPointer);
-            return null;
+    ServerSideRowModel.prototype.destroyRootStore = function () {
+        if (!this.rootNode || !this.rootNode.childStore) {
+            return;
         }
-        while (true) {
-            var midPointer = Math.floor((bottomPointer + topPointer) / 2);
-            var currentRowNode = _super.prototype.getRowUsingLocalIndex.call(this, midPointer);
-            // first check current row for index
-            if (currentRowNode.rowIndex === displayRowIndex) {
-                return currentRowNode;
-            }
-            // then check if current row contains a detail row with the index
-            var expandedMasterRow = currentRowNode.master && currentRowNode.expanded;
-            if (expandedMasterRow && currentRowNode.detailNode.rowIndex === displayRowIndex) {
-                return currentRowNode.detailNode;
-            }
-            // then check if child cache contains index
-            var childrenCache = currentRowNode.childrenCache;
-            if (currentRowNode.expanded && childrenCache && childrenCache.isDisplayIndexInCache(displayRowIndex)) {
-                return childrenCache.getRow(displayRowIndex);
-            }
-            // otherwise adjust pointers to continue searching for index
-            if (currentRowNode.rowIndex < displayRowIndex) {
-                bottomPointer = midPointer + 1;
-            }
-            else if (currentRowNode.rowIndex > displayRowIndex) {
-                topPointer = midPointer - 1;
-            }
-            else {
-                console.warn("ag-Grid: error: unable to locate rowIndex = " + displayRowIndex + " in cache");
-                return null;
-            }
+        this.rootNode.childStore = this.destroyBean(this.rootNode.childStore);
+        this.nodeManager.clear();
+    };
+    ServerSideRowModel.prototype.refreshAfterSort = function (newSortModel, params) {
+        if (this.storeParams) {
+            this.storeParams.sortModel = newSortModel;
+        }
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
+        }
+        rootStore.refreshAfterSort(params);
+        this.onStoreUpdated();
+    };
+    ServerSideRowModel.prototype.resetRootStore = function () {
+        this.destroyRootStore();
+        this.rootNode = new agGridCommunity.RowNode();
+        this.rootNode.group = true;
+        this.rootNode.level = -1;
+        this.createBean(this.rootNode);
+        if (this.datasource) {
+            this.storeParams = this.createStoreParams();
+            this.rootNode.childStore = this.createBean(this.storeFactory.createStore(this.storeParams, this.rootNode));
+            this.updateRowIndexesAndBounds();
         }
     };
     ServerSideBlock.prototype.setDataAndId = function (rowNode, data, index) {
         var _this = this;
-        rowNode.stub = false;
-        if (agGridCommunity._.exists(data)) {
-            // if the user is not providing id's, then we build an id based on the index.
-            // for infinite scrolling, the index is used on it's own. for Server Side Row Model,
-            // we combine the index with the level and group key, so that the id is
-            // unique across the set.
-            //
-            // unique id is needed for selection (so selection can be maintained when
-            // doing server side sorting / filtering) - if user is not providing id's
-            // (and we use the indexes) then selection will not work between sorting &
-            // filtering.
-            //
-            // id's are also used by the row renderer for updating the dom as it identifies
-            // rowNodes by id
-            var idToUse = this.createIdForIndex(index);
-            rowNode.setDataAndId(data, idToUse);
-            if (this.usingTreeData) {
-                var getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
-                if (agGridCommunity._.exists(getServerSideGroupKey) && getServerSideGroupKey) {
-                    rowNode.key = getServerSideGroupKey(rowNode.data);
-                }
-                var isServerSideGroup = this.gridOptionsWrapper.getIsServerSideGroupFunc();
-                if (agGridCommunity._.exists(isServerSideGroup) && isServerSideGroup) {
-                    rowNode.group = isServerSideGroup(rowNode.data);
-                }
-            }
-            else if (rowNode.group) {
-                rowNode.key = this.valueService.getValue(this.rowGroupColumn, rowNode);
-                if (rowNode.key === null || rowNode.key === undefined) {
-                    agGridCommunity._.doOnce(function () {
-                        console.warn("null and undefined values are not allowed for server side row model keys");
-                        if (_this.rowGroupColumn) {
-                            console.warn("column = " + _this.rowGroupColumn.getId());
-                        }
-                        console.warn("data is ", rowNode.data);
-                    }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
-                }
-            }
-            else if (this.usingMasterDetail) {
-                var isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
-                if (agGridCommunity._.exists(isRowMasterFunc) && isRowMasterFunc) {
-                    rowNode.master = isRowMasterFunc(rowNode.data);
-                }
-                else {
-                    rowNode.master = true;
-                }
-            }
+        return columns.map(function (col) { return ({
+            id: col.getId(),
+            aggFunc: col.getAggFunc(),
+            displayName: _this.columnController.getDisplayNameForColumn(col, 'model'),
+            field: col.getColDef().field
+        }); });
+    };
+    ServerSideRowModel.prototype.createStoreParams = function () {
+        var rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
+        var valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
+        var pivotColumnVos = this.columnsToValueObjects(this.columnController.getPivotColumns());
+        var dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
+        var params = {
+            // the columns the user has grouped and aggregated by
+            valueCols: valueColumnVos,
+            rowGroupCols: rowGroupColumnVos,
+            pivotCols: pivotColumnVos,
+            pivotMode: this.columnController.isPivotMode(),
+            // sort and filter model
+            filterModel: this.filterManager.getFilterModel(),
+            sortModel: this.sortListener.extractSortModel(),
+            datasource: this.datasource,
+            lastAccessedSequence: new agGridCommunity.NumberSequence(),
+            // blockSize: blockSize == null ? 100 : blockSize,
+            dynamicRowHeight: dynamicRowHeight
+        };
+        return params;
+    };
+    ServerSideRowModel.prototype.getParams = function () {
+        return this.storeParams;
+    };
+    ServerSideRowModel.prototype.dispatchModelUpdated = function (reset) {
+        if (reset === void 0) { reset = false; }
+        var modelUpdatedEvent = {
+            type: agGridCommunity.Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            animate: !reset,
+            keepRenderedRows: !reset,
+            newPage: false,
+            newData: false
+        };
+        this.eventService.dispatchEvent(modelUpdatedEvent);
+    };
+    ServerSideRowModel.prototype.onStoreUpdated = function () {
+        // sometimes if doing a batch update, we do the batch first,
+        // then call onStoreUpdated manually. eg expandAll() method.
+        if (this.pauseStoreUpdateListening) {
+            return;
         }
-        else {
-            rowNode.setDataAndId(undefined, undefined);
-            rowNode.key = null;
+        this.updateRowIndexesAndBounds();
+        this.dispatchModelUpdated();
+    };
+    ServerSideRowModel.prototype.onRowHeightChanged = function () {
+        this.updateRowIndexesAndBounds();
+        this.dispatchModelUpdated();
+    };
+    ServerSideRowModel.prototype.updateRowIndexesAndBounds = function () {
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
         }
-        if (this.usingTreeData || this.groupLevel) {
-            this.setGroupDataIntoRowNode(rowNode);
-            this.setChildCountIntoRowNode(rowNode);
+        rootStore.setDisplayIndexes(new agGridCommunity.NumberSequence(), { value: 0 });
+    };
+    ServerSideRowModel.prototype.retryLoads = function () {
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
+        }
+        rootStore.retryLoads();
+        this.onStoreUpdated();
+    };
+    ServerSideRowModel.prototype.getRow = function (index) {
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            return null;
+        }
+        return rootStore.getRowUsingDisplayIndex(index);
+    };
+    ServerSideRowModel.prototype.expandAll = function (value) {
+        // if we don't pause store updating, we are needlessly
+        // recalculating row-indexes etc, and also getting rendering
+        // engine to re-render (listens on ModelUpdated event)
+        this.pauseStoreUpdateListening = true;
+        this.forEachNode(function (node) {
+            if (node.group) {
+                node.setExpanded(value);
+            }
+        });
+        this.pauseStoreUpdateListening = false;
+        this.onStoreUpdated();
+    };
+    ServerSideRowModel.prototype.refreshAfterFilter = function (newFilterModel, params) {
+        if (this.storeParams) {
+            this.storeParams.filterModel = newFilterModel;
         }
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true
         if (agGridCommunity._.exists(data)) {
             rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
         }
+        rootStore.refreshAfterFilter(params);
+        this.onStoreUpdated();
     };
-    ServerSideBlock.prototype.setChildCountIntoRowNode = function (rowNode) {
-        var getChildCount = this.gridOptionsWrapper.getChildCountFunc();
-        if (getChildCount) {
-            rowNode.allChildrenCount = getChildCount(rowNode.data);
+    ServerSideRowModel.prototype.getRootStore = function () {
+        if (this.rootNode && this.rootNode.childStore) {
+            return this.rootNode.childStore;
         }
     };
     ServerSideBlock.prototype.setGroupDataIntoRowNode = function (rowNode) {
@@ -38556,23 +39509,31 @@ var ServerSideBlock = /** @class */ (function (_super) {
     ServerSideBlock.prototype.isBlockBefore = function (displayIndex) {
         return displayIndex >= this.displayIndexEnd;
     };
-    ServerSideBlock.prototype.getDisplayIndexStart = function () {
-        return this.displayIndexStart;
+    ServerSideRowModel.prototype.refreshStore = function (params) {
+        if (params === void 0) { params = {}; }
+        var route = params.route ? params.route : [];
+        this.executeOnStore(route, function (store) { return store.refreshStore(params.purge == true); });
     };
-    ServerSideBlock.prototype.getDisplayIndexEnd = function () {
-        return this.displayIndexEnd;
+    ServerSideRowModel.prototype.getStoreState = function () {
+        var res = [];
+        var rootStore = this.getRootStore();
+        if (rootStore) {
+            rootStore.addStoreStates(res);
+        }
+        return res;
+    };
+    ServerSideRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
+        if (agGridCommunity._.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
+            return [];
+        }
+        return firstInRange.parent.childStore.getRowNodesInRange(lastInRange, firstInRange);
     };
     ServerSideBlock.prototype.getBlockHeight = function () {
         return this.blockHeight;
     };
-    ServerSideBlock.prototype.getBlockTop = function () {
-        return this.blockTop;
-    };
-    ServerSideBlock.prototype.isGroupLevel = function () {
-        return this.groupLevel;
-    };
-    ServerSideBlock.prototype.getGroupField = function () {
-        return this.groupField;
+    ServerSideRowModel.prototype.isRowPresent = function (rowNode) {
+        var foundRowNode = this.getRowNode(rowNode.id);
+        return !!foundRowNode;
     };
     ServerSideBlock.DefaultBlockSize = 100;
     __decorate$1A([
@@ -38588,15 +39549,27 @@ var ServerSideBlock = /** @class */ (function (_super) {
         agGridCommunity.Autowired('columnApi')
     ], ServerSideBlock.prototype, "columnApi", void 0);
     __decorate$1A([
-        agGridCommunity.Autowired('gridApi')
-    ], ServerSideBlock.prototype, "gridApi", void 0);
+        agGridCommunity.Autowired('rowRenderer')
+    ], ServerSideRowModel.prototype, "rowRenderer", void 0);
+    __decorate$1A([
+        agGridCommunity.Autowired('ssrmSortService')
+    ], ServerSideRowModel.prototype, "sortListener", void 0);
+    __decorate$1A([
+        agGridCommunity.Autowired('ssrmNodeManager')
+    ], ServerSideRowModel.prototype, "nodeManager", void 0);
+    __decorate$1A([
+        agGridCommunity.Autowired('ssrmStoreFactory')
+    ], ServerSideRowModel.prototype, "storeFactory", void 0);
+    __decorate$1A([
+        agGridCommunity.PreDestroy
+    ], ServerSideRowModel.prototype, "destroyDatasource", null);
     __decorate$1A([
         __param(0, agGridCommunity.Qualifier('loggerFactory'))
     ], ServerSideBlock.prototype, "setBeans", null);
     return ServerSideBlock;
 }(agGridCommunity.RowNodeBlock));
 
-var __extends$2H = (undefined && undefined.__extends) || (function () {
+var __extends$2I = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -38615,39 +39588,154 @@ var __decorate$1B = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __param$1 = (undefined && undefined.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
+var StoreUtils = /** @class */ (function (_super) {
+    __extends$2I(StoreUtils, _super);
+    function StoreUtils() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    StoreUtils.prototype.createGroupKeys = function (groupNode) {
+        var keys = [];
+        var pointer = groupNode;
+        while (pointer && pointer.level >= 0) {
+            keys.push(pointer.key);
+            pointer = pointer.parent;
+        }
+        keys.reverse();
+        return keys;
+    };
+    StoreUtils.prototype.loadFromDatasource = function (p) {
+        var groupKeys = this.createGroupKeys(p.parentNode);
+        var storeParams = p.storeParams;
+        if (!storeParams.datasource) {
+            return;
+        }
+        var request = {
+            startRow: p.startRow,
+            endRow: p.endRow,
+            rowGroupCols: storeParams.rowGroupCols,
+            valueCols: storeParams.valueCols,
+            pivotCols: storeParams.pivotCols,
+            pivotMode: storeParams.pivotMode,
+            groupKeys: groupKeys,
+            filterModel: storeParams.filterModel,
+            sortModel: storeParams.sortModel
+        };
+        var getRowsParams = {
+            successCallback: p.successCallback,
+            success: p.success,
+            failCallback: p.failCallback,
+            fail: p.fail,
+            request: request,
+            parentNode: p.parentNode,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        window.setTimeout(function () {
+            if (storeParams.datasource) {
+                storeParams.datasource.getRows(getRowsParams);
+            }
+        }, 0);
+    };
+    StoreUtils.prototype.getChildStore = function (keys, currentCache, findNodeFunc) {
+        if (agGridCommunity._.missingOrEmpty(keys)) {
+            return currentCache;
+        }
+        var nextKey = keys[0];
+        var nextNode = findNodeFunc(nextKey);
+        if (nextNode) {
+            var keyListForNextLevel = keys.slice(1, keys.length);
+            var nextStore = nextNode.childStore;
+            return nextStore ? nextStore.getChildStore(keyListForNextLevel) : null;
+        }
+        return null;
+    };
+    StoreUtils.prototype.isServerRefreshNeeded = function (parentRowNode, rowGroupCols, params) {
+        if (params.alwaysReset || params.valueColChanged || params.secondaryColChanged) {
+            return true;
+        }
+        var level = parentRowNode.level + 1;
+        var grouping = level < rowGroupCols.length;
+        var leafNodes = !grouping;
+        if (leafNodes) {
+            return true;
+        }
+        var colIdThisGroup = rowGroupCols[level].id;
+        var actionOnThisGroup = params.changedColumns.indexOf(colIdThisGroup) > -1;
+        if (actionOnThisGroup) {
+            return true;
+        }
+        return false;
+    };
+    __decorate$1B([
+        agGridCommunity.Autowired('columnApi')
+    ], StoreUtils.prototype, "columnApi", void 0);
+    __decorate$1B([
+        agGridCommunity.Autowired('gridApi')
+    ], StoreUtils.prototype, "gridApi", void 0);
+    StoreUtils = __decorate$1B([
+        agGridCommunity.Bean('ssrmCacheUtils')
+    ], StoreUtils);
+    return StoreUtils;
+}(agGridCommunity.BeanStub));
+
+var __extends$2J = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$1C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var ServerSideCache = /** @class */ (function (_super) {
-    __extends$2H(ServerSideCache, _super);
-    function ServerSideCache(cacheParams, parentRowNode) {
-        var _this = _super.call(this, cacheParams) || this;
-        // this will always be zero for the top level cache only,
-        // all the other ones change as the groups open and close
-        _this.displayIndexStart = 0;
-        _this.displayIndexEnd = 0; // not sure if setting this one to zero is necessary
-        _this.cacheTop = 0;
-        _this.blockHeights = {};
-        _this.parentRowNode = parentRowNode;
-        return _this;
+var BlockUtils = /** @class */ (function (_super) {
+    __extends$2J(BlockUtils, _super);
+    function BlockUtils() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     ServerSideCache.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ServerSideCache');
     };
-    ServerSideCache.prototype.getRowBounds = function (index) {
-        // this.logger.log(`getRowBounds(${index})`);
-        var _this = this;
-        // we return null if row not found
-        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
-        // should be RowBounds
-        var result;
-        var blockFound = false;
-        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
-        // should be ServerSideBlock
-        var lastBlock = null;
-        this.forEachBlockInOrder(function (block) {
-            if (blockFound) {
-                return;
+    BlockUtils.prototype.destroyRowNodes = function (rowNodes) {
+        if (rowNodes) {
+            rowNodes.forEach(this.destroyRowNode.bind(this));
+        }
+    };
+    BlockUtils.prototype.destroyRowNode = function (rowNode) {
+        if (rowNode.childStore) {
+            this.destroyBean(rowNode.childStore);
+            rowNode.childStore = null;
+        }
+        // this is needed, so row render knows to fade out the row, otherwise it
+        // sees row top is present, and thinks the row should be shown. maybe
+        // rowNode should have a flag on whether it is visible???
+        rowNode.clearRowTop();
+        if (rowNode.id != null) {
+            this.nodeManager.removeNode(rowNode);
+        }
+    };
+    BlockUtils.prototype.setDataIntoRowNode = function (rowNode, data, defaultId) {
+        rowNode.stub = false;
+        if (agGridCommunity._.exists(data)) {
+            rowNode.setDataAndId(data, defaultId);
+            if (this.usingTreeData) {
+                var isGroupFunc = this.gridOptionsWrapper.getIsServerSideGroupFunc();
+                var getKeyFunc = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
+                if (isGroupFunc != null) {
+                    rowNode.group = isGroupFunc(rowNode.data);
+                    if (rowNode.group && getKeyFunc != null) {
+                        rowNode.key = getKeyFunc(rowNode.data);
+                    }
+                }
             }
             if (block.isDisplayIndexInBlock(index)) {
                 result = block.getRowBounds(index, _this.getVirtualRowCount());
@@ -38704,12 +39792,33 @@ var ServerSideCache = /** @class */ (function (_super) {
                 lastBlock = block;
             }
         });
-        if (!blockFound) {
-            var nextRowTop = void 0;
-            var nextRowIndex = void 0;
-            if (lastBlock) {
-                nextRowTop = lastBlock.getBlockTop() + lastBlock.getBlockHeight();
-                nextRowIndex = lastBlock.getDisplayIndexEnd();
+    };
+    BlockUtils.prototype.clearDisplayIndex = function (rowNode) {
+        rowNode.clearRowTop();
+        rowNode.setRowIndex();
+        var hasChildStore = rowNode.group && agGridCommunity._.exists(rowNode.childStore);
+        if (hasChildStore) {
+            var childStore = rowNode.childStore;
+            childStore.clearDisplayIndexes();
+        }
+        var hasDetailNode = rowNode.master && rowNode.detailNode;
+        if (hasDetailNode) {
+            rowNode.detailNode.clearRowTop();
+            rowNode.detailNode.setRowIndex();
+        }
+    };
+    BlockUtils.prototype.setDisplayIndex = function (rowNode, displayIndexSeq, nextRowTop) {
+        // set this row
+        rowNode.setRowIndex(displayIndexSeq.next());
+        rowNode.setRowTop(nextRowTop.value);
+        nextRowTop.value += rowNode.rowHeight;
+        // set child for master / detail
+        var hasDetailRow = rowNode.master;
+        if (hasDetailRow) {
+            if (rowNode.expanded && rowNode.detailNode) {
+                rowNode.detailNode.setRowIndex(displayIndexSeq.next());
+                rowNode.detailNode.setRowTop(nextRowTop.value);
+                nextRowTop.value += rowNode.detailNode.rowHeight;
             }
             else {
                 nextRowTop = this.cacheTop;
@@ -38719,34 +39828,12 @@ var ServerSideCache = /** @class */ (function (_super) {
             var rowsBetween = (pixelsBetween / this.cacheParams.rowHeight) | 0;
             result = nextRowIndex + rowsBetween;
         }
-        var lastAllowedIndex = this.getDisplayIndexEnd() - 1;
-        if (result > lastAllowedIndex) {
-            result = lastAllowedIndex;
-        }
-        //NOTE: purged
-        // this.logger.log(`getRowIndexAtPixel(${pixel}) result = ${result}`);
-        return result;
-    };
-    ServerSideCache.prototype.clearDisplayIndexes = function () {
-        var _this = this;
-        this.displayIndexStart = undefined;
-        this.displayIndexEnd = undefined;
-        this.forEachBlockInOrder(function (block) { return block.clearDisplayIndexes(_this.getVirtualRowCount()); });
-    };
-    ServerSideCache.prototype.setDisplayIndexes = function (displayIndexSeq, nextRowTop) {
-        var _this = this;
-        this.displayIndexStart = displayIndexSeq.peek();
-        this.cacheTop = nextRowTop.value;
-        var lastBlockId = -1;
-        var blockSize = this.getBlockSize();
-        this.forEachBlockInOrder(function (currentBlock, blockId) {
-            // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
-            // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
-            // the cache if any row nodes are open.
-            var blocksSkippedCount = blockId - lastBlockId - 1;
-            var rowsSkippedCount = blocksSkippedCount * blockSize;
-            if (rowsSkippedCount > 0) {
-                displayIndexSeq.skip(rowsSkippedCount);
+        // set children for SSRM child rows
+        var hasChildStore = rowNode.group && agGridCommunity._.exists(rowNode.childStore);
+        if (hasChildStore) {
+            var childStore = rowNode.childStore;
+            if (rowNode.expanded) {
+                childStore.setDisplayIndexes(displayIndexSeq, nextRowTop);
             }
             for (var i = 1; i <= blocksSkippedCount; i++) {
                 var blockToAddId = blockId - i;
@@ -38794,10 +39881,19 @@ var ServerSideCache = /** @class */ (function (_super) {
             if (currentBlock.isDisplayIndexInBlock(displayRowIndex)) {
                 block = currentBlock;
             }
-            else if (currentBlock.isBlockBefore(displayRowIndex)) {
-                // this will get assigned many times, but the last time will
-                // be the closest block to the required block that is BEFORE
-                beforeBlock = currentBlock;
+            // then check if current row contains a detail row with the index
+            var expandedMasterRow = currentRowNode.master && currentRowNode.expanded;
+            if (expandedMasterRow && currentRowNode.detailNode.rowIndex === displayRowIndex) {
+                return currentRowNode.detailNode;
+            }
+            // then check if child cache contains index
+            var childStore = currentRowNode.childStore;
+            if (currentRowNode.expanded && childStore && childStore.isDisplayIndexInStore(displayRowIndex)) {
+                return childStore.getRowUsingDisplayIndex(displayRowIndex);
+            }
+            // otherwise adjust pointers to continue searching for index
+            if (currentRowNode.rowIndex < displayRowIndex) {
+                bottomPointer = midPointer + 1;
             }
         });
         // when we are moving rows around, we don't want to trigger loads
@@ -38843,8 +39939,25 @@ var ServerSideCache = /** @class */ (function (_super) {
         }
         return block ? block.getRow(displayRowIndex) : null;
     };
-    ServerSideCache.prototype.getBlockSize = function () {
-        return this.cacheParams.blockSize ? this.cacheParams.blockSize : ServerSideBlock.DefaultBlockSize;
+    BlockUtils.prototype.extractRowBounds = function (rowNode, index) {
+        var extractRowBounds = function (currentRowNode) { return ({
+            rowHeight: currentRowNode.rowHeight,
+            rowTop: currentRowNode.rowTop
+        }); };
+        if (rowNode.rowIndex === index) {
+            return extractRowBounds(rowNode);
+        }
+        if (rowNode.group && rowNode.expanded && agGridCommunity._.exists(rowNode.childStore)) {
+            var childStore = rowNode.childStore;
+            if (childStore.isDisplayIndexInStore(index)) {
+                return childStore.getRowBounds(index);
+            }
+        }
+        else if (rowNode.master && rowNode.expanded && agGridCommunity._.exists(rowNode.detailNode)) {
+            if (rowNode.detailNode.rowIndex === index) {
+                return extractRowBounds(rowNode.detailNode);
+            }
+        }
     };
     ServerSideCache.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
         var blockSize = this.getBlockSize();
@@ -38855,60 +39968,94 @@ var ServerSideCache = /** @class */ (function (_super) {
             var rowNode = block.getRowUsingLocalIndex(topLevelIndex, true);
             return rowNode.rowIndex;
         }
-        else {
-            // otherwise we need to calculate it from the previous block
-            var blockBefore_1;
-            this.forEachBlockInOrder(function (currentBlock, currentId) {
-                if (blockId > currentId) {
-                    // this will get assigned many times, but the last time will
-                    // be the closest block to the required block that is BEFORE
-                    blockBefore_1 = currentBlock;
-                }
-            });
-            if (blockBefore_1) {
-                // note: the local index is the same as the top level index, two terms for same thing
-                //
-                // get index of the last row before this row
-                // eg if blocksize = 100, then:
-                //   last row of first block is 99 (100 * 1) -1;
-                //   last row of second block is 199 (100 * 2) -1;
-                var lastRowTopLevelIndex = (blockSize * (blockBefore_1.getBlockNumber() + 1)) - 1;
-                // get the last top level node in the block before the wanted block. this will be the last
-                // loaded displayed top level node.
-                var lastRowNode = blockBefore_1.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
-                // we want the index of the last displayed node, not just the top level node, so if the last top level node
-                // is open, we get the index of the last displayed child node.
-                var lastDisplayedNodeIndexInBlockBefore = void 0;
-                if (lastRowNode.expanded && lastRowNode.childrenCache) {
-                    var serverSideCache = lastRowNode.childrenCache;
-                    lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
-                }
-                else if (lastRowNode.expanded && lastRowNode.detailNode) {
-                    lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
-                }
-                else {
-                    lastDisplayedNodeIndexInBlockBefore = lastRowNode.rowIndex;
-                }
-                // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
-                // same as the difference between the displayed index
-                var indexDiff = topLevelIndex - lastRowTopLevelIndex;
-                return lastDisplayedNodeIndexInBlockBefore + indexDiff;
-            }
-            else {
-                return topLevelIndex;
+        // then check if current row contains a detail row with pixel in range
+        var expandedMasterRow = rowNode.master && rowNode.expanded;
+        if (expandedMasterRow && rowNode.detailNode.isPixelInRange(pixel)) {
+            return rowNode.detailNode.rowIndex;
+        }
+        // then check if it's a group row with a child cache with pixel in range
+        if (rowNode.group && rowNode.expanded && agGridCommunity._.exists(rowNode.childStore)) {
+            var childStore = rowNode.childStore;
+            if (childStore.isPixelInRange(pixel)) {
+                return childStore.getRowIndexAtPixel(pixel);
             }
         }
     };
-    ServerSideCache.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
-        var newBlock = new ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
-        this.createBean(newBlock);
-        var displayIndexSequence = new agGridCommunity.NumberSequence(displayIndex);
-        newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount(), nextRowTop);
-        this.postCreateBlock(newBlock);
-        return newBlock;
+    BlockUtils.prototype.createNodeIdPrefix = function (parentRowNode) {
+        var parts = [];
+        var rowNode = parentRowNode;
+        // pull keys from all parent nodes, but do not include the root node
+        while (rowNode && rowNode.level >= 0) {
+            parts.push(rowNode.key);
+            rowNode = rowNode.parent;
+        }
+        if (parts.length > 0) {
+            return parts.reverse().join('-');
+        }
+        else {
+            // no prefix, so node id's are left as they are
+            return undefined;
+        }
     };
-    ServerSideCache.prototype.getDisplayIndexEnd = function () {
-        return this.displayIndexEnd;
+    BlockUtils.prototype.checkOpenByDefault = function (rowNode) {
+        if (!rowNode.isExpandable()) {
+            return;
+        }
+        var userFunc = this.gridOptionsWrapper.getIsServerSideGroupOpenByDefaultFunc();
+        if (!userFunc) {
+            return;
+        }
+        var params = {
+            data: rowNode.data,
+            rowNode: rowNode
+        };
+        var userFuncRes = userFunc(params);
+        if (userFuncRes) {
+            // we do this in a timeout, so that we don't expand a row node while in the middle
+            // of setting up rows, setting up rows is complex enough without another chunk of work
+            // getting added to the call stack. this is also helpful as openByDefault may or may
+            // not happen (so makes setting up rows more deterministic by expands never happening)
+            // and also checkOpenByDefault is shard with both store types, so easier control how it
+            // impacts things by keeping it in new VM turn.
+            window.setTimeout(function () { return rowNode.setExpanded(true); }, 0);
+        }
+    };
+    __decorate$1C([
+        agGridCommunity.Autowired('valueService')
+    ], BlockUtils.prototype, "valueService", void 0);
+    __decorate$1C([
+        agGridCommunity.Autowired('columnController')
+    ], BlockUtils.prototype, "columnController", void 0);
+    __decorate$1C([
+        agGridCommunity.Autowired('ssrmNodeManager')
+    ], BlockUtils.prototype, "nodeManager", void 0);
+    __decorate$1C([
+        agGridCommunity.PostConstruct
+    ], BlockUtils.prototype, "postConstruct", null);
+    BlockUtils = __decorate$1C([
+        agGridCommunity.Bean('ssrmBlockUtils')
+    ], BlockUtils);
+    return BlockUtils;
+}(agGridCommunity.BeanStub));
+
+var __decorate$1D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var NodeManager = /** @class */ (function () {
+    function NodeManager() {
+        this.rowNodes = {};
+    }
+    NodeManager.prototype.addRowNode = function (rowNode) {
+        var id = rowNode.id;
+        if (this.rowNodes[id]) {
+            console.warn('ag-Grid: duplicate node id ' + rowNode.id);
+            console.warn('first instance', this.rowNodes[id].data);
+            console.warn('second instance', rowNode.data);
+        }
+        this.rowNodes[id] = rowNode;
     };
     ServerSideCache.prototype.isDisplayIndexInCache = function (displayIndex) {
         if (this.getVirtualRowCount() === 0) {
@@ -38916,42 +40063,53 @@ var ServerSideCache = /** @class */ (function (_super) {
         }
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     };
-    ServerSideCache.prototype.applyTransaction = function (rowDataTransaction) {
-        // if (this.isMaxRowFound() || this.getBlock()) {
-        //     return null;
-        // }
-        var res = {
-            add: [],
-            remove: [],
-            update: []
-        };
-        if (rowDataTransaction.add) {
-            rowDataTransaction.add.forEach(function (item) {
-            });
-        }
-        return res;
+    NodeManager.prototype.clear = function () {
+        this.rowNodes = {};
     };
-    ServerSideCache.prototype.getChildCache = function (keys) {
-        var _this = this;
-        if (agGridCommunity._.missingOrEmpty(keys)) {
-            return this;
+    __decorate$1D([
+        agGridCommunity.PreDestroy
+    ], NodeManager.prototype, "clear", null);
+    NodeManager = __decorate$1D([
+        agGridCommunity.Bean('ssrmNodeManager')
+    ], NodeManager);
+    return NodeManager;
+}());
+
+var __extends$2K = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$1E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var TransactionManager = /** @class */ (function (_super) {
+    __extends$2K(TransactionManager, _super);
+    function TransactionManager() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.asyncTransactions = [];
+        return _this;
+    }
+    TransactionManager.prototype.postConstruct = function () {
+        // only want to be active if SSRM active, otherwise would be interfering with other row models
+        if (!this.gridOptionsWrapper.isRowModelServerSide()) {
+            return;
         }
-        var nextKey = keys[0];
-        var nextServerSideCache = null;
-        this.forEachBlockInOrder(function (block) {
-            // callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number
-            block.forEachNodeShallow(function (rowNode) {
-                if (rowNode.key === nextKey) {
-                    nextServerSideCache = rowNode.childrenCache;
-                }
-            }, new agGridCommunity.NumberSequence(), _this.getVirtualRowCount());
-        });
-        if (nextServerSideCache) {
-            var keyListForNextLevel = keys.slice(1, keys.length);
-            return nextServerSideCache ? nextServerSideCache.getChildCache(keyListForNextLevel) : null;
-        }
-        else {
-            return null;
+    };
+    TransactionManager.prototype.applyTransactionAsync = function (transaction, callback) {
+        if (this.asyncTransactionsTimeout == null) {
+            this.scheduleExecuteAsync();
         }
     };
     ServerSideCache.prototype.isPixelInRange = function (pixel) {
@@ -38962,20 +40120,73 @@ var ServerSideCache = /** @class */ (function (_super) {
     };
     ServerSideCache.prototype.refreshCacheAfterSort = function (changedColumnsInSort, rowGroupColIds) {
         var _this = this;
-        var level = this.parentRowNode.level + 1;
-        var grouping = level < this.cacheParams.rowGroupCols.length;
-        var shouldPurgeCache;
-        if (grouping) {
-            var groupColVo = this.cacheParams.rowGroupCols[level];
-            var rowGroupBlock = rowGroupColIds.indexOf(groupColVo.id) > -1;
-            var sortingByGroup = changedColumnsInSort.indexOf(groupColVo.id) > -1;
-            shouldPurgeCache = rowGroupBlock && sortingByGroup;
+        if (!this.asyncTransactions) {
+            return;
         }
-        else {
-            shouldPurgeCache = true;
+        var resultFuncs = [];
+        var resultsForEvent = [];
+        var transactionsToRetry = [];
+        var atLeastOneTransactionApplied = false;
+        this.asyncTransactions.forEach(function (txWrapper) {
+            var result;
+            _this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, function (cache) {
+                result = cache.applyTransaction(txWrapper.transaction);
+            });
+            if (result == undefined) {
+                result = { status: agGridCommunity.ServerSideTransactionResultStatus.StoreNotFound };
+            }
+            resultsForEvent.push(result);
+            var retryTransaction = result.status == agGridCommunity.ServerSideTransactionResultStatus.StoreLoading;
+            if (retryTransaction) {
+                transactionsToRetry.push(txWrapper);
+                return;
+            }
+            if (txWrapper.callback) {
+                resultFuncs.push(function () { return txWrapper.callback(result); });
+            }
+            if (result.status === agGridCommunity.ServerSideTransactionResultStatus.Applied) {
+                atLeastOneTransactionApplied = true;
+            }
+        });
+        // do callbacks in next VM turn so it's async
+        if (resultFuncs.length > 0) {
+            window.setTimeout(function () {
+                resultFuncs.forEach(function (func) { return func(); });
+            }, 0);
         }
-        if (shouldPurgeCache) {
-            this.purgeCache();
+        this.asyncTransactionsTimeout = undefined;
+        // this will be empty list if nothing to retry
+        this.asyncTransactions = transactionsToRetry;
+        if (atLeastOneTransactionApplied) {
+            this.valueCache.onDataChanged();
+            this.eventService.dispatchEvent({ type: agGridCommunity.Events.EVENT_STORE_UPDATED });
+        }
+        if (resultsForEvent.length > 0) {
+            var event_1 = {
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                type: agGridCommunity.Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
+                results: resultsForEvent
+            };
+            this.eventService.dispatchEvent(event_1);
+        }
+    };
+    TransactionManager.prototype.flushAsyncTransactions = function () {
+        // the timeout could be missing, if we are flushing due to row data loaded
+        if (this.asyncTransactionsTimeout != null) {
+            clearTimeout(this.asyncTransactionsTimeout);
+        }
+        this.executeAsyncTransactions();
+    };
+    TransactionManager.prototype.applyTransaction = function (transaction) {
+        var res;
+        this.serverSideRowModel.executeOnStore(transaction.route, function (cache) {
+            res = cache.applyTransaction(transaction);
+        });
+        if (res) {
+            this.valueCache.onDataChanged();
+            this.eventService.dispatchEvent({ type: agGridCommunity.Events.EVENT_STORE_UPDATED });
+            return res;
         }
         else {
             this.forEachBlockInOrder(function (block) {
@@ -38991,16 +40202,25 @@ var ServerSideCache = /** @class */ (function (_super) {
             });
         }
     };
-    __decorate$1B([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ServerSideCache.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1B([
-        __param$1(0, agGridCommunity.Qualifier('loggerFactory'))
-    ], ServerSideCache.prototype, "setBeans", null);
-    return ServerSideCache;
-}(agGridCommunity.RowNodeCache));
+    __decorate$1E([
+        agGridCommunity.Autowired('rowNodeBlockLoader')
+    ], TransactionManager.prototype, "rowNodeBlockLoader", void 0);
+    __decorate$1E([
+        agGridCommunity.Autowired('valueCache')
+    ], TransactionManager.prototype, "valueCache", void 0);
+    __decorate$1E([
+        agGridCommunity.Autowired('rowModel')
+    ], TransactionManager.prototype, "serverSideRowModel", void 0);
+    __decorate$1E([
+        agGridCommunity.PostConstruct
+    ], TransactionManager.prototype, "postConstruct", null);
+    TransactionManager = __decorate$1E([
+        agGridCommunity.Bean('ssrmTransactionManager')
+    ], TransactionManager);
+    return TransactionManager;
+}(agGridCommunity.BeanStub));
 
-var __extends$2I = (undefined && undefined.__extends) || (function () {
+var __extends$2L = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -39019,12 +40239,9 @@ var __decorate$1C = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __param$2 = (undefined && undefined.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-var ServerSideRowModel = /** @class */ (function (_super) {
-    __extends$2I(ServerSideRowModel, _super);
-    function ServerSideRowModel() {
+var ExpandListener = /** @class */ (function (_super) {
+    __extends$2L(ExpandListener, _super);
+    function ExpandListener() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     // we don't implement as lazy row heights is not supported in this row model
@@ -39033,11 +40250,22 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.addEventListeners();
     };
-    ServerSideRowModel.prototype.start = function () {
-        var datasource = this.gridOptionsWrapper.getServerSideDatasource();
-        if (datasource) {
-            this.setDatasource(datasource);
+    ExpandListener.prototype.onRowGroupOpened = function (event) {
+        var rowNode = event.node;
+        if (rowNode.expanded) {
+            if (rowNode.master) {
+                this.createDetailNode(rowNode);
+            }
+            else if (agGridCommunity._.missing(rowNode.childStore)) {
+                var storeParams = this.serverSideRowModel.getParams();
+                rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
+            }
         }
+        else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && agGridCommunity._.exists(rowNode.childStore)) {
+            rowNode.childStore = this.destroyBean(rowNode.childStore);
+        }
+        var storeUpdatedEvent = { type: agGridCommunity.Events.EVENT_STORE_UPDATED };
+        this.eventService.dispatchEvent(storeUpdatedEvent);
     };
     ServerSideRowModel.prototype.destroyDatasource = function () {
         if (!this.datasource) {
@@ -39049,66 +40277,106 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.rowRenderer.datasourceChanged();
         this.datasource = undefined;
     };
-    ServerSideRowModel.prototype.setBeans = function (loggerFactory) {
-        this.logger = loggerFactory.create('ServerSideRowModel');
+    __decorate$1F([
+        agGridCommunity.Autowired('rowModel')
+    ], ExpandListener.prototype, "serverSideRowModel", void 0);
+    __decorate$1F([
+        agGridCommunity.Autowired('ssrmStoreFactory')
+    ], ExpandListener.prototype, "storeFactory", void 0);
+    __decorate$1F([
+        agGridCommunity.PostConstruct
+    ], ExpandListener.prototype, "postConstruct", null);
+    ExpandListener = __decorate$1F([
+        agGridCommunity.Bean('ssrmExpandListener')
+    ], ExpandListener);
+    return ExpandListener;
+}(agGridCommunity.BeanStub));
+
+var __extends$2M = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
     };
     ServerSideRowModel.prototype.applyTransaction = function (rowDataTransaction, route) {
         this.executeOnCache(route, function (cache) {
             cache.applyTransaction(rowDataTransaction);
         });
     };
-    ServerSideRowModel.prototype.addEventListeners = function () {
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-    };
-    ServerSideRowModel.prototype.setDatasource = function (datasource) {
-        this.destroyDatasource();
-        this.datasource = datasource;
-        this.reset();
-    };
-    ServerSideRowModel.prototype.isLastRowFound = function () {
-        if (this.cacheExists()) {
-            return this.rootNode.childrenCache.isMaxRowFound();
-        }
-        return false;
-    };
-    ServerSideRowModel.prototype.onColumnEverything = function () {
-        // this is a hack for one customer only, so they can suppress the resetting of the columns.
-        // The problem the customer had was they were api.setColumnDefs() after the data source came
-        // back with data. So this stops the reload from the grid after the data comes back.
-        // Once we have "AG-1591 Allow delta changes to columns" fixed, then this hack can be taken out.
-        if (this.gridOptionsWrapper.isSuppressEnterpriseResetOnNewColumns()) {
+})();
+var __decorate$1G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var SortListener = /** @class */ (function (_super) {
+    __extends$2M(SortListener, _super);
+    function SortListener() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    SortListener.prototype.postConstruct = function () {
+        // only want to be active if SSRM active, otherwise would be interfering with other row models
+        if (!this.gridOptionsWrapper.isRowModelServerSide()) {
             return;
         }
-        // every other customer can continue as normal and have it working!!!
-        // check if anything pertaining to fetching data has changed, and if it has, reset, but if
-        // it has not, don't reset
-        var resetRequired;
-        if (!this.cacheParams) {
-            resetRequired = true;
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+    };
+    SortListener.prototype.extractSortModel = function () {
+        var sortModel = this.sortController.getSortModel();
+        // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
+        // into it's constitute group columns as they are not defined up front and can vary per node.
+        if (this.gridOptionsWrapper.isTreeData()) {
+            return sortModel;
         }
-        else {
-            var rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
-            var valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
-            var pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
-            var sortModelDifferent = !agGridCommunity._.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
-            var rowGroupDifferent = !agGridCommunity._.jsonEquals(this.cacheParams.rowGroupCols, rowGroupColumnVos);
-            var pivotDifferent = !agGridCommunity._.jsonEquals(this.cacheParams.pivotCols, pivotColumnVos);
-            var valuesDifferent = !agGridCommunity._.jsonEquals(this.cacheParams.valueCols, valueColumnVos);
-            resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
-        }
-        if (resetRequired) {
-            this.reset();
+        // it autoCol is active, we don't want to send this to the server. instead we want to
+        // send the
+        this.replaceAutoGroupColumnWithActualRowGroupColumns(sortModel);
+        this.removeMultiColumnPrefixOnColumnIds(sortModel);
+        return sortModel;
+    };
+    SortListener.prototype.removeMultiColumnPrefixOnColumnIds = function (sortModel) {
+        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
+            var multiColumnPrefix = agGridCommunity.Constants.GROUP_AUTO_COLUMN_ID + "-";
+            for (var i = 0; i < sortModel.length; ++i) {
+                if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
+                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
+                }
+            }
         }
     };
-    ServerSideRowModel.prototype.onFilterChanged = function () {
-        this.reset();
+    SortListener.prototype.replaceAutoGroupColumnWithActualRowGroupColumns = function (sortModel) {
+        // find index of auto group column in sort model
+        var autoGroupSortModel = agGridCommunity._.find(sortModel, function (sm) { return sm.colId == agGridCommunity.Constants.GROUP_AUTO_COLUMN_ID; });
+        // replace auto column with individual group columns
+        if (autoGroupSortModel) {
+            // remove auto group column
+            var autoGroupIndex = sortModel.indexOf(autoGroupSortModel);
+            agGridCommunity._.removeFromArray(sortModel, autoGroupSortModel);
+            var isNotInSortModel = function (col) { return sortModel.filter(function (sm) { return sm.colId === col.getColId(); }).length == 0; };
+            var mapColumnToSortModel = function (col) { return ({ colId: col.getId(), sort: autoGroupSortModel.sort }); };
+            var newModels = this.columnController.getRowGroupColumns()
+                .filter(isNotInSortModel)
+                .map(mapColumnToSortModel);
+            agGridCommunity._.insertArrayIntoArray(sortModel, newModels, autoGroupIndex);
+        }
+    };
+    SortListener.prototype.onSortChanged = function () {
+        var storeParams = this.serverSideRowModel.getParams();
+        var newSortModel = this.extractSortModel();
+        var oldSortModel = storeParams.sortModel;
+        var changedColumns = this.findChangedColumnsInSort(newSortModel, oldSortModel);
+        var valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
+        var secondaryColChanged = this.listenerUtils.isSortingWithSecondaryColumn(changedColumns);
+        var alwaysReset = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
+        var params = {
+            valueColChanged: valueColChanged,
+            secondaryColChanged: secondaryColChanged,
+            alwaysReset: alwaysReset,
+            changedColumns: changedColumns
+        };
+        this.serverSideRowModel.refreshAfterSort(newSortModel, params);
     };
     // returns back all the cols that were effected by the sorting. eg if we were sorting by col A,
     // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
@@ -39138,311 +40406,728 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
         });
     };
-    ServerSideRowModel.prototype.onSortChanged = function () {
-        if (!this.cacheExists()) {
+    __decorate$1G([
+        agGridCommunity.Autowired('sortController')
+    ], SortListener.prototype, "sortController", void 0);
+    __decorate$1G([
+        agGridCommunity.Autowired('columnController')
+    ], SortListener.prototype, "columnController", void 0);
+    __decorate$1G([
+        agGridCommunity.Autowired('rowModel')
+    ], SortListener.prototype, "serverSideRowModel", void 0);
+    __decorate$1G([
+        agGridCommunity.Autowired('ssrmListenerUtils')
+    ], SortListener.prototype, "listenerUtils", void 0);
+    __decorate$1G([
+        agGridCommunity.PostConstruct
+    ], SortListener.prototype, "postConstruct", null);
+    SortListener = __decorate$1G([
+        agGridCommunity.Bean('ssrmSortService')
+    ], SortListener);
+    return SortListener;
+}(agGridCommunity.BeanStub));
+
+var __extends$2N = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$1H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var FilterListener = /** @class */ (function (_super) {
+    __extends$2N(FilterListener, _super);
+    function FilterListener() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    FilterListener.prototype.postConstruct = function () {
+        // only want to be active if SSRM active, otherwise would be interfering with other row models
+        if (!this.gridOptionsWrapper.isRowModelServerSide()) {
             return;
         }
-        var newSortModel = this.extractSortModel();
-        var oldSortModel = this.cacheParams.sortModel;
-        var changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
-        this.cacheParams.sortModel = newSortModel;
-        var rowGroupColIds = this.columnController.getRowGroupColumns().map(function (col) { return col.getId(); });
-        var serverSideCache = this.rootNode.childrenCache;
-        var sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
-        var sortingWithSecondaryCol = this.isSortingWithSecondaryColumn(changedColumnsInSort);
-        var sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-        if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
-            this.reset();
-        }
-        else {
-            serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
-        }
+        this.addManagedListener(this.eventService, agGridCommunity.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
     };
-    ServerSideRowModel.prototype.onValueChanged = function () {
-        this.reset();
-    };
-    ServerSideRowModel.prototype.onColumnRowGroupChanged = function () {
-        this.reset();
-    };
-    ServerSideRowModel.prototype.onColumnPivotChanged = function () {
-        this.reset();
-    };
-    ServerSideRowModel.prototype.onPivotModeChanged = function () {
-        this.reset();
-    };
-    ServerSideRowModel.prototype.onRowGroupOpened = function (event) {
-        var _this = this;
-        var rowNode = event.node;
-        if (rowNode.expanded) {
-            if (rowNode.master) {
-                this.createDetailNode(rowNode);
-            }
-            else if (agGridCommunity._.missing(rowNode.childrenCache)) {
-                this.createNodeCache(rowNode);
-            }
-        }
-        else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && agGridCommunity._.exists(rowNode.childrenCache)) {
-            rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);
-        }
-        var shouldAnimate = function () {
-            var rowAnimationEnabled = _this.gridOptionsWrapper.isAnimateRows();
-            if (rowNode.master) {
-                return rowAnimationEnabled && rowNode.expanded;
-            }
-            return rowAnimationEnabled;
-        };
-        this.updateRowIndexesAndBounds();
-        var modelUpdatedEvent = {
-            type: agGridCommunity.Events.EVENT_MODEL_UPDATED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            newPage: false,
-            newData: false,
-            animate: shouldAnimate(),
-            keepRenderedRows: true
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
-    };
-    ServerSideRowModel.prototype.reset = function () {
-        this.rootNode = new agGridCommunity.RowNode();
-        this.rootNode.group = true;
-        this.rootNode.level = -1;
-        this.createBean(this.rootNode);
-        if (this.datasource) {
-            this.createNewRowNodeBlockLoader();
-            this.cacheParams = this.createCacheParams();
-            this.createNodeCache(this.rootNode);
-            this.updateRowIndexesAndBounds();
-        }
-        // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
-        var rowDataChangedEvent = {
-            type: agGridCommunity.Events.EVENT_ROW_DATA_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        this.eventService.dispatchEvent(rowDataChangedEvent);
-        // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
-        // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
-        // to treat the rows as new rows, as it's all new data
-        var modelUpdatedEvent = {
-            type: agGridCommunity.Events.EVENT_MODEL_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            animate: false,
-            keepRenderedRows: false,
-            newData: false,
-            newPage: false
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
-    };
-    ServerSideRowModel.prototype.createNewRowNodeBlockLoader = function () {
-        this.destroyRowNodeBlockLoader();
-        var maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        var blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
-        this.rowNodeBlockLoader = new agGridCommunity.RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.createBean(this.rowNodeBlockLoader);
-    };
-    ServerSideRowModel.prototype.destroyRowNodeBlockLoader = function () {
-        if (this.rowNodeBlockLoader) {
-            this.destroyBean(this.rowNodeBlockLoader);
-            this.rowNodeBlockLoader = undefined;
-        }
-    };
-    ServerSideRowModel.prototype.toValueObjects = function (columns) {
-        var _this = this;
-        return columns.map(function (col) { return ({
-            id: col.getId(),
-            aggFunc: col.getAggFunc(),
-            displayName: _this.columnController.getDisplayNameForColumn(col, 'model'),
-            field: col.getColDef().field
-        }); });
-    };
-    ServerSideRowModel.prototype.createCacheParams = function () {
-        var rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
-        var valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
-        var pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
-        var dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
-        var maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
-        if (dynamicRowHeight && maxBlocksInCache >= 0) {
-            console.warn('ag-Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
-                'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
-            maxBlocksInCache = undefined;
-        }
-        if (maxBlocksInCache >= 0 && this.columnController.isAutoRowHeightActive()) {
-            console.warn('ag-Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
-                'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
-            maxBlocksInCache = undefined;
-        }
-        var userProvidedBlockSize = this.gridOptionsWrapper.getCacheBlockSize();
-        var blockSize;
-        if (typeof userProvidedBlockSize == 'number' && userProvidedBlockSize > 0) {
-            blockSize = userProvidedBlockSize;
-        }
-        else {
-            blockSize = ServerSideBlock.DefaultBlockSize;
-        }
+    FilterListener.prototype.onFilterChanged = function () {
+        var newModel = this.filterManager.getFilterModel();
+        var storeParams = this.serverSideRowModel.getParams();
+        var oldModel = storeParams.filterModel;
+        var changedColumns = this.findChangedColumns(newModel, oldModel);
+        var valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
+        var secondaryColChanged = this.listenerUtils.isSortingWithSecondaryColumn(changedColumns);
+        var alwaysReset = this.gridOptionsWrapper.isServerSideFilteringAlwaysResets();
         var params = {
-            // the columns the user has grouped and aggregated by
-            valueCols: valueColumnVos,
-            rowGroupCols: rowGroupColumnVos,
-            pivotCols: pivotColumnVos,
-            pivotMode: this.columnController.isPivotMode(),
-            // sort and filter model
-            filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.extractSortModel(),
-            rowNodeBlockLoader: this.rowNodeBlockLoader,
-            datasource: this.datasource,
-            lastAccessedSequence: new agGridCommunity.NumberSequence(),
-            overflowSize: 1,
-            initialRowCount: 1,
-            maxBlocksInCache: maxBlocksInCache,
-            blockSize: blockSize,
-            rowHeight: this.rowHeight,
-            dynamicRowHeight: dynamicRowHeight
+            valueColChanged: valueColChanged,
+            secondaryColChanged: secondaryColChanged,
+            alwaysReset: alwaysReset,
+            changedColumns: changedColumns
         };
-        return params;
+        this.serverSideRowModel.refreshAfterFilter(newModel, params);
     };
-    ServerSideRowModel.prototype.createNodeCache = function (rowNode) {
-        var cache = new ServerSideCache(this.cacheParams, rowNode);
-        this.getContext().createBean(cache);
-        cache.addEventListener(agGridCommunity.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
-        rowNode.childrenCache = cache;
-    };
-    ServerSideRowModel.prototype.onCacheUpdated = function () {
-        this.updateRowIndexesAndBounds();
-        var modelUpdatedEvent = {
-            type: agGridCommunity.Events.EVENT_MODEL_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            animate: this.gridOptionsWrapper.isAnimateRows(),
-            keepRenderedRows: true,
-            newPage: false,
-            newData: false
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
-    };
-    ServerSideRowModel.prototype.onRowHeightChanged = function () {
-        this.updateRowIndexesAndBounds();
-        var modelUpdatedEvent = {
-            type: agGridCommunity.Events.EVENT_MODEL_UPDATED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            newPage: false,
-            newData: false,
-            animate: true,
-            keepRenderedRows: true
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
-    };
-    ServerSideRowModel.prototype.updateRowIndexesAndBounds = function () {
-        if (this.cacheExists()) {
-            // NOTE: should not be casting here, the RowModel should use IServerSideRowModel interface?
-            var serverSideCache = this.rootNode.childrenCache;
-            this.resetRowTops(serverSideCache);
-            this.setDisplayIndexes(serverSideCache);
-        }
-    };
-    ServerSideRowModel.prototype.setDisplayIndexes = function (cache) {
-        var numberSequence = new agGridCommunity.NumberSequence();
-        var nextRowTop = { value: 0 };
-        cache.setDisplayIndexes(numberSequence, nextRowTop);
-    };
-    // resetting row tops is needed for animation, as part of the operation is saving the old location,
-    // which is needed for rows that are transitioning in
-    ServerSideRowModel.prototype.resetRowTops = function (cache) {
-        var numberSequence = new agGridCommunity.NumberSequence();
-        cache.forEachNodeDeep(function (rowNode) { return rowNode.clearRowTop(); }, numberSequence);
-    };
-    ServerSideRowModel.prototype.getRow = function (index) {
-        if (this.cacheExists()) {
-            return this.rootNode.childrenCache.getRow(index);
-        }
-        return null;
-    };
-    ServerSideRowModel.prototype.getRowCount = function () {
-        if (!this.cacheExists()) {
-            return 1;
-        }
-        var serverSideCache = this.rootNode.childrenCache;
-        var res = serverSideCache.getDisplayIndexEnd();
+    FilterListener.prototype.findChangedColumns = function (oldModel, newModel) {
+        var allColKeysMap = {};
+        Object.keys(oldModel).forEach(function (key) { return allColKeysMap[key] = true; });
+        Object.keys(newModel).forEach(function (key) { return allColKeysMap[key] = true; });
+        var res = [];
+        Object.keys(allColKeysMap).forEach(function (key) {
+            var oldJson = JSON.stringify(oldModel[key]);
+            var newJson = JSON.stringify(newModel[key]);
+            var filterChanged = oldJson != newJson;
+            if (filterChanged) {
+                res.push(key);
+            }
+        });
         return res;
     };
-    ServerSideRowModel.prototype.getTopLevelRowCount = function () {
-        if (!this.cacheExists()) {
-            return 1;
-        }
-        var serverSideCache = this.rootNode.childrenCache;
-        return serverSideCache.getVirtualRowCount();
+    __decorate$1H([
+        agGridCommunity.Autowired('rowModel')
+    ], FilterListener.prototype, "serverSideRowModel", void 0);
+    __decorate$1H([
+        agGridCommunity.Autowired('filterManager')
+    ], FilterListener.prototype, "filterManager", void 0);
+    __decorate$1H([
+        agGridCommunity.Autowired('ssrmListenerUtils')
+    ], FilterListener.prototype, "listenerUtils", void 0);
+    __decorate$1H([
+        agGridCommunity.PostConstruct
+    ], FilterListener.prototype, "postConstruct", null);
+    FilterListener = __decorate$1H([
+        agGridCommunity.Bean('ssrmFilterListener')
+    ], FilterListener);
+    return FilterListener;
+}(agGridCommunity.BeanStub));
+
+var __extends$2O = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
     };
-    ServerSideRowModel.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
-        if (!this.cacheExists()) {
-            return topLevelIndex;
-        }
-        var serverSideCache = this.rootNode.childrenCache;
-        return serverSideCache.getTopLevelRowDisplayedIndex(topLevelIndex);
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    ServerSideRowModel.prototype.getRowBounds = function (index) {
-        if (!this.cacheExists()) {
-            return {
-                rowTop: 0,
-                rowHeight: this.rowHeight
-            };
+})();
+var __decorate$1I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param$1 = (undefined && undefined.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var PartialStoreBlock = /** @class */ (function (_super) {
+    __extends$2O(PartialStoreBlock, _super);
+    function PartialStoreBlock(blockNumber, parentRowNode, ssrmParams, storeParams, parentStore) {
+        var _this = _super.call(this, blockNumber) || this;
+        _this.ssrmParams = ssrmParams;
+        _this.storeParams = storeParams;
+        _this.parentRowNode = parentRowNode;
+        // we don't need to calculate these now, as the inputs don't change,
+        // however it makes the code easier to read if we work them out up front
+        _this.startRow = blockNumber * storeParams.cacheBlockSize;
+        _this.parentStore = parentStore;
+        _this.level = parentRowNode.level + 1;
+        _this.groupLevel = ssrmParams.rowGroupCols ? _this.level < ssrmParams.rowGroupCols.length : undefined;
+        _this.leafGroup = ssrmParams.rowGroupCols ? _this.level === ssrmParams.rowGroupCols.length - 1 : false;
+        return _this;
+    }
+    PartialStoreBlock.prototype.postConstruct = function () {
+        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+        this.defaultRowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+        if (!this.usingTreeData && this.groupLevel) {
+            var groupColVo = this.ssrmParams.rowGroupCols[this.level];
+            this.groupField = groupColVo.field;
+            this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
         }
-        var serverSideCache = this.rootNode.childrenCache;
-        return serverSideCache.getRowBounds(index);
+        this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
+        this.setData([]);
     };
-    ServerSideRowModel.prototype.getRowIndexAtPixel = function (pixel) {
-        if (pixel === 0) {
-            return 0;
+    PartialStoreBlock.prototype.isDisplayIndexInBlock = function (displayIndex) {
+        return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
+    };
+    PartialStoreBlock.prototype.isBlockBefore = function (displayIndex) {
+        return displayIndex >= this.displayIndexEnd;
+    };
+    PartialStoreBlock.prototype.getDisplayIndexStart = function () {
+        return this.displayIndexStart;
+    };
+    PartialStoreBlock.prototype.getDisplayIndexEnd = function () {
+        return this.displayIndexEnd;
+    };
+    PartialStoreBlock.prototype.getBlockHeightPx = function () {
+        return this.blockHeightPx;
+    };
+    PartialStoreBlock.prototype.getBlockTopPx = function () {
+        return this.blockTopPx;
+    };
+    PartialStoreBlock.prototype.isGroupLevel = function () {
+        return this.groupLevel;
+    };
+    PartialStoreBlock.prototype.getGroupField = function () {
+        return this.groupField;
+    };
+    PartialStoreBlock.prototype.prefixId = function (id) {
+        if (this.nodeIdPrefix) {
+            return this.nodeIdPrefix + '-' + id;
         }
-        if (!this.cacheExists()) {
-            return 0;
+        else {
+            return id.toString();
+        }
+    };
+    PartialStoreBlock.prototype.getBlockStateJson = function () {
+        return {
+            id: this.prefixId(this.getId()),
+            state: {
+                blockNumber: this.getId(),
+                startRow: this.startRow,
+                endRow: this.startRow + this.storeParams.cacheBlockSize,
+                pageStatus: this.getState()
+            }
+        };
+    };
+    PartialStoreBlock.prototype.isAnyNodeOpen = function () {
+        var openNodeCount = this.rowNodes.filter(function (node) { return node.expanded; }).length;
+        return openNodeCount > 0;
+    };
+    // this method is repeated, see forEachRowNode, why?
+    PartialStoreBlock.prototype.forEachNode = function (callback, sequence, includeChildren) {
+        if (sequence === void 0) { sequence = new agGridCommunity.NumberSequence(); }
+        this.rowNodes.forEach(function (rowNode) {
+            callback(rowNode, sequence.next());
+            // this will only every happen for server side row model, as infinite
+            // row model doesn't have groups
+            if (includeChildren && rowNode.childStore) {
+                var childStore = rowNode.childStore;
+                childStore.forEachNodeDeep(callback, sequence);
+            }
+        });
+    };
+    PartialStoreBlock.prototype.forEachNodeDeep = function (callback, sequence) {
+        this.forEachNode(callback, sequence, true);
+    };
+    PartialStoreBlock.prototype.forEachNodeShallow = function (callback, sequence) {
+        this.forEachNode(callback, sequence, false);
+    };
+    PartialStoreBlock.prototype.getLastAccessed = function () {
+        return this.lastAccessed;
+    };
+    PartialStoreBlock.prototype.getRowUsingLocalIndex = function (rowIndex) {
+        return this.rowNodes[rowIndex - this.startRow];
+    };
+    PartialStoreBlock.prototype.touchLastAccessed = function () {
+        this.lastAccessed = this.ssrmParams.lastAccessedSequence.next();
+    };
+    PartialStoreBlock.prototype.processServerFail = function () {
+        this.parentStore.onBlockLoadFailed(this);
+    };
+    PartialStoreBlock.prototype.retryLoads = function () {
+        if (this.getState() === agGridCommunity.RowNodeBlock.STATE_FAILED) {
+            this.setStateWaitingToLoad();
+            this.rowNodeBlockLoader.checkBlockToLoad();
+            this.setData();
+        }
+        this.forEachNodeShallow(function (node) {
+            if (node.childStore) {
+                node.childStore.retryLoads();
+            }
+        });
+    };
+    PartialStoreBlock.prototype.processServerResult = function (params) {
+        this.parentStore.onBlockLoaded(this, params);
+    };
+    PartialStoreBlock.prototype.setData = function (rows, failedLoad) {
+        if (rows === void 0) { rows = []; }
+        if (failedLoad === void 0) { failedLoad = false; }
+        this.destroyRowNodes();
+        var storeRowCount = this.parentStore.getRowCount();
+        var startRow = this.getId() * this.storeParams.cacheBlockSize;
+        var endRow = Math.min(startRow + this.storeParams.cacheBlockSize, storeRowCount);
+        var rowsToCreate = endRow - startRow;
+        for (var i = 0; i < rowsToCreate; i++) {
+            var rowNode = this.blockUtils.createRowNode({ field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
+                level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn });
+            var dataLoadedForThisRow = i < rows.length;
+            if (dataLoadedForThisRow) {
+                var data = rows[i];
+                var defaultId = this.prefixId(this.startRow + i);
+                this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+                var newId = rowNode.id;
+                this.parentStore.removeDuplicateNode(newId);
+                this.nodeManager.addRowNode(rowNode);
+                this.allNodesMap[rowNode.id] = rowNode;
+            }
+            this.rowNodes.push(rowNode);
+            if (failedLoad) {
+                rowNode.failedLoad = true;
+            }
+        }
+    };
+    // to safeguard the grid against duplicate nodes, when a row is loaded, we check
+    // for another row in the same cache. if another row does exist, we delete it.
+    // this covers for when user refreshes the store (which typically happens after a
+    // data change) and the same row ends up coming back in a different block, and the
+    // new block finishes refreshing before the old block has finished refreshing.
+    PartialStoreBlock.prototype.removeDuplicateNode = function (id) {
+        var rowNode = this.allNodesMap[id];
+        if (!rowNode) {
+            return;
+        }
+        this.blockUtils.destroyRowNode(rowNode);
+        var index = this.rowNodes.indexOf(rowNode);
+        var stubRowNode = this.blockUtils.createRowNode({ field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
+            level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn });
+        this.rowNodes[index] = stubRowNode;
+    };
+    PartialStoreBlock.prototype.refresh = function () {
+        if (this.getState() !== agGridCommunity.RowNodeBlock.STATE_WAITING_TO_LOAD) {
+            this.setStateWaitingToLoad();
+        }
+    };
+    PartialStoreBlock.prototype.destroyRowNodes = function () {
+        this.blockUtils.destroyRowNodes(this.rowNodes);
+        this.rowNodes = [];
+        this.allNodesMap = {};
+    };
+    PartialStoreBlock.prototype.setBeans = function (loggerFactory) {
+        this.logger = loggerFactory.create('ServerSideBlock');
+    };
+    PartialStoreBlock.prototype.getRowUsingDisplayIndex = function (displayRowIndex) {
+        this.touchLastAccessed();
+        var res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, this.rowNodes);
+        return res;
+    };
+    PartialStoreBlock.prototype.loadFromDatasource = function () {
+        this.cacheUtils.loadFromDatasource({
+            startRow: this.startRow,
+            endRow: this.startRow + this.storeParams.cacheBlockSize,
+            parentNode: this.parentRowNode,
+            storeParams: this.ssrmParams,
+            successCallback: this.pageLoaded.bind(this, this.getVersion()),
+            success: this.success.bind(this, this.getVersion()),
+            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
+            fail: this.pageLoadFailed.bind(this, this.getVersion())
+        });
+    };
+    PartialStoreBlock.prototype.isPixelInRange = function (pixel) {
+        return pixel >= this.blockTopPx && pixel < (this.blockTopPx + this.blockHeightPx);
+    };
+    PartialStoreBlock.prototype.getRowBounds = function (index) {
+        var _this = this;
+        this.touchLastAccessed();
+        var res;
+        agGridCommunity._.find(this.rowNodes, function (rowNode) {
+            res = _this.blockUtils.extractRowBounds(rowNode, index);
+            return res != null;
+        });
+        return res;
+    };
+    PartialStoreBlock.prototype.getRowIndexAtPixel = function (pixel) {
+        var _this = this;
+        this.touchLastAccessed();
+        var res;
+        agGridCommunity._.find(this.rowNodes, function (rowNode) {
+            res = _this.blockUtils.getIndexAtPixel(rowNode, pixel);
+            return res != null;
+        });
+        return res;
+    };
+    PartialStoreBlock.prototype.clearDisplayIndexes = function () {
+        var _this = this;
+        this.displayIndexEnd = undefined;
+        this.displayIndexStart = undefined;
+        this.rowNodes.forEach(function (rowNode) { return _this.blockUtils.clearDisplayIndex(rowNode); });
+    };
+    PartialStoreBlock.prototype.setDisplayIndexes = function (displayIndexSeq, nextRowTop) {
+        var _this = this;
+        this.displayIndexStart = displayIndexSeq.peek();
+        this.blockTopPx = nextRowTop.value;
+        this.rowNodes.forEach(function (rowNode) { return _this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop); });
+        this.displayIndexEnd = displayIndexSeq.peek();
+        this.blockHeightPx = nextRowTop.value - this.blockTopPx;
+    };
+    __decorate$1I([
+        agGridCommunity.Autowired('rowRenderer')
+    ], PartialStoreBlock.prototype, "rowRenderer", void 0);
+    __decorate$1I([
+        agGridCommunity.Autowired('columnController')
+    ], PartialStoreBlock.prototype, "columnController", void 0);
+    __decorate$1I([
+        agGridCommunity.Autowired('valueService')
+    ], PartialStoreBlock.prototype, "valueService", void 0);
+    __decorate$1I([
+        agGridCommunity.Autowired('columnApi')
+    ], PartialStoreBlock.prototype, "columnApi", void 0);
+    __decorate$1I([
+        agGridCommunity.Autowired('gridApi')
+    ], PartialStoreBlock.prototype, "gridApi", void 0);
+    __decorate$1I([
+        agGridCommunity.Autowired('ssrmCacheUtils')
+    ], PartialStoreBlock.prototype, "cacheUtils", void 0);
+    __decorate$1I([
+        agGridCommunity.Autowired('ssrmBlockUtils')
+    ], PartialStoreBlock.prototype, "blockUtils", void 0);
+    __decorate$1I([
+        agGridCommunity.Autowired('ssrmNodeManager')
+    ], PartialStoreBlock.prototype, "nodeManager", void 0);
+    __decorate$1I([
+        agGridCommunity.Autowired('rowNodeBlockLoader')
+    ], PartialStoreBlock.prototype, "rowNodeBlockLoader", void 0);
+    __decorate$1I([
+        agGridCommunity.PostConstruct
+    ], PartialStoreBlock.prototype, "postConstruct", null);
+    __decorate$1I([
+        agGridCommunity.PreDestroy
+    ], PartialStoreBlock.prototype, "destroyRowNodes", null);
+    __decorate$1I([
+        __param$1(0, agGridCommunity.Qualifier('loggerFactory'))
+    ], PartialStoreBlock.prototype, "setBeans", null);
+    return PartialStoreBlock;
+}(agGridCommunity.RowNodeBlock));
+
+var __extends$2P = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$1J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param$2 = (undefined && undefined.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var FindResult;
+(function (FindResult) {
+    FindResult[FindResult["FOUND"] = 0] = "FOUND";
+    FindResult[FindResult["CONTINUE_FIND"] = 1] = "CONTINUE_FIND";
+    FindResult[FindResult["BREAK_FIND"] = 2] = "BREAK_FIND";
+})(FindResult || (FindResult = {}));
+var PartialStore = /** @class */ (function (_super) {
+    __extends$2P(PartialStore, _super);
+    function PartialStore(ssrmParams, storeParams, parentRowNode) {
+        var _this = _super.call(this) || this;
+        _this.blocks = {};
+        _this.blockHeights = {};
+        _this.blockCount = 0;
+        _this.lastRowIndexKnown = false;
+        // this will always be zero for the top level cache only,
+        // all the other ones change as the groups open and close
+        _this.displayIndexStart = 0;
+        _this.displayIndexEnd = 0; // not sure if setting this one to zero is necessary
+        _this.cacheTopPixel = 0;
+        _this.info = {};
+        _this.ssrmParams = ssrmParams;
+        _this.storeParams = storeParams;
+        _this.parentRowNode = parentRowNode;
+        _this.rowCount = PartialStore.INITIAL_ROW_COUNT;
+        return _this;
+    }
+    PartialStore.prototype.postConstruct = function () {
+        this.defaultRowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+    };
+    PartialStore.prototype.destroyAllBlocks = function () {
+        var _this = this;
+        this.getBlocksInOrder().forEach(function (block) { return _this.destroyBlock(block); });
+    };
+    PartialStore.prototype.setBeans = function (loggerFactory) {
+        this.logger = loggerFactory.create('ServerSideCache');
+    };
+    PartialStore.prototype.getRowCount = function () {
+        return this.rowCount;
+    };
+    PartialStore.prototype.isLastRowIndexKnown = function () {
+        return this.lastRowIndexKnown;
+    };
+    PartialStore.prototype.retryLoads = function () {
+        this.getBlocksInOrder().forEach(function (block) { return block.retryLoads(); });
+    };
+    PartialStore.prototype.onBlockLoadFailed = function (block) {
+        block.setData([], true);
+        this.fireCacheUpdatedEvent();
+    };
+    PartialStore.prototype.onBlockLoaded = function (block, params) {
+        this.logger.log("onPageLoaded: page = " + block.getId() + ", lastRow = " + params.rowCount);
+        if (params.storeInfo) {
+            agGridCommunity._.assign(this.info, params.storeInfo);
+        }
+        if (!params.rowData) {
+            var message_1 = 'ag-Grid: "params.rowData" is missing from Server-Side Row Model success() callback. Please use the "rowData" attribute. If no data is returned, set an empty list.';
+            agGridCommunity._.doOnce(function () { return console.warn(message_1, params); }, 'InfiniteStore.noData');
+        }
+        var finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
+        // if we are not active, then we ignore all events, otherwise we could end up getting the
+        // grid to refresh even though we are no longer the active cache
+        if (!this.isAlive()) {
+            return;
+        }
+        this.checkRowCount(block, finalRowCount);
+        block.setData(params.rowData);
+        // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
+        // in the valid range. so we must remove these. this can happen if the datasource returns a
+        // result and sets lastRow to something less than virtualRowCount (can happen if user scrolls
+        // down, server reduces dataset size).
+        this.destroyAllBlocksPastVirtualRowCount();
+        this.fireCacheUpdatedEvent();
+    };
+    PartialStore.prototype.purgeBlocksIfNeeded = function (blockToExclude) {
+        var _this = this;
+        // we exclude checking for the page just created, as this has yet to be accessed and hence
+        // the lastAccessed stamp will not be updated for the first time yet
+        var blocksForPurging = this.getBlocksInOrder().filter(function (b) { return b != blockToExclude; });
+        var lastAccessedComparator = function (a, b) { return b.getLastAccessed() - a.getLastAccessed(); };
+        blocksForPurging.sort(lastAccessedComparator);
+        // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
+        // in other words, after the splice operation below, we have taken out the blocks
+        // we want to keep, which means we are left with blocks that we can potentially purge
+        var maxBlocksProvided = this.storeParams.maxBlocksInCache > 0;
+        var blocksToKeep = maxBlocksProvided ? this.storeParams.maxBlocksInCache - 1 : null;
+        var emptyBlocksToKeep = PartialStore.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
+        blocksForPurging.forEach(function (block, index) {
+            var purgeBecauseBlockEmpty = block.getState() === PartialStoreBlock.STATE_WAITING_TO_LOAD && index >= emptyBlocksToKeep;
+            var purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep : false;
+            if (purgeBecauseBlockEmpty || purgeBecauseCacheFull) {
+                // we never purge blocks if they are open, as purging them would mess up with
+                // our indexes, it would be very messy to restore the purged block to it's
+                // previous state if it had open children.
+                if (block.isAnyNodeOpen()) {
+                    return;
+                }
+                // if the block currently has rows been displayed, then don't remove it either.
+                // this can happen if user has maxBlocks=2, and blockSize=5 (thus 10 max rows in cache)
+                // but the screen is showing 20 rows, so at least 4 blocks are needed.
+                if (_this.isBlockCurrentlyDisplayed(block)) {
+                    return;
+                }
+                // at this point, block is not needed, and no open nodes, so burn baby burn
+                _this.destroyBlock(block);
+            }
+        });
+    };
+    PartialStore.prototype.isBlockCurrentlyDisplayed = function (block) {
+        var startIndex = block.getDisplayIndexStart();
+        var endIndex = block.getDisplayIndexEnd() - 1;
+        return this.rowRenderer.isRangeInRenderedViewport(startIndex, endIndex);
+    };
+    PartialStore.prototype.removeDuplicateNode = function (id) {
+        this.getBlocksInOrder().forEach(function (block) { return block.removeDuplicateNode(id); });
+    };
+    PartialStore.prototype.checkRowCount = function (block, lastRow) {
+        // if client provided a last row, we always use it, as it could change between server calls
+        // if user deleted data and then called refresh on the grid.
+        if (typeof lastRow === 'number' && lastRow >= 0) {
+            this.rowCount = lastRow;
+            this.lastRowIndexKnown = true;
+        }
+        else if (!this.lastRowIndexKnown) {
+            // otherwise, see if we need to add some virtual rows
+            var lastRowIndex = (block.getId() + 1) * this.storeParams.cacheBlockSize;
+            var lastRowIndexPlusOverflow = lastRowIndex + PartialStore.OVERFLOW_SIZE;
+            if (this.rowCount < lastRowIndexPlusOverflow) {
+                this.rowCount = lastRowIndexPlusOverflow;
+            }
         }
         var serverSideCache = this.rootNode.childrenCache;
         return serverSideCache.getRowIndexAtPixel(pixel);
     };
-    ServerSideRowModel.prototype.getCurrentPageHeight = function () {
-        return this.rowHeight * this.getRowCount();
+    PartialStore.prototype.forEachNodeDeep = function (callback, sequence) {
+        if (sequence === void 0) { sequence = new agGridCommunity.NumberSequence(); }
+        this.getBlocksInOrder().forEach(function (block) { return block.forEachNodeDeep(callback, sequence); });
     };
-    ServerSideRowModel.prototype.isEmpty = function () {
-        return false;
+    PartialStore.prototype.getBlocksInOrder = function () {
+        // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
+        var blockComparator = function (a, b) { return a.getId() - b.getId(); };
+        var blocks = agGridCommunity._.getAllValuesInObject(this.blocks).sort(blockComparator);
+        return blocks;
     };
-    ServerSideRowModel.prototype.isRowsToRender = function () {
-        return this.cacheExists() && this.getRowCount() > 0;
+    PartialStore.prototype.destroyBlock = function (block) {
+        delete this.blocks[block.getId()];
+        this.destroyBean(block);
+        this.blockCount--;
+        this.rowNodeBlockLoader.removeBlock(block);
     };
-    ServerSideRowModel.prototype.getType = function () {
-        return agGridCommunity.Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+    // gets called 1) row count changed 2) cache purged 3) items inserted
+    PartialStore.prototype.fireCacheUpdatedEvent = function () {
+        // this results in row model firing ModelUpdated.
+        // server side row model also updates the row indexes first
+        var event = {
+            type: agGridCommunity.Events.EVENT_STORE_UPDATED
+        };
+        this.eventService.dispatchEvent(event);
     };
-    ServerSideRowModel.prototype.forEachNode = function (callback) {
-        if (this.cacheExists()) {
-            this.rootNode.childrenCache.forEachNodeDeep(callback);
+    PartialStore.prototype.destroyAllBlocksPastVirtualRowCount = function () {
+        var _this = this;
+        var blocksToDestroy = [];
+        this.getBlocksInOrder().forEach(function (block) {
+            var startRow = block.getId() * _this.storeParams.cacheBlockSize;
+            if (startRow >= _this.rowCount) {
+                blocksToDestroy.push(block);
+            }
+        });
+        if (blocksToDestroy.length > 0) {
+            blocksToDestroy.forEach(function (block) { return _this.destroyBlock(block); });
         }
     };
-    ServerSideRowModel.prototype.executeOnCache = function (route, callback) {
-        if (!this.cacheExists()) {
-            return;
+    PartialStore.prototype.refreshStore = function (showLoading) {
+        if (showLoading) {
+            this.resetStore();
         }
-        var topLevelCache = this.rootNode.childrenCache;
-        var cacheToPurge = topLevelCache.getChildCache(route);
-        if (cacheToPurge) {
-            callback(cacheToPurge);
+        else {
+            this.refreshBlocks();
+        }
+        this.fireCacheUpdatedEvent();
+    };
+    PartialStore.prototype.refreshBlocks = function () {
+        this.getBlocksInOrder().forEach(function (block) {
+            block.refresh();
+        });
+        this.lastRowIndexKnown = false;
+        this.rowNodeBlockLoader.checkBlockToLoad();
+    };
+    PartialStore.prototype.resetStore = function () {
+        this.destroyAllBlocks();
+        this.lastRowIndexKnown = false;
+        // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
+        // otherwise if set to zero rows last time, and we don't update the row count, then after
+        // the purge there will still be zero rows, meaning the SSRM won't request any rows.
+        // to kick things off, at least one row needs to be asked for.
+        if (this.rowCount === 0) {
+            this.rowCount = PartialStore.INITIAL_ROW_COUNT;
         }
     };
-    ServerSideRowModel.prototype.purgeCache = function (route) {
-        if (route === void 0) { route = []; }
-        this.executeOnCache(route, function (cache) { return cache.purgeCache(); });
-    };
-    ServerSideRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
-        if (agGridCommunity._.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
-            return [];
+    PartialStore.prototype.getRowNodesInRange = function (firstInRange, lastInRange) {
+        var result = [];
+        var lastBlockId = -1;
+        var inActiveRange = false;
+        // if only one node passed, we start the selection at the top
+        if (agGridCommunity._.missing(firstInRange)) {
+            inActiveRange = true;
         }
-        return firstInRange.parent.childrenCache.getRowNodesInRange(lastInRange, firstInRange);
+        var foundGapInSelection = false;
+        this.getBlocksInOrder().forEach(function (block) {
+            if (foundGapInSelection) {
+                return;
+            }
+            if (inActiveRange && (lastBlockId + 1 !== block.getId())) {
+                foundGapInSelection = true;
+                return;
+            }
+            lastBlockId = block.getId();
+            block.forEachNodeShallow(function (rowNode) {
+                var hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
+                if (inActiveRange || hitFirstOrLast) {
+                    result.push(rowNode);
+                }
+                if (hitFirstOrLast) {
+                    inActiveRange = !inActiveRange;
+                }
+            });
+        });
+        // inActiveRange will be still true if we never hit the second rowNode
+        var invalidRange = foundGapInSelection || inActiveRange;
+        return invalidRange ? [] : result;
     };
-    ServerSideRowModel.prototype.getRowNode = function (id) {
-        var result = null;
-        this.forEachNode(function (rowNode) {
-            if (rowNode.id === id) {
-                result = rowNode;
+    PartialStore.prototype.findBlockAndExecute = function (matchBlockFunc, blockFoundFunc, blockNotFoundFunc) {
+        var blockFound = false;
+        var breakSearch = false;
+        var lastBlock = null;
+        var res;
+        this.getBlocksInOrder().forEach(function (block) {
+            if (blockFound || breakSearch) {
+                return;
+            }
+            var comparatorResult = matchBlockFunc(block);
+            if (comparatorResult == FindResult.FOUND) {
+                res = blockFoundFunc(block);
+                blockFound = true;
+            }
+            else if (comparatorResult == FindResult.CONTINUE_FIND) {
+                lastBlock = block;
+            }
+            else if (comparatorResult == FindResult.BREAK_FIND) {
+                breakSearch = true;
+            }
+        });
+        if (!blockFound) {
+            res = blockNotFoundFunc(lastBlock);
+        }
+        return res;
+    };
+    PartialStore.prototype.getRowBounds = function (index) {
+        var _this = this;
+        var matchBlockFunc = function (block) {
+            if (block.isDisplayIndexInBlock(index)) {
+                return FindResult.FOUND;
+            }
+            else {
+                return block.isBlockBefore(index) ? FindResult.CONTINUE_FIND : FindResult.BREAK_FIND;
+            }
+        };
+        var blockFoundFunc = function (foundBlock) {
+            return foundBlock.getRowBounds(index);
+        };
+        var blockNotFoundFunc = function (previousBlock) {
+            var nextRowTop;
+            var nextRowIndex;
+            if (previousBlock !== null) {
+                nextRowTop = previousBlock.getBlockTopPx() + previousBlock.getBlockHeightPx();
+                nextRowIndex = previousBlock.getDisplayIndexEnd();
+            }
+            else {
+                nextRowTop = _this.cacheTopPixel;
+                nextRowIndex = _this.displayIndexStart;
+            }
+            var rowsBetween = index - nextRowIndex;
+            return {
+                rowHeight: _this.defaultRowHeight,
+                rowTop: nextRowTop + rowsBetween * _this.defaultRowHeight
+            };
+        };
+        return this.findBlockAndExecute(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
+    };
+    PartialStore.prototype.getRowIndexAtPixel = function (pixel) {
+        var _this = this;
+        var matchBlockFunc = function (block) {
+            if (block.isPixelInRange(pixel)) {
+                return FindResult.FOUND;
+            }
+            else {
+                return block.getBlockTopPx() < pixel ? FindResult.CONTINUE_FIND : FindResult.BREAK_FIND;
+            }
+        };
+        var blockFoundFunc = function (foundBlock) {
+            return foundBlock.getRowIndexAtPixel(pixel);
+        };
+        var blockNotFoundFunc = function (previousBlock) {
+            var nextRowTop;
+            var nextRowIndex;
+            if (previousBlock) {
+                nextRowTop = previousBlock.getBlockTopPx() + previousBlock.getBlockHeightPx();
+                nextRowIndex = previousBlock.getDisplayIndexEnd();
             }
             if (rowNode.detailNode && rowNode.detailNode.id === id) {
                 result = rowNode.detailNode;
@@ -39450,69 +41135,978 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         });
         return result;
     };
-    ServerSideRowModel.prototype.getBlockState = function () {
-        if (this.rowNodeBlockLoader) {
-            return this.rowNodeBlockLoader.getBlockState();
+    PartialStore.prototype.clearDisplayIndexes = function () {
+        this.displayIndexStart = undefined;
+        this.displayIndexEnd = undefined;
+        this.getBlocksInOrder().forEach(function (block) { return block.clearDisplayIndexes(); });
+    };
+    PartialStore.prototype.setDisplayIndexes = function (displayIndexSeq, nextRowTop) {
+        var _this = this;
+        this.displayIndexStart = displayIndexSeq.peek();
+        this.cacheTopPixel = nextRowTop.value;
+        var lastBlockId = -1;
+        var blockSize = this.storeParams.cacheBlockSize;
+        this.getBlocksInOrder().forEach(function (currentBlock) {
+            // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
+            // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
+            // the cache if any row nodes are open.
+            var blockId = currentBlock.getId();
+            var blocksSkippedCount = blockId - lastBlockId - 1;
+            var rowsSkippedCount = blocksSkippedCount * blockSize;
+            if (rowsSkippedCount > 0) {
+                displayIndexSeq.skip(rowsSkippedCount);
+            }
+            for (var i = 1; i <= blocksSkippedCount; i++) {
+                var blockToAddId = blockId - i;
+                if (agGridCommunity._.exists(_this.blockHeights[blockToAddId])) {
+                    nextRowTop.value += _this.blockHeights[blockToAddId];
+                }
+                else {
+                    nextRowTop.value += blockSize * _this.defaultRowHeight;
+                }
+            }
+            lastBlockId = blockId;
+            currentBlock.setDisplayIndexes(displayIndexSeq, nextRowTop);
+            _this.blockHeights[blockId] = currentBlock.getBlockHeightPx();
+        });
+        // if any blocks missing at the end, need to increase the row index for them also
+        // eg if block size = 10, we have total rows of 25 (indexes 0 .. 24), but first 2 blocks loaded (because
+        // last row was ejected from cache), then:
+        // lastVisitedRow = 19, virtualRowCount = 25, rows not accounted for = 5 (24 - 19)
+        var lastVisitedRow = ((lastBlockId + 1) * blockSize) - 1;
+        var rowCount = this.getRowCount();
+        var rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
+        if (rowsNotAccountedFor > 0) {
+            displayIndexSeq.skip(rowsNotAccountedFor);
+            nextRowTop.value += rowsNotAccountedFor * this.defaultRowHeight;
+        }
+        this.displayIndexEnd = displayIndexSeq.peek();
+        this.cacheHeightPixels = nextRowTop.value - this.cacheTopPixel;
+    };
+    // gets called in a) init() above and b) by the grid
+    PartialStore.prototype.getRowUsingDisplayIndex = function (displayRowIndex, dontCreateBlock) {
+        var _this = this;
+        if (dontCreateBlock === void 0) { dontCreateBlock = false; }
+        // this can happen if asking for a row that doesn't exist in the model,
+        // eg if a cell range is selected, and the user filters so rows no longer exists
+        if (!this.isDisplayIndexInStore(displayRowIndex)) {
+            return null;
+        }
+        var matchBlockFunc = function (block) {
+            if (block.isDisplayIndexInBlock(displayRowIndex)) {
+                return FindResult.FOUND;
+            }
+            else {
+                return block.isBlockBefore(displayRowIndex) ? FindResult.CONTINUE_FIND : FindResult.BREAK_FIND;
+            }
+        };
+        var blockFoundFunc = function (foundBlock) {
+            return foundBlock.getRowUsingDisplayIndex(displayRowIndex);
+        };
+        var blockNotFoundFunc = function (previousBlock) {
+            if (dontCreateBlock) {
+                return;
+            }
+            var blockNumber;
+            var displayIndexStart;
+            var nextRowTop;
+            var blockSize = _this.storeParams.cacheBlockSize;
+            // because missing blocks are always fully closed, we can work out
+            // the start index of the block we want by hopping from the closest block,
+            // as we know the row count in closed blocks is equal to the page size
+            if (previousBlock) {
+                blockNumber = previousBlock.getId() + 1;
+                displayIndexStart = previousBlock.getDisplayIndexEnd();
+                nextRowTop = previousBlock.getBlockHeightPx() + previousBlock.getBlockTopPx();
+                var isInRange = function () {
+                    return displayRowIndex >= displayIndexStart && displayRowIndex < (displayIndexStart + blockSize);
+                };
+                while (!isInRange()) {
+                    displayIndexStart += blockSize;
+                    var cachedBlockHeight = _this.blockHeights[blockNumber];
+                    if (agGridCommunity._.exists(cachedBlockHeight)) {
+                        nextRowTop += cachedBlockHeight;
+                    }
+                    else {
+                        nextRowTop += _this.defaultRowHeight * blockSize;
+                    }
+                    blockNumber++;
+                }
+            }
+            else {
+                var localIndex = displayRowIndex - _this.displayIndexStart;
+                blockNumber = Math.floor(localIndex / blockSize);
+                displayIndexStart = _this.displayIndexStart + (blockNumber * blockSize);
+                nextRowTop = _this.cacheTopPixel + (blockNumber * blockSize * _this.defaultRowHeight);
+            }
+            _this.logger.log("block missing, rowIndex = " + displayRowIndex + ", creating #" + blockNumber + ", displayIndexStart = " + displayIndexStart);
+            var newBlock = _this.createBlock(blockNumber, displayIndexStart, { value: nextRowTop });
+            return newBlock.getRowUsingDisplayIndex(displayRowIndex);
+        };
+        return this.findBlockAndExecute(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
+    };
+    PartialStore.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
+        var blockSize = this.storeParams.cacheBlockSize;
+        var blockId = Math.floor(topLevelIndex / blockSize);
+        var matchBlockFunc = function (block) {
+            if (block.getId() === blockId) {
+                return FindResult.FOUND;
+            }
+            return block.getId() < blockId ? FindResult.CONTINUE_FIND : FindResult.BREAK_FIND;
+        };
+        var blockFoundFunc = function (foundBlock) {
+            var rowNode = foundBlock.getRowUsingLocalIndex(topLevelIndex);
+            return rowNode.rowIndex;
+        };
+        var blockNotFoundFunc = function (previousBlock) {
+            if (!previousBlock) {
+                return topLevelIndex;
+            }
+            // note: the local index is the same as the top level index, two terms for same thing
+            //
+            // get index of the last row before this row
+            // eg if blocksize = 100, then:
+            //   last row of first block is 99 (100 * 1) -1;
+            //   last row of second block is 199 (100 * 2) -1;
+            var lastRowTopLevelIndex = (blockSize * (previousBlock.getId() + 1)) - 1;
+            // get the last top level node in the block before the wanted block. this will be the last
+            // loaded displayed top level node.
+            var lastRowNode = previousBlock.getRowUsingLocalIndex(lastRowTopLevelIndex);
+            // we want the index of the last displayed node, not just the top level node, so if the last top level node
+            // is open, we get the index of the last displayed child node.
+            var lastDisplayedNodeIndexInBlockBefore;
+            if (lastRowNode.expanded && lastRowNode.childStore) {
+                var serverSideCache = lastRowNode.childStore;
+                lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
+            }
+            else if (lastRowNode.expanded && lastRowNode.detailNode) {
+                lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
+            }
+            else {
+                lastDisplayedNodeIndexInBlockBefore = lastRowNode.rowIndex;
+            }
+            // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
+            // same as the difference between the displayed index
+            var indexDiff = topLevelIndex - lastRowTopLevelIndex;
+            return lastDisplayedNodeIndexInBlockBefore + indexDiff;
+        };
+        return this.findBlockAndExecute(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
+    };
+    PartialStore.prototype.addStoreStates = function (result) {
+        result.push({
+            type: agGridCommunity.ServerSideStoreType.Partial,
+            route: this.storeUtils.createGroupKeys(this.parentRowNode),
+            rowCount: this.rowCount,
+            lastRowIndexKnown: this.lastRowIndexKnown,
+            info: this.info,
+            maxBlocksInCache: this.storeParams.maxBlocksInCache,
+            cacheBlockSize: this.storeParams.cacheBlockSize
+        });
+        this.forEachChildStoreShallow(function (childStore) { return childStore.addStoreStates(result); });
+    };
+    PartialStore.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
+        var block = this.createBean(new PartialStoreBlock(blockNumber, this.parentRowNode, this.ssrmParams, this.storeParams, this));
+        block.setDisplayIndexes(new agGridCommunity.NumberSequence(displayIndex), nextRowTop);
+        this.blocks[block.getId()] = block;
+        this.blockCount++;
+        this.purgeBlocksIfNeeded(block);
+        this.rowNodeBlockLoader.addBlock(block);
+        return block;
+    };
+    PartialStore.prototype.getDisplayIndexEnd = function () {
+        return this.displayIndexEnd;
+    };
+    PartialStore.prototype.isDisplayIndexInStore = function (displayIndex) {
+        if (this.getRowCount() === 0) {
+            return false;
+        }
+        return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
+    };
+    PartialStore.prototype.applyTransaction = function (transaction) {
+        return { status: agGridCommunity.ServerSideTransactionResultStatus.StoreWrongType };
+    };
+    PartialStore.prototype.getChildStore = function (keys) {
+        var _this = this;
+        var findNodeCallback = function (key) {
+            var nextNode = null;
+            _this.getBlocksInOrder().forEach(function (block) {
+                block.forEachNodeShallow(function (rowNode) {
+                    if (rowNode.key === key) {
+                        nextNode = rowNode;
+                    }
+                }, new agGridCommunity.NumberSequence());
+            });
+            return nextNode;
+        };
+        return this.storeUtils.getChildStore(keys, this, findNodeCallback);
+    };
+    PartialStore.prototype.isPixelInRange = function (pixel) {
+        if (this.getRowCount() === 0) {
+            return false;
+        }
+        return pixel >= this.cacheTopPixel && pixel < (this.cacheTopPixel + this.cacheHeightPixels);
+    };
+    PartialStore.prototype.refreshAfterFilter = function (params) {
+        this.resetStore();
+    };
+    PartialStore.prototype.refreshAfterSort = function (params) {
+        if (this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
+            this.resetStore();
+            return;
+        }
+        // call refreshAfterSort on children, as we did not purge.
+        // if we did purge, no need to do this as all children were destroyed
+        this.forEachChildStoreShallow(function (store) { return store.refreshAfterSort(params); });
+    };
+    PartialStore.prototype.forEachChildStoreShallow = function (callback) {
+        this.getBlocksInOrder().forEach(function (block) {
+            if (block.isGroupLevel()) {
+                var innerCallback = function (rowNode) {
+                    var nextCache = rowNode.childStore;
+                    if (nextCache) {
+                        callback(nextCache);
+                    }
+                };
+                block.forEachNodeShallow(innerCallback, new agGridCommunity.NumberSequence());
+            }
+        });
+    };
+    // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
+    // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
+    // scrolled over are not needed to be loaded.
+    PartialStore.MAX_EMPTY_BLOCKS_TO_KEEP = 2;
+    PartialStore.INITIAL_ROW_COUNT = 1;
+    PartialStore.OVERFLOW_SIZE = 1;
+    __decorate$1J([
+        agGridCommunity.Autowired('rowRenderer')
+    ], PartialStore.prototype, "rowRenderer", void 0);
+    __decorate$1J([
+        agGridCommunity.Autowired('rowNodeBlockLoader')
+    ], PartialStore.prototype, "rowNodeBlockLoader", void 0);
+    __decorate$1J([
+        agGridCommunity.Autowired('ssrmCacheUtils')
+    ], PartialStore.prototype, "storeUtils", void 0);
+    __decorate$1J([
+        agGridCommunity.Autowired('columnController')
+    ], PartialStore.prototype, "columnController", void 0);
+    __decorate$1J([
+        agGridCommunity.PostConstruct
+    ], PartialStore.prototype, "postConstruct", null);
+    __decorate$1J([
+        agGridCommunity.PreDestroy
+    ], PartialStore.prototype, "destroyAllBlocks", null);
+    __decorate$1J([
+        __param$2(0, agGridCommunity.Qualifier('loggerFactory'))
+    ], PartialStore.prototype, "setBeans", null);
+    return PartialStore;
+}(agGridCommunity.BeanStub));
+
+var __extends$2Q = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$1K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var FullStore = /** @class */ (function (_super) {
+    __extends$2Q(FullStore, _super);
+    function FullStore(ssrmParams, storeParams, parentRowNode) {
+        var _this = 
+        // finite block represents a cache with just one block, thus 0 is the id, it's the first block
+        _super.call(this, 0) || this;
+        _this.nodeIdSequence = new agGridCommunity.NumberSequence();
+        _this.info = {};
+        _this.ssrmParams = ssrmParams;
+        _this.storeParams = storeParams;
+        _this.parentRowNode = parentRowNode;
+        _this.level = parentRowNode.level + 1;
+        _this.groupLevel = ssrmParams.rowGroupCols ? _this.level < ssrmParams.rowGroupCols.length : undefined;
+        _this.leafGroup = ssrmParams.rowGroupCols ? _this.level === ssrmParams.rowGroupCols.length - 1 : false;
+        return _this;
+    }
+    FullStore.prototype.postConstruct = function () {
+        var _this = this;
+        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+        this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
+        if (!this.usingTreeData && this.groupLevel) {
+            var groupColVo = this.ssrmParams.rowGroupCols[this.level];
+            this.groupField = groupColVo.field;
+            this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
+        }
+        this.initialiseRowNodes();
+        this.rowNodeBlockLoader.addBlock(this);
+        this.addDestroyFunc(function () { return _this.rowNodeBlockLoader.removeBlock(_this); });
+    };
+    FullStore.prototype.destroyRowNodes = function () {
+        this.blockUtils.destroyRowNodes(this.allRowNodes);
+        this.allRowNodes = [];
+        this.nodesAfterSort = [];
+        this.nodesAfterFilter = [];
+        this.allNodesMap = {};
+    };
+    FullStore.prototype.initialiseRowNodes = function (loadingRowsCount, failedLoad) {
+        if (loadingRowsCount === void 0) { loadingRowsCount = 1; }
+        if (failedLoad === void 0) { failedLoad = false; }
+        this.destroyRowNodes();
+        for (var i = 0; i < loadingRowsCount; i++) {
+            var loadingRowNode = this.blockUtils.createRowNode({ field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
+                level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn });
+            if (failedLoad) {
+                loadingRowNode.failedLoad = true;
+            }
+            this.allRowNodes.push(loadingRowNode);
+            this.nodesAfterFilter.push(loadingRowNode);
+            this.nodesAfterSort.push(loadingRowNode);
+        }
+    };
+    FullStore.prototype.getBlockStateJson = function () {
+        return {
+            id: this.nodeIdPrefix ? this.nodeIdPrefix : '',
+            state: this.getState()
+        };
+    };
+    FullStore.prototype.loadFromDatasource = function () {
+        this.storeUtils.loadFromDatasource({
+            startRow: undefined,
+            endRow: undefined,
+            parentNode: this.parentRowNode,
+            storeParams: this.ssrmParams,
+            successCallback: this.pageLoaded.bind(this, this.getVersion()),
+            success: this.success.bind(this, this.getVersion()),
+            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
+            fail: this.pageLoadFailed.bind(this, this.getVersion())
+        });
+    };
+    FullStore.prototype.getStartRow = function () {
+        return 0; // always zero as not in a cache
+    };
+    FullStore.prototype.getEndRow = function () {
+        return this.nodesAfterSort.length;
+    };
+    FullStore.prototype.createDataNode = function (data, index) {
+        var rowNode = this.blockUtils.createRowNode({ field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
+            level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn });
+        if (index != null) {
+            agGridCommunity._.insertIntoArray(this.allRowNodes, rowNode, index);
+        }
+        else {
+            this.allRowNodes.push(rowNode);
+        }
+        var defaultId = this.prefixId(this.nodeIdSequence.next());
+        this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+        this.nodeManager.addRowNode(rowNode);
+        this.blockUtils.checkOpenByDefault(rowNode);
+        this.allNodesMap[rowNode.id] = rowNode;
+        return rowNode;
+    };
+    FullStore.prototype.prefixId = function (id) {
+        if (this.nodeIdPrefix) {
+            return this.nodeIdPrefix + '-' + id;
+        }
+        else {
+            return id.toString();
+        }
+    };
+    FullStore.prototype.processServerFail = function () {
+        this.initialiseRowNodes(1, true);
+        this.fireStoreUpdatedEvent();
+        this.flushAsyncTransactions();
+    };
+    FullStore.prototype.processServerResult = function (params) {
+        if (!this.isAlive()) {
+            return;
+        }
+        if (params.storeInfo) {
+            agGridCommunity._.assign(this.info, params.storeInfo);
+        }
+        var nodesToRecycle = this.allRowNodes.length > 0 ? this.allNodesMap : undefined;
+        this.allRowNodes = [];
+        this.nodesAfterSort = [];
+        this.nodesAfterFilter = [];
+        this.allNodesMap = {};
+        if (!params.rowData) {
+            var message_1 = 'ag-Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
+            agGridCommunity._.doOnce(function () { return console.warn(message_1, params); }, 'FullStore.noData');
+        }
+        this.createOrRecycleNodes(nodesToRecycle, params.rowData);
+        if (nodesToRecycle) {
+            this.blockUtils.destroyRowNodes(agGridCommunity._.getAllValuesInObject(nodesToRecycle));
+        }
+        this.filterAndSortNodes();
+        this.fireStoreUpdatedEvent();
+        this.flushAsyncTransactions();
+    };
+    FullStore.prototype.createOrRecycleNodes = function (nodesToRecycle, rowData) {
+        var _this = this;
+        if (!rowData) {
+            return;
+        }
+        var lookupNodeToRecycle = function (dataItem) {
+            if (!nodesToRecycle) {
+                return undefined;
+            }
+            var userIdFunc = _this.gridOptionsWrapper.getRowNodeIdFunc();
+            if (!userIdFunc) {
+                return undefined;
+            }
+            var id = userIdFunc(dataItem);
+            var foundNode = nodesToRecycle[id];
+            if (!foundNode) {
+                return undefined;
+            }
+            delete nodesToRecycle[id];
+            return foundNode;
+        };
+        var recycleNode = function (rowNode, dataItem) {
+            _this.allNodesMap[rowNode.id] = rowNode;
+            rowNode.updateData(dataItem);
+            _this.allRowNodes.push(rowNode);
+        };
+        rowData.forEach(function (dataItem) {
+            var nodeToRecycle = lookupNodeToRecycle(dataItem);
+            if (nodeToRecycle) {
+                recycleNode(nodeToRecycle, dataItem);
+            }
+            else {
+                _this.createDataNode(dataItem);
+            }
+        });
+    };
+    FullStore.prototype.flushAsyncTransactions = function () {
+        var _this = this;
+        // we want to update the store with any outstanding transactions straight away,
+        // as otherwise if waitTimeMillis is large (eg 5s), then the user could be looking
+        // at old data for a few seconds before the transactions is applied, which isn't what
+        // you would expect when we advertise 'transaction is applied when data is loaded'.
+        // we do this in a timeout as flushAsyncTransactions expects the grid to be in a settled
+        // state, not in the middle of loading rows! keeps the VM Turns more simple and deterministic.
+        window.setTimeout(function () { return _this.transactionManager.flushAsyncTransactions(); }, 0);
+    };
+    FullStore.prototype.filterAndSortNodes = function () {
+        this.filterRowNodes();
+        this.sortRowNodes();
+    };
+    FullStore.prototype.sortRowNodes = function () {
+        var sortOptions = this.sortController.getSortOptions();
+        var noSortApplied = !sortOptions || sortOptions.length == 0;
+        if (noSortApplied) {
+            this.nodesAfterSort = this.nodesAfterFilter;
+            return;
+        }
+        this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
+    };
+    FullStore.prototype.filterRowNodes = function () {
+        var _this = this;
+        // filtering for InFullStore only words at lowest level details.
+        // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
+        if (this.groupLevel) {
+            this.nodesAfterFilter = this.allRowNodes;
+            return;
+        }
+        this.nodesAfterFilter = this.allRowNodes.filter(function (rowNode) { return _this.filterManager.doesRowPassFilter({ rowNode: rowNode }); });
+    };
+    FullStore.prototype.clearDisplayIndexes = function () {
+        var _this = this;
+        this.displayIndexStart = undefined;
+        this.displayIndexEnd = undefined;
+        this.allRowNodes.forEach(function (rowNode) { return _this.blockUtils.clearDisplayIndex(rowNode); });
+    };
+    FullStore.prototype.getDisplayIndexEnd = function () {
+        return this.displayIndexEnd;
+    };
+    FullStore.prototype.isDisplayIndexInStore = function (displayIndex) {
+        if (this.getRowCount() === 0) {
+            return false;
+        }
+        return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
+    };
+    FullStore.prototype.setDisplayIndexes = function (displayIndexSeq, nextRowTop) {
+        var _this = this;
+        this.displayIndexStart = displayIndexSeq.peek();
+        this.topPx = nextRowTop.value;
+        var visibleNodeIds = {};
+        // set on all visible nodes
+        this.nodesAfterSort.forEach(function (rowNode) {
+            _this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop);
+            visibleNodeIds[rowNode.id] = true;
+        });
+        // and clear on all non-visible nodes
+        this.allRowNodes.forEach(function (rowNode) {
+            if (!visibleNodeIds[rowNode.id]) {
+                _this.blockUtils.clearDisplayIndex(rowNode);
+            }
+        });
+        this.displayIndexEnd = displayIndexSeq.peek();
+        this.heightPx = nextRowTop.value - this.topPx;
+    };
+    FullStore.prototype.forEachNodeDeep = function (callback, sequence) {
+        if (sequence === void 0) { sequence = new agGridCommunity.NumberSequence(); }
+        this.allRowNodes.forEach(function (rowNode) {
+            callback(rowNode, sequence.next());
+            var childCache = rowNode.childStore;
+            if (childCache) {
+                childCache.forEachNodeDeep(callback, sequence);
+            }
+        });
+    };
+    FullStore.prototype.getRowUsingDisplayIndex = function (displayRowIndex) {
+        var res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, this.nodesAfterSort);
+        return res;
+    };
+    FullStore.prototype.getRowBounds = function (index) {
+        for (var i = 0; i < this.nodesAfterSort.length; i++) {
+            var rowNode = this.nodesAfterSort[i];
+            var res = this.blockUtils.extractRowBounds(rowNode, index);
+            if (res) {
+                return res;
+            }
         }
         return null;
     };
-    // always returns true - this is used by the
-    ServerSideRowModel.prototype.isRowPresent = function (rowNode) {
-        var foundRowNode = this.getRowNode(rowNode.id);
-        return !!foundRowNode;
+    FullStore.prototype.isPixelInRange = function (pixel) {
+        return pixel >= this.topPx && pixel < (this.topPx + this.heightPx);
     };
-    ServerSideRowModel.prototype.extractSortModel = function () {
-        var sortModel = this.sortController.getSortModel();
-        // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
-        // into it's constitute group columns as they are not defined up front and can vary per node.
-        if (this.gridOptionsWrapper.isTreeData()) {
-            return sortModel;
+    FullStore.prototype.getRowIndexAtPixel = function (pixel) {
+        var _this = this;
+        // if pixel before block, return first row
+        var pixelBeforeThisStore = pixel <= this.topPx;
+        if (pixelBeforeThisStore) {
+            return this.nodesAfterSort[0].rowIndex;
         }
-        var rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
-        // find index of auto group column in sort model
-        var autoGroupIndex = -1;
-        for (var i = 0; i < sortModel.length; ++i) {
-            if (sortModel[i].colId === agGridCommunity.Constants.GROUP_AUTO_COLUMN_ID) {
-                autoGroupIndex = i;
-                break;
+        // if pixel after store, return last row, however the last
+        // row could be a child store
+        var pixelAfterThisStore = pixel >= (this.topPx + this.heightPx);
+        if (pixelAfterThisStore) {
+            var lastRowNode = this.nodesAfterSort[this.nodesAfterSort.length - 1];
+            var lastRowNodeBottomPx = lastRowNode.rowTop + lastRowNode.rowHeight;
+            if (pixel >= lastRowNodeBottomPx && lastRowNode.expanded && lastRowNode.childStore) {
+                return lastRowNode.childStore.getRowIndexAtPixel(pixel);
+            }
+            else {
+                return lastRowNode.rowIndex;
             }
         }
-        // replace auto column with individual group columns
-        if (autoGroupIndex > -1) {
-            var individualGroupCols = rowGroupCols.map(function (group) {
-                return {
-                    colId: group.id,
-                    sort: sortModel[autoGroupIndex].sort
-                };
-            });
-            // remove auto group column
-            sortModel.splice(autoGroupIndex, 1);
-            var _loop_1 = function (i) {
-                var individualGroupCol = individualGroupCols[i];
-                // don't add individual group column if non group column already exists as it gets precedence
-                var sameNonGroupColumnExists = sortModel.some(function (sm) { return sm.colId === individualGroupCol.colId; });
-                if (sameNonGroupColumnExists) {
-                    return "continue";
-                }
-                sortModel.splice(autoGroupIndex++, 0, individualGroupCol);
+        var res;
+        this.nodesAfterSort.forEach(function (rowNode) {
+            var res2 = _this.blockUtils.getIndexAtPixel(rowNode, pixel);
+            if (res2 != null) {
+                res = res2;
+            }
+        });
+        var pixelIsPastLastRow = res == null;
+        if (pixelIsPastLastRow) {
+            return this.displayIndexEnd - 1;
+        }
+        return res;
+    };
+    FullStore.prototype.getChildStore = function (keys) {
+        var _this = this;
+        return this.storeUtils.getChildStore(keys, this, function (key) {
+            var rowNode = agGridCommunity._.find(_this.allRowNodes, function (currentRowNode) { return currentRowNode.key === key; });
+            return rowNode;
+        });
+    };
+    FullStore.prototype.forEachChildStoreShallow = function (callback) {
+        this.allRowNodes.forEach(function (rowNode) {
+            var childStore = rowNode.childStore;
+            if (childStore) {
+                callback(childStore);
+            }
+        });
+    };
+    FullStore.prototype.refreshAfterFilter = function (params) {
+        if (params.alwaysReset || this.gridOptionsWrapper.isTreeData()) {
+            this.refreshStore(true);
+            return;
+        }
+        this.filterAndSortNodes();
+        this.forEachChildStoreShallow(function (store) { return store.refreshAfterFilter(params); });
+    };
+    FullStore.prototype.refreshAfterSort = function (params) {
+        if (params.alwaysReset) {
+            this.refreshStore(true);
+            return;
+        }
+        this.sortRowNodes();
+        this.forEachChildStoreShallow(function (store) { return store.refreshAfterSort(params); });
+    };
+    FullStore.prototype.applyTransaction = function (transaction) {
+        // we only apply transactions to loaded state
+        switch (this.getState()) {
+            case agGridCommunity.RowNodeBlock.STATE_FAILED:
+                return { status: agGridCommunity.ServerSideTransactionResultStatus.StoreLoadingFailed };
+            case agGridCommunity.RowNodeBlock.STATE_LOADING:
+                return { status: agGridCommunity.ServerSideTransactionResultStatus.StoreLoading };
+            case agGridCommunity.RowNodeBlock.STATE_WAITING_TO_LOAD:
+                return { status: agGridCommunity.ServerSideTransactionResultStatus.StoreWaitingToLoad };
+        }
+        var applyCallback = this.gridOptionsWrapper.getIsApplyServerSideTransactionFunc();
+        if (applyCallback) {
+            var params = {
+                transaction: transaction,
+                parentNode: this.parentRowNode,
+                storeInfo: this.info
             };
-            // insert individual group columns
-            for (var i = 0; i < individualGroupCols.length; i++) {
-                _loop_1(i);
+            var apply = applyCallback(params);
+            if (!apply) {
+                return { status: agGridCommunity.ServerSideTransactionResultStatus.Cancelled };
             }
         }
-        // strip out multi-column prefix on colId's
-        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
-            var multiColumnPrefix = agGridCommunity.Constants.GROUP_AUTO_COLUMN_ID + "-";
-            for (var i = 0; i < sortModel.length; ++i) {
-                if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
-                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
-                }
-            }
-        }
-        return sortModel;
+        var res = {
+            status: agGridCommunity.ServerSideTransactionResultStatus.Applied,
+            remove: [],
+            update: [],
+            add: []
+        };
+        var nodesToUnselect = [];
+        this.executeAdd(transaction, res);
+        this.executeRemove(transaction, res, nodesToUnselect);
+        this.executeUpdate(transaction, res, nodesToUnselect);
+        this.filterAndSortNodes();
+        this.updateSelection(nodesToUnselect);
+        return res;
     };
-    ServerSideRowModel.prototype.isSortingWithValueColumn = function (changedColumnsInSort) {
+    FullStore.prototype.updateSelection = function (nodesToUnselect) {
+        var selectionChanged = nodesToUnselect.length > 0;
+        if (selectionChanged) {
+            nodesToUnselect.forEach(function (rowNode) {
+                rowNode.setSelected(false, false, true);
+            });
+            var event_1 = {
+                type: agGridCommunity.Events.EVENT_SELECTION_CHANGED,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi()
+            };
+            this.eventService.dispatchEvent(event_1);
+        }
+    };
+    FullStore.prototype.executeAdd = function (rowDataTran, rowNodeTransaction) {
+        var _this = this;
+        var add = rowDataTran.add, addIndex = rowDataTran.addIndex;
+        if (agGridCommunity._.missingOrEmpty(add)) {
+            return;
+        }
+        var useIndex = typeof addIndex === 'number' && addIndex >= 0;
+        if (useIndex) {
+            // items get inserted in reverse order for index insertion
+            add.reverse().forEach(function (item) {
+                var newRowNode = _this.createDataNode(item, addIndex);
+                rowNodeTransaction.add.push(newRowNode);
+            });
+        }
+        else {
+            add.forEach(function (item) {
+                var newRowNode = _this.createDataNode(item);
+                rowNodeTransaction.add.push(newRowNode);
+            });
+        }
+    };
+    FullStore.prototype.executeRemove = function (rowDataTran, rowNodeTransaction, nodesToUnselect) {
+        var _this = this;
+        var remove = rowDataTran.remove;
+        if (remove == null) {
+            return;
+        }
+        var rowIdsRemoved = {};
+        remove.forEach(function (item) {
+            var rowNode = _this.lookupRowNode(item);
+            if (!rowNode) {
+                return;
+            }
+            // do delete - setting 'suppressFinishActions = true' to ensure EVENT_SELECTION_CHANGED is not raised for
+            // each row node updated, instead it is raised once by the calling code if any selected nodes exist.
+            if (rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
+            // so row renderer knows to fade row out (and not reposition it)
+            rowNode.clearRowTop();
+            // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
+            // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
+            rowIdsRemoved[rowNode.id] = true;
+            // _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+            delete _this.allNodesMap[rowNode.id];
+            rowNodeTransaction.remove.push(rowNode);
+        });
+        this.allRowNodes = this.allRowNodes.filter(function (rowNode) { return !rowIdsRemoved[rowNode.id]; });
+    };
+    FullStore.prototype.executeUpdate = function (rowDataTran, rowNodeTransaction, nodesToUnselect) {
+        var _this = this;
+        var update = rowDataTran.update;
+        if (update == null) {
+            return;
+        }
+        update.forEach(function (item) {
+            var rowNode = _this.lookupRowNode(item);
+            if (!rowNode) {
+                return;
+            }
+            rowNode.updateData(item);
+            if (!rowNode.selectable && rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
+            rowNodeTransaction.update.push(rowNode);
+        });
+    };
+    FullStore.prototype.lookupRowNode = function (data) {
+        var rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
+        var rowNode;
+        if (agGridCommunity._.exists(rowNodeIdFunc)) {
+            // find rowNode using id
+            var id = rowNodeIdFunc(data);
+            rowNode = this.allNodesMap[id];
+            if (!rowNode) {
+                console.error("ag-Grid: could not find row id=" + id + ", data item was not found for this id");
+                return null;
+            }
+        }
+        else {
+            // find rowNode using object references
+            rowNode = agGridCommunity._.find(this.allRowNodes, function (currentRowNode) { return currentRowNode.data === data; });
+            if (!rowNode) {
+                console.error("ag-Grid: could not find data item as object was not found", data);
+                return null;
+            }
+        }
+        return rowNode;
+    };
+    FullStore.prototype.addStoreStates = function (result) {
+        result.push({
+            type: agGridCommunity.ServerSideStoreType.Full,
+            route: this.storeUtils.createGroupKeys(this.parentRowNode),
+            rowCount: this.allRowNodes.length,
+            info: this.info
+        });
+        this.forEachChildStoreShallow(function (childStore) { return childStore.addStoreStates(result); });
+    };
+    FullStore.prototype.refreshStore = function (purge) {
+        if (purge) {
+            var loadingRowsToShow = this.nodesAfterSort ? this.nodesAfterSort.length : 1;
+            this.initialiseRowNodes(loadingRowsToShow);
+        }
+        this.scheduleLoad();
+        this.fireStoreUpdatedEvent();
+    };
+    FullStore.prototype.retryLoads = function () {
+        if (this.getState() === agGridCommunity.RowNodeBlock.STATE_FAILED) {
+            this.initialiseRowNodes(1);
+            this.scheduleLoad();
+        }
+        this.forEachChildStoreShallow(function (store) { return store.retryLoads(); });
+    };
+    FullStore.prototype.scheduleLoad = function () {
+        this.setStateWaitingToLoad();
+        this.rowNodeBlockLoader.checkBlockToLoad();
+    };
+    // gets called 1) row count changed 2) cache purged 3) items inserted
+    FullStore.prototype.fireStoreUpdatedEvent = function () {
+        // this results in row model firing ModelUpdated.
+        // server side row model also updates the row indexes first
+        var event = {
+            type: agGridCommunity.Events.EVENT_STORE_UPDATED
+        };
+        this.eventService.dispatchEvent(event);
+    };
+    FullStore.prototype.getRowCount = function () {
+        return this.nodesAfterSort.length;
+    };
+    FullStore.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
+        var rowNode = this.nodesAfterSort[topLevelIndex];
+        return rowNode.rowIndex;
+    };
+    FullStore.prototype.isLastRowIndexKnown = function () {
+        return this.getState() == agGridCommunity.RowNodeBlock.STATE_LOADED;
+    };
+    FullStore.prototype.getRowNodesInRange = function (firstInRange, lastInRange) {
+        var result = [];
+        var inActiveRange = false;
+        // if only one node passed, we start the selection at the top
+        if (agGridCommunity._.missing(firstInRange)) {
+            inActiveRange = true;
+        }
+        this.nodesAfterSort.forEach(function (rowNode) {
+            var hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
+            if (inActiveRange || hitFirstOrLast) {
+                result.push(rowNode);
+            }
+            if (hitFirstOrLast) {
+                inActiveRange = !inActiveRange;
+            }
+        });
+        // inActiveRange will be still true if we never hit the second rowNode
+        var invalidRange = inActiveRange;
+        return invalidRange ? [] : result;
+    };
+    __decorate$1K([
+        agGridCommunity.Autowired('ssrmCacheUtils')
+    ], FullStore.prototype, "storeUtils", void 0);
+    __decorate$1K([
+        agGridCommunity.Autowired('ssrmBlockUtils')
+    ], FullStore.prototype, "blockUtils", void 0);
+    __decorate$1K([
+        agGridCommunity.Autowired('columnController')
+    ], FullStore.prototype, "columnController", void 0);
+    __decorate$1K([
+        agGridCommunity.Autowired('rowRenderer')
+    ], FullStore.prototype, "rowRenderer", void 0);
+    __decorate$1K([
+        agGridCommunity.Autowired('rowNodeBlockLoader')
+    ], FullStore.prototype, "rowNodeBlockLoader", void 0);
+    __decorate$1K([
+        agGridCommunity.Autowired('rowNodeSorter')
+    ], FullStore.prototype, "rowNodeSorter", void 0);
+    __decorate$1K([
+        agGridCommunity.Autowired('sortController')
+    ], FullStore.prototype, "sortController", void 0);
+    __decorate$1K([
+        agGridCommunity.Autowired('ssrmNodeManager')
+    ], FullStore.prototype, "nodeManager", void 0);
+    __decorate$1K([
+        agGridCommunity.Autowired('filterManager')
+    ], FullStore.prototype, "filterManager", void 0);
+    __decorate$1K([
+        agGridCommunity.Autowired('ssrmTransactionManager')
+    ], FullStore.prototype, "transactionManager", void 0);
+    __decorate$1K([
+        agGridCommunity.PostConstruct
+    ], FullStore.prototype, "postConstruct", null);
+    __decorate$1K([
+        agGridCommunity.PreDestroy
+    ], FullStore.prototype, "destroyRowNodes", null);
+    return FullStore;
+}(agGridCommunity.RowNodeBlock));
+
+var __decorate$1L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var StoreFactory = /** @class */ (function () {
+    function StoreFactory() {
+    }
+    StoreFactory.prototype.createStore = function (ssrmParams, parentNode) {
+        var storeParams = this.getStoreParams(ssrmParams, parentNode);
+        var CacheClass = storeParams.storeType === agGridCommunity.ServerSideStoreType.Partial ? PartialStore : FullStore;
+        return new CacheClass(ssrmParams, storeParams, parentNode);
+    };
+    StoreFactory.prototype.getStoreParams = function (ssrmParams, parentNode) {
+        var userStoreParams = this.getLevelSpecificParams(parentNode);
+        // if user provided overrideParams, we take storeType from there if it exists
+        var storeType = this.getStoreType(userStoreParams);
+        var cacheBlockSize = this.getBlockSize(storeType, userStoreParams);
+        var maxBlocksInCache = this.getMaxBlocksInCache(storeType, ssrmParams, userStoreParams);
+        var storeParams = {
+            storeType: storeType,
+            cacheBlockSize: cacheBlockSize,
+            maxBlocksInCache: maxBlocksInCache
+        };
+        return storeParams;
+    };
+    StoreFactory.prototype.getMaxBlocksInCache = function (storeType, ssrmParams, userStoreParams) {
+        if (storeType == agGridCommunity.ServerSideStoreType.Full) {
+            return undefined;
+        }
+        var maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
+            ? userStoreParams.maxBlocksInCache
+            : this.gridOptionsWrapper.getMaxBlocksInCache();
+        var maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
+        if (!maxBlocksActive) {
+            return undefined;
+        }
+        if (ssrmParams.dynamicRowHeight) {
+            var message_1 = 'ag-Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
+                'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.';
+            agGridCommunity._.doOnce(function () { return console.warn(message_1); }, 'storeFactory.maxBlocksInCache.dynamicRowHeight');
+            return undefined;
+        }
+        if (this.columnController.isAutoRowHeightActive()) {
+            var message_2 = 'ag-Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
+                'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';
+            agGridCommunity._.doOnce(function () { return console.warn(message_2); }, 'storeFactory.maxBlocksInCache.autoRowHeightActive');
+            return undefined;
+        }
+        return maxBlocksInCache;
+    };
+    StoreFactory.prototype.getBlockSize = function (storeType, userStoreParams) {
+        if (storeType == agGridCommunity.ServerSideStoreType.Full) {
+            return undefined;
+        }
+        var blockSize = (userStoreParams && userStoreParams.cacheBlockSize != null)
+            ? userStoreParams.cacheBlockSize
+            : this.gridOptionsWrapper.getCacheBlockSize();
+        if (blockSize != null && blockSize > 0) {
+            return blockSize;
+        }
+        else {
+            return 100;
+        }
+    };
+    StoreFactory.prototype.getLevelSpecificParams = function (parentNode) {
+        var callback = this.gridOptionsWrapper.getServerSideStoreParamsFunc();
+        if (!callback) {
+            return undefined;
+        }
+        var params = {
+            level: parentNode.level + 1,
+            parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
+            rowGroupColumns: this.columnController.getRowGroupColumns(),
+            pivotColumns: this.columnController.getPivotColumns(),
+            pivotMode: this.columnController.isPivotMode()
+        };
+        return callback(params);
+    };
+    StoreFactory.prototype.getStoreType = function (storeParams) {
+        var storeType = (storeParams && storeParams.storeType != null)
+            ? storeParams.storeType
+            : this.gridOptionsWrapper.getServerSideStoreType();
+        switch (storeType) {
+            case agGridCommunity.ServerSideStoreType.Partial:
+            case agGridCommunity.ServerSideStoreType.Full:
+                return storeType;
+            case null:
+            case undefined:
+                return agGridCommunity.ServerSideStoreType.Full;
+            default:
+                var types = Object.keys(agGridCommunity.ServerSideStoreType).join(', ');
+                console.warn("ag-Grid: invalid Server Side Store Type " + storeType + ", valid types are [" + types + "]");
+                return agGridCommunity.ServerSideStoreType.Partial;
+        }
+    };
+    __decorate$1L([
+        agGridCommunity.Autowired('gridOptionsWrapper')
+    ], StoreFactory.prototype, "gridOptionsWrapper", void 0);
+    __decorate$1L([
+        agGridCommunity.Autowired('columnController')
+    ], StoreFactory.prototype, "columnController", void 0);
+    StoreFactory = __decorate$1L([
+        agGridCommunity.Bean('ssrmStoreFactory')
+    ], StoreFactory);
+    return StoreFactory;
+}());
+
+var __decorate$1M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var ListenerUtils = /** @class */ (function () {
+    function ListenerUtils() {
+    }
+    ListenerUtils.prototype.isSortingWithValueColumn = function (changedColumnsInSort) {
         var valueColIds = this.columnController.getValueColumns().map(function (col) { return col.getColId(); });
         for (var i = 0; i < changedColumnsInSort.length; i++) {
             if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
@@ -39521,7 +42115,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         }
         return false;
     };
-    ServerSideRowModel.prototype.isSortingWithSecondaryColumn = function (changedColumnsInSort) {
+    ListenerUtils.prototype.isSortingWithSecondaryColumn = function (changedColumnsInSort) {
         if (!this.columnController.getSecondaryColumns()) {
             return false;
         }
@@ -39533,74 +42127,20 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         }
         return false;
     };
-    ServerSideRowModel.prototype.cacheExists = function () {
-        return agGridCommunity._.exists(this.rootNode) && agGridCommunity._.exists(this.rootNode.childrenCache);
-    };
-    ServerSideRowModel.prototype.createDetailNode = function (masterNode) {
-        if (agGridCommunity._.exists(masterNode.detailNode)) {
-            return masterNode.detailNode;
-        }
-        var detailNode = new agGridCommunity.RowNode();
-        this.getContext().createBean(detailNode);
-        detailNode.detail = true;
-        detailNode.selectable = false;
-        detailNode.parent = masterNode;
-        if (agGridCommunity._.exists(masterNode.id)) {
-            detailNode.id = 'detail_' + masterNode.id;
-        }
-        detailNode.data = masterNode.data;
-        detailNode.level = masterNode.level + 1;
-        var defaultDetailRowHeight = 200;
-        var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode).height;
-        detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
-        masterNode.detailNode = detailNode;
-        return detailNode;
-    };
-    ServerSideRowModel.prototype.isLoading = function () {
-        return this.rowNodeBlockLoader ? this.rowNodeBlockLoader.isLoading() : false;
-    };
-    __decorate$1C([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ServerSideRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1C([
+    __decorate$1M([
         agGridCommunity.Autowired('columnController')
-    ], ServerSideRowModel.prototype, "columnController", void 0);
-    __decorate$1C([
-        agGridCommunity.Autowired('filterManager')
-    ], ServerSideRowModel.prototype, "filterManager", void 0);
-    __decorate$1C([
-        agGridCommunity.Autowired('sortController')
-    ], ServerSideRowModel.prototype, "sortController", void 0);
-    __decorate$1C([
-        agGridCommunity.Autowired('gridApi')
-    ], ServerSideRowModel.prototype, "gridApi", void 0);
-    __decorate$1C([
-        agGridCommunity.Autowired('columnApi')
-    ], ServerSideRowModel.prototype, "columnApi", void 0);
-    __decorate$1C([
-        agGridCommunity.Autowired('rowRenderer')
-    ], ServerSideRowModel.prototype, "rowRenderer", void 0);
-    __decorate$1C([
-        agGridCommunity.PostConstruct
-    ], ServerSideRowModel.prototype, "postConstruct", null);
-    __decorate$1C([
-        agGridCommunity.PreDestroy
-    ], ServerSideRowModel.prototype, "destroyDatasource", null);
-    __decorate$1C([
-        __param$2(0, agGridCommunity.Qualifier('loggerFactory'))
-    ], ServerSideRowModel.prototype, "setBeans", null);
-    __decorate$1C([
-        agGridCommunity.PreDestroy
-    ], ServerSideRowModel.prototype, "destroyRowNodeBlockLoader", null);
-    ServerSideRowModel = __decorate$1C([
-        agGridCommunity.Bean('rowModel')
-    ], ServerSideRowModel);
-    return ServerSideRowModel;
-}(agGridCommunity.BeanStub));
+    ], ListenerUtils.prototype, "columnController", void 0);
+    ListenerUtils = __decorate$1M([
+        agGridCommunity.Bean('ssrmListenerUtils')
+    ], ListenerUtils);
+    return ListenerUtils;
+}());
 
 var ServerSideRowModelModule = {
     moduleName: agGridCommunity.ModuleNames.ServerSideRowModelModule,
-    rowModels: { 'serverSide': ServerSideRowModel },
+    rowModels: { serverSide: ServerSideRowModel },
+    beans: [ExpandListener, SortListener, StoreUtils, BlockUtils, NodeManager, TransactionManager,
+        FilterListener, StoreFactory, ListenerUtils],
     dependantModules: [
         EnterpriseCoreModule
     ]
@@ -39714,7 +42254,7 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.overrideValues = function (valuesToUse, keepSelection) {
         var _this = this;
         if (keepSelection === void 0) { keepSelection = true; }
-        return new agGridCommunity.Promise(function (resolve) {
+        return new agGridCommunity.AgPromise(function (resolve) {
             // wait for any existing values to be populated before overriding
             _this.allValuesPromise.then(function () {
                 _this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
@@ -39726,12 +42266,12 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.refreshAfterAnyFilterChanged = function () {
         var _this = this;
         return this.showAvailableOnly() ?
-            this.allValuesPromise.then(function (values) { return _this.updateAvailableValues(values); }) :
-            agGridCommunity.Promise.resolve();
+            this.allValuesPromise.then(function (values) { return _this.updateAvailableValues(values || []); }) :
+            agGridCommunity.AgPromise.resolve();
     };
     SetValueModel.prototype.updateAllValues = function () {
         var _this = this;
-        this.allValuesPromise = new agGridCommunity.Promise(function (resolve) {
+        this.allValuesPromise = new agGridCommunity.AgPromise(function (resolve) {
             switch (_this.valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
                 case SetFilterModelValuesType.PROVIDED_LIST: {
@@ -39951,7 +42491,7 @@ var SetValueModel = /** @class */ (function () {
     return SetValueModel;
 }());
 
-var __extends$2J = (undefined && undefined.__extends) || (function () {
+var __extends$2R = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -39964,14 +42504,14 @@ var __extends$2J = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFilterListItem = /** @class */ (function (_super) {
-    __extends$2J(SetFilterListItem, _super);
+    __extends$2R(SetFilterListItem, _super);
     function SetFilterListItem(value, params, translate, isSelected) {
         var _this = _super.call(this, SetFilterListItem.TEMPLATE) || this;
         _this.value = value;
@@ -39998,7 +42538,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
         this.eCheckbox.setValue(this.isSelected);
     };
     SetFilterListItem.prototype.render = function () {
-        var _a = this.params, column = _a.column, colDef = _a.colDef;
+        var column = this.params.column;
         var value = this.value;
         var formattedValue = null;
         if (typeof value === 'function') {
@@ -40008,14 +42548,12 @@ var SetFilterListItem = /** @class */ (function (_super) {
             formattedValue = this.getFormattedValue(this.params, column, value);
         }
         if (this.params.showTooltips) {
-            this.tooltipText = agGridCommunity._.escapeString(formattedValue != null ? formattedValue : value);
-            if (agGridCommunity._.exists(this.tooltipText)) {
-                if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
-                    this.getGui().setAttribute('title', this.tooltipText);
-                }
-                else {
-                    this.createManagedBean(new agGridCommunity.TooltipFeature(this));
-                }
+            var tooltipText = agGridCommunity._.escapeString(formattedValue != null ? formattedValue : value);
+            if (tooltipText == null) {
+                this.setTooltip(undefined);
+            }
+            else {
+                this.setTooltip(tooltipText);
             }
         }
         var params = {
@@ -40024,23 +42562,21 @@ var SetFilterListItem = /** @class */ (function (_super) {
             api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext()
         };
-        this.renderCell(colDef, params);
+        this.renderCell(params);
     };
     SetFilterListItem.prototype.getTooltipParams = function () {
-        return {
-            location: 'setFilterValue',
-            colDef: this.getComponentHolder(),
-            value: this.tooltipText
-        };
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'setFilterValue';
+        res.colDef = this.getComponentHolder();
+        return res;
     };
     SetFilterListItem.prototype.getFormattedValue = function (filterParams, column, value) {
         var formatter = filterParams == null ? null : filterParams.valueFormatter;
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     };
-    SetFilterListItem.prototype.renderCell = function (target, params) {
+    SetFilterListItem.prototype.renderCell = function (params) {
         var _this = this;
-        var filterParams = target.filterParams;
-        var cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(filterParams, params);
+        var cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(this.params, params);
         if (cellRendererPromise == null) {
             var valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
             this.eCheckbox.setLabel(valueToRender == null ? this.translate('blanks') : valueToRender);
@@ -40056,19 +42592,16 @@ var SetFilterListItem = /** @class */ (function (_super) {
     };
     SetFilterListItem.EVENT_SELECTION_CHANGED = 'selectionChanged';
     SetFilterListItem.TEMPLATE = "\n        <div class=\"ag-set-filter-item\">\n            <ag-checkbox ref=\"eCheckbox\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox>\n        </div>";
-    __decorate$1D([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1D([
+    __decorate$1N([
         agGridCommunity.Autowired('valueFormatterService')
     ], SetFilterListItem.prototype, "valueFormatterService", void 0);
-    __decorate$1D([
+    __decorate$1N([
         agGridCommunity.Autowired('userComponentFactory')
     ], SetFilterListItem.prototype, "userComponentFactory", void 0);
-    __decorate$1D([
+    __decorate$1N([
         agGridCommunity.RefSelector('eCheckbox')
     ], SetFilterListItem.prototype, "eCheckbox", void 0);
-    __decorate$1D([
+    __decorate$1N([
         agGridCommunity.PostConstruct
     ], SetFilterListItem.prototype, "init", null);
     return SetFilterListItem;
@@ -40083,7 +42616,7 @@ var DEFAULT_LOCALE_TEXT = {
     noMatches: 'No matches.'
 };
 
-var __extends$2K = (undefined && undefined.__extends) || (function () {
+var __extends$2S = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -40096,14 +42629,14 @@ var __extends$2K = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFilter = /** @class */ (function (_super) {
-    __extends$2K(SetFilter, _super);
+    __extends$2S(SetFilter, _super);
     function SetFilter() {
         var _this = _super.call(this, 'setFilter') || this;
         // To make the filtering super fast, we store the values in an object, and check for the boolean value.
@@ -40157,6 +42690,10 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.getCssIdentifier = function () {
         return 'set-filter';
+    };
+    SetFilter.prototype.setModelAndRefresh = function (values) {
+        var _this = this;
+        return this.valueModel ? this.valueModel.setModel(values).then(function () { return _this.refresh(); }) : agGridCommunity.AgPromise.resolve();
     };
     SetFilter.prototype.resetUiToDefaults = function () {
         var _this = this;
@@ -40276,7 +42813,10 @@ var SetFilter = /** @class */ (function (_super) {
         var _this = this;
         if (refreshValues === void 0) { refreshValues = true; }
         if (keepSelection === void 0) { keepSelection = true; }
-        var promise = agGridCommunity.Promise.resolve();
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        var promise = agGridCommunity.AgPromise.resolve();
         if (refreshValues) {
             promise = this.valueModel.refreshValues(keepSelection);
         }
@@ -40340,11 +42880,18 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.initMiniFilter = function () {
         var _this = this;
-        var eMiniFilter = this.eMiniFilter;
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        var _a = this, eMiniFilter = _a.eMiniFilter, gridOptionsWrapper = _a.gridOptionsWrapper;
+        var translate = gridOptionsWrapper.getLocaleTextFunc();
         agGridCommunity._.setDisplayed(eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(function () { return _this.onMiniFilterInput(); });
-        eMiniFilter.setInputAriaLabel('Search filter values');
+        eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
         this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', function (e) { return _this.onMiniFilterKeyPress(e); });
     };
     // we need to have the GUI attached before we can draw the virtual rows, as the
@@ -40634,19 +43181,19 @@ var SetFilter = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     SetFilter.SELECT_ALL_VALUE = '__AG_SELECT_ALL__';
-    __decorate$1E([
+    __decorate$1O([
         agGridCommunity.RefSelector('eMiniFilter')
     ], SetFilter.prototype, "eMiniFilter", void 0);
-    __decorate$1E([
+    __decorate$1O([
         agGridCommunity.RefSelector('eFilterLoading')
     ], SetFilter.prototype, "eFilterLoading", void 0);
-    __decorate$1E([
+    __decorate$1O([
         agGridCommunity.RefSelector('eSetFilterList')
     ], SetFilter.prototype, "eSetFilterList", void 0);
-    __decorate$1E([
+    __decorate$1O([
         agGridCommunity.RefSelector('eFilterNoMatches')
     ], SetFilter.prototype, "eNoMatches", void 0);
-    __decorate$1E([
+    __decorate$1O([
         agGridCommunity.Autowired('valueFormatterService')
     ], SetFilter.prototype, "valueFormatterService", void 0);
     return SetFilter;
@@ -40683,7 +43230,7 @@ var ModelWrapperWithSelectAll = /** @class */ (function () {
     return ModelWrapperWithSelectAll;
 }());
 
-var __extends$2L = (undefined && undefined.__extends) || (function () {
+var __extends$2T = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -40696,14 +43243,14 @@ var __extends$2L = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFloatingFilterComp = /** @class */ (function (_super) {
-    __extends$2L(SetFloatingFilterComp, _super);
+    __extends$2T(SetFloatingFilterComp, _super);
     function SetFloatingFilterComp() {
         var _this = _super.call(this, /* html */ "\n            <div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field>\n            </div>") || this;
         _this.availableValuesListenerAdded = false;
@@ -40716,15 +43263,16 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
     };
     SetFloatingFilterComp.prototype.init = function (params) {
         var displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(displayName + " Filter Input")
+            .setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'))
             .addGuiEventListener('click', function () { return params.showParentFilter(); });
         this.params = params;
     };
     SetFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
         this.lastKnownModel = parentModel;
-        this.updateSetFilterText();
+        this.updateFloatingFilterText();
     };
     SetFloatingFilterComp.prototype.addAvailableValuesListener = function () {
         var _this = this;
@@ -40735,11 +43283,11 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
-            _this.addManagedListener(setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, function () { return _this.updateSetFilterText(); });
+            _this.addManagedListener(setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, function () { return _this.updateFloatingFilterText(); });
         });
         this.availableValuesListenerAdded = true;
     };
-    SetFloatingFilterComp.prototype.updateSetFilterText = function () {
+    SetFloatingFilterComp.prototype.updateFloatingFilterText = function () {
         var _this = this;
         if (!this.lastKnownModel) {
             this.eFloatingFilterText.setValue('');
@@ -40760,7 +43308,8 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
             var localeTextFunc = _this.gridOptionsWrapper.getLocaleTextFunc();
             // format all the values, if a formatter is provided
             var formattedValues = agGridCommunity._.map(availableValues, function (value) {
-                var formattedValue = _this.valueFormatterService.formatValue(_this.params.column, null, null, value);
+                var _a = _this.params, column = _a.column, filterParams = _a.filterParams;
+                var formattedValue = _this.valueFormatterService.formatValue(column, null, null, value, filterParams.valueFormatter, false);
                 var valueToRender = formattedValue != null ? formattedValue : value;
                 return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT['blanks']) : valueToRender;
             });
@@ -40769,16 +43318,13 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
             _this.eFloatingFilterText.setValue(valuesString);
         });
     };
-    __decorate$1F([
+    __decorate$1P([
         agGridCommunity.RefSelector('eFloatingFilterText')
     ], SetFloatingFilterComp.prototype, "eFloatingFilterText", void 0);
-    __decorate$1F([
+    __decorate$1P([
         agGridCommunity.Autowired('valueFormatterService')
     ], SetFloatingFilterComp.prototype, "valueFormatterService", void 0);
-    __decorate$1F([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], SetFloatingFilterComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1F([
+    __decorate$1P([
         agGridCommunity.Autowired('columnController')
     ], SetFloatingFilterComp.prototype, "columnController", void 0);
     return SetFloatingFilterComp;
@@ -40796,7 +43342,7 @@ var SetFilterModule = {
     ]
 };
 
-var __extends$2M = (undefined && undefined.__extends) || (function () {
+var __extends$2U = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -40809,14 +43355,14 @@ var __extends$2M = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var StatusBarService = /** @class */ (function (_super) {
-    __extends$2M(StatusBarService, _super);
+    __extends$2U(StatusBarService, _super);
     // tslint:disable-next-line
     function StatusBarService() {
         var _this = _super.call(this) || this;
@@ -40829,13 +43375,13 @@ var StatusBarService = /** @class */ (function (_super) {
     StatusBarService.prototype.getStatusPanel = function (key) {
         return this.allComponents[key];
     };
-    StatusBarService = __decorate$1G([
+    StatusBarService = __decorate$1Q([
         agGridCommunity.Bean('statusBarService')
     ], StatusBarService);
     return StatusBarService;
 }(agGridCommunity.BeanStub));
 
-var __extends$2N = (undefined && undefined.__extends) || (function () {
+var __extends$2V = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -40848,14 +43394,14 @@ var __extends$2N = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var StatusBar = /** @class */ (function (_super) {
-    __extends$2N(StatusBar, _super);
+    __extends$2V(StatusBar, _super);
     function StatusBar() {
         return _super.call(this, StatusBar.TEMPLATE) || this;
     }
@@ -40891,7 +43437,7 @@ var StatusBar = /** @class */ (function (_super) {
                 promise: promise
             });
         });
-        agGridCommunity.Promise.all(componentDetails.map(function (details) { return details.promise; }))
+        agGridCommunity.AgPromise.all(componentDetails.map(function (details) { return details.promise; }))
             .then(function () {
             componentDetails.forEach(function (componentDetail) {
                 componentDetail.promise.then(function (component) {
@@ -40911,34 +43457,31 @@ var StatusBar = /** @class */ (function (_super) {
         });
     };
     StatusBar.TEMPLATE = "<div class=\"ag-status-bar\">\n            <div ref=\"eStatusBarLeft\" class=\"ag-status-bar-left\"></div>\n            <div ref=\"eStatusBarCenter\" class=\"ag-status-bar-center\"></div>\n            <div ref=\"eStatusBarRight\" class=\"ag-status-bar-right\"></div>\n        </div>";
-    __decorate$1H([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], StatusBar.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1H([
+    __decorate$1R([
         agGridCommunity.Autowired('gridOptions')
     ], StatusBar.prototype, "gridOptions", void 0);
-    __decorate$1H([
+    __decorate$1R([
         agGridCommunity.Autowired('userComponentFactory')
     ], StatusBar.prototype, "userComponentFactory", void 0);
-    __decorate$1H([
+    __decorate$1R([
         agGridCommunity.Autowired('statusBarService')
     ], StatusBar.prototype, "statusBarService", void 0);
-    __decorate$1H([
+    __decorate$1R([
         agGridCommunity.RefSelector('eStatusBarLeft')
     ], StatusBar.prototype, "eStatusBarLeft", void 0);
-    __decorate$1H([
+    __decorate$1R([
         agGridCommunity.RefSelector('eStatusBarCenter')
     ], StatusBar.prototype, "eStatusBarCenter", void 0);
-    __decorate$1H([
+    __decorate$1R([
         agGridCommunity.RefSelector('eStatusBarRight')
     ], StatusBar.prototype, "eStatusBarRight", void 0);
-    __decorate$1H([
+    __decorate$1R([
         agGridCommunity.PostConstruct
     ], StatusBar.prototype, "postConstruct", null);
     return StatusBar;
 }(agGridCommunity.Component));
 
-var __extends$2O = (undefined && undefined.__extends) || (function () {
+var __extends$2W = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -40951,14 +43494,14 @@ var __extends$2O = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var NameValueComp = /** @class */ (function (_super) {
-    __extends$2O(NameValueComp, _super);
+    __extends$2W(NameValueComp, _super);
     function NameValueComp() {
         return _super.call(this, NameValueComp.TEMPLATE) || this;
     }
@@ -40971,20 +43514,17 @@ var NameValueComp = /** @class */ (function (_super) {
     NameValueComp.prototype.setValue = function (value) {
         this.eValue.innerHTML = value;
     };
-    NameValueComp.TEMPLATE = "<div class=\"ag-status-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-status-name-value-value\"></span>\n        </div>";
-    __decorate$1I([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], NameValueComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1I([
+    NameValueComp.TEMPLATE = "<div class=\"ag-status-name-value\">\n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-status-name-value-value\"></span>\n        </div>";
+    __decorate$1S([
         agGridCommunity.RefSelector('eLabel')
     ], NameValueComp.prototype, "eLabel", void 0);
-    __decorate$1I([
+    __decorate$1S([
         agGridCommunity.RefSelector('eValue')
     ], NameValueComp.prototype, "eValue", void 0);
     return NameValueComp;
 }(agGridCommunity.Component));
 
-var __extends$2P = (undefined && undefined.__extends) || (function () {
+var __extends$2X = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -40997,14 +43537,14 @@ var __extends$2P = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
-    __extends$2P(TotalAndFilteredRowsComp, _super);
+    __extends$2X(TotalAndFilteredRowsComp, _super);
     function TotalAndFilteredRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -41055,16 +43595,16 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
     TotalAndFilteredRowsComp.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
     };
-    __decorate$1J([
+    __decorate$1T([
         agGridCommunity.Autowired('gridApi')
     ], TotalAndFilteredRowsComp.prototype, "gridApi", void 0);
-    __decorate$1J([
+    __decorate$1T([
         agGridCommunity.PostConstruct
     ], TotalAndFilteredRowsComp.prototype, "postConstruct", null);
     return TotalAndFilteredRowsComp;
 }(NameValueComp));
 
-var __extends$2Q = (undefined && undefined.__extends) || (function () {
+var __extends$2Y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -41077,14 +43617,14 @@ var __extends$2Q = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var FilteredRowsComp = /** @class */ (function (_super) {
-    __extends$2Q(FilteredRowsComp, _super);
+    __extends$2Y(FilteredRowsComp, _super);
     function FilteredRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -41127,16 +43667,16 @@ var FilteredRowsComp = /** @class */ (function (_super) {
     FilteredRowsComp.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
     };
-    __decorate$1K([
+    __decorate$1U([
         agGridCommunity.Autowired('gridApi')
     ], FilteredRowsComp.prototype, "gridApi", void 0);
-    __decorate$1K([
+    __decorate$1U([
         agGridCommunity.PostConstruct
     ], FilteredRowsComp.prototype, "postConstruct", null);
     return FilteredRowsComp;
 }(NameValueComp));
 
-var __extends$2R = (undefined && undefined.__extends) || (function () {
+var __extends$2Z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -41149,14 +43689,14 @@ var __extends$2R = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TotalRowsComp = /** @class */ (function (_super) {
-    __extends$2R(TotalRowsComp, _super);
+    __extends$2Z(TotalRowsComp, _super);
     function TotalRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -41187,16 +43727,16 @@ var TotalRowsComp = /** @class */ (function (_super) {
     TotalRowsComp.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
     };
-    __decorate$1L([
+    __decorate$1V([
         agGridCommunity.Autowired('gridApi')
     ], TotalRowsComp.prototype, "gridApi", void 0);
-    __decorate$1L([
+    __decorate$1V([
         agGridCommunity.PostConstruct
     ], TotalRowsComp.prototype, "postConstruct", null);
     return TotalRowsComp;
 }(NameValueComp));
 
-var __extends$2S = (undefined && undefined.__extends) || (function () {
+var __extends$2_ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -41209,14 +43749,14 @@ var __extends$2S = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SelectedRowsComp = /** @class */ (function (_super) {
-    __extends$2S(SelectedRowsComp, _super);
+    __extends$2_(SelectedRowsComp, _super);
     function SelectedRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -41252,16 +43792,16 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     SelectedRowsComp.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
     };
-    __decorate$1M([
+    __decorate$1W([
         agGridCommunity.Autowired('gridApi')
     ], SelectedRowsComp.prototype, "gridApi", void 0);
-    __decorate$1M([
+    __decorate$1W([
         agGridCommunity.PostConstruct
     ], SelectedRowsComp.prototype, "postConstruct", null);
     return SelectedRowsComp;
 }(NameValueComp));
 
-var __extends$2T = (undefined && undefined.__extends) || (function () {
+var __extends$2$ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -41274,14 +43814,14 @@ var __extends$2T = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AggregationComp = /** @class */ (function (_super) {
-    __extends$2T(AggregationComp, _super);
+    __extends$2$(AggregationComp, _super);
     function AggregationComp() {
         return _super.call(this, AggregationComp.TEMPLATE) || this;
     }
@@ -41416,49 +43956,46 @@ var AggregationComp = /** @class */ (function (_super) {
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
     };
     AggregationComp.TEMPLATE = "<div class=\"ag-status-panel ag-status-panel-aggregations\">\n            <ag-name-value ref=\"avgAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"countAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"minAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"maxAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"sumAggregationComp\"></ag-name-value>\n        </div>";
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.Optional('rangeController')
     ], AggregationComp.prototype, "rangeController", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.Autowired('valueService')
     ], AggregationComp.prototype, "valueService", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.Autowired('cellNavigationService')
     ], AggregationComp.prototype, "cellNavigationService", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.Autowired('rowRenderer')
     ], AggregationComp.prototype, "rowRenderer", void 0);
-    __decorate$1N([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], AggregationComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.Autowired('gridOptions')
     ], AggregationComp.prototype, "gridOptions", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.Autowired('gridApi')
     ], AggregationComp.prototype, "gridApi", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.Autowired('cellPositionUtils')
     ], AggregationComp.prototype, "cellPositionUtils", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.Autowired('rowPositionUtils')
     ], AggregationComp.prototype, "rowPositionUtils", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.RefSelector('sumAggregationComp')
     ], AggregationComp.prototype, "sumAggregationComp", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.RefSelector('countAggregationComp')
     ], AggregationComp.prototype, "countAggregationComp", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.RefSelector('minAggregationComp')
     ], AggregationComp.prototype, "minAggregationComp", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.RefSelector('maxAggregationComp')
     ], AggregationComp.prototype, "maxAggregationComp", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.RefSelector('avgAggregationComp')
     ], AggregationComp.prototype, "avgAggregationComp", void 0);
-    __decorate$1N([
+    __decorate$1X([
         agGridCommunity.PostConstruct
     ], AggregationComp.prototype, "postConstruct", null);
     return AggregationComp;
@@ -41483,7 +44020,7 @@ var StatusBarModule = {
     ]
 };
 
-var __extends$2U = (undefined && undefined.__extends) || (function () {
+var __extends$30 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -41496,14 +44033,14 @@ var __extends$2U = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ViewportRowModel = /** @class */ (function (_super) {
-    __extends$2U(ViewportRowModel, _super);
+    __extends$30(ViewportRowModel, _super);
     function ViewportRowModel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         // rowRenderer tells us these
@@ -41719,25 +44256,22 @@ var ViewportRowModel = /** @class */ (function (_super) {
     ViewportRowModel.prototype.isRowPresent = function (rowNode) {
         return false;
     };
-    __decorate$1O([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ViewportRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1O([
+    __decorate$1Y([
         agGridCommunity.Autowired('gridApi')
     ], ViewportRowModel.prototype, "gridApi", void 0);
-    __decorate$1O([
+    __decorate$1Y([
         agGridCommunity.Autowired('columnApi')
     ], ViewportRowModel.prototype, "columnApi", void 0);
-    __decorate$1O([
+    __decorate$1Y([
         agGridCommunity.Autowired('rowRenderer')
     ], ViewportRowModel.prototype, "rowRenderer", void 0);
-    __decorate$1O([
+    __decorate$1Y([
         agGridCommunity.PostConstruct
     ], ViewportRowModel.prototype, "init", null);
-    __decorate$1O([
+    __decorate$1Y([
         agGridCommunity.PreDestroy
     ], ViewportRowModel.prototype, "destroyDatasource", null);
-    ViewportRowModel = __decorate$1O([
+    ViewportRowModel = __decorate$1Y([
         agGridCommunity.Bean('rowModel')
     ], ViewportRowModel);
     return ViewportRowModel;
@@ -41751,7 +44285,7 @@ var ViewportRowModelModule = {
     ]
 };
 
-var __extends$2V = (undefined && undefined.__extends) || (function () {
+var __extends$31 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -41764,14 +44298,14 @@ var __extends$2V = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ClipboardService = /** @class */ (function (_super) {
-    __extends$2V(ClipboardService, _super);
+    __extends$31(ClipboardService, _super);
     function ClipboardService() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -41787,34 +44321,49 @@ var ClipboardService = /** @class */ (function (_super) {
     ClipboardService.prototype.pasteFromClipboard = function () {
         var _this = this;
         this.logger.log('pasteFromClipboard');
+        // Method 1 - native clipboard API, available in modern chrome browsers
+        var allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
+        if (allowNavigator && navigator.clipboard) {
+            navigator.clipboard.readText()
+                .then(this.processClipboardData.bind(this))
+                .catch(function () {
+                // no processing, if fails, do nothing, paste doesn't happen
+            });
+            return;
+        }
+        // Method 2 - if modern API fails, the old school hack
         this.executeOnTempElement(function (textArea) { return textArea.focus(); }, function (element) {
             var data = element.value;
-            if (agGridCommunity._.missingOrEmpty(data)) {
-                return;
-            }
-            var parsedData = agGridCommunity._.stringToArray(data, _this.gridOptionsWrapper.getClipboardDeliminator());
-            var userFunc = _this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
-            if (userFunc) {
-                parsedData = userFunc({ data: parsedData });
-            }
-            if (agGridCommunity._.missingOrEmpty(parsedData)) {
-                return;
-            }
-            if (_this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
-                _this.removeLastLineIfBlank(parsedData);
-            }
-            var pasteOperation = function (cellsToFlash, updatedRowNodes, focusedCell, changedPath) {
-                var rangeActive = _this.rangeController && _this.rangeController.isMoreThanOneCell();
-                var pasteIntoRange = rangeActive && !_this.hasOnlyOneValueToPaste(parsedData);
-                if (pasteIntoRange) {
-                    _this.pasteIntoActiveRange(parsedData, cellsToFlash, updatedRowNodes, changedPath);
-                }
-                else {
-                    _this.pasteStartingFromFocusedCell(parsedData, cellsToFlash, updatedRowNodes, focusedCell, changedPath);
-                }
-            };
-            _this.doPasteOperation(pasteOperation);
+            _this.processClipboardData(data);
         });
+    };
+    ClipboardService.prototype.processClipboardData = function (data) {
+        var _this = this;
+        if (agGridCommunity._.missingOrEmpty(data)) {
+            return;
+        }
+        var parsedData = agGridCommunity._.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
+        var userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
+        if (userFunc) {
+            parsedData = userFunc({ data: parsedData });
+        }
+        if (agGridCommunity._.missingOrEmpty(parsedData)) {
+            return;
+        }
+        if (this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
+            this.removeLastLineIfBlank(parsedData);
+        }
+        var pasteOperation = function (cellsToFlash, updatedRowNodes, focusedCell, changedPath) {
+            var rangeActive = _this.rangeController && _this.rangeController.isMoreThanOneCell();
+            var pasteIntoRange = rangeActive && !_this.hasOnlyOneValueToPaste(parsedData);
+            if (pasteIntoRange) {
+                _this.pasteIntoActiveRange(parsedData, cellsToFlash, updatedRowNodes, changedPath);
+            }
+            else {
+                _this.pasteStartingFromFocusedCell(parsedData, cellsToFlash, updatedRowNodes, focusedCell, changedPath);
+            }
+        };
+        this.doPasteOperation(pasteOperation);
     };
     // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
     ClipboardService.prototype.doPasteOperation = function (pasteOperationFunc) {
@@ -41834,6 +44383,8 @@ var ClipboardService = /** @class */ (function (_super) {
         }
         var cellsToFlash = {};
         var updatedRowNodes = [];
+        var doc = this.gridOptionsWrapper.getDocument();
+        var focusedElementBefore = doc.activeElement;
         var focusedCell = this.focusController.getFocusedCell();
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
         if (changedPath) {
@@ -41842,7 +44393,11 @@ var ClipboardService = /** @class */ (function (_super) {
         this.rowRenderer.refreshCells();
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
-        if (focusedCell) {
+        var focusedElementAfter = doc.activeElement;
+        // if using the clipboard hack with a temp element, then the focus has been lost,
+        // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
+        // navigation stops.
+        if (focusedCell && focusedElementBefore != focusedElementAfter) {
             this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
         this.eventService.dispatchEvent({
@@ -41856,7 +44411,8 @@ var ClipboardService = /** @class */ (function (_super) {
         var _this = this;
         // true if clipboard data can be evenly pasted into range, otherwise false
         var abortRepeatingPasteIntoRows = this.getRangeSize() % clipboardData.length != 0;
-        var indexOffset = 0, dataRowIndex = 0;
+        var indexOffset = 0;
+        var dataRowIndex = 0;
         var rowCallback = function (currentRow, rowNode, columns, index) {
             var atEndOfClipboardData = index - indexOffset >= clipboardData.length;
             if (atEndOfClipboardData) {
@@ -41897,12 +44453,7 @@ var ClipboardService = /** @class */ (function (_super) {
         }
         var currentRow = { rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned };
         var columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
-        if (this.hasOnlyOneValueToPaste(parsedData)) {
-            this.pasteSingleValue(parsedData, updatedRowNodes, cellsToFlash, changedPath);
-        }
-        else {
-            this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, agGridCommunity.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
-        }
+        this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, agGridCommunity.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
     };
     ClipboardService.prototype.hasOnlyOneValueToPaste = function (parsedData) {
         return parsedData.length === 1 && parsedData[0].length === 1;
@@ -41976,33 +44527,23 @@ var ClipboardService = /** @class */ (function (_super) {
     };
     ClipboardService.prototype.pasteMultipleValues = function (clipboardGridData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, type, changedPath) {
         var _this = this;
+        var rowPointer = currentRow;
         clipboardGridData.forEach(function (clipboardRowData) {
             // if we have come to end of rows in grid, then skip
-            if (!currentRow) {
+            if (!rowPointer) {
                 return;
             }
-            var rowNode = _this.rowPositionUtils.getRowNode(currentRow);
+            var rowNode = _this.rowPositionUtils.getRowNode(rowPointer);
             if (rowNode) {
                 updatedRowNodes.push(rowNode);
                 clipboardRowData.forEach(function (value, index) {
-                    return _this.updateCellValue(rowNode, columnsToPasteInto[index], value, currentRow, cellsToFlash, type, changedPath);
+                    return _this.updateCellValue(rowNode, columnsToPasteInto[index], value, rowPointer, cellsToFlash, type, changedPath);
                 });
                 // move to next row down for next set of values
-                currentRow = _this.cellNavigationService.getRowBelow({ rowPinned: currentRow.rowPinned, rowIndex: currentRow.rowIndex });
+                rowPointer = _this.cellNavigationService.getRowBelow({ rowPinned: rowPointer.rowPinned, rowIndex: rowPointer.rowIndex });
             }
         });
-        return currentRow;
-    };
-    ClipboardService.prototype.pasteSingleValue = function (parsedData, updatedRowNodes, cellsToFlash, changedPath) {
-        var _this = this;
-        var value = parsedData[0][0];
-        var rowCallback = function (currentRow, rowNode, columns) {
-            updatedRowNodes.push(rowNode);
-            columns.forEach(function (column) {
-                return _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, agGridCommunity.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
-            });
-        };
-        this.iterateActiveRanges(false, rowCallback);
+        return rowPointer;
     };
     ClipboardService.prototype.updateCellValue = function (rowNode, column, value, currentRow, cellsToFlash, type, changedPath) {
         if (!rowNode ||
@@ -42026,7 +44567,6 @@ var ClipboardService = /** @class */ (function (_super) {
         if (includeHeaders == null) {
             includeHeaders = this.gridOptionsWrapper.isCopyHeadersToClipboard();
         }
-        var focusedCell = this.focusController.getFocusedCell();
         var selectedRowsToCopy = !this.selectionController.isEmpty()
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
         // default is copy range if exists, otherwise rows
@@ -42048,9 +44588,6 @@ var ClipboardService = /** @class */ (function (_super) {
             // of exactly one cell (hence the first 'if' above didn't
             // get executed).
             this.copySelectedRangeToClipboard(includeHeaders);
-        }
-        if (focusedCell) {
-            this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
     };
     ClipboardService.prototype.iterateActiveRanges = function (onlyFirst, rowCallback, columnCallback) {
@@ -42210,23 +44747,37 @@ var ClipboardService = /** @class */ (function (_super) {
         this.copyDataToClipboard(data);
     };
     ClipboardService.prototype.copyDataToClipboard = function (data) {
+        var _this = this;
         var userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
+        // method 1 - user provided func
         if (userProvidedFunc) {
             userProvidedFunc({ data: data });
+            return;
         }
-        else {
-            this.executeOnTempElement(function (element) {
-                element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
-                element.select();
-                element.focus();
-                var result = document.execCommand('copy');
-                if (!result) {
-                    console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
-                        'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
-                        'the browser will prevent it for security reasons.');
-                }
+        // method 2 - native clipboard API, available in modern chrome browsers
+        var allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
+        if (allowNavigator && navigator.clipboard) {
+            navigator.clipboard.writeText(data).catch(function () {
+                // no processing, if fails, do nothing, copy doesn't happen
             });
+            return;
         }
+        // method 3 - if all else fails, the old school hack
+        this.executeOnTempElement(function (element) {
+            var focusedElementBefore = _this.gridOptionsWrapper.getDocument().activeElement;
+            element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
+            element.select();
+            element.focus();
+            var result = document.execCommand('copy');
+            if (!result) {
+                console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
+                    'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
+                    'the browser will prevent it for security reasons.');
+            }
+            if (focusedElementBefore != null && focusedElementBefore.focus != null) {
+                focusedElementBefore.focus();
+            }
+        });
     };
     ClipboardService.prototype.executeOnTempElement = function (callbackNow, callbackAfter) {
         var eTempInput = document.createElement('textarea');
@@ -42265,55 +44816,52 @@ var ClipboardService = /** @class */ (function (_super) {
         }
         return startRangeIndex - endRangeIndex + 1;
     };
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('csvCreator')
     ], ClipboardService.prototype, "csvCreator", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('loggerFactory')
     ], ClipboardService.prototype, "loggerFactory", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('selectionController')
     ], ClipboardService.prototype, "selectionController", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Optional('rangeController')
     ], ClipboardService.prototype, "rangeController", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('rowModel')
     ], ClipboardService.prototype, "rowModel", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('valueService')
     ], ClipboardService.prototype, "valueService", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('focusController')
     ], ClipboardService.prototype, "focusController", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('rowRenderer')
     ], ClipboardService.prototype, "rowRenderer", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('columnController')
     ], ClipboardService.prototype, "columnController", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('cellNavigationService')
     ], ClipboardService.prototype, "cellNavigationService", void 0);
-    __decorate$1P([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], ClipboardService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('columnApi')
     ], ClipboardService.prototype, "columnApi", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('gridApi')
     ], ClipboardService.prototype, "gridApi", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('cellPositionUtils')
     ], ClipboardService.prototype, "cellPositionUtils", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.Autowired('rowPositionUtils')
     ], ClipboardService.prototype, "rowPositionUtils", void 0);
-    __decorate$1P([
+    __decorate$1Z([
         agGridCommunity.PostConstruct
     ], ClipboardService.prototype, "init", null);
-    ClipboardService = __decorate$1P([
+    ClipboardService = __decorate$1Z([
         agGridCommunity.Bean('clipboardService')
     ], ClipboardService);
     return ClipboardService;

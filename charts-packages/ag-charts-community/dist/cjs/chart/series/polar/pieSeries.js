@@ -136,6 +136,7 @@ var PieSeries = /** @class */ (function (_super) {
         _this.label.addEventListener('change', _this.scheduleLayout, _this);
         _this.label.addEventListener('dataChange', _this.scheduleData, _this);
         _this.callout.addEventListener('change', _this.scheduleLayout, _this);
+        _this.callout.colors = _this.strokes;
         _this.addPropertyListener('data', function (event) {
             if (event.value) {
                 event.source.seriesItemEnabled = event.value.map(function () { return true; });
@@ -220,12 +221,14 @@ var PieSeries = /** @class */ (function (_super) {
         })();
         var labelKey = this.label.enabled && this.labelKey;
         var labelData = labelKey ? data.map(function (datum) { return String(datum[labelKey]); }) : [];
-        var useRadiusKey = !!radiusKey && !this.innerRadiusOffset;
         var radiusData = [];
-        if (useRadiusKey) {
+        if (radiusKey) {
+            var _b = this, radiusMin = _b.radiusMin, radiusMax = _b.radiusMax;
             var radii = data.map(function (datum) { return Math.abs(datum[radiusKey]); });
-            var maxDatum_1 = Math.max.apply(Math, radii);
-            radiusData = radii.map(function (value) { return value / maxDatum_1; });
+            var min_1 = radiusMin !== undefined ? radiusMin : Math.min.apply(Math, radii);
+            var max = radiusMax !== undefined ? radiusMax : Math.max.apply(Math, radii);
+            var delta_1 = max - min_1;
+            radiusData = radii.map(function (value) { return delta_1 ? (value - min_1) / delta_1 : 1; });
         }
         groupSelectionData.length = 0;
         var rotation = angle_1.toRadians(this.rotation);
@@ -233,7 +236,7 @@ var PieSeries = /** @class */ (function (_super) {
         var datumIndex = 0;
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce(function (start, end) {
-            var radius = useRadiusKey ? radiusData[datumIndex] : 1;
+            var radius = radiusKey ? radiusData[datumIndex] : 1;
             var startAngle = angleScale.convert(start) + rotation;
             var endAngle = angleScale.convert(end) + rotation;
             var midAngle = (startAngle + endAngle) / 2;
@@ -290,12 +293,15 @@ var PieSeries = /** @class */ (function (_super) {
         if (!visible || !chart || chart.dataPending || chart.layoutPending) {
             return;
         }
-        this.radiusScale.range = [0, this.radius];
+        var _a = this, radius = _a.radius, innerRadiusOffset = _a.innerRadiusOffset, outerRadiusOffset = _a.outerRadiusOffset, title = _a.title;
+        this.radiusScale.range = [
+            innerRadiusOffset ? radius + innerRadiusOffset : 0,
+            radius + (outerRadiusOffset || 0)
+        ];
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
-        var title = this.title;
         if (title) {
-            title.node.translationY = -this.radius - this.outerRadiusOffset - 2;
+            title.node.translationY = -radius - outerRadiusOffset - 2;
             title.node.visible = title.enabled;
         }
         this.updateGroupSelection();
@@ -321,11 +327,10 @@ var PieSeries = /** @class */ (function (_super) {
         if (!this.chart) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
         var highlightedDatum = this.chart.highlightedDatum;
-        var minOuterRadius = Infinity;
-        var outerRadii = [];
         var centerOffsets = [];
+        var innerRadius = radiusScale.convert(0);
         this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
             var radius = radiusScale.convert(datum.radius);
             var outerRadius = Math.max(0, radius + outerRadiusOffset);
@@ -333,9 +338,6 @@ var PieSeries = /** @class */ (function (_super) {
             var sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             var sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
             var format = undefined;
-            if (minOuterRadius > outerRadius) {
-                minOuterRadius = outerRadius;
-            }
             if (formatter) {
                 format = formatter({
                     datum: datum.seriesDatum,
@@ -347,8 +349,8 @@ var PieSeries = /** @class */ (function (_super) {
                     radiusKey: radiusKey
                 });
             }
-            sector.outerRadius = outerRadius;
-            sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
+            sector.innerRadius = innerRadius;
+            sector.outerRadius = radius;
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
             sector.fill = format && format.fill || sectorFill;
@@ -361,19 +363,18 @@ var PieSeries = /** @class */ (function (_super) {
             sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
             sector.lineJoin = 'round';
-            outerRadii.push(outerRadius);
             centerOffsets.push(sector.centerOffset);
         });
         var calloutColors = callout.colors, calloutLength = callout.length, calloutStrokeWidth = callout.strokeWidth;
         this.groupSelection.selectByTag(PieNodeTag.Callout).each(function (line, datum, index) {
             if (datum.label) {
-                var outerRadius = centerOffsets[index] + outerRadii[index];
+                var radius = radiusScale.convert(datum.radius);
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
-                line.x1 = datum.midCos * outerRadius;
-                line.y1 = datum.midSin * outerRadius;
-                line.x2 = datum.midCos * (outerRadius + calloutLength);
-                line.y2 = datum.midSin * (outerRadius + calloutLength);
+                line.x1 = datum.midCos * radius;
+                line.y1 = datum.midSin * radius;
+                line.x2 = datum.midCos * (radius + calloutLength);
+                line.y2 = datum.midSin * (radius + calloutLength);
             }
             else {
                 line.stroke = undefined;
@@ -384,8 +385,8 @@ var PieSeries = /** @class */ (function (_super) {
             this.groupSelection.selectByTag(PieNodeTag.Label).each(function (text, datum, index) {
                 var label = datum.label;
                 if (label) {
-                    var outerRadius = outerRadii[index];
-                    var labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset_1;
+                    var radius = radiusScale.convert(datum.radius);
+                    var labelRadius = centerOffsets[index] + radius + calloutLength + offset_1;
                     text.fontStyle = fontStyle_1;
                     text.fontWeight = fontWeight_1;
                     text.fontSize = fontSize_1;
@@ -403,12 +404,14 @@ var PieSeries = /** @class */ (function (_super) {
             });
         }
     };
-    PieSeries.prototype.fireNodeClickEvent = function (datum) {
+    PieSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             angleKey: this.angleKey,
+            labelKey: this.labelKey,
             radiusKey: this.radiusKey
         });
     };
@@ -427,7 +430,7 @@ var PieSeries = /** @class */ (function (_super) {
         var content = label + formattedAngleValue;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -488,6 +491,12 @@ var PieSeries = /** @class */ (function (_super) {
     __decorate([
         observable_1.reactive('update')
     ], PieSeries.prototype, "radiusName", void 0);
+    __decorate([
+        observable_1.reactive('dataChange')
+    ], PieSeries.prototype, "radiusMin", void 0);
+    __decorate([
+        observable_1.reactive('dataChange')
+    ], PieSeries.prototype, "radiusMax", void 0);
     __decorate([
         observable_1.reactive('dataChange')
     ], PieSeries.prototype, "labelKey", void 0);

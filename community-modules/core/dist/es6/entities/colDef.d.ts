@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -90,7 +90,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
     sortIndex?: number;
     initialSortIndex?: number;
-    /** @deprecated since v24 - use sortOrder instead*/
+    /** @deprecated since v24 - use sortIndex instead*/
     sortedAt?: number;
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
     sortingOrder?: (string | null)[];
@@ -367,7 +367,7 @@ export interface SuppressHeaderKeyboardEventParams {
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
     column: Column | ColumnGroup;
-    colDef: ColDef | ColGroupDef;
+    colDef: ColDef | ColGroupDef | null;
     context: any;
     headerRowIndex: number;
     event: KeyboardEvent;

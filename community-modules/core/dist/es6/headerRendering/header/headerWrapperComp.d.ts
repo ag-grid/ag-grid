@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Beans } from "../../rendering/beans";
@@ -8,7 +8,6 @@ import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
 import { ITooltipParams } from "../../rendering/tooltipComponent";
 export declare class HeaderWrapperComp extends AbstractHeaderWrapper {
     private static TEMPLATE;
-    private gridOptionsWrapper;
     private dragAndDropService;
     private columnController;
     private horizontalResizeService;
@@ -39,7 +38,10 @@ export declare class HeaderWrapperComp extends AbstractHeaderWrapper {
     private colDefHeaderComponentFramework?;
     constructor(column: Column, pinned: string);
     protected postConstruct(): void;
+    private onColumnRowGroupChanged;
+    private onColumnPivotChanged;
     private onColumnValueChanged;
+    private checkDisplayName;
     private updateState;
     private calculateDisplayName;
     private onNewColumnsLoaded;
@@ -69,7 +71,6 @@ export declare class HeaderWrapperComp extends AbstractHeaderWrapper {
     onResizing(finished: boolean, resizeAmount: number): void;
     onResizeStart(shiftKey: boolean): void;
     getTooltipParams(): ITooltipParams;
-    private getTooltipText;
     private setupTooltip;
     private setupMovingCss;
     private addAttributes;

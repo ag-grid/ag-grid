@@ -55,6 +55,8 @@ var AggregationStage = /** @class */ (function (_super) {
     };
     AggregationStage.prototype.recursivelyCreateAggData = function (aggDetails) {
         var _this = this;
+        // update prop, in case changed since last time
+        this.filteredOnly = !this.gridOptionsWrapper.isSuppressAggFilteredOnly();
         var callback = function (rowNode) {
             var hasNoChildren = !rowNode.hasChildren();
             if (hasNoChildren) {
@@ -191,9 +193,10 @@ var AggregationStage = /** @class */ (function (_super) {
         var values = [];
         valueColumns.forEach(function () { return values.push([]); });
         var valueColumnCount = valueColumns.length;
-        var rowCount = rowNode.childrenAfterFilter.length;
+        var nodeList = this.filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup;
+        var rowCount = nodeList.length;
         for (var i = 0; i < rowCount; i++) {
-            var childNode = rowNode.childrenAfterFilter[i];
+            var childNode = nodeList[i];
             for (var j = 0; j < valueColumnCount; j++) {
                 var valueColumn = valueColumns[j];
                 // if the row is a group, then it will only have an agg result value,
@@ -245,9 +248,6 @@ var AggregationStage = /** @class */ (function (_super) {
         }; // the "as any" is needed to allow the deprecation warning messages
         return aggFuncAny(params);
     };
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], AggregationStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnController')
     ], AggregationStage.prototype, "columnController", void 0);

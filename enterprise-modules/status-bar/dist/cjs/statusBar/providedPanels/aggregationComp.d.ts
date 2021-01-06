@@ -5,7 +5,6 @@ export declare class AggregationComp extends Component implements IStatusPanelCo
     private valueService;
     private cellNavigationService;
     private rowRenderer;
-    private gridOptionsWrapper;
     private gridOptions;
     private gridApi;
     cellPositionUtils: CellPositionUtils;

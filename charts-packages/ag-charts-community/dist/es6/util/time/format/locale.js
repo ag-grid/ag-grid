@@ -1,6 +1,6 @@
 import timeDay from "../day";
 import year from "../year";
-import { sunday as timeSunday, monday as timeMonday, thursday as timeThursday } from "../week";
+import { sunday as timeSunday, monday as timeMonday, thursday as timeThursday, } from "../week";
 import utcDay from "../utcDay";
 import utcYear from "../utcYear";
 import utcSunday, { utcMonday, utcThursday } from "../utcWeek";

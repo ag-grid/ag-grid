@@ -4,7 +4,6 @@ import {
     ColumnController,
     Component,
     Events,
-    GridOptionsWrapper,
     PreConstruct,
     RefSelector
 } from "@ag-grid-community/core";
@@ -12,7 +11,6 @@ import {
 export class PivotModePanel extends Component {
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
 
@@ -31,7 +29,7 @@ export class PivotModePanel extends Component {
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
 
         this.addManagedListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onPivotModeChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     }
 

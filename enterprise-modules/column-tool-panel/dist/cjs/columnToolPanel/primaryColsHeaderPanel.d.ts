@@ -5,7 +5,6 @@ export declare enum ExpandState {
     INDETERMINATE = 2
 }
 export declare class PrimaryColsHeaderPanel extends Component {
-    private readonly gridOptionsWrapper;
     private readonly columnController;
     private readonly eExpand;
     private readonly eSelect;

@@ -58,7 +58,7 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
                 floatingFilterPromises.push(floatingFilterPromise);
             }
         });
-        return core_1.Promise.all(floatingFilterPromises).then(function (floatingFilters) {
+        return core_1.AgPromise.all(floatingFilterPromises).then(function (floatingFilters) {
             core_1._.forEach(floatingFilters, function (floatingFilter, index) {
                 _this.floatingFilters.push(floatingFilter);
                 var gui = floatingFilter.getGui();

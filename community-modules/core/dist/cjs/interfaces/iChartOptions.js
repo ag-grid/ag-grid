@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8,9 +8,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var ChartType;
 (function (ChartType) {
+    ChartType["Column"] = "column";
     ChartType["GroupedColumn"] = "groupedColumn";
     ChartType["StackedColumn"] = "stackedColumn";
     ChartType["NormalizedColumn"] = "normalizedColumn";
+    ChartType["Bar"] = "bar";
     ChartType["GroupedBar"] = "groupedBar";
     ChartType["StackedBar"] = "stackedBar";
     ChartType["NormalizedBar"] = "normalizedBar";

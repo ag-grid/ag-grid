@@ -1,5 +1,6 @@
-import { CaptionOptions, ChartOptions, ChartType, ColumnApi, DropShadowOptions, EventService, FontOptions, GridApi, PaddingOptions, ProcessChartOptionsParams, SeriesOptions, AgChartThemeOverrides } from "@ag-grid-community/core";
+import { AgChartThemeOverrides, CaptionOptions, ChartOptions, ChartType, ColumnApi, DropShadowOptions, EventService, FontOptions, GridApi, PaddingOptions, ProcessChartOptionsParams, SeriesOptions } from "@ag-grid-community/core";
 import { AgChartTheme, AgChartThemePalette, Chart, ChartTheme } from "ag-charts-community";
+import { CrossFilteringContext } from "../../chartService";
 export interface ChartProxyParams {
     chartId: string;
     chartType: ChartType;
@@ -19,6 +20,8 @@ export interface ChartProxyParams {
     apiChartThemeOverrides?: AgChartThemeOverrides;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
+    crossFiltering: boolean;
+    crossFilterCallback: (event: any, reset?: boolean) => void;
     eventService: EventService;
     gridApi: GridApi;
     columnApi: ColumnApi;
@@ -36,6 +39,8 @@ export interface UpdateChartParams {
         chartDataType?: string;
     };
     fields: FieldDefinition[];
+    chartId?: string;
+    getCrossFilteringContext: () => CrossFilteringContext;
 }
 export declare abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
     protected readonly chartProxyParams: ChartProxyParams;
@@ -48,6 +53,8 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     protected customPalette: AgChartThemePalette;
     protected chartOptions: TOptions;
     protected chartTheme: ChartTheme;
+    protected crossFiltering: boolean;
+    protected crossFilterCallback: (event: any, reset?: boolean) => void;
     protected constructor(chartProxyParams: ChartProxyParams);
     protected abstract createChart(options?: TOptions): TChart;
     recreateChart(options?: TOptions): void;
@@ -91,6 +98,7 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     protected getPalette(): AgChartThemePalette;
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions>;
     protected transformData(data: any[], categoryKey: string): any[];
+    protected hexToRGBA(hex: string, alpha: string): string;
     destroy(): void;
     protected destroyChart(): void;
 }

@@ -29,7 +29,6 @@ import { FocusController } from "./focusController";
 import { MouseEventService } from "./gridPanel/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
 import { Events, GridReadyEvent } from "./events";
-import { CellRendererFactory } from "./rendering/cellRendererFactory";
 import { ValueFormatterService } from "./rendering/valueFormatterService";
 import { AgCheckbox } from "./widgets/agCheckbox";
 import { AgRadioButton } from "./widgets/agRadioButton";
@@ -280,7 +279,7 @@ export class Grid {
             rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
+            MaxDivHeightScaler, AutoHeightCalculator, HorizontalResizeService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper,
             PopupService, SelectionController, FilterManager, ColumnController, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,

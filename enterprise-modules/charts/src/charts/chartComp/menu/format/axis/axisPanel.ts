@@ -168,12 +168,12 @@ export class AxisPanel extends Component {
             const axis = find(chart.axes as AgCartesianAxisOptions[], axis => axis.position === axisPosition);
 
             if (axis) {
-                axis.label.rotation = newValue;
-                if (axis.position === ChartAxisPosition.Bottom) {
-                    // _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue); // TODO: fix this
-                } else if (axis.position === ChartAxisPosition.Left) {
-                    // _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
-                }
+                axis.label!.rotation = newValue;
+                // if (axis.position === ChartAxisPosition.Bottom) {
+                //     // _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
+                // } else if (axis.position === ChartAxisPosition.Left) {
+                //     // _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
+                // }
                 chart.performLayout();
             }
         };

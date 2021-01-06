@@ -128,9 +128,6 @@ var ChartTranslator = /** @class */ (function (_super) {
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
     };
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ChartTranslator.prototype, "gridOptionsWrapper", void 0);
     ChartTranslator = ChartTranslator_1 = __decorate([
         core_1.Bean("chartTranslator")
     ], ChartTranslator);

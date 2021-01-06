@@ -1,7 +1,7 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Promise } from '../../../utils';
+import { AgPromise } from '../../../utils';
 import { ConditionPosition, ISimpleFilterModel } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
@@ -26,7 +26,7 @@ export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number
         to: number;
     };
     protected getDefaultDebounceMs(): number;
-    protected resetUiToDefaults(silent?: boolean): Promise<void>;
+    protected resetUiToDefaults(silent?: boolean): AgPromise<void>;
     protected setConditionIntoUi(model: NumberFilterModel, position: ConditionPosition): void;
     protected setValueFromFloatingFilter(value: string): void;
     protected comparator(): Comparator<number>;
@@ -42,4 +42,5 @@ export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number
     private stringToFloat;
     protected createCondition(position: ConditionPosition): NumberFilterModel;
     protected updateUiVisibility(): void;
+    private getAllowedCharPattern;
 }

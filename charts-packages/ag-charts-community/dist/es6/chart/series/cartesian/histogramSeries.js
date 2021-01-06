@@ -71,7 +71,6 @@ var HistogramBin = /** @class */ (function () {
         this.data.push(datum);
         this.frequency++;
     };
-    ;
     Object.defineProperty(HistogramBin.prototype, "domainWidth", {
         get: function () {
             var _a = this.domain, domainMin = _a[0], domainMax = _a[1];
@@ -87,7 +86,6 @@ var HistogramBin = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    ;
     HistogramBin.prototype.calculateAggregatedValue = function (aggregationName, yKey) {
         if (!yKey) {
             // not having a yKey forces us into a frequency plot
@@ -373,9 +371,10 @@ var HistogramSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    HistogramSeries.prototype.fireNodeClickEvent = function (datum) {
+    HistogramSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey
@@ -504,15 +503,15 @@ var HistogramSeries = /** @class */ (function (_super) {
         }
         var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
         var bin = nodeDatum.seriesDatum;
-        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _c = bin.domain, rangeMin = _c[0], rangeMax = _c[1];
-        var title = (xName || xKey) + " " + toFixed(rangeMin) + " - " + toFixed(rangeMax);
+        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _d = bin.domain, rangeMin = _d[0], rangeMax = _d[1];
+        var title = (xName || xKey) + ": " + toFixed(rangeMin) + " - " + toFixed(rangeMax);
         var content = yKey ?
             "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + toFixed(aggregatedValue) + "<br>" :
             '';
         content += "<b>Frequency</b>: " + frequency;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {

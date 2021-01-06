@@ -1,4 +1,5 @@
 import { AgChartThemeOverrides, CellRange, ChartModel, ChartOptions, ChartType, Component, IAggFunc, ProcessChartOptionsParams } from "@ag-grid-community/core";
+import { CrossFilteringContext } from "../chartService";
 export interface GridChartParams {
     pivotChart: boolean;
     cellRange: CellRange;
@@ -10,6 +11,8 @@ export interface GridChartParams {
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
+    crossFiltering: boolean;
+    crossFilteringContext: CrossFilteringContext;
 }
 export declare class GridChartComp extends Component {
     private readonly params;
@@ -19,10 +22,10 @@ export declare class GridChartComp extends Component {
     private readonly eMenuContainer;
     private readonly eEmpty;
     private readonly eTitleEditContainer;
-    private readonly gridOptionsWrapper;
     private readonly environment;
     private readonly chartTranslator;
     private readonly columnController;
+    private readonly crossFilter;
     private readonly gridApi;
     private readonly columnApi;
     private readonly popupService;

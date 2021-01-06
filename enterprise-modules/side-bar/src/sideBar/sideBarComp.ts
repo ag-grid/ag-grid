@@ -1,9 +1,7 @@
 import {
     _,
-    Autowired,
     Component,
     Events,
-    GridOptionsWrapper,
     IComponent,
     ISideBar,
     IToolPanel,
@@ -23,8 +21,6 @@ export interface IToolPanelChildComp extends IComponent<any> {
 }
 
 export class SideBarComp extends Component implements ISideBar {
-
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
 

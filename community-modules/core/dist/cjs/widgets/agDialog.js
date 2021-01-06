@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -78,13 +78,16 @@ var AgDialog = /** @class */ (function (_super) {
     AgDialog.prototype.renderComponent = function () {
         var eGui = this.getGui();
         var _a = this.config, alwaysOnTop = _a.alwaysOnTop, modal = _a.modal;
-        this.close = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: modal,
             eChild: eGui,
             closeOnEsc: true,
             closedCallback: this.destroy.bind(this),
             alwaysOnTop: alwaysOnTop
         });
+        if (addPopupRes) {
+            this.close = addPopupRes.hideFunc;
+        }
     };
     AgDialog.prototype.addResizers = function () {
         var eGui = this.getGui();

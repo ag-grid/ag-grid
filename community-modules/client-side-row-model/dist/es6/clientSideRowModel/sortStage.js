@@ -55,9 +55,6 @@ var SortStage = /** @class */ (function (_super) {
         return dirtyNodes;
     };
     __decorate([
-        Autowired('gridOptionsWrapper')
-    ], SortStage.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         Autowired('sortService')
     ], SortStage.prototype, "sortService", void 0);
     __decorate([

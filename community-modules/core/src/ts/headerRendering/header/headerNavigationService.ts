@@ -6,7 +6,6 @@ import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
 import { HeaderRowType } from "../headerRowComp";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { GridPanel } from "../../gridPanel/gridPanel";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
@@ -22,7 +21,6 @@ export enum HeaderNavigationDirection {
 @Bean('headerNavigationService')
 export class HeaderNavigationService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;

@@ -21,13 +21,12 @@ import {
     GridOptions,
     GridParams,
     Module,
-    Promise,
-    _
+    AgPromise
 } from "@ag-grid-community/core";
 
-import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
-import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";
-import { AgGridColumn } from "./ag-grid-column.component";
+import {AngularFrameworkOverrides} from "./angularFrameworkOverrides";
+import {AngularFrameworkComponentWrapper} from "./angularFrameworkComponentWrapper";
+import {AgGridColumn} from "./ag-grid-column.component";
 
 @Component({
     selector: 'ag-grid-angular',
@@ -49,7 +48,7 @@ export class AgGridAngular implements AfterViewInit {
     private gridParams: GridParams;
 
     // in order to ensure firing of gridReady is deterministic
-    private _fullyReady: Promise<boolean> = Promise.resolve(true);
+    private _fullyReady: AgPromise<boolean> = AgPromise.resolve(true);
 
     // making these public, so they are accessible to people using the ng2 component references
     public api: GridApi;
@@ -58,17 +57,19 @@ export class AgGridAngular implements AfterViewInit {
     @ContentChildren(AgGridColumn) public columns: QueryList<AgGridColumn>;
 
     constructor(elementDef: ElementRef,
-        private viewContainerRef: ViewContainerRef,
-        private angularFrameworkOverrides: AngularFrameworkOverrides,
-        private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
-        private _componentFactoryResolver: ComponentFactoryResolver) {
+                private viewContainerRef: ViewContainerRef,
+                private angularFrameworkOverrides: AngularFrameworkOverrides,
+                private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
+                private componentFactoryResolver: ComponentFactoryResolver) {
         this._nativeElement = elementDef.nativeElement;
 
-        this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
-        this.frameworkComponentWrapper.setComponentFactoryResolver(this._componentFactoryResolver);
     }
 
     ngAfterViewInit(): void {
+        this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
+        this.frameworkComponentWrapper.setComponentFactoryResolver(this.componentFactoryResolver);
+        this.angularFrameworkOverrides.setEmitterUsedCallback(this.isEmitterUsed.bind(this));
+
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
 
         this.gridParams = {
@@ -122,6 +123,19 @@ export class AgGridAngular implements AfterViewInit {
         }
     }
 
+    // we'll emit the emit if a user is listening for a given event either on the component via normal angular binding
+    // or via gridOptions
+    protected isEmitterUsed(eventType: string): boolean {
+        const emitter = <EventEmitter<any>>(<any>this)[eventType];
+        const hasEmitter = !!emitter && emitter.observers && emitter.observers.length > 0;
+
+        // gridReady => onGridReady
+        const asEventName = `on${eventType.charAt(0).toUpperCase()}${eventType.substring(1)}`
+        const hasGridOptionListener = !!this.gridOptions && !!this.gridOptions[asEventName];
+
+        return hasEmitter || hasGridOptionListener;
+    }
+
     private globalEventListener(eventType: string, event: any): void {
         // if we are tearing down, don't emit angular events, as this causes
         // problems with the angular router
@@ -130,8 +144,8 @@ export class AgGridAngular implements AfterViewInit {
         }
 
         // generically look up the eventType
-        let emitter = <EventEmitter<any>>(<any>this)[eventType];
-        if (emitter) {
+        const emitter = <EventEmitter<any>>(<any>this)[eventType];
+        if (emitter && this.isEmitterUsed(eventType)) {
             if (eventType === 'gridReady') {
                 // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit the
                 // gridReady event
@@ -203,6 +217,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public pivotRowTotals : any = undefined;
     @Input() public pivotPanelShow : any = undefined;
     @Input() public fillHandleDirection : any = undefined;
+    @Input() public serverSideStoreType : any = undefined;
     @Input() public rowHeight : any = undefined;
     @Input() public detailRowHeight : any = undefined;
     @Input() public rowBuffer : any = undefined;
@@ -292,6 +307,9 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public processChartOptions : any = undefined;
     @Input() public getChartToolbarItems : any = undefined;
     @Input() public fillOperation : any = undefined;
+    @Input() public isApplyServerSideTransaction : any = undefined;
+    @Input() public getServerSideStoreParams : any = undefined;
+    @Input() public isServerSideGroupOpenByDefault : any = undefined;
     @Input() public suppressMakeColumnVisibleAfterUnGroup : any = undefined;
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;
@@ -414,6 +432,10 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public applyColumnDefOrder : any = undefined;
     @Input() public debounceVerticalScrollbar : any = undefined;
     @Input() public detailRowAutoHeight : any = undefined;
+    @Input() public serverSideFilteringAlwaysResets : any = undefined;
+    @Input() public suppressAggFilteredOnly : any = undefined;
+    @Input() public showOpenedGroup : any = undefined;
+    @Input() public suppressClipboardApi : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
@@ -430,6 +452,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public columnResized: EventEmitter<any> = new EventEmitter<any>();
     @Output() public displayedColumnsChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public virtualColumnsChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public asyncTransactionsFlushed: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowGroupOpened: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDataChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDataUpdated: EventEmitter<any> = new EventEmitter<any>();

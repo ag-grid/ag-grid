@@ -20,6 +20,6 @@ export declare class Observable {
     addEventListener(type: string, listener: SourceEventListener<this>, scope?: Object): void;
     removeEventListener(type: string, listener?: SourceEventListener<this>, scope?: Object): void;
     protected notifyEventListeners(types: string[]): void;
-    fireEvent<E extends TypedEvent>(event: E): void;
+    fireEvent<E extends TypedEvent>(event: Omit<E, 'source'>): void;
 }
 export declare function reactive(...events: string[]): (target: any, key: string) => void;

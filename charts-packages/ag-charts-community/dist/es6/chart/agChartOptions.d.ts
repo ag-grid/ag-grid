@@ -25,16 +25,17 @@ export interface AgChartThemeOverrides {
     common?: any;
 }
 export interface AgCartesianAxesTheme {
-    number?: AgNumberAxisOptions;
-    category?: AgCategoryAxisOptions;
-    groupedCategory?: AgGroupedCategoryAxisOptions;
-    time?: AgTimeAxisOptions;
+    number?: Omit<AgNumberAxisOptions, 'type'>;
+    category?: Omit<AgCategoryAxisOptions, 'type'>;
+    groupedCategory?: Omit<AgGroupedCategoryAxisOptions, 'type'>;
+    time?: Omit<AgTimeAxisOptions, 'type'>;
 }
 export interface AgCartesianSeriesTheme {
     line?: AgLineSeriesOptions;
     scatter?: AgScatterSeriesOptions;
     area?: AgAreaSeriesOptions;
     bar?: AgBarSeriesOptions;
+    column?: AgBarSeriesOptions;
     histogram?: AgHistogramSeriesOptions;
 }
 export interface AgPolarAxesTheme {
@@ -124,52 +125,58 @@ export interface AgChartLegendOptions {
     spacing?: number;
     item?: AgChartLegendItemOptions;
     /**
-     * @deprecated
+     * @deprecated Use `item.paddingX` instead.
      */
     layoutHorizontalSpacing?: number;
     /**
-     * @deprecated
+     * @deprecated Use `item.paddingY` instead.
      */
     layoutVerticalSpacing?: number;
     /**
-     * @deprecated
+     * @deprecated Use `item.marker.padding` instead.
      */
     itemSpacing?: number;
     /**
-     * @deprecated
+     * @deprecated Use `item.marker.shape` instead.
      */
     markerShape?: string | (new () => any);
     /**
-     * @deprecated
+     * @deprecated Use `item.marker.size` instead.
      */
     markerSize?: number;
     /**
-     * @deprecated
+     * @deprecated Use `item.marker.strokeWidth` instead.
      */
     strokeWidth?: number;
     /**
-     * @deprecated
+     * @deprecated Use `item.label.color` instead.
      */
     color?: string;
     /**
-     * @deprecated
+     * @deprecated Use `item.label.fontStyle` instead.
      */
     fontStyle?: FontStyle;
     /**
-     * @deprecated
+     * @deprecated Use `item.label.fontWeight` instead.
      */
     fontWeight?: FontWeight;
     /**
-     * @deprecated
+     * @deprecated Use `item.label.fontSize` instead.
      */
     fontSize?: number;
     /**
-     * @deprecated
+     * @deprecated Use `item.label.fontFamily` instead.
      */
     fontFamily?: string;
 }
+interface AgChartTooltipOptions {
+    enabled?: boolean;
+    class?: string;
+    tracking?: boolean;
+    delay?: number;
+}
 interface AgBaseChartOptions {
-    container?: HTMLElement;
+    container?: HTMLElement | null;
     data?: any[];
     width?: number;
     height?: number;
@@ -181,7 +188,14 @@ interface AgBaseChartOptions {
     };
     title?: AgChartCaptionOptions;
     subtitle?: AgChartCaptionOptions;
+    tooltip?: AgChartTooltipOptions;
+    /**
+     * @deprecated Use `tooltip.class` instead.
+     */
     tooltipClass?: string;
+    /**
+     * @deprecated Use `tooltip.tracking` instead.
+     */
     tooltipTracking?: boolean;
     navigator?: AgNavigatorOptions;
     legend?: AgChartLegendOptions;
@@ -254,6 +268,9 @@ interface AgTimeAxisOptions extends AgBaseCartesianAxisOptions {
 export declare type AgCartesianAxisOptions = AgNumberAxisOptions | AgCategoryAxisOptions | AgGroupedCategoryAxisOptions | AgTimeAxisOptions;
 declare type AgPolarAxisOptions = any;
 interface AgBaseSeriesOptions {
+    /**
+    * @deprecated Use `tooltip.enabled` instead.
+    */
     tooltipEnabled?: boolean;
     data?: any[];
     visible?: boolean;
@@ -302,18 +319,25 @@ interface AgSeriesMarker {
     stroke?: string;
     strokeWidth?: number;
 }
-interface AgCartesianSeriesMarkerFormatterParams {
+export interface AgCartesianSeriesMarkerFormatterParams {
     xKey: string;
     yKey: string;
 }
-interface AgCartesianSeriesMarkerFormat {
+export interface AgCartesianSeriesMarkerFormat {
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
     size?: number;
 }
+export declare type AgCartesianSeriesMarkerFormatter = (params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat;
 interface AgCartesianSeriesMarker extends AgSeriesMarker {
-    formatter?: (params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat;
+    formatter?: AgCartesianSeriesMarkerFormatter;
+}
+export interface AgSeriesTooltip {
+    enabled?: boolean;
+}
+export interface AgLineSeriesTooltip extends AgSeriesTooltip {
+    renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     type?: 'line';
@@ -332,7 +356,14 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
+    tooltip?: AgLineSeriesTooltip;
+    /**
+     * @deprecated Use `tooltip.renderer` instead.
+     */
     tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+}
+export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
+    renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     type?: 'scatter';
@@ -351,7 +382,15 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
+    tooltip?: AgScatterSeriesTooltip;
+    /**
+    * @deprecated Use `tooltip.renderer` instead.
+    */
     tooltipRenderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+}
+export interface AgAreaSeriesTooltip extends AgSeriesTooltip {
+    renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+    format?: string;
 }
 export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     type?: 'area';
@@ -372,6 +411,10 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
+    tooltip?: AgAreaSeriesTooltip;
+    /**
+    * @deprecated Use `tooltip.renderer` instead.
+    */
     tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
@@ -393,14 +436,19 @@ export interface AgBarSeriesFormat {
     stroke?: string;
     strokeWidth?: number;
 }
+export interface AgBarSeriesTooltip extends AgSeriesTooltip {
+    renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+}
 export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     type?: 'bar' | 'column';
     grouped?: boolean;
     normalizedTo?: number;
     xKey?: string;
-    yKeys?: string[];
+    yKeys?: string[] | string[][];
     xName?: string;
-    yNames?: string[];
+    yNames?: string[] | {
+        [key in string]: string;
+    };
     fills?: string[];
     strokes?: string[];
     strokeWidth?: number;
@@ -414,6 +462,10 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
         stroke?: string;
     };
     label?: AgBarSeriesLabelOptions;
+    tooltip?: AgBarSeriesTooltip;
+    /**
+    * @deprecated Use `tooltip.renderer` instead.
+    */
     tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
     formatter?: (params: AgBarSeriesFormatterParams) => AgBarSeriesFormat;
 }
@@ -421,6 +473,9 @@ interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
     formatter?: (params: {
         value: number;
     }) => string;
+}
+export interface AgHistogramSeriesTooltip extends AgSeriesTooltip {
+    renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     type?: 'histogram';
@@ -445,6 +500,10 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
         stroke?: string;
     };
     label?: AgHistogramSeriesLabelOptions;
+    tooltip?: AgHistogramSeriesTooltip;
+    /**
+    * @deprecated Use `tooltip.renderer` instead.
+    */
     tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
@@ -464,6 +523,9 @@ export interface AgPieSeriesFormat {
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
+}
+export interface AgPieSeriesTooltip extends AgSeriesTooltip {
+    renderer?: (params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     type?: 'pie';
@@ -495,6 +557,10 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
+    tooltip?: AgPieSeriesTooltip;
+    /**
+    * @deprecated Use `tooltip.renderer` instead.
+    */
     tooltipRenderer?: (params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
     formatter?: (params: AgPieSeriesFormatterParams) => AgPieSeriesFormat;
 }

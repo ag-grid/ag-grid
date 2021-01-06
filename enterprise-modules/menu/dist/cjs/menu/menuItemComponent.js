@@ -101,7 +101,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
         }
         var eGui = this.getGui();
         var positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService, { eventSource: eGui, ePopup: ePopup });
-        var closePopup = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
@@ -110,7 +110,9 @@ var MenuItemComponent = /** @class */ (function (_super) {
         this.subMenuIsOpen = true;
         core_1._.setAriaExpanded(eGui, true);
         this.hideSubMenu = function () {
-            closePopup();
+            if (addPopupRes) {
+                addPopupRes.hideFunc();
+            }
             _this.subMenuIsOpen = false;
             core_1._.setAriaExpanded(eGui, false);
             destroySubMenu();
@@ -294,9 +296,6 @@ var MenuItemComponent = /** @class */ (function (_super) {
     MenuItemComponent.EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';
     MenuItemComponent.EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
     MenuItemComponent.ACTIVATION_DELAY = 80;
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('popupService')
     ], MenuItemComponent.prototype, "popupService", void 0);

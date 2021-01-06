@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -727,7 +727,7 @@ var RowComp = /** @class */ (function (_super) {
             }
             else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({ newValue: true, clearSelection: true });
+                this.rowNode.setSelectedParams({ newValue: !shiftKeyPressed, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed });
             }
         }
         else {
@@ -1009,7 +1009,9 @@ var RowComp = /** @class */ (function (_super) {
             node.removeAttribute('aria-label');
             return;
         }
-        aria_1.setAriaLabel(node, "Press SPACE to " + (selected ? 'deselect' : 'select') + " this row.");
+        var translate = this.beans.gridOptionsWrapper.getLocaleTextFunc();
+        var label = translate(selected ? 'ariaRowDeselect' : 'ariaRowSelect', "Press SPACE to " + (selected ? 'deselect' : 'select') + " this row.");
+        aria_1.setAriaLabel(node, label);
     };
     // called:
     // + after row created for first time

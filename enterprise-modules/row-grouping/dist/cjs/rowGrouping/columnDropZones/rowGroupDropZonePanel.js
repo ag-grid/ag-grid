@@ -45,6 +45,11 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         });
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     };
+    RowGroupDropZonePanel.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'rowGroupColumnsList';
+        return res;
+    };
     RowGroupDropZonePanel.prototype.isColumnDroppable = function (column) {
         // we never allow grouping of secondary columns
         if (this.gridOptionsWrapper.isFunctionsReadOnly() || !column.isPrimary()) {
@@ -75,9 +80,6 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], RowGroupDropZonePanel.prototype, "columnController", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], RowGroupDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('loggerFactory')
     ], RowGroupDropZonePanel.prototype, "loggerFactory", void 0);

@@ -1,6 +1,4 @@
-import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ICellRenderer, ICellRendererParams } from "./iCellRenderer";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { createIconNoSpan } from "../../utils/icon";
@@ -16,8 +14,6 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
             <span class="ag-loading-text" ref="eLoadingText"></span>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-
     @RefSelector('eLoadingIcon') private eLoadingIcon: HTMLElement;
     @RefSelector('eLoadingText') private eLoadingText: HTMLElement;
 
@@ -26,6 +22,14 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     public init(params: ILoadingCellRendererParams): void {
+        params.node.failedLoad ? this.setupFailed() : this.setupLoading();
+    }
+
+    private setupFailed(): void {
+        this.eLoadingText.innerText = 'ERR';
+    }
+
+    private setupLoading(): void {
         const eLoadingIcon = createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
         this.eLoadingIcon.appendChild(eLoadingIcon);
 

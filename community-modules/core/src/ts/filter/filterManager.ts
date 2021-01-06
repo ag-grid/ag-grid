@@ -1,5 +1,4 @@
-import { Promise } from '../utils';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { AgPromise } from '../utils';
 import { ValueService } from '../valueService/valueService';
 import { ColumnController } from '../columnController/columnController';
 import { ColumnApi } from '../columnController/columnApi';
@@ -28,7 +27,6 @@ export class FilterManager extends BeanStub {
 
     @Autowired('$compile') private $compile: any;
     @Autowired('$scope') private $scope: any;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -71,7 +69,7 @@ export class FilterManager extends BeanStub {
     }
 
     public setFilterModel(model: { [key: string]: any; }): void {
-        const allPromises: Promise<void>[] = [];
+        const allPromises: AgPromise<void>[] = [];
 
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
@@ -103,18 +101,18 @@ export class FilterManager extends BeanStub {
             });
         }
 
-        Promise.all(allPromises).then(() => this.onFilterChanged());
+        AgPromise.all(allPromises).then(() => this.onFilterChanged());
     }
 
-    private setModelOnFilterWrapper(filterPromise: Promise<IFilterComp>, newModel: any): Promise<void> {
-        return new Promise<void>(resolve => {
+    private setModelOnFilterWrapper(filterPromise: AgPromise<IFilterComp>, newModel: any): AgPromise<void> {
+        return new AgPromise<void>(resolve => {
             filterPromise.then(filter => {
                 if (typeof filter.setModel !== 'function') {
                     console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
                     resolve();
                 }
 
-                (filter.setModel(newModel) || Promise.resolve()).then(() => resolve());
+                (filter!.setModel(newModel) || AgPromise.resolve()).then(() => resolve());
             });
         });
     }
@@ -371,7 +369,7 @@ export class FilterManager extends BeanStub {
         return node => this.valueService.getValue(column, node, true);
     }
 
-    public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): Promise<IFilterComp> {
+    public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
         if (createIfDoesNotExist) {
             return this.getOrCreateFilterWrapper(column, source).filterPromise;
         }
@@ -404,7 +402,7 @@ export class FilterManager extends BeanStub {
         return this.allAdvancedFilters.get(column.getColId());
     }
 
-    private createFilterInstance(column: Column, $scope: any): Promise<IFilterComp> {
+    private createFilterInstance(column: Column, $scope: any): AgPromise<IFilterComp> | null {
         const defaultFilter =
             ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
 
@@ -466,7 +464,7 @@ export class FilterManager extends BeanStub {
             filterPromise: null,
             scope: null as any,
             compiledElement: null,
-            guiPromise: Promise.resolve(null)
+            guiPromise: AgPromise.resolve(null)
         };
 
         filterWrapper.scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
@@ -484,9 +482,9 @@ export class FilterManager extends BeanStub {
 
         eFilterGui.className = 'ag-filter';
 
-        filterWrapper.guiPromise = new Promise<HTMLElement>(resolve => {
-            filterWrapper.filterPromise.then(filter => {
-                let guiFromFilter = filter.getGui();
+        filterWrapper.guiPromise = new AgPromise<HTMLElement>(resolve => {
+            filterWrapper.filterPromise!.then(filter => {
+                let guiFromFilter = filter!.getGui();
 
                 if (!exists(guiFromFilter)) {
                     console.warn(`getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`);
@@ -550,8 +548,8 @@ export class FilterManager extends BeanStub {
     }
 
     private disposeFilterWrapper(filterWrapper: FilterWrapper, source: ColumnEventType): void {
-        filterWrapper.filterPromise.then(filter => {
-            (filter.setModel(null) || Promise.resolve()).then(() => {
+        filterWrapper.filterPromise!.then(filter => {
+            (filter!.setModel(null) || AgPromise.resolve()).then(() => {
                 this.getContext().destroyBean(filter);
 
                 filterWrapper.column.setFilterActive(false, source);
@@ -579,7 +577,7 @@ export class FilterManager extends BeanStub {
 export interface FilterWrapper {
     compiledElement: any;
     column: Column;
-    filterPromise: Promise<IFilterComp>;
+    filterPromise: AgPromise<IFilterComp> | null;
     scope: any;
-    guiPromise: Promise<HTMLElement>;
+    guiPromise: AgPromise<HTMLElement | null>;
 }

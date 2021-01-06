@@ -1,5 +1,5 @@
 import { RowNode } from './entities/rowNode';
-import { ChartRef, FillOperationParams, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, IsRowSelectable, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessChartOptionsParams, ProcessDataFromClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from './entities/gridOptions';
+import { ChartRef, FillOperationParams, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GetServerSideStoreParamsParams, GridOptions, IsApplyServerSideTransaction, IsRowMaster, IsRowSelectable, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessChartOptionsParams, ProcessDataFromClipboardParams, ServerSideStoreParams, TabToNextCellParams, TabToNextHeaderParams } from './entities/gridOptions';
 import { GridApi } from './gridApi';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { ColumnApi } from './columnController/columnApi';
@@ -132,10 +132,12 @@ export declare class GridOptionsWrapper {
     getRowClassFunc(): (params: any) => string | string[];
     rowClassRules(): {
         [cssClassName: string]: string | ((params: any) => boolean);
-    };
-    getCreateChartContainerFunc(): (params: ChartRef) => void | undefined;
-    getPopupParent(): HTMLElement;
-    getBlockLoadDebounceMillis(): number;
+    } | undefined;
+    getServerSideStoreType(): string | undefined;
+    getServerSideStoreParamsFunc(): ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined;
+    getCreateChartContainerFunc(): ((params: ChartRef) => void) | undefined;
+    getPopupParent(): HTMLElement | undefined;
+    getBlockLoadDebounceMillis(): number | undefined;
     getPostProcessPopupFunc(): ((params: PostProcessPopupParams) => void) | undefined;
     getPaginationNumberFormatterFunc(): ((params: PaginationNumberFormatterParams) => string) | undefined;
     getChildCountFunc(): (dataItem: any) => number;
@@ -174,7 +176,7 @@ export declare class GridOptionsWrapper {
     isAngularCompileRows(): boolean;
     isAngularCompileFilters(): boolean;
     isDebug(): boolean;
-    getColumnDefs(): (ColGroupDef | ColDef)[];
+    getColumnDefs(): (ColDef | ColGroupDef)[] | undefined;
     getColumnTypes(): {
         [key: string]: ColDef;
     } | undefined;
@@ -204,6 +206,8 @@ export declare class GridOptionsWrapper {
     isSuppressColumnMoveAnimation(): boolean;
     isSuppressAggFuncInHeader(): boolean;
     isSuppressAggAtRootLevel(): boolean;
+    isSuppressAggFilteredOnly(): boolean;
+    isShowOpenedGroup(): boolean;
     isEnableRangeSelection(): boolean;
     isEnableRangeHandle(): boolean;
     isEnableFillHandle(): boolean;
@@ -229,6 +233,7 @@ export declare class GridOptionsWrapper {
     isSuppressAutoSize(): boolean;
     isEnableCellTextSelection(): boolean;
     isSuppressParentsInRowNodes(): boolean;
+    isSuppressClipboardApi(): boolean;
     isFunctionsReadOnly(): boolean;
     isFloatingFilter(): boolean | undefined;
     isEnableCellTextSelect(): boolean;
@@ -242,6 +247,7 @@ export declare class GridOptionsWrapper {
     isSuppressMakeColumnVisibleAfterUnGroup(): boolean;
     getDataPathFunc(): ((dataItem: any) => string[]) | undefined;
     getIsServerSideGroupFunc(): ((dataItem: any) => boolean) | undefined;
+    getIsServerSideGroupOpenByDefaultFunc(): ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined;
     getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined;
     getGroupRowAggNodesFunc(): (nodes: RowNode[]) => any;
     getContextMenuItemsFunc(): GetContextMenuItems | undefined;
@@ -266,6 +272,7 @@ export declare class GridOptionsWrapper {
     getViewportRowModelPageSize(): number;
     getViewportRowModelBufferSize(): number;
     isServerSideSortingAlwaysResets(): boolean;
+    isServerSideFilteringAlwaysResets(): boolean;
     getPostSortFunc(): ((rowNodes: RowNode[]) => void) | undefined;
     getChartToolbarItemsFunc(): GetChartToolbarItems | undefined;
     getChartThemeOverrides(): AgChartThemeOverrides | undefined;

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "./gridPanel";
@@ -10,7 +10,6 @@ export declare class NavigationService extends BeanStub {
     private animationFrameService;
     private rangeController;
     private columnController;
-    private gridOptionsWrapper;
     private gridPanel;
     private timeLastPageEventProcessed;
     registerGridComp(gridPanel: GridPanel): void;

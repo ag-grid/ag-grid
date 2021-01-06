@@ -33,8 +33,9 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
         this.setTemplate(/* html */ "<div class=\"ag-filter-toolpanel-search\" role=\"presentation\">\n                <div ref=\"eExpand\" class=\"ag-filter-toolpanel-expand\"></div>\n                <ag-input-text-field ref=\"eFilterTextField\" class=\"ag-filter-toolpanel-search-input\"></ag-input-text-field>\n            </div>");
     };
     FiltersToolPanelHeaderPanel.prototype.postConstruct = function () {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eFilterTextField.onValueChange(this.onSearchTextChanged.bind(this));
-        this.eFilterTextField.setInputAriaLabel('Search');
+        this.eFilterTextField.setInputAriaLabel(translate('ariaSearch', 'Search'));
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
         this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
@@ -81,9 +82,6 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
         _.setDisplayed(this.eExpandUnchecked, this.currentExpandState === EXPAND_STATE.COLLAPSED);
         _.setDisplayed(this.eExpandIndeterminate, this.currentExpandState === EXPAND_STATE.INDETERMINATE);
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], FiltersToolPanelHeaderPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('columnController')
     ], FiltersToolPanelHeaderPanel.prototype, "columnController", void 0);

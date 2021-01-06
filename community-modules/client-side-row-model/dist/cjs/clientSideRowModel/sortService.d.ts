@@ -10,8 +10,7 @@ export interface SortedRowNode {
 export declare class SortService extends BeanStub {
     private sortController;
     private columnController;
-    private valueService;
-    private gridOptionsWrapper;
+    private rowNodeSorter;
     private postSortFunc;
     init(): void;
     sort(sortOptions: SortOption[], sortActive: boolean, deltaSort: boolean, dirtyLeafNodes: {

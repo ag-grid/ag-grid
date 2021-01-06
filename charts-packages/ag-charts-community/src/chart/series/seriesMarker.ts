@@ -22,6 +22,8 @@ export class SeriesMarker extends Observable {
      */
     @reactive('change') maxSize = 30;
 
+    @reactive('change') domain?: [number, number];
+
     @reactive('change') fill?: string;
 
     @reactive('change') stroke?: string;

@@ -23,7 +23,7 @@ import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../interfa
 import { RowComp } from "./row/rowComp";
 import { RowDragComp } from "./row/rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
-import { Promise } from "../utils";
+import { AgPromise } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DndSourceComp } from "./dndSourceComp";
 import { TooltipFeature } from "../widgets/tooltipFeature";
@@ -32,7 +32,7 @@ import { setAriaColIndex, setAriaSelected } from "../utils/aria";
 import { get, getValueUsingField } from "../utils/object";
 import { escapeString } from "../utils/string";
 import { exists, missing } from "../utils/generic";
-import { addOrRemoveCssClass, clearElement, addStylesToElement, isElementChildOfClass } from "../utils/dom";
+import { addOrRemoveCssClass, clearElement, addStylesToElement, isElementChildOfClass, isFocusableFormField } from "../utils/dom";
 import { last, areEqual, pushAll, includes } from "../utils/array";
 import { cssStyleObjectToMarkup } from "../utils/general";
 import { isStopPropagationForAgGrid, getTarget, isEventSupported } from "../utils/event";
@@ -88,6 +88,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private hasChartRange = false;
 
     private usingWrapper: boolean;
+    private wrapText: boolean;
 
     private includeSelectionComponent: boolean;
     private includeRowDraggingComponent: boolean;
@@ -407,7 +408,8 @@ export class CellComp extends Component implements TooltipParentComp {
             cssClasses.push(CSS_CELL_VALUE);
         }
 
-        if (this.column.getColDef().wrapText) {
+        this.wrapText = this.column.getColDef().wrapText == true;
+        if (this.wrapText) {
             cssClasses.push(CSS_CELL_WRAP_TEXT);
         }
 
@@ -457,6 +459,19 @@ export class CellComp extends Component implements TooltipParentComp {
 
     public getCellEditor(): ICellEditorComp | null {
         return this.cellEditor;
+    }
+
+    public onNewColumnsLoaded(): void {
+        this.postProcessWrapText();
+        this.postProcessCellClassRules();
+    }
+
+    private postProcessWrapText(): void {
+        const newValue = this.column.getColDef().wrapText == true;
+        if (newValue !== this.wrapText) {
+            this.wrapText = newValue;
+            this.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, this.wrapText);
+        }
     }
 
     // + stop editing {forceRefresh: true, suppressFlash: true}
@@ -1015,7 +1030,9 @@ export class CellComp extends Component implements TooltipParentComp {
         // in the header when the group is open
         const ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
 
-        return this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
+        const value = this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
+
+        return value;
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -1145,7 +1162,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private createCellEditor(params: ICellEditorParams): Promise<ICellEditorComp> {
+    private createCellEditor(params: ICellEditorParams): AgPromise<ICellEditorComp> {
         const cellEditorPromise = this.beans.userComponentFactory.newCellEditor(this.column.getColDef(), params);
 
         return cellEditorPromise.then(cellEditor => {
@@ -1221,10 +1238,18 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private addInCellEditor(): void {
-        clearElement(this.getGui());
+        const eGui = this.getGui();
+
+        // if focus is inside the cell, we move focus to the cell itself
+        // before removing it's contents, otherwise errors could be thrown.
+        if (eGui.contains(document.activeElement)) {
+            eGui.focus();
+        }
+
+        this.clearCellElement();
 
         if (this.cellEditor) {
-            this.getGui().appendChild(this.cellEditor.getGui());
+            eGui.appendChild(this.cellEditor.getGui());
         }
 
         this.angular1Compile();
@@ -1233,13 +1258,11 @@ export class CellComp extends Component implements TooltipParentComp {
     private addPopupCellEditor(): void {
         const ePopupGui = this.cellEditor ? this.cellEditor.getGui() : null;
 
+        const popupService = this.beans.popupService;
+
         const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenGridLosesFocus();
-        this.hideEditorPopup = this.beans.popupService.addPopup({
-            modal: useModelPopup,
-            eChild: ePopupGui,
-            closeOnEsc: true,
-            closedCallback: () => { this.onPopupEditorClosed(); }
-        });
+
+        const position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
 
         const params = {
             column: this.column,
@@ -1250,12 +1273,20 @@ export class CellComp extends Component implements TooltipParentComp {
             keepWithinBounds: true
         };
 
-        const position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
+        const positionCallback = position === 'under' ?
+            popupService.positionPopupUnderComponent.bind(popupService, params)
+            : popupService.positionPopupOverComponent.bind(popupService, params);
 
-        if (position === 'under') {
-            this.beans.popupService.positionPopupUnderComponent(params);
-        } else {
-            this.beans.popupService.positionPopupOverComponent(params);
+        const addPopupRes = popupService.addPopup({
+            modal: useModelPopup,
+            eChild: ePopupGui,
+            closeOnEsc: true,
+            closedCallback: () => { this.onPopupEditorClosed(); },
+            anchorToElement: this.getGui(),
+            positionCallback
+        });
+        if (addPopupRes) {
+            this.hideEditorPopup = addPopupRes.hideFunc;
         }
 
         this.angular1Compile();
@@ -1267,18 +1298,10 @@ export class CellComp extends Component implements TooltipParentComp {
         // before this, eg if 'enter key' was pressed on
         // the editor.
 
-        if (this.editingCell) {
-            // note: this only happens when use clicks outside of the grid. if use clicks on another
-            // cell, then the editing will have already stopped on this cell
-            this.stopRowOrCellEdit();
-
-            // we only focus cell again if this cell is still focused. it is possible
-            // it is not focused if the user cancelled the edit by clicking on another
-            // cell outside of this one
-            if (this.beans.focusController.isCellFocused(this.cellPosition)) {
-                this.focusCell(true);
-            }
-        }
+        if (!this.editingCell) { return; }
+        // note: this only happens when use clicks outside of the grid. if use clicks on another
+        // cell, then the editing will have already stopped on this cell
+        this.stopRowOrCellEdit();
     }
 
     // if we are editing inline, then we don't have the padding in the cell (set in the themes)
@@ -1554,7 +1577,7 @@ export class CellComp extends Component implements TooltipParentComp {
             // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
-            const forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell;
+            const forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell && !isFocusableFormField(target);
 
             this.focusCell(forceBrowserFocus);
         } else if (rangeController) {
@@ -1564,9 +1587,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
         // is focused but we don't want to change the range selection, so return here.
-        if (this.containsWidget(target)) {
-            return;
-        }
+        if (this.containsWidget(target)) { return; }
 
         if (rangeController) {
             const thisCell = this.cellPosition;
@@ -2159,12 +2180,13 @@ export class CellComp extends Component implements TooltipParentComp {
             this.hideEditorPopup();
             this.hideEditorPopup = null;
         } else {
-            clearElement(this.getGui());
+            this.clearCellElement();
 
+            const eGui = this.getGui();
             // put the cell back the way it was before editing
             if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back
-                this.getGui().appendChild(this.eCellWrapper);
+                eGui.appendChild(this.eCellWrapper);
             } else if (this.cellRenderer) {
                 // if cellRenderer, then put the gui back in. if the renderer has
                 // a refresh, it will be called. however if it doesn't, then later
@@ -2176,7 +2198,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 // can be null if cell was previously null / contained empty string,
                 // this will result in new value not being rendered.
                 if (eCell) {
-                    this.getGui().appendChild(eCell);
+                    eGui.appendChild(eCell);
                 }
             }
         }
@@ -2206,5 +2228,19 @@ export class CellComp extends Component implements TooltipParentComp {
         };
 
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
+    }
+
+    private clearCellElement(): void {
+        const eGui = this.getGui();
+
+        // if focus is inside the cell, we move focus to the cell itself
+        // before removing it's contents, otherwise errors could be thrown.
+        if (eGui.contains(document.activeElement) && !isBrowserIE()) {
+            eGui.focus({
+                preventScroll: true
+            });
+        }
+
+        clearElement(eGui);
     }
 }

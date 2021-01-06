@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -85,9 +85,6 @@ var Beans = /** @class */ (function () {
     __decorate([
         Optional('contextMenuFactory')
     ], Beans.prototype, "contextMenuFactory", void 0);
-    __decorate([
-        Autowired('cellRendererFactory')
-    ], Beans.prototype, "cellRendererFactory", void 0);
     __decorate([
         Autowired('popupService')
     ], Beans.prototype, "popupService", void 0);

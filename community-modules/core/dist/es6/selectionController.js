@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -330,9 +330,6 @@ var SelectionController = /** @class */ (function (_super) {
     __decorate([
         Autowired('rowModel')
     ], SelectionController.prototype, "rowModel", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], SelectionController.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('columnApi')
     ], SelectionController.prototype, "columnApi", void 0);

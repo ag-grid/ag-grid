@@ -19,7 +19,6 @@ export declare class RowDragFeature extends BeanStub implements DropTarget {
     private focusController;
     private sortController;
     private filterManager;
-    private gridOptionsWrapper;
     private selectionController;
     private rangeController;
     private mouseEventService;

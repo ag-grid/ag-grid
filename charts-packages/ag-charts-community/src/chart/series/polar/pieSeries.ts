@@ -20,9 +20,11 @@ import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: PieSeries;
     readonly datum: any;
     readonly angleKey: string;
+    readonly labelKey?: string;
     readonly radiusKey?: string;
 }
 
@@ -143,6 +145,7 @@ export class PieSeries extends PolarSeries {
         this.label.addEventListener('change', this.scheduleLayout, this);
         this.label.addEventListener('dataChange', this.scheduleData, this);
         this.callout.addEventListener('change', this.scheduleLayout, this);
+        this.callout.colors = this.strokes;
 
         this.addPropertyListener('data', event => {
             if (event.value) {
@@ -161,11 +164,12 @@ export class PieSeries extends PolarSeries {
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
      * The largest value will correspond to the full radius and smaller values to
-     * proportionally smaller radii. To prevent confusing visuals, this config only works
-     * if {@link innerRadiusOffset} is zero.
+     * proportionally smaller radii.
      */
     @reactive('dataChange') radiusKey?: string;
     @reactive('update') radiusName?: string;
+    @reactive('dataChange') radiusMin?: number;
+    @reactive('dataChange') radiusMax?: number;
 
     @reactive('dataChange') labelKey?: string;
     @reactive('update') labelName?: string;
@@ -261,14 +265,16 @@ export class PieSeries extends PolarSeries {
 
         const labelKey = this.label.enabled && this.labelKey;
         const labelData = labelKey ? data.map(datum => String(datum[labelKey])) : [];
-        const useRadiusKey = !!radiusKey && !this.innerRadiusOffset;
         let radiusData: number[] = [];
 
-        if (useRadiusKey) {
-            const radii = data.map(datum => Math.abs(datum[radiusKey!]));
-            const maxDatum = Math.max(...radii);
+        if (radiusKey) {
+            const { radiusMin, radiusMax } = this;
+            const radii = data.map(datum => Math.abs(datum[radiusKey]));
+            const min = radiusMin !== undefined ? radiusMin : Math.min(...radii);
+            const max = radiusMax !== undefined ? radiusMax : Math.max(...radii);
+            const delta = max - min;
 
-            radiusData = radii.map(value => value / maxDatum);
+            radiusData = radii.map(value => delta ? (value - min) / delta : 1);
         }
 
         groupSelectionData.length = 0;
@@ -280,7 +286,7 @@ export class PieSeries extends PolarSeries {
 
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce((start, end) => {
-            const radius = useRadiusKey ? radiusData[datumIndex] : 1;
+            const radius = radiusKey ? radiusData[datumIndex] : 1;
             const startAngle = angleScale.convert(start) + rotation;
             const endAngle = angleScale.convert(end) + rotation;
 
@@ -345,15 +351,18 @@ export class PieSeries extends PolarSeries {
             return;
         }
 
-        this.radiusScale.range = [0, this.radius];
+        const { radius, innerRadiusOffset, outerRadiusOffset, title } = this;
+
+        this.radiusScale.range = [
+            innerRadiusOffset ? radius + innerRadiusOffset : 0,
+            radius + (outerRadiusOffset || 0)
+        ];
 
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
 
-
-        const { title } = this;
         if (title) {
-            title.node.translationY = -this.radius - this.outerRadiusOffset - 2;
+            title.node.translationY = -radius - outerRadiusOffset - 2;
             title.node.visible = title.enabled;
         }
 
@@ -386,16 +395,14 @@ export class PieSeries extends PolarSeries {
 
         const {
             fills, strokes, fillOpacity, strokeOpacity, strokeWidth,
-            outerRadiusOffset, innerRadiusOffset,
-            radiusScale, callout, shadow,
+            outerRadiusOffset, radiusScale, callout, shadow,
             highlightStyle: { fill, stroke, centerOffset },
             angleKey, radiusKey, formatter
         } = this;
         const { highlightedDatum } = this.chart;
 
-        let minOuterRadius = Infinity;
-        const outerRadii: number[] = [];
         const centerOffsets: number[] = [];
+        const innerRadius = radiusScale.convert(0);
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
@@ -404,10 +411,6 @@ export class PieSeries extends PolarSeries {
             const sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             const sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
             let format: PieSeriesFormat | undefined = undefined;
-
-            if (minOuterRadius > outerRadius) {
-                minOuterRadius = outerRadius;
-            }
 
             if (formatter) {
                 format = formatter({
@@ -421,8 +424,9 @@ export class PieSeries extends PolarSeries {
                 });
             }
 
-            sector.outerRadius = outerRadius;
-            sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
+            sector.innerRadius = innerRadius;
+            sector.outerRadius = radius;
+
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
 
@@ -437,7 +441,6 @@ export class PieSeries extends PolarSeries {
             sector.fillShadow = shadow;
             sector.lineJoin = 'round';
 
-            outerRadii.push(outerRadius);
             centerOffsets.push(sector.centerOffset);
         });
 
@@ -445,14 +448,14 @@ export class PieSeries extends PolarSeries {
 
         this.groupSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
             if (datum.label) {
-                const outerRadius = centerOffsets[index] + outerRadii[index];
+                const radius = radiusScale.convert(datum.radius);
 
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
-                line.x1 = datum.midCos * outerRadius;
-                line.y1 = datum.midSin * outerRadius;
-                line.x2 = datum.midCos * (outerRadius + calloutLength);
-                line.y2 = datum.midSin * (outerRadius + calloutLength);
+                line.x1 = datum.midCos * radius;
+                line.y1 = datum.midSin * radius;
+                line.x2 = datum.midCos * (radius + calloutLength);
+                line.y2 = datum.midSin * (radius + calloutLength);
             } else {
                 line.stroke = undefined;
             }
@@ -465,8 +468,8 @@ export class PieSeries extends PolarSeries {
                 const label = datum.label;
 
                 if (label) {
-                    const outerRadius = outerRadii[index];
-                    const labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset;
+                    const radius = radiusScale.convert(datum.radius);
+                    const labelRadius = centerOffsets[index] + radius + calloutLength + offset;
 
                     text.fontStyle = fontStyle;
                     text.fontWeight = fontWeight;
@@ -485,12 +488,14 @@ export class PieSeries extends PolarSeries {
         }
     }
 
-    fireNodeClickEvent(datum: PieNodeDatum): void {
+    fireNodeClickEvent(event: MouseEvent, datum: PieNodeDatum): void {
         this.fireEvent<PieSeriesNodeClickEvent>({
             type: 'nodeClick',
+            event,
             series: this,
             datum: datum.seriesDatum,
             angleKey: this.angleKey,
+            labelKey: this.labelKey,
             radiusKey: this.radiusKey
         });
     }
@@ -519,9 +524,9 @@ export class PieSeries extends PolarSeries {
         const formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : angleValue.toString();
         const title = this.title ? this.title.text : undefined;
         const content = label + formattedAngleValue;
-        const defaults = {
+        const defaults: TooltipRendererResult = {
             title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content
         };
 

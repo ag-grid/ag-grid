@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -90,6 +90,10 @@ var GridPanel = /** @class */ (function (_super) {
         if (this.columnController.isReady() && !this.paginationProxy.isEmpty()) {
             this.hideOverlay();
         }
+        // we don't want each cellComp to register for events, as would increase rendering time.
+        // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
+        // each cell if / when event was fired.
+        this.rowRenderer.forEachCellComp(function (cellComp) { return cellComp.onNewColumnsLoaded(); });
     };
     GridPanel.prototype.init = function () {
         var _this = this;
@@ -344,7 +348,7 @@ var GridPanel = /** @class */ (function (_super) {
             var target = event_1.getTarget(mouseEvent);
             if (target === _this.eBodyViewport || target === _this.eCenterViewport) {
                 // show it
-                _this.onContextMenu(mouseEvent, null, null, null, null);
+                _this.onContextMenu(mouseEvent, null, null, null, null, _this.getGui());
                 _this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
@@ -485,9 +489,11 @@ var GridPanel = /** @class */ (function (_super) {
             cellComp.dispatchCellContextMenuEvent(event_2);
             value = this.valueService.getValue(column, rowNode);
         }
-        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value);
+        // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
+        var anchorToElement = cellComp ? cellComp.getGui() : this.getGui();
+        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
     };
-    GridPanel.prototype.onContextMenu = function (mouseEvent, touchEvent, rowNode, column, value) {
+    GridPanel.prototype.onContextMenu = function (mouseEvent, touchEvent, rowNode, column, value, anchorToElement) {
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
         if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
@@ -498,7 +504,7 @@ var GridPanel = /** @class */ (function (_super) {
         }
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
             var eventOrTouch = mouseEvent ? mouseEvent : touchEvent.touches[0];
-            if (this.contextMenuFactory.showMenu(rowNode, column, value, eventOrTouch)) {
+            if (this.contextMenuFactory.showMenu(rowNode, column, value, eventOrTouch, anchorToElement)) {
                 var event_3 = mouseEvent ? mouseEvent : touchEvent;
                 event_3.preventDefault();
             }
@@ -1123,7 +1129,7 @@ var GridPanel = /** @class */ (function (_super) {
         // could be 10px before the max position, and then current scroll event could be 20px after the max position).
         // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
         // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
-        if (touchOnly && !browser_1.isIOSUserAgent) {
+        if (touchOnly && !browser_1.isIOSUserAgent()) {
             return false;
         }
         if (direction === 'vertical') {
@@ -1241,9 +1247,6 @@ var GridPanel = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('alignedGridsService')
     ], GridPanel.prototype, "alignedGridsService", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], GridPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('rowRenderer')
     ], GridPanel.prototype, "rowRenderer", void 0);

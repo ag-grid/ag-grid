@@ -3,7 +3,7 @@
         <div></div>
         ag-Grid
     </a>
-    <button id="navbar-toggle" 
+    <button id="navbar-toggle"
         type="button"
         data-toggle="collapse"
         data-target="#main-nav"
@@ -17,9 +17,9 @@
                     <a href="/example.php">Demo</a>
                 </li>
                 <li class="<?php if ($navKey == "documentation") { ?>active<?php }?>">
-                    <a href="/documentation-main/documentation.php">Documentation</a>
+                    <a href="/documentation/">Documentation</a>
                 </li>
-                
+
                 <li class="<?php if ($navKey == "licenseAndPricing") { ?>active<?php }?>">
                 <a href="/license-pricing.php">Pricing</a>
             </li>
@@ -27,12 +27,12 @@
                 <a href="https://blog.ag-grid.com/" target="_blank">Blog</a>
             </li>
         </ul>
-        <?php } else { ?> 
+        <?php } else { ?>
             <ul>
                 <li>
                     <a href="<?php print($rootFolder) ?>"> ag-Grid Archive Documentation <?php print($version) ?> <?php print($latest_hash) ?> <?php print($latest_hash_timestamp) ?></a>
                 </li>
             </ul>
-        <?php } ?> 
+        <?php } ?>
     </div>
 </nav>

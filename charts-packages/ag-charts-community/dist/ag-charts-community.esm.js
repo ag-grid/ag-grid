@@ -1,5 +1,5 @@
 /**
- * ag-charts-community - Advanced Charting / Charts supporting Javascript / React / Angular * @version v2.1.0
+ * ag-charts-community - Advanced Charting / Charts supporting Javascript / React / Angular * @version v3.0.0
  * @link http://www.ag-grid.com/
 ' * @license MIT
  */
@@ -552,8 +552,8 @@ var Node = /** @class */ (function () {
             if (i >= 0) {
                 this._children.splice(i, 1);
                 delete this.childSet[node.id];
-                node._setParent(undefined);
-                node._setScene(undefined);
+                node._setParent();
+                node._setScene();
                 this.dirty = true;
                 return node;
             }
@@ -2146,6 +2146,7 @@ var Observable = /** @class */ (function () {
             }
         });
     };
+    // 'source' is added automatically and is always the object this method belongs to.
     Observable.prototype.fireEvent = function (event) {
         var _this = this;
         var listeners = this.allEventListeners.get(event.type);
@@ -2323,16 +2324,16 @@ var constant = (function (x) { return function () { return x; }; });
 
 function interpolateNumber (a, b) {
     a = +a;
-    b -= a;
-    return function (t) { return a + b * t; };
+    b = +b;
+    return function (t) { return a * (1 - t) + b * t; };
 }
 
 function date (a, b) {
     var date = new Date;
     var msA = +a;
-    var msB = +b - msA;
+    var msB = +b;
     return function (t) {
-        date.setTime(msA + msB * t);
+        date.setTime(msA * (1 - t) + msB * t);
         return date;
     };
 }
@@ -3722,15 +3723,6 @@ var Path2D = /** @class */ (function () {
         // }
         this.cubicArc(cx, cy, rx, ry, rotation, theta1, theta1 + deltaTheta, 1 - fS);
     };
-    Path2D.prototype.arcToAlt = function (rx, ry, rotation, fA, fS, x2, y2) {
-        // Convert from endpoint to center parametrization. See:
-        // https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
-        if (!this.xy) {
-            return;
-        }
-        var x1 = this.xy[0];
-        var y1 = this.xy[1];
-    };
     /**
      * Approximates an elliptical arc with up to four cubic Bézier curves.
      * @param commands The string array to write SVG command letters to.
@@ -4673,6 +4665,16 @@ var AxisLabel = /** @class */ (function () {
  */
 var Axis = /** @class */ (function () {
     function Axis(scale) {
+        // debug (bbox)
+        // private bboxRect = (() => {
+        //     const rect = new Rect();
+        //     rect.fill = undefined;
+        //     rect.stroke = 'red';
+        //     rect.strokeWidth = 1;
+        //     rect.strokeOpacity = 0.2;
+        //     return rect;
+        // })();
+        this.id = createId(this);
         this.lineNode = new Line();
         this.group = new Group();
         this.line = {
@@ -4715,6 +4717,7 @@ var Axis = /** @class */ (function () {
         this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
+    Axis.prototype.getMeta = function () { };
     Axis.prototype.updateRange = function () {
         var _a = this, rr = _a.requestedRange, vr = _a.visibleRange, scale = _a.scale;
         var span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
@@ -4956,6 +4959,7 @@ var Axis = /** @class */ (function () {
             });
         }
         var tickFormatter = this.tickFormatter;
+        var meta = this.getMeta();
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         var fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
         var labelSelection = groupSelection.selectByClass(Text)
@@ -4973,7 +4977,8 @@ var Axis = /** @class */ (function () {
                     value: fractionDigits >= 0 ? datum : String(datum),
                     index: index,
                     fractionDigits: fractionDigits,
-                    formatter: tickFormatter
+                    formatter: tickFormatter,
+                    axis: meta
                 })
                 : fractionDigits
                     // the `datum` is a floating point number
@@ -5139,6 +5144,13 @@ var ChartAxis = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    ChartAxis.prototype.getMeta = function () {
+        return {
+            id: this.id,
+            direction: this.direction,
+            boundSeries: this.boundSeries,
+        };
+    };
     Object.defineProperty(ChartAxis.prototype, "position", {
         get: function () {
             return this._position;
@@ -5601,20 +5613,6 @@ function findMinMax(values) {
         }
         else {
             max += value;
-        }
-    }
-    return { min: min, max: max };
-}
-function findLargestMinMax(totals) {
-    var min = 0;
-    var max = 0;
-    for (var _i = 0, totals_1 = totals; _i < totals_1.length; _i++) {
-        var total = totals_1[_i];
-        if (total.min < min) {
-            min = total.min;
-        }
-        if (total.max > max) {
-            max = total.max;
         }
     }
     return { min: min, max: max };
@@ -7460,7 +7458,6 @@ var TimeScale = /** @class */ (function (_super) {
      */
     TimeScale.prototype.tickInterval = function (interval, start, stop, step) {
         var _a;
-        if (interval === void 0) { interval = 10; }
         if (typeof interval === 'number') {
             var tickCount = interval;
             var tickIntervals = this.tickIntervals;
@@ -7725,7 +7722,7 @@ var Scene = /** @class */ (function () {
                 return;
             }
             if (this._root) {
-                this._root._setScene(undefined);
+                this._root._setScene();
             }
             this._root = node;
             if (node) {
@@ -9049,7 +9046,7 @@ var Legend = /** @class */ (function (_super) {
             markerLabel.markerFillOpacity = marker.fillOpacity;
             markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
-            markerLabel.color = _this.color;
+            markerLabel.color = _this.item.label.color;
         });
     };
     Legend.prototype.getDatumForPoint = function (x, y) {
@@ -9211,7 +9208,7 @@ var Series = /** @class */ (function (_super) {
     Series.prototype.getNodeData = function () {
         return [];
     };
-    Series.prototype.fireNodeClickEvent = function (datum) { };
+    Series.prototype.fireNodeClickEvent = function (event, datum) { };
     Series.prototype.toggleSeriesItem = function (itemId, enabled) {
         this.visible = enabled;
     };
@@ -9226,6 +9223,12 @@ var Series = /** @class */ (function (_super) {
             return [0, 1];
         }
         var min = extent[0], max = extent[1];
+        if (min instanceof Date) {
+            min = min.getTime();
+        }
+        if (max instanceof Date) {
+            max = max.getTime();
+        }
         if (min === max) {
             var padding = Math.abs(min * 0.01);
             min -= padding;
@@ -9310,6 +9313,9 @@ var SeriesMarker = /** @class */ (function (_super) {
     ], SeriesMarker.prototype, "maxSize", void 0);
     __decorate$3([
         reactive('change')
+    ], SeriesMarker.prototype, "domain", void 0);
+    __decorate$3([
+        reactive('change')
     ], SeriesMarker.prototype, "fill", void 0);
     __decorate$3([
         reactive('change')
@@ -9384,16 +9390,145 @@ var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: table;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-hidden {\n    top: -10000px !important;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
 function toTooltipHtml(input, defaults) {
     if (typeof input === 'string') {
         return input;
     }
     defaults = defaults || {};
-    var _a = input.content, content = _a === void 0 ? defaults.content || '' : _a, _b = input.title, title = _b === void 0 ? defaults.title || undefined : _b, _c = input.titleColor, titleColor = _c === void 0 ? defaults.titleColor || 'white' : _c, _d = input.titleBackgroundColor, titleBackgroundColor = _d === void 0 ? defaults.titleBackgroundColor || '#888' : _d;
-    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n        style=\"color: " + titleColor + "; background-color: " + titleBackgroundColor + "\">" + title + "</div>" : '';
+    var _a = input.content, content = _a === void 0 ? defaults.content || '' : _a, _b = input.title, title = _b === void 0 ? defaults.title || undefined : _b, _c = input.color, color = _c === void 0 ? defaults.color || 'white' : _c, _d = input.backgroundColor, backgroundColor = _d === void 0 ? defaults.backgroundColor || '#888' : _d;
+    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n        style=\"color: " + color + "; background-color: " + backgroundColor + "\">" + title + "</div>" : '';
     return titleHtml + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + content + "</div>";
 }
+var ChartTooltip = /** @class */ (function (_super) {
+    __extends$u(ChartTooltip, _super);
+    function ChartTooltip(chart) {
+        var _this = _super.call(this) || this;
+        _this.element = document.createElement('div');
+        _this.enabled = true;
+        _this.class = Chart.defaultTooltipClass;
+        _this.delay = 0;
+        /**
+         * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
+         * Only has effect on series with markers.
+         */
+        _this.tracking = true;
+        _this.showTimeout = 0;
+        _this.chart = chart;
+        _this.class = '';
+        var tooltipRoot = document.body;
+        tooltipRoot.appendChild(_this.element);
+        // Detect when the chart becomes invisible and hide the tooltip as well.
+        if (window.IntersectionObserver) {
+            var target_1 = _this.chart.scene.canvas.element;
+            var observer = new IntersectionObserver(function (entries) {
+                for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
+                    var entry = entries_1[_i];
+                    if (entry.target === target_1 && entry.intersectionRatio === 0) {
+                        _this.toggle(false);
+                    }
+                }
+            }, { root: tooltipRoot });
+            observer.observe(target_1);
+            _this.observer = observer;
+        }
+        return _this;
+    }
+    ChartTooltip.prototype.isVisible = function () {
+        var element = this.element;
+        if (element.classList) { // if not IE11
+            return !element.classList.contains(Chart.defaultTooltipClass + '-hidden');
+        }
+        // IE11 part.
+        var classes = element.getAttribute('class');
+        if (classes) {
+            return classes.split(' ').indexOf(Chart.defaultTooltipClass + '-hidden') < 0;
+        }
+        return false;
+    };
+    ChartTooltip.prototype.updateClass = function (visible, constrained) {
+        var classList = [Chart.defaultTooltipClass, this.class];
+        if (visible !== true) {
+            classList.push(Chart.defaultTooltipClass + "-hidden");
+        }
+        if (constrained !== true) {
+            classList.push(Chart.defaultTooltipClass + "-arrow");
+        }
+        this.element.setAttribute('class', classList.join(' '));
+    };
+    /**
+     * Shows tooltip at the given event's coordinates.
+     * If the `html` parameter is missing, moves the existing tooltip to the new position.
+     */
+    ChartTooltip.prototype.show = function (meta, html, instantly) {
+        var _this = this;
+        if (instantly === void 0) { instantly = false; }
+        var el = this.element;
+        if (html !== undefined) {
+            el.innerHTML = html;
+        }
+        else if (!el.innerHTML) {
+            return;
+        }
+        var left = meta.pageX - el.clientWidth / 2;
+        var top = meta.pageY - el.clientHeight - 8;
+        if (this.chart.container) {
+            var tooltipRect = el.getBoundingClientRect();
+            var minLeft = 0;
+            var maxLeft = window.innerWidth - tooltipRect.width;
+            if (left < minLeft) {
+                left = minLeft;
+                this.updateClass(true, true);
+            }
+            else if (left > maxLeft) {
+                left = maxLeft;
+                this.updateClass(true, true);
+            }
+        }
+        el.style.left = left + "px";
+        el.style.top = top + "px";
+        if (this.delay > 0 && !instantly) {
+            this.toggle(false);
+            this.showTimeout = window.setTimeout(function () {
+                _this.toggle(true);
+            }, this.delay);
+            return;
+        }
+        this.toggle(true);
+    };
+    ChartTooltip.prototype.toggle = function (visible) {
+        if (!visible) {
+            window.clearTimeout(this.showTimeout);
+            if (this.chart.lastPick && !this.delay) {
+                this.chart.dehighlightDatum();
+                this.chart.lastPick = undefined;
+            }
+        }
+        this.updateClass(visible);
+    };
+    ChartTooltip.prototype.destroy = function () {
+        var parentNode = this.element.parentNode;
+        if (parentNode) {
+            parentNode.removeChild(this.element);
+        }
+        if (this.observer) {
+            this.observer.unobserve(this.chart.scene.canvas.element);
+        }
+    };
+    __decorate$4([
+        reactive()
+    ], ChartTooltip.prototype, "enabled", void 0);
+    __decorate$4([
+        reactive()
+    ], ChartTooltip.prototype, "class", void 0);
+    __decorate$4([
+        reactive()
+    ], ChartTooltip.prototype, "delay", void 0);
+    __decorate$4([
+        reactive()
+    ], ChartTooltip.prototype, "tracking", void 0);
+    return ChartTooltip;
+}(Observable));
 var Chart = /** @class */ (function (_super) {
     __extends$u(Chart, _super);
     function Chart(document) {
@@ -9407,6 +9542,11 @@ var Chart = /** @class */ (function (_super) {
         _this._container = undefined;
         _this._data = [];
         _this._autoSize = false;
+        _this._tooltipClass = Chart.defaultTooltipClass;
+        /**
+         * @deprecated Please use {@link tooltip.tracking} instead.
+         */
+        _this.tooltipTracking = true;
         _this.padding = new Padding(20);
         _this._axes = [];
         _this._series = [];
@@ -9428,12 +9568,6 @@ var Chart = /** @class */ (function (_super) {
         _this._onMouseMove = _this.onMouseMove.bind(_this);
         _this._onMouseOut = _this.onMouseOut.bind(_this);
         _this._onClick = _this.onClick.bind(_this);
-        _this._tooltipClass = Chart.defaultTooltipClass;
-        /**
-         * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
-         * Only has effect on series with markers.
-         */
-        _this.tooltipTracking = true;
         var root = new Group();
         var background = _this.background;
         background.fill = 'white';
@@ -9448,9 +9582,8 @@ var Chart = /** @class */ (function (_super) {
         var legend = _this.legend;
         legend.addEventListener('layoutChange', _this.onLayoutChange, _this);
         legend.addPropertyListener('position', _this.onLegendPositionChange, _this);
-        _this.tooltipElement = document.createElement('div');
-        _this.tooltipClass = '';
-        document.body.appendChild(_this.tooltipElement);
+        _this.tooltip = new ChartTooltip(_this);
+        _this.tooltip.addPropertyListener('class', function () { return _this.tooltip.toggle(); });
         if (Chart.tooltipDocuments.indexOf(document) < 0) {
             var styleElement = document.createElement('style');
             styleElement.innerHTML = defaultTooltipCss;
@@ -9553,14 +9686,24 @@ var Chart = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Chart.prototype, "tooltipClass", {
+        get: function () {
+            return this.tooltip.class;
+        },
+        /**
+         * @deprecated Please use {@link tooltip.class} instead.
+         */
+        set: function (value) {
+            this.tooltip.class = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Chart.prototype.download = function (fileName) {
         this.scene.download(fileName);
     };
     Chart.prototype.destroy = function () {
-        var tooltipParent = this.tooltipElement.parentNode;
-        if (tooltipParent) {
-            tooltipParent.removeChild(this.tooltipElement);
-        }
+        this.tooltip.destroy();
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
         this.cleanupDomListeners(this.scene.canvas.element);
@@ -10015,24 +10158,34 @@ var Chart = /** @class */ (function (_super) {
         }
     };
     Chart.prototype.onMouseMove = function (event) {
-        var _a = this, lastPick = _a.lastPick, tooltipTracking = _a.tooltipTracking;
-        var pick = this.pickSeriesNode(event.offsetX, event.offsetY);
+        if (this.tooltip.enabled) {
+            if (this.tooltip.delay > 0) {
+                this.tooltip.toggle(false);
+            }
+            this.handleTooltip(event);
+        }
+    };
+    Chart.prototype.handleTooltip = function (event) {
+        var _a = this, lastPick = _a.lastPick, tooltipTracking = _a.tooltip.tracking;
+        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var pick = this.pickSeriesNode(offsetX, offsetY);
         var nodeDatum;
         if (pick && pick.node instanceof Shape) {
             var node = pick.node;
             nodeDatum = node.datum;
             if (lastPick && lastPick.datum === nodeDatum) {
                 lastPick.node = node;
+                lastPick.event = event;
             }
             // Marker nodes will have the `point` info in their datums.
             // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
             if ((!node.datum.point || !tooltipTracking)) {
                 if (!lastPick // cursor moved from empty space to a node
                     || lastPick.node !== node) { // cursor moved from one node to another
-                    this.onSeriesDatumPick(event, node.datum, node);
+                    this.onSeriesDatumPick(event, node.datum, node, event);
                 }
-                else if (pick.series.tooltipEnabled) { // cursor moved within the same node
-                    this.showTooltip(event);
+                else if (pick.series.tooltip.enabled) { // cursor moved within the same node
+                    this.tooltip.show(event);
                 }
                 // A non-marker node (takes precedence over marker nodes) was highlighted.
                 // Or we are not in the tracking mode.
@@ -10046,7 +10199,7 @@ var Chart = /** @class */ (function (_super) {
         // and also gives the ability to show tooltips even when the series were configured
         // to not render markers.
         if (tooltipTracking) {
-            var closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+            var closestDatum = this.pickClosestSeriesNodeDatum(offsetX, offsetY);
             if (closestDatum && closestDatum.point) {
                 var _b = closestDatum.point, x = _b.x, y = _b.y;
                 var canvas = this.scene.canvas;
@@ -10055,34 +10208,44 @@ var Chart = /** @class */ (function (_super) {
                 this.onSeriesDatumPick({
                     pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
                     pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
-                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node : undefined);
+                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node : undefined, event);
             }
             else {
                 hideTooltip = true;
             }
         }
         if (lastPick && (hideTooltip || !tooltipTracking)) {
-            // cursor moved from a non-marker node to empty space
+            // Cursor moved from a non-marker node to empty space.
             this.dehighlightDatum();
-            this.hideTooltip();
+            this.tooltip.toggle(false);
             this.lastPick = undefined;
         }
     };
     Chart.prototype.onMouseDown = function (event) { };
     Chart.prototype.onMouseUp = function (event) { };
     Chart.prototype.onMouseOut = function (event) {
-        this.toggleTooltip(false);
+        this.tooltip.toggle(false);
     };
     Chart.prototype.onClick = function (event) {
-        this.checkSeriesNodeClick();
-        this.checkLegendClick(event);
+        if (this.checkSeriesNodeClick()) {
+            return;
+        }
+        if (this.checkLegendClick(event)) {
+            return;
+        }
+        this.fireEvent({
+            type: 'click',
+            event: event
+        });
     };
     Chart.prototype.checkSeriesNodeClick = function () {
         var lastPick = this.lastPick;
-        if (lastPick && lastPick.node) {
-            var datum = lastPick.datum;
-            datum.series.fireNodeClickEvent(datum);
+        if (lastPick && lastPick.event && lastPick.node) {
+            var event_1 = lastPick.event, datum = lastPick.datum;
+            datum.series.fireNodeClickEvent(event_1, datum);
+            return true;
         }
+        return false;
     };
     Chart.prototype.onSeriesNodeClick = function (event) {
         this.fireEvent(__assign$1(__assign$1({}, event), { type: 'seriesNodeClick' }));
@@ -10095,24 +10258,32 @@ var Chart = /** @class */ (function (_super) {
             if (series) {
                 series.toggleSeriesItem(itemId, !enabled);
                 if (enabled) {
-                    this.hideTooltip();
+                    this.tooltip.toggle(false);
                 }
+                this.legend.fireEvent({
+                    type: 'click',
+                    event: event,
+                    itemId: itemId,
+                    enabled: !enabled
+                });
+                return true;
             }
         }
+        return false;
     };
-    Chart.prototype.onSeriesDatumPick = function (meta, datum, node) {
+    Chart.prototype.onSeriesDatumPick = function (meta, datum, node, event) {
         if (this.lastPick) {
-            // this.lastPick.datum.series.dehighlightDatum();
             this.dehighlightDatum();
         }
         this.lastPick = {
             datum: datum,
-            node: node
+            node: node,
+            event: event
         };
         this.highlightDatum(datum);
         var html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
         if (html) {
-            this.showTooltip(meta, html);
+            this.tooltip.show(meta, html);
         }
     };
     Chart.prototype.highlightDatum = function (datum) {
@@ -10124,73 +10295,6 @@ var Chart = /** @class */ (function (_super) {
             this.highlightedDatum = undefined;
             this.series.forEach(function (s) { return s.onHighlightChange(); });
         }
-    };
-    Object.defineProperty(Chart.prototype, "tooltipClass", {
-        get: function () {
-            return this._tooltipClass;
-        },
-        set: function (value) {
-            if (this._tooltipClass !== value) {
-                this._tooltipClass = value;
-                this.toggleTooltip();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Chart.prototype.toggleTooltip = function (visible) {
-        if (!visible && this.lastPick) {
-            this.dehighlightDatum();
-            this.lastPick = undefined;
-        }
-        this.updateTooltipClass(visible);
-    };
-    Chart.prototype.updateTooltipClass = function (visible, constrained) {
-        var classList = [Chart.defaultTooltipClass, this.tooltipClass];
-        if (visible === true) {
-            classList.push(Chart.defaultTooltipClass + "-visible");
-        }
-        if (constrained !== true) {
-            classList.push(Chart.defaultTooltipClass + "-arrow");
-        }
-        this.tooltipElement.setAttribute('class', classList.join(' '));
-    };
-    /**
-     * Shows tooltip at the given event's coordinates.
-     * If the `html` parameter is missing, moves the existing tooltip to the new position.
-     */
-    Chart.prototype.showTooltip = function (meta, html) {
-        var el = this.tooltipElement;
-        var container = this.container;
-        if (html !== undefined) {
-            el.innerHTML = html;
-        }
-        else if (!el.innerHTML) {
-            return;
-        }
-        if (html) {
-            this.toggleTooltip(true);
-        }
-        var left = meta.pageX - el.clientWidth / 2;
-        var top = meta.pageY - el.clientHeight - 8;
-        if (container) {
-            var tooltipRect = el.getBoundingClientRect();
-            var minLeft = 0;
-            var maxLeft = window.innerWidth - tooltipRect.width;
-            if (left < minLeft) {
-                left = minLeft;
-                this.updateTooltipClass(true, true);
-            }
-            else if (left > maxLeft) {
-                left = maxLeft;
-                this.updateTooltipClass(true, true);
-            }
-        }
-        el.style.left = left + "px";
-        el.style.top = top + "px";
-    };
-    Chart.prototype.hideTooltip = function () {
-        this.toggleTooltip(false);
     };
     Chart.defaultTooltipClass = 'ag-chart-tooltip';
     Chart.tooltipDocuments = [];
@@ -11054,11 +11158,11 @@ var Navigator = /** @class */ (function () {
         chart.seriesRoot.enabled = clipSeries;
         chart.series.forEach(function (series) { return series.update(); });
     };
-    Navigator.prototype.onMouseDown = function (event) {
+    Navigator.prototype.onDragStart = function (offset) {
         if (!this.enabled) {
             return;
         }
-        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var offsetX = offset.offsetX, offsetY = offset.offsetY;
         var rs = this.rs;
         var minHandle = rs.minHandle, maxHandle = rs.maxHandle, x = rs.x, width = rs.width, min = rs.min;
         var visibleRange = rs.computeVisibleRangeBBox();
@@ -11074,14 +11178,14 @@ var Navigator = /** @class */ (function () {
             }
         }
     };
-    Navigator.prototype.onMouseMove = function (event) {
+    Navigator.prototype.onDrag = function (offset) {
         if (!this.enabled) {
             return;
         }
         var _a = this, rs = _a.rs, panHandleOffset = _a.panHandleOffset;
         var x = rs.x, y = rs.y, width = rs.width, height = rs.height, minHandle = rs.minHandle, maxHandle = rs.maxHandle;
         var style = this.chart.element.style;
-        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var offsetX = offset.offsetX, offsetY = offset.offsetY;
         var minX = x + width * rs.min;
         var maxX = x + width * rs.max;
         var visibleRange = new BBox(minX, y, maxX - minX, height);
@@ -11119,10 +11223,7 @@ var Navigator = /** @class */ (function () {
             }
         }
     };
-    Navigator.prototype.onMouseOut = function (event) {
-        this.stopHandleDragging();
-    };
-    Navigator.prototype.onMouseUp = function (event) {
+    Navigator.prototype.onDragStop = function () {
         this.stopHandleDragging();
     };
     Navigator.prototype.stopHandleDragging = function () {
@@ -11241,26 +11342,13 @@ var CartesianChart = /** @class */ (function (_super) {
         axes.forEach(function (axis) {
             switch (axis.position) {
                 case ChartAxisPosition.Top:
-                    axis.translation.x = Math.floor(shrinkRect.x);
-                    axis.range = [0, shrinkRect.width];
-                    axis.gridLength = shrinkRect.height;
-                    break;
-                case ChartAxisPosition.Right:
-                    axis.translation.y = Math.floor(shrinkRect.y);
-                    if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
-                        axis.range = [0, shrinkRect.height];
-                    }
-                    else {
-                        axis.range = [shrinkRect.height, 0];
-                    }
-                    axis.gridLength = shrinkRect.width;
-                    break;
                 case ChartAxisPosition.Bottom:
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.range = [0, shrinkRect.width];
                     axis.gridLength = shrinkRect.height;
                     break;
                 case ChartAxisPosition.Left:
+                case ChartAxisPosition.Right:
                     axis.translation.y = Math.floor(shrinkRect.y);
                     if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
                         axis.range = [0, shrinkRect.height];
@@ -11298,21 +11386,65 @@ var CartesianChart = /** @class */ (function (_super) {
         _super.prototype.freeSeries.call(this, series);
         series.removeEventListener('dataProcessed', this.updateAxes, this);
     };
+    CartesianChart.prototype.setupDomListeners = function (chartElement) {
+        _super.prototype.setupDomListeners.call(this, chartElement);
+        this._onTouchStart = this.onTouchStart.bind(this);
+        this._onTouchMove = this.onTouchMove.bind(this);
+        this._onTouchEnd = this.onTouchEnd.bind(this);
+        this._onTouchCancel = this.onTouchCancel.bind(this);
+        chartElement.addEventListener('touchstart', this._onTouchStart);
+        chartElement.addEventListener('touchmove', this._onTouchMove);
+        chartElement.addEventListener('touchend', this._onTouchEnd);
+        chartElement.addEventListener('touchcancel', this._onTouchCancel);
+    };
+    CartesianChart.prototype.cleanupDomListeners = function (chartElement) {
+        _super.prototype.cleanupDomListeners.call(this, chartElement);
+        chartElement.removeEventListener('touchstart', this._onTouchStart);
+        chartElement.removeEventListener('touchmove', this._onTouchMove);
+        chartElement.removeEventListener('touchend', this._onTouchEnd);
+        chartElement.removeEventListener('touchcancel', this._onTouchCancel);
+    };
+    CartesianChart.prototype.getTouchOffset = function (event) {
+        var rect = this.scene.canvas.element.getBoundingClientRect();
+        var touch = event.touches[0];
+        return touch ? {
+            offsetX: touch.clientX - rect.left,
+            offsetY: touch.clientY - rect.top
+        } : undefined;
+    };
+    CartesianChart.prototype.onTouchStart = function (event) {
+        var offset = this.getTouchOffset(event);
+        if (offset) {
+            this.navigator.onDragStart(offset);
+        }
+    };
+    CartesianChart.prototype.onTouchMove = function (event) {
+        var offset = this.getTouchOffset(event);
+        if (offset) {
+            this.navigator.onDrag(offset);
+        }
+    };
+    CartesianChart.prototype.onTouchEnd = function (event) {
+        this.navigator.onDragStop();
+    };
+    CartesianChart.prototype.onTouchCancel = function (event) {
+        this.navigator.onDragStop();
+    };
     CartesianChart.prototype.onMouseDown = function (event) {
         _super.prototype.onMouseDown.call(this, event);
-        this.navigator.onMouseDown(event);
+        this.navigator.onDragStart(event);
     };
     CartesianChart.prototype.onMouseMove = function (event) {
         _super.prototype.onMouseMove.call(this, event);
-        this.navigator.onMouseMove(event);
+        this.navigator.onDrag(event);
     };
     CartesianChart.prototype.onMouseUp = function (event) {
         _super.prototype.onMouseUp.call(this, event);
-        this.navigator.onMouseUp(event);
+        this.navigator.onDragStop();
     };
     CartesianChart.prototype.onMouseOut = function (event) {
         _super.prototype.onMouseOut.call(this, event);
-        this.navigator.onMouseUp(event);
+        this.navigator.onDragStop();
     };
     CartesianChart.prototype.updateAxes = function () {
         var navigator = this.navigator;
@@ -11806,7 +11938,7 @@ var AreaSeries = /** @class */ (function (_super) {
         // ]
         var _b = this, yData = _b.yData, normalizedTo = _b.normalizedTo;
         var yMinMax = yData.map(function (values) { return findMinMax(values); }); // used for normalization
-        var yLargestMinMax = findLargestMinMax(yMinMax);
+        var yLargestMinMax = this.findLargestMinMax(yMinMax);
         var yMin;
         var yMax;
         if (normalizedTo && isFinite(normalizedTo)) {
@@ -11831,6 +11963,20 @@ var AreaSeries = /** @class */ (function (_super) {
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
         this.fireEvent({ type: 'dataProcessed' });
         return true;
+    };
+    AreaSeries.prototype.findLargestMinMax = function (totals) {
+        var min = 0;
+        var max = 0;
+        for (var _i = 0, totals_1 = totals; _i < totals_1.length; _i++) {
+            var total = totals_1[_i];
+            if (total.min < min) {
+                min = total.min;
+            }
+            if (total.max > max) {
+                max = total.max;
+            }
+        }
+        return { min: min, max: max };
     };
     AreaSeries.prototype.getDomain = function (direction) {
         if (direction === ChartAxisDirection.X) {
@@ -12034,9 +12180,10 @@ var AreaSeries = /** @class */ (function (_super) {
     AreaSeries.prototype.getNodeData = function () {
         return this.markerSelectionData;
     };
-    AreaSeries.prototype.fireNodeClickEvent = function (datum) {
+    AreaSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -12062,7 +12209,7 @@ var AreaSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipFormat || tooltipRenderer) {
@@ -12217,13 +12364,6 @@ var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var BarSeriesNodeTag;
 (function (BarSeriesNodeTag) {
     BarSeriesNodeTag[BarSeriesNodeTag["Bar"] = 0] = "Bar";
@@ -12292,15 +12432,23 @@ var BarSeries = /** @class */ (function (_super) {
             _a);
         _this._xKey = '';
         _this._xName = '';
+        _this.cumYKeyCount = [];
+        _this.flatYKeys = undefined; // only set when a user used a flat array for yKeys
+        _this.hideInLegend = [];
         /**
-         * With a single value in the `yKeys` array we get the regular bar series.
-         * With multiple values, we get the stacked bar series.
-         * If the {@link grouped} set to `true`, we get the grouped bar series.
-         * @param values
+         * yKeys: [['coffee']] - regular bars, each category has a single bar that shows a value for coffee
+         * yKeys: [['coffee'], ['tea'], ['milk']] - each category has three bars that show values for coffee, tea and milk
+         * yKeys: [['coffee', 'tea', 'milk']] - each category has a single bar with three stacks that show values for coffee, tea and milk
+         * yKeys: [['coffee', 'tea', 'milk'], ['paper', 'ink']] - each category has 2 stacked bars,
+         *     first showing values for coffee, tea and milk and second values for paper and ink
          */
         _this._yKeys = [];
-        _this._yNames = [];
-        _this.grouped = false;
+        _this._grouped = false;
+        /**
+         * A map of `yKeys` to their names (used in legends and tooltips).
+         * For example, if a key is `product_name` it's name can be a more presentable `Product Name`.
+         */
+        _this._yNames = {};
         _this._strokeWidth = 1;
         _this.highlightStyle = { fill: 'yellow' };
         _this.addEventListener('update', _this.update);
@@ -12359,18 +12507,59 @@ var BarSeries = /** @class */ (function (_super) {
         get: function () {
             return this._yKeys;
         },
-        set: function (values) {
-            if (!equal(this._yKeys, values)) {
-                this._yKeys = values;
+        set: function (yKeys) {
+            var _this = this;
+            if (!equal(this._yKeys, yKeys)) {
+                // Convert from flat y-keys to grouped y-keys.
+                if (yKeys.length && !Array.isArray(yKeys[0])) {
+                    var keys = this.flatYKeys = yKeys;
+                    if (this.grouped) {
+                        yKeys = keys.map(function (k) { return [k]; });
+                    }
+                    else {
+                        yKeys = [keys];
+                    }
+                }
+                else {
+                    this.flatYKeys = undefined;
+                }
+                this._yKeys = yKeys;
+                var prevYKeyCount_1 = 0;
+                this.cumYKeyCount = [];
+                var visibleStacks_1 = [];
+                yKeys.forEach(function (stack, index) {
+                    if (stack.length > 0) {
+                        visibleStacks_1.push(String(index));
+                    }
+                    _this.cumYKeyCount.push(prevYKeyCount_1);
+                    prevYKeyCount_1 += stack.length;
+                });
                 this.yData = [];
                 var seriesItemEnabled_1 = this.seriesItemEnabled;
                 seriesItemEnabled_1.clear();
-                values.forEach(function (key) { return seriesItemEnabled_1.set(key, true); });
+                yKeys.forEach(function (stack) {
+                    stack.forEach(function (yKey) { return seriesItemEnabled_1.set(yKey, true); });
+                });
                 var groupScale = this.groupScale;
-                groupScale.domain = values;
+                groupScale.domain = visibleStacks_1;
                 groupScale.padding = 0.1;
                 groupScale.round = true;
                 this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BarSeries.prototype, "grouped", {
+        get: function () {
+            return this._grouped;
+        },
+        set: function (value) {
+            if (this._grouped !== value) {
+                this._grouped = value;
+                if (this.flatYKeys) {
+                    this.yKeys = this.flatYKeys;
+                }
             }
         },
         enumerable: true,
@@ -12381,6 +12570,13 @@ var BarSeries = /** @class */ (function (_super) {
             return this._yNames;
         },
         set: function (values) {
+            if (Array.isArray(values) && this.flatYKeys) {
+                var map_1 = {};
+                this.flatYKeys.forEach(function (k, i) {
+                    map_1[k] = values[i];
+                });
+                values = map_1;
+            }
             this._yNames = values;
             this.scheduleData();
         },
@@ -12437,20 +12633,6 @@ var BarSeries = /** @class */ (function (_super) {
     BarSeries.prototype.processData = function () {
         var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, seriesItemEnabled = _a.seriesItemEnabled;
         var data = xKey && yKeys.length && this.data ? this.data : [];
-        // If the data is an array of rows like so:
-        //
-        // [{
-        //   xKey: 'Jan',
-        //   yKey1: 5,
-        //   yKey2: 7,
-        //   yKey3: -9,
-        // }, {
-        //   xKey: 'Feb',
-        //   yKey1: 10,
-        //   yKey2: -15,
-        //   yKey3: 20
-        // }]
-        //
         var keysFound = true; // only warn once
         this.xData = data.map(function (datum) {
             if (keysFound && !(xKey in datum)) {
@@ -12459,55 +12641,64 @@ var BarSeries = /** @class */ (function (_super) {
             }
             return datum[xKey];
         });
-        this.yData = data.map(function (datum) { return yKeys.map(function (yKey) {
-            if (keysFound && !(yKey in datum)) {
-                keysFound = false;
-                console.warn("The key '" + yKey + "' was not found in the data: ", datum);
-            }
-            var value = datum[yKey];
-            return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+        this.yData = data.map(function (datum) { return yKeys.map(function (stack) {
+            return stack.map(function (yKey) {
+                if (keysFound && !(yKey in datum)) {
+                    keysFound = false;
+                    console.warn("The key '" + yKey + "' was not found in the data: ", datum);
+                }
+                var value = datum[yKey];
+                return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+            });
         }); });
-        // xData: ['Jan', 'Feb']
-        //
-        // yData: [
-        //   [5, 7, -9],
-        //   [10, -15, 20]
-        // ]
-        var yMinMax = this.yData.map(function (values) { return findMinMax(values); }); // used for normalization of stacked bars
+        // Used for normalization of stacked bars. Contains min/max values for each stack in each group,
+        // where min is zero and max is a positive total of all values in the stack
+        // or min is a negative total of all values in the stack and max is zero.
+        var yMinMax = this.yData.map(function (group) { return group.map(function (stack) { return findMinMax(stack); }); });
         var _b = this, yData = _b.yData, normalizedTo = _b.normalizedTo;
-        var yMin = Infinity;
-        var yMax = -Infinity;
-        if (this.grouped) {
-            // Find the tallest positive/negative bar in each group,
-            // then find the tallest positive/negative bar overall.
-            // The `yMin` should always be <= 0,
-            // otherwise with the `yData` like [300, 200, 100] the last bar
-            // will have zero height, because the y-axis range is [100, 300].
-            yMin = Math.min.apply(Math, __spreadArrays([0], yData.map(function (values) { return Math.min.apply(Math, values); })));
-            yMax = Math.max.apply(Math, yData.map(function (values) { return Math.max.apply(Math, values); }));
+        var yLargestMinMax = this.findLargestMinMax(yMinMax);
+        var yMin;
+        var yMax;
+        if (normalizedTo && isFinite(normalizedTo)) {
+            yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
+            yMax = normalizedTo;
+            yData.forEach(function (group, i) {
+                group.forEach(function (stack, j) {
+                    stack.forEach(function (y, k) {
+                        if (y < 0) {
+                            stack[k] = -y / yMinMax[i][j].min * normalizedTo;
+                        }
+                        else {
+                            stack[k] = y / yMinMax[i][j].max * normalizedTo;
+                        }
+                    });
+                });
+            });
         }
-        else { // stacked or regular
-            var yLargestMinMax = findLargestMinMax(yMinMax);
-            if (normalizedTo && isFinite(normalizedTo)) {
-                yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-                yMax = normalizedTo;
-                yData.forEach(function (stackValues, i) { return stackValues.forEach(function (y, j) {
-                    if (y < 0) {
-                        stackValues[j] = -y / yMinMax[i].min * normalizedTo;
-                    }
-                    else {
-                        stackValues[j] = y / yMinMax[i].max * normalizedTo;
-                    }
-                }); });
-            }
-            else {
-                yMin = yLargestMinMax.min;
-                yMax = yLargestMinMax.max;
-            }
+        else {
+            yMin = yLargestMinMax.min;
+            yMax = yLargestMinMax.max;
         }
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
         this.fireEvent({ type: 'dataProcessed' });
         return true;
+    };
+    BarSeries.prototype.findLargestMinMax = function (groups) {
+        var tallestStackMin = 0;
+        var tallestStackMax = 0;
+        for (var _i = 0, groups_1 = groups; _i < groups_1.length; _i++) {
+            var group = groups_1[_i];
+            for (var _a = 0, group_1 = group; _a < group_1.length; _a++) {
+                var stack = group_1[_a];
+                if (stack.min < tallestStackMin) {
+                    tallestStackMin = stack.min;
+                }
+                if (stack.max > tallestStackMax) {
+                    tallestStackMax = stack.max;
+                }
+            }
+        }
+        return { min: tallestStackMin, max: tallestStackMax };
     };
     BarSeries.prototype.getDomain = function (direction) {
         if (this.flipXY) {
@@ -12520,9 +12711,10 @@ var BarSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    BarSeries.prototype.fireNodeClickEvent = function (datum) {
+    BarSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -12539,7 +12731,7 @@ var BarSeries = /** @class */ (function (_super) {
         var yAxis = flipXY ? this.xAxis : this.yAxis;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
-        var _a = this, groupScale = _a.groupScale, yKeys = _a.yKeys, fills = _a.fills, strokes = _a.strokes, grouped = _a.grouped, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, data = _a.data, xData = _a.xData, yData = _a.yData;
+        var _a = this, groupScale = _a.groupScale, yKeys = _a.yKeys, cumYKeyCount = _a.cumYKeyCount, fills = _a.fills, strokes = _a.strokes, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, data = _a.data, xData = _a.xData, yData = _a.yData;
         var label = this.label;
         var labelFontStyle = label.fontStyle;
         var labelFontWeight = label.fontWeight;
@@ -12548,62 +12740,66 @@ var BarSeries = /** @class */ (function (_super) {
         var labelColor = label.color;
         var labelFormatter = label.formatter;
         groupScale.range = [0, xScale.bandwidth];
-        var barWidth = grouped ? groupScale.bandwidth : xScale.bandwidth;
+        var barWidth =  groupScale.bandwidth ;
         var nodeData = [];
-        xData.forEach(function (category, i) {
-            var yDatum = yData[i];
-            var seriesDatum = data[i];
-            var x = xScale.convert(category);
-            var prevMin = 0;
-            var prevMax = 0;
-            for (var j = 0; j < yDatum.length; j++) {
-                var curr = yDatum[j];
-                var yKey = yKeys[j];
-                var barX = grouped ? x + groupScale.convert(yKey) : x;
-                if (!xAxis.inRange(barX, barWidth)) {
-                    continue;
-                }
-                var prev = curr < 0 ? prevMin : prevMax;
-                var y = yScale.convert(grouped ? curr : prev + curr);
-                var bottomY = yScale.convert(grouped ? 0 : prev);
-                var yValue = seriesDatum[yKey]; // unprocessed y-value
-                var yValueIsNumber = typeof yValue === 'number';
-                var labelText = void 0;
-                if (labelFormatter) {
-                    labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
-                }
-                else {
-                    labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
-                }
-                nodeData.push({
-                    series: _this,
-                    seriesDatum: seriesDatum,
-                    yValue: yValue,
-                    yKey: yKey,
-                    x: flipXY ? Math.min(y, bottomY) : barX,
-                    y: flipXY ? barX : Math.min(y, bottomY),
-                    width: flipXY ? Math.abs(bottomY - y) : barWidth,
-                    height: flipXY ? barWidth : Math.abs(bottomY - y),
-                    fill: fills[j % fills.length],
-                    stroke: strokes[j % strokes.length],
-                    strokeWidth: strokeWidth,
-                    label: seriesItemEnabled.get(yKey) && labelText ? {
-                        text: labelText,
-                        fontStyle: labelFontStyle,
-                        fontWeight: labelFontWeight,
-                        fontSize: labelFontSize,
-                        fontFamily: labelFontFamily,
-                        fill: labelColor,
-                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
-                        y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
-                    } : undefined
-                });
-                if (!grouped) {
-                    if (curr < 0) {
-                        prevMin += curr;
+        xData.forEach(function (group, groupIndex) {
+            var seriesDatum = data[groupIndex];
+            var x = xScale.convert(group);
+            var groupYs = yData[groupIndex]; // y-data for groups of stacks
+            for (var stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
+                var stackYs = groupYs[stackIndex]; // y-data for a stack withing a group
+                var prevMinY = 0;
+                var prevMaxY = 0;
+                for (var levelIndex = 0; levelIndex < stackYs.length; levelIndex++) {
+                    var currY = stackYs[levelIndex];
+                    var yKey = yKeys[stackIndex][levelIndex];
+                    var barX =  x + groupScale.convert(String(stackIndex)) ;
+                    // Bars outside of visible range are not rendered, so we generate node data
+                    // only for the visible subset of user data.
+                    if (!xAxis.inRange(barX, barWidth)) {
+                        continue;
+                    }
+                    var prevY = currY < 0 ? prevMinY : prevMaxY;
+                    var y = yScale.convert(prevY + currY);
+                    var bottomY = yScale.convert(prevY);
+                    var yValue = seriesDatum[yKey]; // unprocessed y-value
+                    var yValueIsNumber = typeof yValue === 'number';
+                    var labelText = void 0;
+                    if (labelFormatter) {
+                        labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
                     }
                     else {
-                        prevMax += curr;
+                        labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
+                    }
+                    var colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                    nodeData.push({
+                        series: _this,
+                        seriesDatum: seriesDatum,
+                        yValue: yValue,
+                        yKey: yKey,
+                        x: flipXY ? Math.min(y, bottomY) : barX,
+                        y: flipXY ? barX : Math.min(y, bottomY),
+                        width: flipXY ? Math.abs(bottomY - y) : barWidth,
+                        height: flipXY ? barWidth : Math.abs(bottomY - y),
+                        fill: fills[colorIndex % fills.length],
+                        stroke: strokes[colorIndex % strokes.length],
+                        strokeWidth: strokeWidth,
+                        label: seriesItemEnabled.get(yKey) && labelText ? {
+                            text: labelText,
+                            fontStyle: labelFontStyle,
+                            fontWeight: labelFontWeight,
+                            fontSize: labelFontSize,
+                            fontFamily: labelFontFamily,
+                            fill: labelColor,
+                            x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
+                            y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
+                        } : undefined
+                    });
+                    if (currY < 0) {
+                        prevMinY += currY;
+                    }
+                    else {
+                        prevMaxY += currY;
                     }
                 }
             }
@@ -12703,15 +12899,25 @@ var BarSeries = /** @class */ (function (_super) {
         });
     };
     BarSeries.prototype.getTooltipHtml = function (nodeDatum) {
-        var xKey = this.xKey;
+        var _a = this, xKey = _a.xKey, yKeys = _a.yKeys;
         var yKey = nodeDatum.yKey;
         if (!xKey || !yKey) {
             return '';
         }
-        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer;
+        var yKeyIndex = 0;
+        for (var _i = 0, yKeys_1 = yKeys; _i < yKeys_1.length; _i++) {
+            var stack = yKeys_1[_i];
+            var i = stack.indexOf(yKey);
+            if (i >= 0) {
+                yKeyIndex += i;
+                break;
+            }
+            yKeyIndex += stack.length;
+        }
+        var _b = this, xName = _b.xName, yNames = _b.yNames, fills = _b.fills, tooltip = _b.tooltip;
+        var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c; // TODO: remove deprecated tooltipRenderer
         var datum = nodeDatum.seriesDatum;
-        var yKeyIndex = yKeys.indexOf(yKey);
-        var yName = yNames[yKeyIndex];
+        var yName = yNames[yKey];
         var color = fills[yKeyIndex % fills.length];
         var xValue = datum[xKey];
         var yValue = datum[yKey];
@@ -12721,7 +12927,7 @@ var BarSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -12739,21 +12945,26 @@ var BarSeries = /** @class */ (function (_super) {
         return toTooltipHtml(defaults);
     };
     BarSeries.prototype.listSeriesItems = function (legendData) {
-        var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, seriesItemEnabled = _a.seriesItemEnabled, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
+        var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, cumYKeyCount = _a.cumYKeyCount, seriesItemEnabled = _a.seriesItemEnabled, hideInLegend = _a.hideInLegend, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
         if (data && data.length && xKey && yKeys.length) {
-            yKeys.forEach(function (yKey, index) {
-                legendData.push({
-                    id: id,
-                    itemId: yKey,
-                    enabled: seriesItemEnabled.get(yKey) || false,
-                    label: {
-                        text: yNames[index] || yKeys[index]
-                    },
-                    marker: {
-                        fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length],
-                        fillOpacity: fillOpacity,
-                        strokeOpacity: strokeOpacity
+            this.yKeys.forEach(function (stack, stackIndex) {
+                stack.forEach(function (yKey, levelIndex) {
+                    if (hideInLegend.indexOf(yKey) < 0) {
+                        var colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                        legendData.push({
+                            id: id,
+                            itemId: yKey,
+                            enabled: seriesItemEnabled.get(yKey) || false,
+                            label: {
+                                text: yNames[yKey] || yKey
+                            },
+                            marker: {
+                                fill: fills[colorIndex % fills.length],
+                                stroke: strokes[colorIndex % strokes.length],
+                                fillOpacity: fillOpacity,
+                                strokeOpacity: strokeOpacity
+                            }
+                        });
                     }
                 });
             });
@@ -12761,14 +12972,25 @@ var BarSeries = /** @class */ (function (_super) {
     };
     BarSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
         var seriesItemEnabled = this.seriesItemEnabled;
-        var enabledSeriesItems = [];
         seriesItemEnabled.set(itemId, enabled);
+        var yKeys = this.yKeys.map(function (stack) { return stack.slice(); }); // deep clone
         seriesItemEnabled.forEach(function (enabled, yKey) {
-            if (enabled) {
-                enabledSeriesItems.push(yKey);
+            if (!enabled) {
+                yKeys.forEach(function (stack) {
+                    var index = stack.indexOf(yKey);
+                    if (index >= 0) {
+                        stack.splice(index, 1);
+                    }
+                });
             }
         });
-        this.groupScale.domain = enabledSeriesItems;
+        var visibleStacks = [];
+        yKeys.forEach(function (stack, index) {
+            if (stack.length > 0) {
+                visibleStacks.push(String(index));
+            }
+        });
+        this.groupScale.domain = visibleStacks;
         this.scheduleData();
     };
     BarSeries.className = 'BarSeries';
@@ -12798,8 +13020,8 @@ var BarSeries = /** @class */ (function (_super) {
         reactive('update')
     ], BarSeries.prototype, "formatter", void 0);
     __decorate$8([
-        reactive('dataChange')
-    ], BarSeries.prototype, "grouped", void 0);
+        reactive('layoutChange')
+    ], BarSeries.prototype, "hideInLegend", void 0);
     return BarSeries;
 }(CartesianSeries));
 
@@ -13070,9 +13292,10 @@ var LineSeries = /** @class */ (function (_super) {
     LineSeries.prototype.getNodeData = function () {
         return this.nodeData;
     };
-    LineSeries.prototype.fireNodeClickEvent = function (datum) {
+    LineSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -13094,7 +13317,7 @@ var LineSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -13295,7 +13518,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         this.marker.stroke = strokes[0];
     };
     ScatterSeries.prototype.processData = function () {
-        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis, marker = _a.marker;
         var data = xKey && yKey && this.data ? this.data : [];
         this.xData = data.map(function (d) { return d[xKey]; });
         this.yData = data.map(function (d) { return d[yKey]; });
@@ -13305,7 +13528,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         else {
             this.sizeData = [];
         }
-        this.sizeScale.domain = finiteExtent(this.sizeData) || [1, 1];
+        this.sizeScale.domain = marker.domain ? marker.domain : finiteExtent(this.sizeData) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
             this.xDomain = this.fixNumericExtent(finiteExtent(this.xData), 'x');
         }
@@ -13331,9 +13554,10 @@ var ScatterSeries = /** @class */ (function (_super) {
     ScatterSeries.prototype.getNodeData = function () {
         return this.nodeData;
     };
-    ScatterSeries.prototype.fireNodeClickEvent = function (datum) {
+    ScatterSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -13348,6 +13572,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
+        var isContinuousX = xScale instanceof ContinuousScale;
+        var isContinuousY = yScale instanceof ContinuousScale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, sizeData = _b.sizeData, sizeScale = _b.sizeScale, marker = _b.marker;
@@ -13355,6 +13581,12 @@ var ScatterSeries = /** @class */ (function (_super) {
         var nodeData = [];
         for (var i = 0; i < xData.length; i++) {
             var xDatum = xData[i];
+            var yDatum = yData[i];
+            var noDatum = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            if (noDatum) {
+                continue;
+            }
             var x = xScale.convert(xDatum) + xOffset;
             if (!xAxis.inRange(x)) {
                 continue;
@@ -13453,7 +13685,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         }
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -13534,7 +13766,7 @@ var __decorate$b = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays$1 = (undefined && undefined.__spreadArrays) || function () {
+var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -13808,7 +14040,7 @@ var HistogramSeries = /** @class */ (function (_super) {
         var binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
         var firstBinEnd = binStarts[0];
         var expandStartToBin = function (n) { return [n, n + binSize]; };
-        return __spreadArrays$1([
+        return __spreadArrays([
             [firstBinEnd - binSize, firstBinEnd]
         ], binStarts.map(expandStartToBin));
     };
@@ -13872,9 +14104,10 @@ var HistogramSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    HistogramSeries.prototype.fireNodeClickEvent = function (datum) {
+    HistogramSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey
@@ -14003,15 +14236,15 @@ var HistogramSeries = /** @class */ (function (_super) {
         }
         var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
         var bin = nodeDatum.seriesDatum;
-        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _c = bin.domain, rangeMin = _c[0], rangeMax = _c[1];
-        var title = (xName || xKey) + " " + toFixed(rangeMin) + " - " + toFixed(rangeMax);
+        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _d = bin.domain, rangeMin = _d[0], rangeMax = _d[1];
+        var title = (xName || xKey) + ": " + toFixed(rangeMin) + " - " + toFixed(rangeMax);
         var content = yKey ?
             "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + toFixed(aggregatedValue) + "<br>" :
             '';
         content += "<b>Frequency</b>: " + frequency;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -14255,8 +14488,6 @@ var Sector = /** @class */ (function (_super) {
         var outerRadius = Math.max(this.innerRadius, this.outerRadius);
         var centerOffset = this.centerOffset;
         var fullPie = this.fullPie;
-        // const tipOffset = radiiGap / 3;
-        // const showTip = radiiGap < outerRadius / 2;
         var centerX = this.centerX;
         var centerY = this.centerY;
         path.clear();
@@ -14835,6 +15066,7 @@ var PieSeries = /** @class */ (function (_super) {
         _this.label.addEventListener('change', _this.scheduleLayout, _this);
         _this.label.addEventListener('dataChange', _this.scheduleData, _this);
         _this.callout.addEventListener('change', _this.scheduleLayout, _this);
+        _this.callout.colors = _this.strokes;
         _this.addPropertyListener('data', function (event) {
             if (event.value) {
                 event.source.seriesItemEnabled = event.value.map(function () { return true; });
@@ -14919,12 +15151,14 @@ var PieSeries = /** @class */ (function (_super) {
         })();
         var labelKey = this.label.enabled && this.labelKey;
         var labelData = labelKey ? data.map(function (datum) { return String(datum[labelKey]); }) : [];
-        var useRadiusKey = !!radiusKey && !this.innerRadiusOffset;
         var radiusData = [];
-        if (useRadiusKey) {
+        if (radiusKey) {
+            var _b = this, radiusMin = _b.radiusMin, radiusMax = _b.radiusMax;
             var radii = data.map(function (datum) { return Math.abs(datum[radiusKey]); });
-            var maxDatum_1 = Math.max.apply(Math, radii);
-            radiusData = radii.map(function (value) { return value / maxDatum_1; });
+            var min_1 = radiusMin !== undefined ? radiusMin : Math.min.apply(Math, radii);
+            var max = radiusMax !== undefined ? radiusMax : Math.max.apply(Math, radii);
+            var delta_1 = max - min_1;
+            radiusData = radii.map(function (value) { return delta_1 ? (value - min_1) / delta_1 : 1; });
         }
         groupSelectionData.length = 0;
         var rotation = toRadians(this.rotation);
@@ -14932,7 +15166,7 @@ var PieSeries = /** @class */ (function (_super) {
         var datumIndex = 0;
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce(function (start, end) {
-            var radius = useRadiusKey ? radiusData[datumIndex] : 1;
+            var radius = radiusKey ? radiusData[datumIndex] : 1;
             var startAngle = angleScale.convert(start) + rotation;
             var endAngle = angleScale.convert(end) + rotation;
             var midAngle = (startAngle + endAngle) / 2;
@@ -14989,12 +15223,15 @@ var PieSeries = /** @class */ (function (_super) {
         if (!visible || !chart || chart.dataPending || chart.layoutPending) {
             return;
         }
-        this.radiusScale.range = [0, this.radius];
+        var _a = this, radius = _a.radius, innerRadiusOffset = _a.innerRadiusOffset, outerRadiusOffset = _a.outerRadiusOffset, title = _a.title;
+        this.radiusScale.range = [
+            innerRadiusOffset ? radius + innerRadiusOffset : 0,
+            radius + (outerRadiusOffset || 0)
+        ];
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
-        var title = this.title;
         if (title) {
-            title.node.translationY = -this.radius - this.outerRadiusOffset - 2;
+            title.node.translationY = -radius - outerRadiusOffset - 2;
             title.node.visible = title.enabled;
         }
         this.updateGroupSelection();
@@ -15020,13 +15257,12 @@ var PieSeries = /** @class */ (function (_super) {
         if (!this.chart) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
         var highlightedDatum = this.chart.highlightedDatum;
-        var outerRadii = [];
         var centerOffsets = [];
+        var innerRadius = radiusScale.convert(0);
         this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
             var radius = radiusScale.convert(datum.radius);
-            var outerRadius = Math.max(0, radius + outerRadiusOffset);
             var highlighted = datum === highlightedDatum;
             var sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             var sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
@@ -15042,8 +15278,8 @@ var PieSeries = /** @class */ (function (_super) {
                     radiusKey: radiusKey
                 });
             }
-            sector.outerRadius = outerRadius;
-            sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
+            sector.innerRadius = innerRadius;
+            sector.outerRadius = radius;
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
             sector.fill = format && format.fill || sectorFill;
@@ -15056,19 +15292,18 @@ var PieSeries = /** @class */ (function (_super) {
             sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
             sector.lineJoin = 'round';
-            outerRadii.push(outerRadius);
             centerOffsets.push(sector.centerOffset);
         });
         var calloutColors = callout.colors, calloutLength = callout.length, calloutStrokeWidth = callout.strokeWidth;
         this.groupSelection.selectByTag(PieNodeTag.Callout).each(function (line, datum, index) {
             if (datum.label) {
-                var outerRadius = centerOffsets[index] + outerRadii[index];
+                var radius = radiusScale.convert(datum.radius);
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
-                line.x1 = datum.midCos * outerRadius;
-                line.y1 = datum.midSin * outerRadius;
-                line.x2 = datum.midCos * (outerRadius + calloutLength);
-                line.y2 = datum.midSin * (outerRadius + calloutLength);
+                line.x1 = datum.midCos * radius;
+                line.y1 = datum.midSin * radius;
+                line.x2 = datum.midCos * (radius + calloutLength);
+                line.y2 = datum.midSin * (radius + calloutLength);
             }
             else {
                 line.stroke = undefined;
@@ -15079,8 +15314,8 @@ var PieSeries = /** @class */ (function (_super) {
             this.groupSelection.selectByTag(PieNodeTag.Label).each(function (text, datum, index) {
                 var label = datum.label;
                 if (label) {
-                    var outerRadius = outerRadii[index];
-                    var labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset_1;
+                    var radius = radiusScale.convert(datum.radius);
+                    var labelRadius = centerOffsets[index] + radius + calloutLength + offset_1;
                     text.fontStyle = fontStyle_1;
                     text.fontWeight = fontWeight_1;
                     text.fontSize = fontSize_1;
@@ -15098,12 +15333,14 @@ var PieSeries = /** @class */ (function (_super) {
             });
         }
     };
-    PieSeries.prototype.fireNodeClickEvent = function (datum) {
+    PieSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             angleKey: this.angleKey,
+            labelKey: this.labelKey,
             radiusKey: this.radiusKey
         });
     };
@@ -15122,7 +15359,7 @@ var PieSeries = /** @class */ (function (_super) {
         var content = label + formattedAngleValue;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {
@@ -15183,6 +15420,12 @@ var PieSeries = /** @class */ (function (_super) {
     __decorate$c([
         reactive('update')
     ], PieSeries.prototype, "radiusName", void 0);
+    __decorate$c([
+        reactive('dataChange')
+    ], PieSeries.prototype, "radiusMin", void 0);
+    __decorate$c([
+        reactive('dataChange')
+    ], PieSeries.prototype, "radiusMax", void 0);
     __decorate$c([
         reactive('dataChange')
     ], PieSeries.prototype, "labelKey", void 0);
@@ -15355,7 +15598,7 @@ var ChartTheme = /** @class */ (function () {
             var overrides_1 = options.overrides;
             if (overrides_1) {
                 if (isObject(overrides_1.common)) {
-                    ChartTheme.seriesTypes.forEach(function (seriesType) {
+                    ChartTheme.seriesTypes.concat(['cartesian', 'polar']).forEach(function (seriesType) {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrides_1.common, mergeOptions_1);
                     });
                 }
@@ -15534,6 +15777,12 @@ var ChartTheme = /** @class */ (function () {
                         fontFamily: this.fontFamily
                     }
                 }
+            },
+            tooltip: {
+                enabled: true,
+                tracking: true,
+                delay: 0,
+                class: Chart.defaultTooltipClass
             }
         };
     };
@@ -15773,7 +16022,7 @@ var DarkTheme = /** @class */ (function (_super) {
         };
         var chartDefaults = {
             background: {
-                fill: 'rgb(52, 52, 52)'
+                fill: 'rgb(34, 38, 41)'
             },
             title: {
                 color: fontColor
@@ -16236,6 +16485,16 @@ var commonChartMappings = {
                 right: chartPadding,
                 bottom: chartPadding,
                 left: chartPadding
+            }
+        }
+    },
+    tooltip: {
+        meta: {
+            defaults: {
+                enabled: true,
+                tracking: true,
+                delay: 0,
+                class: Chart.defaultTooltipClass
             }
         }
     },
@@ -16726,7 +16985,7 @@ var __assign$5 = (undefined && undefined.__assign) || function () {
     };
     return __assign$5.apply(this, arguments);
 };
-var __spreadArrays$2 = (undefined && undefined.__spreadArrays) || function () {
+var __spreadArrays$1 = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -16868,7 +17127,7 @@ function create(options, path, component, theme) {
             .map(function (param) { return options[param]; })
             .filter(function (value) { return value !== undefined; });
         if (!component) {
-            component = new ((_a = meta.constructor).bind.apply(_a, __spreadArrays$2([void 0], constructorParamValues)))();
+            component = new ((_a = meta.constructor).bind.apply(_a, __spreadArrays$1([void 0], constructorParamValues)))();
             if (theme && component instanceof Series) {
                 firstColorIndex = theme.setSeriesColors(component, options, firstColorIndex);
             }
@@ -17161,4 +17420,4 @@ var time = {
     utcYear: utcYear
 };
 
-export { AgChart, Arc, ArcType, AreaSeries, BandScale, BarSeries, Caption, CartesianChart, CategoryAxis, Chart, ChartAxis, ChartAxisDirection, ChartAxisPosition, ChartTheme, ClipRect, DropShadow, Group, GroupedCategoryAxis, GroupedCategoryChart, HistogramBin, HistogramSeries, Line, LineSeries, LinearScale, Marker, NumberAxis, Padding, Path, PieSeries, PolarChart, Rect, RectSizing, ScatterSeries, Scene, Sector, Shape, TimeAxis, copy, darkThemes, extent, find, findIndex, findLargestMinMax, findMinMax, finiteExtent, flipChartAxisDirection, getChartTheme, lightThemes, normalizeAngle180, normalizeAngle360, normalizeAngle360Inclusive, numericExtent, themes, time, toDegrees, toRadians, toTooltipHtml };
+export { AgChart, Arc, ArcType, AreaSeries, AreaSeriesTooltip, BandScale, BarSeries, BarSeriesTooltip, Caption, CartesianChart, CategoryAxis, Chart, ChartAxis, ChartAxisDirection, ChartAxisPosition, ChartTheme, ChartTooltip, ClipRect, DropShadow, Group, GroupedCategoryAxis, GroupedCategoryChart, HistogramBin, HistogramSeries, HistogramSeriesTooltip, Legend, LegendItem, LegendLabel, LegendMarker, LegendOrientation, LegendPosition, Line, LineSeries, LineSeriesTooltip, LinearScale, Marker, NumberAxis, Padding, Path, PieSeries, PieSeriesTooltip, PolarChart, Rect, RectSizing, ScatterSeries, ScatterSeriesTooltip, Scene, Sector, Shape, TimeAxis, copy, darkThemes, extent, find, findIndex, findMinMax, finiteExtent, flipChartAxisDirection, getChartTheme, lightThemes, normalizeAngle180, normalizeAngle360, normalizeAngle360Inclusive, numericExtent, themes, time, toDegrees, toRadians, toTooltipHtml };

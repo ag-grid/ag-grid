@@ -120,38 +120,6 @@ export class Path2D {
         this.cubicArc(cx, cy, rx, ry, rotation, theta1, theta1 + deltaTheta, 1 - fS);
     }
 
-    arcToAlt(rx: number, ry: number, rotation: number, fA: number, fS: number, x2: number, y2: number) {
-        // Convert from endpoint to center parametrization. See:
-        // https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
-        if (!this.xy) { return; }
-
-        if (rx < 0) {
-            rx = -rx;
-        }
-        if (ry < 0) {
-            ry = -ry;
-        }
-
-        const x1 = this.xy[0];
-        const y1 = this.xy[1];
-        const hdx = (x1 - x2) / 2;
-        const hdy = (y1 - y2) / 2;
-        const sinPhi = Math.sin(rotation);
-        const cosPhi = Math.cos(rotation);
-        const x1p =  cosPhi * hdx + sinPhi * hdy;
-        const y1p = -sinPhi * hdx + cosPhi * hdy;
-
-        const rx_y1p = rx * rx * y1p * y1p;
-        const ry_x1p = ry * ry * x1p * x1p;
-        const root = Math.sqrt((rx * rx * ry * ry - rx_y1p - ry_x1p) / (rx_y1p + ry_x1p));
-        const rootSign = fA === fS ? 0 : 1;
-        const cxp =  rootSign * root * rx * y1p / ry;
-        const cyp = -rootSign * root * ry * x1p / rx;
-        const cx = cosPhi * cxp - sinPhi * cyp + (x1 + x2) / 2;
-        const cy = sinPhi * cxp + cosPhi * cyp + (y1 + y2) / 2;
-        const theta1 = Math.acos((x1p - cxp) / rx / ((x1p - cxp) / rx));
-    }
-
     /**
      * Approximates an elliptical arc with up to four cubic Bézier curves.
      * @param commands The string array to write SVG command letters to.

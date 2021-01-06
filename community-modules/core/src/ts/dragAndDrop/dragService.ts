@@ -1,7 +1,6 @@
 import { Bean, PreDestroy, Autowired, PostConstruct } from "../context/context";
 import { LoggerFactory, Logger } from "../logger";
 import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { BeanStub } from "../context/beanStub";
@@ -16,7 +15,6 @@ import { areEventsNear } from "../utils/mouse";
 export class DragService extends BeanStub {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

@@ -41,8 +41,8 @@ var HistogramChartProxy = /** @class */ (function (_super) {
             shadow: this.getDefaultDropShadowOptions(),
             label: seriesDefaults.label,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -53,7 +53,10 @@ var HistogramChartProxy = /** @class */ (function (_super) {
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -64,7 +67,10 @@ var HistogramChartProxy = /** @class */ (function (_super) {
         var agChartOptions = options;
         agChartOptions.autoSize = true;
         agChartOptions.axes = [__assign({ type: 'number', position: 'bottom' }, options.xAxis), __assign({ type: 'number', position: 'left' }, options.yAxis)];
-        agChartOptions.series = [__assign(__assign({}, seriesDefaults), { fill: seriesDefaults.fill.colors[0], fillOpacity: seriesDefaults.fill.opacity, stroke: seriesDefaults.stroke.colors[0], strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer, type: 'histogram' })];
+        agChartOptions.series = [__assign(__assign({}, seriesDefaults), { fill: seriesDefaults.fill.colors[0], fillOpacity: seriesDefaults.fill.opacity, stroke: seriesDefaults.stroke.colors[0], strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: (seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer) || undefined,
+                }, type: 'histogram' })];
         return ag_charts_community_1.AgChart.create(agChartOptions, parentElement);
     };
     HistogramChartProxy.prototype.update = function (params) {

@@ -3,7 +3,6 @@ import { BeanStub } from "../context/beanStub";
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 export declare class DragService extends BeanStub {
     private loggerFactory;
-    private gridOptionsWrapper;
     private columnApi;
     private gridApi;
     private currentDragParams;

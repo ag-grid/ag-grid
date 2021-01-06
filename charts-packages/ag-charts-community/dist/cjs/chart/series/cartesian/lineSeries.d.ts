@@ -12,6 +12,7 @@ interface LineNodeDatum extends SeriesNodeDatum {
 }
 export interface LineSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: LineSeries;
     readonly datum: any;
     readonly xKey: string;
@@ -56,7 +57,7 @@ export declare class LineSeries extends CartesianSeries {
     private updateNodeSelection;
     private updateNodes;
     getNodeData(): LineNodeDatum[];
-    fireNodeClickEvent(datum: LineNodeDatum): void;
+    fireNodeClickEvent(event: MouseEvent, datum: LineNodeDatum): void;
     getTooltipHtml(nodeDatum: LineNodeDatum): string;
     listSeriesItems(legendData: LegendDatum[]): void;
 }

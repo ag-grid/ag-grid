@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = require("../../context/context");
 var component_1 = require("../../widgets/component");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var icon_1 = require("../../utils/icon");
@@ -35,6 +34,12 @@ var LoadingCellRenderer = /** @class */ (function (_super) {
         return _super.call(this, LoadingCellRenderer.TEMPLATE) || this;
     }
     LoadingCellRenderer.prototype.init = function (params) {
+        params.node.failedLoad ? this.setupFailed() : this.setupLoading();
+    };
+    LoadingCellRenderer.prototype.setupFailed = function () {
+        this.eLoadingText.innerText = 'ERR';
+    };
+    LoadingCellRenderer.prototype.setupLoading = function () {
         var eLoadingIcon = icon_1.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
         this.eLoadingIcon.appendChild(eLoadingIcon);
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -44,9 +49,6 @@ var LoadingCellRenderer = /** @class */ (function (_super) {
         return false;
     };
     LoadingCellRenderer.TEMPLATE = "<div class=\"ag-loading\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], LoadingCellRenderer.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         componentAnnotations_1.RefSelector('eLoadingIcon')
     ], LoadingCellRenderer.prototype, "eLoadingIcon", void 0);

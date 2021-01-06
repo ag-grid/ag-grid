@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -175,9 +175,6 @@ var AnimationFrameService = /** @class */ (function (_super) {
     AnimationFrameService.prototype.isQueueEmpty = function () {
         return !this.ticking;
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], AnimationFrameService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.PostConstruct
     ], AnimationFrameService.prototype, "init", null);

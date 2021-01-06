@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -101,9 +101,6 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
     OverlayWrapperComponent.TEMPLATE = "\n        <div class=\"ag-overlay\" aria-hidden=\"true\">\n            <div class=\"ag-overlay-panel\">\n                <div class=\"ag-overlay-wrapper\" ref=\"eOverlayWrapper\"></div>\n            </div>\n        </div>";
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], OverlayWrapperComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('userComponentFactory')
     ], OverlayWrapperComponent.prototype, "userComponentFactory", void 0);

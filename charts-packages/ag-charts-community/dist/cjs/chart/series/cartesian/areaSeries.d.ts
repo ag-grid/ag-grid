@@ -7,6 +7,7 @@ import { TooltipRendererResult } from "../../chart";
 import { TypedEvent } from "../../../util/observable";
 export interface AreaSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: AreaSeries;
     readonly datum: any;
     readonly xKey: string;
@@ -71,6 +72,13 @@ export declare class AreaSeries extends CartesianSeries {
     protected highlightedDatum?: MarkerSelectionDatum;
     onHighlightChange(): void;
     processData(): boolean;
+    findLargestMinMax(totals: {
+        min: number;
+        max: number;
+    }[]): {
+        min: number;
+        max: number;
+    };
     getDomain(direction: ChartAxisDirection): any[];
     update(): void;
     private generateSelectionData;
@@ -79,7 +87,7 @@ export declare class AreaSeries extends CartesianSeries {
     private updateMarkerSelection;
     private updateMarkerNodes;
     getNodeData(): MarkerSelectionDatum[];
-    fireNodeClickEvent(datum: MarkerSelectionDatum): void;
+    fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void;
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string;
     listSeriesItems(legendData: LegendDatum[]): void;
     toggleSeriesItem(itemId: string, enabled: boolean): void;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -79,7 +79,6 @@ export { GroupCellRenderer } from "./rendering/cellRenderers/groupCellRenderer";
 export { SetLeftFeature } from "./rendering/features/setLeftFeature";
 // rendering
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
-export { CellRendererFactory } from "./rendering/cellRendererFactory";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cellComp";
 export { RowComp } from "./rendering/row/rowComp";
@@ -113,7 +112,7 @@ export { AgPanel } from "./widgets/agPanel";
 export { Component } from "./widgets/component";
 export { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 export { PopupComponent } from "./widgets/popupComponent";
-export { PopupService } from "./widgets/popupService";
+export { PopupService, } from "./widgets/popupService";
 export { TouchListener } from "./widgets/touchListener";
 export { VirtualList } from "./widgets/virtualList";
 // range

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -20,7 +20,6 @@ export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupP
 }
 export declare class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private columnController;
-    private gridOptionsWrapper;
     static TEMPLATE: string;
     private params;
     private eOpenIcon;

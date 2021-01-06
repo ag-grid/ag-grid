@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,14 +48,20 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         this.showOrHideSelect();
     };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var state = this.rowNode.isSelected();
-        var stateName = state === undefined ? 'indeterminate' : (state === true ? 'checked' : 'unchecked');
+        var stateName = state === undefined
+            ? translate('ariaIndeterminate', 'indeterminate')
+            : (state === true
+                ? translate('ariaChecked', 'checked')
+                : translate('ariaUnchecked', 'unchecked'));
+        var ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel("Press Space to toggle row selection (" + stateName + ")");
+        this.eCheckbox.setInputAriaLabel(ariaLabel + " (" + stateName + ")");
     };
-    CheckboxSelectionComponent.prototype.onCheckedClicked = function () {
+    CheckboxSelectionComponent.prototype.onCheckedClicked = function (event) {
         var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        var updatedCount = this.rowNode.setSelectedParams({ newValue: false, groupSelectsFiltered: groupSelectsFiltered });
+        var updatedCount = this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
         return updatedCount;
     };
     CheckboxSelectionComponent.prototype.onUncheckedClicked = function (event) {
@@ -73,18 +79,20 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         this.addGuiEventListener('click', function (event) { return event_1.stopPropagationForAgGrid(event); });
         // likewise we don't want double click on this icon to open a group
         this.addGuiEventListener('dblclick', function (event) { return event_1.stopPropagationForAgGrid(event); });
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', function (params) {
-            if (params.previousValue === undefined) { // indeterminate
-                var result = _this.onUncheckedClicked(params.event || {});
+        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', function (event) {
+            var isSelected = _this.eCheckbox.getValue();
+            var previousValue = _this.eCheckbox.getPreviousValue();
+            if (previousValue === undefined) { // indeterminate
+                var result = _this.onUncheckedClicked(event || {});
                 if (result === 0) {
-                    _this.onCheckedClicked();
+                    _this.onCheckedClicked(event);
                 }
             }
-            else if (params.selected) {
-                _this.onUncheckedClicked(params.event || {});
+            else if (isSelected) {
+                _this.onCheckedClicked(event);
             }
             else {
-                _this.onCheckedClicked();
+                _this.onUncheckedClicked(event || {});
             }
         });
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
@@ -115,9 +123,6 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         var colDef = this.column ? this.column.getColDef() : null;
         return colDef && typeof colDef.checkboxSelection === 'function';
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], CheckboxSelectionComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         componentAnnotations_1.RefSelector('eCheckbox')
     ], CheckboxSelectionComponent.prototype, "eCheckbox", void 0);

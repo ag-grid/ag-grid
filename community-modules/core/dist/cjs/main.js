@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -154,8 +154,6 @@ exports.SetLeftFeature = setLeftFeature_1.SetLeftFeature;
 // rendering
 var autoWidthCalculator_1 = require("./rendering/autoWidthCalculator");
 exports.AutoWidthCalculator = autoWidthCalculator_1.AutoWidthCalculator;
-var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
-exports.CellRendererFactory = cellRendererFactory_1.CellRendererFactory;
 var checkboxSelectionComponent_1 = require("./rendering/checkboxSelectionComponent");
 exports.CheckboxSelectionComponent = checkboxSelectionComponent_1.CheckboxSelectionComponent;
 var cellComp_1 = require("./rendering/cellComp");

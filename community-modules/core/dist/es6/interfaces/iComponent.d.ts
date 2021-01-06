@@ -1,7 +1,7 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Promise } from '../utils';
+import { AgPromise } from '../utils';
 import { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 /** This is for User Components only, do not implement this for internal components. */
 export interface IComponent<T> {
@@ -19,5 +19,5 @@ export interface IComponent<T> {
      after it is pressed. */
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
     /** The init(params) method is called on the component once. See below for details on the parameters. */
-    init?(params: T): Promise<void> | void;
+    init?(params: T): AgPromise<void> | void;
 }

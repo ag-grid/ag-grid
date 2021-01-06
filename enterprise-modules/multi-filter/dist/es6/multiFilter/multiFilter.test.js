@@ -10,7 +10,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import { MultiFilter } from './multiFilter';
-import { Promise, } from '@ag-grid-community/core';
+import { AgPromise, } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 var eGui;
 var filterManager;
@@ -37,8 +37,8 @@ function createFilter(filterParams) {
     };
     filterManager.createFilterParams.mockImplementation(function (_1, _2, _3) { return (__assign({}, baseFilterParams)); });
     userComponentFactory.newFilterComponent
-        .mockReturnValueOnce(Promise.resolve(filter1))
-        .mockReturnValueOnce(Promise.resolve(filter2));
+        .mockReturnValueOnce(AgPromise.resolve(filter1))
+        .mockReturnValueOnce(AgPromise.resolve(filter2));
     var params = __assign(__assign({}, baseFilterParams), filterParams);
     var multiFilter = new MultiFilter();
     multiFilter.eGui = eGui;

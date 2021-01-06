@@ -75,7 +75,7 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.overrideValues = function (valuesToUse, keepSelection) {
         var _this = this;
         if (keepSelection === void 0) { keepSelection = true; }
-        return new core_1.Promise(function (resolve) {
+        return new core_1.AgPromise(function (resolve) {
             // wait for any existing values to be populated before overriding
             _this.allValuesPromise.then(function () {
                 _this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
@@ -87,12 +87,12 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.refreshAfterAnyFilterChanged = function () {
         var _this = this;
         return this.showAvailableOnly() ?
-            this.allValuesPromise.then(function (values) { return _this.updateAvailableValues(values); }) :
-            core_1.Promise.resolve();
+            this.allValuesPromise.then(function (values) { return _this.updateAvailableValues(values || []); }) :
+            core_1.AgPromise.resolve();
     };
     SetValueModel.prototype.updateAllValues = function () {
         var _this = this;
-        this.allValuesPromise = new core_1.Promise(function (resolve) {
+        this.allValuesPromise = new core_1.AgPromise(function (resolve) {
             switch (_this.valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
                 case SetFilterModelValuesType.PROVIDED_LIST: {

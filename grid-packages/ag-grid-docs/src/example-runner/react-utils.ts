@@ -33,7 +33,9 @@ export function convertTemplate(template: string) {
     template = template
         .replace(/,\s+event([),])/g, '$1')
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
-        .replace(/ class=/g, ' className=');
+        .replace(/<input (.*)value=/g, '<input $1defaultValue=')
+        .replace(/ class=/g, ' className=')
+        .replace(/ \<option (.*)selected=\"\"/g, '<option $1selected={true}')
 
     return convertStyles(template);
 }
@@ -59,7 +61,8 @@ export function convertFunctionalTemplate(template: string) {
         .replace(/ class=/g, ' className=')
         // when using fontawesome just use "class" instead - it's always the case that we're treating it as a raw value
         // I had some fancy regex here to exclude rows with <i class but I thought this was easier to grok and maintain
-        .replace(/<i className=/g, '<i class=');
+        .replace(/<i className=/g, '<i class=')
+        .replace(/ \<option (.*)selected=\"\"/g, '<option $1selected={true}');
 
     return convertStyles(template);
 }

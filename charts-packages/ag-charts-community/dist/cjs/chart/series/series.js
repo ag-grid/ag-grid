@@ -80,7 +80,7 @@ var Series = /** @class */ (function (_super) {
     Series.prototype.getNodeData = function () {
         return [];
     };
-    Series.prototype.fireNodeClickEvent = function (datum) { };
+    Series.prototype.fireNodeClickEvent = function (event, datum) { };
     Series.prototype.toggleSeriesItem = function (itemId, enabled) {
         this.visible = enabled;
     };
@@ -95,6 +95,12 @@ var Series = /** @class */ (function (_super) {
             return [0, 1];
         }
         var min = extent[0], max = extent[1];
+        if (min instanceof Date) {
+            min = min.getTime();
+        }
+        if (max instanceof Date) {
+            max = max.getTime();
+        }
         if (min === max) {
             var padding = Math.abs(min * 0.01);
             min -= padding;

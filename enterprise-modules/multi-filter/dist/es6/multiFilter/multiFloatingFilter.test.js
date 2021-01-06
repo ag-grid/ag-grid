@@ -1,4 +1,4 @@
-import { Promise, } from '@ag-grid-community/core';
+import { AgPromise, } from '@ag-grid-community/core';
 import { MultiFloatingFilterComp } from './multiFloatingFilter';
 import { mock } from '../test-utils/mock';
 var userComponentFactory;
@@ -8,8 +8,8 @@ var floatingFilter2;
 function createFloatingFilter(filterParams) {
     if (filterParams === void 0) { filterParams = {}; }
     userComponentFactory.newFloatingFilterComponent
-        .mockReturnValueOnce(Promise.resolve(floatingFilter1))
-        .mockReturnValueOnce(Promise.resolve(floatingFilter2));
+        .mockReturnValueOnce(AgPromise.resolve(floatingFilter1))
+        .mockReturnValueOnce(AgPromise.resolve(floatingFilter2));
     var params = {
         column: null,
         api: null,

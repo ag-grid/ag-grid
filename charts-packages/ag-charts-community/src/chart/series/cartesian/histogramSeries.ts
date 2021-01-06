@@ -54,6 +54,7 @@ interface HistogramNodeDatum extends SeriesNodeDatum {
 
 export interface HistogramSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: HistogramSeries;
     readonly datum: any;
     readonly xKey: string;
@@ -81,7 +82,7 @@ export class HistogramBin {
     addDatum(datum: any) {
         this.data.push(datum);
         this.frequency++;
-    };
+    }
 
     get domainWidth(): number {
         const [domainMin, domainMax] = this.domain;
@@ -90,7 +91,7 @@ export class HistogramBin {
 
     get relativeHeight(): number {
         return this.aggregatedValue / this.domainWidth;
-    };
+    }
 
     calculateAggregatedValue(aggregationName: HistogramAggregation, yKey: string) {
         if (!yKey) {
@@ -404,9 +405,10 @@ export class HistogramSeries extends CartesianSeries {
         }
     }
 
-    fireNodeClickEvent(datum: HistogramNodeDatum): void {
+    fireNodeClickEvent(event: MouseEvent, datum: HistogramNodeDatum): void {
         this.fireEvent<HistogramSeriesNodeClickEvent>({
             type: 'nodeClick',
+            event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey
@@ -587,16 +589,16 @@ export class HistogramSeries extends CartesianSeries {
         const { xName, yName, fill: color, tooltipRenderer, aggregation } = this;
         const bin: HistogramBin = nodeDatum.seriesDatum;
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
-        const title = `${xName || xKey} ${toFixed(rangeMin)} - ${toFixed(rangeMax)}`;
+        const title = `${xName || xKey}: ${toFixed(rangeMin)} - ${toFixed(rangeMax)}`;
         let content = yKey ?
             `<b>${yName || yKey} (${aggregation})</b>: ${toFixed(aggregatedValue)}<br>` :
             '';
 
         content += `<b>Frequency</b>: ${frequency}`;
 
-        const defaults = {
+        const defaults: TooltipRendererResult = {
             title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content
         };
 

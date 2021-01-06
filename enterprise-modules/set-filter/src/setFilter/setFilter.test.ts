@@ -87,8 +87,8 @@ function createSetFilter(filterParams?: any): SetFilter {
 
     setFilter.setParams(params);
 
-    setFilter['virtualList'] = virtualList;
-    setFilter['valueModel'] = setValueModel;
+    (setFilter as any).virtualList = virtualList;
+    (setFilter as any).valueModel = setValueModel;
 
     return setFilter;
 }

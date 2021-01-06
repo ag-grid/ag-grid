@@ -13,7 +13,6 @@ import { RowPosition } from "../entities/rowPosition";
 export declare class RowRenderer extends BeanStub {
     private paginationProxy;
     private columnController;
-    private gridOptionsWrapper;
     private $scope;
     private pinnedRowModel;
     private rowModel;

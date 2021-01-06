@@ -1,34 +1,41 @@
-// ag-grid-react v24.1.1
-import { ComponentType, Promise } from 'ag-grid-community';
+// ag-grid-react v25.0.0
+import { ComponentType, IComponent, WrapableInterface } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
-import { BaseReactComponent } from './baseReactComponent';
-export declare class ReactComponent extends BaseReactComponent {
-    static REACT_MEMO_TYPE: number | symbol;
-    private eParentElement;
-    private componentInstance;
-    private reactComponent;
-    private componentType;
-    private parentComponent;
-    private portal;
-    private statelessComponent;
-    private statelessDomInsertedListener;
-    private staticMarkup;
-    private staticRenderTime;
+import { ReactPortal } from "react";
+declare abstract class BaseReactComponent implements IComponent<any>, WrapableInterface {
+    abstract getGui(): HTMLElement;
+    abstract getFrameworkComponentInstance(): any;
+    abstract rendered(): boolean;
+    abstract getReactComponentName(): string;
+    abstract hasMethod(name: string): boolean;
+    abstract callMethod(name: string, args: IArguments): void;
+    abstract addMethod(name: string, callback: Function): void;
+}
+export declare abstract class ReactComponent extends BaseReactComponent {
+    protected eParentElement: HTMLElement;
+    protected componentInstance: any;
+    protected reactComponent: any;
+    protected parentComponent: AgGridReact;
+    protected portal: ReactPortal | null;
+    protected statelessComponent: boolean;
+    protected componentType: ComponentType;
     constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType);
+    getGui(): HTMLElement;
+    destroy(): void;
+    protected createParentElement(params: any): any;
+    protected addParentContainerStyleAndClasses(): void;
+    statelessComponentRendered(): boolean;
     getFrameworkComponentInstance(): any;
     isStatelessComponent(): boolean;
     getReactComponentName(): string;
-    init(params: any): Promise<void>;
-    getGui(): HTMLElement;
-    destroy(): void;
-    private createReactComponent;
-    private addParentContainerStyleAndClasses;
-    private createParentElement;
-    statelessComponentRendered(): boolean;
-    private static hasSymbol;
-    private static isStateless;
-    isNullRender(): boolean;
-    private renderStaticMarkup;
-    private removeStaticMarkup;
-    rendered(): boolean;
+    getMemoType(): symbol | 60115;
+    private hasSymbol;
+    protected isStateless(Component: any): boolean;
+    hasMethod(name: string): boolean;
+    callMethod(name: string, args: IArguments): void;
+    addMethod(name: string, callback: Function): void;
+    protected abstract fallbackMethod(name: string, params: any): any;
+    protected abstract fallbackMethodAvailable(name: string): boolean;
+    abstract isNullValue(): boolean;
 }
+export {};

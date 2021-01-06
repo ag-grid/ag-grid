@@ -1,9 +1,10 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
 import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
+import { ITooltipParams } from "../rendering/tooltipComponent";
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
@@ -17,8 +18,14 @@ export declare class Component extends BeanStub {
     protected parentComponent: Component | undefined;
     private compId;
     private cssClassStates;
+    protected usingBrowserTooltips: boolean;
+    private tooltipText;
+    private tooltipFeature;
     constructor(template?: string);
+    private postConstructOnComponent;
     getCompId(): number;
+    getTooltipParams(): ITooltipParams;
+    setTooltip(newTooltipText: string | undefined): void;
     private createChildComponentsFromTags;
     createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: {
         [key: string]: any;

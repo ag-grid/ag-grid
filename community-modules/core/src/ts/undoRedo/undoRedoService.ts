@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { CellValueChangedEvent, FillEndEvent } from "../events";
@@ -18,7 +17,6 @@ import { BeanStub } from "../context/beanStub";
 @Bean('undoRedoService')
 export class UndoRedoService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -59,7 +57,7 @@ export class UndoRedoService extends BeanStub {
         // performed that change the order of the row / cols.
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.clearStacks);

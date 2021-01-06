@@ -30,11 +30,10 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
     GridHeaderDropZones.prototype.postConstruct = function () {
         this.setGui(this.createNorthPanel());
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onRowGroupChanged.bind(this));
         this.onRowGroupChanged();
     };
     GridHeaderDropZones.prototype.createNorthPanel = function () {
-        var _this = this;
         var topPanelGui = document.createElement('div');
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
         core_1._.addCssClass(topPanelGui, 'ag-column-drop-wrapper');
@@ -44,12 +43,8 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         this.createManagedBean(this.pivotComp);
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
-        this.rowGroupComp.addEventListener(core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        this.pivotComp.addEventListener(core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        this.addDestroyFunc(function () {
-            _this.rowGroupComp.removeEventListener(core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-            _this.pivotComp.removeEventListener(core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        });
+        this.addManagedListener(this.rowGroupComp, core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+        this.addManagedListener(this.pivotComp, core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
         this.onDropPanelVisible();
         return topPanelGui;
     };
@@ -74,9 +69,6 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
             this.rowGroupComp.setDisplayed(false);
         }
     };
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], GridHeaderDropZones.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnController')
     ], GridHeaderDropZones.prototype, "columnController", void 0);

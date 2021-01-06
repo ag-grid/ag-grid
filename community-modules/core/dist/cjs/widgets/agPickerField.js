@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,7 +26,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var agAbstractField_1 = require("./agAbstractField");
-var context_1 = require("../context/context");
 var componentAnnotations_1 = require("./componentAnnotations");
 var aria_1 = require("../utils/aria");
 var icon_1 = require("../utils/icon");
@@ -109,9 +108,6 @@ var AgPickerField = /** @class */ (function (_super) {
     AgPickerField.prototype.getFocusableElement = function () {
         return this.eWrapper;
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], AgPickerField.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         componentAnnotations_1.RefSelector('eLabel')
     ], AgPickerField.prototype, "eLabel", void 0);

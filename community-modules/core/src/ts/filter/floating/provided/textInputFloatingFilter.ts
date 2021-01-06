@@ -68,7 +68,8 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
         }
 
         const displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
-        this.eFloatingFilterInput.setInputAriaLabel(`${displayName} Filter Input`);
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eFloatingFilterInput.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {

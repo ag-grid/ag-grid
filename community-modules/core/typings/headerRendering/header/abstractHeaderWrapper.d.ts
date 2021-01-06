@@ -5,6 +5,7 @@ export declare abstract class AbstractHeaderWrapper extends ManagedFocusComponen
     protected abstract readonly column: Column | ColumnGroup;
     protected abstract readonly pinned: string;
     protected abstract onFocusIn(e: FocusEvent): void;
+    protected shouldStopEventPropagation(e: KeyboardEvent): boolean;
     getColumn(): Column | ColumnGroup;
     getPinned(): string;
 }

@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Component, ReactPortal } from "react";
+import {Component, ReactPortal} from "react";
 import * as PropTypes from "prop-types";
 import {
+    _,
     BaseComponentWrapper,
     ColumnApi,
     ComponentType,
@@ -11,24 +12,31 @@ import {
     GridApi,
     GridOptions,
     Module,
-    WrapableInterface,
-    _
+    WrapableInterface
 } from "@ag-grid-community/core";
-import { AgGridColumn } from "./agGridColumn";
-import { ReactComponent } from "./reactComponent";
-import { ChangeDetectionService, ChangeDetectionStrategyType } from "./changeDetectionService";
+import {AgGridColumn} from "./agGridColumn";
+import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
+import {ReactComponent} from "./reactComponent";
+import {LegacyReactComponent} from "./legacyReactComponent";
+import {NewReactComponent} from "./newReactComponent";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
     modules?: Module[];
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
-    disableStaticMarkup?: boolean;
+    disableStaticMarkup?: boolean;  // only used when legacyComponentRendering is true
+    legacyComponentRendering?: boolean,
     containerStyle?: any;
 }
 
 export class AgGridReact extends Component<AgGridReactProps, {}> {
     static propTypes: any;
+
+    static defaultProps = {
+        legacyComponentRendering: false,
+        disableStaticMarkup: false
+    };
 
     gridOptions!: GridOptions;
 
@@ -43,7 +51,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     protected eGridDiv!: HTMLElement;
 
-    private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
+    private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 500; // half a second should be more than enough to instantiate a component
 
     constructor(public props: any) {
         super(props);
@@ -77,7 +85,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         };
 
         const gridOptions = this.props.gridOptions || {};
-        const { children } = this.props;
+        const {children} = this.props;
 
         if (AgGridColumn.hasChildColumns(children)) {
             gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(children);
@@ -103,11 +111,20 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             resolve(reactComponent);
         } else {
             if (Date.now() - startTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS) {
+                // last check - we check if this is a null value being rendered - we do this last as using SSR to check the value
+                // can mess up contexts
+                if(reactComponent.isNullValue()) {
+                    resolve(reactComponent);
+                    return;
+                }
+
                 console.error(`ag-Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS}ms`);
                 return;
             }
 
-            window.setTimeout(() => this.batchUpdate(() => this.waitForInstance(reactComponent, resolve, startTime)));
+            window.setTimeout(() => {
+                this.waitForInstance(reactComponent, resolve, startTime);
+            });
         }
     }
 
@@ -118,19 +135,23 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
      */
     mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void) {
         this.portals = [...this.portals, portal];
-        this.batchUpdate(() => this.waitForInstance(reactComponent, resolve));
+        this.waitForInstance(reactComponent, resolve);
+        this.batchUpdate();
     }
 
-    batchUpdate(callback?: () => void): void {
+    updateReactPortal(oldPortal: ReactPortal, newPortal: ReactPortal) {
+        this.portals = this.portals.filter(portal => portal !== oldPortal).concat(newPortal);
+        this.batchUpdate();
+    }
+
+    batchUpdate(): void {
         if (this.hasPendingPortalUpdate) {
-            callback && callback();
             return;
         }
 
         setTimeout(() => {
             if (this.api) { // destroyed?
                 this.forceUpdate(() => {
-                    callback && callback();
                     this.hasPendingPortalUpdate = false;
                 });
             }
@@ -183,7 +204,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         this.extractDeclarativeColDefChanges(nextProps, changes);
 
         if (Object.keys(changes).length > 0) {
-            ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
+            window.setTimeout(() => ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi));
         }
     }
 
@@ -208,17 +229,17 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
                 }
 
                 changes[propKey] =
-                {
-                    previousValue: currentColDefs,
-                    currentValue: newColDefs
-                };
+                    {
+                        previousValue: currentColDefs,
+                        currentValue: newColDefs
+                    };
             }
         } else if (currentColDefs && currentColDefs.length > 0) {
             changes[propKey] =
-            {
-                previousValue: currentColDefs,
-                currentValue: []
-            };
+                {
+                    previousValue: currentColDefs,
+                    currentValue: []
+                };
         }
     }
 
@@ -266,7 +287,11 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     public isDisableStaticMarkup(): boolean {
-        return !!this.props.disableStaticMarkup;
+        return this.props.disableStaticMarkup;
+    }
+
+    public isLegacyComponentRendering(): boolean {
+        return this.props.legacyComponentRendering;
     }
 }
 
@@ -297,6 +322,8 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
     }
 
     createWrapper(UserReactComponent: { new(): any; }, componentType: ComponentType): WrapableInterface {
-        return new ReactComponent(UserReactComponent, this.agGridReact, componentType);
+        return this.agGridReact.isLegacyComponentRendering() ?
+            new LegacyReactComponent(UserReactComponent, this.agGridReact, componentType) :
+            new NewReactComponent(UserReactComponent, this.agGridReact, componentType);
     }
 }

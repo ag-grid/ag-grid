@@ -3,6 +3,7 @@ import { copy } from "../../util/array";
 import { AgChartThemePalette, AgChartThemeOptions, AgChartThemeOverrides } from "../agChartOptions";
 import { Series } from "../series/series";
 import { Padding } from "../../util/padding";
+import { Chart } from "../chart";
 
 const palette: AgChartThemePalette = {
     fills: [
@@ -206,6 +207,12 @@ export class ChartTheme {
                         fontFamily: this.fontFamily
                     }
                 }
+            },
+            tooltip: {
+                enabled: true,
+                tracking: true,
+                delay: 0,
+                class: Chart.defaultTooltipClass
             }
         };
     }
@@ -435,7 +442,7 @@ export class ChartTheme {
             const overrides = options.overrides;
             if (overrides) {
                 if (isObject(overrides.common)) {
-                    ChartTheme.seriesTypes.forEach(seriesType => {
+                    ChartTheme.seriesTypes.concat(['cartesian', 'polar']).forEach(seriesType => {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrides.common, mergeOptions);
                     });
                 }
@@ -455,7 +462,7 @@ export class ChartTheme {
                     const chartConfig = overrides[seriesType];
                     if (chartConfig) {
                         if (chartConfig.series) {
-                            (chartConfig as any).series = { [seriesType]: chartConfig.series };
+                            chartConfig.series = { [seriesType]: chartConfig.series };
                         }
                         defaults[seriesType] = deepMerge(defaults[seriesType], chartConfig, mergeOptions);
                     }

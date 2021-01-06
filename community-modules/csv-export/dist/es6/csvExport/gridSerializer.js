@@ -284,9 +284,6 @@ var GridSerializer = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnFactory')
     ], GridSerializer.prototype, "columnFactory", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], GridSerializer.prototype, "gridOptionsWrapper", void 0);
     GridSerializer = __decorate([
         Bean("gridSerializer")
     ], GridSerializer);

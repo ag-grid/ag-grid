@@ -162,7 +162,6 @@ export { SetLeftFeature } from "./rendering/features/setLeftFeature";
 
 // rendering
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
-export { CellRendererFactory } from "./rendering/cellRendererFactory";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cellComp";
 export { RowComp } from "./rendering/row/rowComp";
@@ -186,8 +185,8 @@ export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 export { ColumnVO } from "./interfaces/iColumnVO";
 
 export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
-export { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
-export { IServerSideCache } from "./interfaces/iServerSideCache";
+export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams } from "./interfaces/iServerSideRowModel";
+export { IServerSideStore, StoreRefreshAfterParams, ServerSideStoreState } from "./interfaces/IServerSideStore";
 
 export { ISideBar } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
@@ -214,7 +213,7 @@ export { AgPanel } from "./widgets/agPanel";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 export { PopupComponent } from "./widgets/popupComponent";
-export { PopupService } from "./widgets/popupService";
+export { PopupService,  } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 
@@ -241,7 +240,7 @@ export { Constants } from "./constants/constants";
 export { KeyCode } from "./constants/keyCode";
 export { KeyName } from "./constants/keyName";
 export { Grid, GridParams } from "./grid";
-export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, CreatePivotChartParams } from "./gridApi";
+export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, CreatePivotChartParams, CreateCrossFilterChartParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusController } from "./focusController";
 export { defaultGroupComparator } from "./functions";
@@ -289,6 +288,9 @@ export {
 } from "./entities/colDef";
 export {
     GridOptions,
+    IsServerSideGroupOpenByDefaultParams,
+    IsApplyServerSideTransactionParams,
+    IsApplyServerSideTransaction,
     GetContextMenuItemsParams,
     GetContextMenuItems,
     GetChartToolbarItemsParams,

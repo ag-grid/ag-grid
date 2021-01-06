@@ -27,12 +27,20 @@ var ChartProxy = /** @class */ (function () {
         this.eventService = chartProxyParams.eventService;
         this.gridApi = chartProxyParams.gridApi;
         this.columnApi = chartProxyParams.columnApi;
+        this.crossFiltering = chartProxyParams.crossFiltering;
+        this.crossFilterCallback = chartProxyParams.crossFilterCallback;
     }
     ChartProxy.prototype.recreateChart = function (options) {
+        var _this = this;
         if (this.chart) {
             this.destroyChart();
         }
         this.chart = this.createChart(options);
+        if (this.crossFiltering) {
+            // add event listener to chart canvas to detect when user wishes to reset filters
+            var resetFilters_1 = true;
+            this.chart.addEventListener('click', function (e) { return _this.crossFilterCallback(e, resetFilters_1); });
+        }
     };
     ChartProxy.prototype.getChart = function () {
         return this.chart;
@@ -165,8 +173,12 @@ var ChartProxy = /** @class */ (function () {
         options.background = theme.getConfig(standaloneChartType + '.background');
         options.legend = theme.getConfig(standaloneChartType + '.legend');
         options.navigator = theme.getConfig(standaloneChartType + '.navigator');
-        options.tooltipClass = theme.getConfig(standaloneChartType + '.tooltipClass');
-        options.tooltipTracking = theme.getConfig(standaloneChartType + '.tooltipTracking');
+        options.tooltip = {
+            enabled: theme.getConfig(standaloneChartType + '.tooltip.enabled'),
+            tracking: theme.getConfig(standaloneChartType + '.tooltip.tracking'),
+            class: theme.getConfig(standaloneChartType + '.tooltip.class'),
+            delay: theme.getConfig(standaloneChartType + '.tooltip.delay')
+        };
         options.listeners = theme.getConfig(standaloneChartType + '.listeners');
         options.padding = theme.getConfig(standaloneChartType + '.padding');
         return options;
@@ -222,7 +234,6 @@ var ChartProxy = /** @class */ (function () {
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
-            'tooltip.enabled': 'tooltipEnabled',
             'callout.colors': 'calloutColors'
         };
         var series = this.chart.series;
@@ -358,6 +369,12 @@ var ChartProxy = /** @class */ (function () {
             datum[categoryKey] = { id: index, value: value, toString: function () { return valueString; } };
             return datum;
         });
+    };
+    ChartProxy.prototype.hexToRGBA = function (hex, alpha) {
+        var r = parseInt(hex.slice(1, 3), 16);
+        var g = parseInt(hex.slice(3, 5), 16);
+        var b = parseInt(hex.slice(5, 7), 16);
+        return alpha ? "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")" : "rgba(" + r + ", " + g + ", " + b + ")";
     };
     ChartProxy.prototype.destroy = function () {
         this.destroyChart();

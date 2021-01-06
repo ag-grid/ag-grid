@@ -3,7 +3,6 @@ import {
     BeanStub,
     IRowNodeStage,
     Autowired,
-    GridOptionsWrapper,
     ColumnController,
     ValueService,
     RowNode,
@@ -28,13 +27,14 @@ interface AggregationDetails {
 @Bean('aggregationStage')
 export class AggregationStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('pivotStage') private pivotStage: PivotStage;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
+
+    private filteredOnly: boolean;
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
@@ -71,6 +71,9 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     }
 
     private recursivelyCreateAggData(aggDetails: AggregationDetails) {
+
+        // update prop, in case changed since last time
+        this.filteredOnly = !this.gridOptionsWrapper.isSuppressAggFilteredOnly();
 
         const callback = (rowNode: RowNode) => {
 
@@ -231,10 +234,12 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         valueColumns.forEach(() => values.push([]));
 
         const valueColumnCount = valueColumns.length;
-        const rowCount = rowNode.childrenAfterFilter.length;
+
+        const nodeList = this.filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup;
+        const rowCount = nodeList!.length;
 
         for (let i = 0; i < rowCount; i++) {
-            const childNode = rowNode.childrenAfterFilter[i];
+            const childNode = nodeList![i];
             for (let j = 0; j < valueColumnCount; j++) {
                 const valueColumn = valueColumns[j];
                 // if the row is a group, then it will only have an agg result value,

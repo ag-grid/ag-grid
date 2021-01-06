@@ -4,15 +4,16 @@ import {
     Autowired,
     Column,
     ColumnController,
+    Component,
     CssClassApplier,
     DragAndDropService,
     DragSource,
     DragSourceType,
     Events,
-    GridOptionsWrapper,
+    ITooltipParams,
     KeyCode,
     PostConstruct,
-    RefSelector, Component
+    RefSelector
 } from "@ag-grid-community/core";
 import {ModelItemUtils} from "./modelItemUtils";
 
@@ -24,7 +25,6 @@ export class ToolPanelColumnComp extends Component {
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
@@ -55,7 +55,7 @@ export class ToolPanelColumnComp extends Component {
         _.addCssClass(this.eDragHandle, 'ag-column-select-column-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
-        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnToolPanel');
         const displayNameSanitised: any = _.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
 
@@ -83,7 +83,28 @@ export class ToolPanelColumnComp extends Component {
         this.onColumnStateChanged();
         this.refreshAriaLabel();
 
+        this.setupTooltip();
+
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+    }
+
+    private setupTooltip(): void {
+
+        const refresh = () => {
+            const newTooltipText = this.column.getColDef().headerTooltip;
+            this.setTooltip(newTooltipText);
+        };
+
+        refresh();
+
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        const res = super.getTooltipParams();
+        res.location = 'columnToolPanelColumn';
+        res.colDef = this.column.getColDef();
+        return res;
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
@@ -124,8 +145,10 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        _.setAriaLabel(this.focusWrapper, `${this.displayName} column toggle visibility (${state})`);
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
+        const label = translate('ariaColumnToggleVisibility', 'column toggle visibility');
+        _.setAriaLabel(this.focusWrapper, `${this.displayName} ${label} (${state})`);
     }
 
     private setupDragging(): void {

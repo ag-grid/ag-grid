@@ -79,6 +79,10 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.getCssIdentifier = function () {
         return 'set-filter';
     };
+    SetFilter.prototype.setModelAndRefresh = function (values) {
+        var _this = this;
+        return this.valueModel ? this.valueModel.setModel(values).then(function () { return _this.refresh(); }) : core_1.AgPromise.resolve();
+    };
     SetFilter.prototype.resetUiToDefaults = function () {
         var _this = this;
         this.setMiniFilter(null);
@@ -197,7 +201,10 @@ var SetFilter = /** @class */ (function (_super) {
         var _this = this;
         if (refreshValues === void 0) { refreshValues = true; }
         if (keepSelection === void 0) { keepSelection = true; }
-        var promise = core_1.Promise.resolve();
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        var promise = core_1.AgPromise.resolve();
         if (refreshValues) {
             promise = this.valueModel.refreshValues(keepSelection);
         }
@@ -261,11 +268,18 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.initMiniFilter = function () {
         var _this = this;
-        var eMiniFilter = this.eMiniFilter;
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        var _a = this, eMiniFilter = _a.eMiniFilter, gridOptionsWrapper = _a.gridOptionsWrapper;
+        var translate = gridOptionsWrapper.getLocaleTextFunc();
         core_1._.setDisplayed(eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(function () { return _this.onMiniFilterInput(); });
-        eMiniFilter.setInputAriaLabel('Search filter values');
+        eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
         this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', function (e) { return _this.onMiniFilterKeyPress(e); });
     };
     // we need to have the GUI attached before we can draw the virtual rows, as the

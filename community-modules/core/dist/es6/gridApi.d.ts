@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -21,6 +21,7 @@ import { AgEvent, ColumnEventType } from "./events";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
+import { RefreshStoreParams } from "./interfaces/iServerSideRowModel";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
 import { ChartModel } from "./interfaces/IChartService";
@@ -31,6 +32,8 @@ import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { RowDataTransaction } from "./interfaces/rowDataTransaction";
 import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
+import { ServerSideStoreState } from "./interfaces/IServerSideStore";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column;
@@ -66,6 +69,7 @@ export interface CreateRangeChartParams {
     aggFunc?: string | IAggFunc;
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
+    /** @deprecated since v24.0.0, use `chartThemeOverrides` instead */
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 export interface CreatePivotChartParams {
@@ -74,7 +78,18 @@ export interface CreatePivotChartParams {
     chartContainer?: HTMLElement;
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
+    /** @deprecated since v24.0.0, use `chartThemeOverrides` instead */
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
+}
+export interface CreateCrossFilterChartParams {
+    cellRange: CellRangeParams;
+    chartType: ChartType;
+    chartThemeName?: string;
+    chartContainer?: HTMLElement;
+    suppressChartRanges?: boolean;
+    aggFunc?: string | IAggFunc;
+    chartThemeOverrides?: AgChartThemeOverrides;
+    unlinkChart?: boolean;
 }
 export interface DetailGridInfo {
     api?: GridApi;
@@ -105,7 +120,6 @@ export declare class GridApi {
     private aggFuncService;
     private menuFactory;
     private contextMenuFactory;
-    private cellRendererFactory;
     private valueCache;
     private animationFrameService;
     private statusBarService;
@@ -135,6 +149,7 @@ export declare class GridApi {
     exportDataAsExcel(params?: ExcelExportParams): void;
     /** @deprecated */
     setEnterpriseDatasource(datasource: IServerSideDatasource): void;
+    setGridAriaProperty(property: string, value: string | null): void;
     setServerSideDatasource(datasource: IServerSideDatasource): void;
     setDatasource(datasource: IDatasource): void;
     setViewportDatasource(viewportDatasource: IViewportDatasource): void;
@@ -309,6 +324,8 @@ export declare class GridApi {
     getCurrentRedoSize(): number;
     getChartModels(): ChartModel[];
     createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
+    createCrossFilterChart(params: CreateRangeChartParams): ChartRef | undefined;
+    restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
     createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
     copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void;
     copySelectedRangeToClipboard(includeHeader: boolean): void;
@@ -329,8 +346,11 @@ export declare class GridApi {
         [key: string]: IAggFunc;
     }): void;
     clearAggFuncs(): void;
-    applyServerSideTransaction(rowDataTransaction: RowDataTransaction, route?: string[]): void;
-    applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
+    applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined;
+    applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void;
+    retryServerSideLoads(): void;
+    flushServerSideAsyncTransactions(): void;
+    applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null | undefined;
     /** @deprecated */
     updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
     applyTransactionAsync(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
@@ -348,10 +368,14 @@ export declare class GridApi {
     purgeInfiniteCache(): void;
     /** @deprecated */
     purgeEnterpriseCache(route?: string[]): void;
+    /** @deprecated */
     purgeServerSideCache(route?: string[]): void;
-    getVirtualRowCount(): number;
-    getInfiniteRowCount(): number;
-    isMaxRowFound(): boolean;
+    refreshServerSideStore(params: RefreshStoreParams): void;
+    getServerSideStoreState(): ServerSideStoreState[];
+    getVirtualRowCount(): number | null | undefined;
+    getInfiniteRowCount(): number | undefined;
+    isMaxRowFound(): boolean | undefined;
+    isLastRowIndexKnown(): boolean | undefined;
     setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
     setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void;
     getVirtualPageState(): any;

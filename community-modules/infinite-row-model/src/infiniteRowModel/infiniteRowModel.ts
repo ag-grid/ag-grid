@@ -8,7 +8,6 @@ import {
     Events,
     FilterManager,
     GridApi,
-    GridOptionsWrapper,
     IDatasource,
     ModelUpdatedEvent,
     NumberSequence,
@@ -29,7 +28,6 @@ import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('selectionController') private readonly selectionController: SelectionController;
@@ -91,7 +89,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
     }
 
     private onFilterChanged(): void {
@@ -316,7 +315,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        return false;
+        const foundRowNode = this.getRowNode(rowNode.id!);
+        return !!foundRowNode;
     }
 
     public refreshCache(): void {

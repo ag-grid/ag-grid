@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,6 +23,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 import { Bean, Autowired, PostConstruct, Optional } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Events } from "./events";
@@ -31,55 +38,109 @@ import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 import { getTabIndex } from './utils/browser';
 import { findIndex, last } from './utils/array';
 import { makeNull } from './utils/generic';
+import { Constants } from "./constants/constants";
 var FocusController = /** @class */ (function (_super) {
     __extends(FocusController, _super);
     function FocusController() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.keyboardFocusActive = false;
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     FocusController_1 = FocusController;
-    FocusController.prototype.init = function () {
-        var eDocument = this.gridOptionsWrapper.getDocument();
-        var clearFocusedCellListener = this.clearFocusedCell.bind(this);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverythingChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
-        this.addManagedListener(eDocument, 'keydown', this.activateKeyboardMode.bind(this));
-        this.addManagedListener(eDocument, 'mousedown', this.activateMouseMode.bind(this));
-    };
-    FocusController.prototype.registerGridCore = function (gridCore) {
-        this.gridCore = gridCore;
-    };
-    FocusController.prototype.onColumnEverythingChanged = function () {
-        // if the columns change, check and see if this column still exists. if it does,
-        // then we can keep the focused cell. if it doesn't, then we need to drop the focused
-        // cell.
-        if (this.focusedCellPosition) {
-            var col = this.focusedCellPosition.column;
-            var colFromColumnController = this.columnController.getGridColumn(col.getId());
-            if (col !== colFromColumnController) {
-                this.clearFocusedCell();
+    /**
+     * Adds a gridCore to the list of the gridCores monitoring Keyboard Mode
+     * in a specific HTMLDocument.
+     *
+     * @param doc {Document} - The Document containing the gridCore.
+     * @param gridCore {GridCore} - The GridCore to be monitored.
+     */
+    FocusController.addKeyboardModeEvents = function (doc, gridCore) {
+        var gridCoresForDocument = FocusController_1.instancesMonitored.get(doc);
+        if (gridCoresForDocument && gridCoresForDocument.length > 0) {
+            if (gridCoresForDocument.indexOf(gridCore) === -1) {
+                gridCoresForDocument.push(gridCore);
             }
         }
+        else {
+            FocusController_1.instancesMonitored.set(doc, [gridCore]);
+            doc.addEventListener('keydown', FocusController_1.toggleKeyboardMode);
+            doc.addEventListener('mousedown', FocusController_1.toggleKeyboardMode);
+        }
     };
-    FocusController.prototype.isKeyboardFocus = function () {
-        return this.keyboardFocusActive;
+    /**
+     * Removes a gridCore from the list of the gridCores monitoring Keyboard Mode
+     * in a specific HTMLDocument.
+     *
+     * @param doc {Document} - The Document containing the gridCore.
+     * @param gridCore {GridCore} - The GridCore to be removed.
+     */
+    FocusController.removeKeyboardModeEvents = function (doc, gridCore) {
+        var gridCoresForDocument = FocusController_1.instancesMonitored.get(doc);
+        var newGridCoresForDocument = [];
+        if (gridCoresForDocument && gridCoresForDocument.length) {
+            newGridCoresForDocument = __spreadArrays(gridCoresForDocument).filter(function (currentGridCore) { return currentGridCore !== gridCore; });
+            FocusController_1.instancesMonitored.set(doc, newGridCoresForDocument);
+        }
+        if (newGridCoresForDocument.length === 0) {
+            doc.removeEventListener('keydown', FocusController_1.toggleKeyboardMode);
+            doc.removeEventListener('mousedown', FocusController_1.toggleKeyboardMode);
+        }
     };
-    FocusController.prototype.activateMouseMode = function () {
-        if (!this.keyboardFocusActive) {
+    /**
+     * This method will be called by `keydown` and `mousedown` events on all Documents monitoring
+     * KeyboardMode. It will then fire a KEYBOARD_FOCUS, MOUSE_FOCUS on each gridCore present in
+     * the Document allowing each gridCore to maintain a state for KeyboardMode.
+     *
+     * @param event {KeyboardEvent | MouseEvent | TouchEvent} - The event triggered.
+     */
+    FocusController.toggleKeyboardMode = function (event) {
+        var isKeyboardActive = FocusController_1.keyboardModeActive;
+        var isKeyboardEvent = event.type === 'keydown';
+        if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) {
             return;
         }
-        this.keyboardFocusActive = false;
-        this.eventService.dispatchEvent({ type: Events.EVENT_MOUSE_FOCUS });
-    };
-    FocusController.prototype.activateKeyboardMode = function () {
-        if (this.keyboardFocusActive) {
+        FocusController_1.keyboardModeActive = isKeyboardEvent;
+        var doc = event.target.ownerDocument;
+        if (!doc) {
             return;
         }
-        this.keyboardFocusActive = true;
-        this.eventService.dispatchEvent({ type: Events.EVENT_KEYBOARD_FOCUS });
+        var gridCoresForDocument = FocusController_1.instancesMonitored.get(doc);
+        if (gridCoresForDocument) {
+            gridCoresForDocument.forEach(function (gridCore) {
+                gridCore.dispatchEvent({ type: isKeyboardEvent ? Events.EVENT_KEYBOARD_FOCUS : Events.EVENT_MOUSE_FOCUS });
+            });
+        }
+    };
+    FocusController.prototype.init = function () {
+        var clearFocusedCellListener = this.clearFocusedCell.bind(this);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverythingChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
+    };
+    FocusController.prototype.registerGridCore = function (gridCore) {
+        var _this = this;
+        this.gridCore = gridCore;
+        var doc = this.gridOptionsWrapper.getDocument();
+        FocusController_1.addKeyboardModeEvents(doc, gridCore);
+        this.addDestroyFunc(function () { return _this.unregisterGridCore(gridCore); });
+    };
+    FocusController.prototype.unregisterGridCore = function (gridCore) {
+        var doc = this.gridOptionsWrapper.getDocument();
+        FocusController_1.removeKeyboardModeEvents(doc, gridCore);
+    };
+    FocusController.prototype.onColumnEverythingChanged = function () {
+        // if the columns change, check and see if this column still exists. if it does, then
+        // we can keep the focused cell. if it doesn't, then we need to drop the focused cell.
+        if (!this.focusedCellPosition) {
+            return;
+        }
+        var col = this.focusedCellPosition.column;
+        var colFromColumnController = this.columnController.getGridColumn(col.getId());
+        if (col !== colFromColumnController) {
+            this.clearFocusedCell();
+        }
+    };
+    FocusController.prototype.isKeyboardMode = function () {
+        return FocusController_1.keyboardModeActive;
     };
     // we check if the browser is focusing something, and if it is, and
     // it's the cell we think is focused, then return the cell. so this
@@ -225,8 +286,8 @@ var FocusController = /** @class */ (function (_super) {
     };
     FocusController.prototype.findFocusableElements = function (rootNode, exclude, onlyUnmanaged) {
         if (onlyUnmanaged === void 0) { onlyUnmanaged = false; }
-        var focusableString = FocusController_1.FOCUSABLE_SELECTOR;
-        var excludeString = FocusController_1.FOCUSABLE_EXCLUDE;
+        var focusableString = Constants.FOCUSABLE_SELECTOR;
+        var excludeString = Constants.FOCUSABLE_EXCLUDE;
         if (exclude) {
             excludeString += ', ' + exclude;
         }
@@ -340,11 +401,8 @@ var FocusController = /** @class */ (function (_super) {
         }
     };
     var FocusController_1;
-    FocusController.FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
-    FocusController.FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], FocusController.prototype, "gridOptionsWrapper", void 0);
+    FocusController.keyboardModeActive = false;
+    FocusController.instancesMonitored = new Map();
     __decorate([
         Autowired('columnController')
     ], FocusController.prototype, "columnController", void 0);

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgCheckbox } from "../../widgets/agCheckbox";
@@ -9,7 +9,6 @@ export declare class SelectAllFeature extends BeanStub {
     private columnApi;
     private rowModel;
     private selectionController;
-    private gridOptionsWrapper;
     private cbSelectAllVisible;
     private processingEventFromCheckbox;
     private column;

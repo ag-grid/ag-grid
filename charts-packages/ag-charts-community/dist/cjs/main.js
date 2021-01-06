@@ -14,6 +14,7 @@ __export(require("./chart/chartAxis"));
 __export(require("./chart/groupedCategoryChart"));
 __export(require("./chart/polarChart"));
 __export(require("./chart/marker/marker"));
+__export(require("./chart/legend"));
 __export(require("./chart/series/cartesian/areaSeries"));
 __export(require("./chart/series/cartesian/barSeries"));
 __export(require("./chart/series/cartesian/lineSeries"));

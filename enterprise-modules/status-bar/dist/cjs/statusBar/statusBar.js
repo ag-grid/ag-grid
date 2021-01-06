@@ -57,7 +57,7 @@ var StatusBar = /** @class */ (function (_super) {
                 promise: promise
             });
         });
-        core_1.Promise.all(componentDetails.map(function (details) { return details.promise; }))
+        core_1.AgPromise.all(componentDetails.map(function (details) { return details.promise; }))
             .then(function () {
             componentDetails.forEach(function (componentDetail) {
                 componentDetail.promise.then(function (component) {
@@ -77,9 +77,6 @@ var StatusBar = /** @class */ (function (_super) {
         });
     };
     StatusBar.TEMPLATE = "<div class=\"ag-status-bar\">\n            <div ref=\"eStatusBarLeft\" class=\"ag-status-bar-left\"></div>\n            <div ref=\"eStatusBarCenter\" class=\"ag-status-bar-center\"></div>\n            <div ref=\"eStatusBarRight\" class=\"ag-status-bar-right\"></div>\n        </div>";
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], StatusBar.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('gridOptions')
     ], StatusBar.prototype, "gridOptions", void 0);

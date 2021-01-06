@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "../entities/columnGroupChild";
@@ -7,7 +7,6 @@ import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
 import { BeanStub } from "../context/beanStub";
 export declare class ColumnUtils extends BeanStub {
-    private gridOptionsWrapper;
     calculateColInitialWidth(colDef: any): number;
     getOriginalPathForColumn(column: Column, originalBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroup[];
     depthFirstOriginalTreeSearch(parent: OriginalColumnGroup | null, tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild, parent: OriginalColumnGroup) => void): void;

@@ -82,7 +82,7 @@ export const convertLegacyColor = (color: string): string => {
 };
 
 const registerFill = (fill: ExcelInterior): number => {
-    const convertedPattern =  convertLegacyPattern(fill.pattern);
+    const convertedPattern = convertLegacyPattern(fill.pattern);
     const convertedFillColor = convertLegacyColor(fill.color);
     const convertedPatternColor = convertLegacyColor(fill.patternColor);
 
@@ -101,7 +101,7 @@ const registerFill = (fill: ExcelInterior): number => {
 
     if (pos === -1) {
         pos = registeredFills.length;
-        registeredFills.push({patternType: convertedPattern, fgRgb: convertedFillColor, bgRgb: convertedPatternColor});
+        registeredFills.push({ patternType: convertedPattern, fgRgb: convertedFillColor, bgRgb: convertedPatternColor });
     }
 
     return pos;
@@ -115,7 +115,7 @@ const registerNumberFmt = (format: string): number => {
 
     if (pos === -1) {
         pos = registeredNumberFmts.length + 164;
-        registeredNumberFmts.push({formatCode: format, numFmtId: pos});
+        registeredNumberFmts.push({ formatCode: format, numFmtId: pos });
     } else {
         pos = registeredNumberFmts[pos].numFmtId;
     }
@@ -124,9 +124,15 @@ const registerNumberFmt = (format: string): number => {
 };
 
 const registerBorders = (borders: ExcelBorders): number => {
-    const {borderBottom, borderTop, borderLeft, borderRight} = borders;
-    let bottomStyle: BorderProperty, topStyle: BorderProperty, leftStyle:BorderProperty, rightStyle: BorderProperty;
-    let bottomColor: BorderProperty, topColor: BorderProperty, leftColor:BorderProperty, rightColor: BorderProperty;
+    const { borderBottom, borderTop, borderLeft, borderRight } = borders;
+    let bottomStyle: BorderProperty;
+    let topStyle: BorderProperty;
+    let leftStyle: BorderProperty;
+    let rightStyle: BorderProperty;
+    let bottomColor: BorderProperty;
+    let topColor: BorderProperty;
+    let leftColor: BorderProperty;
+    let rightColor: BorderProperty;
 
     if (borderLeft) {
         leftStyle = convertLegacyBorder(borderLeft.lineStyle, borderLeft.weight);
@@ -193,7 +199,7 @@ const registerBorders = (borders: ExcelBorders): number => {
 };
 
 const registerFont = (font: ExcelFont): number => {
-    const {fontName: name, color, size, bold, italic, outline, shadow, strikeThrough, underline, family} = font;
+    const { fontName: name, color, size, bold, italic, outline, shadow, strikeThrough, underline, family } = font;
     const utf8Name = name ? _.utf8_encode(name) : name;
     const convertedColor = convertLegacyColor(color);
     const familyId = getFamilyId(family);

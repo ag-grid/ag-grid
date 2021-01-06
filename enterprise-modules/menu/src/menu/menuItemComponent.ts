@@ -2,7 +2,6 @@ import {
     AgEvent,
     Autowired,
     Component,
-    GridOptionsWrapper,
     MenuItemDef,
     PostConstruct,
     TooltipFeature,
@@ -37,7 +36,6 @@ export interface MenuItemComponentParams extends MenuItemDef {
 }
 
 export class MenuItemComponent extends Component {
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('popupService') private readonly popupService: PopupService;
 
     public static EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';
@@ -143,7 +141,7 @@ export class MenuItemComponent extends Component {
         const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
             { eventSource: eGui, ePopup })
 
-        const closePopup = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
@@ -154,7 +152,9 @@ export class MenuItemComponent extends Component {
         _.setAriaExpanded(eGui, true);
 
         this.hideSubMenu = () => {
-            closePopup();
+            if (addPopupRes) {
+                addPopupRes.hideFunc();
+            }
             this.subMenuIsOpen = false;
             _.setAriaExpanded(eGui, false);
             destroySubMenu();

@@ -1,13 +1,12 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 import { includes } from './array';
 var AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 var PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
-var OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
 var supports = {};
 /**
  * a user once raised an issue - they said that when you opened a popup (eg context menu)
@@ -142,17 +141,10 @@ export function getEventPath(event) {
 }
 export function addSafePassiveEventListener(frameworkOverrides, eElement, event, listener) {
     var isPassive = includes(PASSIVE_EVENTS, event);
-    var isOutsideAngular = includes(OUTSIDE_ANGULAR_EVENTS, event);
     var options = isPassive ? { passive: true } : undefined;
-    if (isOutsideAngular) {
-        // this happens in certain scenarios where I believe the user must be destroying the grid somehow but continuing
-        // for it to be used
-        // don't fall through to the else part either - just don't add the listener
-        if (frameworkOverrides && frameworkOverrides.addEventListenerOutsideAngular) {
-            frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
-        }
-    }
-    else {
-        eElement.addEventListener(event, listener, options);
+    // this check is here for certain scenarios where I believe the user must be destroying
+    // the grid somehow but continuing for it to be used
+    if (frameworkOverrides && frameworkOverrides.addEventListener) {
+        frameworkOverrides.addEventListener(eElement, event, listener, options);
     }
 }

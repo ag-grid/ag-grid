@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -114,13 +114,14 @@ var Column = /** @class */ (function () {
     Column.prototype.initialise = function () {
         var minColWidth = this.gridOptionsWrapper.getMinColWidth();
         var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
-        if (this.colDef.minWidth) {
-            this.minWidth = this.colDef.minWidth;
+        if (this.colDef.minWidth != null) {
+            // we force min width to be at least one pixel, otherwise column will disappear
+            this.minWidth = Math.max(this.colDef.minWidth, 1);
         }
         else {
             this.minWidth = minColWidth;
         }
-        if (this.colDef.maxWidth) {
+        if (this.colDef.maxWidth != null) {
             this.maxWidth = this.colDef.maxWidth;
         }
         else {

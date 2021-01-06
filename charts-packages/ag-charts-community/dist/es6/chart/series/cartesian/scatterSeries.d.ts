@@ -13,6 +13,7 @@ interface ScatterNodeDatum extends SeriesNodeDatum {
 }
 export interface ScatterSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: ScatterSeries;
     readonly datum: any;
     readonly xKey: string;
@@ -65,7 +66,7 @@ export declare class ScatterSeries extends CartesianSeries {
     processData(): boolean;
     getDomain(direction: ChartAxisDirection): any[];
     getNodeData(): ScatterNodeDatum[];
-    fireNodeClickEvent(datum: ScatterNodeDatum): void;
+    fireNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): void;
     private generateNodeData;
     update(): void;
     private updateNodeSelection;

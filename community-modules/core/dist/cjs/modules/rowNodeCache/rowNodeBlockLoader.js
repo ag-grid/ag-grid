@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -124,6 +124,11 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
     RowNodeBlockLoader.prototype.isLoading = function () {
         return this.activeBlockLoadsCount > 0;
     };
+    var RowNodeBlockLoader_1;
+    RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
+    __decorate([
+        context_1.PostConstruct
+    ], RowNodeBlockLoader.prototype, "postConstruct", null);
     __decorate([
         __param(0, context_1.Qualifier('loggerFactory'))
     ], RowNodeBlockLoader.prototype, "setBeans", null);

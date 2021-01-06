@@ -1,10 +1,9 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
 import { BeanStub } from "../context/beanStub";
 export declare class ValueCache extends BeanStub {
-    private gridOptionsWrapper;
     private cacheVersion;
     private active;
     private neverExpires;

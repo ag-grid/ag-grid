@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from '../entities/columnGroup';
@@ -31,7 +31,6 @@ export interface ColumnState {
     sortIndex?: number | null;
 }
 export declare class ColumnController extends BeanStub {
-    private gridOptionsWrapper;
     private expressionService;
     private columnFactory;
     private displayedGroupCreator;
@@ -50,6 +49,7 @@ export declare class ColumnController extends BeanStub {
     private primaryColumnTree;
     private primaryHeaderRowCount;
     private primaryColumns;
+    private primaryColumnsMap;
     private secondaryBalancedTree;
     private secondaryColumns;
     private secondaryHeaderRowCount;
@@ -57,6 +57,7 @@ export declare class ColumnController extends BeanStub {
     private columnsForQuickFilter;
     private gridBalancedTree;
     private gridColumns;
+    private gridColumnsMap;
     private gridHeaderRowCount;
     private lastPrimaryOrder;
     private gridColsArePrimary;
@@ -102,6 +103,8 @@ export declare class ColumnController extends BeanStub {
     onAutoGroupColumnDefChanged(): void;
     getColDefVersion(): number;
     setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
+    private dispatchNewColumnsLoaded;
+    private dispatchEverythingChanged;
     private orderGridColumnsLikePrimary;
     isAutoRowHeightActive(): boolean;
     getAllAutoRowHeightCols(): Column[];

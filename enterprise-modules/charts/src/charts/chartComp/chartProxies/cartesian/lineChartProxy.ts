@@ -1,7 +1,12 @@
-import {AgLineSeriesOptions, CartesianChartOptions, HighlightOptions, LineSeriesOptions} from "@ag-grid-community/core";
-import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries} from "ag-charts-community";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import {
+    AgLineSeriesOptions,
+    CartesianChartOptions,
+    HighlightOptions,
+    LineSeriesOptions
+} from "@ag-grid-community/core";
+import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries, } from "ag-charts-community";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { CartesianChartProxy } from "./cartesianChartProxy";
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
@@ -49,8 +54,9 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.updateAxes(axisType);
 
         const { chart } = this;
-        const fieldIds = params.fields.map(f => f.colId);
-        const { fills, strokes } = this.getPalette();
+
+        const { fields } = params;
+        const fieldIds = fields.map(f => f.colId);
         const data = this.transformData(params.data, params.category.id);
 
         const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series, i) => {
@@ -67,7 +73,10 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
         let previousSeries: LineSeries | undefined = undefined;
 
-        params.fields.forEach((f, index) => {
+        let { fills, strokes } = this.getPalette();
+        fields.forEach((f, index) => {
+            let {yKey, atLeastOneSelectedPoint} = this.processDataForCrossFiltering(data, f.colId, params);
+
             let lineSeries = existingSeriesById.get(f.colId);
             const fill = fills[index % fills.length];
             const stroke = strokes[index % strokes.length];
@@ -77,8 +86,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.data = data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;
-                lineSeries.yKey = f.colId;
-                lineSeries.yName = f.displayName;
+                lineSeries.yKey = yKey;
+                lineSeries.yName = f.displayName!;
                 lineSeries.marker.fill = fill;
                 lineSeries.marker.stroke = stroke;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
@@ -100,21 +109,25 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     data,
                     xKey: params.category.id,
                     xName: params.category.name,
-                    yKey: f.colId,
+                    yKey: yKey,
                     yName: f.displayName,
                     fill,
                     stroke: fill, // this is deliberate, so that the line colours match the fills of other series
                     fillOpacity: seriesDefaults.fill.opacity,
                     strokeOpacity: seriesDefaults.stroke.opacity,
                     strokeWidth: seriesDefaults.stroke.width,
-                    tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                    tooltip: {
+                        enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                        renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                    },
                     marker
                 };
 
                 lineSeries = AgChart.createComponent(options, 'line.series');
-
-                chart.addSeriesAfter(lineSeries, previousSeries);
+                chart.addSeriesAfter(lineSeries!, previousSeries);
             }
+
+            this.updateSeriesForCrossFiltering(lineSeries!, f.colId, chart, params, atLeastOneSelectedPoint);
 
             previousSeries = lineSeries;
         });
@@ -128,8 +141,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         const seriesDefaults = theme.getConfig<AgLineSeriesOptions>('line.series.line');
         options.seriesDefaults = {
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: [],
@@ -141,12 +154,16 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 width: seriesDefaults.strokeWidth
             },
             marker: {
-                enabled: seriesDefaults.marker.enabled,
-                shape: seriesDefaults.marker.shape,
-                size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
+                enabled: seriesDefaults.marker!.enabled,
+                shape: seriesDefaults.marker!.shape,
+                size: seriesDefaults.marker!.size,
+                strokeWidth: seriesDefaults.marker!.strokeWidth,
+                formatter: seriesDefaults.marker!.formatter
             },
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners
         } as LineSeriesOptions;
 
         return options;

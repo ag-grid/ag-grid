@@ -10,7 +10,6 @@ import { Constants } from "../../constants/constants";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { SelectionController } from "../../selectionController";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export class SelectAllFeature extends BeanStub {
 
@@ -18,7 +17,6 @@ export class SelectAllFeature extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
@@ -106,8 +104,12 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private refreshSelectAllLabel(): void {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const checked = this.cbSelectAll.getValue();
-        this.cbSelectAll.setInputAriaLabel(`Press Space to toggle all rows selection (${checked ? 'checked' : 'unchecked'})`);
+        const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
+        const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
+
+        this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
     }
 
     private getSelectionCount(): SelectionCount {

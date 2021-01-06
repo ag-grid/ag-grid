@@ -104,7 +104,6 @@ var TimeScale = /** @class */ (function (_super) {
      */
     TimeScale.prototype.tickInterval = function (interval, start, stop, step) {
         var _a;
-        if (interval === void 0) { interval = 10; }
         if (typeof interval === 'number') {
             var tickCount = interval;
             var tickIntervals = this.tickIntervals;

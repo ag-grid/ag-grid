@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -70,10 +70,10 @@ var GridCore = /** @class */ (function (_super) {
         var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
         var eGui = this.getGui();
-        this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, function () {
+        this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, function () {
             addCssClass(eGui, 'ag-keyboard-focus');
         });
-        this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, function () {
+        this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, function () {
             removeCssClass(eGui, 'ag-keyboard-focus');
         });
         _super.prototype.postConstruct.call(this);
@@ -263,9 +263,6 @@ var GridCore = /** @class */ (function (_super) {
     __decorate([
         Autowired('gridOptions')
     ], GridCore.prototype, "gridOptions", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], GridCore.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('rowModel')
     ], GridCore.prototype, "rowModel", void 0);

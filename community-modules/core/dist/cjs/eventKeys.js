@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9,7 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Events = /** @class */ (function () {
     function Events() {
     }
-    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
+    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState() */
+    /** @deprecated - grid no longer uses this, and setSate() also fires individual events */
     Events.EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
     /** User has set in new columns. */
     Events.EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
@@ -39,6 +40,8 @@ var Events = /** @class */ (function () {
     Events.EVENT_DISPLAYED_COLUMNS_CHANGED = 'displayedColumnsChanged';
     /** The list of virtual columns has changed, results from viewport changing */
     Events.EVENT_VIRTUAL_COLUMNS_CHANGED = 'virtualColumnsChanged';
+    /** Async Transactions Executed */
+    Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED = 'asyncTransactionsFlushed';
     /** A row group was opened / closed */
     Events.EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
     /** The client has set new data into the grid */

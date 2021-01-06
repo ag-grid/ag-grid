@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnController } from "./columnController/columnController";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger } from "./logger";
@@ -20,7 +19,6 @@ import {BeanStub} from "./context/beanStub";
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
 
     private logger: Logger;

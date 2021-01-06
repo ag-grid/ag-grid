@@ -65,7 +65,7 @@ export interface FilterModifiedEvent extends AgGridEvent {
     column: Column;
 }
 export interface FilterOpenedEvent extends AgGridEvent {
-    column: Column;
+    column: Column | OriginalColumnGroup;
     source: FilterRequestSource;
     eGui: HTMLElement;
 }
@@ -282,6 +282,9 @@ export interface CellValueChangedEvent extends CellEvent {
     oldValue: any;
     newValue: any;
     source: string | undefined;
+}
+export interface AsyncTransactionsFlushed extends AgGridEvent {
+    results: (RowNodeTransaction | ServerSideTransactionResult)[];
 }
 export interface ColumnRequestEvent extends AgGridEvent {
     columns: Column[];

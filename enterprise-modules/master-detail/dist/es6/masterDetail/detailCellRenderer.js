@@ -228,19 +228,13 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             this.detailGridOptions.api.setRowData(rowData);
         }
     };
-    DetailCellRenderer.TEMPLATE = "<div class=\"ag-details-row\">\n            <div ref=\"eDetailGrid\" class=\"ag-details-grid\"/>\n        </div>";
+    DetailCellRenderer.TEMPLATE = "<div class=\"ag-details-row\">\n            <div ref=\"eDetailGrid\" class=\"ag-details-grid\"></div>\n        </div>";
     __decorate([
         Autowired('environment')
     ], DetailCellRenderer.prototype, "environment", void 0);
     __decorate([
         RefSelector('eDetailGrid')
     ], DetailCellRenderer.prototype, "eDetailGrid", void 0);
-    __decorate([
-        Autowired('resizeObserverService')
-    ], DetailCellRenderer.prototype, "resizeObserverService", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], DetailCellRenderer.prototype, "gridOptionsWrapper", void 0);
     return DetailCellRenderer;
 }(Component));
 export { DetailCellRenderer };

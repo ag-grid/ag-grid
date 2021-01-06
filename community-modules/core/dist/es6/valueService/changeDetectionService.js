@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -65,9 +65,6 @@ var ChangeDetectionService = /** @class */ (function (_super) {
         // step 2 of change detection is to refresh the cells
         this.rowRenderer.refreshCells();
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ChangeDetectionService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('rowModel')
     ], ChangeDetectionService.prototype, "rowModel", void 0);

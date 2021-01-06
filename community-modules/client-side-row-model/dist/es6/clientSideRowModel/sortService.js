@@ -235,11 +235,8 @@ var SortService = /** @class */ (function (_super) {
         Autowired('columnController')
     ], SortService.prototype, "columnController", void 0);
     __decorate([
-        Autowired('valueService')
-    ], SortService.prototype, "valueService", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], SortService.prototype, "gridOptionsWrapper", void 0);
+        Autowired('rowNodeSorter')
+    ], SortService.prototype, "rowNodeSorter", void 0);
     __decorate([
         PostConstruct
     ], SortService.prototype, "init", null);

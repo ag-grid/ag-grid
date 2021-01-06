@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -107,9 +107,6 @@ var ColumnAnimationService = /** @class */ (function (_super) {
         window.setTimeout(function () { return nowFuncs.forEach(function (func) { return func(); }); }, 0);
         window.setTimeout(function () { return waitFuncs.forEach(function (func) { return func(); }); }, 300);
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], ColumnAnimationService.prototype, "gridOptionsWrapper", void 0);
     ColumnAnimationService = __decorate([
         context_1.Bean('columnAnimationService')
     ], ColumnAnimationService);

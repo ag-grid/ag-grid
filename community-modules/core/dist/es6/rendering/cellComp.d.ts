@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -28,6 +28,7 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private rangeCount;
     private hasChartRange;
     private usingWrapper;
+    private wrapText;
     private includeSelectionComponent;
     private includeRowDraggingComponent;
     private includeDndSourceComponent;
@@ -79,6 +80,8 @@ export declare class CellComp extends Component implements TooltipParentComp {
     isSuppressNavigable(): boolean;
     getCellRenderer(): ICellRendererComp | null;
     getCellEditor(): ICellEditorComp | null;
+    onNewColumnsLoaded(): void;
+    private postProcessWrapText;
     refreshCell(params?: {
         suppressFlash?: boolean;
         newData?: boolean;
@@ -188,4 +191,5 @@ export declare class CellComp extends Component implements TooltipParentComp {
     onCellFocused(event?: any): void;
     stopRowOrCellEdit(cancel?: boolean): void;
     stopEditing(cancel?: boolean): void;
+    private clearCellElement;
 }

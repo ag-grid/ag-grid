@@ -7,7 +7,6 @@ import { HeaderPosition } from "./headerRendering/header/headerPosition";
 import { ColumnGroup } from "./entities/columnGroup";
 import { GridCore } from "./gridCore";
 export declare class FocusController extends BeanStub {
-    private readonly gridOptionsWrapper;
     private readonly columnController;
     private readonly headerNavigationService;
     private readonly columnApi;
@@ -15,19 +14,41 @@ export declare class FocusController extends BeanStub {
     private readonly rowRenderer;
     private readonly rowPositionUtils;
     private readonly rangeController;
-    private static FOCUSABLE_SELECTOR;
-    private static FOCUSABLE_EXCLUDE;
     private gridCore;
     private focusedCellPosition;
     private focusedHeaderPosition;
-    private keyboardFocusActive;
+    private static keyboardModeActive;
+    private static instancesMonitored;
+    /**
+     * Adds a gridCore to the list of the gridCores monitoring Keyboard Mode
+     * in a specific HTMLDocument.
+     *
+     * @param doc {Document} - The Document containing the gridCore.
+     * @param gridCore {GridCore} - The GridCore to be monitored.
+     */
+    private static addKeyboardModeEvents;
+    /**
+     * Removes a gridCore from the list of the gridCores monitoring Keyboard Mode
+     * in a specific HTMLDocument.
+     *
+     * @param doc {Document} - The Document containing the gridCore.
+     * @param gridCore {GridCore} - The GridCore to be removed.
+     */
+    private static removeKeyboardModeEvents;
+    /**
+     * This method will be called by `keydown` and `mousedown` events on all Documents monitoring
+     * KeyboardMode. It will then fire a KEYBOARD_FOCUS, MOUSE_FOCUS on each gridCore present in
+     * the Document allowing each gridCore to maintain a state for KeyboardMode.
+     *
+     * @param event {KeyboardEvent | MouseEvent | TouchEvent} - The event triggered.
+     */
+    private static toggleKeyboardMode;
     private init;
     registerGridCore(gridCore: GridCore): void;
+    unregisterGridCore(gridCore: GridCore): void;
     onColumnEverythingChanged(): void;
-    isKeyboardFocus(): boolean;
-    private activateMouseMode;
-    private activateKeyboardMode;
-    getFocusCellToUseAfterRefresh(): CellPosition;
+    isKeyboardMode(): boolean;
+    getFocusCellToUseAfterRefresh(): CellPosition | null;
     private getGridCellForDomElement;
     clearFocusedCell(): void;
     getFocusedCell(): CellPosition;

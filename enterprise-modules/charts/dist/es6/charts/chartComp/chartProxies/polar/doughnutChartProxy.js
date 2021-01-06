@@ -42,8 +42,8 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -55,6 +55,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
                 width: seriesDefaults.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };
@@ -67,6 +68,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     DoughnutChartProxy.prototype.update = function (params) {
+        var _this = this;
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
@@ -83,47 +85,141 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         });
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        var numFields = params.fields.length;
         var offset = 0;
-        params.fields.forEach(function (f, index) {
-            var existingSeries = seriesMap[f.colId];
-            var seriesOptions = __assign(__assign({}, seriesDefaults), { type: 'pie', angleKey: f.colId, showInLegend: index === 0, title: __assign(__assign({}, seriesDefaults.title), { text: seriesDefaults.title.text || f.displayName }), fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer });
-            var calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
-            var pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series');
-            pieSeries.angleName = f.displayName;
-            pieSeries.labelKey = params.category.id;
-            pieSeries.labelName = params.category.name;
-            pieSeries.data = params.data;
-            pieSeries.fills = fills;
-            pieSeries.strokes = strokes;
-            // Normally all series provide legend items for every slice.
-            // For our use case, where all series have the same number of slices in the same order with the same labels
-            // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
-            // so we only show legend items for the first series, and then when the user toggles the slices of the
-            // first series in the legend, we programmatically toggle the corresponding slices of other series.
-            if (index === 0) {
-                pieSeries.toggleSeriesItem = function (itemId, enabled) {
-                    if (doughnutChart) {
-                        doughnutChart.series.forEach(function (series) {
-                            series.seriesItemEnabled[itemId] = enabled;
-                        });
-                    }
-                    pieSeries.scheduleData();
-                };
-            }
-            pieSeries.outerRadiusOffset = offset;
-            offset -= 20;
-            pieSeries.innerRadiusOffset = offset;
-            offset -= 20;
-            if (calloutColors) {
-                pieSeries.callout.colors = strokes;
-            }
-            if (!existingSeries) {
-                seriesMap[f.colId] = pieSeries;
-            }
-        });
+        if (this.crossFiltering) {
+            params.fields.forEach(function (field, index) {
+                var filteredOutField = __assign({}, field);
+                filteredOutField.colId = field.colId + '-filtered-out';
+                params.data.forEach(function (d) {
+                    d[field.colId + '-total'] = d[field.colId] + d[filteredOutField.colId];
+                    d[field.colId] = d[field.colId] / d[field.colId + '-total'];
+                    d[filteredOutField.colId] = 1;
+                });
+                var _a = _this.updateSeries({
+                    seriesMap: seriesMap,
+                    angleField: field,
+                    field: filteredOutField,
+                    seriesDefaults: seriesDefaults,
+                    index: index,
+                    params: params,
+                    fills: fills,
+                    strokes: strokes,
+                    doughnutChart: doughnutChart,
+                    offset: offset,
+                    numFields: numFields,
+                    opaqueSeries: undefined
+                }), updatedOffset = _a.updatedOffset, pieSeries = _a.pieSeries;
+                _this.updateSeries({
+                    seriesMap: seriesMap,
+                    angleField: field,
+                    field: field,
+                    seriesDefaults: seriesDefaults,
+                    index: index,
+                    params: params,
+                    fills: fills,
+                    strokes: strokes,
+                    doughnutChart: doughnutChart,
+                    offset: offset,
+                    numFields: numFields,
+                    opaqueSeries: pieSeries
+                });
+                offset = updatedOffset;
+            });
+        }
+        else {
+            params.fields.forEach(function (f, index) {
+                var updatedOffset = _this.updateSeries({
+                    seriesMap: seriesMap,
+                    angleField: f,
+                    field: f,
+                    seriesDefaults: seriesDefaults,
+                    index: index,
+                    params: params,
+                    fills: fills,
+                    strokes: strokes,
+                    doughnutChart: doughnutChart,
+                    offset: offset,
+                    numFields: numFields,
+                    opaqueSeries: undefined
+                }).updatedOffset;
+                offset = updatedOffset;
+            });
+        }
         // Because repaints are automatic, it's important to remove/add/update series at once,
         // so that we don't get painted twice.
         doughnutChart.series = _.values(seriesMap);
+    };
+    DoughnutChartProxy.prototype.updateSeries = function (updateParams) {
+        var _this = this;
+        var existingSeries = updateParams.seriesMap[updateParams.field.colId];
+        var seriesOptions = __assign(__assign({}, updateParams.seriesDefaults), { type: 'pie', angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId, radiusKey: this.crossFiltering ? updateParams.field.colId : undefined, showInLegend: updateParams.index === 0, title: __assign(__assign({}, updateParams.seriesDefaults.title), { text: updateParams.seriesDefaults.title.text || updateParams.field.displayName }), fills: updateParams.seriesDefaults.fill.colors, fillOpacity: updateParams.seriesDefaults.fill.opacity, strokes: updateParams.seriesDefaults.stroke.colors, strokeOpacity: updateParams.seriesDefaults.stroke.opacity, strokeWidth: updateParams.seriesDefaults.stroke.width, tooltip: {
+                enabled: updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled,
+                renderer: (updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled && updateParams.seriesDefaults.tooltip.renderer) || undefined,
+            } });
+        var calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
+        var pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series');
+        pieSeries.angleName = updateParams.field.displayName;
+        pieSeries.labelKey = updateParams.params.category.id;
+        pieSeries.labelName = updateParams.params.category.name;
+        pieSeries.data = updateParams.params.data;
+        // Normally all series provide legend items for every slice.
+        // For our use case, where all series have the same number of slices in the same order with the same labels
+        // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
+        // so we only show legend items for the first series, and then when the user toggles the slices of the
+        // first series in the legend, we programmatically toggle the corresponding slices of other series.
+        if (updateParams.index === 0) {
+            pieSeries.toggleSeriesItem = function (itemId, enabled) {
+                if (updateParams.doughnutChart) {
+                    updateParams.doughnutChart.series.forEach(function (series) {
+                        series.seriesItemEnabled[itemId] = enabled;
+                    });
+                }
+                pieSeries.scheduleData();
+            };
+        }
+        if (this.crossFiltering) {
+            pieSeries.radiusMin = 0;
+            pieSeries.radiusMax = 1;
+            var isOpaqueSeries = !updateParams.opaqueSeries;
+            if (isOpaqueSeries) {
+                pieSeries.fills = updateParams.fills.map(function (fill) { return _this.hexToRGBA(fill, '0.3'); });
+                pieSeries.strokes = updateParams.strokes.map(function (stroke) { return _this.hexToRGBA(stroke, '0.3'); });
+                pieSeries.showInLegend = false;
+            }
+            else {
+                updateParams.doughnutChart.legend.addEventListener('click', function (event) {
+                    if (updateParams.opaqueSeries) {
+                        updateParams.opaqueSeries.toggleSeriesItem(event.itemId, event.enabled);
+                    }
+                });
+                pieSeries.fills = updateParams.fills;
+                pieSeries.strokes = updateParams.strokes;
+                if (calloutColors) {
+                    pieSeries.callout.colors = updateParams.strokes;
+                }
+            }
+            // disable series highlighting by default
+            pieSeries.highlightStyle.fill = undefined;
+            pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
+            updateParams.doughnutChart.tooltip.delay = 500;
+        }
+        else {
+            pieSeries.fills = updateParams.fills;
+            pieSeries.strokes = updateParams.strokes;
+            if (calloutColors) {
+                pieSeries.callout.colors = updateParams.strokes;
+            }
+        }
+        var offsetAmount = updateParams.numFields > 1 ? 20 : 40;
+        pieSeries.outerRadiusOffset = updateParams.offset;
+        updateParams.offset -= offsetAmount;
+        pieSeries.innerRadiusOffset = updateParams.offset;
+        updateParams.offset -= offsetAmount;
+        if (!existingSeries) {
+            updateParams.seriesMap[updateParams.field.colId] = pieSeries;
+        }
+        return { updatedOffset: updateParams.offset, pieSeries: pieSeries };
     };
     DoughnutChartProxy.prototype.getDefaultOptions = function () {
         var strokes = this.getPredefinedPalette().strokes;

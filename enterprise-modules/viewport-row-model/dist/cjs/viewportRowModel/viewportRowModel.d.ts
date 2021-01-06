@@ -1,6 +1,5 @@
 import { BeanStub, IRowModel, IViewportDatasource, RowBounds, RowNode } from "@ag-grid-community/core";
 export declare class ViewportRowModel extends BeanStub implements IRowModel {
-    private gridOptionsWrapper;
     private gridApi;
     private columnApi;
     private rowRenderer;

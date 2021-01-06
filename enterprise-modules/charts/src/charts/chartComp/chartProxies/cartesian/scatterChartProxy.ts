@@ -6,11 +6,17 @@ import {
     HighlightOptions,
     ScatterSeriesOptions
 } from "@ag-grid-community/core";
-import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, ScatterSeries} from "ag-charts-community";
-import {ChartProxyParams, FieldDefinition, UpdateChartParams} from "../chartProxy";
-import {ChartDataModel} from "../../chartDataModel";
-import {CartesianChartProxy} from "./cartesianChartProxy";
-import {isDate} from "../../typeChecker";
+import {
+    AgCartesianChartOptions,
+    AgChart,
+    CartesianChart,
+    ChartTheme,
+    LegendClickEvent,
+    ScatterSeries
+} from "ag-charts-community";
+import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
+import { ChartDataModel } from "../../chartDataModel";
+import { CartesianChartProxy } from "./cartesianChartProxy";
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -33,8 +39,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         const seriesDefaults = theme.getConfig<AgScatterSeriesOptions>('scatter.series.scatter');
         options.seriesDefaults = {
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -52,6 +58,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 strokeWidth: seriesDefaults.marker.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners,
             paired: true
         } as ScatterSeriesOptions;
 
@@ -81,9 +88,24 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             return;
         }
 
-        const { fields } = params;
+        let fields = params.fields;
+
+        if (this.crossFiltering) {
+            // add additional filtered out field
+            fields.forEach(field => {
+                const crossFilteringField = {...field};
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+        }
+
         const { seriesDefaults } = this.chartOptions as any;
         const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
+
+        let dataDomain: number[] | undefined;
+        if (this.crossFiltering) {
+            dataDomain = this.getCrossFilteringDataDomain(seriesDefinitions, params);
+        }
 
         const { chart } = this;
 
@@ -102,7 +124,25 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             return map;
         }, new Map<string, ScatterSeries>());
 
-        const { fills, strokes } = this.getPalette();
+        let { fills, strokes } = this.getPalette();
+        if (this.crossFiltering) {
+            // introduce cross filtering transparent fills
+            const fillsMod: string[] = [];
+            fills.forEach(fill => {
+                fillsMod.push(fill);
+                fillsMod.push(this.hexToRGBA(fill, '0.3'));
+            });
+            fills = fillsMod;
+
+            // introduce cross filtering transparent strokes
+            const strokesMod: string[] = [];
+            strokes.forEach(stroke => {
+                strokesMod.push(stroke);
+                strokesMod.push(this.hexToRGBA(stroke, '0.3'));
+            });
+            strokes = strokesMod;
+        }
+
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         let previousSeries: ScatterSeries | undefined = undefined;
 
@@ -120,7 +160,10 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 strokeOpacity: seriesDefaults.stroke.opacity,
                 strokeWidth: seriesDefaults.stroke.width,
                 marker,
-                tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                },
             }, 'scatter.series');
 
             if (!series) {
@@ -155,6 +198,32 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             } else {
                 series.labelKey = series.labelName = undefined;
             }
+
+            const isFilteredOutYKey =  yFieldDefinition.colId.indexOf('-filtered-out') > -1;
+            if (this.crossFiltering) {
+
+                if (!isFilteredOutYKey) {
+                    // sync toggling of legend item with hidden 'filtered out' item
+                    chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                        series!.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+                    });
+                }
+
+                if (dataDomain) {
+                    series.marker.domain = dataDomain;
+                }
+
+                chart.tooltip.delay = 500;
+
+                // hide 'filtered out' legend items
+                if (isFilteredOutYKey) {
+                    series!.showInLegend = false;
+                }
+
+                // add node click cross filtering callback to series
+                series!.addEventListener('nodeClick', this.crossFilterCallback);
+            }
+
 
             if (!existingSeries) {
                 chart.addSeriesAfter(series, previousSeries);
@@ -236,4 +305,25 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             }
         }
     }
+
+    private getCrossFilteringDataDomain(seriesDefinitions: (SeriesDefinition | null)[], params: UpdateChartParams) {
+        let domain;
+        if (seriesDefinitions[0] && seriesDefinitions[0].sizeField) {
+            const sizeColId = seriesDefinitions[0].sizeField!.colId;
+            let allSizePoints: any[] = [];
+            params.data.forEach(d => {
+                if (typeof d[sizeColId] !== 'undefined') {
+                    allSizePoints.push(d[sizeColId]);
+                }
+                if (typeof d[sizeColId + '-filtered-out'] !== 'undefined') {
+                    allSizePoints.push(d[sizeColId + '-filtered-out']);
+                }
+            })
+            if (allSizePoints.length > 0) {
+                domain = [Math.min(...allSizePoints), Math.max(...allSizePoints)];
+            }
+        }
+        return domain;
+    }
+
 }

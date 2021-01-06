@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -175,9 +175,9 @@ var ProvidedFilter = /** @class */ (function (_super) {
         var promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
         return promise.then(function () {
             _this.updateUiVisibility();
-            // we set the model from the gui, rather than the provided model,
-            // so the model is consistent. eg handling of null/undefined will be the same,
-            // of if model is case insensitive, then casing is removed.
+            // we set the model from the GUI, rather than the provided model,
+            // so the model is consistent, e.g. handling of null/undefined will be the same,
+            // or if model is case insensitive, then casing is removed.
             _this.applyModel();
         });
     };
@@ -301,9 +301,6 @@ var ProvidedFilter = /** @class */ (function (_super) {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ProvidedFilter.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('rowModel')
     ], ProvidedFilter.prototype, "rowModel", void 0);

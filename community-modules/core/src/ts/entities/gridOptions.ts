@@ -14,6 +14,7 @@ import { IDateComp } from "../rendering/dateComponent";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
 import {
+    AsyncTransactionsFlushed,
     BodyScrollEvent,
     CellClickedEvent,
     CellContextMenuEvent,
@@ -103,6 +104,8 @@ export interface GridOptions {
     suppressMoveWhenRowDragging?: boolean;
     enableMultiRowDragging?: boolean;
     ensureDomOrder?: boolean;
+    suppressAggFilteredOnly?: boolean;
+    showOpenedGroup?: boolean;
     /** @deprecated */
     deltaRowDataMode?: boolean;
     /** @deprecated */
@@ -170,6 +173,7 @@ export interface GridOptions {
     copyHeadersToClipboard?: boolean;
     clipboardDeliminator?: string;
     suppressClipboardPaste?: boolean;
+    suppressClipboardApi?: boolean;
     suppressLastEmptyLineOnPaste?: boolean;
     suppressAggFuncInHeader?: boolean;
     suppressAggAtRootLevel?: boolean;
@@ -259,6 +263,11 @@ export interface GridOptions {
 
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
+    serverSideFilteringAlwaysResets?: boolean;
+    serverSideStoreType?: ServerSideStoreType;
+
+    getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
+    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
 
     statusBar?: {
         statusPanels: StatusPanelDef[];
@@ -577,6 +586,8 @@ export interface GridOptions {
 
     onComponentStateChanged?(event: ComponentStateChangedEvent): void;
 
+    onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed): void;
+
     /** @deprecated */
     onGridSizeChanged?(event: any): void;
 
@@ -605,6 +616,16 @@ export interface GetDataPath {
 
 export interface IsServerSideGroup {
     (dataItem: any): boolean;
+}
+
+export interface IsApplyServerSideTransaction {
+    (params: IsApplyServerSideTransactionParams): boolean;
+}
+
+export interface IsApplyServerSideTransactionParams {
+    transaction: ServerSideTransaction,
+    parentNode: RowNode,
+    storeInfo: any
 }
 
 export interface GetServerSideGroupKey {
@@ -750,4 +771,28 @@ export interface ChartRef {
     chart: any;
     chartElement: HTMLElement;
     destroyChart: () => void;
+}
+
+export enum ServerSideStoreType {
+    Full = 'full',
+    Partial = 'partial'
+}
+
+export interface ServerSideStoreParams {
+    storeType?: ServerSideStoreType;
+    maxBlocksInCache?: number;
+    cacheBlockSize?: number;
+}
+
+export interface GetServerSideStoreParamsParams {
+    level: number;
+    parentRowNode?: RowNode;
+    rowGroupColumns: Column[];
+    pivotColumns: Column[];
+    pivotMode: boolean;
+}
+
+export interface IsServerSideGroupOpenByDefaultParams {
+    data: any;
+    rowNode: RowNode;
 }

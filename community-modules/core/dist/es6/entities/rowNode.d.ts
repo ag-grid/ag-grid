@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -115,6 +115,8 @@ export declare class RowNode implements IEventEmitter {
     key: any;
     /** Used by server side row model, true if this row node is a stub */
     stub: boolean;
+    /** Used by server side row model, true if this row node failed a load */
+    failedLoad: boolean;
     /** All user provided nodes */
     allLeafChildren: RowNode[];
     /** Groups only - Children of this group */
@@ -130,7 +132,7 @@ export declare class RowNode implements IEventEmitter {
         [key: string]: any;
     } | null;
     /** Server Side Row Model Only - the children are in an infinite cache */
-    childrenCache: RowNodeCache<IRowNodeBlock, RowNodeCacheParams> | null;
+    childStore: IServerSideStore | null;
     /** Groups only - True if group is expanded, otherwise false */
     expanded: boolean;
     /** Groups only - If doing footers, reference to the footer node for this group */
@@ -224,4 +226,5 @@ export declare class RowNode implements IEventEmitter {
     onMouseLeave(): void;
     getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode;
     isFullWidthCell(): boolean;
+    getRoute(): string[] | undefined;
 }

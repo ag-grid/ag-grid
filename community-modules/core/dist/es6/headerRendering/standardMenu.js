@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,7 +74,7 @@ var StandardMenuFactory = /** @class */ (function (_super) {
         var hidePopup;
         var bodyScrollListener = function (event) {
             // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal') {
+            if (event.direction === 'horizontal' && hidePopup) {
                 hidePopup();
             }
         };
@@ -93,12 +93,15 @@ var StandardMenuFactory = /** @class */ (function (_super) {
                 }
             }
         };
-        hidePopup = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,
             closedCallback: closedCallback
         });
+        if (addPopupRes) {
+            this.hidePopup = hidePopup = addPopupRes.hideFunc;
+        }
         filterWrapper.filterPromise.then(function (filter) {
             // need to make sure the filter is present before positioning, as only
             // after filter it is visible can we find out what the width of it is
@@ -107,7 +110,6 @@ var StandardMenuFactory = /** @class */ (function (_super) {
                 filter.afterGuiAttached({ container: 'columnMenu', hidePopup: hidePopup });
             }
         });
-        this.hidePopup = hidePopup;
         column.setMenuVisible(true, 'contextMenu');
     };
     StandardMenuFactory.prototype.trapFocusWithin = function (e, menu) {

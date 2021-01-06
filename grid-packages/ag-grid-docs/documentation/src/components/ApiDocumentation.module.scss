@@ -1,0 +1,19 @@
+.breadcrumbs {
+    margin-bottom: 1rem;
+
+    a {
+        color: $primary;
+    }
+}
+
+.reference {
+    &__name {
+        font-weight: bold;
+        color: inherit;
+        word-break: keep-all;
+    }
+
+    &__required {
+        color: red;
+    }
+}

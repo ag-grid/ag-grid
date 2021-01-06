@@ -3,7 +3,6 @@ import { Component } from '../widgets/component';
 import { BeanStub } from "../context/beanStub";
 import { GridPanel } from '../gridPanel/gridPanel';
 export declare class HeaderContainer extends BeanStub {
-    private gridOptionsWrapper;
     private columnController;
     private scrollVisibleService;
     private eContainer;

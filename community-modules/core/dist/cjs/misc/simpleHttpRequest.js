@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8,7 +8,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
 function simpleHttpRequest(params) {
-    return new utils_1.Promise(function (resolve) {
+    return new utils_1.AgPromise(function (resolve) {
         var httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', params.url);
         httpRequest.send();

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -225,9 +225,6 @@ var NavigationService = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('columnController')
     ], NavigationService.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], NavigationService.prototype, "gridOptionsWrapper", void 0);
     NavigationService = __decorate([
         context_1.Bean('navigationService')
     ], NavigationService);

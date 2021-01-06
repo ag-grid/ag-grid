@@ -1,9 +1,7 @@
-import {Autowired, Bean, BeanStub, GridOptionsWrapper} from "@ag-grid-community/core";
+import { Bean, BeanStub } from "@ag-grid-community/core";
 
 @Bean("chartTranslator")
 export class ChartTranslator extends BeanStub {
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private static DEFAULT_TRANSLATIONS: { [name: string]: string; } = {
         pivotChartTitle: 'Pivot Chart',

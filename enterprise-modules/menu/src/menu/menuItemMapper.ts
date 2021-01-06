@@ -8,7 +8,6 @@ import {
     ColumnController,
     Constants,
     GridApi,
-    GridOptionsWrapper,
     IAggFuncService,
     IChartService,
     IClipboardService,
@@ -20,7 +19,6 @@ import {
 @Bean('menuItemMapper')
 export class MenuItemMapper extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Optional('clipboardService') private clipboardService: IClipboardService;

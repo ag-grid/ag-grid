@@ -279,9 +279,10 @@ var LineSeries = /** @class */ (function (_super) {
     LineSeries.prototype.getNodeData = function () {
         return this.nodeData;
     };
-    LineSeries.prototype.fireNodeClickEvent = function (datum) {
+    LineSeries.prototype.fireNodeClickEvent = function (event, datum) {
         this.fireEvent({
             type: 'nodeClick',
+            event: event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -303,7 +304,7 @@ var LineSeries = /** @class */ (function (_super) {
         var content = xString + ': ' + yString;
         var defaults = {
             title: title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content: content
         };
         if (tooltipRenderer) {

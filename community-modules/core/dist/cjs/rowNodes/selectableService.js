@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -71,9 +71,6 @@ var SelectableService = /** @class */ (function (_super) {
             child.setRowSelectable(rowSelectable);
         });
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], SelectableService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.PostConstruct
     ], SelectableService.prototype, "init", null);

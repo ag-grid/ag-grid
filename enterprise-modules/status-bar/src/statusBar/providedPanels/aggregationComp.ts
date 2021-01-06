@@ -5,7 +5,6 @@ import {
     Events,
     GridApi,
     GridOptions,
-    GridOptionsWrapper,
     RowPosition,
     IStatusPanelComp,
     PostConstruct,
@@ -33,7 +32,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;

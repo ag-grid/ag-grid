@@ -9,7 +9,6 @@ export declare class HeaderRootComp extends ManagedFocusComponent {
     private ePinnedRightHeader;
     private eHeaderContainer;
     private eHeaderViewport;
-    private gridOptionsWrapper;
     private columnController;
     private gridApi;
     private autoWidthCalculator;

@@ -52,7 +52,7 @@ var DarkTheme = /** @class */ (function (_super) {
         };
         var chartDefaults = {
             background: {
-                fill: 'rgb(52, 52, 52)'
+                fill: 'rgb(34, 38, 41)'
             },
             title: {
                 color: fontColor

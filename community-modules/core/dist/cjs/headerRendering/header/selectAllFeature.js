@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -102,8 +102,11 @@ var SelectAllFeature = /** @class */ (function (_super) {
         this.processingEventFromCheckbox = false;
     };
     SelectAllFeature.prototype.refreshSelectAllLabel = function () {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var checked = this.cbSelectAll.getValue();
-        this.cbSelectAll.setInputAriaLabel("Press Space to toggle all rows selection (" + (checked ? 'checked' : 'unchecked') + ")");
+        var ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
+        var ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
+        this.cbSelectAll.setInputAriaLabel(ariaLabel + " (" + ariaStatus + ")");
     };
     SelectAllFeature.prototype.getSelectionCount = function () {
         var _this = this;
@@ -197,9 +200,6 @@ var SelectAllFeature = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('selectionController')
     ], SelectAllFeature.prototype, "selectionController", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], SelectAllFeature.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.PostConstruct
     ], SelectAllFeature.prototype, "postConstruct", null);

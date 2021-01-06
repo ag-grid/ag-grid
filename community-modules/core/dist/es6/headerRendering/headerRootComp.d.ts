@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from '../gridPanel/gridPanel';
@@ -12,7 +12,6 @@ export declare class HeaderRootComp extends ManagedFocusComponent {
     private ePinnedRightHeader;
     private eHeaderContainer;
     private eHeaderViewport;
-    private gridOptionsWrapper;
     private columnController;
     private gridApi;
     private autoWidthCalculator;

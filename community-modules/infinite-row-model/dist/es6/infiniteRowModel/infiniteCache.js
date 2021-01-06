@@ -122,6 +122,98 @@ var InfiniteCache = /** @class */ (function (_super) {
         this.forEachBlockInOrder(function (block) { return block.setDirty(); });
         this.checkBlockToLoad();
     };
+    InfiniteCache.prototype.getBlocksInOrder = function () {
+        // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
+        var blockComparator = function (a, b) { return a.getId() - b.getId(); };
+        var blocks = _.getAllValuesInObject(this.blocks).sort(blockComparator);
+        return blocks;
+    };
+    InfiniteCache.prototype.destroyBlock = function (block) {
+        delete this.blocks[block.getId()];
+        this.destroyBean(block);
+        this.blockCount--;
+        this.params.rowNodeBlockLoader.removeBlock(block);
+    };
+    // gets called 1) row count changed 2) cache purged 3) items inserted
+    InfiniteCache.prototype.onCacheUpdated = function () {
+        if (this.isAlive()) {
+            // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
+            // in the valid range. so we must remove these. this can happen if user explicitly sets
+            // the virtual row count, or the datasource returns a result and sets lastRow to something
+            // less than virtualRowCount (can happen if user scrolls down, server reduces dataset size).
+            this.destroyAllBlocksPastVirtualRowCount();
+            // this results in both row models (infinite and server side) firing ModelUpdated,
+            // however server side row model also updates the row indexes first
+            var event_1 = {
+                type: Events.EVENT_STORE_UPDATED
+            };
+            this.eventService.dispatchEvent(event_1);
+        }
+    };
+    InfiniteCache.prototype.destroyAllBlocksPastVirtualRowCount = function () {
+        var _this = this;
+        var blocksToDestroy = [];
+        this.getBlocksInOrder().forEach(function (block) {
+            var startRow = block.getId() * _this.params.blockSize;
+            if (startRow >= _this.rowCount) {
+                blocksToDestroy.push(block);
+            }
+        });
+        if (blocksToDestroy.length > 0) {
+            blocksToDestroy.forEach(function (block) { return _this.destroyBlock(block); });
+        }
+    };
+    InfiniteCache.prototype.purgeCache = function () {
+        var _this = this;
+        this.getBlocksInOrder().forEach(function (block) { return _this.removeBlockFromCache(block); });
+        this.lastRowIndexKnown = false;
+        // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
+        // otherwise if set to zero rows last time, and we don't update the row count, then after
+        // the purge there will still be zero rows, meaning the SSRM won't request any rows.
+        // to kick things off, at least one row needs to be asked for.
+        if (this.rowCount === 0) {
+            this.rowCount = this.params.initialRowCount;
+        }
+        this.onCacheUpdated();
+    };
+    InfiniteCache.prototype.getRowNodesInRange = function (firstInRange, lastInRange) {
+        var _this = this;
+        var result = [];
+        var lastBlockId = -1;
+        var inActiveRange = false;
+        var numberSequence = new NumberSequence();
+        // if only one node passed, we start the selection at the top
+        if (_.missing(firstInRange)) {
+            inActiveRange = true;
+        }
+        var foundGapInSelection = false;
+        this.getBlocksInOrder().forEach(function (block) {
+            if (foundGapInSelection) {
+                return;
+            }
+            if (inActiveRange && (lastBlockId + 1 !== block.getId())) {
+                foundGapInSelection = true;
+                return;
+            }
+            lastBlockId = block.getId();
+            block.forEachNode(function (rowNode) {
+                var hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
+                if (inActiveRange || hitFirstOrLast) {
+                    result.push(rowNode);
+                }
+                if (hitFirstOrLast) {
+                    inActiveRange = !inActiveRange;
+                }
+            }, numberSequence, _this.rowCount);
+        });
+        // inActiveRange will be still true if we never hit the second rowNode
+        var invalidRange = foundGapInSelection || inActiveRange;
+        return invalidRange ? [] : result;
+    };
+    // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
+    // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
+    // scrolled over are not needed to be loaded.
+    InfiniteCache.MAX_EMPTY_BLOCKS_TO_KEEP = 2;
     __decorate([
         Autowired('columnApi')
     ], InfiniteCache.prototype, "columnApi", void 0);

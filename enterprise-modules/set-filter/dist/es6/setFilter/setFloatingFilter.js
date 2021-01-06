@@ -34,15 +34,16 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
     };
     SetFloatingFilterComp.prototype.init = function (params) {
         var displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(displayName + " Filter Input")
+            .setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'))
             .addGuiEventListener('click', function () { return params.showParentFilter(); });
         this.params = params;
     };
     SetFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
         this.lastKnownModel = parentModel;
-        this.updateSetFilterText();
+        this.updateFloatingFilterText();
     };
     SetFloatingFilterComp.prototype.addAvailableValuesListener = function () {
         var _this = this;
@@ -53,11 +54,11 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
-            _this.addManagedListener(setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, function () { return _this.updateSetFilterText(); });
+            _this.addManagedListener(setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, function () { return _this.updateFloatingFilterText(); });
         });
         this.availableValuesListenerAdded = true;
     };
-    SetFloatingFilterComp.prototype.updateSetFilterText = function () {
+    SetFloatingFilterComp.prototype.updateFloatingFilterText = function () {
         var _this = this;
         if (!this.lastKnownModel) {
             this.eFloatingFilterText.setValue('');
@@ -78,7 +79,8 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
             var localeTextFunc = _this.gridOptionsWrapper.getLocaleTextFunc();
             // format all the values, if a formatter is provided
             var formattedValues = _.map(availableValues, function (value) {
-                var formattedValue = _this.valueFormatterService.formatValue(_this.params.column, null, null, value);
+                var _a = _this.params, column = _a.column, filterParams = _a.filterParams;
+                var formattedValue = _this.valueFormatterService.formatValue(column, null, null, value, filterParams.valueFormatter, false);
                 var valueToRender = formattedValue != null ? formattedValue : value;
                 return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT['blanks']) : valueToRender;
             });
@@ -93,9 +95,6 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
     __decorate([
         Autowired('valueFormatterService')
     ], SetFloatingFilterComp.prototype, "valueFormatterService", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], SetFloatingFilterComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('columnController')
     ], SetFloatingFilterComp.prototype, "columnController", void 0);

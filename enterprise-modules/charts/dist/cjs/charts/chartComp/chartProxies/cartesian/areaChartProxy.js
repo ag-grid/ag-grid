@@ -51,7 +51,10 @@ var AreaChartProxy = /** @class */ (function (_super) {
         }
         agChartOptions.autoSize = true;
         agChartOptions.axes = [__assign({ type: grouping ? 'groupedCategory' : xAxisType, position: 'bottom', paddingInner: 1, paddingOuter: 0 }, this.getXAxisDefaults(xAxisType, options)), __assign({ type: 'number', position: 'left' }, options.yAxis)];
-        agChartOptions.series = [__assign(__assign({}, seriesDefaults), { type: 'area', fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer, marker: marker })];
+        agChartOptions.series = [__assign(__assign({}, seriesDefaults), { type: 'area', fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
+                }, marker: marker })];
         return ag_charts_community_1.AgChart.create(agChartOptions, parentElement);
     };
     AreaChartProxy.prototype.update = function (params) {
@@ -99,8 +102,8 @@ var AreaChartProxy = /** @class */ (function (_super) {
             return;
         }
         var fieldIds = params.fields.map(function (f) { return f.colId; });
-        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
-        var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
+        var existingSeriesById = chart.series
+            .reduceRight(function (map, series, i) {
             var id = series.yKeys[0];
             if (fieldIds.indexOf(id) === i) {
                 map.set(id, series);
@@ -111,8 +114,10 @@ var AreaChartProxy = /** @class */ (function (_super) {
             return map;
         }, new Map());
         var data = this.transformData(params.data, params.category.id);
-        var previousSeries = undefined;
+        var previousSeries;
+        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
         params.fields.forEach(function (f, index) {
+            var _a = _this.processDataForCrossFiltering(data, f.colId, params), yKey = _a.yKey, atLeastOneSelectedPoint = _a.atLeastOneSelectedPoint;
             var areaSeries = existingSeriesById.get(f.colId);
             var fill = fills[index % fills.length];
             var stroke = strokes[index % strokes.length];
@@ -120,7 +125,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
                 areaSeries.data = data;
                 areaSeries.xKey = params.category.id;
                 areaSeries.xName = params.category.name;
-                areaSeries.yKeys = [f.colId];
+                areaSeries.yKeys = [yKey];
                 areaSeries.yNames = [f.displayName];
                 areaSeries.fills = [fill];
                 areaSeries.strokes = [stroke];
@@ -132,10 +137,11 @@ var AreaChartProxy = /** @class */ (function (_super) {
                     marker.shape = marker.type;
                     delete marker.type;
                 }
-                var options = __assign(__assign({}, seriesDefaults), { data: data, xKey: params.category.id, xName: params.category.name, yKeys: [f.colId], yNames: [f.displayName], fills: [fill], strokes: [stroke], fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker });
+                var options = __assign(__assign({}, seriesDefaults), { data: data, xKey: params.category.id, xName: params.category.name, yKeys: [yKey], yNames: [f.displayName], fills: [fill], strokes: [stroke], fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker });
                 areaSeries = ag_charts_community_1.AgChart.createComponent(options, 'area.series');
                 chart.addSeriesAfter(areaSeries, previousSeries);
             }
+            _this.updateSeriesForCrossFiltering(areaSeries, f.colId, chart, params, atLeastOneSelectedPoint);
             previousSeries = areaSeries;
         });
     };
@@ -145,8 +151,8 @@ var AreaChartProxy = /** @class */ (function (_super) {
         options.seriesDefaults = {
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -161,9 +167,13 @@ var AreaChartProxy = /** @class */ (function (_super) {
                 enabled: seriesDefaults.marker.enabled,
                 shape: seriesDefaults.marker.shape,
                 size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
+                strokeWidth: seriesDefaults.marker.strokeWidth,
+                formatter: seriesDefaults.marker.formatter
             },
-            highlightStyle: seriesDefaults.highlightStyle
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
     };

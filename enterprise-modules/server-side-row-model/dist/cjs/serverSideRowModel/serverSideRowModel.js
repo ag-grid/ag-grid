@@ -28,7 +28,9 @@ var serverSideBlock_1 = require("./serverSideBlock");
 var ServerSideRowModel = /** @class */ (function (_super) {
     __extends(ServerSideRowModel, _super);
     function ServerSideRowModel() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.pauseStoreUpdateListening = false;
+        return _this;
     }
     // we don't implement as lazy row heights is not supported in this row model
     ServerSideRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) { return false; };
@@ -61,14 +63,13 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         });
     };
     ServerSideRowModel.prototype.addEventListeners = function () {
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
+        var resetListener = this.resetRootStore.bind(this);
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_VALUE_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
     };
     ServerSideRowModel.prototype.setDatasource = function (datasource) {
         this.destroyDatasource();
@@ -110,82 +111,20 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             this.reset();
         }
     };
-    ServerSideRowModel.prototype.onFilterChanged = function () {
-        this.reset();
-    };
-    // returns back all the cols that were effected by the sorting. eg if we were sorting by col A,
-    // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
-    // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
-    // was previously sorted by A and then the A sort now needs to be cleared.
-    ServerSideRowModel.prototype.findChangedColumnsInSort = function (newSortModel, oldSortModel) {
-        var allColsInBothSorts = [];
-        [newSortModel, oldSortModel].forEach(function (sortModel) {
-            if (sortModel) {
-                var ids = sortModel.map(function (sm) { return sm.colId; });
-                allColsInBothSorts = allColsInBothSorts.concat(ids);
-            }
-        });
-        var differentSorts = function (oldSortItem, newSortItem) {
-            var oldSort = oldSortItem ? oldSortItem.sort : null;
-            var newSort = newSortItem ? newSortItem.sort : null;
-            return oldSort !== newSort;
-        };
-        var differentIndexes = function (oldSortItem, newSortItem) {
-            var oldIndex = oldSortModel.indexOf(oldSortItem);
-            var newIndex = newSortModel.indexOf(newSortItem);
-            return oldIndex !== newIndex;
-        };
-        return allColsInBothSorts.filter(function (colId) {
-            var oldSortItem = core_1._.find(oldSortModel, function (sm) { return sm.colId === colId; });
-            var newSortItem = core_1._.find(newSortModel, function (sm) { return sm.colId === colId; });
-            return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
-        });
-    };
-    ServerSideRowModel.prototype.onSortChanged = function () {
-        if (!this.cacheExists()) {
+    ServerSideRowModel.prototype.destroyRootStore = function () {
+        if (!this.rootNode || !this.rootNode.childStore) {
             return;
         }
-        var newSortModel = this.extractSortModel();
-        var oldSortModel = this.cacheParams.sortModel;
-        var changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
-        this.cacheParams.sortModel = newSortModel;
-        var rowGroupColIds = this.columnController.getRowGroupColumns().map(function (col) { return col.getId(); });
-        var serverSideCache = this.rootNode.childrenCache;
-        var sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
-        var sortingWithSecondaryCol = this.isSortingWithSecondaryColumn(changedColumnsInSort);
-        var sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-        if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
-            this.reset();
+        this.rootNode.childStore = this.destroyBean(this.rootNode.childStore);
+        this.nodeManager.clear();
+    };
+    ServerSideRowModel.prototype.refreshAfterSort = function (newSortModel, params) {
+        if (this.storeParams) {
+            this.storeParams.sortModel = newSortModel;
         }
-        else {
-            serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
-        }
-    };
-    ServerSideRowModel.prototype.onValueChanged = function () {
-        this.reset();
-    };
-    ServerSideRowModel.prototype.onColumnRowGroupChanged = function () {
-        this.reset();
-    };
-    ServerSideRowModel.prototype.onColumnPivotChanged = function () {
-        this.reset();
-    };
-    ServerSideRowModel.prototype.onPivotModeChanged = function () {
-        this.reset();
-    };
-    ServerSideRowModel.prototype.onRowGroupOpened = function (event) {
-        var _this = this;
-        var rowNode = event.node;
-        if (rowNode.expanded) {
-            if (rowNode.master) {
-                this.createDetailNode(rowNode);
-            }
-            else if (core_1._.missing(rowNode.childrenCache)) {
-                this.createNodeCache(rowNode);
-            }
-        }
-        else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && core_1._.exists(rowNode.childrenCache)) {
-            rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
         }
         var shouldAnimate = function () {
             var rowAnimationEnabled = _this.gridOptionsWrapper.isAnimateRows();
@@ -212,9 +151,8 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.rootNode.level = -1;
         this.createBean(this.rootNode);
         if (this.datasource) {
-            this.createNewRowNodeBlockLoader();
-            this.cacheParams = this.createCacheParams();
-            this.createNodeCache(this.rootNode);
+            this.storeParams = this.createStoreParams();
+            this.rootNode.childStore = this.createBean(this.storeFactory.createStore(this.storeParams, this.rootNode));
             this.updateRowIndexesAndBounds();
         }
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
@@ -324,6 +262,15 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         };
         this.eventService.dispatchEvent(modelUpdatedEvent);
     };
+    ServerSideRowModel.prototype.onStoreUpdated = function () {
+        // sometimes if doing a batch update, we do the batch first,
+        // then call onStoreUpdated manually. eg expandAll() method.
+        if (this.pauseStoreUpdateListening) {
+            return;
+        }
+        this.updateRowIndexesAndBounds();
+        this.dispatchModelUpdated();
+    };
     ServerSideRowModel.prototype.onRowHeightChanged = function () {
         this.updateRowIndexesAndBounds();
         var modelUpdatedEvent = {
@@ -345,20 +292,48 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             this.setDisplayIndexes(serverSideCache);
         }
     };
-    ServerSideRowModel.prototype.setDisplayIndexes = function (cache) {
-        var numberSequence = new core_1.NumberSequence();
-        var nextRowTop = { value: 0 };
-        cache.setDisplayIndexes(numberSequence, nextRowTop);
-    };
-    // resetting row tops is needed for animation, as part of the operation is saving the old location,
-    // which is needed for rows that are transitioning in
-    ServerSideRowModel.prototype.resetRowTops = function (cache) {
-        var numberSequence = new core_1.NumberSequence();
-        cache.forEachNodeDeep(function (rowNode) { return rowNode.clearRowTop(); }, numberSequence);
+    ServerSideRowModel.prototype.retryLoads = function () {
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
+        }
+        rootStore.retryLoads();
+        this.onStoreUpdated();
     };
     ServerSideRowModel.prototype.getRow = function (index) {
-        if (this.cacheExists()) {
-            return this.rootNode.childrenCache.getRow(index);
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            return null;
+        }
+        return rootStore.getRowUsingDisplayIndex(index);
+    };
+    ServerSideRowModel.prototype.expandAll = function (value) {
+        // if we don't pause store updating, we are needlessly
+        // recalculating row-indexes etc, and also getting rendering
+        // engine to re-render (listens on ModelUpdated event)
+        this.pauseStoreUpdateListening = true;
+        this.forEachNode(function (node) {
+            if (node.group) {
+                node.setExpanded(value);
+            }
+        });
+        this.pauseStoreUpdateListening = false;
+        this.onStoreUpdated();
+    };
+    ServerSideRowModel.prototype.refreshAfterFilter = function (newFilterModel, params) {
+        if (this.storeParams) {
+            this.storeParams.filterModel = newFilterModel;
+        }
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
+        }
+        rootStore.refreshAfterFilter(params);
+        this.onStoreUpdated();
+    };
+    ServerSideRowModel.prototype.getRootStore = function () {
+        if (this.rootNode && this.rootNode.childStore) {
+            return this.rootNode.childStore;
         }
         return null;
     };
@@ -431,15 +406,24 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             callback(cacheToPurge);
         }
     };
-    ServerSideRowModel.prototype.purgeCache = function (route) {
-        if (route === void 0) { route = []; }
-        this.executeOnCache(route, function (cache) { return cache.purgeCache(); });
+    ServerSideRowModel.prototype.refreshStore = function (params) {
+        if (params === void 0) { params = {}; }
+        var route = params.route ? params.route : [];
+        this.executeOnStore(route, function (store) { return store.refreshStore(params.purge == true); });
+    };
+    ServerSideRowModel.prototype.getStoreState = function () {
+        var res = [];
+        var rootStore = this.getRootStore();
+        if (rootStore) {
+            rootStore.addStoreStates(res);
+        }
+        return res;
     };
     ServerSideRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
         if (core_1._.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
-        return firstInRange.parent.childrenCache.getRowNodesInRange(lastInRange, firstInRange);
+        return firstInRange.parent.childStore.getRowNodesInRange(lastInRange, firstInRange);
     };
     ServerSideRowModel.prototype.getRowNode = function (id) {
         var result = null;
@@ -453,13 +437,6 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         });
         return result;
     };
-    ServerSideRowModel.prototype.getBlockState = function () {
-        if (this.rowNodeBlockLoader) {
-            return this.rowNodeBlockLoader.getBlockState();
-        }
-        return null;
-    };
-    // always returns true - this is used by the
     ServerSideRowModel.prototype.isRowPresent = function (rowNode) {
         var foundRowNode = this.getRowNode(rowNode.id);
         return !!foundRowNode;
@@ -584,8 +561,14 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         core_1.Autowired('rowRenderer')
     ], ServerSideRowModel.prototype, "rowRenderer", void 0);
     __decorate([
-        core_1.PostConstruct
-    ], ServerSideRowModel.prototype, "postConstruct", null);
+        core_1.Autowired('ssrmSortService')
+    ], ServerSideRowModel.prototype, "sortListener", void 0);
+    __decorate([
+        core_1.Autowired('ssrmNodeManager')
+    ], ServerSideRowModel.prototype, "nodeManager", void 0);
+    __decorate([
+        core_1.Autowired('ssrmStoreFactory')
+    ], ServerSideRowModel.prototype, "storeFactory", void 0);
     __decorate([
         core_1.PreDestroy
     ], ServerSideRowModel.prototype, "destroyDatasource", null);

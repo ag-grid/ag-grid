@@ -1,4 +1,4 @@
-// @ag-grid-community/react v24.1.1
+// @ag-grid-community/react v25.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -37,8 +37,9 @@ var react_1 = require("react");
 var PropTypes = require("prop-types");
 var core_1 = require("@ag-grid-community/core");
 var agGridColumn_1 = require("./agGridColumn");
-var reactComponent_1 = require("./reactComponent");
 var changeDetectionService_1 = require("./changeDetectionService");
+var legacyReactComponent_1 = require("./legacyReactComponent");
+var newReactComponent_1 = require("./newReactComponent");
 var AgGridReact = /** @class */ (function (_super) {
     __extends(AgGridReact, _super);
     function AgGridReact(props) {
@@ -97,10 +98,18 @@ var AgGridReact = /** @class */ (function (_super) {
         }
         else {
             if (Date.now() - startTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS) {
+                // last check - we check if this is a null value being rendered - we do this last as using SSR to check the value
+                // can mess up contexts
+                if (reactComponent.isNullValue()) {
+                    resolve(reactComponent);
+                    return;
+                }
                 console.error("ag-Grid: React Component '" + reactComponent.getReactComponentName() + "' not created within " + AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS + "ms");
                 return;
             }
-            window.setTimeout(function () { return _this.batchUpdate(function () { return _this.waitForInstance(reactComponent, resolve, startTime); }); });
+            window.setTimeout(function () {
+                _this.waitForInstance(reactComponent, resolve, startTime);
+            });
         }
     };
     /**
@@ -109,20 +118,22 @@ var AgGridReact = /** @class */ (function (_super) {
      * Context to work properly.
      */
     AgGridReact.prototype.mountReactPortal = function (portal, reactComponent, resolve) {
-        var _this = this;
         this.portals = __spreadArrays(this.portals, [portal]);
-        this.batchUpdate(function () { return _this.waitForInstance(reactComponent, resolve); });
+        this.waitForInstance(reactComponent, resolve);
+        this.batchUpdate();
     };
-    AgGridReact.prototype.batchUpdate = function (callback) {
+    AgGridReact.prototype.updateReactPortal = function (oldPortal, newPortal) {
+        this.portals = this.portals.filter(function (portal) { return portal !== oldPortal; }).concat(newPortal);
+        this.batchUpdate();
+    };
+    AgGridReact.prototype.batchUpdate = function () {
         var _this = this;
         if (this.hasPendingPortalUpdate) {
-            callback && callback();
             return;
         }
         setTimeout(function () {
             if (_this.api) { // destroyed?
                 _this.forceUpdate(function () {
-                    callback && callback();
                     _this.hasPendingPortalUpdate = false;
                 });
             }
@@ -160,11 +171,12 @@ var AgGridReact = /** @class */ (function (_super) {
         this.processPropsChanges(prevProps, this.props);
     };
     AgGridReact.prototype.processPropsChanges = function (prevProps, nextProps) {
+        var _this = this;
         var changes = {};
         this.extractGridPropertyChanges(prevProps, nextProps, changes);
         this.extractDeclarativeColDefChanges(nextProps, changes);
         if (Object.keys(changes).length > 0) {
-            core_1.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+            window.setTimeout(function () { return core_1.ComponentUtil.processOnChange(changes, _this.gridOptions, _this.api, _this.columnApi); });
         }
     };
     AgGridReact.prototype.extractDeclarativeColDefChanges = function (nextProps, changes) {
@@ -235,9 +247,16 @@ var AgGridReact = /** @class */ (function (_super) {
         this.destroyed = true;
     };
     AgGridReact.prototype.isDisableStaticMarkup = function () {
-        return !!this.props.disableStaticMarkup;
+        return this.props.disableStaticMarkup;
     };
-    AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS = 1000; // a second should be more than enough to instantiate a component
+    AgGridReact.prototype.isLegacyComponentRendering = function () {
+        return this.props.legacyComponentRendering;
+    };
+    AgGridReact.defaultProps = {
+        legacyComponentRendering: false,
+        disableStaticMarkup: false
+    };
+    AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS = 500; // half a second should be more than enough to instantiate a component
     return AgGridReact;
 }(react_1.Component));
 exports.AgGridReact = AgGridReact;
@@ -264,7 +283,9 @@ var ReactFrameworkComponentWrapper = /** @class */ (function (_super) {
         return _this;
     }
     ReactFrameworkComponentWrapper.prototype.createWrapper = function (UserReactComponent, componentType) {
-        return new reactComponent_1.ReactComponent(UserReactComponent, this.agGridReact, componentType);
+        return this.agGridReact.isLegacyComponentRendering() ?
+            new legacyReactComponent_1.LegacyReactComponent(UserReactComponent, this.agGridReact, componentType) :
+            new newReactComponent_1.NewReactComponent(UserReactComponent, this.agGridReact, componentType);
     };
     return ReactFrameworkComponentWrapper;
 }(core_1.BaseComponentWrapper));

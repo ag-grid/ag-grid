@@ -12,7 +12,6 @@ import {
     FilterManager,
     FilterWrapper,
     GridApi,
-    GridOptionsWrapper,
     IMenuFactory,
     IPrimaryColsPanel,
     IRowModel,
@@ -21,18 +20,18 @@ import {
     ModuleRegistry,
     PopupService,
     PostConstruct,
-    Promise,
+    AgPromise,
     TabbedItem,
     TabbedLayout,
     FocusController,
     IAfterGuiAttachedParams,
     GridPanel
-} from "@ag-grid-community/core";
-
-import { MenuList } from "./menuList";
-import { MenuItemComponent } from "./menuItemComponent";
-import { MenuItemMapper } from "./menuItemMapper";
-import { PrimaryColsPanel } from "@ag-grid-enterprise/column-tool-panel";
+} from '@ag-grid-community/core';
+import { MenuList } from './menuList';
+import { MenuItemComponent } from './menuItemComponent';
+import { MenuItemMapper } from './menuItemMapper';
+import { PrimaryColsPanel } from '@ag-grid-enterprise/column-tool-panel';
+import { AfterGuiAttachedParams } from '@ag-grid-community/core/dist/cjs/widgets/popupService';
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -42,7 +41,6 @@ export interface TabSelectedEvent extends AgEvent {
 export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('focusController') private focusController: FocusController;
 
     private lastSelectedTab: string;
@@ -68,6 +66,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 mouseEvent,
                 ePopup
             });
+
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
@@ -104,7 +103,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
-
         }, defaultTab, restrictToTabs, eventSource);
     }
 
@@ -118,29 +116,53 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         const eMenuGui = menu.getGui();
 
+        const anchorToElement = eventSource ? eventSource : this.gridPanel.getGui();
+
+        const closedFuncs: ((e?: Event) => void)[] = [];
+
+        closedFuncs.push((e?: Event) => {
+            this.destroyBean(menu);
+            column.setMenuVisible(false, 'contextMenu');
+
+            const isKeyboardEvent = e instanceof KeyboardEvent;
+
+            if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
+                const focusableEl = this.focusController.findTabbableParent(eventSource);
+
+                if (focusableEl) { focusableEl.focus(); }
+            }
+        });
+
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        const hidePopup = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
-            closedCallback: (e: Event) => { // menu closed callback
-                this.destroyBean(menu);
-                column.setMenuVisible(false, 'contextMenu');
-
-                const isKeyboardEvent = e instanceof KeyboardEvent;
-
-                if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
-                    const focusableEl = this.focusController.findTabbableParent(eventSource);
-
-                    if (focusableEl) { focusableEl.focus(); }
-                }
+            closedCallback: (e?: Event) => { // menu closed callback
+                closedFuncs.forEach(f => f(e));
             },
-            positionCallback: () => { positionCallback(menu); },
-            anchorToElement: this.gridPanel.getGui()
+            afterGuiAttached: params => menu.afterGuiAttached(params),
+            positionCallback: () => positionCallback(menu),
+            anchorToElement,
         });
 
-        menu.afterGuiAttached({ hidePopup });
+        if (addPopupRes) {
+            // if user starts showing / hiding columns, or otherwise move the underlying column
+            // for this menu, we want to stop tracking the menu with the column position. otherwise
+            // the menu would move as the user is using the columns tab inside the menu.
+            const stopAnchoringFunc = addPopupRes.stopAnchoringFunc;
+
+            if (stopAnchoringFunc) {
+                column.addEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
+                column.addEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
+
+                closedFuncs.push(() => {
+                    column.removeEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
+                    column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
+                });
+            }
+        }
 
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
@@ -150,7 +172,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             this.lastSelectedTab = event.key;
         });
 
-        column.setMenuVisible(true, "contextMenu");
+        column.setMenuVisible(true, 'contextMenu');
 
         this.activeMenu = menu;
 
@@ -179,7 +201,6 @@ export class EnterpriseMenu extends BeanStub {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('focusController') private focusController: FocusController;
@@ -419,7 +440,7 @@ export class EnterpriseMenu extends BeanStub {
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
             titleLabel: EnterpriseMenu.TAB_GENERAL.replace('MenuTab', ''),
-            bodyPromise: Promise.resolve(this.mainMenuList.getGui()),
+            bodyPromise: AgPromise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
         };
 
@@ -459,7 +480,7 @@ export class EnterpriseMenu extends BeanStub {
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
             titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
-            bodyPromise: filterWrapper.guiPromise,
+            bodyPromise: filterWrapper.guiPromise as AgPromise<HTMLElement>,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
         };
@@ -497,40 +518,19 @@ export class EnterpriseMenu extends BeanStub {
         this.tabItemColumns = {
             title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column), //createColumnsIcon(),
             titleLabel: EnterpriseMenu.TAB_COLUMNS.replace('MenuTab', ''),
-            bodyPromise: Promise.resolve(eWrapperDiv),
+            bodyPromise: AgPromise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS
         };
 
         return this.tabItemColumns;
     }
 
-    public afterGuiAttached(params: any): void {
-        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup: params.hidePopup });
-        this.hidePopupFunc = params.hidePopup;
+    public afterGuiAttached(params: AfterGuiAttachedParams): void {
+        const { hidePopup } = params;
 
-        const initialScroll = this.gridApi.getHorizontalPixelRange().left;
-        // if the user scrolls the grid horizontally, we want to hide the menu, as the menu will not appear in the right location anymore
-        const onBodyScroll = (event: any) => {
-            // If the user hides columns using the columns tab in this menu, it will change the size of the
-            // grid content and lead to a bodyScroll event. But we don't want to hide the menu for that kind
-            // of indirect scrolling. Assume that any bodyScroll that happens right after a column change is
-            // caused by that change, and ignore it.
-            const msSinceLastColumnChange = Date.now() - this.timeOfLastColumnChange;
-            if (msSinceLastColumnChange < 500) {
-                return;
-            }
-            // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal') {
-                const newScroll = this.gridApi.getHorizontalPixelRange().left;
-
-                if (Math.abs(newScroll - initialScroll) > this.gridOptionsWrapper.getScrollbarWidth()) {
-                    params.hidePopup();
-                }
-            }
-        };
-
-        this.addDestroyFunc(params.hidePopup);
-        this.addManagedListener(this.eventService, 'bodyScroll', onBodyScroll);
+        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup });
+        this.hidePopupFunc = hidePopup;
+        this.addDestroyFunc(hidePopup);
     }
 
     public getGui(): HTMLElement {

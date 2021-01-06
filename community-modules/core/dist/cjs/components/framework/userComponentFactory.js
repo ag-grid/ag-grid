@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -125,7 +125,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         this.addReactHacks(params);
         var deferredInit = this.initComponent(componentInstance, params);
         if (deferredInit == null) {
-            return utils_1.Promise.resolve(componentInstance);
+            return utils_1.AgPromise.resolve(componentInstance);
         }
         else {
             return deferredInit.then(function () { return componentInstance; });

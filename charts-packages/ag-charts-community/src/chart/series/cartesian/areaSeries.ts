@@ -14,7 +14,7 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { findLargestMinMax, findMinMax } from "../../../util/array";
+import { findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
@@ -27,6 +27,7 @@ interface AreaSelectionDatum {
 
 export interface AreaSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: AreaSeries;
     readonly datum: any;
     readonly xKey: string;
@@ -239,7 +240,7 @@ export class AreaSeries extends CartesianSeries {
         const { yData, normalizedTo } = this;
 
         const yMinMax = yData.map(values => findMinMax(values)); // used for normalization
-        const yLargestMinMax = findLargestMinMax(yMinMax);
+        const yLargestMinMax = this.findLargestMinMax(yMinMax);
 
         let yMin: number;
         let yMax: number;
@@ -268,6 +269,22 @@ export class AreaSeries extends CartesianSeries {
         this.fireEvent({ type: 'dataProcessed' });
 
         return true;
+    }
+
+    findLargestMinMax(totals: { min: number, max: number }[]): { min: number, max: number } {
+        let min = 0;
+        let max = 0;
+
+        for (const total of totals) {
+            if (total.min < min) {
+                min = total.min;
+            }
+            if (total.max > max) {
+                max = total.max;
+            }
+        }
+
+        return { min, max };
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -520,9 +537,10 @@ export class AreaSeries extends CartesianSeries {
         return this.markerSelectionData;
     }
 
-    fireNodeClickEvent(datum: MarkerSelectionDatum): void {
+    fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void {
         this.fireEvent<AreaSeriesNodeClickEvent>({
             type: 'nodeClick',
+            event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -549,9 +567,9 @@ export class AreaSeries extends CartesianSeries {
         const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
         const title = yName;
         const content = xString + ': ' + yString;
-        const defaults = {
+        const defaults: TooltipRendererResult = {
             title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content
         };
 

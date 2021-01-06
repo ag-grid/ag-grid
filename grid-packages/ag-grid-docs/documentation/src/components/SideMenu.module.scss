@@ -1,0 +1,45 @@
+.side-nav {
+    composes: d-none d-xl-block my-4 from global;
+    width: 300px;
+    flex: none;
+    font-size: 0.9rem;
+    background-color: $white;
+
+    &__list {
+        composes: mx-3 pl-3 list-unstyled from global;
+        @supports (position: sticky) {
+            position: sticky;
+            top: 7rem;
+        }
+        border-left: solid 1px lighten($secondary, 40%);
+    }
+
+    &__item--level-1 {
+        font-size: 1.05rem;
+        font-weight: 500;
+    }
+
+    &__item--level-3 {
+        composes: ml-2 from global;
+
+        font-weight: 300;
+    }
+
+    &__item--level-4 {
+        composes: ml-3 from global;
+
+        font-weight: 300;
+    }
+
+    &__link {
+        composes: d-block my-2 from global;
+
+        color: $secondary;
+        text-decoration: none;
+
+        &:hover {
+            color: $primary;
+            text-decoration: none;
+        }
+    }
+}

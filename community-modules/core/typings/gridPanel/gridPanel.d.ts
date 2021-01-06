@@ -9,7 +9,6 @@ export declare type RowContainerComponents = {
 };
 export declare class GridPanel extends Component {
     private alignedGridsService;
-    private gridOptionsWrapper;
     private rowRenderer;
     private pinnedRowModel;
     private animationFrameService;

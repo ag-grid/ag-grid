@@ -1,17 +1,16 @@
 import {
+    _,
     Autowired,
-    ColumnController,
-    EventService,
-    LoggerFactory,
-    DragAndDropService,
-    GridOptionsWrapper,
-    PostConstruct,
-    Events,
     Column,
-    ColumnValueChangeRequestEvent,
     ColumnApi,
+    ColumnController,
+    ColumnValueChangeRequestEvent,
+    DragAndDropService,
+    Events,
     GridApi,
-    _
+    ITooltipParams,
+    LoggerFactory,
+    PostConstruct
 } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 
@@ -19,7 +18,6 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
 
     @Autowired('columnController') private columnController: ColumnController;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -51,6 +49,12 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        const res = super.getTooltipParams();
+        res.location = 'valueColumnsList';
+        return res;
     }
 
     protected getIconName(): string {

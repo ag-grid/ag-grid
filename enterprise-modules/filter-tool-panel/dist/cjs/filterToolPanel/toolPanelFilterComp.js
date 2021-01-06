@@ -38,7 +38,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     ToolPanelFilterComp.prototype.setColumn = function (column) {
         var _this = this;
         this.column = column;
-        this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false);
+        this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', function (e) {
             if (e.keyCode === core_1.KeyCode.ENTER) {
@@ -62,7 +62,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         return this.column;
     };
     ToolPanelFilterComp.prototype.getColumnFilterName = function () {
-        return this.columnController.getDisplayNameForColumn(this.column, 'header', false);
+        return this.columnController.getDisplayNameForColumn(this.column, 'filterToolPanel', false);
     };
     ToolPanelFilterComp.prototype.addCssClassToTitleBar = function (cssClass) {
         core_1._.addCssClass(this.eFilterToolPanelHeader, cssClass);
@@ -157,9 +157,6 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('filterManager')
     ], ToolPanelFilterComp.prototype, "filterManager", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ToolPanelFilterComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnController')
     ], ToolPanelFilterComp.prototype, "columnController", void 0);

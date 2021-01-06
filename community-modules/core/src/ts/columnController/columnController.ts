@@ -2,7 +2,6 @@ import { ColumnGroup } from '../entities/columnGroup';
 import { Column } from '../entities/column';
 import { AbstractColDef, ColDef, ColGroupDef, IAggFunc } from '../entities/colDef';
 import { ColumnGroupChild } from '../entities/columnGroupChild';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ExpressionService } from '../valueService/expressionService';
 import { ColumnFactory } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
@@ -74,7 +73,6 @@ export interface ColumnState {
 @Bean('columnController')
 export class ColumnController extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
@@ -102,6 +100,7 @@ export class ColumnController extends BeanStub {
     // all columns provided by the user. basically it's the leaf level nodes of the
     // tree above (originalBalancedTree)
     private primaryColumns: Column[]; // every column available
+    private primaryColumnsMap: {[id: string]: Column};
 
     // if pivoting, these are the generated columns as a result of the pivot
     private secondaryBalancedTree: OriginalColumnGroupChild[] | null;
@@ -116,6 +115,8 @@ export class ColumnController extends BeanStub {
     // these are all columns that are available to the grid for rendering after pivot
     private gridBalancedTree: OriginalColumnGroupChild[];
     private gridColumns: Column[];
+    private gridColumnsMap: {[id: string]: Column};
+
     // header row count, either above, or based on pivoting if we are pivoting
     private gridHeaderRowCount = 0;
 
@@ -240,6 +241,8 @@ export class ColumnController extends BeanStub {
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
 
         this.primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
+        this.primaryColumnsMap = {};
+        this.primaryColumns.forEach(col => this.primaryColumnsMap[col.getId()] = col);
 
         this.extractRowGroupColumns(source, oldPrimaryColumns);
         this.extractPivotColumns(source, oldPrimaryColumns);
@@ -254,24 +257,33 @@ export class ColumnController extends BeanStub {
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
 
-        const eventEverythingChanged: ColumnEverythingChangedEvent = {
-            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source
-        };
+        // this event is not used by ag-Grid, but left here for backwards compatibility,
+        // in case applications use it
+        this.dispatchEverythingChanged(source);
 
-        this.eventService.dispatchEvent(eventEverythingChanged);
+        raiseEventsFunc();
+        this.dispatchNewColumnsLoaded();
+    }
 
+    private dispatchNewColumnsLoaded(): void {
         const newColumnsLoadedEvent: NewColumnsLoadedEvent = {
             type: Events.EVENT_NEW_COLUMNS_LOADED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
 
-        raiseEventsFunc();
-
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
+    }
+
+    // this event is legacy, no grid code listens to it. instead the grid listens to New Columns Loaded
+    private dispatchEverythingChanged(source: ColumnEventType = 'api'): void {
+        const eventEverythingChanged: ColumnEverythingChangedEvent = {
+            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            source
+        };
+        this.eventService.dispatchEvent(eventEverythingChanged);
     }
 
     private orderGridColumnsLikePrimary(): void {
@@ -1752,61 +1764,71 @@ export class ColumnController extends BeanStub {
         let letRowGroupIndex = 1000;
         let letPivotIndex = 1000;
 
-        if (primaryColumns) {
-            primaryColumns.forEach((column) => {
-
-                const colDef = column.getColDef();
-
-                const sort = colDef.sort != null ? colDef.sort : null;
-                const sortIndex = colDef.sortIndex;
-                const hide = colDef.hide ? true : false;
-                const pinned = colDef.pinned ? colDef.pinned : null;
-
-                const width = colDef.width;
-                const flex = colDef.flex != null ? colDef.flex : null;
-
-                let rowGroupIndex: number = colDef.rowGroupIndex;
-                let rowGroup: boolean = colDef.rowGroup;
-                if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
-                    rowGroupIndex = null;
-                    rowGroup = null;
-                }
-                let pivotIndex: number = colDef.pivotIndex;
-                let pivot: boolean = colDef.pivot;
-                if (pivotIndex == null && (pivot == null || pivot == false)) {
-                    pivotIndex = null;
-                    pivot = null;
-                }
-                const aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
-
-                const stateItem = {
-                    colId: column.getColId(),
-                    sort,
-                    sortIndex,
-                    hide,
-                    pinned,
-
-                    width,
-                    flex,
-
-                    rowGroup,
-                    rowGroupIndex,
-                    pivot,
-                    pivotIndex,
-                    aggFunc,
-                };
-
-                if (missing(rowGroupIndex) && rowGroup) {
-                    stateItem.rowGroupIndex = letRowGroupIndex++;
-                }
-
-                if (missing(pivotIndex) && pivot) {
-                    stateItem.pivotIndex = letPivotIndex++;
-                }
-
-                columnStates.push(stateItem);
-            });
+        let colsToProcess: Column[] = [];
+        if (this.groupAutoColumns) {
+            colsToProcess = colsToProcess.concat(this.groupAutoColumns);
         }
+        if (primaryColumns) {
+            colsToProcess = colsToProcess.concat(primaryColumns);
+        }
+
+        colsToProcess.forEach(column => {
+
+            const colDef = column.getColDef();
+
+            const sort = colDef.sort != null ? colDef.sort : null;
+            const sortIndex = colDef.sortIndex;
+            const hide = colDef.hide ? true : false;
+            const pinned = colDef.pinned ? colDef.pinned : null;
+
+            const width = colDef.width;
+            const flex = colDef.flex != null ? colDef.flex : null;
+
+            let rowGroupIndex: number | null | undefined = colDef.rowGroupIndex;
+            let rowGroup: boolean | null | undefined = colDef.rowGroup;
+
+            if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
+                rowGroupIndex = null;
+                rowGroup = null;
+            }
+
+            let pivotIndex: number | null | undefined = colDef.pivotIndex;
+            let pivot: boolean | null | undefined = colDef.pivot;
+
+            if (pivotIndex == null && (pivot == null || pivot == false)) {
+                pivotIndex = null;
+                pivot = null;
+            }
+
+            const aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
+
+            const stateItem = {
+                colId: column.getColId(),
+                sort,
+                sortIndex,
+                hide,
+                pinned,
+
+                width,
+                flex,
+
+                rowGroup,
+                rowGroupIndex,
+                pivot,
+                pivotIndex,
+                aggFunc,
+            };
+
+            if (missing(rowGroupIndex) && rowGroup) {
+                stateItem.rowGroupIndex = letRowGroupIndex++;
+            }
+
+            if (missing(pivotIndex) && pivot) {
+                stateItem.pivotIndex = letPivotIndex++;
+            }
+
+            columnStates.push(stateItem);
+        });
 
         this.applyColumnState({ state: columnStates, applyOrder: true }, source);
     }
@@ -1942,13 +1964,7 @@ export class ColumnController extends BeanStub {
 
         this.updateDisplayedColumns(source);
 
-        const event: ColumnEverythingChangedEvent = {
-            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source: source
-        };
-        this.eventService.dispatchEvent(event);
+        this.dispatchEverythingChanged(source);
 
         raiseEventsFunc();
 
@@ -2304,15 +2320,21 @@ export class ColumnController extends BeanStub {
     }
 
     public getPrimaryColumn(key: string | Column): Column | null {
-        return this.getColumn(key, this.primaryColumns);
+        return this.getColumn(key, this.primaryColumns, this.primaryColumnsMap);
     }
 
     public getGridColumn(key: string | Column): Column | null {
-        return this.getColumn(key, this.gridColumns);
+        return this.getColumn(key, this.gridColumns, this.gridColumnsMap);
     }
 
-    private getColumn(key: string | Column, columnList: Column[]): Column | null {
+    private getColumn(key: string | Column, columnList: Column[], columnMap: {[id: string]: Column}): Column | null {
         if (!key) { return null; }
+
+        // most of the time this method gets called the key is a string, so we put this shortcut in
+        // for performance reasons, to see if we can match for ID (it doesn't do auto columns, that's done below)
+        if (typeof key == 'string' && columnMap[key]) {
+            return columnMap[key];
+        }
 
         for (let i = 0; i < columnList.length; i++) {
             if (this.columnsMatch(columnList[i], key)) {
@@ -2874,6 +2896,7 @@ export class ColumnController extends BeanStub {
             this.secondaryBalancedTree = balancedTreeResult.columnTree;
             this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.secondaryColumns = this.getColumnsFromTree(this.secondaryBalancedTree);
+
             this.secondaryColumnsPresent = true;
         } else {
             this.secondaryBalancedTree = null;
@@ -2948,6 +2971,9 @@ export class ColumnController extends BeanStub {
         this.clearDisplayedColumns();
 
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
+
+        this.gridColumnsMap = {};
+        this.gridColumns.forEach(col => this.gridColumnsMap[col.getId()] = col);
 
         const event: GridColumnsChangedEvent = {
             type: Events.EVENT_GRID_COLUMNS_CHANGED,

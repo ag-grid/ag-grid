@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare function addCssClass(element: HTMLElement, className: string): HTMLElement;
@@ -13,6 +13,7 @@ export declare function addOrRemoveCssClass(element: HTMLElement, className: str
  */
 export declare function radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null): void;
 export declare function containsClass(element: HTMLElement, className: string): boolean;
+export declare function isFocusableFormField(element: HTMLElement): boolean;
 export declare function setDisplayed(element: HTMLElement, displayed: boolean): void;
 export declare function setVisible(element: HTMLElement, visible: boolean): void;
 export declare function setDisabled(element: HTMLElement, disabled: boolean): void;

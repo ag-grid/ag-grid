@@ -30,9 +30,10 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     public init(params: IFloatingFilterParams): void {
         this.params = params;
         const displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(`${displayName} Filter Input`);
+            .setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
 
     public onParentModelChanged(parentModel: any): void {

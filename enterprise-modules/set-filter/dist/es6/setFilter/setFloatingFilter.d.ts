@@ -1,10 +1,9 @@
 import { Component, IFloatingFilter, IFloatingFilterParams } from '@ag-grid-community/core';
 import { SetFilterModel } from './setFilterModel';
 export declare class SetFloatingFilterComp extends Component implements IFloatingFilter {
-    private eFloatingFilterText;
-    private valueFormatterService;
-    private gridOptionsWrapper;
-    private columnController;
+    private readonly eFloatingFilterText;
+    private readonly valueFormatterService;
+    private readonly columnController;
     private params;
     private lastKnownModel;
     private availableValuesListenerAdded;
@@ -13,5 +12,5 @@ export declare class SetFloatingFilterComp extends Component implements IFloatin
     init(params: IFloatingFilterParams): void;
     onParentModelChanged(parentModel: SetFilterModel): void;
     private addAvailableValuesListener;
-    private updateSetFilterText;
+    private updateFloatingFilterText;
 }

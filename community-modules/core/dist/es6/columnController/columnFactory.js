@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -373,9 +373,6 @@ var ColumnFactory = /** @class */ (function (_super) {
     ColumnFactory.prototype.isColumnGroup = function (abstractColDef) {
         return abstractColDef.children !== undefined;
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ColumnFactory.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('columnUtils')
     ], ColumnFactory.prototype, "columnUtils", void 0);

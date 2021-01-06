@@ -1,9 +1,7 @@
 import {
-    Autowired,
     Bean,
     BeanStub,
     Column,
-    GridOptionsWrapper,
     IAggFunc,
     IAggFuncService,
     PostConstruct,
@@ -21,8 +19,6 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     private static AGG_MAX = 'max';
     private static AGG_COUNT = 'count';
     private static AGG_AVG = 'avg';
-
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
 
     private aggFuncsMap: { [key: string]: IAggFunc; } = {};
     private initialised = false;

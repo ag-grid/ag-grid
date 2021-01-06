@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -103,16 +103,16 @@ var FilterManager = /** @class */ (function (_super) {
                 allPromises.push(_this.setModelOnFilterWrapper(filterWrapper.filterPromise, null));
             });
         }
-        utils_1.Promise.all(allPromises).then(function () { return _this.onFilterChanged(); });
+        utils_1.AgPromise.all(allPromises).then(function () { return _this.onFilterChanged(); });
     };
     FilterManager.prototype.setModelOnFilterWrapper = function (filterPromise, newModel) {
-        return new utils_1.Promise(function (resolve) {
+        return new utils_1.AgPromise(function (resolve) {
             filterPromise.then(function (filter) {
                 if (typeof filter.setModel !== 'function') {
                     console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
                     resolve();
                 }
-                (filter.setModel(newModel) || utils_1.Promise.resolve()).then(function () { return resolve(); });
+                (filter.setModel(newModel) || utils_1.AgPromise.resolve()).then(function () { return resolve(); });
             });
         });
     };
@@ -393,7 +393,7 @@ var FilterManager = /** @class */ (function (_super) {
             filterPromise: null,
             scope: null,
             compiledElement: null,
-            guiPromise: utils_1.Promise.resolve(null)
+            guiPromise: utils_1.AgPromise.resolve(null)
         };
         filterWrapper.scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
         filterWrapper.filterPromise = this.createFilterInstance(column, filterWrapper.scope);
@@ -406,7 +406,7 @@ var FilterManager = /** @class */ (function (_super) {
         var _this = this;
         var eFilterGui = document.createElement('div');
         eFilterGui.className = 'ag-filter';
-        filterWrapper.guiPromise = new utils_1.Promise(function (resolve) {
+        filterWrapper.guiPromise = new utils_1.AgPromise(function (resolve) {
             filterWrapper.filterPromise.then(function (filter) {
                 var guiFromFilter = filter.getGui();
                 if (!generic_1.exists(guiFromFilter)) {
@@ -463,7 +463,7 @@ var FilterManager = /** @class */ (function (_super) {
     FilterManager.prototype.disposeFilterWrapper = function (filterWrapper, source) {
         var _this = this;
         filterWrapper.filterPromise.then(function (filter) {
-            (filter.setModel(null) || utils_1.Promise.resolve()).then(function () {
+            (filter.setModel(null) || utils_1.AgPromise.resolve()).then(function () {
                 _this.getContext().destroyBean(filter);
                 filterWrapper.column.setFilterActive(false, source);
                 if (filterWrapper.scope) {
@@ -489,9 +489,6 @@ var FilterManager = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('$scope')
     ], FilterManager.prototype, "$scope", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], FilterManager.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('valueService')
     ], FilterManager.prototype, "valueService", void 0);

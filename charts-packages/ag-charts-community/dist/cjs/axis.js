@@ -8,6 +8,7 @@ var text_1 = require("./scene/shape/text");
 var arc_1 = require("./scene/shape/arc");
 var bbox_1 = require("./scene/bbox");
 var matrix_1 = require("./scene/matrix");
+var id_1 = require("./util/id");
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 var Tags;
 (function (Tags) {
@@ -115,6 +116,16 @@ exports.AxisLabel = AxisLabel;
  */
 var Axis = /** @class */ (function () {
     function Axis(scale) {
+        // debug (bbox)
+        // private bboxRect = (() => {
+        //     const rect = new Rect();
+        //     rect.fill = undefined;
+        //     rect.stroke = 'red';
+        //     rect.strokeWidth = 1;
+        //     rect.strokeOpacity = 0.2;
+        //     return rect;
+        // })();
+        this.id = id_1.createId(this);
         this.lineNode = new line_1.Line();
         this.group = new group_1.Group();
         this.line = {
@@ -157,6 +168,7 @@ var Axis = /** @class */ (function () {
         this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
+    Axis.prototype.getMeta = function () { };
     Axis.prototype.updateRange = function () {
         var _a = this, rr = _a.requestedRange, vr = _a.visibleRange, scale = _a.scale;
         var span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
@@ -398,6 +410,7 @@ var Axis = /** @class */ (function () {
             });
         }
         var tickFormatter = this.tickFormatter;
+        var meta = this.getMeta();
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         var fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
         var labelSelection = groupSelection.selectByClass(text_1.Text)
@@ -415,7 +428,8 @@ var Axis = /** @class */ (function () {
                     value: fractionDigits >= 0 ? datum : String(datum),
                     index: index,
                     fractionDigits: fractionDigits,
-                    formatter: tickFormatter
+                    formatter: tickFormatter,
+                    axis: meta
                 })
                 : fractionDigits
                     // the `datum` is a floating point number

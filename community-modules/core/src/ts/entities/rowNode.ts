@@ -165,6 +165,9 @@ export class RowNode implements IEventEmitter {
     /** Used by server side row model, true if this row node is a stub */
     public stub: boolean;
 
+    /** Used by server side row model, true if this row node failed a load */
+    public failedLoad: boolean;
+
     /** All user provided nodes */
     public allLeafChildren: RowNode[];
 
@@ -184,7 +187,7 @@ export class RowNode implements IEventEmitter {
     public childrenMapped: { [key: string]: any; } | null = {};
 
     /** Server Side Row Model Only - the children are in an infinite cache */
-    public childrenCache: RowNodeCache<IRowNodeBlock, RowNodeCacheParams> | null;
+    public childStore: IServerSideStore | null;
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;
@@ -298,7 +301,9 @@ export class RowNode implements IEventEmitter {
     public getRowIndexString(): string {
         if (this.rowPinned === Constants.PINNED_TOP) {
             return 't-' + this.rowIndex;
-        } else if (this.rowPinned === Constants.PINNED_BOTTOM) {
+        }
+
+        if (this.rowPinned === Constants.PINNED_BOTTOM) {
             return 'b-' + this.rowIndex;
         }
 
@@ -733,7 +738,9 @@ export class RowNode implements IEventEmitter {
             const newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             const allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (newRowClicked && allowMultiSelect) {
-                return this.doRowRangeSelection();
+                const nodesChanged = this.doRowRangeSelection(params.newValue);
+                this.selectionController.setLastSelectedNode(this);
+                return nodesChanged;
             }
         }
 
@@ -789,7 +796,7 @@ export class RowNode implements IEventEmitter {
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    private doRowRangeSelection(): number {
+    private doRowRangeSelection(value: boolean = true): number {
         const groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         const lastSelectedNode = this.selectionController.getLastSelectedNode();
         const nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
@@ -797,9 +804,9 @@ export class RowNode implements IEventEmitter {
         let updatedCount = 0;
 
         nodesToSelect.forEach(rowNode => {
-            if (rowNode.group && groupsSelectChildren) { return; }
+            if (rowNode.group && groupsSelectChildren || (value === false && this === rowNode)) { return; }
 
-            const nodeWasSelected = rowNode.selectThisNode(true);
+            const nodeWasSelected = rowNode.selectThisNode(value);
             if (nodeWasSelected) {
                 updatedCount++;
             }
@@ -921,5 +928,20 @@ export class RowNode implements IEventEmitter {
     public isFullWidthCell(): boolean {
         const isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
+    }
+
+    public getRoute(): string[] | undefined {
+        if (this.key == null) { return; }
+
+        const res: string[] = [];
+
+        let pointer: RowNode = this;
+
+        while (pointer.key != null) {
+            res.push(pointer.key);
+            pointer = pointer.parent!;
+        }
+
+        return res.reverse();
     }
 }

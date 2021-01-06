@@ -1,8 +1,6 @@
-import { Autowired, Component, GridOptionsWrapper, RefSelector } from '@ag-grid-community/core';
+import { Component, RefSelector } from '@ag-grid-community/core';
 
 export class NameValueComp extends Component {
-
-    @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
 
     private static TEMPLATE = /* html */
         `<div class="ag-status-name-value">  

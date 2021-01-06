@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -15,6 +15,7 @@ export interface IHeaderParams {
     progressSort: (multiSort?: boolean) => void;
     setSort: (sort: string, multiSort?: boolean) => void;
     columnApi: ColumnApi;
+    eGridHeader: HTMLElement;
     api: GridApi;
     context: any;
     template: string;
@@ -27,7 +28,6 @@ export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
 }
 export declare class HeaderComp extends Component implements IHeaderComp {
     private static TEMPLATE;
-    private gridOptionsWrapper;
     private sortController;
     private menuFactory;
     private eFilter;

@@ -87,10 +87,9 @@ export class PrimaryColsListPanel extends Component {
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
         }
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnsChanged.bind(this));
 
         const eventsImpactingCheckedState: string[] = [
-            Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             Events.EVENT_COLUMN_PIVOT_CHANGED,
             Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
@@ -134,6 +133,8 @@ export class PrimaryColsListPanel extends Component {
 
 
     public onColumnsChanged(): void {
+        const expandedStates = this.getExpandedStates();
+
         const pivotModeActive = this.columnController.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
 
@@ -143,8 +144,41 @@ export class PrimaryColsListPanel extends Component {
             this.buildTreeFromProvidedColumnDefs();
         }
 
-        this.markFilteredColumns()
+        this.setExpandedStates(expandedStates);
+
+        this.markFilteredColumns();
         this.flattenAndFilterModel();
+    }
+
+    private getExpandedStates(): {[key:string]:boolean} {
+        if (!this.allColsTree) { return {}; }
+
+        const res: {[id:string]:boolean} = {};
+        this.forEachItem(item => {
+            if (!item.isGroup()) { return; }
+            const colGroup = item.getColumnGroup();
+            if (colGroup) { // group should always exist, this is defensive
+                res[colGroup.getId()] = item.isExpanded();
+            }
+        });
+
+        return res;
+    }
+
+    private setExpandedStates(states: {[key:string]:boolean}): void {
+        if (!this.allColsTree) { return; }
+
+        this.forEachItem(item => {
+            if (!item.isGroup()) { return; }
+            const colGroup = item.getColumnGroup();
+            if (colGroup) { // group should always exist, this is defensive
+                const expanded = states[colGroup.getId()];
+                const groupExistedLastTime = expanded != null;
+                if (groupExistedLastTime) {
+                    item.setExpanded(expanded);
+                }
+            }
+        });
     }
 
     private buildTreeFromWhatGridIsDisplaying(): void {
@@ -211,7 +245,7 @@ export class PrimaryColsListPanel extends Component {
 
             if (skipThisColumn) { return; }
 
-            const displayName = this.columnController.getDisplayNameForColumn(column, 'toolPanel');
+            const displayName = this.columnController.getDisplayNameForColumn(column, 'columnToolPanel');
 
             parentList.push(new ColumnModelItem(displayName, column, dept));
         }

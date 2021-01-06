@@ -7,7 +7,7 @@ export declare class AgGridAngular implements AfterViewInit {
     private viewContainerRef;
     private angularFrameworkOverrides;
     private frameworkComponentWrapper;
-    private _componentFactoryResolver;
+    private componentFactoryResolver;
     private _nativeElement;
     private _initialised;
     private _destroyed;
@@ -16,10 +16,11 @@ export declare class AgGridAngular implements AfterViewInit {
     api: GridApi;
     columnApi: ColumnApi;
     columns: QueryList<AgGridColumn>;
-    constructor(elementDef: ElementRef, viewContainerRef: ViewContainerRef, angularFrameworkOverrides: AngularFrameworkOverrides, frameworkComponentWrapper: AngularFrameworkComponentWrapper, _componentFactoryResolver: ComponentFactoryResolver);
+    constructor(elementDef: ElementRef, viewContainerRef: ViewContainerRef, angularFrameworkOverrides: AngularFrameworkOverrides, frameworkComponentWrapper: AngularFrameworkComponentWrapper, componentFactoryResolver: ComponentFactoryResolver);
     ngAfterViewInit(): void;
     ngOnChanges(changes: any): void;
     ngOnDestroy(): void;
+    protected isEmitterUsed(eventType: string): boolean;
     private globalEventListener;
     gridOptions: GridOptions;
     modules: Module[];
@@ -76,6 +77,7 @@ export declare class AgGridAngular implements AfterViewInit {
     pivotRowTotals: any;
     pivotPanelShow: any;
     fillHandleDirection: any;
+    serverSideStoreType: any;
     rowHeight: any;
     detailRowHeight: any;
     rowBuffer: any;
@@ -165,6 +167,9 @@ export declare class AgGridAngular implements AfterViewInit {
     processChartOptions: any;
     getChartToolbarItems: any;
     fillOperation: any;
+    isApplyServerSideTransaction: any;
+    getServerSideStoreParams: any;
+    isServerSideGroupOpenByDefault: any;
     suppressMakeColumnVisibleAfterUnGroup: any;
     suppressRowClickSelection: any;
     suppressCellSelection: any;
@@ -287,6 +292,10 @@ export declare class AgGridAngular implements AfterViewInit {
     applyColumnDefOrder: any;
     debounceVerticalScrollbar: any;
     detailRowAutoHeight: any;
+    serverSideFilteringAlwaysResets: any;
+    suppressAggFilteredOnly: any;
+    showOpenedGroup: any;
+    suppressClipboardApi: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;
@@ -302,6 +311,7 @@ export declare class AgGridAngular implements AfterViewInit {
     columnResized: EventEmitter<any>;
     displayedColumnsChanged: EventEmitter<any>;
     virtualColumnsChanged: EventEmitter<any>;
+    asyncTransactionsFlushed: EventEmitter<any>;
     rowGroupOpened: EventEmitter<any>;
     rowDataChanged: EventEmitter<any>;
     rowDataUpdated: EventEmitter<any>;

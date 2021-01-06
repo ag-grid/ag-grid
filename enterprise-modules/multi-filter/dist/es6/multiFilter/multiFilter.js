@@ -28,7 +28,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Promise, Autowired, _, AgGroupComponent, ManagedFocusComponent, } from '@ag-grid-community/core';
+import { AgPromise, Autowired, AgGroupComponent, ManagedFocusComponent, _ } from '@ag-grid-community/core';
 import { MenuItemComponent } from '@ag-grid-enterprise/menu';
 var MultiFilter = /** @class */ (function (_super) {
     __extends(MultiFilter, _super);
@@ -62,7 +62,9 @@ var MultiFilter = /** @class */ (function (_super) {
             }
         });
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
-        return Promise.all(filterPromises).then(function (filters) { _this.filters = filters; _this.refreshGui('columnMenu'); });
+        return AgPromise
+            .all(filterPromises)
+            .then(function (filters) { _this.filters = filters; _this.refreshGui('columnMenu'); });
     };
     MultiFilter.prototype.refreshGui = function (container) {
         var _this = this;
@@ -198,15 +200,10 @@ var MultiFilter = /** @class */ (function (_super) {
         return model;
     };
     MultiFilter.prototype.setModel = function (model) {
-        var setFilterModel = function (filter, model) {
-            return new Promise(function (resolve) {
-                var promise = filter.setModel(model);
-                if (promise == null) {
-                    resolve();
-                }
-                else {
-                    promise.then(function () { return resolve(); });
-                }
+        var setFilterModel = function (filter, filterModel) {
+            return new AgPromise(function (resolve) {
+                var promise = filter.setModel(filterModel);
+                promise ? promise.then(function () { return resolve(); }) : resolve();
             });
         };
         var promises = [];
@@ -219,7 +216,7 @@ var MultiFilter = /** @class */ (function (_super) {
                 promises.push(setFilterModel(filter, filterModel));
             });
         }
-        return Promise.all(promises).then(function () { });
+        return AgPromise.all(promises).then(function () { });
     };
     MultiFilter.prototype.getChildFilterInstance = function (index) {
         return this.filters[index];

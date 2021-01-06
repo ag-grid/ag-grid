@@ -336,9 +336,6 @@ var PivotColDefService = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], PivotColDefService.prototype, "columnController", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], PivotColDefService.prototype, "gridOptionsWrapper", void 0);
     PivotColDefService = PivotColDefService_1 = __decorate([
         core_1.Bean('pivotColDefService')
     ], PivotColDefService);

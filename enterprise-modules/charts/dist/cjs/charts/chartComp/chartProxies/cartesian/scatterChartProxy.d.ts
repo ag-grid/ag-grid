@@ -11,4 +11,5 @@ export declare class ScatterChartProxy extends CartesianChartProxy<ScatterSeries
     getMarkersEnabled: () => boolean;
     protected getDefaultOptions(): CartesianChartOptions<ScatterSeriesOptions>;
     private getSeriesDefinitions;
+    private getCrossFilteringDataDomain;
 }

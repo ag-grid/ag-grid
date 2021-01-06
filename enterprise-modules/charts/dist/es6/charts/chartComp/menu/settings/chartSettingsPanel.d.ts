@@ -2,7 +2,6 @@ import { Component } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 export declare class ChartSettingsPanel extends Component {
     static TEMPLATE: string;
-    private readonly gridOptionsWrapper;
     private readonly eMiniChartsContainer;
     private readonly eNavBar;
     private readonly eCardSelector;

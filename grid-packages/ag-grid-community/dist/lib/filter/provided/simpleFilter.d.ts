@@ -1,7 +1,7 @@
 import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '../../interfaces/iFilter';
 import { OptionsFactory } from './optionsFactory';
 import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
-import { Promise } from '../../utils';
+import { AgPromise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 export declare type JoinOperator = 'AND' | 'OR';
@@ -68,7 +68,7 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     protected getCondition2Type(): string;
     protected getJoinOperator(): JoinOperator;
     protected areModelsEqual(a: M | ICombinedSimpleModel<M>, b: M | ICombinedSimpleModel<M>): boolean;
-    protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): Promise<void>;
+    protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): AgPromise<void>;
     doesFilterPass(params: IDoesFilterPassParams): boolean;
     protected setParams(params: ISimpleFilterParams): void;
     private getDefaultJoinOperator;
@@ -78,7 +78,7 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     protected getCssIdentifier(): string;
     protected updateUiVisibility(): void;
     protected isCondition2Enabled(): boolean;
-    protected resetUiToDefaults(silent?: boolean): Promise<void>;
+    protected resetUiToDefaults(silent?: boolean): AgPromise<void>;
     private isDefaultOperator;
     private addChangedListeners;
     protected doesFilterHaveHiddenInput(filterType: string): boolean;

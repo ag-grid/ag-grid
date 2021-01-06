@@ -1,17 +1,16 @@
 import {
+    _,
     Autowired,
-    ColumnController,
-    EventService,
-    LoggerFactory,
-    DragAndDropService,
-    GridOptionsWrapper,
-    PostConstruct,
-    Events,
     Column,
-    ColumnPivotChangeRequestEvent,
     ColumnApi,
+    ColumnController,
+    ColumnPivotChangeRequestEvent,
+    DragAndDropService,
+    Events,
     GridApi,
-    _
+    ITooltipParams,
+    LoggerFactory,
+    PostConstruct
 } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 
@@ -19,7 +18,6 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
     @Autowired('columnController') private columnController: ColumnController;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -50,11 +48,17 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
             title: title
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
 
         this.refresh();
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        const res = super.getTooltipParams();
+        res.location = 'pivotColumnsList';
+        return res;
     }
 
     private refresh(): void {

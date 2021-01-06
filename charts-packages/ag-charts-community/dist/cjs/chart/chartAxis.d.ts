@@ -14,12 +14,19 @@ export declare enum ChartAxisPosition {
     Angle = "angle",
     Radius = "radius"
 }
+interface ChartAxisMeta {
+    id: string;
+    direction: ChartAxisDirection;
+    boundSeries: Series[];
+}
 export declare class ChartAxis extends Axis<Scale<any, number>> {
     keys: string[];
     direction: ChartAxisDirection;
     boundSeries: Series[];
     linkedTo?: ChartAxis;
     readonly type: string;
+    getMeta(): ChartAxisMeta;
     protected _position: ChartAxisPosition;
     position: ChartAxisPosition;
 }
+export {};

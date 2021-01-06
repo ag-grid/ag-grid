@@ -99,11 +99,17 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
 
         this.onCacheUpdated();
 
-        const event: RowDataUpdatedEvent = {
-            type: Events.EVENT_ROW_DATA_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
+    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void): void {
+        const sequence = new NumberSequence();
+        this.getBlocksInOrder().forEach(block => block.forEachNode(callback, sequence, this.rowCount));
+    }
+
+    public getBlocksInOrder(): InfiniteBlock[] {
+        // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
+        const blockComparator = (a: InfiniteBlock, b: InfiniteBlock) => a.getId() - b.getId();
+        const blocks = _.getAllValuesInObject(this.blocks).sort(blockComparator);
+        return blocks;
+    }
 
         this.eventService.dispatchEvent(event);
     }

@@ -1,10 +1,10 @@
-import { AgEvent, BeanStub, Column, IMenuFactory, GridPanel } from "@ag-grid-community/core";
+import { AgEvent, BeanStub, Column, IMenuFactory, GridPanel } from '@ag-grid-community/core';
+import { AfterGuiAttachedParams } from '@ag-grid-community/core/dist/cjs/widgets/popupService';
 export interface TabSelectedEvent extends AgEvent {
     key: string;
 }
 export declare class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     private popupService;
-    private gridOptionsWrapper;
     private focusController;
     private lastSelectedTab;
     private activeMenu;
@@ -27,7 +27,6 @@ export declare class EnterpriseMenu extends BeanStub {
     private filterManager;
     private gridApi;
     private columnApi;
-    private gridOptionsWrapper;
     private menuItemMapper;
     private rowModel;
     private focusController;
@@ -65,7 +64,7 @@ export declare class EnterpriseMenu extends BeanStub {
     private onHidePopup;
     private createFilterPanel;
     private createColumnsPanel;
-    afterGuiAttached(params: any): void;
+    afterGuiAttached(params: AfterGuiAttachedParams): void;
     getGui(): HTMLElement;
     private onDisplayedColumnsChanged;
 }

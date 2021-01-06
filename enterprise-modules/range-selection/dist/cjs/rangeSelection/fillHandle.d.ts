@@ -2,7 +2,6 @@ import { CellComp, SelectionHandleType } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 export declare class FillHandle extends AbstractSelectionHandle {
     private valueService;
-    private gridOptionsWrapper;
     static TEMPLATE: string;
     private initialPosition;
     private initialXY;

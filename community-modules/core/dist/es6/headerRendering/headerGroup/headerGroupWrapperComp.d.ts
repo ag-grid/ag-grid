@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColGroupDef } from "../../entities/colDef";
@@ -9,7 +9,6 @@ import { Beans } from "../../rendering/beans";
 import { ITooltipParams } from "../../rendering/tooltipComponent";
 export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private static TEMPLATE;
-    private gridOptionsWrapper;
     private columnController;
     private horizontalResizeService;
     private dragAndDropService;
@@ -36,8 +35,7 @@ export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private setupExpandable;
     private refreshExpanded;
     private setupMovingCss;
-    getComponentHolder(): ColGroupDef;
-    private getTooltipText;
+    getComponentHolder(): ColGroupDef | null;
     getTooltipParams(): ITooltipParams;
     private setupTooltip;
     private onColumnMovingChanged;

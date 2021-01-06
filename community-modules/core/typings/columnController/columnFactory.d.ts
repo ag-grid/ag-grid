@@ -3,7 +3,6 @@ import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { Column } from "../entities/column";
 import { BeanStub } from "../context/beanStub";
 export declare class ColumnFactory extends BeanStub {
-    private gridOptionsWrapper;
     private columnUtils;
     private logger;
     private setBeans;

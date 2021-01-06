@@ -6,7 +6,6 @@ export declare enum EXPAND_STATE {
     INDETERMINATE = 2
 }
 export declare class FiltersToolPanelHeaderPanel extends Component {
-    private gridOptionsWrapper;
     private columnController;
     private eExpand;
     private eFilterTextField;

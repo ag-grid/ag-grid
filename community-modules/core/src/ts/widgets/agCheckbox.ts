@@ -1,6 +1,4 @@
-import { Autowired } from '../context/context';
 import { Events, CheckboxChangedEvent } from "../events";
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgEvent } from '../events';
 import { AgAbstractInputField, IInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
@@ -11,7 +9,6 @@ export interface ChangeEvent extends AgEvent {
 }
 
 export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
-    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
 
     protected labelAlignment: LabelAlignment = 'right';
 
@@ -90,14 +87,14 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
             return;
         }
 
-        const previousValue = this.isSelected();
+        this.previousValue = this.isSelected();
 
         selected = this.selected = typeof selected === 'boolean' ? selected : undefined;
         (this.eInput as HTMLInputElement).checked = selected;
         (this.eInput as HTMLInputElement).indeterminate = selected === undefined;
 
         if (!silent) {
-            this.dispatchChange(this.selected, previousValue);
+            this.dispatchChange(this.selected, this.previousValue);
         }
     }
 

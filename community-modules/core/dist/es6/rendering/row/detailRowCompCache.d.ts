@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
@@ -12,7 +12,6 @@ import { BeanStub } from "../../context/beanStub";
  * still be applied after the detail grid is shown for the second time.
  */
 export declare class DetailRowCompCache extends BeanStub {
-    private gridOptionsWrapper;
     private cacheItems;
     private maxCacheSize;
     private active;

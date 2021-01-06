@@ -34,6 +34,7 @@ interface HistogramNodeDatum extends SeriesNodeDatum {
 }
 export interface HistogramSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: HistogramSeries;
     readonly datum: any;
     readonly xKey: string;
@@ -105,7 +106,7 @@ export declare class HistogramSeries extends CartesianSeries {
     readonly xMax: number;
     processData(): boolean;
     getDomain(direction: ChartAxisDirection): any[];
-    fireNodeClickEvent(datum: HistogramNodeDatum): void;
+    fireNodeClickEvent(event: MouseEvent, datum: HistogramNodeDatum): void;
     update(): void;
     private generateNodeData;
     private updateRectSelection;

@@ -125,7 +125,7 @@ var ChartMenu = /** @class */ (function (_super) {
             panels: this.tabs
         }));
         this.addManagedListener(menuPanel, core_1.Component.EVENT_DESTROYED, function () { return _this.destroyBean(_this.tabbedMenu); });
-        return new core_1.Promise(function (res) {
+        return new core_1.AgPromise(function (res) {
             window.setTimeout(function () {
                 menuPanel.setBodyComponent(_this.tabbedMenu);
                 _this.tabbedMenu.showTab(defaultTab);
@@ -185,8 +185,8 @@ var ChartMenu = /** @class */ (function (_super) {
     ChartMenu.EVENT_DOWNLOAD_CHART = "downloadChart";
     ChartMenu.TEMPLATE = "<div class=\"ag-chart-menu\"></div>";
     __decorate([
-        core_1.Autowired("gridOptionsWrapper")
-    ], ChartMenu.prototype, "gridOptionsWrapper", void 0);
+        core_1.Autowired('chartTranslator')
+    ], ChartMenu.prototype, "chartTranslator", void 0);
     __decorate([
         core_1.PostConstruct
     ], ChartMenu.prototype, "postConstruct", null);

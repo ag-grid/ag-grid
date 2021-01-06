@@ -16,6 +16,8 @@ import {
 } from '../utils/dom';
 import { forEach } from '../utils/array';
 import { getFunctionName } from '../utils/function';
+import { TooltipFeature } from "./tooltipFeature";
+import { ITooltipParams } from "../rendering/tooltipComponent";
 
 const compIdSequence = new NumberSequence();
 
@@ -48,6 +50,10 @@ export class Component extends BeanStub {
     // there, or removing one that wasn't present, all takes CPU.
     private cssClassStates: {[cssClass: string]: boolean } = {};
 
+    protected usingBrowserTooltips: boolean;
+    private tooltipText: string | undefined;
+    private tooltipFeature: TooltipFeature | undefined;
+
     constructor(template?: string) {
         super();
 
@@ -56,8 +62,51 @@ export class Component extends BeanStub {
         }
     }
 
+    @PostConstruct
+    private postConstructOnComponent(): void {
+        this.usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
+    }
+
     public getCompId(): number {
         return this.compId;
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        return {
+            value: this.tooltipText,
+            location: 'UNKNOWN'
+        };
+    }
+
+    public setTooltip(newTooltipText: string | undefined): void {
+
+        const removeTooltip = () => {
+            if (this.usingBrowserTooltips) {
+                this.getGui().removeAttribute('title');
+            } else {
+                this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+            }
+        };
+
+        const addTooltip = () => {
+            if (this.usingBrowserTooltips) {
+                this.getGui().setAttribute('title', this.tooltipText!);
+            } else {
+                this.tooltipFeature = this.createBean(new TooltipFeature(this));
+            }
+        };
+
+        if (this.tooltipText != newTooltipText) {
+            if (this.tooltipText) {
+                removeTooltip();
+            }
+
+            this.tooltipText = newTooltipText;
+
+            if (this.tooltipText) {
+                addTooltip();
+            }
+        }
     }
 
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
@@ -331,6 +380,9 @@ export class Component extends BeanStub {
 
     protected destroy(): void {
         this.removeAnnotatedGuiEventListeners();
+        if (this.tooltipFeature) {
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+        }
         super.destroy();
     }
 

@@ -404,9 +404,6 @@ var MenuItemMapper = /** @class */ (function (_super) {
         return result;
     };
     __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], MenuItemMapper.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         core_1.Autowired('columnController')
     ], MenuItemMapper.prototype, "columnController", void 0);
     __decorate([

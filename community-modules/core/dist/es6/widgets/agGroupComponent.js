@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Component } from './component';
 import { RefSelector } from './componentAnnotations';
-import { Autowired, PostConstruct } from '../context/context';
+import { PostConstruct } from '../context/context';
 import { createIcon } from '../utils/icon';
 import { setDisplayed, removeCssClass, addCssClass, addOrRemoveCssClass } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
@@ -200,9 +200,6 @@ var AgGroupComponent = /** @class */ (function (_super) {
     };
     AgGroupComponent.EVENT_EXPANDED = 'expanded';
     AgGroupComponent.EVENT_COLLAPSED = 'collapsed';
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], AgGroupComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         RefSelector('eTitleBar')
     ], AgGroupComponent.prototype, "eTitleBar", void 0);

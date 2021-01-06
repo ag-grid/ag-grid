@@ -13,7 +13,6 @@ import { Events } from "../../events";
 import { IHeaderComp, IHeaderParams, HeaderComp } from "./headerComp";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridApi } from "../../gridApi";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { HorizontalResizeService } from "../horizontalResizeService";
 import { HoverFeature } from "../hoverFeature";
 import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
@@ -21,7 +20,6 @@ import { SortController } from "../../sortController";
 import { SelectAllFeature } from "./selectAllFeature";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { TouchListener } from "../../widgets/touchListener";
-import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
 import { HeaderRowComp } from "../headerRowComp";
@@ -38,7 +36,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
@@ -88,8 +85,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         this.updateState();
 
-        this.appendHeaderComp();
-
         this.setupWidth();
         this.setupMovingCss();
         this.setupTooltip();
@@ -114,9 +109,25 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
+
+        this.appendHeaderComp();
+    }
+
+    private onColumnRowGroupChanged(): void {
+        this.checkDisplayName();
+    }
+
+    private onColumnPivotChanged(): void {
+        this.checkDisplayName();
     }
 
     private onColumnValueChanged(): void {
+        this.checkDisplayName();
+    }
+
+    private checkDisplayName(): void {
         // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
         if (this.displayName !== this.calculateDisplayName()) {
             this.refresh();
@@ -334,7 +345,8 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             },
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsWrapper.getContext()
+            context: this.gridOptionsWrapper.getContext(),
+            eGridHeader: this.getGui()
         } as IHeaderParams;
         return params;
     }
@@ -486,63 +498,21 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     public getTooltipParams(): ITooltipParams {
-        const colDef = this.getComponentHolder();
-
-        return {
-            location: 'header',
-            colDef,
-            column: this.getColumn(),
-            value: this.getTooltipText(),
-        };
-    }
-
-    private getTooltipText(): string {
-        return this.getComponentHolder().headerTooltip;
+        const res = super.getTooltipParams();
+        res.location = 'header';
+        res.colDef = this.column.getColDef();
+        return res;
     }
 
     private setupTooltip(): void {
-        let tooltipFeature: TooltipFeature;
-        let tooltipText: string;
-
-        const usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
-
-        const removeTooltip = () => {
-            if (usingBrowserTooltips) {
-                this.getGui().removeAttribute('title');
-            } else {
-                if (tooltipFeature) {
-                    tooltipFeature = this.destroyBean(tooltipFeature);
-                }
-            }
-        };
-
-        const addTooltip = () => {
-            if (usingBrowserTooltips) {
-                this.getGui().setAttribute('title', tooltipText);
-            } else {
-                tooltipFeature = this.createBean(new TooltipFeature(this));
-            }
-        };
 
         const refresh = () => {
-            const newTooltipText = this.getTooltipText();
-
-            if (tooltipText != newTooltipText) {
-                if (tooltipText) {
-                    removeTooltip();
-                }
-
-                tooltipText = newTooltipText;
-
-                if (tooltipText) {
-                    addTooltip();
-                }
-            }
-
+            const newTooltipText = this.column.getColDef().headerTooltip;
+            this.setTooltip(newTooltipText);
         };
 
         refresh();
-        this.addDestroyFunc(removeTooltip);
+
         this.refreshFunctions.push(refresh);
     }
 

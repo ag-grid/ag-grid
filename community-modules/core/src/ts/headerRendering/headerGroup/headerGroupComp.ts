@@ -3,7 +3,6 @@ import { IComponent } from "../../interfaces/iComponent";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ColumnController } from "../../columnController/columnController";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { Autowired } from "../../context/context";
 import { TouchListener } from "../../widgets/touchListener";
 import { RefSelector } from "../../widgets/componentAnnotations";
@@ -31,7 +30,6 @@ export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupP
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     @Autowired("columnController") private columnController: ColumnController;
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
     static TEMPLATE = /* html */
         `<div class="ag-header-group-cell-label" ref="agContainer" role="presentation">
@@ -101,7 +99,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     }
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
-        const touchListener = new TouchListener(eElement);
+        const touchListener = new TouchListener(eElement, true);
 
         this.addManagedListener(touchListener, TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(() => touchListener.destroy());

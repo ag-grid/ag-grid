@@ -169,9 +169,6 @@ var AggregationComp = /** @class */ (function (_super) {
         core_1.Autowired('rowRenderer')
     ], AggregationComp.prototype, "rowRenderer", void 0);
     __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], AggregationComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         core_1.Autowired('gridOptions')
     ], AggregationComp.prototype, "gridOptions", void 0);
     __decorate([

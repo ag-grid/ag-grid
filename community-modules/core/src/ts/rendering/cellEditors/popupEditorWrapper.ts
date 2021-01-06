@@ -1,7 +1,5 @@
 import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { Autowired } from "../../context/context";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
 
 export class PopupEditorWrapper extends PopupComponent implements ICellEditorComp {
@@ -11,8 +9,6 @@ export class PopupEditorWrapper extends PopupComponent implements ICellEditorCom
     private getGuiCalledOnChild = false;
 
     public static DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
-
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     constructor(cellEditor: ICellEditorComp) {
         super(`<div class="ag-popup-editor" tabindex="-1"/>`);

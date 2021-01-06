@@ -45,6 +45,16 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addDragSource();
         }
+        this.setupTooltip();
+    };
+    DropZoneColumnComp.prototype.setupTooltip = function () {
+        var _this = this;
+        var refresh = function () {
+            var newTooltipText = _this.column.getColDef().headerTooltip;
+            _this.setTooltip(newTooltipText);
+        };
+        refresh();
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, refresh);
     };
     DropZoneColumnComp.prototype.addDragSource = function () {
         var _this = this;
@@ -131,13 +141,15 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             _this.destroyBean(virtualList);
             _this.popupShowing = false;
         };
-        var hidePopup = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: ePopup,
             closeOnEsc: true,
             closedCallback: popupHiddenFunc
         });
-        virtualList.setComponentCreator(this.createAggSelect.bind(this, hidePopup));
+        if (addPopupRes) {
+            virtualList.setComponentCreator(this.createAggSelect.bind(this, addPopupRes.hideFunc));
+        }
         this.popupService.positionPopupUnderComponent({
             type: 'aggFuncSelect',
             eventSource: this.getGui(),
@@ -191,9 +203,6 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     __decorate([
         core_1.Optional('aggFuncService')
     ], DropZoneColumnComp.prototype, "aggFuncService", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], DropZoneColumnComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnApi')
     ], DropZoneColumnComp.prototype, "columnApi", void 0);

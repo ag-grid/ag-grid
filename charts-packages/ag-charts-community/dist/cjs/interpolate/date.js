@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 function default_1(a, b) {
     var date = new Date;
     var msA = +a;
-    var msB = +b - msA;
+    var msB = +b;
     return function (t) {
-        date.setTime(msA + msB * t);
+        date.setTime(msA * (1 - t) + msB * t);
         return date;
     };
 }

@@ -22,6 +22,7 @@ interface ScatterNodeDatum extends SeriesNodeDatum {
 
 export interface ScatterSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: ScatterSeries;
     readonly datum: any;
     readonly xKey: string;
@@ -161,7 +162,7 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     processData(): boolean {
-        const { xKey, yKey, sizeKey, xAxis, yAxis } = this;
+        const { xKey, yKey, sizeKey, xAxis, yAxis, marker } = this;
 
         const data = xKey && yKey && this.data ? this.data : [];
 
@@ -174,7 +175,7 @@ export class ScatterSeries extends CartesianSeries {
             this.sizeData = [];
         }
 
-        this.sizeScale.domain = finiteExtent(this.sizeData) || [1, 1];
+        this.sizeScale.domain = marker.domain ? marker.domain : finiteExtent(this.sizeData) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
             this.xDomain = this.fixNumericExtent(finiteExtent(this.xData), 'x');
         } else {
@@ -201,9 +202,10 @@ export class ScatterSeries extends CartesianSeries {
         return this.nodeData;
     }
 
-    fireNodeClickEvent(datum: ScatterNodeDatum): void {
+    fireNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): void {
         this.fireEvent<ScatterSeriesNodeClickEvent>({
             type: 'nodeClick',
+            event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
@@ -220,6 +222,8 @@ export class ScatterSeries extends CartesianSeries {
         const { xAxis, yAxis } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
+        const isContinuousX = xScale instanceof ContinuousScale;
+        const isContinuousY = yScale instanceof ContinuousScale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
 
@@ -230,6 +234,14 @@ export class ScatterSeries extends CartesianSeries {
         const nodeData: ScatterNodeDatum[] = [];
         for (let i = 0; i < xData.length; i++) {
             const xDatum = xData[i];
+            const yDatum = yData[i];
+            const noDatum =
+                yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            if (noDatum) {
+                continue;
+            }
+
             const x = xScale.convert(xDatum) + xOffset;
             if (!xAxis.inRange(x)) {
                 continue;
@@ -358,9 +370,9 @@ export class ScatterSeries extends CartesianSeries {
             content = `<b>${labelName}</b>: ${datum[labelKey]}<br>` + content;
         }
 
-        const defaults = {
+        const defaults: TooltipRendererResult = {
             title,
-            titleBackgroundColor: color,
+            backgroundColor: color,
             content
         };
 

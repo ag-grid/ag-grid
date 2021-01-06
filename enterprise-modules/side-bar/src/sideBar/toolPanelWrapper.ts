@@ -4,17 +4,15 @@ import {
     UserComponentFactory,
     IToolPanelComp,
     IToolPanelParams,
-    Promise,
+    AgPromise,
     ToolPanelDef,
-    PostConstruct,
-    GridOptionsWrapper
+    PostConstruct
 } from "@ag-grid-community/core";
 import { HorizontalResizeComp } from "./horizontalResizeComp";
 
 export class ToolPanelWrapper extends Component {
 
     @Autowired("userComponentFactory") private userComponentFactory: UserComponentFactory;
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
     private static TEMPLATE = /* html */
         `<div class="ag-tool-panel-wrapper"/>`;
@@ -39,7 +37,7 @@ export class ToolPanelWrapper extends Component {
             columnApi: this.gridOptionsWrapper.getColumnApi()
         };
 
-        const componentPromise: Promise<IToolPanelComp> = this.userComponentFactory.newToolPanelComponent(
+        const componentPromise: AgPromise<IToolPanelComp> | null = this.userComponentFactory.newToolPanelComponent(
             toolPanelDef, params);
 
         if (componentPromise == null) {

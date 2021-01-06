@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, DragAndDropService, PostConstruct, Events, _ } from "@ag-grid-community/core";
+import { _, Autowired, DragAndDropService, Events, PostConstruct } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 var PivotDropZonePanel = /** @class */ (function (_super) {
     __extends(PivotDropZonePanel, _super);
@@ -41,10 +41,15 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
         this.refresh();
+    };
+    PivotDropZonePanel.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'pivotColumnsList';
+        return res;
     };
     PivotDropZonePanel.prototype.refresh = function () {
         this.checkVisibility();
@@ -104,9 +109,6 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnController')
     ], PivotDropZonePanel.prototype, "columnController", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], PivotDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('loggerFactory')
     ], PivotDropZonePanel.prototype, "loggerFactory", void 0);

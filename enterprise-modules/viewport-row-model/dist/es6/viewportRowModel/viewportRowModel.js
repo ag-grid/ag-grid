@@ -236,9 +236,6 @@ var ViewportRowModel = /** @class */ (function (_super) {
         return false;
     };
     __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ViewportRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         Autowired('gridApi')
     ], ViewportRowModel.prototype, "gridApi", void 0);
     __decorate([

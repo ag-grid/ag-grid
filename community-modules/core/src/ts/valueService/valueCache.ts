@@ -1,12 +1,9 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { BeanStub } from "../context/beanStub";
 
 @Bean('valueCache')
 export class ValueCache extends BeanStub {
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private cacheVersion = 0;
     private active: boolean;

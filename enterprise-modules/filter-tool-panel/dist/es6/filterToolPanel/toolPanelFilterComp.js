@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Column, Component, Events, RefSelector, PostConstruct, _, KeyCode } from "@ag-grid-community/core";
+import { _, Autowired, Column, Component, Events, KeyCode, PostConstruct, RefSelector } from "@ag-grid-community/core";
 var ToolPanelFilterComp = /** @class */ (function (_super) {
     __extends(ToolPanelFilterComp, _super);
     function ToolPanelFilterComp(hideHeader) {
@@ -36,7 +36,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     ToolPanelFilterComp.prototype.setColumn = function (column) {
         var _this = this;
         this.column = column;
-        this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false);
+        this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', function (e) {
             if (e.keyCode === KeyCode.ENTER) {
@@ -60,7 +60,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         return this.column;
     };
     ToolPanelFilterComp.prototype.getColumnFilterName = function () {
-        return this.columnController.getDisplayNameForColumn(this.column, 'header', false);
+        return this.columnController.getDisplayNameForColumn(this.column, 'filterToolPanel', false);
     };
     ToolPanelFilterComp.prototype.addCssClassToTitleBar = function (cssClass) {
         _.addCssClass(this.eFilterToolPanelHeader, cssClass);
@@ -155,9 +155,6 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     __decorate([
         Autowired('filterManager')
     ], ToolPanelFilterComp.prototype, "filterManager", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ToolPanelFilterComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('columnController')
     ], ToolPanelFilterComp.prototype, "columnController", void 0);

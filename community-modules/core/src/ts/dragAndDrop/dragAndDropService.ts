@@ -3,7 +3,6 @@ import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { DragService, DragListenerParams } from "./dragService";
 import { Environment } from "../environment";
 import { RowDropZoneParams } from "../gridPanel/rowDragFeature";
@@ -123,7 +122,6 @@ export interface DraggingEvent {
 @Bean('dragAndDropService')
 export class DragAndDropService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('environment') private environment: Environment;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -258,7 +256,25 @@ export class DragAndDropService extends BeanStub {
         this.positionGhost(mouseEvent);
 
         // check if mouseEvent intersects with any of the drop targets
-        const dropTarget = find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
+        const validDropTargets = this.dropTargets.filter(dropTarget => this.isMouseOnDropTarget(mouseEvent, dropTarget));
+        const len = validDropTargets.length;
+
+        if (len === 0) { return; }
+
+        const dropTarget: DropTarget = len === 1
+            ? validDropTargets[0]
+            // the current mouse position could intersect with more than 1 element
+            // if they are nested. In that case we need to get the most specific
+            // container, which is the one that does not contain any other targets.
+            : validDropTargets.reduce((prevTarget, currTarget) => {
+                if (!prevTarget) { return currTarget; }
+                const prevContainer = prevTarget.getContainer();
+                const currContainer = currTarget.getContainer();
+
+                if (prevContainer.contains(currContainer)) { return currTarget; }
+
+                return prevTarget;
+        });
 
         if (dropTarget !== this.lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);

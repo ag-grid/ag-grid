@@ -3,9 +3,8 @@ import {
     Component,
     UserComponentFactory,
     GridOptions,
-    GridOptionsWrapper,
     PostConstruct,
-    Promise,
+    AgPromise,
     RefSelector,
     _,
     IStatusPanelComp
@@ -21,7 +20,6 @@ export class StatusBar extends Component {
             <div ref="eStatusBarRight" class="ag-status-bar-right"></div>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('statusBarService') private statusBarService: StatusBarService;
@@ -54,7 +52,7 @@ export class StatusBar extends Component {
     }
 
     private createAndRenderComponents(statusBarComponents: any[], ePanelComponent: HTMLElement) {
-        const componentDetails: { key: string; promise: Promise<IStatusPanelComp> }[] = [];
+        const componentDetails: { key: string; promise: AgPromise<IStatusPanelComp>; }[] = [];
 
         statusBarComponents.forEach(componentConfig => {
             const params = {
@@ -72,7 +70,7 @@ export class StatusBar extends Component {
             });
         });
 
-        Promise.all(componentDetails.map((details) => details.promise))
+        AgPromise.all(componentDetails.map((details) => details.promise))
             .then(() => {
                 componentDetails.forEach(componentDetail => {
                     componentDetail.promise.then((component: IStatusPanelComp) => {

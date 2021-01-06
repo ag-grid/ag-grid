@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ExpressionService } from "./expressionService";
 import { ColumnController } from "../columnController/columnController";
 import { NewValueParams, ValueGetterParams } from "../entities/colDef";
@@ -15,7 +14,6 @@ import { doOnce } from "../utils/function";
 @Bean('valueService')
 export class ValueService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueCache') private valueCache: ValueCache;
@@ -81,7 +79,35 @@ export class ValueService extends BeanStub {
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }
 
+        if (result == null) {
+            const openedGroup = this.getOpenedGroup(rowNode, column);
+            if (openedGroup != null) {
+                return openedGroup;
+            }
+        }
+
         return result;
+    }
+
+    private getOpenedGroup(rowNode: RowNode, column: Column): any {
+
+        if (!this.gridOptionsWrapper.isShowOpenedGroup()) { return; }
+
+        const colDef = column.getColDef();
+        if (!colDef.showRowGroup) { return; }
+
+        const showRowGroup = column.getColDef().showRowGroup;
+
+        let pointer = rowNode.parent;
+
+        while (pointer != null) {
+            if (pointer.rowGroupColumn && (showRowGroup === true || showRowGroup === pointer.rowGroupColumn.getId())) {
+                return pointer.key;
+            }
+            pointer = pointer.parent;
+        }
+
+        return undefined;
     }
 
     public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, eventSource?: string): void {

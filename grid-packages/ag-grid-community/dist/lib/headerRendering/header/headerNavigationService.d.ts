@@ -13,7 +13,6 @@ export declare enum HeaderNavigationDirection {
     RIGHT = 3
 }
 export declare class HeaderNavigationService extends BeanStub {
-    private gridOptionsWrapper;
     private focusController;
     private headerPositionUtils;
     private animationFrameService;

@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Component, Events, ModuleNames, ModuleRegistry, PostConstruct, RefSelector } from "@ag-grid-community/core";
+import { _, Component, Events, ModuleNames, ModuleRegistry, PostConstruct, RefSelector } from "@ag-grid-community/core";
 import { SideBarButtonsComp } from "./sideBarButtonsComp";
 import { ToolPanelWrapper } from "./toolPanelWrapper";
 var SideBarComp = /** @class */ (function (_super) {
@@ -175,9 +175,6 @@ var SideBarComp = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     SideBarComp.TEMPLATE = "<div class=\"ag-side-bar ag-unselectable\">\n            <ag-side-bar-buttons ref=\"sideBarButtons\"></ag-side-bar-buttons>\n        </div>";
-    __decorate([
-        Autowired("gridOptionsWrapper")
-    ], SideBarComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         RefSelector('sideBarButtons')
     ], SideBarComp.prototype, "sideBarButtonsComp", void 0);

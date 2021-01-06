@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../../entities/columnGroup";
@@ -8,6 +8,7 @@ export declare abstract class AbstractHeaderWrapper extends ManagedFocusComponen
     protected abstract readonly column: Column | ColumnGroup;
     protected abstract readonly pinned: string;
     protected abstract onFocusIn(e: FocusEvent): void;
+    protected shouldStopEventPropagation(e: KeyboardEvent): boolean;
     getColumn(): Column | ColumnGroup;
     getPinned(): string;
 }

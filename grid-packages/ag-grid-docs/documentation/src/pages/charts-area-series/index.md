@@ -1,0 +1,117 @@
+---
+title: "Area Series"
+---
+
+Area series are line series with the area under the line filled, placing more emphasis on the magnitude of the change. Area series additionally support stacking to show the total value and the way individual values relate to the whole.
+
+## Single Area Series
+
+To create a simple area chart we need to use series type `'area'`. We also have to provide the `xKey` and at least one `yKey`.
+
+[[note]]
+| Since `'area'` series can be stacked on top of each other, they can have multiple `yKeys`, with one key for each stack level.
+
+A minimal `'area'` series config would therefore look like this:
+
+```js
+series: [{
+    type: 'area',
+    xKey: 'year',
+    yKeys: ['ie']
+}]
+```
+
+In the snippet above we are using `'ie'` as the only `yKey`, to show market share of just this internet browser. Using this simple series config produces the following chart:
+
+<chart-example title='Single Area Series' name='single-area' type='generated'></chart-example>
+
+[[note]]
+| Even though area series support markers, they are turned off by default for this series type, as this stylisation is the most common.
+
+To enable area markers, all we need to do is add this to the series config:
+
+```js
+marker: {
+    enabled: true
+}
+```
+
+When markers are enabled, the tooltips will be shown on hover. In this case the values shown are percentage values, however there is no `%` suffix because the series don't know about the nature of the data (as it is designed to work with all kinds of data). So for the purposes of this example we additionally provide a `tooltipRenderer` to add the `%` suffix. After this change, the tooltips will change like so:
+
+<div style="display: flex; justify-content: center;">
+    <image-caption src="default-area-tooltip.png" alt="Default Area Tooltip" width="200px" constrained="true">Before</image-caption>
+    <div style="margin: auto 0;">--></div>
+    <image-caption src="custom-area-tooltip.png" alt="Custom Area Tooltip" width="300px" constrained="true">After</image-caption>
+</div>
+
+The final result can be seen in the example below.
+
+<chart-example title='Single Area Series with Markers' name='single-area-markers' type='generated'></chart-example>
+
+## Multiple Area Series
+
+It is possible to use more than one `'area'` series in a single chart. For example, if we want one series to show the magnitude of change in market share of Internet Explorer and the other series the change in market share of Chrome, we could use the following `series` config:
+
+```js
+series: [
+    {
+        type: 'area',
+        xKey: 'year',
+        yKeys: ['ie']
+    },
+    {
+        type: 'area',
+        xKey: 'year',
+        yKeys: ['chrome']
+    }
+]
+```
+
+[[note]]
+| Since multiple area series can overlap, it is a good idea to make the fill translucent, for example using `fillOpacity: 0.7`.
+
+Note that in the example below we also:
+
+- Use `yNames` to control the text that the legend displays
+- Enable `marker`s
+- Define custom `fills` and `strokes`
+- Make the fill translucent using the `fillOpacity` config
+
+<chart-example title='Multiple Area Series' name='multi-area' type='generated'></chart-example>
+
+## Stacked Area Series
+
+If we want the areas to be stacked on top of each other, instead of creating a new `'area'` series per stack level, we simply have to use multiple `yKeys`. For example, to have a stacked area chart that shows changes in market share for the most popular internet browsers we could use a config like this:
+
+```js
+series: [{
+    type: 'area',
+    xKey: 'year',
+    yKeys: ['ie', 'firefox', 'safari', 'chrome']
+}]
+```
+
+This produces the following chart:
+
+<chart-example title='Stacked Area Series' name='stacked-area' type='generated'></chart-example>
+
+## Normalized Area Series
+
+Going back to our [stacked area series](#example-stacked-area-series) example, if we wanted to normalize the totals so that for any given year stack levels always added up to a certain value, for example 100%, we could add the following to our series config:
+
+```js
+normalizedTo: 100
+```
+
+[[note]]
+| It's possible to use any non-zero value to normalize to.
+
+<chart-example title='Normalized Stacked Area Series' name='normalized-area' type='generated'></chart-example>
+
+## API Reference
+
+<api-documentation source='charts-api/api.json' section='area' config='{ "showSnippets": true }'></api-documentation>
+
+## Next Up
+
+Continue to the next section to learn about [scatter and bubble series](../charts-scatter-series/).

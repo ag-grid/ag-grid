@@ -8,7 +8,7 @@ import {
     GetRowNodeIdFunc,
     GridOptions,
     IsRowMaster,
-    IsRowSelectable,
+    IsRowSelectable, IsServerSideGroupOpenByDefaultParams,
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
@@ -648,7 +648,15 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowClassRules;
     }
 
-    public getCreateChartContainerFunc(): (params: ChartRef) => void | undefined {
+    public getServerSideStoreType(): string | undefined {
+        return this.gridOptions.serverSideStoreType;
+    }
+
+    public getServerSideStoreParamsFunc(): ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined {
+        return this.gridOptions.getServerSideStoreParams;
+    }
+
+    public getCreateChartContainerFunc(): ((params: ChartRef) => void) | undefined {
         return this.gridOptions.createChartContainer;
     }
 
@@ -934,6 +942,14 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressAggAtRootLevel);
     }
 
+    public isSuppressAggFilteredOnly() {
+        return isTrue(this.gridOptions.suppressAggFilteredOnly);
+    }
+
+    public isShowOpenedGroup() {
+        return isTrue(this.gridOptions.showOpenedGroup);
+    }
+
     public isEnableRangeSelection(): boolean {
         return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
     }
@@ -1045,6 +1061,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressParentsInRowNodes);
     }
 
+    public isSuppressClipboardApi() {
+        return isTrue(this.gridOptions.suppressClipboardApi);
+    }
+
     public isFunctionsReadOnly() {
         return isTrue(this.gridOptions.functionsReadOnly);
     }
@@ -1095,6 +1115,10 @@ export class GridOptionsWrapper {
 
     public getIsServerSideGroupFunc(): ((dataItem: any) => boolean) | undefined {
         return this.gridOptions.isServerSideGroup;
+    }
+
+    public getIsServerSideGroupOpenByDefaultFunc(): ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined {
+        return this.gridOptions.isServerSideGroupOpenByDefault;
     }
 
     public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {
@@ -1197,6 +1221,10 @@ export class GridOptionsWrapper {
 
     public isServerSideSortingAlwaysResets() {
         return isTrue(this.gridOptions.serverSideSortingAlwaysResets);
+    }
+
+    public isServerSideFilteringAlwaysResets() {
+        return isTrue(this.gridOptions.serverSideFilteringAlwaysResets);
     }
 
     public getPostSortFunc(): ((rowNodes: RowNode[]) => void) | undefined {

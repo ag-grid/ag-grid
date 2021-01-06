@@ -1,7 +1,5 @@
 import { AgAbstractField } from "./agAbstractField";
-import { Autowired } from "../context/context";
 import { Component } from "./component";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RefSelector } from "./componentAnnotations";
 import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
@@ -17,8 +15,6 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
     protected isDestroyingPicker: boolean = false;
     private skipClick: boolean = false;
     private pickerComponent: Component;
-
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
     @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;

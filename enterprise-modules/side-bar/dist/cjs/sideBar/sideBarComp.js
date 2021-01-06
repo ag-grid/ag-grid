@@ -178,9 +178,6 @@ var SideBarComp = /** @class */ (function (_super) {
     };
     SideBarComp.TEMPLATE = "<div class=\"ag-side-bar ag-unselectable\">\n            <ag-side-bar-buttons ref=\"sideBarButtons\"></ag-side-bar-buttons>\n        </div>";
     __decorate([
-        core_1.Autowired("gridOptionsWrapper")
-    ], SideBarComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         core_1.RefSelector('sideBarButtons')
     ], SideBarComp.prototype, "sideBarButtonsComp", void 0);
     __decorate([

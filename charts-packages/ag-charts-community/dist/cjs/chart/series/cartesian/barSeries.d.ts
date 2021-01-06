@@ -9,6 +9,7 @@ import { TooltipRendererResult } from "../../chart";
 import { TypedEvent } from "../../../util/observable";
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: BarSeries;
     readonly datum: any;
     readonly xKey: string;
@@ -94,22 +95,35 @@ export declare class BarSeries extends CartesianSeries {
     xKey: string;
     protected _xName: string;
     xName: string;
+    private cumYKeyCount;
+    private flatYKeys;
+    hideInLegend: string[];
     /**
-     * With a single value in the `yKeys` array we get the regular bar series.
-     * With multiple values, we get the stacked bar series.
-     * If the {@link grouped} set to `true`, we get the grouped bar series.
-     * @param values
+     * yKeys: [['coffee']] - regular bars, each category has a single bar that shows a value for coffee
+     * yKeys: [['coffee'], ['tea'], ['milk']] - each category has three bars that show values for coffee, tea and milk
+     * yKeys: [['coffee', 'tea', 'milk']] - each category has a single bar with three stacks that show values for coffee, tea and milk
+     * yKeys: [['coffee', 'tea', 'milk'], ['paper', 'ink']] - each category has 2 stacked bars,
+     *     first showing values for coffee, tea and milk and second values for paper and ink
      */
-    protected _yKeys: string[];
-    yKeys: string[];
-    protected _yNames: string[];
-    yNames: string[];
-    setColors(fills: string[], strokes: string[]): void;
+    protected _yKeys: string[][];
+    yKeys: string[][];
+    protected _grouped: boolean;
     grouped: boolean;
     /**
-     * The value to normalize the stacks to, when {@link grouped} is `false`.
+     * A map of `yKeys` to their names (used in legends and tooltips).
+     * For example, if a key is `product_name` it's name can be a more presentable `Product Name`.
+     */
+    protected _yNames: {
+        [key in string]: string;
+    };
+    yNames: {
+        [key in string]: string;
+    };
+    setColors(fills: string[], strokes: string[]): void;
+    /**
+     * The value to normalize the bars to.
      * Should be a finite positive value or `undefined`.
-     * Defaults to `undefined` - stacks are not normalized.
+     * Defaults to `undefined` - bars are not normalized.
      */
     private _normalizedTo?;
     normalizedTo: number | undefined;
@@ -120,8 +134,15 @@ export declare class BarSeries extends CartesianSeries {
     highlightStyle: HighlightStyle;
     onHighlightChange(): void;
     processData(): boolean;
+    findLargestMinMax(groups: {
+        min: number;
+        max: number;
+    }[][]): {
+        min: number;
+        max: number;
+    };
     getDomain(direction: ChartAxisDirection): any[];
-    fireNodeClickEvent(datum: BarNodeDatum): void;
+    fireNodeClickEvent(event: MouseEvent, datum: BarNodeDatum): void;
     private generateNodeData;
     update(): void;
     private updateRectSelection;

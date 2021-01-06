@@ -18,6 +18,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Autowired, Bean, BeanStub, NumberSequence, PostConstruct, RowNode, _ } from "@ag-grid-community/core";
+import { BatchRemover } from "./batchRemover";
 var GroupStage = /** @class */ (function (_super) {
     __extends(GroupStage, _super);
     function GroupStage() {
@@ -69,6 +70,12 @@ var GroupStage = /** @class */ (function (_super) {
     GroupStage.prototype.handleTransaction = function (details) {
         var _this = this;
         details.transactions.forEach(function (tran) {
+            // we don't allow batch remover for tree data as tree data uses Filler Nodes,
+            // and creating/deleting filler nodes needs to be done alongside the node deleting
+            // and moving. if we want to Batch Remover working with tree data then would need
+            // to consider how Filler Nodes would be impacted (it's possible that it can be easily
+            // modified to work, however for now I don't have the brain energy to work it all out).
+            var batchRemover = _this.usingTreeData ? undefined : new BatchRemover();
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
@@ -76,10 +83,15 @@ var GroupStage = /** @class */ (function (_super) {
                 _this.insertNodes(tran.add, details, false);
             }
             if (_.existsAndNotEmpty(tran.remove)) {
-                _this.removeNodes(tran.remove, details);
+                _this.removeNodes(tran.remove, details, batchRemover);
             }
             if (_.existsAndNotEmpty(tran.update)) {
-                _this.moveNodesInWrongPath(tran.update, details);
+                _this.moveNodesInWrongPath(tran.update, details, batchRemover);
+            }
+            // must flush here, and not allow another transaction to be applied,
+            // as each transaction must finish leaving the data in a consistent state.
+            if (batchRemover) {
+                batchRemover.flush();
             }
         });
         if (details.rowNodeOrder) {
@@ -127,7 +139,7 @@ var GroupStage = /** @class */ (function (_super) {
         res.reverse();
         return res;
     };
-    GroupStage.prototype.moveNodesInWrongPath = function (childNodes, details) {
+    GroupStage.prototype.moveNodesInWrongPath = function (childNodes, details, batchRemover) {
         var _this = this;
         childNodes.forEach(function (childNode) {
             // we add node, even if parent has not changed, as the data could have
@@ -140,12 +152,12 @@ var GroupStage = /** @class */ (function (_super) {
             var newPath = _this.getGroupInfo(childNode, details).map(infoToKeyMapper);
             var nodeInCorrectPath = _.areEqual(oldPath, newPath);
             if (!nodeInCorrectPath) {
-                _this.moveNode(childNode, details);
+                _this.moveNode(childNode, details, batchRemover);
             }
         });
     };
-    GroupStage.prototype.moveNode = function (childNode, details) {
-        this.removeNodesInStages([childNode], details);
+    GroupStage.prototype.moveNode = function (childNode, details, batchRemover) {
+        this.removeNodesInStages([childNode], details, batchRemover);
         this.insertOneNode(childNode, details, true);
         // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
         // refreshed into the gui.
@@ -160,16 +172,18 @@ var GroupStage = /** @class */ (function (_super) {
             details.changedPath.addParentNode(newParent);
         }
     };
-    GroupStage.prototype.removeNodes = function (leafRowNodes, details) {
-        this.removeNodesInStages(leafRowNodes, details);
+    GroupStage.prototype.removeNodes = function (leafRowNodes, details, batchRemover) {
+        this.removeNodesInStages(leafRowNodes, details, batchRemover);
         if (details.changedPath.isActive()) {
             leafRowNodes.forEach(function (rowNode) { return details.changedPath.addParentNode(rowNode.parent); });
         }
     };
-    GroupStage.prototype.removeNodesInStages = function (leafRowNodes, details) {
-        this.removeNodesFromParents(leafRowNodes, details);
-        this.postRemoveCreateFillerNodes(leafRowNodes, details);
-        this.postRemoveRemoveEmptyGroups(leafRowNodes, details);
+    GroupStage.prototype.removeNodesInStages = function (leafRowNodes, details, batchRemover) {
+        this.removeNodesFromParents(leafRowNodes, details, batchRemover);
+        if (this.usingTreeData) {
+            this.postRemoveCreateFillerNodes(leafRowNodes, details);
+            this.postRemoveRemoveEmptyGroups(leafRowNodes, details);
+        }
     };
     GroupStage.prototype.forEachParentGroup = function (details, child, callback) {
         var pointer = child.parent;
@@ -178,18 +192,21 @@ var GroupStage = /** @class */ (function (_super) {
             pointer = pointer.parent;
         }
     };
-    GroupStage.prototype.removeNodesFromParents = function (nodesToRemove, details) {
+    GroupStage.prototype.removeNodesFromParents = function (nodesToRemove, details, provided) {
         var _this = this;
-        var batchRemover = new BatchRemover();
+        var batchRemoverIsLocal = provided == null;
+        var batchRemoverToUse = provided ? provided : new BatchRemover();
         nodesToRemove.forEach(function (nodeToRemove) {
-            _this.removeFromParent(nodeToRemove, batchRemover);
+            _this.removeFromParent(nodeToRemove, batchRemoverToUse);
             // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
             // the ClientSideNodeManager is responsible for the Root Node.
             _this.forEachParentGroup(details, nodeToRemove, function (parentNode) {
-                batchRemover.removeFromAllLeafChildren(parentNode, nodeToRemove);
+                batchRemoverToUse.removeFromAllLeafChildren(parentNode, nodeToRemove);
             });
         });
-        batchRemover.flush();
+        if (batchRemoverIsLocal) {
+            batchRemoverToUse.flush();
+        }
     };
     GroupStage.prototype.postRemoveCreateFillerNodes = function (nodesToRemove, details) {
         var _this = this;
@@ -487,9 +504,6 @@ var GroupStage = /** @class */ (function (_super) {
         return res;
     };
     __decorate([
-        Autowired('gridOptionsWrapper')
-    ], GroupStage.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         Autowired('columnController')
     ], GroupStage.prototype, "columnController", void 0);
     __decorate([
@@ -507,51 +521,3 @@ var GroupStage = /** @class */ (function (_super) {
     return GroupStage;
 }(BeanStub));
 export { GroupStage };
-// doing _.removeFromArray() multiple times on a large list can be a bottleneck.
-// when doing large deletes (eg removing 1,000 rows) then we would be calling _.removeFromArray()
-// a thousands of times, in particular RootNode.allGroupChildren could be a large list, and
-// 1,000 removes is time consuming as each one requires traversing the full list.
-// to get around this, we do all the removes in a batch. this class manages the batch.
-//
-// This problem was brought to light by a client (AG-2879), with dataset of 20,000
-// in 10,000 groups (2 items per group), then deleting all rows with transaction,
-// it took about 20 seconds to delete. with the BathRemoved, the reduced to less than 1 second.
-var BatchRemover = /** @class */ (function () {
-    function BatchRemover() {
-        this.allSets = {};
-        this.allParents = [];
-    }
-    BatchRemover.prototype.removeFromChildrenAfterGroup = function (parent, child) {
-        var set = this.getSet(parent);
-        set.removeFromChildrenAfterGroup[child.id] = true;
-    };
-    BatchRemover.prototype.removeFromAllLeafChildren = function (parent, child) {
-        var set = this.getSet(parent);
-        set.removeFromAllLeafChildren[child.id] = true;
-    };
-    BatchRemover.prototype.getSet = function (parent) {
-        if (!this.allSets[parent.id]) {
-            this.allSets[parent.id] = {
-                removeFromAllLeafChildren: {},
-                removeFromChildrenAfterGroup: {}
-            };
-            this.allParents.push(parent);
-        }
-        return this.allSets[parent.id];
-    };
-    BatchRemover.prototype.flush = function () {
-        var _this = this;
-        this.allParents.forEach(function (parent) {
-            var nodeDetails = _this.allSets[parent.id];
-            parent.childrenAfterGroup = parent.childrenAfterGroup.filter(function (child) {
-                var res = !nodeDetails.removeFromChildrenAfterGroup[child.id];
-                return res;
-            });
-            parent.allLeafChildren = parent.allLeafChildren.filter(function (child) { return !nodeDetails.removeFromAllLeafChildren[child.id]; });
-            parent.updateHasChildren();
-        });
-        this.allSets = {};
-        this.allParents.length = 0;
-    };
-    return BatchRemover;
-}());

@@ -33,6 +33,7 @@ export declare class ManagedFocusComponent extends Component {
     private addTabGuards;
     private forEachTabGuard;
     private addKeyDownListeners;
+    protected shouldStopEventPropagation(e: KeyboardEvent): boolean;
     private onFocus;
     private activateTabGuards;
     private deactivateTabGuards;

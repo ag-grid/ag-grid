@@ -85,7 +85,7 @@ export function isUserSuppressingHeaderKeyboardEvent(
     column: Column | ColumnGroup
 ): boolean {
     const colDef = column.getDefinition();
-    const colDefFunc = colDef.suppressHeaderKeyboardEvent;
+    const colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
 
     if (!exists(colDefFunc)) { return false; }
 

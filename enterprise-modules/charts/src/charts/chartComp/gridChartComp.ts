@@ -9,12 +9,12 @@ import {
     ChartModel,
     ChartOptions,
     ChartType,
-    ColumnApi, ColumnController,
+    ColumnApi,
+    ColumnController,
     Component,
     Environment,
     Events,
     GridApi,
-    GridOptionsWrapper,
     IAggFunc,
     PopupService,
     PostConstruct,
@@ -34,6 +34,8 @@ import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
 import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
 import { ChartTranslator } from "./chartTranslator";
+import { ChartCrossFilter } from "./chartCrossFilter";
+import { CrossFilteringContext } from "../chartService";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -46,6 +48,8 @@ export interface GridChartParams {
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
+    crossFiltering: boolean;
+    crossFilteringContext: CrossFilteringContext;
 }
 
 export class GridChartComp extends Component {
@@ -65,10 +69,10 @@ export class GridChartComp extends Component {
     @RefSelector('eEmpty') private readonly eEmpty: HTMLElement;
     @RefSelector('eTitleEditContainer') private readonly eTitleEditContainer: HTMLDivElement;
 
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
     @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('chartCrossFilter') private readonly crossFilter: ChartCrossFilter;
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
@@ -111,6 +115,7 @@ export class GridChartComp extends Component {
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
             unlinkChart: this.params.unlinkChart,
+            crossFiltering: this.params.crossFiltering,
         };
 
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
@@ -134,7 +139,11 @@ export class GridChartComp extends Component {
 
         this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
-        this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+
+        if (this.chartMenu) {
+            // chart menu may not exist, i.e. cross filtering
+            this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        }
 
         this.refresh();
         this.raiseChartCreatedEvent();
@@ -175,6 +184,12 @@ export class GridChartComp extends Component {
         const chartType = this.model.getChartType();
         const isGrouping = this.model.isGrouping();
 
+        const crossFilterCallback = (event: any, reset: boolean) => {
+            const ctx = this.params.crossFilteringContext;
+            ctx.lastSelectedChartId = reset ? '' : this.model.getChartId();
+            this.crossFilter.filter(event, reset);
+        }
+
         const chartProxyParams: ChartProxyParams = {
             chartId: this.model.getChartId(),
             chartType,
@@ -187,6 +202,8 @@ export class GridChartComp extends Component {
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             allowPaletteOverride: !this.params.chartThemeName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
+            crossFiltering: this.params.crossFiltering,
+            crossFilterCallback,
             parentElement: this.eChart,
             width,
             height,
@@ -200,7 +217,13 @@ export class GridChartComp extends Component {
         // set local state used to detect when chart changes
         this.chartType = chartType;
         this.chartThemeName = this.model.getChartThemeName();
+
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
+        if (!this.chartProxy) {
+            console.warn('ag-Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            return;
+        }
+
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
 
         _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
@@ -222,6 +245,8 @@ export class GridChartComp extends Component {
 
     private static createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
         switch (chartProxyParams.chartType) {
+            case ChartType.Column:
+            case ChartType.Bar:
             case ChartType.GroupedColumn:
             case ChartType.StackedColumn:
             case ChartType.NormalizedColumn:
@@ -300,8 +325,10 @@ export class GridChartComp extends Component {
     }
 
     private addMenu(): void {
-        this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
-        this.eChartContainer.appendChild(this.chartMenu.getGui());
+        if (!this.params.crossFiltering) {
+            this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
+            this.eChartContainer.appendChild(this.chartMenu.getGui());
+        }
     }
 
     private addTitleEditComp(): void {
@@ -355,7 +382,9 @@ export class GridChartComp extends Component {
                 name: selectedDimension.displayName,
                 chartDataType: this.getChartDataType(selectedDimension.colId)
             },
-            fields
+            fields,
+            chartId: this.model.getChartId(),
+            getCrossFilteringContext: () => this.params.crossFilteringContext,
         };
 
         chartProxy.update(chartUpdateParams);

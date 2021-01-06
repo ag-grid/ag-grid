@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, ISetFilterParams, ProvidedFilter, IAfterGuiAttachedParams, Promise } from '@ag-grid-community/core';
+import { IDoesFilterPassParams, ISetFilterParams, ProvidedFilter, IAfterGuiAttachedParams, AgPromise } from '@ag-grid-community/core';
 import { SetValueModel } from './setValueModel';
 import { SetFilterModel } from './setFilterModel';
 export declare class SetFilter extends ProvidedFilter {
@@ -19,8 +19,9 @@ export declare class SetFilter extends ProvidedFilter {
     private handleKeySpace;
     private handleKeyEnter;
     protected getCssIdentifier(): string;
-    protected resetUiToDefaults(): Promise<void>;
-    protected setModelIntoUi(model: SetFilterModel): Promise<void>;
+    private setModelAndRefresh;
+    protected resetUiToDefaults(): AgPromise<void>;
+    protected setModelIntoUi(model: SetFilterModel): AgPromise<void>;
     getModelFromUi(): SetFilterModel | null;
     getModel(): SetFilterModel;
     getFilterType(): string;

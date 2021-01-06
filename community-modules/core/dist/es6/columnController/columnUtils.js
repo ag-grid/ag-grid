@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,7 +26,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { ColumnGroup } from "../entities/columnGroup";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Bean } from "../context/context";
-import { Autowired } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { getMaxSafeInteger } from "../utils/number";
 import { attrToNumber } from "../utils/generic";
@@ -115,9 +114,6 @@ var ColumnUtils = /** @class */ (function (_super) {
             callback(child);
         });
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ColumnUtils.prototype, "gridOptionsWrapper", void 0);
     ColumnUtils = __decorate([
         Bean('columnUtils')
     ], ColumnUtils);

@@ -1,5 +1,4 @@
 import { GridOptions } from "./entities/gridOptions";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnApi } from "./columnController/columnApi";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
@@ -29,7 +28,6 @@ import { findIndex, last } from "./utils/array";
 export class GridCore extends ManagedFocusComponent {
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
@@ -104,11 +102,11 @@ export class GridCore extends ManagedFocusComponent {
 
         const eGui = this.getGui();
 
-        this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
+        this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, () => {
             addCssClass(eGui, 'ag-keyboard-focus');
         });
 
-        this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
+        this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, () => {
             removeCssClass(eGui, 'ag-keyboard-focus');
         });
 

@@ -184,9 +184,6 @@ var Sector = /** @class */ (function (_super) {
         var outerRadius = Math.max(this.innerRadius, this.outerRadius);
         var centerOffset = this.centerOffset;
         var fullPie = this.fullPie;
-        var radiiGap = outerRadius - innerRadius;
-        // const tipOffset = radiiGap / 3;
-        // const showTip = radiiGap < outerRadius / 2;
         var centerX = this.centerX;
         var centerY = this.centerY;
         path.clear();

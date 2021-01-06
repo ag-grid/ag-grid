@@ -55,6 +55,7 @@ var GridChartComp = /** @class */ (function (_super) {
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
             unlinkChart: this.params.unlinkChart,
+            crossFiltering: this.params.crossFiltering,
         };
         var isRtl = this.gridOptionsWrapper.isEnableRtl();
         core_1._.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
@@ -70,7 +71,10 @@ var GridChartComp = /** @class */ (function (_super) {
         this.addTitleEditComp();
         this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
-        this.addManagedListener(this.chartMenu, chartMenu_1.ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        if (this.chartMenu) {
+            // chart menu may not exist, i.e. cross filtering
+            this.addManagedListener(this.chartMenu, chartMenu_1.ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        }
         this.refresh();
         this.raiseChartCreatedEvent();
     };
@@ -87,6 +91,7 @@ var GridChartComp = /** @class */ (function (_super) {
         }
     };
     GridChartComp.prototype.createChart = function () {
+        var _this = this;
         var width, height;
         // if chart already exists, destroy it and remove it from DOM
         if (this.chartProxy) {
@@ -102,6 +107,11 @@ var GridChartComp = /** @class */ (function (_super) {
         var customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
         var chartType = this.model.getChartType();
         var isGrouping = this.model.isGrouping();
+        var crossFilterCallback = function (event, reset) {
+            var ctx = _this.params.crossFilteringContext;
+            ctx.lastSelectedChartId = reset ? '' : _this.model.getChartId();
+            _this.crossFilter.filter(event, reset);
+        };
         var chartProxyParams = {
             chartId: this.model.getChartId(),
             chartType: chartType,
@@ -114,6 +124,8 @@ var GridChartComp = /** @class */ (function (_super) {
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             allowPaletteOverride: !this.params.chartThemeName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
+            crossFiltering: this.params.crossFiltering,
+            crossFilterCallback: crossFilterCallback,
             parentElement: this.eChart,
             width: width,
             height: height,
@@ -127,6 +139,10 @@ var GridChartComp = /** @class */ (function (_super) {
         this.chartType = chartType;
         this.chartThemeName = this.model.getChartThemeName();
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
+        if (!this.chartProxy) {
+            console.warn('ag-Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            return;
+        }
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
         core_1._.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
         this.chartController.setChartProxy(this.chartProxy);
@@ -142,6 +158,8 @@ var GridChartComp = /** @class */ (function (_super) {
     };
     GridChartComp.createChartProxy = function (chartProxyParams) {
         switch (chartProxyParams.chartType) {
+            case core_1.ChartType.Column:
+            case core_1.ChartType.Bar:
             case core_1.ChartType.GroupedColumn:
             case core_1.ChartType.StackedColumn:
             case core_1.ChartType.NormalizedColumn:
@@ -209,8 +227,10 @@ var GridChartComp = /** @class */ (function (_super) {
         return { width: width, height: height };
     };
     GridChartComp.prototype.addMenu = function () {
-        this.chartMenu = this.createBean(new chartMenu_1.ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
-        this.eChartContainer.appendChild(this.chartMenu.getGui());
+        if (!this.params.crossFiltering) {
+            this.chartMenu = this.createBean(new chartMenu_1.ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
+            this.eChartContainer.appendChild(this.chartMenu.getGui());
+        }
     };
     GridChartComp.prototype.addTitleEditComp = function () {
         this.titleEdit = this.createBean(new titleEdit_1.TitleEdit(this.chartMenu));
@@ -235,6 +255,7 @@ var GridChartComp = /** @class */ (function (_super) {
         return this.chartController.getChartModel();
     };
     GridChartComp.prototype.updateChart = function () {
+        var _this = this;
         var _a = this, model = _a.model, chartProxy = _a.chartProxy;
         var selectedCols = model.getSelectedValueColState();
         var fields = selectedCols.map(function (c) { return ({ colId: c.colId, displayName: c.displayName }); });
@@ -252,7 +273,9 @@ var GridChartComp = /** @class */ (function (_super) {
                 name: selectedDimension.displayName,
                 chartDataType: this.getChartDataType(selectedDimension.colId)
             },
-            fields: fields
+            fields: fields,
+            chartId: this.model.getChartId(),
+            getCrossFilteringContext: function () { return _this.params.crossFilteringContext; },
         };
         chartProxy.update(chartUpdateParams);
         this.titleEdit.setChartProxy(this.chartProxy);
@@ -368,9 +391,6 @@ var GridChartComp = /** @class */ (function (_super) {
         core_1.RefSelector('eTitleEditContainer')
     ], GridChartComp.prototype, "eTitleEditContainer", void 0);
     __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], GridChartComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         core_1.Autowired('environment')
     ], GridChartComp.prototype, "environment", void 0);
     __decorate([
@@ -379,6 +399,9 @@ var GridChartComp = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], GridChartComp.prototype, "columnController", void 0);
+    __decorate([
+        core_1.Autowired('chartCrossFilter')
+    ], GridChartComp.prototype, "crossFilter", void 0);
     __decorate([
         core_1.Autowired('gridApi')
     ], GridChartComp.prototype, "gridApi", void 0);

@@ -4,7 +4,7 @@ export declare class ChartMenu extends Component {
     private readonly eChartContainer;
     private readonly eMenuPanelContainer;
     private readonly chartController;
-    private gridOptionsWrapper;
+    private chartTranslator;
     static EVENT_DOWNLOAD_CHART: string;
     private buttons;
     private tabs;

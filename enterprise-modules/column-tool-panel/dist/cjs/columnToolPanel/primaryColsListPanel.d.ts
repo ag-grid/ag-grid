@@ -20,6 +20,8 @@ export declare class PrimaryColsListPanel extends Component {
     init(params: ToolPanelColumnCompParams, allowDragging: boolean, eventType: ColumnEventType): void;
     private createComponentFromItem;
     onColumnsChanged(): void;
+    private getExpandedStates;
+    private setExpandedStates;
     private buildTreeFromWhatGridIsDisplaying;
     setColumnLayout(colDefs: AbstractColDef[]): void;
     private buildTreeFromProvidedColumnDefs;

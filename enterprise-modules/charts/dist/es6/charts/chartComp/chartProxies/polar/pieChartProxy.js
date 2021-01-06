@@ -32,6 +32,14 @@ var PieChartProxy = /** @class */ (function (_super) {
         _this.recreateChart();
         return _this;
     }
+    PieChartProxy.prototype.createChart = function (options) {
+        options = options || this.chartOptions;
+        var seriesDefaults = options.seriesDefaults;
+        var agChartOptions = options;
+        agChartOptions.autoSize = true;
+        agChartOptions.series = [__assign(__assign({}, seriesDefaults), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, type: 'pie' })];
+        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
+    };
     PieChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
         var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
         var seriesDefaults = theme.getConfig('pie.series.pie');
@@ -41,8 +49,8 @@ var PieChartProxy = /** @class */ (function (_super) {
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -54,16 +62,9 @@ var PieChartProxy = /** @class */ (function (_super) {
                 width: seriesDefaults.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            listeners: seriesDefaults.listeners
         };
         return options;
-    };
-    PieChartProxy.prototype.createChart = function (options) {
-        options = options || this.chartOptions;
-        var seriesDefaults = options.seriesDefaults;
-        var agChartOptions = options;
-        agChartOptions.autoSize = true;
-        agChartOptions.series = [__assign(__assign({}, seriesDefaults), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, type: 'pie' })];
-        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     PieChartProxy.prototype.update = function (params) {
         var chart = this.chart;
@@ -71,27 +72,87 @@ var PieChartProxy = /** @class */ (function (_super) {
             chart.removeAllSeries();
             return;
         }
-        var existingSeries = chart.series[0];
-        var existingSeriesId = existingSeries && existingSeries.angleKey;
-        var pieSeriesField = params.fields[0];
+        var field = params.fields[0];
+        var angleField = field;
+        if (this.crossFiltering) {
+            // add additional filtered out field
+            var fields_1 = params.fields;
+            fields_1.forEach(function (field) {
+                var crossFilteringField = __assign({}, field);
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields_1.push(crossFilteringField);
+            });
+            var filteredOutField_1 = fields_1[1];
+            params.data.forEach(function (d) {
+                d[field.colId + '-total'] = d[field.colId] + d[filteredOutField_1.colId];
+                d[field.colId] = d[field.colId] / d[field.colId + '-total'];
+                d[filteredOutField_1.colId] = 1;
+            });
+            var opaqueSeries = chart.series[1];
+            var radiusField = filteredOutField_1;
+            opaqueSeries = this.updateSeries(chart, opaqueSeries, angleField, radiusField, params, undefined);
+            radiusField = angleField;
+            var filteredSeries = chart.series[0];
+            this.updateSeries(chart, filteredSeries, angleField, radiusField, params, opaqueSeries);
+        }
+        else {
+            var series = chart.series[0];
+            this.updateSeries(chart, series, angleField, angleField, params, undefined);
+        }
+    };
+    PieChartProxy.prototype.updateSeries = function (chart, series, angleField, field, params, opaqueSeries) {
+        var _this = this;
+        var existingSeriesId = series && series.angleKey;
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
         var seriesDefaults = this.chartOptions.seriesDefaults;
-        var pieSeries = existingSeries;
+        var pieSeries = series;
         var calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
-        if (existingSeriesId !== pieSeriesField.colId) {
-            chart.removeSeries(existingSeries);
-            pieSeries = AgChart.createComponent(__assign(__assign({}, seriesDefaults), { type: 'pie', angleKey: pieSeriesField.colId, title: __assign(__assign({}, seriesDefaults.title), { text: seriesDefaults.title.text || params.fields[0].displayName }), fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer }), 'pie.series');
+        if (existingSeriesId !== field.colId) {
+            chart.removeSeries(series);
+            pieSeries = AgChart.createComponent(__assign(__assign({}, seriesDefaults), { type: 'pie', angleKey: this.crossFiltering ? angleField.colId + '-total' : angleField.colId, radiusKey: this.crossFiltering ? field.colId : undefined, title: __assign(__assign({}, seriesDefaults.title), { text: seriesDefaults.title.text || params.fields[0].displayName }), fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltip: {
+                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                } }), 'pie.series');
         }
-        pieSeries.angleName = pieSeriesField.displayName;
+        pieSeries.angleName = field.displayName;
         pieSeries.labelKey = params.category.id;
         pieSeries.labelName = params.category.name;
         pieSeries.data = params.data;
-        pieSeries.fills = fills;
-        pieSeries.strokes = strokes;
-        if (calloutColors) {
-            pieSeries.callout.colors = strokes;
+        if (this.crossFiltering) {
+            pieSeries.radiusMin = 0;
+            pieSeries.radiusMax = 1;
+            var isOpaqueSeries = !opaqueSeries;
+            if (isOpaqueSeries) {
+                pieSeries.fills = fills.map(function (fill) { return _this.hexToRGBA(fill, '0.3'); });
+                pieSeries.strokes = strokes.map(function (stroke) { return _this.hexToRGBA(stroke, '0.3'); });
+                pieSeries.showInLegend = false;
+            }
+            else {
+                chart.legend.addEventListener('click', function (event) {
+                    if (opaqueSeries) {
+                        opaqueSeries.toggleSeriesItem(event.itemId, event.enabled);
+                    }
+                });
+                pieSeries.fills = fills;
+                pieSeries.strokes = strokes;
+                if (calloutColors) {
+                    pieSeries.callout.colors = strokes;
+                }
+            }
+            chart.tooltip.delay = 500;
+            // disable series highlighting by default
+            pieSeries.highlightStyle.fill = undefined;
+            pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
+        }
+        else {
+            pieSeries.fills = fills;
+            pieSeries.strokes = strokes;
+            if (calloutColors) {
+                pieSeries.callout.colors = strokes;
+            }
         }
         chart.addSeries(pieSeries);
+        return pieSeries;
     };
     PieChartProxy.prototype.getDefaultOptions = function () {
         var strokes = this.getPredefinedPalette().strokes;

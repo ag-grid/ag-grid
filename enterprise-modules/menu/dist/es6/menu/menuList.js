@@ -22,13 +22,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-import { Autowired, ManagedFocusComponent, _, KeyCode, } from "@ag-grid-community/core";
+import { ManagedFocusComponent, _, KeyCode, } from "@ag-grid-community/core";
 import { MenuItemComponent } from "./menuItemComponent";
 var MenuList = /** @class */ (function (_super) {
     __extends(MenuList, _super);
@@ -194,9 +188,6 @@ var MenuList = /** @class */ (function (_super) {
         this.clearActiveItem();
         _super.prototype.destroy.call(this);
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], MenuList.prototype, "gridOptionsWrapper", void 0);
     return MenuList;
 }(ManagedFocusComponent));
 export { MenuList };

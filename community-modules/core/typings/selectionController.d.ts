@@ -3,7 +3,6 @@ import { BeanStub } from "./context/beanStub";
 import { ChangedPath } from "./utils/changedPath";
 export declare class SelectionController extends BeanStub {
     private rowModel;
-    private gridOptionsWrapper;
     private columnApi;
     private gridApi;
     private selectedNodes;

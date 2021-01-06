@@ -101,20 +101,6 @@ export function findMinMax(values) {
     }
     return { min: min, max: max };
 }
-export function findLargestMinMax(totals) {
-    var min = 0;
-    var max = 0;
-    for (var _i = 0, totals_1 = totals; _i < totals_1.length; _i++) {
-        var total = totals_1[_i];
-        if (total.min < min) {
-            min = total.min;
-        }
-        if (total.max > max) {
-            max = total.max;
-        }
-    }
-    return { min: min, max: max };
-}
 export function copy(array, start, count) {
     if (start === void 0) { start = 0; }
     if (count === void 0) { count = array.length; }

@@ -4,7 +4,6 @@ import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
 import { BeanStub } from "../context/beanStub";
 export declare class ColumnUtils extends BeanStub {
-    private gridOptionsWrapper;
     calculateColInitialWidth(colDef: any): number;
     getOriginalPathForColumn(column: Column, originalBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroup[];
     depthFirstOriginalTreeSearch(parent: OriginalColumnGroup | null, tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild, parent: OriginalColumnGroup) => void): void;

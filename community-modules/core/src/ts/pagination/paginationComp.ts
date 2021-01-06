@@ -1,6 +1,5 @@
 import { Component } from "../widgets/component";
 import { Autowired, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { Events } from "../events";
 import { PaginationProxy } from "./paginationProxy";
@@ -15,7 +14,6 @@ import { KeyCode } from '../constants/keyCode';
 
 export class PaginationComp extends Component {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowModel') private rowModel: IRowModel;
 

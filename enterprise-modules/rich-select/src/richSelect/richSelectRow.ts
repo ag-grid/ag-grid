@@ -5,15 +5,13 @@ import {
     ICellRendererComp,
     ICellRendererParams,
     IRichCellEditorParams,
-    Promise,
-    UserComponentFactory,
-    GridOptionsWrapper
+    AgPromise,
+    UserComponentFactory
 } from "@ag-grid-community/core";
 
 export class RichSelectRow extends Component {
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private readonly params: IRichCellEditorParams;
 
@@ -53,7 +51,7 @@ export class RichSelectRow extends Component {
             api: this.gridOptionsWrapper.getApi()
         } as ICellRendererParams;
 
-        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer(this.params, params);
+        const cellRendererPromise: AgPromise<ICellRendererComp> | null = this.userComponentFactory.newCellRenderer(this.params, params);
         if (cellRendererPromise != null) {
             _.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
         } else {

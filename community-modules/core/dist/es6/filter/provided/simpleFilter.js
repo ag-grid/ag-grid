@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,7 +26,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { OptionsFactory } from './optionsFactory';
 import { ProvidedFilter } from './providedFilter';
-import { Promise } from '../../utils';
+import { AgPromise } from '../../utils';
 import { forEach, every, some, includes } from '../../utils/array';
 import { setDisplayed, setDisabled } from '../../utils/dom';
 export var ConditionPosition;
@@ -137,7 +137,7 @@ var SimpleFilter = /** @class */ (function (_super) {
             this.setConditionIntoUi(simpleModel, ConditionPosition.One);
             this.setConditionIntoUi(null, ConditionPosition.Two);
         }
-        return Promise.resolve();
+        return AgPromise.resolve();
     };
     SimpleFilter.prototype.doesFilterPass = function (params) {
         var _this = this;
@@ -183,7 +183,9 @@ var SimpleFilter = /** @class */ (function (_super) {
             else {
                 value = option.displayKey;
                 var customOption = _this.optionsFactory.getCustomOption(value);
-                text = customOption ? customOption.displayName : _this.translate(value);
+                text = customOption ?
+                    _this.gridOptionsWrapper.getLocaleTextFunc()(customOption.displayKey, customOption.displayName) :
+                    _this.translate(value);
             }
             var createOption = function () { return ({ value: value, text: text }); };
             _this.eType1.addOption(createOption());
@@ -220,10 +222,12 @@ var SimpleFilter = /** @class */ (function (_super) {
         return this.allowTwoConditions && this.isConditionUiComplete(ConditionPosition.One);
     };
     SimpleFilter.prototype.resetUiToDefaults = function (silent) {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        var filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         var uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
         var defaultOption = this.optionsFactory.getDefaultOption();
-        this.eType1.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
-        this.eType2.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
+        this.eType1.setValue(defaultOption, silent).setAriaLabel(filteringLabel);
+        this.eType2.setValue(defaultOption, silent).setAriaLabel(filteringLabel);
         this.eJoinOperatorAnd
             .setValue(this.isDefaultOperator('AND'), silent)
             .setName(uniqueGroupId)
@@ -232,7 +236,7 @@ var SimpleFilter = /** @class */ (function (_super) {
             .setValue(this.isDefaultOperator('OR'), silent)
             .setName(uniqueGroupId)
             .setLabel(this.translate('orCondition'));
-        return Promise.resolve();
+        return AgPromise.resolve();
     };
     SimpleFilter.prototype.isDefaultOperator = function (operator) {
         return operator === this.defaultJoinOperator;

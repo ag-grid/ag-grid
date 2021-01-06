@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,21 +38,22 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     DefaultDateComponent.prototype.init = function (params) {
-        var _this = this;
+        var inputElement = this.eDateInput.getInputElement();
         if (this.shouldUseBrowserDatePicker(params)) {
             if (isBrowserIE()) {
-                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
+                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11; reverting to text date picker');
             }
             else {
-                this.eDateInput.getInputElement().type = 'date';
+                inputElement.type = 'date';
             }
         }
-        this.listener = params.onDateChanged;
+        // ensures that the input element is focussed when a clear button is clicked
+        this.addManagedListener(inputElement, 'mousedown', function () { return inputElement.focus(); });
         this.addManagedListener(this.eDateInput.getInputElement(), 'input', function (e) {
             if (e.target !== document.activeElement) {
                 return;
             }
-            _this.listener();
+            params.onDateChanged();
         });
     };
     DefaultDateComponent.prototype.getDate = function () {
@@ -63,6 +64,11 @@ var DefaultDateComponent = /** @class */ (function (_super) {
     };
     DefaultDateComponent.prototype.setInputPlaceholder = function (placeholder) {
         this.eDateInput.setInputPlaceholder(placeholder);
+    };
+    DefaultDateComponent.prototype.afterGuiAttached = function (params) {
+        if (!params || !params.suppressFocus) {
+            this.eDateInput.getInputElement().focus();
+        }
     };
     DefaultDateComponent.prototype.shouldUseBrowserDatePicker = function (params) {
         if (params.filterParams && params.filterParams.browserDatePicker != null) {

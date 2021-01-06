@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Logger, LoggerFactory } from '../logger';
 import { ColumnUtils } from './columnUtils';
 import {AbstractColDef, ColDef, ColGroupDef} from "../entities/colDef";
@@ -18,7 +17,6 @@ import { removeFromArray } from '../utils/array';
 @Bean('columnFactory')
 export class ColumnFactory extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
 
     private logger: Logger;

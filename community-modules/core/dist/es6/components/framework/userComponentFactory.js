@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, Bean, Optional } from "../../context/context";
 import { RegisteredComponentSource } from "./userComponentRegistry";
-import { Promise } from "../../utils";
+import { AgPromise } from "../../utils";
 import { CellEditorComponent, CellRendererComponent, DateComponent, FilterComponent, FloatingFilterComponent, HeaderComponent, HeaderGroupComponent, InnerRendererComponent, LoadingOverlayComponent, NoRowsOverlayComponent, PinnedRowCellRendererComponent, StatusPanelComponent, ToolPanelComponent, TooltipComponent } from "./componentTypes";
 import { BeanStub } from "../../context/beanStub";
 import { cloneObject, mergeDeep } from '../../utils/object';
@@ -123,7 +123,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         this.addReactHacks(params);
         var deferredInit = this.initComponent(componentInstance, params);
         if (deferredInit == null) {
-            return Promise.resolve(componentInstance);
+            return AgPromise.resolve(componentInstance);
         }
         else {
             return deferredInit.then(function () { return componentInstance; });

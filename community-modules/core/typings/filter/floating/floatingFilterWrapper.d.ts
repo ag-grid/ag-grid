@@ -4,17 +4,16 @@ import { AbstractHeaderWrapper } from '../../headerRendering/header/abstractHead
 import { Beans } from '../../rendering/beans';
 export declare class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static TEMPLATE;
-    private columnHoverService;
-    private gridOptionsWrapper;
-    private userComponentFactory;
-    private gridApi;
-    private columnApi;
-    private filterManager;
-    private menuFactory;
-    protected beans: Beans;
-    private eFloatingFilterBody;
-    private eButtonWrapper;
-    private eButtonShowMainFilter;
+    private readonly columnHoverService;
+    private readonly userComponentFactory;
+    private readonly gridApi;
+    private readonly columnApi;
+    private readonly filterManager;
+    private readonly menuFactory;
+    protected readonly beans: Beans;
+    private readonly eFloatingFilterBody;
+    private readonly eButtonWrapper;
+    private readonly eButtonShowMainFilter;
     protected readonly column: Column;
     protected readonly pinned: string;
     private suppressFilterButton;

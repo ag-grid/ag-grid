@@ -2,7 +2,6 @@ import { ICellEditor, IRichCellEditorParams, PopupComponent } from "@ag-grid-com
 export declare class RichSelectCellEditor extends PopupComponent implements ICellEditor {
     private static TEMPLATE;
     private userComponentFactory;
-    private gridOptionsWrapper;
     private eValue;
     private eList;
     private params;

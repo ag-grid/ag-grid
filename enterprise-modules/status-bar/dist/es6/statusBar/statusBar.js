@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct, Promise, RefSelector } from '@ag-grid-community/core';
+import { Autowired, Component, PostConstruct, AgPromise, RefSelector } from '@ag-grid-community/core';
 var StatusBar = /** @class */ (function (_super) {
     __extends(StatusBar, _super);
     function StatusBar() {
@@ -55,7 +55,7 @@ var StatusBar = /** @class */ (function (_super) {
                 promise: promise
             });
         });
-        Promise.all(componentDetails.map(function (details) { return details.promise; }))
+        AgPromise.all(componentDetails.map(function (details) { return details.promise; }))
             .then(function () {
             componentDetails.forEach(function (componentDetail) {
                 componentDetail.promise.then(function (component) {
@@ -75,9 +75,6 @@ var StatusBar = /** @class */ (function (_super) {
         });
     };
     StatusBar.TEMPLATE = "<div class=\"ag-status-bar\">\n            <div ref=\"eStatusBarLeft\" class=\"ag-status-bar-left\"></div>\n            <div ref=\"eStatusBarCenter\" class=\"ag-status-bar-center\"></div>\n            <div ref=\"eStatusBarRight\" class=\"ag-status-bar-right\"></div>\n        </div>";
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], StatusBar.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('gridOptions')
     ], StatusBar.prototype, "gridOptions", void 0);

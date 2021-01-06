@@ -5,7 +5,6 @@ export interface ISelectCellEditorParams extends ICellEditorParams {
 }
 export declare class SelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached;
-    private gridOptionsWrapper;
     private valueFormatterService;
     private eSelect;
     private startedByEnter;

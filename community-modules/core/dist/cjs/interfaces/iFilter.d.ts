@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from '../entities/column';
@@ -7,7 +7,7 @@ import { IRowModel } from './iRowModel';
 import { RowNode } from '../entities/rowNode';
 import { IComponent } from './iComponent';
 import { GridApi } from '../gridApi';
-import { Promise } from '../utils';
+import { AgPromise } from '../utils';
 import { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 declare type IFilterType = string | {
     new (): IFilterComp;
@@ -36,7 +36,7 @@ export interface IFilter {
     /** Gets the filter state for storing */
     getModel(): any;
     /** Restores the filter state. */
-    setModel(model: any): void | Promise<void>;
+    setModel(model: any): void | AgPromise<void>;
     /** Gets called when new rows are inserted into the grid. If the filter needs to change it's state
      after rows are loaded, it can do it here. */
     onNewRowsLoaded?(): void;

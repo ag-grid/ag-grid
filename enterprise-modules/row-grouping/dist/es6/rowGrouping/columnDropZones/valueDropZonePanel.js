@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, DragAndDropService, PostConstruct, Events, _ } from "@ag-grid-community/core";
+import { _, Autowired, DragAndDropService, Events, PostConstruct } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 var ValuesDropZonePanel = /** @class */ (function (_super) {
     __extends(ValuesDropZonePanel, _super);
@@ -42,6 +42,11 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
             title: title
         });
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
+    };
+    ValuesDropZonePanel.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'valueColumnsList';
+        return res;
     };
     ValuesDropZonePanel.prototype.getIconName = function () {
         return this.isPotentialDndColumns() ? DragAndDropService.ICON_AGGREGATE : DragAndDropService.ICON_NOT_ALLOWED;
@@ -73,9 +78,6 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnController')
     ], ValuesDropZonePanel.prototype, "columnController", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ValuesDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('loggerFactory')
     ], ValuesDropZonePanel.prototype, "loggerFactory", void 0);

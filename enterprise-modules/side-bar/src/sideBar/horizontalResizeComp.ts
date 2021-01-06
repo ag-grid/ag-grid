@@ -1,7 +1,6 @@
 import {
     Autowired,
     Component,
-    GridOptionsWrapper,
     HorizontalResizeService,
     PostConstruct
 } from "@ag-grid-community/core";
@@ -9,7 +8,6 @@ import {
 export class HorizontalResizeComp extends Component {
 
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private startingWidth: number;
     private elementToResize: HTMLElement;

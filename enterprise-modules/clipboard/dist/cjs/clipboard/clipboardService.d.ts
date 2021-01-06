@@ -10,7 +10,6 @@ export declare class ClipboardService extends BeanStub implements IClipboardServ
     private rowRenderer;
     private columnController;
     private cellNavigationService;
-    private gridOptionsWrapper;
     private columnApi;
     private gridApi;
     cellPositionUtils: CellPositionUtils;
@@ -21,6 +20,7 @@ export declare class ClipboardService extends BeanStub implements IClipboardServ
     registerGridCore(gridCore: GridCore): void;
     private init;
     pasteFromClipboard(): void;
+    private processClipboardData;
     private doPasteOperation;
     private pasteIntoActiveRange;
     private pasteStartingFromFocusedCell;
@@ -29,7 +29,6 @@ export declare class ClipboardService extends BeanStub implements IClipboardServ
     private removeLastLineIfBlank;
     private fireRowChanged;
     private pasteMultipleValues;
-    private pasteSingleValue;
     private updateCellValue;
     copyToClipboard(includeHeaders?: boolean): void;
     private iterateActiveRanges;

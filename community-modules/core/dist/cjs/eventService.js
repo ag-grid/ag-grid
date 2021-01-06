@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,7 +16,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
-var context_2 = require("./context/context");
 var EventService = /** @class */ (function () {
     function EventService() {
         this.allSyncListeners = new Map();
@@ -37,9 +36,10 @@ var EventService = /** @class */ (function () {
     //
     // the times when this class is used outside of the context (eg RowNode has an instance of this
     // class) then it is not a bean, and this setBeans method is not called.
-    EventService.prototype.setBeans = function (loggerFactory, gridOptionsWrapper, globalEventListener) {
+    EventService.prototype.setBeans = function (loggerFactory, gridOptionsWrapper, globalEventListener, frameworkOverrides) {
         if (globalEventListener === void 0) { globalEventListener = null; }
         this.logger = loggerFactory.create('EventService');
+        this.frameworkOverrides = frameworkOverrides;
         if (globalEventListener) {
             var async = gridOptionsWrapper.useAsyncEvents();
             this.addGlobalListener(globalEventListener, async);
@@ -95,10 +95,10 @@ var EventService = /** @class */ (function () {
         var globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
         globalListeners.forEach(function (listener) {
             if (async) {
-                _this.dispatchAsync(function () { return listener(eventType, event); });
+                _this.dispatchAsync(function () { return _this.frameworkOverrides.dispatchEvent(eventType, function () { return listener(eventType, event); }); });
             }
             else {
-                listener(eventType, event);
+                _this.frameworkOverrides.dispatchEvent(eventType, function () { return listener(eventType, event); });
             }
         });
     };
@@ -134,9 +134,10 @@ var EventService = /** @class */ (function () {
         queueCopy.forEach(function (func) { return func(); });
     };
     __decorate([
-        __param(0, context_2.Qualifier('loggerFactory')),
-        __param(1, context_2.Qualifier('gridOptionsWrapper')),
-        __param(2, context_2.Qualifier('globalEventListener'))
+        __param(0, context_1.Qualifier('loggerFactory')),
+        __param(1, context_1.Qualifier('gridOptionsWrapper')),
+        __param(2, context_1.Qualifier('globalEventListener')),
+        __param(3, context_1.Qualifier('frameworkOverrides'))
     ], EventService.prototype, "setBeans", null);
     EventService = __decorate([
         context_1.Bean('eventService')

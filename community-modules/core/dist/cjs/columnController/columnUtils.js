@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var columnGroup_1 = require("../entities/columnGroup");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var context_1 = require("../context/context");
-var context_2 = require("../context/context");
 var beanStub_1 = require("../context/beanStub");
 var number_1 = require("../utils/number");
 var generic_1 = require("../utils/generic");
@@ -117,9 +116,6 @@ var ColumnUtils = /** @class */ (function (_super) {
             callback(child);
         });
     };
-    __decorate([
-        context_2.Autowired('gridOptionsWrapper')
-    ], ColumnUtils.prototype, "gridOptionsWrapper", void 0);
     ColumnUtils = __decorate([
         context_1.Bean('columnUtils')
     ], ColumnUtils);

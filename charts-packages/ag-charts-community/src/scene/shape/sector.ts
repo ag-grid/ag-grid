@@ -149,9 +149,6 @@ export class Sector extends Shape {
         const outerRadius = Math.max(this.innerRadius, this.outerRadius);
         const centerOffset = this.centerOffset;
         const fullPie = this.fullPie;
-        const radiiGap = outerRadius - innerRadius;
-        // const tipOffset = radiiGap / 3;
-        // const showTip = radiiGap < outerRadius / 2;
         let centerX = this.centerX;
         let centerY = this.centerY;
 

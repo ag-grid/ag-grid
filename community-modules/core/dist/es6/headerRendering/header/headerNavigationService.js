@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -170,9 +170,6 @@ var HeaderNavigationService = /** @class */ (function (_super) {
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], HeaderNavigationService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('focusController')
     ], HeaderNavigationService.prototype, "focusController", void 0);

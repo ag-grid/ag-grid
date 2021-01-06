@@ -4,18 +4,19 @@ import {
     Autowired,
     Column,
     ColumnController,
+    ColumnEventType,
+    Component,
     CssClassApplier,
     DragAndDropService,
     DragSource,
     DragSourceType,
     Events,
-    GridOptionsWrapper,
+    ITooltipParams,
+    KeyCode,
     OriginalColumnGroup,
     PostConstruct,
     RefSelector,
-    TouchListener,
-    KeyCode,
-    ColumnEventType, Component
+    TouchListener
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 import {ModelItemUtils} from "./modelItemUtils";
@@ -34,7 +35,6 @@ export class ToolPanelColumnGroupComp extends Component {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
@@ -98,8 +98,30 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addVisibilityListenersToAllChildren();
         this.refreshAriaExpanded();
         this.refreshAriaLabel();
+        this.setupTooltip();
 
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+    }
+
+    private setupTooltip(): void {
+
+        const colGroupDef = this.columnGroup.getColGroupDef();
+        if (!colGroupDef) { return; }
+
+        const refresh = () => {
+            const newTooltipText = colGroupDef.headerTooltip;
+            this.setTooltip(newTooltipText);
+        };
+
+        refresh();
+
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        const res = super.getTooltipParams();
+        res.location = 'columnToolPanelColumnGroup';
+        return res;
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
@@ -210,8 +232,10 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        _.setAriaLabel(this.focusWrapper, `${this.displayName} column group toggle visibility (${state})`);
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
+        const label = translate('ariaColumnGroupToggleVisibility', 'column group toggle visibility');
+        _.setAriaLabel(this.focusWrapper, `${this.displayName} ${label} (${state})`);
     }
 
     public onColumnStateChanged(): void {

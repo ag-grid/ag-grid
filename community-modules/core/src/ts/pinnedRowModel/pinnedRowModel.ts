@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events, PinnedRowDataChangedEvent } from "../events";
@@ -12,7 +11,6 @@ import { last } from "../utils/array";
 @Bean('pinnedRowModel')
 export class PinnedRowModel extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

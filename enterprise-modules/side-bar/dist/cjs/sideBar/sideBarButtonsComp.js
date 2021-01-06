@@ -116,9 +116,6 @@ var SideBarButtonComp = /** @class */ (function (_super) {
     };
     SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
     __decorate([
-        core_1.Autowired("gridOptionsWrapper")
-    ], SideBarButtonComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         core_1.RefSelector('eToggleButton')
     ], SideBarButtonComp.prototype, "eToggleButton", void 0);
     __decorate([

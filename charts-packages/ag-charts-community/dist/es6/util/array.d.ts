@@ -21,11 +21,4 @@ export declare function findMinMax(values: number[]): {
     min: number;
     max: number;
 };
-export declare function findLargestMinMax(totals: {
-    min: number;
-    max: number;
-}[]): {
-    min: number;
-    max: number;
-};
 export declare function copy(array: any[], start?: number, count?: number): any[];

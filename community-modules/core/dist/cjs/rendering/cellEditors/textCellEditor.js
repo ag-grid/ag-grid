@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -70,8 +70,9 @@ var TextCellEditor = /** @class */ (function (_super) {
         });
     };
     TextCellEditor.prototype.afterGuiAttached = function () {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var eInput = this.eInput;
-        eInput.setInputAriaLabel('Input Editor');
+        eInput.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
         if (!this.focusAfterAttached) {
             return;
         }

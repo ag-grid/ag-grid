@@ -10,8 +10,8 @@ var floatingFilter2;
 function createFloatingFilter(filterParams) {
     if (filterParams === void 0) { filterParams = {}; }
     userComponentFactory.newFloatingFilterComponent
-        .mockReturnValueOnce(core_1.Promise.resolve(floatingFilter1))
-        .mockReturnValueOnce(core_1.Promise.resolve(floatingFilter2));
+        .mockReturnValueOnce(core_1.AgPromise.resolve(floatingFilter1))
+        .mockReturnValueOnce(core_1.AgPromise.resolve(floatingFilter2));
     var params = {
         column: null,
         api: null,

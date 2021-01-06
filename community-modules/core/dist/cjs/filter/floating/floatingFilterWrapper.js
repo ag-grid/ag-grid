@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -231,7 +231,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
             var getModelAsStringExists = filterComponent && filterComponent.prototype && filterComponent.prototype.getModelAsString;
             if (getModelAsStringExists) {
                 var compInstance = this.userComponentFactory.createUserComponentFromConcreteClass(readOnlyFloatingFilter_1.ReadOnlyFloatingFilter, params);
-                promise = utils_1.Promise.resolve(compInstance);
+                promise = utils_1.AgPromise.resolve(compInstance);
             }
         }
         return promise;
@@ -267,9 +267,6 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('columnHoverService')
     ], FloatingFilterWrapper.prototype, "columnHoverService", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], FloatingFilterWrapper.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('userComponentFactory')
     ], FloatingFilterWrapper.prototype, "userComponentFactory", void 0);

@@ -22,6 +22,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var menuItemComponent_1 = require("./menuItemComponent");
 var menuList_1 = require("./menuList");
+var CSS_MENU = 'ag-menu';
+var CSS_CONTEXT_MENU_OPEN = ' ag-context-menu-open';
 var ContextMenuFactory = /** @class */ (function (_super) {
     __extends(ContextMenuFactory, _super);
     function ContextMenuFactory() {
@@ -78,7 +80,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         }
         return defaultMenuOptions;
     };
-    ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent) {
+    ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent, anchorToElement) {
         var _this = this;
         var menuItems = this.getMenuItems(node, column, value);
         if (menuItems === undefined || core_1._.missingOrEmpty(menuItems)) {
@@ -99,19 +101,23 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             nudgeY: 1
         };
         var positionCallback = this.popupService.positionPopupUnderMouseEvent.bind(this.popupService, positionParams);
-        var hidePopup = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: function () {
+                core_1._.removeCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
                 _this.destroyBean(menu);
             },
             click: mouseEvent,
             positionCallback: positionCallback,
-            // so when browser is scrolled down, the context menu stays on the grid
-            anchorToElement: this.gridPanel.getGui()
+            // so when browser is scrolled down, or grid is scrolled, context menu stays with cell
+            anchorToElement: anchorToElement
         });
-        menu.afterGuiAttached({ container: 'contextMenu', hidePopup: hidePopup });
+        if (addPopupRes) {
+            core_1._.addCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
+            menu.afterGuiAttached({ container: 'contextMenu', hidePopup: addPopupRes.hideFunc });
+        }
         // there should never be an active menu at this point, however it was found
         // that you could right click a second time just 1 or 2 pixels from the first
         // click, and another menu would pop up. so somehow the logic for closing the
@@ -126,14 +132,15 @@ var ContextMenuFactory = /** @class */ (function (_super) {
                 _this.activeMenu = null;
             }
         });
+        // hide the popup if something gets selected
+        if (addPopupRes) {
+            menu.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_MENU_ITEM_SELECTED, addPopupRes.hideFunc);
+        }
         return true;
     };
     __decorate([
         core_1.Autowired('popupService')
     ], ContextMenuFactory.prototype, "popupService", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Optional('rangeController')
     ], ContextMenuFactory.prototype, "rangeController", void 0);
@@ -149,19 +156,20 @@ exports.ContextMenuFactory = ContextMenuFactory;
 var ContextMenu = /** @class */ (function (_super) {
     __extends(ContextMenu, _super);
     function ContextMenu(menuItems) {
-        var _this = _super.call(this, '<div class="ag-menu" role="presentation"></div>') || this;
+        var _this = _super.call(this, /* html */ "<div class=\"" + CSS_MENU + "\" role=\"presentation\"></div>") || this;
         _this.menuList = null;
         _this.focusedCell = null;
         _this.menuItems = menuItems;
         return _this;
     }
     ContextMenu.prototype.addMenuItems = function () {
+        var _this = this;
         var menuList = this.createBean(new menuList_1.MenuList());
         var menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
         menuList.addMenuItems(menuItemsMapped);
         this.appendChild(menuList);
         this.menuList = menuList;
-        menuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.destroy.bind(this));
+        menuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_MENU_ITEM_SELECTED, function (e) { return _this.dispatchEvent(e); });
     };
     ContextMenu.prototype.afterGuiAttached = function (params) {
         if (params.hidePopup) {
@@ -171,8 +179,6 @@ var ContextMenu = /** @class */ (function (_super) {
         if (this.menuList) {
             this.focusController.focusInto(this.menuList.getGui());
         }
-        // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        this.addManagedListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     };
     ContextMenu.prototype.destroy = function () {
         var currentFocusedCell = this.focusController.getFocusedCell();

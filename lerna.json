@@ -5,7 +5,8 @@
     "charts-packages/*",
     "grid-packages/*",
     "examples-charts/*",
-    "examples-grid/*"
+    "examples-grid/*",
+    "grid-packages/ag-grid-docs/documentation/"
   ],
   "command": {
     "bootstrap": {
@@ -14,5 +15,5 @@
       ]
     }
   },
-  "version": "24.1.1"
+  "version": "25.0.0"
 }

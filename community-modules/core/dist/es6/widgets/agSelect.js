@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61,7 +61,7 @@ var AgSelect = /** @class */ (function (_super) {
                 _this.hideList();
             }
         });
-        this.hideList = this.popupService.addPopup({
+        var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: listGui,
             closeOnEsc: true,
@@ -75,6 +75,9 @@ var AgSelect = /** @class */ (function (_super) {
                 }
             }
         });
+        if (addPopupRes) {
+            this.hideList = addPopupRes.hideFunc;
+        }
         this.isPickerDisplayed = true;
         setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
         listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';

@@ -1,15 +1,13 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 export declare class PopupEditorWrapper extends PopupComponent implements ICellEditorComp {
     private cellEditor;
     private params;
     private getGuiCalledOnChild;
     static DOM_KEY_POPUP_EDITOR_WRAPPER: string;
-    gridOptionsWrapper: GridOptionsWrapper;
     constructor(cellEditor: ICellEditorComp);
     private onKeyDown;
     getGui(): HTMLElement;

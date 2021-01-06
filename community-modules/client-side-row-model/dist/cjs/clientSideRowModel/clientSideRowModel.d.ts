@@ -7,7 +7,6 @@ export interface RowNodeMap {
     [id: string]: RowNode;
 }
 export declare class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
-    private gridOptionsWrapper;
     private columnController;
     private filterManager;
     private $scope;

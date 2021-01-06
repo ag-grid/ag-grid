@@ -64,7 +64,9 @@ var MultiFilter = /** @class */ (function (_super) {
             }
         });
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
-        return core_1.Promise.all(filterPromises).then(function (filters) { _this.filters = filters; _this.refreshGui('columnMenu'); });
+        return core_1.AgPromise
+            .all(filterPromises)
+            .then(function (filters) { _this.filters = filters; _this.refreshGui('columnMenu'); });
     };
     MultiFilter.prototype.refreshGui = function (container) {
         var _this = this;
@@ -200,15 +202,10 @@ var MultiFilter = /** @class */ (function (_super) {
         return model;
     };
     MultiFilter.prototype.setModel = function (model) {
-        var setFilterModel = function (filter, model) {
-            return new core_1.Promise(function (resolve) {
-                var promise = filter.setModel(model);
-                if (promise == null) {
-                    resolve();
-                }
-                else {
-                    promise.then(function () { return resolve(); });
-                }
+        var setFilterModel = function (filter, filterModel) {
+            return new core_1.AgPromise(function (resolve) {
+                var promise = filter.setModel(filterModel);
+                promise ? promise.then(function () { return resolve(); }) : resolve();
             });
         };
         var promises = [];
@@ -221,7 +218,7 @@ var MultiFilter = /** @class */ (function (_super) {
                 promises.push(setFilterModel(filter, filterModel));
             });
         }
-        return core_1.Promise.all(promises).then(function () { });
+        return core_1.AgPromise.all(promises).then(function () { });
     };
     MultiFilter.prototype.getChildFilterInstance = function (index) {
         return this.filters[index];

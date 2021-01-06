@@ -69,7 +69,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         const bodyScrollListener = (event: any) => {
             // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal') {
+            if (event.direction === 'horizontal' && hidePopup) {
                 hidePopup();
             }
         };
@@ -92,14 +92,18 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             }
         };
 
-        hidePopup = this.popupService.addPopup({
+        const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,
             closedCallback: closedCallback
         });
 
-        filterWrapper.filterPromise.then(filter => {
+        if (addPopupRes) {
+            this.hidePopup = hidePopup = addPopupRes.hideFunc;
+        }
+
+        filterWrapper.filterPromise!.then(filter => {
             // need to make sure the filter is present before positioning, as only
             // after filter it is visible can we find out what the width of it is
             positionCallback(eMenu);
@@ -108,8 +112,6 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
             }
         });
-
-        this.hidePopup = hidePopup;
 
         column.setMenuVisible(true, 'contextMenu');
     }

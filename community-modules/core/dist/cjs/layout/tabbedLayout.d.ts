@@ -1,7 +1,7 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Promise } from '../utils';
+import { AgPromise } from '../utils';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 export declare class TabbedLayout extends ManagedFocusComponent {
@@ -34,7 +34,7 @@ export interface TabbedLayoutParams {
 export interface TabbedItem {
     title: Element;
     titleLabel: string;
-    bodyPromise: Promise<HTMLElement>;
+    bodyPromise: AgPromise<HTMLElement>;
     name: string;
     afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;
 }

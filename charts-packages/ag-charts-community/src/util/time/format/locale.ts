@@ -3,11 +3,7 @@ import year from "../year";
 import {
     sunday as timeSunday,
     monday as timeMonday,
-    tuesday as timeTuesday,
-    wednesday as timeWednesday,
     thursday as timeThursday,
-    friday as timeFriday,
-    saturday as timeSaturday
 } from "../week";
 import utcDay from "../utcDay";
 import utcYear from "../utcYear";

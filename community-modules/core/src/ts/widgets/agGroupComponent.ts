@@ -1,7 +1,6 @@
 import { Component } from './component';
 import { RefSelector } from './componentAnnotations';
-import { Autowired, PostConstruct } from '../context/context';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { PostConstruct } from '../context/context';
 import { AgCheckbox } from './agCheckbox';
 import { createIcon } from '../utils/icon';
 import { setDisplayed, removeCssClass, addCssClass, addOrRemoveCssClass } from '../utils/dom';
@@ -34,8 +33,6 @@ export class AgGroupComponent extends Component {
     private suppressEnabledCheckbox: boolean = true;
     private suppressOpenCloseIcons: boolean = false;
     private alignItems: Align;
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eTitleBar') private eTitleBar: HTMLElement;
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;

@@ -3,7 +3,6 @@ import {
     Autowired,
     Bean,
     ColumnController,
-    GridOptionsWrapper,
     RowNode,
     RowNodeTransaction,
     SortController,
@@ -16,7 +15,6 @@ import {SortOption, SortService} from "./sortService";
 @Bean('sortStage')
 export class SortStage extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('sortService') private sortService: SortService;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnController') private columnController: ColumnController;

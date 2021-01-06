@@ -84,9 +84,6 @@ var AggFuncService = /** @class */ (function (_super) {
     AggFuncService.AGG_COUNT = 'count';
     AggFuncService.AGG_AVG = 'avg';
     __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], AggFuncService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         core_1.PostConstruct
     ], AggFuncService.prototype, "init", null);
     AggFuncService = AggFuncService_1 = __decorate([

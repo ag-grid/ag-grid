@@ -485,7 +485,7 @@ var Legend = /** @class */ (function (_super) {
             markerLabel.markerFillOpacity = marker.fillOpacity;
             markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
-            markerLabel.color = _this.color;
+            markerLabel.color = _this.item.label.color;
         });
     };
     Legend.prototype.getDatumForPoint = function (x, y) {

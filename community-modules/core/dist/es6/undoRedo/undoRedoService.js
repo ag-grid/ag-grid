@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -79,7 +79,7 @@ var UndoRedoService = /** @class */ (function (_super) {
         // performed that change the order of the row / cols.
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.clearStacks);
@@ -243,9 +243,6 @@ var UndoRedoService = /** @class */ (function (_super) {
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], UndoRedoService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('focusController')
     ], UndoRedoService.prototype, "focusController", void 0);

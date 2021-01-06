@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -597,7 +597,10 @@ var RowRenderer = /** @class */ (function (_super) {
         // all in all indexes in the viewport
         var indexesToDraw = number_1.createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
         var checkRowToDraw = function (indexStr, rowComp) {
-            var index = Number(indexStr);
+            var index = rowComp.getRowNode().rowIndex;
+            if (index == null) {
+                return;
+            }
             if (index < _this.firstRenderedRow || index > _this.lastRenderedRow) {
                 if (_this.doNotUnVirtualiseRow(rowComp)) {
                     indexesToDraw.push(index);
@@ -1312,9 +1315,6 @@ var RowRenderer = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired("columnController")
     ], RowRenderer.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired("gridOptionsWrapper")
-    ], RowRenderer.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired("$scope")
     ], RowRenderer.prototype, "$scope", void 0);

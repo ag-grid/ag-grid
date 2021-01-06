@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -80,7 +80,7 @@ var RowNode = /** @class */ (function () {
         if (this.rowPinned === Constants.PINNED_TOP) {
             return 't-' + this.rowIndex;
         }
-        else if (this.rowPinned === Constants.PINNED_BOTTOM) {
+        if (this.rowPinned === Constants.PINNED_BOTTOM) {
             return 'b-' + this.rowIndex;
         }
         return this.rowIndex.toString();
@@ -462,7 +462,9 @@ var RowNode = /** @class */ (function () {
             var newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             var allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (newRowClicked && allowMultiSelect) {
-                return this.doRowRangeSelection();
+                var nodesChanged = this.doRowRangeSelection(params.newValue);
+                this.selectionController.setLastSelectedNode(this);
+                return nodesChanged;
             }
         }
         var updatedCount = 0;
@@ -508,16 +510,18 @@ var RowNode = /** @class */ (function () {
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
-    RowNode.prototype.doRowRangeSelection = function () {
+    RowNode.prototype.doRowRangeSelection = function (value) {
+        var _this = this;
+        if (value === void 0) { value = true; }
         var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         var lastSelectedNode = this.selectionController.getLastSelectedNode();
         var nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
         var updatedCount = 0;
         nodesToSelect.forEach(function (rowNode) {
-            if (rowNode.group && groupsSelectChildren) {
+            if (rowNode.group && groupsSelectChildren || (value === false && _this === rowNode)) {
                 return;
             }
-            var nodeWasSelected = rowNode.selectThisNode(true);
+            var nodeWasSelected = rowNode.selectThisNode(value);
             if (nodeWasSelected) {
                 updatedCount++;
             }
@@ -614,6 +618,18 @@ var RowNode = /** @class */ (function () {
     RowNode.prototype.isFullWidthCell = function () {
         var isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
+    };
+    RowNode.prototype.getRoute = function () {
+        if (this.key == null) {
+            return;
+        }
+        var res = [];
+        var pointer = this;
+        while (pointer.key != null) {
+            res.push(pointer.key);
+            pointer = pointer.parent;
+        }
+        return res.reverse();
     };
     RowNode.ID_PREFIX_ROW_GROUP = 'row-group-';
     RowNode.ID_PREFIX_TOP_PINNED = 't-';

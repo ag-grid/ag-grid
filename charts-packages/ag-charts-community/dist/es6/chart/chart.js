@@ -39,16 +39,146 @@ import { SizeMonitor } from "../util/sizeMonitor";
 import { Observable, reactive } from "../util/observable";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { createId } from "../util/id";
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: table;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-hidden {\n    top: -10000px !important;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
 export function toTooltipHtml(input, defaults) {
     if (typeof input === 'string') {
         return input;
     }
     defaults = defaults || {};
-    var _a = input.content, content = _a === void 0 ? defaults.content || '' : _a, _b = input.title, title = _b === void 0 ? defaults.title || undefined : _b, _c = input.titleColor, titleColor = _c === void 0 ? defaults.titleColor || 'white' : _c, _d = input.titleBackgroundColor, titleBackgroundColor = _d === void 0 ? defaults.titleBackgroundColor || '#888' : _d;
-    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n        style=\"color: " + titleColor + "; background-color: " + titleBackgroundColor + "\">" + title + "</div>" : '';
+    var _a = input.content, content = _a === void 0 ? defaults.content || '' : _a, _b = input.title, title = _b === void 0 ? defaults.title || undefined : _b, _c = input.color, color = _c === void 0 ? defaults.color || 'white' : _c, _d = input.backgroundColor, backgroundColor = _d === void 0 ? defaults.backgroundColor || '#888' : _d;
+    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n        style=\"color: " + color + "; background-color: " + backgroundColor + "\">" + title + "</div>" : '';
     return titleHtml + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + content + "</div>";
 }
+var ChartTooltip = /** @class */ (function (_super) {
+    __extends(ChartTooltip, _super);
+    function ChartTooltip(chart) {
+        var _this = _super.call(this) || this;
+        _this.element = document.createElement('div');
+        _this.enabled = true;
+        _this.class = Chart.defaultTooltipClass;
+        _this.delay = 0;
+        /**
+         * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
+         * Only has effect on series with markers.
+         */
+        _this.tracking = true;
+        _this.showTimeout = 0;
+        _this.chart = chart;
+        _this.class = '';
+        var tooltipRoot = document.body;
+        tooltipRoot.appendChild(_this.element);
+        // Detect when the chart becomes invisible and hide the tooltip as well.
+        if (window.IntersectionObserver) {
+            var target_1 = _this.chart.scene.canvas.element;
+            var observer = new IntersectionObserver(function (entries) {
+                for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
+                    var entry = entries_1[_i];
+                    if (entry.target === target_1 && entry.intersectionRatio === 0) {
+                        _this.toggle(false);
+                    }
+                }
+            }, { root: tooltipRoot });
+            observer.observe(target_1);
+            _this.observer = observer;
+        }
+        return _this;
+    }
+    ChartTooltip.prototype.isVisible = function () {
+        var element = this.element;
+        if (element.classList) { // if not IE11
+            return !element.classList.contains(Chart.defaultTooltipClass + '-hidden');
+        }
+        // IE11 part.
+        var classes = element.getAttribute('class');
+        if (classes) {
+            return classes.split(' ').indexOf(Chart.defaultTooltipClass + '-hidden') < 0;
+        }
+        return false;
+    };
+    ChartTooltip.prototype.updateClass = function (visible, constrained) {
+        var classList = [Chart.defaultTooltipClass, this.class];
+        if (visible !== true) {
+            classList.push(Chart.defaultTooltipClass + "-hidden");
+        }
+        if (constrained !== true) {
+            classList.push(Chart.defaultTooltipClass + "-arrow");
+        }
+        this.element.setAttribute('class', classList.join(' '));
+    };
+    /**
+     * Shows tooltip at the given event's coordinates.
+     * If the `html` parameter is missing, moves the existing tooltip to the new position.
+     */
+    ChartTooltip.prototype.show = function (meta, html, instantly) {
+        var _this = this;
+        if (instantly === void 0) { instantly = false; }
+        var el = this.element;
+        if (html !== undefined) {
+            el.innerHTML = html;
+        }
+        else if (!el.innerHTML) {
+            return;
+        }
+        var left = meta.pageX - el.clientWidth / 2;
+        var top = meta.pageY - el.clientHeight - 8;
+        if (this.chart.container) {
+            var tooltipRect = el.getBoundingClientRect();
+            var minLeft = 0;
+            var maxLeft = window.innerWidth - tooltipRect.width;
+            if (left < minLeft) {
+                left = minLeft;
+                this.updateClass(true, true);
+            }
+            else if (left > maxLeft) {
+                left = maxLeft;
+                this.updateClass(true, true);
+            }
+        }
+        el.style.left = left + "px";
+        el.style.top = top + "px";
+        if (this.delay > 0 && !instantly) {
+            this.toggle(false);
+            this.showTimeout = window.setTimeout(function () {
+                _this.toggle(true);
+            }, this.delay);
+            return;
+        }
+        this.toggle(true);
+    };
+    ChartTooltip.prototype.toggle = function (visible) {
+        if (!visible) {
+            window.clearTimeout(this.showTimeout);
+            if (this.chart.lastPick && !this.delay) {
+                this.chart.dehighlightDatum();
+                this.chart.lastPick = undefined;
+            }
+        }
+        this.updateClass(visible);
+    };
+    ChartTooltip.prototype.destroy = function () {
+        var parentNode = this.element.parentNode;
+        if (parentNode) {
+            parentNode.removeChild(this.element);
+        }
+        if (this.observer) {
+            this.observer.unobserve(this.chart.scene.canvas.element);
+        }
+    };
+    __decorate([
+        reactive()
+    ], ChartTooltip.prototype, "enabled", void 0);
+    __decorate([
+        reactive()
+    ], ChartTooltip.prototype, "class", void 0);
+    __decorate([
+        reactive()
+    ], ChartTooltip.prototype, "delay", void 0);
+    __decorate([
+        reactive()
+    ], ChartTooltip.prototype, "tracking", void 0);
+    return ChartTooltip;
+}(Observable));
+export { ChartTooltip };
 var Chart = /** @class */ (function (_super) {
     __extends(Chart, _super);
     function Chart(document) {
@@ -62,6 +192,11 @@ var Chart = /** @class */ (function (_super) {
         _this._container = undefined;
         _this._data = [];
         _this._autoSize = false;
+        _this._tooltipClass = Chart.defaultTooltipClass;
+        /**
+         * @deprecated Please use {@link tooltip.tracking} instead.
+         */
+        _this.tooltipTracking = true;
         _this.padding = new Padding(20);
         _this._axes = [];
         _this._series = [];
@@ -83,12 +218,6 @@ var Chart = /** @class */ (function (_super) {
         _this._onMouseMove = _this.onMouseMove.bind(_this);
         _this._onMouseOut = _this.onMouseOut.bind(_this);
         _this._onClick = _this.onClick.bind(_this);
-        _this._tooltipClass = Chart.defaultTooltipClass;
-        /**
-         * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
-         * Only has effect on series with markers.
-         */
-        _this.tooltipTracking = true;
         var root = new Group();
         var background = _this.background;
         background.fill = 'white';
@@ -103,9 +232,8 @@ var Chart = /** @class */ (function (_super) {
         var legend = _this.legend;
         legend.addEventListener('layoutChange', _this.onLayoutChange, _this);
         legend.addPropertyListener('position', _this.onLegendPositionChange, _this);
-        _this.tooltipElement = document.createElement('div');
-        _this.tooltipClass = '';
-        document.body.appendChild(_this.tooltipElement);
+        _this.tooltip = new ChartTooltip(_this);
+        _this.tooltip.addPropertyListener('class', function () { return _this.tooltip.toggle(); });
         if (Chart.tooltipDocuments.indexOf(document) < 0) {
             var styleElement = document.createElement('style');
             styleElement.innerHTML = defaultTooltipCss;
@@ -208,14 +336,24 @@ var Chart = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Chart.prototype, "tooltipClass", {
+        get: function () {
+            return this.tooltip.class;
+        },
+        /**
+         * @deprecated Please use {@link tooltip.class} instead.
+         */
+        set: function (value) {
+            this.tooltip.class = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Chart.prototype.download = function (fileName) {
         this.scene.download(fileName);
     };
     Chart.prototype.destroy = function () {
-        var tooltipParent = this.tooltipElement.parentNode;
-        if (tooltipParent) {
-            tooltipParent.removeChild(this.tooltipElement);
-        }
+        this.tooltip.destroy();
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
         this.cleanupDomListeners(this.scene.canvas.element);
@@ -670,24 +808,34 @@ var Chart = /** @class */ (function (_super) {
         }
     };
     Chart.prototype.onMouseMove = function (event) {
-        var _a = this, lastPick = _a.lastPick, tooltipTracking = _a.tooltipTracking;
-        var pick = this.pickSeriesNode(event.offsetX, event.offsetY);
+        if (this.tooltip.enabled) {
+            if (this.tooltip.delay > 0) {
+                this.tooltip.toggle(false);
+            }
+            this.handleTooltip(event);
+        }
+    };
+    Chart.prototype.handleTooltip = function (event) {
+        var _a = this, lastPick = _a.lastPick, tooltipTracking = _a.tooltip.tracking;
+        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var pick = this.pickSeriesNode(offsetX, offsetY);
         var nodeDatum;
         if (pick && pick.node instanceof Shape) {
             var node = pick.node;
             nodeDatum = node.datum;
             if (lastPick && lastPick.datum === nodeDatum) {
                 lastPick.node = node;
+                lastPick.event = event;
             }
             // Marker nodes will have the `point` info in their datums.
             // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
             if ((!node.datum.point || !tooltipTracking)) {
                 if (!lastPick // cursor moved from empty space to a node
                     || lastPick.node !== node) { // cursor moved from one node to another
-                    this.onSeriesDatumPick(event, node.datum, node);
+                    this.onSeriesDatumPick(event, node.datum, node, event);
                 }
-                else if (pick.series.tooltipEnabled) { // cursor moved within the same node
-                    this.showTooltip(event);
+                else if (pick.series.tooltip.enabled) { // cursor moved within the same node
+                    this.tooltip.show(event);
                 }
                 // A non-marker node (takes precedence over marker nodes) was highlighted.
                 // Or we are not in the tracking mode.
@@ -701,7 +849,7 @@ var Chart = /** @class */ (function (_super) {
         // and also gives the ability to show tooltips even when the series were configured
         // to not render markers.
         if (tooltipTracking) {
-            var closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+            var closestDatum = this.pickClosestSeriesNodeDatum(offsetX, offsetY);
             if (closestDatum && closestDatum.point) {
                 var _b = closestDatum.point, x = _b.x, y = _b.y;
                 var canvas = this.scene.canvas;
@@ -710,34 +858,44 @@ var Chart = /** @class */ (function (_super) {
                 this.onSeriesDatumPick({
                     pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
                     pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
-                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node : undefined);
+                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node : undefined, event);
             }
             else {
                 hideTooltip = true;
             }
         }
         if (lastPick && (hideTooltip || !tooltipTracking)) {
-            // cursor moved from a non-marker node to empty space
+            // Cursor moved from a non-marker node to empty space.
             this.dehighlightDatum();
-            this.hideTooltip();
+            this.tooltip.toggle(false);
             this.lastPick = undefined;
         }
     };
     Chart.prototype.onMouseDown = function (event) { };
     Chart.prototype.onMouseUp = function (event) { };
     Chart.prototype.onMouseOut = function (event) {
-        this.toggleTooltip(false);
+        this.tooltip.toggle(false);
     };
     Chart.prototype.onClick = function (event) {
-        this.checkSeriesNodeClick();
-        this.checkLegendClick(event);
+        if (this.checkSeriesNodeClick()) {
+            return;
+        }
+        if (this.checkLegendClick(event)) {
+            return;
+        }
+        this.fireEvent({
+            type: 'click',
+            event: event
+        });
     };
     Chart.prototype.checkSeriesNodeClick = function () {
         var lastPick = this.lastPick;
-        if (lastPick && lastPick.node) {
-            var datum = lastPick.datum;
-            datum.series.fireNodeClickEvent(datum);
+        if (lastPick && lastPick.event && lastPick.node) {
+            var event_1 = lastPick.event, datum = lastPick.datum;
+            datum.series.fireNodeClickEvent(event_1, datum);
+            return true;
         }
+        return false;
     };
     Chart.prototype.onSeriesNodeClick = function (event) {
         this.fireEvent(__assign(__assign({}, event), { type: 'seriesNodeClick' }));
@@ -750,24 +908,32 @@ var Chart = /** @class */ (function (_super) {
             if (series) {
                 series.toggleSeriesItem(itemId, !enabled);
                 if (enabled) {
-                    this.hideTooltip();
+                    this.tooltip.toggle(false);
                 }
+                this.legend.fireEvent({
+                    type: 'click',
+                    event: event,
+                    itemId: itemId,
+                    enabled: !enabled
+                });
+                return true;
             }
         }
+        return false;
     };
-    Chart.prototype.onSeriesDatumPick = function (meta, datum, node) {
+    Chart.prototype.onSeriesDatumPick = function (meta, datum, node, event) {
         if (this.lastPick) {
-            // this.lastPick.datum.series.dehighlightDatum();
             this.dehighlightDatum();
         }
         this.lastPick = {
             datum: datum,
-            node: node
+            node: node,
+            event: event
         };
         this.highlightDatum(datum);
         var html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
         if (html) {
-            this.showTooltip(meta, html);
+            this.tooltip.show(meta, html);
         }
     };
     Chart.prototype.highlightDatum = function (datum) {
@@ -779,73 +945,6 @@ var Chart = /** @class */ (function (_super) {
             this.highlightedDatum = undefined;
             this.series.forEach(function (s) { return s.onHighlightChange(); });
         }
-    };
-    Object.defineProperty(Chart.prototype, "tooltipClass", {
-        get: function () {
-            return this._tooltipClass;
-        },
-        set: function (value) {
-            if (this._tooltipClass !== value) {
-                this._tooltipClass = value;
-                this.toggleTooltip();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Chart.prototype.toggleTooltip = function (visible) {
-        if (!visible && this.lastPick) {
-            this.dehighlightDatum();
-            this.lastPick = undefined;
-        }
-        this.updateTooltipClass(visible);
-    };
-    Chart.prototype.updateTooltipClass = function (visible, constrained) {
-        var classList = [Chart.defaultTooltipClass, this.tooltipClass];
-        if (visible === true) {
-            classList.push(Chart.defaultTooltipClass + "-visible");
-        }
-        if (constrained !== true) {
-            classList.push(Chart.defaultTooltipClass + "-arrow");
-        }
-        this.tooltipElement.setAttribute('class', classList.join(' '));
-    };
-    /**
-     * Shows tooltip at the given event's coordinates.
-     * If the `html` parameter is missing, moves the existing tooltip to the new position.
-     */
-    Chart.prototype.showTooltip = function (meta, html) {
-        var el = this.tooltipElement;
-        var container = this.container;
-        if (html !== undefined) {
-            el.innerHTML = html;
-        }
-        else if (!el.innerHTML) {
-            return;
-        }
-        if (html) {
-            this.toggleTooltip(true);
-        }
-        var left = meta.pageX - el.clientWidth / 2;
-        var top = meta.pageY - el.clientHeight - 8;
-        if (container) {
-            var tooltipRect = el.getBoundingClientRect();
-            var minLeft = 0;
-            var maxLeft = window.innerWidth - tooltipRect.width;
-            if (left < minLeft) {
-                left = minLeft;
-                this.updateTooltipClass(true, true);
-            }
-            else if (left > maxLeft) {
-                left = maxLeft;
-                this.updateTooltipClass(true, true);
-            }
-        }
-        el.style.left = left + "px";
-        el.style.top = top + "px";
-    };
-    Chart.prototype.hideTooltip = function () {
-        this.toggleTooltip(false);
     };
     Chart.defaultTooltipClass = 'ag-chart-tooltip';
     Chart.tooltipDocuments = [];

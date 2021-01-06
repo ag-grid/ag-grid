@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -131,6 +131,9 @@ var BeanStub = /** @class */ (function () {
     __decorate([
         context_1.Autowired('eventService')
     ], BeanStub.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper')
+    ], BeanStub.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.PreDestroy
     ], BeanStub.prototype, "destroy", null);

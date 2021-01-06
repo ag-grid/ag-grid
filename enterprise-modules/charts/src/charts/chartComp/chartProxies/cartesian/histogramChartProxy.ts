@@ -26,8 +26,8 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
             shadow: this.getDefaultDropShadowOptions(),
             label: seriesDefaults.label as BarSeriesLabelOptions,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -38,7 +38,10 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners
         } as HistogramSeriesOptions;
 
         return options;
@@ -67,7 +70,10 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
             stroke: seriesDefaults.stroke.colors[0],
             strokeOpacity: seriesDefaults.stroke.opacity,
             strokeWidth: seriesDefaults.stroke.width,
-            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+            tooltip: {
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: (seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer) || undefined,
+            },
             type: 'histogram'
         }];
 

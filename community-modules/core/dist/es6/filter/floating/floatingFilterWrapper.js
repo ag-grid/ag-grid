@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,7 @@ import { SetLeftFeature } from '../../rendering/features/setLeftFeature';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { HoverFeature } from '../../headerRendering/hoverFeature';
 import { Events } from '../../events';
-import { Promise } from '../../utils';
+import { AgPromise } from '../../utils';
 import { ReadOnlyFloatingFilter } from './provided/readOnlyFloatingFilter';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
@@ -229,7 +229,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
             var getModelAsStringExists = filterComponent && filterComponent.prototype && filterComponent.prototype.getModelAsString;
             if (getModelAsStringExists) {
                 var compInstance = this.userComponentFactory.createUserComponentFromConcreteClass(ReadOnlyFloatingFilter, params);
-                promise = Promise.resolve(compInstance);
+                promise = AgPromise.resolve(compInstance);
             }
         }
         return promise;
@@ -265,9 +265,6 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnHoverService')
     ], FloatingFilterWrapper.prototype, "columnHoverService", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], FloatingFilterWrapper.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('userComponentFactory')
     ], FloatingFilterWrapper.prototype, "userComponentFactory", void 0);

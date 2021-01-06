@@ -106,6 +106,10 @@
     .ag-list-item {
         display: flex;
         align-items: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
         &.ag-active-item {
             @include ag-color-property(background-color, row-hover-color);
         }

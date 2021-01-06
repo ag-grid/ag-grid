@@ -64,7 +64,7 @@ var TabbedChartMenu = /** @class */ (function (_super) {
             tab: {
                 title: titleEl,
                 titleLabel: translatedTitle,
-                bodyPromise: core_1.Promise.resolve(eWrapperDiv),
+                bodyPromise: core_1.AgPromise.resolve(eWrapperDiv),
                 name: name
             }
         };

@@ -42,9 +42,10 @@ var RangeController = /** @class */ (function (_super) {
     };
     RangeController.prototype.init = function () {
         this.logger = this.loggerFactory.create('RangeController');
-        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
@@ -543,9 +544,6 @@ var RangeController = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('mouseEventService')
     ], RangeController.prototype, "mouseEventService", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], RangeController.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnApi')
     ], RangeController.prototype, "columnApi", void 0);

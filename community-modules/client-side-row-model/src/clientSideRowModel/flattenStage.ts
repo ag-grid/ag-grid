@@ -4,7 +4,6 @@ import {
     Bean,
     BeanStub,
     ColumnController,
-    GridOptionsWrapper,
     IRowNodeStage,
     RowNode,
     SelectionController,
@@ -14,7 +13,6 @@ import {
 @Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('columnController') private columnController: ColumnController;
 

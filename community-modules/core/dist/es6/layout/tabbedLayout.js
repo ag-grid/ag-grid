@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -148,9 +148,7 @@ var TabbedLayout = /** @class */ (function (_super) {
         eHeaderButton.addEventListener('click', this.showItemWrapper.bind(this, wrapper));
     };
     TabbedLayout.prototype.showItem = function (tabbedItem) {
-        var itemWrapper = find(this.items, function (wrapper) {
-            return wrapper.tabbedItem === tabbedItem;
-        });
+        var itemWrapper = find(this.items, function (wrapper) { return wrapper.tabbedItem === tabbedItem; });
         if (itemWrapper) {
             this.showItemWrapper(itemWrapper);
         }
@@ -167,17 +165,17 @@ var TabbedLayout = /** @class */ (function (_super) {
         clearElement(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(function (body) {
             _this.eBody.appendChild(body);
-            var onlyUnmanaged = !_this.focusController.isKeyboardFocus();
+            var onlyUnmanaged = !_this.focusController.isKeyboardMode();
             _this.focusController.focusInto(_this.eBody, false, onlyUnmanaged);
+            if (wrapper.tabbedItem.afterAttachedCallback) {
+                wrapper.tabbedItem.afterAttachedCallback(_this.afterAttachedParams);
+            }
         });
         if (this.activeItem) {
             removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
         }
         addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
         this.activeItem = wrapper;
-        if (wrapper.tabbedItem.afterAttachedCallback) {
-            wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);
-        }
     };
     __decorate([
         RefSelector('eHeader')

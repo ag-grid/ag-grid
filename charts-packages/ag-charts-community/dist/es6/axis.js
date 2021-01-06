@@ -6,6 +6,7 @@ import { Text } from "./scene/shape/text";
 import { Arc } from "./scene/shape/arc";
 import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
+import { createId } from "./util/id";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 var Tags;
 (function (Tags) {
@@ -113,6 +114,16 @@ export { AxisLabel };
  */
 var Axis = /** @class */ (function () {
     function Axis(scale) {
+        // debug (bbox)
+        // private bboxRect = (() => {
+        //     const rect = new Rect();
+        //     rect.fill = undefined;
+        //     rect.stroke = 'red';
+        //     rect.strokeWidth = 1;
+        //     rect.strokeOpacity = 0.2;
+        //     return rect;
+        // })();
+        this.id = createId(this);
         this.lineNode = new Line();
         this.group = new Group();
         this.line = {
@@ -155,6 +166,7 @@ var Axis = /** @class */ (function () {
         this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
+    Axis.prototype.getMeta = function () { };
     Axis.prototype.updateRange = function () {
         var _a = this, rr = _a.requestedRange, vr = _a.visibleRange, scale = _a.scale;
         var span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
@@ -396,6 +408,7 @@ var Axis = /** @class */ (function () {
             });
         }
         var tickFormatter = this.tickFormatter;
+        var meta = this.getMeta();
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         var fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
         var labelSelection = groupSelection.selectByClass(Text)
@@ -413,7 +426,8 @@ var Axis = /** @class */ (function () {
                     value: fractionDigits >= 0 ? datum : String(datum),
                     index: index,
                     fractionDigits: fractionDigits,
-                    formatter: tickFormatter
+                    formatter: tickFormatter,
+                    axis: meta
                 })
                 : fractionDigits
                     // the `datum` is a floating point number

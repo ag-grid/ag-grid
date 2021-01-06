@@ -1,3 +1,77 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_25_0_0">
+    <p><b>Release 25.0.0 (6th Jan 2021)</b></p>
+
+    <p><b>Feature Highlights:</b></p>
+
+    <ul>
+        <li>
+            AG-2837 - Major Server-side Row Model enhancements including:
+            <ul>
+                <li>
+                    Full CRUD support via Transactions, including Asynchronous Transactions for
+                    High Frequency updates.
+                </li>
+                <li>
+                    Option to turn off Infinite Scrolling and load all rows at a particular level.
+                </li>
+                <li>
+                    Client side Sorting and Filtering.
+                </li>
+                <li>
+                    Silent refreshes (ie don't show Loading Spinner).
+                </li>
+                <li>
+                    Preserving Group State during Refresh.
+                </li>
+                <li>
+                    Retry of failed data loads.
+                </li>
+                <li>
+                    Configure different SSRM properties (eg Block Size) for each group level.
+                </li>
+            </ul>
+            As the changes to SSRM are major, we recommend SSRM users to review the
+            <a href="https://www.ag-grid.com/documentation/javascript/server-side-model/">SSRM documentation</a>.
+        </li>
+        <li>
+            AG-4787 - Integrated Charts Cross Filtering (see <a href="https://www.ag-grid.com/documentation/javascript/integrated-charts-cross-filtering/">Cross Filtering</a>)
+        </li>
+        <li>
+            AG-4600 - Clipboard performance improvement, as grid now uses native Clipboard API.
+        </li>
+        <li>
+            AG-4753 - New property <code>showOpenedGroup</code>, to allow showing the name of the open group in the group column.
+            See <a href="https://www.ag-grid.com/documentation/javascript/grouping/#showing-open-groups">Show Open Groups</a>.
+        </li>
+    </ul>
+
+    <p><b>Breaking Changes:</b></p>
+    <p><u>Server-side Row Model</u></p>
+    <ul>
+        <li>
+            New property <code>serverSideStoreType</code> must be set to <code>partial</code> for backwards
+            compatibility. If not set, the default <code>full</code> is used, which turns off Infinite Scrolling.
+            Infinite Scrolling is now a feature you must opt into.
+        </li>
+        <li>
+            The undocumented attribute <code>childrenCache</code> property of Row Node has been renamed
+            to <code>childStore</code>. The old name didn't make sense with the refactor of how the SSRM works
+            with different store types.
+        </li>
+    </ul>
+
+
+    <p><b>Deprecations:</b></p>
+
+    <p><u>Server-side Row Model</u></p>
+    <ul>
+        <li>
+            Grid API <code>refreshServerSideStore(params)</code> should now be used instead of <code>purgeServerSideCache()</code>.
+        </li>
+    </ul>
+
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_24_1_0">
     <p><b>Release 24.1.0 (12th Sep 2020)</b></p>
 

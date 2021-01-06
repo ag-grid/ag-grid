@@ -1,6 +1,5 @@
 import { StageExecuteParams, BeanStub } from "@ag-grid-community/core";
 export declare class SortStage extends BeanStub {
-    private gridOptionsWrapper;
     private sortService;
     private sortController;
     private columnController;

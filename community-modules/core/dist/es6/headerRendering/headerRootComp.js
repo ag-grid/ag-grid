@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,7 +33,6 @@ import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { HeaderNavigationDirection } from './header/headerNavigationService';
 import { exists } from '../utils/generic';
-import { isUserSuppressingHeaderKeyboardEvent } from '../utils/keyboard';
 import { KeyName } from '../constants/keyName';
 var HeaderRootComp = /** @class */ (function (_super) {
     __extends(HeaderRootComp, _super);
@@ -75,21 +74,13 @@ var HeaderRootComp = /** @class */ (function (_super) {
         var direction = e.shiftKey !== isRtl
             ? HeaderNavigationDirection.LEFT
             : HeaderNavigationDirection.RIGHT;
-        var _a = this.focusController.getFocusedHeader(), headerRowIndex = _a.headerRowIndex, column = _a.column;
-        if (isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
-            return;
-        }
         if (this.headerNavigationService.navigateHorizontally(direction, true, e) ||
             this.focusController.focusNextGridCoreContainer(e.shiftKey)) {
             e.preventDefault();
         }
     };
     HeaderRootComp.prototype.handleKeyDown = function (e) {
-        var direction;
-        var _a = this.focusController.getFocusedHeader(), headerRowIndex = _a.headerRowIndex, column = _a.column;
-        if (isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
-            return;
-        }
+        var direction = null;
         switch (e.key) {
             case KeyName.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
@@ -192,9 +183,6 @@ var HeaderRootComp = /** @class */ (function (_super) {
     __decorate([
         RefSelector('eHeaderViewport')
     ], HeaderRootComp.prototype, "eHeaderViewport", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], HeaderRootComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('columnController')
     ], HeaderRootComp.prototype, "columnController", void 0);

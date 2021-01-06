@@ -77,12 +77,7 @@
             border-width: 1px;
             @include ag-color-property(border-color, row-border-color);
 
-            &:not(.ag-row-first) {
-                border-top-style: solid;
-            }
-            &.ag-row-last {
-                border-bottom-style: solid;
-            }
+            border-bottom-style: solid;
         }
     }
 

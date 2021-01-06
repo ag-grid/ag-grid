@@ -45,6 +45,11 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
         });
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     };
+    ValuesDropZonePanel.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'valueColumnsList';
+        return res;
+    };
     ValuesDropZonePanel.prototype.getIconName = function () {
         return this.isPotentialDndColumns() ? core_1.DragAndDropService.ICON_AGGREGATE : core_1.DragAndDropService.ICON_NOT_ALLOWED;
     };
@@ -75,9 +80,6 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], ValuesDropZonePanel.prototype, "columnController", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ValuesDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('loggerFactory')
     ], ValuesDropZonePanel.prototype, "loggerFactory", void 0);

@@ -4,7 +4,6 @@ import { Constants } from "./constants/constants";
 import { ColumnController } from "./columnController/columnController";
 import { IRowModel } from "./interfaces/iRowModel";
 import { CellPosition } from "./entities/cellPosition";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { RowPosition } from "./entities/rowPosition";
@@ -20,7 +19,6 @@ export class CellNavigationService extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     // returns null if no cell to focus on, ie at the end of the grid

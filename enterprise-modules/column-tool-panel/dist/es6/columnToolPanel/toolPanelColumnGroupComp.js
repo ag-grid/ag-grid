@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, AgCheckbox, Autowired, Column, CssClassApplier, DragSourceType, Events, PostConstruct, RefSelector, TouchListener, KeyCode, Component } from "@ag-grid-community/core";
+import { _, AgCheckbox, Autowired, Column, Component, CssClassApplier, DragSourceType, Events, KeyCode, PostConstruct, RefSelector, TouchListener } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     __extends(ToolPanelColumnGroupComp, _super);
@@ -58,7 +58,26 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.addVisibilityListenersToAllChildren();
         this.refreshAriaExpanded();
         this.refreshAriaLabel();
+        this.setupTooltip();
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+    };
+    ToolPanelColumnGroupComp.prototype.setupTooltip = function () {
+        var _this = this;
+        var colGroupDef = this.columnGroup.getColGroupDef();
+        if (!colGroupDef) {
+            return;
+        }
+        var refresh = function () {
+            var newTooltipText = colGroupDef.headerTooltip;
+            _this.setTooltip(newTooltipText);
+        };
+        refresh();
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refresh);
+    };
+    ToolPanelColumnGroupComp.prototype.getTooltipParams = function () {
+        var res = _super.prototype.getTooltipParams.call(this);
+        res.location = 'columnToolPanelColumnGroup';
+        return res;
     };
     ToolPanelColumnGroupComp.prototype.handleKeyDown = function (e) {
         switch (e.keyCode) {
@@ -154,8 +173,10 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.modelItemUtils.selectAllChildren(this.modelItem.getChildren(), nextState, this.eventType);
     };
     ToolPanelColumnGroupComp.prototype.refreshAriaLabel = function () {
-        var state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        _.setAriaLabel(this.focusWrapper, this.displayName + " column group toggle visibility (" + state + ")");
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        var state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
+        var label = translate('ariaColumnGroupToggleVisibility', 'column group toggle visibility');
+        _.setAriaLabel(this.focusWrapper, this.displayName + " " + label + " (" + state + ")");
     };
     ToolPanelColumnGroupComp.prototype.onColumnStateChanged = function () {
         var selectedValue = this.workOutSelectedValue();
@@ -260,9 +281,6 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     __decorate([
         Autowired('dragAndDropService')
     ], ToolPanelColumnGroupComp.prototype, "dragAndDropService", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ToolPanelColumnGroupComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('modelItemUtils')
     ], ToolPanelColumnGroupComp.prototype, "modelItemUtils", void 0);

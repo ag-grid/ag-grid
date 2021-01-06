@@ -1,20 +1,25 @@
-// ag-grid-react v24.1.1
+// ag-grid-react v25.0.0
 import * as React from "react";
 import { Component, ReactPortal } from "react";
 import { ColumnApi, GridApi, GridOptions, Module } from "ag-grid-community";
-import { ReactComponent } from "./reactComponent";
 import { ChangeDetectionService, ChangeDetectionStrategyType } from "./changeDetectionService";
+import { ReactComponent } from "./reactComponent";
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
     modules?: Module[];
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
     disableStaticMarkup?: boolean;
+    legacyComponentRendering?: boolean;
     containerStyle?: any;
 }
 export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     props: any;
     static propTypes: any;
+    static defaultProps: {
+        legacyComponentRendering: boolean;
+        disableStaticMarkup: boolean;
+    };
     gridOptions: GridOptions;
     changeDetectionService: ChangeDetectionService;
     api: GridApi | null;
@@ -39,7 +44,8 @@ export declare class AgGridReact extends Component<AgGridReactProps, {}> {
      * Context to work properly.
      */
     mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void): void;
-    batchUpdate(callback?: () => void): void;
+    updateReactPortal(oldPortal: ReactPortal, newPortal: ReactPortal): void;
+    batchUpdate(): void;
     destroyPortal(portal: ReactPortal): void;
     private getStrategyTypeForProp;
     private isImmutableDataActive;
@@ -50,4 +56,5 @@ export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     private extractGridPropertyChanges;
     componentWillUnmount(): void;
     isDisableStaticMarkup(): boolean;
+    isLegacyComponentRendering(): boolean;
 }

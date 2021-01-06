@@ -30,22 +30,22 @@ $pageDescription = "Fastest, most feature-rich React Data Grid component from ag
 <a class="nav-link" href="../example.php">Demo<span class="sr-only">(current)</span></a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="../documentation-main/documentation.php">Documentation</a>
+<a class="nav-link" href="../documentation/">Documentation</a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="../features-overview">Features Overview</a>
+<a class="nav-link" href="../features-overview/">Features Overview</a>
 </li>
 <li class="nav-item">
 <a class="nav-link" href="../license-pricing.php">Pricing</a>
 </li>
 <li class="nav-item">
-<a class="nav-link" id="get-started" href="../javascript-grid-getting-started/">Get Started</a>
+<a class="nav-link" id="get-started" href="../documentation/javascript/getting-started/">Get Started</a>
 </li>
 </ul>
 </div>
 </nav>
 </section>
-        
+
 <!--above the fold section--->
 <section id="abovefold">
 <div class="row">
@@ -135,7 +135,7 @@ The charting functionality is deeply integrated with the grid. This integration 
         As illustrated above, the resulting chart range can subsequently modified by dragging on the chart range handle, located at the bottom right corner of the chart range.
     </p>
     <p>
-        Find out more about Chart Ranges <a href="">here</a>. 
+        Find out more about Chart Ranges <a href="">here</a>.
     </p>
 </div>
 <div class="col-md-6">
@@ -199,7 +199,7 @@ The charting functionality is deeply integrated with the grid. This integration 
     </p>
 </div>
 </div>
-    
+
 </section>
 <hr>
 <section id="app-charts">
@@ -261,8 +261,8 @@ The grid comes with charting integration allowing users to chart data directly f
 <h3>
 Standalone Library(in development)
 </h3>
-<p> 
-ag-Grid will also release it's own standalone library, which is currently in development. 
+<p>
+ag-Grid will also release it's own standalone library, which is currently in development.
 </p>
 </div>
 </div>
@@ -293,15 +293,15 @@ ag-Grid will also release it's own standalone library, which is currently in dev
                 <li><a href="/ag-grid-changelog/">Changelog</a></li>
                 <li><a href="/ag-grid-pipeline/">Pipeline</a></li>
                 <li><a href="/archive/">Documentation Archive</a></li>
-            </ul>     
+            </ul>
     </div>
-    <div class="col-md-3"> 
+    <div class="col-md-3">
     <h5>Support & Community</h5>
     <ul class="list-unstyled">
                 <li><a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a></li>
                 <li><a href="/license-pricing.php">License &amp; Pricing</a></li>
                 <li><a href="https://ag-grid.zendesk.com/">Support via Zendesk</a></li>
-            </ul>      
+            </ul>
     </div>
     <div class="col-md-3">
     <h5>The Company</h5>
@@ -311,7 +311,7 @@ ag-Grid will also release it's own standalone library, which is currently in dev
                 <li><a href="https://blog.ag-grid.com/">Blog</a></li>
                 <li><a href=/privacy.php>Privacy Policy</a><li>
                   <li><a href="/cookies.php">Cookies Policy</a><li>
-            </ul>       
+            </ul>
     </div>
     <div class="col-md-3">
     <h5>Social</h5>
@@ -320,8 +320,8 @@ ag-Grid will also release it's own standalone library, which is currently in dev
                 <li><a class="twitter-follow-button"
   href="https://twitter.com/ag_grid">
 Follow @ag_grid</a></li>
-                
-            </ul>       
+
+            </ul>
     </div>
 </div>
 </footer>

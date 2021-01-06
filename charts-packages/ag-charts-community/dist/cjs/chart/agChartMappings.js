@@ -34,6 +34,7 @@ var navigator_1 = require("./navigator/navigator");
 var navigatorMask_1 = require("./navigator/navigatorMask");
 var navigatorHandle_1 = require("./navigator/navigatorHandle");
 var cartesianSeries_1 = require("./series/cartesian/cartesianSeries");
+var chart_1 = require("./chart");
 /*
     This file defines the specs for creating different kinds of charts, but
     contains no code that uses the specs to actually create charts
@@ -56,6 +57,16 @@ var commonChartMappings = {
                 right: chartPadding,
                 bottom: chartPadding,
                 left: chartPadding
+            }
+        }
+    },
+    tooltip: {
+        meta: {
+            defaults: {
+                enabled: true,
+                tracking: true,
+                delay: 0,
+                class: chart_1.Chart.defaultTooltipClass
             }
         }
     },

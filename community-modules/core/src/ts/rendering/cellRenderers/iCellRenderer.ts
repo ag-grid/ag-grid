@@ -36,7 +36,7 @@ export interface ISetFilterCellRendererParams {
 export interface ICellRenderer {
     /** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),
      * then the grid will refresh the cell for you. */
-    refresh(params: any): boolean;
+    refresh(params: ICellRendererParams): boolean;
 }
 
 export interface ICellRendererComp extends ICellRenderer, IComponent<ICellRendererParams> {

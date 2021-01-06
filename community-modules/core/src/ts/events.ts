@@ -73,7 +73,7 @@ export interface FilterModifiedEvent extends AgGridEvent {
 }
 
 export interface FilterOpenedEvent extends AgGridEvent {
-    column: Column;
+    column: Column | OriginalColumnGroup;
     source: FilterRequestSource;
     eGui: HTMLElement;
 }
@@ -360,6 +360,10 @@ export interface CellValueChangedEvent extends CellEvent {
     oldValue: any;
     newValue: any;
     source: string | undefined;
+}
+
+export interface AsyncTransactionsFlushed extends AgGridEvent {
+    results: (RowNodeTransaction | ServerSideTransactionResult) [];
 }
 
 // not documented, was put in for CS - more thought needed of how server side grouping / pivoting

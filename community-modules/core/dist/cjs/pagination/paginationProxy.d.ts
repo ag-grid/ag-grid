@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowBounds } from "../interfaces/iRowModel";
@@ -7,7 +7,6 @@ import { RowNode } from "../entities/rowNode";
 import { RowPosition } from "../entities/rowPosition";
 export declare class PaginationProxy extends BeanStub {
     private rowModel;
-    private gridOptionsWrapper;
     private columnApi;
     private gridApi;
     private active;

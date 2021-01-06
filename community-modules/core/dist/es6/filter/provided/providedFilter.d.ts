@@ -1,11 +1,10 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
-import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import { Promise } from '../../utils/promise';
+import { AgPromise } from '../../utils/promise';
 import { IFilterLocaleText, IFilterTitleLocaleText } from '../filterLocaleText';
 import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
 declare type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
@@ -31,15 +30,14 @@ export declare abstract class ProvidedFilter extends ManagedFocusComponent imple
     private hidePopup;
     private onBtApplyDebounce;
     private appliedModel;
-    protected readonly gridOptionsWrapper: GridOptionsWrapper;
     protected readonly rowModel: IRowModel;
     constructor(filterNameKey: keyof IFilterTitleLocaleText);
     abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
     protected abstract updateUiVisibility(): void;
     protected abstract createBodyTemplate(): string;
     protected abstract getCssIdentifier(): string;
-    protected abstract resetUiToDefaults(silent?: boolean): Promise<void>;
-    protected abstract setModelIntoUi(model: ProvidedFilterModel): Promise<void>;
+    protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
+    protected abstract setModelIntoUi(model: ProvidedFilterModel): AgPromise<void>;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
     /** Used to get the filter type for filter models. */
     protected abstract getFilterType(): string;
@@ -56,8 +54,8 @@ export declare abstract class ProvidedFilter extends ManagedFocusComponent imple
     private static checkForDeprecatedParams;
     protected getDefaultDebounceMs(): number;
     private setupOnBtApplyDebounce;
-    getModel(): ProvidedFilterModel;
-    setModel(model: ProvidedFilterModel): Promise<void>;
+    getModel(): ProvidedFilterModel | null;
+    setModel(model: ProvidedFilterModel): AgPromise<void>;
     private onBtCancel;
     private onBtClear;
     private onBtReset;

@@ -1,6 +1,5 @@
 import { Autowired, Bean } from "../context/context";
 import { Column } from "../entities/column";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColDef } from "../entities/colDef";
 import { ColumnController } from "./columnController";
 import { ColumnFactory } from "./columnFactory";
@@ -14,7 +13,6 @@ export class AutoGroupColService extends BeanStub {
 
     public static GROUP_AUTO_COLUMN_BUNDLE_ID = Constants.GROUP_AUTO_COLUMN_ID;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
 

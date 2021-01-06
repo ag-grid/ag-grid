@@ -1,6 +1,5 @@
 import { Component } from './component';
 import { Autowired } from '../context/context';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { RefSelector } from './componentAnnotations';
 import { ManagedFocusComponent } from './managedFocusComponent';
 import { addCssClass, containsClass } from '../utils/dom';
@@ -22,7 +21,6 @@ export class VirtualList extends ManagedFocusComponent {
     private lastFocusedRowIndex: number;
     private isDestroyed = false;
 
-    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 

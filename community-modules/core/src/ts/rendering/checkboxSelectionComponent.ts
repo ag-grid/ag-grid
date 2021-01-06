@@ -1,9 +1,8 @@
 import { AgCheckbox } from '../widgets/agCheckbox';
-import { Autowired, PostConstruct } from '../context/context';
+import { PostConstruct } from '../context/context';
 import { Column } from '../entities/column';
 import { Component } from '../widgets/component';
 import { Events } from '../events';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { IsRowSelectable } from '../entities/gridOptions';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { RowNode } from '../entities/rowNode';
@@ -11,13 +10,11 @@ import { stopPropagationForAgGrid } from '../utils/event';
 
 export class CheckboxSelectionComponent extends Component {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
     private rowNode: RowNode;
     private column: Column;
-    private isRowSelectableFunc: IsRowSelectable;
+    private isRowSelectableFunc: IsRowSelectable | undefined;
 
     constructor() {
         super(/* html*/`
@@ -43,16 +40,23 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onSelectionChanged(): void {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
-        const stateName = state === undefined ? 'indeterminate' : (state === true ? 'checked' : 'unchecked');
+        const stateName = state === undefined
+            ? translate('ariaIndeterminate', 'indeterminate')
+            : (state === true
+                ? translate('ariaChecked', 'checked')
+                : translate('ariaUnchecked', 'unchecked')
+            );
+        const ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
 
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel(`Press Space to toggle row selection (${stateName})`);
+        this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
 
-    private onCheckedClicked(): number {
+    private onCheckedClicked(event: MouseEvent): number {
         const groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        const updatedCount = this.rowNode.setSelectedParams({ newValue: false, groupSelectsFiltered: groupSelectsFiltered });
+        const updatedCount = this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
         return updatedCount;
     }
 
@@ -74,16 +78,19 @@ export class CheckboxSelectionComponent extends Component {
         // likewise we don't want double click on this icon to open a group
         this.addGuiEventListener('dblclick', event => stopPropagationForAgGrid(event));
 
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (params) => {
-            if (params.previousValue === undefined) { // indeterminate
-                const result = this.onUncheckedClicked(params.event || {});
+        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event) => {
+            const isSelected = this.eCheckbox.getValue();
+            const previousValue = this.eCheckbox.getPreviousValue();
+
+            if (previousValue === undefined) { // indeterminate
+                const result = this.onUncheckedClicked(event || {});
                 if (result === 0) {
-                    this.onCheckedClicked();
+                    this.onCheckedClicked(event);
                 }
-            } else if (params.selected) {
-                this.onUncheckedClicked(params.event || {});
+            } else if (isSelected) {
+                this.onCheckedClicked(event);
             } else {
-                this.onCheckedClicked();
+                this.onUncheckedClicked(event || {});
             }
         });
 
@@ -93,6 +100,7 @@ export class CheckboxSelectionComponent extends Component {
 
         this.isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
         const checkboxVisibleIsDynamic = this.isRowSelectableFunc || this.checkboxCallbackExists();
+
         if (checkboxVisibleIsDynamic) {
             this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();

@@ -1,9 +1,8 @@
-// Type definitions for @ag-grid-community/core v24.1.0
+// Type definitions for @ag-grid-community/core v25.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "./component";
 import { PopupService } from "./popupService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 export interface PanelOptions {
     component?: Component;
     hideTitleBar?: boolean;
@@ -21,7 +20,6 @@ export interface PanelOptions {
 export declare class AgPanel extends Component {
     protected static CLOSE_BTN_TEMPLATE: string;
     protected readonly popupService: PopupService;
-    protected readonly gridOptionsWrapper: GridOptionsWrapper;
     protected closable: boolean;
     protected config: PanelOptions | undefined;
     protected closeButtonComp: Component;

@@ -14,6 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var object_1 = require("../../util/object");
 var array_1 = require("../../util/array");
 var padding_1 = require("../../util/padding");
+var chart_1 = require("../chart");
 var palette = {
     fills: [
         '#f3622d',
@@ -45,7 +46,7 @@ var ChartTheme = /** @class */ (function () {
             var overrides_1 = options.overrides;
             if (overrides_1) {
                 if (object_1.isObject(overrides_1.common)) {
-                    ChartTheme.seriesTypes.forEach(function (seriesType) {
+                    ChartTheme.seriesTypes.concat(['cartesian', 'polar']).forEach(function (seriesType) {
                         defaults[seriesType] = object_1.deepMerge(defaults[seriesType], overrides_1.common, mergeOptions_1);
                     });
                 }
@@ -224,6 +225,12 @@ var ChartTheme = /** @class */ (function () {
                         fontFamily: this.fontFamily
                     }
                 }
+            },
+            tooltip: {
+                enabled: true,
+                tracking: true,
+                delay: 0,
+                class: chart_1.Chart.defaultTooltipClass
             }
         };
     };

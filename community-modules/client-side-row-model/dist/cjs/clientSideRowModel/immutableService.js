@@ -87,9 +87,6 @@ var ImmutableService = /** @class */ (function (_super) {
         core_1.Autowired('rowModel')
     ], ImmutableService.prototype, "rowModel", void 0);
     __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ImmutableService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         core_1.PostConstruct
     ], ImmutableService.prototype, "postConstruct", null);
     ImmutableService = __decorate([

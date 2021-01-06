@@ -8,7 +8,6 @@ import { GridPanel } from "./gridPanel";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { ColumnController } from "../columnController/columnController";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { last } from "../utils/array";
@@ -23,7 +22,6 @@ export class NavigationService extends BeanStub {
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private gridPanel: GridPanel;
 

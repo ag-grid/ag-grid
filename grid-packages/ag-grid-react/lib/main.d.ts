@@ -1,4 +1,4 @@
-// ag-grid-react v24.1.1
+// ag-grid-react v25.0.0
 export { AgGridReact } from './agGridReact';
 export { AgGridColumn } from './agGridColumn';
 export { ChangeDetectionStrategyType } from './changeDetectionService';

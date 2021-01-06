@@ -1,7 +1,6 @@
 import { Bean, PostConstruct } from "../context/context";
 import { Autowired } from "../context/context";
 import { CellPosition } from "../entities/cellPosition";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { CellComp } from "../rendering/cellComp";
 import { NumberSequence } from '../utils';
 import { GridPanel } from "./gridPanel";
@@ -14,7 +13,6 @@ import { exists } from "../utils/generic";
 @Bean('mouseEventService')
 export class MouseEventService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     private static gridInstanceSequence = new NumberSequence();

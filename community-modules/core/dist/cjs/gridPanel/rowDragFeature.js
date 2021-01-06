@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -429,9 +429,6 @@ var RowDragFeature = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('filterManager')
     ], RowDragFeature.prototype, "filterManager", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], RowDragFeature.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('selectionController')
     ], RowDragFeature.prototype, "selectionController", void 0);

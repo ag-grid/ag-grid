@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,11 +20,16 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var managedFocusComponent_1 = require("../../widgets/managedFocusComponent");
+var keyboard_1 = require("../../utils/keyboard");
 var AbstractHeaderWrapper = /** @class */ (function (_super) {
     __extends(AbstractHeaderWrapper, _super);
     function AbstractHeaderWrapper() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    AbstractHeaderWrapper.prototype.shouldStopEventPropagation = function (e) {
+        var _a = this.focusController.getFocusedHeader(), headerRowIndex = _a.headerRowIndex, column = _a.column;
+        return keyboard_1.isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column);
+    };
     AbstractHeaderWrapper.prototype.getColumn = function () {
         return this.column;
     };

@@ -32,7 +32,7 @@ var PivotModePanel = /** @class */ (function (_super) {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
         this.addManagedListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onPivotModeChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     };
     PivotModePanel.prototype.onBtPivotMode = function () {
@@ -52,9 +52,6 @@ var PivotModePanel = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnController')
     ], PivotModePanel.prototype, "columnController", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], PivotModePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         RefSelector('cbPivotMode')
     ], PivotModePanel.prototype, "cbPivotMode", void 0);

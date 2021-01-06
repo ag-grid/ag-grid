@@ -1,12 +1,12 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-import { Promise } from "../utils";
+import { AgPromise } from "../utils";
 export function simpleHttpRequest(params) {
-    return new Promise(function (resolve) {
+    return new AgPromise(function (resolve) {
         var httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', params.url);
         httpRequest.send();

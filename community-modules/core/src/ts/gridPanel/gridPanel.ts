@@ -115,7 +115,6 @@ type ScrollDirection = 'horizontal' | 'vertical';
 
 export class GridPanel extends Component {
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
@@ -245,6 +244,11 @@ export class GridPanel extends Component {
         if (this.columnController.isReady() && !this.paginationProxy.isEmpty()) {
             this.hideOverlay();
         }
+
+        // we don't want each cellComp to register for events, as would increase rendering time.
+        // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
+        // each cell if / when event was fired.
+        this.rowRenderer.forEachCellComp(cellComp => cellComp.onNewColumnsLoaded());
     }
 
     @PostConstruct
@@ -539,7 +543,7 @@ export class GridPanel extends Component {
             const target = getTarget(mouseEvent);
             if (target === this.eBodyViewport || target === this.eCenterViewport) {
                 // show it
-                this.onContextMenu(mouseEvent, null, null, null, null);
+                this.onContextMenu(mouseEvent, null, null, null, null, this.getGui());
                 this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
@@ -701,10 +705,13 @@ export class GridPanel extends Component {
             value = this.valueService.getValue(column, rowNode);
         }
 
-        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value);
+        // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
+        const anchorToElement = cellComp ? cellComp.getGui() : this.getGui();
+
+        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
     }
 
-    private onContextMenu(mouseEvent: MouseEvent, touchEvent: TouchEvent, rowNode: RowNode, column: Column, value: any): void {
+    private onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any, anchorToElement: HTMLElement): void {
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
         if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
@@ -713,8 +720,8 @@ export class GridPanel extends Component {
         }
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
-            const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent.touches[0];
-            if (this.contextMenuFactory.showMenu(rowNode, column, value, eventOrTouch)) {
+            const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent!.touches[0];
+            if (this.contextMenuFactory.showMenu(rowNode!, column!, value, eventOrTouch, anchorToElement)) {
                 const event = mouseEvent ? mouseEvent : touchEvent;
                 event.preventDefault();
             }
@@ -1462,7 +1469,7 @@ export class GridPanel extends Component {
         // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
         // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
 
-        if (touchOnly && !isIOSUserAgent) { return false; }
+        if (touchOnly && !isIOSUserAgent()) { return false; }
 
         if (direction === 'vertical') {
             const { clientHeight, scrollHeight } = this.eBodyViewport;

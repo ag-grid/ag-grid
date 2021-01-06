@@ -57,7 +57,10 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             strokes: seriesDefaults.stroke.colors,
             strokeOpacity: seriesDefaults.stroke.opacity,
             strokeWidth: seriesDefaults.stroke.width,
-            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer,
+            tooltip: {
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
+            },
             marker
         }];
 
@@ -124,24 +127,26 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         }
 
         const fieldIds = params.fields.map(f => f.colId);
-        const { fills, strokes } = this.getPalette();
 
-        const existingSeriesById = (chart.series as AreaSeries[]).reduceRight((map, series, i) => {
-            const id = series.yKeys[0];
-
-            if (fieldIds.indexOf(id) === i) {
-                map.set(id, series);
-            } else {
-                chart.removeSeries(series);
-            }
-
-            return map;
-        }, new Map<string, AreaSeries>());
+        const existingSeriesById = (chart.series as AreaSeries[])
+            .reduceRight((map, series, i) => {
+                const id = series.yKeys[0];
+                if (fieldIds.indexOf(id) === i) {
+                    map.set(id, series);
+                } else {
+                    chart.removeSeries(series);
+                }
+                return map;
+            }, new Map<string, AreaSeries>());
 
         const data = this.transformData(params.data, params.category.id);
         let previousSeries: AreaSeries | undefined = undefined;
 
+        let { fills, strokes } = this.getPalette();
+
         params.fields.forEach((f, index) => {
+            let {yKey, atLeastOneSelectedPoint} = this.processDataForCrossFiltering(data, f.colId, params);
+
             let areaSeries = existingSeriesById.get(f.colId);
             const fill = fills[index % fills.length];
             const stroke = strokes[index % strokes.length];
@@ -150,10 +155,11 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 areaSeries.data = data;
                 areaSeries.xKey = params.category.id;
                 areaSeries.xName = params.category.name;
-                areaSeries.yKeys = [f.colId];
-                areaSeries.yNames = [f.displayName];
+                areaSeries.yKeys = [yKey];
+                areaSeries.yNames = [f.displayName!];
                 areaSeries.fills = [fill];
                 areaSeries.strokes = [stroke];
+
             } else {
                 const seriesDefaults = this.getSeriesDefaults();
                 const marker = { ...seriesDefaults.marker } as any;
@@ -161,12 +167,13 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     marker.shape = marker.type;
                     delete marker.type;
                 }
+
                 const options: any /*InternalAreaSeriesOptions */ = {
                     ...seriesDefaults,
                     data,
                     xKey: params.category.id,
                     xName: params.category.name,
-                    yKeys: [f.colId],
+                    yKeys: [yKey],
                     yNames: [f.displayName],
                     fills: [fill],
                     strokes: [stroke],
@@ -177,9 +184,10 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 };
 
                 areaSeries = AgChart.createComponent(options, 'area.series');
-
-                chart.addSeriesAfter(areaSeries, previousSeries);
+                chart.addSeriesAfter(areaSeries!, previousSeries);
             }
+
+            this.updateSeriesForCrossFiltering(areaSeries!, f.colId, chart, params, atLeastOneSelectedPoint);
 
             previousSeries = areaSeries;
         });
@@ -192,8 +200,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         options.seriesDefaults = {
             shadow: seriesDefaults.shadow as DropShadowOptions,
             tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
                 colors: theme.palette.fills,
@@ -205,12 +213,16 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 width: seriesDefaults.strokeWidth
             },
             marker: {
-                enabled: seriesDefaults.marker.enabled,
-                shape: seriesDefaults.marker.shape,
-                size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
+                enabled: seriesDefaults.marker!.enabled,
+                shape: seriesDefaults.marker!.shape,
+                size: seriesDefaults.marker!.size,
+                strokeWidth: seriesDefaults.marker!.strokeWidth,
+                formatter: seriesDefaults.marker!.formatter
             },
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners
         } as AreaSeriesOptions;
 
         return options;

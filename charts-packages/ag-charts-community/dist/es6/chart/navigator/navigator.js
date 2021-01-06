@@ -116,11 +116,11 @@ var Navigator = /** @class */ (function () {
         chart.seriesRoot.enabled = clipSeries;
         chart.series.forEach(function (series) { return series.update(); });
     };
-    Navigator.prototype.onMouseDown = function (event) {
+    Navigator.prototype.onDragStart = function (offset) {
         if (!this.enabled) {
             return;
         }
-        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var offsetX = offset.offsetX, offsetY = offset.offsetY;
         var rs = this.rs;
         var minHandle = rs.minHandle, maxHandle = rs.maxHandle, x = rs.x, width = rs.width, min = rs.min;
         var visibleRange = rs.computeVisibleRangeBBox();
@@ -136,14 +136,14 @@ var Navigator = /** @class */ (function () {
             }
         }
     };
-    Navigator.prototype.onMouseMove = function (event) {
+    Navigator.prototype.onDrag = function (offset) {
         if (!this.enabled) {
             return;
         }
         var _a = this, rs = _a.rs, panHandleOffset = _a.panHandleOffset;
         var x = rs.x, y = rs.y, width = rs.width, height = rs.height, minHandle = rs.minHandle, maxHandle = rs.maxHandle;
         var style = this.chart.element.style;
-        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var offsetX = offset.offsetX, offsetY = offset.offsetY;
         var minX = x + width * rs.min;
         var maxX = x + width * rs.max;
         var visibleRange = new BBox(minX, y, maxX - minX, height);
@@ -181,10 +181,7 @@ var Navigator = /** @class */ (function () {
             }
         }
     };
-    Navigator.prototype.onMouseOut = function (event) {
-        this.stopHandleDragging();
-    };
-    Navigator.prototype.onMouseUp = function (event) {
+    Navigator.prototype.onDragStop = function () {
         this.stopHandleDragging();
     };
     Navigator.prototype.stopHandleDragging = function () {

@@ -2,6 +2,7 @@ import {
     _,
     AgChartCaptionOptions,
     AgChartLegendOptions,
+    AgChartThemeOverrides,
     AgNavigatorOptions,
     CaptionOptions,
     ChartOptions,
@@ -17,8 +18,7 @@ import {
     NavigatorOptions,
     PaddingOptions,
     ProcessChartOptionsParams,
-    SeriesOptions,
-    AgChartThemeOverrides
+    SeriesOptions
 } from "@ag-grid-community/core";
 import {
     AgChartTheme,
@@ -36,6 +36,7 @@ import {
     themes,
 } from "ag-charts-community";
 import { deepMerge } from "../object";
+import { CrossFilteringContext } from "../../chartService";
 
 export interface ChartProxyParams {
     chartId: string;
@@ -54,6 +55,8 @@ export interface ChartProxyParams {
     apiChartThemeOverrides?: AgChartThemeOverrides;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
+    crossFiltering: boolean;
+    crossFilterCallback: (event: any, reset?: boolean) => void;
     eventService: EventService;
     gridApi: GridApi;
     columnApi: ColumnApi;
@@ -73,6 +76,8 @@ export interface UpdateChartParams {
         chartDataType?: string
     };
     fields: FieldDefinition[];
+    chartId?: string;
+    getCrossFilteringContext: () => CrossFilteringContext,
 }
 
 export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
@@ -86,6 +91,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected customPalette: AgChartThemePalette;
     protected chartOptions: TOptions;
     protected chartTheme: ChartTheme;
+    protected crossFiltering: boolean;
+    protected crossFilterCallback: (event: any, reset?: boolean) => void;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chartId = chartProxyParams.chartId;
@@ -93,6 +100,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.eventService = chartProxyParams.eventService;
         this.gridApi = chartProxyParams.gridApi;
         this.columnApi = chartProxyParams.columnApi;
+        this.crossFiltering = chartProxyParams.crossFiltering;
+        this.crossFilterCallback = chartProxyParams.crossFilterCallback;
     }
 
     protected abstract createChart(options?: TOptions): TChart;
@@ -103,6 +112,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
 
         this.chart = this.createChart(options);
+
+        if (this.crossFiltering) {
+            // add event listener to chart canvas to detect when user wishes to reset filters
+            const resetFilters = true;
+            this.chart.addEventListener('click', (e) => this.crossFilterCallback(e, resetFilters));
+        }
     }
 
     public abstract update(params: UpdateChartParams): void;
@@ -268,8 +283,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         options.background = theme.getConfig(standaloneChartType + '.background');
         options.legend = theme.getConfig<AgChartLegendOptions>(standaloneChartType + '.legend') as LegendOptions;
         options.navigator = theme.getConfig<AgNavigatorOptions>(standaloneChartType + '.navigator') as NavigatorOptions;
-        options.tooltipClass = theme.getConfig(standaloneChartType + '.tooltipClass');
-        options.tooltipTracking = theme.getConfig(standaloneChartType + '.tooltipTracking');
+        options.tooltip = {
+            enabled: theme.getConfig(standaloneChartType + '.tooltip.enabled'),
+            tracking: theme.getConfig(standaloneChartType + '.tooltip.tracking'),
+            class: theme.getConfig(standaloneChartType + '.tooltip.class'),
+            delay: theme.getConfig(standaloneChartType + '.tooltip.delay')
+        };
         options.listeners = theme.getConfig(standaloneChartType + '.listeners');
         options.padding = theme.getConfig(standaloneChartType + '.padding');
 
@@ -341,7 +360,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
-            'tooltip.enabled': 'tooltipEnabled',
             'callout.colors': 'calloutColors'
         };
 
@@ -393,7 +411,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         padding[property] = value;
 
-        this.chart.padding[property] = value;
+        (this.chart.padding as any)[property] = value;
 
         this.chart.performLayout();
         this.raiseChartOptionsChangedEvent();
@@ -517,6 +535,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
             return datum;
         });
+    }
+
+    protected hexToRGBA(hex: string, alpha: string) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return alpha ? `rgba(${r}, ${g}, ${b}, ${alpha})` : `rgba(${r}, ${g}, ${b})`;
     }
 
     public destroy(): void {

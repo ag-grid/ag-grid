@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Component, PostConstruct, Promise, TabbedLayout } from "@ag-grid-community/core";
+import { _, Autowired, Component, PostConstruct, AgPromise, TabbedLayout } from "@ag-grid-community/core";
 import { ChartDataPanel } from "./data/chartDataPanel";
 import { ChartFormattingPanel } from "./format/chartFormattingPanel";
 import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
@@ -62,7 +62,7 @@ var TabbedChartMenu = /** @class */ (function (_super) {
             tab: {
                 title: titleEl,
                 titleLabel: translatedTitle,
-                bodyPromise: Promise.resolve(eWrapperDiv),
+                bodyPromise: AgPromise.resolve(eWrapperDiv),
                 name: name
             }
         };

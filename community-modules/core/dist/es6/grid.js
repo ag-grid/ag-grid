@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.1.0
+ * @version v25.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,7 +34,6 @@ import { FocusController } from "./focusController";
 import { MouseEventService } from "./gridPanel/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
 import { Events } from "./events";
-import { CellRendererFactory } from "./rendering/cellRendererFactory";
 import { ValueFormatterService } from "./rendering/valueFormatterService";
 import { AgCheckbox } from "./widgets/agCheckbox";
 import { AgRadioButton } from "./widgets/agRadioButton";
@@ -219,7 +218,7 @@ var Grid = /** @class */ (function () {
             rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
+            MaxDivHeightScaler, AutoHeightCalculator, HorizontalResizeService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper,
             PopupService, SelectionController, FilterManager, ColumnController, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,

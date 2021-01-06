@@ -5,7 +5,6 @@ import { includes } from './array';
 
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
-const OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
 const supports: { [key: string]: boolean; } = {};
 
 /**
@@ -103,7 +102,9 @@ export function getTarget(event: Event): Element {
 }
 
 export function isElementInEventPath(element: HTMLElement, event: Event): boolean {
-    if (!event || !element) { return false; }
+    if (!event || !element) {
+        return false;
+    }
 
     return getEventPath(event).indexOf(element) >= 0;
 }
@@ -172,17 +173,11 @@ export function addSafePassiveEventListener(
     event: string, listener: (event?: any) => void
 ) {
     const isPassive = includes(PASSIVE_EVENTS, event);
-    const isOutsideAngular = includes(OUTSIDE_ANGULAR_EVENTS, event);
-    const options = isPassive ? { passive: true } : undefined;
+    const options = isPassive ? {passive: true} : undefined;
 
-    if (isOutsideAngular) {
-        // this happens in certain scenarios where I believe the user must be destroying the grid somehow but continuing
-        // for it to be used
-        // don't fall through to the else part either - just don't add the listener
-        if (frameworkOverrides && frameworkOverrides.addEventListenerOutsideAngular) {
-            frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
-        }
-    } else {
-        eElement.addEventListener(event, listener, options);
+    // this check is here for certain scenarios where I believe the user must be destroying
+    // the grid somehow but continuing for it to be used
+    if (frameworkOverrides && frameworkOverrides.addEventListener) {
+        frameworkOverrides.addEventListener(eElement, event, listener, options);
     }
 }

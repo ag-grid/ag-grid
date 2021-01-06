@@ -1,4 +1,4 @@
-import { ColumnEventType, Component } from "@ag-grid-community/core";
+import { ColumnEventType, Component, ITooltipParams } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 export declare class ToolPanelColumnGroupComp extends Component {
     private readonly modelItem;
@@ -8,7 +8,6 @@ export declare class ToolPanelColumnGroupComp extends Component {
     private static TEMPLATE;
     private columnController;
     private dragAndDropService;
-    private gridOptionsWrapper;
     private modelItemUtils;
     private cbSelect;
     private eLabel;
@@ -22,6 +21,8 @@ export declare class ToolPanelColumnGroupComp extends Component {
     private processingColumnStateChange;
     constructor(modelItem: ColumnModelItem, allowDragging: boolean, eventType: ColumnEventType, focusWrapper: HTMLElement);
     init(): void;
+    private setupTooltip;
+    getTooltipParams(): ITooltipParams;
     private handleKeyDown;
     private addVisibilityListenersToAllChildren;
     private setupDragging;
