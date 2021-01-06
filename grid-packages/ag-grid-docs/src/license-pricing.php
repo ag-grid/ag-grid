@@ -134,7 +134,7 @@ gtm_data_layer('community-enterprise');
                         <p>
                             To evaluate ag-Grid Enterprise you don’t need our permission – all features are unlocked.
                             To temporarily hide the watermark and browser console errors e-mail
-                            <a href="mailto:info@ag-grid.com>">info@ag-grid.com</a> to
+                            <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> to
                             get a temporary evaluation key.
                         </p>
                         <p>
@@ -143,7 +143,7 @@ gtm_data_layer('community-enterprise');
                         </p>
                         <p>
                             Expanded definitions and FAQ responses are available further down the page. You can e-mail
-                            us at any time on <a href="mailto:info@ag-grid.com>">info@ag-grid.com</a>.
+                            us at any time on <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
                         </p>
                 </div>
             </section>
@@ -386,7 +386,7 @@ gtm_data_layer('community-enterprise');
                         <p>
                             If you have a deployment that doesn't fit within our licensing model,
                             please start a conversation with us through
-                            <a href="mailto:info@ag-grid.com>">info@ag-grid.com</a> and we will do our
+                            <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> and we will do our
                             best to get to something that works.
                         </p>
 
