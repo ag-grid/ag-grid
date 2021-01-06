@@ -31,12 +31,12 @@ cd ..
 # copy non versionsed files & directories over
 echo "Copying non-versioned directories"
 cp -R ./public_html/support public_html_tmp/
+cp -R ./public_html/example-assets public_html_tmp/
 cp -R ./public_html/ecommerce public_html_tmp/
 cp -R ./public_html/ecommerce-uat public_html_tmp/
 cp -R ./public_html/zendesk public_html_tmp/
 cp -R ./public_html/services public_html_tmp/
 cp -R ./public_html/robots.txt public_html_tmp/
-cp -R ./public_html/.htaccess public_html_tmp/
 cp -R ./public_html/__shared public_html_tmp/
 
 # jira stuff

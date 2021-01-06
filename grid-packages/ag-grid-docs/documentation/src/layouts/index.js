@@ -56,7 +56,7 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
                 </main>
             </div>
         </div>
-        <Footer />
+        <Footer framework={framework} />
     </GlobalContextProvider>;
 };
 

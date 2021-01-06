@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import footerItems from './footerItems.json';
+import DocumentationLink from '../DocumentationLink';
 import styles from './Footer.module.scss';
 
 const SocialMediaButtons = () => (
@@ -20,26 +21,27 @@ const SocialMediaButtons = () => (
     </div>
 );
 
-const MenuColumns = () => footerItems.map(({ title, links }) => (
-    <div key={title.replace(/\s/g, '_').toLocaleLowerCase()} className={styles['footer__links']}>
+const MenuColumns = ({ framework }) => footerItems.map(({ title, links }) => (
+    <div key={title} className={styles['footer__links']}>
         <h3>{title}</h3>
         <ul className={styles['footer__links__list']}>
             {links.map(({ name, url, newTab }) => (
-                <li key={`${title}_${name}`.replace(/\s/g, '_').toLocaleLowerCase()}>
-                    <a href={url} {...newTab ? { target: '_blank', rel: 'noreferrer' } : {}}>
-                        {name}
-                    </a>
+                <li key={`${title}_${name}`}>
+                    {url.indexOf('../') === 0 ?
+                        <DocumentationLink framework={framework} href={url.replace('../', '/')}>{name}</DocumentationLink> :
+                        <a href={url} {...newTab ? { target: '_blank', rel: 'noreferrer' } : {}}>{name}</a>
+                    }
                 </li>
             ))}
         </ul>
     </div>
 ));
 
-const Footer = () => (
+const Footer = ({ framework }) => (
     <footer className={styles['footer']}>
         <div className={styles['footer__wrapper']}>
             <div className={styles['footer__row']}>
-                <MenuColumns />
+                <MenuColumns framework={framework} />
                 <SocialMediaButtons />
             </div>
             <div className={styles['footer__row']}>

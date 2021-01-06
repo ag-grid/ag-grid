@@ -14,7 +14,7 @@ var gridOptions = {
         floatingFilter: true,
         resizable: true,
     },
-    rowData: data,
+    rowData: getData(),
     enableCharts: true,
     chartThemes: ['ag-default-dark'],
     onFirstDataRendered: onFirstDataRendered

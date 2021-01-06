@@ -1,26 +1,27 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import classnames from 'classnames';
-import styles from './Announcements.module.scss';
+import DocumentationLink from './DocumentationLink';
 import thinksterPng from '../images/thinkster.png';
 import communitySvg from '../images/community.svg';
 import enterpriseSvg from '../images/enterprise.svg';
 import flags from '../images/flags';
+import styles from './Announcements.module.scss';
 
-const Announcements = () => <div className={styles['announcements']}>
+const Announcements = ({ framework }) => <div className={styles['announcements']}>
     <Announcement date="Jan 6" version="25.0.0">
         <p className="card-text">
             Major release with new features and bug fixes:
         </p>
         <ul>
             <li className={styles['announcement__list-item']}>
-                <a href="../server-side-model/">Major SSRM Enhancements</a>
+                <DocumentationLink framework={framework} href="/server-side-model/">Major SSRM Enhancements</DocumentationLink>
             </li>
             <li className={styles['announcement__list-item']}>
-                <a href="../integrated-charts-cross-filtering/">Integrated Cross Filtering</a>
+                <DocumentationLink framework={framework} href="/integrated-charts-cross-filtering/">Integrated Cross Filtering</DocumentationLink>
             </li>
             <li className={styles['announcement__list-item']}>
-                <a href="../clipboard/">Clipboard Performance Improvements</a>
+                <DocumentationLink framework={framework} href="/clipboard/">Clipboard Performance Improvements</DocumentationLink>
             </li>
         </ul>
     </Announcement>
@@ -47,7 +48,7 @@ const Announcements = () => <div className={styles['announcements']}>
         </p>
         <img style={{ width: '30px', float: 'left', marginRight: '6px' }} src={enterpriseSvg} alt="Enterprise" />
         <p>
-            Do you want more features? Then <a href="../licensing/">get started with ag-Grid Enterprise</a>.
+            Do you want more features? Then <DocumentationLink framework={framework} href="/licensing/">get started with ag-Grid Enterprise</DocumentationLink>.
             You don't need to contact us to evaluate ag-Grid Enterprise. A license is only required
             when you start developing for production.
         </p>
