@@ -1,4 +1,5 @@
 import React from 'react';
+import { withPrefix } from 'gatsby';
 import { Helmet } from 'react-helmet';
 import classnames from 'classnames';
 import styles from './Announcements.module.scss';
@@ -7,20 +8,20 @@ import communitySvg from '../images/community.svg';
 import enterpriseSvg from '../images/enterprise.svg';
 import flags from '../images/flags';
 
-const Announcements = () => <div className={styles['announcements']}>
+const Announcements = ({ framework }) => <div className={styles['announcements']}>
     <Announcement date="Jan 6" version="25.0.0">
         <p className="card-text">
             Major release with new features and bug fixes:
         </p>
         <ul>
             <li className={styles['announcement__list-item']}>
-                <a href="../server-side-model/">Major SSRM Enhancements</a>
+                <a href={withPrefix(`/${framework}/server-side-model/`)}>Major SSRM Enhancements</a>
             </li>
             <li className={styles['announcement__list-item']}>
-                <a href="../integrated-charts-cross-filtering/">Integrated Cross Filtering</a>
+                <a href={withPrefix(`/${framework}/integrated-charts-cross-filtering/`)}>Integrated Cross Filtering</a>
             </li>
             <li className={styles['announcement__list-item']}>
-                <a href="../clipboard/">Clipboard Performance Improvements</a>
+                <a href={withPrefix(`/${framework}/clipboard/`)}>Clipboard Performance Improvements</a>
             </li>
         </ul>
     </Announcement>
