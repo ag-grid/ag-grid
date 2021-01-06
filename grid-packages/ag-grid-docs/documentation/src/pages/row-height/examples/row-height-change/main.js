@@ -1,4 +1,4 @@
-var swimmingHeight, groupHeight;
+var swimmingHeight, groupHeight, russiaHeight;
 
 var gridOptions = {
     columnDefs: [
@@ -16,9 +16,11 @@ var gridOptions = {
 };
 
 function getRowHeight(params) {
-    if (params.node.group) {
+    if (params.node.group && groupHeight != null) {
         return groupHeight;
-    } else if (params.data && params.data.sport === 'Swimming') {
+    } else if (params.data && params.data.country === 'Russia' && russiaHeight != null) {
+        return russiaHeight;
+    } else if (params.data && params.data.sport === 'Swimming' && swimmingHeight != null) {
         return swimmingHeight;
     }
 }
@@ -33,7 +35,10 @@ function setGroupHeight(height) {
     gridOptions.api.resetRowHeights();
 }
 
-function setZimbabweHeight(height) {
+function setRussiaHeight(height) {
+    // this is used next time resetRowHeights is called
+    russiaHeight = height;
+
     gridOptions.api.forEachNode(function(rowNode) {
         if (rowNode.data && rowNode.data.country === 'Russia') {
             rowNode.setRowHeight(height);
