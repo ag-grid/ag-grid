@@ -56,6 +56,8 @@ var gridOptions = {
             }
         }
     },
+    valueCache: true,
+    valueCacheNeverExpires: true,
     rowData: createRowData(),
     suppressAggFuncInHeader: true,
     enableCellChangeFlash: true,
@@ -115,37 +117,6 @@ function onUpdateOneValue() {
     rowNode.setDataValue(randomCol, newValue);
     console.log('onUpdateOneValue -> end');
 }
-
-var gridOptions = {
-    columnDefs: columnDefs,
-    defaultColDef: {
-        flex: 1,
-        resizable: true
-    },
-    autoGroupColumnDef: {
-        minWidth: 130
-    },
-    columnTypes: {
-        quarterFigure: {
-            editable: true, cellClass: 'number-cell', aggFunc: 'sum',
-            valueFormatter: formatNumber,
-            valueParser: function numberParser(params) {
-                return Number(params.newValue);
-            }
-        }
-    },
-    rowData: createRowData(),
-    suppressAggFuncInHeader: true,
-    enableCellChangeFlash: true,
-    enableRangeSelection: true,
-    groupDefaultExpanded: 1,
-    getRowNodeId: function(data) {
-        return data.id;
-    },
-    onCellValueChanged: function() {
-        console.log('onCellValueChanged');
-    }
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
