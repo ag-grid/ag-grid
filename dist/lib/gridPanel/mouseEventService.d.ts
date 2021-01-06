@@ -4,7 +4,6 @@ import { GridPanel } from "./gridPanel";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
 export declare class MouseEventService extends BeanStub {
-    private gridOptionsWrapper;
     private eGridDiv;
     private static gridInstanceSequence;
     private static GRID_DOM_KEY;

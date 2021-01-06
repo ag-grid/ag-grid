@@ -6,7 +6,6 @@ import { Beans } from "../../rendering/beans";
 import { ITooltipParams } from "../../rendering/tooltipComponent";
 export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private static TEMPLATE;
-    private gridOptionsWrapper;
     private columnController;
     private horizontalResizeService;
     private dragAndDropService;
@@ -33,8 +32,7 @@ export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private setupExpandable;
     private refreshExpanded;
     private setupMovingCss;
-    getComponentHolder(): ColGroupDef;
-    private getTooltipText;
+    getComponentHolder(): ColGroupDef | null;
     getTooltipParams(): ITooltipParams;
     private setupTooltip;
     private onColumnMovingChanged;

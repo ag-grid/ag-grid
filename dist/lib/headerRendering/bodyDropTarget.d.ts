@@ -11,7 +11,6 @@ export interface DropListener {
 export declare class BodyDropTarget extends BeanStub implements DropTarget {
     private dragAndDropService;
     private columnController;
-    private gridOptionsWrapper;
     private gridPanel;
     private pinned;
     private eContainer;

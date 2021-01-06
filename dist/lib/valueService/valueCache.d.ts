@@ -1,7 +1,6 @@
 import { RowNode } from "../entities/rowNode";
 import { BeanStub } from "../context/beanStub";
 export declare class ValueCache extends BeanStub {
-    private gridOptionsWrapper;
     private cacheVersion;
     private active;
     private neverExpires;

@@ -13,7 +13,7 @@ import { CellPosition } from "./cellPosition";
 import { IDateComp } from "../rendering/dateComponent";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
-import { BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ChartCreated, ChartDestroyed, ChartOptionsChanged, ChartRangeSelectionChanged, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, ComponentStateChangedEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, ExpandCollapseAllEvent, FillEndEvent, FillStartEvent, FilterChangedEvent, FilterModifiedEvent, FirstDataRenderedEvent, GridColumnsChangedEvent, GridReadyEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PasteEndEvent, PasteStartEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, ToolPanelVisibleChangedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent } from "../events";
+import { AsyncTransactionsFlushed, BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ChartCreated, ChartDestroyed, ChartOptionsChanged, ChartRangeSelectionChanged, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, ComponentStateChangedEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, ExpandCollapseAllEvent, FillEndEvent, FillStartEvent, FilterChangedEvent, FilterModifiedEvent, FirstDataRenderedEvent, GridColumnsChangedEvent, GridReadyEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PasteEndEvent, PasteStartEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, ToolPanelVisibleChangedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
 import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
@@ -33,6 +33,8 @@ export interface GridOptions {
     suppressMoveWhenRowDragging?: boolean;
     enableMultiRowDragging?: boolean;
     ensureDomOrder?: boolean;
+    suppressAggFilteredOnly?: boolean;
+    showOpenedGroup?: boolean;
     /** @deprecated */
     deltaRowDataMode?: boolean;
     /** @deprecated */
@@ -97,6 +99,7 @@ export interface GridOptions {
     copyHeadersToClipboard?: boolean;
     clipboardDeliminator?: string;
     suppressClipboardPaste?: boolean;
+    suppressClipboardApi?: boolean;
     suppressLastEmptyLineOnPaste?: boolean;
     suppressAggFuncInHeader?: boolean;
     suppressAggAtRootLevel?: boolean;
@@ -176,6 +179,10 @@ export interface GridOptions {
     maxColWidth?: number;
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
+    serverSideFilteringAlwaysResets?: boolean;
+    serverSideStoreType?: ServerSideStoreType;
+    getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
+    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
     statusBar?: {
         statusPanels: StatusPanelDef[];
     };
@@ -407,6 +414,7 @@ export interface GridOptions {
     onChartOptionsChanged?(event: ChartOptionsChanged): void;
     onChartDestroyed?(event: ChartDestroyed): void;
     onComponentStateChanged?(event: ComponentStateChangedEvent): void;
+    onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed): void;
     /** @deprecated */
     onGridSizeChanged?(event: any): void;
     api?: GridApi | null;
@@ -430,6 +438,14 @@ export interface GetDataPath {
 }
 export interface IsServerSideGroup {
     (dataItem: any): boolean;
+}
+export interface IsApplyServerSideTransaction {
+    (params: IsApplyServerSideTransactionParams): boolean;
+}
+export interface IsApplyServerSideTransactionParams {
+    transaction: ServerSideTransaction;
+    parentNode: RowNode;
+    storeInfo: any;
 }
 export interface GetServerSideGroupKey {
     (dataItem: any): string;
@@ -547,4 +563,24 @@ export interface ChartRef {
     chart: any;
     chartElement: HTMLElement;
     destroyChart: () => void;
+}
+export declare enum ServerSideStoreType {
+    Full = "full",
+    Partial = "partial"
+}
+export interface ServerSideStoreParams {
+    storeType?: ServerSideStoreType;
+    maxBlocksInCache?: number;
+    cacheBlockSize?: number;
+}
+export interface GetServerSideStoreParamsParams {
+    level: number;
+    parentRowNode?: RowNode;
+    rowGroupColumns: Column[];
+    pivotColumns: Column[];
+    pivotMode: boolean;
+}
+export interface IsServerSideGroupOpenByDefaultParams {
+    data: any;
+    rowNode: RowNode;
 }

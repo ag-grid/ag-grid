@@ -1,4 +1,3 @@
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgEvent } from '../events';
 import { AgAbstractInputField, IInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
@@ -6,7 +5,6 @@ export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
 export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
-    protected readonly gridOptionsWrapper: GridOptionsWrapper;
     protected labelAlignment: LabelAlignment;
     private selected?;
     private readOnly;

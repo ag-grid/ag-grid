@@ -23,7 +23,6 @@ export declare class AgGroupComponent extends Component {
     private suppressEnabledCheckbox;
     private suppressOpenCloseIcons;
     private alignItems;
-    private gridOptionsWrapper;
     private eTitleBar;
     private eGroupOpenedIcon;
     private eGroupClosedIcon;

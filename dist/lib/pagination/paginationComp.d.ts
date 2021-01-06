@@ -1,6 +1,5 @@
 import { Component } from "../widgets/component";
 export declare class PaginationComp extends Component {
-    private gridOptionsWrapper;
     private paginationProxy;
     private rowModel;
     private btFirst;

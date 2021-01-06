@@ -111,7 +111,6 @@ export interface DraggingEvent {
     dropZoneTarget: HTMLElement;
 }
 export declare class DragAndDropService extends BeanStub {
-    private gridOptionsWrapper;
     private dragService;
     private environment;
     private columnApi;

@@ -14,7 +14,6 @@ export declare class VirtualList extends ManagedFocusComponent {
     private rowHeight;
     private lastFocusedRowIndex;
     private isDestroyed;
-    private readonly gridOptionsWrapper;
     private readonly resizeObserverService;
     private readonly eContainer;
     constructor(cssIdentifier?: string, ariaRole?: string);

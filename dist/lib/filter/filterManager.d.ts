@@ -1,4 +1,5 @@
-import { Promise } from '../utils';
+import { AgPromise } from '../utils';
+import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { ColumnEventType } from '../events';
 import { IFilterComp, IFilterParams } from '../interfaces/iFilter';
@@ -8,7 +9,6 @@ export declare type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 export declare class FilterManager extends BeanStub {
     private $compile;
     private $scope;
-    private gridOptionsWrapper;
     private valueService;
     private columnController;
     private rowModel;
@@ -52,7 +52,7 @@ export declare class FilterManager extends BeanStub {
     private aggregateRowForQuickFilter;
     private onNewRowsLoaded;
     private createValueGetter;
-    getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist?: boolean): Promise<IFilterComp>;
+    getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist?: boolean): AgPromise<IFilterComp> | null;
     isFilterActive(column: Column): boolean;
     getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper;
     cachedFilter(column: Column): FilterWrapper;
@@ -68,7 +68,7 @@ export declare class FilterManager extends BeanStub {
 export interface FilterWrapper {
     compiledElement: any;
     column: Column;
-    filterPromise: Promise<IFilterComp>;
+    filterPromise: AgPromise<IFilterComp> | null;
     scope: any;
-    guiPromise: Promise<HTMLElement>;
+    guiPromise: AgPromise<HTMLElement | null>;
 }

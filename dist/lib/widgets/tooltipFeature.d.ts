@@ -13,7 +13,6 @@ export declare class TooltipFeature extends BeanStub {
     private userComponentFactory;
     private columnApi;
     private gridApi;
-    private gridOptionsWrapper;
     private tooltipShowDelay;
     private parentComp;
     private showTooltipTimeoutId;

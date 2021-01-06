@@ -17,7 +17,6 @@ export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupP
 }
 export declare class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private columnController;
-    private gridOptionsWrapper;
     static TEMPLATE: string;
     private params;
     private eOpenIcon;

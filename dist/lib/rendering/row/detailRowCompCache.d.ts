@@ -9,7 +9,6 @@ import { BeanStub } from "../../context/beanStub";
  * still be applied after the detail grid is shown for the second time.
  */
 export declare class DetailRowCompCache extends BeanStub {
-    private gridOptionsWrapper;
     private cacheItems;
     private maxCacheSize;
     private active;

@@ -5,7 +5,6 @@ export declare class CellNavigationService extends BeanStub {
     private columnController;
     private rowModel;
     private pinnedRowModel;
-    private gridOptionsWrapper;
     private paginationProxy;
     getNextCellToFocus(key: any, lastCellToFocus: CellPosition): CellPosition | null;
     private isCellGoodToFocusOn;

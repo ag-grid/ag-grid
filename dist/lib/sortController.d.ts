@@ -3,7 +3,6 @@ import { Column } from "./entities/column";
 import { ColumnEventType } from "./events";
 export declare class SortController extends BeanStub {
     private static DEFAULT_SORTING_ORDER;
-    private gridOptionsWrapper;
     private columnController;
     private columnApi;
     private gridApi;

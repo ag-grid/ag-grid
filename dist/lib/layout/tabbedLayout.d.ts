@@ -1,4 +1,4 @@
-import { Promise } from '../utils';
+import { AgPromise } from '../utils';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 export declare class TabbedLayout extends ManagedFocusComponent {
@@ -31,7 +31,7 @@ export interface TabbedLayoutParams {
 export interface TabbedItem {
     title: Element;
     titleLabel: string;
-    bodyPromise: Promise<HTMLElement>;
+    bodyPromise: AgPromise<HTMLElement>;
     name: string;
     afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;
 }

@@ -6,7 +6,6 @@ export declare class SelectAllFeature extends BeanStub {
     private columnApi;
     private rowModel;
     private selectionController;
-    private gridOptionsWrapper;
     private cbSelectAllVisible;
     private processingEventFromCheckbox;
     private column;

@@ -10,6 +10,7 @@ export declare function addOrRemoveCssClass(element: HTMLElement, className: str
  */
 export declare function radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null): void;
 export declare function containsClass(element: HTMLElement, className: string): boolean;
+export declare function isFocusableFormField(element: HTMLElement): boolean;
 export declare function setDisplayed(element: HTMLElement, displayed: boolean): void;
 export declare function setVisible(element: HTMLElement, visible: boolean): void;
 export declare function setDisabled(element: HTMLElement, disabled: boolean): void;

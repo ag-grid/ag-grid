@@ -1,6 +1,5 @@
 import { BeanStub } from "../context/beanStub";
 export declare class UndoRedoService extends BeanStub {
-    private gridOptionsWrapper;
     private focusController;
     private gridApi;
     private rowModel;
