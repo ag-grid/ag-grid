@@ -172,7 +172,7 @@ To demonstrate this, the example installs it's own aggregation function for summ
 
 So with the example below, open up the console and notice the following:
 
-- When the grid initialises, the aggregation gets complete 84 times (6 columns * 14 groups). That's all paths in the group tree and all columns.
+- When the grid initialises, the aggregation gets complete 56 times (4 columns * 14 groups). That's all paths in the group tree and all columns.
 
 - When one value changes (either via UI or via the first button 'Update One Value') then the grid recomputes the values for the impacted path only, and for the changed column only.
 
