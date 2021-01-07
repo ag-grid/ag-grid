@@ -7,7 +7,7 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import './src/bootstrap.scss';
 import './src/themes/prism-coy-without-shadows.css';
-import 'fontsource-roboto';
+import '@fontsource/roboto';
 
 const frameworkStorageKey = 'framework';
 const getRelativePath = path => path.replace(withPrefix('/'), '/');
