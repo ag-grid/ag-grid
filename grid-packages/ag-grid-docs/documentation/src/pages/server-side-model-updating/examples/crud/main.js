@@ -39,7 +39,11 @@ function onBtRemove() {
 
     var selectedRow = selectedRows[0];
 
-    window.rowDataServerSide.splice(selectedRow.rowIndex, 1);
+    var indexToRemove = window.rowDataServerSide.indexOf(selectedRow.data);
+    // the record could be missing, if the user hit the 'remove' button a few times before refresh happens
+    if (indexToRemove>=0) {
+        window.rowDataServerSide.splice(indexToRemove, 1);
+    }
 
     gridOptions.api.refreshServerSideStore();
 }
@@ -67,10 +71,12 @@ function createMyDataSource(data) {
     }
 
     MyDatasource.prototype.getRows = function(params) {
-        // take a slice of the total rows
-        var rowsThisPage = data.slice(params.request.startRow, params.request.endRow);
-        // call the success callback
-        params.success({ rowData: rowsThisPage, rowCount: window.rowDataServerSide.length });
+        setTimeout(function() {
+            // take a slice of the total rows
+            var rowsThisPage = data.slice(params.request.startRow, params.request.endRow);
+            // call the success callback
+            params.success({ rowData: rowsThisPage, rowCount: window.rowDataServerSide.length });
+        }, 500);
     };
 
     return new MyDatasource();
