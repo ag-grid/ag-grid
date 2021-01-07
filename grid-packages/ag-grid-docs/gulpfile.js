@@ -198,9 +198,7 @@ const copyFromDistFolder = () => merge(
         .pipe(gulp.dest('./dist/@ag-grid-enterprise/all-modules/dist/'))
 );
 
-const copyHtaccessFileToDist = () => merge(
-    gulp.src(['./.htaccess']).pipe(gulp.dest('./dist/')),
-);
+const copyProdWebServerFilesToDist = () => gulp.src(['./.htaccess', './src/_assets/favicons/favicon.ico']).pipe(gulp.dest('./dist/'));
 
 const copyDocumentationWebsite = () => gulp.src(['./documentation/public/**/*']).pipe(gulp.dest('./dist/documentation/'));
 
@@ -237,12 +235,12 @@ gulp.task('process-src', processSource);
 gulp.task('bundle-site-archive', bundleSite.bind(null, false));
 gulp.task('bundle-site-release', bundleSite.bind(null, true));
 gulp.task('copy-from-dist', copyFromDistFolder);
-gulp.task('copy-htaccess-file', copyHtaccessFileToDist);
+gulp.task('copy-prod-webserver-files', copyProdWebServerFilesToDist);
 gulp.task('copy-documentation-website', copyDocumentationWebsite);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
 gulp.task('generate-examples', parallel('generate-grid-examples', 'generate-chart-examples'));
 gulp.task('release-archive', series('process-src', 'bundle-site-archive', 'copy-from-dist', 'copy-documentation-website', 'populate-dev-folder', 'update-dist-systemjs-files'));
-gulp.task('release', series('process-src', 'bundle-site-release', 'copy-from-dist', 'copy-documentation-website', 'update-dist-systemjs-files', 'copy-htaccess-file', 'replace-references-with-cdn'));
+gulp.task('release', series('process-src', 'bundle-site-release', 'copy-from-dist', 'copy-documentation-website', 'update-dist-systemjs-files', 'copy-prod-webserver-files', 'replace-references-with-cdn'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 

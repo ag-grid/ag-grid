@@ -83,8 +83,7 @@
     "@ag-grid-enterprise/set-filter": "~25.0.0",
     "@ag-grid-enterprise/side-bar": "~25.0.0",
     "@ag-grid-enterprise/status-bar": "~25.0.0",
-    "@ag-grid-enterprise/viewport-row-model": "~25.0.0",
-    "@ag-grid-enterprise/date-time-cell-editor": "~25.0.0"
+    "@ag-grid-enterprise/viewport-row-model": "~25.0.0"
   },
   "devDependencies": {
     "@babel/types": "7.12.7",
