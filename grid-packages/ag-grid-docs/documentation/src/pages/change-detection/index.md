@@ -131,7 +131,7 @@ For this reason, if you want to update the sorting, filtering or group grouping 
 ### Example: Change Detection and Filter / Sort / Group
 
 
-The following example is the same as the example above [Change Detection and Groups](#example-change-detection-groups) except it gets the grid to do an batch update so that the grouping, sorting and filtering are recomputed. From the example, the following can be noted:
+The following example is the same as the example above [Change Detection and Groups](#example-change-detection-groups) except it gets the grid to do a transaction update so that the grouping, sorting and filtering are recomputed. From the example, the following can be noted:
 
 - As before, updating any value will update the total column and aggregated group columns.
 
