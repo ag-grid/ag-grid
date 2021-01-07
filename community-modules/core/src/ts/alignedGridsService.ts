@@ -187,17 +187,26 @@ export class AlignedGridsService extends BeanStub {
                 // when the user moves columns via setColumnState, we can't depend on moving specific columns
                 // to an index, as there maybe be many indexes columns moved to (as wasn't result of a mouse drag).
                 // so only way to be sure is match the order of all columns using Column State.
-                const movedEvent = colEvent as ColumnMovedEvent;
-                const srcColState = colEvent.columnApi.getColumnState();
-                const destColState = srcColState.map( s => { return {colId: s.colId}; } );
-                const applyStateParams = {state: destColState, applyOrder: true};
-                this.columnController.applyColumnState(applyStateParams, "alignedGridChanged");
-                this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
+                {
+                    const movedEvent = colEvent as ColumnMovedEvent;
+                    const srcColState = colEvent.columnApi.getColumnState();
+                    const destColState = srcColState.map( s => { return {colId: s.colId}; } );
+                    this.columnController.applyColumnState(
+                        {state: destColState, applyOrder: true}, "alignedGridChanged");
+                    this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
+                }
                 break;
             case Events.EVENT_COLUMN_VISIBLE:
-                const visibleEvent = colEvent as ColumnVisibleEvent;
-                this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
-                this.columnController.setColumnsVisible(columnIds, visibleEvent.visible, "alignedGridChanged");
+                // when the user changes visibility via setColumnState, we can't depend on visibility flag in event
+                // as there maybe be mix of true/false (as wasn't result of a mouse click to set visiblity).
+                // so only way to be sure is match the visibility of all columns using Column State.
+                {
+                    const visibleEvent = colEvent as ColumnVisibleEvent;
+                    const srcColState = colEvent.columnApi.getColumnState();
+                    const destColState = srcColState.map( s => { return {colId: s.colId, hide: s.hide}; } );
+                    this.columnController.applyColumnState({state: destColState}, "alignedGridChanged");
+                    this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
+                }
                 break;
             case Events.EVENT_COLUMN_PINNED:
                 const pinnedEvent = colEvent as ColumnPinnedEvent;
