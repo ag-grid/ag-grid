@@ -106,7 +106,7 @@ const plugins = [
   {
     resolve: 'gatsby-plugin-sass',
     options: {
-      data: `@import './src/custom.module';`,
+      additionalData: `@import './src/custom.module';`,
       cssLoaderOptions: {
         camelCase: false,
       },
@@ -148,9 +148,6 @@ module.exports = {
     title: 'AG-Grid Documentation',
     author: 'AG-Grid',
     siteUrl: `https://www.ag-grid.com`,
-  },
-  flags: {
-    LAZY_IMAGES: true,
   },
   plugins,
 };

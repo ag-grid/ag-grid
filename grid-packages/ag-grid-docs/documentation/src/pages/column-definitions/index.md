@@ -60,7 +60,7 @@ This is done through the following:
 
 Default columns and column types can specify any of the [column properties](../column-properties/) available on a column.
 
-[[note]]
+[[note | Hello]]
 | Column Types are designed to work on Columns only, i.e. they won't be applied to Column Groups.
 
 The following code snippet demonstrates these three properties:

@@ -163,11 +163,11 @@ main {
         }
     }
 
-    &-heading {
+    &:global(-heading) {
         @extend .alert-heading;
     }
 
-    &-body {
+    &:global(-body) {
         p:last-child {
             margin-bottom: 0;
         }
