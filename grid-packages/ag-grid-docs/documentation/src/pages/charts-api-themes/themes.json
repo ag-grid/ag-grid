@@ -1747,6 +1747,26 @@
       "displayName": "Common Axis Configuration",
       "description": "This is the configuration shared by all types of axis."
     },
+    "top": {
+      "meta": {
+        "description": "An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`."
+      }
+    },
+    "right": {
+      "meta": {
+        "description": "An object with axis theme overrides for the `right` positioned axes. Same configs apply here as one level above."
+      }
+    },
+    "bottom": {
+      "meta": {
+        "description": "An object with axis theme overrides for the `bottom` positioned axes. Same configs apply here as one level above."
+      }
+    },
+    "left": {
+      "meta": {
+        "description": "An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above."
+      }
+    },
     "title": {
       "meta": {
         "description": "Configuration for the title shown next to the axis."
