@@ -43,6 +43,18 @@ var AutoHeightCalculator = /** @class */ (function (_super) {
             // the content in dummy may differ to the real
             _.addCssClass(this.eDummyContainer, 'ag-row ag-row-no-focus');
         }
+        const levelCssClassPrefix = "ag-row-level-";
+        // delete old levelCssClass
+        var cssClasses = this.eDummyContainer.className.split(' ');
+        cssClasses.forEach((cssClass)=>{
+           if (cssClass.startsWith(levelCssClassPrefix)){
+               _.removeCssClass(this.eDummyContainer, cssClass);
+           }
+        });
+        // setup levelCssClass
+        if (rowNode && rowNode.level){
+            _.addCssClass(this.eDummyContainer, levelCssClassPrefix+rowNode.level);
+        }
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
         var eBodyContainer = this.gridPanel.getCenterContainer();
