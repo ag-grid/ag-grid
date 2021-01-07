@@ -163,8 +163,8 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         const headerCompRefreshed = newHeaderCompConfigured ? false : this.attemptHeaderCompRefresh();
         if (headerCompRefreshed) {
-            const dragSourceIsMissing = this.draggable && !this.dragAndDropService;
-            const dragSourceNeedsRemoving = !this.draggable && this.dragAndDropService;
+            const dragSourceIsMissing = this.draggable && !this.moveDragSource;
+            const dragSourceNeedsRemoving = !this.draggable && this.moveDragSource;
             if (dragSourceIsMissing || dragSourceNeedsRemoving) {
                 this.attachDraggingToHeaderComp();
             }
