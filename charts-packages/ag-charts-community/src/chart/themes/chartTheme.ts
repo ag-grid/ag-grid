@@ -42,6 +42,10 @@ export class ChartTheme {
 
     private static getAxisDefaults(): any {
         return {
+            top: {},
+            right: {},
+            bottom: {},
+            left: {},
             title: {
                 enabled: false,
                 padding: {

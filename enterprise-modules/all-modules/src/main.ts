@@ -15,7 +15,6 @@ import { SetFilterModule } from "@ag-grid-enterprise/set-filter";
 import { SideBarModule } from "@ag-grid-enterprise/side-bar";
 import { StatusBarModule } from "@ag-grid-enterprise/status-bar";
 import { ViewportRowModelModule } from "@ag-grid-enterprise/viewport-row-model";
-import { DateTimeCellEditorModule } from "@ag-grid-enterprise/date-time-cell-editor";
 
 export * from "@ag-grid-community/all-modules";
 export * from "@ag-grid-enterprise/clipboard";
@@ -35,7 +34,6 @@ export * from "@ag-grid-enterprise/side-bar";
 export * from "@ag-grid-enterprise/status-bar";
 export * from "@ag-grid-enterprise/viewport-row-model";
 export * from "@ag-grid-enterprise/core";
-export * from "@ag-grid-enterprise/date-time-cell-editor";
 
 export const AllEnterpriseModules: Module[] = [
     ClipboardModule,
@@ -53,8 +51,7 @@ export const AllEnterpriseModules: Module[] = [
     SetFilterModule,
     SideBarModule,
     StatusBarModule,
-    ViewportRowModelModule,
-    DateTimeCellEditorModule
+    ViewportRowModelModule
 ];
 
 export const AllModules: Module[] = AllCommunityModules.concat(AllEnterpriseModules);

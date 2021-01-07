@@ -50,6 +50,8 @@ git reset community-modules/csv-export/dist
 git reset community-modules/infinite-row-model/dist
 git reset community-modules/react/lib
 git reset community-modules/react/bundles
+git reset community-modules/vue/dist
+git reset grid-packages/ag-grid-vue/dist
 git reset community-modules/vue3/dist
 git reset community-modules/vue3/lib
 git reset charts-packages/ag-charts-angular/dist

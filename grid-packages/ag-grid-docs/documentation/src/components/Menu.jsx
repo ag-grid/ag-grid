@@ -97,7 +97,7 @@ const Menu = ({ currentFramework, currentPage }) => {
                     />
                 );
             })}
-            <Announcements />
+            <Announcements framework={currentFramework} />
         </ul>
     </div>;
 };
