@@ -219,24 +219,26 @@ export class CellComp extends Component implements TooltipParentComp {
             templateParts.push(` aria-selected="${this.rangeCount ? 'true' : 'false'}"`);
         }
 
-        if (this.usingWrapper) {
-            wrapperStartTemplate =
-                `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-                    <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}" ${unselectable}>`;
-            wrapperEndTemplate = '</span></div>';
-        }
-
         templateParts.push(` style="width: ${Number(width)}px; left: ${Number(left)}px; ${escapeString(stylesFromColDef)} ${escapeString(stylesForRowSpanning)}">`);
-        templateParts.push(wrapperStartTemplate);
-
-        if (exists(valueSanitised, true)) {
-            templateParts.push(valueSanitised);
-        }
-
-        templateParts.push(wrapperEndTemplate);
+        templateParts.push(this.getCellWrapper(exists(valueSanitised, true) ? valueSanitised : undefined));
         templateParts.push(`</div>`);
 
         return templateParts.join('');
+    }
+
+    private getCellWrapper(value?: string): string {
+        if (!this.usingWrapper) {
+            return value !== undefined ? value : '';
+        }
+        const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? 'unselectable="on"' : '';
+        const wrapper = /* html */
+            `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
+                <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}" ${unselectable}>
+                    ${value}
+                </span>
+            </div>`
+
+        return wrapper;
     }
 
     private getStylesForRowSpanning(): string {
@@ -583,15 +585,24 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private replaceContentsAfterRefresh(): void {
         // otherwise we rip out the cell and replace it
-        clearElement(this.eCellValue);
-
+        this.clearCellElement();
         // remove old renderer component if it exists
         this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
         this.cellRendererGui = null;
 
+        // If a cell is being refresh because of manual call to `refreshCells`
+        // it is possible that we need to add or remove the cell wrapper
+        this.rewireCellWrapper();
+
         // populate
         this.putDataIntoCellAfterRefresh();
         this.updateAngular1ScopeAndCompile();
+    }
+
+    private rewireCellWrapper(): void {
+        this.setUsingWrapper();
+        this.getGui().innerHTML = this.getCellWrapper();
+        this.populateTemplate();
     }
 
     private updateAngular1ScopeAndCompile() {

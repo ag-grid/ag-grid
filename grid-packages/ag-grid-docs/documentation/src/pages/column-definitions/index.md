@@ -213,7 +213,7 @@ The following code snippet demonstrates these three properties:
 |         suppressMenu: true
 |     }
 | };
-|```
+| ```
 
 
 [[only-react]]
@@ -254,7 +254,7 @@ The following code snippet demonstrates these three properties:
 |     // overrides the default using a multiple column types
 |     <AgGridColumn headerName='Col D' field='d' type=['dateColumn', 'nonEditableColumn'] />
 | </AgGridReact>
-|```
+| ```
 
 
 When the grid creates a column it starts with the default column definition, then adds in anything from the column type, then finally adds in items from the specific column definition.
