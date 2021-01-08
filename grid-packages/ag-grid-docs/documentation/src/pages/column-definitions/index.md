@@ -114,7 +114,7 @@ The following code snippet demonstrates these three properties:
 
 [[only-javascript]]
 | ```js
-| var gridOptions = {
+| const gridOptions = {
 |     rowData: myRowData,
 | 
 |     // define columns
