@@ -82,6 +82,9 @@ const plugins = [
               'only-vue': {
                 classes: 'vue-only-section',
               },
+              'only-angular-or-vue': {
+                classes: 'angular-or-vue-only-section',
+              },
               'only-frameworks': {
                 classes: 'frameworks-only-section',
               }

@@ -10,7 +10,7 @@ const processChildren = (node, framework) => node.reduce((children, child) => {
         const blockCustomClass = child.properties.className[1];
 
         if (blockCustomClass.endsWith('-only-section')) {
-            if (blockCustomClass === `${framework}-only-section` ||
+            if (blockCustomClass.includes(framework) ||
                 (blockCustomClass === 'frameworks-only-section' && framework !== 'javascript')) {
                 return [...children, ...child.children[0].children];
             }

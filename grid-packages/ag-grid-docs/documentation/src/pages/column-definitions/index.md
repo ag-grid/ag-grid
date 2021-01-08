@@ -5,40 +5,85 @@ Each column in the grid is defined using a Column Definition (`ColDef`). Columns
 
 The following example shows a simple grid with 3 columns defined:
 
-```js
-var gridOptions = {
-    // define 3 columns
-    columnDefs: [
-        { headerName: 'Athlete', field: 'athlete' },
-        { headerName: 'Sport', field: 'sport' },
-        { headerName: 'Age', field: 'age' }
-    ],
+[[only-javascript]]
+| ```js
+| const gridOptions = {
+|     // define 3 columns
+|     columnDefs: [
+|         { headerName: 'Athlete', field: 'athlete' },
+|         { headerName: 'Sport', field: 'sport' },
+|         { headerName: 'Age', field: 'age' },
+|     ],
+|
+|     // other grid options here...
+| }
+| ```
 
-    // other grid options here...
-}
-```
+[[only-angular-or-vue]]
+| ```js
+| // define 3 columns
+| this.columnDefs = [
+|     { headerName: 'Athlete', field: 'athlete' },
+|     { headerName: 'Sport', field: 'sport' },
+|     { headerName: 'Age', field: 'age' },
+| ];
+| ```
+
+[[only-react]]
+| ```js
+| // define 3 columns
+| <AgGridColumn headerName='Athlete' field='athlete' />
+| <AgGridColumn headerName='Sport' field='sport' />
+| <AgGridColumn headerName='Age' field='age' />
+| ```
 
 See [Column Properties](../column-properties/) for a list of all properties that can be applied to a column.
 
 If you want the columns to be grouped, you can include them as children like so:
 
-```js
-var gridOptions = {
-    columnDefs: [
-        // put the three columns into a group
-        {
-            headerName: 'Group A',
-            children: [
-                { headerName: 'Athlete', field: 'athlete' },
-                { headerName: 'Sport', field: 'sport' },
-                { headerName: 'Age', field: 'age' }
-            ]
-        }
-    ],
+[[only-javascript]]
+| ```js
+| const gridOptions = {
+|     columnDefs: [
+|         // put the three columns into a group
+|         {
+|             headerName: 'Group A',
+|             children: [
+|                 { headerName: 'Athlete', field: 'athlete' },
+|                 { headerName: 'Sport', field: 'sport' },
+|                 { headerName: 'Age', field: 'age' },
+|             ]
+|         }
+|     ],
+| 
+|     // other grid options here...
+| }
+| ```
 
-    // other grid options here...
-}
-```
+[[only-angular-or-vue]]
+| ```js
+| this.columnDefs = [
+|     // put the three columns into a group
+|     {
+|         headerName: 'Group A',
+|         children: [
+|             { headerName: 'Athlete', field: 'athlete' },
+|             { headerName: 'Sport', field: 'sport' },
+|             { headerName: 'Age', field: 'age' },
+|         ]
+|     }
+| ];
+| ```
+
+[[only-react]]
+| ```js
+| // put the three columns into a group
+| <AgGridColumn headerName='Group A'>
+|     <AgGridColumn headerName='Athlete' field='athlete' />
+|     <AgGridColumn headerName='Sport' field='sport' />
+|     <AgGridColumn headerName='Age' field='age' />
+| </AgGridColumn>
+| ```
 
 Groups are explained in more detail in the section [Column Groups](../column-groups/).
 
@@ -67,51 +112,132 @@ Default columns and column types can specify any of the [column properties](../c
 
 The following code snippet demonstrates these three properties:
 
-```js
-var gridOptions = {
-    rowData: myRowData,
+[[only-javascript]]
+| ```js
+| var gridOptions = {
+|     rowData: myRowData,
+| 
+|     // define columns
+|     columnDefs: [
+|         // uses the default column properties
+|         { headerName: 'Col A', field: 'a'},
+| 
+|         // overrides the default with a number filter
+|         { headerName: 'Col B', field: 'b', filter: 'agNumberColumnFilter' },
+| 
+|         // overrides the default using a column type
+|         { headerName: 'Col C', field: 'c', type: 'nonEditableColumn' },
+| 
+|         // overrides the default using a multiple column types
+|         { headerName: 'Col D', field: 'd', type: ['dateColumn', 'nonEditableColumn'] }
+|     ],
+| 
+|     // a default column definition with properties that get applied to every column
+|     defaultColDef: {
+|         // set every column width
+|         width: 100,
+|         // make every column editable
+|         editable: true,
+|         // make every column use 'text' filter by default
+|         filter: 'agTextColumnFilter'
+|     },
+| 
+|     // if we had column groups, we could provide default group items here
+|     defaultColGroupDef: {}
+| 
+|     // define a column type (you can define as many as you like)
+|     columnTypes: {
+|         'nonEditableColumn': { editable: false },
+|         'dateColumn': {
+|             filter: 'agDateColumnFilter',
+|             filterParams: { comparator: myDateComparator },
+|             suppressMenu: true
+|         }
+|     }
+| 
+|     // other grid options here...
+| }
+| ```
 
-    // define columns
-    columnDefs: [
-        // uses the default column properties
-        { headerName: 'Col A', field: 'a'},
+[[only-angular-or-vue]]
+| ```js
+| // define columns
+| this.columnDefs = [
+|     // uses the default column properties
+|     { headerName: 'Col A', field: 'a'},
+|     // overrides the default with a number filter
+|     { headerName: 'Col B', field: 'b', filter: 'agNumberColumnFilter' },
+|     // overrides the default using a column type
+|     { headerName: 'Col C', field: 'c', type: 'nonEditableColumn' },
+|     // overrides the default using a multiple column types
+|     { headerName: 'Col D', field: 'd', type: ['dateColumn', 'nonEditableColumn'] }
+| ];
+|
+| // a default column definition with properties that get applied to every column
+| this.defaultColDef = {
+|     // set every column width
+|     width: 100,
+|     // make every column editable
+|     editable: true,
+|     // make every column use 'text' filter by default
+|     filter: 'agTextColumnFilter'
+| };
+|
+| // if we had column groups, we could provide default group items here
+| this.defaultColGroupDef = {};
+|
+| // define a column type (you can define as many as you like)
+| this.columnTypes = {
+|     'nonEditableColumn': { editable: false },
+|     'dateColumn': {
+|         filter: 'agDateColumnFilter',
+|         filterParams: { comparator: myDateComparator },
+|         suppressMenu: true
+|     }
+| };
+|```
 
-        // overrides the default with a number filter
-        { headerName: 'Col B', field: 'b', filter: 'agNumberColumnFilter' },
 
-        // overrides the default using a column type
-        { headerName: 'Col C', field: 'c', type: 'nonEditableColumn' },
+[[only-react]]
+| ```js
+| <AgGridReact
+|     defaultColDef={{
+|         // set every column width 
+|         width: 100,
+|         // make every column editable
+|         editable: true,
+|         // make every column use 'text' filter by default
+|         filter: 'agTextColumnFilter'
+|     }}
+|     
+|     // if we had column groups, we could provide default group items here
+|     defaultColGroupDef = {};
+|     
+|     // define a column type (you can define as many as you like)
+|     columnTypes={{
+|         'nonEditableColumn': { editable: false },
+|         'dateColumn': {
+|             filter: 'agDateColumnFilter',
+|             filterParams: { comparator: myDateComparator },
+|             suppressMenu: true,
+|         }
+|  
+|     // other grid options here....
+| >
+|     // uses the default column properties
+|     <AgGridColumn headerName='Col A' field='a' />
+|
+|     // overrides the default with a number filter
+|     <AgGridColumn headerName='Col B' field='b', filter='agNumberColumnFilter' />
+|
+|     // overrides the default using a column type
+|     <AgGridColumn headerName='Col C' field='c' type='nonEditableColumn' />
+|
+|     // overrides the default using a multiple column types
+|     <AgGridColumn headerName='Col D' field='d' type=['dateColumn', 'nonEditableColumn'] />
+| </AgGridReact>
+|```
 
-        // overrides the default using a multiple column types
-        { headerName: 'Col D', field: 'd', type: ['dateColumn', 'nonEditableColumn'] }
-    ],
-
-    // a default column definition with properties that get applied to every column
-    defaultColDef: {
-        // set every column width
-        width: 100,
-        // make every column editable
-        editable: true,
-        // make every column use 'text' filter by default
-        filter: 'agTextColumnFilter'
-    },
-
-    // if we had column groups, we could provide default group items here
-    defaultColGroupDef: {}
-
-    // define a column type (you can define as many as you like)
-    columnTypes: {
-        'nonEditableColumn': { editable: false },
-        'dateColumn': {
-            filter: 'agDateColumnFilter',
-            filterParams: { comparator: myDateComparator },
-            suppressMenu: true
-        }
-    }
-
-    // other grid options here...
-}
-```
 
 When the grid creates a column it starts with the default column definition, then adds in anything from the column type, then finally adds in items from the specific column definition.
 
@@ -125,10 +251,10 @@ For example, the following is an outline of the steps used when creating 'Col C'
 { width: 100, editable: true, filter: 'agTextColumnFilter' }
 
 // Step 3: column type properties are merged in (using the 'type' property)
-{ width: 100, editable: false, filter: 'agNumberColumnFilter' }
+{ width: 100, editable: false, filter: 'agTextColumnFilter' }
 
 // Step 4: finally column definition properties are merged in
-{ headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'agNumberColumnFilter' }
+{ headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'agTextColumnFilter' }
 ```
 
 The following example demonstrates the different configuration properties in action.
@@ -142,15 +268,32 @@ The grid provides a handy shortcut for aligning columns to the right. Setting th
 [[note]]
 | Because right alignment is used for numbers, we also provided an alias `numericColumn` that can be used to align the header and cell text to the right.
 
-```js
-var gridOptions = {
-    columnDefs: [
-        { headerName: 'Column A', field: 'a' },
-        { headerName: 'Column B', field: 'b', type: 'rightAligned' },
-        { headerName: 'Column C', field: 'c', type: 'numericColumn' }
-    ]
-}
-```
+[[only-javascript]]
+| ```js
+| const gridOptions = {
+|     columnDefs: [
+|         { headerName: 'Column A', field: 'a' },
+|         { headerName: 'Column B', field: 'b', type: 'rightAligned' },
+|         { headerName: 'Column C', field: 'c', type: 'numericColumn' }
+|     ]
+| }
+| ```
+
+[[only-angular-or-vue]]
+| ```js
+| this.columnDefs = [
+|     { headerName: 'Column A', field: 'a' },
+|     { headerName: 'Column B', field: 'b', type: 'rightAligned' },
+|     { headerName: 'Column C', field: 'c', type: 'numericColumn' }
+| ]
+| ```
+
+[[only-react]]
+| ```js
+| <AgGridColumn headerName='Column A' field='a' />
+| <AgGridColumn headerName='Column B' field='b', type='rightAligned' />
+| <AgGridColumn headerName='Column C' field='c', type='numericColumn' />
+| ```
 
 ## Column IDs
 
