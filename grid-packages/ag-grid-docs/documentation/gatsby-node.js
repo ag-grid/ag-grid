@@ -36,21 +36,30 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
 
                 const publicPath = path.join(process.cwd(), `public`, fileName);
 
-                if (!fs.existsSync(publicPath) || isExampleFile) {
-                    fs.copySync(
-                        details.absolutePath,
-                        publicPath,
-                        { dereference: true },
-                        err => {
-                            if (err) {
-                                console.error(
-                                    `error copying file from ${details.absolutePath} to ${publicPath}`,
-                                    err
-                                );
+                fs.pathExists(publicPath, (err, exists) => {
+                    if (err) {
+                        console.error(
+                            `Error checking for existence of ${publicPath} for ${details.absolutePath}`,
+                            err
+                        );
+                    }
+
+                    if (!exists || isExampleFile) {
+                        fs.copy(
+                            details.absolutePath,
+                            publicPath,
+                            { dereference: true },
+                            err => {
+                                if (err) {
+                                    console.error(
+                                        `Error copying file from ${details.absolutePath} to ${publicPath}`,
+                                        err
+                                    );
+                                }
                             }
-                        }
-                    );
-                }
+                        );
+                    }
+                });
 
                 return `${pathPrefix}/${fileName}`;
             }
