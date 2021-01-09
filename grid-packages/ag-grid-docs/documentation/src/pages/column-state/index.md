@@ -26,13 +26,32 @@ This section details how such state items can be manipulated without having to u
 There are two API methods provided for getting and setting Column State. `columnApi.getColumnState()` gets the current
 column state and `columnApi.applyColumnState()` sets the column state.
 
-```js
-// save the columns state
-let savedState = columnApi.getColumnState();
+[[only-javascript]]
+| ```js
+| // save the columns state
+| const savedState = gridOptions.columnApi.getColumnState();
+| 
+| // restore the column state
+| gridOptions.columnApi.applyColumnState({ state: savedState });
+| ```
 
-// restore the column state
-columnApi.applyColumnState({ state: savedState });
-```
+[[only-angular-or-vue]]
+| ```js
+| // save the columns state
+| const savedState = this.gridColumnApi.getColumnState();
+|
+| // restore the column state
+| this.gridColumnApi.applyColumnState({ state: savedState });
+| ```
+
+[[only-react]]
+| ```js
+| // save the columns state
+| const savedState = gridColumnApi.getColumnState();
+|
+| // restore the column state
+| gridColumnApi.applyColumnState({ state: savedState });
+| ```
 
 The example below demonstrates saving and restoring column state. Try the following:
 

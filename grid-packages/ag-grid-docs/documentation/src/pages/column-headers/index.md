@@ -22,24 +22,96 @@ By default, the text label for the header is display horizontally, i.e. as norma
 
 The following example shows how you can provide a unique look and feel to the headers. Note that:
 
-- The header heights have all been changed in the gridOptions:
+- The header heights have all been changed via grid options:
 
-    ```js
-        /* Group columns */
-        groupHeaderHeight: 75,
+    [[only-javascript]]
+    | ```js
+    | const gridOptions = {
+    |     /* Group columns */
+    |     groupHeaderHeight: 75,
+    | 
+    |     /* Label columns */
+    |     headerHeight: 150,
+    | 
+    |     /* Floating filter */
+    |     floatingFiltersHeight: 50,
+    |  
+    |     /* Pivoting, requires turning on pivot mode. Label columns */
+    |     pivotHeaderHeight: 100,
+    | 
+    |     /* Pivoting, requires turning on pivot mode. Group columns */
+    |     pivotGroupHeaderHeight: 50,
+    |
+    |     // other grid options ...
+    | }
+    | ```
 
-        /* Label columns */
-        headerHeight: 150,
+    [[only-angular]]
+    | ```js
+    | <ag-grid-angular
+    |     [groupHeaderHeight]="groupHeaderHeight"
+    |     [headerHeight]="headerHeight"
+    |     [floatingFiltersHeight]="floatingFiltersHeight"
+    |     [pivotHeaderHeight]="pivotHeaderHeight"
+    |     [pivotGroupHeaderHeight]="pivotGroupHeaderHeight"
+    |     // other grid options ...>
+    | </ag-grid-angular>
+    |   
+    | /* Group columns */
+    | this.groupHeaderHeight = 75;
+    |
+    | /* Label columns */
+    | this.headerHeight = 150;
+    |
+    | /* Floating filter */
+    | this.floatingFiltersHeight = 50;
+    |
+    | /* Pivoting, requires turning on pivot mode. Label columns */
+    | this.pivotHeaderHeight = 100;
+    | 
+    | /* Pivoting, requires turning on pivot mode. Group columns */
+    | this.pivotGroupHeaderHeight = 50;
+    | ```
 
-        /* Floating filter */
-        floatingFiltersHeight: 50,
+    [[only-react]]
+    | ```js
+    | <AgGridReact
+    |     groupHeaderHeight={75}
+    |     headerHeight={150}
+    |     floatingFiltersHeight={50}
+    |     pivotHeaderHeight={100}
+    |     pivotGroupHeaderHeight={50}
+    |     // other grid options ...>
+    | </AgGridReact>
+    | ```
 
-        /* Pivoting, requires turning on pivot mode. Label columns */
-        pivotGroupHeaderHeight: 50,
-
-        /* Pivoting, requires turning on pivot mode. Group columns */
-        pivotGroupHeaderHeight: 100,
-    ```
+    [[only-vue]]
+    | ```js
+    | <ag-grid-vue
+    |     :groupHeaderHeight="groupHeaderHeight"
+    |     :headerHeight="headerHeight"
+    |     :floatingFiltersHeight="floatingFiltersHeight"
+    |     :pivotHeaderHeight="pivotHeaderHeight"
+    |     :pivotGroupHeaderHeight="pivotGroupHeaderHeight"
+    |     // other grid options ...>
+    | </ag-grid-vue>
+    |   
+    | /* Group columns */
+    | this.groupHeaderHeight = 75;
+    |
+    | /* Label columns */
+    | this.headerHeight = 150;
+    |
+    | /* Floating filter */
+    | this.floatingFiltersHeight = 50;
+    |
+    | /* Pivoting, requires turning on pivot mode. Label columns */
+    | this.pivotHeaderHeight = 100;
+    |
+    | /* Pivoting, requires turning on pivot mode. Group columns */
+    | this.pivotGroupHeaderHeight = 50;
+    | ```
+  
 
 - The grouped column header `Athlete Details` has a specific style applied to it to make it bigger. Note that the style is slightly different depending if pivoting or not:
 
@@ -178,25 +250,106 @@ The ref parameters are used by the grid to identify elements to add functionalit
 
 In the following example you can see how we are reusing the default grid template to change the layout of the elements.
 
-```js
-defaultColDef: {
-    width: 100,
-    headerComponentParams: {
-    template:
-        '<div class="ag-cell-label-container" role="presentation">' +
-        '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-        '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
-        '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
-        '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
-        '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
-        '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
-        '    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
-        '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
-        '  </div>' +
-        '</div>'
-    }
-}
-```
+
+[[only-javascript]]
+| ```js
+| const gridOptions = {
+|     defaultColDef: {
+|         width: 100,
+|         headerComponentParams: {
+|             template:
+|                 '<div class="ag-cell-label-container" role="presentation">' +
+|                 '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
+|                 '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
+|                 '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
+|                 '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
+|                 '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
+|                 '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
+|                 '    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
+|                 '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
+|                 '  </div>' +
+|                 '</div>'
+|         }
+|     }
+|     // other grid options ...
+| }
+| ```
+
+[[only-angular]]
+| ```js
+| <ag-grid-angular
+|     [defaultColDef]="defaultColDef"
+|     // other grid options ...>
+| </ag-grid-angular>
+|
+| this.defaultColDef = {
+|     width: 100,
+|     headerComponentParams: {
+|         template:
+|             '<div class="ag-cell-label-container" role="presentation">' +
+|             '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
+|             '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
+|             '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
+|             '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
+|             '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
+|             '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
+|             '    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
+|             '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
+|             '  </div>' +
+|             '</div>'
+|     }     
+| };
+| ```
+
+[[only-react]]
+| ```js
+| <AgGridReact
+|     defaultColDef = {{
+|         width: 100,
+|         headerComponentParams: {
+|             template:
+|                 '<div class="ag-cell-label-container" role="presentation">' +
+|                 '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
+|                 '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
+|                 '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
+|                 '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
+|                 '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
+|                 '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
+|                 '    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
+|                 '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
+|                 '  </div>' +
+|                 '</div>'
+|     }}
+|     // other grid options ...>
+| </AgGridReact>
+| ```
+
+
+[[only-vue]]
+| ```js
+| <ag-grid-vue
+|     :defaultColDef="defaultColDef"
+|     // other grid options ...>
+| </ag-grid-vue>
+|
+| this.defaultColDef = {
+|     width: 100,
+|     headerComponentParams: {
+|         template:
+|             '<div class="ag-cell-label-container" role="presentation">' +
+|             '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
+|             '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
+|             '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
+|             '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
+|             '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
+|             '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
+|             '    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
+|             '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
+|             '  </div>' +
+|             '</div>'
+|     }     
+| };
+| ```
 
 Note that specifying your own templates is compatible with other configurations:
 
