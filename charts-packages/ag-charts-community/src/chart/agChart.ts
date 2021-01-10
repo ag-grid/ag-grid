@@ -176,8 +176,6 @@ function save(component: any, target: any = {}, mapping: any = mappings) {
     });
 }
 
-const cartesianAxisPositions = ['top', 'right', 'bottom', 'left'];
-
 function create(options: any, path?: string, component?: any, theme?: ChartTheme) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
     options = Object.create(options);
