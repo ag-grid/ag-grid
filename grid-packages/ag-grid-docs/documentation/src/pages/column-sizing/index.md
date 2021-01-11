@@ -86,7 +86,7 @@ The snippet below allows all columns except Address to be resized by setting `re
 |     // other grid options ...>
 | </ag-grid-angular>
 |
-| this.defaultColDef: {
+| this.defaultColDef = {
 |     resizable: true
 | };
 | this.columnDefs = [
@@ -113,7 +113,7 @@ The snippet below allows all columns except Address to be resized by setting `re
 |     // other grid options ...>
 | </ag-grid-vue>
 |
-| this.defaultColDef: {
+| this.defaultColDef = {
 |     resizable: true
 | };
 | this.columnDefs = [

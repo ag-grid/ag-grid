@@ -6,22 +6,92 @@ Row dragging is used to rearrange rows by dragging the row with the mouse. To
 enable row dragging, set the column property `rowDrag` on one (typically
 the first) column.
 
-```js
-// option 1 - all rows are draggable
-colDef = {
-    rowDrag: true,
-    ...
-}
+## Enabling Row Dragging
 
-// option 2 - only some rows are draggable
-colDef = {
-    rowDrag: function(params) {
-        // only allow non-groups to be dragged
-        return !params.node.group;
-    },
-    ...
-}
-```
+To enable row dragging on all columns, set the column property `rowDrag = true` on one (typically the first) column.
+
+[[only-javascript]]
+| ```js
+| const gridOptions = {
+|     columnDefs: [
+|         // make all rows draggable
+|         { field: 'athlete', rowDrag: true },
+|        
+|         // other column definitions ...
+|     ],
+|
+|     // other grid options ...
+| }
+| ```
+
+[[only-angular]]
+| ```js
+| <ag-grid-angular
+|     [columnDefs]="columnDefs"
+|     // other grid options ...>
+| </ag-grid-angular>
+|
+| this.columnDefs = [
+|     // make rows draggable
+|     { field: 'athlete', rowDrag: true },
+|    
+|     // other column definitions ...
+| ];
+| ```
+
+[[only-react]]
+| ```js
+| <AgGridReact>
+|     // make all rows draggable
+|     <AgGridColumn field='athlete' rowDrag={true}/>
+|     
+|     // other column definitions ...
+| </AgGridReact>
+| ```
+
+[[only-vue]]
+| ```js
+| <ag-grid-vue
+|     :columnDefs="columnDefs"
+|     // other grid options ...>
+| </ag-grid-vue>
+|
+| this.columnDefs = [
+|     // make all rows draggable
+|     { field: 'athlete', rowDrag: true },
+|    
+|     // other column definitions ...
+| ];
+| ```
+
+
+It is also possible to dynamically control which rows are draggable by providing a callback function as shown below:
+
+[[only-javascript]]
+| ```js
+| columnDefs: [
+|     // only allow non-group rows to be dragged
+|     { field: 'athlete', rowDrag: params => !params.node.group },
+|
+|     // other column definitions ...
+| ],
+| ```
+
+[[only-angular-or-vue]]
+| ```js
+| this.columnDefs = [
+|     // only allow non-group rows to be dragged
+|     { field: 'athlete', rowDrag: params => !params.node.group },
+|    
+|     // other column definitions ...
+| ];
+| ```
+
+[[only-react]]
+| ```js
+| // only allow non-group rows to be dragged
+| <AgGridColumn field='athlete' rowDrag={params => !params.node.group}/>
+| ```
 
 There are two ways in which row dragging works in the grid, managed and unmanaged:
 
@@ -82,7 +152,62 @@ The example below is almost identical to the [Managed Dragging](#managed-draggin
 
 ## Custom Row Drag Text
 
-When a row drag starts, a "floating" DOM element is created to indicate which row is being dragged. By default this DOM element will contain the same value as the cell that started the row drag. It's possible to override that text by using the `colDef.rowDragText` callback.
+When a row drag starts, a "floating" DOM element is created to indicate which row is being dragged. By default, this DOM
+element will contain the same value as the cell that started the row drag. It's possible to override that text by using
+the `colDef.rowDragText` callback.
+
+[[only-javascript]]
+| ```js
+| columnDefs: [
+|     {
+|         field: 'athlete',
+|         rowDrag: true,
+|         rowDragText: (params, dragItemCount) => {
+|             return (
+|                 dragItemCount > 1
+|                     ? (dragItemCount + ' items')
+|                     : params.defaultTextValue + ' is'
+|             ) + ' being dragged...';
+|         }
+|     },
+|
+|     // other column definitions ...
+| ],
+| ```
+
+[[only-angular-or-vue]]
+| ```js
+| this.columnDefs = [
+|     {
+|         field: 'athlete',
+|         rowDrag: true,
+|         rowDragText: (params, dragItemCount) => {
+|             return (
+|                 dragItemCount > 1
+|                     ? (dragItemCount + ' items')
+|                     : params.defaultTextValue + ' is'
+|             ) + ' being dragged...';
+|         }
+|     },
+|    
+|     // other column definitions ...
+| ];
+| ```
+
+[[only-react]]
+| ```js
+| <AgGridColumn field='athlete' rowDrag={true} rowDragText={rowDragText}/>
+|
+| const rowDragText = (params, dragItemCount) => {
+|     return (
+|         dragItemCount > 1
+|             ? (dragItemCount + ' items')
+|             : params.defaultTextValue + ' is'
+|     ) + ' being dragged...';
+| }
+| ```
+
+The interface for the rowDragText callback is as follows:
 
 ```ts
 // function for rowDragText
@@ -93,17 +218,6 @@ interface IRowDragItem {
     rowNode: RowNode; // the current RowNode
     columns: Column[]; // an array containing the column that initiated the drag
     defaultTextValue: string; // The default text that would be applied to this Drag Element
-}
-```
-
-```js
-// example
-colDef.rowDragText = function(params, dragItemCount) {
-    return (
-        dragItemCount > 1
-            ? (dragItemCount + ' items')
-            : params.defaultTextValue + ' is'
-        ) + ' being dragged...';
 }
 ```
 
@@ -164,10 +278,10 @@ The below example demonstrates unmanaged row dragging with no attempt by the app
 From the example the following can be noted:
 
 - The first column has `rowDrag=true` which results in a draggable
-area included in the cell.
+  area included in the cell.
 
 - The grid has not set `rowDragManaged` which results in the grid
-not reordering rows as they are dragged.
+  not reordering rows as they are dragged.
 
 - All of the drag events are listened for and when one is received, it is printed to the console. To best see this, open the example in a new tab and open the developer console.
 
@@ -182,9 +296,9 @@ The example below shows how to implement simple row dragging using unmanaged row
 From the example the following can be noted:
 
 - The property `suppressRowDrag=true` is set by the application
-depending on whether sorting or filtering is active. This is because the logic
-in the example doesn't cover these scenarios and wants to prevent row
-dragging when sorting or filtering is active.
+  depending on whether sorting or filtering is active. This is because the logic
+  in the example doesn't cover these scenarios and wants to prevent row
+  dragging when sorting or filtering is active.
 
 - To update the data the example uses an [Immutable Data Store](../immutable-data/) and sets `immutableData=true`. The application is free to use any update mechanism it wants; see [Updating Data](../data-update/) for different options.
 
@@ -221,7 +335,7 @@ The example below shows [Tree Data](../tree-data/) and row dragging where the fo
 - The [auto-group column](../grouping/#auto-column-group) has row drag `true` for all rows.
 
 -  The example registers for `onRowDragEnd` events and rearranges
-the rows when the drag completes.
+   the rows when the drag completes.
 
 - The application does NOT rearrange the rows as the drag is happening. Instead it waits for the `onRowDragEnd` event before updating the data.
 
