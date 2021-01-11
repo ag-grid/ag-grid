@@ -1,6 +1,6 @@
 const path = require('path');
 const express = require('express');
-const { createFilePath } = require('gatsby-source-filesystem');
+const { createFilePath, CODES } = require('gatsby-source-filesystem');
 const { GraphQLString } = require('gatsby/graphql');
 const fs = require('fs-extra');
 const supportedFrameworks = require('./src/utils/supported-frameworks.js');
@@ -8,7 +8,8 @@ const chartGallery = require('./src/pages/charts/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 const publicIp = require('public-ip');
 
-/* We override this to allow us to specify the directory structure of the example files, so that we can reference
+/* This is an override of the code in https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-filesystem/src/extend-file-node.js
+ * We override this to allow us to specify the directory structure of the example files, so that we can reference
  * them correctly in the examples. By default, Gatsby includes a cache-busting hash of the file which would cause
  * problems if we included it. It does mean that example files could be held in the cache though. */
 exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, pathPrefix = `` }) => {
@@ -20,7 +21,7 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
         publicURL: {
             type: GraphQLString,
             args: {},
-            description: `Copy static files return public URLs`,
+            description: `Copy file to static directory and return public url to it`,
             resolve: async (file, _, context) => {
                 const details = getNodeAndSavePathDependency(file.id, context.path);
 
@@ -36,30 +37,30 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
 
                 const publicPath = path.join(process.cwd(), `public`, fileName);
 
-                fs.pathExists(publicPath, (err, exists) => {
-                    if (err) {
-                        console.error(
-                            `Error checking for existence of ${publicPath} for ${details.absolutePath}`,
-                            err
-                        );
-                    }
+                // if example files have been updated in the last minute, overwrite them
+                const isRecent = date => (new Date() - Date.parse(date)) < 60000;
+                const forceOverwrite = isExampleFile && (isRecent(file.birthTime) || isRecent(file.modifiedTime));
 
-                    if (!exists || isExampleFile) {
-                        fs.copy(
-                            details.absolutePath,
-                            publicPath,
-                            { dereference: true },
-                            err => {
-                                if (err) {
-                                    console.error(
-                                        `Error copying file from ${details.absolutePath} to ${publicPath}`,
-                                        err
-                                    );
-                                }
+                if (!fs.existsSync(publicPath) || forceOverwrite) {
+                    fs.copySync(
+                        details.absolutePath,
+                        publicPath,
+                        { dereference: true },
+                        err => {
+                            if (err) {
+                                reporter.panic(
+                                    {
+                                        id: prefixId(CODES.MissingResource),
+                                        context: {
+                                            sourceMessage: `error copying file from ${details.absolutePath} to ${publicPath}`,
+                                        },
+                                    },
+                                    err
+                                );
                             }
-                        );
-                    }
-                });
+                        }
+                    );
+                }
 
                 return `${pathPrefix}/${fileName}`;
             }
