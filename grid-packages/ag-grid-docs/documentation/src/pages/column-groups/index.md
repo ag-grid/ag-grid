@@ -8,28 +8,109 @@ Grouping columns is done by providing the columns in a tree hierarchy to the gri
 
 Here is a code snippet of providing two groups of columns.
 
-```js
-gridOptions.columnDefs = [
-    {
-        headerName: 'Athlete Details',
-        children: [
-            { headerName: 'Name', field: 'name' },
-            { headerName: 'Age', field: 'age' },
-            { headerName: 'Country', field: 'country' }
-        ]
-    },
-    {
-        headerName: 'Sports Results',
-        children: [
-            { headerName: 'Sport', field: 'sport' },
-            { headerName: 'Total', columnGroupShow: 'closed' },
-            { headerName: 'Gold', columnGroupShow: 'open' },
-            { headerName: 'Silver', columnGroupShow: 'open' },
-            { headerName: 'Bronze', columnGroupShow: 'open' }
-        ]
-    }
-];
-```
+[[only-javascript]]
+| ```js
+| const gridOptions = {
+|     columnDefs: [
+|         {
+|             headerName: 'Athlete Details',
+|             children: [
+|                 { field: 'athlete' },
+|                 { field: 'age' },
+|                 { field: 'country' },
+|             ]
+|         },
+|         {
+|             headerName: 'Sports Results',
+|             children: [
+|                 { field: 'sport' },
+|                 { field: 'total', columnGroupShow: 'closed' },
+|                 { field: 'gold', columnGroupShow: 'open' },
+|                 { field: 'silver', columnGroupShow: 'open' },
+|                 { field: 'bronze', columnGroupShow: 'open' },
+|             ]
+|         }
+|     ],
+|
+|     // other grid options ...
+| }
+| ```
+
+[[only-angular]]
+| ```js
+| <ag-grid-angular
+|     [columnDefs]="columnDefs"
+|     // other grid options ...>
+| </ag-grid-angular>
+|
+| this.columnDefs = [
+|     {
+|         headerName: 'Athlete Details',
+|         children: [
+|             { field: 'athlete' },
+|             { field: 'age' },
+|             { field: 'country' },
+|         ]
+|     },
+|     {
+|         headerName: 'Sports Results',
+|         children: [
+|             { field: 'sport' },
+|             { field: 'total', columnGroupShow: 'closed' },
+|             { field: 'gold', columnGroupShow: 'open' },
+|             { field: 'silver', columnGroupShow: 'open' },
+|             { field: 'bronze', columnGroupShow: 'open' },
+|         ]
+|     }
+| ];
+| ```
+
+[[only-react]]
+| ```js
+| <AgGridReact>
+|     <AgGridColumn headerName='Athlete Details'>
+|         <AgGridColumn field='name' />
+|         <AgGridColumn field='age' />
+|         <AgGridColumn field='country' />
+|     </AgGridColumn>
+|     <AgGridColumn headerName='Sports Results'>
+|         <AgGridColumn field='sport' />
+|         <AgGridColumn field='total' columnGroupShow='closed' />
+|         <AgGridColumn field='gold' columnGroupShow='open' />
+|         <AgGridColumn field='silver' columnGroupShow='open' />
+|         <AgGridColumn field='bronze' columnGroupShow='open' />
+|     </AgGridColumn>
+| </AgGridReact>
+| ```
+
+[[only-vue]]
+| ```js
+| <ag-grid-vue
+|     :columnDefs="columnDefs"  
+|     // other grid options ...>
+| </ag-grid-vue>
+|
+| this.columnDefs = [
+|     {
+|         headerName: 'Athlete Details',
+|         children: [
+|             { field: 'athlete' },
+|             { field: 'age' },
+|             { field: 'country' },
+|         ]
+|     },
+|     {
+|         headerName: 'Sports Results',
+|         children: [
+|             { field: 'sport' },
+|             { field: 'total', columnGroupShow: 'closed' },
+|             { field: 'gold', columnGroupShow: 'open' },
+|             { field: 'silver', columnGroupShow: 'open' },
+|             { field: 'bronze', columnGroupShow: 'open' },
+|         ]
+|     }
+| ];
+| ```
 
 Below shows an example of column group configuration.
 
@@ -75,17 +156,44 @@ If you grab the group resize bar, it resizes each child in the group evenly dist
 
 The grid doesn't colour the groups for you. However you can use the column definition `headerClass` for this purpose. The `headerClass` attribute is available on both columns and column groups.
 
-```js
-columnDefs = [
-    {
-        headerName: 'Athlete Details',
-        // this CSS class will get applied to the header group
-        headerClass: 'my-css-class',
-        // then children as normal
-        children: [ ... ]
-    }
-]
-```
+[[only-javascript]]
+| ```js
+| columnDefs: [
+|     {
+|         headerName: 'Athlete Details',
+|         // this CSS class will get applied to the header group
+|         headerClass: 'my-css-class',
+|         // then children as normal
+|         children: [ ... ]
+|     }
+| ]
+| ```
+
+[[only-angular-or-vue]]
+| ```js
+| this.columnDefs = [
+|     {
+|         headerName: 'Athlete Details',
+|         // this CSS class will get applied to the header group
+|         headerClass: 'my-css-class',
+|         // then children as normal
+|         children: [ ... ]
+|     }
+| ];
+| ```
+
+[[only-react]]
+| ```js
+| <AgGridColumn 
+|     headerName='Athlete Details'
+|     // this CSS class will get applied to the header group
+|     headerClass: 'my-css-class' >
+|         // then children as normal
+|         <AgGridColumn field='name' />
+|         <AgGridColumn field='age' />
+|         <AgGridColumn field='country' />
+| </AgGridColumn>
+| ```
 
 ## Align the Header Group Label To The Right
 

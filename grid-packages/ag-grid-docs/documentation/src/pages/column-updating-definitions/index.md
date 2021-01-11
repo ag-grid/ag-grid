@@ -212,6 +212,18 @@ perhaps retrieve, alter and then re-apply the modified columns.
 
 The current column definitions can be retrieved with `getColumnDefs`:
 
-```js
-gridOptions.api.getColumnDefs();
-```
+[[only-javascript]]
+| ```js
+| gridOptions.api.getColumnDefs();
+| ```
+
+[[only-angular-or-vue]]
+| ```js
+| this.gridApi.getColumnDefs();
+| ```
+
+[[only-react]]
+| ```js
+| gridApi.getColumnDefs();
+| ```
+

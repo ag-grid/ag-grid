@@ -15,7 +15,7 @@ The following example shows a simple grid with 3 columns defined:
 |         { headerName: 'Age', field: 'age' },
 |     ],
 |
-|     // other grid options here...
+|     // other grid options ...
 | }
 | ```
 
@@ -34,6 +34,16 @@ The following example shows a simple grid with 3 columns defined:
 | ];
 | ```
 
+[[only-react]]
+| ```js
+| <AgGridReact>
+|     // define 3 columns
+|     <AgGridColumn headerName='Athlete' field='athlete' />
+|     <AgGridColumn headerName='Sport' field='sport' />
+|     <AgGridColumn headerName='Age' field='age' />
+| </AgGridReact>
+| ```
+
 [[only-vue]]
 | ```js
 | <ag-grid-vue
@@ -49,15 +59,6 @@ The following example shows a simple grid with 3 columns defined:
 | ];
 | ```
 
-[[only-react]]
-| ```js
-| <AgGridReact>
-|     // define 3 columns
-|     <AgGridColumn headerName='Athlete' field='athlete' />
-|     <AgGridColumn headerName='Sport' field='sport' />
-|     <AgGridColumn headerName='Age' field='age' />
-| </AgGridReact>
-| ```
 
 See [Column Properties](../column-properties/) for a list of all properties that can be applied to a column.
 
@@ -173,7 +174,7 @@ The following code snippet demonstrates these three properties:
 |         }
 |     }
 | 
-|     // other grid options here...
+|     // other grid options ...
 | }
 | ```
 
@@ -240,19 +241,19 @@ The following code snippet demonstrates these three properties:
 |             suppressMenu: true,
 |         }
 |  
-|     // other grid options here....
+|     // other grid options ....
 | >
 |     // uses the default column properties
 |     <AgGridColumn headerName='Col A' field='a' />
 |
 |     // overrides the default with a number filter
-|     <AgGridColumn headerName='Col B' field='b', filter='agNumberColumnFilter' />
+|     <AgGridColumn headerName='Col B' field='b' filter='agNumberColumnFilter' />
 |
 |     // overrides the default using a column type
 |     <AgGridColumn headerName='Col C' field='c' type='nonEditableColumn' />
 |
 |     // overrides the default using a multiple column types
-|     <AgGridColumn headerName='Col D' field='d' type=['dateColumn', 'nonEditableColumn'] />
+|     <AgGridColumn headerName='Col D' field='d' type={['dateColumn', 'nonEditableColumn']} />
 | </AgGridReact>
 | ```
 
@@ -309,8 +310,8 @@ The grid provides a handy shortcut for aligning columns to the right. Setting th
 [[only-react]]
 | ```js
 | <AgGridColumn headerName='Column A' field='a' />
-| <AgGridColumn headerName='Column B' field='b', type='rightAligned' />
-| <AgGridColumn headerName='Column C' field='c', type='numericColumn' />
+| <AgGridColumn headerName='Column B' field='b' type='rightAligned' />
+| <AgGridColumn headerName='Column C' field='c' type='numericColumn' />
 | ```
 
 ## Column IDs

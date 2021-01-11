@@ -40,24 +40,22 @@ interface RowDropZoneParams {
 
 To allow dragging from the grid onto an outside element, or a different grid, call the `addRowDropZone` from the grid API. This will result in making the passed element or `Grid` a valid target when moving rows around. If you later wish to remove that drop zone use the `removeRowDropZone` method from the grid API.
 
-
 ```js
-// example usage:
-new agGrid.Grid(gridElement, gridOptions);
+// define drop zone
+const targetContainer = document.querySelector('.target-container');
+const dropZoneParams = {
+    getContainer: () => targetContainer,
+    onDragStop: params => {
+        // here we create an element for the target container
+        const element = createElement(params.node.data);
+        targetContainer.appendChild(element);
+    }
+};
 
-var container = document.querySelector('.row-drop-zone'),
-    dropZoneParams = {
-        getContainer: function() {
-            return container;
-        },
-        onDragStop: function(params) {
-            // do some custom action
-        }
-    };
-
+// register drop zone with grid
 gridApi.addRowDropZone(dropZoneParams);
 
-// when the DropZone above is no longer needed
+// deregister the drop zone when no longer required
 gridApi.removeRowDropZone(dropZoneParams);
 ```
 

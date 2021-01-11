@@ -8,17 +8,70 @@ By default, each cell will take up the width of one column. You can change this 
 
 Column spanning is set configured at the column definition level. To have a cell span more than one column, return how many columns to span in the callback `colDef.colSpan`.
 
-```js
-// col span is 2 for rows with Russia, but 1 for everything else
-colDef = {
-    headerName: 'Country',
-    field: 'country',
-    colSpan: function(params) {
-        return params.data.country === 'Russia' ? 2 : 1;
-    }
-    ...
-};
-```
+[[only-javascript]]
+| ```js
+| const gridOptions = {
+|     columnDefs: [         
+|         {
+|             field: 'country',
+|             // col span is 2 for rows with Russia, but 1 for everything else
+|             colSpan: params => params.data.country === 'Russia' ? 2 : 1,
+|         },
+|
+|         // other column definitions ...
+|     ],
+|
+|     // other grid options ...
+| }
+| ```
+
+[[only-angular]]
+| ```js
+| <ag-grid-angular
+|     [columnDefs]="columnDefs"
+|     // other grid options ...>
+| </ag-grid-angular>
+|
+| this.columnDefs = [
+|     {
+|         field: 'country',
+|         // col span is 2 for rows with Russia, but 1 for everything else
+|         colSpan: params => params.data.country === 'Russia' ? 2 : 1,
+|     },
+|
+|     // other column definitions ...
+| ];
+| ```
+
+[[only-react]]
+| ```js
+| <AgGridReact>
+|     // col span is 2 for rows with Russia, but 1 for everything else
+|     <AgGridColumn field='country' colSpan={params => params.data.country === 'Russia' ? 2 : 1} />
+|
+|     // other column definitions ...
+| </AgGridReact>
+| ```
+
+[[only-vue]]
+| ```js
+| <ag-grid-vue
+|     :columnDefs="columnDefs"
+|     // other grid options ...>
+| </ag-grid-vue>
+|
+| this.columnDefs = [
+|     {
+|         field: 'country',
+|         // col span is 2 for rows with Russia, but 1 for everything else
+|         colSpan: params => params.data.country === 'Russia' ? 2 : 1,
+|     },
+|
+|     // other column definitions ...
+| ];
+| ```
+
+
 The interface for the colSpan callback is as follows:
 
 ```ts

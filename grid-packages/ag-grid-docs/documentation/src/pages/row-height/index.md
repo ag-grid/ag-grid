@@ -14,9 +14,42 @@ individually to give each row a different height.
 To change the row height for the whole grid, set the property `rowHeight` to a positive number.
 For example, to set the height to 50px, do the following:
 
-```js
-gridOptions.rowHeight = 50;
-```
+[[only-javascript]]
+| ```js
+| const gridOptions = {
+|     rowHeight: 50,
+|
+|     // other grid options ...
+| }
+| ```
+
+[[only-angular]]
+| ```js
+| <ag-grid-angular
+|     [rowHeight]="rowHeight"
+|     // other grid options ...>
+| </ag-grid-angular>
+|
+| this.rowHeight = 50;
+| ```
+
+[[only-react]]
+| ```js
+| <AgGridReact rowHeight={50}>
+|     // column definitions ...
+| </AgGridReact>
+| ```
+
+[[only-vue]]
+| ```js
+| <ag-grid-vue
+|     :rowHeight="rowHeight" 
+|     // other grid options ...>
+| </ag-grid-vue>
+|
+| this.rowHeight = 50;
+| ```
+
 
 Changing the property will set a new row height for all rows, including pinned rows top and bottom.
 
@@ -26,11 +59,45 @@ To change the row height so that each row can have a different height,
 implement the `getRowHeight()` callback. For example, to set the height
 to 50px for all non-pinned rows and 25px for pinned rows, do the following:
 
-```js
-gridOptions.getRowHeight = function(params) {
-    return params.node.group ? 50 : 20;
-}
-```
+[[only-javascript]]
+| ```js
+| const gridOptions = {
+|     getRowHeight: params => params.node.group ? 50 : 20,
+|
+|     // other grid options ...
+| }
+| ```
+
+[[only-angular]]
+| ```js
+| <ag-grid-angular
+|     [getRowHeight]="getRowHeight"
+|     // other grid options ...>
+| </ag-grid-angular>
+|
+| this.getRowHeight = params => params.node.group ? 50 : 20;
+| ```
+
+[[only-react]]
+| ```js
+| <AgGridReact getRowHeight={getRowHeight}>
+|     // column definitions ...
+| </AgGridReact>
+|
+| const getRowHeight = params => params.node.group ? 50 : 20;
+|
+| ```
+
+[[only-vue]]
+| ```js
+| <ag-grid-vue
+|     :getRowHeight="getRowHeight"
+|     // other grid options ...>
+| </ag-grid-vue>
+|
+| this.getRowHeight = params => params.node.group ? 50 : 20;
+| ```
+
 
 The params object passed to the callback has the following values:
 

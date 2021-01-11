@@ -192,9 +192,6 @@ export class CellComp extends Component implements TooltipParentComp {
         const tooltipSanitised = escapeString(this.tooltip);
         const colIdSanitised = escapeString(col.getId());
 
-        let wrapperStartTemplate: string = '';
-        let wrapperEndTemplate: string = '';
-
         const stylesFromColDef = this.preProcessStylesFromColDef();
         const cssClasses = this.getInitialCssClasses();
 
@@ -236,7 +233,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}" ${unselectable}>
                     ${value}
                 </span>
-            </div>`
+            </div>`;
 
         return wrapper;
     }

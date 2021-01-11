@@ -14,20 +14,71 @@ Row spanning is then configured at the column definition level. To have a cell
 span more than one row, return how many rows to span in the callback
 `colDef.rowSpan`.
 
-```js
-// turn off row translation
-gridOptions.suppressRowTransform = true;
+[[only-javascript]]
+| ```js
+| const gridOptions = { 
+|     suppressRowTransform: true, // turn off row translation
+|     columnDefs: [
+|         {
+|             field: 'country',
+|             // row span is 2 for rows with Russia, but 1 for everything else
+|             rowSpan: params => params.data.country === 'Russia' ? 2 : 1,
+|         },
+|         // other column definitions ...
+|     ],
+|
+|     // other grid options ...
+| }
+| ```
 
-// row span is 2 for rows with Russia, but 1 for everything else
-colDef = {
-    headerName: 'Country',
-    field: 'country',
-    rowSpan: function(params) {
-        return params.data.country === 'Russia' ? 2 : 1;
-    }
-    ...
-};
-```
+[[only-angular]]
+| ```js
+| <ag-grid-angular
+|     [suppressRowTransform]="true" // turn off row translation
+|     [columnDefs]="columnDefs"
+|     // other grid options ...>
+| </ag-grid-angular>
+|
+| this.columnDefs = [
+|     {
+|         field: 'country',
+|         // row span is 2 for rows with Russia, but 1 for everything else
+|         rowSpan: params => params.data.country === 'Russia' ? 2 : 1,
+|     },
+|     // other column definitions ...
+| ];
+| ```
+
+[[only-react]]
+| ```js
+| <AgGridReact 
+|     suppressRowTransform={true} // turn off row translation
+|     // other grid options ...
+| > 
+|     // row span is 2 for rows with Russia, but 1 for everything else
+|     <AgGridColumn field='country' rowSpan={params => params.data.country === 'Russia' ? 2 : 1} />
+|
+|     // other column definitions ...
+| </AgGridReact>
+| ```
+
+[[only-vue]]
+| ```js
+| <ag-grid-vue
+|     :suppressRowTransform="true" // turn off row translation
+|     :columnDefs="columnDefs"  
+|     // other grid options ...>
+| </ag-grid-vue>
+|
+| this.columnDefs = [
+|     {
+|         field: 'country',
+|         // row span is 2 for rows with Russia, but 1 for everything else
+|         rowSpan: params => params.data.country === 'Russia' ? 2 : 1,
+|     },
+|     // other column definitions ...
+| ];
+| ```
 
 [[note]]
 | The property `suppressRowTransform=true` is used to stop the grid positioning rows using CSS

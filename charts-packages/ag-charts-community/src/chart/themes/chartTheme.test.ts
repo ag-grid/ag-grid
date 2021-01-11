@@ -413,6 +413,28 @@ describe('Position specific axis styling', () => {
         expect(chart.axes[1].label.fontSize).toBe(18);
     });
 
+    test('Specialized chart type themed bottom category, unthemed left number', () => {
+        const chart = AgChart.create({
+            type: 'area',
+            theme,
+            data,
+            series: [{
+                xKey: 'label',
+                yKeys: ['v1', 'v2', 'v3', 'v4', 'v5']
+            }]
+        } as AgCartesianChartOptions);
+
+        expect(chart.axes[0].type).toBe('number');
+        expect(chart.axes[0].position).toBe('left');
+        expect(chart.axes[0].line.color).toBe(defaultTheme.getConfig('cartesian.axes.number.line.color'));
+        expect(chart.axes[0].label.fontSize).toBe(defaultTheme.getConfig('cartesian.axes.number.label.fontSize'));
+
+        expect(chart.axes[1].type).toBe('category');
+        expect(chart.axes[1].position).toBe('bottom');
+        expect(chart.axes[1].line.color).toBe('blue');
+        expect(chart.axes[1].label.fontSize).toBe(18);
+    });
+
     test('Themed right number, unthemed top category', () => {
         const chart = AgChart.create({
             theme,
