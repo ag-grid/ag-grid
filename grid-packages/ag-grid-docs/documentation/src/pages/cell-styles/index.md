@@ -16,26 +16,114 @@ Each of these approaches are presented in the following sections.
 Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
 of CSS styles, or a function returning an object of CSS styles.
 
-```js
-// return same style for each row
-var colDef = {
-    name: 'Static Styles',
-    field: 'field1',
-    cellStyle: {color: 'red', 'background-color': 'green'}
-}
-// return different styles for each row
-var colDef = {
-    name: 'Dynamic Styles',
-    field: 'field2',
-    cellStyle: function(params) {
-        if (params.value=='Police') {
-            //mark police cells as red
-            return {color: 'red', backgroundColor: 'green'};
-        }
-        return null;
-    }
-}
-```
+[[only-javascript]]
+| ```js
+| const gridOptions = {
+|     columnDefs: [
+|         // same style for each row
+|         {
+|             headerName: 'Static Styles',
+|             field: 'field1',
+|             cellStyle: {color: 'red', 'background-color': 'green'}
+|         },
+|         // different styles for each row    
+|         {
+|             headerName: 'Dynamic Styles',
+|             field: 'field2',
+|             cellStyle: params => {
+|                 if (params.value === 'Police') {
+|                     //mark police cells as red
+|                     return {color: 'red', backgroundColor: 'green'};
+|                 }
+|                 return null;
+|             }
+|         },
+|     ],
+|
+|     // other grid options ...
+| }
+| ```
+
+[[only-angular]]
+| ```js
+| <ag-grid-angular
+|     [columnDefs]="columnDefs"
+|     // other grid options ...>
+| </ag-grid-angular>
+|
+| this.columnDefs = [
+|     // same style for each row
+|     {
+|         headerName: 'Static Styles',
+|         field: 'field1',
+|         cellStyle: {color: 'red', 'background-color': 'green'}
+|     },
+|     // different styles for each row    
+|     {
+|         headerName: 'Dynamic Styles',
+|         field: 'field2',
+|         cellStyle: params => {
+|             if (params.value === 'Police') {
+|                 //mark police cells as red
+|                 return {color: 'red', backgroundColor: 'green'};
+|             }
+|             return null;
+|         }
+|     },
+| ];
+| ```
+
+[[only-react]]
+| ```js
+| <AgGridReact>
+|     <AgGridColumn headerName='Static Styles' field='field1' cellStyle={staticCellStyle} />
+|     <AgGridColumn headerName='Dynamic Styles' field='field2' cellStyle={dynamicCellStyle} /> 
+| </AgGridReact>
+|
+| // same style for each row
+| const staticCellStyle = {color: 'red', 'background-color': 'green'};
+|
+| // different styles for each row   
+| const dynamicCellStyle = params => {
+|     if (params.value === 'Police') {
+|         //mark police cells as red
+|         return {color: 'red', backgroundColor: 'green'};
+|     }
+|     return null;
+| };
+|
+| ```
+
+
+[[only-vue]]
+| ```js
+| <ag-grid-vue
+|     :columnDefs="columnDefs"  
+|     // other grid options ...>
+| </ag-grid-vue>
+|
+| this.columnDefs = [
+|     // same style for each row
+|     {
+|         headerName: 'Static Styles',
+|         field: 'field1',
+|         cellStyle: {color: 'red', 'background-color': 'green'}
+|     },
+|     // different styles for each row    
+|     {
+|         headerName: 'Dynamic Styles',
+|         field: 'field2',
+|         cellStyle: params => {
+|             if (params.value === 'Police') {
+|                 //mark police cells as red
+|                 return {color: 'red', backgroundColor: 'green'};
+|             }
+|             return null;
+|         }
+|     },
+| ];
+| ```
+
 
 ## Cell Class
 
