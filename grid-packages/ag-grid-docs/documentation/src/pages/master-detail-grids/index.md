@@ -28,7 +28,7 @@ The example below shows configuring a Detail Grid with some additional Grid Opti
 
 - The first Column Definition is configured to use Checkbox Selection.
 
-<grid-example title='Detail Grid Options' name='grid-options' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Detail Grid Options' name='grid-options' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel", "range"] }'></grid-example>
 
 ## Providing Rows
 
