@@ -7,12 +7,13 @@
   "scripts": {
     "generate-examples": "cd .. && node dev-server.js generate-examples && cd documentation",
     "build": "npm run clean",
-    "package": "npm run generate-examples && npm run clean && npx gatsby build --prefix-paths",
-    "develop": "npx gatsby develop -H 0.0.0.0",
+    "package": "npm run generate-examples && npm run optimise && npm run clean && npx gatsby build --prefix-paths",
+    "develop": "npm run optimise && npx gatsby develop -H 0.0.0.0",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run develop",
     "serve": "npx gatsby serve --prefix-paths -H 0.0.0.0",
-    "clean": "npx gatsby clean"
+    "clean": "npx gatsby clean",
+    "optimise": "node optimise.js"
   },
   "dependencies": {
     "@fontsource/roboto": "4.1.0",
