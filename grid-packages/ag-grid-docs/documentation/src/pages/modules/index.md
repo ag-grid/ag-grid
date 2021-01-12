@@ -247,5 +247,5 @@ import "./node_modules/@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 ```scss
 // SCSS Community
 @import "./node_modules/@ag-grid-community/core/dist/styles/ag-grid.scss";
-@import "./node_modules/@ag-grid-community/core/dist/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+@import "./node_modules/@ag-grid-community/core/dist/styles/ag-theme-alpine/sass/ag-theme-alpine.scss";
 ```
