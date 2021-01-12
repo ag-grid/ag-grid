@@ -12,7 +12,17 @@ const getInternalFramework = (framework, useFunctionalReact) => {
     return framework;
 };
 
-export const getExampleInfo = (nodes, library, pageName, name, title, type, options, framework, importType, useFunctionalReact) => {
+export const getExampleInfo = (
+    nodes,
+    library,
+    pageName,
+    name,
+    title,
+    type,
+    options = {},
+    framework = 'javascript',
+    importType = 'modules',
+    useFunctionalReact = false) => {
     if (library === 'charts') {
         // no support for modules or React Hooks in charts yet
         importType = 'packages';

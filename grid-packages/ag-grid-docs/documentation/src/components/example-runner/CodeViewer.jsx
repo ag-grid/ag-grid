@@ -55,7 +55,7 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
         </div>
         <div className={styles['code-viewer__code']}>
             {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
-            {files && activeFile && <FileView path={activeFile} code={files[activeFile].source} />}
+            {files && activeFile && <FileView key={activeFile} path={activeFile} code={files[activeFile].source} />}
         </div>
     </div>;
 };

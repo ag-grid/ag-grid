@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withPrefix } from 'gatsby';
 import VisibilitySensor from 'react-visibility-sensor';
 import { encodeQueryParams } from 'use-query-params';
@@ -50,10 +50,18 @@ const getNewTabLink = exampleInfo => {
     }
 };
 
-const ExampleRunnerInner = ({ pageName, framework, name, title, type, options = {}, library, exampleImportType, useFunctionalReact, set }) => {
+const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, set }) => {
     const nodes = useExampleFileNodes();
-    const [showCode, setShowCode] = useState(!!options.showCode);
-    const exampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
+    const [showCode, setShowCode] = useState(!!(options && options.showCode));
+    const [exampleInfo, setExampleInfo] = useState(() =>
+        getExampleInfo(nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact));
+
+    useEffect(() => {
+        const updatedExampleInfo = getExampleInfo(
+            nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
+
+        setExampleInfo(updatedExampleInfo);
+    }, [nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact]);
 
     const exampleStyle = {
         width: '100%',
@@ -102,7 +110,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options = 
                         <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
                     </a>
                 </div>
-                {!options.noPlunker &&
+                {!exampleInfo.options.noPlunker &&
                     <div
                         className={styles['example-runner__menu-item']}
                         onClick={() => openPlunker(exampleInfo)}
