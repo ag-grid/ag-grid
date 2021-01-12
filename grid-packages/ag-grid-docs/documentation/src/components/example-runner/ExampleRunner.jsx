@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { withPrefix } from 'gatsby';
 import VisibilitySensor from 'react-visibility-sensor';
 import { encodeQueryParams } from 'use-query-params';
@@ -52,19 +52,8 @@ const getNewTabLink = exampleInfo => {
 
 const ExampleRunnerInner = ({ pageName, framework, name, title, type, options = {}, library, exampleImportType, useFunctionalReact, set }) => {
     const nodes = useExampleFileNodes();
-    const [exampleInfo, setExampleInfo] = useState(
-        getExampleInfo(nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact));
-
     const [showCode, setShowCode] = useState(!!options.showCode);
-
-    useEffect(() => {
-        const exampleInfo = getExampleInfo(
-            nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
-
-        setExampleInfo(exampleInfo);
-    }, [nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact]);
-
-    if (!exampleInfo) { return null; }
+    const exampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
 
     const exampleStyle = {
         width: '100%',
