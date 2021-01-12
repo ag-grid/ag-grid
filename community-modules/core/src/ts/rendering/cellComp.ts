@@ -602,7 +602,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.setUsingWrapper();
 
-        if (isUsingWrapper !== this.usingWrapper) {
+        if (this.usingWrapper || isUsingWrapper !== this.usingWrapper) {
             this.refreshCellTemplate();
         } else {
             clearElement(this.eCellValue);
