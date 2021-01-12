@@ -29,6 +29,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
 
   const pageName = getPageName(location.pathname);
   const ast = processFrameworkSpecificSections(page.htmlAst, framework);
+
   const getExampleRunnerProps = (props, library) => ({
     ...props,
     framework,
