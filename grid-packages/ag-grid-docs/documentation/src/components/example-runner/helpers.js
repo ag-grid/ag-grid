@@ -1,6 +1,9 @@
 import { withPrefix } from 'gatsby';
+import { encodeQueryParams } from 'use-query-params';
+import { stringify } from 'query-string';
 import { agGridVersion, localPrefix, getLocalPrefix } from './consts';
 import { getIndexHtml } from './index-html-helper';
+import { ParameterConfig } from '../../pages/example-runner';
 
 const getInternalFramework = (framework, useFunctionalReact) => {
     if (framework === 'javascript') {
@@ -199,4 +202,38 @@ export const getEntryFile = framework => {
     };
 
     return entryFile[framework] || 'main.js';
+};
+
+export const getIndexHtmlUrl = exampleInfo => {
+    if (isDevelopment()) {
+        const {
+            pageName,
+            library,
+            framework,
+            useFunctionalReact,
+            importType,
+            name,
+            title,
+            type,
+            options,
+        } = exampleInfo;
+
+        const queryParams = encodeQueryParams(
+            ParameterConfig,
+            {
+                pageName,
+                library,
+                framework,
+                useFunctionalReact,
+                importType,
+                name,
+                title,
+                type,
+                options,
+            });
+
+        return withPrefix(`/example-runner/?${stringify(queryParams)}`);
+    } else {
+        return withPrefix(`${exampleInfo.appLocation}index.html`);
+    }
 };

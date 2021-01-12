@@ -1,60 +1,54 @@
 import React, { useEffect, useState } from 'react';
-import { withPrefix } from 'gatsby';
 import VisibilitySensor from 'react-visibility-sensor';
-import { encodeQueryParams } from 'use-query-params';
-import { stringify } from 'query-string';
 import classnames from 'classnames';
+import fs from 'fs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import CodeViewer from './CodeViewer';
 import GlobalContextConsumer from '../GlobalContext';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import { useExampleFileNodes } from './use-example-file-nodes';
-import { getExampleInfo, isDevelopment, openPlunker } from './helpers';
+import { getExampleInfo, getIndexHtmlUrl, openPlunker } from './helpers';
 import { doOnEnter } from '../key-handlers';
-import { ParameterConfig } from '../../pages/example-runner';
+import isServerSideRendering from '../../utils/is-server-side-rendering';
+import { getIndexHtml } from './index-html-helper';
 import anchorIcon from '../../images/anchor';
 import styles from './ExampleRunner.module.scss';
 
-const getNewTabLink = exampleInfo => {
-    if (isDevelopment()) {
-        const {
-            pageName,
-            library,
-            framework,
-            useFunctionalReact,
-            importType,
-            name,
-            title,
-            type,
-            options,
-        } = exampleInfo;
+const writeIndexHtmlFiles = exampleInfo => {
+    const indexHtml = getIndexHtml(exampleInfo, true);
+    const { appLocation, type, framework, library } = exampleInfo;
 
-        const queryParams = encodeQueryParams(
-            ParameterConfig,
-            {
-                pageName,
-                library,
-                framework,
-                useFunctionalReact,
-                importType,
-                name,
-                title,
-                type,
-                options,
-            });
+    if (type === 'generated' || type === 'mixed') {
+        const modulesLocation = appLocation; // because modules is the default
 
-        return `/example-runner/?${stringify(queryParams)}`;
-    } else {
-        return `${exampleInfo.appLocation}index.html`;
+        fs.writeFileSync(`public${modulesLocation}index.html`, indexHtml);
+
+        const packagesLocation = modulesLocation.replace('/modules/', '/packages/');
+
+        fs.writeFileSync(`public${packagesLocation}index.html`, indexHtml);
+
+        if (framework === 'react' && library === 'grid') {
+            // need to ensure functional version is also generated
+            fs.writeFileSync(`public${modulesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
+            fs.writeFileSync(`public${packagesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
+        }
+    } else if (type === 'polymer') {
+        fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
     }
 };
 
 const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, set }) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
-    const [exampleInfo, setExampleInfo] = useState(() =>
-        getExampleInfo(nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact));
+    const [exampleInfo, setExampleInfo] = useState(null);
+
+    if (isServerSideRendering()) {
+        const exampleInfo = getExampleInfo(
+            nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
+
+        writeIndexHtmlFiles(exampleInfo);
+    }
 
     useEffect(() => {
         const updatedExampleInfo = getExampleInfo(
@@ -62,6 +56,8 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
 
         setExampleInfo(updatedExampleInfo);
     }, [nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact]);
+
+    if (!exampleInfo) { return null; }
 
     const exampleStyle = {
         width: '100%',
@@ -106,7 +102,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                     <FontAwesomeIcon icon={faCode} fixedWidth />
                 </div>
                 <div className={styles['example-runner__menu-item']}>
-                    <a href={withPrefix(getNewTabLink(exampleInfo))} target="_blank" rel="noreferrer">
+                    <a href={getIndexHtmlUrl(exampleInfo)} target="_blank" rel="noreferrer">
                         <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
                     </a>
                 </div>

@@ -1,36 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import fs from 'fs';
 import classnames from 'classnames';
-import isServerSideRendering from '../../utils/is-server-side-rendering';
-import { getIndexHtml } from './index-html-helper';
 import styles from './ExampleRunnerResult.module.scss';
+import { getIndexHtmlUrl, isDevelopment } from './helpers';
+import { getIndexHtml } from './index-html-helper';
 
-const ExampleRunnerResult = ({ isVisible, isActive, exampleInfo }) => {
+const ExampleRunnerResult = ({ isVisible, isActive = true, exampleInfo }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
-
-    const { pageName, name, appLocation, framework, internalFramework, type, library, importType } = exampleInfo;
-    const indexHtml = getIndexHtml(exampleInfo, true);
-
-    if (isServerSideRendering()) {
-        // generate code for the website to read at runtime
-        if (type === 'generated' || type === 'mixed') {
-            const modulesLocation = appLocation; // because modules is the default
-
-            fs.writeFileSync(`public${modulesLocation}index.html`, indexHtml);
-
-            const packagesLocation = modulesLocation.replace('/modules/', '/packages/');
-
-            fs.writeFileSync(`public${packagesLocation}index.html`, indexHtml);
-
-            if (framework === 'react' && library === 'grid') {
-                // need to ensure functional version is also generated
-                fs.writeFileSync(`public${modulesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
-                fs.writeFileSync(`public${packagesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
-            }
-        } else if (type === 'polymer') {
-            fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
-        }
-    }
+    const { pageName, name, internalFramework, importType } = exampleInfo;
 
     useEffect(() => {
         if (isVisible) {
@@ -42,7 +18,7 @@ const ExampleRunnerResult = ({ isVisible, isActive, exampleInfo }) => {
         if (!isVisible) {
             setShouldExecute(false);
         }
-    }, [indexHtml]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [exampleInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const iframeRef = React.createRef();
 
@@ -50,10 +26,14 @@ const ExampleRunnerResult = ({ isVisible, isActive, exampleInfo }) => {
         const iframe = iframeRef.current;
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-        iframeDoc.open();
-        iframeDoc.write(shouldExecute ? indexHtml : '');
-        iframeDoc.close();
-    }, [shouldExecute, indexHtml]); // eslint-disable-line react-hooks/exhaustive-deps
+        if (isDevelopment()) {
+            iframeDoc.open();
+            iframeDoc.write(shouldExecute ? getIndexHtml(exampleInfo, true) : '');
+            iframeDoc.close();
+        } else {
+            iframe.src = getIndexHtmlUrl(exampleInfo);
+        }
+    }, [shouldExecute, exampleInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <iframe
         key={`${pageName}_${name}_${internalFramework}_${importType}`}
