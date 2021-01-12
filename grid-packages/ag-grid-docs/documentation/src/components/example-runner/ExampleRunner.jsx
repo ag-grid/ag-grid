@@ -52,7 +52,9 @@ const getNewTabLink = exampleInfo => {
 
 const ExampleRunnerInner = ({ pageName, framework, name, title, type, options = {}, library, exampleImportType, useFunctionalReact, set }) => {
     const nodes = useExampleFileNodes();
-    const [exampleInfo, setExampleInfo] = useState(null);
+    const [exampleInfo, setExampleInfo] = useState(
+        getExampleInfo(nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact));
+
     const [showCode, setShowCode] = useState(!!options.showCode);
 
     useEffect(() => {
@@ -114,8 +116,8 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options = 
                 {!options.noPlunker &&
                     <div
                         className={styles['example-runner__menu-item']}
-                        onClick={() => openPlunker(nodes, exampleInfo)}
-                        onKeyDown={e => doOnEnter(e, () => openPlunker(nodes, exampleInfo))}
+                        onClick={() => openPlunker(exampleInfo)}
+                        onKeyDown={e => doOnEnter(e, () => openPlunker(exampleInfo))}
                         role="button"
                         tabIndex="0">
                         <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />

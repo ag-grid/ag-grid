@@ -121,10 +121,10 @@ export const getExampleFiles = exampleInfo => {
     return Promise.all(promises).then(() => files);
 };
 
-export const openPlunker = (nodes, exampleInfo) => {
+export const openPlunker = exampleInfo => {
     const { title } = exampleInfo;
 
-    getExampleFiles(nodes, exampleInfo).then(files => {
+    getExampleFiles(exampleInfo).then(files => {
         const form = document.createElement('form');
         form.method = 'post';
         form.style.display = 'none';
