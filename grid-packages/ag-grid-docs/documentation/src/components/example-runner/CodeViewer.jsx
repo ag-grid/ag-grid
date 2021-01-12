@@ -9,46 +9,41 @@ import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
 import isServerSideRendering from '../../utils/is-server-side-rendering';
-import { useExampleFileNodes } from './use-example-file-nodes';
-import { getExampleFiles } from './helpers';
+import { getEntryFile, getExampleFiles } from './helpers';
 import { doOnEnter } from '../key-handlers';
 import styles from './CodeViewer.module.scss';
 
-const updateFiles = (nodes, exampleInfo, setFiles, setActiveFile) => {
+const updateFiles = (exampleInfo, setFiles, setActiveFile) => {
     if (isServerSideRendering()) { return; }
-
-    const defaultFile = {
-        'react': 'index.jsx',
-        'angular': 'app/app.component.ts'
-    };
 
     const { framework } = exampleInfo;
 
-    getExampleFiles(nodes, exampleInfo).then(files => {
+    getExampleFiles(exampleInfo).then(files => {
         setFiles(files);
 
-        const mainFile = defaultFile[framework] || 'main.js';
+        const entryFile = getEntryFile(framework);
 
-        if (files[mainFile]) {
-            setActiveFile(mainFile);
+        if (files[entryFile]) {
+            setActiveFile(entryFile);
         } else {
             setActiveFile(Object.keys(files).sort()[0]);
         }
     });
 };
 
-const CodeViewer = ({ exampleInfo }) => {
+const CodeViewer = ({ isActive, exampleInfo }) => {
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
-    const nodes = useExampleFileNodes();
 
-    useEffect(() => updateFiles(nodes, exampleInfo, setFiles, setActiveFile), [nodes, exampleInfo]);
+    useEffect(() => {
+        updateFiles(exampleInfo, setFiles, setActiveFile);
+    }, [exampleInfo]);
 
     const keys = files ? Object.keys(files).sort() : [];
     const exampleFiles = keys.filter(key => !files[key].isFramework);
     const frameworkFiles = keys.filter(key => files[key].isFramework);
 
-    return <div className={styles['code-viewer']}>
+    return <div className={classnames(styles['code-viewer'], { [styles['code-viewer--hidden']]: !isActive })}>
         <div className={styles['code-viewer__files']}>
             {frameworkFiles.length > 0 && <div className={styles['code-viewer__file-title']}>App</div>}
             {exampleFiles.map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}

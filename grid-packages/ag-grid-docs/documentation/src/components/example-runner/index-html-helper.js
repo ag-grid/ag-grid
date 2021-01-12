@@ -6,6 +6,7 @@ import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
 import VueTemplate from './VueTemplate';
 import PolymerTemplate from './PolymerTemplate';
+import { getEntryFile } from './helpers';
 
 export const getIndexHtml = (exampleInfo, isExecuting = false) => {
     const { sourcePath, options, library } = exampleInfo;
@@ -28,14 +29,7 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
         boilerplatePath = '';
     }
 
-    const modifiedTimeFileName = {
-        javascript: 'main.js',
-        angular: 'app/app.component.ts',
-        react: 'index.jsx',
-        vue: 'main.js',
-    };
-
-    const modifiedTimeFile = exampleInfo.getFile(modifiedTimeFileName[framework]);
+    const modifiedTimeFile = exampleInfo.getFile(getEntryFile(framework));
     const modifiedTimeMs = modifiedTimeFile ? modifiedTimeFile.mtimeMs : new Date().getTime();
 
     let element;

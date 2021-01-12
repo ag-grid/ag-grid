@@ -61,7 +61,7 @@ export const getExampleInfo = (nodes, library, pageName, name, title, type, opti
         getFile: name => nodes.filter(file => file.relativePath === sourcePath + name)[0],
         getFiles: (extension, exclude = () => false) =>
             nodes.filter(file => file.relativePath.startsWith(sourcePath) &&
-                file.base.endsWith(`.${extension}`) &&
+                (!extension || file.base.endsWith(`.${extension}`)) &&
                 !exclude(file)
             )
     };
@@ -83,11 +83,11 @@ const getFrameworkFiles = framework => {
     return files;
 };
 
-export const getExampleFiles = (nodes, exampleInfo) => {
+export const getExampleFiles = exampleInfo => {
     const { sourcePath, framework, boilerplatePath } = exampleInfo;
 
-    const filesForExample = nodes
-        .filter(node => node.relativePath.startsWith(sourcePath))
+    const filesForExample = exampleInfo
+        .getFiles()
         .map(node => ({
             path: node.relativePath.replace(sourcePath, ''),
             publicURL: node.publicURL,
@@ -180,4 +180,13 @@ export const getCssFilePaths = theme => {
         `${localPrefix}/@ag-grid-community/all-modules/dist/styles/${file}`;
 
     return cssFiles.map(getCssFilePath);
+};
+
+export const getEntryFile = framework => {
+    const entryFile = {
+        'react': 'index.jsx',
+        'angular': 'app/app.component.ts'
+    };
+
+    return entryFile[framework] || 'main.js';
 };

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import fs from 'fs';
+import classnames from 'classnames';
 import isServerSideRendering from '../../utils/is-server-side-rendering';
 import { getIndexHtml } from './index-html-helper';
 import styles from './ExampleRunnerResult.module.scss';
 
-const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
+const ExampleRunnerResult = ({ isVisible, isActive, exampleInfo }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
 
     const { pageName, name, appLocation, framework, internalFramework, type, library, importType } = exampleInfo;
@@ -58,7 +59,7 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
         key={`${pageName}_${name}_${internalFramework}_${importType}`}
         ref={iframeRef}
         title={name}
-        className={styles['example-runner-result']}></iframe>;
+        className={classnames(styles['example-runner-result'], { [styles['example-runner-result--hidden']]: !isActive })}></iframe>;
 };
 
 export default ExampleRunnerResult;
