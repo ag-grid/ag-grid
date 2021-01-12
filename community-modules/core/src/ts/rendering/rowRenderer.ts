@@ -560,7 +560,16 @@ export class RowRenderer extends BeanStub {
             newData: false,
             suppressFlash: params.suppressFlash
         };
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.refreshCell(refreshCellParams));
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => {
+            if (cellComp.refreshShouldDestroy()) {
+                const rowComp = cellComp.getRenderedRow();
+                if (rowComp) {
+                    rowComp.refreshCell(cellComp);
+                }
+            } else {
+                cellComp.refreshCell(refreshCellParams);
+            }
+        });
     }
 
     public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRendererComp[] {

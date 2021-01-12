@@ -624,6 +624,13 @@ export class RowComp extends Component {
         this.refreshCells();
     }
 
+    public refreshCell(cellComp: CellComp) {
+        if (!this.areAllContainersReady()) { return; }
+
+        this.destroyCells([cellComp.getColumn().getId()]);
+        this.refreshCells();
+    }
+
     private refreshCells() {
         if (!this.areAllContainersReady()) {
             this.refreshNeeded = true;
