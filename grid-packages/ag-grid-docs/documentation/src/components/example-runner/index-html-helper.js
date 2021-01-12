@@ -1,28 +1,23 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import {withPrefix} from 'gatsby';
+import { withPrefix } from 'gatsby';
 import VanillaTemplate from './VanillaTemplate';
 import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
 import VueTemplate from './VueTemplate';
 import PolymerTemplate from './PolymerTemplate';
 
-export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
-    const {sourcePath, options, library} = exampleInfo;
-    let {boilerplatePath, appLocation, framework} = exampleInfo;
+export const getIndexHtml = (exampleInfo, isExecuting = false) => {
+    const { sourcePath, options, library } = exampleInfo;
+    let { boilerplatePath, appLocation, framework } = exampleInfo;
 
-    const getFileUrl = file => isExecuting ?
-        file.publicURL : file.relativePath.replace(sourcePath, '').replace(boilerplatePath, '');
+    const getFileUrl = file =>
+        isExecuting ? file.publicURL : file.relativePath.replace(sourcePath, '').replace(boilerplatePath, '');
 
-    const getExampleFileUrls = (extension, exclude = () => false) => nodes
-        .filter(file => file.relativePath.startsWith(sourcePath) &&
-            file.base.endsWith(`.${extension}`) &&
-            !exclude(file)
-        )
-        .map(file => getFileUrl(file))
-        .sort();
+    const getExampleFileUrls = (extension, exclude = () => false) =>
+        exampleInfo.getFiles(extension, exclude).map(file => getFileUrl(file)).sort();
 
-    const scriptFiles = getExampleFileUrls('js', (file) => file.base === 'main.js' || file.base.endsWith('Vue.js'));
+    const scriptFiles = getExampleFileUrls('js', file => file.base === 'main.js' || file.base.endsWith('Vue.js'));
     const styleFiles = getExampleFileUrls('css');
 
     if (isExecuting) {
@@ -33,10 +28,20 @@ export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
         boilerplatePath = '';
     }
 
+    const modifiedTimeFileName = {
+        javascript: 'main.js',
+        angular: 'app/app.component.ts',
+        react: 'index.jsx',
+        vue: 'main.js',
+    };
+
+    const modifiedTimeFile = exampleInfo.getFile(modifiedTimeFileName[framework]);
+    const modifiedTimeMs = modifiedTimeFile ? modifiedTimeFile.mtimeMs : new Date().getTime();
+
     let element;
 
     if (exampleInfo.type === 'polymer') {
-        element = <PolymerTemplate appLocation={appLocation} options={options}/>;
+        element = <PolymerTemplate appLocation={appLocation} options={options} />;
     } else {
         switch (framework) {
             case 'javascript': {
@@ -47,12 +52,13 @@ export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
                 }
 
                 element = <VanillaTemplate
+                    modifiedTimeMs={modifiedTimeMs}
                     library={library}
                     appLocation={appLocation}
                     options={options}
                     indexFragment={indexHtml.childHtmlRehype.html}
                     scriptFiles={[...scriptFiles, getFileUrl(exampleInfo.getFile('main.js'))]}
-                    styleFiles={styleFiles}/>;
+                    styleFiles={styleFiles} />;
 
                 break;
             }
@@ -68,14 +74,14 @@ export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
 
                 const FrameworkTemplate = frameworkTemplates[framework];
 
-
                 element = <FrameworkTemplate
+                    modifiedTimeMs={modifiedTimeMs}
                     library={library}
                     boilerplatePath={boilerplatePath}
                     appLocation={appLocation}
                     options={options}
                     scriptFiles={scriptFiles}
-                    styleFiles={styleFiles}/>;
+                    styleFiles={styleFiles} />;
 
                 break;
             }
@@ -83,9 +89,9 @@ export const getIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
             default:
                 element =
                     <html lang="en">
-                    <body>
-                    <div>An unknown framework "{framework}" was requested.</div>
-                    </body>
+                        <body>
+                            <div>An unknown framework "{framework}" was requested.</div>
+                        </body>
                     </html>;
                 break;
         }

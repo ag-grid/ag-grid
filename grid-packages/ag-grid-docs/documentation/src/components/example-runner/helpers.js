@@ -59,6 +59,11 @@ export const getExampleInfo = (nodes, library, pageName, name, title, type, opti
         boilerplatePath,
         appLocation,
         getFile: name => nodes.filter(file => file.relativePath === sourcePath + name)[0],
+        getFiles: (extension, exclude = () => false) =>
+            nodes.filter(file => file.relativePath.startsWith(sourcePath) &&
+                file.base.endsWith(`.${extension}`) &&
+                !exclude(file)
+            )
     };
 };
 
@@ -109,7 +114,7 @@ export const getExampleFiles = (nodes, exampleInfo) => {
     });
 
     files['index.html'] = {
-        source: getIndexHtml(nodes, exampleInfo),
+        source: getIndexHtml(exampleInfo),
         isFramework: false,
     };
 

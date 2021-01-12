@@ -16,7 +16,6 @@ var gridOptions = {
         resizable: true,
         floatingFilter: true,
     }
-
 };
 
 // setup the grid after the page has finished loading

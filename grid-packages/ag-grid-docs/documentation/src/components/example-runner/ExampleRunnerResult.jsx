@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import fs from 'fs';
 import isServerSideRendering from '../../utils/is-server-side-rendering';
-import { useExampleFileNodes } from './use-example-file-nodes';
 import { getIndexHtml } from './index-html-helper';
 import styles from './ExampleRunnerResult.module.scss';
 
 const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
 
-    const nodes = useExampleFileNodes();
     const { pageName, name, appLocation, framework, internalFramework, type, library, importType } = exampleInfo;
-    const indexHtml = getIndexHtml(nodes, exampleInfo, true);
+    const indexHtml = getIndexHtml(exampleInfo, true);
 
     if (isServerSideRendering()) {
         // generate code for the website to read at runtime

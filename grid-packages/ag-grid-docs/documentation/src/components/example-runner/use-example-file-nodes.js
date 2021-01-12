@@ -11,6 +11,7 @@ export const useExampleFileNodes = () => {
                 childHtmlRehype {
                     html
                 }
+                mtimeMs
             }
         }
     }

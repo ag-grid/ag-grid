@@ -1,14 +1,15 @@
 import React from 'react';
 import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
+import { isDevelopment } from './helpers';
 import Scripts from './Scripts';
 import Styles from './Styles';
 import SystemJs from './SystemJs';
 
-const AngularTemplate = ({ library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+const AngularTemplate = ({ modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
     <html lang="en">
         <head>
-            <title>Angular 2 example</title>
+            <title>Angular 2 example{isDevelopment() ? ` (${modifiedTimeMs})` : ''}</title>
             <meta charSet="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <ExampleStyle rootId="app" />

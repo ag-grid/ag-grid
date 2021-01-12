@@ -7,19 +7,21 @@ import { getCssFilePaths, isDevelopment, isUsingPublishedPackages } from './help
 import Scripts from './Scripts';
 import Styles from './Styles';
 
-const VanillaTemplate = ({ library, appLocation, options, scriptFiles, styleFiles, indexFragment }) =>
+const getCacheBustingUrl = (url, timestamp) => `${url}?t=${timestamp}`;
+
+const VanillaTemplate = ({ modifiedTimeMs, library, appLocation, options, scriptFiles, styleFiles, indexFragment }) =>
     <html lang="en">
         <head>
-            <title>JavaScript example</title>
+            <title>JavaScript example{isDevelopment() ? ` (${modifiedTimeMs})` : ''}</title>
             <ExampleStyle />
-            <VanillaStyles library={library} files={styleFiles} />
+            <VanillaStyles library={library} files={isDevelopment() ? styleFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
             <Extras options={options} />
         </head>
         <VanillaBody
             library={library}
             appLocation={appLocation}
             options={options}
-            scriptFiles={scriptFiles}
+            scriptFiles={isDevelopment() ? scriptFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : scriptFiles}
             indexFragment={indexFragment} />
     </html>;
 
