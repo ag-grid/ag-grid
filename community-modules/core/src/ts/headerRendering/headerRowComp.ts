@@ -75,18 +75,9 @@ export class HeaderRowComp extends Component {
         this.destroyChildComponents(idsOfAllChildren);
     }
 
-    private destroyChildComponents(idsToDestroy: string[], keepFocused?: boolean): void {
+    private destroyChildComponents(idsToDestroy: string[]): void {
         idsToDestroy.forEach(id => {
             const childHeaderWrapper: AbstractHeaderWrapper = this.headerComps[id];
-
-            if (
-                keepFocused &&
-                !childHeaderWrapper.getColumn().isMoving() &&
-                this.focusController.isHeaderWrapperFocused(childHeaderWrapper)
-            ) {
-                return;
-            }
-
             this.getGui().removeChild(childHeaderWrapper.getGui());
             this.destroyBean(childHeaderWrapper);
             delete this.headerComps[id];
@@ -269,8 +260,22 @@ export class HeaderRowComp extends Component {
             compIdsWanted.push(idOfChild);
         });
 
+        // we want to keep columns that are focused, otherwise keyboard navigation breaks
+        const headerCompIsFocused = (colId: string) => {
+            const wrapper = this.headerComps[colId];
+            const col = this.headerComps[colId].getColumn();
+            return !col.isMoving && this.focusController.isHeaderWrapperFocused(wrapper);
+        };
+
+        const focusedHeaderComps = compIdsToRemove.filter(headerCompIsFocused);
+
+        focusedHeaderComps.forEach(colId => {
+            removeFromArray(compIdsToRemove, colId);
+            focusedHeaderComps.push(colId);
+        });
+
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
-        this.destroyChildComponents(compIdsToRemove, true);
+        this.destroyChildComponents(compIdsToRemove);
 
         const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         if (ensureDomOrder) {
