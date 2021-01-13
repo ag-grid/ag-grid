@@ -185,43 +185,43 @@ export class HeaderRowComp extends Component {
         this.setWidth();
     }
 
-    private getItemsAtDepth(): ColumnGroupChild[] {
+    private getColumnsInViewport(): {viewportColumns: ColumnGroupChild[], allColumns: ColumnGroupChild[]} {
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
+    }
 
-        if (printLayout) {
-            // for print layout, we add all columns into the center
-            const centerContainer = missing(this.pinned);
-            if (centerContainer) {
-                let result: ColumnGroupChild[] = [];
-                [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
-                    const items = this.columnController.getVirtualHeaderGroupRow(
-                        pinned,
-                        this.type == HeaderRowType.FLOATING_FILTER ?
-                            this.dept - 1 :
-                            this.dept
-                    );
-                    result = result.concat(items);
-                });
-                return result;
-            }
-            return [];
-        }
+    private getColumnsInViewportPrintLayout(): {viewportColumns: ColumnGroupChild[], allColumns: ColumnGroupChild[]} {
+        // for print layout, we add all columns into the center
+        const pinned = this.pinned != null;
+        if (pinned) { return {viewportColumns: [], allColumns: []} };
 
+        let viewportColumns: ColumnGroupChild[] = [];
+        const actualDepth = this.type == HeaderRowType.FLOATING_FILTER ? this.dept - 1 : this.dept;
+
+        [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
+            const items = this.columnController.getVirtualHeaderGroupRow(pinned, actualDepth);
+            viewportColumns = viewportColumns.concat(items);
+        });
+
+        return {viewportColumns, allColumns: viewportColumns};
+    }
+
+    private getColumnsInViewportNormalLayout(): {viewportColumns: ColumnGroupChild[], allColumns: ColumnGroupChild[]} {
         // when in normal layout, we add the columns for that container only
-        return this.columnController.getVirtualHeaderGroupRow(
-            this.pinned,
-            this.type == HeaderRowType.FLOATING_FILTER ?
-                this.dept - 1 :
-                this.dept
-        );
+        const actualDepth = this.type == HeaderRowType.FLOATING_FILTER ? this.dept - 1 : this.dept;
+
+        const viewportColumns = this.columnController.getVirtualHeaderGroupRow(this.pinned, actualDepth);
+        const allColumns = this.columnController.getVirtualHeaderGroupRow(this.pinned, actualDepth);
+
+        return {viewportColumns, allColumns};
     }
 
     private onVirtualColumnsChanged(): void {
         const compIdsToRemove = Object.keys(this.headerComps);
         const compIdsWanted: string[] = [];
-        const itemsAtDepth = this.getItemsAtDepth();
+        const columns = this.getColumnsInViewport();
 
-        itemsAtDepth.forEach((child: ColumnGroupChild) => {
+        columns.viewportColumns.forEach((child: ColumnGroupChild) => {
             // skip groups that have no displayed children. this can happen when the group is broken,
             // and this section happens to have nothing to display for the open / closed state.
             // (a broken group is one that is split, ie columns in the group have a non-group column
@@ -263,6 +263,10 @@ export class HeaderRowComp extends Component {
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
         const headerCompIsFocused = (colId: string) => {
             const wrapper = this.headerComps[colId];
+            // if column no longer existing (ie it missing for reasons other than not in viewport)
+            // then we never try to keep it.
+            if (columns.allColumns.indexOf(wrapper.getColumn())<0) { return false; }
+            // otherwise just keep focused columns
             return this.focusController.isHeaderWrapperFocused(wrapper);
         };
 
