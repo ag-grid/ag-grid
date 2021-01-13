@@ -4,6 +4,7 @@ import { stringify } from 'query-string';
 import { agGridVersion, localPrefix, getLocalPrefix } from './consts';
 import { getIndexHtml } from './index-html-helper';
 import { ParameterConfig } from '../../pages/example-runner';
+import isDevelopment from '../../utils/is-development';
 
 const getInternalFramework = (framework, useFunctionalReact) => {
     if (framework === 'javascript') {
@@ -175,7 +176,6 @@ export const openPlunker = exampleInfo => {
     });
 };
 
-export const isDevelopment = () => process.env.NODE_ENV === 'development';
 export const isUsingPublishedPackages = () => process.env.GATSBY_USE_PUBLISHED_PACKAGES === 'true';
 
 export const getCssFilePaths = theme => {

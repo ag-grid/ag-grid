@@ -3,10 +3,12 @@ const express = require('express');
 const { createFilePath, CODES } = require('gatsby-source-filesystem');
 const { GraphQLString } = require('gatsby/graphql');
 const fs = require('fs-extra');
+const publicIp = require('public-ip');
+const gifFrames = require('gif-frames');
 const supportedFrameworks = require('./src/utils/supported-frameworks.js');
 const chartGallery = require('./doc-pages/charts/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
-const publicIp = require('public-ip');
+const isDevelopment = require('./src/utils/is-development');
 
 /* This is an override of the code in https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-filesystem/src/extend-file-node.js
  * We override this to allow us to specify the directory structure of the example files, so that we can reference
@@ -60,6 +62,18 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
                             }
                         }
                     );
+
+                    if (!isDevelopment() && publicPath.endsWith('.gif')) {
+                        // create first frame still
+                        const frameData = await gifFrames({
+                            url: details.absolutePath,
+                            frames: 0,
+                            type: 'png',
+                            quality: 100,
+                        });
+
+                        frameData[0].getImage().pipe(fs.createWriteStream(publicPath.replace('.gif', '-still.png')));
+                    }
                 }
 
                 return `${pathPrefix}/${fileName}`;

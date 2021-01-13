@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import styles from './ExampleRunnerResult.module.scss';
-import { getIndexHtmlUrl, isDevelopment } from './helpers';
+import { getIndexHtmlUrl } from './helpers';
 import { getIndexHtml } from './index-html-helper';
+import isDevelopment from '../../utils/is-development';
 
 const ExampleRunnerResult = ({ isVisible, isActive = true, exampleInfo }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
