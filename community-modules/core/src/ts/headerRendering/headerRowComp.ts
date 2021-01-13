@@ -185,15 +185,14 @@ export class HeaderRowComp extends Component {
         this.setWidth();
     }
 
-    private getColumnsInViewport(): {viewportColumns: ColumnGroupChild[], allColumns: ColumnGroupChild[]} {
+    private getColumnsInViewport(): ColumnGroupChild[] {
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
         return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     }
 
-    private getColumnsInViewportPrintLayout(): {viewportColumns: ColumnGroupChild[], allColumns: ColumnGroupChild[]} {
+    private getColumnsInViewportPrintLayout(): ColumnGroupChild[] {
         // for print layout, we add all columns into the center
-        const pinned = this.pinned != null;
-        if (pinned) { return {viewportColumns: [], allColumns: []} };
+        if (this.pinned != null) { return []; }
 
         let viewportColumns: ColumnGroupChild[] = [];
         const actualDepth = this.type == HeaderRowType.FLOATING_FILTER ? this.dept - 1 : this.dept;
@@ -203,17 +202,13 @@ export class HeaderRowComp extends Component {
             viewportColumns = viewportColumns.concat(items);
         });
 
-        return {viewportColumns, allColumns: viewportColumns};
+        return viewportColumns;
     }
 
-    private getColumnsInViewportNormalLayout(): {viewportColumns: ColumnGroupChild[], allColumns: ColumnGroupChild[]} {
+    private getColumnsInViewportNormalLayout(): ColumnGroupChild[] {
         // when in normal layout, we add the columns for that container only
         const actualDepth = this.type == HeaderRowType.FLOATING_FILTER ? this.dept - 1 : this.dept;
-
-        const viewportColumns = this.columnController.getVirtualHeaderGroupRow(this.pinned, actualDepth);
-        const allColumns = this.columnController.getVirtualHeaderGroupRow(this.pinned, actualDepth);
-
-        return {viewportColumns, allColumns};
+        return this.columnController.getVirtualHeaderGroupRow(this.pinned, actualDepth);
     }
 
     private onVirtualColumnsChanged(): void {
@@ -221,7 +216,7 @@ export class HeaderRowComp extends Component {
         const compIdsWanted: string[] = [];
         const columns = this.getColumnsInViewport();
 
-        columns.viewportColumns.forEach((child: ColumnGroupChild) => {
+        columns.forEach((child: ColumnGroupChild) => {
             // skip groups that have no displayed children. this can happen when the group is broken,
             // and this section happens to have nothing to display for the open / closed state.
             // (a broken group is one that is split, ie columns in the group have a non-group column
@@ -261,16 +256,17 @@ export class HeaderRowComp extends Component {
         });
 
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
-        const headerCompIsFocused = (colId: string) => {
+        const headerCompIsFocusedAndVisible = (colId: string) => {
             const wrapper = this.headerComps[colId];
-            // if column no longer existing (ie it missing for reasons other than not in viewport)
-            // then we never try to keep it.
-            if (columns.allColumns.indexOf(wrapper.getColumn())<0) { return false; }
-            // otherwise just keep focused columns
-            return this.focusController.isHeaderWrapperFocused(wrapper);
+            const column = wrapper.getColumn();
+            const isHeaderCompFocused = this.focusController.isHeaderWrapperFocused(wrapper);
+            const isHeaderVisible: boolean = columns.indexOf(wrapper.getColumn()) !== -1;
+            // if some action removed the column and caused the virtualisation to start (eg. hiding)
+            // we allow the headerComp to be destroyed, otherwise just keep focused columns
+            return isHeaderCompFocused && isHeaderVisible;
         };
 
-        const focusedHeaderComps = compIdsToRemove.filter(headerCompIsFocused);
+        const focusedHeaderComps = compIdsToRemove.filter(headerCompIsFocusedAndVisible);
 
         focusedHeaderComps.forEach(colId => {
             removeFromArray(compIdsToRemove, colId);
