@@ -19,11 +19,11 @@ function hasArgument(name) {
 
 const options = {
     rootPageName: 'charts',
-    rootDirectory: 'src/pages/charts',
+    rootDirectory: 'doc-pages/charts',
     galleryJsonFile: 'gallery.json',
     thumbnailDirectory: 'src/components/chart-gallery/thumbnails',
     encoding: 'utf8',
-    menuJsonPath: 'src/pages/licensing/menu.json',
+    menuJsonPath: 'doc-pages/licensing/menu.json',
 };
 
 console.log('Generating gallery assets using gallery.json');

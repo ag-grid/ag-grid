@@ -5,7 +5,7 @@ import { getHeaderTitle } from '../utils/page-header';
 import fwLogos from '../images/fw-logos';
 import supportedFrameworks from '../utils/supported-frameworks';
 import MenuView from '../components/menu-view/MenuView';
-import menuData from '../pages/licensing/menu.json';
+import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './home.module.scss';
 
 const backgroundColor = {

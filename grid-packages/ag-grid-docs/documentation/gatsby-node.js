@@ -4,7 +4,7 @@ const { createFilePath, CODES } = require('gatsby-source-filesystem');
 const { GraphQLString } = require('gatsby/graphql');
 const fs = require('fs-extra');
 const supportedFrameworks = require('./src/utils/supported-frameworks.js');
-const chartGallery = require('./src/pages/charts/gallery.json');
+const chartGallery = require('./doc-pages/charts/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 const publicIp = require('public-ip');
 

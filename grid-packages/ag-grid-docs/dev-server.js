@@ -1,9 +1,5 @@
 const os = require('os');
 const fs = require('fs');
-const gracefulFs = require('graceful-fs');
-
-gracefulFs.gracefulify(fs);
-
 const cp = require('child_process');
 const glob = require('glob');
 const resolve = require('path').resolve
@@ -242,7 +238,7 @@ function regenerateDocumentationExamplesForFileChange(file) {
     let scope;
 
     try {
-        scope = file.replace(/\\/g, '/').match(/documentation\/src\/pages\/([^\/]+)\//)[1];
+        scope = file.replace(/\\/g, '/').match(/documentation\/doc-pages\/([^\/]+)\//)[1];
     } catch (e) {
         throw new Error(`'${exampleDirMatch}' could not extract the example dir from '${file}'. Fix the regexp in dev-server.js`);
     }
@@ -263,11 +259,11 @@ async function watchAndGenerateExamples() {
     }
 
     chokidar
-        .watch([`./documentation/src/pages/**/examples/**/*.{html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] })
+        .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] })
         .on('change', regenerateDocumentationExamplesForFileChange);
 
     chokidar
-        .watch([`./documentation/src/pages/**/*.md`], { ignoreInitial: true })
+        .watch([`./documentation/doc-pages/**/*.md`], { ignoreInitial: true })
         .on('add', regenerateDocumentationExamplesForFileChange);
 }
 
@@ -681,7 +677,7 @@ const watchFrameworkModules = async () => {
         const frameworkDirectory = resolve(`${moduleRootDirectory}${moduleFramework}`);
 
         const ignoredFolders = [...defaultIgnoreFolders];
-        if(moduleFramework !== 'angular') {
+        if (moduleFramework !== 'angular') {
             ignoredFolders.push('**/lib/**/*')
         }
 

@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import Announcements from '../components/Announcements';
-import menuData from '../pages/licensing/menu.json';
+import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {

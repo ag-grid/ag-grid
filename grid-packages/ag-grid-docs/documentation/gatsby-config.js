@@ -20,7 +20,7 @@ const plugins = [
   {
     resolve: `gatsby-transformer-rehype`,
     options: {
-      filter: node => node.sourceInstanceName === 'pages' &&
+      filter: node => node.sourceInstanceName === 'doc-pages' &&
         node.relativePath.indexOf('/_gen/') < 0 &&
         node.ext === '.html',
     },
@@ -32,14 +32,13 @@ const plugins = [
     resolve: 'gatsby-plugin-page-creator',
     options: {
       path: `${__dirname}/src/pages`,
-      ignore: ['**/examples/**'],
     },
   },
   {
     resolve: 'gatsby-source-filesystem',
     options: {
-      path: `${__dirname}/src/pages`,
-      name: 'pages',
+      path: `${__dirname}/doc-pages`,
+      name: 'doc-pages',
     },
   },
   {
