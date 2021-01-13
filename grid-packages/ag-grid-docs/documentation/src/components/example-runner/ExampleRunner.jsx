@@ -1,133 +1,144 @@
-import React, { useState } from 'react';
-import { withPrefix } from 'gatsby';
+import React, { useEffect, useState } from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
-import { encodeQueryParams } from 'use-query-params';
-import { stringify } from 'query-string';
 import classnames from 'classnames';
+import fs from 'fs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import CodeViewer from './CodeViewer';
 import GlobalContextConsumer from '../GlobalContext';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import { useExampleFileNodes } from './use-example-file-nodes';
-import { getExampleInfo, isDevelopment, openPlunker } from './helpers';
+import { getExampleInfo, getIndexHtmlUrl, openPlunker } from './helpers';
 import { doOnEnter } from '../key-handlers';
-import { ParameterConfig } from '../../pages/example-runner';
+import isServerSideRendering from '../../utils/is-server-side-rendering';
+import { getIndexHtml } from './index-html-helper';
 import anchorIcon from '../../images/anchor';
 import styles from './ExampleRunner.module.scss';
 
-const getNewTabLink = exampleInfo => {
-    if (isDevelopment()) {
-        const {
-            pageName,
-            library,
-            framework,
-            useFunctionalReact,
-            importType,
-            name,
-            title,
-            type,
-            options,
-        } = exampleInfo;
+const writeIndexHtmlFiles = exampleInfo => {
+    const indexHtml = getIndexHtml(exampleInfo, true);
+    const { appLocation, type, framework, library } = exampleInfo;
 
-        const queryParams = encodeQueryParams(
-            ParameterConfig,
-            {
-                pageName,
-                library,
-                framework,
-                useFunctionalReact,
-                importType,
-                name,
-                title,
-                type,
-                options,
-            });
+    if (type === 'generated' || type === 'mixed') {
+        const modulesLocation = appLocation; // because modules is the default
 
-        return `/example-runner/?${stringify(queryParams)}`;
-    } else {
-        return `${exampleInfo.appLocation}index.html`;
+        fs.writeFileSync(`public${modulesLocation}index.html`, indexHtml);
+
+        const packagesLocation = modulesLocation.replace('/modules/', '/packages/');
+
+        fs.writeFileSync(`public${packagesLocation}index.html`, indexHtml);
+
+        if (framework === 'react' && library === 'grid') {
+            // need to ensure functional version is also generated
+            fs.writeFileSync(`public${modulesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
+            fs.writeFileSync(`public${packagesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
+        }
+    } else if (type === 'polymer') {
+        fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
     }
 };
 
-export const ExampleRunner = ({ pageName, framework, name, title, type, options = {}, library }) => {
-    const [showCode, setShowCode] = useState(!!options.showCode);
+const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, set }) => {
     const nodes = useExampleFileNodes();
+    const [showCode, setShowCode] = useState(!!(options && options.showCode));
+    const [exampleInfo, setExampleInfo] = useState(null);
 
+    if (isServerSideRendering()) {
+        const exampleInfo = getExampleInfo(
+            nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
+
+        writeIndexHtmlFiles(exampleInfo);
+    }
+
+    useEffect(() => {
+        const updatedExampleInfo = getExampleInfo(
+            nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
+
+        setExampleInfo(updatedExampleInfo);
+    }, [nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact]);
+
+    if (!exampleInfo) { return null; }
+
+    const exampleStyle = {
+        width: '100%',
+        height: exampleInfo.options.exampleHeight || '500px',
+    };
+
+    const isGenerated = exampleInfo.type === 'generated' || exampleInfo.type === 'mixed';
+    const linkId = `example-${name}`;
+
+    return <div className={styles['example-runner']}>
+        <div className={`form-inline ${styles['example-runner__header']}`}>
+            <a id={linkId} href={`#${linkId}`} className={`anchor ${styles['example-runner__title']}`}>
+                {anchorIcon}&nbsp;Example: {title}
+            </a>
+            {library === 'grid' && exampleInfo.framework === 'react' &&
+                <ReactStyleSelector
+                    useFunctionalReact={useFunctionalReact}
+                    onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
+            }
+            {library === 'grid' && exampleInfo.framework !== 'javascript' && isGenerated &&
+                <ImportTypeSelector
+                    importType={exampleImportType}
+                    onChange={event => set({ exampleImportType: event.target.value })} />
+            }
+        </div>
+        <div className={styles['example-runner__body']} style={exampleStyle}>
+            <div className={styles['example-runner__menu']}>
+                <div
+                    className={classnames(styles['example-runner__menu-item'], { [styles['example-runner__menu-item--selected']]: !showCode })}
+                    onClick={() => setShowCode(false)}
+                    onKeyDown={e => doOnEnter(e, () => setShowCode(false))}
+                    role="button"
+                    tabIndex="0">
+                    <FontAwesomeIcon icon={faPlay} fixedWidth />
+                </div>
+                <div
+                    className={classnames(styles['example-runner__menu-item'], { [styles['example-runner__menu-item--selected']]: showCode })}
+                    onClick={() => setShowCode(true)}
+                    onKeyDown={e => doOnEnter(e, () => setShowCode(true))}
+                    role="button"
+                    tabIndex="0">
+                    <FontAwesomeIcon icon={faCode} fixedWidth />
+                </div>
+                <div className={styles['example-runner__menu-item']}>
+                    <a href={getIndexHtmlUrl(exampleInfo)} target="_blank" rel="noreferrer">
+                        <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
+                    </a>
+                </div>
+                {!exampleInfo.options.noPlunker &&
+                    <div
+                        className={styles['example-runner__menu-item']}
+                        onClick={() => openPlunker(exampleInfo)}
+                        onKeyDown={e => doOnEnter(e, () => openPlunker(exampleInfo))}
+                        role="button"
+                        tabIndex="0">
+                        <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
+                    </div>}
+            </div>
+            <div className={styles['example-runner__content']}>
+                <VisibilitySensor partialVisibility={true}>
+                    {({ isVisible }) =>
+                        <ExampleRunnerResult isActive={!showCode} isVisible={isVisible} exampleInfo={exampleInfo} />
+                    }
+                </VisibilitySensor>
+                <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
+            </div>
+        </div>
+    </div>;
+};
+
+export const ExampleRunner = props => {
     return <GlobalContextConsumer>
         {({ exampleImportType, useFunctionalReact, set }) => {
-            const exampleInfo = getExampleInfo(
-                nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
-
-            const exampleStyle = {
-                width: '100%',
-                height: exampleInfo.options.exampleHeight || '500px',
+            const innerProps = {
+                ...props,
+                exampleImportType,
+                useFunctionalReact,
+                set,
             };
 
-            const isGenerated = exampleInfo.type === 'generated' || exampleInfo.type === 'mixed';
-            const linkId = `example-${name}`;
-
-            return <div className={styles['example-runner']}>
-                <div className={`form-inline ${styles['example-runner__header']}`}>
-                    <a id={linkId} href={`#${linkId}`} className={`anchor ${styles['example-runner__title']}`}>
-                        {anchorIcon}&nbsp;Example: {title}
-                    </a>
-                    {library === 'grid' && exampleInfo.framework === 'react' &&
-                        <ReactStyleSelector
-                            useFunctionalReact={useFunctionalReact}
-                            onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
-                    }
-                    {library === 'grid' && exampleInfo.framework !== 'javascript' && isGenerated &&
-                        <ImportTypeSelector
-                            importType={exampleImportType}
-                            onChange={event => set({ exampleImportType: event.target.value })} />
-                    }
-                </div>
-                <div className={styles['example-runner__body']} style={exampleStyle}>
-                    <div className={styles['example-runner__menu']}>
-                        <div
-                            className={classnames(styles['example-runner__menu-item'], { [styles['example-runner__menu-item--selected']]: !showCode })}
-                            onClick={() => setShowCode(false)}
-                            onKeyDown={e => doOnEnter(e, () => setShowCode(false))}
-                            role="button"
-                            tabIndex="0">
-                            <FontAwesomeIcon icon={faPlay} fixedWidth />
-                        </div>
-                        <div
-                            className={classnames(styles['example-runner__menu-item'], { [styles['example-runner__menu-item--selected']]: showCode })}
-                            onClick={() => setShowCode(true)}
-                            onKeyDown={e => doOnEnter(e, () => setShowCode(true))}
-                            role="button"
-                            tabIndex="0">
-                            <FontAwesomeIcon icon={faCode} fixedWidth />
-                        </div>
-                        <div className={styles['example-runner__menu-item']}>
-                            <a href={withPrefix(getNewTabLink(exampleInfo))} target="_blank" rel="noreferrer">
-                                <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
-                            </a>
-                        </div>
-                        {!options.noPlunker &&
-                            <div
-                                className={styles['example-runner__menu-item']}
-                                onClick={() => openPlunker(nodes, exampleInfo)}
-                                onKeyDown={e => doOnEnter(e, () => openPlunker(nodes, exampleInfo))}
-                                role="button"
-                                tabIndex="0">
-                                <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
-                            </div>}
-                    </div>
-                    <div className={styles['example-runner__content']}>
-                        {!showCode &&
-                            <VisibilitySensor partialVisibility={true}>
-                                {({ isVisible }) =>
-                                    <ExampleRunnerResult isVisible={isVisible} exampleInfo={exampleInfo} />
-                                }
-                            </VisibilitySensor>
-                        }
-                        {showCode && <CodeViewer exampleInfo={exampleInfo} />}
-                    </div>
-                </div>
-            </div>;
+            return <ExampleRunnerInner {...innerProps} />;
         }}
     </GlobalContextConsumer>;
 };

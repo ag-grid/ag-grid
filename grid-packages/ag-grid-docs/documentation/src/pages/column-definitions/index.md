@@ -5,60 +5,16 @@ Each column in the grid is defined using a Column Definition (`ColDef`). Columns
 
 The following example shows a simple grid with 3 columns defined:
 
-[[only-javascript]]
-| ```js
-| const gridOptions = {
-|     // define 3 columns
-|     columnDefs: [
-|         { headerName: 'Athlete', field: 'athlete' },
-|         { headerName: 'Sport', field: 'sport' },
-|         { headerName: 'Age', field: 'age' },
-|     ],
-|
-|     // other grid options ...
-| }
-| ```
-
-[[only-angular]]
-| ```js
-| <ag-grid-angular
-|     [columnDefs]="columnDefs"
-|     // other grid options ...>
-| </ag-grid-angular>
-|
-| // define 3 columns
-| this.columnDefs = [
-|     { headerName: 'Athlete', field: 'athlete' },
-|     { headerName: 'Sport', field: 'sport' },
-|     { headerName: 'Age', field: 'age' },
-| ];
-| ```
-
-[[only-react]]
-| ```js
-| <AgGridReact>
-|     // define 3 columns
-|     <AgGridColumn headerName='Athlete' field='athlete' />
-|     <AgGridColumn headerName='Sport' field='sport' />
-|     <AgGridColumn headerName='Age' field='age' />
-| </AgGridReact>
-| ```
-
-[[only-vue]]
-| ```js
-| <ag-grid-vue
-|     :columnDefs="columnDefs"  
-|     // other grid options ...>
-| </ag-grid-vue>
-|
-| // define 3 columns
-| this.columnDefs = [
-|     { headerName: 'Athlete', field: 'athlete' },
-|     { headerName: 'Sport', field: 'sport' },
-|     { headerName: 'Age', field: 'age' },
-| ];
-| ```
-
+<snippet>
+const gridOptions = {
+    // define 3 columns
+    columnDefs: [
+        { headerName: 'Athlete', field: 'athlete' },
+        { headerName: 'Sport', field: 'sport' },
+        { headerName: 'Age', field: 'age' },
+    ]
+}
+</snippet>
 
 See [Column Properties](../column-properties/) for a list of all properties that can be applied to a column.
 
@@ -67,6 +23,7 @@ If you want the columns to be grouped, you can include them as children like so:
 [[only-javascript]]
 | ```js
 | columnDefs: [
+|
 |     // put the three columns into a group
 |     {
 |         headerName: 'Group A',

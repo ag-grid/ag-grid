@@ -5,7 +5,7 @@ frameworks: ["javascript"]
 
 ## More Details
 
-[[note]
+[[note]]
 | A full working example of using ag-Grid with Polymer 3 can be found in our <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-Grid Polymer 3 Example Repo</a>.
 
 ### Downloading the ag-Grid Enterprise Dependency

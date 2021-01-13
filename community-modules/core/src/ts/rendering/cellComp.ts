@@ -137,7 +137,6 @@ export class CellComp extends Component implements TooltipParentComp {
     private scope: any = null;
 
     private readonly printLayout: boolean;
-    private cellComponentBeans: Component[];
 
     // every time we go into edit mode, or back again, this gets incremented.
     // it's the components way of dealing with the async nature of framework components,
@@ -240,18 +239,6 @@ export class CellComp extends Component implements TooltipParentComp {
         </div>`;
 
         return wrapper;
-    }
-
-    private addCellComponentBean(comp: Component) {
-        if (!this.cellComponentBeans) { this.cellComponentBeans = []; }
-        this.cellComponentBeans.push(comp);
-    }
-
-    private destroyAllComponentBeans() {
-        if (!this.cellComponentBeans) { return; }
-
-        this.cellComponentBeans.forEach(bean => this.beans.context.destroyBean(bean));
-        this.cellComponentBeans = [];
     }
 
     private getStylesForRowSpanning(): string {
@@ -601,12 +588,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // otherwise we rip out the cell and replace it
 
         this.setUsingWrapper();
-
-        if (this.usingWrapper || isUsingWrapper !== this.usingWrapper) {
-            this.refreshCellTemplate();
-        } else {
-            clearElement(this.eCellValue);
-        }
+        clearElement(this.eCellValue);
 
         // remove old renderer component if it exists
         this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
@@ -615,15 +597,6 @@ export class CellComp extends Component implements TooltipParentComp {
         // populate
         this.putDataIntoCellAfterRefresh();
         this.updateAngular1ScopeAndCompile();
-    }
-
-    private refreshCellTemplate() {
-        this.clearCellElement();
-        this.destroyAllComponentBeans();
-        if (this.usingWrapper) {
-            this.getGui().innerHTML = this.getCellWrapperString();
-        }
-        this.populateTemplate();
     }
 
     private updateAngular1ScopeAndCompile() {
@@ -1740,7 +1713,6 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         this.stopEditing();
-        this.destroyAllComponentBeans();
         this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
         this.beans.context.destroyBean(this.selectionHandle);
 
@@ -2038,6 +2010,20 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
+    public refreshShouldDestroy(): boolean {
+        const isUsingWrapper = this.usingWrapper;
+        const isIncludingRowDragging = this.includeRowDraggingComponent;
+        const isIncludingDndSource = this.includeDndSourceComponent;
+        const isIncludingSelection = this.includeSelectionComponent;
+
+        this.setUsingWrapper();
+
+        return isUsingWrapper !== this.usingWrapper ||
+            isIncludingRowDragging !== this.includeRowDraggingComponent ||
+            isIncludingDndSource !== this.includeDndSourceComponent ||
+            isIncludingSelection !== this.includeSelectionComponent;
+    }
+
     private populateTemplate(): void {
         if (this.usingWrapper) {
 
@@ -2088,8 +2074,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         const rowDraggingComp = new RowDragComp(this.rowNode, this.column, () => this.value, this.beans);
-        this.beans.context.createBean(rowDraggingComp);
-        this.addCellComponentBean(rowDraggingComp);
+        this.createManagedBean(rowDraggingComp, this.beans.context);
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eCellValue);
@@ -2097,8 +2082,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private addDndSource(): void {
         const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans, this.getGui());
-        this.beans.context.createBean(dndSourceComp);
-        this.addCellComponentBean(dndSourceComp);
+        this.createManagedBean(dndSourceComp, this.beans.context);
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eCellValue);
@@ -2107,12 +2091,12 @@ export class CellComp extends Component implements TooltipParentComp {
     private addSelectionCheckbox(): void {
         const cbSelectionComponent = new CheckboxSelectionComponent();
         this.beans.context.createBean(cbSelectionComponent);
-        this.addCellComponentBean(cbSelectionComponent);
 
         let visibleFunc = this.getComponentHolder().checkboxSelection;
         visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
 
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc });
+        this.addDestroyFunc(() => this.beans.context.destroyBean(cbSelectionComponent));
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eCellValue);

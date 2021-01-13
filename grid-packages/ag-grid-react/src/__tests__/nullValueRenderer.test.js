@@ -25,7 +25,8 @@ afterEach(() => {
 
 it('null value cell renderer test', async () => {
     // null values are checked just as we're about to timeout waiting for a comp - currently 500ms
-    await wait(550);
+    await wait(1050);
+
 
     const renderedOutput = component.render();
 

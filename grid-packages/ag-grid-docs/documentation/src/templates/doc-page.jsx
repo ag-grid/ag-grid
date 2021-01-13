@@ -9,6 +9,7 @@ import processFrameworkSpecificSections from '../utils/framework-specific-sectio
 import { getPageName } from '../utils/get-page-name';
 import { getHeaderTitle } from '../utils/page-header';
 import { ApiDocumentation } from '../components/ApiDocumentation';
+import { Snippet } from '../components/snippet/Snippet';
 import FeatureOverview from '../components/FeatureOverview';
 import IconsPanel from '../components/IconsPanel';
 import ImageCaption from '../components/ImageCaption';
@@ -29,6 +30,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
 
   const pageName = getPageName(location.pathname);
   const ast = processFrameworkSpecificSections(page.htmlAst, framework);
+
   const getExampleRunnerProps = (props, library) => ({
     ...props,
     framework,
@@ -51,6 +53,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
         sources: props.sources != null ? JSON.parse(props.sources) : undefined,
         config: props.config != null ? JSON.parse(props.config) : undefined
       }),
+      'snippet': props => Snippet({...props, framework}),
       'feature-overview': FeatureOverview,
       'icons-panel': IconsPanel,
       'image-caption': props => ImageCaption({ ...props, pageName }),

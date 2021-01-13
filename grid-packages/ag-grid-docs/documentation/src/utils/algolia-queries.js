@@ -19,7 +19,7 @@ const pageQuery = `{
 }`;
 
 function pageToAlgoliaRecord({ id: objectID, frontmatter: { title }, fields: { path }, htmlAst }, framework) {
-  const text = stripHtml(processFrameworkSpecificSections(htmlAst, framework)).substr(0, 10000);
+  const text = stripHtml(processFrameworkSpecificSections(htmlAst, framework)).substr(0, 19000);
 
   return {
     objectID,

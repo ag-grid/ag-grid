@@ -84,9 +84,11 @@ var chart = agCharts.AgChart.create(options);
 // inScope[updateData]
 function updateData() {
     var now = Date.now();
-    chart.data = getData();
-    chart.axes[0].min = now - millisecondsOfData;
-    chart.axes[0].max = now;
+    options.data = getData();
+    options.axes[0].min = now - millisecondsOfData;
+    options.axes[0].max = now;
+
+    agCharts.AgChart.update(chart, options);
 }
 
 setInterval(this.updateData, refreshRateInMilliseconds);

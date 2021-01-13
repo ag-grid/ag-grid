@@ -38,8 +38,8 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
                 const publicPath = path.join(process.cwd(), `public`, fileName);
 
                 // if example files have been updated in the last minute, overwrite them
-                const isRecent = date => (new Date() - Date.parse(date)) < 60000;
-                const forceOverwrite = isExampleFile && (isRecent(file.birthTime) || isRecent(file.modifiedTime));
+                const isRecent = dateMs => (new Date().getTime() - dateMs) < 60000;
+                const forceOverwrite = isExampleFile && (isRecent(file.ctimeMs) || isRecent(file.mtimeMs));
 
                 if (!fs.existsSync(publicPath) || forceOverwrite) {
                     fs.copySync(
