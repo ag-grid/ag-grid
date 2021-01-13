@@ -9,7 +9,7 @@ export const Snippet = (props, framework) => {
     const tree = esprima.parseScript(suppliedSnippet.trim(), {comment: true, range: true, loc: true});
 
     // convert syntax tree into a more convenient form, [{ propertyName: propertyAstObj }]
-    let propertyMappings = parseTree(tree);
+    const propertyMappings = parse(tree);
 
     // create FW specific snippet
     const snippet =
@@ -21,7 +21,7 @@ export const Snippet = (props, framework) => {
     return <CodeSnippet code={snippet}/>;
 };
 
-function parseTree(tree) {
+const parse = tree => {
     const isVarDeclaration = node => node.type === 'VariableDeclaration' && Array.isArray(node.declarations);
 
     const commentsMap = tree.comments.reduce((acc, comment) => {
