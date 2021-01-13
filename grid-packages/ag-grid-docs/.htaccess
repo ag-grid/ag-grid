@@ -173,6 +173,7 @@
     Redirect 301 /best-vuejs-data-grid/ /documentation/vue/getting-started/
     Redirect 301 /best-vuejs-grid/ /documentation/vue/getting-started/
     Redirect 301 /documentation-main/documentation.php /documentation/
+    Redirect 301 /documentation/javascript/selection/ /documentation/javascript/row-selection/
     Redirect 301 /embracing-the-future-with-angularjs2-web-components-and-ag-grid/ https://medium.com/ag-grid/embracing-the-future-with-angular-2-0-web-components-and-ag-grid-fec000d5a304
     Redirect 301 /example-angular-material-design/ /documentation/angular/material-design/
     Redirect 301 /example-angular-rxjs/ /documentation/angular/angular-rxjs/
@@ -330,11 +331,13 @@
     Redirect 301 /javascript-grid-pagination/ /documentation/javascript/row-pagination/
     Redirect 301 /javascript-grid-performance/ /documentation/javascript/scrolling-performance/
     Redirect 301 /javascript-grid-pinning/ /documentation/javascript/column-pinning/
+    Redirect 301 /javascript-grid-pivoting /documentation/javascript/pivoting/
     Redirect 301 /javascript-grid-pivoting/ /documentation/javascript/pivoting/
     Redirect 301 /javascript-grid-properties/ /documentation/javascript/grid-properties/
     Redirect 301 /javascript-grid-provided-cell-editors/ /documentation/javascript/provided-cell-editors/
     Redirect 301 /javascript-grid-provided-renderer-change/ /documentation/javascript/change-cell-renderers/
     Redirect 301 /javascript-grid-provided-renderer-group/ /documentation/javascript/group-cell-renderer/
+    Redirect 301 /javascript-grid-range-selection /documentation/javascript/range-selection/
     Redirect 301 /javascript-grid-range-selection/ /documentation/javascript/range-selection/
     Redirect 301 /javascript-grid-range-selection-fill-handle/ /documentation/javascript/range-selection-fill-handle/
     Redirect 301 /javascript-grid-range-selection-handle/ /documentation/javascript/range-selection-handle/
@@ -354,9 +357,10 @@
     Redirect 301 /javascript-grid-row-spanning/ /documentation/javascript/row-spanning/
     Redirect 301 /javascript-grid-row-styles/ /documentation/javascript/row-styles/
     Redirect 301 /javascript-grid-rtl/ /documentation/javascript/rtl/
+    Redirect 301 /javascript-grid-rxjs/ /documentation/angular/rxjs/
     Redirect 301 /javascript-grid-scrolling-scenarios/ /documentation/javascript/scrolling-scenarios/
     Redirect 301 /javascript-grid-security/ /documentation/javascript/security/
-    Redirect 301 /javascript-grid-selection/ /documentation/javascript/selection/
+    Redirect 301 /javascript-grid-selection/ /documentation/javascript/row-selection/
     Redirect 301 /javascript-grid-selection-overview/ /documentation/javascript/selection-overview/
     Redirect 301 /javascript-grid-server-side-model/ /documentation/javascript/server-side-model/
     Redirect 301 /javascript-grid-server-side-model-changing-columns/ /documentation/javascript/server-side-model-changing-columns/
@@ -406,6 +410,7 @@
     Redirect 301 /nodejs-server-side-operations/ /documentation/javascript/server-side-operations-nodejs/
     Redirect 301 /oracle-server-side-operations/ /documentation/javascript/server-side-operations-oracle/
     Redirect 301 /polymer-getting-started/ /documentation/javascript/polymer-getting-started/
+    Redirect 301 /polymer-more-details/ /documentation/javascript/polymer-more-details/
     Redirect 301 /react-15/ /documentation/react/react-15/
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
     Redirect 301 /react-apis/ /documentation/react/framework-apis/
