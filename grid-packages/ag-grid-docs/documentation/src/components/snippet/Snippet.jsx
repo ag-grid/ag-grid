@@ -2,20 +2,23 @@ import React from 'react';
 import Prism from 'prismjs';
 import * as esprima from 'esprima';
 
-export const Snippet = (props, framework) => {
+export const Snippet = (props) => {
     const suppliedSnippet = props.children[0].toString();
 
-    // create syntax tree from supplied snippet
-    const tree = esprima.parseScript(suppliedSnippet.trim(), {comment: true, range: true, loc: true});
+    // snippets that require spaces will need to be prefixed with '|' as markdown doesn't allow spaces
+    const formattedSnippet = suppliedSnippet.replace(/\|/g, ' ').trim();
 
-    // convert syntax tree into a more convenient form, [{ propertyName: propertyAstObj }]
+    // create syntax tree from supplied snippet
+    const tree = esprima.parseScript(formattedSnippet, {comment: true, loc: true});
+
+    // convert syntax tree into a more convenient form, i.e. [{ propertyName: propertyAstObj }]
     const propertyMappings = parse(tree);
 
     // create FW specific snippet
     const snippet =
-        framework === 'angular' ? createNgSnippet(propertyMappings) :
-            framework === 'react' ? createReactSnippet(propertyMappings) :
-                framework === 'vue' ? createVueSnippet(propertyMappings) :
+        props.framework === 'angular' ? createNgSnippet(propertyMappings) :
+            props.framework === 'react' ? createReactSnippet(propertyMappings) :
+                props.framework === 'vue' ? createVueSnippet(propertyMappings) :
                     createJsSnippet(propertyMappings);
 
     return <CodeSnippet code={snippet}/>;

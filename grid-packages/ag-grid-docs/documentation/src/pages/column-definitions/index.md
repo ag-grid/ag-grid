@@ -23,6 +23,7 @@ If you want the columns to be grouped, you can include them as children like so:
 [[only-javascript]]
 | ```js
 | columnDefs: [
+|
 |     // put the three columns into a group
 |     {
 |         headerName: 'Group A',

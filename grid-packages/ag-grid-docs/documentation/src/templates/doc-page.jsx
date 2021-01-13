@@ -53,7 +53,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
         sources: props.sources != null ? JSON.parse(props.sources) : undefined,
         config: props.config != null ? JSON.parse(props.config) : undefined
       }),
-      'snippet': props => Snippet(props, framework),
+      'snippet': props => Snippet({...props, framework}),
       'feature-overview': FeatureOverview,
       'icons-panel': IconsPanel,
       'image-caption': props => ImageCaption({ ...props, pageName }),
