@@ -263,8 +263,7 @@ export class HeaderRowComp extends Component {
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
         const headerCompIsFocused = (colId: string) => {
             const wrapper = this.headerComps[colId];
-            const col = this.headerComps[colId].getColumn();
-            return !col.isMoving && this.focusController.isHeaderWrapperFocused(wrapper);
+            return this.focusController.isHeaderWrapperFocused(wrapper);
         };
 
         const focusedHeaderComps = compIdsToRemove.filter(headerCompIsFocused);
