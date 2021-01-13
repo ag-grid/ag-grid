@@ -14,7 +14,6 @@ beforeEach((done) => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
 
     component = mount((<DeclarativeColumnsGrid/>));
-    // jest.runAllTimers();
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
     ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 20));
