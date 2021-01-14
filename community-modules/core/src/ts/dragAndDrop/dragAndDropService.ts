@@ -259,9 +259,10 @@ export class DragAndDropService extends BeanStub {
         const validDropTargets = this.dropTargets.filter(dropTarget => this.isMouseOnDropTarget(mouseEvent, dropTarget));
         const len = validDropTargets.length;
 
-        if (len === 0) { return; }
+        let dropTarget: DropTarget | null = null;
 
-        const dropTarget: DropTarget = len === 1
+        if (len > 0) {
+            dropTarget = len === 1
             ? validDropTargets[0]
             // the current mouse position could intersect with more than 1 element
             // if they are nested. In that case we need to get the most specific
@@ -274,7 +275,8 @@ export class DragAndDropService extends BeanStub {
                 if (prevContainer.contains(currContainer)) { return currTarget; }
 
                 return prevTarget;
-        });
+            });
+        }
 
         if (dropTarget !== this.lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
