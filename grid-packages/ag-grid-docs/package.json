@@ -110,7 +110,7 @@
     "lazyload": "2.0.0-beta.2",
     "merge-stream": "1.0.1",
     "mini-css-extract-plugin": "0.4.2",
-    "node-sass": "4.12.0",
+    "node-sass": "4.14.1",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "popper.js": "1.14.4",
     "postcss-loader": "3.0.0",
