@@ -209,9 +209,13 @@ export class AlignedGridsService extends BeanStub {
                 }
                 break;
             case Events.EVENT_COLUMN_PINNED:
-                const pinnedEvent = colEvent as ColumnPinnedEvent;
-                this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
-                this.columnController.setColumnsPinned(columnIds, pinnedEvent.pinned, "alignedGridChanged");
+                {
+                    const pinnedEvent = colEvent as ColumnPinnedEvent;
+                    const srcColState = colEvent.columnApi.getColumnState();
+                    const destColState = srcColState.map( s => { return {colId: s.colId, pinned: s.pinned}; } );
+                    this.columnController.applyColumnState({state: destColState}, "alignedGridChanged");
+                    this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
+                }
                 break;
             case Events.EVENT_COLUMN_RESIZED:
                 const resizedEvent = colEvent as ColumnResizedEvent;
