@@ -230,7 +230,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         return this.appliedModel;
     }
 
-    public setModel(model: ProvidedFilterModel): AgPromise<void> {
+    public setModel(model: ProvidedFilterModel | null): AgPromise<void> {
         const promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
 
         return promise.then(() => {
