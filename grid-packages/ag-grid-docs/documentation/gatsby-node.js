@@ -64,15 +64,27 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
                     );
 
                     if (!isDevelopment() && publicPath.endsWith('.gif')) {
-                        // create first frame still
-                        const frameData = await gifFrames({
-                            url: details.absolutePath,
-                            frames: 0,
-                            type: 'png',
-                            quality: 100,
-                        });
+                        try {
+                            // create first frame still
+                            const frameData = await gifFrames({
+                                url: details.absolutePath,
+                                frames: 0,
+                                type: 'png',
+                                quality: 100,
+                            });
 
-                        frameData[0].getImage().pipe(fs.createWriteStream(publicPath.replace('.gif', '-still.png')));
+                            frameData[0].getImage().pipe(fs.createWriteStream(publicPath.replace('.gif', '-still.png')));
+                        } catch (err) {
+                            reporter.panic(
+                                {
+                                    id: prefixId(CODES.MissingResource),
+                                    context: {
+                                        sourceMessage: `Could not create still from ${details.absolutePath}`,
+                                    },
+                                },
+                                err
+                            );
+                        }
                     }
                 }
 
