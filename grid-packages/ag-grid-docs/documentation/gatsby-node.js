@@ -14,7 +14,7 @@ const isDevelopment = require('./src/utils/is-development');
  * We override this to allow us to specify the directory structure of the example files, so that we can reference
  * them correctly in the examples. By default, Gatsby includes a cache-busting hash of the file which would cause
  * problems if we included it. It does mean that example files could be held in the cache though. */
-exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, pathPrefix = `` }) => {
+exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, pathPrefix = ``, reporter }) => {
     if (type.name !== `File`) {
         return {};
     }
