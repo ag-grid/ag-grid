@@ -190,7 +190,7 @@ export class AlignedGridsService extends BeanStub {
                 {
                     const movedEvent = colEvent as ColumnMovedEvent;
                     const srcColState = colEvent.columnApi.getColumnState();
-                    const destColState = srcColState.map( s => { return {colId: s.colId}; } );
+                    const destColState = srcColState.map(s => ({ colId: s.colId }));
                     this.columnController.applyColumnState(
                         {state: destColState, applyOrder: true}, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
@@ -203,7 +203,7 @@ export class AlignedGridsService extends BeanStub {
                 {
                     const visibleEvent = colEvent as ColumnVisibleEvent;
                     const srcColState = colEvent.columnApi.getColumnState();
-                    const destColState = srcColState.map( s => { return {colId: s.colId, hide: s.hide}; } );
+                    const destColState = srcColState.map(s => ({ colId: s.colId, hide: s.hide }));
                     this.columnController.applyColumnState({state: destColState}, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
                 }
@@ -212,7 +212,7 @@ export class AlignedGridsService extends BeanStub {
                 {
                     const pinnedEvent = colEvent as ColumnPinnedEvent;
                     const srcColState = colEvent.columnApi.getColumnState();
-                    const destColState = srcColState.map( s => { return {colId: s.colId, pinned: s.pinned}; } );
+                    const destColState = srcColState.map(s => ({ colId: s.colId, pinned: s.pinned }));
                     this.columnController.applyColumnState({state: destColState}, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
                 }
