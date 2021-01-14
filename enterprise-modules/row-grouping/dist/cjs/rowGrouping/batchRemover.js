@@ -23,6 +23,9 @@ var BatchRemover = /** @class */ (function () {
         }
         return this.allSets[parent.id];
     };
+    BatchRemover.prototype.getAllParents = function () {
+        return this.allParents;
+    };
     BatchRemover.prototype.flush = function () {
         var _this = this;
         this.allParents.forEach(function (parent) {

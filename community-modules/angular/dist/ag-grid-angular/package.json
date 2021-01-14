@@ -4,8 +4,8 @@
   "license": "MIT",
   "peerDependencies": {
     "@ag-grid-community/core": "~25.0.0",
-    "@angular/common": "^9.0.0 || ^10.0.0",
-    "@angular/core": "^9.0.0 || ^10.0.0"
+    "@angular/common": "^9.0.0 || ^10.0.0 || ^11.0.0",
+    "@angular/core": "^9.0.0 || ^10.0.0 || ^11.0.0"
   },
   "main": "bundles/ag-grid-community-angular.umd.js",
   "module": "fesm5/ag-grid-community-angular.js",
