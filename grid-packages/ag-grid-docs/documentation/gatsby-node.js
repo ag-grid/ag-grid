@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
-const { createFilePath, CODES } = require('gatsby-source-filesystem');
+const { createFilePath } = require('gatsby-source-filesystem');
+const { CODES, prefixId } = require('gatsby-source-filesystem/error-utils');
 const { GraphQLString } = require('gatsby/graphql');
 const fs = require('fs-extra');
 const publicIp = require('public-ip');
@@ -75,6 +76,8 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
 
                             frameData[0].getImage().pipe(fs.createWriteStream(publicPath.replace('.gif', '-still.png')));
                         } catch (err) {
+                            console.error(`Failed to create still from ${details.absolutePath}`);
+
                             reporter.panic(
                                 {
                                     id: prefixId(CODES.MissingResource),
