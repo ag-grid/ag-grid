@@ -183,12 +183,6 @@ describe('getModelFromUi', () => {
         filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
-    it('returns null if neither filter is active', () => {
-        const multiFilter = createFilter();
-
-        expect(multiFilter.getModelFromUi()).toBeNull();
-    });
-
     it('includes model from first filter', () => {
         const providedFilter = mock<ProvidedFilter>('getGui', 'isFilterActive', 'getModelFromUi');
         providedFilter.getGui.mockReturnValue(document.createElement('div'));
@@ -254,7 +248,7 @@ describe('getModel', () => {
     it('returns null if neither filter is active', () => {
         const multiFilter = createFilter();
 
-        expect(multiFilter.getModelFromUi()).toBeNull();
+        expect(multiFilter.getModel()).toBeNull();
     });
 
     it('includes model from first filter', () => {

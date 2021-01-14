@@ -212,16 +212,12 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     }
 
     public getModelFromUi(): IMultiFilterModel | null {
-        if (!this.isFilterActive()) {
-            return null;
-        }
-
         const model: IMultiFilterModel = {
             filterType: this.getFilterType(),
             filterModels: _.map(this.filters!, filter => {
                 const providedFilter = filter as ProvidedFilter;
 
-                if (filter.isFilterActive() && typeof providedFilter.getModelFromUi === 'function') {
+                if (typeof providedFilter.getModelFromUi === 'function') {
                     return providedFilter.getModelFromUi();
                 }
 
