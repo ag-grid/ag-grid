@@ -41,6 +41,10 @@ export class BatchRemover {
         return this.allSets[parent.id!];
     }
 
+    public getAllParents(): RowNode[] {
+        return this.allParents;
+    }
+
     public flush(): void {
         this.allParents.forEach(parent => {
             const nodeDetails = this.allSets[parent.id!];

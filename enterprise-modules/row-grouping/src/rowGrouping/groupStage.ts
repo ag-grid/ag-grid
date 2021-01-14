@@ -118,7 +118,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // and moving. if we want to Batch Remover working with tree data then would need
             // to consider how Filler Nodes would be impacted (it's possible that it can be easily
             // modified to work, however for now I don't have the brain energy to work it all out).
-            const batchRemover = this.usingTreeData ? undefined : new BatchRemover();
+            const batchRemover = !this.usingTreeData ? new BatchRemover() : undefined;
+
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
@@ -134,7 +135,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // must flush here, and not allow another transaction to be applied,
             // as each transaction must finish leaving the data in a consistent state.
             if (batchRemover) {
+                const parentsWithChildrenRemoved = batchRemover.getAllParents().slice();
                 batchRemover.flush();
+                this.removeEmptyGroups(parentsWithChildrenRemoved, details);
             }
         });
 
@@ -239,12 +242,16 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         this.removeNodesFromParents(leafRowNodes, details, batchRemover);
         if (this.usingTreeData) {
             this.postRemoveCreateFillerNodes(leafRowNodes, details);
-            this.postRemoveRemoveEmptyGroups(leafRowNodes, details);
+
+            // When not TreeData, then removeEmptyGroups is called just before the BatchRemover is flushed.
+            // However for TreeData, there is no BatchRemover, so we have to call removeEmptyGroups here.
+            const nodeParents = leafRowNodes.map( n => n.parent!);
+            this.removeEmptyGroups(nodeParents, details);
         }
     }
 
-    private forEachParentGroup(details: GroupingDetails, child: RowNode, callback: (parent: RowNode) => void): void {
-        let pointer = child.parent;
+    private forEachParentGroup(details: GroupingDetails, group: RowNode, callback: (parent: RowNode) => void): void {
+        let pointer: RowNode | null = group;
         while (pointer && pointer !== details.rootNode) {
             callback(pointer);
             pointer = pointer.parent;
@@ -252,6 +259,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private removeNodesFromParents(nodesToRemove: RowNode[], details: GroupingDetails, provided: BatchRemover | undefined): void {
+        // this method can be called with BatchRemover as optional. if it is missed, we created a local version
+        // and flush it at the end. if one is provided, we add to the provided one and it gets flushed elsewhere.
         const batchRemoverIsLocal = provided == null;
         const batchRemoverToUse = provided ? provided : new BatchRemover();
 
@@ -260,7 +269,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
             // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
             // the ClientSideNodeManager is responsible for the Root Node.
-            this.forEachParentGroup(details, nodeToRemove, parentNode => {
+            this.forEachParentGroup(details, nodeToRemove.parent!, parentNode => {
                 batchRemoverToUse.removeFromAllLeafChildren(parentNode, nodeToRemove);
             });
         });
@@ -295,7 +304,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         });
     }
 
-    private postRemoveRemoveEmptyGroups(nodesToRemove: RowNode[], details: GroupingDetails): void {
+    private removeEmptyGroups(possibleEmptyGroups: RowNode[], details: GroupingDetails): void {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
@@ -321,9 +330,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         while (checkAgain) {
             checkAgain = false;
             const batchRemover: BatchRemover = new BatchRemover();
-            nodesToRemove.forEach(nodeToRemove => {
+            possibleEmptyGroups.forEach(possibleEmptyGroup => {
                 // remove empty groups
-                this.forEachParentGroup(details, nodeToRemove, rowNode => {
+                this.forEachParentGroup(details, possibleEmptyGroup, rowNode => {
                     if (groupShouldBeRemoved(rowNode)) {
                         checkAgain = true;
                         this.removeFromParent(rowNode, batchRemover);
