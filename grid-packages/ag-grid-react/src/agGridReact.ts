@@ -207,7 +207,12 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         this.extractDeclarativeColDefChanges(nextProps, changes);
 
         if (Object.keys(changes).length > 0) {
-            window.setTimeout(() => ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi));
+            window.setTimeout(() => {
+                // destroyed?
+                if(this.api) {
+                    ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi)
+                }
+            });
         }
     }
 
