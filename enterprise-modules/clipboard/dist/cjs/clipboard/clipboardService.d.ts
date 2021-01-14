@@ -24,6 +24,8 @@ export declare class ClipboardService extends BeanStub implements IClipboardServ
     private doPasteOperation;
     private pasteIntoActiveRange;
     private pasteStartingFromFocusedCell;
+    private isPasteSingleValueIntoRange;
+    private pasteSingleValueIntoRange;
     private hasOnlyOneValueToPaste;
     copyRangeDown(): void;
     private removeLastLineIfBlank;

@@ -1967,6 +1967,9 @@ var BatchRemover = /** @class */ (function () {
         }
         return this.allSets[parent.id];
     };
+    BatchRemover.prototype.getAllParents = function () {
+        return this.allParents;
+    };
     BatchRemover.prototype.flush = function () {
         var _this = this;
         this.allParents.forEach(function (parent) {
@@ -2056,7 +2059,7 @@ var GroupStage = /** @class */ (function (_super) {
             // and moving. if we want to Batch Remover working with tree data then would need
             // to consider how Filler Nodes would be impacted (it's possible that it can be easily
             // modified to work, however for now I don't have the brain energy to work it all out).
-            var batchRemover = _this.usingTreeData ? undefined : new BatchRemover();
+            var batchRemover = !_this.usingTreeData ? new BatchRemover() : undefined;
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
@@ -2072,7 +2075,9 @@ var GroupStage = /** @class */ (function (_super) {
             // must flush here, and not allow another transaction to be applied,
             // as each transaction must finish leaving the data in a consistent state.
             if (batchRemover) {
+                var parentsWithChildrenRemoved = batchRemover.getAllParents().slice();
                 batchRemover.flush();
+                _this.removeEmptyGroups(parentsWithChildrenRemoved, details);
             }
         });
         if (details.rowNodeOrder) {
@@ -2163,11 +2168,14 @@ var GroupStage = /** @class */ (function (_super) {
         this.removeNodesFromParents(leafRowNodes, details, batchRemover);
         if (this.usingTreeData) {
             this.postRemoveCreateFillerNodes(leafRowNodes, details);
-            this.postRemoveRemoveEmptyGroups(leafRowNodes, details);
+            // When not TreeData, then removeEmptyGroups is called just before the BatchRemover is flushed.
+            // However for TreeData, there is no BatchRemover, so we have to call removeEmptyGroups here.
+            var nodeParents = leafRowNodes.map(function (n) { return n.parent; });
+            this.removeEmptyGroups(nodeParents, details);
         }
     };
-    GroupStage.prototype.forEachParentGroup = function (details, child, callback) {
-        var pointer = child.parent;
+    GroupStage.prototype.forEachParentGroup = function (details, group, callback) {
+        var pointer = group;
         while (pointer && pointer !== details.rootNode) {
             callback(pointer);
             pointer = pointer.parent;
@@ -2175,13 +2183,15 @@ var GroupStage = /** @class */ (function (_super) {
     };
     GroupStage.prototype.removeNodesFromParents = function (nodesToRemove, details, provided) {
         var _this = this;
+        // this method can be called with BatchRemover as optional. if it is missed, we created a local version
+        // and flush it at the end. if one is provided, we add to the provided one and it gets flushed elsewhere.
         var batchRemoverIsLocal = provided == null;
         var batchRemoverToUse = provided ? provided : new BatchRemover();
         nodesToRemove.forEach(function (nodeToRemove) {
             _this.removeFromParent(nodeToRemove, batchRemoverToUse);
             // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
             // the ClientSideNodeManager is responsible for the Root Node.
-            _this.forEachParentGroup(details, nodeToRemove, function (parentNode) {
+            _this.forEachParentGroup(details, nodeToRemove.parent, function (parentNode) {
                 batchRemoverToUse.removeFromAllLeafChildren(parentNode, nodeToRemove);
             });
         });
@@ -2210,7 +2220,7 @@ var GroupStage = /** @class */ (function (_super) {
             }
         });
     };
-    GroupStage.prototype.postRemoveRemoveEmptyGroups = function (nodesToRemove, details) {
+    GroupStage.prototype.removeEmptyGroups = function (possibleEmptyGroups, details) {
         var _this = this;
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
@@ -2233,9 +2243,9 @@ var GroupStage = /** @class */ (function (_super) {
         var _loop_1 = function () {
             checkAgain = false;
             var batchRemover = new BatchRemover();
-            nodesToRemove.forEach(function (nodeToRemove) {
+            possibleEmptyGroups.forEach(function (possibleEmptyGroup) {
                 // remove empty groups
-                _this.forEachParentGroup(details, nodeToRemove, function (rowNode) {
+                _this.forEachParentGroup(details, possibleEmptyGroup, function (rowNode) {
                     if (groupShouldBeRemoved(rowNode)) {
                         checkAgain = true;
                         _this.removeFromParent(rowNode, batchRemover);
@@ -44702,7 +44712,29 @@ var ClipboardService = /** @class */ (function (_super) {
         }
         var currentRow = { rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned };
         var columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
-        this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, agGridCommunity.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
+        if (this.isPasteSingleValueIntoRange(parsedData)) {
+            this.pasteSingleValueIntoRange(parsedData, updatedRowNodes, cellsToFlash, changedPath);
+        }
+        else {
+            this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, agGridCommunity.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
+        }
+    };
+    // if range is active, and only one cell, then we paste this cell into all cells in the active range.
+    ClipboardService.prototype.isPasteSingleValueIntoRange = function (parsedData) {
+        return this.hasOnlyOneValueToPaste(parsedData)
+            && this.rangeController != null
+            && !this.rangeController.isEmpty();
+    };
+    ClipboardService.prototype.pasteSingleValueIntoRange = function (parsedData, updatedRowNodes, cellsToFlash, changedPath) {
+        var _this = this;
+        var value = parsedData[0][0];
+        var rowCallback = function (currentRow, rowNode, columns) {
+            updatedRowNodes.push(rowNode);
+            columns.forEach(function (column) {
+                return _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, agGridCommunity.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
+            });
+        };
+        this.iterateActiveRanges(false, rowCallback);
     };
     ClipboardService.prototype.hasOnlyOneValueToPaste = function (parsedData) {
         return parsedData.length === 1 && parsedData[0].length === 1;

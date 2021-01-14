@@ -169,7 +169,29 @@ var ClipboardService = /** @class */ (function (_super) {
         }
         var currentRow = { rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned };
         var columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
-        this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
+        if (this.isPasteSingleValueIntoRange(parsedData)) {
+            this.pasteSingleValueIntoRange(parsedData, updatedRowNodes, cellsToFlash, changedPath);
+        }
+        else {
+            this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
+        }
+    };
+    // if range is active, and only one cell, then we paste this cell into all cells in the active range.
+    ClipboardService.prototype.isPasteSingleValueIntoRange = function (parsedData) {
+        return this.hasOnlyOneValueToPaste(parsedData)
+            && this.rangeController != null
+            && !this.rangeController.isEmpty();
+    };
+    ClipboardService.prototype.pasteSingleValueIntoRange = function (parsedData, updatedRowNodes, cellsToFlash, changedPath) {
+        var _this = this;
+        var value = parsedData[0][0];
+        var rowCallback = function (currentRow, rowNode, columns) {
+            updatedRowNodes.push(rowNode);
+            columns.forEach(function (column) {
+                return _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
+            });
+        };
+        this.iterateActiveRanges(false, rowCallback);
     };
     ClipboardService.prototype.hasOnlyOneValueToPaste = function (parsedData) {
         return parsedData.length === 1 && parsedData[0].length === 1;

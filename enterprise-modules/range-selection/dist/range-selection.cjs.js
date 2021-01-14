@@ -18007,25 +18007,25 @@ var DragAndDropService = /** @class */ (function (_super) {
         // check if mouseEvent intersects with any of the drop targets
         var validDropTargets = this.dropTargets.filter(function (dropTarget) { return _this.isMouseOnDropTarget(mouseEvent, dropTarget); });
         var len = validDropTargets.length;
-        if (len === 0) {
-            return;
+        var dropTarget = null;
+        if (len > 0) {
+            dropTarget = len === 1
+                ? validDropTargets[0]
+                // the current mouse position could intersect with more than 1 element
+                // if they are nested. In that case we need to get the most specific
+                // container, which is the one that does not contain any other targets.
+                : validDropTargets.reduce(function (prevTarget, currTarget) {
+                    if (!prevTarget) {
+                        return currTarget;
+                    }
+                    var prevContainer = prevTarget.getContainer();
+                    var currContainer = currTarget.getContainer();
+                    if (prevContainer.contains(currContainer)) {
+                        return currTarget;
+                    }
+                    return prevTarget;
+                });
         }
-        var dropTarget = len === 1
-            ? validDropTargets[0]
-            // the current mouse position could intersect with more than 1 element
-            // if they are nested. In that case we need to get the most specific
-            // container, which is the one that does not contain any other targets.
-            : validDropTargets.reduce(function (prevTarget, currTarget) {
-                if (!prevTarget) {
-                    return currTarget;
-                }
-                var prevContainer = prevTarget.getContainer();
-                var currContainer = currTarget.getContainer();
-                if (prevContainer.contains(currContainer)) {
-                    return currTarget;
-                }
-                return prevTarget;
-            });
         if (dropTarget !== this.lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
@@ -34922,19 +34922,37 @@ var AlignedGridsService = /** @class */ (function (_super) {
         var masterColumns = this.getMasterColumns(colEvent);
         switch (colEvent.type) {
             case Events.EVENT_COLUMN_MOVED:
-                var movedEvent = colEvent;
-                this.logger.log("onColumnEvent-> processing " + colEvent.type + " toIndex = " + movedEvent.toIndex);
-                this.columnController.moveColumns(columnIds, movedEvent.toIndex, "alignedGridChanged");
+                // when the user moves columns via setColumnState, we can't depend on moving specific columns
+                // to an index, as there maybe be many indexes columns moved to (as wasn't result of a mouse drag).
+                // so only way to be sure is match the order of all columns using Column State.
+                {
+                    var movedEvent = colEvent;
+                    var srcColState = colEvent.columnApi.getColumnState();
+                    var destColState = srcColState.map(function (s) { return ({ colId: s.colId }); });
+                    this.columnController.applyColumnState({ state: destColState, applyOrder: true }, "alignedGridChanged");
+                    this.logger.log("onColumnEvent-> processing " + colEvent.type + " toIndex = " + movedEvent.toIndex);
+                }
                 break;
             case Events.EVENT_COLUMN_VISIBLE:
-                var visibleEvent = colEvent;
-                this.logger.log("onColumnEvent-> processing " + colEvent.type + " visible = " + visibleEvent.visible);
-                this.columnController.setColumnsVisible(columnIds, visibleEvent.visible, "alignedGridChanged");
+                // when the user changes visibility via setColumnState, we can't depend on visibility flag in event
+                // as there maybe be mix of true/false (as wasn't result of a mouse click to set visiblity).
+                // so only way to be sure is match the visibility of all columns using Column State.
+                {
+                    var visibleEvent = colEvent;
+                    var srcColState = colEvent.columnApi.getColumnState();
+                    var destColState = srcColState.map(function (s) { return ({ colId: s.colId, hide: s.hide }); });
+                    this.columnController.applyColumnState({ state: destColState }, "alignedGridChanged");
+                    this.logger.log("onColumnEvent-> processing " + colEvent.type + " visible = " + visibleEvent.visible);
+                }
                 break;
             case Events.EVENT_COLUMN_PINNED:
-                var pinnedEvent = colEvent;
-                this.logger.log("onColumnEvent-> processing " + colEvent.type + " pinned = " + pinnedEvent.pinned);
-                this.columnController.setColumnsPinned(columnIds, pinnedEvent.pinned, "alignedGridChanged");
+                {
+                    var pinnedEvent = colEvent;
+                    var srcColState = colEvent.columnApi.getColumnState();
+                    var destColState = srcColState.map(function (s) { return ({ colId: s.colId, pinned: s.pinned }); });
+                    this.columnController.applyColumnState({ state: destColState }, "alignedGridChanged");
+                    this.logger.log("onColumnEvent-> processing " + colEvent.type + " pinned = " + pinnedEvent.pinned);
+                }
                 break;
             case Events.EVENT_COLUMN_RESIZED:
                 var resizedEvent_1 = colEvent;
