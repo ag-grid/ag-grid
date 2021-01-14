@@ -1,4 +1,4 @@
-import { ColumnController } from "./columnController/columnController";
+import {ColumnController, ColumnState} from "./columnController/columnController";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
@@ -15,6 +15,7 @@ import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { BeanStub } from "./context/beanStub";
+import {ApplyColumnStateParams} from "./columnController/columnApi";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
@@ -183,9 +184,15 @@ export class AlignedGridsService extends BeanStub {
 
         switch (colEvent.type) {
             case Events.EVENT_COLUMN_MOVED:
+                // when the user moves columns via setColumnState, we can't depend on moving specific columns
+                // to an index, as there maybe be many indexes columns moved to (as wasn't result of a mouse drag).
+                // so only way to be sure is match the order of all columns using Column State.
                 const movedEvent = colEvent as ColumnMovedEvent;
+                const srcColState = colEvent.columnApi.getColumnState();
+                const destColState = srcColState.map( s => { return {colId: s.colId}; } );
+                const applyStateParams = {state: destColState, applyOrder: true};
+                this.columnController.applyColumnState(applyStateParams, "alignedGridChanged");
                 this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
-                this.columnController.moveColumns(columnIds, movedEvent.toIndex!, "alignedGridChanged");
                 break;
             case Events.EVENT_COLUMN_VISIBLE:
                 const visibleEvent = colEvent as ColumnVisibleEvent;
