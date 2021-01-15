@@ -268,6 +268,14 @@ title: "Testing ag-Grid"
 | We will walk through how you can use testing ag-Grid as part of your Angular application,
 | using default build tools provided when using the [Angular CLI](https://cli.angular.io/).
 |
+| ## Configuring ag-grid
+| ### When using ag-grid-enterprise you may see license errors shown on your test run, to prevent that add set your licence in the `test.ts` file
+|
+| ```ts
+| const agGridLicense = 'YOUR LICENSE GOES HERE';
+| LicenseManager.setLicenseKey(agGridLicense);
+| ```
+|
 | ## Configuring the Test Module
 |
 | The first thing we need to do is to add ag-Grid's `AgGridModule` to the `TestBed.configureTestingModule(`:
