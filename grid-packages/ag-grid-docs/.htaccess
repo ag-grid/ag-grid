@@ -78,6 +78,10 @@
     RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/(?:\ Ballot169)?
     RewriteRule ^(.*)/index\.php$ /$1/ [R=301,L]
 
+    # Add trailing slash for directories
+    RewriteCond %{REQUEST_URI} /+[^\.]+$
+    RewriteRule ^(.+[^/])$ %{REQUEST_URI}/ [R=301,L]
+
     # Redirect old pages to new documentation structure
     Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /documentation/javascript/8-performance-hacks-for-javascript/
     Redirect 301 /ag-grid-angular-aot-dynamic-components/ https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845
@@ -331,13 +335,11 @@
     Redirect 301 /javascript-grid-pagination/ /documentation/javascript/row-pagination/
     Redirect 301 /javascript-grid-performance/ /documentation/javascript/scrolling-performance/
     Redirect 301 /javascript-grid-pinning/ /documentation/javascript/column-pinning/
-    Redirect 301 /javascript-grid-pivoting /documentation/javascript/pivoting/
     Redirect 301 /javascript-grid-pivoting/ /documentation/javascript/pivoting/
     Redirect 301 /javascript-grid-properties/ /documentation/javascript/grid-properties/
     Redirect 301 /javascript-grid-provided-cell-editors/ /documentation/javascript/provided-cell-editors/
     Redirect 301 /javascript-grid-provided-renderer-change/ /documentation/javascript/change-cell-renderers/
     Redirect 301 /javascript-grid-provided-renderer-group/ /documentation/javascript/group-cell-renderer/
-    Redirect 301 /javascript-grid-range-selection /documentation/javascript/range-selection/
     Redirect 301 /javascript-grid-range-selection/ /documentation/javascript/range-selection/
     Redirect 301 /javascript-grid-range-selection-fill-handle/ /documentation/javascript/range-selection-fill-handle/
     Redirect 301 /javascript-grid-range-selection-handle/ /documentation/javascript/range-selection-handle/
