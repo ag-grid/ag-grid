@@ -154,7 +154,7 @@ body {
             }
         }
 
-        $frameworks: javascript angular react vue angularjs polymer aurelia webcomponents;
+        $frameworks: javascript angular react vue angularjs aurelia webcomponents;
 
         @each $framework in $frameworks {
             $i: index($frameworks, $framework);

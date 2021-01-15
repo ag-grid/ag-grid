@@ -93,7 +93,6 @@ Most of the frameworks ag-Grid works with use components. It is possible to use 
 - **Angular** (version 2 and later)
 - **React**
 - **VueJS**
-- **Polymer**
 
 
 [[only-angular]]

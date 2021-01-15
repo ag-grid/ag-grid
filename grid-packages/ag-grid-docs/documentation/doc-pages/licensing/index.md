@@ -195,65 +195,6 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 | });
 | ```
 
-[[only-javascript]]
-| ### Polymer
-|
-| You have two choices as to where to set your license key in Polymer.
-|
-| If you have many components with agGrid in, the we suggest you run a separate script to reference and set the license key - for example:
-|
-| ```html
-| <script src="../bower_components/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.noStyle.js"></script>
-|
-| <!-- ag-grid-polymer element -->
-| <link rel="import" href="../bower_components/ag-grid-polymer/ag-grid-polymer.html">
-|
-| <!-- your code -->
-| <!-- licenseKey.js will be responsible for setting the license key across the application -->
-| <script src="licenseKey.js"></script>
-| <link rel="import" href="grid-component-one.html">
-| <link rel="import" href="grid-component-one.html">
-| ```
-|
-| ```js
-| // licenseKey.js
-| agGrid.LicenseManager.setLicenseKey("your license key")
-| ```
-|
-| If you have a single component, or a single component that in turn has the child components, you can set the
-| license key in this parent component - for example:
-|
-| ```html
-| <script src="../bower_components/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.noStyle.js"></script>
-|
-| <!-- ag-grid-polymer element -->
-| <link rel="import" href="../bower_components/ag-grid-polymer/ag-grid-polymer.html">
-|
-| <!-- your code -->
-| <link rel="import" href="main-component-one.html">
-| ```
-|
-| ```html
-| <dom-module id="simple-grid-example">
-|     <template id="template">
-|         <div>
-|             <ag-grid-polymer style="width: 100%; height: 350px;"
-|                              class="ag-theme-alpine"
-|                              rowData="{{rowData}}"
-|                              columnDefs="{{columnDefs}}">
-|             </ag-grid-polymer>
-|         </div>
-|     </template>
-|
-| <script>
-|     agGrid.LicenseManager.setLicenseKey("your license key")
-|
-|     class SimpleGridExample extends Polymer.Element {
-|         ...
-|     }
-| </script>
-| ```
-
 ### Invalid License
 If you have an enterprise grid running with an invalid license (no license, expired license) your console log will display a series of warnings and the grid will show a watermark for 5 seconds.
 

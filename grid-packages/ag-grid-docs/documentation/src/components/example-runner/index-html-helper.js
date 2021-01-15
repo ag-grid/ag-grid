@@ -5,7 +5,6 @@ import VanillaTemplate from './VanillaTemplate';
 import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
 import VueTemplate from './VueTemplate';
-import PolymerTemplate from './PolymerTemplate';
 import { getEntryFile } from './helpers';
 
 export const getIndexHtml = (exampleInfo, isExecuting = false) => {
@@ -33,62 +32,57 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
     const modifiedTimeMs = modifiedTimeFile ? modifiedTimeFile.mtimeMs : new Date().getTime();
 
     let element;
+    switch (framework) {
+        case 'javascript': {
+            const indexHtml = exampleInfo.getFile('index.html');
 
-    if (exampleInfo.type === 'polymer') {
-        element = <PolymerTemplate appLocation={appLocation} options={options} />;
-    } else {
-        switch (framework) {
-            case 'javascript': {
-                const indexHtml = exampleInfo.getFile('index.html');
-
-                if (!indexHtml) {
-                    throw new Error(`Could not find index.html for "${exampleInfo.name}" example`);
-                }
-
-                element = <VanillaTemplate
-                    modifiedTimeMs={modifiedTimeMs}
-                    library={library}
-                    appLocation={appLocation}
-                    options={options}
-                    indexFragment={indexHtml.childHtmlRehype.html}
-                    scriptFiles={[...scriptFiles, getFileUrl(exampleInfo.getFile('main.js'))]}
-                    styleFiles={styleFiles} />;
-
-                break;
+            if (!indexHtml) {
+                throw new Error(`Could not find index.html for "${exampleInfo.name}" example`);
             }
 
-            case 'angular':
-            case 'react':
-            case 'vue': {
-                const frameworkTemplates = {
-                    angular: AngularTemplate,
-                    react: ReactTemplate,
-                    vue: VueTemplate
-                };
+            element = <VanillaTemplate
+                modifiedTimeMs={modifiedTimeMs}
+                library={library}
+                appLocation={appLocation}
+                options={options}
+                indexFragment={indexHtml.childHtmlRehype.html}
+                scriptFiles={[...scriptFiles, getFileUrl(exampleInfo.getFile('main.js'))]}
+                styleFiles={styleFiles} />;
 
-                const FrameworkTemplate = frameworkTemplates[framework];
-
-                element = <FrameworkTemplate
-                    modifiedTimeMs={modifiedTimeMs}
-                    library={library}
-                    boilerplatePath={boilerplatePath}
-                    appLocation={appLocation}
-                    options={options}
-                    scriptFiles={scriptFiles}
-                    styleFiles={styleFiles} />;
-
-                break;
-            }
-
-            default:
-                element =
-                    <html lang="en">
-                        <body>
-                            <div>An unknown framework "{framework}" was requested.</div>
-                        </body>
-                    </html>;
-                break;
+            break;
         }
+
+        case 'angular':
+        case 'react':
+        case 'vue': {
+            const frameworkTemplates = {
+                angular: AngularTemplate,
+                react: ReactTemplate,
+                vue: VueTemplate
+            };
+
+            const FrameworkTemplate = frameworkTemplates[framework];
+
+            element = <FrameworkTemplate
+                modifiedTimeMs={modifiedTimeMs}
+                library={library}
+                boilerplatePath={boilerplatePath}
+                appLocation={appLocation}
+                options={options}
+                scriptFiles={scriptFiles}
+                styleFiles={styleFiles} />;
+
+            break;
+        }
+
+        default:
+            element =
+                <html lang="en">
+                <body>
+                <div>An unknown framework "{framework}" was requested.</div>
+                </body>
+                </html>;
+            break;
     }
 
     return '<!DOCTYPE html>\n' + format(ReactDOMServer.renderToStaticMarkup(element));

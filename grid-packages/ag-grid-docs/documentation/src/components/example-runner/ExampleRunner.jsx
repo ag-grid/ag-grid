@@ -33,8 +33,6 @@ const writeIndexHtmlFiles = exampleInfo => {
             fs.writeFileSync(`public${modulesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
             fs.writeFileSync(`public${packagesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
         }
-    } else if (type === 'polymer') {
-        fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
     }
 };
 

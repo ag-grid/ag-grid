@@ -159,13 +159,6 @@
             "frameworks": [
               "angular"
             ]
-          },
-          {
-            "title": "Polymer",
-            "url": "../polymer-getting-started/",
-            "frameworks": [
-              "javascript"
-            ]
           }
         ]
       },

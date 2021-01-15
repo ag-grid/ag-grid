@@ -15,7 +15,6 @@ The following artifacts are "`packages`" and are designed to work to together:
 | `ag-grid-angular` | Angular Support |
 | `ag-grid-react` | React Support |
 | `ag-grid-vue` | Vue Support |
-| `ag-grid-polymer` | Polymer Support |
 
 When using `packages` you get all of the code within that package and cannot pick and choose which features you require. You also don't need to register these packages in the same way you do with `modules`.
 

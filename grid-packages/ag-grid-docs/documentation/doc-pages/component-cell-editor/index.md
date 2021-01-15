@@ -429,32 +429,3 @@ if (instances.length > 0) {
 |
 | <grid-example title='Vue Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
 
-[[only-javascript]]
-| ##  Polymer Cell Editing
-|
-| It is possible to provide Polymer cell editors's for ag-Grid to use if you are are using the Polymer version of
-| ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to
-| register framework components.
-|
-| ###  Polymer Parameters
-|
-| The ag Framework expects to find the `agInit` method on the created component, and uses it to supply
-| the cell `params`.
-|
-| ### Polymer Methods / Lifecycle
-|
-| All of the methods in the `ICellEditor` interface described above are applicable to the Polymer Component
-| with the following exceptions:
-|
-| - `init()` is not used. Instead implement the `agInit` method.
-| - `getGui()` is not used. Instead do normal Polymer magic in your Component via the Polymer template.
-|
-| All of the other methods (`isPopup(), getValue(), destroy(), afterGuiAttached(), isCancelBeforeStart(),
-| isCancelAfterEnd()` etc) should be put onto your Polymer component and will work as normal.
-|
-| ### Example: Cell Editing using Polymer Components
-|
-| Using Polymer Components in the Cell Editors, illustrating keyboard events, rendering, validation
-| and lifecycle events.
-|
-| <grid-example title='Polymer Editor Components' name='polymer-editor' type='polymer' options='{ "noPlunker": true }'></grid-example>

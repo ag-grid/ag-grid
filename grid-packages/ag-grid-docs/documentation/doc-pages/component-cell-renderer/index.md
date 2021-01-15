@@ -451,29 +451,3 @@ if (instances.length > 0) {
 | | rich example of configuring ag-Grid with Vue components, but each section for renderers,
 | | filters, editors | etc will also demonstrate how this functionality can be extended with Vue.
 
-[[only-javascript]]
-| ## Polymer Cell Rendering
-|
-| It is possible to provide Polymer cell renderers for ag-Grid to use if you are are using the Polymer version of ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to register framework components.
-|
-| ### Example: Rendering using Polymer Components
-|
-| Using Polymer Components in the Cell Renderers
-|
-| <grid-example title='Simple Dynamic Component' name='polymer-dynamic' type='polymer' options='{ "noPlunker": true, "exampleHeight": 460 }'></grid-example>
-|
-| ###  Polymer Methods / Lifecycle
-|
-| All of the methods in the `ICellRenderer` interface described above are applicable to the Polymer Component with the following exceptions:
-|
-| - `init()` is not used. Instead implement the `agInit` method.
-| - `getGui()` is not used. Instead do normal Polymer magic in your Component via the Polymer template.
-|
-| ### Handling Refresh
-|
-| To handle refresh, implement logic inside the `refresh()` method inside your component and return true. If you do not want to handle refresh, just return false from the refresh method (which | will tell the grid you do not handle refresh and your component will be destroyed and recreated if the underlying data changes).
-|
-| [[note]]
-| | The full [ag-grid-polymer-example](https://github.com/ag-grid/ag-grid-polymer-example) repo shows
-| | many more examples for rendering, including grouped rows, full width renderers and so on,
-| | as well as examples on using Polymer Components with both Cell Editors and Filters

@@ -46,12 +46,6 @@
     "exported": "Vue Support"
   },
   {
-    "title": "Polymer Support",
-    "module": "@ag-grid-community/polymer",
-    "framework": true,
-    "exported": "Polymer Support"
-  },
-  {
     "title": "All Community & Enterprise Modules <sup>(!)</sup><enterprise-icon></enterprise-icon>",
     "module": "@ag-grid-enterprise/all-modules",
     "enterprise": true,

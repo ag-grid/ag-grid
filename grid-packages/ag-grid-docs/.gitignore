@@ -22,7 +22,6 @@ screenshots
 !src/framework-examples/vue-examples/dist
 
 # polymer examples
-!src/polymer-getting-started/simple-grid/node_modules
 !src/javascript-grid-filter-component/polymer-filter/node_modules
 !src/javascript-grid-cell-rendering-components/polymer-dynamic/node_modules
 !src/javascript-grid-cell-editor/polymer-editor/node_modules

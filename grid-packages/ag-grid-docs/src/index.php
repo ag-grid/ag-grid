@@ -108,7 +108,6 @@ meta_and_links($title, $keywords, $description, false);
                         <li id="fw-react"><a href="/documentation/react/getting-started/">React</a></li>
                         <li id="fw-vue"><a href="/documentation/vue/getting-started/">Vue.js</a></li>
                         <li id="fw-angularjs"><a href="/documentation/angular/angularjs/">AngularJS 1.x</a></li>
-                        <li id="fw-polymer"><a href="/documentation/javascript/polymer-getting-started/">Polymer</a></li>
                     </ul>
                 </div>
             </section>
