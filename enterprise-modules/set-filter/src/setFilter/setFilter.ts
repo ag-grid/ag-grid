@@ -414,21 +414,19 @@ export class SetFilter extends ProvidedFilter {
 
         const result = super.applyModel();
 
-        if (result) {
-            // keep appliedModelValues in sync with the applied model
-            const appliedModel = this.getModel();
+        // keep appliedModelValues in sync with the applied model
+        const appliedModel = this.getModel();
 
-            if (appliedModel) {
-                this.appliedModelValues = _.reduce(
-                    appliedModel.values,
-                    (values, value) => {
-                        values[String(value)] = true;
-                        return values;
-                    },
-                    {} as { [key: string]: boolean; });
-            } else {
-                this.appliedModelValues = null;
-            }
+        if (appliedModel) {
+            this.appliedModelValues = _.reduce(
+                appliedModel.values,
+                (values, value) => {
+                    values[String(value)] = true;
+                    return values;
+                },
+                {} as { [key: string]: boolean; });
+        } else {
+            this.appliedModelValues = null;
         }
 
         return result;
