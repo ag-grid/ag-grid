@@ -39,6 +39,8 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     options: props.options != null ? JSON.parse(props.options) : undefined
   });
 
+  const getSnippetProps = props => ({...props, framework});
+
   const renderAst = new rehypeReact({
     createElement: React.createElement,
     fragment: true,
@@ -53,7 +55,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
         sources: props.sources != null ? JSON.parse(props.sources) : undefined,
         config: props.config != null ? JSON.parse(props.config) : undefined
       }),
-      'snippet': props => Snippet({...props, framework}),
+      'snippet': props => Snippet(getSnippetProps(props)),
       'feature-overview': FeatureOverview,
       'icons-panel': IconsPanel,
       'image-caption': props => ImageCaption({ ...props, pageName }),

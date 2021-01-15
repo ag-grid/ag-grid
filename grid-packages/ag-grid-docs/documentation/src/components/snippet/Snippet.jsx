@@ -1,12 +1,13 @@
 import React from 'react';
 import Prism from 'prismjs';
 import * as esprima from 'esprima';
+import * as transformer from './SnippetTransformer';
 
-export const Snippet = (props) => {
+export const Snippet = props => {
     const suppliedSnippet = props.children[0].toString();
 
     // snippets that require spaces will need to be prefixed with '|' as markdown doesn't allow spaces
-    const formattedSnippet = suppliedSnippet.replace(/\|/g, ' ').trim();
+    const formattedSnippet = suppliedSnippet.replace(/\|/g, '').trim();
 
     // create syntax tree from supplied snippet
     const tree = esprima.parseScript(formattedSnippet, {comment: true, loc: true});
@@ -16,10 +17,10 @@ export const Snippet = (props) => {
 
     // create FW specific snippet
     const snippet =
-        props.framework === 'angular' ? createNgSnippet(propertyMappings) :
-            props.framework === 'react' ? createReactSnippet(propertyMappings) :
-                props.framework === 'vue' ? createVueSnippet(propertyMappings) :
-                    createJsSnippet(propertyMappings);
+        props.framework === 'angular' ? transformer.createNgSnippet(propertyMappings) :
+            props.framework === 'react' ? transformer.createReactSnippet(propertyMappings) :
+                props.framework === 'vue' ? transformer.createVueSnippet(propertyMappings) :
+                    transformer.createJsSnippet(propertyMappings);
 
     return <CodeSnippet code={snippet}/>;
 };
@@ -27,6 +28,7 @@ export const Snippet = (props) => {
 const parse = tree => {
     const isVarDeclaration = node => node.type === 'VariableDeclaration' && Array.isArray(node.declarations);
 
+    // store comments with locations for easy lookup
     const commentsMap = tree.comments.reduce((acc, comment) => {
         acc[comment.loc.start.line] = comment.value;
         return acc;
@@ -53,101 +55,6 @@ const parse = tree => {
 
     return propertyMappings;
 }
-
-const createJsSnippet = propertyMappings => {
-    let res = 'const gridOptions = {';
-    propertyMappings.forEach(prop => {
-        if (prop.comment) {
-            res += `\n\t//${prop.comment}`;
-        }
-
-        if (prop.name === 'columnDefs') {
-            res += '\n\tcolumnDefs: [\n';
-            res += formatColDefsAsObjs(prop.elements, 2).join('\n');
-            res += '\n\t],';
-        } else {
-            res += `\n\t${prop.name}: ${prop.value},`;
-        }
-    });
-
-    res += '\n\n\t// other grid options ...';
-    res += '\n}';
-
-    return res;
-}
-
-const createReactSnippet = propertyMappings => {
-    let res = '<AgGridReact>';
-    propertyMappings.forEach(prop => {
-        if (prop.comment) {
-            res += `\n\t//${prop.comment}`;
-        }
-
-        if (prop.name === 'columnDefs') {
-            res += prop.elements.map(colDefAst => {
-                const colDefObj = colDefAst.properties.map(property => {
-                    return `${property.key.name}='${property.value.value}'`;
-                });
-                return `\n${pad(1)}<AgGridColumn ${colDefObj.join(', ')} />`;
-            }).join('');
-        }
-    });
-
-    res += '\n</AgGridReact>';
-
-    return res;
-}
-
-const createNgSnippet = propertyMappings => {
-    let res = `<ag-grid-angular
-    [columnDefs]="columnDefs"
-    // other grid options ...>
-</ag-grid-angular>
-\n`;
-
-    return addPropsToNgOrVueSnippet(res, propertyMappings);
-}
-
-const createVueSnippet = propertyMappings => {
-    let res = `<ag-grid-vue
-    :columnDefs="columnDefs"
-    // other grid options ...>
-</ag-grid-vue>
-\n`;
-
-    return addPropsToNgOrVueSnippet(res, propertyMappings);
-}
-
-const addPropsToNgOrVueSnippet = (res, propertyMappings) => {
-    for (let i = 0; i < propertyMappings.length; i++) {
-        const prop = propertyMappings[i];
-        if (prop.comment) {
-            if (i > 0) res += `\n`;
-            res += `//${prop.comment}\n`;
-        }
-
-        if (prop.name === 'columnDefs') {
-            res += 'this.columnDefs = [\n';
-            res += formatColDefsAsObjs(prop.elements, 1).join('\n');
-            res += '\n];\n';
-        } else {
-            res += `this.${prop.name} = ${prop.value};`;
-        }
-    }
-
-    return res;
-}
-
-const formatColDefsAsObjs = (colDefs, padding) => {
-    return colDefs.map(colDefAst => {
-        const colDefObj = colDefAst.properties.map(property => {
-            return `${property.key.name}: '${property.value.value}'`;
-        });
-        return `${pad(padding)}{ ${colDefObj.join(', ')} },`;
-    });
-}
-
-const pad = n => new Array(n).fill('\t').join('');
 
 const CodeSnippet = ({code}) => <pre className="language-ts">
     <code dangerouslySetInnerHTML={{__html: Prism.highlight(code, Prism.languages.typescript, 'typescript')}}/>

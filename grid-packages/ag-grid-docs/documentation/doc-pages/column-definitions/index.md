@@ -20,46 +20,18 @@ See [Column Properties](../column-properties/) for a list of all properties that
 
 If you want the columns to be grouped, you can include them as children like so:
 
-[[only-javascript]]
-| ```js
-| columnDefs: [
-|
-|     // put the three columns into a group
-|     {
-|         headerName: 'Group A',
-|         children: [
-|             { headerName: 'Athlete', field: 'athlete' },
-|             { headerName: 'Sport', field: 'sport' },
-|             { headerName: 'Age', field: 'age' },
-|         ]
-|     }
-| ]
-| ```
-
-[[only-angular-or-vue]]
-| ```js
-| this.columnDefs = [
-|     // put the three columns into a group
-|     {
-|         headerName: 'Group A',
-|         children: [
-|             { headerName: 'Athlete', field: 'athlete' },
-|             { headerName: 'Sport', field: 'sport' },
-|             { headerName: 'Age', field: 'age' },
-|         ]
-|     }
-| ];
-| ```
-
-[[only-react]]
-| ```js
-| // put the three columns into a group
-| <AgGridColumn headerName='Group A'>
-|     <AgGridColumn headerName='Athlete' field='athlete' />
-|     <AgGridColumn headerName='Sport' field='sport' />
-|     <AgGridColumn headerName='Age' field='age' />
-| </AgGridColumn>
-| ```
+<snippet suppressFrameworkContext=false>
+const gridOptions = {
+    // put the three columns into a group
+    columnDefs: [
+        {headerName: 'Group A', children: [
+                { headerName: 'Athlete', field: 'athlete' },
+                { headerName: 'Sport', field: 'sport' },
+                { headerName: 'Age', field: 'age' },
+            ]}
+    ]
+}
+</snippet>
 
 Groups are explained in more detail in the section [Column Groups](../column-groups/).
 
