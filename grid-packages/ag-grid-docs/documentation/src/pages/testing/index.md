@@ -269,7 +269,7 @@ title: "Testing ag-Grid"
 | using default build tools provided when using the [Angular CLI](https://cli.angular.io/).
 |
 | ## Configuring ag-grid
-| ### When using ag-grid-enterprise you may see license errors shown on your test run, to prevent that add set your licence in the `test.ts` file
+| ### When using ag-grid-enterprise you may see license errors shown on your test run, to prevent that set your licence in the `test.ts` file
 |
 | ```ts
 | const agGridLicense = 'YOUR LICENSE GOES HERE';
