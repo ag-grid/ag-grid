@@ -1,11 +1,10 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import classnames from 'classnames';
 import DocumentationLink from './DocumentationLink';
 import thinksterPng from '../images/thinkster.png';
 import communitySvg from '../images/community.svg';
 import enterpriseSvg from '../images/enterprise.svg';
-import flags from '../images/flags';
+import { Announcement } from './Announcement';
 import styles from './Announcements.module.scss';
 
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
@@ -58,15 +57,15 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
 
         <h6 className="card-subtitle mb-2 text-muted">Angular</h6>
 
-        <img src={flags.us} alt="United States" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/us.png' alt="United States" className={styles['announcement__flag']} />
         <a href="https://www.ng-conf.org" target="_blank" rel="noreferrer">ng-Conf</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Postponed</p>
 
-        <img src={flags.no} alt="Norway" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/no.png' alt="Norway" className={styles['announcement__flag']} />
         <a href="https://ngvikings.org" target="_blank" rel="noreferrer">ngVikings</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Postponed</p>
 
-        <img src={flags.gb} alt="United Kingdom" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/gb.png' alt="United Kingdom" className={styles['announcement__flag']} />
         <a href="https://angularconnect.com" target="_blank" rel="noreferrer">Angular Connect</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Oct 13-14</p>
 
@@ -74,11 +73,11 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
 
         <h6 className="card-subtitle mb-2 text-muted">React</h6>
 
-        <img src={flags.nl} alt="Netherlands" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/nl.png' alt="Netherlands" className={styles['announcement__flag']} />
         <a href="https://reactsummit.com" target="_blank" rel="noreferrer">React Summit</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>11th September</p>
 
-        <img src={flags.gb} alt="United Kingdom" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/gb.png' alt="United Kingdom" className={styles['announcement__flag']} />
         <a href="https://reactadvanced.com" target="_blank" rel="noreferrer">React Advanced</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Oct 25</p>
 
@@ -86,7 +85,7 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
 
         <h6 className="card-subtitle mb-2 text-muted">JavaScript</h6>
 
-        <img src={flags.gb} alt="United Kingdom" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/gb.png' alt="United Kingdom" className={styles['announcement__flag']} />
         <a href="https://halfstackconf.com/online/" target="_blank" rel="noreferrer">Half Stack Online</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>May 22</p>
     </Announcement>
@@ -101,23 +100,6 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
         </p>
     </Announcement>
 </div>;
-
-const Announcement = ({ title, date, children, version, highlight = true }) => {
-    return <div className={classnames(styles['announcement'], { [styles['announcement--highlighted']]: highlight })}>
-        <div className="card-body">
-            {version &&
-                <h5 className="card-title"><a href={`/ag-grid-changelog/?fixVersion=${version}`}>Version {version}</a></h5>
-            }
-            {title && <h5 className="card-title">{title}</h5>}
-            {date && <h6 className="card-subtitle mb-2 text-muted">{date}</h6>}
-            {children}
-            {version &&
-                <p className="text-right">
-                    <a href={`/ag-grid-changelog/?fixVersion=${version}`}>Change Log</a>
-                </p>}
-        </div>
-    </div>;
-};
 
 const MailingListSignup = () => {
     return <>
