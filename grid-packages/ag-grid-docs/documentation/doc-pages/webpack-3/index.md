@@ -21,7 +21,7 @@ npm init --yes
 npm i --save @ag-grid-community/all-modules @ag-grid-community/angular
 
 // or, if using Enterprise features
-npm i --save @ag-grid-community/all-modules @ag-grid-community/angular
+npm i --save @ag-grid-enterprise/all-modules @ag-grid-community/angular
 
 npm i --save @angular/common @angular/compiler @angular/compiler-cli @angular/core @angular/platform-browser @angular/platform-browser-dynamic typescript rxjs core-js zone.js
 npm i --save-dev webpack webpack-dev-server angular2-template-loader awesome-typescript-loader extract-text-webpack-plugin file-loader canonical-path @types/node
