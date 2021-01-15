@@ -21,7 +21,7 @@ export declare class GroupStage extends BeanStub implements IRowNodeStage {
     private forEachParentGroup;
     private removeNodesFromParents;
     private postRemoveCreateFillerNodes;
-    private postRemoveRemoveEmptyGroups;
+    private removeEmptyGroups;
     private removeFromParent;
     private addToParent;
     private areGroupColsEqual;

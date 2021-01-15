@@ -272,14 +272,37 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const currentRow: RowPosition = { rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned };
         const columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
 
-        this.pasteMultipleValues(
-            parsedData,
-            currentRow,
-            updatedRowNodes,
-            columnsToPasteInto,
-            cellsToFlash,
-            Constants.EXPORT_TYPE_CLIPBOARD,
-            changedPath);
+        if (this.isPasteSingleValueIntoRange(parsedData)) {
+            this.pasteSingleValueIntoRange(parsedData, updatedRowNodes, cellsToFlash, changedPath);
+        } else {
+            this.pasteMultipleValues(
+                parsedData,
+                currentRow,
+                updatedRowNodes,
+                columnsToPasteInto,
+                cellsToFlash,
+                Constants.EXPORT_TYPE_CLIPBOARD,
+                changedPath);
+        }
+    }
+
+    // if range is active, and only one cell, then we paste this cell into all cells in the active range.
+    private isPasteSingleValueIntoRange(parsedData: string[][]): boolean {
+        return this.hasOnlyOneValueToPaste(parsedData)
+            && this.rangeController!=null
+            && !this.rangeController.isEmpty();
+    }
+
+    private pasteSingleValueIntoRange(parsedData: string[][], updatedRowNodes: RowNode[], cellsToFlash: any, changedPath: ChangedPath | undefined) {
+        const value = parsedData[0][0];
+
+        const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[]) => {
+            updatedRowNodes.push(rowNode);
+            columns.forEach(column =>
+                this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, Constants.EXPORT_TYPE_CLIPBOARD, changedPath));
+        };
+
+        this.iterateActiveRanges(false, rowCallback);
     }
 
     private hasOnlyOneValueToPaste(parsedData: string[][]) {

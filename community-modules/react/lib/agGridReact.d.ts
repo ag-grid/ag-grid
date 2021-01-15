@@ -1,4 +1,4 @@
-// @ag-grid-community/react v25.0.0
+// @ag-grid-community/react v25.0.1
 import * as React from "react";
 import { Component, ReactPortal } from "react";
 import { ColumnApi, GridApi, GridOptions, Module } from "@ag-grid-community/core";
@@ -10,15 +10,18 @@ export interface AgGridReactProps extends GridOptions {
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
     disableStaticMarkup?: boolean;
+    maxComponentCreationTimeMs?: number;
     legacyComponentRendering?: boolean;
     containerStyle?: any;
 }
 export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     props: any;
+    private static MAX_COMPONENT_CREATION_TIME_IN_MS;
     static propTypes: any;
     static defaultProps: {
         legacyComponentRendering: boolean;
         disableStaticMarkup: boolean;
+        maxComponentCreationTimeMs: number;
     };
     gridOptions: GridOptions;
     changeDetectionService: ChangeDetectionService;
@@ -28,7 +31,6 @@ export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     hasPendingPortalUpdate: boolean;
     destroyed: boolean;
     protected eGridDiv: HTMLElement;
-    private static MAX_COMPONENT_CREATION_TIME_IN_MS;
     constructor(props: any);
     render(): React.DetailedReactHTMLElement<{
         style: any;

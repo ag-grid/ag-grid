@@ -1,4 +1,4 @@
-// ag-grid-react v25.0.0
+// ag-grid-react v25.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -97,7 +97,7 @@ var AgGridReact = /** @class */ (function (_super) {
             resolve(reactComponent);
         }
         else {
-            if (Date.now() - startTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS) {
+            if (Date.now() - startTime >= this.props.maxComponentCreationTimeMs && !this.hasPendingPortalUpdate) {
                 // last check - we check if this is a null value being rendered - we do this last as using SSR to check the value
                 // can mess up contexts
                 if (reactComponent.isNullValue()) {
@@ -176,7 +176,12 @@ var AgGridReact = /** @class */ (function (_super) {
         this.extractGridPropertyChanges(prevProps, nextProps, changes);
         this.extractDeclarativeColDefChanges(nextProps, changes);
         if (Object.keys(changes).length > 0) {
-            window.setTimeout(function () { return ag_grid_community_1.ComponentUtil.processOnChange(changes, _this.gridOptions, _this.api, _this.columnApi); });
+            window.setTimeout(function () {
+                // destroyed?
+                if (_this.api) {
+                    ag_grid_community_1.ComponentUtil.processOnChange(changes, _this.gridOptions, _this.api, _this.columnApi);
+                }
+            });
         }
     };
     AgGridReact.prototype.extractDeclarativeColDefChanges = function (nextProps, changes) {
@@ -252,11 +257,12 @@ var AgGridReact = /** @class */ (function (_super) {
     AgGridReact.prototype.isLegacyComponentRendering = function () {
         return this.props.legacyComponentRendering;
     };
+    AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS = 1000; // a second should be more than enough to instantiate a component
     AgGridReact.defaultProps = {
         legacyComponentRendering: false,
-        disableStaticMarkup: false
+        disableStaticMarkup: false,
+        maxComponentCreationTimeMs: AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS
     };
-    AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS = 500; // half a second should be more than enough to instantiate a component
     return AgGridReact;
 }(react_1.Component));
 exports.AgGridReact = AgGridReact;

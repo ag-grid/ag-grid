@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.0
+ * @version v25.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -134,25 +134,25 @@ var DragAndDropService = /** @class */ (function (_super) {
         // check if mouseEvent intersects with any of the drop targets
         var validDropTargets = this.dropTargets.filter(function (dropTarget) { return _this.isMouseOnDropTarget(mouseEvent, dropTarget); });
         var len = validDropTargets.length;
-        if (len === 0) {
-            return;
+        var dropTarget = null;
+        if (len > 0) {
+            dropTarget = len === 1
+                ? validDropTargets[0]
+                // the current mouse position could intersect with more than 1 element
+                // if they are nested. In that case we need to get the most specific
+                // container, which is the one that does not contain any other targets.
+                : validDropTargets.reduce(function (prevTarget, currTarget) {
+                    if (!prevTarget) {
+                        return currTarget;
+                    }
+                    var prevContainer = prevTarget.getContainer();
+                    var currContainer = currTarget.getContainer();
+                    if (prevContainer.contains(currContainer)) {
+                        return currTarget;
+                    }
+                    return prevTarget;
+                });
         }
-        var dropTarget = len === 1
-            ? validDropTargets[0]
-            // the current mouse position could intersect with more than 1 element
-            // if they are nested. In that case we need to get the most specific
-            // container, which is the one that does not contain any other targets.
-            : validDropTargets.reduce(function (prevTarget, currTarget) {
-                if (!prevTarget) {
-                    return currTarget;
-                }
-                var prevContainer = prevTarget.getContainer();
-                var currContainer = currTarget.getContainer();
-                if (prevContainer.contains(currContainer)) {
-                    return currTarget;
-                }
-                return prevTarget;
-            });
         if (dropTarget !== this.lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);

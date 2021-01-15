@@ -5,5 +5,6 @@ export declare class BatchRemover {
     removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void;
     removeFromAllLeafChildren(parent: RowNode, child: RowNode): void;
     private getSet;
+    getAllParents(): RowNode[];
     flush(): void;
 }

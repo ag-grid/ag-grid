@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.0
+ * @version v25.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -184,19 +184,37 @@ var AlignedGridsService = /** @class */ (function (_super) {
         var masterColumns = this.getMasterColumns(colEvent);
         switch (colEvent.type) {
             case events_1.Events.EVENT_COLUMN_MOVED:
-                var movedEvent = colEvent;
-                this.logger.log("onColumnEvent-> processing " + colEvent.type + " toIndex = " + movedEvent.toIndex);
-                this.columnController.moveColumns(columnIds, movedEvent.toIndex, "alignedGridChanged");
+                // when the user moves columns via setColumnState, we can't depend on moving specific columns
+                // to an index, as there maybe be many indexes columns moved to (as wasn't result of a mouse drag).
+                // so only way to be sure is match the order of all columns using Column State.
+                {
+                    var movedEvent = colEvent;
+                    var srcColState = colEvent.columnApi.getColumnState();
+                    var destColState = srcColState.map(function (s) { return ({ colId: s.colId }); });
+                    this.columnController.applyColumnState({ state: destColState, applyOrder: true }, "alignedGridChanged");
+                    this.logger.log("onColumnEvent-> processing " + colEvent.type + " toIndex = " + movedEvent.toIndex);
+                }
                 break;
             case events_1.Events.EVENT_COLUMN_VISIBLE:
-                var visibleEvent = colEvent;
-                this.logger.log("onColumnEvent-> processing " + colEvent.type + " visible = " + visibleEvent.visible);
-                this.columnController.setColumnsVisible(columnIds, visibleEvent.visible, "alignedGridChanged");
+                // when the user changes visibility via setColumnState, we can't depend on visibility flag in event
+                // as there maybe be mix of true/false (as wasn't result of a mouse click to set visiblity).
+                // so only way to be sure is match the visibility of all columns using Column State.
+                {
+                    var visibleEvent = colEvent;
+                    var srcColState = colEvent.columnApi.getColumnState();
+                    var destColState = srcColState.map(function (s) { return ({ colId: s.colId, hide: s.hide }); });
+                    this.columnController.applyColumnState({ state: destColState }, "alignedGridChanged");
+                    this.logger.log("onColumnEvent-> processing " + colEvent.type + " visible = " + visibleEvent.visible);
+                }
                 break;
             case events_1.Events.EVENT_COLUMN_PINNED:
-                var pinnedEvent = colEvent;
-                this.logger.log("onColumnEvent-> processing " + colEvent.type + " pinned = " + pinnedEvent.pinned);
-                this.columnController.setColumnsPinned(columnIds, pinnedEvent.pinned, "alignedGridChanged");
+                {
+                    var pinnedEvent = colEvent;
+                    var srcColState = colEvent.columnApi.getColumnState();
+                    var destColState = srcColState.map(function (s) { return ({ colId: s.colId, pinned: s.pinned }); });
+                    this.columnController.applyColumnState({ state: destColState }, "alignedGridChanged");
+                    this.logger.log("onColumnEvent-> processing " + colEvent.type + " pinned = " + pinnedEvent.pinned);
+                }
                 break;
             case events_1.Events.EVENT_COLUMN_RESIZED:
                 var resizedEvent_1 = colEvent;

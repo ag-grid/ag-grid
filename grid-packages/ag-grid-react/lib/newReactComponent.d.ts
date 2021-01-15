@@ -1,4 +1,4 @@
-// ag-grid-react v25.0.0
+// ag-grid-react v25.0.1
 import { ComponentType, AgPromise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
 import { ReactComponent } from './reactComponent';

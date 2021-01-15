@@ -26,16 +26,20 @@ export interface AgGridReactProps extends GridOptions {
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
     disableStaticMarkup?: boolean;  // only used when legacyComponentRendering is true
+    maxComponentCreationTimeMs?: number,
     legacyComponentRendering?: boolean,
     containerStyle?: any;
 }
 
 export class AgGridReact extends Component<AgGridReactProps, {}> {
+    private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
+
     static propTypes: any;
 
     static defaultProps = {
         legacyComponentRendering: false,
-        disableStaticMarkup: false
+        disableStaticMarkup: false,
+        maxComponentCreationTimeMs: AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS
     };
 
     gridOptions!: GridOptions;
@@ -51,7 +55,6 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     protected eGridDiv!: HTMLElement;
 
-    private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 500; // half a second should be more than enough to instantiate a component
 
     constructor(public props: any) {
         super(props);
@@ -110,7 +113,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         if (reactComponent.rendered()) {
             resolve(reactComponent);
         } else {
-            if (Date.now() - startTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS) {
+            if (Date.now() - startTime >= this.props.maxComponentCreationTimeMs && !this.hasPendingPortalUpdate) {
                 // last check - we check if this is a null value being rendered - we do this last as using SSR to check the value
                 // can mess up contexts
                 if(reactComponent.isNullValue()) {
@@ -204,7 +207,12 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         this.extractDeclarativeColDefChanges(nextProps, changes);
 
         if (Object.keys(changes).length > 0) {
-            window.setTimeout(() => ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi));
+            window.setTimeout(() => {
+                // destroyed?
+                if(this.api) {
+                    ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi)
+                }
+            });
         }
     }
 

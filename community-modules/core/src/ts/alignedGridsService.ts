@@ -1,4 +1,4 @@
-import { ColumnController } from "./columnController/columnController";
+import {ColumnController, ColumnState} from "./columnController/columnController";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
@@ -14,7 +14,8 @@ import { Qualifier } from "./context/context";
 import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
-import {BeanStub} from "./context/beanStub";
+import { BeanStub } from "./context/beanStub";
+import {ApplyColumnStateParams} from "./columnController/columnApi";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
@@ -150,11 +151,13 @@ export class AlignedGridsService extends BeanStub {
     private processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
         // likewise for column group
         const masterColumnGroup = groupOpenedEvent.columnGroup;
-        let otherColumnGroup: OriginalColumnGroup | undefined;
+        let otherColumnGroup: OriginalColumnGroup | null = null;
+
         if (masterColumnGroup) {
             const groupId = masterColumnGroup.getGroupId();
             otherColumnGroup = this.columnController.getOriginalColumnGroup(groupId);
         }
+
         if (masterColumnGroup && !otherColumnGroup) { return; }
 
         this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
@@ -165,7 +168,7 @@ export class AlignedGridsService extends BeanStub {
         // the column in the event is from the master grid. need to
         // look up the equivalent from this (other) grid
         const masterColumn = colEvent.column;
-        let otherColumn: Column | undefined;
+        let otherColumn: Column | null = null;
 
         if (masterColumn) {
             otherColumn = this.columnController.getPrimaryColumn(masterColumn.getColId());
@@ -181,19 +184,38 @@ export class AlignedGridsService extends BeanStub {
 
         switch (colEvent.type) {
             case Events.EVENT_COLUMN_MOVED:
-                const movedEvent = colEvent as ColumnMovedEvent;
-                this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
-                this.columnController.moveColumns(columnIds, movedEvent.toIndex, "alignedGridChanged");
+                // when the user moves columns via setColumnState, we can't depend on moving specific columns
+                // to an index, as there maybe be many indexes columns moved to (as wasn't result of a mouse drag).
+                // so only way to be sure is match the order of all columns using Column State.
+                {
+                    const movedEvent = colEvent as ColumnMovedEvent;
+                    const srcColState = colEvent.columnApi.getColumnState();
+                    const destColState = srcColState.map(s => ({ colId: s.colId }));
+                    this.columnController.applyColumnState(
+                        {state: destColState, applyOrder: true}, "alignedGridChanged");
+                    this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
+                }
                 break;
             case Events.EVENT_COLUMN_VISIBLE:
-                const visibleEvent = colEvent as ColumnVisibleEvent;
-                this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
-                this.columnController.setColumnsVisible(columnIds, visibleEvent.visible, "alignedGridChanged");
+                // when the user changes visibility via setColumnState, we can't depend on visibility flag in event
+                // as there maybe be mix of true/false (as wasn't result of a mouse click to set visiblity).
+                // so only way to be sure is match the visibility of all columns using Column State.
+                {
+                    const visibleEvent = colEvent as ColumnVisibleEvent;
+                    const srcColState = colEvent.columnApi.getColumnState();
+                    const destColState = srcColState.map(s => ({ colId: s.colId, hide: s.hide }));
+                    this.columnController.applyColumnState({state: destColState}, "alignedGridChanged");
+                    this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
+                }
                 break;
             case Events.EVENT_COLUMN_PINNED:
-                const pinnedEvent = colEvent as ColumnPinnedEvent;
-                this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
-                this.columnController.setColumnsPinned(columnIds, pinnedEvent.pinned, "alignedGridChanged");
+                {
+                    const pinnedEvent = colEvent as ColumnPinnedEvent;
+                    const srcColState = colEvent.columnApi.getColumnState();
+                    const destColState = srcColState.map(s => ({ colId: s.colId, pinned: s.pinned }));
+                    this.columnController.applyColumnState({state: destColState}, "alignedGridChanged");
+                    this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
+                }
                 break;
             case Events.EVENT_COLUMN_RESIZED:
                 const resizedEvent = colEvent as ColumnResizedEvent;
@@ -208,8 +230,12 @@ export class AlignedGridsService extends BeanStub {
         const isVerticalScrollShowing = this.gridPanel.isVerticalScrollShowing();
         const alignedGrids = this.gridOptionsWrapper.getAlignedGrids();
 
-        alignedGrids.forEach((grid) => {
-            grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
-        });
+        if (alignedGrids) {
+            alignedGrids.forEach((grid) => {
+                if (grid.api) {
+                    grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
+                }
+            });
+        }
     }
 }
