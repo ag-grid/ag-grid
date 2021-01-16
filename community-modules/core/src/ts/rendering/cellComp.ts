@@ -1730,7 +1730,7 @@ export class CellComp extends Component implements TooltipParentComp {
             return leftPosition;
         }
 
-        const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
+        const leftWidth = this.beans.columnController.getDisplayedColumnsLeftWidth();
 
         if (this.column.getPinned() === Constants.PINNED_RIGHT) {
             const bodyWidth = this.beans.columnController.getBodyContainerWidth();

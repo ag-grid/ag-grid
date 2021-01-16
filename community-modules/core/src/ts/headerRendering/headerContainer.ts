@@ -80,7 +80,7 @@ export class HeaderContainer extends BeanStub {
 
         if (pinningLeft || pinningRight) {
             // size to fit all columns
-            let width = controller[pinningLeft ? 'getPinnedLeftContainerWidth' : 'getPinnedRightContainerWidth']();
+            let width = controller[pinningLeft ? 'getDisplayedColumnsLeftWidth' : 'getDisplayedColumnsRightWidth']();
 
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,

@@ -115,7 +115,7 @@ export class RangeController extends BeanStub implements IRangeController {
             return false;
         }
 
-        const allColumns = this.columnController.getAllDisplayedColumns();
+        const allColumns = this.columnController.getAllContainerColumns();
         const allPositions = rangeColumns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
 
         return _.last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
@@ -278,7 +278,7 @@ export class RangeController extends BeanStub implements IRangeController {
     }
 
     public getRangeEdgeColumns(cellRange: CellRange): { left: Column, right: Column; } {
-        const allColumns = this.columnController.getAllDisplayedColumns();
+        const allColumns = this.columnController.getAllContainerColumns();
         const allIndices = cellRange.columns
             .map(c => allColumns.indexOf(c))
             .filter(i => i > -1)
@@ -475,7 +475,7 @@ export class RangeController extends BeanStub implements IRangeController {
     }
 
     public isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean {
-        const allColumns = this.columnController.getAllDisplayedColumns();
+        const allColumns = this.columnController.getAllContainerColumns();
         const allPositions = cellRange.columns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
         const { startRow, endRow } = cellRange;
         const lastRow = this.rowPositionUtils.before(startRow!, endRow!) ? endRow : startRow;
@@ -650,7 +650,7 @@ export class RangeController extends BeanStub implements IRangeController {
     }
 
     private calculateColumnsBetween(columnFrom: Column, columnTo: Column): Column[] | undefined {
-        const allColumns = this.columnController.getAllDisplayedColumns();
+        const allColumns = this.columnController.getAllContainerColumns();
         const isSameColumn = columnFrom === columnTo;
         const fromIndex = allColumns.indexOf(columnFrom);
 

@@ -51,7 +51,7 @@ export class ColumnApi {
     public getDisplayedCenterColumns(): Column[] { return this.columnController.getDisplayedCenterColumns(); }
     public getDisplayedRightColumns(): Column[] { return this.columnController.getDisplayedRightColumns(); }
     public getAllDisplayedColumns(): Column[] { return this.columnController.getAllDisplayedColumns(); }
-    public getAllDisplayedVirtualColumns(): Column[] { return this.columnController.getAllDisplayedVirtualColumns(); }
+    public getAllDisplayedVirtualColumns(): Column[] { return this.columnController.getViewportColumns(); }
 
     public moveColumn(key: string | Column, toIndex: number): void {
         if (typeof key === 'number') {
@@ -100,10 +100,10 @@ export class ColumnApi {
     public addPivotColumns(colKeys: (string | Column)[]): void { this.columnController.addPivotColumns(colKeys, 'api'); }
     public getPivotColumns(): Column[] { return this.columnController.getPivotColumns(); }
 
-    public getLeftDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getLeftDisplayedColumnGroups(); }
-    public getCenterDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getCenterDisplayedColumnGroups(); }
-    public getRightDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getRightDisplayedColumnGroups(); }
-    public getAllDisplayedColumnGroups(): ColumnGroupChild[] | null { return this.columnController.getAllDisplayedColumnGroups(); }
+    public getLeftDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getDisplayedTreeLeft(); }
+    public getCenterDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getDisplayedTreeCentre(); }
+    public getRightDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getDisplayedTreeRight(); }
+    public getAllDisplayedColumnGroups(): ColumnGroupChild[] | null { return this.columnController.getAllDisplayedTrees(); }
     public autoSizeColumn(key: string | Column, skipHeader?: boolean): void {return this.columnController.autoSizeColumn(key, skipHeader, 'api'); }
     public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void {return this.columnController.autoSizeColumns(keys, skipHeader, 'api'); }
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnController.autoSizeAllColumns(skipHeader, 'api'); }

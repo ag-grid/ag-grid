@@ -358,7 +358,7 @@ export class RowComp extends Component {
         if (this.printLayout) {
             centerCols = this.beans.columnController.getAllDisplayedColumns();
         } else {
-            centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
+            centerCols = this.beans.columnController.getViewportLeftColumnsForRow(this.rowNode);
             leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
             rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
         }
@@ -666,7 +666,7 @@ export class RowComp extends Component {
             leftCols = [];
             rightCols = [];
         } else {
-            centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
+            centerCols = this.beans.columnController.getViewportLeftColumnsForRow(this.rowNode);
             leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
             rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
         }

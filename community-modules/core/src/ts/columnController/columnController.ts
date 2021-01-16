@@ -123,26 +123,33 @@ export class ColumnController extends BeanStub {
     private lastPrimaryOrder: Column[];
     private gridColsArePrimary: boolean;
 
-    // these are the columns actually shown on the screen. used by the header renderer,
-    // as header needs to know about column groups and the tree structure.
-    private displayedLeftColumnTree: ColumnGroupChild[];
-    private displayedRightColumnTree: ColumnGroupChild[];
-    private displayedCentreColumnTree: ColumnGroupChild[];
+    // primary columns -> what the user provides
+    // secondary columns -> columns generated as a result of a pivot
+    // displayed columns -> columns that are 1) visible and 2) parent groups are opened. thus can be rendered
+    // viewport columns -> centre columns only, what columns are to be rendered due to column virtualisation
 
-    private displayedLeftHeaderRows: { [row: number]: ColumnGroupChild[]; };
-    private displayedRightHeaderRows: { [row: number]: ColumnGroupChild[]; };
-    private displayedCentreHeaderRows: { [row: number]: ColumnGroupChild[]; };
+    // tree of columns to be displayed for each section
+    private displayedTreeLeft: ColumnGroupChild[];
+    private displayedTreeRight: ColumnGroupChild[];
+    private displayedTreeCentre: ColumnGroupChild[];
 
-    // these are the lists used by the rowRenderer to render nodes. almost the leaf nodes of the above
-    // displayed trees, however it also takes into account if the groups are open or not.
-    private displayedLeftColumns: Column[] = [];
-    private displayedRightColumns: Column[] = [];
-    private displayedCenterColumns: Column[] = [];
+    // leave level columns of the displayed trees
+    private displayedColumnsLeft: Column[] = [];
+    private displayedColumnsRight: Column[] = [];
+    private displayedColumnsCenter: Column[] = [];
     // all three lists above combined
-    private allDisplayedColumns: Column[] = [];
-    // same as above, except trimmed down to only columns within the viewport
-    private allDisplayedVirtualColumns: Column[] = [];
-    private allDisplayedCenterVirtualColumns: Column[] = [];
+    private displayedColumns: Column[] = [];
+
+    // all columns to be rendered
+    private viewportColumns: Column[] = [];
+    // all columns to be rendered in the centre
+    private viewportColumnsCenter: Column[] = [];
+
+    // all columns & groups to be rendered, index by row. used by header rows to get all items
+    // to render for that row.
+    private viewportRowLeft: { [row: number]: ColumnGroupChild[]; };
+    private viewportRowRight: { [row: number]: ColumnGroupChild[]; };
+    private viewportRowCenter: { [row: number]: ColumnGroupChild[]; };
 
     // true if we are doing column spanning
     private colSpanActive: boolean;
@@ -255,7 +262,7 @@ export class ColumnController extends BeanStub {
             this.orderGridColumnsLikePrimary();
         }
         this.updateDisplayedColumns(source);
-        this.checkDisplayedVirtualColumns();
+        this.checkViewportColumns();
 
         // this event is not used by ag-Grid, but left here for backwards compatibility,
         // in case applications use it
@@ -325,7 +332,7 @@ export class ColumnController extends BeanStub {
         return this.autoRowHeightColumns;
     }
 
-    private setVirtualViewportLeftAndRight(): void {
+    private setViewport(): void {
         if (this.gridOptionsWrapper.isEnableRtl()) {
             this.viewportLeft = this.bodyWidth - this.scrollPosition - this.scrollWidth;
             this.viewportRight = this.bodyWidth - this.scrollPosition;
@@ -350,16 +357,16 @@ export class ColumnController extends BeanStub {
 
     // checks what columns are currently displayed due to column virtualisation. fires an event
     // if the list of columns has changed.
-    // + setColumnWidth(), setVirtualViewportPosition(), setColumnDefs(), sizeColumnsToFit()
-    private checkDisplayedVirtualColumns(): void {
+    // + setColumnWidth(), setViewportPosition(), setColumnDefs(), sizeColumnsToFit()
+    private checkViewportColumns(): void {
         // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
-        if (this.displayedCenterColumns == null) { return; }
+        if (this.displayedColumnsCenter == null) { return; }
 
-        const hashBefore = this.allDisplayedVirtualColumns.map(column => column.getId()).join('#');
+        const hashBefore = this.viewportColumns.map(column => column.getId()).join('#');
 
-        this.updateVirtualSets();
+        this.extractViewport();
 
-        const hashAfter = this.allDisplayedVirtualColumns.map(column => column.getId()).join('#');
+        const hashAfter = this.viewportColumns.map(column => column.getId()).join('#');
 
         if (hashBefore !== hashAfter) {
             const event: VirtualColumnsChangedEvent = {
@@ -372,7 +379,7 @@ export class ColumnController extends BeanStub {
         }
     }
 
-    public setVirtualViewportPosition(scrollWidth: number, scrollPosition: number): void {
+    public setViewportPosition(scrollWidth: number, scrollPosition: number): void {
         if (scrollWidth !== this.scrollWidth || scrollPosition !== this.scrollPosition || this.bodyWidthDirty) {
             this.scrollWidth = scrollWidth;
             this.scrollPosition = scrollPosition;
@@ -380,10 +387,10 @@ export class ColumnController extends BeanStub {
             // as the viewport can stay the same, but in RTL, if body width changes, we need to work out the
             // virtual columns again
             this.bodyWidthDirty = true;
-            this.setVirtualViewportLeftAndRight();
+            this.setViewport();
 
             if (this.ready) {
-                this.checkDisplayedVirtualColumns();
+                this.checkViewportColumns();
             }
         }
     }
@@ -453,11 +460,11 @@ export class ColumnController extends BeanStub {
         let firstRight: Column | null;
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
-            lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[0] : null;
-            firstRight = this.displayedRightColumns ? last(this.displayedRightColumns) : null;
+            lastLeft = this.displayedColumnsLeft ? this.displayedColumnsLeft[0] : null;
+            firstRight = this.displayedColumnsRight ? last(this.displayedColumnsRight) : null;
         } else {
-            lastLeft = this.displayedLeftColumns ? last(this.displayedLeftColumns) : null;
-            firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
+            lastLeft = this.displayedColumnsLeft ? last(this.displayedColumnsLeft) : null;
+            firstRight = this.displayedColumnsRight ? this.displayedColumnsRight[0] : null;
         }
 
         this.gridColumns.forEach((column: Column) => {
@@ -558,11 +565,11 @@ export class ColumnController extends BeanStub {
         return result;
     }
 
-    public getAllDisplayedColumnGroups(): ColumnGroupChild[] | null {
-        if (this.displayedLeftColumnTree && this.displayedRightColumnTree && this.displayedCentreColumnTree) {
-            return this.displayedLeftColumnTree
-                .concat(this.displayedCentreColumnTree)
-                .concat(this.displayedRightColumnTree);
+    public getAllDisplayedTrees(): ColumnGroupChild[] | null {
+        if (this.displayedTreeLeft && this.displayedTreeRight && this.displayedTreeCentre) {
+            return this.displayedTreeLeft
+                .concat(this.displayedTreeCentre)
+                .concat(this.displayedTreeRight);
         }
 
         return null;
@@ -579,29 +586,18 @@ export class ColumnController extends BeanStub {
     }
 
     // + headerRenderer -> setting pinned body width
-    public getLeftDisplayedColumnGroups(): ColumnGroupChild[] {
-        return this.displayedLeftColumnTree;
+    public getDisplayedTreeLeft(): ColumnGroupChild[] {
+        return this.displayedTreeLeft;
     }
 
     // + headerRenderer -> setting pinned body width
-    public getRightDisplayedColumnGroups(): ColumnGroupChild[] {
-        return this.displayedRightColumnTree;
+    public getDisplayedTreeRight(): ColumnGroupChild[] {
+        return this.displayedTreeRight;
     }
 
     // + headerRenderer -> setting pinned body width
-    public getCenterDisplayedColumnGroups(): ColumnGroupChild[] {
-        return this.displayedCentreColumnTree;
-    }
-
-    public getDisplayedColumnGroups(type: string): ColumnGroupChild[] {
-        switch (type) {
-            case Constants.PINNED_LEFT:
-                return this.getLeftDisplayedColumnGroups();
-            case Constants.PINNED_RIGHT:
-                return this.getRightDisplayedColumnGroups();
-            default:
-                return this.getCenterDisplayedColumnGroups();
-        }
+    public getDisplayedTreeCentre(): ColumnGroupChild[] {
+        return this.displayedTreeCentre;
     }
 
     // gridPanel -> ensureColumnVisible
@@ -611,27 +607,27 @@ export class ColumnController extends BeanStub {
 
     // + csvCreator
     public getAllDisplayedColumns(): Column[] {
-        return this.allDisplayedColumns;
+        return this.displayedColumns;
     }
 
-    public getAllDisplayedVirtualColumns(): Column[] {
-        return this.allDisplayedVirtualColumns;
+    public getViewportColumns(): Column[] {
+        return this.viewportColumns;
     }
 
     public getDisplayedLeftColumnsForRow(rowNode: RowNode): Column[] {
         if (!this.colSpanActive) {
-            return this.displayedLeftColumns;
+            return this.displayedColumnsLeft;
         }
 
-        return this.getDisplayedColumnsForRow(rowNode, this.displayedLeftColumns);
+        return this.getDisplayedColumnsForRow(rowNode, this.displayedColumnsLeft);
     }
 
     public getDisplayedRightColumnsForRow(rowNode: RowNode): Column[] {
         if (!this.colSpanActive) {
-            return this.displayedRightColumns;
+            return this.displayedColumnsRight;
         }
 
-        return this.getDisplayedColumnsForRow(rowNode, this.displayedRightColumns);
+        return this.getDisplayedColumnsForRow(rowNode, this.displayedColumnsRight);
     }
 
     private getDisplayedColumnsForRow(
@@ -696,9 +692,9 @@ export class ColumnController extends BeanStub {
     // if we are not column spanning, this just returns back the virtual centre columns,
     // however if we are column spanning, then different rows can have different virtual
     // columns, so we have to work out the list for each individual row.
-    public getAllDisplayedCenterVirtualColumnsForRow(rowNode: RowNode): Column[] {
+    public getViewportLeftColumnsForRow(rowNode: RowNode): Column[] {
         if (!this.colSpanActive) {
-            return this.allDisplayedCenterVirtualColumns;
+            return this.viewportColumnsCenter;
         }
 
         const emptySpaceBeforeColumn = (col: Column) => {
@@ -712,7 +708,7 @@ export class ColumnController extends BeanStub {
 
         return this.getDisplayedColumnsForRow(
             rowNode,
-            this.displayedCenterColumns,
+            this.displayedColumnsCenter,
             filterCallback,
             emptySpaceBeforeColumn
         );
@@ -742,13 +738,13 @@ export class ColumnController extends BeanStub {
     // used by:
     // + angularGrid -> setting pinned body width
     // note: this should be cached
-    public getPinnedLeftContainerWidth() {
-        return this.getWidthOfColsInList(this.displayedLeftColumns);
+    public getDisplayedColumnsLeftWidth() {
+        return this.getWidthOfColsInList(this.displayedColumnsLeft);
     }
 
     // note: this should be cached
-    public getPinnedRightContainerWidth() {
-        return this.getWidthOfColsInList(this.displayedRightColumns);
+    public getDisplayedColumnsRightWidth() {
+        return this.getWidthOfColsInList(this.displayedColumnsRight);
     }
 
     public updatePrimaryColumnList(
@@ -1184,7 +1180,7 @@ export class ColumnController extends BeanStub {
         if (atLeastOneColChanged) {
             this.setLeftValues(source);
             this.updateBodyWidths();
-            this.checkDisplayedVirtualColumns();
+            this.checkViewportColumns();
         }
 
         // check for change first, to avoid unnecessary firing of events
@@ -1396,9 +1392,9 @@ export class ColumnController extends BeanStub {
 
     // after setColumnWidth or updateGroupsAndDisplayedColumns
     private updateBodyWidths(): void {
-        const newBodyWidth = this.getWidthOfColsInList(this.displayedCenterColumns);
-        const newLeftWidth = this.getWidthOfColsInList(this.displayedLeftColumns);
-        const newRightWidth = this.getWidthOfColsInList(this.displayedRightColumns);
+        const newBodyWidth = this.getWidthOfColsInList(this.displayedColumnsCenter);
+        const newLeftWidth = this.getWidthOfColsInList(this.displayedColumnsLeft);
+        const newRightWidth = this.getWidthOfColsInList(this.displayedColumnsRight);
 
         // this is used by virtual col calculation, for RTL only, as a change to body width can impact displayed
         // columns, due to RTL inverting the y coordinates
@@ -1411,7 +1407,7 @@ export class ColumnController extends BeanStub {
             this.leftWidth = newLeftWidth;
             this.rightWidth = newRightWidth;
             // when this fires, it is picked up by the gridPanel, which ends up in
-            // gridPanel calling setWidthAndScrollPosition(), which in turn calls setVirtualViewportPosition()
+            // gridPanel calling setWidthAndScrollPosition(), which in turn calls setViewportPosition()
             const event: DisplayedColumnsWidthChangedEvent = {
                 type: Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
                 api: this.gridApi,
@@ -1443,16 +1439,16 @@ export class ColumnController extends BeanStub {
 
     // + rowController -> while inserting rows
     public getDisplayedCenterColumns(): Column[] {
-        return this.displayedCenterColumns;
+        return this.displayedColumnsCenter;
     }
 
     // + rowController -> while inserting rows
     public getDisplayedLeftColumns(): Column[] {
-        return this.displayedLeftColumns;
+        return this.displayedColumnsLeft;
     }
 
     public getDisplayedRightColumns(): Column[] {
-        return this.displayedRightColumns;
+        return this.displayedColumnsRight;
     }
 
     public getDisplayedColumns(type: string | null): Column[] {
@@ -1681,11 +1677,11 @@ export class ColumnController extends BeanStub {
     }
 
     public isPinningLeft(): boolean {
-        return this.displayedLeftColumns.length > 0;
+        return this.displayedColumnsLeft.length > 0;
     }
 
     public isPinningRight(): boolean {
-        return this.displayedRightColumns.length > 0;
+        return this.displayedColumnsRight.length > 0;
     }
 
     public getPrimaryAndSecondaryAndAutoColumns(): Column[] {
@@ -2537,7 +2533,7 @@ export class ColumnController extends BeanStub {
         if (!colId) { return null; }
         if (colId instanceof ColumnGroup) { return colId; }
 
-        const allColumnGroups = this.getAllDisplayedColumnGroups();
+        const allColumnGroups = this.getAllDisplayedTrees();
         const checkInstanceId = typeof instanceId === 'number';
         let result: ColumnGroup | null = null;
 
@@ -3008,7 +3004,7 @@ export class ColumnController extends BeanStub {
 
         this.putFixedColumnsFirst();
         this.setupQuickFilterColumns();
-        this.clearDisplayedColumns();
+        this.clearDisplayedAndViewportColumns();
 
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
 
@@ -3127,27 +3123,27 @@ export class ColumnController extends BeanStub {
     // than stale columns. for example, the header will received gridColumnsChanged
     // event, so will try and draw, but it will draw successfully when it acts on the
     // virtualColumnsChanged event
-    private clearDisplayedColumns(): void {
-        this.displayedLeftColumnTree = [];
-        this.displayedRightColumnTree = [];
-        this.displayedCentreColumnTree = [];
+    private clearDisplayedAndViewportColumns(): void {
+        this.displayedTreeLeft = [];
+        this.displayedTreeRight = [];
+        this.displayedTreeCentre = [];
 
-        this.displayedLeftHeaderRows = {};
-        this.displayedRightHeaderRows = {};
-        this.displayedCentreHeaderRows = {};
+        this.viewportRowLeft = {};
+        this.viewportRowRight = {};
+        this.viewportRowCenter = {};
 
-        this.displayedLeftColumns = [];
-        this.displayedRightColumns = [];
-        this.displayedCenterColumns = [];
-        this.allDisplayedColumns = [];
-        this.allDisplayedVirtualColumns = [];
+        this.displayedColumnsLeft = [];
+        this.displayedColumnsRight = [];
+        this.displayedColumnsCenter = [];
+        this.displayedColumns = [];
+        this.viewportColumns = [];
     }
 
     private updateGroupsAndDisplayedColumns(source: ColumnEventType) {
         this.updateOpenClosedVisibilityInColumnGroups();
-        this.updateDisplayedColumnsFromTrees(source);
+        this.deriveDisplayedColumns(source);
         this.refreshFlexedColumns();
-        this.updateVirtualSets();
+        this.extractViewport();
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
 
@@ -3159,23 +3155,23 @@ export class ColumnController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private updateDisplayedColumnsFromTrees(source: ColumnEventType): void {
-        this.addToDisplayedColumns(this.displayedLeftColumnTree, this.displayedLeftColumns);
-        this.addToDisplayedColumns(this.displayedCentreColumnTree, this.displayedCenterColumns);
-        this.addToDisplayedColumns(this.displayedRightColumnTree, this.displayedRightColumns);
-        this.setupAllDisplayedColumns();
+    private deriveDisplayedColumns(source: ColumnEventType): void {
+        this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeLeft, this.displayedColumnsLeft);
+        this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeCentre, this.displayedColumnsCenter);
+        this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeRight, this.displayedColumnsRight);
+        this.joinDisplayedColumns();
         this.setLeftValues(source);
     }
 
-    private setupAllDisplayedColumns(): void {
+    private joinDisplayedColumns(): void {
         if (this.gridOptionsWrapper.isEnableRtl()) {
-            this.allDisplayedColumns = this.displayedRightColumns
-                .concat(this.displayedCenterColumns)
-                .concat(this.displayedLeftColumns);
+            this.displayedColumns = this.displayedColumnsRight
+                .concat(this.displayedColumnsCenter)
+                .concat(this.displayedColumnsLeft);
         } else {
-            this.allDisplayedColumns = this.displayedLeftColumns
-                .concat(this.displayedCenterColumns)
-                .concat(this.displayedRightColumns);
+            this.displayedColumns = this.displayedColumnsLeft
+                .concat(this.displayedColumnsCenter)
+                .concat(this.displayedColumnsRight);
         }
     }
 
@@ -3193,9 +3189,9 @@ export class ColumnController extends BeanStub {
         const doingRtl = this.gridOptionsWrapper.isEnableRtl();
 
         [
-            this.displayedLeftColumns,
-            this.displayedRightColumns,
-            this.displayedCenterColumns
+            this.displayedColumnsLeft,
+            this.displayedColumnsRight,
+            this.displayedColumnsCenter
         ].forEach(columns => {
             if (doingRtl) {
                 // when doing RTL, we start at the top most pixel (ie RHS) and work backwards
@@ -3226,9 +3222,9 @@ export class ColumnController extends BeanStub {
     private setLeftValuesOfGroups(): void {
         // a groups left value is the lest left value of it's children
         [
-            this.displayedLeftColumnTree,
-            this.displayedRightColumnTree,
-            this.displayedCentreColumnTree
+            this.displayedTreeLeft,
+            this.displayedTreeRight,
+            this.displayedTreeCentre
         ].forEach(columns => {
             columns.forEach(column => {
                 if (column instanceof ColumnGroup) {
@@ -3239,37 +3235,27 @@ export class ColumnController extends BeanStub {
         });
     }
 
-    private addToDisplayedColumns(displayedColumnTree: ColumnGroupChild[], displayedColumns: Column[]): void {
-        displayedColumns.length = 0;
-        this.columnUtils.depthFirstDisplayedColumnTreeSearch(displayedColumnTree, (child: ColumnGroupChild) => {
+    private derivedDisplayedColumnsFromDisplayedTree(tree: ColumnGroupChild[], columns: Column[]): void {
+        columns.length = 0;
+        this.columnUtils.depthFirstDisplayedColumnTreeSearch(tree, (child: ColumnGroupChild) => {
             if (child instanceof Column) {
-                displayedColumns.push(child);
+                columns.push(child);
             }
         });
     }
 
-    private updateDisplayedCenterVirtualColumns(): { [key: string]: boolean; } {
+    private extractViewportColumns(): void {
         if (this.suppressColumnVirtualisation) {
             // no virtualisation, so don't filter
-            this.allDisplayedCenterVirtualColumns = this.displayedCenterColumns;
+            this.viewportColumnsCenter = this.displayedColumnsCenter;
         } else {
             // filter out what should be visible
-            this.allDisplayedCenterVirtualColumns = this.filterOutColumnsWithinViewport();
+            this.viewportColumnsCenter = this.filterOutColumnsWithinViewport();
         }
 
-        this.allDisplayedVirtualColumns = this.allDisplayedCenterVirtualColumns
-            .concat(this.displayedLeftColumns)
-            .concat(this.displayedRightColumns);
-
-        // return map of virtual col id's, for easy lookup when building the groups.
-        // the map will be colId=>true, ie col id's mapping to 'true'.
-        const result: any = {};
-
-        this.allDisplayedVirtualColumns.forEach((col: Column) => {
-            result[col.getId()] = true;
-        });
-
-        return result;
+        this.viewportColumns = this.viewportColumnsCenter
+            .concat(this.displayedColumnsLeft)
+            .concat(this.displayedColumnsRight);
     }
 
     public getVirtualHeaderGroupRow(type: string | null, dept: number): ColumnGroupChild[] {
@@ -3277,13 +3263,13 @@ export class ColumnController extends BeanStub {
 
         switch (type) {
             case Constants.PINNED_LEFT:
-                result = this.displayedLeftHeaderRows[dept];
+                result = this.viewportRowLeft[dept];
                 break;
             case Constants.PINNED_RIGHT:
-                result = this.displayedRightHeaderRows[dept];
+                result = this.viewportRowRight[dept];
                 break;
             default:
-                result = this.displayedCentreHeaderRows[dept];
+                result = this.viewportRowCenter[dept];
                 break;
         }
 
@@ -3294,14 +3280,23 @@ export class ColumnController extends BeanStub {
         return result;
     }
 
-    private updateDisplayedVirtualGroups(virtualColIds: any): void {
+    private extractViewportRows(): void {
+
         // go through each group, see if any of it's cols are displayed, and if yes,
         // then this group is included
-        this.displayedLeftHeaderRows = {};
-        this.displayedRightHeaderRows = {};
-        this.displayedCentreHeaderRows = {};
+        this.viewportRowLeft = {};
+        this.viewportRowRight = {};
+        this.viewportRowCenter = {};
 
-        const testGroup = (children: ColumnGroupChild[], result: { [row: number]: ColumnGroupChild[]; }, dept: number): boolean => {
+        // for easy lookup when building the groups.
+        const virtualColIds: { [key: string]: boolean; } = {};
+        this.viewportColumns.forEach( col => virtualColIds[col.getId()] = true );
+
+        const testGroup = (
+            children: ColumnGroupChild[],
+            result: { [row: number]: ColumnGroupChild[]; },
+            dept: number): boolean => {
+
             let returnValue = false;
 
             for (let i = 0; i < children.length; i++) {
@@ -3333,18 +3328,18 @@ export class ColumnController extends BeanStub {
             return returnValue;
         };
 
-        testGroup(this.displayedLeftColumnTree, this.displayedLeftHeaderRows, 0);
-        testGroup(this.displayedRightColumnTree, this.displayedRightHeaderRows, 0);
-        testGroup(this.displayedCentreColumnTree, this.displayedCentreHeaderRows, 0);
+        testGroup(this.displayedTreeLeft, this.viewportRowLeft, 0);
+        testGroup(this.displayedTreeRight, this.viewportRowRight, 0);
+        testGroup(this.displayedTreeCentre, this.viewportRowCenter, 0);
     }
 
-    private updateVirtualSets(): void {
-        const virtualColIds = this.updateDisplayedCenterVirtualColumns();
-        this.updateDisplayedVirtualGroups(virtualColIds);
+    private extractViewport(): void {
+        this.extractViewportColumns();
+        this.extractViewportRows();
     }
 
     private filterOutColumnsWithinViewport(): Column[] {
-        return this.displayedCenterColumns.filter(this.isColumnInViewport.bind(this));
+        return this.displayedColumnsCenter.filter(this.isColumnInViewport.bind(this));
     }
 
     public refreshFlexedColumns(params: { resizingCols?: Column[], skipSetLeft?: boolean, viewportWidth?: number, source?: ColumnEventType, fireResizedEvent?: boolean, updateBodyWidths?: boolean; } = {}): Column[] {
@@ -3363,7 +3358,7 @@ export class ColumnController extends BeanStub {
         let flexAfterDisplayIndex = -1;
         if (params.resizingCols) {
             params.resizingCols.forEach(col => {
-                const indexOfCol = this.displayedCenterColumns.indexOf(col);
+                const indexOfCol = this.displayedColumnsCenter.indexOf(col);
                 if (flexAfterDisplayIndex < indexOfCol) {
                     flexAfterDisplayIndex = indexOfCol;
                 }
@@ -3371,11 +3366,11 @@ export class ColumnController extends BeanStub {
         }
 
         const isColFlex = (col: Column) => {
-            const afterResizingCols = this.displayedCenterColumns.indexOf(col) > flexAfterDisplayIndex;
+            const afterResizingCols = this.displayedColumnsCenter.indexOf(col) > flexAfterDisplayIndex;
             return col.getFlex() && afterResizingCols;
         };
-        const knownWidthColumns = this.displayedCenterColumns.filter(col => !isColFlex(col));
-        const flexingColumns = this.displayedCenterColumns.filter(col => isColFlex(col));
+        const knownWidthColumns = this.displayedColumnsCenter.filter(col => !isColFlex(col));
+        const flexingColumns = this.displayedColumnsCenter.filter(col => isColFlex(col));
         const changedColumns: Column[] = [];
 
         if (!flexingColumns.length) {
@@ -3561,16 +3556,16 @@ export class ColumnController extends BeanStub {
 
         const groupInstanceIdCreator = new GroupInstanceIdCreator();
 
-        this.displayedLeftColumnTree = this.displayedGroupCreator.createDisplayedGroups(
-            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Constants.PINNED_LEFT, this.displayedLeftColumnTree);
-        this.displayedRightColumnTree = this.displayedGroupCreator.createDisplayedGroups(
-            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Constants.PINNED_RIGHT, this.displayedRightColumnTree);
-        this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(
-            centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, null, this.displayedCentreColumnTree);
+        this.displayedTreeLeft = this.displayedGroupCreator.createDisplayedGroups(
+            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Constants.PINNED_LEFT, this.displayedTreeLeft);
+        this.displayedTreeRight = this.displayedGroupCreator.createDisplayedGroups(
+            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Constants.PINNED_RIGHT, this.displayedTreeRight);
+        this.displayedTreeCentre = this.displayedGroupCreator.createDisplayedGroups(
+            centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, null, this.displayedTreeCentre);
     }
 
     private updateOpenClosedVisibilityInColumnGroups(): void {
-        const allColumnGroups = this.getAllDisplayedColumnGroups();
+        const allColumnGroups = this.getAllDisplayedTrees();
 
         this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, child => {
             if (child instanceof ColumnGroup) {

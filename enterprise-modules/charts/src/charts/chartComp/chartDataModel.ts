@@ -235,7 +235,7 @@ export class ChartDataModel extends BeanStub {
 
     private getAllColumnsFromRanges(): Set<Column> {
         if (this.pivotChart) {
-            return _.convertToSet(this.columnController.getAllDisplayedColumns());
+            return _.convertToSet(this.columnController.getAllContainerColumns());
         }
 
         const columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
@@ -269,7 +269,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     private getAllChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
-        const displayedCols = this.columnController.getAllDisplayedColumns();
+        const displayedCols = this.columnController.getAllContainerColumns();
 
         const dimensionCols = new Set<Column>();
         const valueCols = new Set<Column>();
