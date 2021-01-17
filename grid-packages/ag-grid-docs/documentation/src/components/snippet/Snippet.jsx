@@ -1,7 +1,7 @@
 import React from 'react';
 import Prism from 'prismjs';
 import * as esprima from 'esprima';
-import * as transformer from './SnippetTransformer';
+import * as transformer from './snippetTransformer';
 
 export const Snippet = props => {
     const suppliedSnippet = props.children[0].toString();
