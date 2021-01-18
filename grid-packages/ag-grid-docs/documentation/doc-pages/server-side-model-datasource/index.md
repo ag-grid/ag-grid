@@ -204,9 +204,19 @@ The `rowCount` is used when Partial Store is used. When the total row count is k
 
 The `info` is additional data the application can pass to the grid about a particular load. This is useful when doing [High Frequency Updates](../server-side-model-high-frequency/) and explained further in that section.
 
+[[note]]
+| Prior to version 25, the `success` callback was called `successCallback` and takes a list of parameters instead
+| of a `params` object. The old method is still provided for backwards compatibility however it will be deprecated
+| and then removed in future major releases.
+
+
 ## Fail Callback
 
 The Fail callback has no parameters. It informs the grid the request has failed - eg a network error. It is important to inform the grid of failed requests as it limits the number of concurrent datasource requests. If the Fail callback was not called, the grid would still count the request as pending. For example if the grid was configured with `maxConcurrentDatasourceRequests = 1`, only one request can be pending at any time, and all other requests would be paused until either the Fail or Success callbacks were called for the outstanding request.
+
+[[note]]
+| Prior to version 25, the `fail` callback was called `failCallback`. The old method is still provided for backwards 
+| compatibility however it will be deprecated and then removed in future major releases.
 
 ## Next Up
 
