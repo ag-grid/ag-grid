@@ -1,31 +1,28 @@
 import React from 'react';
 import Prism from 'prismjs';
-import * as esprima from 'esprima';
-import * as transformer from './snippetTransformer';
+import 'prismjs/components/prism-typescript';
+import { parseScript } from 'esprima';
+import { transform } from './snippetTransformer';
 
 export const Snippet = props => {
-    const suppliedSnippet = props.children[0].toString();
+    const snippetToTransform = props.children.toString();
 
-    // snippets that require spaces will need to be prefixed with '|' as markdown doesn't allow spaces
-    const formattedSnippet = suppliedSnippet.replace(/\|/g, '').trim();
+    // snippets with spaces need to be prefixed with '|' as markdown doesn't allow spaces
+    const formattedSnippet = snippetToTransform.replace(/\|/g, '').trim();
 
     // create syntax tree from supplied snippet
-    const tree = esprima.parseScript(formattedSnippet, {comment: true, loc: true});
+    const tree = parseScript(formattedSnippet, {comment: true, loc: true});
 
-    // convert syntax tree into a more convenient form, i.e. [{ propertyName: propertyAstObj }]
-    const propertyMappings = parse(tree);
+    // associate comments with properties
+    const treeWithComments = addCommentsToTree(tree);
 
     // create FW specific snippet
-    const snippet =
-        props.framework === 'angular' ? transformer.createNgSnippet(propertyMappings) :
-            props.framework === 'react' ? transformer.createReactSnippet(propertyMappings) :
-                props.framework === 'vue' ? transformer.createVueSnippet(propertyMappings) :
-                    transformer.createJsSnippet(propertyMappings);
+    const snippet = transform(props.framework, treeWithComments);
 
     return <CodeSnippet code={snippet}/>;
 };
 
-const parse = tree => {
+const addCommentsToTree = tree => {
     const isVarDeclaration = node => node.type === 'VariableDeclaration' && Array.isArray(node.declarations);
 
     // store comments with locations for easy lookup
@@ -34,28 +31,26 @@ const parse = tree => {
         return acc;
     }, {});
 
-    const parse = (acc, node) => {
+    // decorate nodes with comments
+    const parseTree = node => {
         if (Array.isArray(node)) {
-            node.forEach(n => parse(acc, n));
+            node.forEach(n => parseTree(n));
         } else if (isVarDeclaration(node)) {
-            node.declarations.forEach(n => parse(acc, n));
+            node.declarations.forEach(n => parseTree(n));
         } else {
-            const commentAbove = commentsMap[node.loc.start.line - 1];
-            acc.push({name: node.key.name, comment: commentAbove, ...node.value});
+            node.comment = commentsMap[node.loc.start.line - 1];
         }
     }
 
     // simpler and faster to start here
     const root = tree.body[0].declarations[0].init.properties;
 
-    // using array to preserve supplied order
-    const propertyMappings = [];
+    parseTree(root);
 
-    parse(propertyMappings, root);
-
-    return propertyMappings;
+    return root;
 }
 
-const CodeSnippet = ({code}) => <pre className="language-ts">
-    <code dangerouslySetInnerHTML={{__html: Prism.highlight(code, Prism.languages.typescript, 'typescript')}}/>
-</pre>;
+const CodeSnippet = ({code}) =>
+    <pre className="language-ts">
+        <code dangerouslySetInnerHTML={{__html: Prism.highlight(code, Prism.languages.typescript, 'typescript')}}/>
+    </pre>;

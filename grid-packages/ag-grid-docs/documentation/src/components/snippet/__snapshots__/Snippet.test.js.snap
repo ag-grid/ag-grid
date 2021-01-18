@@ -1,0 +1,215 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snippet given column definitions with group columns it should create 'angular' snippets 1`] = `
+<pre
+  className="language-ts"
+>
+  <code
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "<span class=\\"token operator\\">&lt;</span>ag<span class=\\"token operator\\">-</span>grid<span class=\\"token operator\\">-</span>angular
+    <span class=\\"token punctuation\\">[</span>columnDefs<span class=\\"token punctuation\\">]</span><span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"columnDefs\\"</span>
+    <span class=\\"token comment\\">// other grid options ...></span>
+<span class=\\"token operator\\">&lt;</span><span class=\\"token operator\\">/</span>ag<span class=\\"token operator\\">-</span>grid<span class=\\"token operator\\">-</span>angular<span class=\\"token operator\\">></span>
+
+<span class=\\"token comment\\">// 2 levels of grouping</span>
+<span class=\\"token keyword\\">this</span><span class=\\"token punctuation\\">.</span>columnDefs<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+    <span class=\\"token punctuation\\">{</span>
+        headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'G1'</span><span class=\\"token punctuation\\">,</span>
+        children<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+            <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C1'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c1'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+            <span class=\\"token punctuation\\">{</span>
+                headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'G2'</span><span class=\\"token punctuation\\">,</span>
+                children<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+                    <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C2'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c2'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+                    <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C3'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c3'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+                <span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">,</span>
+            <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+            <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C4'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c4'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+        <span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">,</span>
+    <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+<span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">;</span>",
+      }
+    }
+  />
+</pre>
+`;
+
+exports[`Snippet given column definitions with group columns it should create 'javascript' snippets 1`] = `
+<pre
+  className="language-ts"
+>
+  <code
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "<span class=\\"token keyword\\">const</span> gridOptions <span class=\\"token operator\\">=</span> <span class=\\"token punctuation\\">{</span>
+    <span class=\\"token comment\\">// 2 levels of grouping</span>
+    columnDefs<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+        <span class=\\"token punctuation\\">{</span>
+            headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'G1'</span><span class=\\"token punctuation\\">,</span>
+            children<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+                <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C1'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c1'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+                <span class=\\"token punctuation\\">{</span>
+                    headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'G2'</span><span class=\\"token punctuation\\">,</span>
+                    children<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+                        <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C2'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c2'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+                        <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C3'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c3'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+                    <span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">,</span>
+                <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+                <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C4'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c4'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+            <span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">,</span>
+        <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+    <span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">,</span>
+<span class=\\"token punctuation\\">}</span>",
+      }
+    }
+  />
+</pre>
+`;
+
+exports[`Snippet given column definitions with group columns it should create 'react' snippets 1`] = `
+<pre
+  className="language-ts"
+>
+  <code
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "<span class=\\"token operator\\">&lt;</span>AgGridReact<span class=\\"token operator\\">></span>
+	<span class=\\"token comment\\">// 2 levels of grouping</span>
+    <span class=\\"token operator\\">&lt;</span>AgGridColumn headerName<span class=\\"token operator\\">=</span><span class=\\"token string\\">'G1'</span><span class=\\"token operator\\">></span>
+        <span class=\\"token operator\\">&lt;</span>AgGridColumn headerName<span class=\\"token operator\\">=</span><span class=\\"token string\\">'C1'</span> field<span class=\\"token operator\\">=</span><span class=\\"token string\\">'c1'</span> <span class=\\"token operator\\">/</span><span class=\\"token operator\\">></span>
+        <span class=\\"token operator\\">&lt;</span>AgGridColumn headerName<span class=\\"token operator\\">=</span><span class=\\"token string\\">'G2'</span><span class=\\"token operator\\">></span>
+            <span class=\\"token operator\\">&lt;</span>AgGridColumn headerName<span class=\\"token operator\\">=</span><span class=\\"token string\\">'C2'</span> field<span class=\\"token operator\\">=</span><span class=\\"token string\\">'c2'</span> <span class=\\"token operator\\">/</span><span class=\\"token operator\\">></span>
+            <span class=\\"token operator\\">&lt;</span>AgGridColumn headerName<span class=\\"token operator\\">=</span><span class=\\"token string\\">'C3'</span> field<span class=\\"token operator\\">=</span><span class=\\"token string\\">'c3'</span> <span class=\\"token operator\\">/</span><span class=\\"token operator\\">></span>
+        <span class=\\"token operator\\">&lt;</span><span class=\\"token operator\\">/</span>AgGridColumn<span class=\\"token operator\\">></span>
+        <span class=\\"token operator\\">&lt;</span>AgGridColumn headerName<span class=\\"token operator\\">=</span><span class=\\"token string\\">'C4'</span> field<span class=\\"token operator\\">=</span><span class=\\"token string\\">'c4'</span> <span class=\\"token operator\\">/</span><span class=\\"token operator\\">></span>
+    <span class=\\"token operator\\">&lt;</span><span class=\\"token operator\\">/</span>AgGridColumn<span class=\\"token operator\\">></span>
+<span class=\\"token operator\\">&lt;</span><span class=\\"token operator\\">/</span>AgGridReact<span class=\\"token operator\\">></span>",
+      }
+    }
+  />
+</pre>
+`;
+
+exports[`Snippet given column definitions with group columns it should create 'vue' snippets 1`] = `
+<pre
+  className="language-ts"
+>
+  <code
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "<span class=\\"token operator\\">&lt;</span>ag<span class=\\"token operator\\">-</span>grid<span class=\\"token operator\\">-</span>vue
+    <span class=\\"token operator\\">:</span>columnDefs<span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"columnDefs\\"</span>
+    <span class=\\"token comment\\">// other grid options ...></span>
+<span class=\\"token operator\\">&lt;</span><span class=\\"token operator\\">/</span>ag<span class=\\"token operator\\">-</span>grid<span class=\\"token operator\\">-</span>vue<span class=\\"token operator\\">></span>
+
+<span class=\\"token comment\\">// 2 levels of grouping</span>
+<span class=\\"token keyword\\">this</span><span class=\\"token punctuation\\">.</span>columnDefs<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+    <span class=\\"token punctuation\\">{</span>
+        headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'G1'</span><span class=\\"token punctuation\\">,</span>
+        children<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+            <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C1'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c1'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+            <span class=\\"token punctuation\\">{</span>
+                headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'G2'</span><span class=\\"token punctuation\\">,</span>
+                children<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+                    <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C2'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c2'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+                    <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C3'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c3'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+                <span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">,</span>
+            <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+            <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C4'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c4'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+        <span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">,</span>
+    <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+<span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">;</span>",
+      }
+    }
+  />
+</pre>
+`;
+
+exports[`Snippet given simple column definitions it should create 'angular' snippets 1`] = `
+<pre
+  className="language-ts"
+>
+  <code
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "<span class=\\"token operator\\">&lt;</span>ag<span class=\\"token operator\\">-</span>grid<span class=\\"token operator\\">-</span>angular
+    <span class=\\"token punctuation\\">[</span>columnDefs<span class=\\"token punctuation\\">]</span><span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"columnDefs\\"</span>
+    <span class=\\"token comment\\">// other grid options ...></span>
+<span class=\\"token operator\\">&lt;</span><span class=\\"token operator\\">/</span>ag<span class=\\"token operator\\">-</span>grid<span class=\\"token operator\\">-</span>angular<span class=\\"token operator\\">></span>
+
+<span class=\\"token comment\\">// define 3 columns</span>
+<span class=\\"token keyword\\">this</span><span class=\\"token punctuation\\">.</span>columnDefs<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+    <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'A'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'a'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+    <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'B'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'b'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+    <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+<span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">;</span>",
+      }
+    }
+  />
+</pre>
+`;
+
+exports[`Snippet given simple column definitions it should create 'javascript' snippets 1`] = `
+<pre
+  className="language-ts"
+>
+  <code
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "<span class=\\"token keyword\\">const</span> gridOptions <span class=\\"token operator\\">=</span> <span class=\\"token punctuation\\">{</span>
+    <span class=\\"token comment\\">// define 3 columns</span>
+    columnDefs<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+        <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'A'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'a'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+        <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'B'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'b'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+        <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+    <span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">,</span>
+<span class=\\"token punctuation\\">}</span>",
+      }
+    }
+  />
+</pre>
+`;
+
+exports[`Snippet given simple column definitions it should create 'react' snippets 1`] = `
+<pre
+  className="language-ts"
+>
+  <code
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "<span class=\\"token operator\\">&lt;</span>AgGridReact<span class=\\"token operator\\">></span>
+	<span class=\\"token comment\\">// define 3 columns</span>
+    <span class=\\"token operator\\">&lt;</span>AgGridColumn headerName<span class=\\"token operator\\">=</span><span class=\\"token string\\">'A'</span> field<span class=\\"token operator\\">=</span><span class=\\"token string\\">'a'</span> <span class=\\"token operator\\">/</span><span class=\\"token operator\\">></span>
+    <span class=\\"token operator\\">&lt;</span>AgGridColumn headerName<span class=\\"token operator\\">=</span><span class=\\"token string\\">'B'</span> field<span class=\\"token operator\\">=</span><span class=\\"token string\\">'b'</span> <span class=\\"token operator\\">/</span><span class=\\"token operator\\">></span>
+    <span class=\\"token operator\\">&lt;</span>AgGridColumn headerName<span class=\\"token operator\\">=</span><span class=\\"token string\\">'C'</span> field<span class=\\"token operator\\">=</span><span class=\\"token string\\">'c'</span> <span class=\\"token operator\\">/</span><span class=\\"token operator\\">></span>
+<span class=\\"token operator\\">&lt;</span><span class=\\"token operator\\">/</span>AgGridReact<span class=\\"token operator\\">></span>",
+      }
+    }
+  />
+</pre>
+`;
+
+exports[`Snippet given simple column definitions it should create 'vue' snippets 1`] = `
+<pre
+  className="language-ts"
+>
+  <code
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "<span class=\\"token operator\\">&lt;</span>ag<span class=\\"token operator\\">-</span>grid<span class=\\"token operator\\">-</span>vue
+    <span class=\\"token operator\\">:</span>columnDefs<span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"columnDefs\\"</span>
+    <span class=\\"token comment\\">// other grid options ...></span>
+<span class=\\"token operator\\">&lt;</span><span class=\\"token operator\\">/</span>ag<span class=\\"token operator\\">-</span>grid<span class=\\"token operator\\">-</span>vue<span class=\\"token operator\\">></span>
+
+<span class=\\"token comment\\">// define 3 columns</span>
+<span class=\\"token keyword\\">this</span><span class=\\"token punctuation\\">.</span>columnDefs<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">[</span>
+    <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'A'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'a'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+    <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'B'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'b'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+    <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+<span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">;</span>",
+      }
+    }
+  />
+</pre>
+`;
