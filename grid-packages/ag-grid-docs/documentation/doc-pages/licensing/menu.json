@@ -7,7 +7,7 @@
         "matrixExcludeChildren": true,
         "items": [
           {
-            "title": "Overview",
+            "title": "Tutorial",
             "url": "../getting-started/",
             "frameworks": [
               "javascript",
@@ -16,64 +16,6 @@
               "vue"
             ],
             "items": [
-              {
-                "title": "Install with NPM",
-                "url": "../npm/",
-                "frameworks": [
-                  "javascript"
-                ]
-              },
-              {
-                "title": "Download Bundles",
-                "url": "../download/",
-                "frameworks": [
-                  "javascript"
-                ]
-              },
-              {
-                "title": "Components",
-                "url": "../framework-components/",
-                "frameworks": [
-                  "angular",
-                  "vue"
-                ]
-              },
-              {
-                "title": "Markup",
-                "url": "../framework-markup/",
-                "frameworks": [
-                  "angular",
-                  "vue"
-                ]
-              },
-              {
-                "title": "SystemJS",
-                "url": "../systemjs/",
-                "frameworks": [
-                  "angular"
-                ]
-              },
-              {
-                "title": "Webpack 3",
-                "url": "../webpack-3/",
-                "frameworks": [
-                  "angular"
-                ]
-              },
-              {
-                "title": "Webpack 2",
-                "url": "../webpack-2/",
-                "frameworks": [
-                  "angular"
-                ]
-              },
-              {
-                "title": "Webpack 1",
-                "url": "../webpack/",
-                "frameworks": [
-                  "angular"
-                ]
-              },
               {
                 "title": "Material Components",
                 "url": "../material-design/",
@@ -89,27 +31,6 @@
                 ]
               },
               {
-                "title": "Column Configuration",
-                "url": "../column-configuration/",
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
-                "title": "Context API & Redux",
-                "url": "../framework-apis/",
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
-                "title": "Fine Tuning",
-                "url": "../fine-tuning/",
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
                 "title": "Hooks & Functional Components",
                 "url": "../react-hooks/",
                 "frameworks": [
@@ -117,35 +38,7 @@
                 ]
               },
               {
-                "title": "Redux Integration Part 1",
-                "url": "../redux-integration-pt1/",
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
-                "title": "Redux Integration Part 2",
-                "url": "../redux-integration-pt2/",
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
-                "title": "React 15.x",
-                "url": "../react-15/",
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
-                "title": "Vue & Unidirectional Data Flow",
-                "url": "../framework-data-flow/",
-                "frameworks": [
-                  "vue"
-                ]
-              },
-              {
-                "title": "Misc",
+                "title": "Components & Markup",
                 "url": "../framework-misc/",
                 "frameworks": [
                   "vue"
@@ -348,6 +241,54 @@
         "icon": "icon-information",
         "matrixExcludeChildren": true,
         "items": [
+          {
+            "title": "Install with NPM",
+            "url": "../npm/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "javascript"
+            ]
+          },
+          {
+            "title": "Download Bundles",
+            "url": "../download/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "javascript"
+            ]
+          },
+          {
+            "title": "SystemJS",
+            "url": "../systemjs/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
+            "title": "Webpack 1",
+            "url": "../webpack/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
+            "title": "Webpack 2",
+            "url": "../webpack-2/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
+            "title": "Webpack 3",
+            "url": "../webpack-3/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "angular"
+            ]
+          },
           {
             "title": "Community & Enterprise",
             "url": "../licensing/",
@@ -1121,6 +1062,15 @@
         "icon": "icon-components",
         "items": [
           {
+            "title": "Declaring Components",
+            "url": "../framework-components/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "angular",
+              "vue"
+            ]
+          },
+          {
             "title": "Registering Components",
             "url": "../components/",
             "showInCollapsed": true
@@ -1650,6 +1600,61 @@
             "showInCollapsed": true
           }
         ]
+      },
+      {
+        "title": "Miscellaneous",
+        "icon": "icon-test",
+        "matrixExcludeChildren": true,
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Vue & Unidirectional Data Flow",
+            "url": "../framework-data-flow/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "vue"
+            ]
+          },
+          {
+            "title": "Context API & Redux",
+            "url": "../framework-apis/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "Fine Tuning",
+            "url": "../fine-tuning/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "react"
+            ]
+          },              {
+            "title": "Redux Integration Part 1",
+            "url": "../redux-integration-pt1/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "Redux Integration Part 2",
+            "url": "../redux-integration-pt2/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "React 15.x",
+            "url": "../react-15/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "react"
+            ]
+          }
+       ]
       }
     ]
   }
