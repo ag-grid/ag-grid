@@ -67,17 +67,8 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         let hidePopup: (() => void);
 
-        const bodyScrollListener = (event: any) => {
-            // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal' && hidePopup) {
-                hidePopup();
-            }
-        };
-
-        this.eventService.addEventListener('bodyScroll', bodyScrollListener);
-
+        const anchorToElement = eventSource || this.gridPanel.getGui();
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
-            this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
             column.setMenuVisible(false, 'contextMenu');
             const isKeyboardEvent = e instanceof KeyboardEvent;
 
@@ -96,7 +87,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,
-            closedCallback
+            closedCallback,
+            positionCallback: () => positionCallback(eMenu),
+            anchorToElement
         });
 
         if (addPopupRes) {

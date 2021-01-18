@@ -116,7 +116,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         const eMenuGui = menu.getGui();
 
-        const anchorToElement = eventSource ? eventSource : this.gridPanel.getGui();
+        const anchorToElement = eventSource || this.gridPanel.getGui();
 
         const closedFuncs: ((e?: Event) => void)[] = [];
 
@@ -144,7 +144,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             },
             afterGuiAttached: params => menu.afterGuiAttached(params),
             positionCallback: () => positionCallback(menu),
-            anchorToElement,
+            anchorToElement
         });
 
         if (addPopupRes) {
