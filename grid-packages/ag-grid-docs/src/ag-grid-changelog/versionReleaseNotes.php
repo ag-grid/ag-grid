@@ -68,6 +68,14 @@
         <li>
             Grid API <code>refreshServerSideStore(params)</code> should now be used instead of <code>purgeServerSideCache()</code>.
         </li>
+        <li>
+            The success callbacks <code>successCallback</code> and <code>failCallback</code> are replaced with
+            the methods <code>success</code> and <code>fail</code>. The new methods serve the same purpose as the
+            old methods, however the new 'success' method uses a <code>params</code> object rather than listing
+            individual parameters as this is more extensible. The old methods will still work and are left in
+            for backwards compatibility, however future releases of ag-Grid will deprecated these and then
+            remove the old methods.
+        </li>
     </ul>
 
 </div>
