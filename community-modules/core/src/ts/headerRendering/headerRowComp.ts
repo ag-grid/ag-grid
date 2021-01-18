@@ -195,7 +195,7 @@ export class HeaderRowComp extends Component {
         if (this.pinned != null) { return []; }
 
         let viewportColumns: ColumnGroupChild[] = [];
-        const actualDepth = this.type == HeaderRowType.FLOATING_FILTER ? this.dept - 1 : this.dept;
+        const actualDepth = this.getActualDepth();
 
         [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
             const items = this.columnController.getVirtualHeaderGroupRow(pinned, actualDepth);
@@ -205,10 +205,13 @@ export class HeaderRowComp extends Component {
         return viewportColumns;
     }
 
+    private getActualDepth(): number {
+        return this.type == HeaderRowType.FLOATING_FILTER ? this.dept - 1 : this.dept;
+    }
+
     private getColumnsInViewportNormalLayout(): ColumnGroupChild[] {
         // when in normal layout, we add the columns for that container only
-        const actualDepth = this.type == HeaderRowType.FLOATING_FILTER ? this.dept - 1 : this.dept;
-        return this.columnController.getVirtualHeaderGroupRow(this.pinned, actualDepth);
+        return this.columnController.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
     }
 
     private onVirtualColumnsChanged(): void {
@@ -256,21 +259,19 @@ export class HeaderRowComp extends Component {
         });
 
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
-        const headerCompIsFocusedAndVisible = (colId: string) => {
+        const isFocusedAndDisplayed = (colId: string) => {
             const wrapper = this.headerComps[colId];
-            const column = wrapper.getColumn();
-            const isHeaderCompFocused = this.focusController.isHeaderWrapperFocused(wrapper);
-            const isHeaderVisible: boolean = columns.indexOf(wrapper.getColumn()) !== -1;
-            // if some action removed the column and caused the virtualisation to start (eg. hiding)
-            // we allow the headerComp to be destroyed, otherwise just keep focused columns
-            return isHeaderCompFocused && isHeaderVisible;
+            const isFocused = this.focusController.isHeaderWrapperFocused(wrapper);
+            if (!isFocused) { return false; }
+            const isDisplayed = this.columnController.isDisplayed(wrapper.getColumn());
+            return isDisplayed;
         };
 
-        const focusedHeaderComps = compIdsToRemove.filter(headerCompIsFocusedAndVisible);
+        const focusedAndDisplayedComps = compIdsToRemove.filter(isFocusedAndDisplayed);
 
-        focusedHeaderComps.forEach(colId => {
+        focusedAndDisplayedComps.forEach(colId => {
             removeFromArray(compIdsToRemove, colId);
-            focusedHeaderComps.push(colId);
+            compIdsWanted.push(colId);
         });
 
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport

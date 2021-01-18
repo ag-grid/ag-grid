@@ -140,6 +140,9 @@ export class ColumnController extends BeanStub {
     // all three lists above combined
     private displayedColumns: Column[] = [];
 
+    // for fast lookup, to see if a column or group is still displayed
+    private displayedColumnsAndGroupsMap: {[id:string]:ColumnGroupChild} = {};
+
     // all columns to be rendered
     private viewportColumns: Column[] = [];
     // all columns to be rendered in the centre
@@ -3562,6 +3565,26 @@ export class ColumnController extends BeanStub {
             rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Constants.PINNED_RIGHT, this.displayedTreeRight);
         this.displayedTreeCentre = this.displayedGroupCreator.createDisplayedGroups(
             centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, null, this.displayedTreeCentre);
+
+        this.updateDisplayedMap();
+    }
+
+    private updateDisplayedMap(): void {
+        this.displayedColumnsAndGroupsMap = {};
+
+        const func = (child: ColumnGroupChild) => {
+            this.displayedColumnsAndGroupsMap[child.getUniqueId()] = child;
+        };
+
+        this.columnUtils.depthFirstAllColumnTreeSearch(this.displayedTreeCentre, func);
+        this.columnUtils.depthFirstAllColumnTreeSearch(this.displayedTreeLeft, func);
+        this.columnUtils.depthFirstAllColumnTreeSearch(this.displayedTreeRight, func);
+    }
+
+    public isDisplayed(item: ColumnGroupChild): boolean {
+        const fromMap = this.displayedColumnsAndGroupsMap[item.getUniqueId()];
+        // check for reference, in case new column / group with same id is now present
+        return fromMap === item;
     }
 
     private updateOpenClosedVisibilityInColumnGroups(): void {
