@@ -15,6 +15,7 @@ const runSnippetFrameworkTests = snippetToTest => {
     });
 }
 
+// These tests are run for each framework!
 describe('Snippet', () => {
     describe('given simple column definitions', () => {
         runSnippetFrameworkTests(
@@ -53,4 +54,22 @@ describe('Snippet', () => {
         );
     });
 
+    describe('given a mix of different properties', () => {
+        runSnippetFrameworkTests(
+            `const gridOptions = {
+                // columnDefs property (special)
+                columnDefs: [
+                    { headerName: 'A', field: 'a' },
+                    { headerName: 'B', field: 'b' },
+                    { headerName: 'C', field: 'c' },
+                ],
+                // numeric property
+                rowHeight: 50,
+                // boolean property
+                rowDragManaged: true,
+                // string property
+                rowSelection: 'single',
+            }`
+        );
+    });
 });
