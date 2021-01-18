@@ -1741,10 +1741,10 @@ export class ColumnController extends BeanStub {
 
     private orderColumnStateList(columnStateList: any[]): void {
         const gridColumnIds = this.gridColumns.map(column => column.getColId());
-
+        const gridColumnIdMap = new Map(gridColumnIds.map((value, index) => [value, index]));
         columnStateList.sort((itemA: any, itemB: any) => {
-            const posA = gridColumnIds.indexOf(itemA.colId);
-            const posB = gridColumnIds.indexOf(itemB.colId);
+            const posA = gridColumnIdMap.has(itemA.colId) ? gridColumnIdMap.get(itemA.colId) : -1;
+            const posB = gridColumnIdMap.has(itemB.colId) ? gridColumnIdMap.get(itemB.colId) : -1;
             return posA - posB;
         });
     }
@@ -2990,8 +2990,16 @@ export class ColumnController extends BeanStub {
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from secondary to primary columns
         let noColsFound = true;
+
+
+        // use these maps instead of indexOf calls in a loop for performance reasons
+        const lastPrimaryOrderIdMap = new Map(this.lastPrimaryOrder.map((value, index) =>
+            [value, index]));
+        const gridColumnIdMap = new Map(this.gridColumns.map((value, index) =>
+            [value, index]));
+
         this.gridColumns.forEach(col => {
-            if (this.lastPrimaryOrder.indexOf(col) >= 0) {
+            if (lastPrimaryOrderIdMap.has(col)) {
                 noColsFound = false;
             }
         });
@@ -3000,8 +3008,8 @@ export class ColumnController extends BeanStub {
 
         // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
-        const oldColsOrdered = this.lastPrimaryOrder.filter(col => this.gridColumns.indexOf(col) >= 0);
-        const newColsOrdered = this.gridColumns.filter(col => oldColsOrdered.indexOf(col) < 0);
+        const oldColsOrdered = this.lastPrimaryOrder.filter(col => lastPrimaryOrderIdMap.has(col));
+        const newColsOrdered = this.gridColumns.filter(col => !gridColumnIdMap.has(col));
 
         // add in the new columns, at the end (if no group), or at the end of the group (if a group)
         const newGridColumns = oldColsOrdered.slice();
