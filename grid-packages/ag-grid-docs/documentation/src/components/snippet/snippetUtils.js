@@ -39,7 +39,7 @@ export const createColDefSnippet = (tree, depth) => {
         const colProps = tree.properties.map(property => `${getName(property)}: ${getValue(property)}`);
         return `\n${tab(depth)}{ ${colProps.join(', ')} }`;
     }
-};
+}
 
 export const createReactColDefSnippet = (tree, depth) => {
     if (Array.isArray(tree)) {
@@ -59,7 +59,7 @@ export const createReactColDefSnippet = (tree, depth) => {
         const colProps = tree.properties.map(property => `${getName(property)}=${getReactValue(property)}`);
         return `\n${tab(depth)}<AgGridColumn ${colProps.join(' ')} />`;
     }
-};
+}
 
 const isArrayExpr = node => node.value.type === 'ArrayExpression';
 const getChildren = node => isArrayExpr(node) ? node.value.elements : node.properties;
