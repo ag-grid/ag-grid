@@ -63,6 +63,11 @@ describe('Snippet', () => {
                     { headerName: 'B', field: 'b' },
                     { headerName: 'C', field: 'c' },
                 ],
+                // object property
+                defaultColDef: {
+                    // set every column width
+                    width: 100
+                },
                 // numeric property
                 rowHeight: 50,
                 // boolean property
