@@ -1,134 +1,160 @@
-export const createJsSnippet = propertyMappings => {
-    let res = 'const gridOptions = {';
-    res = processJsonProperties(propertyMappings, res);
-    res += '\n}';
-    return res;
-};
+import {
+    createColDefSnippet,
+    createReactColDefSnippet,
+    getName,
+    getValue,
+    getReactValue,
+    isArrayProperty,
+    isLiteralProperty,
+    isObjectProperty,
+    tab,
+} from "./snippetUtils";
 
-export const createNgSnippet = propertyMappings => {
-    let res = `<ag-grid-angular
-    [columnDefs]="columnDefs"
-    // other grid options ...>
-</ag-grid-angular>
-\n`;
-
-    return processObjectProperties(propertyMappings, res);
-};
-
-export const createVueSnippet = propertyMappings => {
-    let res = `<ag-grid-vue
-    :columnDefs="columnDefs"
-    // other grid options ...>
-</ag-grid-vue>
-\n`;
-
-    return processObjectProperties(propertyMappings, res);
-};
-
-export const createReactSnippet = propertyMappings => {
-    let res = '<AgGridReact>';
-    propertyMappings.forEach(prop => {
-        if (prop.name === 'columnDefs') {
-            if (prop.comment) {
-                res += `\n\t//${prop.comment}`;
-            }
-
-            res += createReactColDefSnippet(prop.elements, 1);
-        }
-    });
-
-    res += '\n</AgGridReact>';
-
-    return res;
+export const transform = (framework, tree) => {
+    return framework === 'angular' ? new AngularTransformer().transform(tree) :
+        framework === 'react' ? new ReactTransformer().transform(tree) :
+            framework === 'vue' ? new VueTransformer().transform(tree) :
+                new JavascriptTransformer().transform(tree);
 }
 
-const createReactColDefSnippet = (tree, depth) => {
-    if (Array.isArray(tree)) {
-        return tree.map(node => createReactColDefSnippet(node, depth)).join('');
+// The SnippetTransformer is based around the 'Template Method' design pattern
+class SnippetTransformer {
+    transform(tree) {
+        return this.addFrameworkContext(this.parse(tree, 0));
     }
 
-    const groupCol = tree.properties.find(n => isArrayExpr(n));
-    if (groupCol) {
-        const childColDefs = createReactColDefSnippet(getChildren(groupCol), depth + 1);
+    parse(tree, depth) {
+        if (Array.isArray(tree)) {
+            return tree.map(node => this.parse(node, depth + 1)).join('');
+        } else if (isLiteralProperty(tree)) {
+            return this.addComment(tree) + this.parseLiteral(tree, depth);
 
-        const colProps = tree.properties
-            .filter(property => !isArrayExpr(property))
-            .map(property => `${getName(property)}='${getValue(property)}'`);
+        } else if (isArrayProperty(tree)) {
+            return this.addComment(tree) + this.parseArray(tree, depth);
 
-        let r = `\n${pad(depth)}<AgGridColumn ${colProps.join('')}>`;
-        r += childColDefs;
-        r += `\n${pad(depth)}</AgGridColumn>`
-
-        return r;
-    } else {
-        const colProps = tree.properties.map(property => `${getName(property)}='${getValue(property)}'`);
-        return `\n${pad(depth)}<AgGridColumn ${colProps.join(' ')} />`;
-    }
-};
-
-
-// i.e. javascript properties
-const processJsonProperties = (propertyMappings, res) => {
-    propertyMappings.forEach(prop => {
-        if (prop.comment) {
-            res += `\n\t//${prop.comment}`;
+        } else if (isObjectProperty(tree)) {
+            return this.addComment(tree) + this.parseObject(tree, depth);
         }
+    }
+}
 
-        if (prop.name === 'columnDefs') {
-            res += '\n\tcolumnDefs: [' + createColDefSnippet(prop.elements, 2) + ',\n\t],';
+class JavascriptTransformer extends SnippetTransformer {
+    parseLiteral(property, depth) {
+        return `${tab(depth)}${getName(property)}: ${getValue(property)},`;
+    }
+    parseArray(property, depth) {
+        if (getName(property) === 'columnDefs') {
+            let res = `${tab(depth)}columnDefs: [`;
+            res += createColDefSnippet(property.value.elements, 2);
+            res += `,\n${tab(depth)}],`;
+            return res;
         } else {
-            res += `${prop.name}: ${prop.value},`;
+            throw Error("Not yet implemented!");
         }
-    });
-
-    res += '\n\n\t// other grid options ...';
-    return res;
+    }
+    parseObject(property, depth) {
+        let res = `${tab(depth)}${getName(property)}: {`;
+        res += property.value.properties.map(prop => this.parse(prop, depth + 1)).join('');
+        res += `\n${tab(depth)}},`;
+        return res;
+    }
+    addFrameworkContext(result) {
+        return `const gridOptions = {${result}\n}`;
+    }
+    addComment(property) {
+        return property.comment ? `\n${tab(1)}//${property.comment}\n` : '\n';
+    }
 }
 
-// i.e. angular / vue properties
-const processObjectProperties = (propertyMappings, res) => {
-    propertyMappings.forEach((prop, i) => {
-        if (prop.comment) {
-            if (i > 0) res += `\n`;
-            res += `//${prop.comment}\n`;
-        }
+class AngularTransformer extends SnippetTransformer {
+    // used when adding framework context
+    propertiesVisited = [];
 
-        if (prop.name === 'columnDefs') {
-            res += 'this.columnDefs: [' + createColDefSnippet(prop.elements, 1) + ',\n];';
+    parseLiteral(property, depth) {
+        if (depth > 1) {
+            // don't include nested object properties
+            return `${tab(depth - 1)}${getName(property)}: ${getValue(property)},`;
         } else {
-            res += `this.${prop.name} = ${prop.value};`;
+            this.propertiesVisited.push(getName(property));
+            return `this.${getName(property)} = ${getValue(property)};`;
         }
-    });
-    return res;
+    }
+    parseArray(property, depth) {
+        this.propertiesVisited.push(getName(property));
+        if (getName(property) === 'columnDefs') {
+            return `this.${getName(property)}: [` + createColDefSnippet(property.value.elements, depth) + ',\n];';
+        } else {
+            console.error("Not yet implemented!");
+        }
+    }
+    parseObject(property, depth) {
+        this.propertiesVisited.push(getName(property));
+        const properties = property.value.properties.map(prop => this.parse(prop, depth + 1)).join('');
+        return `this.${getName(property)}: {` + properties + '\n};';
+    }
+    addFrameworkContext(result) {
+        const props = this.propertiesVisited.map(property => `${tab(1)}[${property}]="${property}"`).join('\n');
+        return '<ag-grid-angular\n' + props +
+            '\n    // other grid options ...>\n' +
+            '</ag-grid-angular>\n' +
+            result;
+    }
+    addComment(property) {
+        return property.comment ? `\n//${property.comment}\n` : '\n';
+    }
 }
 
-const createColDefSnippet = (tree, depth) => {
-    if (Array.isArray(tree)) {
-        return tree.map(node => createColDefSnippet(node, depth));
+class VueTransformer extends AngularTransformer {
+    addFrameworkContext(result) {
+        const props = this.propertiesVisited.map(property => `${tab(1)}:${property}="${property}"`).join('\n');
+        return '<ag-grid-vue\n' + props +
+            '\n    // other grid options ...>\n' +
+            '</ag-grid-vue>\n' +
+            result;
+    }
+}
+
+class ReactTransformer extends SnippetTransformer {
+    propertySnippets = [];
+
+    parseLiteral(property, depth) {
+        this.propertySnippets.push(this.createLiteralSnippet(property, depth));
+        return '';
+    }
+    parseArray(property, depth) {
+        if (getName(property) === 'columnDefs') {
+            let res = property.comment ? `\n\t//${property.comment}` : '';
+            res += createReactColDefSnippet(property.value.elements, depth);
+            return res;
+        } else {
+            console.error("Not yet implemented!");
+        }
+    }
+    parseObject(property, depth) {
+        let res = property.comment ? `\n\t//${property.comment}` : '';
+        res += `\n${tab(depth)}${getName(property)}: {`;
+        res += property.value.properties.map(prop => this.createLiteralSnippet(prop, depth + 1)).join(',');
+        res += `\n${tab(depth)}},`;
+
+        this.propertySnippets.push(res);
+        return '';
+    }
+    addFrameworkContext(result) {
+        if (this.propertySnippets.length > 0) {
+            return `<AgGridReact` +
+                   `${this.propertySnippets.join('')}` +
+                   `\n${tab(1)}// other grid options ...\n>` +
+                   `${result}\n</AgGridReact>`;
+        } else {
+            return `<AgGridReact>${result}\n</AgGridReact>`;
+        }
+    }
+    addComment() {
+        return ''; // react comments added inplace
     }
 
-    const isGroupCol = !!tree.properties.find(n => isArrayExpr(n));
-    if (isGroupCol) {
-        let r = `\n${pad(depth)}{`;
-        r += tree.properties.map(property => {
-            const [name, value, padding] = [getName(property), getValue(property), `\n${pad(depth + 1)}`];
-            if (isArrayExpr(property)) {
-                const childColDefs = createColDefSnippet(getChildren(property), depth + 2);
-                return `${padding}${name}: [${childColDefs},${padding}],`;
-            } else {
-                return `${padding}${name}: '${value}'`;
-            }
-        }).join(',');
-        r += `\n${pad(depth)}}`;
-        return r;
-    } else {
-        const colProps = tree.properties.map(property => `${getName(property)}: '${getValue(property)}'`);
-        return `\n${pad(depth)}{ ${colProps.join(', ')} }`;
+    createLiteralSnippet(property, depth) {
+        let res = property.comment ? `\n\t//${property.comment}` : '';
+        return res + `\n${tab(depth)}${getName(property)}=${getReactValue(property)}`;
     }
-};
-
-const getName = node => node.key.name;
-const getValue = node => node.value.value;
-const pad = n => new Array(n).fill('\t').join('');
-const isArrayExpr = node => node.value.type === 'ArrayExpression';
-const getChildren = node => isArrayExpr(node) ? node.value.elements : node.properties;
+}

@@ -53,7 +53,7 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
 
         if (typeof this.label === 'string') {
             this.eLabel.innerText = this.label + this.labelSeparator;
-        } else {
+        } else if (this.label) {
             this.eLabel.appendChild(this.label);
         }
 
