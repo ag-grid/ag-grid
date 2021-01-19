@@ -463,7 +463,7 @@ gtm_data_layer('community-enterprise');
                         <p>
                             At the end of your subscription period you will no longer be able to license the latest
                             versions of ag-Grid Enterprise or access support without renewing. This could range from
-                            365 days up to a 5-year term. Renewal pricing starts as follows: Single Application Developer
+                            365 days up to a 3-year term. Renewal pricing starts as follows: Single Application Developer
                             License, $350; Multiple Applications Developer License, $560;
                             Deployment License Add-on, $350.
                         </p>
