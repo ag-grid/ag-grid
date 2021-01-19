@@ -2230,8 +2230,8 @@ title: "Get Started with ag-Grid"
 |   @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
 |   @import "../node_modules/ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
 |
-|   -alpine((
-|       add-row-background-color: #ACE
+|   @include ag-theme-alpine((
+|     add-row-background-color: #ACE
 |   ));
 | </style>
 | ```
