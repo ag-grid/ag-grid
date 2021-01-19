@@ -1,9 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { withQueryParams, StringParam, BooleanParam, JsonParam, withDefault } from 'use-query-params';
-import ExampleRunnerResult from '../components/example-runner/ExampleRunnerResult';
-import { useExampleFileNodes } from '../components/example-runner/use-example-file-nodes';
-import { getExampleInfo } from '../components/example-runner/helpers';
+import ExampleRunnerResult from 'components/example-runner/ExampleRunnerResult';
+import { useExampleFileNodes } from 'components/example-runner/use-example-file-nodes';
+import { getExampleInfo } from 'components/example-runner/helpers';
 
 const ExampleRunnerPage = ({ query: { pageName, library, framework, useFunctionalReact, importType, name, title, type, options } }) => {
     const nodes = useExampleFileNodes();

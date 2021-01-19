@@ -1,11 +1,11 @@
 import React from 'react';
-import { GlobalContextProvider } from '../components/GlobalContext';
-import HeaderNav from '../components/HeaderNav';
-import Menu from '../components/Menu';
-import Footer from '../components/footer/Footer';
-import Search from '../components/search/Search';
-import FrameworkSelector from '../components/FrameworkSelector';
-import { getPageName } from '../utils/get-page-name';
+import { GlobalContextProvider } from 'components/GlobalContext';
+import HeaderNav from 'components/HeaderNav';
+import Menu from 'components/Menu';
+import Footer from 'components/footer/Footer';
+import Search from 'components/search/Search';
+import FrameworkSelector from 'components/FrameworkSelector';
+import { getPageName } from 'utils/get-page-name';
 import styles from './index.module.scss';
 
 const TopBar = ({ frameworks, framework, path }) => (

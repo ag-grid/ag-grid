@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
-import fwLogos from '../images/fw-logos';
-import supportedFrameworks from '../utils/supported-frameworks';
+import fwLogos from 'images/fw-logos';
+import supportedFrameworks from 'utils/supported-frameworks';
 import styles from './FrameworkSelector.module.scss';
 
 export default function FrameworkSelector({ frameworks, path, currentFramework }) {

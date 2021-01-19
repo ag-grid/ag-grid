@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { HuePicker, AlphaPicker } from 'react-color';
 import classnames from 'classnames';
-import { doOnEnter } from '../key-handlers';
+import { doOnEnter } from 'components/key-handlers';
 import styles from './Editors.module.scss';
 
 export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {

@@ -5,14 +5,14 @@ import fs from 'fs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import CodeViewer from './CodeViewer';
-import GlobalContextConsumer from '../GlobalContext';
+import GlobalContextConsumer from 'components/GlobalContext';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { getExampleInfo, getIndexHtmlUrl, openPlunker } from './helpers';
-import { doOnEnter } from '../key-handlers';
-import isServerSideRendering from '../../utils/is-server-side-rendering';
+import { doOnEnter } from 'components/key-handlers';
+import isServerSideRendering from 'utils/is-server-side-rendering';
 import { getIndexHtml } from './index-html-helper';
-import anchorIcon from '../../images/anchor';
+import anchorIcon from 'images/anchor';
 import styles from './ExampleRunner.module.scss';
 
 const writeIndexHtmlFiles = exampleInfo => {

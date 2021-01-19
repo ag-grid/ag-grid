@@ -1,8 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
 import { useImageFileNodes, getImage } from './use-image-file-nodes';
-import isServerSideRendering from '../utils/is-server-side-rendering';
-import isDevelopment from '../utils/is-development';
+import isServerSideRendering from 'utils/is-server-side-rendering';
+import isDevelopment from 'utils/is-development';
 import styles from './Gif.module.scss';
 
 const Gif = ({ pageName, src, alt, autoPlay, className, wrapped, children, ...props }) => {

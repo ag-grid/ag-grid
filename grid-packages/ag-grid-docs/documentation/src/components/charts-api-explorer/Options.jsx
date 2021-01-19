@@ -4,7 +4,7 @@ import { formatJson } from './utils.jsx';
 import * as Config from './config.jsx';
 import { CodeSnippet } from './CodeSnippet.jsx';
 import styles from './Options.module.scss';
-import { doOnEnter } from '../key-handlers.js';
+import { doOnEnter } from 'components/key-handlers.js';
 
 const getType = value => {
     if (value == null) {

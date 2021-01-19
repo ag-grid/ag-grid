@@ -4,7 +4,7 @@ import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
 import { localPrefix, agGridVersion, agChartsVersion } from './consts';
 import { getCssFilePaths, isUsingPublishedPackages } from './helpers';
-import isDevelopment from '../../utils/is-development';
+import isDevelopment from 'utils/is-development';
 import Scripts from './Scripts';
 import Styles from './Styles';
 

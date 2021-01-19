@@ -1,10 +1,10 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { withPrefix } from 'gatsby';
-import { getHeaderTitle } from '../utils/page-header';
-import fwLogos from '../images/fw-logos';
-import supportedFrameworks from '../utils/supported-frameworks';
-import MenuView from '../components/menu-view/MenuView';
+import { getHeaderTitle } from 'utils/page-header';
+import fwLogos from 'images/fw-logos';
+import supportedFrameworks from 'utils/supported-frameworks';
+import MenuView from 'components/menu-view/MenuView';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './home.module.scss';
 

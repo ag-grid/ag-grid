@@ -1,9 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import DocumentationLink from './DocumentationLink';
-import thinksterPng from '../images/thinkster.png';
-import communitySvg from '../images/community.svg';
-import enterpriseSvg from '../images/enterprise.svg';
+import thinksterPng from 'images/thinkster.png';
+import communitySvg from 'images/community.svg';
+import enterpriseSvg from 'images/enterprise.svg';
 import { Announcement } from './Announcement';
 import styles from './Announcements.module.scss';
 

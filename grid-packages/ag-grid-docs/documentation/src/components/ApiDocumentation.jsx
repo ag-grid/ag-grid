@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import Prism from 'prismjs';
 import { useJsonFileNodes } from './use-json-file-nodes';
-import anchorIcon from '../images/anchor';
+import anchorIcon from 'images/anchor';
 import styles from './ApiDocumentation.module.scss';
 
 export const ApiDocumentation = ({ pageName, source, sources, section, names = [], config = {} }) => {

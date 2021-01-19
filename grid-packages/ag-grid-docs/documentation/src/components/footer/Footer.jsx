@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import footerItems from './footerItems.json';
-import DocumentationLink from '../DocumentationLink';
+import footerItems from './footer-items.json';
+import DocumentationLink from 'components/DocumentationLink';
 import styles from './Footer.module.scss';
 
 const SocialMediaButtons = () => (

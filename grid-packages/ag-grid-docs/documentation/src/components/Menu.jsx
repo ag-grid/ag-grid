@@ -3,7 +3,7 @@ import { Link } from 'gatsby';
 import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import Announcements from '../components/Announcements';
+import Announcements from 'components/Announcements';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
 

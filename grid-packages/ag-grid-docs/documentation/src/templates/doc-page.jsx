@@ -3,24 +3,24 @@ import { Helmet } from 'react-helmet';
 import { graphql } from 'gatsby';
 import rehypeReact from 'rehype-react';
 import classnames from 'classnames';
-import ExampleRunner from '../components/example-runner/ExampleRunner';
-import SideMenu from '../components/SideMenu';
-import processFrameworkSpecificSections from '../utils/framework-specific-sections';
-import { getPageName } from '../utils/get-page-name';
-import { getHeaderTitle } from '../utils/page-header';
-import { ApiDocumentation } from '../components/ApiDocumentation';
-import { Snippet } from '../components/snippet/Snippet';
-import FeatureOverview from '../components/FeatureOverview';
-import IconsPanel from '../components/IconsPanel';
-import ImageCaption from '../components/ImageCaption';
+import ExampleRunner from 'components/example-runner/ExampleRunner';
+import SideMenu from 'components/SideMenu';
+import processFrameworkSpecificSections from 'utils/framework-specific-sections';
+import { getPageName } from 'utils/get-page-name';
+import { getHeaderTitle } from 'utils/page-header';
+import { ApiDocumentation } from 'components/ApiDocumentation';
+import { Snippet } from 'components/snippet/Snippet';
+import FeatureOverview from 'components/FeatureOverview';
+import IconsPanel from 'components/IconsPanel';
+import ImageCaption from 'components/ImageCaption';
+import MatrixTable from 'components/MatrixTable';
+import VideoSection from 'components/VideoSection';
+import VideoLink from 'components/VideoLink';
+import ChartGallery from 'components/chart-gallery/ChartGallery';
+import ChartsApiExplorer from 'components/charts-api-explorer/ChartsApiExplorer';
+import { ListItem } from 'components/ListItem';
+import Gif from 'components/Gif';
 import styles from './doc-page.module.scss';
-import MatrixTable from '../components/MatrixTable';
-import VideoSection from '../components/VideoSection';
-import VideoLink from '../components/VideoLink';
-import ChartGallery from '../components/chart-gallery/ChartGallery';
-import ChartsApiExplorer from '../components/charts-api-explorer/ChartsApiExplorer';
-import { ListItem } from '../components/ListItem';
-import Gif from '../components/Gif';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
@@ -39,7 +39,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     options: props.options != null ? JSON.parse(props.options) : undefined
   });
 
-  const getSnippetProps = props => ({...props, framework});
+  const getSnippetProps = props => ({ ...props, framework });
 
   const renderAst = new rehypeReact({
     createElement: React.createElement,

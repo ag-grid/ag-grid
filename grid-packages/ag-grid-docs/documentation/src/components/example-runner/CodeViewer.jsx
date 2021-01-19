@@ -8,9 +8,9 @@ import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
-import isServerSideRendering from '../../utils/is-server-side-rendering';
+import isServerSideRendering from 'utils/is-server-side-rendering';
 import { getEntryFile, getExampleFiles } from './helpers';
-import { doOnEnter } from '../key-handlers';
+import { doOnEnter } from 'components/key-handlers';
 import styles from './CodeViewer.module.scss';
 
 const updateFiles = (exampleInfo, setFiles, setActiveFile) => {

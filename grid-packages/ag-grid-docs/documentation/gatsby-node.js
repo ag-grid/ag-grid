@@ -1,5 +1,4 @@
 const path = require('path');
-const express = require('express');
 const { createFilePath } = require('gatsby-source-filesystem');
 const { CODES, prefixId } = require('gatsby-source-filesystem/error-utils');
 const { GraphQLString } = require('gatsby/graphql');
@@ -222,17 +221,16 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
     });
 };
 
-/* This allows HTML files from the static folder to be served in development mode */
-exports.onCreateDevServer = ({ app }) => {
-    app.use(express.static(`public`));
-};
-
-/* We use fs to write some files during the build, but fs is only available at compile time. This allows the site to
- * load at runtime by providing a dummy fs */
 exports.onCreateWebpackConfig = ({ actions }) => {
     actions.setWebpackConfig({
+        /* We use fs to write some files during the build, but fs is only available at compile time. This allows the
+         * site to load at runtime by providing a dummy fs */
         node: {
             fs: 'empty',
+        },
+        resolve: {
+            // add src folder as default root for imports
+            modules: [path.resolve(__dirname, 'src'), 'node_modules'],
         }
     });
 };

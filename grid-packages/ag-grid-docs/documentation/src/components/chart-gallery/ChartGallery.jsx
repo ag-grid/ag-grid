@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import chartGallery from '../../../doc-pages/charts/gallery.json';
 import thumbnails from './thumbnails';
-import toKebabCase from '../../utils/to-kebab-case';
+import toKebabCase from 'utils/to-kebab-case';
 import styles from './ChartGallery.module.scss';
 
 const ChartGallery = () => {
