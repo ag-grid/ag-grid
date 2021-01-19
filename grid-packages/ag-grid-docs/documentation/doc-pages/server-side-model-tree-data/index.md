@@ -104,8 +104,8 @@ explained in the [SSRM Refresh](../server-side-model-refresh/).
 
 The example below shows this in action where the following can be noted:
 
-- Click **Purge Everything** to clear all caches by calling `gridOptions.api.purgeServerSideCache([])`.
-- Click **Purge ['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `gridOptions.api.purgeServerSideCache(['Kathryn Powers','Mabel Ward'])`.
+- Click **Purge Everything** to clear all caches by calling `gridOptions.api.refreshServerSideStore({ route: [], purge: true })`.
+- Click **Purge ['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `gridOptions.api.refreshServerSideStore({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
 
 <grid-example title='Purging Tree Data' name='purging-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["lodash"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
