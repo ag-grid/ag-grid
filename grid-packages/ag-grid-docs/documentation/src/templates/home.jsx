@@ -36,7 +36,6 @@ const flatRenderItems = (items, framework) => {
         if (!curr.items) { return ret; }
 
         return ret.concat(flatRenderItems(curr.items, framework));
-
     }, []);
 };
 

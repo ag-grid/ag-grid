@@ -1,16 +1,12 @@
 import supportedFrameworks from "../../utils/supported-frameworks";
-import renderer from "react-test-renderer";
 import { Snippet } from "./Snippet";
 import React from "react";
+import { transform } from './snippetTransformer';
 
 // Utility method used by test suites to verify snippets match saved snapshots for all frameworks
 const runSnippetFrameworkTests = snippetToTest => {
     it.each(supportedFrameworks)(`it should create '%s' snippets`, framework => {
-        const generatedSnippet =
-            renderer
-                .create(<Snippet framework={framework}>{snippetToTest}</Snippet>)
-                .toJSON();
-
+        const generatedSnippet = transform(snippetToTest, framework);
         expect(generatedSnippet).toMatchSnapshot();
     });
 }

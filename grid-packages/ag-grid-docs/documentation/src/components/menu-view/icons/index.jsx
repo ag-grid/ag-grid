@@ -16,6 +16,7 @@ import scrollSvg from './icon-scroll.svg'
 import selectionSvg from './icon-selection.svg'
 import styleSvg from './icon-style.svg'
 import testSvg from './icon-test.svg'
+import miscSvg from './icon-misc.svg'
 
 const icons = {
     accessories: accessoriesSvg,
@@ -36,6 +37,7 @@ const icons = {
     selection: selectionSvg,
     style: styleSvg,
     test: testSvg,
+    misc: miscSvg,
 }
 
 export default icons;

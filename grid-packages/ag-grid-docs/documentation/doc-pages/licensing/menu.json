@@ -8,43 +8,7 @@
         "items": [
           {
             "title": "Tutorial",
-            "url": "../getting-started/",
-            "frameworks": [
-              "javascript",
-              "angular",
-              "react",
-              "vue"
-            ],
-            "items": [
-              {
-                "title": "Material Components",
-                "url": "../material-design/",
-                "frameworks": [
-                  "angular"
-                ]
-              },
-              {
-                "title": "Use with RxJS",
-                "url": "../angular-rxjs/",
-                "frameworks": [
-                  "angular"
-                ]
-              },
-              {
-                "title": "Hooks & Functional Components",
-                "url": "../react-hooks/",
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
-                "title": "Components & Markup",
-                "url": "../framework-misc/",
-                "frameworks": [
-                  "vue"
-                ]
-              }
-            ]
+            "url": "../getting-started/"
           },
           {
             "title": "AngularJS",
@@ -1603,12 +1567,12 @@
       },
       {
         "title": "Miscellaneous",
-        "icon": "icon-test",
+        "icon": "icon-misc",
         "matrixExcludeChildren": true,
         "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Vue & Unidirectional Data Flow",
+            "title": "Unidirectional Data Flow",
             "url": "../framework-data-flow/",
             "showInCollapsed": true,
             "frameworks": [
@@ -1630,7 +1594,8 @@
             "frameworks": [
               "react"
             ]
-          },              {
+          },
+          {
             "title": "Redux Integration Part 1",
             "url": "../redux-integration-pt1/",
             "showInCollapsed": true,
@@ -1653,8 +1618,40 @@
             "frameworks": [
               "react"
             ]
+          },
+          {
+            "title": "Material Components",
+            "url": "../material-design/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
+            "title": "Use with RxJS",
+            "url": "../angular-rxjs/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
+            "title": "Hooks & Functional Components",
+            "url": "../react-hooks/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "Components & Markup",
+            "url": "../framework-misc/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "vue"
+            ]
           }
-       ]
+        ]
       }
     ]
   }

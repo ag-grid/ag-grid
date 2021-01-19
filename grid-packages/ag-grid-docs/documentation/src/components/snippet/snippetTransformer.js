@@ -1,20 +1,55 @@
+import { parseScript } from 'esprima';
 import {
     createColDefSnippet,
     createReactColDefSnippet,
     getName,
-    getValue,
     getReactValue,
+    getValue,
     isArrayProperty,
     isLiteralProperty,
     isObjectProperty,
     tab,
 } from "./snippetUtils";
 
-export const transform = (framework, tree) => {
+export const transform = (snippet, framework) => {
+    // create syntax tree from supplied snippet and associate comments with each node
+    const tree = addCommentsToTree(parseScript(snippet, {comment: true, loc: true}));
+
     return framework === 'angular' ? new AngularTransformer().transform(tree) :
         framework === 'react' ? new ReactTransformer().transform(tree) :
             framework === 'vue' ? new VueTransformer().transform(tree) :
                 new JavascriptTransformer().transform(tree);
+}
+
+const addCommentsToTree = tree => {
+    const isVarDeclaration = node => node.type === 'VariableDeclaration' && Array.isArray(node.declarations);
+
+    // store comments with locations for easy lookup
+    const commentsMap = tree.comments.reduce((acc, comment) => {
+        acc[comment.loc.start.line] = comment.value;
+        return acc;
+    }, {});
+
+    // decorate nodes with comments
+    const parseTree = node => {
+        if (Array.isArray(node)) {
+            node.forEach(n => parseTree(n));
+        } else if (isVarDeclaration(node)) {
+            node.declarations.forEach(n => parseTree(n));
+        } else {
+            node.comment = commentsMap[node.loc.start.line - 1];
+            if (isObjectProperty(node)) {
+                parseTree(node.value.properties);
+            }
+        }
+    }
+
+    // simpler and faster to start here
+    const root = tree.body[0].declarations[0].init.properties;
+
+    parseTree(root);
+
+    return root;
 }
 
 // The SnippetTransformer is based around the 'Template Method' design pattern
