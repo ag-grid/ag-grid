@@ -7,7 +7,8 @@
   "scripts": {
     "generate-examples": "cd .. && node dev-server.js generate-examples && cd documentation",
     "build": "npm run clean",
-    "package": "npm run generate-examples && npm run clean && npx gatsby build --prefix-paths",
+    "package": "npm run generate-examples && npm run publish",
+    "publish": "npm run clean && npx gatsby build --prefix-paths",
     "develop": "npx gatsby develop -H 0.0.0.0",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run develop",
@@ -16,7 +17,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@fontsource/roboto": "4.1.0",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
     "@fortawesome/free-solid-svg-icons": "5.15.2",
     "@fortawesome/react-fontawesome": "0.1.14",
@@ -76,6 +76,6 @@
     "identity-obj-proxy": "3.0.0",
     "jest": "26.6.3",
     "prettier": "2.2.1",
-    "react-test-renderer": "17.0.1"
+    "react-test-renderer": "16.14.0"
   }
 }

@@ -1,13 +1,8 @@
 import { navigate, withPrefix } from 'gatsby';
-import { LocalStorage } from './src/utils/local-storage';
-import supportedFrameworks from './src/utils/supported-frameworks.js';
-import 'jquery/dist/jquery.min.js';
-import 'popper.js/dist/popper.min.js';
-import 'bootstrap/dist/js/bootstrap.min.js';
-import '@fortawesome/fontawesome-svg-core/styles.css';
+import { LocalStorage } from 'utils/local-storage';
+import supportedFrameworks from 'utils/supported-frameworks.js';
 import './src/bootstrap.scss';
 import './src/themes/prism-coy-without-shadows.css';
-import '@fontsource/roboto';
 
 const frameworkStorageKey = 'framework';
 const getRelativePath = path => path.replace(withPrefix('/'), '/');
