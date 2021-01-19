@@ -95,7 +95,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 .catch((e) => {
                     _.doOnce(() => {
                         console.warn(e);
-                        console.warn('ag-Grid: The Clipboard API could not be used due to environment restriction, defaulted to legacy mode. You should set `suppressClipboardApi=true` in the gridOptions.');
+                        console.warn('ag-Grid: The Clipboard API could not be used due to environment restrictions, defaulted to legacy mode. You should set `suppressClipboardApi=true` in the gridOptions.');
                     }, 'clipboardApi');
                     this.pasteFromClipboardLegacy();
                 });
@@ -691,7 +691,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             navigator.clipboard.writeText(data).catch((e) => {
                 _.doOnce(() => {
                     console.warn(e);
-                    console.warn('ag-Grid: The Clipboard API could not be used due to environment restriction, defaulted to legacy mode. You should set `suppressClipboardApi=true` in the gridOptions.');
+                    console.warn('ag-Grid: The Clipboard API could not be used due to environment restrictions, defaulted to legacy mode. You should set `suppressClipboardApi=true` in the gridOptions.');
                 }, 'clipboardApi');
                 this.copyDataToClipboardLegacy(data);
             });
