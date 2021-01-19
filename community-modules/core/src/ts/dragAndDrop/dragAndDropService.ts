@@ -475,7 +475,8 @@ export class DragAndDropService extends BeanStub {
         this.eGhost.style.left = '20px';
 
         const usrDocument = this.gridOptionsWrapper.getDocument();
-        this.eGhostParent = usrDocument.querySelector('body') as HTMLElement;
+        const targetEl = usrDocument.fullscreenElement || usrDocument.querySelector('body');
+        this.eGhostParent = targetEl as HTMLElement;
 
         if (!this.eGhostParent) {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
