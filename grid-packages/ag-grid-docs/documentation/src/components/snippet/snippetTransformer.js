@@ -27,13 +27,13 @@ class SnippetTransformer {
         if (Array.isArray(tree)) {
             return tree.map(node => this.parse(node, depth + 1)).join('');
         } else if (isLiteralProperty(tree)) {
-            return this.addComment(tree) + this.parseLiteral(tree, depth);
+            return this.addComment(tree, depth) + this.parseLiteral(tree, depth);
 
         } else if (isArrayProperty(tree)) {
-            return this.addComment(tree) + this.parseArray(tree, depth);
+            return this.addComment(tree, depth) + this.parseArray(tree, depth);
 
         } else if (isObjectProperty(tree)) {
-            return this.addComment(tree) + this.parseObject(tree, depth);
+            return this.addComment(tree, depth) + this.parseObject(tree, depth);
         }
     }
 }
@@ -44,7 +44,7 @@ class JavascriptTransformer extends SnippetTransformer {
     }
     parseArray(property, depth) {
         if (getName(property) === 'columnDefs') {
-            let res = `${tab(depth)}columnDefs: [`;
+            let res = `${tab(depth)}${getName(property)}: [`;
             res += createColDefSnippet(property.value.elements, 2);
             res += `,\n${tab(depth)}],`;
             return res;
@@ -61,8 +61,8 @@ class JavascriptTransformer extends SnippetTransformer {
     addFrameworkContext(result) {
         return `const gridOptions = {${result}\n}`;
     }
-    addComment(property) {
-        return property.comment ? `\n${tab(1)}//${property.comment}\n` : '\n';
+    addComment(property, depth) {
+        return property.comment ? `\n${tab(depth)}//${property.comment}\n` : '\n';
     }
 }
 
@@ -99,8 +99,8 @@ class AngularTransformer extends SnippetTransformer {
             '</ag-grid-angular>\n' +
             result;
     }
-    addComment(property) {
-        return property.comment ? `\n//${property.comment}\n` : '\n';
+    addComment(property, depth) {
+        return property.comment ? `\n${tab(depth-1)}//${property.comment}\n` : '\n';
     }
 }
 
@@ -131,7 +131,7 @@ class ReactTransformer extends SnippetTransformer {
         }
     }
     parseObject(property, depth) {
-        let res = property.comment ? `\n\t//${property.comment}` : '';
+        let res = property.comment ? `\n${tab(depth)}//${property.comment}` : '';
         res += `\n${tab(depth)}${getName(property)}: {`;
         res += property.value.properties.map(prop => this.createLiteralSnippet(prop, depth + 1)).join(',');
         res += `\n${tab(depth)}},`;
@@ -154,7 +154,7 @@ class ReactTransformer extends SnippetTransformer {
     }
 
     createLiteralSnippet(property, depth) {
-        let res = property.comment ? `\n\t//${property.comment}` : '';
+        let res = property.comment ? `\n${tab(depth)}//${property.comment}` : '';
         return res + `\n${tab(depth)}${getName(property)}=${getReactValue(property)}`;
     }
 }

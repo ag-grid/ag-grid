@@ -3,6 +3,7 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript';
 import { parseScript } from 'esprima';
 import { transform } from './snippetTransformer';
+import { isObjectProperty } from "./snippetUtils";
 
 export const Snippet = props => {
     const snippetToTransform = props.children.toString();
@@ -39,6 +40,9 @@ const addCommentsToTree = tree => {
             node.declarations.forEach(n => parseTree(n));
         } else {
             node.comment = commentsMap[node.loc.start.line - 1];
+            if (isObjectProperty(node)) {
+                parseTree(node.value.properties);
+            }
         }
     }
 

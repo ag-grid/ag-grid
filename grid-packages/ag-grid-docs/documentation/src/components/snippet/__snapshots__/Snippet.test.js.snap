@@ -9,6 +9,7 @@ exports[`Snippet given a mix of different properties it should create 'angular' 
       Object {
         "__html": "<span class=\\"token operator\\">&lt;</span>ag<span class=\\"token operator\\">-</span>grid<span class=\\"token operator\\">-</span>angular
     <span class=\\"token punctuation\\">[</span>columnDefs<span class=\\"token punctuation\\">]</span><span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"columnDefs\\"</span>
+    <span class=\\"token punctuation\\">[</span>defaultColDef<span class=\\"token punctuation\\">]</span><span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"defaultColDef\\"</span>
     <span class=\\"token punctuation\\">[</span>rowHeight<span class=\\"token punctuation\\">]</span><span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"rowHeight\\"</span>
     <span class=\\"token punctuation\\">[</span>rowDragManaged<span class=\\"token punctuation\\">]</span><span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"rowDragManaged\\"</span>
     <span class=\\"token punctuation\\">[</span>rowSelection<span class=\\"token punctuation\\">]</span><span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"rowSelection\\"</span>
@@ -21,6 +22,11 @@ exports[`Snippet given a mix of different properties it should create 'angular' 
     <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'B'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'b'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
     <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
 <span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">;</span>
+<span class=\\"token comment\\">// object property</span>
+<span class=\\"token keyword\\">this</span><span class=\\"token punctuation\\">.</span>defaultColDef<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">{</span>
+    <span class=\\"token comment\\">// set every column width</span>
+    width<span class=\\"token operator\\">:</span> <span class=\\"token number\\">100</span><span class=\\"token punctuation\\">,</span>
+<span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">;</span>
 <span class=\\"token comment\\">// numeric property</span>
 <span class=\\"token keyword\\">this</span><span class=\\"token punctuation\\">.</span>rowHeight <span class=\\"token operator\\">=</span> <span class=\\"token number\\">50</span><span class=\\"token punctuation\\">;</span>
 <span class=\\"token comment\\">// boolean property</span>
@@ -47,6 +53,11 @@ exports[`Snippet given a mix of different properties it should create 'javascrip
         <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'B'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'b'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
         <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
     <span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">,</span>
+    <span class=\\"token comment\\">// object property</span>
+    defaultColDef<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">{</span>
+        <span class=\\"token comment\\">// set every column width</span>
+        width<span class=\\"token operator\\">:</span> <span class=\\"token number\\">100</span><span class=\\"token punctuation\\">,</span>
+    <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
     <span class=\\"token comment\\">// numeric property</span>
     rowHeight<span class=\\"token operator\\">:</span> <span class=\\"token number\\">50</span><span class=\\"token punctuation\\">,</span>
     <span class=\\"token comment\\">// boolean property</span>
@@ -68,11 +79,16 @@ exports[`Snippet given a mix of different properties it should create 'react' sn
     dangerouslySetInnerHTML={
       Object {
         "__html": "<span class=\\"token operator\\">&lt;</span>AgGridReact
-	<span class=\\"token comment\\">// numeric property</span>
+    <span class=\\"token comment\\">// object property</span>
+    defaultColDef<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">{</span>
+        <span class=\\"token comment\\">// set every column width</span>
+        width<span class=\\"token operator\\">=</span><span class=\\"token punctuation\\">{</span><span class=\\"token number\\">100</span><span class=\\"token punctuation\\">}</span>
+    <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
+    <span class=\\"token comment\\">// numeric property</span>
     rowHeight<span class=\\"token operator\\">=</span><span class=\\"token punctuation\\">{</span><span class=\\"token number\\">50</span><span class=\\"token punctuation\\">}</span>
-	<span class=\\"token comment\\">// boolean property</span>
+    <span class=\\"token comment\\">// boolean property</span>
     rowDragManaged<span class=\\"token operator\\">=</span><span class=\\"token punctuation\\">{</span><span class=\\"token boolean\\">true</span><span class=\\"token punctuation\\">}</span>
-	<span class=\\"token comment\\">// string property</span>
+    <span class=\\"token comment\\">// string property</span>
     rowSelection<span class=\\"token operator\\">=</span><span class=\\"token string\\">'single'</span>
     <span class=\\"token comment\\">// other grid options ...</span>
 <span class=\\"token operator\\">></span>
@@ -96,6 +112,7 @@ exports[`Snippet given a mix of different properties it should create 'vue' snip
       Object {
         "__html": "<span class=\\"token operator\\">&lt;</span>ag<span class=\\"token operator\\">-</span>grid<span class=\\"token operator\\">-</span>vue
     <span class=\\"token operator\\">:</span>columnDefs<span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"columnDefs\\"</span>
+    <span class=\\"token operator\\">:</span>defaultColDef<span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"defaultColDef\\"</span>
     <span class=\\"token operator\\">:</span>rowHeight<span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"rowHeight\\"</span>
     <span class=\\"token operator\\">:</span>rowDragManaged<span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"rowDragManaged\\"</span>
     <span class=\\"token operator\\">:</span>rowSelection<span class=\\"token operator\\">=</span><span class=\\"token string\\">\\"rowSelection\\"</span>
@@ -108,6 +125,11 @@ exports[`Snippet given a mix of different properties it should create 'vue' snip
     <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'B'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'b'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
     <span class=\\"token punctuation\\">{</span> headerName<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'C'</span><span class=\\"token punctuation\\">,</span> field<span class=\\"token operator\\">:</span> <span class=\\"token string\\">'c'</span> <span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">,</span>
 <span class=\\"token punctuation\\">]</span><span class=\\"token punctuation\\">;</span>
+<span class=\\"token comment\\">// object property</span>
+<span class=\\"token keyword\\">this</span><span class=\\"token punctuation\\">.</span>defaultColDef<span class=\\"token operator\\">:</span> <span class=\\"token punctuation\\">{</span>
+    <span class=\\"token comment\\">// set every column width</span>
+    width<span class=\\"token operator\\">:</span> <span class=\\"token number\\">100</span><span class=\\"token punctuation\\">,</span>
+<span class=\\"token punctuation\\">}</span><span class=\\"token punctuation\\">;</span>
 <span class=\\"token comment\\">// numeric property</span>
 <span class=\\"token keyword\\">this</span><span class=\\"token punctuation\\">.</span>rowHeight <span class=\\"token operator\\">=</span> <span class=\\"token number\\">50</span><span class=\\"token punctuation\\">;</span>
 <span class=\\"token comment\\">// boolean property</span>
