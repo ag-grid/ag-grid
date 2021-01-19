@@ -1,7 +1,7 @@
 import { withPrefix } from 'gatsby';
 import { encodeQueryParams } from 'use-query-params';
 import { stringify } from 'query-string';
-import { agGridVersion, localPrefix, getLocalPrefix } from './consts';
+import { agGridVersion, localPrefix } from './consts';
 import { getIndexHtml } from './index-html-helper';
 import { ParameterConfig } from '../../pages/example-runner';
 import isDevelopment from '../../utils/is-development';
@@ -160,14 +160,7 @@ export const openPlunker = exampleInfo => {
         addHiddenInput('description', title);
 
         Object.keys(files).forEach(key => {
-            let { source } = files[key];
-
-            if (isDevelopment() && window.location) {
-                // swap out to match hostname so Plunkers from localhost can be shared
-                source = source.replace(new RegExp(localPrefix, 'g'), getLocalPrefix(`${window.location.hostname}:8080`));
-            }
-
-            addHiddenInput(`files[${key}]`, source);
+            addHiddenInput(`files[${key}]`, files[key].source);
         });
 
         document.body.appendChild(form);
