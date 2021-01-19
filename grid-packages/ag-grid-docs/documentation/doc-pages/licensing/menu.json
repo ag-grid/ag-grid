@@ -8,13 +8,7 @@
         "items": [
           {
             "title": "Tutorial",
-            "url": "../getting-started/",
-            "frameworks": [
-              "javascript",
-              "angular",
-              "react",
-              "vue"
-            ]
+            "url": "../getting-started/"
           },
           {
             "title": "AngularJS",
@@ -1600,7 +1594,8 @@
             "frameworks": [
               "react"
             ]
-          },              {
+          },
+          {
             "title": "Redux Integration Part 1",
             "url": "../redux-integration-pt1/",
             "showInCollapsed": true,
@@ -1656,7 +1651,7 @@
               "vue"
             ]
           }
-       ]
+        ]
       }
     ]
   }
