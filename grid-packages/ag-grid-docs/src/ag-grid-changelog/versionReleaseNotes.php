@@ -175,8 +175,8 @@
     <ul>
         <li>Column stateful items (width, flex, hide, sort, aggFunc, pivot, pivotIndex, rowGroup, rowGroupIndex, initialPinned) always get re-applied when Column Definitions are updated.</li>
         <li>Grid Property 'immutableColumns' is now gone. Columns are immutable by default.</li>
-        <li>Grid API 'getColumnState()' now returns back more information about columns. This is only a breaking change if your application isn't able to work with the extra details.</li>
-        <li>Grid API 'setColumnsState()' is replaced with 'applyColumnState()'. The new method is similar but more powerful / flexible.</li>
+        <li>Grid Column API 'getColumnState()' now returns back more information about columns. This is only a breaking change if your application isn't able to work with the extra details.</li>
+        <li>Grid Column API 'setColumnsState()' is replaced with 'applyColumnState()'. The new method is similar but more powerful / flexible.</li>
         <li>Grid Property 'suppressSetColumnStateEvents' renamed to 'suppressColumnStateEvents'.</li>
         <li>Column Definition property sortedAt replaced with sortIndex.</li>
         <li>Grid API's 'getSortModel()' and 'setSortModel()' are deprecated as sort information is now part of Column State. Use get/applyColumnState() for sort information instead.</li>
