@@ -92,12 +92,19 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.readText()
                 .then(this.processClipboardData.bind(this))
-                .catch(() => {
-                    // no processing, if fails, do nothing, paste doesn't happen
+                .catch((e) => {
+                    _.doOnce(() => {
+                        console.warn(e);
+                        console.warn('ag-Grid: The Clipboard API could not be used due to environment restriction, defaulted to legacy mode. You should set `suppressClipboardApi=true` in the gridOptions.');
+                    }, 'clipboardApi');
+                    this.pasteFromClipboardLegacy();
                 });
-            return;
+        } else {
+            this.pasteFromClipboardLegacy();
         }
+    }
 
+    private pasteFromClipboardLegacy(): void {
         // Method 2 - if modern API fails, the old school hack
         this.executeOnTempElement(
             (textArea: HTMLTextAreaElement) => textArea.focus(),
@@ -681,12 +688,20 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // method 2 - native clipboard API, available in modern chrome browsers
         const allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
         if (allowNavigator && navigator.clipboard) {
-            navigator.clipboard.writeText(data).catch(() => {
-                // no processing, if fails, do nothing, copy doesn't happen
+            navigator.clipboard.writeText(data).catch((e) => {
+                _.doOnce(() => {
+                    console.warn(e);
+                    console.warn('ag-Grid: The Clipboard API could not be used due to environment restriction, defaulted to legacy mode. You should set `suppressClipboardApi=true` in the gridOptions.');
+                }, 'clipboardApi');
+                this.copyDataToClipboardLegacy(data);
             });
             return;
         }
 
+        this.copyDataToClipboardLegacy(data);
+    }
+
+    private copyDataToClipboardLegacy(data: string): void {
         // method 3 - if all else fails, the old school hack
         this.executeOnTempElement(element => {
             const focusedElementBefore = this.gridOptionsWrapper.getDocument().activeElement as HTMLElement;
