@@ -89,7 +89,10 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // Method 1 - native clipboard API, available in modern chrome browsers
         const allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
-        if (allowNavigator && navigator.clipboard) {
+        // Some browsers (Firefox) do not allow Web Applications to read from 
+        // the clipboard so verify if not only the ClipboardAPI is available, 
+        // but also if the `readText` method is public.
+        if (allowNavigator && navigator.clipboard && navigator.clipboard.readText) {
             navigator.clipboard.readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
