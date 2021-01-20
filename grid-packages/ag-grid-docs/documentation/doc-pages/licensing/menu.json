@@ -1107,6 +1107,15 @@
                 "box-title": "Tooltip",
                 "url": "../component-tooltip/",
                 "showInCollapsed": true
+              },
+              {
+                "title": "Styling Components",
+                "box-title": "Tooltip",
+                "url": "../component-styling/",
+                "showInCollapsed": true,
+                "frameworks": [
+                  "react"
+                ]
               }
             ]
           }
@@ -1580,7 +1589,7 @@
             ]
           },
           {
-            "title": "Context API & Redux",
+            "title": "Context API & HOC",
             "url": "../framework-apis/",
             "showInCollapsed": true,
             "frameworks": [
