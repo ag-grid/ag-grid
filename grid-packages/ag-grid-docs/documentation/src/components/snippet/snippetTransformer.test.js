@@ -3,10 +3,17 @@ import { Snippet } from "./Snippet";
 import React from "react";
 import { transform } from './snippetTransformer';
 
-// Utility method used by test suites to verify snippets match saved snapshots for all frameworks
+// Utility method to verify snippets match saved snapshots for all frameworks and options
 const runSnippetFrameworkTests = snippetToTest => {
+    // with framework context (suppressFrameworkContext = false)
     it.each(supportedFrameworks)(`it should create '%s' snippets`, framework => {
-        const generatedSnippet = transform(snippetToTest, framework);
+        const generatedSnippet = transform(snippetToTest, framework, {suppressFrameworkContext: false});
+        expect(generatedSnippet).toMatchSnapshot();
+    });
+
+    // without framework context (suppressFrameworkContext = true)
+    it.each(supportedFrameworks)(`it should create '%s' snippets without framework context`, framework => {
+        const generatedSnippet = transform(snippetToTest, framework, {suppressFrameworkContext: true});
         expect(generatedSnippet).toMatchSnapshot();
     });
 }
@@ -25,7 +32,6 @@ describe('Snippet', () => {
             }`
         );
     });
-
     describe('given column definitions with group columns', () => {
         runSnippetFrameworkTests(
             `const gridOptions = {
@@ -35,8 +41,8 @@ describe('Snippet', () => {
                         headerName: 'G1',
                         children: [
                             { headerName: 'C1', field: 'c1' },
-                            { 
-                                headerName: 'G2', 
+                            {
+                                headerName: 'G2',
                                 children: [
                                     { headerName: 'C2', field: 'c2' },
                                     { headerName: 'C3', field: 'c3' },
@@ -49,7 +55,6 @@ describe('Snippet', () => {
             }`
         );
     });
-
     describe('given a mix of different properties', () => {
         runSnippetFrameworkTests(
             `const gridOptions = {

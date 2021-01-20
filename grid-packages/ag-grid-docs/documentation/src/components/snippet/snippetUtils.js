@@ -4,7 +4,7 @@ export const isArrayProperty = node => isProperty(node) && node.value.type === '
 export const isObjectProperty = node => isProperty(node) && node.value.type === 'ObjectExpression';
 
 // using spaces rather than tabs for accurate test matching
-export const tab = n => new Array(n*4).fill(' ').join('');
+export const tab = n => n > 0 ? new Array(n*4).fill(' ').join('') : '';
 
 export const getName = node => node.key.name;
 export const getValue = node => {
@@ -29,9 +29,8 @@ export const createColDefSnippet = (tree, depth) => {
             if (isArrayExpr(property)) {
                 const childColDefs = createColDefSnippet(getChildren(property), depth + 2);
                 return `${padding}${name}: [${childColDefs},${padding}],`;
-            } else {
-                return `${padding}${name}: ${value}`;
             }
+            return `${padding}${name}: ${value}`;
         }).join(',');
         r += `\n${tab(depth)}}`;
         return r;
@@ -55,10 +54,9 @@ export const createReactColDefSnippet = (tree, depth) => {
         r += childColDefs;
         r += `\n${tab(depth)}</AgGridColumn>`;
         return r;
-    } else {
-        const colProps = tree.properties.map(property => `${getName(property)}=${getReactValue(property)}`);
-        return `\n${tab(depth)}<AgGridColumn ${colProps.join(' ')} />`;
     }
+    const colProps = tree.properties.map(property => `${getName(property)}=${getReactValue(property)}`);
+    return `\n${tab(depth)}<AgGridColumn ${colProps.join(' ')} />`;
 }
 
 const isArrayExpr = node => node.value.type === 'ArrayExpression';
