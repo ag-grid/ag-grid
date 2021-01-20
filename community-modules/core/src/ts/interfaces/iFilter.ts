@@ -55,7 +55,7 @@ export interface IFilter {
 }
 
 export interface ProvidedFilterModel {
-    filterType: string;
+    filterType?: string;
 }
 
 export interface IFilterComp extends IFilter, IComponent<IFilterParams> {

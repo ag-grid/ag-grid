@@ -1,4 +1,4 @@
-import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { Autowired, PostConstruct } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { Constants } from '../../constants/constants';
@@ -28,7 +28,7 @@ export interface IProvidedFilterParams extends IFilterParams {
  * All the filters that come with ag-Grid extend this class. User filters do not
  * extend this class.
  */
-export abstract class ProvidedFilter extends ManagedFocusComponent implements IFilterComp {
+export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements IFilterComp {
     private newRowsActionKeep: boolean;
 
     // each level in the hierarchy will save params with the appropriate type for that level.
@@ -45,7 +45,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
     // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
     // not active) then this appliedModel will be null/undefined.
-    private appliedModel: ProvidedFilterModel | null = null;
+    private appliedModel: T | null = null;
 
     @Autowired('rowModel') protected readonly rowModel: IRowModel;
 
@@ -61,13 +61,13 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
 
-    protected abstract setModelIntoUi(model: ProvidedFilterModel): AgPromise<void>;
-    protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
+    protected abstract setModelIntoUi(model: T): AgPromise<void>;
+    protected abstract areModelsEqual(a: T, b: T): boolean;
 
     /** Used to get the filter type for filter models. */
     protected abstract getFilterType(): string;
 
-    public abstract getModelFromUi(): ProvidedFilterModel | null;
+    public abstract getModelFromUi(): T | null;
 
     public getFilterTitle(): string {
         return this.translate(this.filterNameKey);
@@ -226,11 +226,11 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
     }
 
-    public getModel(): ProvidedFilterModel | null {
+    public getModel(): T | null {
         return this.appliedModel;
     }
 
-    public setModel(model: ProvidedFilterModel | null): AgPromise<void> {
+    public setModel(model: T | null): AgPromise<void> {
         const promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
 
         return promise.then(() => {
@@ -279,7 +279,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         return !this.areModelsEqual(previousModel!, newModel!);
     }
 
-    protected isModelValid(model: ProvidedFilterModel): boolean {
+    protected isModelValid(model: T): boolean {
         return true;
     }
 
