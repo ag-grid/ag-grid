@@ -15,14 +15,13 @@ import {
     IAfterGuiAttachedParams,
     AgPromise,
     KeyCode,
-    _
+    _,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
-import { SetFilterModel } from './setFilterModel';
+import { SetFilterModel, SetFilterModelValue } from './setFilterModel';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
-
-export class SetFilter extends ProvidedFilter {
+export class SetFilter extends ProvidedFilter<SetFilterModel> {
     public static SELECT_ALL_VALUE = '__AG_SELECT_ALL__';
 
     @RefSelector('eMiniFilter') private readonly eMiniFilter: AgInputTextField;
@@ -107,7 +106,7 @@ export class SetFilter extends ProvidedFilter {
         return 'set-filter';
     }
 
-    private setModelAndRefresh(values: (string | null)[] | null): AgPromise<void> {
+    private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
         return this.valueModel ? this.valueModel.setModel(values).then(() => this.refresh()) : AgPromise.resolve();
     }
 
@@ -142,7 +141,7 @@ export class SetFilter extends ProvidedFilter {
 
         if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
             // this is a hack, it breaks casting rules, to apply with old model
-            return (values as any) as SetFilterModel;
+            return (values as any);
         }
 
         return { values, filterType: this.getFilterType() };

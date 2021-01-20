@@ -14,6 +14,7 @@ import {
     ProvidedFilter,
     Context,
     FocusController,
+    ProvidedFilterModel,
 } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
@@ -184,7 +185,7 @@ describe('getModelFromUi', () => {
     });
 
     it('includes model from first filter', () => {
-        const providedFilter = mock<ProvidedFilter>('getGui', 'isFilterActive', 'getModelFromUi');
+        const providedFilter = mock<ProvidedFilter<ProvidedFilterModel>>('getGui', 'isFilterActive', 'getModelFromUi');
         providedFilter.getGui.mockReturnValue(document.createElement('div'));
         filter1 = providedFilter;
 
@@ -210,7 +211,7 @@ describe('getModelFromUi', () => {
     });
 
     it('includes model from second filter', () => {
-        const providedFilter = mock<ProvidedFilter>('getGui', 'isFilterActive', 'getModelFromUi');
+        const providedFilter = mock<ProvidedFilter<ProvidedFilterModel>>('getGui', 'isFilterActive', 'getModelFromUi');
         providedFilter.getGui.mockReturnValue(document.createElement('div'));
         filter2 = providedFilter;
 
