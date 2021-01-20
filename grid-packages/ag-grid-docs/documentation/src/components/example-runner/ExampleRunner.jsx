@@ -33,6 +33,13 @@ const writeIndexHtmlFiles = exampleInfo => {
             fs.writeFileSync(`public${modulesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
             fs.writeFileSync(`public${packagesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
         }
+
+        // don't publish the template index.html
+        if (framework === 'javascript') {
+            fs.rmSync(`public${appLocation}../../index.html`);
+        }
+    } else {
+        fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
     }
 };
 

@@ -23,7 +23,7 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
         publicURL: {
             type: GraphQLString,
             args: {},
-            description: `Copy file to static directory and return public url to it`,
+            description: `Copy file to static directory and return public URL to it`,
             resolve: async (file, _, context) => {
                 const details = getNodeAndSavePathDependency(file.id, context.path);
 

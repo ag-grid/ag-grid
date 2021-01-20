@@ -111,11 +111,9 @@ title: "Testing ag-Grid"
 | | If you're testing against a non-Angular application then you need to tell `Protractor`
 | | not to wait for Angular by adding this to either your configuration or your tests: `browser.ignoreSynchronization = true;`
 |
-| For this test we'll testing a simple
-| [JavaScript based grid](https://www.ag-grid.com/example-runner/vanilla.php?section=javascript-grid&example=hello-world) which can be
-| found at the Getting Started -> JavaScript Section:
+| For this sample test we'll be testing this simple example:
 |
-| <image-caption src="testing/resources/example-js.png" alt="ag-Grid Example" maxwidth="50rem" constrained="true"></image-caption>
+| <grid-example title='Hello World' name='hello-world' type='vanilla' options='{ "exampleHeight": "210px" }'></grid-example>
 |
 | ## Checking Headers
 |
@@ -129,7 +127,7 @@ title: "Testing ag-Grid"
 |     browser.ignoreSynchronization = true;
 |
 |     beforeEach(() => {
-|         browser.get("https://www.ag-grid.com/example-runner/vanilla.php?section=javascript-grid&example=hello-world");
+|         browser.get('https://www.ag-grid.com/documentation/examples/testing/hello-world/index.html');
 |     });
 |
 |     it('should have expected column headers', () => {
@@ -837,10 +835,10 @@ title: "Testing ag-Grid"
 | unit testing environment (but could if doing e2e with something like Protractor for example).
 |
 | # Jest Configuration
-| 
+|
 | ### `SyntaxError: Cannot use import statement outside a module`
 |
-| If you experience the error above then depending on your build configuration you may need to exclude either 
+| If you experience the error above then depending on your build configuration you may need to exclude either
 | `ag-grid-vue` or `@ag-grid-community/vue` in your Jest configuration:
 |
 | ```

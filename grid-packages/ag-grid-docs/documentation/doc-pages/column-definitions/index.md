@@ -199,22 +199,22 @@ The following code snippet demonstrates these three properties:
 | ```js
 | const gridOptions = {
 |     rowData: myRowData,
-| 
+|
 |     // define columns
 |     columnDefs: [
 |         // uses the default column properties
 |         { headerName: 'Col A', field: 'a'},
-| 
+|
 |         // overrides the default with a number filter
 |         { headerName: 'Col B', field: 'b', filter: 'agNumberColumnFilter' },
-| 
+|
 |         // overrides the default using a column type
 |         { headerName: 'Col C', field: 'c', type: 'nonEditableColumn' },
-| 
+|
 |         // overrides the default using a multiple column types
 |         { headerName: 'Col D', field: 'd', type: ['dateColumn', 'nonEditableColumn'] }
 |     ],
-| 
+|
 |     // a default column definition with properties that get applied to every column
 |     defaultColDef: {
 |         // set every column width
@@ -224,10 +224,10 @@ The following code snippet demonstrates these three properties:
 |         // make every column use 'text' filter by default
 |         filter: 'agTextColumnFilter'
 |     },
-| 
+|
 |     // if we had column groups, we could provide default group items here
 |     defaultColGroupDef: {}
-| 
+|
 |     // define a column type (you can define as many as you like)
 |     columnTypes: {
 |         'nonEditableColumn': { editable: false },
@@ -237,7 +237,7 @@ The following code snippet demonstrates these three properties:
 |             suppressMenu: true
 |         }
 |     }
-| 
+|
 |     // other grid options ...
 | }
 | ```
@@ -285,17 +285,17 @@ The following code snippet demonstrates these three properties:
 | ```js
 | <AgGridReact
 |     defaultColDef={{
-|         // set every column width 
+|         // set every column width
 |         width: 100,
 |         // make every column editable
 |         editable: true,
 |         // make every column use 'text' filter by default
 |         filter: 'agTextColumnFilter'
 |     }}
-|     
+|
 |     // if we had column groups, we could provide default group items here
 |     defaultColGroupDef = {};
-|     
+|
 |     // define a column type (you can define as many as you like)
 |     columnTypes={{
 |         'nonEditableColumn': { editable: false },
@@ -304,7 +304,7 @@ The following code snippet demonstrates these three properties:
 |             filterParams: { comparator: myDateComparator },
 |             suppressMenu: true,
 |         }
-|  
+|
 |     // other grid options ....
 | >
 |     // uses the default column properties
@@ -342,7 +342,7 @@ For example, the following is an outline of the steps used when creating 'Col C'
 
 The following example demonstrates the different configuration properties in action.
 
-<grid-example title="Column Definition Example" name="column-definition" type="generated"></grid-example>
+<grid-example title='Column Definition Example' name='column-definition' type='generated'></grid-example>
 
 ## Right Aligned and Numeric Columns
 
@@ -392,4 +392,4 @@ In the example below, columns are set up to demonstrate the different ways IDs a
 - Col 3 and Col 4 both use `field`. The grid appends `'_1'` to Col 4 to make the ID unique.
 - Col 5 and Col 6 have neither `colId` or `field` so the grid generates column IDs.
 
-<grid-example title="Column IDs" name="column-ids" type="generated"></grid-example>
+<grid-example title='Column IDs' name='column-ids' type='generated'></grid-example>
