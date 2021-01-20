@@ -10,7 +10,9 @@ const ExampleRunnerPage = ({ query: { pageName, library, framework, useFunctiona
     const exampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, importType, useFunctionalReact);
 
     return <div style={{ height: '100vh', width: '100%' }}>
-        <Helmet title={title} />
+        <Helmet title={title}>
+            <meta name="robots" content="noindex" />
+        </Helmet>
         <ExampleRunnerResult isVisible={true} exampleInfo={exampleInfo} />
     </div>;
 };

@@ -1,17 +1,18 @@
 import React from 'react';
 import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
-import isDevelopment from 'utils/is-development';
 import Scripts from './Scripts';
 import Styles from './Styles';
 import SystemJs from './SystemJs';
+import MetaData from './MetaData';
 
 const VueTemplate = ({ modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
     <html lang="en">
         <head>
-            <title>Vue example{isDevelopment() ? ` (${modifiedTimeMs})` : ''}</title>
+            <MetaData title="Vue example" modifiedTimeMs={modifiedTimeMs} />
             <meta charSet="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <meta name="robots" content="noindex" />
             <ExampleStyle rootId="app" />
             <Styles files={styleFiles} />
             <Extras options={options} />

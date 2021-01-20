@@ -7,13 +7,14 @@ import { getCssFilePaths, isUsingPublishedPackages } from './helpers';
 import isDevelopment from 'utils/is-development';
 import Scripts from './Scripts';
 import Styles from './Styles';
+import MetaData from './MetaData';
 
 const getCacheBustingUrl = (url, timestamp) => `${url}?t=${timestamp}`;
 
 const VanillaTemplate = ({ modifiedTimeMs, library, appLocation, options, scriptFiles, styleFiles, indexFragment }) =>
     <html lang="en">
         <head>
-            <title>JavaScript example{isDevelopment() ? ` (${modifiedTimeMs})` : ''}</title>
+            <MetaData title="JavaScript example" modifiedTimeMs={modifiedTimeMs} />
             <ExampleStyle />
             <VanillaStyles library={library} files={isDevelopment() ? styleFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
             <Extras options={options} />
