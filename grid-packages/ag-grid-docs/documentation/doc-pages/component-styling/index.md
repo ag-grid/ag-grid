@@ -1,5 +1,6 @@
 ---
 title: "Styling Components"
+frameworks: ["react"]
 ---
 
 [[only-react]]

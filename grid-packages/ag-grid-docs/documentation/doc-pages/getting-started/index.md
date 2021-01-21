@@ -1789,7 +1789,7 @@ title: "Get Started with ag-Grid"
 | `my-project` (you may need a new instance of the terminal):
 |
 | ```bash
-| npm install --save ag-grid-community ag-grid-vue vue-property-decorator
+| npm install --save ag-grid-community ag-grid-vue vue-property-decorator@^8.0.0
 | ```
 |
 | After a few seconds of waiting, you should be good to go. Let's get to the actual coding!
