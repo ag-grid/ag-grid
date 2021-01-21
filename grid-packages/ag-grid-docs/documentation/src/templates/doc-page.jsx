@@ -43,7 +43,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
 
   const renderAst = new rehypeReact({
     createElement: React.createElement,
-    fragment: true,
+    Fragment: React.Fragment,
     components: {
       'li': ListItem,
       'gif': props => Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false }),

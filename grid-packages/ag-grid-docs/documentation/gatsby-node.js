@@ -10,6 +10,12 @@ const chartGallery = require('./doc-pages/charts/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 const isDevelopment = require('./src/utils/is-development');
 
+console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+console.log("GATSBY_HOST:", process.env.GATSBY_HOST);
+console.log("GATSBY_ROOT_DIRECTORY:", process.env.GATSBY_ROOT_DIRECTORY);
+console.log("GATSBY_USE_PUBLISHED_PACKAGES:", process.env.GATSBY_USE_PUBLISHED_PACKAGES);
+console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
 /* This is an override of the code in https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-filesystem/src/extend-file-node.js
  * We override this to allow us to specify the directory structure of the example files, so that we can reference
  * them correctly in the examples. By default, Gatsby includes a cache-busting hash of the file which would cause
