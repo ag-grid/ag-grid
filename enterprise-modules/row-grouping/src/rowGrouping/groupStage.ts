@@ -350,6 +350,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     // a) removing from childrenAfterGroup (using batchRemover if present, otherwise immediately)
     // b) removing from childrenMapped (immediately)
     // c) setRowTop(null) - as the rowRenderer uses this to know the RowNode is no longer needed
+    // d) setRowIndex(null) - as the rowNode will no longer be displayed.
     private removeFromParent(child: RowNode, batchRemover?: BatchRemover) {
         if (child.parent) {
             if (batchRemover) {
@@ -366,6 +367,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
         child.setRowTop(null);
+        child.setRowIndex(null);
     }
 
     private addToParent(child: RowNode, parent: RowNode | null) {

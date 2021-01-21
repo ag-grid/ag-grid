@@ -143,7 +143,7 @@ export class InfiniteBlock extends RowNodeBlock {
             rowNode.setRowHeight(this.params.rowHeight);
             rowNode.uiLevel = 0;
             rowNode.setRowIndex(rowIndex);
-            rowNode.rowTop = this.params.rowHeight * rowIndex;
+            rowNode.setRowTop(this.params.rowHeight * rowIndex);
 
             this.rowNodes.push(rowNode);
         }
@@ -173,9 +173,8 @@ export class InfiniteBlock extends RowNodeBlock {
     private destroyRowNodes(): void {
         this.rowNodes.forEach(rowNode => {
             // this is needed, so row render knows to fade out the row, otherwise it
-            // sees row top is present, and thinks the row should be shown. maybe
-            // rowNode should have a flag on whether it is visible???
-            rowNode.clearRowTop();
+            // sees row top is present, and thinks the row should be shown.
+            rowNode.clearRowTopAndRowIndex();
         });
     }
 }

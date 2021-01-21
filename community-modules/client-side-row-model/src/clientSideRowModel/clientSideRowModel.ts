@@ -176,7 +176,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private resetRowTops(rowNode: RowNode, changedPath: ChangedPath): void {
-        rowNode.clearRowTop();
+        rowNode.clearRowTopAndRowIndex();
         if (rowNode.hasChildren()) {
             if (rowNode.childrenAfterGroup) {
 
@@ -193,11 +193,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 }
             }
             if (rowNode.sibling) {
-                rowNode.sibling.clearRowTop();
+                rowNode.sibling.clearRowTopAndRowIndex();
             }
         }
         if (rowNode.detailNode) {
-            rowNode.detailNode.clearRowTop();
+            rowNode.detailNode.clearRowTopAndRowIndex();
         }
     }
 

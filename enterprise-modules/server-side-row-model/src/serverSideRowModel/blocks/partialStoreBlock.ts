@@ -326,10 +326,11 @@ export class PartialStoreBlock extends RowNodeBlock {
         return res;
     }
 
-    public getRowIndexAtPixel(pixel: number): number | undefined {
+    public getRowIndexAtPixel(pixel: number): number | null {
         this.touchLastAccessed();
 
-        let res: number | undefined;
+        let res: number | null = null;
+
         _.find(this.rowNodes, rowNode => {
             res = this.blockUtils.getIndexAtPixel(rowNode, pixel);
             return res != null;
