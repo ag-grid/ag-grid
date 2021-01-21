@@ -1,4 +1,4 @@
-export const getHeaderTitle = (title, framework, isCharts = false) => {
+export const getHeaderTitle = (title, framework = 'javascript', isCharts = false) => {
     let prefix = isCharts ? 'ag-Charts' : 'ag-Grid';
 
     if (framework !== 'javascript') {
