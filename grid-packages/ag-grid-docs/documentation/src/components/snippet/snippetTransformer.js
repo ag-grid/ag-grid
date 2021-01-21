@@ -7,20 +7,20 @@ import {
     getReactValue,
     getValue,
     isArrayProperty,
+    isArrowFunctionProperty,
     isLiteralProperty,
+    isObjectExpr,
     isObjectProperty,
+    descIndent,
     tab,
 } from "./snippetUtils";
 
 export const transform = (snippet, framework, options) => {
-    // create a syntax tree from the supplied snippet with comments associated to each node
-    const tree = decorateWithComments(parseScript(snippet, {comment: true, loc: true}));
-
     return {
-        'javascript': () => new JavascriptTransformer(options).transform(tree),
-        'angular': () => new AngularTransformer(options).transform(tree),
-        'react': () => new ReactTransformer(options).transform(tree),
-        'vue': () => new VueTransformer(options).transform(tree),
+        'javascript': () => new JavascriptTransformer(snippet, options).transform(),
+        'angular': () => new AngularTransformer(snippet, options).transform(),
+        'react': () => new ReactTransformer(snippet, options).transform(),
+        'vue': () => new VueTransformer(snippet, options).transform(),
     }[framework]();
 }
 
@@ -28,12 +28,25 @@ export const transform = (snippet, framework, options) => {
 class SnippetTransformer {
     initialDepth = 0;
 
-    constructor(options) {
+    constructor(snippet, options) {
         this.options = options;
+        this.snippet = snippet;
     }
-    transform(tree) {
-        return this.addFrameworkContext(this.parse(tree, this.initialDepth));
+
+    transform() {
+        // create a syntax tree from the supplied snippet
+        const treeWithoutAssociatedComments = parseScript(this.snippet, {comment: true, loc: true, range: true});
+
+        // associate comments with each node
+        const tree = decorateWithComments(treeWithoutAssociatedComments);
+
+        // parse syntax tree to produce main snippet body
+        const snippetBody = this.parse(tree, this.initialDepth);
+
+        // wrap snippet body with framework context
+        return this.addFrameworkContext(snippetBody);
     }
+
     parse(tree, depth) {
         if (Array.isArray(tree)) {
             return tree.map(node => this.parse(node, depth + 1)).join('');
@@ -43,16 +56,22 @@ class SnippetTransformer {
 
         } else if (isArrayProperty(tree)) {
             return this.addComment(tree, depth) + this.parseArray(tree, depth);
-
-        } else if (isObjectProperty(tree)) {
+        }
+        if (isObjectProperty(tree)) {
             return this.addComment(tree, depth) + this.parseObject(tree, depth);
+        }
+        if (isObjectExpr(tree)) {
+            return this.addComment(tree, depth) + this.parseObjectExpr(tree, depth);
+        }
+        if (isArrowFunctionProperty(tree)) {
+            return this.addComment(tree, depth) + this.parseArrowFunction(tree, depth);
         }
     }
 }
 
 class JavascriptTransformer extends SnippetTransformer {
-    constructor(options) {
-        super(options);
+    constructor(snippet, options) {
+        super(snippet, options);
         if (this.options.suppressFrameworkContext) {
             this.initialDepth--;
         }
@@ -61,6 +80,7 @@ class JavascriptTransformer extends SnippetTransformer {
     parseLiteral(property, depth) {
         return `${tab(depth)}${getName(property)}: ${getValue(property)},`;
     }
+
     parseArray(property, depth) {
         if (getName(property) === 'columnDefs') {
             let res = `${tab(depth)}${getName(property)}: [`;
@@ -76,12 +96,27 @@ class JavascriptTransformer extends SnippetTransformer {
         res += `\n${tab(depth)}},`;
         return res;
     }
+
+    parseObjectExpr(tree, depth) {
+        const colProps = tree.properties.map(property => this.parse(property, depth));
+        return `${tab(depth)}{ ${colProps.join(', ')} }`;
+    }
+
+    parseArrowFunction(property, depth) {
+        const [start, end] = property.range;
+        if (this.options.suppressFrameworkContext) {
+            return descIndent(`${this.snippet.slice(start, end)}`) + ',';
+        }
+        return `${tab(depth)}${this.snippet.slice(start, end)},`;
+    }
+
     addFrameworkContext(result) {
         if (this.options.suppressFrameworkContext) { return result.trim(); }
         return `const gridOptions = {${result}` +
                `\n\n${tab(1)}// other grid options here...` +
                '\n}';
     }
+
     addComment(property, depth) {
         return property.comment ? `\n${tab(depth)}//${property.comment}\n` : '\n';
     }
@@ -99,6 +134,7 @@ class AngularTransformer extends SnippetTransformer {
         this.propertiesVisited.push(getName(property));
         return `this.${getName(property)} = ${getValue(property)};`;
     }
+
     parseArray(property, depth) {
         this.propertiesVisited.push(getName(property));
         if (getName(property) === 'columnDefs') {
@@ -106,11 +142,25 @@ class AngularTransformer extends SnippetTransformer {
         }
         console.error("Not yet implemented!");
     }
+
     parseObject(property, depth) {
         this.propertiesVisited.push(getName(property));
         const properties = property.value.properties.map(prop => this.parse(prop, depth + 1)).join('');
         return `this.${getName(property)}: {` + properties + '\n};';
     }
+
+    parseObjectExpr(tree, depth) {
+        return tree.properties.map(node => this.parse(node)).join('');
+    }
+
+    parseArrowFunction(property) {
+        const propertyName = getName(property);
+        this.propertiesVisited.push(propertyName);
+        const [start, end] = property.range;
+        return descIndent(`${this.snippet.slice(start, end)}`)
+            .replace(`${propertyName}:`, `this.${propertyName} =`) + ';';
+    }
+
     addFrameworkContext(result) {
         if (this.options.suppressFrameworkContext) { return result.trim(); }
         const props = this.propertiesVisited.map(property => `${tab(1)}[${property}]="${property}"`).join('\n');
@@ -119,6 +169,7 @@ class AngularTransformer extends SnippetTransformer {
             '</ag-grid-angular>\n' +
             result;
     }
+
     addComment(property, depth) {
         return property.comment ? `\n${tab(depth-1)}//${property.comment}\n` : '\n';
     }
@@ -138,16 +189,11 @@ class VueTransformer extends AngularTransformer {
 class ReactTransformer extends SnippetTransformer {
     propertySnippets = [];
 
-    constructor(options) {
-        super(options);
-        if (this.options.suppressFrameworkContext) {
-            this.initialDepth--;
-        }
-    }
     parseLiteral(property, depth) {
         this.propertySnippets.push(this.createLiteralSnippet(property, depth));
         return '';
     }
+
     parseArray(property, depth) {
         if (getName(property) === 'columnDefs') {
             let res = property.comment ? `\n${tab(1)}//${property.comment}` : '';
@@ -156,6 +202,7 @@ class ReactTransformer extends SnippetTransformer {
         }
         console.error("Not yet implemented!");
     }
+
     parseObject(property, depth) {
         let res = property.comment ? `\n${tab(depth)}//${property.comment}` : '';
         res += `\n${tab(depth)}${getName(property)}: {`;
@@ -164,6 +211,19 @@ class ReactTransformer extends SnippetTransformer {
         this.propertySnippets.push(res);
         return '';
     }
+
+    parseObjectExpr(tree, depth) {
+        return tree.properties.map(node => this.parse(node)).join('');
+    }
+
+    parseArrowFunction(property) {
+        const [start, end] = property.range;
+        const functionSnippet = `${this.snippet.slice(start, end)}`;
+        const res = functionSnippet.replace(`${getName(property)}: `, `\n${tab(1)}${getName(property)}={`) + '}';
+        this.propertySnippets.push(res);
+        return '';
+    }
+
     addFrameworkContext(result) {
         if (this.propertySnippets.length > 0) {
             return `<AgGridReact` +
@@ -173,13 +233,15 @@ class ReactTransformer extends SnippetTransformer {
         }
         if (this.options.suppressFrameworkContext) {
             // framework context is only hidden if no properties exist for React
-            return result.trim();
+            return descIndent(result.trim());
         }
         return `<AgGridReact>${result}\n</AgGridReact>`;
     }
+
     addComment() {
         return ''; // react comments added inplace
     }
+
     createLiteralSnippet(property, depth) {
         let res = property.comment ? `\n${tab(depth)}//${property.comment}` : '';
         return res + `\n${tab(depth)}${getName(property)}=${getReactValue(property)}`;

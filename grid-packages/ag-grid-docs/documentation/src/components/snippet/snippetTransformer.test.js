@@ -1,5 +1,4 @@
 import supportedFrameworks from "../../utils/supported-frameworks";
-import { Snippet } from "./Snippet";
 import React from "react";
 import { transform } from './snippetTransformer';
 
@@ -19,7 +18,7 @@ const runSnippetFrameworkTests = snippetToTest => {
 }
 
 // These tests are run for each framework!
-describe('Snippet', () => {
+describe('Snippet Component', () => {
     describe('given simple column definitions', () => {
         runSnippetFrameworkTests(
             `const gridOptions = {
@@ -55,7 +54,7 @@ describe('Snippet', () => {
             }`
         );
     });
-    describe('given a mix of different properties', () => {
+    describe('given a mix of grid options', () => {
         runSnippetFrameworkTests(
             `const gridOptions = {
                 // columnDefs property (special)
@@ -75,6 +74,18 @@ describe('Snippet', () => {
                 rowDragManaged: true,
                 // string property
                 rowSelection: 'single',
+                // function property
+                postSort: rowNodes => {
+                    // here we put Ireland rows on top while preserving the sort order  
+                    let nextInsertPos = 0;
+                    for (let i = 0; i < rowNodes.length; i++) {
+                        const country = rowNodes[i].data.country;      
+                        if (country === 'Ireland') {        
+                            rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
+                            nextInsertPos++;
+                        }
+                    }
+                },
             }`
         );
     });

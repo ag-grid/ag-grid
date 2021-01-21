@@ -1,8 +1,6 @@
 import React from 'react';
 import Prism from 'prismjs';
-import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-javascript';
 import { transform } from './snippetTransformer';
 
 export const Snippet = props => {
@@ -14,19 +12,14 @@ export const Snippet = props => {
     // create FW specific snippet
     const snippet = transform(formattedSnippet, props.framework, extractOptions(props));
 
-    return <pre className="language-js">
-               <code dangerouslySetInnerHTML={{__html: highlightSnippet(snippet, props.framework)}}/>
+    return <pre className="language-ts">
+               <code dangerouslySetInnerHTML={{__html: highlightSnippet(snippet)}}/>
            </pre>;
 };
 
-const highlightSnippet = (code, framework) => {
-    const [grammar, language] = {
-        react: [Prism.languages.jsx, 'jsx'],
-        javascript: [Prism.languages.js, 'js'],
-        angular: [Prism.languages.typescript, 'typescript'],
-        vue: [Prism.languages.typescript, 'typescript'],
-    }[framework];
-
+const highlightSnippet = (code) => {
+    // NOTE: typescript seems to work best for all frameworks???
+    const [grammar, language] = [Prism.languages.typescript, 'typescript'];
     return Prism.highlight(code, grammar, language);
 }
 

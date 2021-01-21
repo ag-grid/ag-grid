@@ -1,12 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Snippet given a mix of different properties it should create 'angular' snippets 1`] = `
+exports[`Snippet Component given a mix of grid options it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]=\\"columnDefs\\"
     [defaultColDef]=\\"defaultColDef\\"
     [rowHeight]=\\"rowHeight\\"
     [rowDragManaged]=\\"rowDragManaged\\"
     [rowSelection]=\\"rowSelection\\"
+    [postSort]=\\"postSort\\"
     // other grid options ...>
 </ag-grid-angular>
 
@@ -26,10 +27,22 @@ this.rowHeight = 50;
 // boolean property
 this.rowDragManaged = true;
 // string property
-this.rowSelection = 'single';"
+this.rowSelection = 'single';
+// function property
+this.postSort = rowNodes => {
+                // here we put Ireland rows on top while preserving the sort order  
+                let nextInsertPos = 0;
+                for (let i = 0; i < rowNodes.length; i++) {
+                    const country = rowNodes[i].data.country;      
+                    if (country === 'Ireland') {        
+                        rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
+                        nextInsertPos++;
+                    }
+                }
+            };"
 `;
 
-exports[`Snippet given a mix of different properties it should create 'angular' snippets without framework context 1`] = `
+exports[`Snippet Component given a mix of grid options it should create 'angular' snippets without framework context 1`] = `
 "// columnDefs property (special)
 this.columnDefs: [
     { headerName: 'A', field: 'a' },
@@ -46,10 +59,22 @@ this.rowHeight = 50;
 // boolean property
 this.rowDragManaged = true;
 // string property
-this.rowSelection = 'single';"
+this.rowSelection = 'single';
+// function property
+this.postSort = rowNodes => {
+                // here we put Ireland rows on top while preserving the sort order  
+                let nextInsertPos = 0;
+                for (let i = 0; i < rowNodes.length; i++) {
+                    const country = rowNodes[i].data.country;      
+                    if (country === 'Ireland') {        
+                        rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
+                        nextInsertPos++;
+                    }
+                }
+            };"
 `;
 
-exports[`Snippet given a mix of different properties it should create 'javascript' snippets 1`] = `
+exports[`Snippet Component given a mix of grid options it should create 'javascript' snippets 1`] = `
 "const gridOptions = {
     // columnDefs property (special)
     columnDefs: [
@@ -68,12 +93,24 @@ exports[`Snippet given a mix of different properties it should create 'javascrip
     rowDragManaged: true,
     // string property
     rowSelection: 'single',
+    // function property
+    postSort: rowNodes => {
+                    // here we put Ireland rows on top while preserving the sort order  
+                    let nextInsertPos = 0;
+                    for (let i = 0; i < rowNodes.length; i++) {
+                        const country = rowNodes[i].data.country;      
+                        if (country === 'Ireland') {        
+                            rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
+                            nextInsertPos++;
+                        }
+                    }
+                },
 
     // other grid options here...
 }"
 `;
 
-exports[`Snippet given a mix of different properties it should create 'javascript' snippets without framework context 1`] = `
+exports[`Snippet Component given a mix of grid options it should create 'javascript' snippets without framework context 1`] = `
 "// columnDefs property (special)
 columnDefs: [
     { headerName: 'A', field: 'a' },
@@ -90,10 +127,22 @@ rowHeight: 50,
 // boolean property
 rowDragManaged: true,
 // string property
-rowSelection: 'single',"
+rowSelection: 'single',
+// function property
+postSort: rowNodes => {
+                // here we put Ireland rows on top while preserving the sort order  
+                let nextInsertPos = 0;
+                for (let i = 0; i < rowNodes.length; i++) {
+                    const country = rowNodes[i].data.country;      
+                    if (country === 'Ireland') {        
+                        rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
+                        nextInsertPos++;
+                    }
+                }
+            },"
 `;
 
-exports[`Snippet given a mix of different properties it should create 'react' snippets 1`] = `
+exports[`Snippet Component given a mix of grid options it should create 'react' snippets 1`] = `
 "<AgGridReact
     // object property
     defaultColDef: {
@@ -106,6 +155,17 @@ exports[`Snippet given a mix of different properties it should create 'react' sn
     rowDragManaged={true}
     // string property
     rowSelection='single'
+    postSort={rowNodes => {
+                    // here we put Ireland rows on top while preserving the sort order  
+                    let nextInsertPos = 0;
+                    for (let i = 0; i < rowNodes.length; i++) {
+                        const country = rowNodes[i].data.country;      
+                        if (country === 'Ireland') {        
+                            rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
+                            nextInsertPos++;
+                        }
+                    }
+                }}
     // other grid options ...
 >
     // columnDefs property (special)
@@ -115,35 +175,47 @@ exports[`Snippet given a mix of different properties it should create 'react' sn
 </AgGridReact>"
 `;
 
-exports[`Snippet given a mix of different properties it should create 'react' snippets without framework context 1`] = `
+exports[`Snippet Component given a mix of grid options it should create 'react' snippets without framework context 1`] = `
 "<AgGridReact
-// object property
-defaultColDef: {
-    // set every column width
-    width={100}
-},
-// numeric property
-rowHeight={50}
-// boolean property
-rowDragManaged={true}
-// string property
-rowSelection='single'
+    // object property
+    defaultColDef: {
+        // set every column width
+        width={100}
+    },
+    // numeric property
+    rowHeight={50}
+    // boolean property
+    rowDragManaged={true}
+    // string property
+    rowSelection='single'
+    postSort={rowNodes => {
+                    // here we put Ireland rows on top while preserving the sort order  
+                    let nextInsertPos = 0;
+                    for (let i = 0; i < rowNodes.length; i++) {
+                        const country = rowNodes[i].data.country;      
+                        if (country === 'Ireland') {        
+                            rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
+                            nextInsertPos++;
+                        }
+                    }
+                }}
     // other grid options ...
 >
     // columnDefs property (special)
-<AgGridColumn headerName='A' field='a' />
-<AgGridColumn headerName='B' field='b' />
-<AgGridColumn headerName='C' field='c' />
+    <AgGridColumn headerName='A' field='a' />
+    <AgGridColumn headerName='B' field='b' />
+    <AgGridColumn headerName='C' field='c' />
 </AgGridReact>"
 `;
 
-exports[`Snippet given a mix of different properties it should create 'vue' snippets 1`] = `
+exports[`Snippet Component given a mix of grid options it should create 'vue' snippets 1`] = `
 "<ag-grid-vue
     [columnDefs]=\\"columnDefs\\"
     [defaultColDef]=\\"defaultColDef\\"
     [rowHeight]=\\"rowHeight\\"
     [rowDragManaged]=\\"rowDragManaged\\"
     [rowSelection]=\\"rowSelection\\"
+    [postSort]=\\"postSort\\"
     // other grid options ...>
 </ag-grid-vue>
 
@@ -163,10 +235,22 @@ this.rowHeight = 50;
 // boolean property
 this.rowDragManaged = true;
 // string property
-this.rowSelection = 'single';"
+this.rowSelection = 'single';
+// function property
+this.postSort = rowNodes => {
+                // here we put Ireland rows on top while preserving the sort order  
+                let nextInsertPos = 0;
+                for (let i = 0; i < rowNodes.length; i++) {
+                    const country = rowNodes[i].data.country;      
+                    if (country === 'Ireland') {        
+                        rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
+                        nextInsertPos++;
+                    }
+                }
+            };"
 `;
 
-exports[`Snippet given a mix of different properties it should create 'vue' snippets without framework context 1`] = `
+exports[`Snippet Component given a mix of grid options it should create 'vue' snippets without framework context 1`] = `
 "// columnDefs property (special)
 this.columnDefs: [
     { headerName: 'A', field: 'a' },
@@ -183,10 +267,22 @@ this.rowHeight = 50;
 // boolean property
 this.rowDragManaged = true;
 // string property
-this.rowSelection = 'single';"
+this.rowSelection = 'single';
+// function property
+this.postSort = rowNodes => {
+                // here we put Ireland rows on top while preserving the sort order  
+                let nextInsertPos = 0;
+                for (let i = 0; i < rowNodes.length; i++) {
+                    const country = rowNodes[i].data.country;      
+                    if (country === 'Ireland') {        
+                        rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
+                        nextInsertPos++;
+                    }
+                }
+            };"
 `;
 
-exports[`Snippet given column definitions with group columns it should create 'angular' snippets 1`] = `
+exports[`Snippet Component given column definitions with group columns it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]=\\"columnDefs\\"
     // other grid options ...>
@@ -211,7 +307,7 @@ this.columnDefs: [
 ];"
 `;
 
-exports[`Snippet given column definitions with group columns it should create 'angular' snippets without framework context 1`] = `
+exports[`Snippet Component given column definitions with group columns it should create 'angular' snippets without framework context 1`] = `
 "// 2 levels of grouping
 this.columnDefs: [
     {
@@ -231,7 +327,7 @@ this.columnDefs: [
 ];"
 `;
 
-exports[`Snippet given column definitions with group columns it should create 'javascript' snippets 1`] = `
+exports[`Snippet Component given column definitions with group columns it should create 'javascript' snippets 1`] = `
 "const gridOptions = {
     // 2 levels of grouping
     columnDefs: [
@@ -255,7 +351,7 @@ exports[`Snippet given column definitions with group columns it should create 'j
 }"
 `;
 
-exports[`Snippet given column definitions with group columns it should create 'javascript' snippets without framework context 1`] = `
+exports[`Snippet Component given column definitions with group columns it should create 'javascript' snippets without framework context 1`] = `
 "// 2 levels of grouping
 columnDefs: [
     {
@@ -275,7 +371,7 @@ columnDefs: [
 ],"
 `;
 
-exports[`Snippet given column definitions with group columns it should create 'react' snippets 1`] = `
+exports[`Snippet Component given column definitions with group columns it should create 'react' snippets 1`] = `
 "<AgGridReact>
     // 2 levels of grouping
     <AgGridColumn headerName='G1'>
@@ -289,7 +385,7 @@ exports[`Snippet given column definitions with group columns it should create 'r
 </AgGridReact>"
 `;
 
-exports[`Snippet given column definitions with group columns it should create 'react' snippets without framework context 1`] = `
+exports[`Snippet Component given column definitions with group columns it should create 'react' snippets without framework context 1`] = `
 "// 2 levels of grouping
 <AgGridColumn headerName='G1'>
     <AgGridColumn headerName='C1' field='c1' />
@@ -301,7 +397,7 @@ exports[`Snippet given column definitions with group columns it should create 'r
 </AgGridColumn>"
 `;
 
-exports[`Snippet given column definitions with group columns it should create 'vue' snippets 1`] = `
+exports[`Snippet Component given column definitions with group columns it should create 'vue' snippets 1`] = `
 "<ag-grid-vue
     [columnDefs]=\\"columnDefs\\"
     // other grid options ...>
@@ -326,7 +422,7 @@ this.columnDefs: [
 ];"
 `;
 
-exports[`Snippet given column definitions with group columns it should create 'vue' snippets without framework context 1`] = `
+exports[`Snippet Component given column definitions with group columns it should create 'vue' snippets without framework context 1`] = `
 "// 2 levels of grouping
 this.columnDefs: [
     {
@@ -346,7 +442,7 @@ this.columnDefs: [
 ];"
 `;
 
-exports[`Snippet given simple column definitions it should create 'angular' snippets 1`] = `
+exports[`Snippet Component given simple column definitions it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]=\\"columnDefs\\"
     // other grid options ...>
@@ -360,7 +456,7 @@ this.columnDefs: [
 ];"
 `;
 
-exports[`Snippet given simple column definitions it should create 'angular' snippets without framework context 1`] = `
+exports[`Snippet Component given simple column definitions it should create 'angular' snippets without framework context 1`] = `
 "// define 3 columns
 this.columnDefs: [
     { headerName: 'A', field: 'a' },
@@ -369,7 +465,7 @@ this.columnDefs: [
 ];"
 `;
 
-exports[`Snippet given simple column definitions it should create 'javascript' snippets 1`] = `
+exports[`Snippet Component given simple column definitions it should create 'javascript' snippets 1`] = `
 "const gridOptions = {
     // define 3 columns
     columnDefs: [
@@ -382,7 +478,7 @@ exports[`Snippet given simple column definitions it should create 'javascript' s
 }"
 `;
 
-exports[`Snippet given simple column definitions it should create 'javascript' snippets without framework context 1`] = `
+exports[`Snippet Component given simple column definitions it should create 'javascript' snippets without framework context 1`] = `
 "// define 3 columns
 columnDefs: [
     { headerName: 'A', field: 'a' },
@@ -391,7 +487,7 @@ columnDefs: [
 ],"
 `;
 
-exports[`Snippet given simple column definitions it should create 'react' snippets 1`] = `
+exports[`Snippet Component given simple column definitions it should create 'react' snippets 1`] = `
 "<AgGridReact>
     // define 3 columns
     <AgGridColumn headerName='A' field='a' />
@@ -400,14 +496,14 @@ exports[`Snippet given simple column definitions it should create 'react' snippe
 </AgGridReact>"
 `;
 
-exports[`Snippet given simple column definitions it should create 'react' snippets without framework context 1`] = `
+exports[`Snippet Component given simple column definitions it should create 'react' snippets without framework context 1`] = `
 "// define 3 columns
 <AgGridColumn headerName='A' field='a' />
 <AgGridColumn headerName='B' field='b' />
 <AgGridColumn headerName='C' field='c' />"
 `;
 
-exports[`Snippet given simple column definitions it should create 'vue' snippets 1`] = `
+exports[`Snippet Component given simple column definitions it should create 'vue' snippets 1`] = `
 "<ag-grid-vue
     [columnDefs]=\\"columnDefs\\"
     // other grid options ...>
@@ -421,7 +517,7 @@ this.columnDefs: [
 ];"
 `;
 
-exports[`Snippet given simple column definitions it should create 'vue' snippets without framework context 1`] = `
+exports[`Snippet Component given simple column definitions it should create 'vue' snippets without framework context 1`] = `
 "// define 3 columns
 this.columnDefs: [
     { headerName: 'A', field: 'a' },
