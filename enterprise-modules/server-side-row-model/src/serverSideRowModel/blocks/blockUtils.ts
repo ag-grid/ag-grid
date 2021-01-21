@@ -71,7 +71,7 @@ export class BlockUtils extends BeanStub {
         // this is needed, so row render knows to fade out the row, otherwise it
         // sees row top is present, and thinks the row should be shown. maybe
         // rowNode should have a flag on whether it is visible???
-        rowNode.clearRowTop();
+        rowNode.clearRowTopAndRowIndex();
         if (rowNode.id != null) {
             this.nodeManager.removeNode(rowNode);
         }
@@ -157,8 +157,7 @@ export class BlockUtils extends BeanStub {
     }
 
     public clearDisplayIndex(rowNode: RowNode): void {
-        rowNode.clearRowTop();
-        rowNode.setRowIndex();
+        rowNode.clearRowTopAndRowIndex();
 
         const hasChildStore = rowNode.group && _.exists(rowNode.childStore);
         if (hasChildStore) {
@@ -168,8 +167,7 @@ export class BlockUtils extends BeanStub {
 
         const hasDetailNode = rowNode.master && rowNode.detailNode;
         if (hasDetailNode) {
-            rowNode.detailNode.clearRowTop();
-            rowNode.detailNode.setRowIndex();
+            rowNode.detailNode.clearRowTopAndRowIndex();
         }
     }
 
@@ -187,8 +185,7 @@ export class BlockUtils extends BeanStub {
                 rowNode.detailNode.setRowTop(nextRowTop.value);
                 nextRowTop.value += rowNode.detailNode.rowHeight!;
             } else if (rowNode.detailNode) {
-                rowNode.detailNode.clearRowTop();
-                rowNode.detailNode.setRowIndex();
+                rowNode.detailNode.clearRowTopAndRowIndex();
             }
         }
 
@@ -271,7 +268,7 @@ export class BlockUtils extends BeanStub {
         }
     }
 
-    public getIndexAtPixel(rowNode: RowNode, pixel: number): number | undefined {
+    public getIndexAtPixel(rowNode: RowNode, pixel: number): number | null {
         // first check if pixel is in range of current row
         if (rowNode.isPixelInRange(pixel)) {
             return rowNode.rowIndex;
@@ -291,6 +288,7 @@ export class BlockUtils extends BeanStub {
             }
         }
 
+        return null
         // pixel is not within this row node or it's children / detail, so return undefined
     }
 

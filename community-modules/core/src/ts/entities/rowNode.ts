@@ -62,6 +62,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_MOUSE_LEAVE = 'mouseLeave';
     public static EVENT_HEIGHT_CHANGED = 'heightChanged';
     public static EVENT_TOP_CHANGED = 'topChanged';
+    public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     public static EVENT_FIRST_CHILD_CHANGED = 'firstChildChanged';
     public static EVENT_LAST_CHILD_CHANGED = 'lastChildChanged';
     public static EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
@@ -141,7 +142,7 @@ export class RowNode implements IEventEmitter {
     public childIndex: number;
 
     /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
-    public rowIndex: number | undefined;
+    public rowIndex: number | null = null;
 
     /** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */
     public rowPinned: string;
@@ -203,12 +204,17 @@ export class RowNode implements IEventEmitter {
      * the row height calculation and set rowHeightEstimated=false.*/
     public rowHeightEstimated: boolean;
 
+    /**
+     * True if the RowNode is not filtered, or in a collapsed group.
+     */
+    public displayed: boolean = false;
+
     /** The top pixel for this row */
-    public rowTop: number | null;
+    public rowTop: number | null = null;
 
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
      * it is used so new rows can animate in from their old position. */
-    public oldRowTop: number | null;
+    public oldRowTop: number | null = null;
 
     /** True if this node is a daemon. This means row is not part of the model. Can happen when then
      * the row is selected and then the user sets a different ID onto the node. The nodes is then
@@ -381,11 +387,6 @@ export class RowNode implements IEventEmitter {
         return pixel >= this.rowTop && pixel < (this.rowTop + this.rowHeight);
     }
 
-    public clearRowTop(): void {
-        this.oldRowTop = this.rowTop;
-        this.setRowTop(null);
-    }
-
     public setFirstChild(firstChild: boolean): void {
         if (this.firstChild === firstChild) { return; }
 
@@ -423,6 +424,24 @@ export class RowNode implements IEventEmitter {
 
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
+        }
+
+        this.setDisplayed(rowTop !== null);
+    }
+
+    public clearRowTopAndRowIndex(): void {
+        this.oldRowTop = this.rowTop;
+        this.setRowTop(null);
+        this.setRowIndex(null);
+    }
+
+    private setDisplayed(displayed: boolean): void {
+        if (this.displayed !== displayed) {
+            this.displayed = displayed;
+        }
+
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DISPLAYED_CHANGED));
         }
     }
 
@@ -481,7 +500,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setRowIndex(rowIndex?: number): void {
+    public setRowIndex(rowIndex: number | null): void {
         this.rowIndex = rowIndex;
 
         if (this.eventService) {
@@ -524,7 +543,7 @@ export class RowNode implements IEventEmitter {
             type: type,
             node: this,
             data: this.data,
-            rowIndex: this.rowIndex!,
+            rowIndex: this.rowIndex,
             rowPinned: this.rowPinned,
             context: this.gridOptionsWrapper.getContext(),
             api: this.gridOptionsWrapper.getApi()!,

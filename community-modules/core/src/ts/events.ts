@@ -301,7 +301,7 @@ export interface ColumnPinnedEvent extends ColumnEvent {
 export interface RowEvent extends AgGridEvent {
     node: RowNode;
     data: any;
-    rowIndex: number;
+    rowIndex: number | null;
     rowPinned: string;
     context: any;
     event?: Event | null;

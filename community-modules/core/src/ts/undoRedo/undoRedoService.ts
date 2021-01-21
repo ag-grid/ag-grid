@@ -75,11 +75,11 @@ export class UndoRedoService extends BeanStub {
         const { rowPinned, rowIndex, column, oldValue, value } = event;
 
         const cellValueChange: CellValueChange = {
-            rowPinned: rowPinned,
-            rowIndex: rowIndex,
+            rowPinned,
+            rowIndex: rowIndex!,
             columnId: column.getColId(),
-            oldValue: oldValue,
-            newValue: value
+            newValue: value,
+            oldValue
         };
 
         this.cellValueChanges.push(cellValueChange);
@@ -147,7 +147,7 @@ export class UndoRedoService extends BeanStub {
             const currentRow = this.getRowNode(rowPosition);
 
             // checks if the row has been filtered out
-            if (currentRow!.rowTop == null) {
+            if (!currentRow!.displayed) {
                 return;
             }
 

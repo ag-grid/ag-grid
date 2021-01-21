@@ -9,6 +9,9 @@
         "data": {
             "description": "The data as provided by the application."
         },
+        "displayed": {
+            "description": "This will be `true` if it has a rowIndex assigned, otherwise `false`."
+        },
         "parent": {
             "description": "The parent node to this node, or empty if top level."
         },
@@ -38,6 +41,9 @@
         },
         "rowHeight": {
             "description": "The row height in pixels."
+        },
+        "rowIndex": {
+            "description": "The current row index. If the row is filtered out or in a collapsed group, this value will be `null`."
         },
         "rowTop": {
             "description": "The row top position in pixels."
