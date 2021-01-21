@@ -131,20 +131,19 @@ class ReactTransformer extends SnippetTransformer {
     }
 
     parseProperty(property, depth) {
-        if (isLiteralProperty(property)) {
-            this.propertySnippets.push(this.extractRawProperty(property, depth));
-            return '';
-        }
         // special handling required for react column definitions
         if (getName(property) === 'columnDefs') {
             let res = property.comment ? `\n${tab(1)}//${property.comment}` : '';
-            res += createReactColDefSnippet(property.value.elements, depth);
-            return res;
+            return createReactColDefSnippet(property.value.elements, depth);
         }
-        let res = property.comment ? `\n${tab(depth)}//${property.comment}` : '';
-        res += `\n${tab(depth)}${getName(property)}={` + this.extractRawProperty(property, depth) + '}';
-        this.propertySnippets.push(res);
-        return '';
+        if (isLiteralProperty(property)) {
+            this.propertySnippets.push(this.extractRawProperty(property, depth));
+        } else {
+            let res = property.comment ? `\n${tab(depth)}//${property.comment}` : '';
+            res += `\n${tab(depth)}${getName(property)}={` + this.extractRawProperty(property, depth) + '}';
+            this.propertySnippets.push(res);
+        }
+        return ''; // react grid options are gathered and added later in the framework context
     }
 
     addFrameworkContext(result) {
