@@ -8,14 +8,16 @@
         "items": [
           {
             "title": "Tutorial",
-            "url": "../getting-started/"
+            "url": "../getting-started/",
+            "pane": "left"
           },
           {
             "title": "AngularJS",
             "url": "../angularjs/",
             "frameworks": [
               "angular"
-            ]
+            ],
+            "pane": "right"
           }
         ]
       },

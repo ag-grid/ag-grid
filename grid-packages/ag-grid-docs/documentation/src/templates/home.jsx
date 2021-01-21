@@ -39,29 +39,43 @@ const flatRenderItems = (items, framework) => {
     }, []);
 };
 
-const GettingStarted = ({ framework, data }) => {
+const panelItemsFilter = (pane, framework) => data => ((data.frameworks && data.frameworks.indexOf(framework) !== -1) || !data.frameworks) && data.pane === pane;
+
+const GettingStartedPane = ({framework, data}) => {
     const linksToRender = flatRenderItems(data, framework);
     const numberOfColumns = Math.ceil(linksToRender.length / 5);
+
+    return (
+        <div className={styles['docs-home__getting-started__framework_pane']}>
+            <div className={styles['docs-home__getting-started__framework_overview']}>
+                <a href="./getting-started/" className={styles['docs-home__getting-started__framework_logo']}>
+                    <img
+                        style={{ backgroundColor: backgroundColor[framework] }}
+                        alt={framework}
+                        src={logos[framework]} />
+                </a>
+            </div>
+            <div
+                className={styles['docs-home__getting-started__items']}
+                style={{ gridTemplateColumns: `repeat(${numberOfColumns}, 1fr)` }}>
+                {linksToRender.map(link => <a
+                    key={link.title}
+                    href={withPrefix(link.url.replace('../', `/${framework}/`))}>{link.title}</a>)}
+            </div>
+        </div>
+    );
+}
+
+const GettingStarted = ({ framework, data }) => {
+    const leftPaneItems = data.filter(panelItemsFilter("left", framework))
+    const rightPaneItems = data.filter(panelItemsFilter("right", framework))
 
     return (
         <div className={styles['docs-home__getting-started']}>
             <h2 className={styles['docs-home__getting-started__title']}>Getting Started</h2>
             <div className={styles['docs-home__getting-started__row']}>
-                <div className={styles['docs-home__getting-started__framework_overview']}>
-                    <a href="./getting-started/" className={styles['docs-home__getting-started__framework_logo']}>
-                        <img
-                            style={{ backgroundColor: backgroundColor[framework] }}
-                            alt={framework}
-                            src={logos[framework]} />
-                    </a>
-                </div>
-                <div
-                    className={styles['docs-home__getting-started__items']}
-                    style={{ gridTemplateColumns: `repeat(${numberOfColumns}, 1fr)` }}>
-                    {linksToRender.map(link => <a
-                        key={link.title}
-                        href={withPrefix(link.url.replace('../', `/${framework}/`))}>{link.title}</a>)}
-                </div>
+                <GettingStartedPane framework={framework} data={leftPaneItems} />
+                {rightPaneItems.length > 0 && <GettingStartedPane framework={framework} data={rightPaneItems} />}
             </div>
         </div>
     );
@@ -70,10 +84,13 @@ const GettingStarted = ({ framework, data }) => {
 const HomePage = ({ pageContext }) => {
     const { framework } = pageContext;
 
+    // basics / getting started
+    const gettingStartedItems = menuData[0].items[0].items;
+
     return (
         <div className={styles['docs-home']}>
             <Helmet title={getHeaderTitle('Documentation', framework)} />
-            <GettingStarted framework={framework} data={menuData[0].items[0].items} />
+            <GettingStarted framework={framework} data={gettingStartedItems} />
             <MenuView framework={framework} data={menuData} />
         </div>
     );
