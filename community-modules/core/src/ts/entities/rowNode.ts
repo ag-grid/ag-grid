@@ -436,9 +436,9 @@ export class RowNode implements IEventEmitter {
     }
 
     private setDisplayed(displayed: boolean): void {
-        if (this.displayed !== displayed) {
-            this.displayed = displayed;
-        }
+        if (this.displayed === displayed) { return; }
+
+        this.displayed = displayed;
 
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DISPLAYED_CHANGED));
