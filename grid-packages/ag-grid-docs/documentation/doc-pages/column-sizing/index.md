@@ -10,118 +10,30 @@ Turn column resizing on for the grid by setting `resizable=true` for each column
 
 The snippet below allows all columns except Address to be resized by explicitly setting each column.
 
-[[only-javascript]]
-| ```js
-| const gridOptions = {
-|     columnDefs: [
-|         { field: 'name', resizable: true },
-|         { field: 'age', resizable: true },
-|         { field: 'address' },
-|     ],
-|
-|     // other grid options ...
-| }
-| ```
-
-[[only-angular]]
-| ```js
-| <ag-grid-angular
-|     [columnDefs]="columnDefs"
-|     // other grid options ...>
-| </ag-grid-angular>
-|
-| this.columnDefs = [
-|     { field: 'name', resizable: true },
-|     { field: 'age', resizable: true },
-|     { field: 'address' },
-| ];
-| ```
-
-[[only-react]]
-| ```js
-| <AgGridReact>
-|     <AgGridColumn field='name' resizable={true} />
-|     <AgGridColumn field='age' resizable={true} />
-|     <AgGridColumn field='address' />
-| </AgGridReact>
-| ```
-
-[[only-vue]]
-| ```js
-| <ag-grid-vue
-|     :columnDefs="columnDefs"  
-|     // other grid options ...>
-| </ag-grid-vue>
-|
-| this.columnDefs = [
-|     { field: 'name', resizable: true },
-|     { field: 'age', resizable: true },
-|     { field: 'address' },
-| ];
-| ```
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        { field: 'name', resizable: true },
+        { field: 'age', resizable: true },
+        { field: 'address' },
+    ],
+}
+</snippet>
 
 The snippet below allows all columns except Address to be resized by setting `resizable=true` on the default column definition and then `resizable=false` on the Address column.
 
-[[only-javascript]]
-| ```js
-| const gridOptions = {
-|     defaultColDef: {
-|         resizable: true
-|     },
-|     columnDefs: [
-|         { field: 'name' },
-|         { field: 'age' },
-|         { field: 'address', resizable: false },
-|     ],
-|
-|     // other grid options ...
-| }
-| ```
-
-[[only-angular]]
-| ```js
-| <ag-grid-angular
-|     [defaultColDef]="defaultColDef"
-|     [columnDefs]="columnDefs"
-|     // other grid options ...>
-| </ag-grid-angular>
-|
-| this.defaultColDef = {
-|     resizable: true
-| };
-| this.columnDefs = [
-|     { field: 'name' },
-|     { field: 'age' },
-|     { field: 'address', resizable: false },
-| ];
-| ```
-
-[[only-react]]
-| ```js
-| <AgGridReact defaultColDef={{ resizable: true }} >
-|     <AgGridColumn field='name' />
-|     <AgGridColumn field='age' />
-|     <AgGridColumn field='address' resizable={false} />
-| </AgGridReact>
-| ```
-
-[[only-vue]]
-| ```js
-| <ag-grid-vue
-|     :defaultColDef="defaultColDef"
-|     :columnDefs="columnDefs"  
-|     // other grid options ...>
-| </ag-grid-vue>
-|
-| this.defaultColDef = {
-|     resizable: true
-| };
-| this.columnDefs = [
-|     { field: 'name' },
-|     { field: 'age' },
-|     { field: 'address', resizable: false },
-| ];
-| ```
+<snippet>
+const gridOptions = {
+    defaultColDef: {
+        resizable: true,
+    },
+    columnDefs: [
+        { field: 'name' },
+        { field: 'age' },
+        { field: 'address', resizable: false },
+    ],
+}
+</snippet>
 
 ## Size Columns to Fit
 
