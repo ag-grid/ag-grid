@@ -122,7 +122,7 @@ export class MenuItemMapper extends BeanStub {
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: () => this.columnController.resetColumnState(false, "contextMenu")
+                    action: () => this.columnController.resetColumnState("contextMenu")
                 };
             case 'expandAll':
                 return {

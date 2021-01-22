@@ -290,7 +290,7 @@ export class ColumnGroup implements ColumnGroupChild {
         // find the column group that is controlling expandable. this is relevant when we have padding (empty)
         // groups, where the expandable is actually the first parent that is not a padding group.
         let parentWithExpansion: ColumnGroup = this;
-        while (parentWithExpansion!=null && parentWithExpansion.isPadding()) {
+        while (parentWithExpansion != null && parentWithExpansion.isPadding()) {
             parentWithExpansion = parentWithExpansion.getParent();
         }
 

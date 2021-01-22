@@ -1,4 +1,4 @@
-import {ColumnController, ColumnState} from "./columnController/columnController";
+import { ColumnController, ColumnState } from "./columnController/columnController";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
@@ -15,7 +15,7 @@ import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { BeanStub } from "./context/beanStub";
-import {ApplyColumnStateParams} from "./columnController/columnApi";
+import { ApplyColumnStateParams } from "./columnController/columnApi";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {

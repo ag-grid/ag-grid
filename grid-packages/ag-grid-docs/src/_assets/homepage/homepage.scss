@@ -102,20 +102,12 @@ body {
     section#section-frameworks {
         @extend .align-items-center;
 
-        & > div:nth-child(1) {
-            @extend .col-md-5;
-        }
-
-        & > div:nth-child(2) {
-            @extend .col-md-6, .ml-auto;
+        & > div {
+            width: 100%;margin: 0 auto
         }
 
         h2 {
-            @extend .display-4, .text-right, .mb-3;
-        }
-
-        p {
-            @extend .display-5, .text-right;
+            @extend .display-4, .text-center, .mb-3;
         }
     }
 
@@ -243,9 +235,6 @@ body {
 
     .get-started-btn {
         @extend .btn, .btn-lg, .py-3, .px-4;
-        &:first-child {
-            @extend .btn-darkblue, .mr-1, .mr-sm-2;
-        }
         &:last-child {
             @extend .btn-outline-darkblue, .ml-2, .ml-sm-3;
         }
