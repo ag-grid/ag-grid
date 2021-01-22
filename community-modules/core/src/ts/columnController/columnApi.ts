@@ -30,7 +30,7 @@ export class ColumnApi {
     public getColumn(key: any): Column | null { return this.columnController.getPrimaryColumn(key); }
     public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnController.applyColumnState(params, 'api'); }
     public getColumnState(): ColumnState[] { return this.columnController.getColumnState(); }
-    public resetColumnState(): void { this.columnController.resetColumnState(false, 'api'); }
+    public resetColumnState(): void { this.columnController.resetColumnState('api'); }
     public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnController.getColumnGroupState(); }
     public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[]): void {this.columnController.setColumnGroupState(stateItems, 'api'); }
     public resetColumnGroupState(): void { this.columnController.resetColumnGroupState('api'); }

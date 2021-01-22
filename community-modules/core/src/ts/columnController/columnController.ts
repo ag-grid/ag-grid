@@ -48,7 +48,6 @@ import { camelCaseToHumanText, startsWith } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import {doOnce} from "../utils/function";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -1752,7 +1751,7 @@ export class ColumnController extends BeanStub {
 
     private orderColumnStateList(columnStateList: any[]): void {
         // for fast looking, store the index of each column
-        const gridColumnIdMap = new Map<string,number>(this.gridColumns.map( (col, index)=> [col.getColId(), index]));
+        const gridColumnIdMap = new Map<string, number>(this.gridColumns.map((col, index) => [col.getColId(), index]));
 
         columnStateList.sort((itemA: any, itemB: any) => {
             const posA = gridColumnIdMap.has(itemA.colId) ? gridColumnIdMap.get(itemA.colId) : -1;
@@ -1761,7 +1760,7 @@ export class ColumnController extends BeanStub {
         });
     }
 
-    public resetColumnState(suppressEverythingEvent = false, source: ColumnEventType = "api"): void {
+    public resetColumnState(source: ColumnEventType = "api"): void {
         // NOTE = there is one bug here that no customer has noticed - if a column has colDef.lockPosition,
         // this is ignored  below when ordering the cols. to work, we should always put lockPosition cols first.
         // As a work around, developers should just put lockPosition columns first in their colDef list.
@@ -1780,14 +1779,13 @@ export class ColumnController extends BeanStub {
         if (this.groupAutoColumns) {
             colsToProcess = colsToProcess.concat(this.groupAutoColumns);
         }
+
         if (primaryColumns) {
             colsToProcess = colsToProcess.concat(primaryColumns);
         }
 
         colsToProcess.forEach(column => {
-
             const colDef = column.getColDef();
-
             const sort = colDef.sort != null ? colDef.sort : null;
             const sortIndex = colDef.sortIndex;
             const hide = colDef.hide ? true : false;
@@ -1962,25 +1960,22 @@ export class ColumnController extends BeanStub {
         });
 
         this.applyOrderAfterApplyState(params);
-
         this.updateDisplayedColumns(source);
-
         this.dispatchEverythingChanged(source);
 
         raiseEventsFunc();
-
         this.columnAnimationService.finish();
 
         return success;
     }
 
     private applyOrderAfterApplyState(params: ApplyColumnStateParams): void {
-
         if (!this.gridColsArePrimary || !params.applyOrder || !params.state) { return; }
 
         let newOrder: Column[] = [];
         const processedColIds: {[id: string]:boolean} = {};
-        params.state.forEach( item => {
+
+        params.state.forEach(item => {
             if (!item.colId || processedColIds[item.colId]) { return; }
             const col = this.primaryColumnsMap[item.colId];
             if (col) {
@@ -1990,7 +1985,7 @@ export class ColumnController extends BeanStub {
         });
 
         // add in all other columns
-        this.gridColumns.forEach( col => {
+        this.gridColumns.forEach(col => {
             if (!processedColIds[col.getColId()]) {
                 newOrder.push(col);
             }
@@ -3049,7 +3044,7 @@ export class ColumnController extends BeanStub {
     private orderGridColsLikeLastPrimary(): void {
         if (missing(this.lastPrimaryOrder)) { return; }
 
-        const lastPrimaryOrderMapped = new Map<Column, number>(this.lastPrimaryOrder.map( (col, index) => [col, index] ));
+        const lastPrimaryOrderMapped = new Map<Column, number>(this.lastPrimaryOrder.map((col, index) => [col, index]));
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from secondary to primary columns
@@ -3320,7 +3315,7 @@ export class ColumnController extends BeanStub {
 
         // for easy lookup when building the groups.
         const virtualColIds: { [key: string]: boolean; } = {};
-        this.viewportColumns.forEach( col => virtualColIds[col.getId()] = true );
+        this.viewportColumns.forEach(col => virtualColIds[col.getId()] = true);
 
         const testGroup = (
             children: ColumnGroupChild[],

@@ -89,8 +89,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // Method 1 - native clipboard API, available in modern chrome browsers
         const allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
-        // Some browsers (Firefox) do not allow Web Applications to read from 
-        // the clipboard so verify if not only the ClipboardAPI is available, 
+        // Some browsers (Firefox) do not allow Web Applications to read from
+        // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
         if (allowNavigator && navigator.clipboard && navigator.clipboard.readText) {
             navigator.clipboard.readText()
@@ -101,8 +101,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                         console.warn(
                             'ag-Grid: Unable to use the Clipboard API (navigator.clipboard.readText()). ' +
                             'The reason why it could not be used has been logged in the previous line. ' +
-                            'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. '+
-                            'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid '+
+                            'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
+                            'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
                             'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API');
                     }, 'clipboardApiError');
                     this.pasteFromClipboardLegacy();
@@ -303,7 +303,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     // if range is active, and only one cell, then we paste this cell into all cells in the active range.
     private isPasteSingleValueIntoRange(parsedData: string[][]): boolean {
         return this.hasOnlyOneValueToPaste(parsedData)
-            && this.rangeController!=null
+            && this.rangeController != null
             && !this.rangeController.isEmpty();
     }
 
@@ -702,8 +702,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                     console.warn(
                         'ag-Grid: Unable to use the Clipboard API (navigator.clipboard.writeText()). ' +
                         'The reason why it could not be used has been logged in the previous line. ' +
-                        'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. '+
-                        'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid '+
+                        'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
+                        'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
                         'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.');
                 }, 'clipboardApiError');
                 this.copyDataToClipboardLegacy(data);

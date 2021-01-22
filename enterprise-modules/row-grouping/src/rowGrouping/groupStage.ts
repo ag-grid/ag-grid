@@ -245,7 +245,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
             // When not TreeData, then removeEmptyGroups is called just before the BatchRemover is flushed.
             // However for TreeData, there is no BatchRemover, so we have to call removeEmptyGroups here.
-            const nodeParents = leafRowNodes.map( n => n.parent!);
+            const nodeParents = leafRowNodes.map(n => n.parent!);
             this.removeEmptyGroups(nodeParents, details);
         }
     }
