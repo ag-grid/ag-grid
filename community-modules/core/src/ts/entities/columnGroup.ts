@@ -305,11 +305,10 @@ export class ColumnGroup implements ColumnGroupChild {
         // Note - the below also adds padding groups, these are always added because they never have
         // colDef.columnGroupShow set.
         this.children!.forEach(child => {
-            // always add padding
-            if (child instanceof ColumnGroup && child.isPadding()) {
-                this.displayedChildren!.push(child);
-                return;
-            }
+            // never add empty groups
+            const emptyGroup = child instanceof ColumnGroup
+                && (child.displayedChildren==null || child.displayedChildren.length==0);
+            if (emptyGroup) { return; }
 
             const headerGroupShow = child.getColumnGroupShow();
             switch (headerGroupShow) {
