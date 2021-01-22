@@ -40,7 +40,7 @@ export class PieChartProxy extends PolarChartProxy {
             title: seriesDefaults.title,
             label: {
                 ...seriesDefaults.label,
-                minRequiredAngle: seriesDefaults.label!.minAngle
+                minAngle: seriesDefaults.label!.minAngle
             },
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
@@ -216,7 +216,7 @@ export class PieChartProxy extends PolarChartProxy {
                 ...fontOptions,
                 enabled: false,
                 offset: 3,
-                minRequiredAngle: 0,
+                minAngle: 0,
             },
             tooltip: {
                 enabled: true,
