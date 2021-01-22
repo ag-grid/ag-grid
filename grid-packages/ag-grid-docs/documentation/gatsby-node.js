@@ -10,11 +10,13 @@ const chartGallery = require('./doc-pages/charts/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 const isDevelopment = require('./src/utils/is-development');
 
-console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-console.log("GATSBY_HOST:", process.env.GATSBY_HOST);
-console.log("GATSBY_ROOT_DIRECTORY:", process.env.GATSBY_ROOT_DIRECTORY);
-console.log("GATSBY_USE_PUBLISHED_PACKAGES:", process.env.GATSBY_USE_PUBLISHED_PACKAGES);
-console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+exports.onPreBootstrap = () => {
+    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    console.log("GATSBY_HOST:", process.env.GATSBY_HOST);
+    console.log("GATSBY_ROOT_DIRECTORY:", process.env.GATSBY_ROOT_DIRECTORY);
+    console.log("GATSBY_USE_PUBLISHED_PACKAGES:", process.env.GATSBY_USE_PUBLISHED_PACKAGES);
+    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+};
 
 /* This is an override of the code in https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-filesystem/src/extend-file-node.js
  * We override this to allow us to specify the directory structure of the example files, so that we can reference
@@ -32,7 +34,6 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
             description: `Copy file to static directory and return public URL to it`,
             resolve: async (file, _, context) => {
                 const details = getNodeAndSavePathDependency(file.id, context.path);
-
                 let fileName = `static/${file.internal.contentDigest}/${details.base}`;
                 let isExampleFile = false;
 
@@ -103,7 +104,7 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
 };
 
 /* We add the path onto markdown nodes which allows us to then find the relevant file when generating pages */
-exports.onCreateNode = ({ node, getNode, actions: { createNodeField } }) => {
+exports.onCreateNode = async ({ node, loadNodeContent, getNode, actions: { createNodeField } }) => {
     if (node.internal.type === 'MarkdownRemark') {
         const filePath = createFilePath({ node, getNode });
 
@@ -112,13 +113,9 @@ exports.onCreateNode = ({ node, getNode, actions: { createNodeField } }) => {
             name: 'path',
             value: filePath.substring(0, filePath.length - 1)
         });
-    }
-
-    if (node.internal.type === 'File' && node.extension === 'json') {
+    } else if (node.internal.type === 'File' && node.extension === 'json') {
         // load contents of JSON files to be used e.g. by ApiDocumentation
-        fs.readFile(node.absolutePath, undefined, (_err, buf) => {
-            createNodeField({ node, name: 'content', value: buf.toString() });
-        });
+        node.internal.content = await loadNodeContent(node);
     }
 };
 
@@ -148,13 +145,7 @@ const getInternalIPAddress = () => {
     return '0.0.0.0';
 };
 
-/* This creates pages for each framework from all of the markdown files, using the doc-page template */
-exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => {
-    if (!process.env.GATSBY_HOST) {
-        process.env.GATSBY_HOST =
-            process.env.NODE_ENV === 'development' ? `${getInternalIPAddress()}:8080` : `${await publicIp.v4()}:9000`;
-    }
-
+const createHomePages = createPage => {
     const homePage = path.resolve('src/templates/home.jsx');
 
     supportedFrameworks.forEach(framework => {
@@ -164,7 +155,9 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
             context: { frameworks: supportedFrameworks, framework }
         });
     });
+};
 
+const createDocPages = async (createPage, graphql, reporter) => {
     const docPageTemplate = path.resolve(`src/templates/doc-page.jsx`);
 
     const result = await graphql(`
@@ -188,25 +181,26 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
     }
 
     result.data.allMarkdownRemark.nodes.forEach(node => {
-        const { frontmatter: { frameworks: specifiedFrameworks }, fields: { path } } = node;
+        const { frontmatter: { frameworks: specifiedFrameworks }, fields: { path: srcPath } } = node;
 
-        if (path.split('/').some(part => part.startsWith('_'))) { return; }
+        if (srcPath.split('/').some(part => part.startsWith('_'))) { return; }
 
-        const filteredFrameworks = supportedFrameworks
-            .filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
+        const frameworks = supportedFrameworks.filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
 
-        filteredFrameworks.forEach(framework => {
+        frameworks.forEach(framework => {
             createPage({
-                path: `/${framework}${path}/`,
+                path: `/${framework}${srcPath}/`,
                 component: docPageTemplate,
-                context: { frameworks: filteredFrameworks, framework, srcPath: path, }
+                context: { frameworks, framework, srcPath }
             });
         });
     });
+};
 
+const createChartGalleryPages = createPage => {
     const chartGalleryPageTemplate = path.resolve(`src/templates/chart-gallery-page.jsx`);
-
     const categories = Object.keys(chartGallery);
+
     const namesByCategory = categories.reduce(
         (names, c) => names.concat(Object.keys(chartGallery[c]).map(k => ({ category: c, name: k }))),
         []);
@@ -221,10 +215,22 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
             createPage({
                 path: `/${framework}/charts/${toKebabCase(name)}/`,
                 component: chartGalleryPageTemplate,
-                context: { frameworks: supportedFrameworks, framework, framework, name, description, previous, next }
+                context: { frameworks: supportedFrameworks, framework, name, description, previous, next }
             });
         });
     });
+};
+
+/* This creates pages for each framework from all of the markdown files, using the doc-page template */
+exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => {
+    if (!process.env.GATSBY_HOST) {
+        process.env.GATSBY_HOST =
+            process.env.NODE_ENV === 'development' ? `${getInternalIPAddress()}:8080` : `${await publicIp.v4()}:9000`;
+    }
+
+    createHomePages(createPage);
+    await createDocPages(createPage, graphql, reporter);
+    createChartGalleryPages(createPage);
 };
 
 exports.onCreateWebpackConfig = ({ actions }) => {

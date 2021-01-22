@@ -6,7 +6,7 @@ import styles from './MatrixTable.module.scss';
 
 const MatrixTable = ({ src, rootnode: rootNode, columns, tree, booleanonly: booleanOnly, stringonly: stringOnly, childpropertyname: childPropertyName, showcondition: showCondition }) => {
     const nodes = useJsonFileNodes();
-    const file = JSON.parse(nodes.find(node => node.relativePath === src).fields.content);
+    const file = JSON.parse(nodes.find(node => node.relativePath === src).internal.content);
     const allRows = getRowsToProcess(file, rootNode, showCondition);
     const allColumns = JSON.parse(columns);
 

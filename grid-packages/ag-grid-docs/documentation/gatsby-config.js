@@ -143,7 +143,7 @@ module.exports = {
   siteMetadata: {
     title: 'ag-Grid Documentation',
     author: 'ag-Grid',
-    siteUrl: `https://${process.env.GATSBY_HOST}`,
+    siteUrl: `https://${process.env.GATSBY_HOST || 'www.ag-grid.com'}`,
   },
   plugins,
 };
