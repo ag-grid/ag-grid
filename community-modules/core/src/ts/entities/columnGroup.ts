@@ -13,7 +13,6 @@ export class ColumnGroup implements ColumnGroupChild {
 
     public static HEADER_GROUP_SHOW_OPEN = 'open';
     public static HEADER_GROUP_SHOW_CLOSED = 'closed';
-    public static HEADER_GROUP_PADDING = 'padding';
 
     public static EVENT_LEFT_CHANGED = 'leftChanged';
     public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
@@ -287,53 +286,50 @@ export class ColumnGroup implements ColumnGroupChild {
     public calculateDisplayedColumns() {
         // clear out last time we calculated
         this.displayedChildren = [];
-        let topLevelGroup: ColumnGroup = this;
 
         // find the column group that is controlling expandable. this is relevant when we have padding (empty)
         // groups, where the expandable is actually the first parent that is not a padding group.
-        if (this.isPadding()) {
-            while (topLevelGroup.getParent() && topLevelGroup.isPadding()) {
-                topLevelGroup = topLevelGroup.getParent();
-            }
+        let parentWithExpansion: ColumnGroup = this;
+        while (parentWithExpansion!=null && parentWithExpansion.isPadding()) {
+            parentWithExpansion = parentWithExpansion.getParent();
         }
 
-        const isExpandable = topLevelGroup.originalColumnGroup.isExpandable();
+        const isExpandable = parentWithExpansion ? parentWithExpansion.originalColumnGroup.isExpandable() : false;
         // it not expandable, everything is visible
         if (!isExpandable) {
             this.displayedChildren = this.children;
-        } else {
-            // Add cols based on columnGroupShow
-            // Note - the below also adds padding groups, these are always added because they never have
-            // colDef.columnGroupShow set.
-            this.children!.forEach(abstractColumn => {
-                const headerGroupShow = abstractColumn.getColumnGroupShow();
-                switch (headerGroupShow) {
-                    case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
-                        // when set to open, only show col if group is open
-                        if (topLevelGroup.originalColumnGroup.isExpanded()) {
-                            this.displayedChildren!.push(abstractColumn);
-                        }
-                        break;
-                    case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
-                        // when set to open, only show col if group is open
-                        if (!topLevelGroup.originalColumnGroup.isExpanded()) {
-                            this.displayedChildren!.push(abstractColumn);
-                        }
-                        break;
-                    default:
-                        // if this abstractColumn is padding, we just want to add it
-                        // to the displayedChildren list if it has displayedChildren itself.
-                        if (!(
-                            abstractColumn instanceof ColumnGroup &&
-                            abstractColumn.isPadding() &&
-                            !abstractColumn.displayedChildren!.length)
-                        ) {
-                            this.displayedChildren!.push(abstractColumn);
-                        }
-                        break;
-                }
-            });
+            return;
         }
+
+        // Add cols based on columnGroupShow
+        // Note - the below also adds padding groups, these are always added because they never have
+        // colDef.columnGroupShow set.
+        this.children!.forEach(child => {
+            // always add padding
+            if (child instanceof ColumnGroup && child.isPadding()) {
+                this.displayedChildren!.push(child);
+                return;
+            }
+
+            const headerGroupShow = child.getColumnGroupShow();
+            switch (headerGroupShow) {
+                case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
+                    // when set to open, only show col if group is open
+                    if (parentWithExpansion.originalColumnGroup.isExpanded()) {
+                        this.displayedChildren!.push(child);
+                    }
+                    break;
+                case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
+                    // when set to open, only show col if group is open
+                    if (!parentWithExpansion.originalColumnGroup.isExpanded()) {
+                        this.displayedChildren!.push(child);
+                    }
+                    break;
+                default:
+                    this.displayedChildren!.push(child);
+                    break;
+            }
+        });
 
         this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
     }

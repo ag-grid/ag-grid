@@ -113,8 +113,6 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     }
 
     public getColumnGroupShow(): string | undefined {
-        if (this.padding) { return ColumnGroup.HEADER_GROUP_PADDING; }
-
         const colGroupDef = this.colGroupDef;
 
         if (!colGroupDef) { return; }
@@ -140,7 +138,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         // want to make sure the group has something to show / hide
         let atLeastOneChangeable = false;
 
-        const children = this.findChildren();
+        const children = this.findChildrenRemovingPadding();
 
         for (let i = 0, j = children.length; i < j; i++) {
             const abstractColumn = children[i];
@@ -159,11 +157,6 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
             } else {
                 atLeastOneShowingWhenOpen = true;
                 atLeastOneShowingWhenClosed = true;
-
-                if (headerGroupShow === ColumnGroup.HEADER_GROUP_PADDING) {
-                    const column = abstractColumn as OriginalColumnGroup;
-                    atLeastOneChangeable = atLeastOneChangeable || column.children.some(child => child.getColumnGroupShow() !== undefined);
-                }
             }
         }
 
@@ -178,17 +171,24 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         }
     }
 
-    public findChildren(): OriginalColumnGroupChild[] {
-        let children = this.children;
-        const firstChild = children[0] as any;
+    private findChildrenRemovingPadding(): OriginalColumnGroupChild[] {
+        const res: OriginalColumnGroupChild[] = [];
 
-        if (firstChild && (!firstChild.isPadding || !firstChild.isPadding())) { return children; }
+        const process = (items: OriginalColumnGroupChild[]) => {
+            items.forEach(item => {
+                // if padding, we add this children instead of the padding
+                const skipBecausePadding = item instanceof OriginalColumnGroup && item.isPadding();
+                if (skipBecausePadding) {
+                    process((item as OriginalColumnGroup).children);
+                } else {
+                    res.push(item);
+                }
+            });
+        };
 
-        while (children.length === 1 && children[0] instanceof OriginalColumnGroup) {
-            children = (children[0] as OriginalColumnGroup).children;
-        }
+        process(this.children);
 
-        return children;
+        return res;
     }
 
     private onColumnVisibilityChanged(): void {
