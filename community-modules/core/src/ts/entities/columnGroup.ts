@@ -306,8 +306,7 @@ export class ColumnGroup implements ColumnGroupChild {
         // colDef.columnGroupShow set.
         this.children!.forEach(child => {
             // never add empty groups
-            const emptyGroup = child instanceof ColumnGroup
-                && (child.displayedChildren==null || child.displayedChildren.length==0);
+            const emptyGroup = child instanceof ColumnGroup && (!child.displayedChildren || !child.displayedChildren.length);
             if (emptyGroup) { return; }
 
             const headerGroupShow = child.getColumnGroupShow();
