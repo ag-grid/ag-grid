@@ -1,6 +1,6 @@
 import React from 'react';
 import Prism from 'prismjs';
-import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-javascript';
 import { transform } from './snippetTransformer';
 
 export const Snippet = props => {
@@ -12,14 +12,14 @@ export const Snippet = props => {
     // create FW specific snippet
     const snippet = transform(formattedSnippet, props.framework, extractOptions(props));
 
-    return <pre className="language-ts">
+    return <pre className="language-js">
                <code dangerouslySetInnerHTML={{__html: highlightSnippet(snippet)}}/>
            </pre>;
 };
 
 const highlightSnippet = (code) => {
-    // NOTE: typescript seems to work best for all frameworks???
-    const [grammar, language] = [Prism.languages.typescript, 'typescript'];
+    // NOTE: javascript seems to work best for each frameworks
+    const [grammar, language] = [Prism.languages.javascript, 'javascript'];
     return Prism.highlight(code, grammar, language);
 }
 
@@ -27,7 +27,7 @@ const extractOptions = props => {
     const asBoolean = prop => ['true', '{true}', ''].includes(prop && prop.toLowerCase());
     return {
         suppressFrameworkContext: asBoolean(props['suppressframeworkcontext']),
-        addSpaceBetweenProperties: asBoolean(props['spacebetweenproperties']),
+        addSpaceBetweenProperties: asBoolean(props['spacesbetweenproperties']),
     };
 }
 

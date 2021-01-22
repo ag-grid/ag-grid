@@ -53,7 +53,7 @@ var gridOptions = {
                     fontSize: 14,
                     fontFamily: 'Arial, sans-serif',
                     color: '#2222aa',
-                    minRequiredAngle: 30,
+                    minAngle: 30,
                 },
                 callout: {
                     strokeWidth: 3,
