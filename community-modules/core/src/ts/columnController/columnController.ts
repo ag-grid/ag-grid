@@ -48,6 +48,7 @@ import { camelCaseToHumanText, startsWith } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
+import {doOnce} from "../utils/function";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -1960,22 +1961,7 @@ export class ColumnController extends BeanStub {
             this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source);
         });
 
-        if (this.gridColsArePrimary && params.applyOrder && params.state) {
-            const orderOfColIds = params.state.map(stateItem => stateItem.colId);
-
-            this.gridColumns.sort((colA: Column, colB: Column) => {
-                const indexA = orderOfColIds.indexOf(colA.getId());
-                const indexB = orderOfColIds.indexOf(colB.getId());
-
-                return indexA - indexB;
-            });
-
-            // this is already done in updateGridColumns, however we changed the order above (to match the order of the state
-            // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
-            // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
-            // is less sexy for the code here, but it keeps consistency.
-            this.putFixedColumnsFirst();
-        }
+        this.applyOrderAfterApplyState(params);
 
         this.updateDisplayedColumns(source);
 
@@ -1986,6 +1972,42 @@ export class ColumnController extends BeanStub {
         this.columnAnimationService.finish();
 
         return success;
+    }
+
+    private applyOrderAfterApplyState(params: ApplyColumnStateParams): void {
+
+        if (!this.gridColsArePrimary || !params.applyOrder || !params.state) { return; }
+
+        let newOrder: Column[] = [];
+        const processedColIds: {[id: string]:boolean} = {};
+        params.state.forEach( item => {
+            if (!item.colId || processedColIds[item.colId]) { return; }
+            const col = this.primaryColumnsMap[item.colId];
+            if (col) {
+                newOrder.push(col);
+                processedColIds[item.colId] = true;
+            }
+        });
+
+        // add in all other columns
+        this.gridColumns.forEach( col => {
+            if (!processedColIds[col.getColId()]) {
+                newOrder.push(col);
+            }
+        });
+
+        // this is already done in updateGridColumns, however we changed the order above (to match the order of the state
+        // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
+        // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
+        // is less sexy for the code here, but it keeps consistency.
+        newOrder = this.putFixedColumnsFirst(newOrder);
+
+        if (!this.doesMovePassMarryChildren(newOrder)) {
+            console.warn('ag-Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.');
+            return;
+        }
+
+        this.gridColumns = newOrder;
     }
 
     private compareColumnStatesAndRaiseEvents(source: ColumnEventType): () => void {
@@ -3006,7 +3028,7 @@ export class ColumnController extends BeanStub {
 
         this.autoRowHeightColumns = this.gridColumns.filter(col => col.getColDef().autoHeight);
 
-        this.putFixedColumnsFirst();
+        this.gridColumns = this.putFixedColumnsFirst(this.gridColumns);
         this.setupQuickFilterColumns();
         this.clearDisplayedAndViewportColumns();
 
@@ -3107,10 +3129,10 @@ export class ColumnController extends BeanStub {
         }
     }
 
-    private putFixedColumnsFirst(): void {
-        const locked = this.gridColumns.filter(c => c.getColDef().lockPosition);
-        const unlocked = this.gridColumns.filter(c => !c.getColDef().lockPosition);
-        this.gridColumns = locked.concat(unlocked);
+    private putFixedColumnsFirst(cols:Column[]): Column[] {
+        const locked = cols.filter(c => c.getColDef().lockPosition);
+        const unlocked = cols.filter(c => !c.getColDef().lockPosition);
+        return locked.concat(unlocked);
     }
 
     private addAutoGroupToGridColumns(): void {
