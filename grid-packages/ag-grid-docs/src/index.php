@@ -47,7 +47,7 @@ meta_and_links($title, $keywords, $description, false);
     </header>
     <div class="page-content">
         <div class="stage-scenarios main">
-            <h2 class="heading-scenarios">The Best JavaScript Grid in the World</h2>
+            <h2 >The Best JavaScript Grid in the World</h2>
             <section>
                 <div class="demo" >
                     <div id="bestHtml5Grid"  class="ag-theme-material"></div>
@@ -56,9 +56,24 @@ meta_and_links($title, $keywords, $description, false);
         </div>
 
         <section class="main-buttons">
-            <a class="get-started-btn" href="/documentation/javascript/getting-started/" role="button">Get Started</a>
             <a class="get-started-btn" href="/example.php" role="button">View Demo</a>
         </section>
+
+        <div id="stage-frameworks">
+            <section id="section-frameworks">
+                <div>
+                    <h2>Get Started With:</h2>
+                </div>
+                <div>
+                    <ul id="frameworks">
+                        <li id="fw-javascript"><a href="/documentation/javascript/getting-started/">JavaScript</a></li>
+                        <li id="fw-angular"><a href="/documentation/angular/getting-started/">Angular</a></li>
+                        <li id="fw-react"><a href="/documentation/react/getting-started/">React</a></li>
+                        <li id="fw-vue"><a href="/documentation/vue/getting-started/">Vue.js</a></li>
+                    </ul>
+                </div>
+            </section>
+        </div>
 
         <div id="stage-description">
             <section>
@@ -85,30 +100,6 @@ meta_and_links($title, $keywords, $description, false);
                         dedicated support and more enterprise style features. ag-Grid gives for free what other grids
                         charge for, then provides ag-Grid Enterprise where it goes above and beyond the competition.
                     </p>
-                </div>
-            </section>
-        </div>
-
-        <div id="stage-frameworks">
-            <section id="section-frameworks">
-                <div>
-                    <h2>
-                        Works With All<br />
-                        Major JavaScript<br />
-                        Frameworks<br />
-                        <small></small>
-                    </h2>
-                    <p>With Zero Dependencies.</p>
-                </div>
-
-                <div>
-                    <ul id="frameworks">
-                        <li id="fw-javascript"><a href="/documentation/javascript/getting-started/">JavaScript</a></li>
-                        <li id="fw-angular"><a href="/documentation/angular/getting-started/">Angular</a></li>
-                        <li id="fw-react"><a href="/documentation/react/getting-started/">React</a></li>
-                        <li id="fw-vue"><a href="/documentation/vue/getting-started/">Vue.js</a></li>
-                        <li id="fw-angularjs"><a href="/documentation/angular/angularjs/">AngularJS 1.x</a></li>
-                    </ul>
                 </div>
             </section>
         </div>
