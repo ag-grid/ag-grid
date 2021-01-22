@@ -64,6 +64,7 @@ export interface AddPopupParams {
 export interface AddPopupResult {
     hideFunc: () => void;
     stopAnchoringFunc?: () => void;
+    didRemoveChangeFocus: () => boolean
 }
 
 @Bean('popupService')
@@ -456,9 +457,12 @@ export class PopupService extends BeanStub {
 
         const pos = findIndex(this.popupList, popup => popup.element === eChild);
 
+        let removeChangedFocus = false;
+        const didRemoveChangeFocus = () => removeChangedFocus;
+
         if (pos !== -1) {
             const popup = this.popupList[pos];
-            return { hideFunc: popup.hideFunc, stopAnchoringFunc: popup.stopAnchoringFunc };
+            return { hideFunc: popup.hideFunc, stopAnchoringFunc: popup.stopAnchoringFunc, didRemoveChangeFocus };
         }
 
         const ePopupParent = this.getPopupParent();
@@ -530,7 +534,12 @@ export class PopupService extends BeanStub {
 
             popupHidden = true;
 
+            const activeElementBeforeRemove = this.gridOptionsWrapper.getDocument().activeElement;
             ePopupParent.removeChild(eWrapper);
+            const activeElementAfterRemove = this.gridOptionsWrapper.getDocument().activeElement;
+            if (activeElementBeforeRemove!=activeElementAfterRemove) {
+                removeChangedFocus = true;
+            }
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
@@ -591,7 +600,8 @@ export class PopupService extends BeanStub {
 
         return {
             hideFunc: hidePopup,
-            stopAnchoringFunc: destroyPositionTracker
+            stopAnchoringFunc: destroyPositionTracker,
+            didRemoveChangeFocus
         };
     }
 
