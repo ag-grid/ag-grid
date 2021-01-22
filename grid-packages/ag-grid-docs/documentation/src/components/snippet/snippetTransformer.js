@@ -1,22 +1,12 @@
 import { parseScript } from 'esprima';
-import { decorateWithComments } from "./commentDecorator";
-import {
-    createReactColDefSnippet,
-    decreaseIndent,
-    getName,
-    getReactValue,
-    isLiteralProperty,
-    isProperty,
-    tab,
-} from "./snippetUtils";
 
 export const transform = (snippet, framework, options) => {
     return {
-        'javascript': () => new JavascriptTransformer(snippet, options).transform(),
-        'angular': () => new AngularTransformer(snippet, options).transform(),
-        'react': () => new ReactTransformer(snippet, options).transform(),
-        'vue': () => new VueTransformer(snippet, options).transform(),
-    }[framework]();
+        'javascript': () => new JavascriptTransformer(snippet, options),
+        'angular': () => new AngularTransformer(snippet, options),
+        'react': () => new ReactTransformer(snippet, options),
+        'vue': () => new VueTransformer(snippet, options),
+    }[framework]().transform();
 }
 
 // The SnippetTransformer is based around the 'Template Method' design pattern
@@ -123,24 +113,22 @@ class ReactTransformer extends SnippetTransformer {
 
     extractRawProperty(property, depth) {
         if (isLiteralProperty(property)) {
-            return (property.comment ? `\n${tab(depth)}//${property.comment}` : '') +
-                `\n${tab(depth)}${getName(property)}=${getReactValue(property)}`;
+            return `\n${tab(depth)}${getName(property)}=${getReactValue(property)}`;
         }
         const [start, end] = property.range;
         return `${this.snippet.slice(start, end)}`.replace(`${getName(property)}:`, '').trim();
     }
 
     parseProperty(property, depth) {
-        // special handling required for react column definitions
+        let comment = property.comment ? `\n${tab(depth)}//${property.comment}` : '';
+
         if (getName(property) === 'columnDefs') {
-            return (property.comment ? `\n${tab(1)}//${property.comment}` : '') +
-                createReactColDefSnippet(property.value.elements, depth);
+            return comment + this.createReactColDefSnippet(property.value.elements, depth);
         }
         if (isLiteralProperty(property)) {
-            this.propertySnippets.push(this.extractRawProperty(property, depth));
+            this.propertySnippets.push(comment + this.extractRawProperty(property, depth));
         } else {
-            let res = (property.comment ? `\n${tab(depth)}//${property.comment}` : '') +
-                `\n${tab(depth)}${getName(property)}={` + this.extractRawProperty(property, depth) + '}';
+            let res = comment + `\n${tab(depth)}${getName(property)}={` + this.extractRawProperty(property, depth) + '}';
             this.propertySnippets.push(res);
         }
         return ''; // react grid options are gathered and added later in the framework context
@@ -163,4 +151,91 @@ class ReactTransformer extends SnippetTransformer {
     addComment() {
         return ''; // react comments are added inplace
     }
+
+    createReactColDefSnippet(tree, depth) {
+        if (Array.isArray(tree)) {
+            return tree.map(node => this.createReactColDefSnippet(node, depth)).join('');
+        }
+
+        const groupCol = tree.properties.find(n => getName(n) === 'children');
+        if (groupCol) {
+            const colProps = this.extractColumnProperties(tree.properties);
+            const childColDefs = this.createReactColDefSnippet(getChildren(groupCol), depth + 1);
+            return `\n${tab(depth)}<AgGridColumn ${colProps.join(' ')}>` +
+                        childColDefs +
+                    `\n${tab(depth)}</AgGridColumn>`;
+        } else {
+            const colProps = this.extractColumnProperties(tree.properties);
+            return `\n${tab(depth)}<AgGridColumn ${colProps.join(' ')} />`;
+        }
+    }
+
+    extractColumnProperties(properties) {
+        return properties
+            .filter(property => getName(property) !== 'children')
+            .map(property => {
+                if (isArrayExpr(property)) {
+                    const [start, end] = property.range;
+                    const rawValue = this.snippet.slice(start, end);
+                    const value = rawValue.replace(`${getName(property)}:`, '').trim();
+                    return `${getName(property)}={${value}}`;
+                }
+                return `${getName(property)}=${getReactValue(property)}`;
+            });
+    }
 }
+
+
+// This function associates comments with the correct node as comments returned in a separate array by 'esprima'
+const decorateWithComments = tree => {
+    // store comments with locations for easy lookup
+    const commentsMap = tree.comments.reduce((acc, comment) => {
+        acc[comment.loc.start.line] = comment.value;
+        return acc;
+    }, {});
+
+    // decorate nodes with comments
+    const parseTree = node => {
+        if (Array.isArray(node)) {
+            node.forEach(n => parseTree(n));
+        } else if (isVarDeclaration(node)) {
+            node.declarations.forEach(n => parseTree(n));
+        } else {
+            node.comment = commentsMap[node.loc.start.line - 1];
+            if (isObjectProperty(node)) {
+                parseTree(node.value.properties);
+            }
+        }
+    }
+
+    // simpler and faster to start here
+    const root = tree.body[0].declarations[0].init.properties;
+    parseTree(root);
+
+    return root;
+}
+
+// removes a tab spacing from the beginning of each line after first
+const decreaseIndent = codeBlock => {
+    const functionArr = codeBlock.split('\n');
+    let firstLine = functionArr.shift();
+    const res = functionArr.map(line => line.substring(4));
+    res.unshift(firstLine);
+    return res.join('\n');
+}
+
+// using spaces rather than tabs for accurate test matching
+const tab = n => n > 0 ? new Array(n*4).fill(' ').join('') : '';
+
+const getName = node => node.key.name;
+const getReactValue = node => {
+    const value = node.value.value;
+    return (typeof value === 'string') ? `"${value}"` : `{${value}}`;
+}
+
+const isProperty = node => node.type === 'Property';
+const isLiteralProperty = node => isProperty(node) && node.value.type === 'Literal';
+const isObjectProperty = node => isProperty(node) && node.value.type === 'ObjectExpression';
+const isArrayExpr = node => node.value && node.value.type === 'ArrayExpression';
+const getChildren = node => isArrayExpr(node) ? node.value.elements : node.properties;
+const isVarDeclaration = node => node.type === 'VariableDeclaration' && Array.isArray(node.declarations);
