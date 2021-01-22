@@ -38,10 +38,7 @@ export class PieChartProxy extends PolarChartProxy {
         const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
         options.seriesDefaults = {
             title: seriesDefaults.title,
-            label: {
-                ...seriesDefaults.label,
-                minAngle: seriesDefaults.label!.minAngle
-            },
+            label: seriesDefaults.label,
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
