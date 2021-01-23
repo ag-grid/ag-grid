@@ -73,6 +73,7 @@ export class MenuItemComponent extends Component {
             this.addGuiEventListener('click', e => this.onItemSelected(e));
             this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
                 if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
+                    e.preventDefault();
                     this.onItemSelected(e);
                 }
             });
@@ -207,7 +208,8 @@ export class MenuItemComponent extends Component {
         if (!this.params.checked && !this.params.icon && this.params.isCompact) { return; }
 
         const icon = _.loadTemplate(/* html */
-            `<span ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`);
+            `<span ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`
+        );
 
         if (this.params.checked) {
             icon.appendChild(_.createIconNoSpan('check', this.gridOptionsWrapper)!);
@@ -228,7 +230,8 @@ export class MenuItemComponent extends Component {
         if (!this.params.name && this.params.isCompact) { return; }
 
         const name = _.loadTemplate(/* html */
-            `<span ref="eName" class="${this.getClassName('part')} ${this.getClassName('text')}">${this.params.name || ''}</span>`);
+            `<span ref="eName" class="${this.getClassName('part')} ${this.getClassName('text')}">${this.params.name || ''}</span>`
+        );
 
         this.getGui().appendChild(name);
     }
@@ -255,7 +258,8 @@ export class MenuItemComponent extends Component {
     private addShortcut(): void {
         if (!this.params.shortcut && this.params.isCompact) { return; }
         const shortcut = _.loadTemplate(/* html */
-            `<span ref="eShortcut" class="${this.getClassName('part')} ${this.getClassName('shortcut')}">${this.params.shortcut || ''}</span>`);
+            `<span ref="eShortcut" class="${this.getClassName('part')} ${this.getClassName('shortcut')}">${this.params.shortcut || ''}</span>`
+        );
 
         this.getGui().appendChild(shortcut);
     }
@@ -264,7 +268,8 @@ export class MenuItemComponent extends Component {
         if (!this.params.subMenu && this.params.isCompact) { return; }
 
         const pointer = _.loadTemplate(/* html */
-            `<span ref="ePopupPointer" class="${this.getClassName('part')} ${this.getClassName('popup-pointer')}"></span>`);
+            `<span ref="ePopupPointer" class="${this.getClassName('part')} ${this.getClassName('popup-pointer')}"></span>`
+        );
 
         const eGui = this.getGui();
 
