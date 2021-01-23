@@ -6,6 +6,7 @@ var columnDefs = [
     { headerName: "minMax(age)", field: "age", aggFunc: minAndMaxAggFunction },
     // here we use an average func and specify the function directly
     { headerName: "avg(age)", field: "age", aggFunc: avgAggFunction, enableValue: true, minWidth: 200 },
+    { headerName: "roundedAvg(age)", field: "age", aggFunc: roundedAvgAggFunction, enableValue: true, minWidth: 200 },
     // here we use a custom sum function that was registered with the grid,
     // which overrides the built in sum function
     { headerName: "sum(gold)", field: "gold", aggFunc: 'sum', enableValue: true },
@@ -111,7 +112,6 @@ function minAndMaxAggFunction(params) {
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
 function avgAggFunction(params) {
-
     // the average will be the sum / count
     var sum = 0;
     var count = 0;
@@ -151,6 +151,14 @@ function avgAggFunction(params) {
             return this.avg;
         }
     };
+
+    return result;
+}
+
+function roundedAvgAggFunction(params) { 
+    var result = avgAggFunction(params);
+
+    result.avg = parseInt(Math.round(result.avg * 100), 10) / 100;
 
     return result;
 }
