@@ -152,6 +152,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             });
         }
         const keys = [node.key];
+
         if (!this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
             while (node.parent) {
                 node = node.parent;
@@ -186,16 +187,17 @@ export class GridSerializer extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('columnFactory') private columnFactory: ColumnFactory;
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
 
         const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
-        const api = this.gridOptionsWrapper.getApi()!;
-        const columnApi = this.gridOptionsWrapper.getColumnApi()!;
-        const skipSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
-        const skipLowestSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
-        const context = this.gridOptionsWrapper.getContext();
+        const gridOptionsWrapper = this.gridOptionsWrapper;
+        const api = gridOptionsWrapper.getApi()!;
+        const columnApi = gridOptionsWrapper.getColumnApi()!;
+        const skipSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveSingleChildren();
+        const skipLowestSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
+        const hideOpenParents = gridOptionsWrapper.isGroupHideOpenParents();
+        const context = gridOptionsWrapper.getContext();
 
         // when in pivot mode, we always render cols on screen, never 'all columns'
         const isPivotMode = this.columnController.isPivotMode();
@@ -209,7 +211,7 @@ export class GridSerializer extends BeanStub {
             columnsToExport = this.columnController.getGridColumns(params.columnKeys!);
         } else if (params.allColumns && !isPivotMode) {
             // add auto group column for tree data
-            columnsToExport = this.gridOptionsWrapper.isTreeData() ?
+            columnsToExport = gridOptionsWrapper.isTreeData() ?
                 this.columnController.getGridColumns([Constants.GROUP_AUTO_COLUMN_ID]) : [];
 
             columnsToExport = columnsToExport.concat(this.columnController.getAllPrimaryColumns() || []);
@@ -244,20 +246,23 @@ export class GridSerializer extends BeanStub {
         }
 
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
+        const rowModel = this.rowModel;
+        const clientSideRowModel = this.rowModel as IClientSideRowModel;
 
         if (isPivotMode) {
-            if ((this.rowModel as IClientSideRowModel).forEachPivotNode) {
-                (this.rowModel as IClientSideRowModel).forEachPivotNode(processRow);
+            // @ts-ignore - ignore tautology below as we are using it to check if it's clientSideRowModel
+            if (clientSideRowModel.forEachPivotNode) {
+                clientSideRowModel.forEachPivotNode(processRow);
             } else {
-                //Must be enterprise, so we can just loop through all the nodes
-                this.rowModel.forEachNode(processRow);
+                // n=must be enterprise, so we can just loop through all the nodes
+                rowModel.forEachNode(processRow);
             }
         } else {
             // onlySelectedAllPages: user doing pagination and wants selected items from
             // other pages, so cannot use the standard row model as it won't have rows from
             // other pages.
             // onlySelectedNonStandardModel: if user wants selected in non standard row model
-            // (eg viewport) then again rowmodel cannot be used, so need to use selected instead.
+            // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
             if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
                 const selectedNodes = this.selectionController.getSelectedNodes();
                 selectedNodes.forEach((node: RowNode) => {
@@ -268,9 +273,9 @@ export class GridSerializer extends BeanStub {
                 // the selection model even when just using selected, so that the result is the order
                 // of the rows appearing on the screen.
                 if (rowModelNormal) {
-                    (this.rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow);
+                    clientSideRowModel.forEachNodeAfterFilterAndSort(processRow);
                 } else {
-                    this.rowModel.forEachNode(processRow);
+                    rowModel.forEachNode(processRow);
                 }
             }
         }
@@ -284,8 +289,9 @@ export class GridSerializer extends BeanStub {
         function processRow(node: RowNode): void {
             const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
             const shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
+            const shouldSkipOpenParents = hideOpenParents && node.expanded && !node.displayed;
 
-            if (node.group && (params.skipGroups || shouldSkipCurrentGroup)) {
+            if (node.group && (params.skipGroups || shouldSkipCurrentGroup || shouldSkipOpenParents)) {
                 return;
             }
 
