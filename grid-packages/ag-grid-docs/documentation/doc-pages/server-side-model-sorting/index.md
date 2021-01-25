@@ -11,17 +11,15 @@ Sorting is enabled in the grid via the `sortable` column definition attribute. S
 with sorting enabled are shown below:
 
 
-```js
-gridOptions: {
+<snippet>
+const gridOptions = {
     columnDefs: [
         { field: 'country', sortable: true },
         { field: 'year', sortable: true },
         { field: 'sport' },
-    ],
-
-    // other options
+    ]
 }
-```
+</snippet>
 
 For more details on sorting configurations see the section on [Row Sorting](../row-sorting/).
 

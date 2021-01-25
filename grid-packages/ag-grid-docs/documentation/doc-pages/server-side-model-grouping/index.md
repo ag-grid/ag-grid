@@ -10,18 +10,15 @@ This section covers Row Grouping in the Server-Side Row Model (SSRM).
 Row Grouping is enabled in the grid via the `rowGroup` column definition attribute. 
 The example below shows how to group rows by 'country':
 
-
-```js
-gridOptions: {
+<snippet>
+const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true },
         { field: 'sport' },
         { field: 'year' },
-    ],
-
-    // other options
+    ]
 }
-```
+</snippet>
 
 For more configuration details see the section on [Row Grouping](../grouping/).
 
@@ -210,16 +207,21 @@ providing [Transactions](../server-side-model-transactions/) or doing a [Store R
 It is also possible to attach info to each store as data is loaded. This is done through the `success()` callback
 when rows are fetched.
 
-
 ```js
-// Example - providing info to a store
-MyDatasource.prototype.getRows = function(params) {
-
-    // get the rows to return
-    let myRowsFromServer = ....
-
-    // pass rows back along with any additional store info
-    params.success({rowData: myRowsFromServer, storeInfo: {a: 22, b: 55});
+const createDatasource = server => {
+    return {
+        // called by the grid when more rows are required
+        getRows: params => { 
+            // get data for request from server
+            const rows = server.getData(params.request);  
+            
+            // pass rows back along with any additional store info
+            params.success({
+                rowData: rows, 
+                storeInfo: {a: 22, b: 55}
+            }); 
+        }
+    }
 }
 ```
 
@@ -279,13 +281,12 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
 
 It is possible to expand and collapse all group rows using the `expandAll()` and `collapseAll()` grid API's.
 
-```js
+<snippet>
 // Expand all group rows
 gridOptions.api.expandAll();
-
 // Collapse all group rows
 gridOptions.api.collapseAll();
-```
+</snippet>
 
 Calling `expandAll()` and `collapseAll()` will impact **all loaded group nodes**, including those not visible due to their containing group been closed. This means there could potentially be a huge number of groups expanded, so this method should be used very wisely to not create massive amount of server requests and loading a large amount of data.
 
@@ -293,14 +294,14 @@ Calling `expandAll()` and `collapseAll()` will have no impact on rows yet to be 
 
 To open only specific groups, e.g. only groups at the top level, then use the `forEachNode()` callback and open / close the row using `setExpanded()` as follows:
 
-```js
+<snippet>
 // Expand all top level row nodes
-gridOptions.api.forEachNode(function(node) {
+gridOptions.api.forEachNode(node => {
     if (node.group && node.level == 0) {
         node.setExpanded(true);
     }
 });
-```
+</snippet>
 
 The example below demonstrates these techniques. Note the following:
 
@@ -315,16 +316,15 @@ The example below demonstrates these techniques. Note the following:
 
 By default, the grid will not show row counts beside the group names. If you do want row counts, you need to implement the `getChildCount()` callback for the grid. The callback provides you with the row data; it is your application's responsibility to know what the child row count is. The suggestion is you set this information into the row data item you provide to the grid.
 
-```js
-gridOptions: {
-    getChildCount = function(data) {
+
+<snippet>
+const gridOptions = {
+    getChildCount: data => {
         // here child count is stored in the 'childCount' property
         return data.childCount;
-    },
-
-    // other options
+    }
 }
-```
+</snippet>
 
 <grid-example title='Child Counts' name='child-counts' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 

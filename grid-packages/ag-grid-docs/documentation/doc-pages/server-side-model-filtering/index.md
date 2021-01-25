@@ -9,23 +9,20 @@ This section covers Filtering using the Server-Side Row Model (SSRM).
 
 Filtering is enabled in the grid via the `filter` column definition attribute. Some example column definitions with filtering enabled are shown below:
 
-
-```js
-gridOptions: {
-    columnDefs: [
-        // sets the 'text' filter
-        { field: 'country', filter: 'agTextColumnFilter' },
-
-        // use the default 'set' filter
-        { field: 'year', filter: true },
-
-        // no filter (unspecified)
-        { field: 'sport' }
-    ],
-
-    // other options
-}
-```
+<snippet>
+|const gridOptions = {
+|    columnDefs: [
+|        // sets the 'text' filter
+|        { field: 'country', filter: 'agTextColumnFilter' },
+|
+|        // use the default 'set' filter
+|        { field: 'year', filter: true },
+|
+|        // no filter (unspecified)
+|        { field: 'sport' },
+|    ],
+|}
+</snippet>
 
 For more details on filtering configurations see the section on [Column Filtering](../filtering/).
 
@@ -125,30 +122,31 @@ When using the Set Filter with the SSRM it is necessary to supply the values as 
 have all rows loaded.  This can be done either synchronously or asynchronously using the `values` filter param as shown below:
 
 
-```js
-// colDef with Set Filter values supplied synchronously
-{
-    field: 'country',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        values: ['Australia', 'China', 'Sweden']
-    }
-}
-
-// colDef with Set Filter values supplied asynchronously
-{
-    field: 'country',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        values: function(params) {
-            // simulating async delay
-            setTimeout(function() {
-                params.success(['Australia', 'China', 'Sweden']);
-            }, 500);
+<snippet spaceBetweenProperties="true">
+const gridOptions = {
+    columnDefs: [
+        // colDef with Set Filter values supplied synchronously
+        {
+            field: 'country',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                values: ['Australia', 'China', 'Sweden']
+            }
+        },
+        // colDef with Set Filter values supplied asynchronously
+        {
+            field: 'country',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                values: params => {
+                    // simulating async delay
+                    setTimeout(() => params.success(['Australia', 'China', 'Sweden']), 500);
+                }
+            }
         }
-    }
+    ]
 }
-```
+</snippet>
 
 For more details on setting values, see [Supplying Filter Values](../filter-set-filter-list/#supplying-filter-values).
 Once you have supplied values to the Set Filter, they will not change unless you ask for them to be refreshed; 

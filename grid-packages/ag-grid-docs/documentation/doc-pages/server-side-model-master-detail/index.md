@@ -24,30 +24,33 @@ To enable Master / Detail, you should set the following grid options:
 
 These grid options are illustrated below:
 
-```js
-var masterGridOptions = {
-    columnDefs: masterColumnDefs,
-    rowData: rowData,
 
-    // enable master detail
-    masterDetail: true,
-
-    // specify params for default detail cell renderer
-    detailCellRendererParams: {
-        // provide detail grid options
-        detailGridOptions: detailGridOptions,
-
-        // extract and supply row data for detail
-        getDetailRowData: function(params) {
-            params.successCallback(params.data.childRecords);
-        }
-    }
-}
-
-var detailGridOptions = {
-    columnDefs: detailColumnDefs
-}
-```
+<snippet spaceBetweenProperties="true">
+|const gridOptions = {
+|    // master grid columns
+|    columnDefs: [],
+|
+|    // use the server-side row model
+|    rowModelType: 'serverSide',
+|
+|    // choose store type
+|    serverSideStoreType: 'partial',
+|
+|    // enable master detail
+|    masterDetail: true,
+|
+|    detailCellRendererParams: {
+|        detailGridOptions: {
+|            // detail grid columns
+|            columnDefs: [],
+|        },
+|        getDetailRowData: params => {
+|            // supply data to the detail grid
+|            params.successCallback(params.data);
+|        }
+|    },
+|}
+</snippet>
 
 [[note]]
 | Note that the nested detail grid can be configured to use any Row Model.
@@ -66,16 +69,17 @@ This example shows a simple Master / Detail setup which includes the infinite sc
 
 It is possible to combine [Server-Side Grouping](../server-side-model-grouping/) with Master Detail.
 
-
 The following snippet shows row grouping on the 'country' column by setting `rowGroup = true`:
 
-```js
-columnDefs = [
-    { field: 'country', rowGroup: true },
-
-    // ... more colDefs
-]
-```
+<snippet suppressFrameworkContext="true">
+|const gridOptions = {
+|    columnDefs: [
+|        { field: 'country', rowGroup: true },
+|
+|        // more column definitions
+|    ]
+|}
+</snippet>
 
 ## Example: Row Grouping with Master Detail
 
@@ -98,14 +102,16 @@ Rather than use the `autoGroupColumnDef` for the master rows as shown in the exa
 
 This is shown in the code snippet below:
 
-
-```js
-columnDefs = [
-    { field: 'country', rowGroup: true },
-    { field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer' },
-    // ... more colDefs
-]
-```
+<snippet suppressFrameworkContext="true">
+|const gridOptions = {
+|    columnDefs: [
+|        { field: 'country', rowGroup: true },
+|        { field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer' },
+|
+|        // more column definitions
+|    ]
+|}
+</snippet>
 
 ## Detail Row Height
 
@@ -117,27 +123,30 @@ The height of detail rows can be configured in one of the following ways:
 
 The following snippet compares all approaches:
 
-
-```js
-// option 1 - fixed detail row height, sets height for all details rows
-masterGridOptions.detailRowHeight = 500;
-
-// option 2 - dynamic detail row height, dynamically sets height for all rows
-masterGridOptions.getRowHeight = function(params) {
-    var isDetailRow = params.node.detail;
-
-    // not that this callback gets called for all rows, not just the detail row
-    if (isDetailRow) {
-        // dynamically calculate detail row height
-        return params.data.children.length * 50;
-    }
-    // for all non-detail rows, return 25, the default row height
-    return 25;
-}
-
-// option 3 - use autoHeight
-masterGridOptions.detailCellRendererParams.autoHeight = true;
-```
+<snippet spaceBetweenProperties="true">
+|const gridOptions = {
+|    // option 1 - fixed detail row height, sets height for all details rows
+|    detailRowHeight: 500,
+|
+|    // option 2 - dynamic detail row height, dynamically sets height for all rows
+|    getRowHeight: params => {
+|        const isDetailRow = params.node.detail;
+|    
+|        // not that this callback gets called for all rows, not just the detail row
+|        if (isDetailRow) {
+|            // dynamically calculate detail row height
+|            return params.data.children.length * 50;
+|        }
+|        // for all non-detail rows, return 25, the default row height
+|        return 25;
+|    },
+|
+|    // option 3 - use autoHeight
+|    detailCellRendererParams: {
+|        autoHeight: true,
+|    }
+|}
+</snippet>
 
 [[note]]
 | Purging the cache and dynamic row heights do not work together for the Server-Side Row Model.

@@ -59,27 +59,22 @@ and `getServerSideGroupKey(dataItem)`.
 The following code snippet shows the relevant `gridOptions` entries for configuring tree data with the 
 server-side row model:
 
-
-```js
-var gridOptions = {
-    // choose Server-Side Row Model
-    rowModelType: 'serverSide',
-
-    // enable Tree Data
-    treeData: true,
-
-    // indicate if row is a group node
-    isServerSideGroup: function(dataItem) {
-        return dataItem.group;
-    },
-
-    // specify which group key to use
-    getServerSideGroupKey: function(dataItem) {
-        return dataItem.employeeId;
-    }
-    ...
-}
-```
+<snippet spaceBetweenProperties="true">
+|const gridOptions = {
+|    // choose Server-Side Row Model
+|    rowModelType: 'serverSide',
+|    // enable Tree Data
+|    treeData: true,
+|    // indicate if row is a group node
+|    isServerSideGroup: dataItem => {
+|        return dataItem.group;
+|    },
+|    // specify which group key to use
+|    getServerSideGroupKey: dataItem => {
+|        return dataItem.employeeId;
+|    },
+|}
+</snippet>
 
 [[note]]
 | Be careful not to get mixed up with the [Client-Side Tree Data](../tree-data/) configurations by mistake.

@@ -43,19 +43,18 @@ On top of that, you can also update using [Transactions](../server-side-model-tr
 
 The following code snippet outlines the general approach, to iterate through all loaded row nodes and then update them directly using `rowNode.setData(data)`:
 
-
-```js
-gridOptions.api.forEachNode(function(rowNode) {
-    if (idsToUpdate.indexOf(rowNode.data.id) >= 0) {
-        // arbitrarily update some data
-        var updated = rowNode.data;
-        updated.gold += 1;
-
-        // directly update data in rowNode
-        rowNode.setData(updated);
-    }
-});
-```
+<snippet>
+|gridOptions.api.forEachNode(rowNode => {
+|    if (idsToUpdate.indexOf(rowNode.data.id) >= 0) {
+|        // arbitrarily update some data
+|        var updated = rowNode.data;
+|        updated.gold += 1;
+|
+|        // directly update data in rowNode
+|        rowNode.setData(updated);
+|    }
+|});
+</snippet>
 
 [[note]]
 | Setting row data will NOT change the row node ID, so if you are using `getRowNodeId()` 
