@@ -17,21 +17,20 @@ To efficiently process this data we need the following:
 
 - A unique key per row - we do this by making use of the `getRowNodeId` callback:
 
-    ```js
-    const gridOptions = {
-        getRowNodeId: function(data) {
-            // the code is unique, so perfect for the ID
-            return data.code;
-        }
-        ...
-    };
-    ```
+<snippet>
+const gridOptions = {
+    getRowNodeId: data => {
+        // the code is unique, so perfect for the ID
+        return data.code;
+    }
+}
+</snippet>
 
 - A manner of letting ag-Grid know the type of update we're doing - for this we make use of the [Transaction](../data-update/) method:
 
-    ```js
-    updates.subscribe(updates => gridOptions.api.applyTransaction({ update: updates }));
-    ```
+<snippet>
+updates.subscribe(updates => gridOptions.api.applyTransaction({ update: updates }));
+</snippet>
 
 With these two pieces of code we can supply the updates to ag-Grid and the grid will only re-render the changes rows, resulting
 in much improved performance.
@@ -46,20 +45,18 @@ This time however the second subscription has the full row data, with altered ro
 
 To efficiently process this data we need two things:
 
-
 - A unique key per row - we do this by making use of the `getRowNodeId` callback.
 - A manner of letting ag-Grid know that we're supplying the full data again, but with altered data within - for this we make use of the [Immutable Data](../immutable-data/) method.
 
-```js
+<snippet spaceBetweenProperties="true">
 const gridOptions = {
-    getRowNodeId: function(data) {
+    getRowNodeId: data => {
         // the code is unique, so perfect for the ID
         return data.code;
     },
     immutableData: true,
-    ...
-};
-```
+}
+</snippet>
 
 With this configuration we can supply the updates to ag-Grid and the grid will only re-render the changed rows, resulting in much improved performance.
 
