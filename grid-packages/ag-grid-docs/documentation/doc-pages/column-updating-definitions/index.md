@@ -79,21 +79,16 @@ All stateful attributes of Column Definitions are as follows:
 The **Initial Attribute** will be used only when the **Column is Created** only. The **Stateful Attribute** will be used
 when the **Column is Created or Updated**.
 
-```js
-// using initial values, get applied when Column is created
-myInitialValuesColDef = {
-    field: 'country',
-    initialWidth: 200,
-    initialPinned: 'left'
+<snippet suppressFrameworkContext=true>
+const gridOptions = {
+    columnDefs: [
+        // using initial values, get applied when Column is created
+        { field: 'country', initialWidth: 200, initialPinned: 'left' },
+        // using stateful values, get applied when Column is created or updated
+        { field: 'country', width: 200, pinned: 'left' }
+    ]
 }
-
-// using stateful values, get applied when Column is created or updated
-myStatefulColDef = {
-    field: 'country',
-    width: 200,
-    pinned: 'left'
-}
-```
+</snippet>
 
 The example below shows Column Definitions using **initial attributes**. Note the following:
 

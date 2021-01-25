@@ -4,15 +4,35 @@ import { transform } from './snippetTransformer';
 
 // Utility method to verify snippets match saved snapshots for all frameworks and options
 const runSnippetFrameworkTests = snippetToTest => {
-    // with framework context (suppressFrameworkContext = false)
-    it.each(supportedFrameworks)(`it should create '%s' snippets`, framework => {
-        const generatedSnippet = transform(snippetToTest, framework, {suppressFrameworkContext: false});
+    // no options supplied
+    it.each(supportedFrameworks)
+    (`it should create '%s' snippets`, framework => {
+        const options = {};
+        const generatedSnippet = transform(snippetToTest, framework, options);
         expect(generatedSnippet).toMatchSnapshot();
     });
 
-    // without framework context (suppressFrameworkContext = true)
-    it.each(supportedFrameworks)(`it should create '%s' snippets without framework context`, framework => {
-        const generatedSnippet = transform(snippetToTest, framework, {suppressFrameworkContext: true});
+    // (suppressFrameworkContext = true)
+    it.each(supportedFrameworks)
+    (`it should create '%s' snippets without framework context`, framework => {
+        const options = { suppressFrameworkContext: true };
+        const generatedSnippet = transform(snippetToTest, framework, options);
+        expect(generatedSnippet).toMatchSnapshot();
+    });
+
+    // (spaceBetweenProperties = true)
+    it.each(supportedFrameworks)
+    (`it should create '%s' snippets with space between properties`, framework => {
+        const options = { spaceBetweenProperties: true };
+        const generatedSnippet = transform(snippetToTest, framework, options);
+        expect(generatedSnippet).toMatchSnapshot();
+    });
+
+    // (suppressFrameworkContext = true, spaceBetweenProperties = true)
+    it.each(supportedFrameworks)
+    (`it should create '%s' snippets without framework context and space between properties`, framework => {
+        const options = { suppressFrameworkContext: true, spaceBetweenProperties: true };
+        const generatedSnippet = transform(snippetToTest, framework, options);
         expect(generatedSnippet).toMatchSnapshot();
     });
 }
@@ -31,6 +51,7 @@ describe('Snippet Component', () => {
 }`
         );
     });
+
     describe('given column definitions with group columns', () => {
         runSnippetFrameworkTests(
 `const gridOptions = {
@@ -54,6 +75,21 @@ describe('Snippet Component', () => {
 }`
         );
     });
+
+    describe('given col defs with arrow function properties', () => {
+        runSnippetFrameworkTests(
+`const gridOptions = {
+    columnDefs: [
+        {
+            field: 'country',
+            // col span is 2 for rows with Russia, but 1 for everything else
+            colSpan: params => params.data.country === 'Russia' ? 2 : 1,
+        },        
+    ],
+}`
+        );
+    });
+
     describe('given a mix of grid options', () => {
         runSnippetFrameworkTests(
 `const gridOptions = {
@@ -89,4 +125,36 @@ describe('Snippet Component', () => {
 }`
         );
     });
+
+    describe('given expressions', () => {
+        runSnippetFrameworkTests(
+`// save the columns state
+const savedState = gridOptions.columnApi.getColumnState();
+// restore the column state
+gridOptions.columnApi.applyColumnState({ state: savedState });`
+        );
+    });
+
+    describe('given column definitions with functions', () => {
+        runSnippetFrameworkTests(
+`const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            // simple number comparator
+            comparator: (valueA, valueB, nodeA, nodeB, isInverted) => valueA - valueB
+        },
+        {
+            field: 'name',
+            // simple string comparator
+            comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
+                if (valueA == valueB) return 0;
+                return (valueA > valueB) ? 1 : -1;
+            }
+        }
+    ]    
+}`
+        );
+    });
+
 });

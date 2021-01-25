@@ -41,7 +41,7 @@ Groups are explained in more detail in the section [Column Groups](../column-gro
 [[only-angular]]
 | ## Declarative Columns
 |
-| You can define columns in two ways - either programatically (as shown above),
+| You can define columns in two ways - either programmatically (as shown above),
 | or declare them via declaratively with markup.
 |
 | ### Column Definition
@@ -198,9 +198,8 @@ Default columns and column types can specify any of the [column properties](../c
 
 The following code snippet demonstrates these three properties:
 
-<snippet>
+<snippet spaceBetweenProperties="true">
 const gridOptions = {
-    // define columns
     columnDefs: [
         // uses the default column properties
         { headerName: 'Col A', field: 'a'},
@@ -218,14 +217,14 @@ const gridOptions = {
         // make every column editable
         editable: true,
         // make every column use 'text' filter by default
-        filter: 'agTextColumnFilter'
+        filter: 'agTextColumnFilter',
     },
     // if we had column groups, we could provide default group items here
     defaultColGroupDef: {},
     // define a column type (you can define as many as you like)
     columnTypes: {
-        'nonEditableColumn': { editable: false },
-        'dateColumn': {
+        nonEditableColumn: { editable: false },
+        dateColumn: {
             filter: 'agDateColumnFilter',
             filterParams: { comparator: myDateComparator },
             suppressMenu: true
