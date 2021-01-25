@@ -3,8 +3,8 @@ title: "SSRM Refresh"
 enterprise: true
 ---
 
-It is possible to get the grid to refresh any grouping level. This is useful if the data has changed and 
-you want to do a complete refresh.
+It is possible to get the grid to refresh its rows. In other words reload previously loaded rows.
+This is useful when the data has changed at the source (typically on the server) and the UI needs refresh.
 
 ## Refresh API
 
@@ -25,12 +25,11 @@ interface RefreshStoreParams {
     // If no route is passed, or an empty array, then the top level store is refreshed.
     route?: string[];
 
-    // If true, then all rows at the level getting refreshed are destroyed, including
-    // their child rows, and 'loading' rows appear, to signal to the user that loading
-    // is taking place.
+    // If true, then all rows at the level getting refreshed are immediatly destroyed 
+    // and 'loading' rows will appear.
     //
-    // If false, then loading will happen in the background and data will be updated
-    // immediatly once loading has complete without showing any loading rows.
+    // If false, then all rows at the level getting refreshed are kept until rows 
+    // are loaded (no 'loading' rows appear).
     purge?: boolean;
 }
 ```
@@ -49,41 +48,54 @@ The following example demonstrates the refresh API. The following can be noted:
 
 <grid-example title='Refresh Store' name='refresh-store' type='generated' options='{ "enterprise": true, "exampleHeight":  615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-## Group State
+## Purge vs Refresh
 
-When a refresh is done, all open groups at the refreshed level along with their children may 
-be destroyed depending on the store type and whether `params.purge=true` is set.
+When a purge is executed (`params.purge=true`) then the data is replaced with loading rows
+while the data is refreshed. There are a few more subtle differences between purging and
+refreshing which are as follows:
 
+- While purging, the loading icons prevent the user from interacting with the data while the rows are re-fetched.<br/><br/>
 
-### Group State - Full Store
+- When purging, all open groups will always get closed and children destroyed. This is explained in more detail
+  in the section Maintaining Open Groups below.<br/><br/>
 
-The Full Store can keep the state of open groups during a refresh. To do this the grid needs to be 
-provided with [Row ID's](../row-object/#application-assigned-ids) by the application implementing `getRowNodeId()`. 
-This is required to allow the grid to match newly loaded rows with previously loaded rows.
+- When Partial Store is used (i.e. data is loaded in blocks), purging will destroy all blocks
+  and remove them from the cache and only re-create blocks needed to show data the user is looking at. <br/><br/>
+  For example if the user had scrolled down and 5 blocks are in the cache, after a purge it could
+  be only 1 block exists in the cache after purging. This means only one block request is sent to the server.<br/><br/>
+  Refreshing however will refresh all existing blocks. Thus if 5 blocks exist in the cache, all blocks
+  will get refreshed resulting in 5 requests sent to the server.
+ 
 
-When using the Full Store, if Row ID's are provided and rows are not purged, then refreshing rows will keep open 
-groups open and not destroy child rows.
+## Maintaining Open Groups
 
-| Purge | ID's Provided | Open Groups | Child Rows |
-| ----- | ------------- | ----------- | ---------- |
-| No    | Yes           | Kept Open   | Kept       |
-| No    | No            | Closed      | Destroyed  |
-| Yes   | Yes           | Closed      | Destroyed  |
-| Yes   | No            | Closed      | Destroyed  |
+It is possible to have open groups remain open during a refresh, thus maintaining the context
+of open groups.
+
+Maintaining open groups is achieved when all of the following are configured:
+
+- Full Store (`serverSideStoreType=full`). When using Partial Store, groups and children will be lost.
+
+- Refreshing (`params.purge=false`). When using a purge, groups and children will be lost.
+
+- Row Id's are provided (`getRowNodeId()` implemented, see [Row ID's](../row-object/#application-assigned-ids)). If not providing row Id's, groups and children will be lost
+
+When all the above is true, when a refresh is done, open groups will remain open and children will be kept.
 
 The example below shows refreshing using the Full Store and keeping group state. The example is similar to the 
 previous example with the addition `getRowNodeId()` is implemented. Note the following:
 
 - When 'Purge' is not checked, refreshing using any refresh button will maintain any open groups and children at that level.<br/><br/>
-    For example expand 'United States' and hit 'Refresh Top Level' - note that the
-    top level countries are refreshed (the version column changes once the load is
-    complete) and the open 'United States' group is left open and the child rows
-    (displaying year groups) are left intact.<br/><br/>
+  For example expand 'United States' and hit 'Refresh Top Level' - note that the
+  top level countries are refreshed (the version column changes once the load is
+  complete) and the open 'United States' group is left open and the child rows
+  (displaying year groups) are left intact.<br/><br/>
+
 - When 'Purge' is checked, refreshing using any refresh button will close all open groups and destroy all children at that level.<br/><br/>
-    For example expand 'United States' and hit 'Refresh Top Level' - note that the
-    list of countries is reset, including closing 'United States' and losing
-    all child rows to 'United States'. When 'United States' is expanded again, the
-    child rows are loaded again from scratch.
+  For example expand 'United States' and hit 'Refresh Top Level' - note that the
+  list of countries is reset, including closing 'United States' and losing
+  all child rows to 'United States'. When 'United States' is expanded again, the
+  child rows are loaded again from scratch.
 
 Because the grid is getting provided ID's with via `getRowNodeId()` it allows the grid to update rows rather than
 replace rows. This also means when grid property `enableCellChangeFlash = true` the cells will flash when their data 
@@ -93,16 +105,15 @@ is possible.
 
 <grid-example title='Keep Group State' name='keep-group-state' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-### Group State - Partial Store
-
-If using the Partial Store, the grid does not provide for keeping open groups. Refreshing a Partial Store will always 
-reset groups and destroy children.
-
-This is because the Partial Store loads rows in blocks, so it's unreliable to expect rows that existed before to 
-exist in the new load, as the row could appear in a different block.
-
-If you are using the Partial Store and need to restore groups to their previously open state, then this logic can 
-be implemented in your application using the [Open by Default](../server-side-model-grouping/#open-by-default) API.
+[[note]]
+| If using the Partial Store, the grid does not provide for keeping open groups. Refreshing a Partial Store will always
+| reset groups and destroy children.
+|
+| This is because the Partial Store loads rows in blocks, so it's unreliable to expect rows that existed before to 
+| exist in the new load, as the row could appear in a different block.
+|
+|If you are using the Partial Store and need to restore groups to their previously open state, then this logic can 
+|be implemented in your application using the [Open by Default](../server-side-model-grouping/#open-by-default) API.
 
 
 ## Next Up
