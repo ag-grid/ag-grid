@@ -17,7 +17,7 @@ import { Component } from "../widgets/component";
 import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
-import { ColDef, NewValueParams } from "../entities/colDef";
+import { CellClassParams, ColDef, NewValueParams } from "../entities/colDef";
 import { CellPosition } from "../entities/cellPosition";
 import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../interfaces/iRangeController";
 import { RowComp } from "./row/rowComp";
@@ -640,15 +640,17 @@ export class CellComp extends Component implements TooltipParentComp {
 
             if (typeof colDef.cellStyle === 'function') {
                 const cellStyleParams = {
+                    column: this.column,
                     value: this.value,
+                    colDef: colDef,
                     data: this.rowNode.data,
                     node: this.rowNode,
-                    colDef: colDef,
-                    column: this.column,
+                    rowIndex: this.rowNode.rowIndex!,
                     $scope: this.scope,
+                    api: this.beans.gridOptionsWrapper.getApi()!,
+                    columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
                     context: this.beans.gridOptionsWrapper.getContext(),
-                    api: this.beans.gridOptionsWrapper.getApi()
-                };
+                } as CellClassParams;
                 const cellStyleFunc = colDef.cellStyle as Function;
                 cssToUse = cellStyleFunc(cellStyleParams);
             } else {
@@ -673,20 +675,21 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private processClassesFromColDef(onApplicableClass: (className: string) => void): void {
         const colDef = this.getComponentHolder();
+        const cellClassParams: CellClassParams = {
+            value: this.value,
+            data: this.rowNode.data,
+            node: this.rowNode,
+            colDef: colDef,
+            rowIndex: this.rowNode.rowIndex!,
+            $scope: this.scope,
+            api: this.beans.gridOptionsWrapper.getApi()!,
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
+            context: this.beans.gridOptionsWrapper.getContext()
+        };
 
         this.beans.stylingService.processStaticCellClasses(
             colDef,
-            {
-                value: this.value,
-                data: this.rowNode.data,
-                node: this.rowNode,
-                colDef: colDef,
-                rowIndex: this.rowNode.rowIndex!,
-                $scope: this.scope,
-                api: this.beans.gridOptionsWrapper.getApi()!,
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-                context: this.beans.gridOptionsWrapper.getContext()
-            },
+            cellClassParams,
             onApplicableClass
         );
     }
@@ -817,20 +820,24 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private processCellClassRules(onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
         const colDef = this.getComponentHolder();
+        const cellClassParams: CellClassParams = {
+            value: this.value,
+            data: this.rowNode.data,
+            node: this.rowNode,
+            colDef: colDef,
+            rowIndex: this.cellPosition.rowIndex,
+            api: this.beans.gridOptionsWrapper.getApi()!,
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
+            $scope: this.scope,
+            context: this.beans.gridOptionsWrapper.getContext()
+        };
 
         this.beans.stylingService.processClassRules(
             colDef.cellClassRules,
-            {
-                value: this.value,
-                data: this.rowNode.data,
-                node: this.rowNode,
-                colDef: colDef,
-                rowIndex: this.cellPosition.rowIndex,
-                api: this.beans.gridOptionsWrapper.getApi()!,
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-                $scope: this.scope,
-                context: this.beans.gridOptionsWrapper.getContext()
-            }, onApplicableClass, onNotApplicableClass);
+            cellClassParams,
+            onApplicableClass,
+            onNotApplicableClass
+        );
     }
 
     private postProcessCellClassRules(): void {

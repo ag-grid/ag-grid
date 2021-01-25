@@ -3,6 +3,7 @@ import { Autowired, Bean } from "../context/context";
 import { ExpressionService } from "../valueService/expressionService";
 import { BeanStub } from "../context/beanStub";
 import { isNonNullObject } from "../utils/object";
+import { RowClassParams } from "../entities/gridOptions";
 
 @Bean('stylingService')
 export class StylingService extends BeanStub {
@@ -14,7 +15,7 @@ export class StylingService extends BeanStub {
         this.processStaticCellClasses(colDef, params, onApplicableClass);
     }
 
-    public processClassRules(classRules: { [cssClassName: string]: (Function | string) } | undefined, params: CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void) {
+    public processClassRules(classRules: { [cssClassName: string]: (Function | string) } | undefined, params: RowClassParams | CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void) {
         if (isNonNullObject(classRules)) {
             const classNames = Object.keys(classRules!);
             for (let i = 0; i < classNames.length; i++) {

@@ -312,6 +312,7 @@ export {
     ChartRef,
     ProcessChartOptionsParams,
     ProcessChartParams,
+    RowClassParams,
     ServerSideStoreType,
     ServerSideStoreParams,
     GetServerSideStoreParamsParams

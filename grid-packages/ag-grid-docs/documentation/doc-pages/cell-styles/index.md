@@ -207,6 +207,8 @@ interface CellClassParams {
     $scope: any,
     // A reference to the ag-Grid API.
     api: GridApi,
+    // A reference to the ag-Grid Column API.
+    columnApi: ColumnApi;
     // If provided in gridOptions, a context object
     context: any,
 }
@@ -224,9 +226,7 @@ params object):
 - `data`: maps data
 - `colDef`: maps colDef
 - `rowIndex`: maps rowIndex
-- `api`: maps api
-
-
+- `api`: maps the grid api
 
 In other words, x and ctx map value and context, all other attributes map the parameters of the same name.
 

@@ -282,17 +282,37 @@ The following snippet shows `rowClassRules` that use functions and the value fro
 | ```
 
 
-When a function is provided the `params` object has the attributes: `data`, `node`, `rowIndex`, `api` and `context`.
+All rowStyle, rowClass and rowClassRules functions take a params object that implements the following interface:
+
+
+```ts
+interface RowClassParams {
+    // The row (from the rowData array, where value was taken) been rendered.
+    data: any;
+    // The node associated to this row
+    node: RowNode;
+    // The index of the row about to be rendered
+    rowIndex: number;
+    // If compiling to Angular, is the row's child scope, otherwise null.
+    $scope: any;
+    // A reference to the ag-Grid API.
+    api: GridApi;
+    // A reference to the ag-Grid Column API.
+    columnApi: ColumnApi;
+    // If provided in gridOptions, a context object
+    context: any;
+}
+```
 
 As an alternative, you can also provide shorthands of the functions using an expression.
 An expression is evaluated by the grid by executing the string as if it were a Javascript expression. The expression has the following attributes available to it (mapping the the attributes of the equivalent
 params object):
 
-- **ctx**: maps context
-- **node**: maps node
-- **data**: maps data
-- **rowIndex**: maps rowIndex
-- **api**: maps api
+- `ctx`: maps context
+- `node`: maps node
+- `data`: maps data
+- `rowIndex`: maps rowIndex
+- `api`: maps the grid api
 
 The following snippet shows `rowClassRules` applying classes to rows using expressions on an age column value:
 

@@ -11,6 +11,7 @@ import { ComponentSelectorResult } from "../components/framework/userComponentFa
 import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { IFilterDef } from '../interfaces/iFilter';
 import { ColumnGroup } from "./columnGroup";
+import { RowClassParams } from "./gridOptions";
 
 /***********************************************************************
  * Don't forget to update PropertyKeys if changing this class. PLEASE! *
@@ -468,14 +469,7 @@ export interface SuppressHeaderKeyboardEventParams {
     event: KeyboardEvent;
 }
 
-export interface CellClassParams {
+export interface CellClassParams extends RowClassParams {
+    colDef: ColDef;
     value: any;
-    data: any;
-    node: RowNode;
-    colDef?: ColDef;
-    rowIndex: number;
-    $scope: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-    context: any;
 }

@@ -642,6 +642,16 @@ export interface IsRowSelectable {
     (node: RowNode): boolean;
 }
 
+export interface RowClassParams {
+    data: any;
+    node: RowNode;
+    rowIndex: number;
+    $scope: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+}
+
 export interface ProcessChartOptionsParams {
     type: ChartType;
     options: ChartOptions<any>;

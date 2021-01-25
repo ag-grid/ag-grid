@@ -17,7 +17,7 @@ import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { Component } from "../../widgets/component";
 
-import { ProcessRowParams } from "../../entities/gridOptions";
+import { ProcessRowParams, RowClassParams } from "../../entities/gridOptions";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { Constants } from "../../constants/constants";
 import { ModuleNames } from "../../modules/moduleNames";
@@ -1138,7 +1138,7 @@ export class RowComp extends Component {
     }
 
     private postProcessClassesFromGridOptions(): void {
-        const cssClasses = this.beans.rowCssClassCalculator.processClassesFromGridOptions(this.rowNode);
+        const cssClasses = this.beans.rowCssClassCalculator.processClassesFromGridOptions(this.rowNode, this.scope);
         if (!cssClasses || !cssClasses.length) { return; }
 
         cssClasses.forEach(classStr => {
@@ -1182,12 +1182,14 @@ export class RowComp extends Component {
         let rowStyleFuncResult: any;
 
         if (rowStyleFunc) {
-            const params = {
+            const params: RowClassParams = {
                 data: this.rowNode.data,
                 node: this.rowNode,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                context: this.beans.gridOptionsWrapper.getContext(),
-                $scope: this.scope
+                rowIndex: this.rowNode.rowIndex!,
+                $scope: this.scope,
+                api: this.beans.gridOptionsWrapper.getApi()!,
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
+                context: this.beans.gridOptionsWrapper.getContext()
             };
             rowStyleFuncResult = rowStyleFunc(params);
         }
