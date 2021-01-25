@@ -265,7 +265,7 @@
             "description": "Downloads an Excel export of the grid's data."
         },
         "getDataAsExcel(params)": {
-            "description": "Similar to `exportDataAsExcel`, except returns the result as a string rather than download it. This forces `exportMode` to `'xml'`."
+            "description": "Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a string when `exportMode='xml'` or a <a href='https://developer.mozilla.org/en-US/docs/Web/API/Blob' target='_blank'>Blob</a> when `exportMode='xlsx'`."
         }
     },
     "events": {

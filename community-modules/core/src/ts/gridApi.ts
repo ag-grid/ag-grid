@@ -250,9 +250,9 @@ export class GridApi {
         }
     }
 
-    public getDataAsExcel(params?: ExcelExportParams): string | undefined {
+    public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getDataAsExcel')) {
-            return this.excelCreator.getDataAsExcelXml(params);
+            return this.excelCreator.getDataAsExcel(params);
         }
     }
 

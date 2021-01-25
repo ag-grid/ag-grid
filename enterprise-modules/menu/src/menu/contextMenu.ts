@@ -22,8 +22,7 @@ import {
     Optional,
     PopupService,
     PostConstruct,
-    RowNode,
-    AddPopupResult
+    RowNode
 } from "@ag-grid-community/core";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
@@ -143,7 +142,6 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         if (addPopupRes) {
             _.addCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
             menu.afterGuiAttached({ container: 'contextMenu', hidePopup: addPopupRes.hideFunc });
-            menu.setPopupResult(addPopupRes);
         }
 
         // there should never be an active menu at this point, however it was found
@@ -181,15 +179,10 @@ class ContextMenu extends Component {
     private menuItems: (MenuItemDef | string)[];
     private menuList: MenuList | null = null;
     private focusedCell: CellPosition | null = null;
-    private addPopupResult: AddPopupResult;
 
     constructor(menuItems: (MenuItemDef | string)[]) {
         super(/* html */`<div class="${CSS_MENU}" role="presentation"></div>`);
         this.menuItems = menuItems;
-    }
-
-    public setPopupResult(addPopupResult: AddPopupResult): void {
-        this.addPopupResult = addPopupResult;
     }
 
     @PostConstruct
@@ -218,20 +211,15 @@ class ContextMenu extends Component {
     }
 
     private restoreFocusedCell(): void {
-
-        // normally when the menu is closed, we put focus back onto the grid, so if user is using keyboard
-        // navigation, they can continue to use arrow keys to navigate around cells. however if the application
-        // moved the focus to another component (eg a dialog popped up as a result of a menu item getting selected,
-        // and the application focused something in the dialog) then we don't want to steal the focus back off the
-        // dialog.
-        const focusWasMovedAwayFromMenu = !this.addPopupResult || !this.addPopupResult.didRemoveChangeFocus();
-        if (focusWasMovedAwayFromMenu) { return; }
-
         const currentFocusedCell = this.focusController.getFocusedCell();
 
         if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
-            this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+            const doc = this.gridOptionsWrapper.getDocument();
+
+            if (doc.activeElement === doc.body) {
+                this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+            }
         }
     }
 

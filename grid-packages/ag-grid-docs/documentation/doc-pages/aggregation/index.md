@@ -142,6 +142,10 @@ interface IAggFuncParams {
     columnApi: ColumnApi; // the grid's Column API
 }
 ```
+[[note]]
+| Javascript doesn't always represent decimal numbers correctly (e.g `0.2 + 0.1 = 0.30000000000000004`). For this
+| reason, if your aggregations rely on decimal values, it's better to add logic to enforce the amount of decimal
+| numbers that will be displayed in the cell (see the Rounded Average on Age Column in the example below).
 
 The next example shows many custom aggregation functions configured in a variety of ways and demonstrating different things aggregation functions can do.
 
@@ -151,6 +155,9 @@ The following can be noted from the example:
 - **Min/Max on Age Column**: The function creates an aggregation over age giving a min and a max age. The function knows whether it is working with leaf nodes (original row data items) or aggregated nodes (ie groups) by checking the type of the value. If the value is a number, it's a row data item, otherwise it's a group. This is because the result of the aggregation has two values based on one input value. <br/><br/> The min/max function is then set by placing the function directly as the `colDef.aggFunc`.
 <br/><br/>
 - **Average on Age Column**: The age columns is aggregated a second time with a custom average function. The average function also needs to know if it is working with leaf nodes or group nodes, as if it's group nodes then the average is weighted. The grid also provides an average function that works in the same way, so there is no value in providing your own average function like this, it is done in this example for demonstration purposes. <br/><br/> The average function is also set by placing the function directly as the `colDef.aggFunc`.
+<br/><br/>
+- **Rounded Average on Age Column**: This is the same as `Average on Age Column` but forcing the values to display a maximum of
+two decimal numbers.
 <br/><br/>
 - **Sum on Gold**: The gold column gets a custom `sum` aggregated function. The new sum function doesn't do anything different to the built in sum function, however it serves as a demonstration on how you can override. Maybe you want to provide a sum function that uses for example the `math.js` library.<br/><br/> The sum function is set using a `gridOptions` property.
 <br/><br/>
