@@ -4,26 +4,13 @@ title: "Column Pinning"
 
 You can pin columns by setting the `pinned` attribute on the column definition to either `'left'` or `'right'`.
 
-[[only-javascript]]
-| ```js
-| colDef = {
-|     field: "athlete",
-|     pinned: 'left',
-| }
-| ```
-
-[[only-angular-or-vue]]
-| ```js
-| colDef = {
-|     field: "athlete",
-|     pinned: 'left',
-| }
-| ```
-
-[[only-react]]
-| ```js
-| <AgGridColumn field='athlete' pinned='left' />
-| ```
+<snippet suppressFrameworkContext="true">
+const gridOptions = {
+    columnDefs: [
+        { field: 'athlete', pinned: 'left' }
+    ],
+}
+</snippet>
 
 Below shows an example with two pinned columns on the left and one pinned column on the right. The example also demonstrates changing the pinning via the API at runtime.
 

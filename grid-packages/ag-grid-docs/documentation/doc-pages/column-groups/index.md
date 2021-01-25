@@ -81,13 +81,8 @@ The grid doesn't colour the groups for you. However you can use the column defin
 <snippet suppressFrameworkContext="true">
 const gridOptions = {
     columnDefs: [
-        {
-            headerName: 'Athlete Details',
-            // this CSS class will get applied to the header group
-            headerClass: 'my-css-class',
-            // then children as normal
-            children: [],
-        }
+        // the CSS class name supplied to 'headerClass' will get applied to the header group
+        { headerName: 'Athlete Details', headerClass: 'my-css-class', children: []}
     ]
 }
 </snippet>
