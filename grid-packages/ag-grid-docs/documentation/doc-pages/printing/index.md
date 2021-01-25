@@ -18,13 +18,12 @@ The example below shows print layout. The following can be noted:
 
 Print layout can be turned on by setting the property `domLayout='print'` or by calling the grid API `setDomLayout('print')`. Similarly the layout can be set back to normal by unsetting the `domLayout` property or calling the grid API `setDomLayout(null)`.
 
-```js
+<snippet>
 // setting the grid layout to 'print'
-api.setDomLayout('print');
-
+gridOptions.api.setDomLayout('print');
 // resetting the layout back to normal
-api.setDomLayout(null);
-```
+gridOptions.api.setDomLayout(null);
+</snippet>
 
 ## Toggling Grid Size
 

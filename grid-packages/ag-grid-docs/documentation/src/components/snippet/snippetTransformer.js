@@ -267,7 +267,7 @@ class ReactTransformer extends SnippetTransformer {
                     if (propertyName === 'field') { fieldName = property.value.value; }
                     return `${propertyName}=${getReactValue(property)}`;
                 }
-                if (isArrowFunctionProperty(property)) {
+                if (isArrowFunctionProperty(property) || isObjectProperty(property)) {
                     const extraLine = this.options.spaceBetweenProperties ? '\n' : '';
                     let comment = extraLine + (property.comment ? `//${property.comment}\n` : '');
                     const funcName = fieldName ? fieldName + capitalise(propertyName) : propertyName;

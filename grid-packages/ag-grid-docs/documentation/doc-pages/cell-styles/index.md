@@ -16,113 +16,30 @@ Each of these approaches are presented in the following sections.
 Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
 of CSS styles, or a function returning an object of CSS styles.
 
-[[only-javascript]]
-| ```js
-| const gridOptions = {
-|     columnDefs: [
-|         // same style for each row
-|         {
-|             headerName: 'Static Styles',
-|             field: 'field1',
-|             cellStyle: {color: 'red', 'background-color': 'green'}
-|         },
-|         // different styles for each row    
-|         {
-|             headerName: 'Dynamic Styles',
-|             field: 'field2',
-|             cellStyle: params => {
-|                 if (params.value === 'Police') {
-|                     //mark police cells as red
-|                     return {color: 'red', backgroundColor: 'green'};
-|                 }
-|                 return null;
-|             }
-|         },
-|     ],
-|
-|     // other grid options ...
-| }
-| ```
-
-[[only-angular]]
-| ```js
-| <ag-grid-angular
-|     [columnDefs]="columnDefs"
-|     // other grid options ...>
-| </ag-grid-angular>
-|
-| this.columnDefs = [
-|     // same style for each row
-|     {
-|         headerName: 'Static Styles',
-|         field: 'field1',
-|         cellStyle: {color: 'red', 'background-color': 'green'}
-|     },
-|     // different styles for each row    
-|     {
-|         headerName: 'Dynamic Styles',
-|         field: 'field2',
-|         cellStyle: params => {
-|             if (params.value === 'Police') {
-|                 //mark police cells as red
-|                 return {color: 'red', backgroundColor: 'green'};
-|             }
-|             return null;
-|         }
-|     },
-| ];
-| ```
-
-[[only-react]]
-| ```js
-| <AgGridReact>
-|     <AgGridColumn headerName='Static Styles' field='field1' cellStyle={staticCellStyle} />
-|     <AgGridColumn headerName='Dynamic Styles' field='field2' cellStyle={dynamicCellStyle} /> 
-| </AgGridReact>
-|
-| // same style for each row
-| const staticCellStyle = {color: 'red', 'background-color': 'green'};
-|
-| // different styles for each row   
-| const dynamicCellStyle = params => {
-|     if (params.value === 'Police') {
-|         //mark police cells as red
-|         return {color: 'red', backgroundColor: 'green'};
-|     }
-|     return null;
-| };
-|
-| ```
-
-
-[[only-vue]]
-| ```js
-| <ag-grid-vue
-|     :columnDefs="columnDefs"  
-|     // other grid options ...>
-| </ag-grid-vue>
-|
-| this.columnDefs = [
-|     // same style for each row
-|     {
-|         headerName: 'Static Styles',
-|         field: 'field1',
-|         cellStyle: {color: 'red', 'background-color': 'green'}
-|     },
-|     // different styles for each row    
-|     {
-|         headerName: 'Dynamic Styles',
-|         field: 'field2',
-|         cellStyle: params => {
-|             if (params.value === 'Police') {
-|                 //mark police cells as red
-|                 return {color: 'red', backgroundColor: 'green'};
-|             }
-|             return null;
-|         }
-|     },
-| ];
-| ```
+<snippet spaceBetweenProperties="true">
+const gridOptions = {
+    columnDefs: [ 
+        // same style for each row
+        {
+            headerName: 'Static Styles',
+            field: 'static',
+            cellStyle: {color: 'red', 'background-color': 'green'}
+        }, 
+        // different styles for each row
+        {
+            headerName: 'Dynamic Styles',
+            field: 'dynamic',
+            cellStyle: params => {
+                if (params.value === 'Police') {
+                    //mark police cells as red
+                    return {color: 'red', backgroundColor: 'green'};
+                }
+                return null;
+            }
+        },
+    ]
+}
+</snippet>
 
 
 ## Cell Class
@@ -131,36 +48,38 @@ of CSS styles, or a function returning an object of CSS styles.
 Provides a class for the cells in this column. Can be a string (a class), array of strings
 (array of classes), or a function (that returns a string or an array of strings).
 
-
-```js
-// return same class for each row
-var colDef1 = {
-    name: 'Static Class',
-    field: 'field1',
-    cellClass: 'my-class'
+<snippet spaceBetweenProperties="true">
+const gridOptions = {
+    columnDefs: [
+        // return same class for each row
+        { 
+            headerName: 'Static Class', 
+            field: 'static', 
+            cellClass: 'my-class' 
+        },
+        // return same array of classes for each row
+        {   
+            headerName: 'Static Array of Classes', 
+            field: 'staticArray', 
+            cellClass: ['my-class1','my-class2'], 
+        },
+        // return class based on function
+        { 
+            headerName: 'Function Returns String', 
+            field: 'function', 
+            cellClass: params => {
+                return params.value === 'something' ? 'my-class-1' : 'my-class-2';
+            },
+        },
+        // return array of classes based on function
+        {
+            name: 'Function Returns Array',
+            field: 'functionArray',
+            cellClass: params => ['my-class-1','my-class-2'],
+        }
+    ]
 }
-
-// return same array of classes for each row
-var colDef2 = {
-    name: 'Static Array of Classes',
-    field: 'field2',
-    cellClass: ['my-class1','my-class2']
-}
-
-// return class based on function
-var colDef3 = {
-    name: 'Function Returns String',
-    field: 'field3',
-    cellClass: function(params) { return (params.value==='something'?'my-class-1':'my-class-2'); }
-}
-
-// return array of classes based on function
-var colDef4 = {
-    name: 'Function Returns Array',
-    field: 'field4',
-    cellClass: function(params) { return ['my-class-1','my-class-2']; }
-}
-```
+</snippet>
 
 ## Cell Class Rules
 
@@ -174,16 +93,21 @@ or a string which is treated as a shorthand for a function by the grid.
 
 The following snippet is cellClassRules using functions on a year column:
 
-```js
-cellClassRules: {
-    // apply green to 2008
-    'rag-green-outer': function(params) { return params.value === 2008},
-    // apply amber 2004
-    'rag-amber-outer': function(params) { return params.value === 2004},
-    // apply red to 2000
-    'rag-red-outer': function(params) { return params.value === 2000}
-}
-```
+
+<snippet suppressFrameworkContext="true">
+|const gridOptions = {
+|    cellClassRules: {
+|        // apply green to 2008
+|        'rag-green-outer': params => params.value === 2008,
+|
+|        // apply amber 2004
+|        'rag-amber-outer': params => params.value === 2004,
+|
+|        // apply red to 2000
+|        'rag-red-outer': params => params.value === 2000,
+|    }
+|}
+</snippet>
 
 ## Cell Style, Cell Class & Cell Class Rules Params
 
@@ -232,13 +156,15 @@ In other words, x and ctx map value and context, all other attributes map the pa
 
 The following snippet is cellClassRules using expressions on an age column:
 
-```js
-cellClassRules: {
-    'rag-green': 'x < 20',
-    'rag-amber': 'x >= 20 && x < 25',
-    'rag-red': 'x >= 25'
+<snippet suppressFrameworkContext="true">
+const gridOptions = {
+    cellClassRules: {
+        'rag-green': 'x < 20',
+        'rag-amber': 'x >= 20 && x < 25',
+        'rag-red': 'x >= 25',
+    }
 }
-```
+</snippet>
 
 ## Refresh of Styles
 
@@ -256,7 +182,6 @@ effect:
 
 [[note]]
 | If you are using cellStyle to highlight changing data, then please take note that grid will not remove styles. For example if you are setting text color to 'red' for a condition, then you should explicitly set it back to default eg 'black' when the condition is not met. Otherwise the highlight will remain once it's first applied.
-|
 |
 | ```js
 | // unsafe, the red will stay after initially applied

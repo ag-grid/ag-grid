@@ -17,94 +17,18 @@ You can add CSS styles to each row in the following ways:
 - `rowStyle`: Property to set style for all rows. Set to an object of key (style names) and values (style values).
 - `getRowStyle`: Callback to set style for each row individually.
 
-
-[[only-javascript]]
-| ```js
-| const gridOptions = {
-|     // set background colour on every row
-|     // this is probably bad, should be using CSS classes
-|     rowStyle: { background: 'black' },
-|
-|     // set background colour on even rows
-|     // again, this looks bad, should be using CSS classes
-|     getRowStyle: params => {
-|         if (params.node.rowIndex % 2 === 0) {
-|             return { background: 'red' };
-|         }
-|     },
-|
-|     // other grid options ...
-| }
-| ```
-
-[[only-angular]]
-| ```js
-| <ag-grid-angular
-|     [rowStyle]="rowStyle"
-|     [getRowStyle]="getRowStyle"
-|     // other grid options ...>
-| </ag-grid-angular>
-|
-| // set background colour on every row
-| // this is probably bad, should be using CSS classes
-| this.rowStyle = { background: 'black' };
-|
-| // set background colour on even rows
-| // again, this looks bad, should be using CSS classes
-| this.getRowStyle = params => {
-|     if (params.node.rowIndex % 2 === 0) {
-|         return { background: 'red' };
-|     }
-| };
-|
-| ```
-
-[[only-react]]
-| ```js
-| <AgGridReact
-|     rowStyle={rowStyle} 
-|     getRowStyle={getRowStyle} 
-|     // other grid options ...
-| >
-|     // column definitions ...
-| </AgGridReact>
-|
-| // set background colour on every row
-| // this is probably bad, should be using CSS classes
-| const rowStyle = { background: 'black' };
-|
-| // set background colour on even rows
-| // again, this looks bad, should be using CSS classes
-| const getRowStyle = params => {
-|     if (params.node.rowIndex % 2 === 0) {
-|         return { background: 'red' };
-|     }
-| };
-|
-| ```
-
-
-[[only-vue]]
-| ```js
-| <ag-grid-vue
-|     :rowStyle="rowStyle"  
-|     :getRowStyle="getRowStyle"  
-|     // other grid options ...>
-| </ag-grid-vue>
-|
-| // set background colour on every row
-| // this is probably bad, should be using CSS classes
-| this.rowStyle = { background: 'black' };
-|
-| // set background colour on even rows
-| // again, this looks bad, should be using CSS classes
-| this.getRowStyle = params => {
-|     if (params.node.rowIndex % 2 === 0) {
-|         return { background: 'red' };
-|     }
-| };
-|
-| ```
+<snippet spaceBetweenProperties="true">
+const gridOptions = {
+    // set background colour on every row, this is probably bad, should be using CSS classes
+    rowStyle: { background: 'black' },
+    // set background colour on even rows again, this looks bad, should be using CSS classes
+    getRowStyle: params => {
+        if (params.node.rowIndex % 2 === 0) {
+            return { background: 'red' };
+        }
+    }
+}
+</snippet>
 
 ## Row Class
 
@@ -114,86 +38,18 @@ You can add CSS classes to each row in the following ways:
     of class names).
 - `getRowClass`: Callback to set class for each row individually.
 
-
-[[only-javascript]]
-| ```js
-| const gridOptions = {
-|     // all rows assigned CSS class 'my-green-class'
-|     rowClass: 'my-green-class',
-|
-|     // all even rows assigned 'my-shaded-effect'
-|     getRowClass: params => {
-|         if (params.node.rowIndex % 2 === 0) {
-|             return 'my-shaded-effect';
-|         }
-|     },
-|
-|     // other grid options ...
-| }
-| ```
-
-[[only-angular]]
-| ```js
-| <ag-grid-angular
-|     [rowClass]="rowClass"
-|     [getRowClass]="getRowClass"
-|     // other grid options ...>
-| </ag-grid-angular>
-|
-| // all rows assigned CSS class 'my-green-class'
-| this.rowClass = 'my-green-class';
-|
-| // all even rows assigned 'my-shaded-effect'
-| this.getRowClass = params => {
-|     if (params.node.rowIndex % 2 === 0) {
-|         return 'my-shaded-effect';
-|     }
-| };
-|
-| ```
-
-[[only-react]]
-| ```js
-| <AgGridReact
-|     rowClass={rowClass}
-|     getRowClass={getRowClass}
-|     // other grid options ...
-| >
-|     // column definitions ...
-| </AgGridReact>
-|
-| // all rows assigned CSS class 'my-green-class'
-| const rowClass = 'my-green-class';
-|
-| // all even rows assigned 'my-shaded-effect'
-| const getRowClass = params => {
-|     if (params.node.rowIndex % 2 === 0) {
-|         return 'my-shaded-effect';
-|     }
-| };
-|
-| ```
-
-[[only-vue]]
-| ```js
-| <ag-grid-vue
-|     :rowClass="rowClass"  
-|     :getRowClass="getRowClass"  
-|     // other grid options ...>
-| </ag-grid-vue>
-|
-| // all rows assigned CSS class 'my-green-class'
-| this.rowClass = 'my-green-class';
-|
-| // all even rows assigned 'my-shaded-effect'
-| this.getRowClass = params => {
-|     if (params.node.rowIndex % 2 === 0) {
-|         return 'my-shaded-effect';
-|     }
-| };
-|
-| ```
-
+<snippet spaceBetweenProperties="true">
+const gridOptions = {
+    // all rows assigned CSS class 'my-green-class'
+    rowClass: 'my-green-class',
+    // all even rows assigned 'my-shaded-effect'
+    getRowClass: params => {
+        if (params.node.rowIndex % 2 === 0) {
+            return 'my-shaded-effect';
+        }
+    },
+}
+</snippet>
 
 ## Row Class Rules
 
@@ -201,86 +57,20 @@ You can define rules which can be applied to include certain CSS classes via the
 
 The following snippet shows `rowClassRules` that use functions and the value from the year column:
 
-[[only-javascript]]
-| ```js
-| const gridOptions = {
-|     rowClassRules: {
-|         // apply green to 2008
-|         'rag-green-outer': function(params) { return params.data.year === 2008; },
-|         
-|         // apply amber 2004
-|         'rag-amber-outer': function(params) { return params.data.year === 2004; },
-|         
-|         // apply red to 2000
-|         'rag-red-outer': function(params) { return params.data.year === 2000; }
-|     },
+<snippet>
+|const gridOptions = {
+|    rowClassRules: {
+|        // apply green to 2008
+|        'rag-green-outer': function(params) { return params.data.year === 2008; },
 |
-|     // other grid options ...
-| }
-| ```
-
-[[only-angular]]
-| ```js
-| <ag-grid-angular
-|     [rowClassRules]="rowClassRules"
-|     // other grid options ...>
-| </ag-grid-angular>
+|        // apply amber 2004
+|        'rag-amber-outer': function(params) { return params.data.year === 2004; },
 |
-| this.rowClassRules = {
-|     // apply green to 2008
-|     'rag-green-outer': function(params) { return params.data.year === 2008; },
-|     
-|     // apply amber 2004
-|     'rag-amber-outer': function(params) { return params.data.year === 2004; },
-|     
-|     // apply red to 2000
-|     'rag-red-outer': function(params) { return params.data.year === 2000; }
-| };
-|
-| ```
-
-[[only-react]]
-| ```js
-| <AgGridReact
-|     rowClassRules={rowClassRules}
-|     // other grid options ...
-| >
-|     // column definitions ...
-| </AgGridReact>
-|
-| const rowClassRules = {
-|     // apply green to 2008
-|     'rag-green-outer': function(params) { return params.data.year === 2008; },
-|     
-|     // apply amber 2004
-|     'rag-amber-outer': function(params) { return params.data.year === 2004; },
-|     
-|     // apply red to 2000
-|     'rag-red-outer': function(params) { return params.data.year === 2000; }
-| };
-|
-| ```
-
-[[only-vue]]
-| ```js
-| <ag-grid-vue
-|     :rowClassRules="rowClassRules"
-|     // other grid options ...>
-| </ag-grid-vue>
-|
-| this.rowClassRules = {
-|     // apply green to 2008
-|     'rag-green-outer': function(params) { return params.data.year === 2008; },
-|     
-|     // apply amber 2004
-|     'rag-amber-outer': function(params) { return params.data.year === 2004; },
-|     
-|     // apply red to 2000
-|     'rag-red-outer': function(params) { return params.data.year === 2000; }
-| };
-|
-| ```
-
+|        // apply red to 2000
+|        'rag-red-outer': function(params) { return params.data.year === 2000; }
+|    }
+|}
+</snippet>
 
 All rowStyle, rowClass and rowClassRules functions take a params object that implements the following interface:
 
@@ -316,34 +106,15 @@ params object):
 
 The following snippet shows `rowClassRules` applying classes to rows using expressions on an age column value:
 
-[[only-javascript]]
-| ```js
-| rowClassRules: {
-|     'rag-green': 'data.age < 20',
-|     'rag-amber': 'data.age >= 20 && data.age < 25',
-|     'rag-red': 'data.age >= 25',
-| },
-| ```
-
-[[only-angular-or-vue]]
-| ```js
-| this.rowClassRules = {
-|     'rag-green': 'data.age < 20',
-|     'rag-amber': 'data.age >= 20 && data.age < 25',
-|     'rag-red': 'data.age >= 25',
-| };
-| ```
-
-[[only-react]]
-| ```js
-|
-| const rowClassRules = {
-|     'rag-green': 'data.age < 20',
-|     'rag-amber': 'data.age >= 20 && data.age < 25',
-|     'rag-red': 'data.age >= 25',
-| };
-|
-| ```
+<snippet>
+const gridOptions = {
+    rowClassRules: {
+        'rag-green': 'data.age < 20',
+        'rag-amber': 'data.age >= 20 && data.age < 25',
+        'rag-red': 'data.age >= 25',
+    }
+}
+</snippet>
 
 ## Refresh of Styles
 
