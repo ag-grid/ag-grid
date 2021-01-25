@@ -126,8 +126,10 @@ export class InfiniteCache extends BeanStub {
 
         this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${lastRow}`);
 
-        this.checkRowCount(block, lastRow);
-        this.onCacheUpdated();
+        const rowCountHasChanged = this.checkRowCount(block, lastRow);
+        if (rowCountHasChanged || this.params.dynamicRowHeight) {
+            this.onCacheUpdated();
+        }
     }
 
     private purgeBlocksIfNeeded(blockToExclude: InfiniteBlock): void {
@@ -179,12 +181,13 @@ export class InfiniteCache extends BeanStub {
         // if the purged page is in loading state
     }
 
-    private checkRowCount(block: InfiniteBlock, lastRow?: number): void {
+    private checkRowCount(block: InfiniteBlock, lastRow?: number): boolean {
+        const rowCountBefore = this.rowCount;
         // if client provided a last row, we always use it, as it could change between server calls
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
             this.rowCount = lastRow;
-            this.lastRowIndexKnown = true;
+            this.lastRowIndexKnown = true
         } else if (!this.lastRowIndexKnown) {
             // otherwise, see if we need to add some virtual rows
             const lastRowIndex = (block.getId() + 1) * this.params.blockSize!;
@@ -194,6 +197,9 @@ export class InfiniteCache extends BeanStub {
                 this.rowCount = lastRowIndexPlusOverflow;
             }
         }
+
+        const rowCountHasChanged = rowCountBefore != this.rowCount;
+        return rowCountHasChanged;
     }
 
     public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {
