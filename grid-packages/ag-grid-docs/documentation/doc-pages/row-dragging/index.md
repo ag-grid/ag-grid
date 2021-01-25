@@ -10,88 +10,26 @@ the first) column.
 
 To enable row dragging on all columns, set the column property `rowDrag = true` on one (typically the first) column.
 
-[[only-javascript]]
-| ```js
-| const gridOptions = {
-|     columnDefs: [
-|         // make all rows draggable
-|         { field: 'athlete', rowDrag: true },
-|        
-|         // other column definitions ...
-|     ],
-|
-|     // other grid options ...
-| }
-| ```
-
-[[only-angular]]
-| ```js
-| <ag-grid-angular
-|     [columnDefs]="columnDefs"
-|     // other grid options ...>
-| </ag-grid-angular>
-|
-| this.columnDefs = [
-|     // make rows draggable
-|     { field: 'athlete', rowDrag: true },
-|    
-|     // other column definitions ...
-| ];
-| ```
-
-[[only-react]]
-| ```js
-| <AgGridReact>
-|     // make all rows draggable
-|     <AgGridColumn field='athlete' rowDrag={true}/>
-|     
-|     // other column definitions ...
-| </AgGridReact>
-| ```
-
-[[only-vue]]
-| ```js
-| <ag-grid-vue
-|     :columnDefs="columnDefs"
-|     // other grid options ...>
-| </ag-grid-vue>
-|
-| this.columnDefs = [
-|     // make all rows draggable
-|     { field: 'athlete', rowDrag: true },
-|    
-|     // other column definitions ...
-| ];
-| ```
-
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // make all rows draggable
+        { field: 'athlete', rowDrag: true },
+    ],
+}
+</snippet>
 
 It is also possible to dynamically control which rows are draggable by providing a callback function as shown below:
 
-[[only-javascript]]
-| ```js
-| columnDefs: [
-|     // only allow non-group rows to be dragged
-|     { field: 'athlete', rowDrag: params => !params.node.group },
-|
-|     // other column definitions ...
-| ],
-| ```
 
-[[only-angular-or-vue]]
-| ```js
-| this.columnDefs = [
-|     // only allow non-group rows to be dragged
-|     { field: 'athlete', rowDrag: params => !params.node.group },
-|    
-|     // other column definitions ...
-| ];
-| ```
-
-[[only-react]]
-| ```js
-| // only allow non-group rows to be dragged
-| <AgGridColumn field='athlete' rowDrag={params => !params.node.group}/>
-| ```
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // only allow non-group rows to be dragged
+        { field: 'athlete', rowDrag: params => !params.node.group },
+    ],
+}
+</snippet>
 
 There are two ways in which row dragging works in the grid, managed and unmanaged:
 
@@ -156,56 +94,23 @@ When a row drag starts, a "floating" DOM element is created to indicate which ro
 element will contain the same value as the cell that started the row drag. It's possible to override that text by using
 the `colDef.rowDragText` callback.
 
-[[only-javascript]]
-| ```js
-| columnDefs: [
-|     {
-|         field: 'athlete',
-|         rowDrag: true,
-|         rowDragText: (params, dragItemCount) => {
-|             return (
-|                 dragItemCount > 1
-|                     ? (dragItemCount + ' items')
-|                     : params.defaultTextValue + ' is'
-|             ) + ' being dragged...';
-|         }
-|     },
-|
-|     // other column definitions ...
-| ],
-| ```
-
-[[only-angular-or-vue]]
-| ```js
-| this.columnDefs = [
-|     {
-|         field: 'athlete',
-|         rowDrag: true,
-|         rowDragText: (params, dragItemCount) => {
-|             return (
-|                 dragItemCount > 1
-|                     ? (dragItemCount + ' items')
-|                     : params.defaultTextValue + ' is'
-|             ) + ' being dragged...';
-|         }
-|     },
-|    
-|     // other column definitions ...
-| ];
-| ```
-
-[[only-react]]
-| ```js
-| <AgGridColumn field='athlete' rowDrag={true} rowDragText={rowDragText}/>
-|
-| const rowDragText = (params, dragItemCount) => {
-|     return (
-|         dragItemCount > 1
-|             ? (dragItemCount + ' items')
-|             : params.defaultTextValue + ' is'
-|     ) + ' being dragged...';
-| }
-| ```
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            rowDrag: true,
+            rowDragText: (params, dragItemCount) => {
+                return (
+                    dragItemCount > 1
+                        ? (dragItemCount + ' items')
+                        : params.defaultTextValue + ' is'
+                ) + ' being dragged...';
+            }
+        }
+    ]
+}
+</snippet>
 
 The interface for the rowDragText callback is as follows:
 
