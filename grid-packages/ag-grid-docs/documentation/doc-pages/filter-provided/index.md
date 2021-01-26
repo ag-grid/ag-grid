@@ -76,16 +76,16 @@ If any changes are made in the UI when the Apply button is active, or via other 
 
 Applying the model is then typically followed by calling `gridApi.onFilterChanged()` to tell the grid to re-run the filtering.
 
-```js
-// Get a reference to the 'name' filter instance
-var filterInstance = gridApi.getFilterInstance('name');
-
-// Apply the model to ensure any changes in the UI or via API methods are recognised
-filterInstance.applyModel();
-
-// Tell grid to run filter operation again
-gridApi.onFilterChanged();
-```
+<snippet>
+|// Get a reference to the 'name' filter instance
+|const filterInstance = gridOptions.api.getFilterInstance('name');
+|
+|// Apply the model to ensure any changes in the UI or via API methods are recognised
+|filterInstance.applyModel();
+|
+|// Tell grid to run filter operation again
+|gridOptions.api.onFilterChanged();
+</snippet>
 
 If no call is made to `filterInstance.applyModel()` then the filter UI will show any changes that have been made, but they won't be reflected in the filter model and therefore won't be reflected in the filtering. This will appear as if the user never hit the Apply button (regardless of whether the Apply button is active or not).
 

@@ -111,10 +111,10 @@ When saving or restoring state on a filter, the Filter Model is used. The Filter
 ```js
 // get filter instance (Note - React users must use the async version
 // of this method by passing a callback parameter)
-var filterInstance = gridOptions.api.getFilterInstance('athlete');
+const filterInstance = gridOptions.api.getFilterInstance('athlete');
 
 // get filter model
-var model = filterInstance.getModel();
+const model = filterInstance.getModel();
 
 // set filter model and update
 filterInstance.setModel({
@@ -189,7 +189,7 @@ Examples of filter model instances are as follows:
 
 ```js
 // number filter with one condition, with equals type
-var numberLessThan35 = {
+const numberLessThan35 = {
     filterType: 'number',
     type: 'lessThan',
     filter: 35
@@ -198,7 +198,7 @@ var numberLessThan35 = {
 
 ```js
 // number filter with one condition, with inRange type
-var numberBetween35And40 = {
+const numberBetween35And40 = {
     filterType: 'number',
     type: 'inRange',
     filter: 35,
@@ -232,9 +232,9 @@ An example of a filter model with two conditions is as follows:
 
 ```js
 // number filter with two conditions, both are equals type
-var numberEquals18OrEquals20 = {
+const numberEquals18OrEquals20 = {
     filterType: 'number',
-    operator: 'OR'
+    operator: 'OR',
     condition1: {
         filterType: 'number',
         type: 'equals',
@@ -272,32 +272,32 @@ It is also possible to hide the filter input field by enabling the optional prop
 
 Custom `FilterOptionDef`s can be supplied alongside the built-in filter option `string` keys as shown below:
 
-```js
-{
-    field: 'age',
-    filter: 'agNumberColumnFilter',
-    filterParams: {
-        filterOptions: [
-            'lessThan',
-            {
-                displayKey: 'lessThanWithNulls',
-                displayName: 'Less Than with Nulls',
-                test: function(filterValue, cellValue) {
-                    return cellValue == null || cellValue < filterValue;
-                }
-            },
-            'greaterThan',
-            {
-                displayKey: 'greaterThanWithNulls',
-                displayName: 'Greater Than with Nulls',
-                test: function(filterValue, cellValue) {
-                    return cellValue == null || cellValue > filterValue;
-                }
-            }
-        ]
-    }
-}
-```
+<snippet>
+|const gridOptions = {
+|    columnDefs: [
+|        {
+|            field: 'age',
+|            filter: 'agNumberColumnFilter',
+|            filterParams: {
+|                filterOptions: [
+|                    'lessThan',
+|                    {
+|                        displayKey: 'lessThanWithNulls',
+|                        displayName: 'Less Than with Nulls',
+|                        test: (filterValue, cellValue) => cellValue == null || cellValue < filterValue,
+|                    },
+|                    'greaterThan',
+|                    {
+|                        displayKey: 'greaterThanWithNulls',
+|                        displayName: 'Greater Than with Nulls',
+|                        test: (filterValue, cellValue) => cellValue == null || cellValue > filterValue,
+|                    }
+|                ]
+|            }
+|        }
+|    ]
+|}
+</snippet>
 
 The following example demonstrates several custom filter options:
 
@@ -315,11 +315,11 @@ The following example demonstrates several custom filter options:
 If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range:
 
 ```js
-filterParams = {
+const filterParams = {
     includeBlanksInEquals: true,
     includeBlanksInLessThan: false,
     includeBlanksInGreaterThan: false,
-    includeBlanksInRange: false
+    includeBlanksInRange: false,
 };
 ```
 

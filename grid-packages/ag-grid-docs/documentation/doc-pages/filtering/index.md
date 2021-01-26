@@ -38,65 +38,67 @@ one of the following values:
 
 The code below shows some column definitions with filters set:
 
-```js
-columnDefs: [
-    // sets the text filter
-    { field: 'athlete', filter: 'agTextColumnFilter' },
 
-    // sets the number filter
-    { field: 'age',     filter: 'agNumberColumnFilter' },
-
-    // use the default filter
-    { field: 'gold',    filter: true },
-
-    // use no filter (leaving unspecified means use no filter)
-    { field: 'sport' }
-]
-```
+<snippet>
+|const gridOptions = {
+|    columnDefs: [
+|        // sets the text filter
+|        { field: 'athlete', filter: 'agTextColumnFilter' },
+|    
+|        // sets the number filter
+|        { field: 'age', filter: 'agNumberColumnFilter' },
+|    
+|        // use the default filter
+|        { field: 'gold', filter: true },
+|    
+|        // use no filter (leaving unspecified means use no filter)
+|        { field: 'sport' },
+|    ]
+|}
+</snippet>
 
 If you want to enable filters on all columns, you should set a filter on the [Default Column Definition](../column-definitions/#default-column-definitions). The following code snippet shows setting `filter=true` for all columns via the `defaultColDef` and then setting `filter=false` for the Sport column, so all columns have a filter except Sport.
 
-```js
-gridOptions = {
-    ...
-    // anything specified in defaultColDef gets applied to all columns
-    defaultColDef: {
-        filter: true // set filtering on for all columns
-    },
-
-    // then set individual column definitions
-    columnDefs: [
-        // filter not specified, defaultColDef setting is used
-        { field: 'athlete' },
-        { field: 'age' },
-
-        // filter specifically set to 'false'
-        { field: 'sport', filter: false } // use no filter
-    ]
-}
-```
+<snippet spaceBetweenProperties="true">
+|const gridOptions = {
+|    // anything specified in defaultColDef gets applied to all columns
+|    defaultColDef: {
+|        // set filtering on for all columns    
+|        filter: true,
+|    },
+|    columnDefs: [
+|        // filter not specified, defaultColDef setting is used
+|        { field: 'athlete' },
+|        { field: 'age' },
+|
+|        // filter specifically set to 'false', i.e. use no filter
+|        { field: 'sport', filter: false },
+|    ],
+|}
+</snippet>
 
 ## Filter Parameters
-
 
 Each filter can take additional filter parameters by setting `colDef.filterParams`. The parameters each filter type accepts are specific to each filter; parameters for the provided filters are explained in their relevant sections.
 
 The code below shows configuring the text filter on the Athlete column and providing extra filter parameters (what the `buttons` do is explained in [Apply, Clear, Reset and Cancel Buttons](../filter-provided/#apply-clear-reset-and-cancel-buttons)).
 
-```js
-columnDefinition = {
-    field: 'athlete'
-
-    // set the column to use text filter
-    filter: 'agTextColumnFilter',
-
-    // pass in additional parameters to the text filter
-    filterParams: {
-        buttons: ['reset', 'apply'],
-        debounceMs: 200
-    }
+<snippet spaceBetweenProperties="true">
+const gridOptions = { 
+    columnDefs: [
+        // column configured to use text filter
+        { 
+            field: 'athlete', 
+            filter: 'agTextColumnFilter',
+            // pass in additional parameters to the text filter
+            filterParams: {
+                buttons: ['reset', 'apply'],
+                debounceMs: 200
+            }
+        }
+    ]
 }
-```
+</snippet>
 
 ## Filter Events
 

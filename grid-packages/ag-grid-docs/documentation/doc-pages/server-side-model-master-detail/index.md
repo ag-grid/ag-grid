@@ -125,9 +125,9 @@ The following snippets compares these approaches:
 
 Option 1 - fixed detail row height, sets height for all details rows
 <snippet>
-|const gridOptions = {
-|    detailRowHeight: 500,
-|}
+const gridOptions = {
+    detailRowHeight: 500,
+}
 </snippet>
 
 Option 2 - dynamic detail row height, dynamically sets height for all rows

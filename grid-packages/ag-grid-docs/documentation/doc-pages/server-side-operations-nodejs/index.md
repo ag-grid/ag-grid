@@ -84,7 +84,7 @@ In order to keep this sample application as simple as possible, the grid configu
 // client/index.js
 
 const gridOptions = {
-    rowModelType: 'serverSide'
+    rowModelType: 'serverSide',
 
     columnDefs: [
         { field: 'athlete' },

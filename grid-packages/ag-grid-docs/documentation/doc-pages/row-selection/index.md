@@ -105,24 +105,25 @@ To demonstrate, try this in the example:
 
 It is possible to have a checkbox in the header for selection. To configure the column to have a checkbox, set `colDef.headerCheckboxSelection=true`. `headerCheckboxSelection` can also be a function, if you want the checkbox to appear sometimes (e.g. if the column is ordered first in the grid).
 
-```js
-// the name column header always has a checkbox in the header
-colDef = {
-    field: 'name',
-    headerCheckboxSelection: true,
-    ...
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // the name column header always has a checkbox in the header
+        { 
+            field: 'name', 
+            headerCheckboxSelection: true 
+        },
+        // the country column header only has checkbox if it is the first column
+        {
+            field: 'country',
+            headerCheckboxSelection: params => {
+                const displayedColumns = params.columnApi.getAllDisplayedColumns();
+                return displayedColumns[0] === params.column;
+            }
+        },
+    ],
 }
-
-// the country column header only has checkbox if it is the first column
-colDef = {
-    field: 'country',
-    headerCheckboxSelection: function(params) {
-        var displayedColumns = params.columnApi.getAllDisplayedColumns();
-        return displayedColumns[0] === params.column;
-    },
-    ...
-}
-```
+</snippet>
 
 If `headerCheckboxSelection` is a function, the function will be called every time there is a change to the displayed columns, to check for changes.
 
@@ -161,11 +162,11 @@ It is possible to specify which rows can be selected via the `gridOptions.isRowS
 
 For instance if we only wanted to allow rows where the 'year' property is less than 2007, we could implement the following:
 
-```js
-gridOptions.isRowSelectable: function(rowNode) {
-    return rowNode.data ? rowNode.data.year < 2007 : false;
+<snippet>
+const gridOptions = {
+    isRowSelectable: rowNode => rowNode.data ? rowNode.data.year < 2007 : false,
 }
-```
+</snippet>
 
 ### Example: Selectable Rows with Header Checkbox
 
@@ -210,19 +211,19 @@ To select rows programmatically, use the `node.setSelected()` method. This metho
 - **selected**: set to `true` to select, `false` to un-select.
 - **clearSelection** (optional): for selection only. If `true`, any other selected nodes will be deselected. Use this if you do not want multi-selection and want this node to be exclusively selected.
 
-```js
-// set selected, keep any other selections
-node.setSelected(true);
-
-// set selected, exclusively, remove any other selections
-node.setSelected(true, true);
-
-// un-select
-node.setSelected(false);
-
-// check status of node selection
-var selected = node.isSelected();
-```
+<snippet>
+|// set selected, keep any other selections
+|node.setSelected(true);
+|
+|// set selected, exclusively, remove any other selections
+|node.setSelected(true, true);
+|
+|// un-select
+|node.setSelected(false);
+|
+|// check status of node selection
+|const selected = node.isSelected();
+</snippet>
 
 The `isSelected()` method returns `true` if the node is selected, or `false` if it is not selected. If the node is a group node and the group selection is set to `'children'`, this will return `true` if all child (and grandchild) nodes are selected, `false` if all unselected, or `undefined` if a mixture.
 
@@ -239,13 +240,13 @@ The grid API has the following methods for selection:
 
 If you want to select only filtered-out row nodes, you could do this using the following:
 
-```js
+<snippet>
 // loop through each node when it is filtered out
-api.forEachNodeAfterFilter(function(node) {
-// select the node
-node.setSelected(true);
+gridOptions.api.forEachNodeAfterFilter(node => {
+    // select the node
+    node.setSelected(true);
 });
-```
+</snippet>
 
 ### Example: Using forEachNode
 
@@ -257,38 +258,34 @@ There is an API function `forEachNode`. This is useful for doing group selection
 
 By default, you can select a row on mouse click, and navigate up and down the rows using your keyboard keys. However, the selection state does not correlate with the navigation keys, but we can add this behaviour using our own [Custom Navigation](../keyboard-navigation/#custom-navigation).
 
-First we need to provide a callback to the `navigateToNextCell` property in `gridOptions` to override the default arrow key navigation:
+We need to provide a callback to the `navigateToNextCell` grid option to override the default arrow key navigation:
 
-```js
-var gridOptions = {
-navigateToNextCell: myNavigation,
-...
-}
-```
+<snippet>
+|const gridOptions = {
+|    navigateToNextCell: params => {
+|        const suggestedNextCell = params.nextCellPosition;
+|
+|        // this is some code
+|        const KEY_UP = 38;
+|        const KEY_DOWN = 40;
+|    
+|        const noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
+|        if (noUpOrDownKeyPressed) {
+|            return suggestedNextCell;
+|        }
+|    
+|        params.api.forEachNode(node => {
+|            if (node.rowIndex === suggestedNextCell.rowIndex) {
+|                node.setSelected(true);
+|            }
+|        });
+|    
+|        return suggestedNextCell;
+|    },
+|}
+</snippet>
 
-From the code below you can see that we iterate over each node and call the `setSelected()` method if it matches the current `rowIndex`.
-
-```js
-function myNavigation(params) {
-    var suggestedNextCell = params.nextCellPosition;
-// this is some code
-    var KEY_UP = 38;
-    var KEY_DOWN = 40;
-
-    var noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
-    if (noUpOrDownKeyPressed) {
-        return suggestedNextCell;
-    }
-
-    gridOptions.api.forEachNode(function(node) {
-        if (node.rowIndex === suggestedNextCell.rowIndex) {
-            node.setSelected(true);
-        }
-    });
-
-    return suggestedNextCell;
-}
-```
+From the code above you can see that we iterate over each node and call the `setSelected()` method if it matches the current `rowIndex`.
 
 <grid-example title='Selection with Keyboard Arrow Keys' name='selection-with-arrow-keys' type='generated'></grid-example>
 

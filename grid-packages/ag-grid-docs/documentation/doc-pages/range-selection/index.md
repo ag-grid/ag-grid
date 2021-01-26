@@ -44,14 +44,14 @@ The above two (pinning and floating) can be thought of as follows: if you have a
 
 The `rangeSelectionChanged` event tells you that the range selection has changed. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing. For example, if selecting a range of 10 cells in a row, the user will click the first cell and drag to the last cell. This will result in up to 11 events. The first event will have `started=true`, the last will have `finished=true`, and all the intermediary events will have both of these values as `false`.
 
-```js
-api.addEventListener('rangeSelectionChanged', function(event) {
-// this prints true for first event only
-console.log('has changed, started = ' + event.started);
-// this prints true for last event only
-console.log('has changed, finished = ' + event.finished);
+<snippet>
+gridOptions.api.addEventListener('rangeSelectionChanged', event => {
+    // this prints true for first event only
+    console.log('has changed, started = ' + event.started);
+    // this prints true for last event only
+    console.log('has changed, finished = ' + event.finished);
 });
-```
+</snippet>
 
 ## Range Selection API
 
@@ -61,14 +61,14 @@ Get the selected ranges using `api.getCellRanges()`. This will return back a lis
 
 ```ts
 interface CellRange {
-startRow: RowPosition; // the start row of the range
-endRow: RowPosition; // the end row of the range
-columns: Column[]; // the columns in the range
+    startRow: RowPosition; // the start row of the range
+    endRow: RowPosition; // the end row of the range
+    columns: Column[]; // the columns in the range
 }
 
 interface RowPosition {
-rowIndex: number;
-rowPinned: string | undefined;
+    rowIndex: number;
+    rowPinned: string | undefined;
 }
 ```
 
@@ -86,19 +86,18 @@ Adds a range to the selection. This keeps any previous ranges. If you wish to on
 
 ```ts
 interface AddCellRangeParams {
-
-// start row
-rowStartIndex?: number;
-rowStartPinned?: string; // either 'top', 'bottom' or undefined
-
-// end row
-rowEndIndex?: number;
-rowEndPinned?: string; // either 'top', 'bottom' or undefined
-
-// columns
-columnStart?: string | Column;
-columnEnd?: string | Column;
-columns?: (string | Column)[];
+    // start row
+    rowStartIndex?: number;
+    rowStartPinned?: string; // either 'top', 'bottom' or undefined
+    
+    // end row
+    rowEndIndex?: number;
+    rowEndPinned?: string; // either 'top', 'bottom' or undefined
+    
+    // columns
+    columnStart?: string | Column;
+    columnEnd?: string | Column;
+    columns?: (string | Column)[];
 }
 ```
 

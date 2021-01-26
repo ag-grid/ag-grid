@@ -9,7 +9,7 @@ export const Snippet = props => {
     const snippetToTransform = props.children.toString();
 
     // snippets with spaces need to be prefixed with '|' as markdown doesn't allow spaces
-    const formattedSnippet = snippetToTransform.replace(/\|/g, '').trim();
+    const formattedSnippet = snippetToTransform.replace(/^\|/gm, '').trim();
 
     // create FW specific snippet
     const snippet = transform(formattedSnippet, props.framework, extractOptions(props));
