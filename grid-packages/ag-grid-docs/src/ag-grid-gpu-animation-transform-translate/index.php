@@ -124,7 +124,7 @@ eRow.style.transform = 'translateY(500px)';
 
         <p>
             For a real world example of this check out the
-            <a href="../example.php">ag-Grid main demo</a>. ag-Grid uses
+            <a href="/example.php">ag-Grid main demo</a>. ag-Grid uses
             this technique for animating the rows after a) the rows are sorted; b) the rows
             are filtered and c) a row group is opened (as rows are moved down to expand the group).
             This is particularly helpful with either very large grids or when using ag-Grid on
@@ -172,12 +172,12 @@ eRow.style.transform = 'translateY(500px)';
         </div>
     </div>
 
-<?php 
+<?php
     include '../blog-authors/niall.php';
 ?>
 
 </div>
-    
+
 
 </div>
 

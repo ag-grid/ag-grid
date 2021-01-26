@@ -53,8 +53,7 @@ is an optional part of ag-Grid and you need to tell ag-Grid you want to use it.
 
 ag-Grid-Enterprise is also distributed as both a self contained bundle and also via a CommonJS package.
 
-
-As with the [ag-Grid example](https://www.ag-grid.com/example.php), all we need to do is reference
+As with the [ag-Grid example](../../../example.php), all we need to do is reference
 the ag-grid-enterprise dependency and we're good to go:
 
 ```html

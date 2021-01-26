@@ -27,16 +27,16 @@ $pageDescription = "Fastest, most feature-rich React Data Grid component from ag
 <div class="collapse navbar-collapse" id="navbarNav">
 <ul class="navbar-nav ml-auto">
 <li class="nav-item">
-<a class="nav-link" href="../example.php">Demo<span class="sr-only">(current)</span></a>
+<a class="nav-link" href="/example.php">Demo<span class="sr-only">(current)</span></a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="../documentation/">Documentation</a>
+<a class="nav-link" href="/documentation/">Documentation</a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="../features-overview/">Features Overview</a>
+<a class="nav-link" href="/features-overview/">Features Overview</a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="../license-pricing.php">Pricing</a>
+<a class="nav-link" href="/license-pricing.php">Pricing</a>
 </li>
 <li class="nav-item">
 <a class="nav-link" id="get-started" href="../documentation/javascript/getting-started/">Get Started</a>
