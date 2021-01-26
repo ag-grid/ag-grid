@@ -102,7 +102,7 @@ function getTemplate(bindings: any, componentAttributes: string[], columnDefs: s
             </AgGridReact>
             </div>`;
 
-    const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag) : agGridTag;
+    const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag.replace('$', '$$$$')) : agGridTag;
 
     return convertFunctionalTemplate(template);
 }
