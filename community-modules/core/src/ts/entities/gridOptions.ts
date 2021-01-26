@@ -127,6 +127,7 @@ export interface GridOptions {
     accentedSort?: boolean;
     deltaSort?: boolean;
     suppressHorizontalScroll?: boolean;
+    alwaysShowHorizontalScroll?: boolean;
     alwaysShowVerticalScroll?: boolean;
     debounceVerticalScrollbar?: boolean;
     unSortIcon?: boolean;

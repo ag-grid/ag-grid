@@ -346,8 +346,11 @@
         "meta": {
             "displayName": "Scrolling"
         },
+        "setAlwaysShowHorizontalScroll(show)": {
+            "description": "If `true`, the horizontal scrollbar will always be present, event if not required. Otherwise, it will only be displayed when necessary."
+        },
         "setAlwaysShowVerticalScroll(show)": {
-            "description": "If `true`, the vertical scrollbar will always be present even if not required, otherwise it will only be displayed when necessary."
+            "description": "If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary."
         },
         "ensureIndexVisible(index, position)": {
             "description": "Ensures the row index is visible by vertically scrolling the grid. The valid values for positions are `'top' | 'middle' | 'bottom' | undefined | null`. If `'top'`, `'middle'` or `'bottom'`, the grid will scroll the row to place the row at the top, middle or bottom respectively. If `undefined` or `null` the grid will do the minimum scrolling to show the row, i.e. if the grid needs to scroll up then it will scroll so that the row is at the top, if the grid needs to scroll down then it will scroll so that the row is at the bottom, if the row is already in view then the grid will do nothing."

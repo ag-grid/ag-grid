@@ -608,6 +608,10 @@
         "meta": {
             "displayName": "Scrolling"
         },
+        "alwaysShowHorizontalScroll": { 
+            "default": false,
+            "description": "Set to `true` to always show the horizontal scrollbar."
+        },
         "alwaysShowVerticalScroll": {
             "default": false,
             "description": "Set to `true` to always show the vertical scrollbar."
@@ -618,7 +622,7 @@
         },
         "suppressHorizontalScroll": {
             "default": false,
-            "description": "Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls.",
+            "description": "Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Show not be used in combination with `alwaysShowHorizontalScroll`)",
             "more": {
                 "name": "Aligned Grid as Footer",
                 "url": "../aligned-grids/#example-aligned-floating-footer"

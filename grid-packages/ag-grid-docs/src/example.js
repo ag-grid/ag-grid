@@ -295,6 +295,7 @@ var gridOptions = {
     // groupIncludeFooter: true,
     // groupIncludeTotalFooter: true,
     // suppressHorizontalScroll: true,
+    // alwaysShowHorizontalScroll: true,
     // alwaysShowVerticalScroll: true,
     // debounceVerticalScrollbar: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),

@@ -412,6 +412,10 @@ export class GridApi {
         return this.gridPanel.getHScrollPosition();
     }
 
+    public setAlwaysShowHorizontalScroll(show: boolean) {
+        this.gridOptionsWrapper.setProperty('alwaysShowHorizontalScroll', show);
+    }
+
     public setAlwaysShowVerticalScroll(show: boolean) {
         this.gridOptionsWrapper.setProperty('alwaysShowVerticalScroll', show);
     }

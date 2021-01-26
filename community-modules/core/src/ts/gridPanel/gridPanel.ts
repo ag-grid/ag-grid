@@ -895,14 +895,15 @@ export class GridPanel extends Component {
         return this.eCenterViewport.clientWidth;
     }
 
+    public isHorizontalScrollShowing(): boolean {
+        const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
+        return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eCenterViewport);
+    }
+
     public isVerticalScrollShowing(): boolean {
         const isAlwaysShowVerticalScroll = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
         addOrRemoveCssClass(this.eBodyViewport, 'ag-force-vertical-scroll', isAlwaysShowVerticalScroll);
         return isAlwaysShowVerticalScroll || isVerticalScrollShowing(this.eBodyViewport);
-    }
-
-    public isHorizontalScrollShowing(): boolean {
-        return isHorizontalScrollShowing(this.eCenterViewport);
     }
 
     private onScrollbarWidthChanged() {

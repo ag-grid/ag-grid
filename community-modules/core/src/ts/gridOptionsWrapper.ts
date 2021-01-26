@@ -564,6 +564,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.excludeChildrenWhenTreeDataFiltering);
     }
 
+    public isAlwaysShowHorizontalScroll() {
+        return isTrue(this.gridOptions.alwaysShowHorizontalScroll);
+    }
+
     public isAlwaysShowVerticalScroll() {
         return isTrue(this.gridOptions.alwaysShowVerticalScroll);
     }
