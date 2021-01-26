@@ -695,7 +695,7 @@ export class ColumnController extends BeanStub {
     // if we are not column spanning, this just returns back the virtual centre columns,
     // however if we are column spanning, then different rows can have different virtual
     // columns, so we have to work out the list for each individual row.
-    public getViewportLeftColumnsForRow(rowNode: RowNode): Column[] {
+    public getViewportCenterColumnsForRow(rowNode: RowNode): Column[] {
         if (!this.colSpanActive) {
             return this.viewportColumnsCenter;
         }
