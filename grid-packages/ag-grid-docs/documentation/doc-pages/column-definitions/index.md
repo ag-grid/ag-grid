@@ -230,7 +230,6 @@ const gridOptions = {
             suppressMenu: true
         }
     }
-    // other grid options ...
 }
 </snippet>
 

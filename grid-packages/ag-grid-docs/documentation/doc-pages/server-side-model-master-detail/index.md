@@ -121,17 +121,21 @@ The height of detail rows can be configured in one of the following ways:
 1. Using the `getRowHeight()` grid option callback to explicitly set height for each row individually. This callback will need to work out the pixel height of each detail row.
 1. Using the `detailCellRendererParams.autoHeight=true` property to let the grid automatically size the detail rows / grids to fit their rows.
 
-The following snippet compares all approaches:
+The following snippets compares these approaches:
 
-<snippet spaceBetweenProperties="true">
+Option 1 - fixed detail row height, sets height for all details rows
+<snippet>
 |const gridOptions = {
-|    // option 1 - fixed detail row height, sets height for all details rows
 |    detailRowHeight: 500,
-|
-|    // option 2 - dynamic detail row height, dynamically sets height for all rows
+|}
+</snippet>
+
+Option 2 - dynamic detail row height, dynamically sets height for all rows
+<snippet>
+|const gridOptions = {
 |    getRowHeight: params => {
 |        const isDetailRow = params.node.detail;
-|    
+|
 |        // not that this callback gets called for all rows, not just the detail row
 |        if (isDetailRow) {
 |            // dynamically calculate detail row height
@@ -139,9 +143,13 @@ The following snippet compares all approaches:
 |        }
 |        // for all non-detail rows, return 25, the default row height
 |        return 25;
-|    },
-|
-|    // option 3 - use autoHeight
+|    }
+|}
+</snippet>
+
+Option 3 - use autoHeight
+<snippet>
+|const gridOptions = {
 |    detailCellRendererParams: {
 |        autoHeight: true,
 |    }

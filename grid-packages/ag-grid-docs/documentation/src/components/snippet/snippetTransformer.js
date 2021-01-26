@@ -64,7 +64,7 @@ class SnippetTransformer {
         } else if (isVarDeclaration(tree)) {
             return tree.declarations.map(n => this.parse(n, depth - 1)).join('');
 
-        } else if (isLabelStatement(tree)) {
+        } else if (isLabelStatement(tree) || isBlockStatement(tree)) {
             throw new Error('Grid options should be wrapped inside: const gridOptions = { ... }');
         } else {
             throw new Error(`Unexpected node encountered:\n\n${JSON.stringify(tree)}`);
@@ -259,27 +259,33 @@ class ReactTransformer extends SnippetTransformer {
 
     extractColumnProperties(properties) {
         let fieldName = '';
-        return properties
-            .filter(property => getName(property) !== 'children')
-            .map(property => {
-                const propertyName = getName(property);
-                if (isLiteralProperty(property)) {
-                    if (propertyName === 'field') { fieldName = property.value.value; }
-                    return `${propertyName}=${getReactValue(property)}`;
-                }
-                if (isArrowFunctionProperty(property) || isObjectProperty(property)) {
-                    const extraLine = this.options.spaceBetweenProperties ? '\n' : '';
-                    let comment = extraLine + (property.comment ? `//${property.comment}\n` : '');
-                    const funcName = fieldName ? fieldName + capitalise(propertyName) : propertyName;
-                    this.externalisedProperties.push(comment + decreaseIndent(this.extractExternalProperty(property), 2)
-                            .replace(`const ${propertyName}`, `const ${funcName}`));
-                    return `${propertyName}={${funcName}}`;
-                }
-                const [start, end] = property.range;
-                const rawValue = this.snippet.slice(start, end);
-                const value = rawValue.replace(`${propertyName}:`, '').trim();
-                return `${propertyName}={${value}}`;
-            });
+
+        const mapColumnProperty = property => {
+            const propertyName = getName(property);
+            if (isLiteralProperty(property)) {
+                if (propertyName === 'field') { fieldName = property.value.value; }
+                return `${propertyName}=${getReactValue(property)}`;
+            }
+            if (isArrowFunctionProperty(property) || isObjectProperty(property)) {
+                return this.extractNonLiteralProperty(property, fieldName, propertyName);
+            }
+            const [start, end] = property.range;
+            const rawValue = this.snippet.slice(start, end);
+            const value = rawValue.replace(`${propertyName}:`, '').trim();
+
+            return `${propertyName}={${value}}`;
+        }
+
+        return properties.filter(property => getName(property) !== 'children').map(mapColumnProperty);
+    }
+
+    extractNonLiteralProperty(property, fieldName, propertyName) {
+        const extraLine = this.options.spaceBetweenProperties ? '\n' : '';
+        let comment = extraLine + (property.comment ? `//${property.comment}\n` : '');
+        const funcName = fieldName ? fieldName + capitalise(propertyName) : propertyName;
+        const extracted = this.extractExternalProperty(property).replace(`const ${propertyName}`, `const ${funcName}`);
+        this.externalisedProperties.push(comment + decreaseIndent(extracted, 2));
+        return `${propertyName}={${funcName}}`;
     }
 }
 
@@ -349,4 +355,5 @@ const isVarDeclaration = node => node.type === 'VariableDeclaration' && Array.is
 const isVarDeclarator = node => node.type === 'VariableDeclarator';
 const isExprStatement = node => node.type === 'ExpressionStatement';
 const isLabelStatement = node => node.type === 'LabeledStatement';
+const isBlockStatement = node => node.type === 'BlockStatement';
 const isCallableExpr = node => node.init.type === 'CallExpression';
