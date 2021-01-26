@@ -125,6 +125,7 @@ const plugins = [
       includeInDevelopment: false,
     },
   },
+  'gatsby-plugin-remove-generator',
 ];
 
 if (process.env.GATSBY_UPDATE_ALGOLIA === 'true') {
