@@ -23,7 +23,7 @@ include('../includes/mediaHeader.php');
         <li>
             AG-1435: Maintain cell focus on data updates </li>
         <li>
-            AG-1419: Allow quickfilter to work with tree data </li>
+            AG-1419: Allow quick filter to work with tree data </li>
         <li>
             AG-1400: Allow moving of group auto-column </li>
         <li>
@@ -106,7 +106,7 @@ include('../includes/mediaHeader.php');
         <li>
             AG-1258: Have consistent behaviour for indeterminate checkbox across selection and set filter </li>
         <li>
-            AG-1243: IE Edge issue on colum nenu/columns clicking on the column label is good, clicking on checkbox closes the menu </li>
+            AG-1243: IE Edge issue on column menu/columns clicking on the column label is good, clicking on checkbox closes the menu </li>
         <li>
             AG-1181: No rows overlay displayed when col defs are supplied after row data </li>
         <li>
@@ -122,7 +122,7 @@ include('../includes/mediaHeader.php');
         <li>
             AG-831: [enterprise row model] Quickly expanding group node doesn't resolve loading </li>
         <li>
-            AG-798: [drag event] dragStopped gets called when clcking on a cell </li>
+            AG-798: [drag event] dragStopped gets called when clicking on a cell </li>
         <li>
             AG-663: [react headerComponent drag&drop] Cannot drag & drop header with a custom component into the row groups by </li>
         <li>
@@ -136,7 +136,7 @@ include('../includes/mediaHeader.php');
     <h4>Enhancements</h4>
     <ul>
         <li>
-            AG-1032/661: Allowing <a href="../javascript-grid-components">registering components by name</a> and renaming all componets to add ag namespace to it
+            AG-1032/661: Allowing <a href="../javascript-grid-components">registering components by name</a> and renaming all components to add ag namespace to it
         </li>
         <li>
             AG-76: Adding <a href="../javascript-grid-overlay-component">overlays as a new component</a> into the grid, so now they are fully customisable
@@ -173,7 +173,7 @@ include('../includes/mediaHeader.php');
             AG-1169: Key creator not working on pivot mode
         </li>
         <li>
-            AG-1156: afterGuiAttached not called anymore after a filter is rendered in the screen
+            AG-1156: afterGuiAttached not called any more after a filter is rendered in the screen
         </li>
         <li>
             AG-1141: Consistency of notEqual and notEquals in FilterParams.filterOptions, defaultOptions, nullComparator
@@ -183,7 +183,7 @@ include('../includes/mediaHeader.php');
             first item is picked
         </li>
         <li>
-            AG-1064: Set filter not rebuilt after delta upated
+            AG-1064: Set filter not rebuilt after delta updated
         </li>
         <li>
             AG-799: [enterprise row model] purgeEnterpriseCache render problem
@@ -207,7 +207,7 @@ include('../includes/mediaHeader.php');
             AG-1257: Column menu on non enterprise version has padding on the top in 14.2 not in 14.1
         </li>
         <li>
-            AG-1250: Regression issue - Chart example doesn't work anymore
+            AG-1250: Regression issue - Chart example doesn't work any more
         </li>
         <li>
             AG-1248: Fix broken examples in the docs pre Christmas release
@@ -220,7 +220,7 @@ include('../includes/mediaHeader.php');
         </li>
         <li>
             AG-1209: Wrong deprecated error message when using refreshView - Points to refreshRows, should say
-            refreshCelss
+            refreshCells
         </li>
         <li>
             AG-1200: iOs double click doesn't make a cell enter in edit mode, but zooms in
@@ -332,7 +332,7 @@ include('../includes/mediaHeader.php');
     <h4>Enhancements</h4>
     <ul>
 
-        <li>AG-897: Master/Detail. New streamlined and simplifed offering, allowing for much easier <a
+        <li>AG-897: Master/Detail. New streamlined and simplified offering, allowing for much easier <a
                     href="../javascript-grid-master-detail/">Master/Detail</a>.
         </li>
         <li>AG-530: Implement React declarative offering. Allow Grid & Column definitions to be entirely in markup.</li>
@@ -392,7 +392,7 @@ include('../includes/mediaHeader.php');
         <li>AG-910: New component editor uses mergeDeep - causes stack overflow when certain observables are used</li>
         <li>AG-946: Improve memory usage of vue vs js</li>
         <li>AG-884: [excel] DateType were restricted to String and Number, added Boolean DateTime and Error</li>
-        <li>AG-901: [regression] SetFilter not displaying (Blanks) anymore for null values</li>
+        <li>AG-901: [regression] SetFilter not displaying (Blanks) any more for null values</li>
         <li>AG-878: [master detail] Error raised in detail panel when using Cell Editors</li>
         <li>AG-864: Sanitise Data in tooltip and cellRenderer</li>
         <li>AG-855: Grids fail on ie11 when dealing with tree data</li>
@@ -444,7 +444,7 @@ include('../includes/mediaHeader.php');
     <li>AG-861: Fixed issue with expandAll when using <code>hideOpenParents:true</code></li>
     <li>AG-759: Clear button does not work well when also providing filterOptions</li>
     <li>AG-547: Set filter tristate was not working</li>
-    <li>AG-842: Fix issue with autosize for the columns and the new matherial theme</li>
+    <li>AG-842: Fix issue with autosize for the columns and the new material theme</li>
     <li>AG-829: Fix error in CellComp.prototype.stopEditing in certain cases</li>
     <li>AG-406: Fix issue on touch devices where sub menus and custom menu items wouldn't work.</li>
     <ul>
@@ -595,7 +595,7 @@ include('../includes/mediaHeader.php');
         <li>AG-705: angular 1 cells were not getting compiled</li>
         <li>AG-710: Fixed an issues where drag and drop did not work as expected in ag-grid-react</li>
         <li>AG-712: Fixed an issue with headers no longer displaying ellipsis (&hellip;) when too narrow.</li>
-        <li>AG-708: The themes are shipped without minifictation for easier debugging.</li>
+        <li>AG-708: The themes are shipped without minification for easier debugging.</li>
         <li>AG-707: Fixed an issue introduced with new SVG icons - some of the icons passed through the <code>gridOptions</code>
             stopped working
         </li>
@@ -671,7 +671,7 @@ include('../includes/mediaHeader.php');
             not considered
             when grouping by that column
         </li>
-        <li>AG-253: Support for innnerRendererFramework</li>
+        <li>AG-253: Support for innerRendererFramework</li>
         <li>AG-50: Support for cellRendererFramework inside filterParams</li>
         <li>AG-688: Fixed compatibility issue with Internet Explorer 10</li>
     </ul>
@@ -680,7 +680,7 @@ include('../includes/mediaHeader.php');
     <ul>
         <li>In cell renderer, the eGridDiv and eParentOfValue no longer exist in init(), instead they are in
             afterGuiAttached().
-            We don't like breaking changes, however this was neccessay to allow the new rendering engine.
+            We don't like breaking changes, however this was necessary to allow the new rendering engine.
         </li>
     </ul>
 
@@ -692,7 +692,7 @@ include('../includes/mediaHeader.php');
         <li>AG-646: Enhancement: updateRowData now <a href="../javascript-grid-data-update/#bulk-updating">returns the
                 rows updated</a>.
         </li>
-        <li>AG-645: Bugfix: Error creating bean CsvCreator due to minimifying issues. Still causing issues after
+        <li>AG-645: Bugfix: Error creating bean CsvCreator due to minifying issues. Still causing issues after
             12.0.1
         </li>
     </ul>
@@ -701,10 +701,10 @@ include('../includes/mediaHeader.php');
 
     <h4>Bug Fixes</h4>
     <ul>
-        <li>AG-645: Bugfix: Error creating bean CsvCreator due to minimifying issues.</li>
+        <li>AG-645: Bugfix: Error creating bean CsvCreator due to minifying issues.</li>
         <li>AG-636: Bugfix: Normal rowModelType was not deprecated properly.</li>
         <li>AG-639: Bugfix: Date component was still broken after previous fix AG-541/600</li>
-        <li>AG-633: Bugfix: Fixed bug where "not contains" filter would not work with emtpy strings</li>
+        <li>AG-633: Bugfix: Fixed bug where "not contains" filter would not work with empty strings</li>
         <li>AG-641: Bugfix: When using row groups and footer rows, deprecation warning message was printed to the
             console, fixed it so it is now (internally grid was using a deprecate method).
         </li>
@@ -785,12 +785,12 @@ include('../includes/mediaHeader.php');
         <li>AG-317: Bugfix: Agg/Pivot Display Issues With Longer Col Names</li>
         <li>AG-578: Bugfix: Exception raised when performing range selection and filtering on the enterprise row model
         </li>
-        <li>AG-327: Bugfix: Cumalative sort numbers disappear when refreshHeader is called</li>
+        <li>AG-327: Bugfix: Cumulative sort numbers disappear when refreshHeader is called</li>
         <li>AG-375: After calling columnApi.setState() and doing multi-column sort,
             the sort numbers were not getting displayed beside the relevant column.
         </li>
         <li>AG-602: Bugfix: Enterprise Row Model success callback interface was missing 'lastRow'.</li>
-        <li>AG-617: Buffix: Enterprise Row Model unable to perform full width groups</li>
+        <li>AG-617: Bugfix: Enterprise Row Model unable to perform full width groups</li>
         <li>AG-625: Now Enterprise Row Model works with complex objects (eg valueGetters and fields with dot
             notation).
         </li>
@@ -895,7 +895,7 @@ include('../includes/mediaHeader.php');
     <h4>Documentation</h4>
     <ul>
         <li><a href="../javascript-grid-grouping">Row Grouping </a> docs rewritten, favours new <i>rowGroup</i> property
-            (instead of <i>rowGroupIndex</i>) and also favours auto group columns (instead of configurating column
+            (instead of <i>rowGroupIndex</i>) and also favours auto group columns (instead of configuring column
             explicitly).
         </li>
         <li>New documentation page to <a href="../javascript-grid-testing">test with Jasmine or Karma</a>.</li>
@@ -980,7 +980,7 @@ include('../includes/mediaHeader.php');
     <ul>
         <li>Aggregation data and group data are no longer stored in rowNode.data, instead they are stored in
             rowNode.groupData and rowNode.aggData. If you are
-            accessing rowNode.data for aggreation or group data, this will now not work.
+            accessing rowNode.data for aggregation or group data, this will now not work.
         </li>
         <li>Removed property suppressUseColIdForGroups, because of new way of storing grouped data in the rowNode, it is
             not needed.
@@ -1037,7 +1037,7 @@ include('../includes/mediaHeader.php');
         <li>AG-420: Support for <a href="../example-react-redux/">Redux Style Immutable Stores</a>,
             to work better with React applications.
         </li>
-        state (seelction, grouping etc) while new rows are set.</li>
+        state (selection, grouping etc) while new rows are set.</li>
         <LI>AG-114: <a href="../javascript-grid-width-and-height/#autoHeight">Auto height grid</a>: Allow the grid to
             resize it's height to the number of rows so that there is no vertical scrolls.
         </li>
@@ -1145,7 +1145,7 @@ include('../includes/mediaHeader.php');
         <LI>AG-452: Using <i>groupColumnDef</i> would cause CSV/Excel export to fail</li>
         <LI>AG-450: Fix bug when the only option specified for a filter is in range <i>filterOptions:['inRange']</i>
         </li>
-        <LI>AG-445: Cell editors <i>destroy</i> method is not mandatory anymore</li>
+        <LI>AG-445: Cell editors <i>destroy</i> method is not mandatory any more</li>
         <LI>AG-259: <i>sizeColsToFit</i> not working in frameworks when immediately invoked</li>
         <LI>AG-335: <i>floatingFilterWrapperComponent</i> prints readable error messages when the custom implementations
             are missing mandatory methods
@@ -1194,7 +1194,7 @@ include('../includes/mediaHeader.php');
     <ul>
         <li>
             Enhancement (AG-346): Floating Filters/Performance: Floating filters won't slow down vertical scrolling
-            anymore
+            any more
             as they lazily interact with the filters now.
         </li>
         <li>
@@ -1662,7 +1662,7 @@ include('../includes/mediaHeader.php');
             the clipboard.
         </li>
         <li>scrolls - new property 'scrollbarWidth', so you can tell grid how much padding to use for scrollbar. Handy
-            if providing non-standard scrolbars to grid and need to provide alterlative padding to use.
+            if providing non-standard scrollbars to grid and need to provide alternative padding to use.
         </li>
         <li>grid size - added api.checkGridSize(), so you can force grid to check its size. Handy if you create the grid
             OUT of the dom, then insert it, then you want to tell grid to work out what rows and columns to render.
@@ -1703,16 +1703,14 @@ include('../includes/mediaHeader.php');
             Not is doesn't sort when only groups.
         </li>
         <li>api.ensureIndexVisible() will now also render the rows in the same action, previously you had to wait for
-            the grid to pick up the scroll event (which happened immediatly after) to render the rows. This causes
-            problems if you wanted to access the row immediatly after ensuring it was visible (eg to start editing).
+            the grid to pick up the scroll event (which happened immediately after) to render the rows. This causes
+            problems if you wanted to access the row immediately after ensuring it was visible (eg to start editing).
         </li>
         <li>Formatted values can now be empty strings, previously empty strings were ignored and the original value was
             presented.
         </li>
         <li>grid options was missing onRowValueChanged property</li>
-        <li>fixes <a href="https://www.ag-grid.com/forum/showthread.php?tid=4303">this issue</a>, when left and right
-            pinned on IE, left pinned didn't sync scroll with body always.
-        </li>
+        <li>fixes an issue, when left and right pinned on IE, left pinned didn't sync scroll with body always.</li>
         <li>Set Filter - 'Select All' checkbox was not getting cleared when all items were unchecked.</li>
         <li>Set Filter - When new rows got loaded into the grid, the filter icon was not cleared down if filter was
             reset. Now it is.
@@ -1748,7 +1746,7 @@ include('../includes/mediaHeader.php');
         defining order of pivot columns.
     </li>
     <li>Enhancement - Added <a href="../javascript-grid-tool-panel/#suppressExample">'suppressToolPanel'</a> to column
-        definitions, so suppress columns from appearing in the toolpanel.
+        definitions, so suppress columns from appearing in the tool panel.
     </li>
     <li>Enhancement - headerValueGetter now also works for column groups.</li>
     <li>Enhancement - Added <a href="../javascript-grid-pivoting/#manipulatingSecondaryColumns"> <i>processSecondaryColDef</i>
@@ -1951,7 +1949,7 @@ params = {
     </li>
     <li>Enhancement: export to csv now allows you to specify particular columns.</li>
     <li>Enhancement: export to csv now includes floating top and floating bottom rows.</li>
-    <li>Enhancement: toolPanel has lazy intialisation, so now if toolPanel not showing, it doesn't initialise.</li>
+    <li>Enhancement: toolPanel has lazy initialisation, so now if toolPanel not showing, it doesn't initialise.</li>
     <li>Bugfix: copy range to clipboard was not taking in group values when group key was using valueGetter.</li>
     <li>Bugfix: removed styles from border layout templates, used css classes instead. Fixed bug where chrome complained
         about 'styles violate Content Security Policy #1093'
@@ -2109,7 +2107,7 @@ params = {
     <li>Enhancement: added suppressFilter to colDef, to allow turning filtering off for a particular column</li>
     <li>Bugfix: AngularJS 1.x bindings were not getting cells updated when columns added and removed</li>
     <li>Bugfix: Popups were triggering a scrollbar to flicker on and off when showing (eg show column menu, a scrollbar
-        appeard and then dissappeared in the grid)
+        appeared and then disappeared in the grid)
     </li>
     <li>Bugfix: rowSelectionChanged was not firing on shift select</li>
     <li>Bugfix: isCancelBeforeStart and isCancelAfterEnd were not working for popup editors</li>
@@ -2172,7 +2170,7 @@ params = {
     <li>Enhancement: new property for column group called 'marryChildren', when true then group cannot be split up by
         moving children.
     </li>
-    <li>Enhancement: toolpanel now has icon beside column group to show visibility of the group. icon is also clickable
+    <li>Enhancement: tool panel now has icon beside column group to show visibility of the group. icon is also clickable
         to set visible / hidden all children of the group
     </li>
     <li>Enhancement: editing now has methods isCancelBeforeStart() and isCancelAfterEnd() to help with lifecycle.</li>
@@ -2192,7 +2190,7 @@ params = {
     <li>Enhancement: new property 'suppressPreventDefaultOnMouseWheel' so you can allow browser to handle mouse wheel
         events - useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page
     </li>
-    <li>Enhancement: build in renderer 'animiateShowChange' now highlights changes when values are not numbers (eg
+    <li>Enhancement: build in renderer 'animateShowChange' now highlights changes when values are not numbers (eg
         strings).
     </li>
 
@@ -2362,7 +2360,7 @@ params = {
 
     <li>rowsAlreadyGrouped replaced with getNodeChildDetails. If you are providing already grouped data to the grid,
         see the new section 'Tree Data' on how this is now done. It had to change because Node is now an object with
-        functinality, so you can't just pass in JSON an expect them to be treated like nodes.
+        functionality, so you can't just pass in JSON an expect them to be treated like nodes.
     </li>
 
     <li>Renamed: columnApi.getState()/setState()/resetState() to
@@ -2423,12 +2421,12 @@ params = {
     It only made an improvement on IE, and now that we are using delayed scrolling, IE is
     working fast enough now. In addition, I have now tested with Windows 10 and Edge (the IE replacement) and
     it's working very fast. So the virtual DOM was giving very little benefit and was 'getting in the way' of a clean
-    design. So I've favored a clean design rather than a more complex design just to get it faster in IE. If
+    design. So I've favoured a clean design rather than a more complex design just to get it faster in IE. If
     you want to see how little difference a virtual DOM made, see the Angular Connect 2015 talk I gave.
 
 
     <h3>Version 3.3.3</h3>
-    <li>Bug fix: Pinned rows were not colored correctly</li>
+    <li>Bug fix: Pinned rows were not coloured correctly</li>
 
     <h3>Version 3.3.2</h3>
     <li>Bug fix: Was not exporting initialiseAgGridWithAngular1() and initialiseAgGridWithWebComponents() with
@@ -2503,7 +2501,7 @@ params = {
     <li>Minor: Fixed up placement of menu icon, it was hitting the header border.</li>
     <li>Major: Rows can have variable heights with new getRowHeight() callback.</li>
     <li>Minor: bugfix - setColState was not restoring 'visible' correctly</li>
-    <li>Minor: New APi - columnApi.resetState()</li>
+    <li>Minor: New API - columnApi.resetState()</li>
     <li>Major: Implemented column header templates</li>
 
     <h3>Version 3.0.0</h3>
@@ -2581,7 +2579,7 @@ params = {
     <h3>Version 2.3.1</h3>
     <li>Bug fix: Angular 2 - EventEmitter for rowDeselected was missing.</li>
     <li>Major: Added getBusinessKeyForNode() method, to allow easily identifying of rows for automated testing.</li>
-    <li>Minor: Removed declaration of 'module' and 'exports' in main.ts, so no longer clashes with node.ts typics.</li>
+    <li>Minor: Removed declaration of 'module' and 'exports' in main.ts, so no longer clashes with node.ts types.</li>
     <li>Minor: Fixed headerClass, array of classes was not working</li>
 
     <h3>Version 2.3.0</h3>
