@@ -13,10 +13,9 @@ today! As a contributor, here are the guidelines we would like you to follow:
 
 ## <a name="question"></a> Got a Question or Problem?
 
-Please, do not open issues for the general support questions as we want to keep GitHub issues for bug reports and feature requests. You've got much better chances of getting your question answered on [StackOverflow](https://stackoverflow.com/questions/tagged/ag-grid) where the questions should be tagged with tag `ag-grig`,
-or on our [Forum](https://ag-grid.com/forum)
+Please, do not open issues for general support questions as we want to keep GitHub issues for bug reports and feature requests. You've got much better chances of getting your question answered on [StackOverflow](https://stackoverflow.com/questions/tagged/ag-grid) where the questions should be tagged with tag `ag-grid`.
 
-If you're using the Enterprise version of ag-Grid (ag-grid-enterprise), then the [Members Forum](https://ag-grid.com/forum/forumdisplay.php?fid=5) is the best place to ask - you'll get a much quicker response there. Please contact accounts@ag-grid.com for access.
+If you're using the Enterprise version of ag-Grid (ag-grid-enterprise), then you should use our [Support Portal](https://ag-grid.zendesk.com/) - you'll get a much quicker response there. Please contact accounts@ag-grid.com for access.
 
 To save your and our time we will be systematically closing all the issues that are requests for general support (for ag-Grid Free) and redirecting people to StackOverflow.
 
