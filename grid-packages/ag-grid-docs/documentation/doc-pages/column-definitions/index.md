@@ -25,7 +25,7 @@ const gridOptions = {
     // put the three columns into a group
     columnDefs: [
         {
-            headerName: 'Group A', 
+            headerName: 'Group A',
             children: [
                 { headerName: 'Athlete', field: 'athlete' },
                 { headerName: 'Sport', field: 'sport' },

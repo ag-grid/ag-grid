@@ -40,33 +40,42 @@ function textCustomComparator(filter: string, gridValue: any, filterText: string
 
 The following is an example of a `textCustomComparator` that mimics the current implementation of ag-Grid. This can be used as a template to create your own.
 
-```js
-function myComparator(filter, value, filterText) {
-    var filterTextLowerCase = filterText.toLowerCase();
-    var valueLowerCase = value.toString().toLowerCase();
 
-    switch (filter) {
-        case 'contains':
-            return valueLowerCase.indexOf(filterTextLowerCase) >= 0;
-        case 'notContains':
-            return valueLowerCase.indexOf(filterTextLowerCase) === -1;
-        case 'equals':
-            return valueLowerCase === filterTextLowerCase;
-        case 'notEqual':
-            return valueLowerCase != filterTextLowerCase;
-        case 'startsWith':
-            return valueLowerCase.indexOf(filterTextLowerCase) === 0;
-        case 'endsWith':
-            var index = valueLowerCase.lastIndexOf(filterTextLowerCase);
-            return index >= 0 && index === (valueLowerCase.length - filterTextLowerCase.length);
-        default:
-            // should never happen
-            console.warn('invalid filter type ' + filter);
-            return false;
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            filter: 'agTextColumnFilter',
+            filterParams: {
+                textCustomComparator: (filter, value, filterText) => {
+                    const filterTextLowerCase = filterText.toLowerCase();
+                    const valueLowerCase = value.toString().toLowerCase();
+                    switch (filter) {
+                        case 'contains':
+                            return valueLowerCase.indexOf(filterTextLowerCase) >= 0;
+                        case 'notContains':
+                            return valueLowerCase.indexOf(filterTextLowerCase) === -1;
+                        case 'equals':
+                            return valueLowerCase === filterTextLowerCase;
+                        case 'notEqual':
+                            return valueLowerCase != filterTextLowerCase;
+                        case 'startsWith':
+                            return valueLowerCase.indexOf(filterTextLowerCase) === 0;
+                        case 'endsWith':
+                            var index = valueLowerCase.lastIndexOf(filterTextLowerCase);
+                            return index >= 0 && index === (valueLowerCase.length - filterTextLowerCase.length);
+                        default:
+                            // should never happen
+                            console.warn('invalid filter type ' + filter);
+                            return false;
+                    }
+                } 
+            }
         }
-    }
+    ]
 }
-```
+</snippet>
 
 ## Text Formatter
 
@@ -83,8 +92,8 @@ function textFormatter(gridValue: string): string;
 The following is an example function to remove accents and convert to lower case.
 
 ```js
-function(value) {
-    return value.toLowerCase()
+const toLowerWithoutAccents = value =>
+    value.toLowerCase()
         .replace(/\s/g, '')
         .replace(/[àáâãäå]/g, 'a')
         .replace(/æ/g, 'ae')
@@ -97,7 +106,6 @@ function(value) {
         .replace(/[ùúûü]/g, 'u')
         .replace(/[ýÿ]/g, 'y')
         .replace(/\W/g, '');
-};
 ```
 
 ## Example: Text Filter

@@ -318,7 +318,6 @@ const addCommentsToTree = tree => {
         }
     }
 
-    // simpler and faster to start here
     const root = tree.body;
     parseTree(root);
 

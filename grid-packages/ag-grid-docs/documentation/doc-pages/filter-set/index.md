@@ -20,22 +20,16 @@ The Set Filter is comprised of the following sections:
 
 The Set Filter is the default filter used in ag-Grid Enterprise, but it can also be explicitly configured as shown below:
 
-```js
-gridOptions: {
+<snippet>
+const gridOptions = {
     columnDefs: [
-        {
-            field: 'country',
-            filter: true // Set Filter is used by default in Enterprise version
-        },
-        {
-            field: 'year',
-            filter: 'agSetColumnFilter' // explicitly configure the Set Filter
-        },
+        // Set Filter is used by default in Enterprise version
+        { field: 'country', filter: true },
+        // explicitly configure column to use the Set Filter
+        { field: 'year', filter: 'agSetColumnFilter' },
     ],
-    // other options
 }
-```
-
+</snippet>
 
 The following example demonstrates how the Set Filter can be enabled. Note the following:
 

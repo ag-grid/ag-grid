@@ -25,22 +25,26 @@ For these reasons, the Number Filter allows you to control what characters the u
 
 Custom number support is enabled by specifying configuration similar to the following:
 
-```js
-colDef: {
-    filter: 'agNumberColumnFilter',
-    filterParams: {
-        allowedCharPattern: '\\d\\-\\,', // note: ensure you escape as if you were creating a RegExp from a string
-        numberParser: function(text) {
-            return text == null ? null : parseFloat(text.replace(',', '.'));
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            filter: 'agNumberColumnFilter',
+            filterParams: {
+                allowedCharPattern: '\\d\\-\\,', // note: ensure you escape as if you were creating a RegExp from a string
+                numberParser: function(text) {
+                    return text == null ? null : parseFloat(text.replace(',', '.'));
+                }
+            }
         }
-    }
+    ]
 }
-```
+</snippet>
 
 The `allowedCharPattern` is a regex of all the characters that are allowed to be typed. This is surrounded by square brackets `[]` and used as a character class to be compared against each typed character individually and prevent the character from appearing in the input if it does not match, in supported browsers (all except Safari).
 
 The `numberParser` should take the user-entered text and return either a number if one can be interpreted, or `null` if not.
-
 
 The example below shows custom number support in action. The first column shows the default behaviour, and the second column uses commas for decimals and allows a dollar sign ($) to be included.
 
