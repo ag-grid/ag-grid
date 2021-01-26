@@ -115,9 +115,9 @@ export class ClientSideNodeManager {
 
         const nodesToUnselect: RowNode[] = [];
 
-        this.executeAdd(rowDataTran, rowNodeTransaction);
         this.executeRemove(rowDataTran, rowNodeTransaction, nodesToUnselect);
         this.executeUpdate(rowDataTran, rowNodeTransaction, nodesToUnselect);
+        this.executeAdd(rowDataTran, rowNodeTransaction);
 
         this.updateSelection(nodesToUnselect);
 

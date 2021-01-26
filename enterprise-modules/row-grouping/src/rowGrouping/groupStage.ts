@@ -123,14 +123,14 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
-            if (_.existsAndNotEmpty(tran.add)) {
-                this.insertNodes(tran.add, details, false);
-            }
             if (_.existsAndNotEmpty(tran.remove)) {
                 this.removeNodes(tran.remove, details, batchRemover);
             }
             if (_.existsAndNotEmpty(tran.update)) {
                 this.moveNodesInWrongPath(tran.update, details, batchRemover);
+            }
+            if (_.existsAndNotEmpty(tran.add)) {
+                this.insertNodes(tran.add, details, false);
             }
             // must flush here, and not allow another transaction to be applied,
             // as each transaction must finish leaving the data in a consistent state.
