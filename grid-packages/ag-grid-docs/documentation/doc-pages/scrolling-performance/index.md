@@ -1,5 +1,5 @@
 ---
-title: "Performance"
+title: "Scrolling Performance"
 ---
 
 ag-Grid is fast. However ag-Grid can also be configured and extended in many ways.
@@ -8,10 +8,9 @@ Often people come to the ag-Grid forum and ask 'why is the grid in my applicatio
 
 This page explains how you can make the grid go faster.
 
-
 ## 1. Setting Expectations
 
-ag-Grid can be as fast as demonstrated in the demo application [Demo Application](../../example.php). You can resize the demo application to the same size as the grid in your application by resizing the browser, then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own implementation. If the demo grid is going faster, then there is room for performance improvements.
+ag-Grid can be as fast as demonstrated in the demo application [Demo Application](../../../example.php). You can resize the demo application to the same size as the grid in your application by resizing the browser, then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own implementation. If the demo grid is going faster, then there is room for performance improvements.
 
 ## 2. Check Cell Renderers
 
@@ -30,7 +29,6 @@ The fastest cell renderers have the following properties:
 | concerns.
 
 Not everyone needs blazing fast cell renderers (eg maybe you have users on fast machines with fast browsers, or maybe your grids have few columns) in which case framework cell renderers may work fine. The suggestion of not using frameworks for cells is only applicable when you are looking to squeeze performance gains.
-
 
 [[note]]
 | Using frameworks for cell renderers can be slower because of the large number of cells getting
@@ -61,7 +59,6 @@ For fast changing data, consider using [Batch Update Transactions](../data-updat
 ## 8. See Also
 
 Read the article [8 Performance Hacks for JavaScript](../8-performance-hacks-for-javascript/) so you know what the grid is doing, that way you will be able to reason with it.
-
 
 ## 9. Debounce Vertical Scroll
 

@@ -1028,15 +1028,6 @@
         "icon": "icon-components",
         "items": [
           {
-            "title": "Declaring Components",
-            "url": "../framework-components/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "angular",
-              "vue"
-            ]
-          },
-          {
             "title": "Registering Components",
             "url": "../components/",
             "showInCollapsed": true
@@ -1117,6 +1108,31 @@
                 "showInCollapsed": true,
                 "frameworks": [
                   "react"
+                ]
+              },
+              {
+                "title": "Higher Order Components",
+                "url": "../framework-hoc/",
+                "showInCollapsed": true,
+                "frameworks": [
+                  "react"
+                ]
+              },
+              {
+                "title": "Hooks / Functional Components",
+                "url": "../react-hooks/",
+                "showInCollapsed": true,
+                "frameworks": [
+                  "react"
+                ]
+              },
+              {
+                "title": "Parent/Child Communication",
+                "url": "../component-communication/",
+                "showInCollapsed": true,
+                "frameworks": [
+                  "angular",
+                  "vue"
                 ]
               }
             ]
@@ -1591,14 +1607,6 @@
             ]
           },
           {
-            "title": "Context API & HOC",
-            "url": "../framework-apis/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
             "title": "Fine Tuning",
             "url": "../fine-tuning/",
             "showInCollapsed": true,
@@ -1623,15 +1631,7 @@
             ]
           },
           {
-            "title": "React 15.x",
-            "url": "../react-15/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Material Components",
+            "title": "Material UI Components",
             "url": "../material-design/",
             "showInCollapsed": true,
             "frameworks": [
@@ -1647,15 +1647,7 @@
             ]
           },
           {
-            "title": "Hooks & Functional Components",
-            "url": "../react-hooks/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Components & Markup",
+            "title": "Miscellaneous",
             "url": "../framework-misc/",
             "showInCollapsed": true,
             "frameworks": [

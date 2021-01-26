@@ -35,6 +35,7 @@
     "gatsby-plugin-layout": "1.9.0",
     "gatsby-plugin-minify-classnames": "0.2.0",
     "gatsby-plugin-react-helmet": "3.9.0",
+    "gatsby-plugin-remove-generator": "^1.0.8",
     "gatsby-plugin-sass": "3.1.0",
     "gatsby-plugin-sharp": "2.13.1",
     "gatsby-plugin-sitemap": "2.11.0",

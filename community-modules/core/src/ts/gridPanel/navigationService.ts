@@ -201,7 +201,16 @@ export class NavigationService extends BeanStub {
         const upKey = key === KeyCode.UP;
         const rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
 
-        this.navigateTo(rowIndexToScrollTo, null, gridCell.column, rowIndexToScrollTo, gridCell.column);
+        let rowIndexToFocus = rowIndexToScrollTo;
+
+        if (!upKey) {
+            const node = this.paginationProxy.getRow(rowIndexToScrollTo);
+            if (node && node && node.stub) {
+                rowIndexToFocus -= 1;
+            }
+        }
+
+        this.navigateTo(rowIndexToScrollTo, null, gridCell.column, rowIndexToFocus, gridCell.column);
     }
 
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
@@ -221,6 +230,15 @@ export class NavigationService extends BeanStub {
         const columnToSelect = homeKey ? allColumns[0] : last(allColumns);
         const rowIndexToScrollTo = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
-        this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);
+        let rowIndexToFocus = rowIndexToScrollTo;
+
+        if (!homeKey) {
+            const node = this.paginationProxy.getRow(rowIndexToScrollTo);
+            if (node && node && node.stub) {
+                rowIndexToFocus -= 1;
+            }
+        }
+
+        this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToFocus, columnToSelect);
     }
 }

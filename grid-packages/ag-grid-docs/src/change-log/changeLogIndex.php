@@ -363,7 +363,7 @@ include('../includes/mediaHeader.php');
 
     <h3>Version 14.0.0 [02-NOV-2017]</h3>
 
-    <p>For details of this release, check our dedicated <a href="../change-log/v14/index.php">blog post for v14 aka
+    <p>For details of this release, check our dedicated <a href="https://medium.com/ag-grid/ag-grid-v14-halloween-released-fb53e674bfc">blog post for v14 aka
             Halloween</a>.</p>
 
     <h4>Enhancements</h4>
