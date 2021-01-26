@@ -29,13 +29,13 @@ A datasource is used by the SSRM to fetch rows for the grid. Applications are re
 The following snippet shows a simple datasource implementation:
 
 ```js
-function createDatasource(server) {
+const createDatasource = server => {
     return {
         // called by the grid when more rows are required
-        getRows: function(params) {
-
+        getRows: params => {
+            
             // get data for request from server
-            var response = server.getData(params.request);
+            const response = server.getData(params.request);
 
             if (response.success) {
                 // supply rows for requested block to grid
@@ -59,19 +59,19 @@ Rows fetched from the server are supplied to the grid via `params.success()`. No
 
 The datasource is registered with the grid via either a) the grid property `serverSideDatasoruce` or b) the grid API.
 
+Registering the datasource with via grid options is done as follows: 
 
-```js
-// Create Datasource
-var myDatasource = createDatasource();
-
-// Option A - Register via Grid Property
-gridOptions = {
+<snippet>
+const gridOptions = {
     serverSideDatasource: myDatasource
 }
+</snippet>
 
-// Optoin B - Register via API
+Alternatively, the datasource can be registered via the grid API:
+
+<snippet>
 gridOptions.api.setServerSideDatasource(myDatasource);
-```
+</snippet>
 
 ## Simple Example
 

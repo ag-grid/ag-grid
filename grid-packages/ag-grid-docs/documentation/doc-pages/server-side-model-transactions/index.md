@@ -11,53 +11,38 @@ Transactions for the Server Side Row Model (SSRM) work similarly to [Client Side
 
 Applying a SSRM transaction is done using the grid API `applyServerSideTransaction()`. Here are some introductory code snippets demonstrating how to use the API:
 
-```js
+
+<snippet>
 // Add 1 row at the top level group
-gridApi.applyServerSideTransaction({
+gridOptions.api.applyServerSideTransaction({
     add: [
         { id: 24, name: 'Niall Crosby', status: 'Alive and kicking' }
     ]
 });
-
-// Add 1 row under the group 'Ireland', then select it
-let res = gridApi.applyServerSideTransaction({
-    route: ['Ireland'],
-    add: [
-        { id: 24, name: 'Niall Crosby', status: 'Alive and kicking' }
-    ]
-});
-
-if (res.status=='Applied') {
-  let rowNode = res.add[0];
-  rowNode.setSelected(true);
-}
-
 // Remove 1 row under the group 'Ireland', '2002'
-gridApi.applyServerSideTransaction({
+gridOptions.api.applyServerSideTransaction({
     route: ['Ireland','2002'],
     remove: [
         { id: 24, name: 'Niall Crosby', status: 'Alive and kicking' }
     ]
 });
-
 // Add, remove and update a bunch of rows under 'United Kingdom'
-gridApi.applyServerSideTransaction({
+gridOptions.api.applyServerSideTransaction({
     route: ['United Kingdom'],
     add: [
         { id: 24, name: 'Niall Crosby', status: 'Alive and kicking' },
         { id: 25, name: 'Jillian Crosby', status: 'Alive and kicking' }
-    ]
+    ],
     update: [
         { id: 26, name: 'Kevin Flannagan', status: 'Alive and kicking' },
         { id: 27, name: 'Tony Smith', status: 'Alive and kicking' }
-    ]
+    ],
     remove: [
         { id: 28, name: 'Andrew Connel', status: 'Alive and kicking' },
         { id: 29, name: 'Bricker McGee', status: 'Alive and kicking' }
     ]
 });
-```
-
+</snippet>
 
 Here is a basic example with no grouping and a small dataset.
 

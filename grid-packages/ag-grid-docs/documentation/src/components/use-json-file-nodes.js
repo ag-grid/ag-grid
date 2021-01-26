@@ -6,7 +6,7 @@ export const useJsonFileNodes = () => {
         allFile(filter: { sourceInstanceName: { eq: "doc-pages" }, ext: { eq: ".json" } }) {
             nodes {
                 relativePath
-                fields {
+                internal {
                     content
                 }
             }

@@ -13,20 +13,18 @@ pivot mode which is set through the grid option `pivotMode=true`.
 
 In the snippet below a pivot is defined on the 'year' column and pivot mode is enabled:
 
-```js
-gridOptions: {
+<snippet>
+const gridOptions = {
     // pivot mode enabled
     pivotMode: true,
-
     columnDefs: [
         { field: 'country', rowGroup: true },
-        { field: 'year', pivot: true }, // pivot enabled
-        { field: 'total' }
+        // pivot enabled
+        { field: 'year', pivot: true }, 
+        { field: 'total' },
     ],
-
-    // other options
 }
-```
+</snippet>
 
 For more configuration details see the section on [Pivoting](../pivoting/).
 
@@ -66,10 +64,9 @@ data, e.g. `2000, 2002, 2004 etc...`
 
 Secondary columns are defined identically to primary columns: you provide a list of [Column Definitions](../column-definitions/) passing a list of columns and / or column groups using the following column API method:
 
-
-```js
-columnApi.setSecondaryColumns(pivotColDefs);
-```
+<snippet>
+gridOptions.columnApi.setSecondaryColumns(pivotColDefs);
+</snippet>
 
 There is no limit or restriction as to the number of columns or groups you pass. However, it's important that the field (or value getter) that you set for the columns match.
 

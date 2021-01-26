@@ -286,7 +286,7 @@ const getJsonFromFile = (nodes, pageName, source) => {
     const json = nodes.filter(n => n.relativePath === source || n.relativePath === `${pageName}/${source}`)[0];
 
     if (json) {
-        return JSON.parse(json.fields.content);
+        return JSON.parse(json.internal.content);
     }
 
     throw new Error(`Could not find JSON for source ${source}`);
