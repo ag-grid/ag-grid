@@ -34,7 +34,7 @@ export class NavigationService extends BeanStub {
     public handlePageScrollingKey(event: KeyboardEvent): boolean {
         const key = event.which || event.keyCode;
         const alt = event.altKey;
-        const ctrl = event.ctrlKey;
+        const ctrl = event.ctrlKey || event.metaKey;
 
         const currentCell: CellPosition | null = this.mouseEventService.getCellPositionForEvent(event);
         if (!currentCell) { return false; }
