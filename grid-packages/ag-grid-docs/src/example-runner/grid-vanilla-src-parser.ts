@@ -17,7 +17,7 @@ import {
     recognizedDomEvents,
 } from './parser-utils';
 
-export const templatePlaceholder = '$$GRID$$';
+export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
 
 const EVENTS = (<any>Object).values(Events);
 const PROPERTIES = PropertyKeys.ALL_PROPERTIES;
