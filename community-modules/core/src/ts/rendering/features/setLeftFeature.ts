@@ -8,6 +8,7 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
 import { last } from "../../utils/array";
 import { exists } from "../../utils/generic";
+import {Events} from "../../eventKeys";
 
 export class SetLeftFeature extends BeanStub {
 
@@ -51,6 +52,12 @@ export class SetLeftFeature extends BeanStub {
     private postConstruct(): void {
         this.addManagedListener(this.columnOrGroup, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.setLeftFirstTime();
+
+        // when in print layout, the left position is also dependent on the width of the pinned sections.
+        // so additionally update left if any column width changes.
+        if (this.printLayout) {
+            this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onLeftChanged.bind(this));
+        }
     }
 
     private setLeftFirstTime(): void {
