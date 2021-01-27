@@ -188,7 +188,7 @@ Note that:
 | <grid-example title='React Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "onlyShow": "react", "extras": ["bootstrap"] }'></grid-example>
 |
 | Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please
-| see [here](https://www.ag-grid.com/react/react-hooks/) for more information.
+| see [here](../react-hooks/) for more information.
 
 [[only-vue]]
 | ## Vue Floating Filters
@@ -200,4 +200,3 @@ Note that:
 | The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Vue.
 |
 | <grid-example title='Vue Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
-

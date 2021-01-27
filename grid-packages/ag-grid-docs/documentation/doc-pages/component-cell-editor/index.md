@@ -379,13 +379,13 @@ if (instances.length > 0) {
 | <grid-example title='React Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
 |
 | Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see
-| [here](https://www.ag-grid.com/react/react-hooks/) for more information.
+| [here](../react-hooks/) for more information.
 
 
 [[only-vue]]
 | ##  Cell Editing
 |
-| It is possible to provide VueJS cell editors's for ag-Grid to use if you are are using the VueJS version of
+| It is possible to provide VueJS cell editors for ag-Grid to use if you are are using the VueJS version of
 | ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to
 | register framework components.
 |
@@ -424,8 +424,7 @@ if (instances.length > 0) {
 | Using Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
 |
 | A Component can be defined in a few different ways (please see
-| [Defining VueJS Components](../vuejs-misc/#define_component) for all the options), but in this example we're
+| [Defining VueJS Components](../framework-misc/#define_component) for all the options), but in this example we're
 | going to define our editor as a Single File Component:
 |
 | <grid-example title='Vue Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
-

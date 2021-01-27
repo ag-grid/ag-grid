@@ -325,7 +325,7 @@ There are two ways you can get fix this problem:
 | <grid-example title='React Filter Component' name='filter-component' type='generated' options='{ "enterprise": false, "exampleHeight": 445, "extras": ["bootstrap"] }'></grid-example>
 |
 | Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see
-| [here](https://www.ag-grid.com/react/react-hooks/) for more information.
+| [here](../react-hooks/) for more information.
 |
 
 [[only-vue]]

@@ -78,14 +78,14 @@
             "viewport": false
         },
         {
-            "feature": "<a href='../selection/'>Row Selection</a>",
+            "feature": "<a href='../row-selection/'>Row Selection</a>",
             "clientSide": true,
             "infinite": true,
             "serverSide": true,
             "viewport": true
         },
         {
-            "feature": "<a href='../selection/#header-checkbox-selection'>Header Checkbox Selection</a>",
+            "feature": "<a href='../row-selection/#header-checkbox-selection'>Header Checkbox Selection</a>",
             "clientSide": true,
             "infinite": false,
             "serverSide": false,
@@ -225,7 +225,7 @@
             "viewport": false
         },
         {
-            "feature": "<a href='../selection/#specify-selectable-rows'>Specify Selectable Rows</a>",
+            "feature": "<a href='../row-selection/#specify-selectable-rows'>Specify Selectable Rows</a>",
             "clientSide": true,
             "infinite": true,
             "serverSide": true,

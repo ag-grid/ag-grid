@@ -224,6 +224,19 @@
     Redirect 301 /javascript-grid-cell-styles/ /documentation/javascript/cell-styles/
     Redirect 301 /javascript-grid-cell-template/ /documentation/angular/getting-started/
     Redirect 301 /javascript-grid-change-detection/ /documentation/javascript/change-detection/
+    Redirect 301 /javascript-grid-charts-chart-range-api/ /documentation/javascript/integrated-charts-api/
+    Redirect 301 /javascript-grid-charts-chart-toolbar/ /documentation/javascript/integrated-charts-toolbar/
+    Redirect 301 /javascript-grid-charts-container/ /documentation/javascript/integrated-charts-container/
+    Redirect 301 /javascript-grid-charts-customisation/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-general/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-bar/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-line/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-scatter/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-area/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-pie/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-overview/ /documentation/javascript/integrated-charts/
+    Redirect 301 /javascript-grid-charts-pivot-chart/ /documentation/javascript/integrated-charts-pivot-chart/
+    Redirect 301 /javascript-grid-charts-range-chart/ /documentation/javascript/integrated-charts-range-chart/
     Redirect 301 /javascript-grid-charts-integrated-chart-events/ /documentation/javascript/integrated-charts-events/
     Redirect 301 /javascript-grid-charts-integrated-chart-range-api/ /documentation/javascript/integrated-charts-api/
     Redirect 301 /javascript-grid-charts-integrated-chart-toolbar/ /documentation/javascript/integrated-charts-toolbar/

@@ -25,7 +25,7 @@ The status bar is configured using the `statusBar` grid option. The option takes
 
 If `align` is not specified the components will default to being aligned to the right.
 
-`key` is useful for accessing status bar component instances - [see here](../status-bar-component/#accessing-status-bar-panel-instances) for more information.</p>
+`key` is useful for accessing status bar component instances - [see here](../component-status-bar/#accessing-status-bar-panel-instances) for more information.</p>
 
 The snippet below shows a status bar configured with the grid provided components.
 

@@ -11,7 +11,6 @@ There are two types of header components:
 
 You specify the header component to use in the column definition (or you can set in the default column definition to impact all columns).
 
-
 ```js
 // a list of column definitions
 var myColumns = {
@@ -272,8 +271,7 @@ The example below shows a header component in action. The following can be obser
 | ```
 |
 | For a full working example of Header Components in Angular see
-| [Angular Example](https://github.com/ag-grid/| ag-grid-angular-cli-example).
-|
+| [Angular Example](https://github.com/ag-grid/ag-grid-angular-cli-example).
 
 [[only-react]]
 | ## React Header Rendering
@@ -291,8 +289,7 @@ The example below shows a header component in action. The following can be obser
 | For a full working example of Header Components in React see
 | [React Example](https://github.com/ag-grid/ag-grid-react-example).
 |
-|
-| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](https://www.ag-grid.com/react/react-hooks/) for more information.
+| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](../react-hooks/) for more information.
 
 [[only-vue]]
 | ## VueJS Header Rendering
@@ -373,7 +370,6 @@ interface IHeaderGroupParams
 |
 | The interface `IHeaderReactComp` is empty. The params object (IHeaderGroupCompParams) is passed as a constructor
 | to your React component.
-
 
 ### Opening / Closing Groups
 

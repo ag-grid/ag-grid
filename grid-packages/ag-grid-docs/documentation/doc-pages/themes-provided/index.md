@@ -36,24 +36,21 @@ There are two kinds of stylesheet that need to be loaded when using provided the
 
 There are various ways to load these stylesheets, as described in the sections below:
 
-### Pre-built Bundles
-
-Some pre-built bundles, whether [downloaded from our website](../download/) or included in the `ag-grid-community` [NPM package](../npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
-
+[[only-javascript]]
+| ### Pre-built Bundles
+|
+| Some pre-built bundles, whether [downloaded from our website](../download/) or included in the `ag-grid-community` [NPM package](../npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
 
 ### JavaScript Bundlers
 
-If you are using a JavaScript bundler like webpack or Rollup and it is configured to load styles, you can
-`require()` the correct CSS file from node_modules. This is the recommended approach as webpack will take
-care of minifying your CSS in production.
-
+If you are using a JavaScript bundler like webpack or Rollup and it is configured to load styles, you can `require()` the correct CSS file from `node_modules`. This is the recommended approach as webpack will take care of minifying your CSS in production.
 
 ### App Hosted
 
 You can copy, either manually or as part of your app's build, the required CSS files (`ag-grid.css` and `ag-theme-{theme-name}.css`) from node_modules and serve it with your app.
 
-
 ### CDN
+
 You can load the structural styles and theme from a free CDN by adding this code to your page.
 
 ```html
@@ -69,14 +66,11 @@ You can load the structural styles and theme from a free CDN by adding this code
 [[note]]
 | Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches the JS version you're using. This is useful for testing and prototyping but not recommended for production as your app will be unavailable if the unpkg servers are down.
 
-
 ## Loading the Roboto font for Material theme
 
 The Material theme requires the Roboto font, and this is not bundled in the material CSS. The easiest way to load Roboto is through Google's CDN:
-
 
 ```html
 <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
 <div id="myGrid" class="ag-theme-material"></div>
 ```
-

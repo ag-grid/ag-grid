@@ -2,8 +2,8 @@
 title: "Row Models"
 ---
 
-The grid can be configured with different strategies for loading row data into the grid, which are 
-encapsulated into different Row Models. Changing which Row Model the grid is using means changing 
+The grid can be configured with different strategies for loading row data into the grid, which are
+encapsulated into different Row Models. Changing which Row Model the grid is using means changing
 the strategy the grid is using for loading rows.
 
 The grid comes with four row models:
@@ -13,7 +13,7 @@ The grid comes with four row models:
 1. Infinite
 1. Viewport
 
-The Client-Side Row Model deals with client-side data. The Server-Side, Infinite and Viewport Row Models 
+The Client-Side Row Model deals with client-side data. The Server-Side, Infinite and Viewport Row Models
 deal with server-side data. The following is a summary of each:
 
 <ul>
@@ -48,7 +48,7 @@ deal with server-side data. The following is a summary of each:
     </li>
 </ul>
 
-Which row model you use is set as a grid property `rowModelType`. Set it to one of `'clientSide'`, 
+Which row model you use is set as a grid property `rowModelType`. Set it to one of `'clientSide'`,
 `'infinite'`, `'viewport'`, or `'serverSide'`. The default is `'clientSide'`.
 
 ## When to Use
@@ -77,15 +77,14 @@ Below is a quick feature comparison of all the grid's features across all four r
 
 <matrix-table src='row-models/resources/rowModels.json' rootnode='features' columns='{ "feature": "Feature", "clientSide": "Client-Side", "infinite": "Infinite", "serverSide": "Server-Side", "viewport": "Viewport" }'></matrix-table>
 
-
 ## Deeper Understanding of Row Models
 
-The grid follows an MVC pattern. Each data item is wrapped in a **Row Node** and then 
-stored in the **Row Model**. The grid rendering engine is called **Row Renderer** and 
+The grid follows an MVC pattern. Each data item is wrapped in a **Row Node** and then
+stored in the **Row Model**. The grid rendering engine is called **Row Renderer** and
 listens for changes to the row model and updates the DOM accordingly.
 
 
-Below shows a simplified version of a class diagram showing the relationships between 
+Below shows a simplified version of a class diagram showing the relationships between
 the major classes involved with the row models.
 
 <img src="resources/rowmodels.svg" alt="Diagram of Major Classes involved with the Row Models" style="max-width: 100%; margin-bottom: 1rem;" />
@@ -93,15 +92,10 @@ the major classes involved with the row models.
 The following should be noted from the diagram:
 
 - The grid has exactly one `RowRenderer` instance. The `RowRenderer` contains a reference to the `PaginationProxy` where it asks for the rows one at a time for rendering.
-
 - The grid has exactly one `PaginationProxy` instance. The `PaginationProxy` will either a) do nothing if pagination is not active and just forward all requests to the Row Model or b) do pagination if pagination is active. The `PaginationProxy` has exactly one `RowModel` instance.
-
 - You can configure the grid to use any of the provided **Row Models** - that's why `RowModel` is in italics, it means it's an interface, the concrete implementation is what you decide when configuring the grid. The `RowModel` contains a list of `RowNodes`. The `RowModel` may have a list of all the `RowNodes` (Client-Side Row Model) or have a datasource where it can lazy-load `RowNodes`.
-
 - A **RowNode** has a reference to exactly one row data item (the client application provides the row data items). The `RowNode` has state information about the row item, such as whether it is selected and the height of it.
-
 - When there is a change of state in the `RowNodes`, the `RowModel` fires a **modelUpdated** event which gets the `RowRenderer` to refresh. This happens for many reasons, or example the data is sorted, filtered, a group is opened, or the underlying data has changed.
-
 
 ## Pagination
 
@@ -110,4 +104,3 @@ Pagination can be applied to any of the row model types. The documentation on ea
 ## Grid Datasource
 
 The [Client-Side](../client-side-model/) row model does not need a datasource. [Infinite](../infinite-scrolling/), [Viewport](../viewport/) and [Server-Side](../server-side-model/) all use a datasource. The documentation on each row model type explains how to configure the datasource for the particular row model.
-
