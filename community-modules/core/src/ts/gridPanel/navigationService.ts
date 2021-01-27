@@ -233,7 +233,7 @@ export class NavigationService extends BeanStub {
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
     private onCtrlUpOrDown(key: number, gridCell: CellPosition): void {
         const upKey = key === KeyCode.UP;
-        const rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
+        const rowIndexToScrollTo = upKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
         this.navigateTo({
             scrollIndex: rowIndexToScrollTo,
