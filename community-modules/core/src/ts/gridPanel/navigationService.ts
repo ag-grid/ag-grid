@@ -13,6 +13,18 @@ import { exists } from "../utils/generic";
 import { last } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
 
+interface NavigateParams {
+     // The rowIndex to vertically scroll to
+    scrollIndex: number;
+     // The position to put scroll index
+    scrollType: 'top' | 'bottom' | null;
+    //  The column to horizontally scroll to
+    scrollColumn: Column | null;
+    // For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub).
+    focusIndex: number;
+    focusColumn: Column;
+}
+
 @Bean('navigationService')
 export class NavigationService extends BeanStub {
 
@@ -107,6 +119,30 @@ export class NavigationService extends BeanStub {
         this.timeLastPageEventProcessed = new Date().getTime();
     }
 
+    private navigateTo(navigateParams: NavigateParams): void {
+        const { scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn } = navigateParams;
+
+        if (exists(scrollColumn)) {
+            this.gridPanel.ensureColumnVisible(scrollColumn);
+        }
+
+        if (exists(scrollIndex)) {
+            this.gridPanel.ensureIndexVisible(scrollIndex, scrollType);
+        }
+
+        // make sure the cell is rendered, needed if we are to focus
+        this.animationFrameService.flushAllFrames();
+
+        // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
+        // highlighted.
+        this.focusController.setFocusedCell(focusIndex, focusColumn, null, true);
+
+        if (this.rangeController) {
+            const cellPosition: CellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };
+            this.rangeController.setRangeToCell(cellPosition);
+        }
+    }
+
     private onPageDown(gridCell: CellPosition): void {
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
@@ -133,7 +169,13 @@ export class NavigationService extends BeanStub {
         if (focusIndex > pageLastRow) { focusIndex = pageLastRow; }
         if (scrollIndex > pageLastRow) { scrollIndex = pageLastRow; }
 
-        this.navigateTo(scrollIndex, 'top', null, focusIndex, gridCell.column);
+        this.navigateTo({
+            scrollIndex,
+            scrollType: 'top',
+            scrollColumn: null,
+            focusIndex,
+            focusColumn: gridCell.column
+        });
 
         this.setTimeLastPageEventProcessed();
     }
@@ -164,36 +206,28 @@ export class NavigationService extends BeanStub {
         if (focusIndex < firstRow) { focusIndex = firstRow; }
         if (scrollIndex < firstRow) { scrollIndex = firstRow; }
 
-        this.navigateTo(scrollIndex, 'bottom', null, focusIndex, gridCell.column);
+        this.navigateTo({
+            scrollIndex,
+            scrollType: 'bottom',
+            scrollColumn: null,
+            focusIndex,
+            focusColumn: gridCell.column
+        });
 
         this.setTimeLastPageEventProcessed();
     }
 
-    // common logic to navigate. takes parameters:
-    // scrollIndex - what row to vertically scroll to
-    // scrollType - what position to put scroll index ie top/bottom
-    // scrollColumn - what column to horizontally scroll to
-    // focusIndex / focusColumn - for page up / down, we want to scroll to one row/column, but focus another
-    private navigateTo(scrollIndex: number, scrollType: string | null, scrollColumn: Column | null, focusIndex: number, focusColumn: Column): void {
-        if (exists(scrollColumn)) {
-            this.gridPanel.ensureColumnVisible(scrollColumn);
+    private getIndexToFocus(indexToScrollTo: number, isDown: boolean) {
+        let indexToFocus = indexToScrollTo;
+
+        if (isDown) {
+            const node = this.paginationProxy.getRow(indexToScrollTo);
+            if (node && node.stub) {
+                indexToFocus -= 1;
+            }
         }
 
-        if (exists(scrollIndex)) {
-            this.gridPanel.ensureIndexVisible(scrollIndex, scrollType);
-        }
-
-        // make sure the cell is rendered, needed if we are to focus
-        this.animationFrameService.flushAllFrames();
-
-        // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
-        // highlighted.
-        this.focusController.setFocusedCell(focusIndex, focusColumn, null, true);
-
-        if (this.rangeController) {
-            const cellPosition: CellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };
-            this.rangeController.setRangeToCell(cellPosition);
-        }
+        return indexToFocus;
     }
 
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
@@ -201,16 +235,13 @@ export class NavigationService extends BeanStub {
         const upKey = key === KeyCode.UP;
         const rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
 
-        let rowIndexToFocus = rowIndexToScrollTo;
-
-        if (!upKey) {
-            const node = this.paginationProxy.getRow(rowIndexToScrollTo);
-            if (node && node && node.stub) {
-                rowIndexToFocus -= 1;
-            }
-        }
-
-        this.navigateTo(rowIndexToScrollTo, null, gridCell.column, rowIndexToFocus, gridCell.column);
+        this.navigateTo({
+            scrollIndex: rowIndexToScrollTo,
+            scrollType: null,
+            scrollColumn: gridCell.column,
+            focusIndex: this.getIndexToFocus(rowIndexToScrollTo, !upKey),
+            focusColumn: gridCell.column
+        });
     }
 
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
@@ -219,7 +250,13 @@ export class NavigationService extends BeanStub {
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
         const columnToSelect: Column = leftKey ? allColumns[0] : last(allColumns);
 
-        this.navigateTo(gridCell.rowIndex, null, columnToSelect, gridCell.rowIndex, columnToSelect);
+        this.navigateTo({
+            scrollIndex: gridCell.rowIndex,
+            scrollType: null,
+            scrollColumn: columnToSelect,
+            focusIndex: gridCell.rowIndex,
+            focusColumn: columnToSelect
+        });
     }
 
     // home brings focus to top left cell, end brings focus to bottom right, grid scrolled to bring
@@ -228,17 +265,14 @@ export class NavigationService extends BeanStub {
         const homeKey = key === KeyCode.PAGE_HOME;
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
         const columnToSelect = homeKey ? allColumns[0] : last(allColumns);
-        const rowIndexToScrollTo = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
+        const scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
-        let rowIndexToFocus = rowIndexToScrollTo;
-
-        if (!homeKey) {
-            const node = this.paginationProxy.getRow(rowIndexToScrollTo);
-            if (node && node && node.stub) {
-                rowIndexToFocus -= 1;
-            }
-        }
-
-        this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToFocus, columnToSelect);
+        this.navigateTo({
+            scrollIndex: scrollIndex,
+            scrollType: null,
+            scrollColumn: columnToSelect,
+            focusIndex: this.getIndexToFocus(scrollIndex, !homeKey),
+            focusColumn: columnToSelect
+        });
     }
 }
