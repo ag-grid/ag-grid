@@ -220,6 +220,8 @@ export class NavigationService extends BeanStub {
     private getIndexToFocus(indexToScrollTo: number, isDown: boolean) {
         let indexToFocus = indexToScrollTo;
 
+        // for SSRM, when user hits ctrl+down, we can end up trying to focus the loading row.
+        // instead we focus the last row with data instead.
         if (isDown) {
             const node = this.paginationProxy.getRow(indexToScrollTo);
             if (node && node.stub) {
