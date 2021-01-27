@@ -9,16 +9,20 @@ The Set Filter is a more powerful version of Excel's AutoFilter, allowing users 
 
 To enable Excel Mode, simply add the `excelMode` option to your filter params:
 
-```js
-// ColDef
-{
-    field: 'animal',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        excelMode: 'windows', // can be 'windows' or 'mac'
-    },
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'animal',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                // can be 'windows' or 'mac'
+                excelMode: 'windows',
+            },
+        }
+    ]
 }
-```
+</snippet>
 
 Excel's AutoFilter behaves differently depending on whether you are using the Windows or Mac version. The grid therefore allows you to choose which behaviour you would like by setting `excelMode` to `'windows'` or `'mac'` respectively.
 

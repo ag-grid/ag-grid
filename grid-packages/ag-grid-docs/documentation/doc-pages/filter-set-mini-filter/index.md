@@ -15,16 +15,19 @@ When the `Enter` key is pressed while on the Mini Filter, the Set Filter will ex
 
 Alternatively, you can choose to have the Mini Filter applied as the user is typing, i.e. as the Filter List is filtered, the Set Filter will be applied as described above so that the results in the grid will also be filtered at the same time. To enable this behaviour, use the following:
 
-```js
-// ColDef
-{
-    field: 'country',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        applyMiniFilterWhileTyping: true,
-    },
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'country',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                applyMiniFilterWhileTyping: true,
+            },
+        }
+    ]
 }
-```
+</snippet>
 
 The following example demonstrates this behaviour. Note the following:
 
@@ -40,31 +43,35 @@ Sometimes it is necessary to provide custom handling for Mini Filter searches, f
 
 As with the [Text Filter](../filter-text/#text-formatter) it is possible to supply a Text Formatter to the Set Filter which formats the text before applying the Mini Filter compare logic. The snippet below shows how this can be configured:
 
-```js
-// ColDef
-{
-    field: 'athlete',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        textFormatter: function(value) {
-            return value
-                .toLowerCase()
-                .replace(/\s/g, '')
-                .replace(/[àáâãäå]/g, 'a')
-                .replace(/æ/g, 'ae')
-                .replace(/ç/g, 'c')
-                .replace(/[èéêë]/g, 'e')
-                .replace(/[ìíîï]/g, 'i')
-                .replace(/ñ/g, 'n')
-                .replace(/[òóôõö]/g, 'o')
-                .replace(/œ/g, 'oe')
-                .replace(/[ùúûü]/g, 'u')
-                .replace(/[ýÿ]/g, 'y')
-                .replace(/\W/g, '');
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                textFormatter: value => {
+                    return value
+                        .toLowerCase()
+                        .replace(/\s/g, '')
+                        .replace(/[àáâãäå]/g, 'a')
+                        .replace(/æ/g, 'ae')
+                        .replace(/ç/g, 'c')
+                        .replace(/[èéêë]/g, 'e')
+                        .replace(/[ìíîï]/g, 'i')
+                        .replace(/ñ/g, 'n')
+                        .replace(/[òóôõö]/g, 'o')
+                        .replace(/œ/g, 'oe')
+                        .replace(/[ùúûü]/g, 'u')
+                        .replace(/[ýÿ]/g, 'y')
+                        .replace(/\W/g, '');
+                }
+            }
         }
-    }
+    ]
 }
-```
+</snippet>
 
 The following example demonstrates searching when there are accented characters. Note the following:
 
@@ -90,16 +97,19 @@ The example below shows this text being customised.
 
 By default, the Mini Filter is shown whenever the Set Filter is used. If you would like to hide it, you can use the following:
 
-```js
-// ColDef
-{
-    field: 'country',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        suppressMiniFilter: true,
-    },
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'country',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                suppressMiniFilter: true,
+            },
+        }
+    ]
 }
-```
+</snippet>
 
 The following example demonstrates hiding the mini filter. Note the following:
 

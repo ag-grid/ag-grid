@@ -23,15 +23,14 @@ Cell editing does not re-execute filtering by default, so the row will not be fi
 
 To execute filtering on cell edits, listen to `CellValueChanged` events and trigger filtering as shown below:
 
-```js
-gridOptions: {
+<snippet>
+const gridOptions = {
     onCellValueChanged: function(params) {
         // trigger filtering on cell edits
         params.api.onFilterChanged();
     }
-    // other options
 }
-```
+</snippet>
 
 The following example demonstrates Cell Editing with the Set Filter. Try the following:
 
@@ -86,16 +85,19 @@ By default, when `api.setRowData()` is called, all Set Filter selections will be
 
 It is recommended that `newRowsAction='keep'` is set on the filter params to keep existing filter selections when new rows are added, as shown below:
 
-```js
-// ColDef
-{
-    field: 'col1',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        newRowsAction: 'keep'
-    }
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'country',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                newRowsAction: 'keep'
+            }
+        }
+    ]
 }
-```
+</snippet>
 
 [[note]]
 | `newRowsAction` is deprecated, and `newRowsAction='keep'` will become the default behaviour in v24.

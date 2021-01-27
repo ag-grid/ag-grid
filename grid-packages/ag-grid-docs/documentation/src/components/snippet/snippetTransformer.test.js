@@ -126,6 +126,15 @@ describe('Snippet Component', () => {
         );
     });
 
+    describe('given function declaration', () => {
+        runSnippetFrameworkTests(
+            `// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+}`
+        );
+    });
+
     describe('given expressions', () => {
         runSnippetFrameworkTests(
 `// save the columns state

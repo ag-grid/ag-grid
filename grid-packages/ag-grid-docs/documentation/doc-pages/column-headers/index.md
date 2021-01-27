@@ -176,105 +176,27 @@ The ref parameters are used by the grid to identify elements to add functionalit
 
 In the following example you can see how we are reusing the default grid template to change the layout of the elements.
 
-[[only-javascript]]
-| ```js
-| const gridOptions = {
-|     defaultColDef: {
-|         width: 100,
-|         headerComponentParams: {
-|             template:
-|                 '<div class="ag-cell-label-container" role="presentation">' +
-|                 '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-|                 '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
-|                 '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
-|                 '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
-|                 '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
-|                 '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
-|                 '    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
-|                 '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
-|                 '  </div>' +
-|                 '</div>'
-|         }
-|     }
-|     // other grid options ...
-| }
-| ```
-
-[[only-angular]]
-| ```js
-| <ag-grid-angular
-|     [defaultColDef]="defaultColDef"
-|     // other grid options ...>
-| </ag-grid-angular>
-|
-| this.defaultColDef = {
-|     width: 100,
-|     headerComponentParams: {
-|         template:
-|             '<div class="ag-cell-label-container" role="presentation">' +
-|             '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-|             '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
-|             '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
-|             '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
-|             '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
-|             '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
-|             '    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
-|             '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
-|             '  </div>' +
-|             '</div>'
-|     }     
-| };
-| ```
-
-[[only-react]]
-| ```js
-| <AgGridReact
-|     defaultColDef = {{
-|         width: 100,
-|         headerComponentParams: {
-|             template:
-|                 '<div class="ag-cell-label-container" role="presentation">' +
-|                 '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-|                 '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
-|                 '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
-|                 '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
-|                 '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
-|                 '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
-|                 '    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
-|                 '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
-|                 '  </div>' +
-|                 '</div>'
-|     }}
-|     // other grid options ...>
-| </AgGridReact>
-| ```
-
-
-[[only-vue]]
-| ```js
-| <ag-grid-vue
-|     :defaultColDef="defaultColDef"
-|     // other grid options ...>
-| </ag-grid-vue>
-|
-| this.defaultColDef = {
-|     width: 100,
-|     headerComponentParams: {
-|         template:
-|             '<div class="ag-cell-label-container" role="presentation">' +
-|             '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-|             '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
-|             '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
-|             '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
-|             '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
-|             '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
-|             '    ** <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
-|             '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
-|             '  </div>' +
-|             '</div>'
-|     }     
-| };
-| ```
+<snippet>
+const gridOptions = {
+    defaultColDef: {
+        width: 100,
+        headerComponentParams: {
+            template:
+                '&lt;div class="ag-cell-label-container" role="presentation"&gt;' +
+                '  &lt;span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"&gt;&lt;/span&gt;' +
+                '  &lt;div ref="eLabel" class="ag-header-cell-label" role="presentation"&gt;' +
+                '    &lt;span ref="eSortOrder" class="ag-header-icon ag-sort-order"&gt;&lt;/span&gt;' +
+                '    &lt;span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"&gt;&lt;/span&gt;' +
+                '    &lt;span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"&gt;&lt;/span&gt;' +
+                '    &lt;span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"&gt;&lt;/span&gt;' +
+                '    ** &lt;span ref="eText" class="ag-header-cell-text" role="columnheader"&gt;&lt;/span&gt;' +
+                '    &lt;span ref="eFilter" class="ag-header-icon ag-filter-icon"&gt;&lt;/span&gt;' +
+                '  &lt;/div&gt;' +
+                '&lt;/div&gt;'
+        }
+    }
+}
+</snippet>
 
 Note that specifying your own templates is compatible with other configurations:
 

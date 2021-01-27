@@ -58,7 +58,9 @@ class SnippetTransformer {
            return this.parseExpression(tree);
 
         } else if (isVarDeclarator(tree)) {
-           if (isCallableExpr(tree)) { return this.parseExpression(tree, true); }
+           if (isCallableExpr(tree) || isArrowFunctionExpr(tree)) {
+               return this.parseExpression(tree, true);
+           }
            return tree.init.properties.map(node => this.parse(node, depth + 1)).join('');
 
         } else if (isVarDeclaration(tree)) {
@@ -254,6 +256,11 @@ class ReactTransformer extends SnippetTransformer {
                               `\n${tab(depth)}</AgGridColumn>`;
         }
         const colProps = this.extractColumnProperties(property.properties);
+
+        if (colProps.length > 3) {
+            return comment + `\n${tab(depth)}<AgGridColumn \n${tab(2)}${colProps.join(`\n${tab(2)}`)} />`;
+        }
+
         return comment + `\n${tab(depth)}<AgGridColumn ${colProps.join(' ')} />`;
     }
 
@@ -356,3 +363,4 @@ const isExprStatement = node => node.type === 'ExpressionStatement';
 const isLabelStatement = node => node.type === 'LabeledStatement';
 const isBlockStatement = node => node.type === 'BlockStatement';
 const isCallableExpr = node => node.init.type === 'CallExpression';
+const isArrowFunctionExpr = node => node.init.type === 'ArrowFunctionExpression';

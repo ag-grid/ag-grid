@@ -37,4 +37,3 @@ const extractOptions = props => {
         spaceBetweenProperties: asBoolean(props['spacebetweenproperties']),
     };
 }
-

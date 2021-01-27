@@ -11,23 +11,24 @@ Values inside a Set Filter will be sorted by default, where the values are conve
 
 When a different sort order is required, a Comparator can be supplied to the set filter as shown below:
 
-```js
-// ColDef
-{
-    field: 'age',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        comparator: function(a, b) {
-            var valA = parseInt(a);
-            var valB = parseInt(b);
-
-            if (valA === valB) return 0;
-
-            return valA > valB ? 1 : -1;
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                comparator: (a, b) => {
+                    const valA = parseInt(a);
+                    const valB = parseInt(b);
+                    if (valA === valB) return 0;
+                    return valA > valB ? 1 : -1;
+                }
+            }
         }
-    }
+    ]
 }
-```
+</snippet>
 
 The Comparator used by the Set Filter is only provided the values in the first two parameters, whereas the Comparator for the Column Definition (`colDef`) is also provided the row data as additional parameters. This is because when sorting rows, row data exists. For example, take 100 rows split across the colour values `[white, black]`. The column will be sorting 100 rows, however the filter will be only sorting two values.
 
@@ -49,28 +50,35 @@ This section covers different ways to format the displayed Filter List values in
 
 ### Value Formatter
 
-A [Value Formatter](../value-formatters/) is a good choice when the string value displayed in the Filter List needs to be modified, for example adding country codes in parentheses after country name.
+A [Value Formatter](../value-formatters/) is a good choice when the string value displayed in the Filter List needs to
+be modified, for example adding country codes in parentheses after a country name, as shown below:
 
-
-The following snippet shows how to provide a Value Formatter to the Set Filter:
-
-```js
-// ColDef
-{
-    field: 'a',
-    valueFormatter: myValueFormatter, // formats cell values
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        valueFormatter: myValueFormatter, // formats filter values
-    }
+<snippet>
+const countryValueFormatter = params => {
+    const country = params.value;
+    return country + ' (' + COUNTRY_CODES[country].toUpperCase() + ')';
 }
+</snippet>
 
-function myValueFormatter(params) {
-    return '(' + params.value + ')';
+The following snippet shows how to provide the `countryValueFormatter` to the Set Filter:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // column definition using the same value formatter to format cell and filter values
+        {
+            field: 'country',
+            valueFormatter: countryValueFormatter, 
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                valueFormatter: countryValueFormatter,
+            },
+        }
+    ]
 }
-```
+</snippet>
 
-In the code above, the same value formatter is supplied to the Column and Filter, however separate Value Formatters can be used.
+In the code above, the same value formatter is supplied to the Column and Filter params, however separate Value Formatters can be used.
 
 The following example shows how Set Filter values are formatted using a Value Formatter. Note the following:
 
@@ -83,27 +91,38 @@ The following example shows how Set Filter values are formatted using a Value Fo
 ### Cell Renderer
 
 
-A [Cell Renderer](../cell-rendering/) is a good choice when the value displayed requires markup. For instance if a country flag image is to be shown alongside country names.
+A [Cell Renderer](../cell-rendering/) is a good choice when the value displayed requires markup. For instance if a 
+country flag image is to be shown alongside country names.
 
-The same Cell Renderer can used to format the grid cells and filter values, or different renderers can be supplied to each. Note that the Cell Renderer will be supplied additional info when used to format cells inside the grid (as grid cells have row details that are not present for values inside a Filter List).
+The same Cell Renderer can used to format the grid cells and filter values, or different renderers can be supplied to 
+each. Note that the Cell Renderer will be supplied additional info when used to format cells inside the grid (as grid 
+cells have row details that are not present for values inside a Filter List).
 
-The following snippet shows how the Cell Renderers are configured:
+Given the following Cell Renderer:
 
-```js
-// ColDef
-{
-    field: 'a',
-    cellRenderer: myCellRenderer // formats cell values
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        cellRenderer: myCellRenderer // formats filter values
-    }
+<snippet>
+const countryCellRenderer = params => {
+    return '&lt;span style="font-weight: bold"&gt;' + params.value + '&lt;/span&gt;';
 }
+</snippet>
 
-function myCellRenderer(params)  {
-    return '<span style="font-weight: bold">' + params.value + '</span>';
+The following snippet shows how to provide the `countryCellRenderer` to the Set Filter:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // column definition using the same cell renderer to format cell and filter values
+        { 
+            field: 'country',
+            cellRenderer: countryCellRenderer, 
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                cellRenderer: countryCellRenderer
+            }
+        }
+    ]
 }
-```
+</snippet>
 
 [[note]]
 | A custom [Cell Renderer Component](../component-cell-renderer/#cell-renderer-component) can also be supplied to `filterParams.cellRenderer`.
@@ -125,18 +144,20 @@ The Set Filter will obtain the filter values from the row data by default. Howev
 
 The simplest approach is to supply a list of values to `filterParams.values` as shown below:
 
-```js
-// ColDef
-{
-    field: 'days',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        // provide all days, even if days are missing in data!
-        values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    }
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'days',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                // provide all days, even if days are missing in data!
+                values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            }
+        }
+    ],
 }
-```
-
+</snippet>
 
 Note that if there are missing values in the row data, the filter list will display all provided values. This could give users the impression that filtering is broken.
 
@@ -156,25 +177,26 @@ The following example demonstrates providing filter values using `filterParams.v
 
 It is also possible to supply values asynchronously to the set filter. This is done by providing a callback function instead of a list of values as shown below:
 
-```js
-// ColDef
-{
-    field: 'col1',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        values: function(params) {
-            // async update simulated using setTimeout()
-            setTimeout(function() {
-                // fetch values from server
-                var values = getValuesFromServer();
-
-                // supply values to the set filter
-                params.success(values);
-            }, 3000);
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                values: params => {
+                    // async update simulated using setTimeout()
+                    setTimeout(() => {
+                        // fetch values from server
+                        const values = getValuesFromServer(); 
+                        // supply values to the set filter
+                        params.success(values);
+                    }, 3000);
+                }
+            }
         }
-    }
+    ],
 }
-```
+</snippet>
 
 Note in the snippet above the values callback receives a parameter object which contains `params.success()`which allows values obtained asynchronously to be supplied to the set filter.
 
@@ -195,7 +217,7 @@ interface SetFilterValuesFuncParams {
 |
 | ```js
 | filter.setModel({ values: ['a', 'b'] })
-|   .then(function() { gridApi.onFilterChanged(); });
+|   .then(() => gridApi.onFilterChanged(); );
 | ```
 
 The following example demonstrates loading set filter values asynchronously. Note the following:
@@ -210,32 +232,32 @@ The following example demonstrates loading set filter values asynchronously. Not
 
 By default, when values are passed to the set filter they are only loaded once when the set filter is initially created. It may be desirable to refresh the values at a later point, for example to reflect other filtering that has occurred in the grid. To achieve this, you can call `refreshFilterValues` on the relevant filter that you would like to refresh. This will cause the values used in the filter to be refreshed from the original source, whether that is by looking at the provided `values` array again, or by re-executing the `values` callback. For example, you might use something like the following:
 
-```js
-gridOptions: {
-    onFilterChanged: function(params) {
-        var setFilter = gridOptions.api.getFilterInstance('columnName');
+<snippet>
+const gridOptions = {
+    onFilterChanged: params => {
+        const setFilter = params.api.getFilterInstance('columnName');
         setFilter.refreshFilterValues();
     }
 }
-```
+</snippet>
 
 If you are using the grid as a source of values (i.e. you are not providing values yourself), calling this method will also refresh the filter values using values taken from the grid, but this should not be necessary as the values are automatically refreshed for you whenever any data changes in the grid.
 
 If instead you want to refresh the values every time the Set Filter is opened, you can configure that using `refreshValuesOnOpen`:
 
-```js
-// ColDef
-{
-    field: 'col1',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        values: function(params) {
-            params.success(getValuesFromServer());
-        },
-        refreshValuesOnOpen: true,
-    }
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                values: params => params.success(getValuesFromServer()),
+                refreshValuesOnOpen: true,
+            }
+        }
+    ],
 }
-```
+</snippet>
 
 When you refresh the values, any values that were selected in the filter that still exist in the new values will stay selected, but any other selected values will be discarded.
 
@@ -257,24 +279,18 @@ If there are missing / empty values in the row data of the grid, or missing valu
 
 If you are providing complex objects as values, then you need to provide a Key Creator function (`colDef.keyCreator`) to convert the objects to strings when using the Set Filter. Note the string is used to compare objects when filtering and to render a label in the filter UI.
 
-```js
-// ColDef
-{
-    field: 'country',
-    keyCreator: countryKeyCreator,
-    valueFormatter: countryValueFormatter,
-    filter: 'agSetColumnFilter',
+<snippet spaceBetweenProperties="true">
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'country',
+            keyCreator: params => params.value.name,
+            valueFormatter: params => params.value.name,
+            filter: 'agSetColumnFilter',
+        }
+    ],
 }
-
-function countryKeyCreator(params) {
-    return params.value.name;
-}
-
-function countryValueFormatter(params) {
-    return params.value.name;
-}
-```
-
+</snippet>
 
 The snippet above shows a Key Creator function that returns the country name from the complex object. If the Key Creator was not provided on the Column Definition, the Set Filter would not work.
 
@@ -309,16 +325,19 @@ The example below demonstrates this in action. Note the following:
 
 By default, when the Set Filter is created all values are selected. If you would prefer to invert this behaviour and have everything de-selected by default, you can use the following:
 
-```js
-// ColDef
-{
-    field: 'country',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        defaultToNothingSelected: true,
-    }
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'country',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                defaultToNothingSelected: true,
+            }
+        }
+    ],
 }
-```
+</snippet>
 
 In this case, no filtering will occur until at least one value is selected.
 
@@ -334,16 +353,19 @@ The following example demonstrates different default states. Note the following:
 
 Set filter values that are too long to be displayed are truncated by default with ellipses. To allow users to see the full filter value, tooltips can be enabled as shown below:
 
-```js
-// ColDef
-{
-    field: 'colA',
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        showTooltips: true,
-    }
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'country',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                showTooltips: true,
+            }
+        }
+    ],
 }
-```
+</snippet>
 
 The default tooltip component will be used unless a [Custom Tooltip Component](../component-tooltip/) is provided.
 

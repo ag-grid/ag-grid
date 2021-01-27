@@ -1529,6 +1529,118 @@ const savedState = this.gridColumnApi.getColumnState();
 this.gridColumnApi.applyColumnState({ state: savedState });"
 `;
 
+exports[`Snippet Component given function declaration it should create 'angular' snippets 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'angular' snippets with space between properties 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'angular' snippets without framework context 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'angular' snippets without framework context and space between properties 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'javascript' snippets 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'javascript' snippets with space between properties 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'javascript' snippets without framework context 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'javascript' snippets without framework context and space between properties 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'react' snippets 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'react' snippets with space between properties 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'react' snippets without framework context 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'react' snippets without framework context and space between properties 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'vue' snippets 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'vue' snippets with space between properties 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'vue' snippets without framework context 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
+exports[`Snippet Component given function declaration it should create 'vue' snippets without framework context and space between properties 1`] = `
+"// some value handler
+const myValueFormatter = params => {
+    return '(' + params.value + ')';
+};"
+`;
+
 exports[`Snippet Component given simple column definitions it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]=\\"columnDefs\\"
