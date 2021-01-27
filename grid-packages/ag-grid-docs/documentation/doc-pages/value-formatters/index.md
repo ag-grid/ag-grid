@@ -27,7 +27,7 @@ interface ValueFormatterParams {
 }
 
 // example value formatter, simple currency formatter
-colDef.valueFormatter = function(params) {
+colDef.valueFormatter = params => {
     return '£' + params.value;
 }
 ```

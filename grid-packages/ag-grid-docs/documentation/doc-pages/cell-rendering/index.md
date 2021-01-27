@@ -14,32 +14,31 @@ The cell editor for a column is set via `colDef.cellRenderer` and can be any of 
 
 The code snippet below demonstrates each of these method types.
 
-
-```js
-// 1 - undefined / null - Grid renders the value as a string.
-var colDef1 = {
-    cellRenderer: null,
-    ...
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // 1 - undefined / null - Grid renders the value as a string.
+        {
+            cellRenderer: null,
+        },
+        // 2 - String - The name of a cell renderer registered with the grid.
+        {
+            cellRenderer: 'agGroupCellRenderer',
+        },
+        // 3 - Class - Provide your own cell renderer component directly without registering.
+        {
+            cellRenderer: MyCustomCellRendererClass,
+        },
+        // 4 - Function - A function that returns an HTML string or DOM element for display
+        {
+            cellRenderer: params => {
+                // put the value in bold
+                return 'Value is **' + params.value + '**';
+            }
+        }
+    ]
 }
-
-// 2 - String - The name of a cell renderer registered with the grid.
-var colDef2 = {
-    cellRenderer: 'agGroupCellRenderer',
-    ...
-}
-
-// 3 - Class - Provide your own cell renderer component directly without registering.
-var colDef3 = {
-    cellRenderer: MyCustomCellRendererClass,
-    ...
-}
-
-// 4 - Function - A function that returns an HTML string or DOM element for display
-var colDef3 = function(params) {
-    // put the value in bold
-    return 'Value is **'+params.value+'**';
-}
-```
+</snippet>
 
 This remainder of this documentation page goes through the grid provided cell renderer's. To build your own cell renderer see the section [Cell Rendering Components](../component-cell-renderer/).
 
@@ -66,26 +65,26 @@ The following example illustrates how to use different renderers and parameters 
 - `colDef.cellRendererSelector` is a function that selects the renderer based on the row data.
 
     ```js
-        cellRendererSelector:function (params) {
-            var moodDetails = {
-                component: 'moodCellRenderer'
-            };
+    cellRendererSelector: params => {
+        const moodDetails = {
+            component: 'moodCellRenderer'
+        };
 
-            var genderDetails = {
-                component: 'genderCellRenderer',
-                params: {values: ['Male', 'Female']}
-            };
+        const genderDetails = {
+            component: 'genderCellRenderer',
+            params: {values: ['Male', 'Female']}
+        };
 
-            if (params.data.type === 'gender') {
-                return genderDetails;
-            }
-                
-            if (params.data.type === 'mood') {
-                return moodDetails;
-            }
-
-            return null;
+        if (params.data.type === 'gender') {
+            return genderDetails;
         }
+            
+        if (params.data.type === 'mood') {
+            return moodDetails;
+        }
+
+        return null;
+    }
     ```
 
 - The column 'Rendered Value' show the data rendered applying the component and params specified by `colDef.cellRendererSelector`

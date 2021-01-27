@@ -8,23 +8,30 @@ The key for the group cell renderer is `agGroupCellRenderer`.
 
 The grid's group cell renderer takes many parameters to configure it. Here is an example of a column and it's configuration:
 
-```js
-colDef = {
-    // tell the grid we want to show group values in this column
-    showRowGroup: true,
-    // set the cell renderer to 'group'
-    cellRenderer:'agGroupCellRenderer',
-    // provide extra params to the cellRenderer
-    cellRendererParams: {
-        suppressCount: true, // turn off the row count
-        suppressDoubleClickExpand: true, // turn off double click for expand
-        checkbox: true, // enable checkbox selection
-        innerRenderer: myInnerRenderer, // provide an inner renderer
-        footerValueGetter: myFooterValueGetter // provide a footer value getter
-    }
-    ...
-};
-```
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // column definition configured to show group values with the cell renderer set to 'group' 
+        {
+            showRowGroup: true,
+            cellRenderer:'agGroupCellRenderer',
+            // provide extra params to the cellRenderer
+            cellRendererParams: {
+                // turn off the row count
+                suppressCount: true, 
+                // turn off double click for expand
+                suppressDoubleClickExpand: true,
+                // enable checkbox selection
+                checkbox: true, 
+                // provide an inner renderer
+                innerRenderer: myInnerRenderer, 
+                // provide a footer value getter
+                footerValueGetter: myFooterValueGetter 
+            }
+        }  
+    ]
+}
+</snippet>
 
 The set of parameters for the group cell renderer are:
 
@@ -42,7 +49,6 @@ The set of parameters for the group cell renderer are:
 Below shows an example of configuring a group cell renderer. The example setup is not realistic as it has many columns configured for the showing the groups. The reason for this is to demonstrate different group column configurations side by side. In your application, you will typically have one column for showing the groups.
 
 The example is built up as follows:
-
 
 - The data is grouped by two columns: **Type** (one of 'Fiction' or 'Non-Fiction') and **Country** (a country name, eg Ireland or United Kingdom).
 
