@@ -10,8 +10,8 @@ $version = 'latest';
 <html class="stretch-html" lang="en">
 <head>
 <?php
-$title = 'ag-Grid: High-Performance React Grid, Angular Grid, JavaScript Grid.';
-$description = 'ag-Grid is feature rich datagrid designed for the major JavaScript Frameworks. Version 23 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.';
+$title = 'ag-Grid: High-Performance React Grid, Angular Grid, JavaScript Grid';
+$description = 'ag-Grid is a feature rich datagrid designed for the major JavaScript Frameworks. Version 25 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source, or take a 2 month trial of ag-Grid Enterprise.';
 meta_and_links($title, $keywords, $description, false);
 ?>
     <!-- Google Tag Manager -->
@@ -31,9 +31,9 @@ meta_and_links($title, $keywords, $description, false);
 
 <?= globalAgGridScript(true) ?>
 
-</head>
+<link rel="stylesheet" href="dist/homepage.css" />
 
-<link rel="stylesheet" href="dist/homepage.css" >
+</head>
 
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -47,7 +47,7 @@ meta_and_links($title, $keywords, $description, false);
     </header>
     <div class="page-content">
         <div class="stage-scenarios main">
-            <h2 >The Best JavaScript Grid in the World</h2>
+            <h2 class="heading-scenarios">The Best JavaScript Grid in the World</h2>
             <section>
                 <div class="demo" >
                     <div id="bestHtml5Grid"  class="ag-theme-material"></div>

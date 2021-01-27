@@ -5,7 +5,6 @@ $pageDescription = "In Part 3 of this series, we create the scaffolding for our 
 $pageKeywords = "ag-grid datagrid crud enterprise";
 
 $socialUrl = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-3/";
-$socialImage = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/crud_overview.png?".uniqid();
 
 include('../includes/mediaHeader.php');
 ?>
@@ -89,7 +88,7 @@ ng serve
 
             <p>You can now navigate to <code>http://localhost:4200/</code> and see the results of the scaffolding:</p>
 
-            <img src="angular-cli-default.png" alt="Angular CLI" 
+            <img src="angular-cli-default.png" alt="Angular CLI"
                  style="border: solid 1px lightgrey;border-radius: 5px;width: 100%;margin-bottom: 15px">
 
             <h2>Development</h2>
