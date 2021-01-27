@@ -1,9 +1,16 @@
-export const getHeaderTitle = (title, framework = 'javascript', isCharts = false) => {
-    let prefix = isCharts ? 'ag-Charts' : 'ag-Grid';
+export const getHeaderTitle = (title, framework = 'javascript', isCharts = false) =>
+    `${isCharts ? 'ag-Charts' : 'ag-Grid'} ${getFrameworkPart(framework, isCharts)}: ${title}`;
 
-    if (framework !== 'javascript') {
-        prefix += ` (${framework.charAt(0).toUpperCase() + framework.slice(1)})`;
-    }
+const getFrameworkPart = (framework, isCharts = false) =>
+    `(${getFrameworkName(framework)} ${isCharts ? 'Charts' : 'Grid'})`;
 
-    return `${prefix}: ${title}`;
+const getFrameworkName = framework => {
+    const mappings = {
+        javascript: 'JavaScript',
+        angular: 'Angular',
+        react: 'React',
+        vue: 'Vue',
+    };
+
+    return mappings[framework];
 };
