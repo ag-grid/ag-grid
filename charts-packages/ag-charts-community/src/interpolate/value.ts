@@ -45,13 +45,4 @@ export default function (a: any, b: any): (t: number) => any {
     }
 
     return number(a, b);
-
-    // return b == null || t === 'boolean' ? constant(b)
-    //     : (t === 'number' ? number
-    //         : t === 'string' ? ((c = Color.fromString(b)) ? (b = c, rgb) : string)
-    //             : b instanceof color ? rgb
-    //                 : b instanceof Date ? date
-    //                     : Array.isArray(b) ? array
-    //                         : typeof b.valueOf !== 'function' && typeof b.toString !== 'function' || isNaN(b) ? object
-    //                             : number)(a, b);
 }

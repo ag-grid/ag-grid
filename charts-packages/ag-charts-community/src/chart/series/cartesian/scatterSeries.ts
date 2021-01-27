@@ -140,7 +140,7 @@ export class ScatterSeries extends CartesianSeries {
      * @deprecated Use {@link tooltip.renderer} instead.
      */
     tooltipRenderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult;
-    tooltip: ScatterSeriesTooltip = new ScatterSeriesTooltip();
+    readonly tooltip: ScatterSeriesTooltip = new ScatterSeriesTooltip();
 
     constructor() {
         super();

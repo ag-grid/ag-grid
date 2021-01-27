@@ -50,6 +50,7 @@ const defaultTooltipCss = `
     line-height: 1.7em;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    overflow: hidden;
 }
 
 .ag-chart-tooltip-arrow::before {
@@ -183,6 +184,7 @@ export class ChartTooltip extends Observable {
     }
 
     private showTimeout: number = 0;
+    private constrained = false;
     /**
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
@@ -197,18 +199,24 @@ export class ChartTooltip extends Observable {
         }
 
         let left = meta.pageX - el.clientWidth / 2;
-        const top = meta.pageY - el.clientHeight - 8;
+        let top = meta.pageY - el.clientHeight - 8;
 
+        this.constrained = false;
         if (this.chart.container) {
             const tooltipRect = el.getBoundingClientRect();
             const minLeft = 0;
             const maxLeft = window.innerWidth - tooltipRect.width;
             if (left < minLeft) {
                 left = minLeft;
-                this.updateClass(true, true);
+                this.updateClass(true, this.constrained = true);
             } else if (left > maxLeft) {
                 left = maxLeft;
-                this.updateClass(true, true);
+                this.updateClass(true, this.constrained = true);
+            }
+
+            if (top < window.pageYOffset) {
+                top = meta.pageY + 20;
+                this.updateClass(true, this.constrained = true);
             }
         }
 
@@ -234,7 +242,7 @@ export class ChartTooltip extends Observable {
                 this.chart.lastPick = undefined;
             }
         }
-        this.updateClass(visible);
+        this.updateClass(visible, this.constrained);
     }
 
     constructor(chart: Chart) {
@@ -305,12 +313,12 @@ export abstract class Chart extends Observable {
         return this._container;
     }
 
-    private _data: any[] = [];
-    set data(data: any[]) {
+    protected _data: any = [];
+    set data(data: any) {
         this._data = data;
         this.series.forEach(series => series.data = data);
     }
-    get data(): any[] {
+    get data(): any {
         return this._data;
     }
 
@@ -898,6 +906,9 @@ export abstract class Chart extends Observable {
 
     // Should be available after first layout.
     protected seriesRect?: BBox;
+    getSeriesRect(): Readonly<BBox | undefined> {
+        return this.seriesRect;
+    }
 
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
     private pickSeriesNode(x: number, y: number): {
