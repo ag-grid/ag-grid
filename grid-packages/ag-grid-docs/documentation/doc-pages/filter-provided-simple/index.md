@@ -108,25 +108,22 @@ Each of the three filter types has the following default options and default sel
 
 When saving or restoring state on a filter, the Filter Model is used. The Filter Model represents the state of the filter. For example, the code below first gets and then sets the Filter Model for the Athlete column:
 
-```js
-// get filter instance (Note - React users must use the async version
-// of this method by passing a callback parameter)
-const filterInstance = gridOptions.api.getFilterInstance('athlete');
-
-// get filter model
-const model = filterInstance.getModel();
-
-// set filter model and update
-filterInstance.setModel({
-    type: 'endsWith',
-    filter: 'thing'
-});
-
-// tell the grid to refresh rows based on the filter. The filter does
-// not do this automatically, allowing you to batch multiple filter
-// updates for performance
-gridOptions.api.onFilterChanged();
-```
+<snippet>
+|// get filter instance
+|const filterInstance = gridOptions.api.getFilterInstance('athlete');
+|
+|// get filter model
+|const model = filterInstance.getModel();
+|
+|// set filter model and update
+|filterInstance.setModel({
+|    type: 'endsWith',
+|    filter: 'thing'
+|});
+|
+|// refresh rows based on the filter (not automatic to allow for batching multiple filters)
+|gridOptions.api.onFilterChanged();
+</snippet>
 
 This section explains what the Filter Model looks like for each of the simple filters. The interface used by each filter type is as follows:
 

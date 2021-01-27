@@ -135,12 +135,16 @@ const myValueFormatter = params => {
         );
     });
 
-    describe('given expressions', () => {
+    describe('given api statements', () => {
         runSnippetFrameworkTests(
 `// save the columns state
 const savedState = gridOptions.columnApi.getColumnState();
+
 // restore the column state
-gridOptions.columnApi.applyColumnState({ state: savedState });`
+gridOptions.columnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = gridOptions.api.getRowNode('55');`
         );
     });
 
@@ -162,6 +166,22 @@ gridOptions.columnApi.applyColumnState({ state: savedState });`
             }
         }
     ]    
+}`
+        );
+    });
+
+    describe('given complex column definition with array property', () => {
+        runSnippetFrameworkTests(
+`const gridOptions = {
+    columnDefs: [
+        {
+            filterType: 'multi',
+            filterModels: [
+                null,
+                { filterType: 'set', values: ['A', 'B', 'C'] }
+            ]
+        }
+    ]
 }`
         );
     });

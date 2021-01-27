@@ -9,19 +9,19 @@ This section describes how the Set Filter can be controlled programmatically usi
 
 Get and set the state of the Set Filter by getting and setting the model on the filter instance.
 
-```js
-// get filter instance (Note - React users must use the async version
-// of this method by passing a callback parameter)
-var countryFilterComponent = gridOptions.api.getFilterInstance('country');
-
-// get filter model
-var model = countryFilterComponent.getModel();
-
-// set filter model and update
-countryFilterComponent.setModel({ values: ['Spain', 'Ireland', 'South Africa'] });
-
-gridApi.onFilterChanged();
-```
+<snippet>
+|// get filter instance
+|const countryFilterComponent = gridOptions.api.getFilterInstance('country');
+|
+|// get filter model
+|const model = countryFilterComponent.getModel();
+|
+|// set filter model and update
+|countryFilterComponent.setModel({ values: ['Spain', 'Ireland', 'South Africa'] });
+|
+|// refresh rows based on the filter (not automatic to allow for batching multiple filters)
+|gridOptions.api.onFilterChanged();
+</snippet>
 
 The filter model contains an array of string values where each item in the array corresponds to an element to be selected from the set.
 

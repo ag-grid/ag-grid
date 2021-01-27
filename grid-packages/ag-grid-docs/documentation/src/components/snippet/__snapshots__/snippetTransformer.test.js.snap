@@ -626,6 +626,182 @@ this.postSort = rowNodes => {
 };"
 `;
 
+exports[`Snippet Component given api statements it should create 'angular' snippets 1`] = `
+"// save the columns state
+const savedState = this.gridColumnApi.getColumnState(); 
+
+// restore the column state
+this.gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = this.gridApi.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'angular' snippets with space between properties 1`] = `
+"// save the columns state
+const savedState = this.gridColumnApi.getColumnState(); 
+
+// restore the column state
+this.gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = this.gridApi.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'angular' snippets without framework context 1`] = `
+"// save the columns state
+const savedState = this.gridColumnApi.getColumnState(); 
+
+// restore the column state
+this.gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = this.gridApi.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'angular' snippets without framework context and space between properties 1`] = `
+"// save the columns state
+const savedState = this.gridColumnApi.getColumnState(); 
+
+// restore the column state
+this.gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = this.gridApi.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'javascript' snippets 1`] = `
+"// save the columns state
+const savedState = gridOptions.columnApi.getColumnState(); 
+
+// restore the column state
+gridOptions.columnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = gridOptions.api.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'javascript' snippets with space between properties 1`] = `
+"// save the columns state
+const savedState = gridOptions.columnApi.getColumnState(); 
+
+// restore the column state
+gridOptions.columnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = gridOptions.api.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'javascript' snippets without framework context 1`] = `
+"// save the columns state
+const savedState = gridOptions.columnApi.getColumnState(); 
+
+// restore the column state
+gridOptions.columnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = gridOptions.api.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'javascript' snippets without framework context and space between properties 1`] = `
+"// save the columns state
+const savedState = gridOptions.columnApi.getColumnState(); 
+
+// restore the column state
+gridOptions.columnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = gridOptions.api.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'react' snippets 1`] = `
+"// save the columns state
+const savedState = gridColumnApi.getColumnState(); 
+
+// restore the column state
+gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = gridApi.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'react' snippets with space between properties 1`] = `
+"// save the columns state
+const savedState = gridColumnApi.getColumnState(); 
+
+// restore the column state
+gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = gridApi.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'react' snippets without framework context 1`] = `
+"// save the columns state
+const savedState = gridColumnApi.getColumnState(); 
+
+// restore the column state
+gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = gridApi.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'react' snippets without framework context and space between properties 1`] = `
+"// save the columns state
+const savedState = gridColumnApi.getColumnState(); 
+
+// restore the column state
+gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = gridApi.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'vue' snippets 1`] = `
+"// save the columns state
+const savedState = this.gridColumnApi.getColumnState(); 
+
+// restore the column state
+this.gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = this.gridApi.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'vue' snippets with space between properties 1`] = `
+"// save the columns state
+const savedState = this.gridColumnApi.getColumnState(); 
+
+// restore the column state
+this.gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = this.gridApi.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'vue' snippets without framework context 1`] = `
+"// save the columns state
+const savedState = this.gridColumnApi.getColumnState(); 
+
+// restore the column state
+this.gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = this.gridApi.getRowNode('55');"
+`;
+
+exports[`Snippet Component given api statements it should create 'vue' snippets without framework context and space between properties 1`] = `
+"// save the columns state
+const savedState = this.gridColumnApi.getColumnState(); 
+
+// restore the column state
+this.gridColumnApi.applyColumnState({ state: savedState });
+
+// get the row node with ID 55
+const rowNode = this.gridApi.getRowNode('55');"
+`;
+
 exports[`Snippet Component given col defs with arrow function properties it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]=\\"columnDefs\\"
@@ -1401,132 +1577,202 @@ this.columnDefs = [
 ];"
 `;
 
-exports[`Snippet Component given expressions it should create 'angular' snippets 1`] = `
-"// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
+exports[`Snippet Component given complex column definition with array property it should create 'angular' snippets 1`] = `
+"<ag-grid-angular
+    [columnDefs]=\\"columnDefs\\"
+    /* other grid options ... */>
+</ag-grid-angular>
 
-// restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });"
+this.columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+];"
 `;
 
-exports[`Snippet Component given expressions it should create 'angular' snippets with space between properties 1`] = `
-"// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
+exports[`Snippet Component given complex column definition with array property it should create 'angular' snippets with space between properties 1`] = `
+"<ag-grid-angular
+    [columnDefs]=\\"columnDefs\\"
+    /* other grid options ... */>
+</ag-grid-angular>
 
-// restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });"
+this.columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+];"
 `;
 
-exports[`Snippet Component given expressions it should create 'angular' snippets without framework context 1`] = `
-"// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
-
-// restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });"
+exports[`Snippet Component given complex column definition with array property it should create 'angular' snippets without framework context 1`] = `
+"this.columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+];"
 `;
 
-exports[`Snippet Component given expressions it should create 'angular' snippets without framework context and space between properties 1`] = `
-"// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
-
-// restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });"
+exports[`Snippet Component given complex column definition with array property it should create 'angular' snippets without framework context and space between properties 1`] = `
+"this.columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+];"
 `;
 
-exports[`Snippet Component given expressions it should create 'javascript' snippets 1`] = `
-"// save the columns state
-const savedState = gridOptions.columnApi.getColumnState(); 
+exports[`Snippet Component given complex column definition with array property it should create 'javascript' snippets 1`] = `
+"const gridOptions = {
+    columnDefs: [
+        {
+            filterType: 'multi',
+            filterModels: [
+                null,
+                { filterType: 'set', values: ['A', 'B', 'C'] }
+            ]
+        }
+    ],
 
-// restore the column state
-gridOptions.columnApi.applyColumnState({ state: savedState });"
+    // other grid options ...
+}"
 `;
 
-exports[`Snippet Component given expressions it should create 'javascript' snippets with space between properties 1`] = `
-"// save the columns state
-const savedState = gridOptions.columnApi.getColumnState(); 
+exports[`Snippet Component given complex column definition with array property it should create 'javascript' snippets with space between properties 1`] = `
+"const gridOptions = {
+    columnDefs: [
+        {
+            filterType: 'multi',
+            filterModels: [
+                null,
+                { filterType: 'set', values: ['A', 'B', 'C'] }
+            ]
+        }
+    ],
 
-// restore the column state
-gridOptions.columnApi.applyColumnState({ state: savedState });"
+    // other grid options ...
+}"
 `;
 
-exports[`Snippet Component given expressions it should create 'javascript' snippets without framework context 1`] = `
-"// save the columns state
-const savedState = gridOptions.columnApi.getColumnState(); 
-
-// restore the column state
-gridOptions.columnApi.applyColumnState({ state: savedState });"
+exports[`Snippet Component given complex column definition with array property it should create 'javascript' snippets without framework context 1`] = `
+"columnDefs: [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+],"
 `;
 
-exports[`Snippet Component given expressions it should create 'javascript' snippets without framework context and space between properties 1`] = `
-"// save the columns state
-const savedState = gridOptions.columnApi.getColumnState(); 
-
-// restore the column state
-gridOptions.columnApi.applyColumnState({ state: savedState });"
+exports[`Snippet Component given complex column definition with array property it should create 'javascript' snippets without framework context and space between properties 1`] = `
+"columnDefs: [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+],"
 `;
 
-exports[`Snippet Component given expressions it should create 'react' snippets 1`] = `
-"// save the columns state
-const savedState = gridColumnApi.getColumnState(); 
+exports[`Snippet Component given complex column definition with array property it should create 'react' snippets 1`] = `
+"const filterModels = [
+    null,
+    { filterType: 'set', values: ['A', 'B', 'C'] }
+];
 
-// restore the column state
-gridColumnApi.applyColumnState({ state: savedState });"
+<AgGridReact>
+    <AgGridColumn filterType=\\"multi\\" filterModels={filterModels} />
+</AgGridReact>"
 `;
 
-exports[`Snippet Component given expressions it should create 'react' snippets with space between properties 1`] = `
-"// save the columns state
-const savedState = gridColumnApi.getColumnState(); 
+exports[`Snippet Component given complex column definition with array property it should create 'react' snippets with space between properties 1`] = `
+"const filterModels = [
+    null,
+    { filterType: 'set', values: ['A', 'B', 'C'] }
+];
 
-// restore the column state
-gridColumnApi.applyColumnState({ state: savedState });"
+<AgGridReact>
+    <AgGridColumn filterType=\\"multi\\" filterModels={filterModels} />
+</AgGridReact>"
 `;
 
-exports[`Snippet Component given expressions it should create 'react' snippets without framework context 1`] = `
-"// save the columns state
-const savedState = gridColumnApi.getColumnState(); 
+exports[`Snippet Component given complex column definition with array property it should create 'react' snippets without framework context 1`] = `"<AgGridColumn filterType=\\"multi\\" filterModels={filterModels} />"`;
 
-// restore the column state
-gridColumnApi.applyColumnState({ state: savedState });"
+exports[`Snippet Component given complex column definition with array property it should create 'react' snippets without framework context and space between properties 1`] = `"<AgGridColumn filterType=\\"multi\\" filterModels={filterModels} />"`;
+
+exports[`Snippet Component given complex column definition with array property it should create 'vue' snippets 1`] = `
+"<ag-grid-vue
+    [columnDefs]=\\"columnDefs\\"
+    /* other grid options ... */>
+</ag-grid-vue>
+
+this.columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+];"
 `;
 
-exports[`Snippet Component given expressions it should create 'react' snippets without framework context and space between properties 1`] = `
-"// save the columns state
-const savedState = gridColumnApi.getColumnState(); 
+exports[`Snippet Component given complex column definition with array property it should create 'vue' snippets with space between properties 1`] = `
+"<ag-grid-vue
+    [columnDefs]=\\"columnDefs\\"
+    /* other grid options ... */>
+</ag-grid-vue>
 
-// restore the column state
-gridColumnApi.applyColumnState({ state: savedState });"
+this.columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+];"
 `;
 
-exports[`Snippet Component given expressions it should create 'vue' snippets 1`] = `
-"// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
-
-// restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });"
+exports[`Snippet Component given complex column definition with array property it should create 'vue' snippets without framework context 1`] = `
+"this.columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+];"
 `;
 
-exports[`Snippet Component given expressions it should create 'vue' snippets with space between properties 1`] = `
-"// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
-
-// restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });"
-`;
-
-exports[`Snippet Component given expressions it should create 'vue' snippets without framework context 1`] = `
-"// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
-
-// restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });"
-`;
-
-exports[`Snippet Component given expressions it should create 'vue' snippets without framework context and space between properties 1`] = `
-"// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
-
-// restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });"
+exports[`Snippet Component given complex column definition with array property it should create 'vue' snippets without framework context and space between properties 1`] = `
+"this.columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+];"
 `;
 
 exports[`Snippet Component given function declaration it should create 'angular' snippets 1`] = `

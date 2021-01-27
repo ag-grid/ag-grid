@@ -11,12 +11,14 @@ The Multi Filter allows multiple [Provided Filters](../filter-provided/) or [Cus
 
 To use a Multi Filter, specify the following in your Column Definition:
 
-```js
-// ColDef
-{
-    filter: 'agMultiColumnFilter'
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // column configured to use the Multi Filter
+        { field: 'athlete', filter: 'agMultiColumnFilter' },
+    ]
 }
-```
+</snippet>
 
 By default the Multi Filter will show a [Text Filter](../filter-text/) and [Set Filter](../filter-set/), but you can specify which filters you would like to use in the `filters` array. The filters will be displayed in the same order as they are specified.
 
@@ -44,23 +46,27 @@ The example below shows Floating Filters enabled for all columns. Note how the F
 
 By default, all filters in the Multi Filter are shown inline in the same view, so that the user has easy, immediate access. However, you can change how filters are presented, by either using sub-menus or accordions to wrap each filter. To do this, you can set `display` to the style of how you would like a particular filter to be displayed:
 
-```js
-// ColDef
-{
-    filter: 'agMultiColumnFilter',
-    filterParams: {
-        filters: [
-            {
-                filter: 'agTextColumnFilter',
-                display: 'subMenu',
-            },
-            {
-                filter: 'agSetColumnFilter',
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            filter: 'agMultiColumnFilter',
+            filterParams: {
+                filters: [
+                    {
+                        filter: 'agTextColumnFilter',
+                        display: 'subMenu',
+                    },
+                    {
+                        filter: 'agSetColumnFilter',
+                    }
+                ]
             }
-        ]
-    }
+        }
+    ]
 }
-```
+</snippet>
 
 The options for `display` are `'inline'`, `'subMenu'` or `'accordion'`.
 
@@ -101,15 +107,19 @@ The `filterType` will always be set to `'multi'`. The models array is the same l
 
 For example, if the Multi Filter has the default Text Filter and Set Filter, and the Set Filter is active, the Multi Filter model might look something like this:
 
-```js
-{
-    filterType: 'multi'
-    filterModels: [
-        null,
-        { filterType: 'set', values: ['A', 'B', 'C'] }
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            filterType: 'multi',
+            filterModels: [
+                null,
+                { filterType: 'set', values: ['A', 'B', 'C'] }
+            ]
+        }
     ]
 }
-```
+</snippet>
 
 The example below allows you to see the Multi Filter Model in use. You can print the current filter state to the console and save/restore it using the buttons at the top of the grid
 

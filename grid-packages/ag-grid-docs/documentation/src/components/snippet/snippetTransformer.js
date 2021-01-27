@@ -245,23 +245,23 @@ class ReactTransformer extends SnippetTransformer {
         if (Array.isArray(property)) {
             return property.map(node => this.createReactColDefSnippet(node, depth)).join('');
         }
-
+        const padding = `\n${tab(depth)}`;
         let comment = property.comment ? `\n${tab(depth)}{/*${property.comment} */}` : '';
+
         const groupCol = property.properties.find(n => getName(n) === 'children');
         if (groupCol) {
             const colProps = this.extractColumnProperties(property.properties);
             const childColDefs = this.createReactColDefSnippet(getChildren(groupCol), depth + 1);
-            return comment + `\n${tab(depth)}<AgGridColumn ${colProps.join(' ')}>` +
-                                    childColDefs +
-                              `\n${tab(depth)}</AgGridColumn>`;
+            return comment + `${padding}<AgGridColumn ${colProps.join(' ')}>${childColDefs}${padding}</AgGridColumn>`;
         }
+
         const colProps = this.extractColumnProperties(property.properties);
-
+        // split col def props over multiple lines if > 3 props
         if (colProps.length > 3) {
-            return comment + `\n${tab(depth)}<AgGridColumn \n${tab(2)}${colProps.join(`\n${tab(2)}`)} />`;
+            return comment + `${padding}<AgGridColumn \n${tab(2)}${colProps.join(`\n${tab(2)}`)} />`;
         }
-
-        return comment + `\n${tab(depth)}<AgGridColumn ${colProps.join(' ')} />`;
+        // return single line col def
+        return comment + `${padding}<AgGridColumn ${colProps.join(' ')} />`;
     }
 
     extractColumnProperties(properties) {
@@ -273,7 +273,7 @@ class ReactTransformer extends SnippetTransformer {
                 if (propertyName === 'field') { fieldName = property.value.value; }
                 return `${propertyName}=${getReactValue(property)}`;
             }
-            if (isArrowFunctionProperty(property) || isObjectProperty(property)) {
+            if (isArrowFunctionProperty(property) || isObjectProperty(property) || isArrayProperty(property)) {
                 return this.extractNonLiteralProperty(property, fieldName, propertyName);
             }
             const [start, end] = property.range;
@@ -353,6 +353,7 @@ const capitalise = str => str[0].toUpperCase() + str.substr(1);
 const isProperty = node => node.type === 'Property';
 const isLiteralProperty = node => isProperty(node) && node.value.type === 'Literal';
 const isObjectProperty = node => isProperty(node) && node.value.type === 'ObjectExpression';
+const isArrayProperty = node => isProperty(node) && node.value.type === 'ArrayExpression';
 const isObjectExpr = node => node.type === 'ObjectExpression';
 const isArrowFunctionProperty = node => isProperty(node) && node.value.type === 'ArrowFunctionExpression';
 const isArrayExpr = node => node.value && node.value.type === 'ArrayExpression';
