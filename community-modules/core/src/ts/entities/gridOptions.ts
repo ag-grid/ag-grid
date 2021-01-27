@@ -200,6 +200,7 @@ export interface GridOptions {
 
     /** @deprecated - no longer needed, transaction updates keep group state */
     rememberGroupStateWhenNewData?: boolean;
+    suppressModelUpdateAfterUpdateTransaction?: boolean;
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;

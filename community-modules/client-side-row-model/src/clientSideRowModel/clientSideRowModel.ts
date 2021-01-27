@@ -20,6 +20,7 @@ import {
     Optional,
     PostConstruct,
     RefreshModelParams,
+    ClientSideRowModelSteps,
     RowBounds,
     RowDataChangedEvent,
     RowDataTransaction,
@@ -77,10 +78,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @PostConstruct
     public init(): void {
 
-        const refreshEverythingFunc = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING });
+        const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
 
         const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
-                step: Constants.STEP_EVERYTHING, // after cols change, row grouping (the first stage) could of changed
+                step: ClientSideRowModelSteps.EVERYTHING, // after cols change, row grouping (the first stage) could of changed
                 afterColumnsChanged: true,
                 keepRenderedRows: true, // we want animations cos sorting or filtering could be applied
                 animate: true
@@ -89,14 +90,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refreshEverythingAfterColsChangedFunc);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: Constants.STEP_PIVOT }));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
 
         const refreshMapListener = this.refreshModel.bind(this, {
-            step: Constants.STEP_MAP,
+            step: ClientSideRowModelSteps.MAP,
             keepRenderedRows: true,
             animate: true
         });
@@ -219,7 +220,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         });
 
         this.refreshModel({
-            step: Constants.STEP_EVERYTHING,
+            step: ClientSideRowModelSteps.EVERYTHING,
             keepRenderedRows: true,
             animate: true,
             keepEditingRows: true
@@ -328,18 +329,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     private onRowGroupOpened(): void {
         const animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({ step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate });
+        this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
     }
 
     private onFilterChanged(event: FilterChangedEvent): void {
         if (event.afterDataChange) { return; }
         const animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({ step: Constants.STEP_FILTER, keepRenderedRows: true, animate: animate });
+        this.refreshModel({ step: ClientSideRowModelSteps.FILTER, keepRenderedRows: true, animate: animate });
     }
 
     private onSortChanged(): void {
         const animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({ step: Constants.STEP_SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true });
+        this.refreshModel({ step: ClientSideRowModelSteps.SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true });
     }
 
     public getType(): string {
@@ -348,9 +349,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     private onValueChanged(): void {
         if (this.columnController.isPivotActive()) {
-            this.refreshModel({ step: Constants.STEP_PIVOT });
+            this.refreshModel({ step: ClientSideRowModelSteps.PIVOT });
         } else {
-            this.refreshModel({ step: Constants.STEP_AGGREGATE });
+            this.refreshModel({ step: ClientSideRowModelSteps.AGGREGATE });
         }
     }
 
@@ -375,7 +376,24 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return changedPath;
     }
 
+    private isSuppressModelUpdateAfterUpdateTransaction(params: RefreshModelParams): boolean {
+        if (!this.gridOptionsWrapper.isSuppressModelUpdateAfterUpdateTransaction()) { return false; }
+
+        // return true if we are only doing update transactions
+        if (params.rowNodeTransactions==null) { return false;}
+
+        const transWithAddsOrDeletes = _.filter(params.rowNodeTransactions, tx =>
+            (tx.add!=null && tx.add.length>0) || (tx.remove!=null && tx.remove.length>0)
+        );
+
+        const transactionsContainUpdatesOnly = transWithAddsOrDeletes==null || transWithAddsOrDeletes.length == 0;
+
+        return transactionsContainUpdatesOnly;
+    }
+
     public refreshModel(params: RefreshModelParams): void {
+
+        if (this.isSuppressModelUpdateAfterUpdateTransaction(params)) { return; }
 
         // this goes through the pipeline of stages. what's in my head is similar
         // to the diagram on this page:
@@ -392,26 +410,26 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const changedPath: ChangedPath = this.createChangePath(params.rowNodeTransactions);
 
         switch (params.step) {
-            case constants.STEP_EVERYTHING:
+            case ClientSideRowModelSteps.EVERYTHING:
                 // start = new Date().getTime();
                 this.doRowGrouping(params.groupState, params.rowNodeTransactions, params.rowNodeOrder,
                     changedPath, !!params.afterColumnsChanged);
             // console.log('rowGrouping = ' + (new Date().getTime() - start));
-            case constants.STEP_FILTER:
+            case ClientSideRowModelSteps.FILTER:
                 // start = new Date().getTime();
                 this.doFilter(changedPath);
             // console.log('filter = ' + (new Date().getTime() - start));
-            case constants.STEP_PIVOT:
+            case ClientSideRowModelSteps.PIVOT:
                 this.doPivot(changedPath);
-            case constants.STEP_AGGREGATE: // depends on agg fields
+            case ClientSideRowModelSteps.AGGREGATE: // depends on agg fields
                 // start = new Date().getTime();
                 this.doAggregate(changedPath);
             // console.log('aggregation = ' + (new Date().getTime() - start));
-            case constants.STEP_SORT:
+            case ClientSideRowModelSteps.SORT:
                 // start = new Date().getTime();
                 this.doSort(params.rowNodeTransactions, changedPath);
             // console.log('sort = ' + (new Date().getTime() - start));
-            case constants.STEP_MAP:
+            case ClientSideRowModelSteps.MAP:
                 // start = new Date().getTime();
                 this.doRowsToDisplay();
             // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
@@ -645,7 +663,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             });
         }
 
-        this.refreshModel({ step: Constants.STEP_MAP });
+        this.refreshModel({ step: ClientSideRowModelSteps.MAP });
 
         const eventSource = expand ? 'expandAll' : 'collapseAll';
         const event: ExpandCollapseAllEvent = {
@@ -764,7 +782,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.eventService.dispatchEvent(rowDataChangedEvent);
 
         this.refreshModel({
-            step: Constants.STEP_EVERYTHING,
+            step: ClientSideRowModelSteps.EVERYTHING,
             groupState: groupState,
             newData: true
         });
@@ -876,7 +894,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
 
         this.refreshModel({
-            step: Constants.STEP_EVERYTHING,
+            step: ClientSideRowModelSteps.EVERYTHING,
             rowNodeTransactions: rowNodeTrans,
             rowNodeOrder: rowNodeOrder,
             keepRenderedRows: true,
@@ -897,7 +915,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public onRowHeightChanged(): void {
-        this.refreshModel({ step: Constants.STEP_MAP, keepRenderedRows: true, keepEditingRows: true });
+        this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true });
     }
 
     public resetRowHeights(): void {

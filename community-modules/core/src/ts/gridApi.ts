@@ -47,8 +47,7 @@ import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
-import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
-import { RefreshModelParams } from "./interfaces/refreshModelParams";
+import {ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams} from "./interfaces/iClientSideRowModel";
 import { RowDataTransaction } from "./interfaces/rowDataTransaction";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { IImmutableService } from "./interfaces/iImmutableService";
@@ -564,7 +563,7 @@ export class GridApi {
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
-        this.clientSideRowModel.refreshModel({ step: Constants.STEP_MAP });
+        this.clientSideRowModel.refreshModel({ step: ClientSideRowModelSteps.MAP });
     }
 
     public refreshInMemoryRowModel(step?: string): any {
@@ -575,14 +574,14 @@ export class GridApi {
     public refreshClientSideRowModel(step?: string): any {
         if (missing(this.clientSideRowModel)) { console.warn('cannot call refreshClientSideRowModel unless using normal row model'); }
 
-        let paramsStep = Constants.STEP_EVERYTHING;
+        let paramsStep = ClientSideRowModelSteps.EVERYTHING;
         const stepsMapped: any = {
-            group: Constants.STEP_EVERYTHING,
-            filter: Constants.STEP_FILTER,
-            map: Constants.STEP_MAP,
-            aggregate: Constants.STEP_AGGREGATE,
-            sort: Constants.STEP_SORT,
-            pivot: Constants.STEP_PIVOT
+            group: ClientSideRowModelSteps.EVERYTHING,
+            filter: ClientSideRowModelSteps.FILTER,
+            map: ClientSideRowModelSteps.MAP,
+            aggregate: ClientSideRowModelSteps.AGGREGATE,
+            sort: ClientSideRowModelSteps.SORT,
+            pivot: ClientSideRowModelSteps.PIVOT
         };
 
         if (exists(step)) {
@@ -712,7 +711,7 @@ export class GridApi {
     public recomputeAggregates(): void {
         if (missing(this.clientSideRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model'); }
         console.warn(`recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead`);
-        this.clientSideRowModel.refreshModel({ step: Constants.STEP_AGGREGATE });
+        this.clientSideRowModel.refreshModel({ step: ClientSideRowModelSteps.AGGREGATE });
     }
 
     public sizeColumnsToFit() {

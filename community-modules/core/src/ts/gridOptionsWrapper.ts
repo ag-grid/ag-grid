@@ -1400,6 +1400,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.tooltipMouseTrack);
     }
 
+    public isSuppressModelUpdateAfterUpdateTransaction(): boolean {
+        return isTrue(this.gridOptions.suppressModelUpdateAfterUpdateTransaction);
+    }
+
     public getDocument(): Document {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.

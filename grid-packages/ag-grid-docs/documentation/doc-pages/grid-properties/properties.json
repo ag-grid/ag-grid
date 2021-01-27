@@ -543,6 +543,9 @@
         "immutableData": {
             "description": "(<a href='../client-side-model/'>Client-Side Row Model</a> only) Enables <a href='../immutable-data/'>Immutable Data</a> mode, for compatibility with immutable stores."
         },
+        "suppressModelUpdateAfterUpdateTransaction": {
+            "description": "(<a href='../client-side-model/'></a> only) Prevents <a href='../data-update-transactions/'>Transactions</a> changing sort, filter, group or pivot state when transaction only contains updates."
+        },
         "pinnedTopRowData": {
             "description": "Data to be displayed as <a href='../row-pinning/'>Pinned Top Rows</a> in the grid."
         },

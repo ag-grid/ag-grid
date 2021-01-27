@@ -149,3 +149,25 @@ The example below demonstrates Changed Path Selection. The example is best viewe
 | row to be checked (for selection state) between each update. If you need a blazing fast grid managing rapid
 | changes, consider avoiding this feature.
 
+
+## Suppress Model Updates
+
+Sometimes it's required to do transaction updates and not have the rows re-sort / re-filter / re-group / re-aggregate.
+This is useful if the user is interacting with the data and you don't want the rows moving.
+
+To prevent sorting, filtering and grouping after an update transaction, set the grid property
+`suppressModelUpdateAfterUpdateTransaction=true`.
+
+Not that this property is only used when transactions are applied that only have updates. If the transaction
+contains any adds or removes, the sorting, filtering and grouping will always be applied.
+
+The example below is identical to the previous example except `suppressModelUpdateAfterUpdateTransaction=true`.
+Note the following:
+
+1. When data is updated (Update buttons), the grid does not re-execute sorting, filtering or aggregation.
+2. When data is added (Duplicate button) or removed (Remove button), the grid does execute sorting, filtering and aggregation.
+3. After data is updated, hitting Update Model gets the grid to sort, filter and aggregate.
+
+<grid-example title='Suppress Update Model' name='suppress-update-model' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+

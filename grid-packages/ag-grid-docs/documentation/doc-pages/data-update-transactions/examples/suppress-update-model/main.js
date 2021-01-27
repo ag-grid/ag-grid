@@ -152,6 +152,10 @@ function onBtClearSelection() {
     gridOptions.api.deselectAll();
 }
 
+function onBtUpdateModel() {
+    gridOptions.api.refreshClientSideRowModel('filter');
+}
+
 function timeOperation(name, operation) {
     aggCallCount = 0;
     compareCallCount = 0;
@@ -171,6 +175,7 @@ var gridOptions = {
         sortable: true,
         resizable: true
     },
+    suppressModelUpdateAfterUpdateTransaction: true,
     getRowNodeId: getRowNodeId,
     rowSelection: 'multiple',
     groupSelectsChildren: true,

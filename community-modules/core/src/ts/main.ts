@@ -178,8 +178,7 @@ export { ChangedPath } from "./utils/changedPath";
 export { RowNodeBlock, LoadCompleteEvent, LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 export { PaginationProxy } from "./pagination/paginationProxy";
-export { RefreshModelParams } from "./interfaces/refreshModelParams";
-export { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
+export { IClientSideRowModel, ClientSideRowModelSteps, RefreshModelParams } from "./interfaces/iClientSideRowModel";
 export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 
 export { ColumnVO } from "./interfaces/iColumnVO";

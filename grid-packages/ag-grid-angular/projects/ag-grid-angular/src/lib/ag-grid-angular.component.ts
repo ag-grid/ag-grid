@@ -437,6 +437,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressAggFilteredOnly : any = undefined;
     @Input() public showOpenedGroup : any = undefined;
     @Input() public suppressClipboardApi : any = undefined;
+    @Input() public suppressModelUpdateAfterUpdateTransaction : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
