@@ -23,7 +23,7 @@ function gtm_data_layer($pageCategory, $additional = array()) {
 function meta_and_links($title, $keywords, $description, $root = false) {
     $font_awesome = $GLOBALS['DONT_USE_FONT_AWESOME']
         ? ""
-        : '<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">';
+        : '<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />';
 
     $socialImage = $GLOBALS['socialImage'];
     if ($socialImage) {
@@ -38,8 +38,8 @@ META;
     $socialUrl = $GLOBALS['socialUrl'];
     if ($socialUrl) {
         $socialUrlMeta = <<<META
-    <meta property="og:image" content="$socialUrlMeta" />
-    <meta name="twitter:image" content="$socialUrlMeta" />
+    <meta property="og:url" content="$socialUrl" />
+    <meta name="twitter:url" content="$socialUrl" />
 META;
     } else {
         $socialUrlMeta = '';
@@ -50,34 +50,37 @@ META;
     } else {
         $prefix = "../";
     }
+
+    $canonicalUrl = 'https://www.ag-grid.com' . strtok($_SERVER["REQUEST_URI"], '?');
+
     echo <<<META
     <script>var dataLayer = [${GLOBALS['GTM_DATA_LAYER']}]</script>
     ${GLOBALS['GTM_SCRIPT']}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-    <!-- link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,900" rel="stylesheet" -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
 
     <title>$title</title>
+    <link rel="canonical" href="$canonicalUrl" />
 
-    <meta name="description" content="$description">
-    <meta name="keywords" content="$keywords">
+    <meta name="description" content="$description" />
+    <meta name="keywords" content="$keywords" />
 
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="ag-Grid">
-    <meta property="og:description" content="$description">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="$title" />
+    <meta property="og:description" content="$description" />
 
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:site" content="@ag_grid">
-    <meta name="twitter:title" content="ag-Grid">
-    <meta name="twitter:description" content="$description">
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@ag_grid" />
+    <meta name="twitter:title" content="$title" />
+    <meta name="twitter:description" content="$description" />
 
     $socialUrlMeta
     $socialImageMeta
 
-    <link rel="icon" type="image/png" sizes="32x32" href="{$prefix}_assets/favicons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="{$prefix}_assets/favicons/favicon-16x16.png">
-    <link rel="shortcut icon" href="{$prefix}_assets/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="{$prefix}_assets/favicons/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{$prefix}_assets/favicons/favicon-16x16.png" />
+    <link rel="shortcut icon" href="{$prefix}_assets/favicons/favicon.ico" />
     ${GLOBALS['LINKEDIN_SCRIPT']}
 META;
 }

@@ -7,7 +7,7 @@
 # ag-Grid Angular Component
 
 ag-Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github#/performance/1), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/documentation/angular/getting-started/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github).
+It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/documentation/angular/getting-started/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github).
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
