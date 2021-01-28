@@ -96,24 +96,24 @@ The grid has the following API methods for editing:
 
 Below is a code example of using the editing API methods.
 
-```js
-// start editing country cell on first row
-api.startEditing({
-    rowIndex: 0,
-    colKey: 'country'
-});
-
-// stop editing
-api.stopEditing();
-
-// print details of editing cell
-var cellDefs = gridOptions.api.getEditingCells();
-cellDefs.forEach(function(cellDef) {
-    console.log(cellDef.rowIndex);
-    console.log(cellDef.column.getId());
-    console.log(cellDef.floating);
-});
-```
+<snippet>
+|// start editing country cell on first row
+|gridOptions.api.startEditing({
+|    rowIndex: 0,
+|    colKey: 'country'
+|});
+|
+|// stop editing
+|gridOptions.api.stopEditing();
+|
+|// print details of editing cell
+|const cellDefs = gridOptions.api.getEditingCells();
+|cellDefs.forEach(cellDef => {
+|    console.log(cellDef.rowIndex);
+|    console.log(cellDef.column.getId());
+|    console.log(cellDef.floating);
+|});
+</snippet>
 
 ## Start / Stop Editing Events
 
@@ -158,24 +158,24 @@ The following example illustrates how to use different editors and parameters in
 - `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
 
     ```js
-        cellEditorSelector: function(params) {
-            if (params.data.type === 'age') {
-                return { component: 'numericCellEditor' };
-            }
-
-            if (params.data.type === 'gender') {
-                return {
-                    component: 'agRichSelect',
-                    params: { values: ['Male', 'Female'] }
-                };
-            }
-
-            if (params.data.type === 'mood') {
-                return { component: 'agRichSelect' };
-            }
-
-            return null;
+    cellEditorSelector: params => {
+        if (params.data.type === 'age') {
+            return { component: 'numericCellEditor' };
         }
+
+        if (params.data.type === 'gender') {
+            return {
+                component: 'agRichSelect',
+                params: { values: ['Male', 'Female'] }
+            };
+        }
+
+        if (params.data.type === 'mood') {
+            return { component: 'agRichSelect' };
+        }
+
+        return null;
+    }
     ```
 - Edit a cell by double clicking to observe the different editors used.
 
@@ -186,8 +186,8 @@ The following example illustrates how to use different editors and parameters in
 Parameters for cell editors can be dynamic to allow different selections based on what cell is being edited. For example, you might have a 'City' column that has values based on the 'Country' column. To do this, provide a function that returns parameters for the property `cellEditorParams`.
 
 ```js
-cellEditorParams: function(params) {
-    var selectedCountry = params.data.country;
+cellEditorParams: params => {
+    const selectedCountry = params.data.country;
 
     if (selectedCountry === 'Ireland') {
         return {

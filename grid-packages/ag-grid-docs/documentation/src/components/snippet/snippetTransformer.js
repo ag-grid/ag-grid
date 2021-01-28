@@ -270,17 +270,13 @@ class ReactTransformer extends SnippetTransformer {
         const mapColumnProperty = property => {
             const propertyName = getName(property);
             if (isLiteralProperty(property)) {
-                if (propertyName === 'field') { fieldName = property.value.value; }
+                // store field name for prefixing extracted colDef properties later
+                const updateField = propertyName === 'field' || (propertyName === 'colId' && fieldName.length === 0);
+                if (updateField) { fieldName = property.value.value; }
+
                 return `${propertyName}=${getReactValue(property)}`;
             }
-            if (isArrowFunctionProperty(property) || isObjectProperty(property) || isArrayProperty(property)) {
-                return this.extractNonLiteralProperty(property, fieldName, propertyName);
-            }
-            const [start, end] = property.range;
-            const rawValue = this.snippet.slice(start, end);
-            const value = rawValue.replace(`${propertyName}:`, '').trim();
-
-            return `${propertyName}={${value}}`;
+            return this.extractNonLiteralProperty(property, fieldName, propertyName);
         }
 
         return properties.filter(property => getName(property) !== 'children').map(mapColumnProperty);
@@ -353,9 +349,7 @@ const capitalise = str => str[0].toUpperCase() + str.substr(1);
 const isProperty = node => node.type === 'Property';
 const isLiteralProperty = node => isProperty(node) && node.value.type === 'Literal';
 const isObjectProperty = node => isProperty(node) && node.value.type === 'ObjectExpression';
-const isArrayProperty = node => isProperty(node) && node.value.type === 'ArrayExpression';
 const isObjectExpr = node => node.type === 'ObjectExpression';
-const isArrowFunctionProperty = node => isProperty(node) && node.value.type === 'ArrowFunctionExpression';
 const isArrayExpr = node => node.value && node.value.type === 'ArrayExpression';
 const getChildren = node => isArrayExpr(node) ? node.value.elements : node.properties;
 const isVarDeclaration = node => node.type === 'VariableDeclaration' && Array.isArray(node.declarations);

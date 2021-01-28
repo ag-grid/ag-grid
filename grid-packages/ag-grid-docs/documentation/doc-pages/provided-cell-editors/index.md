@@ -37,12 +37,19 @@ Simple editors that use the standard HTML `select` tag.
 
 The only parameter for text cell editors is `values`. Use this to provide a list of values to the cell editor.
 
-```js
-colDef.cellEditor = 'agSelectCellEditor';
-colDef.cellEditorParams = {
-    values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'language',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: ['English', 'Spanish', 'French', 'Portuguese', '(other)'],
+            },
+        }
+    ]
 }
-```
+</snippet>
 
 [[note]]
 |

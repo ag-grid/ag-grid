@@ -29,16 +29,18 @@ If `align` is not specified the components will default to being aligned to the 
 
 The snippet below shows a status bar configured with the grid provided components.
 
-```js
-gridOptions: {
+<snippet>
+const gridOptions = {
     statusBar: {
         statusPanels: [
-            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' }
+            { 
+                statusPanel: 'agTotalAndFilteredRowCountComponent', 
+                align: 'left', 
+            }
         ]
     }
-    // ...other grid properties
 }
-```
+</snippet>
 
 ### Component Alignment
 
@@ -70,8 +72,8 @@ By default all of the aggregations available will be displayed but you can confi
 
 In this code snippet we have configured the aggregation component to only show `min, max and average`:
 
-```js
-gridOptions: {
+<snippet>
+const gridOptions = {
     statusBar: {
         statusPanels: [
             {
@@ -83,9 +85,8 @@ gridOptions: {
             }
         ]
     }
-    // ...other grid properties
 }
-```
+</snippet>
 
 ### Accessing Status Panels
 
@@ -99,8 +100,8 @@ Some of the status panel components, or your own custom components, can take fur
 
 The snippet below shows a status bar configured with the grid provided aggregation component only. The component is further configured to only show average and sum functions.
 
-```js
-gridOptions: {
+<snippet>
+const gridOptions = {
     statusBar: {
         statusPanels: [
             {
@@ -112,9 +113,8 @@ gridOptions: {
             }
         ]
     }
-    // ...other grid properties
 }
-```
+</snippet>
 
 ### Example Component Parameters
 

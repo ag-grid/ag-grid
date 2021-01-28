@@ -9,12 +9,12 @@ The following snippet illustrates how to achieve nesting by configuring Detail G
 
 ```js
 // Level 3 (bottom level), Detail Grid only, no Master / Detail configuration
-var gridOptionsLevel3 = {
+const gridOptionsLevel3 = {
     ...
 }
 
 // Level 2, configured to be a Master Grid and use Level 3 grid as Detail Grid,
-var gridOptionsLevel2 = {
+const gridOptionsLevel2 = {
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: gridOptionsLevel3,
@@ -26,12 +26,12 @@ var gridOptionsLevel2 = {
 }
 
 // Level 1, configured to be a Master Grid and use Level 2 grid as Detail Grid,
-var gridOptionsLevel1 = {
+const gridOptionsLevel1 = {
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: gridOptionsLevel2,
         getDetailRowData: function (params) {
-        ...
+            ...
         }
     }
     ...

@@ -27,24 +27,25 @@ A value setter should return `true` if the value was updated successfully and `f
 
 The following is an example of how you would configure a column using the field attribute and then follows how the same can be done using value getters and value setters.
 
-```js
-// Option 1 - using field
-colDef = {
-    field: 'name';
-};
-
-// Options 2 - using valueGetter and valueSetter
-// value getter used to get data
-colDef = {
-    valueGetter: function(params) {
-        return params.data.name;
-    },
-    valueSetter: function(params) {
-        params.data.name = params.newValue;
-        return true;
-    }
-};
-```
+<snippet>
+|const gridOptions = {
+|    columnDefs: [
+|        // Option 1: using field
+|        { field: 'name' },
+|
+|        // Options 2: using valueGetter and valueSetter - value getter used to get data
+|        {
+|            valueGetter: params => {
+|                return params.data.name;
+|            },
+|            valueSetter: params => {
+|                params.data.name = params.newValue;
+|                return true;
+|            }
+|        }
+|    ]
+|}
+</snippet>
 
 ## Example: Value Setter
 
