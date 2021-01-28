@@ -10,9 +10,9 @@
 |- By name.
 |- Direct reference.
 |
-|Both options are fully supported by the grid, however registering by name is ag-Grid's preferred options as it's more flexible.
+|Both options are fully supported by the grid, however registering by name is ag-Grid's preferred option as it's more flexible.
 |All of the examples in the documentation use this approach.
-|The direct reference approach is kept for backwards compatibility reasons as this was the original way to do it in ag-Grid.
+|The direct reference approach is kept for backwards compatibility as this was the original way to do it in ag-Grid.
 |
 |## Registering Inline Custom Components
 |

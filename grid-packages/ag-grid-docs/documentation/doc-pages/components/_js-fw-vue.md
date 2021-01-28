@@ -26,11 +26,12 @@
 |export default {
 |   components: {
 |       AgGridVue,
-|       // declare the Vue component
+|       // Vue components are registered here
 |       'vueComponent': VueComponent
 |   }
 |   data() {
 |       return {
+|           // JavaScript components are registered here
 |           components: [
 |               // declare the javascript component
 |               'javascriptComponent': JavascriptComponent
@@ -53,3 +54,4 @@
 |}
 |</script>
 |```
+|Change the documentation view to <a href='../../javascript/components/'>JavaScript</a> to see how to create a plain JavaScript component.

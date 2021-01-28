@@ -4,8 +4,8 @@
 |The below table gives an overview of where components can be used. 
 |
 |- **Name / Direct JavaScript:** This can be:
-|    - 1) A component name referring to a registered component (either plain JavaScript or framework component);
-|    - 2) A direct reference to a JavaScript component.
+|    - 1) A component name referring to a registered JavaScript Component;
+|    - 2) A direct reference to a JavaScript Component.
 |
 || Component                     | Where                     | Name / Direct JavaScript | 
 || ----------------------------- | ------------------------- | ------------------------ | 
