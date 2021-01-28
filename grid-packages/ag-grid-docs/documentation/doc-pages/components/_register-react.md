@@ -16,7 +16,11 @@
 |
 |### 1. By Name
 |
-| To use an React component within the grid you will reference components by name, for example:
+|When registering a React component by name you need to first register the component within the grid `frameworkComponents` property,
+|then reference the component by name where you want it used (i.e. as a Cell Renderer, Filter etc).
+|
+|In this example we've registered our `CubeComponent` React Component and given it a name of `cubeComponent` (this can be any name you choose).
+|We then specify that we want the previously registered `cubeComponent` to be used as a Cell Renderer in the `Cube` column:
 |
 |```jsx
 |//...other imports
@@ -43,6 +47,10 @@
 |```
 |### 2. By Direct Reference
 |
+|When registering an Angular Component by reference you simply pass the Component to the place you want it used (i.e. Cell Renderer, Filter etc).
+|
+|In this example we're specifying that we want our `CubeComponent` React Component as a Cell Renderer in the `Cube` column:
+|
 |```jsx
 |//...other imports
 |import CubeComponent from './CubeComponent';
@@ -61,3 +69,10 @@
 |    );
 |};
 |```
+|When registering by Direct Reference you do not need to specify it in `frameworkComponents`, but you lose future flexibility
+|if you decide for example to switch this component out for another.
+|
+|[[note]]
+||A React Component in this context can be an valid React Component - A Class Based Component, a Hook or even an inline
+||Functional Component. 
+||The same rules apply regardless of the type of component used.

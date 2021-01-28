@@ -136,7 +136,7 @@ The grid comes with pre-registered components that can be used. Each component p
         <tr>
             <td>agNoRowsOverlay</td>
             <td>No rows overlay.</td>
-        </tr>
+        </tr> 
         <tr>
             <td colspan="2"><h3>Cell Editors</h3></td>
         </tr>
