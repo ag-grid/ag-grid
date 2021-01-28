@@ -32,6 +32,7 @@
     &__link {
         composes: nav-link from global;
         position: relative;
+
         a {
             color: lighten($primary, 30%);
             &:hover {
@@ -39,25 +40,26 @@
                 text-decoration: none;
             }
         }
-        &.active {
+
+        &--active {
             a {
                 color: $light;
             }
             @include media-breakpoint-up(sm) {
                 &:after {
                     content: "";
-                    height: .2rem;
+                    height: 0.2rem;
                     width: 100%;
                     background-color: #fff;
                     position: absolute;
                     left: 0;
-                    bottom: -.7rem;
+                    bottom: -0.7rem;
                 }
             }
         }
     }
 
-    &__link_anchor {
+    &__link-anchor {
         composes: py-2 px-sm-4 from global;
     }
 }

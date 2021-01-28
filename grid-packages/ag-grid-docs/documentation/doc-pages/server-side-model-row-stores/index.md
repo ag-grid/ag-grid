@@ -3,24 +3,21 @@ title: "SSRM Row Stores"
 enterprise: true
 ---
 
-Inside the Server-Side Row Model (SSRM), rows are stored in Row Stores. There are two types of 
+Inside the Server-Side Row Model (SSRM), rows are stored in Row Stores. There are two types of
 Row Stores - Full Store and Partial Store. This section explains more on these two different Row Store types.
 
 ## Row Stores
 
 A Row Store stores [Row Nodes](../row-object/). A Row Node represents one Row inside the grid.
 
-
 There is at least one Row Store inside the SSRM for storing top level rows. The diagram below shows a SSRM with one Row Store.
 
-
 <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
-    <img src="resources/single-store.svg" alt="Single Store" style="width: 40%;"/>
+    <img src="resources/single-store.svg" alt="Single Store" style="width: 40%;" />
     <div>Fig 1. Node Store</div>
 </div>
 
 If the grid had [Row Grouping](../server-side-model-grouping/) there would be many rows stores, but for now we consider the simple case.
-
 
 ## Row Store Types
 
@@ -35,24 +32,24 @@ There are two types of Row Stores, which differ in their strategy for loading an
     The name "Full Store" comes from the fact all data is loaded into the store,
     and not partially using blocks. The store is full of rows, no more rows will be loaded
     after the initial load.
-    
+
 - **Partial Store**:
-    Loads rows in blocks (eg 500 rows in total and 100 rows in a block, 5 block loads are required). 
-    Blocks are loaded as the user scrolls down and stored in a cache inside the 
+    Loads rows in blocks (eg 500 rows in total and 100 rows in a block, 5 block loads are required).
+    Blocks are loaded as the user scrolls down and stored in a cache inside the
     Partial Store. This technique, of loading rows as the user scrolls down,
-    is known as [Infinite Scrolling](https://en.wiktionary.org/wiki/infinite_scroll). 
-    Blocks that are no longer needed (the user has scrolled past the blocks rows and are no longer visible) 
+    is known as [Infinite Scrolling](https://en.wiktionary.org/wiki/infinite_scroll).
+    Blocks that are no longer needed (the user has scrolled past the blocks rows and are no longer visible)
     are optionally purged from the cache, thus controlling the browser's memory footprint.
-        
-    The name "Partial Store" comes from the fact rows are partially loaded using blocks, 
+
+    The name "Partial Store" comes from the fact rows are partially loaded using blocks,
     one block at a time.
 
 <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
-    <img src="resources/full-vs-partial-store.svg" style="width: 80%;"/>
+    <img src="resources/full-vs-partial-store.svg" style="width: 80%;" alt="Partial Store vs Full Store" />
     <div>Fig 2. Partial Store vs Full Store</div>
 </div>
 
-Set the store type using the grid property `serverSideStoreType`. Set to `full` to use the Full Store and `partial` 
+Set the store type using the grid property `serverSideStoreType`. Set to `full` to use the Full Store and `partial`
 to use the Partial Store. If not set, the Full Store is used.
 
 Below shows a simple example using Partial Store. Note the following:
@@ -68,7 +65,7 @@ Below shows a simple example using Full Store. Note the following:
 
 - Open the console to observe when the server is called to load rows.
 - All the rows are loaded back in one go.
-- Sorting the data is done by the grid when the columns headers are clicked. Sorting is possible by the grid because 
+- Sorting the data is done by the grid when the columns headers are clicked. Sorting is possible by the grid because
 the entire dataset is loaded into the grid.
 
 <grid-example title='Full Store' name='full-store' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
@@ -79,19 +76,17 @@ the entire dataset is loaded into the grid.
 | The difference is when Row Grouping, the children of the row groups are loaded as the
 | groups are expanded. For Client-Side Row Model, all data needs to be loaded up front.
 
-
 ## Partial Store vs Full Store
 
 So when is it best to use Partial Store? And when is it best to use Full Store?
 
-Use Full Store when all of the data comfortably fits inside the browsers memory. It is possible to present big 
-data inside an application using a combination of Full Store and Row Grouping. For example a dataset could have 
-10 million rows, however due to grouping only 200 rows are brought back at any group level - in this case 
+Use Full Store when all of the data comfortably fits inside the browsers memory. It is possible to present big
+data inside an application using a combination of Full Store and Row Grouping. For example a dataset could have
+10 million rows, however due to grouping only 200 rows are brought back at any group level - in this case
 Full Store would work fine.
 
-
-Use Partial Store when all of the data at a particular group level will not comfortably fit inside the browsers memory. 
-For example a dataset with 10 million rows with no grouping applied would not fit inside a browsers memory, thus 
+Use Partial Store when all of the data at a particular group level will not comfortably fit inside the browsers memory.
+For example a dataset with 10 million rows with no grouping applied would not fit inside a browsers memory, thus
 Partial Store would be needed to view it.
 
 ## Partial Store Restrictions
@@ -112,7 +107,7 @@ and using infinite scrolling to load the blocks as the users scrolls. However it
 - **Updating Data**
     Updating data in the grid using [Transactions](../server-side-model-transactions/) is not supported
     by the Partial Store.
-    
+
     This is because applying updates would potentially move rows between blocks, which would not be possible
     if all blocks are not loaded.
 
@@ -135,4 +130,3 @@ and using infinite scrolling to load the blocks as the users scrolls. However it
 ## Next Up
 
 Continue to the next section to learn about [Configuration](../server-side-model-configuration/) of the SSRM.
-

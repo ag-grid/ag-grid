@@ -26,7 +26,8 @@
 @import "../pages/features-overview.scss";
 @import "../docs/example-runner.scss";
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
 }
@@ -91,7 +92,6 @@ body {
             @extend .pr-4;
             text-align: justify;
         }
-    
     }
 }
 
@@ -103,7 +103,8 @@ body {
         @extend .align-items-center;
 
         & > div {
-            width: 100%;margin: 0 auto
+            width: 100%;
+            margin: 0 auto;
         }
 
         h2 {
@@ -192,7 +193,6 @@ body {
     }
 }
 
-
 #stage-sponsorships {
     @extend %stage;
     background-color: $offwhite;
@@ -247,7 +247,7 @@ body {
 
     &.main {
         background-color: $blue-1;
-        h2 {
+        h1 {
             font-weight: 500 !important;
             color: $white;
         }
@@ -450,10 +450,11 @@ body {
 
 div.animated-example {
     img {
-        vertical-align: unset;            
+        vertical-align: unset;
     }
 
-    button:focus, img:focus {
+    button:focus,
+    img:focus {
         outline: none;
     }
 

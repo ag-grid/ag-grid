@@ -47,7 +47,7 @@ meta_and_links($title, $keywords, $description, false);
     </header>
     <div class="page-content">
         <div class="stage-scenarios main">
-            <h2 class="heading-scenarios">The Best JavaScript Grid in the World</h2>
+            <h1 class="heading-scenarios">The Best JavaScript Grid in the World</h2>
             <section>
                 <div class="demo" >
                     <div id="bestHtml5Grid"  class="ag-theme-material"></div>

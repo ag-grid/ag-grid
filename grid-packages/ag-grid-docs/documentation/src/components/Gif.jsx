@@ -26,6 +26,7 @@ const Gif = ({ pageName, src, alt, autoPlay, className, wrapped, children, ...pr
         still={isDevelopment() ? undefined : image.publicURL.replace('.gif', '-still.png')}
         className={classes}
         autoplay={autoPlay}
+        alt={alt}
         {...props} />;
 };
 

@@ -7,7 +7,7 @@ This section covers Row Grouping in the Server-Side Row Model (SSRM).
 
 ## Enabling Row Grouping
 
-Row Grouping is enabled in the grid via the `rowGroup` column definition attribute. 
+Row Grouping is enabled in the grid via the `rowGroup` column definition attribute.
 The example below shows how to group rows by 'country':
 
 <snippet>
@@ -22,16 +22,14 @@ const gridOptions = {
 
 For more configuration details see the section on [Row Grouping](../grouping/).
 
-
 ## Row Grouping on the Server
 
-The actual grouping of rows is performed on the server when using the SSRM. 
-When the grid needs more rows it makes a request via `getRows(params)` on 
-the [Server-Side Datasource](../server-side-model-datasource/#datasource-interface) with 
+The actual grouping of rows is performed on the server when using the SSRM.
+When the grid needs more rows it makes a request via `getRows(params)` on
+the [Server-Side Datasource](../server-side-model-datasource/#datasource-interface) with
 metadata containing grouping details.
 
 The properties relevant to row grouping in the request are shown below:
-
 
 ```ts
 // IServerSideGetRowsRequest
@@ -46,67 +44,61 @@ The properties relevant to row grouping in the request are shown below:
 }
 ```
 
-Note in the snippet above the property `rowGroupCols` contains all the columns (dimensions) the grid is 
-grouping on, e.g. 'Country', 'Year'. The property `groupKeys` contains the list of group keys selected, 
+Note in the snippet above the property `rowGroupCols` contains all the columns (dimensions) the grid is
+grouping on, e.g. 'Country', 'Year'. The property `groupKeys` contains the list of group keys selected,
 e.g. `['Argentina', '2012']`.
 
 The example below demonstrates server-side Row Grouping. Note the following:
 
 - The Partial Store is used, thus Infinite Scrolling is active.
-
 - The store block size is set to 5 by setting the grid property `cacheBlockSize = 5`. It can then be observed that rows are loaded in blocks at all levels. For example if you expand United States row, the children rows are loaded in blocks using Partial Scrolling.
-
 - Country and Sport columns have `rowGroup=true` defined on their column definitions. This tells the grid there is two levels of grouping, one for Country and one for Sport.
-
 - The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
-
 - Open the browser's dev console to view the request supplied to the datasource.
 
 <grid-example title='Row Grouping' name='row-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 [[note]]
 | The example above also demonstrates [Sorting](../server-side-model-sorting/) with groups.
-| When the grid sort changes, only impacted rows will be reloaded. For example, if 'Sport' groups 
-| are expanded, sorting on the 'Year' column won't cause the top level 'Country' groups to reload, 
+| When the grid sort changes, only impacted rows will be reloaded. For example, if 'Sport' groups
+| are expanded, sorting on the 'Year' column won't cause the top level 'Country' groups to reload,
 | but sorting on the 'Gold' column will.
 | <br/><br/>
-| To avoid this and always refresh top level groups regardless of which column is sorted, set the grid 
+| To avoid this and always refresh top level groups regardless of which column is sorted, set the grid
 | property `serverSideSortingAlwaysResets=true`.
 
 ## Grouping and Row Stores
 
-When grouping and a group is expanded, a new Row Store is created to store the child rows of the opened group. 
+When grouping and a group is expanded, a new Row Store is created to store the child rows of the opened group.
 The diagram below shows what the Row Stores could look like with Row Grouping, where two top level Row Groups are open.
 
-<image-caption src="server-side-model-grouping/resources/multi-store.svg" width="80%" constrained="true" centered="true">
+<image-caption src="multi-store.svg" width="80%" constrained="true" centered="true" alt="Node Store - Grouping">
     <div style="text-align: center;">Fig 1. Node Store - Grouping</div>
 </image-caption>
 
-This means there can be any number of Row Stores existing inside the SSRM. Each time a Row Group is expanded, 
-a new Row Store is created for that level. The sections [Server-Side Row Grouping](../server-side-model-grouping/) 
+This means there can be any number of Row Stores existing inside the SSRM. Each time a Row Group is expanded,
+a new Row Store is created for that level. The sections [Server-Side Row Grouping](../server-side-model-grouping/)
 explains in detail this topic.
 
 ## Full vs Partial Store
 
-The Row Grouping mechanics are almost identical with the [Full Store](../server-side-model-row-stores/) 
-and [Partial Store](../server-side-model-row-stores/). The difference is that when 
-using the Partial Store, data will be requested in blocks and could be requested to have sorting and / or 
+The Row Grouping mechanics are almost identical with the [Full Store](../server-side-model-row-stores/)
+and [Partial Store](../server-side-model-row-stores/). The difference is that when
+using the Partial Store, data will be requested in blocks and could be requested to have sorting and / or
 filtering applied.
 
-All the examples presented in this section use the Partial Store as it covers all the semantics found when 
+All the examples presented in this section use the Partial Store as it covers all the semantics found when
 using both store types.
-
 
 ## Configure Stores
 
-By default, each store will have the same configuration (store type, block size etc). This configuration 
+By default, each store will have the same configuration (store type, block size etc). This configuration
 is specified using the grid properties `serverSideStoreType`, `maxBlocksInCache` and `cacheBlockSize`.
 
-It is possible to have different configurations for different stores. For example if grouping, infinite 
+It is possible to have different configurations for different stores. For example if grouping, infinite
 scrolling (using the Partial Store) could be turned off at the top level but turned on at the lower levels.
 
 This is done by implementing the grid callback `getServerSideStoreParams()`. Its interface is as follows:
-
 
 ```ts
 // functions takes params and also returns a different type of params
@@ -137,7 +129,7 @@ interface ServerSideStoreParams {
     // what store type to use. if missing, then defaults to grid option 'serverSideStoreType'
     storeType?: ServerSideStoreType;
 
-    // For Partial Store only. How many blocks to keep in cach.
+    // For Partial Store only. How many blocks to keep in cache.
     // If missing, defaults to grid options 'maxBlocksInCache'
     maxBlocksInCache?: number;
 
@@ -155,7 +147,7 @@ enum ServerSideStoreType {
 
 The example below demonstrates the `getServerSideStoreParams()` callback. Note the following:
 
-- The grid is configured differently depending on whether grouping is active or not by implementing 
+- The grid is configured differently depending on whether grouping is active or not by implementing
 the `getServerSideStoreParams()` callback. The callback logs its results to the dev console.
 
 - When grouping is active, the stores are configured as follows:
@@ -169,10 +161,9 @@ the `getServerSideStoreParams()` callback. The callback logs its results to the 
 
 <grid-example title='Dynamic Params' name='dynamic-params' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
-
 ## Store State & Store Info
 
-For debugging purposes, the grid has the API `getServerSideStoreState()` which returns info on all 
+For debugging purposes, the grid has the API `getServerSideStoreState()` which returns info on all
 existing [Row Stores](../server-side-model-row-stores/). This is good for learning purposes, as you can
 see details about the store such as the store type and it's route.
 
@@ -211,15 +202,15 @@ when rows are fetched.
 const createDatasource = server => {
     return {
         // called by the grid when more rows are required
-        getRows: params => { 
+        getRows: params => {
             // get data for request from server
-            const rows = server.getData(params.request);  
-            
+            const rows = server.getData(params.request);
+
             // pass rows back along with any additional store info
             params.success({
-                rowData: rows, 
+                rowData: rows,
                 storeInfo: {a: 22, b: 55}
-            }); 
+            });
         }
     }
 }
@@ -228,7 +219,7 @@ const createDatasource = server => {
 The info object is merged into the Store Info (which is initially an empty object) and then available in the following locations:
 
 1. Included in the Store State returned from `getServerSideStoreState()`.
-1. Included in the params to `isApplyServerSideTransaction()`. This method is explained 
+1. Included in the params to `isApplyServerSideTransaction()`. This method is explained
 in [Cancelling Transactions](../server-side-model-high-frequency/#cancelling-transactions).
 
 If rows are loaded multiple times into the Store, then the Store Info values will over write existing values
@@ -243,7 +234,6 @@ The example below shows Store Info in action.
 ## Open by Default
 
 It is possible to have rows open as soon as they are loaded. To do this implement the grid callback `isServerSideGroupOpenByDefault`.
-
 
 ```js
 // Callback Signature
@@ -354,9 +344,7 @@ When a filter is applied to a grouped grid using the SSRM, the grid will behave 
 - ### Partial Store
     Changing the filter on any column will always refresh the Partial Store. Rows will be loaded again from the server with the new filter information.
 
-
 It is possible to force the grid to always refresh (reload data) after a filter changes. Do this by setting grid property `serverSideFilteringAlwaysResets=true`.
-
 
 ## Complex Columns
 
@@ -386,11 +374,8 @@ In the example below, all rows are modified so that the rows look something like
 
 Then the columns are set up so that country uses a `valueGetter` that uses the field with dot notation, i.e. `data.country.name`
 
-
 <grid-example title='Complex Objects' name='complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
-
 
 ## Next Up
 
 Continue to the next section to learn how to perform [Data Refresh](../server-side-model-refresh/).
-

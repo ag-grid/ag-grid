@@ -51,7 +51,7 @@
     <div class="card-body">
         <h5 class="card-title">
             <a class="learn-more" href="https://thinkster.io/topics/ag-grid">
-                <img style="width: 100%;" src="../images/thinkster.png"/>
+                <img style="width: 100%;" src="../images/thinkster.png" alt="Thinkster" />
             </a>
         </h5>
         <p class="card-text">
@@ -67,7 +67,7 @@
         <h6 class="card-subtitle mb-2 text-muted">Jan 27th</h6>
         <p class="card-text">
             ag-Grid is the "Absolute Winner" according to
-            <a class="learn-more" href="https://www.crankuptheamps.com//blog/posts/2020/01/23/grid-comparison-2/#">Best Web Grids for 2020</a>.
+            <a class="learn-more" href="https://www.crankuptheamps.com/blog/posts/2020/01/23/grid-comparison-2/">Best Web Grids for 2020</a>.
         </p>
     </div>
 </div>
@@ -75,7 +75,7 @@
 <div class="card card-highlight mb-4">
     <div class="card-body">
         <h5 class="card-title">Community or Enterprise?</h5>
-        <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/Community.svg"/>
+        <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/Community.svg" alt="ag-Grid Community" />
         <p class="font-weight-normal">Everyone can use ag-Grid Community for free.
             It's MIT licensed and Open Source. No restrictions. No strings attached.
         </p>
@@ -83,7 +83,7 @@
                 <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/SA.svg"/>
                 <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/MA.svg"/>
         -->
-        <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/enterprise.svg"/>
+        <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/enterprise.svg" alt="ag-Grid Enterprise" />
         <p class="font-weight-normal">Do you want more features? Then
             <a class="learn-more" href="../documentation/javascript/licensing/">get started with ag-Grid Enterprise</a>.
             You don't need to contact us to evaluate ag-Grid Enterprise. A license is only required
@@ -97,26 +97,26 @@
         <p class="font-weight-normal">Come see us at the following conferences that we are attending and sponsoring.</p>
 
         <h6 class="card-subtitle mb-2 text-muted">Angular</h6>
-        <img src="../images/flags/united-states.png" style="height: 18px; width: 18px">
+        <img src="../images/flags/united-states.png" style="height: 18px; width: 18px" alt="US" />
         <a class="learn-more" href="https://www.ng-conf.org" target="_blank"> ng-Conf</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Postponed</p>
 
-        <img src="../images/flags/no.png" style="height: 13px; width: 18px">
+        <img src="../images/flags/no.png" style="height: 13px; width: 18px" alt="Norway" />
         <a class="learn-more" href="https://ngvikings.org" target="_blank"> ngVikings</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Postponed</p>
 
-        <img src="../images/flags/united-kingdom.png">
+        <img src="../images/flags/united-kingdom.png" alt="UK" />
         <a class="learn-more" href="https://angularconnect.com" target="_blank"> Angular Connect</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Oct 13-14</p>
 
         <p></p>
 
         <h6 class="card-subtitle mb-2 text-muted">React</h6>
-        <img src="../images/flags/netherlands.png" style="height: 18px; width: 18px">
+        <img src="../images/flags/netherlands.png" style="height: 18px; width: 18px" alt="Netherlands" />
         <a class="learn-more" href="https://reactsummit.com" target="_blank"> React Summit</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">11th September</p>
 
-        <img src="../images/flags/united-kingdom.png" style="height: 18px; width: 18px">
+        <img src="../images/flags/united-kingdom.png" style="height: 18px; width: 18px" alt="UK" />
         <a class="learn-more" href="https://reactadvanced.com" target="_blank"> React Advanced</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Oct 25</p>
 
@@ -124,7 +124,7 @@
 
         <h6 class="card-subtitle mb-2 text-muted">JavaScript</h6>
 
-        <img src="../images/flags/united-kingdom.png">
+        <img src="../images/flags/united-kingdom.png" alt="UK" />
         <a class="learn-more" href="https://halfstackconf.com/online/" target="_blank"> Half Stack Online</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">May 22</p>
 
@@ -199,12 +199,10 @@
     <div class="card">
         <div class="card-body">
             <p>Work at ag-Grid:</p>
-            <h5 class="card-title"><a
-                        href="../ag-grid-jobs-board/">JavaScript Developers</a></h5>
+            <h5 class="card-title"><a href="../ag-grid-jobs-board/">JavaScript Developers</a></h5>
             <h6 class="card-subtitle mb-2 text-muted">London, United Kingdom</h6>
             <p class="card-text">
-                Would you like to join the ag-Grid team in London<br>
-                <br>
+                Would you like to join the ag-Grid team in London<br /><br />
                 Check the <a href="../ag-grid-jobs-board/">jobs board</a>
             </p>
         </div>

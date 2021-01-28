@@ -5,7 +5,6 @@ enterprise: true
 
 Chart themes can be used to customise the look and feel of your charts to match your application.
 
-
 ag-Charts support [Chart Themes](../charts-themes/) to change how charts are styled. There are a number of chart themes provided out of the box by the grid. You can also provide your own custom chart theme to the grid to customise the colours of charts along with other styling options. Alternatively, you can just provide overrides to tweak the provided chart themes in the way you want.
 
 ## Provided Themes
@@ -14,17 +13,15 @@ There are five chart themes that are provided by the grid: `'ag-default'`, `'ag-
 
 When you create a chart, you can scroll through the different available themes in the chart settings.
 
-<gif src="theme-picker.gif"></gif>
+<gif src="theme-picker.gif" alt="Theme Picker"></gif>
 
 You can change which themes are available by setting the `chartThemes` property in `gridOptions`. The example below shows a different selection of themes configured in this way.
-
 
 <grid-example title='Configure Available Themes' name='available-themes' type='generated' options='{ "exampleHeight": 690, "enterprise": true }'></grid-example>
 
 ## Custom Chart Themes
 
 You can create your own chart theme and provide it to the grid in the `customChartThemes` map on `gridOptions`. Your theme should then be specified in `chartThemes` to make it available to your users.
-
 
 ```js
 gridOptions: {
