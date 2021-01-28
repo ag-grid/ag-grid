@@ -87,7 +87,6 @@ interface IColumnToolPanel {
 }
 ```
 
-
 The example below demonstrates the suppress options / methods described above. Note the following:
 
 - The following sections are not present in the tool panel: Row Groups, Values, Column Labels, Pivot Mode, Side Buttons, Column Filter, Select / Un-select All, Expand / Collapse All.
@@ -103,24 +102,25 @@ The example below demonstrates the suppress options / methods described above. N
 
 You can add a CSS class to the columns in the tool panel by specifying `toolPanelHeaderClass` in the column definition as follows:
 
-```js
-colDefs = {
-    // set as string
-    { headerName: 'Gold', field: 'gold', toolPanelClass: 'tp-gold' },
-
-    // set as array of strings
-    { headerName: 'Silver', field: 'silver', toolPanelClass: ['tp-silver'] },
-
-    // set as function returning string or array of strings
-    {
-        headerName: 'Bronze',
-        field: 'bronze',
-        toolPanelClass: function(params) {
-            return 'tp-bronze';
-        },
-    }
-}
-```
+<snippet spaceBetweenProperties="true">
+|const gridOptions = {
+|    columnDefs: [
+|        // set as string
+|        { field: 'gold', toolPanelClass: 'tp-gold' },
+|    
+|        // set as array of strings
+|        { field: 'silver', toolPanelClass: ['tp-silver'] },
+|    
+|        // set as function returning string or array of strings
+|        {              
+|            field: 'bronze',
+|            toolPanelClass: params => {
+|                return 'tp-bronze';
+|            },
+|        }
+|    ]
+|}
+</snippet>
 
 ## Column Tool Panel Example
 
@@ -153,23 +153,22 @@ interface IColumnToolPanel {
 
 The code snippet below shows how to expand and collapse column groups using the Columns Tool Panel instance:
 
-```js
-// lookup Columns Tool Panel instance by id
-var columnsToolPanelId = 'columns'; // default columns instance id
-var columnsToolPanel = gridOptions.api.getToolPanelInstance(columnsToolPanelId);
-
-// expands all column groups in the Columns Tool Panel
-columnsToolPanel.expandColumnGroups();
-
-// collapses all column groups in the Columns Tool Panel
-columnsToolPanel.collapseColumnGroups();
-
-// expands the 'Athlete' and 'Competition' column groups in the Columns Tool Panel
-columnsToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
-
-// collapses the 'Competition' column group in the Columns Tool Panel
-columnsToolPanel.collapseFilters(['age', 'sport']);
-```
+<snippet>
+|// lookup Columns Tool Panel instance by id, in this case using the default columns instance id
+|const columnsToolPanel = gridOptions.api.getToolPanelInstance('columns');
+|
+|// expands all column groups in the Columns Tool Panel
+|columnsToolPanel.expandColumnGroups();
+|
+|// collapses all column groups in the Columns Tool Panel
+|columnsToolPanel.collapseColumnGroups();
+|
+|// expands the 'Athlete' and 'Competition' column groups in the Columns Tool Panel
+|columnsToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
+|
+|// collapses the 'Competition' column group in the Columns Tool Panel
+|columnsToolPanel.collapseFilters(['age', 'sport']);
+</snippet>
 
 Notice in the snippet above that it's possible to target individual column groups by supplying `groupId`s.
 
@@ -196,34 +195,34 @@ interface IColumnToolPanel {
 
 Notice that the same [Column Definitions](../column-definitions/) that are supplied in the grid options are also passed to `setColumnLayout(colDefs)`.
 
-The code snippet below shows how to set custom column layouts using the Columns Tool Panel instance:
+The code snippets below show how to set custom column layouts using the Columns Tool Panel instance:
 
-```js
-// original column definitions supplied to the grid
-gridOptions.columnDefs = [
-    { field: 'a' },
-    { field: 'b' },
-    { field: 'c' }
-];
+<snippet>
+const gridOptions = {
+    // original column definitions supplied to the grid
+    columnDefs: [
+        { field: 'a' },
+        { field: 'b' },
+        { field: 'c' }
+    ]
+}
+</snippet>
 
-// custom tool panel column definitions
-var customToolPanelColumnDefs = [
-    {
-        headerName: 'Group 1', // group doesn't appear in grid
-        children: [
-            { field: 'c' }, // custom column order with column "b" omitted
-            { field: 'a' }
-        ]
-    }
-];
-
-// lookup Columns Tool Panel instance by id
-var columnsToolPanelId = 'columns'; // default columns instance id
-var columnsToolPanel = gridOptions.api.getToolPanelInstance(columnsToolPanelId);
-
-// set custom Columns Tool Panel layout
-columnsToolPanel.setColumnLayout(customToolPanelColumnDefs);
-```
+<snippet>
+|// lookup Columns Tool Panel instance by id, in this case using the default columns instance id 
+|const columnsToolPanel = gridOptions.api.getToolPanelInstance('columns');
+|
+|// set custom Columns Tool Panel layout
+|columnsToolPanel.setColumnLayout([
+|    {
+|        headerName: 'Group 1', // group doesn't appear in grid
+|        children: [
+|            { field: 'c' }, // custom column order with column "b" omitted
+|            { field: 'a' }
+|        ]
+|    }
+|]);
+</snippet>
 
 Notice from the snippet above that it's possible to define column groups in the tool panel that don't exist in the grid. Also note that columns can be omitted or positioned in a different order but all referenced columns must already exist in the grid.
 

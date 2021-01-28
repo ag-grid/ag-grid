@@ -21,10 +21,12 @@ Users can change the contents of cells through the following grid features:
 
 The following undo / redo properties are provided in the grid options interface:
 
-```js
-undoRedoCellEditing: true
-undoRedoCellEditingLimit: 20 // default is 10
-```
+<snippet>
+const gridOptions = {
+    undoRedoCellEditing: true,
+    undoRedoCellEditingLimit: 20 
+}
+</snippet>
 
 As shown in the snippet above, undo / redo is enabled through the `undoRedoCellEditing` property.
 
@@ -45,41 +47,46 @@ Note that the grid needs focus for these shortcuts to have an effect.
 
 It is also possible to programmatically control undo / redo and check the number of currently available undo / redo actions. These API methods are listed below:
 
-```js
-// perform undo / redo
-gridApi.undoCellEditing();
-gridApi.redoCellEditing();
-
-// obtain current number of available undo / redo actions
-gridApi.getCurrentUndoSize();
-gridApi.getCurrentRedoSize();
-```
+<snippet>
+|// perform undo
+|gridOptions.api.undoCellEditing();
+|
+|// perform redo
+|gridOptions.api.redoCellEditing();
+|
+|// obtain current number of available undo
+|gridOptions.api.getCurrentUndoSize();
+|
+|// obtain current number of available redo actions
+|gridOptions.api.getCurrentRedoSize();
+</snippet>
 
 ## Example: Undo / Redo
 
 The example below has the following grid options enabled to demonstrate undo / redo:
 
-```js
-defaultColDef: {
-    // makes all cells editable
-    editable: true
-},
-
-// allows copy / paste using cell ranges
-enableRangeSelection: true,
-
-// enables the fill handle
-enableFillHandle: true,
-
-// enables undo / redo
-undoRedoCellEditing: true,
-
-// restricts the number of undo / redo steps to 5
-undoRedoCellEditingLimit: 5,
-
-// enables flashing to help see cell changes
-enableCellChangeFlash: true,
-```
+<snippet spaceBetweenProperties="true">
+|const gridOptions = {
+|    defaultColDef: {
+|        // makes all cells editable
+|        editable: true
+|    }, 
+|    // allows copy / paste using cell ranges
+|    enableRangeSelection: true,
+|    
+|    // enables the fill handle
+|    enableFillHandle: true,
+|    
+|    // enables undo / redo
+|    undoRedoCellEditing: true,
+|    
+|    // restricts the number of undo / redo steps to 5
+|    undoRedoCellEditingLimit: 5,
+|    
+|    // enables flashing to help see cell changes
+|    enableCellChangeFlash: true,
+|}
+</snippet>
 
 To see undo / redo in action, try the following:
 

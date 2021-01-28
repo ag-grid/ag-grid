@@ -13,16 +13,17 @@ The grid manages showing and hiding of the overlays for you, so you may not ever
 
 At any point, you can show or hide any of the overlays using the methods below. You may never use these methods, as the grid manages the overlays for you. However you may find some edge cases where you need complete control (such as showing 'loading' if an option outside the grid is changed).
 
-```js
-// show 'loading' overlay
-gridOptions.api.showLoadingOverlay()
+<snippet>
+|// show 'loading' overlay
+|gridOptions.api.showLoadingOverlay();
+|
+|// show 'no rows' overlay
+|gridOptions.api.showNoRowsOverlay();
+|
+|// clear all overlays
+|gridOptions.api.hideOverlay();
+</snippet>
 
-// show 'no rows' overlay
-gridOptions.api.showNoRowsOverlay()
-
-// clear all overlays
-gridOptions.api.hideOverlay()
-```
 The overlays are mutually exclusive, you cannot show more than one overlay at any given time.
 
 ## Custom Templates

@@ -98,22 +98,20 @@ The borderBottom, borderLeft, borderTop, borderRight properties are objects comp
 
 ## Excel Style Definition Example
 
-```js
-var columnDef = {
-    ...,
-    // The same cellClassRules and cellClass can be used for CSS and Excel
-    cellClassRules: {
-        greenBackground: function(params) { return params.value > 23; }
-    },
-    cellClass: 'redFont'
-};
+The example below demonstrates how to merge the styles in Excel. Everyone less than 23 will have a green background, and
+a light green color font (#e0ffc1) also because redFont is set in cellClass, it will always be applied
 
-// In this example we can see how we merge the styles in Excel.
-// Everyone less than 23 will have a green background, and a light green color font (#e0ffc1)
-// also because redFont is set in cellClass, it will always be applied
-
-var gridOptions = {
-    ...,
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            // The same cellClassRules and cellClass can be used for CSS and Excel
+            cellClassRules: {
+                greenBackground: params => params.value > 23,
+            },
+            cellClass: 'redFont'
+        }
+    ],
     excelStyles: [
         // The base style, red font.
         {
@@ -150,8 +148,8 @@ var gridOptions = {
             }
         }
     ]
-};
-```
+}
+</snippet>
 
 ## Resolving Excel Styles
 

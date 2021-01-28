@@ -10,38 +10,69 @@ You can pick from the grid's built in aggregation functions or provide your own.
 
 You can define aggregations on columns in the following three ways:
 
-1. **Built-In Functions:** Out of the box the grid provides `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. To use one of these, set `colDef.aggFunc` to the string of the function you require.
+1. **Built-In Functions:** Out of the box the grid provides `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. To use
+   one of these, set `colDef.aggFunc` to the string of the function you require.
 
     [[note]]
     | The built-in functions will support `bigint` values if you have them in your data, but the `avg` 
     | function will lose precision as it can only use integer arithmetic if `bigint` is used.
 
 1. **User Registered Functions:** You can install your own aggregation functions into the
-grid and reference them as if they were grid provided functions by calling `api.addAggFunc(key, func)`.
+grid and reference them as if they were grid provided functions by calling `api.addAggFunc(key, func)` or by declaring 
+them using the grid option `aggFuncs` property. 
 
 1. **Direct Functions:** Lastly you can provide a function directly by setting `colDef.aggFunc` to your custom function. Direct functions do not appear in the toolPanel when selecting functions for your columns.
 
 
-Aggregation functions are provided with an array of values that it should aggregate into one value that it then returns. The following code snippet shows defining aggregations for columns in each of the three ways explained above.
+Aggregation functions are provided with an array of values that it should aggregate into one value that it then returns.
+The following code snippets show the three ways of defining aggregations for columns as explained above.
 
-```js
-// Option 1: column that uses the built in 'sum' function
-colDef1.aggFunc = 'sum';
+Option 1 - use the built-in 'sum' function:
 
-// Option 2: register aggFunc to grid called 'abc', then reference by name
-gridOptions.api.addAggFunc('abc', myCustomAggFunc);
-colDef2.aggFunc = 'abc';
-
-// Option 3: column uses a function directly
-colDef3.aggFunc = myCustomAggFunc;
-
-// this is the function 2 and 3 above are using
-function myCustomAggFunc(values) {
-    var sum = 0;
-    values.forEach( function(value) {sum += value;} );
-    return sum;
+<snippet>
+const gridOptions = {
+    columnDefs: [ 
+        { field: 'sales', aggFunc: 'sum' },
+    ]
 }
-```
+</snippet>
+
+Option 2 - register aggFunc with the grid called 'mySum', then reference by name:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [ 
+        { field: 'sales', aggFunc: 'mySum' },
+    ],
+    aggFuncs: {
+        // this overrides the grids built-in sum function
+        'mySum': params => {
+            let sum = 0;
+            values.forEach(value => sum += value);
+            return sum;
+        }
+    },
+}
+</snippet>
+
+Note that custom aggregation functions can also be registered using `gridApi.addAggFunc('mySum', mySumFunc)`.
+
+Option 3 - column uses a function directly:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [ 
+        { 
+            field: 'sales', 
+            aggFunc: params => {
+                let sum = 0;
+                values.forEach(value => sum += value);
+                return sum;
+            } 
+        },
+    ]
+}
+</snippet>
 
 [[note]]
 | Using a function directly will not work with column state, like
@@ -50,27 +81,25 @@ function myCustomAggFunc(values) {
 
 ## Restricting Functions
 
-
 By default, all functions are available to all value columns. To restrict the functions on a column, use the `allowedAggFuncs` column property.
 
-```js
-// define Gold column
-colDef = {
-    headerName: 'Gold',
-    field: 'gold',
-    // allow gui to set aggregations for this column
-    enableValue: true,
-    // restrict aggregations to sum, min and max
-    allowedAggFuncs: ['sum', 'min', 'max']
-    ...
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'gold',
+            // allow gui to set aggregations for this column
+            enableValue: true,
+            // restrict aggregations to sum, min and max
+            allowedAggFuncs: ['sum', 'min', 'max'], 
+        }
+    ]
 }
-```
+</snippet>
 
 ## Example 1 - Built In Functions
 
-
 The example below shows simple aggregation using the built in functions. The following should be noted:
-
 
 - In order for aggregations to be used, a group column is specified. The example groups by country by setting `rowGroup=true` for the country column.
 
@@ -89,39 +118,45 @@ The example below shows simple aggregation using the built in functions. The fol
 ## Custom Aggregation Functions
 
 
-It is possible to add your own custom aggregation to the grid. Custom aggregation functions can be applied directly to the column or registered to the grid and reference by name (similar to grid provided functions).
+It is possible to add your own custom aggregation to the grid. Custom aggregation functions can be applied directly to 
+the column or registered to the grid and reference by name (similar to grid provided functions).
 
 A custom aggregation function takes values to aggregate and aggregates them.
 
+Option 1 - reference the function directly with a column
 
-```js
-// custom simple aggregation, complete 'sum' of values
-function mySum(params) {
-    var result = 0;
-    params.values.forEach( function(value) {
-        if (typeof value === 'number') {
-            result += value;
-        }
-    });
-    return result;
+<snippet>
+const gridOptions = {
+    columnDefs: [ 
+        { 
+            field: 'sales', 
+            aggFunc: params => {
+                let sum = 0;
+                values.forEach(value => sum += value);
+                return sum;
+            }  
+        },
+    ]
 }
+</snippet>
 
-// Option 1 - reference the function directly with a column
-var columnA = {
-    field: 'a',
-    aggFunc: mySum
-};
+Option 2 - register the function with the grid property aggFuncs
 
-// Option 2 - register the function with the grid property aggFuncs
-gridOptions.aggFuncs: {
-    mySumFunc: mySum
-};
-
-var columnB = {
-    field: 'a',
-    aggFunc: 'mySumFunc'
-};
-```
+<snippet>
+const gridOptions = {
+    columnDefs: [ 
+        { field: 'sales', aggFunc: 'mySum' },
+    ],
+    aggFuncs: {
+        // this overrides the grids built-in sum function
+        'mySum': params => {
+            let sum = 0;
+            values.forEach(value => sum += value);
+            return sum;
+        }
+    },
+}
+</snippet>
 
 The interface for the aggregation function is as follows:
 
@@ -180,45 +215,45 @@ The next example shows a ratio calculation to demonstrate how to create an `aggF
 
 When values from multiple columns are required, a value object containing all the required values across multiple columns should be passed around instead of a simple value. This value object should also contain a `toString()` method so it can also be resolved by the grid to a single value. This is shown in the code snippet below:
 
-```js
-var columnDefs = [
-    { field: 'gold', aggFunc: 'sum' },
-    { field: 'silver', aggFunc: 'sum' },
-    { headerName: 'Ratio', colId: 'ratio', valueGetter: ratioValueGetter, aggFunc: ratioAggFunc }
-];
 
-function ratioValueGetter(params) {
-    if (!params.node.group) {
-        // no need to handle group levels - calculated in the 'ratioAggFunc'
-        return createValueObject(params.data.gold, params.data.silver);
-    }
-}
-
-function ratioAggFunc(values) {
-    var goldSum = 0;
-    var silverSum = 0;
-
-    values.forEach(function(value) {
-        if (value && value.gold) {
-            goldSum += value.gold;
-        }
-        if (value && value.silver) {
-            silverSum += value.silver;
-        }
-    });
-    return createValueObject(goldSum, silverSum);
-}
-
-function createValueObject(gold, silver) {
-    return {
-        gold: gold,
-        silver: silver,
-        toString: function() {
-            return (gold && silver) ? gold / silver : 0;
-        }
-    }
-}
-```
+<snippet spaceBetweenProperties="true">
+|const gridOptions = {
+|    columnDefs: [
+|        { field: 'gold', aggFunc: 'sum' },
+|        { field: 'silver', aggFunc: 'sum' },
+|        { 
+|            headerName: 'Ratio', 
+|            colId: 'ratio', 
+|            valueGetter: params => {
+|                if (!params.node.group) {
+|                    // no need to handle group levels - calculated in the 'ratioAggFunc'
+|                    return {
+|                        gold: params.data.gold,
+|                        silver: params.data.silver,
+|                        toString: () => (gold && silver) ? gold / silver : 0,
+|                    }
+|                }
+|            }, 
+|            aggFunc: values => {
+|                let goldSum = 0, silverSum = 0;
+|                values.forEach(value => {
+|                    if (value && value.gold) {
+|                        goldSum += value.gold;
+|                    }
+|                    if (value && value.silver) {
+|                        silverSum += value.silver;
+|                    }
+|                });
+|                return {
+|                     gold: params.data.gold,
+|                     silver: params.data.silver,
+|                     toString: () => (gold && silver) ? gold / silver : 0,
+|                 }
+|            } 
+|        }
+|    ]
+|}
+</snippet>
 
 The following example demonstrates this approach in action:
 
@@ -267,13 +302,17 @@ Using `colDef.aggFunc` is the preferred way of doing aggregations. However you m
 
 For groups, when aggregating, the grid stores the results in the colId of the column. For example, if you have a group defined as follows:
 
-```js
-colDef = {
-    field: 'abby',
-    valueGetter: 'data.a + data.b',
-    colId: 'aaa'
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'abby',
+            valueGetter: 'data.a + data.b',
+            colId: 'aaa'
+        }
+    ]
 }
-```
+</snippet>
 
 Then the result of the aggregation will be stored in `data.aaa` and not in 'abby'. Most of the time this will not matter for you as the colId, if not provided, will default to the field. In order for the grid to display the aggregation result, it must be stored in the correct field name.
 

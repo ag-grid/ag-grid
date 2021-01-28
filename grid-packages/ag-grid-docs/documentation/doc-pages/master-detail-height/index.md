@@ -23,10 +23,12 @@ To change the height of the details section from the default you have the follow
 
 Use the grid property `detailRowHeight` to set a fixed height for each detail row.
 
-```js
-// statically fix row height for all detail grids
-masterGridOptions.detailRowHeight = 200;
-```
+<snippet>
+const gridOptions = {
+    // statically fix row height for all detail grids
+    detailRowHeight: 200,
+}
+</snippet>
 
 The following example sets a fixed row height for all detail rows.
 
@@ -36,10 +38,12 @@ The following example sets a fixed row height for all detail rows.
 
 Set grid property `detailRowAutoHeight=true` to have the detail grid to dynamically change it's height to fit it's rows.
 
-```js
-// statically fix row height for all detail grids
-masterGridOptions.detailRowAutoHeight = true;
-```
+<snippet>
+const gridOptions = {
+    // dynamically set row height for all detail grids
+    detailRowAutoHeight: true,
+}
+</snippet>
 
 <grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 600, "modules": ["clientside", "masterdetail"] }'></grid-example>
 
@@ -59,19 +63,21 @@ Use the callback `getRowHeight()` to set height for each row individually. This 
 
 Note that this callback gets called for **all rows** in the Master Grid, not just rows containing Detail Grids. If you do not want to set row heights explicitly for other rows simply return `undefined / null` and the grid will ignore the result for that particular row.
 
-```js
-// dynamically assigning detail row height
-masterGridOptions.getRowHeight = function (params) {
-    var isDetailRow = params.node.detail;
-
-    // for all rows that are not detail rows, return nothing
-    if (!isDetailRow) { return undefined; }
-
-    // otherwise return height based on number of rows in detail grid
-    var detailPanelHeight = params.data.children.length * 50;
-    return detailPanelHeight;
-}
-```
+<snippet>
+|const gridOptions = {
+|    // dynamically assigning detail row height
+|    getRowHeight: params => {
+|        const isDetailRow = params.node.detail;
+|    
+|        // for all rows that are not detail rows, return nothing
+|        if (!isDetailRow) { return undefined; }
+|    
+|        // otherwise return height based on number of rows in detail grid
+|        const detailPanelHeight = params.data.children.length * 50;
+|        return detailPanelHeight;
+|    }
+|}
+</snippet>
 
 The following example demonstrates dynamic detail row heights:
 

@@ -11,14 +11,15 @@ This section introduces simple ways to work with Tree Data before covering more 
 
 In order to set the grid to work with Tree Data, simply enable Tree Data mode via the Grid Options using:
 
-```js
-treeData = true
-```
+<snippet>
+const gridOptions = {
+    treeData: true
+}
+</snippet>
 
 ## Supplying Tree Data
 
 When providing tree data to the grid you implement the `gridOptions.getDataPath(data)` callback to tell the grid the hierarchy for each row. The callback returns back a `string[]` with each element specifying a level of the tree. Below follows two examples presenting the hierarchy in different ways.
-
 
 ```js
 // sample hierarchy, Malcolm is child or Erica
@@ -28,26 +29,26 @@ When providing tree data to the grid you implement the `gridOptions.getDataPath(
 // ############
 // Example #1 - hierarchy in the data is already a string array
 // ############
-var rowData = [
+const rowData = [
     { orgHierarchy: ['Erica'], jobTitle: "CEO", employmentType: "Permanent" },
     { orgHierarchy: ['Erica', 'Malcolm'], jobTitle: "VP", employmentType: "Permanent" }
     ...
 ]
 // just return the hierarchy, no conversion required
-getDataPath: function(data) {
+getDataPath: data => {
     return data.orgHierarchy;
 }
 
 // ############
 // Example #2 - hierarchy is a path string, needs conversion
 // ############
-var rowData = [
+const rowData = [
     { path: "Erica", jobTitle: "CEO", employmentType: "Permanent" },
     { path: "Erica/Malcolm", jobTitle: "VP", employmentType: "Permanent" }
     ...
 ]
 // callback converts eg "Erica/Malcolm" to ["Erica","Malcolm"]
-getDataPath: function(data) {
+getDataPath: data => {
     return data.path.split('/'); // path: "Erica/Malcolm"
 }
 ```
@@ -65,15 +66,17 @@ There are two ways to configure the Group Column:
 
 When the grid is working with Tree Data there is no need to explicitly specify a Column Group as the grid will use the  [Auto Column Group](../grouping/#auto-column-group). However you will probably want to override some of the defaults as shown below:
 
-```js
-autoGroupColumnDef: {
-    headerName: "My Group",
-    width: 300,
-    cellRendererParams: {
-        suppressCount: true
+<snippet>
+const gridOptions = {
+    autoGroupColumnDef: {
+        headerName: "My Group",
+        width: 300,
+        cellRendererParams: {
+            suppressCount: true
+        }
     }
 }
-```
+</snippet>
 
 ### Custom Column Group
 
@@ -100,7 +103,7 @@ It is not necessary to include entries for each level in the path if data is not
 
 ```js
 // all path levels provided
-var rowData = [
+const rowData = [
     { filePath: ['Documents'] },
     { filePath: ['Documents', 'txt'] },
     { filePath: ['Documents', 'txt', 'notes.txt'], dateModified: "21 May 2017, 13:50", size: "14 KB" }
@@ -108,7 +111,7 @@ var rowData = [
 ]
 
 // only leaf level provided
-var rowData = [
+const rowData = [
     { filePath: ['Documents', 'txt', 'notes.txt'], dateModified: "21 May 2017, 13:50", size: "14 KB" }
     ...
 ]
@@ -147,9 +150,12 @@ As Tree Data has parent / child relationships, by default all child nodes will b
 
 To override this behaviour to use regular filtering instead, enable the following Grid Options property:
 
-```js
-excludeChildrenWhenTreeDataFiltering = true
-```
+<snippet>
+const gridOptions = {
+    excludeChildrenWhenTreeDataFiltering: true, 
+}
+</snippet>
+
 Also note the [Set Filter](../filter-set/) will contain a list of all unique values across each level of the group hierarchy. The [File Browser](#example-file-browser) example below demonstrates how the Set Filter works with Tree Data.
 
 ## Example: File Browser
@@ -186,20 +192,19 @@ If you want to achieve something similar to `groupSelectsChildren` then you shou
 
 Click selection is supported with tree data. However when you are displaying tree data, clicking rows for selection is confusing as mouse clicks are also used for expanding / contracting rows. For this reason we recommend not using click selecting and preferring checkbox selection instead.
 
-```js
-var gridOptions = {
-    // don't have click select rows
-    suppressRowClickSelection: true,
-
-    // have checkbox on the group column
-    autoGroupColumnDef: {
-        cellRendererParams: {
-            checkbox: true,
-        }
-    }
-    ...
-}
-```
+<snippet spaceBetweenProperties="true">
+|const gridOptions = {
+|    // don't have click select rows
+|    suppressRowClickSelection: true,
+|
+|    // have checkbox on the group column
+|    autoGroupColumnDef: {
+|        cellRendererParams: {
+|            checkbox: true,
+|        }
+|    }
+|}
+</snippet>
 
 ### Group Selection
 

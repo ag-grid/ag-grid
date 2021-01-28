@@ -11,14 +11,16 @@ enterprise: true
 
 <video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=5s" time="00:05"></video-link>
 
-To group rows by a particular column, mark the column you want to group with `rowGroup=true`. There is no limit on the number of columns that the grid can group by. For example, the following will group the rows in the grid by country and then sport:
+To group rows by a particular column, mark the column you want to group with `rowGroup=true`. There is no limit on the number of columns that the grid can group by. For example, the following will group the rows in the grid by `country` and then `sport`:
 
-```js
-gridOptions.columnDefs = [
-    { field: "country", rowGroup: true },
-    { field: "sport", rowGroup: true },
-];
-```
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        { field: "country", rowGroup: true },
+        { field: "sport", rowGroup: true },
+    ]
+}
+</snippet>
 
 [[note]]
 | To allow a column to be grouped when using the [Tool Panel](../tool-panel/)
@@ -112,25 +114,30 @@ You can also configure the look &amp; feel of the expand/contract buttons by [sp
 
 By default, if you are using a column to display more than one group, the grid will order the groups based in the order in which you provide the columns. The following code snipped will group by country first, then sport second.
 
-```js
-columnDefs = [
-    // country listed first, gets grouped first
-    { headerName: "Country", field: "country", rowGroup: true },
-    // sport listed second, gets grouped second
-    { headerName: "Sport", field: "sport", rowGroup: true },
-];
-```
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // country listed first, gets grouped first
+        { headerName: "Country", field: "country", rowGroup: true },
+        // sport listed second, gets grouped second
+        { headerName: "Sport", field: "sport", rowGroup: true },
+    ]
+}
+</snippet>
 
 To explicitly set the order of the grouping and not depend on the column order, use `rowGroupIndex` instead of `rowGroup` as follows:
 
-```js
-columnDefs = [
-    // index = 1, gets grouped second
-    { headerName: "Country", field: "country", rowGroupIndex: 1 },
-    // index = 0, gets grouped first
-    { headerName: "Sport", field: "sport", rowGroupIndex: 0 },
-];
-```
+<snippet suppressFrameworkContext="true">
+const gridOptions = {
+    columnDefs: [
+        // index = 1, gets grouped second
+        { headerName: "Country", field: "country", rowGroupIndex: 1 },
+        // index = 0, gets grouped first
+        { headerName: "Sport", field: "sport", rowGroupIndex: 0 },
+    ]
+}
+</snippet>
 
 The grid will order sort the columns based on the `rowGroupIndex`. The values can be any numbers that are sortable, they do NOT need to start at zero (or one) and the sequence can have gaps.
 
@@ -210,18 +217,21 @@ When using Full Width Group Rows, it is possible to change the rendering of the 
 
 If using Full Width Group Rows and no `groupRowRenderer` properties are provided, then the default [Group Cell Renderer](../group-cell-renderer/) is used with it's default values.
 
-```js
-// tell the grid to group by row, the grid defaults to using
-// the default group cell renderer for the row with default settings.
-gridOptions.groupUseEntireRow = true;
-```
 
-```js
-// this is identical to the above. it tells the grid to use "agGroupCellRenderer"
-// which is the default, so doesn't change anything.
-gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer = 'agGroupCellRenderer';
-```
+<snippet>
+const gridOptions = {
+    // groups by row - the grid defaults to using the default group cell renderer for the row with default settings.
+    groupUseEntireRow: true,
+}
+</snippet>
+
+<snippet>
+const gridOptions = {
+    // identical to above - uses 'agGroupCellRenderer' which is the default, so doesn't change anything.
+    groupUseEntireRow: true,
+    groupRowRenderer: 'agGroupCellRenderer',
+}
+</snippet>
 
 ### Providing Cell Renderer
 
@@ -230,28 +240,32 @@ To provide your own Cell Renderer, use the grid properties `groupRowRenderer`, `
 Using your own Cell Renderer hands over rendering of the full row to your custom Cell Renderer. However that also means the customer Cell Renderer will also need
 to provide expand / collapse functionality.
 
-```js
-// configure Full Width rows with a customer Cell Renderer
-gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer = 'myCellRenderer';
-gridOptions.groupRowRendererParams = {
-    someProp: 'someValue'
-};
-```
+<snippet>
+const gridOptions = {
+    // configures Full Width rows with a customer Cell Renderer
+    groupUseEntireRow: true,
+    groupRowRenderer: 'myCellRenderer',
+    groupRowRendererParams: {
+        someProp: 'someValue',
+    },
+}
+</snippet>
 
 ### Configuring Group Cell Renderer
 
 Configure the default Group Cell Renderer using `groupRowRendererParams`. Full details on what to configure are provided in the page
 [Group Cell Renderer](../group-cell-renderer/).
 
-```js
-// use Full Width group rows and configure the Group Cell Renderer
-gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRendererParams = {
-    checkbox: true // puts a checkbox onto each group row
-};
-```
-
+<snippet>
+const gridOptions = {
+    // use Full Width group rows and configure the Group Cell Renderer
+    groupUseEntireRow: true,
+    groupRowRendererParams: {
+        // puts a checkbox onto each group row
+        checkbox: true, 
+    },
+}
+</snippet>
 
 Below shows an example of aggregating with full width rows for groups. It also provides an `innerRenderer` to configure what gets displaying inside the row groups, however it keeps the Default Group Cell Renderer for it's expand / collapse functionality. The following can be noted:
 
@@ -308,13 +322,13 @@ If you do not want rows with null or undefined to be left out of groups, but wan
 
 To expand or contract a group via the API, you first must get a reference to the rowNode and then call `rowNode.setExpanded(boolean)`. This will result in the grid getting updated and displaying the correct rows. For example, to expand a group with the name 'Zimbabwe' would be done as follows:
 
-```js
-gridOptions.api.forEachNode(function(node) {
+<snippet>
+gridOptions.api.forEachNode(node => {
     if (node.key === 'Zimbabwe') {
         node.setExpanded(true);
     }
 });
-```
+</snippet>
 
 Calling `node.setExpanded()` causes the grid to get redrawn. If you have many nodes you want to expand, then it is best to set node.expanded=true directly, and then call `api.onGroupExpandedOrCollapsed()` when finished to get the grid to redraw the grid again just once.
 
@@ -336,17 +350,21 @@ rowItem = {
     }
     ....
 }
-
-// the column definition for country has keyCreator
-colDef = {
-    headerName: "Country",
-    field: "country",
-    keyCreator: function(params) {
-        return params.value.name;
-    }
-    ...
-}
 ```
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+      // the column definition for country uses a keyCreator
+      {
+          field: "country",
+          keyCreator: params => {
+              return params.value.name;
+          }
+      }
+    ]
+}
+</snippet>
 
 <grid-example title='Grouping Complex Objects with Keys' name='grouping-complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
@@ -357,21 +375,32 @@ colDef = {
 If you want to include a footer with each group, set the property `groupIncludeFooter` to true. The footer is displayed as the last line of the group when the group is expanded - it is not displayed when the group is collapsed.
 
 
-The footer by default will display the word 'Total' followed by the group key. If this is not what you want, then use the `footerValueGetter` option. The following shows two snippets for achieving the same, one using a function, one using an expression.
+The footer by default will display the word 'Total' followed by the group key. If this is not what you want, then use 
+the `footerValueGetter` option. The following shows two ways for achieving the same, one using a function, one 
+using an expression.
 
-```js
-// use a function to return a footer value
-cellRenderer: 'agGroupCellRenderer',
-cellRendererParams: {
-    footerValueGetter: function(params) { return 'Total (' + params.value + ')'; },
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // Option 1: use a function to return a footer value
+        {
+            cellRenderer: 'agGroupCellRenderer',
+            cellRendererParams: {
+                footerValueGetter: params =>  { 
+                    return 'Total (' + params.value + ')'; 
+                },
+            }
+        },
+        // Option 2: use an expression to return a footer value - gives same result
+        {
+            cellRenderer: 'agGroupCellRenderer',
+            cellRendererParams: {
+                footerValueGetter: '"Total (" + x + ")"'
+            }
+        }
+    ]
 }
-
-// use an expression to return a footer value. this gives the same result as above
-cellRenderer: 'agGroupCellRenderer',
-cellRendererParams: {
-    footerValueGetter: '"Total (" + x + ")"'
-}
-```
+</snippet>
 
 When showing the groups in one column, the aggregation data is displayed in the group header when collapsed and only in the footer when expanded (ie it moves from the header to the footer). To have different rendering, provide a custom `groupInnerCellRenderer`, where the renderer can check if it's a header or footer.
 
@@ -449,16 +478,20 @@ If you do specify `coldef.showRowGroup` you are going to also tell this column h
 
 This illustrates how to configure an specific column to show the groups generated by the country column
 
-```js
-coldefs:[
-    // The column we are grouping by, it is also hidden.
-    { headerName: "Country", field: "country", width: 120, rowGroup: true, hide: true },
-    // We appoint this column as the column to show the country groups.
-    // note that we need to provide an appropriate cell renderer.
-    // in this case we are using the out of the box group cell renderer.
-    { headerName: "Country - group", showRowGroup: 'country', width: 120, cellRenderer: 'agGroupCellRenderer' },
-]
-```
+<snippet>
+|const gridOptions = {
+|    columnDefs: [
+|        // The column we are grouping by, it is also hidden.
+|        { field: "country", rowGroup: true, hide: true },
+|        
+|        // We choose this column as the column to show the country groups.
+|        { headerName: "Country - group", showRowGroup: 'country', cellRenderer: 'agGroupCellRenderer' },
+|    ]
+|}
+</snippet>
+
+Note that the group column needs an appropriate cell renderer, in this case the out-of-the-box group cell renderer is used.
+
 The following example shows how to appoint individual columns to show individual groups
 
 <grid-example title='Custom Grouping Many Group Columns' name='custom-grouping-many-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>

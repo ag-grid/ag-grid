@@ -7,17 +7,14 @@ When a Master Row is expanded, the grid uses the default Detail Cell Renderer to
 
 Configure the grid to use a customer Detail Cell Renderer using the grid property `detailCellRenderer`.
 
-```js
-gridOptions = {
-    // normally you leave this blank, means the grid
-    // will use the default Detail Cell Renderer
+<snippet spaceBetweenProperties="true">
+const gridOptions = {
+    // normally left blank, the grid will use the default Detail Cell Renderer
     detailCellRenderer: 'myCellRendererComp',
-
-    // these are the parameters that will get sent to the Detail Cell Renderer,
-    // in this case, to an instance of your MyCellRendererComp
-    detailCellRendererParams: {...},
+    // params sent to the Detail Cell Renderer, in this case your MyCellRendererComp
+    detailCellRendererParams: {},
 }
-```
+</snippet>
 
 The Detail Cell Renderer should be a [Cell Renderer](../component-cell-renderer/) component. See [Cell Renderer](../component-cell-renderer/) on how to build
 and register a Cell Renderer with the grid.
@@ -47,10 +44,10 @@ When the Detail Grid is created, register it via `masterGridApi.addDetailGridInf
 ```js
 //////////////////////////////
 // Register with Master Grid
-var detailId = params.node.id;
+const detailId = params.node.id;
 
 // Create Grid Info object
-var detailGridInfo = {
+const detailGridInfo = {
     id: detailId,
     api: params.api,
     columnApi: params.columnApi

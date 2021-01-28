@@ -9,13 +9,12 @@ Master Rows are the rows inside the Master Grid that can be expanded to display 
 
 Once a Master Grid is configured with `masterDetail=true`, all rows in the Master Grid behave as Master Rows, in that they can be expanded to display Detail Grids.
 
-```js
-gridOptions = {
+<snippet>
+const gridOptions = {
     // by itself, all rows will be expandable
-    masterDetail=true,
-    ...
+    masterDetail: true,
 }
-```
+</snippet>
 
 Because Static Master Rows are used in all the basic examples of Master / Detail, another example is not given here.
 
@@ -25,18 +24,17 @@ Dynamic Master Rows allows specifically deciding what rows in the Master Grid ca
 
 In specify which rows should expand, provide the grid callback `isRowMaster`. The callback will be called once for each row. Return `true` to allow expanding and `false` to disallow expanding for that row.
 
-```js
-gridOptions = {
-    // turn on master detail
-    masterDetail = true,
-
-    // specify which rows to expand
-    isRowMaster = function(dataItem) {
-        return expandThisRow ? true : false;
-    }
-    ...
-}
-```
+<snippet spaceBetweenProperties="true">
+|const gridOptions = {
+|    // turn on master detail
+|    masterDetail: true,
+|
+|    // specify which rows to expand
+|    isRowMaster: dataItem => {
+|        return expandThisRow ? true : false;
+|    }
+|}
+</snippet>
 
 The following example only shows detail rows when there are corresponding child records.
 
@@ -48,10 +46,9 @@ The following example only shows detail rows when there are corresponding child 
 The callback `isRowMaster` is re-called after data changes in the row as a result of a [Transaction Update](../data-update-transactions/). This gives the opportunity to change whether the row is expandable or not.
 
 ```js
-// to get isRowMaster called again, update the row
-// using a Transaction Update
-var transaction = { update: [ updatedRecord1, updatedRecord2 ] };
-gridOptions.api.applyTransaction(transaction);
+// to get isRowMaster called again, update the row using a Transaction Update
+const transaction = { update: [ updatedRecord1, updatedRecord2 ] };
+gridApi.applyTransaction(transaction);
 ```
 
 In the example below, only Master Rows that have data to show are expandable. Note teh following:

@@ -54,28 +54,31 @@ Each panel has the following properties:
 
 The following snippet shows configuring the tool panel using a `SideBarDef` object:
 
-```js
-sideBar = {
-    toolPanels: [
-        {
-            id: 'columns',
-            labelDefault: 'Columns',
-            labelKey: 'columns',
-            iconKey: 'columns',
-            toolPanel: 'agColumnsToolPanel',
-        },
-        {
-            id: 'filters',
-            labelDefault: 'Filters',
-            labelKey: 'filters',
-            iconKey: 'filter',
-            toolPanel: 'agFiltersToolPanel',
-        }
-    ],
-    position: 'left',
-    defaultToolPanel: 'filters'
+
+<snippet>
+const gridOptions = {
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+            },
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+            }
+        ],
+        position: 'left',
+        defaultToolPanel: 'filters'
+    }
 }
-```
+</snippet>
 
 The snippet above is demonstrated in the following example:
 
@@ -85,83 +88,101 @@ The snippet above is demonstrated in the following example:
 
 The `boolean` and `string` configurations are shortcuts for more detailed configurations. When you use a shortcut the grid replaces it with the equivalent long form of the configuration by building the equivalent `SideBarDef`.
 
-The following code snippet shows an example of the `boolean` shortcut and the equivalent `SideBarDef` long form.
+The following code snippets show an example of the `boolean` shortcut and the equivalent `SideBarDef` long form.
 
-```js
-// shortcut
-sideBar = true;
-
-// equivalent detailed long form
-sideBar = {
-    toolPanels: [
-        {
-            id: 'columns',
-            labelDefault: 'Columns',
-            labelKey: 'columns',
-            iconKey: 'columns',
-            toolPanel: 'agColumnsToolPanel',
-        },
-        {
-            id: 'filters',
-            labelDefault: 'Filters',
-            labelKey: 'filters',
-            iconKey: 'filter',
-            toolPanel: 'agFiltersToolPanel',
-        }
-    ],
-    defaultToolPanel: 'columns',
+<snippet>
+const gridOptions = {
+    // shortcut
+    sideBar: true,
 }
-```
+</snippet>
 
-The following code snippet shows an example of the `string` shortcut and the equivalent `SideBarDef` long form.
-
-```js
-// shortcut
-sideBar = 'filters';
-
-// equivalent detailed long form
-sideBar = {
-    toolPanels: [
-        {
-            id: 'filters',
-            labelDefault: 'Filters',
-            labelKey: 'filters',
-            iconKey: 'filter',
-            toolPanel: 'agFiltersToolPanel',
-        }
-    ],
-    defaultToolPanel: 'filters',
+<snippet>
+const gridOptions = {
+    // equivalent detailed long form
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+            },
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+            }
+        ],
+        defaultToolPanel: 'columns',
+    }
 }
-```
+</snippet>
+
+The following code snippets show an example of the `string` shortcut and the equivalent `SideBarDef` long form.
+
+<snippet>
+const gridOptions = {
+    // shortcut
+    sideBar: 'filters',
+}
+</snippet>
+
+<snippet>
+const gridOptions = {
+    // equivalent detailed long form
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+            }
+        ],
+        defaultToolPanel: 'filters',
+    }
+}
+</snippet>
 
 You can also use shortcuts inside the `toolPanel.items` array for specifying the Columns and Filters items.
 
-```js
-// shortcut
-sideBar = {
-    toolPanels: ['columns', 'filters']
-};
-
-// equivalent detailed long form
-sideBar = {
-    toolPanels: [
-        {
-            id: 'columns',
-            labelDefault: 'Columns',
-            labelKey: 'columns',
-            iconKey: 'columns',
-            toolPanel: 'agColumnsToolPanel',
-        },
-        {
-            id: 'filters',
-            labelDefault: 'Filters',
-            labelKey: 'filters',
-            iconKey: 'filter',
-            toolPanel: 'agFiltersToolPanel',
-        }
-    ]
+<snippet>
+const gridOptions = {
+    // shortcut
+    sideBar: {
+        toolPanels: ['columns', 'filters']
+    }
 }
-```
+</snippet>
+
+<snippet>
+const gridOptions = {
+    // equivalent detailed long form
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+            },
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+            }
+        ]
+    }
+}
+</snippet>
 
 ## Side Bar Customisation
 
@@ -173,21 +194,25 @@ If you are using the long form (providing a `SideBarDef` object) then it is poss
 
 Parameters are passed to tool panels via the `componentParams` object. For example, the following code snippet sets `suppressRowGroups: true` and `suppressValues: true` for the [columns tool panel](../tool-panel-columns/).
 
-```js
-sideBar = {
-    toolPanels: [{
-        id: 'columns',
-        labelDefault: 'Columns',
-        labelKey: 'columns',
-        iconKey: 'columns',
-        toolPanel: 'agColumnsToolPanel',
-        toolPanelParams: {
-            suppressRowGroups: true,
-            suppressValues: true,
-        }
-    }]
+<snippet>
+const gridOptions = {
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    suppressRowGroups: true,
+                    suppressValues: true,
+                }
+            }
+        ]
+    }
 }
-```
+</snippet>
 
 This example configures the columns tool panel. See the [columns tool panel](../tool-panel-columns/) documentation for the full list of possible parameters to this tool panel.
 
