@@ -3,67 +3,65 @@
 | VueJS components can be defined as either simple inline components, or as full/complex
 | externalised ones (i.e in a separate file).
 |
-| ### Simple, Inline Components
+| ### "Inline" Components
 |
-| ```js
-| components: {
-| 'CubeComponent': {
-|     template: '<span>{{ valueCubed() }}</span>',
-|     methods: {
-|         valueCubed() {
-|             return this.params.value * this.params.value * this.params.value;
-|         }
-|     }
-| },
-| ParamsComponent: {
-|     template: '<span>Field: {{params.colDef.field}}, Value: {{params.value}}</span>',
-|     methods: {
-|         valueCubed() {
-|             return this.params.value * this.params.value * this.params.value;
-|         }
-|     }
-| }
-| ```
+|```js
+|export default {
+|   data() {
+|       return {
+|           ...data 
+|       }
+|   },
+|   components: {
+|       AgGridVue,              // the actual AgGridVue Grid component
+|       CubeComponent: {        // an inline custom component
+|           template: '<span>{{ valueCubed() }}</span>',
+|           methods: {
+|               valueCubed() {
+|                   return this.params.value * this.params.value * this.params.value;
+|               }
+|           }
+|       }
+|   }
+|}
+|```
 |
 | Note here that we can define the property name either quoted or not but note that in
 | order to reference these components in your column definitions you'll need to provide
 | them as **case-sensitive** strings.
 |
-| ### Simple, Locally Declared Components
+| ### Locally Declared Components
 |
 | ```js
-| let SquareComponent = {
-|     template: '<span>{{ valueSquared() }}</span>',
-|     methods: {
-|         valueSquared() {
-|             return this.params.value * this.params.value;
-|         }
-|     }
-| };
+|const SquareComponent = {
+|    template: '<span>{{ valueSquared() }}</span>',
+|    methods: {
+|        valueSquared() {
+|            return this.params.value * this.params.value;
+|        }
+|    }
+|};
 | ```
 |
-| ### External .js Components
+| ### Externalised JavaScript Components (.js files)
 |
-| ```js
-| // SquareComponent.js
-| export default {
-|     template: '<span>{{ valueSquared() }}</span>',
-|     methods: {
-|         valueSquared() {
-|             return this.params.value * this.params.value;
-|         }
-|     }
-| };
-|
-| // MyGridApp.vue (your Component holding the ag-Grid component)
-| import SquareComponent from './SquareComponent'
+|```js
+|// SquareComponent.js
+|export default {
+|    template: '<span>{{ valueSquared() }}</span>',
+|    methods: {
+|        valueSquared() {
+|            return this.params.value * this.params.value;
+|        }
+|    }
+|};
 | ```
 |
-| ### More Complex, Externalised Single File Components (.vue)
+| ### Externalised Single File Components (SFC / .vue files)
 |
 | ```jsx
 | <template>
-|     <span class="currency"><span ng-non-bindable>{{</span> params.value | currency('EUR') }}</span>
+|     <span class="currency">{{ params.value | currency('EUR') }}</span>
 | </template>
 |
 | <script>
@@ -87,15 +85,6 @@
 | </style>
 | ```
 |
-| For non-inline components you need to provide them to Vue via the `components` property:
-|
-| ```js
-| components: {
-|     AgGridVue,
-|     SquareComponent
-| }
-| ```
-|
 | Note that in this case the component name will match the actual reference, but you can
 | specify a different one if you choose:
 |
@@ -105,3 +94,8 @@
 |     'MySquareComponent': SquareComponent
 | }
 | ```
+|[[note]]
+||All of the above works if you're going to register components by Name (see below). If you wish to register components
+||by direct reference then you will need to wrap your component with `Vue.extend(...your component...)`.
+||
+||Examples of this are demonstrated in the "registering by name" section below.

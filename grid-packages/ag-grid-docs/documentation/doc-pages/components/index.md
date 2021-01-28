@@ -22,27 +22,28 @@ The remainder of this page gives information that is common across all the compo
 
 md-include:declare-vue.md
 md-include:declare-angular.md
-
-md-include:register-javascript.md
+ 
+md-include:register-javascript.md 
 md-include:register-angular.md
 md-include:register-react.md 
 md-include:register-vue.md
- 
-### Advantages of By Name 
 
-Registering components by name has the following advantages:
+[[only-angular]]
+md-include:advantages-common.md 
+[[only-react]]
+md-include:advantages-common.md 
+[[only-vue]]
+md-include:advantages-vue.md
 
-- Implementations can change without having to change all the column definitions. For example, you may have 20 columns using a currency cell renderer. If you want to update the cell renderer to another currency cell renderer, you only need to do it in only place (where the cell renderer is registered) and all columns will pick up the new implementation.
-- The part of the grid specifying column definitions is plain JSON. This is helpful for applications that read column definitions from static data. If you referred to the class name directly inside the column definition, it would not be possible to convert the column definition to JSON.
- 
+[[only-javascript]]
 md-include:component-usage-javascript.md
 [[only-angular]]
 md-include:component-usage-fw.md 
 [[only-react]]
 md-include:component-usage-fw.md
 [[only-vue]]
-md-include:component-usage-fw.md
-
+md-include:component-usage-vue.md
+ 
 md-include:js-fw-angular.md 
 md-include:js-fw-react.md
 md-include:js-fw-vue.md

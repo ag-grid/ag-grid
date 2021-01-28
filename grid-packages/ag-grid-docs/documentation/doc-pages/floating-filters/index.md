@@ -6,14 +6,18 @@ Floating Filters are an additional row under the column headers where the user w
 
 Floating filters are activated by setting the property `floatingFilter = true` on the `colDef`:
 
-
-```js
-colDef = {
-    // turn on floating filter
-    floatingFilter: true
-    ...
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // column definition with floating filter enabled
+        {  
+            field: 'country',
+            filter: true,
+            floatingFilter: true
+        }
+    ]
 }
-```
+</snippet>
 
 To have floating filters on for all columns by default, you should set `floatingFilter` on the `defaultColDef`. You can then disable floating filters on a per-column basis by setting `floatingFilter = false` on an individual `colDef`.
 

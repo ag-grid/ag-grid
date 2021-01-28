@@ -54,18 +54,21 @@ If your row data attributes are simple types (string, boolean, number) or immuta
 
 If you do need to provide custom comparison of objects, use the `colDef.equals(val1,val2)` method. For example, the following code snippet provides custom comparison to a 'Name' column where the name is stored in a complex object.
 
-```js
-// column with custom equals method for change detection
-colDef = {
-    // method returns true if first and last names are equal
-    equals: function(person1, person2) {
-        var firstNameEqual = person1.firstName === person2.firstName;
-        var lastNameEqual = person2.lastName === person2.lastName;
-        return firstNameEqual && lastNameEqual;
-    }
-    ...
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'person',    
+            // method returns true if first and last names are equal
+            equals: (person1, person2) => {
+                const firstNameEqual = person1.firstName === person2.firstName;
+                const lastNameEqual = person2.lastName === person2.lastName;
+                return firstNameEqual && lastNameEqual;
+            }
+        }
+    ]
 }
-```
+</snippet>
 
 ### Triggering Value Change Detection
 

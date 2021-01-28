@@ -25,7 +25,7 @@ interface ValueGetterParams {
 }
 
 // example value getter, adds two fields together
-colDef.valueGetter = function(params) {
+colDef.valueGetter = params => {
     return params.data.firstName + params.data.lastName;
 }
 ```

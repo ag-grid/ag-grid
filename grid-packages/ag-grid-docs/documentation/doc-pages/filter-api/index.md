@@ -6,27 +6,34 @@ You can access and set the models for filters through the grid API, or access in
 
 ## Get / Set All Filter Models
 
-It is possible to get the state of all filters using the grid API method `getFilterModel()`, and to set the state using `setFilterModel()`. These methods manage the filters states via the `getModel()` and `setModel()` methods of the individual filters.
+It is possible to get the state of all filters using the grid API method `getFilterModel()`, and to set the state using 
+`setFilterModel()`. These methods manage the filters states via the `getModel()` and `setModel()` methods of the 
+individual filters.
 
+<snippet>
+|// Gets filter model via the grid API 
+|const model = gridOptions.api.getFilterModel();
+|
+|// Sets the filter model via the grid API 
+|gridOptions.api.setFilterModel(model);
+</snippet>
+
+The filter model represents the state of filters for all columns and has the following structure:
 
 ```js
-var model = gridApi.getFilterModel();
-
-// model represents the state of filters for all columns, e.g.
-// {
-//   athlete: {
-//     filterType: 'text',
-//     type: 'startsWith',
-//     filter: 'mich'
-//   },
-//   age: {
-//     filterType: 'number',
-//     type: 'lessThan',
-//     filter: 30
-//   }
-// }
-
-gridApi.setFilterModel(model);
+// Sample filter model via getFilterModel()
+{
+    athlete: {
+        filterType: 'text',
+        type: 'startsWith',
+        filter: 'mich'
+    },
+    age: {
+        filterType: 'number',
+        type: 'lessThan',
+        filter: 30
+    }
+}
 ```
 
 This is useful if you want to save the global filter state and apply it at a later stage. It is also useful for server-side filtering, where you want to pass the filter state to the server.
@@ -35,9 +42,9 @@ This is useful if you want to save the global filter state and apply it at a lat
 
 You can reset all filters by doing the following:
 
-```js
-gridApi.setFilterModel(null);
-```
+<snippet>
+gridOptions.api.setFilterModel(null);
+</snippet>
 
 ### Example: Get / Set All Filter Models
 
@@ -57,56 +64,56 @@ The example below shows getting and setting all the filter models in action.
 
 It is also possible to access the filter components directly if you want to interact with a specific filter. This also works for your own custom filters, where you can get a reference to the underlying filtering instance (i.e. what was created when ag-Grid called `new` on your filter). Calling `api.getFilterInstance(colKey)` will return a reference to the filter instance for the column with key `colKey`.
 
-```js
+<snippet>
 // Get a reference to the 'name' filter instance
-var filterInstance = gridApi.getFilterInstance('name');
-```
+const filterInstance = gridOptions.api.getFilterInstance('name');
+</snippet>
 
 All of the methods of the filter are available on the instance. If using a custom filter, any other methods you have added will also be present, allowing bespoke behaviour to be added to your filter.
 
 For filters that are created asynchronously, including React 16+ components, `getFilterInstance` will return `null` if the filter has not already been created. If your app uses asynchronous components, use the optional `callback` function which will be invoked with the filter instance when it is available.
 
-```js
+<snippet>
 // Get a reference to an asynchronously created filter instance
-gridApi.getFilterInstance('name', function(filterInstance) {
-    ... use filterInstance here
+gridOptions.api.getFilterInstance('name', filterInstance => {
+    // ... use filterInstance here
 });
-```
+</snippet>
 
 ### Re-running Grid Filtering
 
 
 After filters have been changed via their API, you must ensure the method `gridApi.onFilterChanged()` is called to tell the grid to filter the rows again. If `gridApi.onFilterChanged()` is not called, the grid will still show the data relevant to the filters before they were updated through the API.
 
-```js
-// Get a reference to the filter instance
-var filterInstance = gridApi.getFilterInstance('name');
-
-// Set the filter model
-filterInstance.setModel({
-    filterType: 'text',
-    type: 'startsWith',
-    filter: 'abc'
-});
-
-// Tell grid to run filter operation again
-gridApi.onFilterChanged();
-```
+<snippet>
+|// Get a reference to the filter instance
+|const filterInstance = gridOptions.api.getFilterInstance('name');
+|
+|// Set the filter model
+|filterInstance.setModel({
+|    filterType: 'text',
+|    type: 'startsWith',
+|    filter: 'abc',
+|});
+|
+|// Tell grid to run filter operation again
+|gridOptions.api.onFilterChanged();
+</snippet>
 
 ### Reset Individual Filters
 
 You can reset a filter to its original state by getting the filter instance and setting the model to `null`.
 
-```js
-// Get a reference to the filter instance
-var filterInstance = gridApi.getFilterInstance('name');
-
-// Set the model to null
-filterInstance.setModel(null);
-
-// Tell grid to run filter operation again
-gridApi.onFilterChanged();
-```
+<snippet>
+|// Get a reference to the filter instance
+|const filterInstance = gridOptions.api.getFilterInstance('name');
+|
+|// Set the model to null
+|filterInstance.setModel(null);
+|
+|// Tell grid to run filter operation again
+|gridOptions.api.onFilterChanged();
+</snippet>
 
 <h3>Example: Accessing Individual Filters</h2>
 

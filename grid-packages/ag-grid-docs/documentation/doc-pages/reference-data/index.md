@@ -13,21 +13,21 @@ The examples contained within this section use the following reference data. Not
 
 ```js
 // data from server
-var rowData = [
+const rowData = [
     { make: 'tyt', exteriorColour: 'fg', interiorColour: 'bw', price: 35000 },
     { make: 'frd', exteriorColour: 'bw', interiorColour: 'cb', price: 32000 },
     ...
 ]
 
 // supporting reference data
-var carMappings = {
+const carMappings = {
     'tyt': 'Toyota',
     'frd': 'Ford',
     'prs': 'Porsche',
     'nss': 'Nissan'
 };
 
-var colourMappings = {
+const colourMappings = {
     'cb': 'Cadet Blue',
     'bw': 'Burlywood',
     'fg': 'Forest Green'
@@ -40,24 +40,27 @@ Value Handlers can be used to map keys contained within the row data to their co
 
 The main idea of this approach is to use a `valueFormatter` to convert the code (key) to a value which is displayed in the cell. Then use a `valueParser` to convert the name back to a code (key) when saving it down into the underlying data.
 
-```js
-{
-    headerName: 'Make',
-    field: 'make',
-    cellEditor: 'agSelectCellEditor',
-    cellEditorParams: {
-        values: extractValues(carMappings)
-    },
-    valueFormatter: function (params) {
-        // convert code to value
-        return lookupValue(carMappings, params.value);
-    },
-    valueParser: function (params) {
-        // convert value to code
-        return lookupKey(carMappings, params.newValue);
-    }
+<snippet spaceBetweenProperties="true">
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'make',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: extractValues(carMappings)
+            },
+            // convert code to value
+            valueFormatter: params => { 
+                return lookupValue(carMappings, params.value);
+            },
+            // convert value to code
+            valueParser: params => { 
+                return lookupKey(carMappings, params.newValue);
+            }
+        }
+    ]
 }
-```
+</snippet>
 
 [[note]]
 | When editing using Cell Editors it's important to ensure the underlying data is updated with the codes (keys) rather than the values that are displayed in the cells.
@@ -72,7 +75,6 @@ cellEditorParams: {
 ```
 
 ### Example: Value Handlers
-
 
 The following example demonstrates how `Value Handlers` can be combined to work with reference data:
 
@@ -96,17 +98,20 @@ Here we present the same example but this time using the `refData` `ColDef` prop
 All that is required with this approach is to specify the `refData` and the grid will take care of the
 rest, as shown below:
 
-```js
-{
-    headerName: 'Make',
-    field: 'make',
-    cellEditor: 'agSelectCellEditor',
-    cellEditorParams: {
-       values: extractValues(carMappings)
-    },
-    refData: carMappings
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        { 
+            field: 'make',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+               values: extractValues(carMappings)
+            },
+            refData: carMappings
+        }
+    ]
 }
-```
+</snippet>
 
 Like in the previous example using Value Handlers, where the underlying data contains codes, the grid will use the specified reference data to display the associated values in the cells and save down the codes (keys) in the data when editing.
 

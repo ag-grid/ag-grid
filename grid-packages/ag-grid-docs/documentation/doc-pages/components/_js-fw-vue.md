@@ -25,17 +25,15 @@
 |
 |export default {
 |   components: {
-|       AgGridVue
+|       AgGridVue,
+|       // declare the Vue component
+|       'vueComponent': VueComponent
 |   }
 |   data() {
 |       return {
 |           components: [
 |               // declare the javascript component
 |               'javascriptComponent': JavascriptComponent
-|           ],          
-|           frameworkComponents: [
-|               // declare the Vue component
-|               'vueComponent': VueComponent
 |           ],          
 |           columnDefs: [
 |                {
@@ -46,7 +44,7 @@
 |               {
 |                   headerName: "Vue Cell",
 |                   field: "value",
-|                   cellRenderer: 'vueComponent',           // reference/use the Vue component
+|                   cellRendererFramework: 'vueComponent',  // reference/use the Vue component
 |               }
 |           ]
 |       }
