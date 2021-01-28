@@ -41,6 +41,30 @@ Call `api.sizeColumnsToFit()` to make the currently visible columns fit the scre
 
 If you don't want a particular column to be included in the auto resize, then set the column definition `suppressSizeToFit=true`. This is helpful if, for example, you want the first column to remain fixed width, but all other columns to fill the width of the table.
 
+The grid calculates new column widths while maintaining the ratio of the column default widths. So for example
+if Column A has a default size twice as width as Column B, then after calling `api.sizeColumnsToFit()` Column A
+will still be twice the size of Column B, assuming no Column min-width or max-width constraints are violated.
+
+Column default widths, rather than current widths, are used while calculating the new widths. This insures
+the result is deterministic and not depend on any Column resizing the user may have manually done.
+
+[[note]]
+| For example assuming a grid with three Columns, the algorithm will be as follows:<br/>
+|
+| scale = availableWidth / (w1 + w2 + w3)<br/>
+| w1 = round(w1 * scale)<br/>
+| w2 = round(w2 * scale)<br/>
+| w3 = totalGridWidth - (w1 + w2)<br/>
+|
+| Assuming the grid is 1,200 pixels wide and the Columns have default widths of 40, 120 and 300,
+| then the calculation is as follows:
+|
+| availableWidth = 1,198 (available width is typically smaller as the grid typically has left and right boarders)<br/>
+| scale = 1198 / (50 + 120 + 300) = 2.548936170212766<br/>
+| col 1 = 50 * 2.54 = 127.44 -> rounded = 127<br/>
+| col 2 = 120 * 2.54 = 305.87 -> rounded = 306<br/>
+| col 3 = 1198 - (127 + 306) = 765 // last col gets the space that's left, which ensures all space is used, no rounding issues<br/>
+
 ## Auto-Size Columns
 
 Just like Excel, each column can be 'auto resized' by double clicking the right side of the header rather than dragging it. When you do this, the grid will work out the best width to fit the contents of the cells in the column.
