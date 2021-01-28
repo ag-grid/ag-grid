@@ -16,30 +16,28 @@ Cross-Filter charts are created programmatically using `createCrossFilterChart()
 
 The following snippet shows how a cross-filtering pie chart can be created:
 
-```js
-gridApi.createCrossFilterChart({
+<snippet>
+gridOptions.api.createCrossFilterChart({
     chartType: 'pie',
     cellRange: {
         columns: ['salesRep', 'sale'],
     },
     aggFunc: 'sum',
 });
-```
+</snippet>
 
 Note in the snippet above that the `sale` values are aggregated by the `salesRep` category as `aggFunc: 'sum'` is specified.
 
-A corresponding column configuration for the chart above is shown in the following snippet: 
+A corresponding column configuration for the chart above is shown in the following snippet:
 
-```js
-var gridOptions = {       
+<snippet>
+const gridOptions = {       
     columnDefs: [
         { field: 'salesRep', filter: 'agSetColumnFilter', chartDataType: 'category' },
-        { field: 'sale', chartDataType: 'series' }        
+        { field: 'sale', chartDataType: 'series' },        
     ],
-
-    // other grid options here...
 }
-```
+</snippet>
 
 [[note]]
 | Cross-filtering requires that grid filtering is enabled with either a [Set Filter](../filter-set/) or [Multi Filter](../filter-multi/) configured on the category column used in the chart. It is also important to define the [Chart Data Type](../integrated-charts-range-chart/#coldefchartdatatype) as it's not possible to infer the type when all data is filtered out..

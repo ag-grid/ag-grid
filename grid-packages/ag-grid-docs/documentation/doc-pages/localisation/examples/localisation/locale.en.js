@@ -1,6 +1,6 @@
 // Example locale file for English, give this to your locale team to translate
 
-var AG_GRID_LOCALE_EN = {
+const AG_GRID_LOCALE_EN = {
     // Set Filter
     selectAll: '(Select All)',
     selectAllSearchResults: '(Select All Search Results)',

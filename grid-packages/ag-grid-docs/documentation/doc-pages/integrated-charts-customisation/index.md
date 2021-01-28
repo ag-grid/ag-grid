@@ -22,10 +22,8 @@ You can change which themes are available by setting the `chartThemes` property 
 ## Custom Chart Themes
 
 You can create your own chart theme and provide it to the grid in the `customChartThemes` map on `gridOptions`. Your theme should then be specified in `chartThemes` to make it available to your users.
-
-```js
-gridOptions: {
-    // ...
+<snippet>
+const gridOptions = {
     customChartThemes: {
         myCustomTheme: {
             baseTheme: 'ag-pastel',
@@ -45,7 +43,7 @@ gridOptions: {
     },
     chartThemes: ['myCustomTheme', 'ag-vivid']
 }
-```
+</snippet>
 
 The example below shows a custom chart theme being used with the grid. Note that other provided themes can be used alongside a custom theme, and are unaffected by the settings in the custom theme.
 
@@ -56,10 +54,8 @@ The example below shows a custom chart theme being used with the grid. Note that
 
 Instead of providing a whole custom chart theme, you can instead supply just a set of theme overrides. These will be applied on top of every available theme. This can be useful for tweaking the style of your charts without having to provide a whole theme, or to make changes across multiple themes.
 
-
-```js
-gridOptions: {
-    // ...
+<snippet>
+const gridOptions = {
     chartThemeOverrides: {
         common: {
             title: {
@@ -69,7 +65,7 @@ gridOptions: {
         }
     }
 }
-```
+</snippet>
 
 The following examples show different types of chart being customised using theme overrides.
 

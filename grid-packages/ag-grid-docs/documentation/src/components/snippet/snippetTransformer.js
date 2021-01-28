@@ -47,6 +47,7 @@ class SnippetTransformer {
         return this.addFrameworkContext(snippetBody);
     }
 
+    // recursively walks AST and delegates actual parsing of each node type to subclasses
     parse(tree, depth) {
         if (Array.isArray(tree)) {
             return tree.map(node => this.parse(node, depth + 1)).join('');
@@ -68,6 +69,7 @@ class SnippetTransformer {
 
         } else if (isLabelStatement(tree) || isBlockStatement(tree)) {
             throw new Error('Grid options should be wrapped inside: const gridOptions = { ... }');
+
         } else {
             throw new Error(`Unexpected node encountered:\n\n${JSON.stringify(tree)}`);
         }
@@ -276,13 +278,13 @@ class ReactTransformer extends SnippetTransformer {
 
                 return `${propertyName}=${getReactValue(property)}`;
             }
-            return this.extractNonLiteralProperty(property, fieldName, propertyName);
+            return this.extractNonLiteralColumnProperty(property, fieldName, propertyName);
         }
 
         return properties.filter(property => getName(property) !== 'children').map(mapColumnProperty);
     }
 
-    extractNonLiteralProperty(property, fieldName, propertyName) {
+    extractNonLiteralColumnProperty(property, fieldName, propertyName) {
         const extraLine = this.options.spaceBetweenProperties ? '\n' : '';
         let comment = extraLine + (property.comment ? `//${property.comment}\n` : '');
         const funcName = fieldName ? fieldName + capitalise(propertyName) : propertyName;

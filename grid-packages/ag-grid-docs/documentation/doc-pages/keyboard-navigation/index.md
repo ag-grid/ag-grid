@@ -4,7 +4,6 @@ title: "Keyboard Interaction"
 
 The grid responds to keyboard interactions from the user as well as emitting events when key presses happen on the grid cells. Below shows all the keyboards interactions that can be done with the grid.
 
-
 ## Navigation
 
 Use the **arrow keys** to move focus up, down, left and right. If the focused cell is already on the boundary for that position (eg if on the first column and the left key is pressed) then the key press has no effect. Use **ctrl + left and right** to move to start and end of the line.
@@ -12,7 +11,6 @@ Use the **arrow keys** to move focus up, down, left and right. If the focused ce
 If a cell on the first grid row is focused and you you press `arrow up`, the focus will be moved into the grid header. The header navigation focus navigation works the same as the grid's, arrows will move up/down/left/right, tab will move the focus horizontally until the last header cell and the move on to the next row.
 
 Use **page up** and **page down** to move the scroll up and down by one page. Use **home** and **end** to go to the first and last rows.
-
 
 [[note]]
 | When a header cell is focused, commands like **page up**, **page down**, **home**, **end**, **ctrl + left / right** will not work as they do when a grid cell is focused.
@@ -217,34 +215,33 @@ In applications where the grid is embedded into a larger page, by default, when 
 
 You could override this behavior to focus the first grid cell, if that is a preferred scenario using a combination of DOM event listeners and Grid API calls shown in the following code snippet:
 
-
-```js
-// obtain reference to input element
-var myInput = document.getElementById("my-input");
-
-// intercept key strokes within input element
-myInput.addEventListener("keydown", function (event) {
-    // code for tab key
-    var tabKeyCode = 9;
-
-    // ignore non tab key strokes
-    if(event.keyCode !== tabKeyCode) return;
-
-    // prevents tabbing into the url section
-    event.preventDefault();
-
-    // scrolls to the first row
-    gridOptions.api.ensureIndexVisible(0);
-
-    // scrolls to the first column
-    var firstCol = gridOptions.columnApi.getAllDisplayedColumns()[0];
-    gridOptions.api.ensureColumnVisible(firstCol);
-
-    // sets focus into the first grid cell
-    gridOptions.api.setFocusedCell(0, firstCol);
-
-}, true);
-```
+<snippet>
+|// obtain reference to input element
+|const myInput = document.getElementById("my-input");
+|
+|// intercept key strokes within input element
+|myInput.addEventListener("keydown", event => {
+|     // code for tab key
+|     const tabKeyCode = 9;
+|
+|    // ignore non tab key strokes
+|    if(event.keyCode !== tabKeyCode) return;
+|
+|    // prevents tabbing into the url section
+|    event.preventDefault();
+|
+|    // scrolls to the first row
+|    gridApi.ensureIndexVisible(0);
+|
+|    // scrolls to the first column
+|    const firstCol = columnApi.getAllDisplayedColumns()[0];
+|    gridApi.ensureColumnVisible(firstCol);
+|
+|    // sets focus into the first grid cell
+|    gridApi.setFocusedCell(0, firstCol);
+|
+|}, true);
+</snippet>
 
 ### Example: Tabbing into the Grid
 

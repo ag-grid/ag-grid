@@ -64,19 +64,27 @@ Columns defined as `excluded` will not be included in charts or charting ranges.
 
 The following column definitions show how the different `ColDef.chartDataType` values are applied:
 
-```js
-// 'category' columns
-{ field: 'athlete', chartDataType: 'category' },
-{ field: 'age', chartDataType: 'category' }, // despite containing numbers
-{ field: 'country' }, // contains strings
+<snippet>
+|const gridOptions = {
+|    columnDefs: [
+|        // 'category' columns
+|        { field: 'athlete', chartDataType: 'category' },
+|        { field: 'age', chartDataType: 'category' },
+|        { field: 'country' },
+|        
+|        // 'excluded' from charts
+|        { field: 'date', chartDataType: 'excluded' },
+|        
+|        // 'series' columns
+|        { field: 'gold', chartDataType: 'series' },
+|        { field: 'silver' }
+|    ]
+|}
+</snippet>
 
-// 'excluded' from charts
-{ field: 'date', chartDataType: 'excluded' },
-
-// 'series' columns
-{ field: 'gold', chartDataType: 'series' },
-{ field: 'silver', width: 100 } // contains numbers
-```
+Note from the snippet above that the `age` column contains numbers but explicitly defined as a category, however as the
+`country` column contains strings it can be inferred correctly as a category column without needing to specify the 
+`chartDataType`.
 
 See the [Time Series](../integrated-charts-time-series/) section for details on the `'time'` chart data type.
 
