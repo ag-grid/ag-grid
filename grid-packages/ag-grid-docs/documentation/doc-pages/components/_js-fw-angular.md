@@ -25,9 +25,11 @@
 |`
 |})
 |export class AppComponent {
+|   // JavaScript components are registered here
 |   components: [
 |       'javascriptComponent': JavascriptComponent
 |   ];          
+|   // Angular components are registered here
 |   frameworkComponents: [
 |       'angularComponent': AngularComponent
 |   ];          
@@ -47,3 +49,4 @@
 |   //...other properties & methods
 |}
 |```
+|Change the documentation view to <a href='../../javascript/components/'>JavaScript</a> to see how to create a plain JavaScript component.

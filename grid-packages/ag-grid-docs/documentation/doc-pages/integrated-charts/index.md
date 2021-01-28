@@ -41,19 +41,21 @@ The charts module has been built from the ground up with zero dependencies on an
 
 To enable charting in the grid set the following grid option:
 
-```js
-gridOptions = {
+<snippet>
+const gridOptions = {
     enableCharts: true
 }
-```
+</snippet>
 
-To allow users to create charts from a [Range Selection](../range-selection/) and / or display the [Chart Ranges](../integrated-charts-range-chart/) in the grid, then set the following grid option:
+To allow users to create charts from a [Range Selection](../range-selection/) and / or display the [Chart Ranges](../integrated-charts-range-chart/) 
+in the grid, `enableRangeSelection` should also be enabled as follows:
 
-```js
-gridOptions = {
+<snippet>
+const gridOptions = {
+    enableCharts: true,
     enableRangeSelection: true
 }
-```
+</snippet>
 
 ## User Created Charts
 

@@ -17,9 +17,11 @@
 |const GridExample = () => {
 |   // other properties & methods
 |   
+|   // JavaScript components are registered here
 |   components = {
 |       'javascriptComponent': JavascriptComponent    
 |   };
+|   // React components are registered here
 |   frameworkComponents = {
 |       'reactComponent': ReactComponent    
 |   };
@@ -38,4 +40,4 @@
 |    );
 |};
 |```
-
+|Change the documentation view to <a href='../../javascript/components/'>JavaScript</a> to see how to create a plain JavaScript component.

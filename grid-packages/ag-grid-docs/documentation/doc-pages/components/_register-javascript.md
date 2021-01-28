@@ -8,7 +8,7 @@
 |- By name.
 |- Direct reference.
 |
-|Both options are fully supported by the grid, however the preferred options is by name as it's more flexible. All of the examples in the documentation use this approach. The direct reference approach is kept for backwards compatibility reasons as this was the original way to do it in ag-Grid.
+|Both options are fully supported by the grid, however the preferred option is by name as it's more flexible. All of the examples in the documentation use this approach. The direct reference approach is kept for backwards compatibility as this was the original way to do it in ag-Grid.
 |
 |### 1. By Name
 |

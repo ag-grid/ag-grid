@@ -1,3 +1,4 @@
+[[only-vue]]
 |### Advantages of By Name
 |
 |Registering components by name has the following advantages:

@@ -102,14 +102,16 @@ In order to support large datasets with a minimised memory footprint and a respo
 
 ### Ensure DOM Element order
 
-By default rows and columns can appear out of order in the DOM. This 'incorrect order' can result in inconsistent
+By default, rows and columns can appear out of order in the DOM. This 'incorrect order' can result in inconsistent
 results when parsed by screen readers.
 
 To force row and column order, enable the following gridOptions property like so:
 
-```js
-gridOptions.ensureDomOrder = true
-```
+<snippet>
+const gridOptions = {
+    ensureDomOrder: true,
+}
+</snippet>
 
 [[note]]
 | Animations won't work properly when the DOM order is forced, so ensure they are not enabled.</note>
@@ -122,17 +124,22 @@ If your requirement is to use scrolling instead of pagination, you can disable r
 
 Column virtualisation can be disabled as follows:
 
-```js
-gridOptions.suppressColumnVirtualisation = true
-```
+<snippet>
+const gridOptions = {
+    suppressColumnVirtualisation: true,
+}
+</snippet>
 
 This means if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
 
 There is no property to suppress row virtualisation however if you want to do this you can set the rowBuffer property to be very large as follows:
 
-```js
-gridOptions.rowBuffer = 9999
-```
+<snippet>
+const gridOptions = {
+    rowBuffer: 9999,
+}
+</snippet>
+
 This sets number of rows rendered outside the scrollable viewable area the grid renders. The defaults is 20.
 
 However note that lots of rendered rows will mean a very large amount of rendering in the DOM which will slow things down.
@@ -158,7 +165,6 @@ customisation in action.
 
 Using advanced functionality in ag-Grid makes the DOM structure incompatible with the assumptions screen readers make. This results in a few limitations in accessibility when specific functionality is used:
 
-
 - ### Navigation to pinned rows/columns
     Screen readers assume that the visual and DOM element order are identical. Specifically, when you pin a row/column, it  causes elements to be rendered in different containers. This is why you cannot use screen readers to navigate into a  pinned row/column cells, as in fact, this means they're rendered in a different element from the rest of the columns/rows which are scrollable.
 
@@ -170,4 +176,3 @@ Using advanced functionality in ag-Grid makes the DOM structure incompatible wit
 
 - ### Server-Side Row Model
     Announcing the row count in the grid when using server-side row model (SSRM) is not supported. This is because the row count cannot be known in all the scenarios where SSRM is in use.
-

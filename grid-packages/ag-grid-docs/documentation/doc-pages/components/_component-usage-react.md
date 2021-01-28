@@ -1,13 +1,14 @@
+[[only-react]]
 |### Component Usage
 |
 |The below table gives an overview of where components can be used. The table shows both options for usage:
 |
 |- **Name / Direct JavaScript:** This can be:
-|    - 1) A component name referring to a registered component (either plain JavaScript or framework component);
+|    - 1) A component name referring to a registered component (either plain JavaScript or React Component);
 |    - 2) A direct reference to a JavaScript component.
-|- **Direct Framework:** A direct reference to a framework component.
+|- **Direct React Reference:** A direct reference to a React Component.
 |
-|| Component                     | Where                     | Name / Direct JavaScript | Direct Framework                     |
+|| Component                     | Where                     | Name / Direct JavaScript | Direct React Reference               |
 || ----------------------------- | ------------------------- | ------------------------ | ------------------------------------ |
 || Detail Cell Renderer          | Grid Option               | detailCellRenderer       | detailCellRenderer**Framework**      |
 || Full Width Cell Renderer      | Grid Option               | fullWidthCellRenderer    | fullWidthCellRenderer**Framework**   |

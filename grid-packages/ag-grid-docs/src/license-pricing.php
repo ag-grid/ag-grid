@@ -86,7 +86,7 @@ gtm_data_layer('community-enterprise');
             <section class="packages">
                 <div>
                     <div>
-                        <img src="./images/coronavirus.png" style="max-width: 50px;" alt="Coronavirus Update">
+                        <img src="./images/coronavirus.png" style="max-width: 50px;" alt="Coronavirus Update" />
                     </div>
                     <div>
                         <h3>Coronavirus Update</h3>
@@ -99,7 +99,7 @@ gtm_data_layer('community-enterprise');
                 </div>
                 <div>
                     <div>
-                        <img src="./images/pricing/Community.svg" style="max-width: 50px;" alt="MIT">
+                        <img src="./images/pricing/Community.svg" style="max-width: 50px;" alt="MIT" />
                     </div>
                     <div>
                         <h3>ag-Grid Community</h3>
@@ -119,7 +119,7 @@ gtm_data_layer('community-enterprise');
                 </div>
                 <div>
                     <div>
-                        <img src="./images/svg/enterprise.svg" style="max-width: 50px;" alt="Enterprise">
+                        <img src="./images/svg/enterprise.svg" style="max-width: 50px;" alt="Enterprise" />
                     </div>
                     <div>
                     <h3>ag-Grid Enterprise</h3>
@@ -151,7 +151,7 @@ gtm_data_layer('community-enterprise');
                 <div class="license-container">
                     <div class="license" style="border-color: #009ede;">
                         <div>
-                            <img src="./images/pricing/SA.svg" alt="Single Application">
+                            <img src="./images/pricing/SA.svg" alt="Single Application" />
                             <h3>ag-Grid Enterprise</h3>
                             <h2>Single Application</h2>
                             <h3>Development License</h3>
@@ -171,7 +171,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                     <div class="license" style="border-color: #009d70;">
                         <div>
-                            <img src="./images/pricing/MA.svg" alt="Multiple Applications">
+                            <img src="./images/pricing/MA.svg" alt="Multiple Applications" />
                             <h3>ag-Grid Enterprise</h3>
                             <h2>Multiple Applications</h2>
                             <h3>Development License</h3>
@@ -190,7 +190,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                     <div class="license" style="border-color: #fbad18;">
                         <div>
-                            <img src="./images/pricing/Deployment%20Add-on.svg" alt="Deployment License">
+                            <img src="./images/pricing/Deployment%20Add-on.svg" alt="Deployment License" />
                             <h3>ag-Grid Enterprise</h3>
                             <h2>Deployment License</h2>
                             <h3>Add-on</h3>
@@ -413,7 +413,7 @@ gtm_data_layer('community-enterprise');
                 </div>
                 <div>
                     <div>
-                        <img src="./images/pricing/Perpetual.svg">
+                        <img src="./images/pricing/Perpetual.svg" alt="Perpetual" />
                     </div>
                     <div>
                         <span>Perpetual License</span>
@@ -428,13 +428,13 @@ gtm_data_layer('community-enterprise');
                             alter older versions.
                         </p>
                         <div>
-                            <img src="./images/pricing/Version%201.svg">
+                            <img src="./images/pricing/Version%201.svg" alt="Perpetual timeline" />
                         </div>
                     </div>
                 </div>
                 <div>
                     <div>
-                        <img src="./images/pricing/1-year.svg">
+                        <img src="./images/pricing/1-year.svg" alt="1-year" />
                     </div>
                     <div>
                         <span>1-year Subscription to New Versions (included)</span>
@@ -450,13 +450,13 @@ gtm_data_layer('community-enterprise');
                             alter older versions.
                         </p>
                         <div>
-                            <img src="./images/pricing/Versions%202.svg">
+                            <img src="./images/pricing/Versions%202.svg" alt="1-year timeline" />
                         </div>
                     </div>
                 </div>
                 <div>
                     <div>
-                        <img src="./images/pricing/Renewal%20icon.svg">
+                        <img src="./images/pricing/Renewal%20icon.svg" alt="Renewal" />
                     </div>
                     <div>
                         <span>Subscription Renewal (optional)</span>
@@ -474,7 +474,7 @@ gtm_data_layer('community-enterprise');
                             releases; we don’t patch, fix or in any way alter older versions.
                         </p>
                         <div>
-                            <img src="./images/pricing/Versions%203.svg">
+                            <img src="./images/pricing/Versions%203.svg" alt="Renewal timeline" />
                         </div>
                     </div>
                 </div>
@@ -516,7 +516,7 @@ gtm_data_layer('community-enterprise');
                 </div>
                 <div>
                     <div>
-                        <img src="./images/pricing/Dependency.svg">
+                        <img src="./images/pricing/Dependency.svg" alt="Project dependency" />
                     </div>
                     <div>
                         <span>Project Dependency</span>
@@ -541,7 +541,7 @@ gtm_data_layer('community-enterprise');
                 </div>
                 <div>
                     <div>
-                        <img src="./images/pricing/Indirect.svg">
+                        <img src="./images/pricing/Indirect.svg" alt="Indirect dependency" />
                     </div>
                     <div>
                         <span>Indirect Project Dependency</span>

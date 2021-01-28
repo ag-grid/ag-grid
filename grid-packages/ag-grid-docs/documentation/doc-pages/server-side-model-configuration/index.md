@@ -21,7 +21,7 @@ gridOptions.debug = true;
 
 The screenshot below is taken from the browser's dev console when `debug` is enabled:
 
-<image-caption src="server-side-model-configuration/resources/debug.png" constrained="true"></image-caption>
+<image-caption src="debug.png" constrained="true" alt="Console Output"></image-caption>
 
 Notice that the current cache status is logged showing block details such as the `startRow` and `endRow`.
 

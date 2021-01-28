@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { withPrefix } from 'gatsby';
-import { getHeaderTitle } from 'utils/page-header';
+import { getHeaderTitle, getFrameworkName } from 'utils/page-header';
 import fwLogos from 'images/fw-logos';
 import supportedFrameworks from 'utils/supported-frameworks';
 import MenuView from 'components/menu-view/MenuView';
@@ -41,7 +41,7 @@ const flatRenderItems = (items, framework) => {
 
 const panelItemsFilter = (pane, framework) => data => ((data.frameworks && data.frameworks.indexOf(framework) !== -1) || !data.frameworks) && data.pane === pane;
 
-const GettingStartedPane = ({framework, data}) => {
+const GettingStartedPane = ({ framework, data }) => {
     const linksToRender = flatRenderItems(data, framework);
     const numberOfColumns = Math.ceil(linksToRender.length / 5);
 
@@ -64,11 +64,11 @@ const GettingStartedPane = ({framework, data}) => {
             </div>
         </div>
     );
-}
+};
 
 const GettingStarted = ({ framework, data }) => {
-    const leftPaneItems = data.filter(panelItemsFilter("left", framework))
-    const rightPaneItems = data.filter(panelItemsFilter("right", framework))
+    const leftPaneItems = data.filter(panelItemsFilter("left", framework));
+    const rightPaneItems = data.filter(panelItemsFilter("right", framework));
 
     return (
         <div className={styles['docs-home__getting-started']}>
@@ -81,15 +81,25 @@ const GettingStarted = ({ framework, data }) => {
     );
 };
 
-const HomePage = ({ pageContext }) => {
-    const { framework } = pageContext;
-
+const HomePage = ({ pageContext: { framework } }) => {
     // basics / getting started
     const gettingStartedItems = menuData[0].items[0].items;
+    const frameworkName = getFrameworkName(framework);
 
     return (
         <div className={styles['docs-home']}>
             <Helmet title={getHeaderTitle('Documentation', framework)} />
+            <div className={styles['docs-home__intro']}>
+                <h1>ag-Grid: {frameworkName} Documentation</h1>
+                <p>
+                    The performance, feature set and quality of ag-Grid has not been seen before in
+                    a {frameworkName} datagrid. Many features in ag-Grid are unique to ag-Grid, and simply put ag-Grid
+                    into a class of its own, without compromising on quality or performance.
+                </p>
+                <p>
+                    Our documentation will help you to get up and running with the best {frameworkName} grid in the world.
+                </p>
+            </div>
             <GettingStarted framework={framework} data={gettingStartedItems} />
             <MenuView framework={framework} data={menuData} />
         </div>

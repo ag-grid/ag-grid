@@ -32,16 +32,11 @@ md-include:register-vue.md
 md-include:advantages-common.md 
 [[only-react]]
 md-include:advantages-common.md 
-[[only-vue]]
 md-include:advantages-vue.md
 
-[[only-javascript]]
 md-include:component-usage-javascript.md
-[[only-angular]]
-md-include:component-usage-fw.md 
-[[only-react]]
-md-include:component-usage-fw.md
-[[only-vue]]
+md-include:component-usage-angular.md 
+md-include:component-usage-react.md
 md-include:component-usage-vue.md
  
 md-include:js-fw-angular.md 
@@ -61,9 +56,9 @@ The grid comes with pre-registered components that can be used. Each component p
     <tbody>
         <tr>
             <td>agDateInput</td>
-            <td>Default date input used by filters.</td>
-        </tr>
-        <tr>
+            <td>Default date input used by filters.</td> 
+        </tr> 
+        <tr> 
             <td colspan="2"><h3>Column Headers</h3></td>
         </tr>
         <tr>
@@ -85,10 +80,10 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>agTextColumnFilter</td>
             <td>Simple text filter (default when using ag-Grid Free).</td>
         </tr>
-        <tr>
+        <tr> 
             <td>agNumberColumnFilter</td>
             <td>Number filter.</td>
-        </tr>
+        </tr> 
         <tr>
             <td>agDateColumnFilter</td>
             <td>Date filter.</td>
@@ -102,7 +97,7 @@ The grid comes with pre-registered components that can be used. Each component p
         </tr>
         <tr>
             <td>agTextColumnFloatingFilter</td>
-            <td>Floating text filter.</td>
+            <td>Floating text filter.</td> 
         </tr>
         <tr>
             <td>agNumberColumnFloatingFilter</td>
@@ -141,7 +136,7 @@ The grid comes with pre-registered components that can be used. Each component p
         <tr>
             <td>agNoRowsOverlay</td>
             <td>No rows overlay.</td>
-        </tr>
+        </tr> 
         <tr>
             <td colspan="2"><h3>Cell Editors</h3></td>
         </tr>
@@ -165,7 +160,7 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>agPopupSelectCellEditor</td>
             <td>Popup select cell editor.</td>
         </tr>
-        <tr>
+        <tr> 
             <td>agLargeTextCellEditor</td>
             <td>Large text cell editor.</td>
         </tr>

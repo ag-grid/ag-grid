@@ -14,30 +14,30 @@ The `script-src` policy will work only with `'self'` rule. If you are working wi
 
 Using expressions instead of functions is an option for many grid properties such as [Cell Class Rules](../cell-styles/#cell-class-rules) and [Value Getters](../value-getters/). Below demonstrates the difference where expressions are used instead of functions.
 
-
-```js
-// this column definition does NOT use expressions.
-// no need for unsafe-eval
-let colDef = {
-    cellClassRules: {
-        'rag-green': function(params) { return params.value < 20; },
-        'rag-amber': function(params) { return params.value >= 20 && params.value < 25; },
-        'rag-red': function(params) { return params.value >= 25; }
-    },
-    valueGetter: function(params) { return params.data.price * params.data.fx; }
-};
-
-// this column definition does use expressions
-// ******** unsafe-eval is needed
-let colDef = {
-    cellClassRules: {
-        'rag-green': 'x < 20',
-        'rag-amber': 'x >= 20 && x < 25',
-        'rag-red': 'x >= 25'
-    },
-    valueGetter: 'data.price * data.fx'
-};
-```
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // this column definition does NOT use expressions. no need for unsafe-eval
+        {
+            cellClassRules: {
+                'rag-green': function(params) { return params.value < 20; },
+                'rag-amber': function(params) { return params.value >= 20 && params.value < 25; },
+                'rag-red': function(params) { return params.value >= 25; }
+            },
+            valueGetter: params => params.data.price * params.data.fx,
+        },
+        // this column definition does use expressions *** unsafe-eval is needed! ***
+        {
+            cellClassRules: {
+                'rag-green': 'x < 20',
+                'rag-amber': 'x >= 20 && x < 25',
+                'rag-red': 'x >= 25'
+            },
+            valueGetter: 'data.price * data.fx',
+        }
+    ]
+}
+</snippet>
 
 ### style-src
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { withPrefix } from 'gatsby';
+import classnames from 'classnames';
 import styles from './HeaderNav.module.scss';
 
 const links = [{
@@ -18,15 +19,16 @@ const links = [{
 
 const HeaderLinks = () => (
     <ul className={styles['header-nav__navbar']}>
-        { links.map(link => {
-            let className = styles['header-nav__link'];
-            const isDocumentation = link.url.indexOf('documentation') !== -1;
-
-            if (isDocumentation) { className += ` ${styles.active}`; }
+        {links.map(link => {
+            const linkClasses = classnames(
+                styles['header-nav__link'],
+                {
+                    [styles['header-nav__link--active']]: link.url.indexOf('/documentation/') > -1
+                });
 
             return (
-                <li key={link.name.toLocaleLowerCase()} className={className}>
-                    <a className={styles['header-nav__link_anchor']} href={link.url}>{link.name}</a>
+                <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
+                    <a className={styles['header-nav__link-anchor']} href={link.url}>{link.name}</a>
                 </li>
             );
         })}

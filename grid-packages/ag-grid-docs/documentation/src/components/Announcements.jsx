@@ -36,7 +36,7 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
     <Announcement title="Best Web Grids for 2020" date="Jan 27th">
         <p className="card-text">
             ag-Grid is the "Absolute Winner" according
-            to <a href="https://www.crankuptheamps.com//blog/posts/2020/01/23/grid-comparison-2/">Best Web Grids for 2020</a>.
+            to <a href="https://www.crankuptheamps.com/blog/posts/2020/01/23/grid-comparison-2/">Best Web Grids for 2020</a>.
         </p>
     </Announcement>
     <Announcement title="Community or Enterprise?">

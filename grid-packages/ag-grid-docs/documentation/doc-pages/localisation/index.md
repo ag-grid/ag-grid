@@ -8,7 +8,7 @@ The default language of the grid is American English. The grid does not come wit
 
 ## Creating a Locale
 
-The grid by default does not need a locale. If no locale is provide, the grid will default to English. If a locale is provided but is missing values, the default English will be used for the missing values.
+The grid by default does not need a locale. If no locale is provided, the grid will default to English. If a locale is provided but is missing values, the default English will be used for the missing values.
 
 An example full locale file is provided below. To support other languages, the first step is to copy this file and translate the values into the required language.
 
@@ -48,9 +48,9 @@ The example below shows providing a callback for the grid's localisation. The ex
 In a real world application, the callback would look something like this:
 
 ```js
-function localeTextFunc(key, defaultValue) {
+const localeTextFunc = (key, defaultValue) => {
     // to avoid key clash with external keys, we add 'grid' to the start of each key.
-    var gridKey = 'grid.' + key;
+    const gridKey = 'grid.' + key;
 
     // look the value up using an application wide service
     return applicationLocaleService(gridKey);
