@@ -3,6 +3,7 @@ import { CellComp } from "../cellComp";
 import { DataChangedEvent, RowNode } from "../../entities/rowNode";
 import { Column } from "../../entities/column";
 import {
+    CellFocusedEvent,
     Events,
     RowClickedEvent,
     RowDoubleClickedEvent,
@@ -31,6 +32,7 @@ import { isStopPropagationForAgGrid } from "../../utils/event";
 import { iterateObject, assign } from "../../utils/object";
 import { cssStyleObjectToMarkup } from "../../utils/general";
 import { AngularRowUtils } from "./angularRowUtils";
+import { CellPosition } from "../../entities/cellPosition";
 
 interface CellTemplate {
     template: string;
@@ -206,6 +208,10 @@ export class RowComp extends Component {
         templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
         templateParts.push(` class="${rowClasses}"`);
+
+        if (this.fullWidthRow) {
+            templateParts.push(` tabindex="-1"`);
+        }
 
         if (this.beans.gridOptionsWrapper.isRowSelection()) {
             templateParts.push(` aria-selected="${this.rowNode.isSelected() ? 'true' : 'false'}"`);
@@ -624,6 +630,30 @@ export class RowComp extends Component {
         this.refreshCells();
     }
 
+    public onKeyboardNavigate(keyboardEvent: KeyboardEvent) {
+        const node = this.rowNode;
+        const lastFocusedCell = this.beans.focusController.getFocusedCell();
+        const cellPosition: CellPosition = {
+            rowIndex: node.rowIndex!,
+            rowPinned: node.rowPinned,
+            column: (lastFocusedCell && lastFocusedCell.column) as Column
+        };
+        this.beans.rowRenderer.navigateToNextCell(keyboardEvent, keyboardEvent.keyCode, cellPosition, true);
+        keyboardEvent.preventDefault();
+    }
+
+    public onFullWidthRowFocused(event: CellFocusedEvent) {
+        const node = this.rowNode;
+        const isFocused = this.fullWidthRow && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
+
+        addOrRemoveCssClass(this.eFullWidthRow, 'ag-full-width-focus', isFocused);
+
+        if (isFocused) {
+            const focusEl = this.embedFullWidth ? this.eFullWidthRowBody : this.eFullWidthRow;
+            focusEl.focus();
+        }
+    }
+
     public refreshCell(cellComp: CellComp) {
         if (!this.areAllContainersReady()) { return; }
 
@@ -861,6 +891,18 @@ export class RowComp extends Component {
 
     private onRowMouseDown(mouseEvent: MouseEvent) {
         this.lastMouseDownOnDragger = isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
+
+        if (!this.isFullWidth()) { return; }
+
+        const node = this.rowNode;
+        const columnController = this.beans.columnController;
+
+        this.beans.focusController.setFocusedCell(
+            node.rowIndex!,
+            columnController.getAllDisplayedColumns()[0],
+            node.rowPinned, true
+        );
+
     }
 
     public onRowClick(mouseEvent: MouseEvent) {

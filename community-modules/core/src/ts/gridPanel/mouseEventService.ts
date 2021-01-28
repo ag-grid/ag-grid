@@ -7,7 +7,7 @@ import { GridPanel } from "./gridPanel";
 import { Constants } from "../constants/constants";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
-import { getEventPath, getCellCompForEvent } from "../utils/event";
+import { getEventPath, getComponentForEvent } from "../utils/event";
 import { exists } from "../utils/generic";
 
 @Bean('mouseEventService')
@@ -38,7 +38,7 @@ export class MouseEventService extends BeanStub {
     }
 
     public getRenderedCellForEvent(event: Event): CellComp | null {
-        return getCellCompForEvent(this.gridOptionsWrapper, event);
+        return getComponentForEvent<CellComp>(this.gridOptionsWrapper, event, 'cellComp');
     }
 
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
