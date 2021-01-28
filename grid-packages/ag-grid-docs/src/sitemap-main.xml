@@ -7,18 +7,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example-javascript/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/example-gallery/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/ag-grid-pipeline/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
@@ -61,19 +49,13 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/support.php/</loc>
+    <loc>https://www.ag-grid.com/example.php</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example.php/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/license-pricing.php/</loc>
+    <loc>https://www.ag-grid.com/license-pricing.php</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
