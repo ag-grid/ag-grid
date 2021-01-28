@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { GlobalContextProvider } from 'components/GlobalContext';
 import HeaderNav from 'components/HeaderNav';
 import Menu from 'components/Menu';
@@ -39,6 +40,7 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
 
     return <GlobalContextProvider>
         <div className={styles['main-container']}>
+            <Helmet htmlAttributes={{ lang: 'en' }} />
             <header className={styles.header}>
                 <div className={styles.header__wrapper}>
                     {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
