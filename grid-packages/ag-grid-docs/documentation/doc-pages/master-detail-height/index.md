@@ -47,6 +47,24 @@ const gridOptions = {
 
 <grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 600, "modules": ["clientside", "masterdetail"] }'></grid-example>
 
+If you are not providing your own Detail Cell Renderer, then there is nothing else to be concerned about.
+
+If you are providing your own Detail Cell Renderer, then you need to make sure the top most element of the
+Detail Cell Renderer has the correct height, as this is what the grid checks and matches the row height to this.
+So make sure the CSS on the top most element is set so that its height is correct.
+
+[[only-angular]]
+| This can be a particular concern if providing a Detail Cell Renderer in Angular. Be aware that by default 
+| custom Angular tags will not inherit the height of their children. This can be fixed by adding 
+| `display: inline-block` style to the top most element of your component. This is done as follows:
+|
+| ```
+| @Component({
+|   styles: [':host { display: inline-block; }'],
+|   // other items here
+| }
+| ```
+
 [[note]]
 | When using Auto Height feature, the Detail Grid will render all of it's rows all the time.
 | [Row Virtualisation](../dom-virtualisation/) will not happen.
@@ -55,6 +73,7 @@ const gridOptions = {
 | <br/><br/>
 | Do not use Auto Height if you have many rows (eg 100+) in the Detail Grid's. To know if this
 | is a concern for your grid and dataset, try it out and check the performance.
+
 
 ## Dynamic Height
 
