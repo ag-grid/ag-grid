@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { graphql } from 'gatsby';
 import rehypeReact from 'rehype-react';
 import classnames from 'classnames';
@@ -7,7 +6,6 @@ import ExampleRunner from 'components/example-runner/ExampleRunner';
 import SideMenu from 'components/SideMenu';
 import processFrameworkSpecificSections from 'utils/framework-specific-sections';
 import { getPageName } from 'utils/get-page-name';
-import { getHeaderTitle } from 'utils/page-header';
 import { ApiDocumentation } from 'components/ApiDocumentation';
 import { Snippet } from 'components/snippet/Snippet';
 import FeatureOverview from 'components/FeatureOverview';
@@ -20,6 +18,8 @@ import ChartGallery from 'components/chart-gallery/ChartGallery';
 import ChartsApiExplorer from 'components/charts-api-explorer/ChartsApiExplorer';
 import { ListItem } from 'components/ListItem';
 import Gif from 'components/Gif';
+import { SEO } from 'components/SEO';
+import stripHtml from 'utils/strip-html';
 import styles from './doc-page.module.scss';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
@@ -43,7 +43,6 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
 
   const renderAst = new rehypeReact({
     createElement: React.createElement,
-    Fragment: React.Fragment,
     components: {
       'li': ListItem,
       'gif': props => Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false }),
@@ -67,13 +66,20 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     },
   }).Compiler;
 
-  const { title } = page.frontmatter;
-  const headerTitle = getHeaderTitle(title, framework, pageName === 'charts' || pageName.indexOf('charts-') === 0);
+  let { title, description } = page.frontmatter;
+
+  if (!description) {
+    const firstParagraphNode = ast.children.filter(child => child.tagName === 'p')[0];
+
+    if (firstParagraphNode) {
+      description = stripHtml(firstParagraphNode);
+    }
+  }
 
   return (
     <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
       <div id="doc-content" className={classnames(styles['doc-page'], { [styles['doc-page--with-side-menu']]: showSideMenu })}>
-        <Helmet title={headerTitle} />
+        <SEO title={title} description={description} framework={framework} pageName={pageName} />
         <h1 id="top" className={classnames(styles['doc-page__title'], { [styles['doc-page__title--enterprise']]: page.frontmatter.enterprise })}>{title}</h1>
         {renderAst(ast)}
       </div>
@@ -89,6 +95,7 @@ export const pageQuery = graphql`
       frontmatter {
         title
         enterprise
+        description
       }
       headings {
         id

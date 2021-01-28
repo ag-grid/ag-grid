@@ -4,7 +4,6 @@ title: "Provided Filters"
 
 This section describes the functionality common to all filters that are provided by the grid.
 
-
 The grid provides four filters out of the box: three [Simple Filters](../filter-provided-simple/) (Text, Number and Date), and an advanced [Set Filter](../filter-set/) which is available in the Enterprise version of the grid.
 
 Follow the links below to learn more about each specific filter:
@@ -13,7 +12,6 @@ Follow the links below to learn more about each specific filter:
 - [Number](../filter-number/)
 - [Date](../filter-date/)
 - [Set Filter](../filter-set/)<enterprise-icon></enterprise-icon>
-
 
 The rest of this section will cover concepts that are common to every provided filter.
 
@@ -24,7 +22,6 @@ The diagram below outlines the structure of the filters. Each box represents a f
 <image-caption src="filter-provided/resources/providedFilters.png" alt="Provided Filters" width="52rem" centered="true"></image-caption>
 
 ## Provided Filter UI
-
 
 Each provided filter is displayed in a UI with optional buttons at the bottom.
 
@@ -37,7 +34,6 @@ All of the provided filters have the following parameters:
 <api-documentation source='filter-provided/resources/providedFilters.json' section='filterParams'></api-documentation>
 
 ## Provided Filter API
-
 
 Provided Filters provide the following methods:
 
@@ -52,7 +48,6 @@ When the Apply button is used, the filter is only applied once the Apply button 
 The Clear button clears just the filter UI, whereas the Reset button clears the filter UI and removes any active filters for that column.
 
 The Cancel button will discard any changes that have been made in the UI, restoring the state of the filter to match the applied model.
-
 
 The buttons will be displayed in the order they are specified in the `buttons` array.
 
@@ -88,4 +83,3 @@ Applying the model is then typically followed by calling `gridApi.onFilterChange
 </snippet>
 
 If no call is made to `filterInstance.applyModel()` then the filter UI will show any changes that have been made, but they won't be reflected in the filter model and therefore won't be reflected in the filtering. This will appear as if the user never hit the Apply button (regardless of whether the Apply button is active or not).
-

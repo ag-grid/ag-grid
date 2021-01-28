@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
-import { localPrefix, agGridVersion, agChartsVersion } from './consts';
+import { localPrefix, agGridVersion, agChartsVersion } from 'utils/consts';
 import { getCssFilePaths, isUsingPublishedPackages } from './helpers';
 import isDevelopment from 'utils/is-development';
 import Scripts from './Scripts';
