@@ -7,15 +7,21 @@
         margin-left: calc((100% - 300px) / 2 - 730px);
     }
 
+    &__intro {
+        composes: p-3 from global;
+    }
+
     h2 {
-        background-color: $secondary;
+        background-color: $grey-2;
         color: $white;
     }
+
     @include media-breakpoint-down(md) {
         h2 {
             font-size: 1.5rem;
         }
     }
+
     &__getting-started {
         text-align: left;
 
@@ -25,29 +31,29 @@
             font-weight: 400;
             text-align: left;
         }
-    
+
         &__row {
             composes: d-flex ml-3 mb-2 from global;
             height: 7.5rem;
         }
-    
+
         &__framework_overview {
             composes: d-flex flex-column from global;
             height: 7.5rem;
         }
-    
+
         &__framework_logo {
             composes: p-2 from global;
             position: relative;
             width: 7.5rem;
             height: 7.5rem;
-    
+
             img {
                 width: 100%;
                 height: 100%;
             }
         }
-    
+
         &__framework_button {
             composes: btn btn-primary mx-2 from global;
         }
@@ -69,7 +75,8 @@
                 overflow: hidden;
                 white-space: nowrap;
             }
-            @media all and (-ms-high-contrast:none) { // IE!!
+            @media all and (-ms-high-contrast: none) {
+                // IE!!
                 & {
                     display: flex;
                     flex-direction: column;
@@ -82,4 +89,3 @@
         }
     }
 }
-
