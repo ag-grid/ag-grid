@@ -33,7 +33,7 @@ const gridOptions = {
             filter: 'agNumberColumnFilter',
             filterParams: {
                 allowedCharPattern: '\\d\\-\\,', // note: ensure you escape as if you were creating a RegExp from a string
-                numberParser: function(text) {
+                numberParser: text => {
                     return text == null ? null : parseFloat(text.replace(',', '.'));
                 }
             }

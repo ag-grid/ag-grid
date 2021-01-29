@@ -25,7 +25,7 @@ To execute filtering on cell edits, listen to `CellValueChanged` events and trig
 
 <snippet>
 const gridOptions = {
-    onCellValueChanged: function(params) {
+    onCellValueChanged: params => {
         // trigger filtering on cell edits
         params.api.onFilterChanged();
     }

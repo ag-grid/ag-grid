@@ -24,7 +24,7 @@ The following example shows how you can provide a unique look and feel to the he
 
 - The header heights have all been changed via grid options:
 
-<snippet>
+<snippet spaceBetweenProperties="true">
     const gridOptions = {
         // Group columns
         groupHeaderHeight: 75,

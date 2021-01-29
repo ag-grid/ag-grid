@@ -20,7 +20,7 @@ See [Column Properties](../column-properties/) for a list of all properties that
 
 If you want the columns to be grouped, you can include them as children like so:
 
-<snippet suppressFrameworkContext=true>
+<snippet suppressFrameworkContext="true">
 const gridOptions = {
     // put the three columns into a group
     columnDefs: [
