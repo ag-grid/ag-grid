@@ -56,14 +56,14 @@ export const isEventSupported = (() => {
     return eventChecker;
 })();
 
-export function getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, event: Event): CellComp | null {
+export function getComponentForEvent<T>(gridOptionsWrapper: GridOptionsWrapper, event: Event, type: string): T | null {
     let sourceElement = getTarget(event);
 
     while (sourceElement) {
-        const renderedCell = gridOptionsWrapper.getDomData(sourceElement, 'cellComp');
+        const renderedComp = gridOptionsWrapper.getDomData(sourceElement, type);
 
-        if (renderedCell) {
-            return renderedCell as CellComp;
+        if (renderedComp) {
+            return renderedComp as T;
         }
 
         sourceElement = sourceElement.parentElement!;

@@ -46,13 +46,14 @@ import { debounce } from '../utils/function';
 import { addCssClass, removeCssClass, isVisible, addOrRemoveCssClass, isHorizontalScrollShowing, isVerticalScrollShowing, setFixedHeight, setDisplayed, setFixedWidth, getScrollLeft, setScrollLeft, isRtlNegativeScroll } from '../utils/dom';
 import { getTabIndex, isBrowserIE, isIOSUserAgent } from '../utils/browser';
 import { missing, missingOrEmpty } from '../utils/generic';
-import { getTarget, getCellCompForEvent, isStopPropagationForAgGrid } from '../utils/event';
+import { getTarget, isStopPropagationForAgGrid, getComponentForEvent } from '../utils/event';
 import { isUserSuppressingKeyboardEvent } from '../utils/keyboard';
 import { last } from '../utils/array';
 import { iterateObject } from '../utils/object';
 import { KeyCode } from '../constants/keyCode';
 import { PopupService } from "../widgets/popupService";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
+import { KeyName } from '../constants/keyName';
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -575,10 +576,18 @@ export class GridPanel extends Component {
     }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        const cellComp = getCellCompForEvent(this.gridOptionsWrapper, keyboardEvent);
+        const cellComp = getComponentForEvent<CellComp>(this.gridOptionsWrapper, keyboardEvent, 'cellComp');
+        const rowComp = getComponentForEvent<RowComp>(this.gridOptionsWrapper, keyboardEvent, 'renderedRow');
 
-        if (!cellComp || keyboardEvent.defaultPrevented) { return; }
+        if (keyboardEvent.defaultPrevented) { return; }
+        if (cellComp) {
+            this.processCellKeyboardEvent(cellComp, eventName, keyboardEvent);
+        } else if (rowComp && rowComp.isFullWidth()) {
+            this.processFullWidthRowKeyboardEvent(rowComp, eventName, keyboardEvent);
+        }
+    }
 
+    private processCellKeyboardEvent(cellComp: CellComp, eventName: string, keyboardEvent: KeyboardEvent): void {
         const rowNode = cellComp.getRenderedRow()!.getRowNode();
         const column = cellComp.getColumn();
         const editing = cellComp.isEditing();
@@ -614,6 +623,27 @@ export class GridPanel extends Component {
         if (eventName === 'keypress') {
             const cellKeyPressEvent: CellKeyPressEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_PRESS);
             this.eventService.dispatchEvent(cellKeyPressEvent);
+        }
+    }
+
+    processFullWidthRowKeyboardEvent(rowComp: RowComp, eventName: string, keyboardEvent: KeyboardEvent) {
+        const rowNode = rowComp.getRowNode();
+        const focusedCell = this.beans.focusController.getFocusedCell();
+        const column = (focusedCell && focusedCell.column) as Column;
+        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, false);
+
+        if (gridProcessingAllowed) {
+            const key = keyboardEvent.key;
+            if (eventName === 'keydown') {
+                switch (key) {
+                    case KeyName.UP:
+                    case KeyName.DOWN:
+                    case KeyName.TAB:
+                        rowComp.onKeyboardNavigate(keyboardEvent);
+                        break;
+                    default:
+                }
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { localPrefix, agGridVersion, agChartsVersion } from './consts';
+import { localPrefix, agGridVersion, agChartsVersion } from 'utils/consts';
 import { isUsingPublishedPackages } from './helpers';
 import isDevelopment from 'utils/is-development';
 

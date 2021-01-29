@@ -57,8 +57,9 @@ So make sure the CSS on the top most element is set so that its height is correc
 | This can be a particular concern if providing a Detail Cell Renderer in Angular. Be aware that by default 
 | custom Angular tags will not inherit the height of their children. This can be fixed by adding 
 | `display: inline-block` style to the top most element of your component. This is done as follows:
-|
-| ```
+| 
+| 
+| ```ts
 | @Component({
 |   styles: [':host { display: inline-block; }'],
 |   // other items here

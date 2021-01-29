@@ -1,6 +1,7 @@
 ---
 title: "Set Filter - Overview"
 enterprise: true
+description: "Set Filter works like Excel, providing checkboxes to select values from a set."
 ---
 
 The Set Filter takes inspiration from Excel's AutoFilter and allows filtering on sets of data. It is built on top of the shared functionality that is common across all [Provided Filters](../filter-provided/).

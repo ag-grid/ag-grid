@@ -125,7 +125,7 @@
         @include ag-theme-rtl(( margin-left: auto ));
     }
 
-    .ag-cell {
+    .ag-cell, .ag-full-width-row .ag-cell-wrapper.ag-row-group {
         // draw a transparent border so that the cell size doesn't change when we add a range border
         border: 1px solid transparent;
         // adjust for transparent border

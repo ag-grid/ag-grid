@@ -3,7 +3,7 @@ import { GridPanel, RowContainerComponents } from "../gridPanel/gridPanel";
 import { RowComp } from "./row/rowComp";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import { Events, FirstDataRenderedEvent, ModelUpdatedEvent, ViewportChangedEvent } from "../events";
+import { CellFocusedEvent, Events, FirstDataRenderedEvent, ModelUpdatedEvent, ViewportChangedEvent } from "../events";
 import { Constants } from "../constants/constants";
 import { CellComp } from "./cellComp";
 import { Autowired, Bean, Optional, Qualifier } from "../context/context";
@@ -120,9 +120,13 @@ export class RowRenderer extends BeanStub {
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
-
-        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, event => {
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
             this.forEachCellComp(cellComp => cellComp.onCellFocused(event));
+            this.forEachRowComp((key: string, rowComp: RowComp) => {
+                if (rowComp.isFullWidth()) {
+                    rowComp.onFullWidthRowFocused(event);
+                }
+            });
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
@@ -1253,20 +1257,24 @@ export class RowRenderer extends BeanStub {
         const cellComp = this.getComponentForCell(nextCell);
 
         // not guaranteed to have a cellComp when using the SSRM as blocks are loading.
-        if (!cellComp) { return; }
+        if (cellComp) {
+            nextCell = cellComp.getCellPosition();
+                // we call this again, as nextCell can be different to it's previous value due to Column Spanning
+                // (ie if cursor moving from right to left, and cell is spanning columns, then nextCell was the
+                // last column in the group, however now it's the first column in the group). if we didn't do
+                // ensureCellVisible again, then we could only be showing the last portion (last column) of the
+                // merged cells.
+                this.ensureCellVisible(nextCell);
+        }
 
-        nextCell = cellComp.getCellPosition();
-
-        // we call this again, as nextCell can be different to it's previous value due to Column Spanning
-        // (ie if cursor moving from right to left, and cell is spanning columns, then nextCell was the
-        // last column in the group, however now it's the first column in the group). if we didn't do
-        // ensureCellVisible again, then we could only be showing the last portion (last column) of the
-        // merged cells.
-        this.ensureCellVisible(nextCell);
+        if (!cellComp) {
+            const rowComp = this.getRowCompByPosition(nextCell);
+            if (!rowComp || !rowComp.isFullWidth()) { return; }
+        }
 
         this.focusController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
 
-        if (this.rangeController) {
+        if (cellComp && this.rangeController) {
             this.rangeController.setRangeToCell(nextCell);
         }
     }
@@ -1275,19 +1283,7 @@ export class RowRenderer extends BeanStub {
         const rowNode = this.rowPositionUtils.getRowNode(cell);
 
         // we do not allow focusing on detail rows and full width rows
-        if (!rowNode || rowNode.detail || rowNode.isFullWidthCell()) { return false; }
-
-        // if not a group, then we have a valid row, so quit the search
-        if (!rowNode.group) { return true; }
-
-        // full width rows cannot be focused, so if it's a group and using full width rows,
-        // we need to skip over the row
-        const pivotMode = this.columnController.isPivotMode();
-        const usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
-
-        if (!usingFullWidthRows) { return true; }
-
-        return false;
+        return !!rowNode;
     }
 
     private getLastCellOfColSpan(cell: CellPosition): CellPosition {
@@ -1331,19 +1327,25 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    public getComponentForCell(cellPosition: CellPosition): CellComp | null {
+    private getRowCompByPosition(rowPosition: RowPosition): RowComp | null {
         let rowComponent: RowComp | null;
-        switch (cellPosition.rowPinned) {
+        switch (rowPosition.rowPinned) {
             case Constants.PINNED_TOP:
-                rowComponent = this.floatingTopRowComps[cellPosition.rowIndex];
+                rowComponent = this.floatingTopRowComps[rowPosition.rowIndex];
                 break;
             case Constants.PINNED_BOTTOM:
-                rowComponent = this.floatingBottomRowComps[cellPosition.rowIndex];
+                rowComponent = this.floatingBottomRowComps[rowPosition.rowIndex];
                 break;
             default:
-                rowComponent = this.rowCompsByIndex[cellPosition.rowIndex];
+                rowComponent = this.rowCompsByIndex[rowPosition.rowIndex];
                 break;
         }
+
+        return rowComponent;
+    }
+
+    public getComponentForCell(cellPosition: CellPosition): CellComp | null {
+        const rowComponent = this.getRowCompByPosition(cellPosition);
 
         if (!rowComponent) {
             return null;
