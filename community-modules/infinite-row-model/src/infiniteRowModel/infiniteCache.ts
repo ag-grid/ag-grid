@@ -14,7 +14,8 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
-    _
+    _,
+    FocusController
 } from "@ag-grid-community/core";
 import { InfiniteBlock } from "./infiniteBlock";
 
@@ -43,6 +44,7 @@ export class InfiniteCache extends BeanStub {
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
+    @Autowired("focusController") private focusController: FocusController;
 
     private readonly params: InfiniteCacheParams;
 
@@ -158,11 +160,26 @@ export class InfiniteCache extends BeanStub {
                 // but the screen is showing 20 rows, so at least 4 blocks are needed.
                 if (this.isBlockCurrentlyDisplayed(block)) { return; }
 
+                // don't want to loose keyboard focus, so keyboard navigation can continue. so keep focused blocks.
+                if (this.isBlockFocused(block)) { return; }
+
                 // at this point, block is not needed, so burn baby burn
                 this.removeBlockFromCache(block);
             }
 
         });
+    }
+
+    private isBlockFocused(block: InfiniteBlock): boolean {
+        const focusedCell = this.focusController.getFocusCellToUseAfterRefresh();
+        if (!focusedCell) { return false; }
+        if (focusedCell.rowPinned!=null) { return false; }
+
+        const blockIndexStart = block.getStartRow();
+        const blockIndexEnd = block.getEndRow();
+
+        const hasFocus = focusedCell.rowIndex >= blockIndexStart && focusedCell.rowIndex < blockIndexEnd;
+        return hasFocus;
     }
 
     private isBlockCurrentlyDisplayed(block: InfiniteBlock): boolean {
