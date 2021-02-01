@@ -229,16 +229,12 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             }
 
             additionalInReady.push(`
-            const httpRequest = new XMLHttpRequest();
-            const updateData = (data) => ${setRowDataBlock};
-
-            httpRequest.open('GET', ${data.url});
-            httpRequest.send();
-            httpRequest.onreadystatechange = () => {
-                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                    updateData(JSON.parse(httpRequest.responseText));
-                }
-            };`);
+                const updateData = (data) => ${setRowDataBlock};
+                
+                fetch(${data.url})
+                .then(resp => resp.json())
+                .then(data => updateData(data));`
+            );
         }
 
         if (onGridReady) {
