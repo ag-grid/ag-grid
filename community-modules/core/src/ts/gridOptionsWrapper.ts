@@ -1675,8 +1675,12 @@ export class GridOptionsWrapper {
                 context: this.gridOptions.context
             };
             const height = this.gridOptions.getRowHeight(params);
+
             if (this.isNumeric(height)) {
-                return { height, estimated: false };
+                if (height === 0) {
+                    doOnce(() => console.warn('ag-Grid: The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.'), 'invalidRowHeight');
+                }
+                return { height: Math.max(1, height), estimated: false };
             }
         }
 
