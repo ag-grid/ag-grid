@@ -441,6 +441,14 @@ export class ChartTheme {
                     }
                 }
             }
+        },
+        hierarchy: {
+            ...ChartTheme.getChartDefaults(),
+            series: {
+                treemap: {
+                    ...ChartTheme.getSeriesDefaults()
+                }
+            }
         }
     };
 

@@ -21,6 +21,9 @@ import { NavigatorMask } from "./navigator/navigatorMask";
 import { NavigatorHandle } from "./navigator/navigatorHandle";
 import { CartesianSeriesMarker } from "./series/cartesian/cartesianSeries";
 import { Chart } from "./chart";
+import { HierarchyChart } from "./hierarchyChart";
+import { HierarchySeries } from "./series/hierarchy/hierarchySeries";
+import { TreemapSeries } from "./series/hierarchy/treemapSeries";
 
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -711,6 +714,28 @@ const mappings: any = {
                 ...shadowMapping
             }
         }
+    },
+    [HierarchyChart.type]: {
+        meta: {
+            constructor: HierarchyChart,
+            ...chartMeta,
+            defaults: {
+                ...chartDefaults
+            }
+        },
+        ...commonChartMappings,
+        series: {
+            [TreemapSeries.type]: {
+                meta: {
+                    constructor: TreemapSeries,
+                    defaults: {
+                        ...seriesDefaults,
+                        showInLegend: false
+                    }
+                },
+                ...tooltipMapping,
+            }
+        }
     }
 };
 
@@ -718,7 +743,8 @@ const mappings: any = {
 {
     const typeToAliases: { [key in string]: string[] } = {
         cartesian: ['line', 'area', 'bar', 'column'],
-        polar: ['pie']
+        polar: ['pie'],
+        hierarchy: ['treemap']
     };
     for (const type in typeToAliases) {
         typeToAliases[type].forEach(alias => {
