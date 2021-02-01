@@ -10,7 +10,7 @@ import { ResizeObserverService } from "../misc/resizeObserverService";
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
-    isRowSelected?(index: number): boolean;
+    isRowSelected?(index: number): boolean | undefined;
 }
 
 export class VirtualList extends ManagedFocusComponent {

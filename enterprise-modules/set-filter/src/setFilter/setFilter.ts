@@ -747,7 +747,7 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
     }
 
-    private isSelectAllSelected(): boolean {
+    private isSelectAllSelected(): boolean | undefined {
         if (!this.setFilterParams || !this.valueModel) { return false; }
 
         if (!this.setFilterParams.defaultToNothingSelected) {
@@ -769,8 +769,8 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
                 return false;
             }
         }
-
-        return false;
+        // returning `undefined` means the checkbox status is indeterminate.
+        return undefined;
     }
 
     public destroy(): void {
@@ -803,7 +803,7 @@ class ModelWrapper implements VirtualListModel {
 class ModelWrapperWithSelectAll implements VirtualListModel {
     constructor(
         private readonly model: SetValueModel,
-        private readonly isSelectAllSelected: (() => boolean)) {
+        private readonly isSelectAllSelected: (() => boolean | undefined)) {
     }
 
     public getRowCount(): number {
@@ -814,7 +814,7 @@ class ModelWrapperWithSelectAll implements VirtualListModel {
         return index === 0 ? SetFilter.SELECT_ALL_VALUE : this.model.getDisplayedValue(index - 1);
     }
 
-    public isRowSelected(index: number): boolean {
+    public isRowSelected(index: number): boolean | undefined {
         return index === 0 ? this.isSelectAllSelected() : this.model.isValueSelected(this.getRow(index - 1));
     }
 }
