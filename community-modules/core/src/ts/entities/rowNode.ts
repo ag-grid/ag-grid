@@ -15,6 +15,7 @@ import { DetailGridInfo, GridApi } from "../gridApi";
 import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { assign, getAllKeysInObjects } from "../utils/object";
 import { IServerSideStore } from "../interfaces/IServerSideStore";
+import { RowRenderer } from "../rendering/rowRenderer";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -75,6 +76,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_DRAGGING_CHANGED = 'draggingChanged';
 
     @Autowired('eventService') private mainEventService: EventService;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('columnController') private columnController: ColumnController;
@@ -534,7 +536,7 @@ export class RowNode implements IEventEmitter {
         this.mainEventService.dispatchEvent(event);
 
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.gridApi.redrawRows({ rowNodes: [this] });
+            this.rowRenderer.redrawRows([this], true);
         }
     }
 

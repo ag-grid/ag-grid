@@ -28,7 +28,7 @@ import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { missing, exists } from "../utils/generic";
+import { missing, exists, find } from "../utils/generic";
 import { iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
 import { pushAll, last } from "../utils/array";
@@ -43,7 +43,6 @@ export class RowRenderer extends BeanStub {
     @Autowired("$scope") private $scope: any;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
-    @Autowired("loggerFactory") private loggerFactory: LoggerFactory;
     @Autowired("focusController") private focusController: FocusController;
     @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
     @Autowired("columnApi") private columnApi: ColumnApi;
@@ -381,11 +380,22 @@ export class RowRenderer extends BeanStub {
         return result;
     }
 
-    public redrawRows(rowNodes: RowNode[]): void {
+    public redrawRows(rowNodes: RowNode[], forceRestoreFocus: boolean = false): void {
         if (!rowNodes || rowNodes.length == 0) { return; }
 
         // we only need to be worried about rendered rows, as this method is
         // called to what's rendered. if the row isn't rendered, we don't care
+        let focusedCell: CellPosition | null = null;
+
+        if (forceRestoreFocus) {
+            const cellFocused = this.focusController.getFocusCellToUseAfterRefresh();
+            const rowNode: RowNode | null = find(rowNodes, (rowNode) => this.rowPositionUtils.sameRow(
+                { rowIndex: rowNode.rowIndex!, rowPinned: rowNode.rowPinned }, cellFocused as RowPosition));
+            if (rowNode && cellFocused) {
+                focusedCell = cellFocused;
+            }
+        }
+
         const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
 
         // remove the rows
@@ -395,6 +405,10 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterModelUpdate({
             recycleRows: true
         });
+
+        if (focusedCell) {
+            this.restoreFocusedCell(focusedCell);
+        }
     }
 
     private getCellToRestoreFocusToAfterRefresh(params: RefreshViewParams): CellPosition | null {
