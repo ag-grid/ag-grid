@@ -78,9 +78,13 @@ META;
     $socialUrlMeta
     $socialImageMeta
 
-    <link rel="icon" type="image/png" sizes="32x32" href="{$prefix}_assets/favicons/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{$prefix}_assets/favicons/favicon-16x16.png" />
-    <link rel="shortcut icon" href="{$prefix}_assets/favicons/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="196x196" href="{$prefix}_assets/favicons/favicon-196.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="{$prefix}_assets/favicons/favicon-192.png" />
+    <link rel="icon" type="image/png" sizes="180x180" href="{$prefix}_assets/favicons/favicon-180.png" />
+    <link rel="icon" type="image/png" sizes="167x167" href="{$prefix}_assets/favicons/favicon-167.png" />
+    <link rel="icon" type="image/png" sizes="152x152" href="{$prefix}_assets/favicons/favicon-152.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="{$prefix}_assets/favicons/favicon-128.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{$prefix}_assets/favicons/favicon-32.png" />
     ${GLOBALS['LINKEDIN_SCRIPT']}
 META;
 }

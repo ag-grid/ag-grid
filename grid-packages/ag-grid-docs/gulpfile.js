@@ -194,7 +194,16 @@ const copyFromDistFolder = () => merge(
         .pipe(gulp.dest('./dist/@ag-grid-enterprise/all-modules/dist/'))
 );
 
-const copyProdWebServerFilesToDist = () => gulp.src(['./.htaccess', './src/_assets/favicons/favicon.ico']).pipe(gulp.dest('./dist/'));
+const copyProdWebServerFilesToDist = () => gulp.src([
+    './.htaccess',
+    './src/_assets/favicons/favicon-196.png',
+    './src/_assets/favicons/favicon-192.png',
+    './src/_assets/favicons/favicon-180.png',
+    './src/_assets/favicons/favicon-167.png',
+    './src/_assets/favicons/favicon-152.png',
+    './src/_assets/favicons/favicon-128.png',
+    './src/_assets/favicons/favicon-32.png'
+]).pipe(gulp.dest('./dist/'));
 
 const copyDocumentationWebsite = () => gulp.src(['./documentation/public/**/*']).pipe(gulp.dest('./dist/documentation/'));
 
