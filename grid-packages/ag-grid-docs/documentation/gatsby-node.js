@@ -10,12 +10,14 @@ const chartGallery = require('./doc-pages/charts/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 const isDevelopment = require('./src/utils/is-development');
 
-exports.onPreBootstrap = () => {
-    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-    console.log("GATSBY_HOST:", process.env.GATSBY_HOST);
-    console.log("GATSBY_ROOT_DIRECTORY:", process.env.GATSBY_ROOT_DIRECTORY);
-    console.log("GATSBY_USE_PUBLISHED_PACKAGES:", process.env.GATSBY_USE_PUBLISHED_PACKAGES);
-    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+exports.onPreBootstrap = ({ reporter }) => {
+    reporter.info("---[ Initial configuration ]----------------------------------------------------");
+
+    Object.keys(process.env).filter(key => key.startsWith('GATSBY_')).forEach(key => {
+        reporter.info(`${key}=${process.env[key]}`);
+    });
+
+    reporter.info("--------------------------------------------------------------------------------");
 };
 
 /* This is an override of the code in https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-filesystem/src/extend-file-node.js
