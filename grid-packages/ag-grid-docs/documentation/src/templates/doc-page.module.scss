@@ -50,7 +50,7 @@
         }
     }
 
-    p:first-child {
+    h1 + div > p:first-child {
         font-size: 1.25rem;
     }
 
