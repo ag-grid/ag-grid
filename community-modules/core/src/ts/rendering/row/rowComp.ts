@@ -1001,9 +1001,9 @@ export class RowComp extends Component {
                 if (!res) {
                     const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
                     if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
-                        console.warn(`ag-Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
+                        console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
                     } else {
-                        console.error(`ag-Grid: fullWidthCellRenderer ${cellRendererName} not found`);
+                        console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
                     }
                     return;
                 }
@@ -1215,7 +1215,7 @@ export class RowComp extends Component {
         const rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
 
         if (rowStyle && typeof rowStyle === 'function') {
-            console.warn('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
+            console.warn('AG Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             return;
         }
 
@@ -1396,7 +1396,7 @@ export class RowComp extends Component {
     public addEventListener(eventType: string, listener: Function): void {
         if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
             eventType = Events.EVENT_VIRTUAL_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
+            console.warn('AG Grid: Since version 11, event renderedRowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
         super.addEventListener(eventType, listener);
     }
@@ -1404,7 +1404,7 @@ export class RowComp extends Component {
     public removeEventListener(eventType: string, listener: Function): void {
         if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
             eventType = Events.EVENT_VIRTUAL_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved and rowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
+            console.warn('AG Grid: Since version 11, event renderedRowRemoved and rowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
         super.removeEventListener(eventType, listener);
     }

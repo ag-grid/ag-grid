@@ -212,7 +212,7 @@ For Just in Time (JIT) compilation our SystemJS Configuration file looks like th
 <html>
 
 <head>
-    <title>ag-Grid Angular JIT Example</title>
+    <title>AG Grid Angular JIT Example</title>
 
     <!-- polyfills -->
     <script src="node_modules/core-js/client/shim.min.js"></script>
@@ -223,7 +223,7 @@ For Just in Time (JIT) compilation our SystemJS Configuration file looks like th
 
     <!-- ag-grid CSS -->
     <!-- In your build, you will probably want to include the css in your bundle. -->
-    <!-- To do this you will use a CSS Loader. How to do this is not an ag-Grid -->
+    <!-- To do this you will use a CSS Loader. How to do this is not an AG Grid -->
     <!-- problem, so I've not included how to do it here. For simplicity, and -->
     <!-- explicitness, the CSS files are loaded in directly here. -->
     <link href="node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css" rel="stylesheet"/>
@@ -362,7 +362,7 @@ will result is quicker startup and runtime behaviour, as well as less network tr
 <html>
 
 <head>
-    <title>ag-Grid Angular 2 AOT Example</title>
+    <title>AG Grid Angular 2 AOT Example</title>
     <base href="/">
 
     <script src="shim.min.js"></script>
@@ -370,7 +370,7 @@ will result is quicker startup and runtime behaviour, as well as less network tr
 
     <!-- ag-grid CSS -->
     <!-- In your build, you will probably want to include the css in your bundle. -->
-    <!-- To do this you will use a CSS Loader. How to do this is not an ag-Grid -->
+    <!-- To do this you will use a CSS Loader. How to do this is not an AG Grid -->
     <!-- problem, so I've not included how to do it here. For simplicity, and -->
     <!-- explicitness, the CSS files are loaded in directly here. -->
     <link href="ag-grid.css" rel="stylesheet" />
@@ -454,5 +454,5 @@ see the documentation for those projects.
 
 - Get started with Angular Grid in 5 minutes in our [guide](../getting-started/).
 
-- Please take a look at the [components](../framework-components/) section next for more detailed information on using Angular with ag-Grid.
+- Please take a look at the [components](../framework-components/) section next for more detailed information on using Angular with AG Grid.
 

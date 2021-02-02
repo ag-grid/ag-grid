@@ -71,7 +71,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.renderSelectedValue();
 
         if (_.missing(params.values)) {
-            console.warn('ag-Grid: richSelectCellEditor requires values for it to work');
+            console.warn('AG Grid: richSelectCellEditor requires values for it to work');
             return;
         }
 

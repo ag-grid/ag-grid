@@ -3,7 +3,7 @@ title: "Excel Export"
 enterprise: true
 ---
 
-Excel Export allows exporting ag-Grid data to Excel using Open XML format (xlsx) or Excel's own XML format. The export can be initiated with with an API call or by using the right-click context menu on the Grid.
+Excel Export allows exporting AG Grid data to Excel using Open XML format (xlsx) or Excel's own XML format. The export can be initiated with with an API call or by using the right-click context menu on the Grid.
 
 [[note]]
 | This page covers Excel-specific features such as styling. For information on how to control what data is included in the export
@@ -17,7 +17,7 @@ Using this format allows for rich Excel files to be created with the following:
 1. You can specify Excel styles (colors, fonts, borders etc) to be included in the Excel file.
 
 1. The data types of your columns are passed to Excel as part of the export so that if you can to work with the data within Excel in the correct format.
-1. The cells of the column header groups are merged in the same manner as the group headers in ag-Grid.
+1. The cells of the column header groups are merged in the same manner as the group headers in AG Grid.
 
 ## API
 
@@ -35,7 +35,7 @@ The `params` object can contain all the [common export options](../export/), as 
 
 ## Defining styles
 
-The main reason to export to Excel instead of CSV is so that the look and feel remain as consistent as possible with your ag-Grid application. In order to simplify the configuration the Excel Export reuses the [cellClassRules](../cell-styles/#cell-class-rules) and the [cellClass](../cell-styles/#cell-class) from the column definition. Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the `excelStyles` property in the [gridOptions](../grid-properties/).
+The main reason to export to Excel instead of CSV is so that the look and feel remain as consistent as possible with your AG Grid application. In order to simplify the configuration the Excel Export reuses the [cellClassRules](../cell-styles/#cell-class-rules) and the [cellClass](../cell-styles/#cell-class) from the column definition. Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the `excelStyles` property in the [gridOptions](../grid-properties/).
 
 An Excel style object has the following properties:
 
@@ -182,7 +182,7 @@ Headers are a special case, headers are exported to Excel as normal rows, so in 
 - Its possible to export borders as specified in the gold column (boldBorders)
 - If a cell has an style but there isn't an associated Excel Style defined, the style for that cell won't get exported. This is the case in this example of the year column which has the style notInExcel, but since it hasn't been specified in the gridOptions, the column then gets exported without formatting.
 
-- Note that there is an Excel Style with name and id header that gets automatically applied to the ag-Grid headers when exported to Excel
+- Note that there is an Excel Style with name and id header that gets automatically applied to the AG Grid headers when exported to Excel
 
 - As you can see in the column "Group", the Excel styles can be combined into cellClassRules and cellClass
 

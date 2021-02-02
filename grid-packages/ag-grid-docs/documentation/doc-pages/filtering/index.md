@@ -33,7 +33,7 @@ The example below demonstrates simple filters. The following can be noted:
 Set filtering on a column using the column definition property `filter`. The property can have
 one of the following values:
 
-- `boolean`: Set to `true` to enable the default filter. The default is [Text Filter](../filter-text/) for ag-Grid Community and [Set Filter](../filter-set/) for ag-Grid Enterprise.
+- `boolean`: Set to `true` to enable the default filter. The default is [Text Filter](../filter-text/) for AG Grid Community and [Set Filter](../filter-set/) for AG Grid Enterprise.
 - `string` / `Component`: Provide a specific filter to use instead of the default filter.
 
 The code below shows some column definitions with filters set:

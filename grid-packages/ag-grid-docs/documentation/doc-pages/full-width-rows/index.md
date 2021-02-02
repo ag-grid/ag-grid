@@ -2,12 +2,12 @@
 title: "Full Width Rows"
 ---
 
-Under normal operation, ag-Grid will render each row as a horizontal list of cells. Each cell in the row will correspond to one column definition. It is possible to switch this off and allow you to provide one component to span the entire width of the grid and not use columns. This is useful if you want to embed a complex component inside the grid instead of rendering a list of cells. This technique can be used for displaying panels of information.
+Under normal operation, AG Grid will render each row as a horizontal list of cells. Each cell in the row will correspond to one column definition. It is possible to switch this off and allow you to provide one component to span the entire width of the grid and not use columns. This is useful if you want to embed a complex component inside the grid instead of rendering a list of cells. This technique can be used for displaying panels of information.
 
 [[note]]
 | You may be wondering what full width rows are useful for. Their usage is very rare and most
 | applications will not use them. If you cannot think of a use case for it, then don't worry,
-| do not use it. Full width rows were initially introduced into ag-Grid to support
+| do not use it. Full width rows were initially introduced into AG Grid to support
 | [Master / Detail](../master-detail/) before the grid provided direct support for master / detail.
 | Now that master / detail is directly supported, the usefulness of full width is reduced.
 
@@ -30,14 +30,14 @@ A `fullWidth` (full width) component takes up the entire width of the grid. A fu
 - is not impacted by horizontal scrolling.
 - is the width of the grid, regardless of what columns are present.
 - is not impacted by pinned sections of the grid, will span left and right pinned areas regardless.
-- does not participate in the navigation, rangeSelection (ag-Grid Enterprise) or contextMenu (ag-Grid Enterprise) of the main grid.
+- does not participate in the navigation, rangeSelection (AG Grid Enterprise) or contextMenu (AG Grid Enterprise) of the main grid.
 
 To use `fullWidth`, you must:
 
 1. Implement the `isFullWidthCell(rowNode)` callback, to tell the grid which rows should be treated as `fullWidth`.
 1. Provide a `fullWidthCellRenderer`, to tell the grid what `cellRenderer` to use when doing `fullWidth` rendering.
 
-The cell renderer can be any ag-Grid cell renderer. Refer to
+The cell renderer can be any AG Grid cell renderer. Refer to
 [Cell Rendering](../component-cell-renderer/) on how to build cell renderers.
 The cell renderer for `fullWidth` has one difference to normal cell renderers: the parameters passed
 are missing the value and column information as the `cellRenderer`, by definition, is not tied to a particular

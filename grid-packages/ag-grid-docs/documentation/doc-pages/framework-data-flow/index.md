@@ -4,7 +4,7 @@ frameworks: ["vue"]
 ---
 
 This page details how a reduced footprint as well as unidirectional data flow can be 
-achieved when using ag-Grid and VueJs.
+achieved when using AG Grid and VueJs.
 
 ## Memory Footprint
 
@@ -88,4 +88,4 @@ methods: {
 
 ![Data Flow](resources/vuex.png)
 
-A full Vuex working example can be find in our [ag-Grid Vuex](https://github.com/seanlandsman/ag-grid-vue-vuex) repo.
+A full Vuex working example can be find in our [AG Grid Vuex](https://github.com/seanlandsman/ag-grid-vue-vuex) repo.

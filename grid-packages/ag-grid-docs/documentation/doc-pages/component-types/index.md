@@ -2,7 +2,7 @@
 title: "Component Types"
 ---
 
-The full list of component types you can provide in ag-Grid are as follows:
+The full list of component types you can provide in AG Grid are as follows:
 
 - [Cell Renderer](../component-cell-renderer/): To customises the contents of a cell.
 - [Cell Editor](../component-cell-editor/): To customises editing of a cell.

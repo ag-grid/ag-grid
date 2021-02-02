@@ -56,7 +56,7 @@ export class RowDragComp extends Component {
 
         if (treeData && managed) {
             doOnce(() =>
-                console.warn('ag-Grid: If using row drag with tree data, you cannot have rowDragManaged=true'),
+                console.warn('AG Grid: If using row drag with tree data, you cannot have rowDragManaged=true'),
                 'RowDragComp.managedAndTreeData'
             );
         }

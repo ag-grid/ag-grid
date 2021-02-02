@@ -145,7 +145,7 @@ export class SelectAllFeature extends BeanStub {
         const rowModelMatches = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
         if (!rowModelMatches) {
-            console.warn(`ag-Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
+            console.warn(`AG Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
         }
     }
 

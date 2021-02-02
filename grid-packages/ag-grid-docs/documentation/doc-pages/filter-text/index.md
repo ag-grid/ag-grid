@@ -38,7 +38,7 @@ function textCustomComparator(filter: string, gridValue: any, filterText: string
 - `filterText: string` The value to filter by.
 - `returns: boolean` Set to `true` if the value passes the filter, otherwise `false`.
 
-The following is an example of a `textCustomComparator` that mimics the current implementation of ag-Grid. This can be used as a template to create your own.
+The following is an example of a `textCustomComparator` that mimics the current implementation of AG Grid. This can be used as a template to create your own.
 
 
 <snippet>

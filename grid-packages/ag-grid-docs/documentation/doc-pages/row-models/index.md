@@ -55,8 +55,8 @@ Which row model you use is set as a grid property `rowModelType`. Set it to one 
 
 Which row model you use will depend on your application. Here are some quick rules of thumb:
 
-- If using **ag-Grid Community**, use **Client-Side Row Model** if you want to load all your data into the browser, or **Infinite Row Model** if you want to load it in blocks.
-- If using **ag-Grid Enterprise**, use **Client-Side Row Model** if you want to load all your data into the browser, or **Server-Side Row Model** if you want to load it in blocks. Server-Side Row Model is Infinite Row Model plus more. So if you are an ag-Grid Enterprise customer, you should prefer Server-Side Row Model over Infinite Row Model.
+- If using **AG Grid Community**, use **Client-Side Row Model** if you want to load all your data into the browser, or **Infinite Row Model** if you want to load it in blocks.
+- If using **AG Grid Enterprise**, use **Client-Side Row Model** if you want to load all your data into the browser, or **Server-Side Row Model** if you want to load it in blocks. Server-Side Row Model is Infinite Row Model plus more. So if you are an AG Grid Enterprise customer, you should prefer Server-Side Row Model over Infinite Row Model.
 - Don't use **Viewport Row Model** unless you understand what its advantages are and when you need them. We find many of our users use Viewport Row Model when they don't need to and end up with more complicated applications as a result.
 
 Here are more detailed rules of thumb.

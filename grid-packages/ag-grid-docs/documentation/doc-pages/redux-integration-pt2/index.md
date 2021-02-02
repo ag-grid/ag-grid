@@ -3,12 +3,12 @@ title: "Redux Integration - Part 2"
 frameworks: ["react"]
 ---
 
-This section takes a deeper look at integrating ag-Grid with a Redux store by implementing a 
+This section takes a deeper look at integrating AG Grid with a Redux store by implementing a 
 feature rich File Browser that uses Tree Data.
 
 
 Following on from [Redux Integration Part 1](../redux-integration-pt1/) we will implement a 
-Redux File Browser to demonstrate how the feature rich ag-Grid can be combined with a Redux 
+Redux File Browser to demonstrate how the feature rich AG Grid can be combined with a Redux 
 store to achieve elegant and powerful grid implementations.
 
 <image-caption src="redux-integration-pt2/resources/redux-file-browser.png" alt="Redux File Browser"></image-caption>
@@ -182,7 +182,7 @@ in `this.props.files`.
 ## Adding the Data Table
 
 Now that the Redux store is now connected to our stateless React component, all that remains 
-is to implement the view, which just consists of the ag-Grid Data Table in our File Browser.
+is to implement the view, which just consists of the AG Grid Data Table in our File Browser.
 
 Before discussing the grid features in our file browser, here are all of the grid options we are using:
 
@@ -244,7 +244,7 @@ files: [
 This is supplied to the grid via the callback: `getDataPath={data => data.filePath}`.
 
 For more details see our documentation on [Tree Data](../tree-data/). The mechanism for connecting 
-Redux to ag-Grid applies equally to when the Tree Data feature is not used.
+Redux to AG Grid applies equally to when the Tree Data feature is not used.
 
 ## Row Data Updates
 

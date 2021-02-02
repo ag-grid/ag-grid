@@ -40,7 +40,7 @@ var gridOptions = {
             var ePopup = params.ePopup;
 
             var oldTopStr = ePopup.style.top;
-            // remove 'px' from the string (ag-Grid uses px positioning)
+            // remove 'px' from the string (AG Grid uses px positioning)
             oldTopStr = oldTopStr.substring(0, oldTopStr.indexOf('px'));
             var oldTop = parseInt(oldTopStr);
             var newTop = oldTop + 25;
@@ -59,7 +59,7 @@ function getMainMenuItems(params) {
         case 'athlete':
             var athleteMenuItems = params.defaultItems.slice(0);
             athleteMenuItems.push({
-                name: 'ag-Grid Is Great', action: function() { console.log('ag-Grid is great was selected'); }
+                name: 'AG Grid Is Great', action: function() { console.log('AG Grid is great was selected'); }
             });
             athleteMenuItems.push({
                 name: 'Casio Watch', action: function() { console.log('People who wear casio watches are cool'); }

@@ -245,14 +245,14 @@ export class ClientSideNodeManager {
             const id: string = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error(`ag-Grid: could not find row id=${id}, data item was not found for this id`);
+                console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
                 return null;
             }
         } else {
             // find rowNode using object references
             rowNode = _.find(this.rootNode.allLeafChildren, node => node.data === data);
             if (!rowNode) {
-                console.error(`ag-Grid: could not find data item as object was not found`, data);
+                console.error(`AG Grid: could not find data item as object was not found`, data);
                 return null;
             }
         }
@@ -263,7 +263,7 @@ export class ClientSideNodeManager {
     private recursiveFunction(rowData: any[], parent: RowNode, level: number): RowNode[] | undefined {
         // make sure the rowData is an array and not a string of json - this was a commonly reported problem on the forum
         if (typeof rowData === 'string') {
-            console.warn('ag-Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
+            console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
             return;
         }
 

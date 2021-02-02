@@ -212,7 +212,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.allNodesMap = {};
 
         if (!params.rowData) {
-            const message = 'ag-Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
+            const message = 'AG Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
             _.doOnce(() => console.warn(message, params), 'FullStore.noData');
         }
 
@@ -586,14 +586,14 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const id: string = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error(`ag-Grid: could not find row id=${id}, data item was not found for this id`);
+                console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
                 return null;
             }
         } else {
             // find rowNode using object references
             rowNode = _.find(this.allRowNodes, currentRowNode => currentRowNode.data === data)!;
             if (!rowNode) {
-                console.error(`ag-Grid: could not find data item as object was not found`, data);
+                console.error(`AG Grid: could not find data item as object was not found`, data);
                 return null;
             }
         }

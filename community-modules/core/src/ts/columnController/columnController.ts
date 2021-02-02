@@ -267,7 +267,7 @@ export class ColumnController extends BeanStub {
         this.updateDisplayedColumns(source);
         this.checkViewportColumns();
 
-        // this event is not used by ag-Grid, but left here for backwards compatibility,
+        // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it
         this.dispatchEverythingChanged(source);
 
@@ -404,7 +404,7 @@ export class ColumnController extends BeanStub {
 
     private isPivotSettingAllowed(pivot: boolean): boolean {
         if (pivot && this.gridOptionsWrapper.isTreeData()) {
-            console.warn("ag-Grid: Pivot mode not available in conjunction Tree Data i.e. 'gridOptions.treeData: true'");
+            console.warn("AG Grid: Pivot mode not available in conjunction Tree Data i.e. 'gridOptions.treeData: true'");
             return false;
         }
 
@@ -1112,7 +1112,7 @@ export class ColumnController extends BeanStub {
                 if (loopCount > 1000) {
                     // this should never happen, but in the future, someone might introduce a bug here,
                     // so we stop the browser from hanging and report bug properly
-                    console.error('ag-Grid: infinite loop in resizeColumnSets');
+                    console.error('AG Grid: infinite loop in resizeColumnSets');
                     break;
                 }
 
@@ -1238,8 +1238,8 @@ export class ColumnController extends BeanStub {
         this.columnAnimationService.start();
 
         if (toIndex > this.gridColumns.length - columnsToMoveKeys.length) {
-            console.warn('ag-Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
-            console.warn('ag-Grid: remember that you should not count the moving columns when calculating the new index');
+            console.warn('AG Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
+            console.warn('AG Grid: remember that you should not count the moving columns when calculating the new index');
             return;
         }
 
@@ -1847,7 +1847,7 @@ export class ColumnController extends BeanStub {
         if (missingOrEmpty(this.primaryColumns)) { return false; }
 
         if (params && params.state && !params.state.forEach) {
-            console.warn('ag-Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.');
+            console.warn('AG Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.');
             return false;
         }
 
@@ -1998,7 +1998,7 @@ export class ColumnController extends BeanStub {
         newOrder = this.putFixedColumnsFirst(newOrder);
 
         if (!this.doesMovePassMarryChildren(newOrder)) {
-            console.warn('ag-Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.');
+            console.warn('AG Grid: Applying column order broke a group where columns should be married together. Applying new order has been discarded.');
             return;
         }
 
@@ -2290,7 +2290,7 @@ export class ColumnController extends BeanStub {
                 }
             } else {
                 if (exists(aggFunc)) {
-                    console.warn('ag-Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
+                    console.warn('AG Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
                         'functions, register the functions first before using them in get/set state. This is because it is ' +
                         'intended for the column state to be stored and retrieved as simple JSON.');
                 }
@@ -2365,7 +2365,7 @@ export class ColumnController extends BeanStub {
         const column = this.getGridColumn(key);
 
         if (!column) {
-            console.warn('ag-Grid: could not find column ' + key);
+            console.warn('AG Grid: could not find column ' + key);
         }
 
         return column;
@@ -2848,7 +2848,7 @@ export class ColumnController extends BeanStub {
         if (key instanceof OriginalColumnGroup) { return key; }
 
         if (typeof key !== 'string') {
-            console.error('ag-Grid: group key must be a string');
+            console.error('AG Grid: group key must be a string');
         }
 
         // otherwise, search for the column group by id

@@ -10,8 +10,8 @@ $version = 'latest';
 <html class="stretch-html" lang="en">
 <head>
 <?php
-$title = 'ag-Grid: High-Performance React Grid, Angular Grid, JavaScript Grid';
-$description = 'ag-Grid is a feature rich datagrid designed for the major JavaScript Frameworks. Version 25 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source, or take a 2 month trial of ag-Grid Enterprise.';
+$title = 'AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid';
+$description = 'AG Grid is a feature rich datagrid designed for the major JavaScript Frameworks. Version 25 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source, or take a 2 month trial of AG Grid Enterprise.';
 meta_and_links($title, $keywords, $description, false);
 ?>
     <!-- Google Tag Manager -->
@@ -80,25 +80,25 @@ meta_and_links($title, $keywords, $description, false);
                 <div>
                     <h3>Feature Packed</h3>
                     <p>
-                        The performance, feature set and quality of ag-Grid has not been seen before in a
-                        JavaScript datagrid. Many features in ag-Grid are unique to ag-Grid, and simply put
-                        ag-Grid into a class of its own, without compromising on quality or performance.
+                        The performance, feature set and quality of AG Grid has not been seen before in a
+                        JavaScript datagrid. Many features in AG Grid are unique to AG Grid, and simply put
+                        AG Grid into a class of its own, without compromising on quality or performance.
                     </p>
                 </div>
                 <div>
                     <h3>Industry Leading</h3>
                     <p>
-                        Over 600,000 monthly downloads of ag-Grid Community and over 50% of the Fortune 500
-                        using ag-Grid Enterprise. ag-Grid has become the JavaScript datagrid of choice for Enterprise
+                        Over 600,000 monthly downloads of AG Grid Community and over 50% of the Fortune 500
+                        using AG Grid Enterprise. AG Grid has become the JavaScript datagrid of choice for Enterprise
                         JavaScript developers.
                     </p>
                 </div>
                 <div>
                     <h3>Community & Enterprise</h3>
                     <p>
-                        ag-Grid Community is free and open-sourced under the MIT license. ag-Grid Enterprise comes with
-                        dedicated support and more enterprise style features. ag-Grid gives for free what other grids
-                        charge for, then provides ag-Grid Enterprise where it goes above and beyond the competition.
+                        AG Grid Community is free and open-sourced under the MIT license. AG Grid Enterprise comes with
+                        dedicated support and more enterprise style features. AG Grid gives for free what other grids
+                        charge for, then provides AG Grid Enterprise where it goes above and beyond the competition.
                     </p>
                 </div>
             </section>

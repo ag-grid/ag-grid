@@ -4,7 +4,7 @@ title: "Components"
 
 You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
 
-The full list of component types you can provide in ag-Grid are as follows:
+The full list of component types you can provide in AG Grid are as follows:
 
 - [Cell Renderer](../component-cell-renderer/): To customises the contents of a cell.
 - [Cell Editor](../component-cell-editor/): To customises editing of a cell.
@@ -74,11 +74,11 @@ The grid comes with pre-registered components that can be used. Each component p
         </tr>
         <tr>
             <td>agSetColumnFilter</td>
-            <td>Set filter (default when using ag-Grid Enterprise).</td>
+            <td>Set filter (default when using AG Grid Enterprise).</td>
         </tr>
         <tr>
             <td>agTextColumnFilter</td>
-            <td>Simple text filter (default when using ag-Grid Free).</td>
+            <td>Simple text filter (default when using AG Grid Free).</td>
         </tr>
         <tr> 
             <td>agNumberColumnFilter</td>

@@ -7,7 +7,7 @@ gtm_data_layer('community-enterprise');
 <html lang="en">
 <head>
     <?php
-    meta_and_links("ag-Grid: License and Pricing", "ag-Grid Javascript Grid License and Pricing", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page describes the License and Pricing details for ag-Grid Enterprise.", true);
+    meta_and_links("AG Grid: License and Pricing", "AG Grid Javascript Grid License and Pricing", "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This page describes the License and Pricing details for AG Grid Enterprise.", true);
     ?>
 
     <!-- Facebook Pixel Code -->
@@ -81,7 +81,7 @@ gtm_data_layer('community-enterprise');
     <div class="license-pricing">
         <div id="content">
             <section class="page-info">
-                <h1 style="margin-bottom: 3.5rem;">ag-Grid Licensing & Pricing</h1>
+                <h1 style="margin-bottom: 3.5rem;">AG Grid Licensing & Pricing</h1>
             </section>
             <section class="packages">
                 <div>
@@ -91,7 +91,7 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <h3>Coronavirus Update</h3>
                         <p>
-                            ag-Grid is open for business. We have activated our
+                            AG Grid is open for business. We have activated our
                             contingency plan which is to allow all staff to work from home.
                             Please continue to get in touch with your interest.
                         </p>
@@ -102,15 +102,15 @@ gtm_data_layer('community-enterprise');
                         <img src="./images/pricing/Community.svg" style="max-width: 50px;" alt="MIT" />
                     </div>
                     <div>
-                        <h3>ag-Grid Community</h3>
+                        <h3>AG Grid Community</h3>
                         <p>
-                            ag-Grid Community is a free to use product distributed under the
+                            AG Grid Community is a free to use product distributed under the
                             <a href="./eula/AG-Grid-Community-License.html">MIT License</a>.
                             It is free to use in your production environments.
                         </p>
-                        <h3 style="margin-top: 26px;">ag-Charts Community</h3>
+                        <h3 style="margin-top: 26px;">AG Charts Community</h3>
                         <p>
-                            ag-Charts Community (a.k.a. <a href="./documentation/javascript/charts/">Standalone Charts</a>)
+                            AG Charts Community (a.k.a. <a href="./documentation/javascript/charts/">Standalone Charts</a>)
                             is a free to use product distributed under the
                             <a href="./eula/AG-Grid-Community-License.html">MIT License</a>.
                             It is free to use in your production environments.
@@ -122,17 +122,17 @@ gtm_data_layer('community-enterprise');
                         <img src="./images/svg/enterprise.svg" style="max-width: 50px;" alt="Enterprise" />
                     </div>
                     <div>
-                    <h3>ag-Grid Enterprise</h3>
+                    <h3>AG Grid Enterprise</h3>
                         <p>
-                            ag-Grid Enterprise is a commercial product distributed under our
+                            AG Grid Enterprise is a commercial product distributed under our
                             <a href="./eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
                             technical staff. It has advanced functionality like Row Grouping, Range Selection,
                             Master / Detail, Server Side Row Model and <a href="/documentation/javascript/licensing/">more</a>.
-                            ag-Grid Enterprise also comes with <a href="./documentation/javascript/integrated-charts/">Integrated Charts</a>, allowing users to create charts
+                            AG Grid Enterprise also comes with <a href="./documentation/javascript/integrated-charts/">Integrated Charts</a>, allowing users to create charts
                             using the grid's UI.
                         </p>
                         <p>
-                            To evaluate ag-Grid Enterprise you don’t need our permission – all features are unlocked.
+                            To evaluate AG Grid Enterprise you don’t need our permission – all features are unlocked.
                             To temporarily hide the watermark and browser console errors e-mail
                             <a href="mailto:info@ag-grid.com">info@ag-grid.com</a> to
                             get a temporary evaluation key.
@@ -152,7 +152,7 @@ gtm_data_layer('community-enterprise');
                     <div class="license" style="border-color: #009ede;">
                         <div>
                             <img src="./images/pricing/SA.svg" alt="Single Application" />
-                            <h3>ag-Grid Enterprise</h3>
+                            <h3>AG Grid Enterprise</h3>
                             <h2>Single Application</h2>
                             <h3>Development License</h3>
 
@@ -172,7 +172,7 @@ gtm_data_layer('community-enterprise');
                     <div class="license" style="border-color: #009d70;">
                         <div>
                             <img src="./images/pricing/MA.svg" alt="Multiple Applications" />
-                            <h3>ag-Grid Enterprise</h3>
+                            <h3>AG Grid Enterprise</h3>
                             <h2>Multiple Applications</h2>
                             <h3>Development License</h3>
                         </div>
@@ -191,7 +191,7 @@ gtm_data_layer('community-enterprise');
                     <div class="license" style="border-color: #fbad18;">
                         <div>
                             <img src="./images/pricing/Deployment%20Add-on.svg" alt="Deployment License" />
-                            <h3>ag-Grid Enterprise</h3>
+                            <h3>AG Grid Enterprise</h3>
                             <h2>Deployment License</h2>
                             <h3>Add-on</h3>
                         </div>
@@ -238,7 +238,7 @@ gtm_data_layer('community-enterprise');
                         <h3>Single Application Development License</h3>
                         <p></p>
                         <p>
-                            Licenses <b>one application</b>, developed for internal use, to embed ag-Grid
+                            Licenses <b>one application</b>, developed for internal use, to embed AG Grid
                             Enterprise in perpetuity.
                         </p>
                         <ul>
@@ -253,7 +253,7 @@ gtm_data_layer('community-enterprise');
                             <li>
                                 All concurrent, front-end, JavaScript developers working on the Application
                                 would need to be added to the license count, not just the ones working with
-                                ag-Grid.
+                                AG Grid.
                             </li>
                             <li>
                                 Developers within the Single Application Development License count are
@@ -287,7 +287,7 @@ gtm_data_layer('community-enterprise');
                         <p></p>
 
                         <p>
-                            Licenses <b>unlimited number of applications</b>, developed for internal use, to embed ag-Grid
+                            Licenses <b>unlimited number of applications</b>, developed for internal use, to embed AG Grid
                             Enterprise in perpetuity.
                         </p>
 
@@ -303,7 +303,7 @@ gtm_data_layer('community-enterprise');
                             <li>
                                 All concurrent, front-end, JavaScript developers working across the
                                 licensed Applications would need to be added to the license count,
-                                not just the ones working with ag-Grid.
+                                not just the ones working with AG Grid.
                             </li>
                             <li>
                                 Developers within the Multiple Application Development License count are
@@ -334,7 +334,7 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <h3>Deployment License Add-on</h3>
                         <p>
-                            Allows licensed developers to sub-license ag-Grid for one application on one production
+                            Allows licensed developers to sub-license AG Grid for one application on one production
                             environment in perpetuity. Includes a 1-year subscription to new versions, support and
                             maintenance. Only available with a Developer License.
                         </p>
@@ -418,12 +418,12 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Perpetual License</span>
                         <p>
-                            When you purchase ag-Grid Enterprise you are granted a license to use a version of the product in
+                            When you purchase AG Grid Enterprise you are granted a license to use a version of the product in
                             perpetuity. There are no further charges until you choose to extend your license to cover newer
                             versions (see next point).
                         </p>
                         <p>Please note that while use of the software is perpetual, Support and Corrective Maintenance are not. We
-                            do not provide issue resolution to versions of ag-Grid Enterprise older than 12 months. We roll bug fixes,
+                            do not provide issue resolution to versions of AG Grid Enterprise older than 12 months. We roll bug fixes,
                             performance enhancements and other improvements into new releases; we don't patch, fix or in any way
                             alter older versions.
                         </p>
@@ -438,14 +438,14 @@ gtm_data_layer('community-enterprise');
                     </div>
                     <div>
                         <span>1-year Subscription to New Versions (included)</span>
-                        <p>When you make a purchase you get a Subscription to license new versions of ag-Grid Enterprise for 365 days.
+                        <p>When you make a purchase you get a Subscription to license new versions of AG Grid Enterprise for 365 days.
                             You can see our release list <a href="./ag-grid-changelog/">here</a>. After 365 days you will no longer be able to license the latest versions
-                            of ag-Grid Enterprise without renewing your subscription. You can continue to use your licensed versions
+                            of AG Grid Enterprise without renewing your subscription. You can continue to use your licensed versions
                             in perpetuity.
                         </p>
                         <p>
                             Please note that while use of the software is perpetual, Support and Corrective Maintenance are not. We
-                            do not provide issue resolution to versions of ag-Grid Enterprise older than 12 months. We roll bug fixes,
+                            do not provide issue resolution to versions of AG Grid Enterprise older than 12 months. We roll bug fixes,
                             performance enhancements and other improvements into new releases; we don't patch, fix or in any way
                             alter older versions.
                         </p>
@@ -462,14 +462,14 @@ gtm_data_layer('community-enterprise');
                         <span>Subscription Renewal (optional)</span>
                         <p>
                             At the end of your subscription period you will no longer be able to license the latest
-                            versions of ag-Grid Enterprise or access support without renewing. This could range from
+                            versions of AG Grid Enterprise or access support without renewing. This could range from
                             365 days up to a 3-year term. Renewal pricing starts as follows: Single Application Developer
                             License, $350; Multiple Applications Developer License, $560;
                             Deployment License Add-on, $350.
                         </p>
                         <p>
                             Please note that while use of the software is perpetual Support and Corrective Maintenance
-                            are not. We do not provide issue resolution to versions of ag-Grid Enterprise older than
+                            are not. We do not provide issue resolution to versions of AG Grid Enterprise older than
                             12 months. We roll bug fixes, performance enhancements and other improvements into new
                             releases; we don’t patch, fix or in any way alter older versions.
                         </p>
@@ -499,7 +499,7 @@ gtm_data_layer('community-enterprise');
                         <span>Corrective maintenance (only with an active subscription)</span>
                         <p>
                             We roll bug fixes, performance enhancements and other improvements into new releases and
-                            expect customers to upgrade to a version of ag-Grid that resolves their issue. Starting
+                            expect customers to upgrade to a version of AG Grid that resolves their issue. Starting
                             with version 22.0 we will also aim to release Patches for critical issues on a bi-weekly
                             schedule.
                         </p>
@@ -520,7 +520,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                     <div>
                         <span>Project Dependency</span>
-                        <p>A software project will have a dependency on ag-Grid Enterprise if it requires our software to
+                        <p>A software project will have a dependency on AG Grid Enterprise if it requires our software to
                             perform some of its functions. Every Front-End JavaScript developer working on the project will need
                             to be licensed.
                         </p>
@@ -529,11 +529,11 @@ gtm_data_layer('community-enterprise');
                             <div class="card-body">
                                 <div class="card-text">
                                     Company &lsquo;A&rsquo; is developing an application named &lsquo;MyApp&rsquo;. The app needs to render
-                                    10K rows of data in a table and allow users to group, filter and sort. The dev team adds ag-Grid Enterprise
+                                    10K rows of data in a table and allow users to group, filter and sort. The dev team adds AG Grid Enterprise
                                     to the project to satisfy that requirement. 5 Front-End and 10 Back-End developers are working on
                                     &lsquo;MyApp&rsquo;. Only 1 Front-End developer is tasked with configuring and modifying the data grid.
                                     The benefit to the UI is project-wide however and all developers contributing to it need to be licensed.
-                                    Company &lsquo;A&rsquo; purchases 5 licenses for ag-Grid Enterprise.
+                                    Company &lsquo;A&rsquo; purchases 5 licenses for AG Grid Enterprise.
                                 </div>
                             </div>
                         </div>
@@ -546,11 +546,11 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Indirect Project Dependency</span>
                         <p>
-                            A software project will have an indirect dependency on ag-Grid Enterprise even if it's wrapped into
+                            A software project will have an indirect dependency on AG Grid Enterprise even if it's wrapped into
                             another framework, file, library, etc. Every Front-End JavaScript developer working on a project using
-                            a library that wraps ag-Grid Enterprise will need to be licensed.
+                            a library that wraps AG Grid Enterprise will need to be licensed.
                         </p>
-                        <p>Please note: You are not allowed to wrap ag-Grid Enterprise in a framework, library, component, etc. and
+                        <p>Please note: You are not allowed to wrap AG Grid Enterprise in a framework, library, component, etc. and
                             make it available as a development tool outside of your organisation.
                         </p>
                         <div class="example card">
@@ -558,10 +558,10 @@ gtm_data_layer('community-enterprise');
                             <div class="card-body">
                                 <div class="card-text">
                                     A UI development team at Company &lsquo;A&rsquo; creates its own UI library for internal development
-                                    and includes ag-Grid Enterprise as a component. The team working on &lsquo;MyApp&rsquo; uses the new
+                                    and includes AG Grid Enterprise as a component. The team working on &lsquo;MyApp&rsquo; uses the new
                                     library and so does the team working on &lsquo;NewApp&rsquo;. &lsquo;MyApp&rsquo; has 5 Front-End
                                     JavaScript developers and &lsquo;NewApp&rsquo; has 3. There are 2 Front-End JavaScript developers on
-                                    the UI development team. Company &lsquo;A&rsquo; purchases 10 licenses for ag-Grid Enterprise.
+                                    the UI development team. Company &lsquo;A&rsquo; purchases 10 licenses for AG Grid Enterprise.
                                 </div>
                             </div>
                         </div>

@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "ag-Grid Blog: How to Add JavaScript Pivot Tables to your App";
+$pageTitle = "AG Grid Blog: How to Add JavaScript Pivot Tables to your App";
 $pageDescription = "Make the most of your data by using pivot tables to create summaries and reports.";
 $pageKeywords = "The power of pivot tables";
 $socialUrl = "https://www.ag-grid.com/pivoting-blog/";
@@ -12,13 +12,13 @@ include('../includes/mediaHeader.php');
 
 
     <!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
-    <h1>Become a data guru with ag-Grid and JavaScript pivot tables</h1>
+    <h1>Become a data guru with AG Grid and JavaScript pivot tables</h1>
     <p class="blog-author">Sophia Lazarova | 14th November 2017</p>
 
     <div>
         <a href="https://twitter.com/share" class="twitter-share-button"
             data-url="https://www.ag-grid.com/ag-grid-blog-14-2-0/"
-            data-text="ag-Grid v14.2.0" data-via="sophialazarova"
+            data-text="AG Grid v14.2.0" data-via="sophialazarova"
             data-size="large">Tweet</a>
 <script>!function (d, s, id) {
 var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
@@ -68,7 +68,7 @@ Let's have a look at the following example and see how we can use pivot tables.<
 <p></p>
 <h4>Pivot Tables to the Rescue</h4>
 
-<p>To solve our task we will use the magic power of pivoting in <strong>ag-Grid</strong>. So in order to find the total winnings for each country we need to find all participant from a country and sum their winnings. Easy, right?</p>
+<p>To solve our task we will use the magic power of pivoting in <strong>AG Grid</strong>. So in order to find the total winnings for each country we need to find all participant from a country and sum their winnings. Easy, right?</p>
 
 <p>First we need to enter 'Pivot Mode' or in other words - start a pivot table.</p>
 
@@ -114,10 +114,10 @@ Have in mind that the default aggregation value is <strong>SUM</strong>.</p>
 <p></p>
 <h2>Talk technie to me!</h2>
 <p>It is clear now what pivot tables are and how we can use them, but there is still one unsolved question - how do we enable them in our JavaScript application?</p>
-<p>As you already know we don't need to build pivot table from scratch, we can simply use the capabilities of <strong>ag-Grid.</strong></p>
-<p>Pivoting is, no doubt, one of the top features of <strong>ag-Grid Enterprise</strong>. Make sure you are using <strong>ag-Grid Enterprise</strong>
-in order to use pivoting and other high profile goods. You can find <strong>ag-Grid</strong> and <strong>ag-Grid Enterprise</strong> on npm and bower. If you have any difficulties you can refer to <a href="../javascript-grid-getting-started/">our getting started articles.</a></p>
-<p> Once you are packed with <strong>ag-Grid Enterprise</strong>, you should simply edit the column definitions and add the <code>enablePivot</code> property with value <code>true</code>.
+<p>As you already know we don't need to build pivot table from scratch, we can simply use the capabilities of <strong>AG Grid.</strong></p>
+<p>Pivoting is, no doubt, one of the top features of <strong>AG Grid Enterprise</strong>. Make sure you are using <strong>AG Grid Enterprise</strong>
+in order to use pivoting and other high profile goods. You can find <strong>AG Grid</strong> and <strong>AG Grid Enterprise</strong> on npm and bower. If you have any difficulties you can refer to <a href="../javascript-grid-getting-started/">our getting started articles.</a></p>
+<p> Once you are packed with <strong>AG Grid Enterprise</strong>, you should simply edit the column definitions and add the <code>enablePivot</code> property with value <code>true</code>.
 <snippet language="sh">
 this.columnDefs = [
             {headerName: "Make", field: "make", enablePivot: true},
@@ -126,7 +126,7 @@ this.columnDefs = [
         ];
 </snippet>
 
-<p>This is a simple example of enabling pivoting in <strong>ag-Grid</strong>. Of course, <strong>ag-Grid</strong> has more advanced settings for pivoting in complecated scenarios.
+<p>This is a simple example of enabling pivoting in <strong>AG Grid</strong>. Of course, <strong>AG Grid</strong> has more advanced settings for pivoting in complecated scenarios.
 To find out more about pivoting, read the <a href="../javascript-grid-pivoting/">dedicated article</a> in our documentation.</p>
 
 <h2 id="conclusion">Conclusion</h2>
@@ -134,8 +134,8 @@ To find out more about pivoting, read the <a href="../javascript-grid-pivoting/"
 <p>Congrats, you are a master of the advanced reports now! </p>
 <p>Pivot tables are a powerful tool which is fairly simple to use once you know it's tricks.
 
-<p>You can try this by yourself right away, using the <a href="../example.php">ag-Grid demo</a>.
-If you are in a mood for writing code you can download ag-Grid and build your own grid with pivoting.</p>
+<p>You can try this by yourself right away, using the <a href="../example.php">AG Grid demo</a>.
+If you are in a mood for writing code you can download AG Grid and build your own grid with pivoting.</p>
 
 <ul class="content">
 <li><strong>npm install ag-grid-community</strong></li>
@@ -158,7 +158,7 @@ If you are in a mood for writing code you can download ag-Grid and build your ow
     <td>
     <a href="https://twitter.com/share" class="twitter-share-button"
     data-url="https://www.ag-grid.com/ag-grid-blog-14-2-0/"
-    data-text="ag-Grid v14.2.0 Released" data-via="ceolter"
+    data-text="AG Grid v14.2.0 Released" data-via="ceolter"
     data-size="large">Tweet</a>
     <script>!function (d, s, id) {
     var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';

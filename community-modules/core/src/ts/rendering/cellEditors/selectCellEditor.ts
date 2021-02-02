@@ -29,7 +29,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         this.focusAfterAttached = params.cellStartedEdit;
 
         if (missing(params.values)) {
-            console.warn('ag-Grid: no values found for select cellEditor');
+            console.warn('AG Grid: no values found for select cellEditor');
             return;
         }
 

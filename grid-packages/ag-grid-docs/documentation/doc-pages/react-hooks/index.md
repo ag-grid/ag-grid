@@ -5,10 +5,10 @@ frameworks: ["react"]
 
 ### React Hooks
 
-React Hooks are fully supported within ag-Grid - please refer to our working example in
+React Hooks are fully supported within AG Grid - please refer to our working example in
 <a href="https://github.com/ag-grid/ag-grid-react-example/">GitHub</a>.
 
-We can break down the type of Hooks you can use within ag-Grid into two broad categories - those
+We can break down the type of Hooks you can use within AG Grid into two broad categories - those
 that have lifecycle methods (such as Filters) and those that don't (such as Cell Renderers).
 
 ## Hooks without Lifecycle Methods
@@ -16,7 +16,7 @@ that have lifecycle methods (such as Filters) and those that don't (such as Cell
 Cell Renderers, Loading Cell Renderers and Overlay Components are examples of components without lifecycle methods.
 
 For this type of Hook you don't have to do anything special and the Hook should work as
-expected within ag-Grid, although it would often be easier to simply use a functional component
+expected within AG Grid, although it would often be easier to simply use a functional component
 in these cases (as there won't be any state to maintain).
 
 ## Hooks with Lifecycle Methods

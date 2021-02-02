@@ -240,7 +240,7 @@ export class BlockUtils extends BeanStub {
             } else if (currentRowNode.rowIndex! > displayRowIndex) {
                 topPointer = midPointer - 1;
             } else {
-                console.warn(`ag-Grid: error: unable to locate rowIndex = ${displayRowIndex} in cache`);
+                console.warn(`AG Grid: error: unable to locate rowIndex = ${displayRowIndex} in cache`);
                 return null;
             }
         }

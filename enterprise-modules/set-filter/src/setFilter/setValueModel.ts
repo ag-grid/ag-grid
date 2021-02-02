@@ -239,7 +239,7 @@ export class SetValueModel implements IEventEmitter {
 
     private getValuesFromRows(removeUnavailableValues = false): (string | null)[] {
         if (!this.clientSideValuesExtractor) {
-            console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
+            console.error('AG Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             return [];
         }
 

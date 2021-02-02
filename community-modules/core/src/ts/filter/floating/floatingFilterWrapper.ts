@@ -313,7 +313,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     }
 
     private onFloatingFilterChanged(): void {
-        console.warn('ag-Grid: since version 21.x, how floating filters are implemented has changed. ' +
+        console.warn('AG Grid: since version 21.x, how floating filters are implemented has changed. ' +
             'Instead of calling params.onFloatingFilterChanged(), get a reference to the main filter via ' +
             'params.parentFilterInstance() and then set a value on the parent filter directly.');
     }

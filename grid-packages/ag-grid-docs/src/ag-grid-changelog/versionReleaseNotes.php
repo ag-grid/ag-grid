@@ -72,7 +72,7 @@
             the methods <code>success</code> and <code>fail</code>. The new methods serve the same purpose as the
             old methods, however the new 'success' method uses a <code>params</code> object rather than listing
             individual parameters as this is more extensible. The old methods will still work and are left in
-            for backwards compatibility, however future releases of ag-Grid will deprecated these and then
+            for backwards compatibility, however future releases of AG Grid will deprecated these and then
             remove the old methods.
         </li>
     </ul>
@@ -457,7 +457,7 @@
         <li>
             <p>
                 AG-3110 - We have undertaken a major rewrite of the Sass code behind our provided themes, with the goal of making it easier to write custom themes.
-                See <a rel="nofollow" href="https://www.ag-grid.com/archive/23.0.0/javascript-grid-themes-v23-migration/">Migrating themes to ag-Grid 23.x</a> to understand why we've made these changes, and exactly what we've changed.
+                See <a rel="nofollow" href="https://www.ag-grid.com/archive/23.0.0/javascript-grid-themes-v23-migration/">Migrating themes to AG Grid 23.x</a> to understand why we've made these changes, and exactly what we've changed.
             </p>
         </li>
 
@@ -683,7 +683,7 @@
     <ul>
 
         <li>
-            AG-3008 / AG-3009 - Integrated Charts - a major new component has been added to ag-Grid which provides integrated charting from within the grid (see <a rel="nofollow" href="https://www.ag-grid.com/archive/21.0.0/javascript-grid-charts-overview/#user-created-charts">User Created Charts</a> and
+            AG-3008 / AG-3009 - Integrated Charts - a major new component has been added to AG Grid which provides integrated charting from within the grid (see <a rel="nofollow" href="https://www.ag-grid.com/archive/21.0.0/javascript-grid-charts-overview/#user-created-charts">User Created Charts</a> and
             <a rel="nofollow" href="https://www.ag-grid.com/archive/21.0.0/javascript-grid-charts-overview/#application-created-charts">Application Created Charts</a>).
         </li>
 
@@ -694,7 +694,7 @@
             coming to it's 'end of life'. For that reason the simple provided filters were rewritten from scratch.
             The has the benefits of a) implementing floating filters is now simpler; b) all provided filters
             now work in a more consistent way; c) code is easier to follow for anyone debugging through the
-            ag-Grid code. The documentation for column filters was also rewritten from scratch to make it
+            AG Grid code. The documentation for column filters was also rewritten from scratch to make it
             easier to follow.
         </li>
 
@@ -705,9 +705,9 @@
         </li>
 
         <li>
-            AG-2999 - Change of License Messaging - Now anyone can try out ag-Grid Enterprise without needing
-            a license from us. We want everyone to give ag-Grid Enterprise a trial. You only need to get in touch
-            with us if you decided to start using ag-Grid inside your project.
+            AG-2999 - Change of License Messaging - Now anyone can try out AG Grid Enterprise without needing
+            a license from us. We want everyone to give AG Grid Enterprise a trial. You only need to get in touch
+            with us if you decided to start using AG Grid inside your project.
         </li>
 
         <li>
@@ -717,7 +717,7 @@
         <li>AG-2663 - React - Declarative Column Definitions Now Reactive.</li>
         <li>AG-2536 - React - Component Container Configurable (see <a rel="nofollow" href="https://www.ag-grid.com/archive/21.0.0/react-more-details/#control-react-components-container">Control React Components Container</a>).</li>
         <li>AG-2656 - React - Allow React Change Detection to be Configurable (see <a rel="nofollow" href="https://www.ag-grid.com/archive/21.0.0/react-more-details/#react-row-data-control">Row Data Control</a>).</li>
-        <li>AG-2257 - All Frameworks - Expand & Improve Testing Documentation (see <a rel="nofollow" href="https://www.ag-grid.com/archive/21.0.0/javascript-grid-testing/">ag-Grid Testing</a>).</li>
+        <li>AG-2257 - All Frameworks - Expand & Improve Testing Documentation (see <a rel="nofollow" href="https://www.ag-grid.com/archive/21.0.0/javascript-grid-testing/">AG Grid Testing</a>).</li>
     </ul>
 
 
@@ -815,7 +815,7 @@
         </li>
         <li>
             <code>ag-grid-vue</code>Event bindings are now bound with <code>@</code> instead of <code>:</code>. Please
-            refer to <a rel="nofollow" href="https://www.ag-grid.com/archive/20.0.0/best-vuejs-data-grid/">Configuring ag-Grid and Vue.js</a>.
+            refer to <a rel="nofollow" href="https://www.ag-grid.com/archive/20.0.0/best-vuejs-data-grid/">Configuring AG Grid and Vue.js</a>.
         </li>
     </ul>
 
@@ -832,7 +832,7 @@
         </li>
         <li>
             AG-2280 Allow event handler in Vue too support more idiomatic conventions
-            <a rel="nofollow" href="https://www.ag-grid.com/archive/20.0.0/best-vuejs-data-grid/#configuring-ag-grid-in-vuejs">Configuring ag-Grid in Vue</a>.
+            <a rel="nofollow" href="https://www.ag-grid.com/archive/20.0.0/best-vuejs-data-grid/#configuring-ag-grid-in-vuejs">Configuring AG Grid in Vue</a>.
         </li>
         <li>
             AG-939 Improve horizontal and vertical scrolling in other browsers.
@@ -871,12 +871,12 @@
 
     <ul>
         <li>
-            The NPM package name for the free module of ag-Grid is now <code>ag-grid-community</code>
+            The NPM package name for the free module of AG Grid is now <code>ag-grid-community</code>
             instead of <code>ag-grid</code>. This means you install with <code>npm install ag-grid-community</code>
             and then you reference like <code>import {Grid, GridOptions} from "ag-grid-community"</code>.
         </li>
         <li>
-            ag-Grid received a major overhaul of the Tool Panels in version 19.0.0. The old property 'showToolPanel' is
+            AG Grid received a major overhaul of the Tool Panels in version 19.0.0. The old property 'showToolPanel' is
             no longer used and the Tool Panel is also not included by default. For more details see:
             <a rel="nofollow" href="https://www.ag-grid.com/archive/19.0.0/javascript-grid-side-bar/#configuring-the-side-bar">Configuring the Side Bar</a>.
         </li>
@@ -1020,7 +1020,7 @@
             was changed to be consistent with other filter models. For backwards compatibility,
             this change can be toggled off using the grid property
             <code>enableOldSetFilterModel</code>. Both models will be supported for releases for
-            the next 6 months. After this one major ag-Grid release will have the old model
+            the next 6 months. After this one major AG Grid release will have the old model
             deprecated and then the following release will have it dropped.
         </li>
     </ul>

@@ -90,10 +90,10 @@ const HomePage = ({ pageContext: { framework } }) => {
         <div className={styles['docs-home']}>
             <Helmet title={getHeaderTitle('Documentation', framework)} />
             <div className={styles['docs-home__intro']}>
-                <h1>ag-Grid: {frameworkName} Documentation</h1>
+                <h1>AG Grid: {frameworkName} Documentation</h1>
                 <p>
-                    The performance, feature set and quality of ag-Grid has not been seen before in
-                    a {frameworkName} datagrid. Many features in ag-Grid are unique to ag-Grid, and simply put ag-Grid
+                    The performance, feature set and quality of AG Grid has not been seen before in
+                    a {frameworkName} datagrid. Many features in AG Grid are unique to AG Grid, and simply put AG Grid
                     into a class of its own, without compromising on quality or performance.
                 </p>
                 <p>

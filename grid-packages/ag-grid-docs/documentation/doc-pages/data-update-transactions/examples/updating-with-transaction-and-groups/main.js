@@ -115,7 +115,7 @@ function onRemoveSelected() {
 }
 
 // wait for the document to be loaded, otherwise
-// ag-Grid will not find the div in the document.
+// AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function() {
     var eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);

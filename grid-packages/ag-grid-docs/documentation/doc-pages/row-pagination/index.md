@@ -10,7 +10,7 @@ Remember Pagination works with all frameworks eg Angular and React as well as pl
 
 ## Supported Row Models
 
-Pagination in ag-Grid is supported in [all the different row models](../row-models/). The [Client-Side Row Model](../client-side-model/) (the default row model) is used for the examples on this page.
+Pagination in AG Grid is supported in [all the different row models](../row-models/). The [Client-Side Row Model](../client-side-model/) (the default row model) is used for the examples on this page.
 
 
 To see the specifics of pagination on the other row models check the relevant documentation for [Infinite Row Model](../infinite-scrolling/#pagination), [Viewport Row Model](../viewport/#example-viewport-with-pagination) and [Server-Side Row Model](../server-side-model-pagination/).

@@ -2,19 +2,19 @@
 title: "Scrolling Performance"
 ---
 
-ag-Grid is fast. However ag-Grid can also be configured and extended in many ways.
+AG Grid is fast. However AG Grid can also be configured and extended in many ways.
 
-Often people come to the ag-Grid forum and ask 'why is the grid in my application not that fast?'.
+Often people come to the AG Grid forum and ask 'why is the grid in my application not that fast?'.
 
 This page explains how you can make the grid go faster.
 
 ## 1. Setting Expectations
 
-ag-Grid can be as fast as demonstrated in the demo application [Demo Application](../../../example.php). You can resize the demo application to the same size as the grid in your application by resizing the browser, then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own implementation. If the demo grid is going faster, then there is room for performance improvements.
+AG Grid can be as fast as demonstrated in the demo application [Demo Application](../../../example.php). You can resize the demo application to the same size as the grid in your application by resizing the browser, then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own implementation. If the demo grid is going faster, then there is room for performance improvements.
 
 ## 2. Check Cell Renderers
 
-ag-Grid can be slowed down by your custom
+AG Grid can be slowed down by your custom
 [cell renderers](../component-cell-renderer/). To test this, remove all cell renderers from your grid and compare the speed again. If the grid does improve it's speed by removing cell renderers, try to introduce the cell renderers one by one to find out which ones are adding the most overhead.
 
 ## 3. Create Fast Cell Renderers
@@ -23,7 +23,7 @@ The fastest cell renderers have the following properties:
 
 [[note]]
 | The grid rendering is highly customised and plain JavaScript cell renderers will work faster than framework
-| equivalents. It is still fine to use the framework version of ag-Grid (eg for setting ag-Grid properties etc)
+| equivalents. It is still fine to use the framework version of AG Grid (eg for setting AG Grid properties etc)
 | however because there are so many cells getting created and destroyed, the additional layer the frameworks
 | add do not help performance. Plain JavaScript cell renderers should be considered if you are having performance
 | concerns.

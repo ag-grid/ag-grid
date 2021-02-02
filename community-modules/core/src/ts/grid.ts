@@ -121,12 +121,12 @@ export class Grid {
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
         if (!eGridDiv) {
-            console.error('ag-Grid: no div element provided to the grid');
+            console.error('AG Grid: no div element provided to the grid');
             return;
         }
 
         if (!gridOptions) {
-            console.error('ag-Grid: no gridOptions provided to the grid');
+            console.error('AG Grid: no gridOptions provided to the grid');
             return;
         }
 
@@ -147,7 +147,7 @@ export class Grid {
             debug: debug
         };
 
-        this.logger = new Logger('ag-Grid', () => gridOptions.debug);
+        this.logger = new Logger('AG Grid', () => gridOptions.debug);
         const contextLogger = new Logger('Context', () => contextParams.debug);
         this.context = new Context(contextParams, contextLogger);
 
@@ -354,20 +354,20 @@ export class Grid {
         if (exists(rowModelClass)) { return rowModelClass; }
 
         if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
-            console.error(`ag-Grid: Row Model "Infinite" not found. Please ensure the ${ModuleNames.InfiniteRowModelModule} is registered.';`);
+            console.error(`AG Grid: Row Model "Infinite" not found. Please ensure the ${ModuleNames.InfiniteRowModelModule} is registered.';`);
         }
 
-        console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
+        console.error('AG Grid: could not find matching row model for rowModelType ' + rowModelType);
         if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
-            console.error(`ag-Grid: Row Model "Viewport" not found. Please ensure the ag-Grid Enterprise Module ${ModuleNames.ViewportRowModelModule} is registered.';`);
+            console.error(`AG Grid: Row Model "Viewport" not found. Please ensure the AG Grid Enterprise Module ${ModuleNames.ViewportRowModelModule} is registered.';`);
         }
 
         if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-            console.error(`ag-Grid: Row Model "Server Side" not found. Please ensure the ag-Grid Enterprise Module ${ModuleNames.ServerSideRowModelModule} is registered.';`);
+            console.error(`AG Grid: Row Model "Server Side" not found. Please ensure the AG Grid Enterprise Module ${ModuleNames.ServerSideRowModelModule} is registered.';`);
         }
 
         if (rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.error(`ag-Grid: Row Model "Client Side" not found. Please ensure the ${ModuleNames.ClientSideRowModelModule} is registered.';`);
+            console.error(`AG Grid: Row Model "Client Side" not found. Please ensure the ${ModuleNames.ClientSideRowModelModule} is registered.';`);
         }
     }
 

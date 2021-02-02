@@ -21,7 +21,7 @@ const coreFactory: ExcelOOXMLTemplate = {
             },
             children: [{
                 name: 'dc:creator',
-                textNode: 'ag-Grid'
+                textNode: 'AG Grid'
             }, {
                 name: 'dc:title',
                 textNode: 'Workbook'

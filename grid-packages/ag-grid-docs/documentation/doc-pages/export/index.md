@@ -90,4 +90,4 @@ The CSV exporter can accept a multi-line string for `customHeader` and `customFo
 
 ## Export on iOS
 
-It is not possible to download files directly from JavaScript to an iPad / iPhone. This is a restriction of iOS and not something wrong with ag-Grid. For this reason, the download links in the context menu are removed when running on iPad / iPhone. If you do want to download on iPad / iPhone, then it is recommended you use the api function `getDataAsCsv()` to get the export data and then send this to the server to allow building an endpoint for doing the download.
+It is not possible to download files directly from JavaScript to an iPad / iPhone. This is a restriction of iOS and not something wrong with AG Grid. For this reason, the download links in the context menu are removed when running on iPad / iPhone. If you do want to download on iPad / iPhone, then it is recommended you use the api function `getDataAsCsv()` to get the export data and then send this to the server to allow building an endpoint for doing the download.

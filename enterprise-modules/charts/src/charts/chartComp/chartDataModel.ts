@@ -291,7 +291,7 @@ export class ChartDataModel extends BeanStub {
                     case 'excluded':
                         return;
                     default:
-                        console.warn(`ag-Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`);
+                        console.warn(`AG Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`);
                         break;
                 }
             }

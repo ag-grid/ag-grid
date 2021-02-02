@@ -259,7 +259,7 @@ interface SuppressKeyboardEventParams {
 
 The example below illustrates:
 
-- 'Gender' column uses a Component cell editor that allows choices via a 'richSelect' (ag-Grid-Enterprise only), with values supplied by complementing the editor parameters.
+- 'Gender' column uses a Component cell editor that allows choices via a 'richSelect' (AG Grid Enterprise only), with values supplied by complementing the editor parameters.
 - 'Age' column uses a Component cell editor that allows simple integer input only.
 - 'Mood' column uses a custom Component cell editor and renderer that allows choice of mood based on image selection.
 - 'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. Tab & Esc (amongst others) will exit editing in this field, Shift+Enter will allow newlines.
@@ -320,8 +320,8 @@ if (instances.length > 0) {
 [[only-angular]]
 | ## Cell Editing
 |
-| It is possible to provide Angular cell editors's for ag-Grid to use if you are are using the Angular version of
-| ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to
+| It is possible to provide Angular cell editors's for AG Grid to use if you are are using the Angular version of
+| AG Grid. See [registering framework components](../components/#registering-framework-components) for how to
 | register framework components.
 |
 | Your components need to implement `AgEditorComponent`. The ag Framework expects to find the `agInit` method
@@ -352,7 +352,7 @@ if (instances.length > 0) {
 [[only-react]]
 | ## Cell Editing
 |
-| It is possible to provide React cell editors for ag-Grid to use if you are are using the React version of ag-Grid.
+| It is possible to provide React cell editors for AG Grid to use if you are are using the React version of AG Grid.
 | See [registering framework components](../components/#registering-framework-components) for how to register
 | framework components.
 |
@@ -385,8 +385,8 @@ if (instances.length > 0) {
 [[only-vue]]
 | ##  Cell Editing
 |
-| It is possible to provide VueJS cell editors for ag-Grid to use if you are are using the VueJS version of
-| ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to
+| It is possible to provide VueJS cell editors for AG Grid to use if you are are using the VueJS version of
+| AG Grid. See [registering framework components](../components/#registering-framework-components) for how to
 | register framework components.
 |
 | ###  VueJS Parameters

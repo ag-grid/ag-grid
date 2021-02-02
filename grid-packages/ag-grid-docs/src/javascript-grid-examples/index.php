@@ -1,7 +1,7 @@
 <?php
-$pageTitle = "ag-Grid Examples: Overview showcasing our features";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. We have built lots of examples so you can see the datagrid in action with your framework of choice. This page is the jumping off point for those examples.";
-$pageKeywords = "ag-Grid Examples";
+$pageTitle = "AG Grid Examples: Overview showcasing our features";
+$pageDescription = "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. We have built lots of examples so you can see the datagrid in action with your framework of choice. This page is the jumping off point for those examples.";
+$pageKeywords = "AG Grid Examples";
 $pageGroup = "examples";
 define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';
@@ -19,13 +19,13 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     If you are looking for a particular feature, please refer to the features section for details
-    on that feature. Use this section for reference on how to configure ag-Grid.
+    on that feature. Use this section for reference on how to configure AG Grid.
 </p>
 
 <div class="docs-homepage-section-preview">
     <div>
         <h2>Angular & Material Design</h2>
-        <p>ag-Grid Angular Examples with Material Design Components. </p>
+        <p>AG Grid Angular Examples with Material Design Components. </p>
         <p><a href="../example-angular-material-design/">Go To Angular & Material Design</a></p>
     </div>
 </div>
@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
 </div><div class="docs-homepage-section-preview">
     <div>
         <h2>Import Excel</h2>
-        <p>We illustrate how you might import an Excel spreadsheet into ag-Grid using a third-party library - in this example we're using xlsx-style.</p>
+        <p>We illustrate how you might import an Excel spreadsheet into AG Grid using a third-party library - in this example we're using xlsx-style.</p>
         <p><a href="../example-excel-import/">Go To Import Excel</a></p>
     </div>
 </div><div class="docs-homepage-section-preview">
@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
 </div><div class="docs-homepage-section-preview">
     <div>
         <h2>Graphing</h2>
-        <p>Sometimes however a picture (or graph) is worth a thousand words, so in this section we offer some examples of how you can interact with external Graphs, or embed Graphs into ag-Grid itself. </p>
+        <p>Sometimes however a picture (or graph) is worth a thousand words, so in this section we offer some examples of how you can interact with external Graphs, or embed Graphs into AG Grid itself. </p>
         <p><a href="../javascript-grid-graphing/">Go To Graphing</a></p>
     </div>
 </div>

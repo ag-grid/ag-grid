@@ -66,7 +66,7 @@ This example is a bit more useful. In the bottom grid, we show a summary row. Al
 [[note]]
 | * The property `suppressHorizontalScroll` does not work with the browser Edge.
 | If you are targeting Edge there is currently no way to hide the scrollbar.
-| The technique ag-Grid uses is to set the CSS overflow
+| The technique AG Grid uses is to set the CSS overflow
 | property to 'hidden' (rather than 'auto'). In all other browsers, this technique works, however
 | in Edge it does not. The problem with Edge is demonstrated in the following
 | [Plunker](https://plnkr.co/edit/MHgT6Rrp9LpOu7jddzVr?p=preview).

@@ -200,7 +200,7 @@ When a row is selected, the selection will remain inside the grid, even if the g
 
 
 [[note]]
-| The example below uses ag-Grid Enterprise, to demonstrate the set filter with server-side filtering. ag-Grid Enterprise is not required for infinite scrolling.
+| The example below uses AG Grid Enterprise, to demonstrate the set filter with server-side filtering. AG Grid Enterprise is not required for infinite scrolling.
 
 <grid-example title='Server-Side Sorting And Filtering' name='server-side' type='generated' options=' { "enterprise": true, "modules": ["infinite", "setfilter", "menu", "columnpanel"] }'></grid-example>
 

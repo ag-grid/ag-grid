@@ -60,7 +60,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
         if (!model) {
-            console.warn("ag-Grid - unable to restore chart as no chart model is provided");
+            console.warn("AG Grid - unable to restore chart as no chart model is provided");
             return;
         }
 
@@ -77,7 +77,7 @@ export class ChartService extends BeanStub implements IChartService {
             : undefined;
 
         if (!cellRange) {
-            console.warn("ag-Grid - unable to create chart as no range is selected");
+            console.warn("AG Grid - unable to create chart as no range is selected");
             return;
         }
 
@@ -110,7 +110,7 @@ export class ChartService extends BeanStub implements IChartService {
             : undefined;
 
         if (!cellRange) {
-            console.warn("ag-Grid - unable to create chart as there are no columns in the grid.");
+            console.warn("AG Grid - unable to create chart as there are no columns in the grid.");
             return;
         }
 
@@ -133,7 +133,7 @@ export class ChartService extends BeanStub implements IChartService {
             : undefined;
 
         if (!cellRange) {
-            console.warn("ag-Grid - unable to create chart as no range is selected");
+            console.warn("AG Grid - unable to create chart as no range is selected");
             return;
         }
 

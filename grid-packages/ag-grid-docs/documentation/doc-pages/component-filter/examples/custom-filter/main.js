@@ -53,7 +53,7 @@ PersonFilter.prototype.init = function(params) {
     this.setupGui(params);
 };
 
-// not called by ag-Grid, just for us to help setup
+// not called by AG Grid, just for us to help setup
 PersonFilter.prototype.setupGui = function(params) {
     this.gui = document.createElement('div');
     this.gui.innerHTML =

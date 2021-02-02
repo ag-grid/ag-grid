@@ -29,7 +29,7 @@ interface CellValueChangedEvent {
 
 <pre class="event-hierarchy">
 <span class="event-hierarchy__property">//---------------------------------------------------------//</span>
-<span class="event-hierarchy__property">// Event hierarchy, and properties, for all ag-Grid events //</span>
+<span class="event-hierarchy__property">// Event hierarchy, and properties, for all AG Grid events //</span>
 <span class="event-hierarchy__property">//---------------------------------------------------------//</span>
 └── AgEvent <span class="event-hierarchy__property">{
     │     <span class="event-hierarchy__attribute">type</span>: string, // the event type, eg 'sortChanged' or 'columnResized'

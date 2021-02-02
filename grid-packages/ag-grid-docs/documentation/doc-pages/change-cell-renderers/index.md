@@ -21,6 +21,6 @@ The example below shows both types of animation cell renders in action. To test,
 | We hope you like the animation cell renderers. However you can also take inspiration from them, and create your own animations in your own cell renderers. Check out our source code on Github on how we implemented these cell renderers for inspiration.
 
 [[note]]
-| Most of the ag-Grid users love the `animateShowChange` cell renderer for showing changes in values. Not many people like the animateSlide one. So if you are trying to impress someone, probably best show them the `animateShowChange` :)
+| Most of the AG Grid users love the `animateShowChange` cell renderer for showing changes in values. Not many people like the animateSlide one. So if you are trying to impress someone, probably best show them the `animateShowChange` :)
 
 

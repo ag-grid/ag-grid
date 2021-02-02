@@ -99,7 +99,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                     _.doOnce(() => {
                         console.warn(e);
                         console.warn(
-                            'ag-Grid: Unable to use the Clipboard API (navigator.clipboard.readText()). ' +
+                            'AG Grid: Unable to use the Clipboard API (navigator.clipboard.readText()). ' +
                             'The reason why it could not be used has been logged in the previous line. ' +
                             'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
                             'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
@@ -700,7 +700,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 _.doOnce(() => {
                     console.warn(e);
                     console.warn(
-                        'ag-Grid: Unable to use the Clipboard API (navigator.clipboard.writeText()). ' +
+                        'AG Grid: Unable to use the Clipboard API (navigator.clipboard.writeText()). ' +
                         'The reason why it could not be used has been logged in the previous line. ' +
                         'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
                         'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +

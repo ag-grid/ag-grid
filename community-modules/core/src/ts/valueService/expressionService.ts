@@ -23,7 +23,7 @@ export class ExpressionService extends BeanStub {
             const expression = expressionOrFunc;
             return this.evaluateExpression(expression, params);
         } else {
-            console.error('ag-Grid: value should be either a string or a function', expressionOrFunc);
+            console.error('AG Grid: value should be either a string or a function', expressionOrFunc);
         }
     }
 

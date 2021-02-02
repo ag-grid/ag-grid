@@ -39,7 +39,7 @@ In the example below, note the following:
 
 ## Dragging Between Grids
 
-It is possible to drag rows between two instances of ag-Grid. The drag is done exactly like the simple case described above. The drop is done by the example.
+It is possible to drag rows between two instances of AG Grid. The drag is done exactly like the simple case described above. The drop is done by the example.
 
 In the example below, note the following:
 

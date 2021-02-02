@@ -1,8 +1,8 @@
 ---
-title: "Migrating themes to ag-Grid v23+"
+title: "Migrating themes to AG Grid v23+"
 ---
 
-With the release of ag-Grid version 23, we have undertaken a major rewrite of the Sass code behind our provided themes, with the goal of making it easier to write custom themes. This document explains what you need to do, why we've made these changes, and exactly what we've changed.
+With the release of AG Grid version 23, we have undertaken a major rewrite of the Sass code behind our provided themes, with the goal of making it easier to write custom themes. This document explains what you need to do, why we've made these changes, and exactly what we've changed.
 
 
 ## What you need to do

@@ -70,7 +70,7 @@ export class InfiniteBlock extends RowNodeBlock {
     protected loadFromDatasource(): void {
         const params = this.createLoadParams();
         if (_.missing(this.params.datasource.getRows)) {
-            console.warn(`ag-Grid: datasource is missing getRows method`);
+            console.warn(`AG Grid: datasource is missing getRows method`);
             return;
         }
 

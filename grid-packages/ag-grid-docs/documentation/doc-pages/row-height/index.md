@@ -160,8 +160,8 @@ The example below changes the row height in the different ways described above.
 - **Swimming Leaf Rows:** Same technique is used here as above. You will need to expand a group with swimming (e.g. United States) and the grid works out all row heights again.
 - **Russia Leaf Rows:** The row height is set directly on the `rowNode`, and then the grid is told to reposition all rows again by calling `api.onRowHeightChanged()`.
 
-Note that this example uses ag-Grid Enterprise as it uses grouping. Setting the row
-height is an ag-Grid free feature, we just demonstrate it against groups and normal
+Note that this example uses AG Grid Enterprise as it uses grouping. Setting the row
+height is an AG Grid free feature, we just demonstrate it against groups and normal
 rows below.
 
 <grid-example title='Changing Row Height' name='row-height-change' type='generated' options=' { "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>

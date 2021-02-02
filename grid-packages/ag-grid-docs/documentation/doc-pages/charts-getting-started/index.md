@@ -1,5 +1,5 @@
 ---
-title: "Get Started with ag-Charts"
+title: "Get Started with AG Charts"
 ---
 
 <style>
@@ -21,7 +21,7 @@ title: "Get Started with ag-Charts"
     }
 </style>
 
-ag-Charts is an exciting new addition to the ag-Grid family, offering both integrated as well as standalone fully functional charting capabilities.
+AG Charts is an exciting new addition to the AG Grid family, offering both integrated as well as standalone fully functional charting capabilities.
 
 <section class="code-tab mb-3">
 <div class="card">
@@ -342,7 +342,7 @@ ag-Charts is an exciting new addition to the ag-Grid family, offering both integ
 | <!DOCTYPE html>
 | <html lang="en">
 |     <head>
-|         <title>ag-Charts Basic Example</title>
+|         <title>AG Charts Basic Example</title>
 |         <script src="https://unpkg.com/ag-charts-community/dist/ag-charts-community.min.js">
 |         </script>
 |     </head>
@@ -411,7 +411,7 @@ ag-Charts is an exciting new addition to the ag-Grid family, offering both integ
 ## Getting Started
 
 [[only-javascript]]
-| In this article we will walk through the necessary steps to add ag-Charts to an existing JavaScript project and produce your first charts.
+| In this article we will walk through the necessary steps to add AG Charts to an existing JavaScript project and produce your first charts.
 |
 | ## Your First Chart
 |
@@ -456,13 +456,13 @@ ag-Charts is an exciting new addition to the ag-Grid family, offering both integ
 | The series `type` defaults to `'line'` so the only series configuration we need to specify is which keys to use to fetch the data to be plotted along the horizontal (x) and vertical (y) axes.
 
 [[only-angular]]
-| In this article we will walk through the necessary steps to add ag-Charts to an existing Angular project and produce your first charts.
+| In this article we will walk through the necessary steps to add AG Charts to an existing Angular project and produce your first charts.
 |
-| ## Add ag-Charts to Your Project
+| ## Add AG Charts to Your Project
 |
 | For the purposes of this tutorial, we are going to scaffold an Angular app with the [Angular CLI](https://cli.angular.io/).
 |
-| Don't worry if your project has a different configuration - ag-Charts and its Angular wrapper are distributed as NPM packages and work with all common Angular project setups.
+| Don't worry if your project has a different configuration - AG Charts and its Angular wrapper are distributed as NPM packages and work with all common Angular project setups.
 |
 | Let's follow the [Angular CLI instructions](https://github.com/angular/angular-cli#installation) and run the following in your terminal:
 |
@@ -475,14 +475,14 @@ ag-Charts is an exciting new addition to the ag-Grid family, offering both integ
 |
 | If everything goes well, `ng serve` has started the web server. You can open your app at <a href="http://localhost:4200" target="_blank">localhost:4200</a>.
 |
-| As a next step, let's add the ag-Charts NPM packages. Run the following command in `my-app` (you may need a new instance of the terminal):
+| As a next step, let's add the AG Charts NPM packages. Run the following command in `my-app` (you may need a new instance of the terminal):
 |
 | ```bash
 | npm install --save ag-charts-community ag-charts-angular
 | npm install # in certain circumstances npm will perform an "auto prune". This step ensures all expected dependencies are present
 | ```
 |
-| After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the ag-Charts Angular module to our app module (`src/app/app.module.ts`):
+| After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the AG Charts Angular module to our app module (`src/app/app.module.ts`):
 |
 | ```ts
 | import { BrowserModule } from '@angular/platform-browser';
@@ -559,13 +559,13 @@ ag-Charts is an exciting new addition to the ag-Grid family, offering both integ
 | ```
 
 [[only-react]]
-| In this article we will walk through the necessary steps to add ag-Charts to an existing React project and produce your first charts.
+| In this article we will walk through the necessary steps to add AG Charts to an existing React project and produce your first charts.
 |
-| ## Add ag-Charts to Your Project
+| ## Add AG Charts to Your Project
 |
 | For the purposes of this tutorial, we are going to scaffold a React app with [create-react-app](https://github.com/facebook/create-react-app).
 |
-| Don't worry if your project has a different configuration - ag-Charts and the React wrapper are distributed as NPM packages, which should work with any common React project module bundler setup.
+| Don't worry if your project has a different configuration - AG Charts and the React wrapper are distributed as NPM packages, which should work with any common React project module bundler setup.
 |
 | Let's follow the [create-react-app instructions](https://github.com/facebook/create-react-app#quick-overview) and run the following commands in your terminal:
 |
@@ -580,7 +580,7 @@ ag-Charts is an exciting new addition to the ag-Grid family, offering both integ
 |
 | If everything goes well, `npm start` has started the web server and conveniently opened a browser pointing to <a href="http://localhost:3000" target="_blank">localhost:3000</a>.
 |
-| As a next step, let's add the ag-Charts NPM packages. Run the following command in `my-app` (you may need a new instance of the terminal):
+| As a next step, let's add the AG Charts NPM packages. Run the following command in `my-app` (you may need a new instance of the terminal):
 |
 | ```bash
 | npm install --save ag-charts-community ag-charts-react
@@ -637,16 +637,16 @@ ag-Charts is an exciting new addition to the ag-Grid family, offering both integ
 | The series `type` defaults to `'line'` so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and | vertical (y) axes.
 
 [[only-vue]]
-| In this article we will walk through the necessary steps to add ag-Charts to an existing Vue project and produce your first charts.
+| In this article we will walk through the necessary steps to add AG Charts to an existing Vue project and produce your first charts.
 |
 | [[note]]
 | | The "Quick Look Code" above is different to the code that runs in Stackblitz - this is because Stackblitz doesn't support .vue files at this time.
 |
-| ## Add ag-Charts to Your Project
+| ## Add AG Charts to Your Project
 |
 | For the purposes of this tutorial, we are going to scaffold an Vue app with the [Vue CLI](https://cli.vuejs.org/).
 |
-| Don't worry if your project has a different configuration. ag-Charts and its Vue wrapper are distributed as NPM packages and work with any common Vue project setup.
+| Don't worry if your project has a different configuration. AG Charts and its Vue wrapper are distributed as NPM packages and work with any common Vue project setup.
 |
 | Let's follow the [Vue CLI instructions](https://cli.vuejs.org/) and run the following in your terminal:
 |
@@ -668,13 +668,13 @@ ag-Charts is an exciting new addition to the ag-Grid family, offering both integ
 |
 | If everything goes well, `npm run serve` has started the web server. You can open the default app at <a href="http://localhost:8080" target="_blank">localhost:8080</a>.
 |
-| Let's add the ag-Charts NPM packages. Run the following command in `my-project` (you may need a new instance of the terminal):
+| Let's add the AG Charts NPM packages. Run the following command in `my-project` (you may need a new instance of the terminal):
 |
 | ```bash
 | npm install --save ag-charts-community ag-charts-vue vue-property-decorator
 | ```
 |
-| After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the ag-Charts module. As this will be a simple example we can delete the `src/| components` directory. Our example application will live in `src/App.vue`.
+| After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the AG Charts module. As this will be a simple example we can delete the `src/| components` directory. Our example application will live in `src/App.vue`.
 |
 | Let's add the component definition to our template. Edit `src/App.vue` and replace the scaffold code:
 |
@@ -1114,9 +1114,9 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 ![Column chart with captions](beverage-expenses-with-captions.png)
 
 [[only-javascript]]
-| ## Install ag-Charts with NPM
+| ## Install AG Charts with NPM
 |
-| To install ag-Charts and update your package.json file run:
+| To install AG Charts and update your package.json file run:
 |
 | ```bash
 | npm install --save ag-charts-community
@@ -1134,7 +1134,7 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | agCharts.AgChart.create(options);
 | ```
 
-Now that you've had a taste of what it's like to use ag-Charts, we encourage you to explore our documentation to learn more.
+Now that you've had a taste of what it's like to use AG Charts, we encourage you to explore our documentation to learn more.
 
 ## Next Up
 

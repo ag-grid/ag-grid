@@ -30,25 +30,25 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
         </h5>
         <p className="card-text">
             There are free <a href="https://thinkster.io/topics/ag-grid">Thinkster Courses</a> for learning
-            ag-Grid with Angular and React.
+            AG Grid with Angular and React.
         </p>
     </Announcement>
     <Announcement title="Best Web Grids for 2020" date="Jan 27th">
         <p className="card-text">
-            ag-Grid is the "Absolute Winner" according
+            AG Grid is the "Absolute Winner" according
             to <a href="https://www.crankuptheamps.com/blog/posts/2020/01/23/grid-comparison-2/">Best Web Grids for 2020</a>.
         </p>
     </Announcement>
     <Announcement title="Community or Enterprise?">
         <img style={{ width: '30px', float: 'left', marginRight: '6px' }} src={communitySvg} alt="Community" />
         <p >
-            Everyone can use ag-Grid Community for free.
+            Everyone can use AG Grid Community for free.
             It's MIT licensed and Open Source. No restrictions. No strings attached.
         </p>
         <img style={{ width: '30px', float: 'left', marginRight: '6px' }} src={enterpriseSvg} alt="Enterprise" />
         <p>
-            Do you want more features? Then <DocumentationLink framework={framework} href="/licensing/">get started with ag-Grid Enterprise</DocumentationLink>.
-            You don't need to contact us to evaluate ag-Grid Enterprise. A license is only required
+            Do you want more features? Then <DocumentationLink framework={framework} href="/licensing/">get started with AG Grid Enterprise</DocumentationLink>.
+            You don't need to contact us to evaluate AG Grid Enterprise. A license is only required
             when you start developing for production.
         </p>
     </Announcement>
@@ -91,11 +91,11 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
     </Announcement>
     <MailingListSignup />
     <Announcement highlight={false}>
-        <p>Work at ag-Grid:</p>
+        <p>Work at AG Grid:</p>
         <h5 className="card-title"><a href="/ag-grid-jobs-board/">JavaScript Developers</a></h5>
         <h6 className="card-subtitle mb-2 text-muted">London, United Kingdom</h6>
         <p className="card-text">
-            Would you like to join the ag-Grid team in London?<br /><br />
+            Would you like to join the AG Grid team in London?<br /><br />
             Check the <a href="/ag-grid-jobs-board/">jobs board</a>
         </p>
     </Announcement>
@@ -118,7 +118,7 @@ const MailingListSignup = () => {
                 method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" className="validate"
                 target="_blank" noValidate>
                 <div id="mc_embed_signup_scroll">
-                    <h2>ag-Grid Mailing List</h2>
+                    <h2>AG Grid Mailing List</h2>
                     <div className="mc-field-group">
                         <label htmlFor="mce-EMAIL">Email Address <span className="asterisk">*</span>
                             <input type="email" defaultValue="" name="EMAIL" className="required email" id="mce-EMAIL" />

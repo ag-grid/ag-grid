@@ -502,7 +502,7 @@ export class RowRenderer extends BeanStub {
     private getLockOnRefresh(): void {
         if (this.refreshInProgress) {
             throw new Error(
-                "ag-Grid: cannot get grid to draw rows when it is in the middle of drawing rows. " +
+                "AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows. " +
                 "Your code probably called a grid API method while the grid was in the render stage. To overcome " +
                 "this, put the API call into a timeout, e.g. instead of api.refreshView(), " +
                 "call setTimeout(function() { api.refreshView(); }, 0). To see what part of your code " +
@@ -1220,7 +1220,7 @@ export class RowRenderer extends BeanStub {
                 const userCell = userFunc(params);
                 if (exists(userCell)) {
                     if ((userCell as any).floating) {
-                        doOnce(() => { console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
+                        doOnce(() => { console.warn(`AG Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
                         userCell.rowPinned = (userCell as any).floating;
                     }
                     nextCell = {
@@ -1524,7 +1524,7 @@ export class RowRenderer extends BeanStub {
                 const userCell = userFunc(params);
                 if (exists(userCell)) {
                     if ((userCell as any).floating) {
-                        doOnce(() => { console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
+                        doOnce(() => { console.warn(`AG Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
                         userCell.rowPinned = (userCell as any).floating;
                     }
                     nextCell = {

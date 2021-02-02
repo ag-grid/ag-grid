@@ -7,7 +7,7 @@ gtm_data_layer('cookies');
 <html lang="en">
 <head>
 <?php
-meta_and_links("ag-Grid: Cookies Policy", "About ag-Grid", "This page outlines our policy in relation to
+meta_and_links("AG Grid: Cookies Policy", "About AG Grid", "This page outlines our policy in relation to
   the cookies that we collect on our website.", true);
 ?>
 <script src="dist/homepage.js"></script>

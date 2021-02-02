@@ -112,9 +112,9 @@ The following example demonstrates when the described events occur by writing to
 
 ## Accessing Chart Instance
 
-Charts in the grid are produced by the [ag-Charts](../charts/) library, which is integrated
+Charts in the grid are produced by the [AG Charts](../charts/) library, which is integrated
 directly into the grid for your convenience. In some advanced use cases, you may wish to access the chart
-instance that is produced by ag-Charts, in order to interact with the chart directly.
+instance that is produced by AG Charts, in order to interact with the chart directly.
 
 The chart instance can be found inside the `ChartModel`, which is provided in the [`ChartCreated`](#chartcreated) event.
 

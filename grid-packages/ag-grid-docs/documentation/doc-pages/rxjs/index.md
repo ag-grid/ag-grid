@@ -3,9 +3,9 @@ title: "Use with RxJS"
 frameworks: ["angular", "react", "vue"]
 ---
 
-It is possible to use RxJS with ag-Grid - with the rich [API](../grid-api/) and numerous [Data Update Options](../data-update/) the two can interoperate very well.
+It is possible to use RxJS with AG Grid - with the rich [API](../grid-api/) and numerous [Data Update Options](../data-update/) the two can interoperate very well.
 
-There are many ways you can use RxJS with ag-Grid. Below we describe two ways to do updates: One that processes just updated rows, and another that supplies the full Row Dataset but with altered rows within it.
+There are many ways you can use RxJS with AG Grid. Below we describe two ways to do updates: One that processes just updated rows, and another that supplies the full Row Dataset but with altered rows within it.
 
 ## Option 1 - Providing Just Updated Data
 
@@ -26,13 +26,13 @@ const gridOptions = {
 }
 </snippet>
 
-- A manner of letting ag-Grid know the type of update we're doing - for this we make use of the [Transaction](../data-update/) method:
+- A manner of letting AG Grid know the type of update we're doing - for this we make use of the [Transaction](../data-update/) method:
 
 <snippet>
 updates.subscribe(updates => gridOptions.api.applyTransaction({ update: updates }));
 </snippet>
 
-With these two pieces of code we can supply the updates to ag-Grid and the grid will only re-render the changes rows, resulting
+With these two pieces of code we can supply the updates to AG Grid and the grid will only re-render the changes rows, resulting
 in much improved performance.
 
 <grid-example title='RxJS - Row Updates' name='rxjs-updates' type='generated' options='{ "enterprise": true, "extras": ["lodash", "rxjs", "bluebirdjs"], "modules": ["clientside", "rowgrouping"] }'></grid-example>
@@ -46,7 +46,7 @@ This time however the second subscription has the full row data, with altered ro
 To efficiently process this data we need two things:
 
 - A unique key per row - we do this by making use of the `getRowNodeId` callback.
-- A manner of letting ag-Grid know that we're supplying the full data again, but with altered data within - for this we make use of the [Immutable Data](../immutable-data/) method.
+- A manner of letting AG Grid know that we're supplying the full data again, but with altered data within - for this we make use of the [Immutable Data](../immutable-data/) method.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -58,7 +58,7 @@ const gridOptions = {
 }
 </snippet>
 
-With this configuration we can supply the updates to ag-Grid and the grid will only re-render the changed rows, resulting in much improved performance.
+With this configuration we can supply the updates to AG Grid and the grid will only re-render the changed rows, resulting in much improved performance.
 
 <grid-example title='RxJS - Full Updates' name='rxjs-full' type='generated' options='{ "enterprise": true, "extras": ["lodash", "rxjs", "bluebirdjs"], "modules": ["clientside", "rowgrouping"] }'></grid-example>
 

@@ -1,7 +1,7 @@
 import { agGridVersion, agChartsVersion } from 'utils/consts';
 
 export const getHeaderTitle = (title, framework = 'javascript', isCharts = false) =>
-    `${isCharts ? 'ag-Charts' : 'ag-Grid'} ${getFrameworkPart(framework, isCharts)}: ${title}`;
+    `${isCharts ? 'AG Charts' : 'AG Grid'} ${getFrameworkPart(framework, isCharts)}: ${title}`;
 
 const getFrameworkPart = (framework, isCharts = false) =>
     `(${getFrameworkName(framework)} ${isCharts ? 'Charts' : 'Grid'})`;

@@ -7,7 +7,7 @@ gtm_data_layer('about');
 <html lang="en">
     <head>
 <?php
-meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
+meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", true);
 ?>
     <link rel="stylesheet" href="dist/homepage.css">
     <title>Legal Policy</title>
@@ -28,14 +28,14 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
                     <hr />
 
                     <div class="text-center">
-                        <p>Welcome to ag-Grid's legal policies page.</p>
+                        <p>Welcome to AG Grid's legal policies page.</p>
                         <p>Here you can navigate through our legal policies, including our 
                             <strong>Privacy Policy</strong> and <strong>Cookies Policy</strong>.
                         <hr/>
                     </div>
 
                     <div class="text-center">
-                        <p>Welcome to ag-Grid's Privacy Policy.<br/>
+                        <p>Welcome to AG Grid's Privacy Policy.<br/>
                             <strong>Your privacy is important to us.</strong><br/> 
                             At ag-grid, we are fully committed to protecting your personal data and complying with all data privacy laws.<br/>
                             This policy serves as a guide and reference point for how we may collect and use personal information, and the rights and 
@@ -50,7 +50,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
                         <button type="button" class="btn btn-primary btn-lg btn-block">Privacy Policy</button>
                     </a>
                     <hr/>
-                    <p class="text-center">Welcome to ag-Grid's Cookie Policy.<br/>
+                    <p class="text-center">Welcome to AG Grid's Cookie Policy.<br/>
                         <strong>Your choice is important to us.</strong>
                         <br/><br/>
                         This site uses cookies – small text files that are placed on your machine to help the site provide a better user experience. 

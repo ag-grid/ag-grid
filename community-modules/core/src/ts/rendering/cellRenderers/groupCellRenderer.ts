@@ -187,7 +187,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private setPaddingDeprecatedWay(paddingCount: number, padding: number): void {
-        doOnce(() => console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation page for Themes, in particular the property $row-group-indent-size.'), 'groupCellRenderer->doDeprecatedWay');
+        doOnce(() => console.warn('AG Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the AG Grid documentation page for Themes, in particular the property $row-group-indent-size.'), 'groupCellRenderer->doDeprecatedWay');
 
         const paddingPx = paddingCount * padding;
         const eGui = this.getGui();
@@ -232,7 +232,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             } else if (typeof footerValueGetter === 'string') {
                 footerValue = this.expressionService.evaluate(footerValueGetter, paramsClone);
             } else {
-                console.warn('ag-Grid: footerValueGetter should be either a function or a string (expression)');
+                console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
             }
         } else {
             footerValue = 'Total ' + this.params.value;

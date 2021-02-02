@@ -35,7 +35,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ChartsModule]);
 The charts module has been built from the ground up with zero dependencies on any third party libraries.
 
 [[note]]
-| If you are not using ES6 Modules and are instead using the bundled version of ag-Grid Enterprise, note that `ag-grid-enterprise.js` already contains the charting module.
+| If you are not using ES6 Modules and are instead using the bundled version of AG Grid Enterprise, note that `ag-grid-enterprise.js` already contains the charting module.
 
 ## Enabling Charts
 

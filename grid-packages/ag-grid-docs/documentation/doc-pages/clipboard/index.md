@@ -34,7 +34,7 @@ Paste to clipboard can only be done in the following ways:
 | It is not possible because of a browser security restriction that Javascript cannot
 | take data from the clipboard without the user explicitly doing a paste command from the browser
 | (eg Ctrl+V or from the browser menu). If Javascript could do this, then websites could steal
-| data from the client via grabbing from the clipboard maliciously. The reason why ag-Grid keeps
+| data from the client via grabbing from the clipboard maliciously. The reason why AG Grid keeps
 | the paste in the menu as disabled is to indicate to the user that paste is possible and it provides
 | the shortcut as a hint to the user. This is also why the API cannot copy from clipboard.
 

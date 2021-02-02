@@ -1,16 +1,16 @@
 <?php
-$pageTitle = "ag-Grid Examples: Third Party Libraries";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers examples using common Third Party librabries.";
-$pageKeywords = "ag-Grid Third Party Examples";
+$pageTitle = "AG Grid Examples: Third Party Libraries";
+$pageDescription = "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers examples using common Third Party librabries.";
+$pageKeywords = "AG Grid Third Party Examples";
 $pageGroup = "thirdparty";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h1><img src="../images/svg/docs/abc.svg" alt="abc" width="50" />Third Party Examples - Integrating with ag-Grid</h1>
+    <h1><img src="../images/svg/docs/abc.svg" alt="abc" width="50" />Third Party Examples - Integrating with AG Grid</h1>
 
-    <p>This section of our documentation demonstrates some examples of ag-Grid integration with commonly used Third Party products.</p>
+    <p>This section of our documentation demonstrates some examples of AG Grid integration with commonly used Third Party products.</p>
 
     <p>Please note that these examples are for demonstration purposes only and provided "as is" - please contact the respective
     vendors if support with those products is required.</p>

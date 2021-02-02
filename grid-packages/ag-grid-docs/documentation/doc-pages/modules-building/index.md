@@ -1,5 +1,5 @@
 ---
-title: "ag-Grid Building Applications With ag-Grid Modules"
+title: "AG Grid Building Applications With AG Grid Modules"
 ---
 
 In this section we describe how you can cherry pick modules to provide the features you need with a reduced application bundle size.
@@ -7,7 +7,7 @@ In this section we describe how you can cherry pick modules to provide the featu
 [[only-frameworks]]
 | ## Introduction
 |
-| In order to use selective ag-Grid modules within your application you need to do two things:
+| In order to use selective AG Grid modules within your application you need to do two things:
 |
 | - Specify the modules you require as dependencies
 | - Register the modules you require with the Grid

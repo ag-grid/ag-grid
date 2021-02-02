@@ -6,9 +6,9 @@ export interface IFrameworkOverrides {
 
     /** Again because Angular uses Zones, we allow adding some events outside of Zone JS so that we do not kick off
      * the Angular change detection. We do this for some events ONLY, and not all events, just events that get fired
-     * a lot (eg mouse move), but we need to make sure in ag-Grid that we do NOT call any grid callbacks while processing
+     * a lot (eg mouse move), but we need to make sure in AG Grid that we do NOT call any grid callbacks while processing
      * these events, as we will be outside of ZoneJS and hence Angular2 Change Detection won't work. However it's fine
-     * for our code to result in ag-Grid events (and Angular application action on these) as these go through
+     * for our code to result in AG Grid events (and Angular application action on these) as these go through
      * Event Emitter's.
      *
      * This was done by Niall and Sean. The problematic events are mouseover, mouseout, mouseenter and mouseleave.

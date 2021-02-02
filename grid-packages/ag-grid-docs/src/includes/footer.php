@@ -42,8 +42,8 @@ Follow @ag_grid</a></li>
     </div>
 
     <div id="copy">
-        <div>ag-Grid Limited registered in the United Kingdom. Company No. 07318192.</div>
-        <div>&copy; ag-Grid Ltd. 2015-<?php echo date("Y"); ?></div>
+        <div>AG Grid Limited registered in the United Kingdom. Company No. 07318192.</div>
+        <div>&copy; AG Grid Ltd. 2015-<?php echo date("Y"); ?></div>
     </div>
 </footer>
 

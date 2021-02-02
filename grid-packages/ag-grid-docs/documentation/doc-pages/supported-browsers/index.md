@@ -2,10 +2,10 @@
 title: "Supported Browsers"
 ---
 
-All modules of ag-Grid (Community, Enterprise and Charts) are tested to work with a wide array of browsers and operating systems.
+All modules of AG Grid (Community, Enterprise and Charts) are tested to work with a wide array of browsers and operating systems.
 
 
-We test against all the browser below. However we also work with other less common browsers by default. If the browsers / platform you are using is not listed below (eg Opera on Android) then we suggest testing the version of the grid you are interested in and making the decision for yourself. ag-Grid is primarily concerned with supporting all common desktop and mobile browsers.
+We test against all the browser below. However we also work with other less common browsers by default. If the browsers / platform you are using is not listed below (eg Opera on Android) then we suggest testing the version of the grid you are interested in and making the decision for yourself. AG Grid is primarily concerned with supporting all common desktop and mobile browsers.
 
 ## Desktop Browsers
 

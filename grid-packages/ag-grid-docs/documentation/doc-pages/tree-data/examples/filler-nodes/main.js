@@ -32,7 +32,7 @@ var gridOptions = {
 };
 
 // wait for the document to be loaded, otherwise
-// ag-Grid will not find the div in the document.
+// AG Grid will not find the div in the document.
 document.addEventListener("DOMContentLoaded", function() {
 
     // lookup the container we want the Grid to use

@@ -473,7 +473,7 @@
     {
         "title": "License Key",
         "enterprise": true,
-        "description": "Each customer of ag-Grid Enterprise will be given a <span class=\"feature-highlight\">License Key</span> to\nput into their application.",
+        "description": "Each customer of AG Grid Enterprise will be given a <span class=\"feature-highlight\">License Key</span> to\nput into their application.",
         "snippet": null,
         "level": 0,
         "url": "../licensing/"

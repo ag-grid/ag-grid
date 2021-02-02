@@ -1,8 +1,8 @@
 ---
-title: "Using ag-Grid with AMD"
+title: "Using AG Grid with AMD"
 ---
 
-We walk through the main steps required when using ag-Grid with AMD.
+We walk through the main steps required when using AG Grid with AMD.
 
 ## Initialise Project
 

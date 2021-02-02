@@ -1091,7 +1091,7 @@ export class GridPanel extends Component {
         }
 
         // this will happen anyway, as the move will cause a 'scroll' event on the body, however
-        // it is possible that the ensureColumnVisible method is called from within ag-Grid and
+        // it is possible that the ensureColumnVisible method is called from within AG Grid and
         // the caller will need to have the columns rendered to continue, which will be before
         // the event has been worked on (which is the case for cell navigation).
         this.onHorizontalViewportChanged();
@@ -1139,7 +1139,7 @@ export class GridPanel extends Component {
                 this.sizeColumnsToFit(-1);
             }, 500);
         } else {
-            console.warn('ag-Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +
+            console.warn('AG Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +
                 'zero width, maybe the grid is not visible yet on the screen?');
         }
     }

@@ -19,7 +19,7 @@ this pages focuses on areas that are of particular interest to this Server-Side 
 To enable Master / Detail, you should set the following grid options:
 
 - **masterDetail:** Set to `true` to inform the grid you want to allow expanding of rows to reveal detail grids.
-- **detailGridOptions:** The grid options to set for the detail grid. The detail grid is a fully featured instance of ag-Grid, so any configuration can be set on the detail grid that you would set any other grid.
+- **detailGridOptions:** The grid options to set for the detail grid. The detail grid is a fully featured instance of AG Grid, so any configuration can be set on the detail grid that you would set any other grid.
 - **getDetailRowData:** A function you implement to provide the grid with rows for display in the detail grids.
 
 These grid options are illustrated below:

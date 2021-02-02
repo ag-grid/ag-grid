@@ -424,7 +424,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         const parentGroup = this.findParentForNode(childNode, path, details);
         if (!parentGroup.group) {
-            console.warn(`ag-Grid: duplicate group keys for row data, keys should be unique`,
+            console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`,
                 [parentGroup.data, childNode.data]);
         }
 

@@ -2,7 +2,7 @@
 title: "Overlay Component"
 ---
 
-Overlay components allow you to add your own overlays to ag-Grid. Use these when the provided overlays do not meet your requirements.
+Overlay components allow you to add your own overlays to AG Grid. Use these when the provided overlays do not meet your requirements.
 
 ## Loading Rows Overlay Interface
 

@@ -322,7 +322,7 @@ if (instances.length > 0) {
 |
 | ## Cell Rendering
 |
-| It is possible to provide Angular cell renderers for ag-Grid to use if you are are using the Angular version of ag-Grid.
+| It is possible to provide Angular cell renderers for AG Grid to use if you are are using the Angular version of AG Grid.
 | See [registering framework components](../components/#registering-framework-components) for how to register framework components.
 |
 | ### Example: Rendering using Angular Components
@@ -351,7 +351,7 @@ if (instances.length > 0) {
 [[only-react]]
 | ## Cell Rendering
 |
-| It is possible to provide React cell renderers for ag-Grid to use if you are are using the React version of ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to register framework components.
+| It is possible to provide React cell renderers for AG Grid to use if you are are using the React version of AG Grid. See [registering framework components](../components/#registering-framework-components) for how to register framework components.
 |
 | ### Example: Rendering using Components
 |
@@ -403,7 +403,7 @@ if (instances.length > 0) {
 [[only-vue]]
 | ## Cell Rendering
 |
-| It is possible to provide VueJS cell renderers for ag-Grid to use if you are are using the VueJS version of ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to register framework components.
+| It is possible to provide VueJS cell renderers for AG Grid to use if you are are using the VueJS version of AG Grid. See [registering framework components](../components/#registering-framework-components) for how to register framework components.
 |
 | ### Example: Rendering using Components
 |
@@ -448,6 +448,6 @@ if (instances.length > 0) {
 |
 | [[note]]
 | | The full [ag-grid-vue-example](https://github.com/ag-grid/ag-grid-vue-example) repo shows a
-| | rich example of configuring ag-Grid with Vue components, but each section for renderers,
+| | rich example of configuring AG Grid with Vue components, but each section for renderers,
 | | filters, editors | etc will also demonstrate how this functionality can be extended with Vue.
 

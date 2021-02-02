@@ -3,12 +3,12 @@ title: "AngularJS 1.x Grid"
 frameworks: ["angular"]
 ---
 
-This page details how to set up ag-Grid inside and AngularJS 1.x application.
+This page details how to set up AG Grid inside and AngularJS 1.x application.
 
-When the ag-Grid script loads, it does not register with AngularJS 1.x. This is because AngularJS 1.x
-is an optional part of ag-Grid and you need to tell ag-Grid you want to use it.
+When the AG Grid script loads, it does not register with AngularJS 1.x. This is because AngularJS 1.x
+is an optional part of AG Grid and you need to tell AG Grid you want to use it.
 
-## Download ag-Grid-Enterprise
+## Download AG Grid Enterprise
 
 <style>
     .gatsby-resp-image-wrapper {
@@ -25,7 +25,7 @@ is an optional part of ag-Grid and you need to tell ag-Grid you want to use it.
 <table class="content">
     <tr>
         <td style="padding: 10px;">
-            <img src="resources/bower.png" alt="Bower Install ag-Grid" />
+            <img src="resources/bower.png" alt="Bower Install AG Grid" />
         </td>
         <td>
             <strong>Bower</strong><br/><code>bower install ag-grid-enterprise</code>
@@ -33,7 +33,7 @@ is an optional part of ag-Grid and you need to tell ag-Grid you want to use it.
     </tr>
     <tr>
         <td style="padding: 10px;">
-            <img src="resources/npm.png" alt="NPM install ag-Grid" />
+            <img src="resources/npm.png" alt="NPM install AG Grid" />
         </td>
         <td>
             <strong>NPM</strong><br/><code>npm install ag-grid-enterprise</code>
@@ -41,7 +41,7 @@ is an optional part of ag-Grid and you need to tell ag-Grid you want to use it.
     </tr>
     <tr>
         <td style="padding: 10px;">
-            <img src="resources/github.png" alt="Github install ag-Grid" />
+            <img src="resources/github.png" alt="Github install AG Grid" />
         </td>
         <td>
             <strong>Github</strong><br/>Download from <a href="https://github.com/ag-grid/ag-grid-enterprise" target="_blank">Github</a>
@@ -49,11 +49,11 @@ is an optional part of ag-Grid and you need to tell ag-Grid you want to use it.
     </tr>
 </table>
 
-### Referencing ag-Grid-Enterprise
+### Referencing AG Grid Enterprise
 
-ag-Grid-Enterprise is also distributed as both a self contained bundle and also via a CommonJS package.
+AG Grid Enterprise is also distributed as both a self contained bundle and also via a CommonJS package.
 
-As with the [ag-Grid example](../../../example.php), all we need to do is reference
+As with the [AG Grid example](../../../example.php), all we need to do is reference
 the ag-grid-enterprise dependency and we're good to go:
 
 ```html
@@ -71,14 +71,14 @@ the ag-grid-enterprise dependency and we're good to go:
 [[note]]
 | **Self Contained Bundles**
 | <br/>
-| Do **not** include both ag-Grid Community and ag-Grid-Enterprise self contained bundles.
-| The ag-Grid-Enterprise bundle contains ag-Grid Community within it.
+| Do **not** include both AG Grid Community and AG Grid Enterprise self contained bundles.
+| The AG Grid Enterprise bundle contains AG Grid Community within it.
 
-The creation of the Grid would be the same as the ag-Grid example above.
+The creation of the Grid would be the same as the AG Grid example above.
 
-### ag-Grid Enterprise Bundle Types
+### AG Grid Enterprise Bundle Types
 
-Again similar to ag-Grid, ag-Grid-Enterprise has 4 bundles:
+Again similar to AG Grid, AG Grid Enterprise has 4 bundles:
 
 - dist/ag-grid-enterprise.js -> standard bundle containing JavaScript and CSS
 - dist/ag-grid-enterprise.min.js -> minified bundle containing JavaScript and CSS
@@ -90,9 +90,9 @@ you need to do. Any grid you create will be an enterprise grid once you load the
 
 ### CommonJS
 
-If using CommonJS, you one need to include ag-Grid-Enterprise into your project. You do not need
-to execute any code inside it. When ag-Grid-Enterprise loads, it will register with ag-Grid such
-that the enterprise features are available when you use ag-Grid.
+If using CommonJS, you one need to include AG Grid Enterprise into your project. You do not need
+to execute any code inside it. When AG Grid Enterprise loads, it will register with AG Grid such
+that the enterprise features are available when you use AG Grid.
 
 ```js
 // ECMA 5 - using nodes require() method
@@ -110,21 +110,21 @@ import { Grid } from '@ag-grid-community/all-modules'
 
 ### Creating the AngularJS 1.x Module
 
-Include ag-Grid as a dependency of your module like this:
+Include AG Grid as a dependency of your module like this:
 
 ```js
-// if you're using ag-Grid-Enterprise, you'll need to provide the License Key before doing anything else
-// not necessary if you're just using ag-Grid
+// if you're using AG Grid Enterprise, you'll need to provide the License Key before doing anything else
+// not necessary if you're just using AG Grid
 agGrid.LicenseManager.setLicenseKey("your license key goes here");
 
-// get ag-Grid to create an Angular module and register the ag-Grid directive
+// get AG Grid to create an Angular module and register the AG Grid directive
 agGrid.initialiseAgGridWithAngular1(angular);
 
-// create your module with ag-Grid as a dependency
+// create your module with AG Grid as a dependency
 var module = angular.module("example", ["agGrid"]);
 ```
 
-### ag-Grid div
+### AG Grid div
 
 To include a grid in your html, add the `ag-grid` attribute to a div. The value
 of the div should be the provided grid options on the scope.
@@ -147,24 +147,24 @@ the width and height you give it.
 
 ### Grid Options
 
-The grid options provide ag-Grid with the details needed to render. At a minimum you
+The grid options provide AG Grid with the details needed to render. At a minimum you
 should provide the columns (columnDefs) and the rows (rowData).
 
 
 ## Basic AngularJS 1.x Example
 
-<grid-example title='Basic AngularJS 1.x ag-Grid' name='basic' type='vanilla' options='{ "exampleHeight": 250, "extras":  ["angularjs1"] }'></grid-example>
+<grid-example title='Basic AngularJS 1.x AG Grid' name='basic' type='vanilla' options='{ "exampleHeight": 250, "extras":  ["angularjs1"] }'></grid-example>
 
 ## Events & Digest Cycle
 
-For AngularJS 1.x - ag-Grid does not not fire events inside an Angular JS digest cycle. This is done on
+For AngularJS 1.x - AG Grid does not not fire events inside an Angular JS digest cycle. This is done on
 purpose for performance reasons, as there are many events fired, even if you don't listen to them.
 Firing the digest cycle for each one would kill performance. So you may want to $scope.$apply() after you
 handle the event.
 
 ## Destroy
 
-If using ag-Grid's AngularJS direction, you do not need to manually clean up the grid. The grid ties in
+If using AG Grid's AngularJS direction, you do not need to manually clean up the grid. The grid ties in
 with the AngularJS 1.x lifecycle and releases all resources when the directive is destroyed.
 
 ## Advanced AngularJS 1.x Example
@@ -173,16 +173,16 @@ The below example has much more details. The mechanism for setting up the grid i
 Don't worry about the finer details for now, how all the different options are configured is explained
 in the relevant parts of the documentation.
 
-<grid-example title='Basic AngularJS 1.x ag-Grid' name='basic2' type='vanilla' options='{ "exampleHeight": 460, "extras": ["angularjs1"] }'></grid-example>
+<grid-example title='Basic AngularJS 1.x AG Grid' name='basic2' type='vanilla' options='{ "exampleHeight": 460, "extras": ["angularjs1"] }'></grid-example>
 
-## Angular 1.x and ag-Grid Components
+## Angular 1.x and AG Grid Components
 
-ag-Grid does not provide direct support for it's [components](../components/) and AngularJS 1.x.
-If you want to put custom AngularJS 1.x components into ag-Grid, follow the
+AG Grid does not provide direct support for it's [components](../components/) and AngularJS 1.x.
+If you want to put custom AngularJS 1.x components into AG Grid, follow the
 [instructions for plain JavaScript component](../getting-started/). You will then need to manage creating
 and destroying child scopes yourself inside the `init()` and `destroy()` methods.
 
-Below shows an example of using ag-Grid Filter, Header and Cell Renderer components. The following can be noted:
+Below shows an example of using AG Grid Filter, Header and Cell Renderer components. The following can be noted:
 
 - The Make column has an Angular 1 Header Component.
 - The Model column has an Angular 1 Filter.
@@ -195,20 +195,20 @@ Below shows an example of using ag-Grid Filter, Header and Cell Renderer compone
 <grid-example title='Components' name='components' type='vanilla' options='{ "exampleHeight": 250, "extras": ["angularjs1", "ui-bootstrap"] }'></grid-example>
 
 [[note]]
-| Creating child scopes and managing AngularJS compiling is part of the AngularJS framework. Please google how to do this, it's not part of ag-Grid.
+| Creating child scopes and managing AngularJS compiling is part of the AngularJS framework. Please google how to do this, it's not part of AG Grid.
 
 ## Angular Compiling
 
 Angular 1.x is great. It allows us to build large end-to-end single page web apps with relative ease.
-However the author of ag-Grid is of the opinion that not everything should be built in Angular.
-Angular 1.x does come with a disadvantage, it can slow things down. ag-Grid does not use
+However the author of AG Grid is of the opinion that not everything should be built in Angular.
+Angular 1.x does come with a disadvantage, it can slow things down. AG Grid does not use
 Angular 1.x (or any other framework) underneath the hood, it is all blazing fast raw Javascript.
 
 But maybe you are not worried about performance. Maybe you are not displaying that many rows and
 columns. And maybe you want to provide your own cell renderers and use Angular here. For whatever
 reason, it is possible to turn Angular on for Angular version 1.x.
 
-When [Angular is turned on in ag-Grid](../getting-started/), every time a row is inserted, a new
+When [Angular is turned on in AG Grid](../getting-started/), every time a row is inserted, a new
 child Angular Scope is created for that row. This scope gets the row attached to it so it's
 available to any Angular logic inside the cell.
 
@@ -262,4 +262,4 @@ The example below uses cell templates for the first three columns.
 
 ## Next Steps
 
-Ready to try ag-Grid in your project? Download ag-Grid Community edition or trial ag-Grid Enterprise for free.
+Ready to try AG Grid in your project? Download AG Grid Community edition or trial AG Grid Enterprise for free.

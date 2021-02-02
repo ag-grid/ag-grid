@@ -105,7 +105,7 @@ const gridOptions = {
 In the code snippet above, the grid is configured to use the Server-Side Row Model by setting: `gridOptions.rowModelType = 'serverSide'`.
 
 
-Sorting is enabled via `defaultColDef.sortable = true` property. A simple number filter is also added to the 'year' column. The example has `filterParams.newRowsAction = 'keep'` set to ensure that as new data is loaded the applied filters are kept, however since v21 of ag-Grid, `newRowsAction` defaults to `'keep'` for Server Side Row Model so this property no longer needs to be set.
+Sorting is enabled via `defaultColDef.sortable = true` property. A simple number filter is also added to the 'year' column. The example has `filterParams.newRowsAction = 'keep'` set to ensure that as new data is loaded the applied filters are kept, however since v21 of AG Grid, `newRowsAction` defaults to `'keep'` for Server Side Row Model so this property no longer needs to be set.
 
 To demonstrate [Row Grouping](../server-side-model-grouping/), the 'country' and 'sport' columns have been configured with `rowGroup = true`. Finally, to ensure the medal values are aggregated up the group hierarchy, the value columns have been set up with an aggregation function: `aggFunc='sum'`.
 

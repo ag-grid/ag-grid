@@ -60,7 +60,7 @@ When in print layout the grid will redraw the entire grid any time there is a ch
 
 ## Don't Print Large Data
 
-Do not use this technique for printing if you are showing a large number of rows or columns. This is not a problem with the grid, it is a limitation on browsers on how much data they can easily display in one web page. If you try to render lots of data into the web page, the web page will create lots of DOM elements and will either slow things down or simply hang the browser. ag-Grid gets around this problem by virtualising the rows and columns. However if you render the whole grid, there is no possibility of virtualising the rows or columns.
+Do not use this technique for printing if you are showing a large number of rows or columns. This is not a problem with the grid, it is a limitation on browsers on how much data they can easily display in one web page. If you try to render lots of data into the web page, the web page will create lots of DOM elements and will either slow things down or simply hang the browser. AG Grid gets around this problem by virtualising the rows and columns. However if you render the whole grid, there is no possibility of virtualising the rows or columns.
 
 If you want to allow printing large data sets it's best to get your users to export to CSV or Excel and then print from another non-web based application.
 

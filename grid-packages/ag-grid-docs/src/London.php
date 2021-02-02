@@ -7,7 +7,7 @@ gtm_data_layer('about');
 <head lang="en">
     <?php
 
-    meta_and_links("ag-Conf London and New York", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
+    meta_and_links("ag-Conf London and New York", "About AG Grid", "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", true);
     ?>
     <link rel="stylesheet" href="dist/homepage.css">
 </head>
@@ -28,11 +28,11 @@ gtm_data_layer('about');
             <section>
                 <p class="text-center">
                     <h1 style="text-align: center;">
-                        ag-Grid Conf
+                        AG Grid Conf
                     </h1>
 
                     <p class="lead" align="center">
-                        Where CTO's, Senior Developers, Developers and Product Managers serious about JavaScript data presentation<br> can learn more about ag-Grid and share their experiences with the ag-Grid team.
+                        Where CTO's, Senior Developers, Developers and Product Managers serious about JavaScript data presentation<br> can learn more about AG Grid and share their experiences with the AG Grid team.
                     </p>
 
                     <div class="container">
@@ -80,7 +80,7 @@ gtm_data_layer('about');
                                 <img src='images/team/niall.jpg' alt="Niall Crosby, CEO"/>
                             </div>
                             <h3>Niall Crosby</h3>
-                            <h4>Founder, CEO & CTO, ag-Grid</h4>
+                            <h4>Founder, CEO & CTO, AG Grid</h4>
 
                         </div>
 
@@ -89,7 +89,7 @@ gtm_data_layer('about');
                                 <img src='images/team/sean.jpg' alt="Sean Landsman, Lead Developer"/>
                             </div>
                             <h3>Sean Landsman</h3>
-                            <h4>Javascript Frameworks Guru, ag-Grid</h4>
+                            <h4>Javascript Frameworks Guru, AG Grid</h4>
 
                         </div>
 
@@ -98,7 +98,7 @@ gtm_data_layer('about');
                                 <img src='images/team/rob.jpg' alt="Alberto Gutierrez, Lead Developer"/>
                             </div>
                             <h3>Robert Clarke </h3>
-                            <h4>Enterprise Applications Guru, ag-Grid</h4>
+                            <h4>Enterprise Applications Guru, AG Grid</h4>
 
                         </div>
                     </div>
@@ -130,7 +130,7 @@ gtm_data_layer('about');
                 </tr>
                 <tr>
                     <td>3:00 - 3:50 PM</td>
-                    <td><strong>Technical look into ag-Grid's features with the Core team, followed by a Q&A</strong></td>
+                    <td><strong>Technical look into AG Grid's features with the Core team, followed by a Q&A</strong></td>
                 </tr>
                                 <tr>
                     <td>3:50 - 4:00 PM</td>
@@ -138,9 +138,9 @@ gtm_data_layer('about');
                 </tr>
                 <tr>
                     <td style="background-color: whitesmoke">4:00 - 4:25 PM</td>
-                    <td style="background-color: whitesmoke"><strong>How ag-Grid Manages Complexity internally</strong>
+                    <td style="background-color: whitesmoke"><strong>How AG Grid Manages Complexity internally</strong>
                         <br>
-                        Looking at how ag-Grid built it's own IoC container and Component Library under the hood rather than relying on frameworks, and how it all integrates with all the frameworks.
+                        Looking at how AG Grid built it's own IoC container and Component Library under the hood rather than relying on frameworks, and how it all integrates with all the frameworks.
                     </td>
                 </tr>
                 <tr>
@@ -162,9 +162,9 @@ gtm_data_layer('about');
                     </tr>
                     <tr>
                         <td>5:30 - 6:00 PM</td>
-                        <td><strong>Origins of ag-Grid, Current State, and Roadmap</strong>
+                        <td><strong>Origins of AG Grid, Current State, and Roadmap</strong>
                             <br>
-                            The story of ag-Grid, where we are, where we are going.
+                            The story of AG Grid, where we are, where we are going.
                         </tr>
                                             <tr>
                         <td>6:00 - 8:00 PM</td>
@@ -201,7 +201,7 @@ gtm_data_layer('about');
                 </tr>
                 <tr>
                     <td>3:00 - 3:50 PM</td>
-                    <td><strong>Technical look into ag-Grid's features with the Core team, followed by a Q&A</strong></td>
+                    <td><strong>Technical look into AG Grid's features with the Core team, followed by a Q&A</strong></td>
                 </tr>
                                 <tr>
                     <td>3:50 - 4:00 PM</td>
@@ -209,9 +209,9 @@ gtm_data_layer('about');
                 </tr>
                 <tr>
                     <td style="background-color: whitesmoke">4:00 - 4:25 PM</td>
-                    <td style="background-color: whitesmoke"><strong>How ag-Grid Manages Complexity internally</strong>
+                    <td style="background-color: whitesmoke"><strong>How AG Grid Manages Complexity internally</strong>
                         <br>
-                        Looking at how ag-Grid built it's own IoC container and Component Library under the hood rather than relying on frameworks, and how it all integrates with all the frameworks.
+                        Looking at how AG Grid built it's own IoC container and Component Library under the hood rather than relying on frameworks, and how it all integrates with all the frameworks.
                     </td>
                 </tr>
                 <tr>
@@ -233,9 +233,9 @@ gtm_data_layer('about');
                     </tr>
                     <tr>
                         <td>5:30 - 6:00 PM</td>
-                        <td><strong>Origins of ag-Grid, Current State, and Roadmap</strong>
+                        <td><strong>Origins of AG Grid, Current State, and Roadmap</strong>
                             <br>
-                            The story of ag-Grid, where we are, where we are going.
+                            The story of AG Grid, where we are, where we are going.
                         </tr>
                                             <tr>
                         <td>6:00 - 8:00 PM</td>

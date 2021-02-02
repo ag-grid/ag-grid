@@ -67,7 +67,7 @@ export default class CustomDateComponent extends Component {
 
     updateAndNotifyAgGrid(date) {
         //Callback after the state is set. This is where we tell ag-grid that the date has changed so
-        //it will proceed with the filtering and we can then expect ag-Grid to call us back to getDate
+        //it will proceed with the filtering and we can then expect AG Grid to call us back to getDate
         this.setState({ date }, this.props.onDateChanged);
     }
 

@@ -12,7 +12,7 @@ The provided cell editors are as follows:
 - `agLargeTextCellEditor`: A text popup for inputting larger, multi-line text.
 - `agSelectCellEditor`: Simple editor that uses a standard HTML `select`.
 - `agPopupSelectCellEditor`: Same as 'select' but as popup.
-- `agRichSelectCellEditor (ag-Grid Enterprise only)`: A rich select popup that uses row virtualisation.
+- `agRichSelectCellEditor (AG Grid Enterprise only)`: A rich select popup that uses row virtualisation.
 
 ### agTextCellEditor / agPopupTextCellEditor
 
@@ -71,7 +71,7 @@ const gridOptions = {
 
 ### agRichSelectCellEditor
 
-Available in ag-Grid Enterprise only. An alternative to using the browser's `select` popup for dropdowns inside the grid.
+Available in AG Grid Enterprise only. An alternative to using the browser's `select` popup for dropdowns inside the grid.
 
 The `agRichSelectCellEditor` has the following benefits over the browser's `select` popup:
 

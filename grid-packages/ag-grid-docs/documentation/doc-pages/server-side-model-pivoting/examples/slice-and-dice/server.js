@@ -57,7 +57,7 @@ function createFakeServer(data) {
     // in your application, you should be implementing the server logic in your server, maybe in JavaScript, but
     // also maybe in Java, C# or another server side language. The server side would then typically query a database
     // or another data store to get the data, and the grouping, aggregation and pivoting would be done by the data store.
-    // This fake server is only intended to demonstrate the interface between ag-Grid and the server side. The
+    // This fake server is only intended to demonstrate the interface between AG Grid and the server side. The
     // implementation details are not intended to be and example of how your server side should create results.
     function FakeServer(allData) {
         this.allData = allData;
@@ -232,7 +232,7 @@ function createFakeServer(data) {
     };
 
     // function does pivoting. this is very funky logic, doing pivoting and creating secondary columns on the fly.
-    // if you are using the ag-Grid Enterprise Row Model, remember this would all be done on your server side with a
+    // if you are using the AG Grid Enterprise Row Model, remember this would all be done on your server side with a
     // database or something that does pivoting for you - this messy code is just for demo purposes on how to use
     // ag-Gird, it's not supposed to be beautiful production quality code.
     FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) {

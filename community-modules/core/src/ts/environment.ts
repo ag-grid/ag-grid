@@ -147,7 +147,7 @@ export class Environment extends BeanStub {
 
         if (usingOldTheme) {
             const newTheme = theme.replace('ag-', 'ag-theme-');
-            doOnce(() => console.warn(`ag-Grid: As of v19 old theme are no longer provided. Please replace ${theme} with ${newTheme}.`), 'using-old-theme');
+            doOnce(() => console.warn(`AG Grid: As of v19 old theme are no longer provided. Please replace ${theme} with ${newTheme}.`), 'using-old-theme');
         }
 
         return { theme, el, themeFamily: theme.replace(/-dark$/, '') };

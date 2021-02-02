@@ -25,7 +25,7 @@ export interface IProvidedFilterParams extends IFilterParams {
 
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
- * All the filters that come with ag-Grid extend this class. User filters do not
+ * All the filters that come with AG Grid extend this class. User filters do not
  * extend this class.
  */
 export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements IFilterComp {
@@ -75,7 +75,7 @@ export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements
 
     /** @deprecated */
     public onFilterChanged(): void {
-        console.warn(`ag-Grid: you should not call onFilterChanged() directly on the filter, please call
+        console.warn(`AG Grid: you should not call onFilterChanged() directly on the filter, please call
         gridApi.onFilterChanged() instead. onFilterChanged is not part of the exposed filter interface (it was
         a method that existed on an old version of the filters that was not intended for public use.`);
         this.providedFilterParams.filterChangedCallback();
@@ -194,22 +194,22 @@ export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements
         const { applyButton, resetButton, clearButton } = params;
 
         if (clearButton) {
-            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.clearButton is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v23.2, filterParams.clearButton is deprecated. Please use filterParams.buttons instead');
             buttons.push('clear');
         }
 
         if (resetButton) {
-            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.resetButton is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v23.2, filterParams.resetButton is deprecated. Please use filterParams.buttons instead');
             buttons.push('reset');
         }
 
         if (applyButton) {
-            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.applyButton is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v23.2, filterParams.applyButton is deprecated. Please use filterParams.buttons instead');
             buttons.push('apply');
         }
 
         if ((params as any).apply) {
-            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v21, filterParams.apply is deprecated. Please use filterParams.buttons instead');
             buttons.push('apply');
         }
 
@@ -356,7 +356,7 @@ export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements
     public static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number {
         if (ProvidedFilter.isUseApplyButton(params)) {
             if (params.debounceMs != null) {
-                console.warn('ag-Grid: debounceMs is ignored when apply button is present');
+                console.warn('AG Grid: debounceMs is ignored when apply button is present');
             }
 
             return 0;

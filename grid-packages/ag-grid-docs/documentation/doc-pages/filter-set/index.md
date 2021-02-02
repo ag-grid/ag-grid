@@ -19,7 +19,7 @@ The Set Filter is comprised of the following sections:
 
 ## Enabling Set Filters
 
-The Set Filter is the default filter used in ag-Grid Enterprise, but it can also be explicitly configured as shown below:
+The Set Filter is the default filter used in AG Grid Enterprise, but it can also be explicitly configured as shown below:
 
 <snippet>
 const gridOptions = {
@@ -34,7 +34,7 @@ const gridOptions = {
 
 The following example demonstrates how the Set Filter can be enabled. Note the following:
 
-- The **Athlete** column has `filter=true` which defaults to the Set Filter as this example is using ag-Grid Enterprise.
+- The **Athlete** column has `filter=true` which defaults to the Set Filter as this example is using AG Grid Enterprise.
 - The **Country** column is explicitly configured to use the Set Filter using `filter='agSetColumnFilter'`.
 - All other columns are configured to use the [Number Filter](../filter-number/) using `filter='agNumberColumnFilter'`.
 - Filters can be accessed from the [Column Menu](../column-menu/) or by clicking on the filter icon in the [Floating Filters](../floating-filters/).

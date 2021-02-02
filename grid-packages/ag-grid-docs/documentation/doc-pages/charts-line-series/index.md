@@ -102,7 +102,7 @@ There are many other customisations you can make to the markers; see the [marker
 
 ## Missing Data
 
-In a perfect world all data would be 100% complete. Unfortunately, in the real one, data for certain items or time periods might be missing or corrupted. But that shouldn't result in corrupted charts, and ag-Charts supports the correct rendering of incomplete data:
+In a perfect world all data would be 100% complete. Unfortunately, in the real one, data for certain items or time periods might be missing or corrupted. But that shouldn't result in corrupted charts, and AG Charts supports the correct rendering of incomplete data:
 
 <chart-example title='Line Series with Incomplete Data' name='gap-line' type='generated'></chart-example>
 

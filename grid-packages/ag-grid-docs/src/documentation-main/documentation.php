@@ -1,7 +1,7 @@
 <?php
-$pageTitle = "ag-Grid Documentation";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is our documentation page where you can learn about all of the features of the grid.";
-$pageKeywords = "ag-Grid JavaScript Grid Documentation";
+$pageTitle = "AG Grid Documentation";
+$pageDescription = "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This is our documentation page where you can learn about all of the features of the grid.";
+$pageKeywords = "AG Grid JavaScript Grid Documentation";
 define('skipInPageNav', true);
 
 include 'documentation_header.php';

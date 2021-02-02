@@ -99,7 +99,7 @@ function onRowDragEnd(event) {
 }
 
 // this updates the filePath locations in our data, we update the data
-// before we send it to ag-Grid
+// before we send it to AG Grid
 function moveToPath(newParentPath, node, allUpdatedNodes) {
     // last part of the file path is the file name
     var oldPath = node.data.filePath;
@@ -174,7 +174,7 @@ function getFileIcon(filename) {
 }
 
 // wait for the document to be loaded, otherwise
-// ag-Grid will not find the div in the document.
+// AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function() {
     // lookup the container we want the Grid to use
     var eGridDiv = document.querySelector('#myGrid');

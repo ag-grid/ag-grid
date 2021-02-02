@@ -18,7 +18,7 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
 
         // this component is only really useful with client side row model
         if (this.gridApi.getModel().getType() !== 'clientSide') {
-            console.warn(`ag-Grid: agFilteredRowCountComponent should only be used with the client side row model.`);
+            console.warn(`AG Grid: agFilteredRowCountComponent should only be used with the client side row model.`);
             return;
         }
 

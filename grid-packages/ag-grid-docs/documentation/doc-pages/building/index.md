@@ -1,8 +1,8 @@
 ---
-title: "Building ag-Grid Applications"
+title: "Building AG Grid Applications"
 ---
 
-This section documents how to build ag-Grid applications outside of a framework - for build & bundling using a framework please see the relevant framework section above.
+This section documents how to build AG Grid applications outside of a framework - for build & bundling using a framework please see the relevant framework section above.
 
 <div style="display: flex">
     <image-caption src="building/resources/typescript.svg" alt="Typescript" width="20rem" centered="true" constrained="true">

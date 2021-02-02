@@ -3,7 +3,7 @@ title: "Angular Webpack 2"
 frameworks: ["angular"]
 ---
 
-This article walks through the main steps involved when using ag-Grid, Angular and Webpack 2 together. 
+This article walks through the main steps involved when using AG Grid, Angular and Webpack 2 together. 
 Please refer to [ag-grid-angular-example](https://github.com/ag-grid/ag-grid-angular-example) on 
 GitHub for a full working example of this. This can be used in conjunction with this article.
 
@@ -227,7 +227,7 @@ exports.root = root;
 <html>
 <head>
     <base href="/">
-    <title>ag-Grid & Angular With Webpack</title>
+    <title>AG Grid & Angular With Webpack</title>
 </head>
 <body>
 <my-app>Loading...</my-app>
@@ -330,7 +330,7 @@ dependencies and the more fluid application code. Using the `entry` property we 
 entry points we want to use - we have specified 3 here:
 
 - polyfills: polyfills we require to run Angular / ES6 applications in current browsers.
-- vendor: the vendor (or 3rd party) libraries we need - ag-Grid, Angular etc.
+- vendor: the vendor (or 3rd party) libraries we need - AG Grid, Angular etc.
 - app: our application code.
 
 ### resolve
@@ -478,10 +478,10 @@ If we now run our application with the above code we will see this:
 
 <img src="../webpack/resources/seed.png" alt="Grid Example" />
 
-### Override ag-Grid CSS
+### Override AG Grid CSS
 
 There are many ways to override the CSS with Webpack, but if you use the configuration above then 
-you can override ag-Grid CSS as follows:
+you can override AG Grid CSS as follows:
 
 - Place your application-wide CSS file(s) in a directory other than `./app` - for example 
 `./css/`. Remember that CSS under `./app` is treated differently - it is used for component-scoped styles.
@@ -492,7 +492,7 @@ you can override ag-Grid CSS as follows:
 import '../css/app.css';
 ```
 
-And that's it - you can now override ag-Grid CSS with your own in `./css/app.css`. For example, 
+And that's it - you can now override AG Grid CSS with your own in `./css/app.css`. For example, 
 the following would set the cell background to green across the board.
 
 ```css

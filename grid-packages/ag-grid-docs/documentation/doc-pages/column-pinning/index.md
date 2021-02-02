@@ -38,7 +38,7 @@ It is possible to pin a column by moving the column in the following ways:
 If you do not want the user to be able to pin using the UI, set the property `lockPinned=true`. This will block the UI in the following way:
 
 - Dragging a column to the pinned section will not pin the column.
-- For ag-Grid Enterprise, the column menu will not have a pin option.
+- For AG Grid Enterprise, the column menu will not have a pin option.
 
 The example below demonstrates columns with pinning locked. The following can be noted:
 

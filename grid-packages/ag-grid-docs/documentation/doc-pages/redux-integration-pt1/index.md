@@ -3,7 +3,7 @@ title: "Redux Integration - Part 1"
 frameworks: ["react"]
 ---
 
-This section introduces how React components using the ag-Grid Data Table can take advantage of a Redux store to
+This section introduces how React components using the AG Grid Data Table can take advantage of a Redux store to
 simplify state management.
 
 
@@ -236,7 +236,7 @@ in the store changes, our component will re-render with the latest file state av
 ## Adding the Data Table
 
 Now that the Redux store is now connected to our stateless React component, all that remains is 
-to implement the view, which just consists of the ag-Grid Data Table in our File View.
+to implement the view, which just consists of the AG Grid Data Table in our File View.
 
 Before discussing the grid features in our File View, here are all of the grid options we are using:
 

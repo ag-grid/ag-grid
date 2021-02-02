@@ -121,7 +121,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
                     return;
                 }
 
-                console.error(`ag-Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS}ms`);
+                console.error(`AG Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS}ms`);
                 return;
             }
 
@@ -190,7 +190,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     shouldComponentUpdate(nextProps: any) {
         this.processPropsChanges(this.props, nextProps);
 
-        // we want full control of the dom, as ag-Grid doesn't use React internally,
+        // we want full control of the dom, as AG Grid doesn't use React internally,
         // so for performance reasons we tell React we don't need render called after
         // property changes.
         return false;

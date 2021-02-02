@@ -51,7 +51,7 @@ Below shows a simple example using column spanning. The example doesn't make muc
 
 ## Column Spanning Complex Example
 
-Column spanning will typically be used for creating reports with ag-Grid. Below is something that would be more typical of the column spanning feature. The following can be noted from the example:
+Column spanning will typically be used for creating reports with AG Grid. Below is something that would be more typical of the column spanning feature. The following can be noted from the example:
 
 - The data is formatted in a certain way, it is not intended for the user to sort this data or reorder the columns.
 - The dataset has meta-data inside it, the `data.section` attribute. This meta-data, provided by the application, is used in the grid configuration in order to set the column spans and the background colours.

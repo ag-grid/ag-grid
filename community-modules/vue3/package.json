@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/vue3",
-  "description": "ag-Grid Vue 3 Component",
+  "description": "AG Grid Vue 3 Component",
   "version": "25.0.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",

@@ -513,7 +513,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public setDatasource(datasource: any): void {
-        console.error('ag-Grid: should never call setDatasource on clientSideRowController');
+        console.error('AG Grid: should never call setDatasource on clientSideRowController');
     }
 
     public getTopLevelNodes(): RowNode[] | null {

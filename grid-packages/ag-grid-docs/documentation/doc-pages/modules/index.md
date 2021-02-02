@@ -1,12 +1,12 @@
 ---
-title: "ag-Grid Modules - Overview"
+title: "AG Grid Modules - Overview"
 ---
 
-ag-Grid `modules` allow you to pick and choose which features you require, resulting in a smaller application size overall, with the trade-off being that you need to register the modules you require.
+AG Grid `modules` allow you to pick and choose which features you require, resulting in a smaller application size overall, with the trade-off being that you need to register the modules you require.
 
 [[note]]
 | The introduction of modules in version 22.0.0 is a significant first step towards reducing
-| the size of ag-Grid inside applications. As most of the new modules cover enterprise
+| the size of AG Grid inside applications. As most of the new modules cover enterprise
 | features, community users should not expect to see a size reduction right away. However,
 | in the coming releases, we will strive to reduce the size of the community-core module
 | by splitting it out into separate community modules.
@@ -15,7 +15,7 @@ ag-Grid `modules` allow you to pick and choose which features you require, resul
 
 ### Modules
 
-The below table summarizes the modules provided in the ag-Grid Community and ag-Grid Enterprise packages.
+The below table summarizes the modules provided in the AG Grid Community and AG Grid Enterprise packages.
 
 <matrix-table src='modules/modules.json' columns='{ "title": "", "module": "Community Module", "exported": "Exported" }' stringonly="true" showcondition="notIn(enterprise, framework)"></matrix-table>
 <matrix-table src='modules/modules.json' columns='{ "title": "", "module": "Enterprise Module<enterprise-icon></enterprise-icon>", "exported": "Exported" }' stringonly="true" showcondition="in(enterprise)"></matrix-table>
@@ -63,7 +63,7 @@ You **cannot** mix `packages` and `modules` - in other words you cannot have a m
 }
 ```
 
-## Installing ag-Grid Modules
+## Installing AG Grid Modules
 
 If you choose to select individual modules then at a minimum the a [Row Model](../row-models/) need to be specified. After that all other modules are optional depending on your requirements.
 

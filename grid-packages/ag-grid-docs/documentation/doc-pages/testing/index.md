@@ -1,10 +1,10 @@
 ---
-title: "Testing ag-Grid"
+title: "Testing AG Grid"
 ---
 
 [[only-javascript]]
 | We will walk through how you can use `Protractor` and `Jasmine` to do Unit & End to End (e2e)
-| testing with ag-Grid in this section.
+| testing with AG Grid in this section.
 |
 | ## Unit Testing with Jasmine - Waiting for the API
 |
@@ -39,12 +39,12 @@ title: "Testing ag-Grid"
 | ## End to End (e2e) Testing
 |
 | These recipes below are suggestions - there are many ways to do End to End testing, what we document
-| below is what we use here at ag-Grid.
+| below is what we use here at AG Grid.
 |
 | We do not document how to use either `Protractor` and `Jasmine` in depth here - please see either the
 | <a href="http://www.protractortest.org/#/" target="_blank">Protractor</a> or
 | <a href="https://jasmine.github.io/" target="_blank">Jasmine</a> for information around either of these tools.
-| We only describe how these tools can be used to test ag-Grid below.
+| We only describe how these tools can be used to test AG Grid below.
 |
 | [[note]]
 | | End to End testing can be fragile. If you change something trivial upstream it can have a big impact
@@ -122,7 +122,7 @@ title: "Testing ag-Grid"
 |
 | ```js
 | // spec.js
-| describe('ag-Grid Protractor Test', function () {
+| describe('AG Grid Protractor Test', function () {
 |     // not an angular application
 |     browser.ignoreSynchronization = true;
 |
@@ -168,13 +168,13 @@ title: "Testing ag-Grid"
 |
 | We can add this to `spec.js` and run the tests as before.
 |
-| ## ag-Grid Testing Utilities
+| ## AG Grid Testing Utilities
 |
 | [[note]]
 | | These utilities scripts should still be considered beta and are subject to change. Please provide feedback to
 | | the <a href="https://github.com/seanlandsman/ag-grid-testing" target="_blank">GitHub</a> repository.
 |
-| Here at ag-Grid we use a number of utility functions that make it easier for us to test ag-Grid functionality.
+| Here at AG Grid we use a number of utility functions that make it easier for us to test AG Grid functionality.
 |
 | The utilities can be installed & imported as follows:
 |
@@ -263,12 +263,12 @@ title: "Testing ag-Grid"
 | ```
 
 [[only-angular]]
-| We will walk through how you can use testing ag-Grid as part of your Angular application,
+| We will walk through how you can use testing AG Grid as part of your Angular application,
 | using default build tools provided when using the [Angular CLI](https://cli.angular.io/).
 |
 | ## Configuring the Test Module
 |
-| The first thing we need to do is to add ag-Grid's `AgGridModule` to the `TestBed.configureTestingModule(`:
+| The first thing we need to do is to add AG Grid's `AgGridModule` to the `TestBed.configureTestingModule(`:
 |
 | ```ts
 | beforeEach(async(() => {
@@ -287,7 +287,7 @@ title: "Testing ag-Grid"
 | }));
 | ```
 |
-| Now that the test bed is aware of ag-Grid we can continue with our testing. If however you wish
+| Now that the test bed is aware of AG Grid we can continue with our testing. If however you wish
 | to add any user provided components to the grid then you'll need to declare them here too:
 |
 | ```diff
@@ -460,7 +460,7 @@ title: "Testing ag-Grid"
 | ```
 
 [[only-react]]
-| We will walk through how you can use testing ag-Grid as part of your React application, using default
+| We will walk through how you can use testing AG Grid as part of your React application, using default
 | build tools provided when using the [Create React App](https://github.com/facebook/create-react-app) utility.
 |
 | ## Waiting for the Grid to be Initialised
@@ -654,7 +654,7 @@ title: "Testing ag-Grid"
 | testing environment (but could if doing e2e with something like Protractor for example).
 
 [[only-vue]]
-| We will walk through how you can use testing ag-Grid as part of your Vue application, using default
+| We will walk through how you can use testing AG Grid as part of your Vue application, using default
 | build tools provided when using the [Vue CLI](https://cli.vuejs.org/) utility.
 |
 | ## Waiting for the Grid to be Initialised

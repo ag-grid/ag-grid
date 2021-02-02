@@ -80,7 +80,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
             }
 
             if (mandatory) {
-                console.warn('ag-Grid: Framework component is missing the method ' + methodName + '()');
+                console.warn('AG Grid: Framework component is missing the method ' + methodName + '()');
             }
             return null;
         };

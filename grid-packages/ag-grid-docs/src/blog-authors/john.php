@@ -5,7 +5,7 @@
 <p class="lead">Customer Experience Manager</p>
 
     <p>
-        John was the first business focused hire at ag-Grid and joined in late 2016 to manage and grow the customer base. He has an operations and product management background and has always focused on the end user of technology. John is always available to deal with customer queries as well as building ag-Grid's infrastructure for growth.
+        John was the first business focused hire at AG Grid and joined in late 2016 to manage and grow the customer base. He has an operations and product management background and has always focused on the end user of technology. John is always available to deal with customer queries as well as building AG Grid's infrastructure for growth.
     </p>
 
     <div>

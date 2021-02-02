@@ -2,7 +2,7 @@ import * as ts from "typescript";
 import * as Lint from "tslint";
 
 export class Rule extends Lint.Rules.AbstractRule {
-    public static FAILURE_STRING = "Relative import of ag-Grid Community";
+    public static FAILURE_STRING = "Relative import of AG Grid Community";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         return this.applyWithWalker(new NoImportsWalker(sourceFile, this.getOptions()));

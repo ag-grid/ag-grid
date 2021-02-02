@@ -2,7 +2,7 @@
 title: "Tooltips"
 ---
 
-There are four ways of enabling the tooltips in ag-Charts by using:
+There are four ways of enabling the tooltips in AG Charts by using:
 
 - [default tooltips](#default-tooltip)
 - [custom styled tooltips](#styling-the-default-tooltip) via CSS classes

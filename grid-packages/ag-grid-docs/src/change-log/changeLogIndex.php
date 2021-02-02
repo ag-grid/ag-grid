@@ -1,7 +1,7 @@
 <?php
-$pageTitle = "ag-Grid: Change Log for Releases";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page lists all the Changes completed in recent releases.";
-$pageKeywords = "ag-Grid Change Log";
+$pageTitle = "AG Grid: Change Log for Releases";
+$pageDescription = "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This page lists all the Changes completed in recent releases.";
+$pageKeywords = "AG Grid Change Log";
 $pageGroup = "misc";
 include('../includes/mediaHeader.php');
 ?>
@@ -76,7 +76,7 @@ include('../includes/mediaHeader.php');
         <li>
             AG-1374: innerRendererFramework doesn't work in the group column for the master grid in a master/detail configuration </li>
         <li>
-            AG-1373: Can't nest a framework detail grid in a master detail grid. [ag-Grid: unable to find bean reference agGridReact while initialising frameworkComponentWrapper] </li>
+            AG-1373: Can't nest a framework detail grid in a master detail grid. [AG Grid: unable to find bean reference agGridReact while initialising frameworkComponentWrapper] </li>
         <li>
             AG-1368: Cell focus should not get darker when browser focus is lost </li>
         <li>
@@ -374,7 +374,7 @@ include('../includes/mediaHeader.php');
         <li>AG-459: <a rel="nofollow" href="https://www.ag-grid.com/archive/14.0.0/javascript-grid-grouping/#example-unbalanced-groups">Unbalanced Grouping</a>. We now
             show as leaf rows that are part of a group but their grouping key is null.
         </li>
-        <li>AG-875: If you are a React fan, then you will be excited to lean that ag-Grid v14 comes with full support
+        <li>AG-875: If you are a React fan, then you will be excited to lean that AG Grid v14 comes with full support
             for Asynchronous Components
         </li>
         <li>AG-544: You can now provide <a rel="nofollow" href="https://www.ag-grid.com/archive/14.0.0/javascript-grid-column-header/#header-template">custom HTML
@@ -800,7 +800,7 @@ include('../includes/mediaHeader.php');
         <li>AG-593: Added missing exports to exports.ts</li>
         <li>AG-628: Bugfix: Enterprise Data Source can now be set as a grid property (previously API had to be used).
         </li>
-        <li>AG-629: Bugfix: Row order now maintained when using ag-Grid Enterprise and inserting with transaction using
+        <li>AG-629: Bugfix: Row order now maintained when using AG Grid Enterprise and inserting with transaction using
             'addIndex'.
         </li>
         <li>AG-631: The internationalisation text 'drag here to aggregate' was incorrectly showing the 'drag here to
@@ -1263,7 +1263,7 @@ include('../includes/mediaHeader.php');
     <b>Big Feature: Client Side Pagination (AG-91)</b>
 
     <p>
-        ag-Grid 9.0.x introduces <a rel="nofollow" href="https://www.ag-grid.com/archive/9.1.0/javascript-grid-pagination/">Client-Side Pagination</a>. This replaces the
+        AG Grid 9.0.x introduces <a rel="nofollow" href="https://www.ag-grid.com/archive/9.1.0/javascript-grid-pagination/">Client-Side Pagination</a>. This replaces the
         old 'pagination row model' which forced
         you to bring back pagination pages one page at a time from the server. The client side pagination works
         with all row models and paginates on the client side. This means you have pagination work with the default
@@ -1274,7 +1274,7 @@ include('../includes/mediaHeader.php');
     <b>Big Feature: Improved Column Groups (AG-315)</b>
 
     <p>
-        ag-Grid 9.0.x also introduces
+        AG Grid 9.0.x also introduces
         <a rel="nofollow" href="https://www.ag-grid.com/archive/9.1.0/javascript-grid-grouping/#manyGroupColumns">multiple columns for groups</a>
         and
         <a rel="nofollow" href="https://www.ag-grid.com/archive/9.1.0/javascript-grid-grouping/#replacingChildren">multi columns while grouping</a>.
@@ -1290,7 +1290,7 @@ include('../includes/mediaHeader.php');
             size when <i>paginationAutoPageSize=true</i>.
         </li>
         <li>Enhancement: First pass of <a rel="nofollow" href="https://www.ag-grid.com/archive/9.1.0/javascript-grid-enterprise-model/">Server-Side Row Model</a>,
-            to allow ag-Grid users to see work in progress for our server side filtering, sorting, grouping and
+            to allow AG Grid users to see work in progress for our server side filtering, sorting, grouping and
             aggregation.
         </li>
         <li>Enhancement (AG-349): Filter: Provided 'in range' filters now have parameter <i>inRangeInclusive</i> to
@@ -1386,12 +1386,12 @@ include('../includes/mediaHeader.php');
 
     <h2>Version 8.0.x</h2>
 
-    <h3>ag-Grid 8.1.1, ag-Grid-Enterprise 8.1.1</h3>
+    <h3>AG Grid 8.1.1, AG Grid Enterprise 8.1.1</h3>
 
     <li>Bugfix: Fixed bug where the export to Excel will not export numerical cells</li>
 
 
-    <h3>ag-Grid 8.1.0, ag-Grid-Enterprise 8.1.0</h3>
+    <h3>AG Grid 8.1.0, AG Grid Enterprise 8.1.0</h3>
 
     <b>Enhancements:</b>
     <ul>
@@ -1425,8 +1425,8 @@ include('../includes/mediaHeader.php');
     <ul>
         <li>Breaking Change: TypeScript Users Only: Interfaces names changed for components.
             Check the documentation for the names of the interfaces. Eg <i>ICellRenderer</i> is replaced
-            with <i>ICellRendererComp</i>. This is to position ag-Grid for supporting components from
-            other frameworks ('Comp' means an ag-Grid component, to differentiate from a cellRenderer
+            with <i>ICellRendererComp</i>. This is to position AG Grid for supporting components from
+            other frameworks ('Comp' means an AG Grid component, to differentiate from a cellRenderer
             built in eg Angular or React).
         </li>
         <li>Breaking Change: TypeScript Users Only: Interface names used in Angular 2 are also changed slightly. Again
@@ -1787,7 +1787,7 @@ include('../includes/mediaHeader.php');
 
     <h2>Version 6.0.x</h2>
 
-    <h4>ag-Grid 6.0.1, ag-Grid-Enterprise 6.0.1, ag-Grid-React 6.0.1, , ag-grid-angular 6.0.1</h4>
+    <h4>AG Grid 6.0.1, AG Grid Enterprise 6.0.1, AG Grid-React 6.0.1, , ag-grid-angular 6.0.1</h4>
 
     <p>
         Version 6.0.x brings the following changes:
@@ -1835,8 +1835,8 @@ colDef.cellRendererFramework = MyAngular2CellRenderer; // for Angular</snippet>
 
     <p>
         How filters were working were out of line with how cellRenderers and cellEditors were working. This is
-        because filters were done as one of the first items in ag-Grid and the interface has not changed. The
-        changes in this release bring them in line with the newer 'Component Model' that is in ag-Grid, so they
+        because filters were done as one of the first items in AG Grid and the interface has not changed. The
+        changes in this release bring them in line with the newer 'Component Model' that is in AG Grid, so they
         now behave in the same way as cellRenderers and cellEditors, including fitting in with React and
         Angular 2 components, the same way the renderers and editors do. The main core changes are as follows:
         <ol>
@@ -1935,7 +1935,7 @@ params = {
 
     <h3>Version 5.4.x</h3>
 
-    <h4>ag-Grid 5.4.0, ag-Grid-Enterprise 5.4.0, ag-Grid-React 5.4.0, , ag-grid-angular 5.4.0</h4>
+    <h4>AG Grid 5.4.0, AG Grid Enterprise 5.4.0, AG Grid-React 5.4.0, , ag-grid-angular 5.4.0</h4>
 
     <li>Enhancement: added API for startEditing().</li>
     <li>Enhancement: now rememberGroupStateWhenNewData works when inserting/removing rows, ie group open/closed state is
@@ -1960,7 +1960,7 @@ params = {
 
     <h3>Version 5.3.x</h3>
 
-    <h4>ag-Grid 5.3.1, ag-Grid-Enterprise 5.3.1</h4>
+    <h4>AG Grid 5.3.1, AG Grid Enterprise 5.3.1</h4>
     <li>Enhancement: added 'Copy with Headers' option to context menu, to copy header values when copying to
         clipboard.
     </li>
@@ -1969,7 +1969,7 @@ params = {
     </li>
     <li>Bugfix: onDragStopped was getting called on header button clicks, even if not dragging was taking place.</li>
 
-    <h4>ag-Grid 5.3.0, ag-Grid-Enterprise 5.3.0</h4>
+    <h4>AG Grid 5.3.0, AG Grid Enterprise 5.3.0</h4>
 
     <li>Enhancement: new feature - <a rel="nofollow" href="https://www.ag-grid.com/archive/9.1.0/javascript-grid-master-detail/">Full Width Rows and Master / Details</a>
     </li>
@@ -1983,7 +1983,7 @@ params = {
 
     <h3>Version 5.2.x</h3>
 
-    <h4>ag-Grid 5.2.0, ag-Grid-Enterprise 5.2.0, ag-grid-angular 5.2.0</h4>
+    <h4>AG Grid 5.2.0, AG Grid Enterprise 5.2.0, ag-grid-angular 5.2.0</h4>
 
     <h4>Bug Fixes and Angular 2 Cell Rendering</h4>
 
@@ -2010,7 +2010,7 @@ params = {
 
     <h3>Version 5.1.x</h3>
 
-    <h4>ag-Grid 5.1.2, ag-Grid-Enterprise 5.1.2</h4>
+    <h4>AG Grid 5.1.2, AG Grid Enterprise 5.1.2</h4>
 
     <li>Enhancement: Adding and removing of rows now allowed in normal row model. See new documentation page on 'Insert
         & Remove'.
@@ -2033,7 +2033,7 @@ params = {
 
     <h3>Version 5.0.x</h3>
 
-    <h4>ag-Grid 5.0.7, ag-Grid-Enterprise 5.0.7</h4>
+    <h4>AG Grid 5.0.7, AG Grid Enterprise 5.0.7</h4>
     <li>Enhancement: cellRenderer for richSelect is no longer mandatory, now default text renderer used in richSelect if
         no cellRenderer specified
     </li>
@@ -2051,7 +2051,7 @@ params = {
     <li>Bugfix: api.deselectAll() was not deselecting groups when gridOptions.groupSelectsChildren=true.</li>
     <li>Bugfix: tab navigation was not working with virtual columns when column been tabbed onto was not visible.</li>
 
-    <h4>ag-Grid 5.0.6, ag-Grid-Enterprise 5.0.6</h4>
+    <h4>AG Grid 5.0.6, AG Grid Enterprise 5.0.6</h4>
     <li>Enhancement: added columnApi.getAllDisplayedVirtualColumns(), so you can check what columns are rendered due to
         column virtualisation.
     </li>
@@ -2059,19 +2059,19 @@ params = {
         compiles each cell exactly once when cell is created.
     </li>
 
-    <h4>ag-Grid 5.0.4, ag-Grid-Enterprise 5.0.4</h4>
+    <h4>AG Grid 5.0.4, AG Grid Enterprise 5.0.4</h4>
     <li>Bugfix: hitting space sometimes (noticed on firefox) sent grid scrolling down when it should select the row</li>
 
-    <h4>ag-Grid 5.0.3, ag-Grid-Enterprise 5.0.3</h4>
+    <h4>AG Grid 5.0.3, AG Grid Enterprise 5.0.3</h4>
     <li>Bugfix: pivot was not working with groupUseEntireRow=true</li>
 
-    <h4>ag-Grid 5.0.2, ag-Grid-Enterprise 5.0.2</h4>
+    <h4>AG Grid 5.0.2, AG Grid Enterprise 5.0.2</h4>
     <li>Enhancement: changed comparison (or sorting) to use localeCompare for strings</li>
     <li>Enhancement: now pivot shows 'n/a' when no value columns is enabled</li>
     <li>Enhancement: now 'autosize cols' considers the header width, not just the row content</li>
     <li>Bugfix: cellRenderer with text field was not allowing editing in text field</li>
 
-    <h4>ag-Grid 5.0.1, ag-Grid-Enterprise 5.0.1</h4>
+    <h4>AG Grid 5.0.1, AG Grid Enterprise 5.0.1</h4>
     <li>Major Enhancement: Enterprise feature - Pivoting</li>
     <li>Major Enhancement: Free feature - Column Virtualisation</li>
     <li>Breaking Change: colDef.suppressAggregation and colDef.suppressRowGroup are gone, replaced with enableRowGroup,
@@ -2115,13 +2115,13 @@ params = {
         datasource via api.setDatasource())
     </li>
 
-    <h3>Version 4.2.x (ag-Grid 4.2.7, ag-Grid-Enterprise 4.2.11)</h3>
+    <h3>Version 4.2.x (AG Grid 4.2.7, AG Grid Enterprise 4.2.11)</h3>
     <li>Bugfix: group selection was selecting groups when 'groupSelectsChildren=false' giving strange behaviours</li>
 
-    <h3>Version 4.2.x (ag-Grid-Enterprise 4.2.10)</h3>
+    <h3>Version 4.2.x (AG Grid Enterprise 4.2.10)</h3>
     <li>Bugfix: aggregation type 'sum' was giving incorrect results</li>
 
-    <h3>Version 4.2.x (ag-Grid 4.2.6, ag-Grid-Enterprise 4.2.9)</h3>
+    <h3>Version 4.2.x (AG Grid 4.2.6, AG Grid Enterprise 4.2.9)</h3>
     <li>Enhancement: For Enterprise, License message no longer printed to screen when license is correct.</li>
     <li>Enhancement: Added colDef.tooltipField, so tooltip can be set on the cell.</li>
     <li>Enhancement: Icons for drag and drop of columns are now all configurable.</li>
@@ -2202,11 +2202,11 @@ params = {
     <li>Bug fix: you can now tab into and out of the grid.</li>
     <li>Bug fix: default text editor was displaying 'undefined' when initial value was missing. now showing blank.</li>
 
-    <h3>Version 4.1.x patch (ag-Grid 4.1.5, ag-Grid-Enterprise 4.1.4)</h3>
+    <h3>Version 4.1.x patch (AG Grid 4.1.5, AG Grid Enterprise 4.1.4)</h3>
     <li>Bug fix: when setting columns directly on gridOptions, the groupByPanel was not initialised correctly.</li>
     <li>Bug fix: row group panel was not initialising correctly.</li>
 
-    <h3>Version 4.1.x patch (ag-Grid 4.1.4, ag-Grid-Enterprise 4.1.3)</h3>
+    <h3>Version 4.1.x patch (AG Grid 4.1.4, AG Grid Enterprise 4.1.3)</h3>
     <li>Bug fix: api.deselectAll() was not calling onSelectionChanged, it is now.</li>
     <li>Bug fix: defaultExpanded setting was not been used, it is now.</li>
     <li>Bug fix: popup editor was not working, init() was not called.</li>
@@ -2252,21 +2252,21 @@ params = {
         cell)
     </li>
 
-    <h3>Version 4.0.x (ag-Grid 4.0.5, ag-Grid-Enterprise 4.0.7)</h3>
+    <h3>Version 4.0.x (AG Grid 4.0.5, AG Grid Enterprise 4.0.7)</h3>
     <li>Bugfix: Status bar was not calculating 'min' correctly.</li>
     <li>Enhancement: Now ctrl+d will copy down the selected range, similar to Excel</li>
     <li>Deprecated: cellRendererParams.addRenderedRowListener() is now deprecated. If you want callback methods for
         cellRendering, use the cellRenderer Component pattern.
     </li>
 
-    <h3>Version 4.0.x (ag-Grid 4.0.4)</h3>
+    <h3>Version 4.0.x (AG Grid 4.0.4)</h3>
 
     <li>Bugfix: Firefox was showing native context menu on top of grids context menu.</li>
     <li>Bugfix: Drag event is only cancelled if source is image, allows user to implement custom drag event.</li>
     <li>Bugfix: Angular compiling is now done after row is inserted into the DOM.</li>
     <li>Bugfix: Fixed horizontal scroll on trackpads when mouse over pinned column.</li>
 
-    <h3>Version 4.0.x (ag-Grid 4.0.2, ag-Grid-Enterprise 4.0.4)</h3>
+    <h3>Version 4.0.x (AG Grid 4.0.2, AG Grid Enterprise 4.0.4)</h3>
 
     <li>Bugfix: When filter was 'zero' (for number filer) is was not saving correctly when using 'getFilterModel()'.
     </li>
@@ -2309,7 +2309,7 @@ params = {
     <li>Enterprise Feature: Status bar</li>
 
     <li>Tool panel, set filter, row grouping and aggregation are now only available in Enterprise version
-        of ag-Grid.
+        of AG Grid.
     </li>
 
     <!-- ENHANCEMENTS -->
@@ -2454,7 +2454,7 @@ params = {
 
     <li>Major Build Changes:
         <ul>
-            <li>CSS now bundled in ag-Grid.js file</li>
+            <li>CSS now bundled in AG Grid.js file</li>
             <li>Took out TypeScript internal modules</li>
             <li>Moved to ECMA 6 style imports (instead of require)</li>
             <li>Moved to WebPack for bundling</li>
@@ -2615,7 +2615,7 @@ params = {
     <hr/>
 
     <p>
-        <b>23rd Sep</b> ag-Grid 2.0 released - AngularJS 1.x 2 and Web Components supported
+        <b>23rd Sep</b> AG Grid 2.0 released - AngularJS 1.x 2 and Web Components supported
     </p>
 
     <hr/>

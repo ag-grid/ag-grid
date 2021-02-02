@@ -121,7 +121,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         }
 
         if (!params.rowData) {
-            const message = 'ag-Grid: "params.rowData" is missing from Server-Side Row Model success() callback. Please use the "rowData" attribute. If no data is returned, set an empty list.';
+            const message = 'AG Grid: "params.rowData" is missing from Server-Side Row Model success() callback. Please use the "rowData" attribute. If no data is returned, set an empty list.';
             _.doOnce(() => console.warn(message, params), 'InfiniteStore.noData');
         }
 

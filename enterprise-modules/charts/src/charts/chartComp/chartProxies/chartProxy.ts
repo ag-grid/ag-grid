@@ -195,7 +195,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const customChartTheme = customChartThemes && customChartThemes[name];
 
         if (!customChartTheme) {
-            console.warn(`ag-Grid: no stock theme exists with the name '${name}' and no ` +
+            console.warn(`AG Grid: no stock theme exists with the name '${name}' and no ` +
                 "custom chart theme with that name was supplied to 'customChartThemes'");
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "ag-Grid Blog: Building a CRUD Application with ag-Grid Part 3";
+$pageTitle = "AG Grid Blog: Building a CRUD Application with AG Grid Part 3";
 $pageDescription = "In Part 3 of this series, we create the scaffolding for our Angular application and get our data displayed in our first, simple, datagrid.";
 $pageKeywords = "ag-grid datagrid crud enterprise";
 
@@ -9,13 +9,13 @@ $socialUrl = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-3/";
 include('../includes/mediaHeader.php');
 ?>
 
-<h1>Building a CRUD Application with ag-Grid - Part 3</h1>
+<h1>Building a CRUD Application with AG Grid - Part 3</h1>
 <p class="blog-author">Sean Landsman | 21st November 2017</p>
 
 <div>
     <a href="https://twitter.com/share" class="twitter-share-button"
        data-url="https://www.ag-grid.com/ag-grid-datagrid-crud-part-3/"
-       data-text="Building a CRUD application with ag-Grid Part 3" data-via="seanlandsman"
+       data-text="Building a CRUD application with AG Grid Part 3" data-via="seanlandsman"
        data-size="large">Tweet</a>
     <script>!function (d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
@@ -277,13 +277,13 @@ ng serve
 
             <p>Great, good progress so far - we now know we can call the backend successfully!</p>
 
-            <h2>ag-Grid</h2>
+            <h2>AG Grid</h2>
 
-            <p>We're finally in a position to start hooking our data into ag-Grid!</p>
+            <p>We're finally in a position to start hooking our data into AG Grid!</p>
 
-            <p>First, let's install the ag-Grid dependencies - as we're going to be using a few of the Enterprise
+            <p>First, let's install the AG Grid dependencies - as we're going to be using a few of the Enterprise
                 features
-                that ag-Grid offers we'll install both the <code>ag-grid</code> and <code>ag-grid-enterprise</code>
+                that AG Grid offers we'll install both the <code>ag-grid</code> and <code>ag-grid-enterprise</code>
                 dependencies.</p>
 
             <p>If you're not using any of the Enterprise features then you only need to install the <code>ag-grid</code>
@@ -332,12 +332,12 @@ import {AgGridModule} from 'ag-grid-angular';
     ...rest of module
 </snippet>
 
-            <p>We now have the ag-Grid dependencies all setup - our next step is to actually use ag-Grid to display some
+            <p>We now have the AG Grid dependencies all setup - our next step is to actually use AG Grid to display some
                 data.</p>
 
             <h3>Our Grid Component</h3>
 
-            <p>Let's create a new component that will be responsible for displaying our data in ag-Grid:</p>
+            <p>Let's create a new component that will be responsible for displaying our data in AG Grid:</p>
 
             <snippet>ng generate component Grid</snippet>
 
@@ -504,7 +504,7 @@ private createColumnDefs() {
                         <td>
                             <a href="https://twitter.com/share" class="twitter-share-button"
                                data-url="https://www.ag-grid.com/ag-grid-datagrid-crud-part-3/"
-                               data-text="Building a CRUD Application with ag-Grid Part 3 #angular #aggrid #crud" data-via="seanlandsman"
+                               data-text="Building a CRUD Application with AG Grid Part 3 #angular #aggrid #crud" data-via="seanlandsman"
                                data-size="large">Tweet</a>
                             <script>!function (d, s, id) {
                                     var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';

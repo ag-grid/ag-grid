@@ -79,8 +79,8 @@ Cell Expressions bring the expression power to the cell level, so your grid can 
 [[note]]
 | Although you can put expressions into cells like Excel, the intention is that your application
 | will decide what the expressions are. It is not intended that you give this power to your user
-| and have the cells editable. This is because ag-Grid is not trying to give Excel expressions
-| to the user, rather ag-Grid is giving you, the developer, the power to design reports and
+| and have the cells editable. This is because AG Grid is not trying to give Excel expressions
+| to the user, rather AG Grid is giving you, the developer, the power to design reports and
 | include JavaScript logic inside the cells.
 
 To enable cell expressions, set `enableCellExpressions=true` in the gridOptions. Then, whenever the grid comes across a value starting with '=', it will treat it as an expression.

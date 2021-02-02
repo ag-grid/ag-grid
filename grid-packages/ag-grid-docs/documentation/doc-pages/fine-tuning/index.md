@@ -3,14 +3,14 @@ title: "Fine Tuning"
 frameworks: ["react"]
 ---
 
-This section describes some of the finer grain tuning you might want to do with your React & ag-Grid application.
+This section describes some of the finer grain tuning you might want to do with your React & AG Grid application.
 
 ## Avoiding Stale Closures (i.e. old props values)
 
 A common issue that React hook users will encounter is capturing old values in a closure - this is not unique to React
 but is a common issue with JavaScript in general, but it is something that is more common when using Hooks.
 
-An example of this (in the context of using ag-Grid) would be something like this:
+An example of this (in the context of using AG Grid) would be something like this:
 
 ```jsx
 const KEY_LEFT = 37;
@@ -177,7 +177,7 @@ supplied function will be the latest value.
 
 ## Row Data & Column Def Control
 
-By default the ag-Grid React component will check props passed in to determine if data has changed 
+By default the AG Grid React component will check props passed in to determine if data has changed 
 and will only re-render based on actual changes.
 
 For `rowData` and `columnDefs` we provide an option for you to override this behaviour by the `rowDataChangeDetectionStrategy` and `columnDefsChangeDetectionStrategy` properties respectively:

@@ -48,13 +48,13 @@ export class AnimationFrameService extends BeanStub {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
     }
 
-    // this method is for our ag-Grid sanity only - if animation frames are turned off,
+    // this method is for our AG Grid sanity only - if animation frames are turned off,
     // then no place in the code should be looking to add any work to be done in animation
     // frames. this stops bugs - where some code is asking for a frame to be executed
     // when it should not.
     private verifyAnimationFrameOn(methodName: string): void {
         if (this.useAnimationFrame === false) {
-            console.warn(`ag-Grid: AnimationFrameService.${methodName} called but animation frames are off`);
+            console.warn(`AG Grid: AnimationFrameService.${methodName} called but animation frames are off`);
         }
     }
 

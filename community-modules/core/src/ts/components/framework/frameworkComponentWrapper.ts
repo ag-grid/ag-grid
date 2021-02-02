@@ -55,7 +55,7 @@ export abstract class BaseComponentWrapper<F extends WrapableInterface> implemen
             }
 
             if (mandatory) {
-                console.warn('ag-Grid: Framework component is missing the method ' + methodName + '()');
+                console.warn('AG Grid: Framework component is missing the method ' + methodName + '()');
             }
             return null;
         };

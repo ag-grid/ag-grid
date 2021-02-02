@@ -1,7 +1,7 @@
 <?php
-$pageTitle = "ag-Grid Examples: Plain JavaScript";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows Plain JavaScript examples.";
-$pageKeywords = "ag-Grid JavaScript examples";
+$pageTitle = "AG Grid Examples: Plain JavaScript";
+$pageDescription = "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows Plain JavaScript examples.";
+$pageKeywords = "AG Grid JavaScript examples";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';
 ?>
@@ -47,7 +47,7 @@ include '../documentation-main/documentation_header.php';
     </h2>
 
     <p>
-        Illustrates how you might utilise a third-party library to import an Excel spreadsheet into ag-Grid.
+        Illustrates how you might utilise a third-party library to import an Excel spreadsheet into AG Grid.
     </p>
 
 </div>

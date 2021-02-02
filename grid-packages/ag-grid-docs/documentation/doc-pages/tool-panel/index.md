@@ -12,7 +12,7 @@ Tool Panels are panels that sit in the Side Bar to the right of the grid. The Si
 <image-caption src="tool-panel/resources/sideBar.png" maxwidth="52rem" alt="Side Bar" constrained="true"></image-caption>
 
 [[note]]
-|Version 19 of ag-Grid received a major overhaul of the tool panels. It did not make sense to keep
+| Version 19 of AG Grid received a major overhaul of the tool panels. It did not make sense to keep
 | the older configuration options. The old property `showToolPanel` is no longer
 | used. The tool panel is also not included by default - if the tool panel is not configured, no
 | tool panel is shown.

@@ -1,7 +1,7 @@
 <nav class="nav<?php if (defined('HOMEPAGE')) { ?> home<?php }?>">
     <a id="logo" href="/" title="The Best Javascript Grid in the World">
         <div></div>
-        ag-Grid
+        AG Grid
     </a>
     <button id="navbar-toggle"
         type="button"
@@ -30,7 +30,7 @@
         <?php } else { ?>
             <ul>
                 <li>
-                    <a href="<?php print($rootFolder) ?>"> ag-Grid Archive Documentation <?php print($version) ?> <?php print($latest_hash) ?> <?php print($latest_hash_timestamp) ?></a>
+                    <a href="<?php print($rootFolder) ?>"> AG Grid Archive Documentation <?php print($version) ?> <?php print($latest_hash) ?> <?php print($latest_hash_timestamp) ?></a>
                 </li>
             </ul>
         <?php } ?>

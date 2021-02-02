@@ -2,8 +2,8 @@
 |## Mixing JavaScript and Angular
 |When providing Custom Components have a choice of the following:
 |
-|1. Provide an ag-Grid component in JavaScript.
-|1. Provide an ag-Grid component as an Angular Component.
+|1. Provide an AG Grid component in JavaScript.
+|1. Provide an AG Grid component as an Angular Component.
 |
 |For example if you want to build a cell renderer you have the choice to build the cell renderer using either Angular or using plain JavaScript.
 |

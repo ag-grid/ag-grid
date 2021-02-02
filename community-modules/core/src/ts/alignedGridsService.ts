@@ -140,7 +140,7 @@ export class AlignedGridsService extends BeanStub {
                 case Events.EVENT_COLUMN_PIVOT_CHANGED:
                     // we cannot support pivoting with aligned grids as the columns will be out of sync as the
                     // grids will have columns created based on the row data of the grid.
-                    console.warn('ag-Grid: pivoting is not supported with aligned grids. ' +
+                    console.warn('AG Grid: pivoting is not supported with aligned grids. ' +
                         'You can only use one of these features at a time in a grid.');
                     break;
             }

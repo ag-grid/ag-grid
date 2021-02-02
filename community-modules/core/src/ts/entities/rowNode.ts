@@ -371,7 +371,7 @@ export class RowNode implements IEventEmitter {
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
                 if (this.id && this.id.startsWith && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
-                    console.error(`ag-Grid: Row ID's cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for ag-Grid's row grouping feature.`);
+                    console.error(`AG Grid: Row ID's cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`);
                 }
             } else {
                 // this can happen if user has set blank into the rowNode after the row previously
@@ -737,12 +737,12 @@ export class RowNode implements IEventEmitter {
         const groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
 
         if (this.id === undefined) {
-            console.warn('ag-Grid: cannot select node until id for node is known');
+            console.warn('AG Grid: cannot select node until id for node is known');
             return 0;
         }
 
         if (this.rowPinned) {
-            console.warn('ag-Grid: cannot select pinned rows');
+            console.warn('AG Grid: cannot select pinned rows');
             return 0;
         }
 

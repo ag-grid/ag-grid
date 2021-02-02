@@ -156,7 +156,7 @@ export class AgGridAngular implements AfterViewInit {
                 emitter.emit(event);
             }
         } else {
-            console.log('ag-Grid-angular: could not find EventEmitter: ' + eventType);
+            console.log('AG Grid Angular: could not find EventEmitter: ' + eventType);
         }
     }
 

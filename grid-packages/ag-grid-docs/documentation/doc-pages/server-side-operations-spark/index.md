@@ -8,7 +8,7 @@ Learn how to perform server-side operations using Apache Spark with a complete r
 In recent years analysts and data scientists are requesting browser based applications for big data analytics. This data is often widely dispersed in different systems and large file storage volumes.
 
 
-This guide will show how to combine Apache Spark's powerful server side transformations with ag-Grid's [Server-Side Row Model](../server-side-model/) to create interactive reports for big data analytics.
+This guide will show how to combine Apache Spark's powerful server side transformations with AG Grid's [Server-Side Row Model](../server-side-model/) to create interactive reports for big data analytics.
 
 We will develop an Olympic Medals application that demonstrates how data can be lazy-loaded as required, even when performing group, filter, sort and pivot operations.
 

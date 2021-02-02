@@ -55,7 +55,7 @@ var gridOptions = {
         // for this method.
         return rowNode.data.fullWidth;
     },
-    // see ag-Grid docs cellRenderer for details on how to build cellRenderers
+    // see AG Grid docs cellRenderer for details on how to build cellRenderers
     // this is a simple function cellRenderer, returns plain HTML, not a component
     fullWidthCellRenderer: function(params) {
         // pinned rows will have node.rowPinned set to either 'top' or 'bottom' - see docs for row pinning

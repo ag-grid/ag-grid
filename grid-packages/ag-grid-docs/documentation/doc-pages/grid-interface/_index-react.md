@@ -2,7 +2,7 @@
 |
 | ## Properties, Events, Callbacks and APIs
 |
-| - **Properties**: properties are defined by passing React props down to ag-Grid (e.g. `columnDefs={this.state.columnDefs}`)
+| - **Properties**: properties are defined by passing React props down to AG Grid (e.g. `columnDefs={this.state.columnDefs}`)
 | - **Callbacks**: callbacks are also defined using React Props (e.g. `isScrollLag={this.isScrollLagFunction}`).
 | - **Event Handlers**: event handlers are also defined using React Props (e.g. `onCellClicked={this.onCellClicked}`).
 | - **API**: The grid API and column API are provided to you via the `onGridReady()` event callback.

@@ -145,7 +145,7 @@ var gridOptions = {
     isFullWidthCell: function(rowNode) {
         return isFullWidth(rowNode.data);
     },
-    // see ag-Grid docs cellRenderer for details on how to build cellRenderers
+    // see AG Grid docs cellRenderer for details on how to build cellRenderers
     fullWidthCellRenderer: 'fullWidthCellRenderer'
 };
 

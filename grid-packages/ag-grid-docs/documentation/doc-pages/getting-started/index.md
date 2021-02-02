@@ -1,5 +1,5 @@
 ---
-title: "Get Started with ag-Grid"
+title: "Get Started with AG Grid"
 ---
 <style>
     .gatsby-resp-image-wrapper {
@@ -21,20 +21,20 @@ title: "Get Started with ag-Grid"
 </style>
 
 [[only-javascript]]
-| ag-Grid is the industry standard for JavaScript Enterprise Applications. Developers using
-| ag-Grid are building applications that would not be possible if ag-Grid did not exist.
+| AG Grid is the industry standard for JavaScript Enterprise Applications. Developers using
+| AG Grid are building applications that would not be possible if AG Grid did not exist.
 
 [[only-angular]]
-| ag-Grid is the industry standard for Angular Enterprise Applications. Developers using ag-Grid are
-| building applications that would not be possible if ag-Grid did not exist.
+| AG Grid is the industry standard for Angular Enterprise Applications. Developers using AG Grid are
+| building applications that would not be possible if AG Grid did not exist.
 
 [[only-react]]
-| ag-Grid is the industry standard for React Enterprise Applications. Developers using ag-Grid
-| are building applications that would not be possible if ag-Grid did not exist.
+| AG Grid is the industry standard for React Enterprise Applications. Developers using AG Grid
+| are building applications that would not be possible if AG Grid did not exist.
 
 [[only-vue]]
-| ag-Grid is the industry standard for Vue Enterprise Applications. Developers using ag-Grid
-| are building applications that would not be possible if ag-Grid did not exist.
+| AG Grid is the industry standard for Vue Enterprise Applications. Developers using AG Grid
+| are building applications that would not be possible if AG Grid did not exist.
 
 
 <section class="code-tab mb-3">
@@ -295,7 +295,7 @@ title: "Get Started with ag-Grid"
 | ## Getting Started
 |
 | <video-section src="https://www.youtube.com/embed/KS-wg5zfCXc" title="Getting Started Video Tutorial">
-|     In this article, we will walk you through the necessary steps to add ag-Grid to an existing JavaScript
+|     In this article, we will walk you through the necessary steps to add AG Grid to an existing JavaScript
 |     project, and configure some of the essential features of it. We will show you some of the fundamentals
 |     of the grid (passing properties, using the API, etc).
 | </video-section>
@@ -305,7 +305,7 @@ title: "Get Started with ag-Grid"
 | During the last couple of years, we are witnessing a Cambrian Explosion of JavaScript project stacks.
 | It seems like everyday there is a new, better way for JavaScript developers to build and distribute their apps.
 | However,  for the purposes of this setup, we are going to stick to tried-and-true no-build, single HTML file setup
-| which loads the ag-Grid scripts from CDN (our favorite one is [unpkg](https://unpkg.com/)). Let's start from
+| which loads the AG Grid scripts from CDN (our favorite one is [unpkg](https://unpkg.com/)). Let's start from
 | this clean html file:
 |
 | ```html
@@ -323,7 +323,7 @@ title: "Get Started with ag-Grid"
 | | You can either use your favorite programming text editor, or you can execute the steps in the
 | | tutorial using [this Plunker as a starting point](https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview).
 |
-| ## Add ag-Grid to Your Project
+| ## Add AG Grid to Your Project
 |
 | We are going to load the necessary scripts and styles from the unpkg CDN. Add the following to the `head` element:
 |
@@ -404,12 +404,12 @@ title: "Get Started with ag-Grid"
 | grid's theme by setting the `class` to `ag-theme-alpine`. As you may have already noticed, the CSS class
 | matches the name of CSS file we imported earlier.
 |
-| ![ag-Grid in its simplest form](resources/step1.png)
+| ![AG Grid in its simplest form](resources/step1.png)
 |
 | ## Enable Sorting And Filtering
 |
 | So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most
-| expensive Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is add `sortable` to
+| expensive Well, enabling sorting in AG Grid is actually quite simple - all you need to do is add `sortable` to
 | each column.
 |
 | ```js
@@ -441,7 +441,7 @@ title: "Get Started with ag-Grid"
 | it will display a popup with a filtering UI which lets you choose the kind of filter and the text that you
 | want to filter by.
 |
-| ![ag-Grid sorting and filtering](resources/step2.png)
+| ![AG Grid sorting and filtering](resources/step2.png)
 |
 | ## Fetch Remote Data
 |
@@ -511,7 +511,7 @@ title: "Get Started with ag-Grid"
 | We will leave the flag toggle state and persistence to the backend team. On our side, we should enable the
 | selection and, afterwards, to obtain the selected records and pass them with an API call to a remote service endpoint.
 |
-| Fortunately, the above task is quite simple with ag-Grid. As you may have already guessed, it is just a
+| Fortunately, the above task is quite simple with AG Grid. As you may have already guessed, it is just a
 | matter of adding and changing couple of properties:
 |
 | ```js
@@ -561,8 +561,8 @@ title: "Get Started with ag-Grid"
 | ## Grouping
 |
 | [[note]]
-| | Grouping is a feature exclusive to ag-Grid Enterprise. You are free to trial ag-Grid Enterprise to see what
-| | you think. You only need to get in touch if you want to start using ag-Grid Enterprise in a project intended
+| | Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise to see what
+| | you think. You only need to get in touch if you want to start using AG Grid Enterprise in a project intended
 | | for production.
 |
 | In addition to filtering and sorting, [grouping](../grouping/) is another effective way for the user to make
@@ -580,7 +580,7 @@ title: "Get Started with ag-Grid"
 | You can ignore the message as we are trialing. In addition to that, the grid got a few UI improvements - a custom
 | context menu and fancier column menu popup - feel free to look around:
 |
-| ![ag-Grid final](resources/step3.png)
+| ![AG Grid final](resources/step3.png)
 |
 | Now, let's enable grouping! Change the configuration to this:
 |
@@ -687,7 +687,7 @@ title: "Get Started with ag-Grid"
 | ## Next Steps
 |
 | The best thing you can check after the Javascript grid tutorial is the [features overview](../grid-features/).
-| It provides an extensive review of what you can achieve with ag-Grid. In addition, you can go through the
+| It provides an extensive review of what you can achieve with AG Grid. In addition, you can go through the
 | following help articles to learn more about the features we enabled:
 | <style>
 |    .btn.btn-outline-primary:hover {
@@ -705,18 +705,18 @@ title: "Get Started with ag-Grid"
 [[only-angular]]
 | [[note]]
 | | Please refer to our [Compatibility Chart](#ag-grid--angular-compatibility-chart) for Supported Versions of
-| | Angular & ag-Grid.
+| | Angular & AG Grid.
 |
 | ## Getting Started
 |
 | <video-section src="https://www.youtube.com/embed/AeEfiWAGyLc" title="Getting Started Video Tutorial">
-|     Below we walk through the necessary steps to add ag-Grid (both
+|     Below we walk through the necessary steps to add AG Grid (both
 |     <a href="../licensing/">Community and Enterprise</a> are covered) to an
 |     Angular project and configure some grid features. In particular, we will go through
 |     the following steps:
 |  </video-section>
 |
-| 1. [Add ag-Grid to Your Project](#add-ag-grid-to-your-project-1)
+| 1. [Add AG Grid to Your Project](#add-ag-grid-to-your-project-1)
 | 1. [Enable Sorting and Filtering](#enable-sorting-and-filtering-1)
 | 1. [Fetch Remote Data](#fetch-remote-data-1)
 | 1. [Enable Selection](#enable-selection-1)
@@ -733,16 +733,16 @@ title: "Get Started with ag-Grid"
 | |     </span>
 | |     <span style="flex-grow: 1; display: inline-block; padding-left: 10px;">
 | |         Thinkster has provided a free course
-| |         <a href="https://thinkster.io/topics/ag-grid" target="_blank">Learning ag-Grid with Angular</a>
+| |         <a href="https://thinkster.io/topics/ag-grid" target="_blank">Learning AG Grid with Angular</a>
 | |     </span>
 | | </div>
 |
 |
-| ## Add ag-Grid to Your Project
+| ## Add AG Grid to Your Project
 |
 | For the purposes of this tutorial, we are going to scaffold an Angular app with
 | [angular CLI](https://cli.angular.io/). Don't worry if your project has a different
-| configuration. ag-Grid and its Angular wrapper are distributed as NPM packages, which
+| configuration. AG Grid and its Angular wrapper are distributed as NPM packages, which
 | should work with any common Angular project module bundler setup. Let's follow the
 | [Angular CLI instructions](https://github.com/angular/angular-cli#installation) - run the
 | following in your terminal:
@@ -762,7 +762,7 @@ title: "Get Started with ag-Grid"
 | If everything goes well, `ng serve` has started the web server. You can open your app at
 | <a href="http://localhost:4200" target="_blank">localhost:4200</a>.
 |
-| As a next step, let's add the ag-Grid NPM packages. run the following command in `my-app` (you may need a new instance of | the terminal):
+| As a next step, let's add the AG Grid NPM packages. run the following command in `my-app` (you may need a new instance of | the terminal):
 |
 | ```bash
 | npm install --save ag-grid-community ag-grid-angular
@@ -770,7 +770,7 @@ title: "Get Started with ag-Grid"
 | ```
 |
 | After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first
-| step, let's add the ag-Grid Angular module to our app module (`src/app/app.module.ts`):
+| step, let's add the AG Grid Angular module to our app module (`src/app/app.module.ts`):
 |
 | ```ts
 | import { BrowserModule } from '@angular/platform-browser';
@@ -795,7 +795,7 @@ title: "Get Started with ag-Grid"
 | | The `withComponents` call is necessary for the grid to be able to use Angular
 | | components as cells / headers - you can ignore it for now.
 |
-| The next step is to add the ag-Grid styles - replace the content of
+| The next step is to add the AG Grid styles - replace the content of
 | `src/styles.scss` with the following code:
 |
 | ```scss
@@ -859,12 +859,12 @@ title: "Get Started with ag-Grid"
 |
 | If everything works as expected, you should see a simple grid like the one on the screenshot:
 |
-| ![ag-Grid hello world](resources/step1.png)
+| ![AG Grid hello world](resources/step1.png)
 |
 | ## Enable Sorting And Filtering
 |
 | So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the
-| least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you
+| least/most expensive? Well, enabling sorting in AG Grid is actually quite simple - all you
 | need to do is set the `sortable` property to each column you want to be able to sort by.
 |
 | ```ts
@@ -897,7 +897,7 @@ title: "Get Started with ag-Grid"
 | it will display a popup with a filtering UI which lets you choose the kind of filter and the text that
 | you want to filter by.
 |
-| ![ag-Grid sorting and filtering](resources/step2.png)
+| ![AG Grid sorting and filtering](resources/step2.png)
 |
 | ## Fetch Remote Data
 |
@@ -985,7 +985,7 @@ title: "Get Started with ag-Grid"
 | persistence to the backend team. On our side, we should enable the selection and, afterwards, to obtain
 | the selected records and pass them with an API call to a remote service endpoint.
 |
-| Fortunately, the above task is quite simple with ag-Grid. As you may have already guessed, it is just a
+| Fortunately, the above task is quite simple with AG Grid. As you may have already guessed, it is just a
 | matter of adding and changing couple of properties. Edit `src/app.component.ts` first:
 |
 | ```ts
@@ -1038,7 +1038,7 @@ title: "Get Started with ag-Grid"
 |
 | Great! Now the first column contains a checkbox that, when clicked, selects the row. The only
 | thing we have to add is a button that gets the selected data and sends it to the server. To do this,
-| we are going to use the [ag-Grid API](../grid-api/) - we will access
+| we are going to use the [AG Grid API](../grid-api/) - we will access
 | it through the component instance. To access to component instance we will need to add the
 | `#agGrid` id to our component.
 |
@@ -1142,8 +1142,8 @@ title: "Get Started with ag-Grid"
 | ## Grouping
 |
 | [[note]]
-| | Grouping is a feature exclusive to ag-Grid Enterprise. You are free to trial ag-Grid Enterprise
-| | to see what you think. You only need to get in touch if you want to start using ag-Grid Enterprise
+| | Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
+| | to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
 | | in a project intended for production.
 |
 | In addition to filtering and sorting, [grouping](../grouping/) is another effective way for the
@@ -1176,7 +1176,7 @@ title: "Get Started with ag-Grid"
 | license key. You can ignore the message as we are trialing. In addition to that, the grid got a few
 | UI improvements - a custom context menu and fancier column menu popup - feel free to look around:
 |
-| ![ag-Grid final](resources/step3.png)
+| ![AG Grid final](resources/step3.png)
 |
 | Now, let's enable grouping! Add an `autoGroupColumnDef` property and change the
 | `columnDefs` to the following:
@@ -1275,16 +1275,16 @@ title: "Get Started with ag-Grid"
 | [theme parameter list](../themes-customising/#full-list-of-theme-parameters) is
 | available in the themes documentation section.
 |
-| ## ag-Grid & Angular Compatibility Chart
+| ## AG Grid & Angular Compatibility Chart
 |
 | [[note]]
 | | Due to a breaking change in Angular 10 you may experience the following error when building:
 | | `Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)`<br/><br/>
-| | If you wish to use Angular 10 with ag-Grid versions 18-23 then you need to set `"skipLibCheck": true`
+| | If you wish to use Angular 10 with AG Grid versions 18-23 then you need to set `"skipLibCheck": true`
 | | in `tsconfig.app.json` Please note however that this is a workaround and Angular 10 is only
-| | officially supported with ag-Grid 24+.
+| | officially supported with AG Grid 24+.
 |
-| | Angular Version | ag-Grid Versions                        |
+| | Angular Version | AG Grid Versions                        |
 | | --------------- | --------------------------------------- |
 | | 6               | 18 - 22                                 |
 | | 7 - 9           | 18 - 23+ (23 recommended for Angular 9) |
@@ -1300,24 +1300,24 @@ title: "Get Started with ag-Grid"
 | [[note]]
 | | Want to know more?
 | |
-| | Want to see some full examples of customising ag-Grid using Angular components? See this blog
+| | Want to see some full examples of customising AG Grid using Angular components? See this blog
 | | written by Max Koretskyi (aka Angular in Depth Wizard)
 | | <a href="https://blog.ag-grid.com/learn-to-customize-angular-grid-in-less-than-10-minutes/" target="_blank">
 | | Learn to customise Angular grid in less than 10 minutes</a>.
 | |
-| | A full working examples of ag-Grid and Angular can be found in
+| | A full working examples of AG Grid and Angular can be found in
 | | [Github](https://github.com/ag-grid/ag-grid-angular-cli-example), illustrating
 | | (amongst others) rich grids, filtering with angular components and master/detail.
 
 
 [[only-react]]
 | [[note]]
-| | Please refer to our [Compatibility Chart](#ag-grid--react-compatibility-chart) for Supported Versions of React & ag-Grid.
+| | Please refer to our [Compatibility Chart](#ag-grid--react-compatibility-chart) for Supported Versions of React & AG Grid.
 |
 | ## Getting Started
 |
 | <video-section src="https://www.youtube.com/embed/6PA45adHun8" title="Getting Started Video Tutorial">
-|     In this article, we will walk you through the necessary steps to add ag-Grid
+|     In this article, we will walk you through the necessary steps to add AG Grid
 |     (both <a href="../licensing/">Community and Enterprise</a> are covered) to an existing
 |     React project, and configure some of the essential features of it. We will show you some of the
 |     fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the
@@ -1336,17 +1336,17 @@ title: "Get Started with ag-Grid"
 | |     <span style="flex-grow: 1; display: inline-block; padding-left: 10px;">
 | |         Thinkster has provided a free course
 | |         <a href="https://thinkster.io/topics/ag-grid" target="_blank">
-| |             Learning ag-Grid with React
+| |             Learning AG Grid with React
 | |         </a>
 | |     </span>
 | | </div>
 |
 |
-| ## Add ag-Grid to Your Project
+| ## Add AG Grid to Your Project
 |
 | For the purposes of this tutorial, we are going to scaffold a react app with
 | [create-react-app](https://github.com/facebook/create-react-app). Don't worry if your project has a
-| different configuration. ag-Grid and the React wrapper are distributed as NPM packages, which should
+| different configuration. AG Grid and the React wrapper are distributed as NPM packages, which should
 | work with any common React project module bundler setup. Let's follow the
 | [create-react-app instructions](https://github.com/facebook/create-react-app#quick-overview) - run
 | the following commands in your terminal:
@@ -1365,7 +1365,7 @@ title: "Get Started with ag-Grid"
 | If everything goes well, `npm start` has started the web server and conveniently opened a browser
 | pointing to [localhost:3000](http://localhost:3000).
 |
-| As a next step, let's add the ag-Grid NPM packages. Run the following command in `my-app`
+| As a next step, let's add the AG Grid NPM packages. Run the following command in `my-app`
 | (you may need a new instance of the terminal):
 |
 | ```bash
@@ -1408,7 +1408,7 @@ title: "Get Started with ag-Grid"
 | ```
 |
 | Done? If everything is correct, we should see a simple grid that looks like this:<br/><br/>
-| ![ag-Grid in its simplest form](resources/step1.png)
+| ![AG Grid in its simplest form](resources/step1.png)
 |
 | Let's go over the `App.jsx` changes we made:
 |
@@ -1468,7 +1468,7 @@ title: "Get Started with ag-Grid"
 | ## Enable Sorting And Filtering
 |
 | So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the
-| least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to
+| least/most expensive? Well, enabling sorting in AG Grid is actually quite simple - all you need to
 | do is set the `sort` property on the column definitions.
 |
 | ```jsx
@@ -1496,7 +1496,7 @@ title: "Get Started with ag-Grid"
 | Pressing it will display a popup with a filtering UI which lets you choose the kind of filter and the
 | text that you want to filter by.
 |
-| ![ag-Grid sorting and filtering](resources/step2.png)
+| ![AG Grid sorting and filtering](resources/step2.png)
 |
 | ## Fetch Remote Data
 |
@@ -1533,7 +1533,7 @@ title: "Get Started with ag-Grid"
 | persistence to the backend team. On our side, we should enable the selection and, afterwards, to obtain
 | the selected records and pass them with an API call to a remote service endpoint.
 |
-| Fortunately, the above task is quite simple with ag-Grid. As you may have already guessed,
+| Fortunately, the above task is quite simple with AG Grid. As you may have already guessed,
 | it is just a matter of adding and changing couple of properties:
 |
 | ```diff
@@ -1590,8 +1590,8 @@ title: "Get Started with ag-Grid"
 | ##Grouping (enterprise)
 |
 | [[note]]
-| | Grouping is a feature exclusive to ag-Grid Enterprise. You are free to trial ag-Grid Enterprise
-| | to see what you think. You only need to get in touch if you want to start using ag-Grid Enterprise
+| | Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
+| | to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
 | | in a project intended for production.
 |
 | In addition to filtering and sorting, [grouping](../grouping/)
@@ -1625,7 +1625,7 @@ title: "Get Started with ag-Grid"
 | the grid got a few UI improvements - a custom context menu and fancier column menu
 | popup - feel free to look around:
 |
-| ![ag-Grid final](resources/step3.png)
+| ![AG Grid final](resources/step3.png)
 |
 | Now, let's enable grouping! Update the `AgGridReact` configuration to this:
 |
@@ -1665,7 +1665,7 @@ title: "Get Started with ag-Grid"
 |
 | The last thing which we are going to do is to change the grid look and feel by customising a theme.
 |
-| By default, ag-Grid ships a set of [pre-built theme stylesheets](../themes/). If we want to tweak
+| By default, AG Grid ships a set of [pre-built theme stylesheets](../themes/). If we want to tweak
 | the colors and the fonts of theme, we should add a Sass preprocessor to our project, override the theme
 | variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable
 | overrides are applied.
@@ -1703,9 +1703,9 @@ title: "Get Started with ag-Grid"
 | [full list of theme parameters](../themes-provided/#customising-themes)
 | is available in the themes documentation section.
 |
-| ## ag-Grid & React Compatibility Chart
+| ## AG Grid & React Compatibility Chart
 |
-| | React Version | ag-Grid Versions |
+| | React Version | AG Grid Versions |
 | | ------------- | ---------------- |
 | | 15.x          | 18 - 21.2.0      |
 | | 16.3+         | 22+              |
@@ -1720,7 +1720,7 @@ title: "Get Started with ag-Grid"
 
 [[only-vue]]
 | <video-section src="https://www.youtube.com/embed/eW3qCti1lsA" title="Getting Started Video Tutorial">
-|     In this article, we will walk you through the necessary steps to add ag-Grid
+|     In this article, we will walk you through the necessary steps to add AG Grid
 |     (both <a href="../licensing/">Community and Enterprise</a> are covered)
 |     to an existing Vue project, configure some of the essential features of it.
 |     We will show you some of the fundamentals of the grid (passing properties, using the API, etc).
@@ -1745,7 +1745,7 @@ title: "Get Started with ag-Grid"
 | |
 | | For more information on import types please refer to the documentation [here.](../modules/)
 |
-| ## Add ag-Grid to Your Project
+| ## Add AG Grid to Your Project
 |
 | For the purposes of this tutorial, we are going to scaffold an Vue app with
 | [Vue CLI](https://cli.vuejs.org/). Don't worry if your project has a different configuration.
@@ -1785,7 +1785,7 @@ title: "Get Started with ag-Grid"
 | If everything goes well, `npm run serve` has started the web server. You can open the
 | default app at <a href="http://localhost:8080" target="_blank">localhost:8080</a>.
 |
-| As a next step, let's add the ag-Grid NPM packages. run the following command in
+| As a next step, let's add the AG Grid NPM packages. run the following command in
 | `my-project` (you may need a new instance of the terminal):
 |
 | ```bash
@@ -1793,7 +1793,7 @@ title: "Get Started with ag-Grid"
 | ```
 |
 | After a few seconds of waiting, you should be good to go. Let's get to the actual coding!
-|  As a first step, let's add the ag-Grid styles - import them in the style section of `src/App.vue`:
+|  As a first step, let's add the AG Grid styles - import them in the style section of `src/App.vue`:
 |
 | ```scss
 | <style lang="scss">
@@ -1869,16 +1869,16 @@ title: "Get Started with ag-Grid"
 | we imported earlier.
 |
 | Finally, note that we've imported the `ag-grid-vue` component - this is actual component that will
-| provide the ag-Grid functionality.
+| provide the AG Grid functionality.
 |
 | If everything works as expected, you should see a simple grid like the one on the screenshot:
 |
-| ![ag-Grid hello world](resources/step1.png)
+| ![AG Grid hello world](resources/step1.png)
 |
 | ## Enable Sorting And Filtering
 |
 | So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car
-| is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple -
+| is the least/most expensive? Well, enabling sorting in AG Grid is actually quite simple -
 | all you need to do is set the `sortable` property to the column definitions.
 |
 | ```js
@@ -1911,7 +1911,7 @@ title: "Get Started with ag-Grid"
 | Pressing it will display a popup with a filtering UI which lets you choose the kind of filter and
 | the text that you want to filter by.
 |
-| ![ag-Grid sorting and filtering](resources/step2.png)
+| ![AG Grid sorting and filtering](resources/step2.png)
 |
 | ## Fetch Remote Data
 |
@@ -1949,7 +1949,7 @@ title: "Get Started with ag-Grid"
 | toggle state and persistence to the backend team. On our side, we should enable the selection and,
 | afterwards, to obtain the selected records and pass them with an API call to a remote service endpoint.
 |
-| Fortunately, the above task is quite simple with ag-Grid. As you may have already guessed, it is
+| Fortunately, the above task is quite simple with AG Grid. As you may have already guessed, it is
 | just a matter of adding and changing couple of properties.
 |
 | ```jsx
@@ -2017,7 +2017,7 @@ title: "Get Started with ag-Grid"
 |
 | Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing
 | we have to add is a button that gets the selected data and sends it to the server. To do this, we are
-| going to use the [ag-Grid API](../grid-api/) - we will store a reference to both the grid and
+| going to use the [AG Grid API](../grid-api/) - we will store a reference to both the grid and
 | column API's in the `gridReady` event
 |
 | To test this we'll add a button that gets the selected data and sends it to the server.
@@ -2091,8 +2091,8 @@ title: "Get Started with ag-Grid"
 | ## Grouping
 |
 | [[note]]
-| | Grouping is a feature exclusive to ag-Grid Enterprise. You are free to trial ag-Grid Enterprise
-| | to see what you think. You only need to get in touch if you want to start using ag-Grid Enterprise
+| | Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
+| | to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
 | | in a project intended for production.
 |
 | In addition to filtering and sorting, [grouping](../grouping/) is another effective way for the user
@@ -2126,7 +2126,7 @@ title: "Get Started with ag-Grid"
 | the grid got a few UI improvements - a custom context menu and fancier column menu popup -
 | feel free to look around:
 |
-| ![ag-Grid final](resources/step3.png)
+| ![AG Grid final](resources/step3.png)
 |
 | Now, let's enable grouping! Add an `autoGroupColumnDef` property, bind to it, and update
 | the `columnDefs` with a `rowGroup`:
@@ -2216,14 +2216,14 @@ title: "Get Started with ag-Grid"
 | The last thing which we are going to do is to change the grid look and feel by modifying some
 | of the theme's Sass variables.
 |
-| By default, ag-Grid ships a set of
+| By default, AG Grid ships a set of
 | [pre-built theme stylesheets](../themes/). If we want to tweak the colors and the fonts of
 | theme, we should add a Sass preprocessor to our project, override the theme variable values,
 | and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable
 | overrides are applied.
 |
 | The `vue cli` did a lot of for us including providing support for Sass. Let's switch to using
-| the provided ag-Grid SCSS files - replace the `style` block in `src/App.vue` with:
+| the provided AG Grid SCSS files - replace the `style` block in `src/App.vue` with:
 |
 | ```scss
 | <style lang="scss">

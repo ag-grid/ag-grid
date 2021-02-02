@@ -10,7 +10,7 @@
             "description": "A Date Filter for date comparisons."
         },
         "agSetColumnFilter": {
-            "description": "A Set Filter, influenced by how filters work in Microsoft Excel. This is an ag-Grid-Enterprise feature."
+            "description": "A Set Filter, influenced by how filters work in Microsoft Excel. This is an AG Grid Enterprise feature."
         }
     }
 }

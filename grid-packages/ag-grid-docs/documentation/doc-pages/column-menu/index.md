@@ -3,7 +3,7 @@ title: "Column Menu"
 enterprise: true
 ---
 
-The column menu appears when you click on the menu icon in the column header. For ag-Grid Community, only the filter is shown. For ag-Grid Enterprise, a tabbed component containing a 1) Menu, 2) Filter and 3) Column Management panel is shown.
+The column menu appears when you click on the menu icon in the column header. For AG Grid Community, only the filter is shown. For AG Grid Enterprise, a tabbed component containing a 1) Menu, 2) Filter and 3) Column Management panel is shown.
 
 ## Showing the Column Menu
 

@@ -7,7 +7,7 @@
 
     <p>
     Sean was the first person that Niall asked to join the team. Sean ensures that we can keep the
-    agnostic in ag-Grid... he is responsible for integrating with all of our supported frameworks.
+    agnostic in AG Grid... he is responsible for integrating with all of our supported frameworks.
     He has also recently given a number of talks at conferences where his calm manner
     belies his years of experience.
     </p>

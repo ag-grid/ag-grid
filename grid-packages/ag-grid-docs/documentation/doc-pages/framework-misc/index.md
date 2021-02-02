@@ -5,7 +5,7 @@ frameworks: ["vue"]
 
 ## Overview
 
-This section describes some of the finer grain tuning you might want to do with your React & ag-Grid application.
+This section describes some of the finer grain tuning you might want to do with your React & AG Grid application.
 
 ## Binding Row Data with **v-model**
 

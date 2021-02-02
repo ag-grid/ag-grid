@@ -14,7 +14,7 @@ export function initialiseAgGridWithWebComponents() {
     registered = true;
 
     if (typeof document === 'undefined' || !(document as any).registerElement) {
-        console.error('ag-Grid: unable to find document.registerElement() function, unable to initialise ag-Grid as a Web Component');
+        console.error('AG Grid: unable to find document.registerElement() function, unable to initialise AG Grid as a Web Component');
     }
 
     // i don't think this type of extension is possible in TypeScript, so back to

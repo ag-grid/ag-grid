@@ -6,9 +6,9 @@ Niall Crosby | 8th September 2017
 
 ## Make It Faster
 
-[ag-Grid](https://www.ag-grid.com/) is a JavaScript data grid for displaying large amounts of data in the browser in a style similar to Excel spreadsheets. ag-Grid is fast, even in Internet Explorer with large volumes of data. This blog presents performance patterns, or performance 'hacks', that we used to put our grid on steroids.
+[AG Grid](https://www.ag-grid.com/) is a JavaScript data grid for displaying large amounts of data in the browser in a style similar to Excel spreadsheets. AG Grid is fast, even in Internet Explorer with large volumes of data. This blog presents performance patterns, or performance 'hacks', that we used to put our grid on steroids.
 
-We describe how to squeeze performance out of the browser which can be applied to anyone wanting to tune their own applications. It will be of particular interest to users of ag-Grid to  improve understanding of how to work with the grid. We also think that it will be of interest to anyone creating a grid.  We relish the idea of healthy competition so we are happy to contribute to the wider community knowledge.
+We describe how to squeeze performance out of the browser which can be applied to anyone wanting to tune their own applications. It will be of particular interest to users of AG Grid to  improve understanding of how to work with the grid. We also think that it will be of interest to anyone creating a grid.  We relish the idea of healthy competition so we are happy to contribute to the wider community knowledge.
 
 ## Hack 1 - Row Virtualisation
 
@@ -74,7 +74,7 @@ function myEventListener(event) {
 }
 ```
 
-You might have noticed that we are attaching arbitrary attributes (`__col` and `__row`) onto the DOM element and might be wondering is this safe? I hope so, as ag-Grid is used for air traffic control over Australia as far as I know. In other words, ag-Grid has done this for a long time and has been tested in the field.
+You might have noticed that we are attaching arbitrary attributes (`__col` and `__row`) onto the DOM element and might be wondering is this safe? I hope so, as AG Grid is used for air traffic control over Australia as far as I know. In other words, AG Grid has done this for a long time and has been tested in the field.
 
 [[note]]
 | This is a similar pattern used by React using React's Synthetic Events.
@@ -88,7 +88,7 @@ Good programming sense tells you to de-construct everything you construct. This 
 
 This hack goes as follows: if you are removing an item from the DOM (e.g. a grid cell) but you know the parent of that item is also going to be removed (e.g. a grid row) then there is no need to remove the child items individually.
 
-So in ag-Grid, as rows are created, we use composition to build the complex structure into the DOM. However when removing the rows, we do not remove the cells individually from the DOM, instead we remove the entire row in one quick DOM hit.
+So in AG Grid, as rows are created, we use composition to build the complex structure into the DOM. However when removing the rows, we do not remove the cells individually from the DOM, instead we remove the entire row in one quick DOM hit.
 
 ## Hack 5 - innerHTML where possible
 
@@ -96,7 +96,7 @@ What is the fastest way to populate lots of cells and rows into the browser? Sho
 
 We have done many tests. The answer is to use `.innerHTML`.
 
-So ag-Grid leverages the speed of `.innerHTML` by creating the HTML in one big string and then inserting it into the DOM using the method `element.insertAdjacentHTML()`. The method `element.insertAdjacentHTML()` is similar but slightly less well known equivalent of the property `.innerHTML`. The difference is that `insertAdjacentHTML()` appends to existing HTML where as `.innerHTML()` replacing the current content. Both work just as fast.
+So AG Grid leverages the speed of `.innerHTML` by creating the HTML in one big string and then inserting it into the DOM using the method `element.insertAdjacentHTML()`. The method `element.insertAdjacentHTML()` is similar but slightly less well known equivalent of the property `.innerHTML`. The difference is that `insertAdjacentHTML()` appends to existing HTML where as `.innerHTML()` replacing the current content. Both work just as fast.
 
 ```js
 // build up the row's HTML in a string
@@ -116,13 +116,13 @@ eContainer.insertAdjacentHTML(rowHtml);
 
 This works well when there are no custom cell renderers. So for all cells that do not use cell renderers, the grid will inject the whole row in one HTML string which is the quickest way to render HTML. When a component is used, the grid will then go back and inject the components into the HTML after the row is created.
 
-Cell renderers are a type of component. The component concept is great for applications. They are the building blocks of the composite design pattern used for building large applications, where smaller pieces (components) fit together to create bigger pieces. However, in ag-Grid, we want the fastest grid possible, so it's best to avoid the use of cell renderer components to leverage the power of `innerHTML` for the fastest rendering of rows.
+Cell renderers are a type of component. The component concept is great for applications. They are the building blocks of the composite design pattern used for building large applications, where smaller pieces (components) fit together to create bigger pieces. However, in AG Grid, we want the fastest grid possible, so it's best to avoid the use of cell renderer components to leverage the power of `innerHTML` for the fastest rendering of rows.
 
-If you are a user of ag-Grid, you might be wondering how cell renderers impact performance. The answer depends on your platform, using Chrome or a small non-complex grid, they should not pose a problem. If you are displaying large grids using Internet Explorer, it is worth checking the impact your cell renderers are adding.
+If you are a user of AG Grid, you might be wondering how cell renderers impact performance. The answer depends on your platform, using Chrome or a small non-complex grid, they should not pose a problem. If you are displaying large grids using Internet Explorer, it is worth checking the impact your cell renderers are adding.
 
 ## Hack 6 - Debouncing Scroll Events
 
-When you scroll in ag-Grid, the grid is doing row and column virtualisation, which means the DOM is getting trashed. This trashing is time consuming and if processed within the event listener will make the scroll experience 'rough'.
+When you scroll in AG Grid, the grid is doing row and column virtualisation, which means the DOM is getting trashed. This trashing is time consuming and if processed within the event listener will make the scroll experience 'rough'.
 
 To get around this, the grid uses debouncing of scroll events with animation frames. This is a common trick to achieve smooth scrolling and is explained very well in this blog [Leaner, Meaner, Faster Animations with RequestAnimationFrame](https://www.html5rocks.com/en/tutorials/speed/animations/). As this technique is well explained in posts such as above, I won't repeat it here. Suffice to say, we found this delivers a good performance boost.
 
@@ -173,7 +173,7 @@ So there is a trade-off. By default, the grid does not order the rows. If the us
 All of the performance hacks above are the result of years of learning. They are tried and tested approaches for squeezing performance out of the browser. If you have more ideas to make things faster, or have any improvements suggestions on this blog,
 then please comment below. Even better, if this all seems easy to you and you could do better, get in touch as we are always looking to hire the right people.
 
-One lasting note - these are performance hacks that worked for us in ag-Grid. You should understand them and consider them. They may not be suitable to your application (an application has different concerns to a data grid).
+One lasting note - these are performance hacks that worked for us in AG Grid. You should understand them and consider them. They may not be suitable to your application (an application has different concerns to a data grid).
 
 ## And Share!!!
 
@@ -192,7 +192,7 @@ Sharing is caring! So please take the time to share this article, or up-vote on 
             <td>
                 <a href="https://twitter.com/share" class="twitter-share-button"
                     data-url="https://www.ag-grid.com/ag-grid-performance-hacks/"
-                    data-text="Squeezing the Browser - JavaScript Performance Hacks in ag-Grid #javascript" data-via="ceolter"
+                    data-text="Squeezing the Browser - JavaScript Performance Hacks in AG Grid #javascript" data-via="ceolter"
                     data-size="large">Tweet</a>
                 <script>!function (d, s, id) {
                         var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';

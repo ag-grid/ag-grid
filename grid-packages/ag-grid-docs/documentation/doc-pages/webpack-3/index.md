@@ -3,7 +3,7 @@ title: "Angular Webpack 3"
 frameworks: ["angular"]
 ---
 
-We walk through the main steps required when using ag-Grid, Angular and Webpack 3 below, 
+We walk through the main steps required when using AG Grid, Angular and Webpack 3 below, 
 but please refer to [ag-grid-angular-example](https://github.com/ag-grid/ag-grid-angular-example) on 
 GitHub for a full working example of this.
 
@@ -226,7 +226,7 @@ exports.root = root;
 <html>
 <head>
     <base href="/">
-    <title>ag-Grid & Angular With Webpack</title>
+    <title>AG Grid & Angular With Webpack</title>
 </head>
 <body>
 <my-app>Loading...</my-app>
@@ -329,7 +329,7 @@ We could generate one large bundle, but it's better to break the bundle up into 
 can specify the entry points we want to use - we have specified 3 here:
 
 - polyfills: polyfills we require to run Angular / ES6 applications in current browsers.
-- vendor: the vendor (or 3rd party) libraries we need - ag-Grid, Angular etc.
+- vendor: the vendor (or 3rd party) libraries we need - AG Grid, Angular etc.
 - app: our application code.
 
 ### resolve
@@ -477,10 +477,10 @@ If we now run our application with the above code we will see this:
 
 <img src="../webpack/resources/seed.png" alt="Grid Example" />
 
-## Override ag-Grid CSS
+## Override AG Grid CSS
 
 There are many ways to override the CSS with Webpack, but if you use the configuration above 
-then you can override ag-Grid CSS as follows:
+then you can override AG Grid CSS as follows:
 
 - Place your application-wide CSS file(s) in a directory other than `./app` - for example `./css/`. Remember that CSS under `./app` is treated differently - it is used for component-scoped styles.
 
@@ -490,7 +490,7 @@ then you can override ag-Grid CSS as follows:
 import '../css/app.css';
 ```
 
-And that's it - you can now override ag-Grid CSS with your own in `./css/app.css`. 
+And that's it - you can now override AG Grid CSS with your own in `./css/app.css`. 
 For example, the following would set the cell background to green across the board.
 
 ```css

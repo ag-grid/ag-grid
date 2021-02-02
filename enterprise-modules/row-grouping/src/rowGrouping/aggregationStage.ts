@@ -258,13 +258,13 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             aggFuncOrString;
 
         if (typeof aggFunc !== 'function') {
-            console.error(`ag-Grid: unrecognised aggregation function ${aggFuncOrString}`);
+            console.error(`AG Grid: unrecognised aggregation function ${aggFuncOrString}`);
             return null;
         }
 
         const deprecationWarning = () => {
             _.doOnce(() => {
-                console.warn('ag-Grid: since v24.0, custom aggregation functions take a params object. Please alter your aggregation function to use params.values');
+                console.warn('AG Grid: since v24.0, custom aggregation functions take a params object. Please alter your aggregation function to use params.values');
             }, 'aggregationStage.aggregateValues Deprecation');
         };
 

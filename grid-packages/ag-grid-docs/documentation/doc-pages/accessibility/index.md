@@ -2,7 +2,7 @@
 title: "Accessibility"
 ---
 
-ag-Grid provides amongst the best support for accessibility compared to other grids available on the market today. This page provides guidance on how to address accessibility concerns in your grid implementations.
+AG Grid provides amongst the best support for accessibility compared to other grids available on the market today. This page provides guidance on how to address accessibility concerns in your grid implementations.
 
 ## Web Conformance Guidelines
 
@@ -41,15 +41,15 @@ interact with grid based application.
 
 There are numerous screen readers available, however right now the most popular screen reader for Windows is [JAWS](https://www.freedomscientific.com/Downloads/JAWS) and for MAC users it is the embedded [VoiceOver](http://help.apple.com/voiceover/info/guide) software. Our testing has focused on these screen readers.
 
-In order to cover the widest range of use cases and screen readers, ag-Grid has taken a standards-based approach to implementing accessibility support. Instead of optimizing our implementation for specific screen readers, we have followed the W3C WCAG standard and added the relevant ARIA-tags to let screen readers announce any ag-Grid element and its state.
+In order to cover the widest range of use cases and screen readers, AG Grid has taken a standards-based approach to implementing accessibility support. Instead of optimizing our implementation for specific screen readers, we have followed the W3C WCAG standard and added the relevant ARIA-tags to let screen readers announce any AG Grid element and its state.
 
-However, different screen readers interpret the WCAG standard in different ways. As a result, they may generate different announcements for the same ag-Grid element, or no announcement at all.
+However, different screen readers interpret the WCAG standard in different ways. As a result, they may generate different announcements for the same AG Grid element, or no announcement at all.
 
 This is why we recommend testing how different screen readers announce the UI of the application you're using, selecting the best one and recommending that to your users. We believe this is the best way to guide your users how to get the best possible experience at this time until screen readers improve their support for the WCAG standard.
 
 ## ARIA Attributes
 
-In order to give screen readers the contextual information they require to interpret and interact with the grid, [ARIA](https://www.w3.org/TR/wai-aria/) attributes are added to the grid DOM elements. These attributes are particularity useful when plain HTML elements such `div` and `span` are used to create complex DOM structures, which is the case with ag-Grid.
+In order to give screen readers the contextual information they require to interpret and interact with the grid, [ARIA](https://www.w3.org/TR/wai-aria/) attributes are added to the grid DOM elements. These attributes are particularity useful when plain HTML elements such `div` and `span` are used to create complex DOM structures, which is the case with AG Grid.
 
 When inspecting the DOM you'll notice the following roles and properties have been added:
 
@@ -163,7 +163,7 @@ customisation in action.
 
 ## Known Limitations
 
-Using advanced functionality in ag-Grid makes the DOM structure incompatible with the assumptions screen readers make. This results in a few limitations in accessibility when specific functionality is used:
+Using advanced functionality in AG Grid makes the DOM structure incompatible with the assumptions screen readers make. This results in a few limitations in accessibility when specific functionality is used:
 
 - ### Navigation to pinned rows/columns
     Screen readers assume that the visual and DOM element order are identical. Specifically, when you pin a row/column, it  causes elements to be rendered in different containers. This is why you cannot use screen readers to navigate into a  pinned row/column cells, as in fact, this means they're rendered in a different element from the rest of the columns/rows which are scrollable.

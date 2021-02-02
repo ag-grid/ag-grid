@@ -19,7 +19,7 @@ It is possible to have only a few cells in a column editable; to do so, instead 
 | Parameter | Description |
 |-|-|
 | **`node`** | The `RowNode` of the row being rendered. |
-| **`column`** | The column being rendered (in ag-Grid, each `colDef` is wrapped by a `Column`). |
+| **`column`** | The column being rendered (in AG Grid, each `colDef` is wrapped by a `Column`). |
 | **`colDef`** | The `colDef` being rendered. |
 | **`context`** | The context as set on the `gridOptions`. |
 | **`api`** | A reference to the grid API. |

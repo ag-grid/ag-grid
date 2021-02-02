@@ -171,7 +171,7 @@
             "displayName": "Sort and Filter"
         },
         "setQuickFilter(quickFilter)": {
-            "description": "Pass a quick filter text into ag-Grid for filtering. If using Angular, the grid watches the `quickFilterText` attribute of the `gridOptions`. If you won't want to use `quickFilterText` (i.e. if not using AngularJS) then you can call this method instead to apply a quick filter."
+            "description": "Pass a quick filter text into AG Grid for filtering. If using Angular, the grid watches the `quickFilterText` attribute of the `gridOptions`. If you won't want to use `quickFilterText` (i.e. if not using AngularJS) then you can call this method instead to apply a quick filter."
         },
         "isQuickFilterPresent()": {
             "description": "Returns `true` if the quick filter is set, otherwise `false`."

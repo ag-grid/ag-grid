@@ -2,7 +2,7 @@
 title: "Filter Component"
 ---
 
-Filter components allow you to add your own filter types to ag-Grid. Use them when the provided filters do not meet your requirements.
+Filter components allow you to add your own filter types to AG Grid. Use them when the provided filters do not meet your requirements.
 
 ## Filter Component Interface (**IFilterComp**)
 
@@ -149,7 +149,7 @@ interface IDoesFilterPassParams {
 If you create your own filter you have two options to get floating filters working for that filter:
 
 1. You can [create your own floating filter](../component-floating-filter/).
-1. You can implement the method `getModelAsString()` in your custom filter. If you implement this method and don't provide a custom floating filter, ag-Grid will automatically provide a read-only version of a floating filter.
+1. You can implement the method `getModelAsString()` in your custom filter. If you implement this method and don't provide a custom floating filter, AG Grid will automatically provide a read-only version of a floating filter.
 
 If you don't provide either of these two options for your custom filter, the display area for the floating filter will be empty.
 
@@ -171,7 +171,7 @@ There are two ways you can get fix this problem:
 [[only-angular]]
 | ## Angular Filtering
 |
-| It is possible to provide Angular filters for ag-Grid to use if you are are using the Angular version of ag-Grid.
+| It is possible to provide Angular filters for AG Grid to use if you are are using the Angular version of AG Grid.
 | See [registering framework components](../components/#registering-framework-components) for how to register
 | framework components.
 |
@@ -204,8 +204,8 @@ There are two ways you can get fix this problem:
 |
 | ### Accessing the Angular Component Instance
 |
-| ag-Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
-| If your component is a Angular component, this will give you a reference to ag-Grid's component which wraps your
+| AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
+| If your component is a Angular component, this will give you a reference to AG Grid's component which wraps your
 | Angular component, just like Russian Dolls. To get to the wrapped Angular instance of your component, use the
 | `getFrameworkComponentInstance()` method as follows:
 |
@@ -229,10 +229,10 @@ There are two ways you can get fix this problem:
 |
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
-|     // get reference to the ag-Grid Filter component
+|     // get reference to the AG Grid Filter component
 |     const agGridFilter = api.getFilterInstance('name'); // assume filter on name column
 |
-|     // get Angular instance from the ag-Grid instance
+|     // get Angular instance from the AG Grid instance
 |     const angularFilterInstance = agGridFilter.getFrameworkComponentInstance();
 |
 |     // now we're sucking diesel!!!
@@ -250,7 +250,7 @@ There are two ways you can get fix this problem:
 [[only-react]]
 | ## React Filtering
 |
-| It is possible to provide React filters for ag-Grid to use if you are are using the React version of ag-Grid.
+| It is possible to provide React filters for AG Grid to use if you are are using the React version of AG Grid.
 | See [registering framework components](../components/#registering-framework-components) for how to register
 | framework components.
 |
@@ -290,8 +290,8 @@ There are two ways you can get fix this problem:
 |
 | ### Accessing the React Component Instance
 |
-| ag-Grid allows you to get a reference to the filter instances via `api.getFilterInstance(colKey, callback)`. React components | are created asynchronously, so it is necessary to use a callback rather than relying on the return value of this method. If
-| your component is a React component, this will give you a reference to ag-Grid's component which wraps your React component, | just like Russian Dolls. To get to the wrapped React instance of your component, use the `getFrameworkComponentInstance()`
+| AG Grid allows you to get a reference to the filter instances via `api.getFilterInstance(colKey, callback)`. React components | are created asynchronously, so it is necessary to use a callback rather than relying on the return value of this method. If
+| your component is a React component, this will give you a reference to AG Grid's component which wraps your React component, | just like Russian Dolls. To get to the wrapped React instance of your component, use the `getFrameworkComponentInstance()`
 | method as follows:
 |
 | ```ts
@@ -307,9 +307,9 @@ There are two ways you can get fix this problem:
 |
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
-|     // get reference to the ag-Grid Filter component on name column
+|     // get reference to the AG Grid Filter component on name column
 |     api.getFilterInstance('name', agGridFilterInstance => {
-|         // get React instance from the ag-Grid instance
+|         // get React instance from the AG Grid instance
 |         var reactFilterInstance = agGridFilterInstance.getFrameworkComponentInstance();
 |
 |         // now we're sucking diesel!!!
@@ -331,7 +331,7 @@ There are two ways you can get fix this problem:
 [[only-vue]]
 | ## VueJS Filtering
 |
-| It is possible to provide VueJS filters for ag-Grid to use if you are are using the VueJS version of ag-Grid.
+| It is possible to provide VueJS filters for AG Grid to use if you are are using the VueJS version of AG Grid.
 | See [registering framework components](../components/#registering-framework-components) for how to register
 | framework components.
 |
@@ -368,8 +368,8 @@ There are two ways you can get fix this problem:
 |
 | ### Accessing the VueJS Component Instance
 |
-| ag-Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
-| If your component is a VueJS component, then this will give you a reference to ag-Grid's component which wraps
+| AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
+| If your component is a VueJS component, then this will give you a reference to AG Grid's component which wraps
 | your VueJS component, just like Russian Dolls. To get to the wrapped VueJS instance of your component, use
 | the `getFrameworkComponentInstance()` method as follows:
 |
@@ -389,10 +389,10 @@ There are two ways you can get fix this problem:
 |
 |     // later in your app, if you want to execute myMethod()...
 |     laterOnInYourApplicationSomewhere() {
-|         // get reference to the ag-Grid Filter component
+|         // get reference to the AG Grid Filter component
 |         const agGridFilterInstance = api.getFilterInstance('name'); // assume filter on name column
 |
-|         // get VueJS instance from the ag-Grid instance
+|         // get VueJS instance from the AG Grid instance
 |         const vueFilterInstance = agGridFilterInstance.getFrameworkComponentInstance();
 |
 |         // now we're sucking diesel!!!

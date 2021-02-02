@@ -83,7 +83,7 @@ export interface DragSource {
 export interface DropTarget {
     /** The main container that will get the drop. */
     getContainer(): HTMLElement;
-    /** If any secondary containers. For example when moving columns in ag-Grid, we listen for drops
+    /** If any secondary containers. For example when moving columns in AG Grid, we listen for drops
      * in the header as well as the body (main rows and pinned rows) of the grid. */
     getSecondaryContainers?(): HTMLElement[];
     /** Icon to show when drag is over */
@@ -479,7 +479,7 @@ export class DragAndDropService extends BeanStub {
         this.eGhostParent = targetEl as HTMLElement;
 
         if (!this.eGhostParent) {
-            console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
+            console.warn('AG Grid: could not find document body, it is needed for dragging columns');
         } else {
             this.eGhostParent.appendChild(this.eGhost);
         }

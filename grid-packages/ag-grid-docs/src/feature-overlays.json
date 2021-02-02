@@ -4,7 +4,7 @@
         "url": "performance",
         "slides": [
             {
-                "content": "ag-Grid is designed to be performant with large amounts of data. To stress-test the demo, select '100,000 rows' from the Data dropdown.",
+                "content": "AG Grid is designed to be performant with large amounts of data. To stress-test the demo, select '100,000 rows' from the Data dropdown.",
                 "markers": [{ "selector": "#data-size" }]
             }
         ]
@@ -14,7 +14,7 @@
         "url": "grouping-aggregation",
         "slides": [
             {
-                "content": "ag-Grid allows the end-user to group the data by specific columns. To group the data, drag the 'Country' column header to the row group area.",
+                "content": "AG Grid allows the end-user to group the data by specific columns. To group the data, drag the 'Country' column header to the row group area.",
                 "markers": [
                     { "selector": "#myGrid > div > div:nth-child(1) > div.ag-column-drop.ag-font-style.ag-column-drop-horizontal.ag-column-drop-row-group > span", "type": "oval" },
                     {
@@ -67,7 +67,7 @@
         "url": "filtering",
         "slides": [
             {
-                "content": "ag-Grid comes with an extensive set of built-in column filter types. The floating filter row provides quick access to the UI.",
+                "content": "AG Grid comes with an extensive set of built-in column filter types. The floating filter row provides quick access to the UI.",
                 "markers": [
                     {
                         "selector":
@@ -95,7 +95,7 @@
         "url": "editing",
         "slides": [
             {
-                "content": "ag-Grid allows the user to edit the data right inside the grid - double click any cell to edit its value. ",
+                "content": "AG Grid allows the user to edit the data right inside the grid - double click any cell to edit its value. ",
                 "markers": [
                     {
                         "selector":

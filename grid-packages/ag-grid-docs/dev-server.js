@@ -783,7 +783,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             launchPhpCP(app);
 
             app.listen(EXPRESS_PORT, function() {
-                console.log(`ag-Grid dev server now available on http://${HOST}:${EXPRESS_PORT}`);
+                console.log(`AG Grid dev server now available on http://${HOST}:${EXPRESS_PORT}`);
             });
 
             launchGatsby();

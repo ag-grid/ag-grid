@@ -67,9 +67,9 @@ However if you are using expressions / code parsing, the rule is:
 
 <h2>Security Vulnerability Testing</h2>
 
-Applications may be required to pass an Application Security Test prior to being put into production. If your application is using ag-Grid, you will want to make sure that ag-Grid has also been tested for security vulnerabilities.
+Applications may be required to pass an Application Security Test prior to being put into production. If your application is using AG Grid, you will want to make sure that AG Grid has also been tested for security vulnerabilities.
 
-ag-Grid is tested for a wide variety of security vulnerabilities using the [SonarQube](https://www.sonarqube.org/) automatic security testing tool. SonarQube performs testing using a number of security rules, covering well-established security vulnerability standards such as CWE, SANS Top 25 and OWASP Top 10. For more details please refer to the section on [Security-related Rules](https://docs.sonarqube.org/latest/user-guide/security-rules/#header-2).
+AG Grid is tested for a wide variety of security vulnerabilities using the [SonarQube](https://www.sonarqube.org/) automatic security testing tool. SonarQube performs testing using a number of security rules, covering well-established security vulnerability standards such as CWE, SANS Top 25 and OWASP Top 10. For more details please refer to the section on [Security-related Rules](https://docs.sonarqube.org/latest/user-guide/security-rules/#header-2).
 
 ## SonarQube Results
 

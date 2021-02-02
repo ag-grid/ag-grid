@@ -139,7 +139,7 @@ The example below shows header tooltips. Note the following:
 
 You can provide a header template used by the default header component for simple layout changes. If you want to change the behaviour, please look at creating your own [Custom Header Component](../component-header/). The template for the default header is specified in `columnDef.headerComponentParams.template`.
 
-This is the default template used in ag-Grid:
+This is the default template used in AG Grid:
 
 ```html
 <div class="ag-cell-label-container" role="presentation">

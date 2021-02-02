@@ -85,9 +85,9 @@ interface RowClassParams {
     rowIndex: number;
     // If compiling to Angular, is the row's child scope, otherwise null.
     $scope: any;
-    // A reference to the ag-Grid API.
+    // A reference to the AG Grid API.
     api: GridApi;
-    // A reference to the ag-Grid Column API.
+    // A reference to the AG Grid Column API.
     columnApi: ColumnApi;
     // If provided in gridOptions, a context object
     context: any;

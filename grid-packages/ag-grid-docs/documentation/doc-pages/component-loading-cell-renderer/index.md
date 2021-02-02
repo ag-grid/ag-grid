@@ -2,7 +2,7 @@
 title: "Loading Cell Renderer"
 ---
 
-Loading cell renderers allow you to add your own loading renderers to ag-Grid. Use these when the provided loading renderers do not meet your requirements.
+Loading cell renderers allow you to add your own loading renderers to AG Grid. Use these when the provided loading renderers do not meet your requirements.
 
 ## Loading Cell Renderer Interface
 

@@ -400,7 +400,7 @@ export class ColumnFactory extends BeanStub {
 
         iterateObject(userTypes, (key, value) => {
             if (key in allColumnTypes) {
-                console.warn(`ag-Grid: the column type '${key}' is a default column type and cannot be overridden.`);
+                console.warn(`AG Grid: the column type '${key}' is a default column type and cannot be overridden.`);
             } else {
                 allColumnTypes[key] = value;
             }

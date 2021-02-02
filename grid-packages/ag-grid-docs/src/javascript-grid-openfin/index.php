@@ -1,14 +1,14 @@
 <?php
-$pageTitle = "ag-Grid Examples: OpenFin Integration";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. OpenFin provides runtime technology solutions for financial desktops. in this example, we document and illustrate how you can use ag-Grid within the OpenFin platform.";
+$pageTitle = "AG Grid Examples: OpenFin Integration";
+$pageDescription = "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. OpenFin provides runtime technology solutions for financial desktops. in this example, we document and illustrate how you can use AG Grid within the OpenFin platform.";
 $pageKeywords = "ag-grid openfin examples";
 $pageGroup = "thirdparty";
 include '../documentation-main/documentation_header.php';
 ?>
-    <h1>ag-Grid <a href="https://openfin.co/">OpenFin</a> Integration</h1>
+    <h1>AG Grid <a href="https://openfin.co/">OpenFin</a> Integration</h1>
 
     <p class="lead"><a href="https://openfin.co/">OpenFin</a> provides runtime technology solutions for financial desktops. Below we document and illustrate how you can use
-    ag-Grid within the <a href="https://openfin.co/">OpenFin</a> platform.</p>
+    AG Grid within the <a href="https://openfin.co/">OpenFin</a> platform.</p>
 
     <note>Full working examples can be found <a href="https://github.com/ag-grid/ag-grid-openfin-example"> in GitHub</a>.</note>
 
@@ -32,7 +32,7 @@ npm run server
 
     <h2>A Simple Grid</h2>
 
-    <p>A simple ag-Grid running within the <a href="https://openfin.co/">OpenFin</a> container.</p>
+    <p>A simple AG Grid running within the <a href="https://openfin.co/">OpenFin</a> container.</p>
 
     <p>Open a terminal and run the following command:</p>
 
@@ -44,7 +44,7 @@ npm run simple-grid
 
     <h2>A Richer Grid</h2>
 
-    <p>A more sophisticated ag-Grid example running within the <a href="https://openfin.co/">OpenFin</a> container.</p>
+    <p>A more sophisticated AG Grid example running within the <a href="https://openfin.co/">OpenFin</a> container.</p>
 
     <p>Open a terminal and run the following command:</p>
 

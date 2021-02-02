@@ -213,7 +213,7 @@ export class Context {
         }
 
         if (!optional) {
-            console.error(`ag-Grid: unable to find bean reference ${beanName} while initialising ${wiringBean}`);
+            console.error(`AG Grid: unable to find bean reference ${beanName} while initialising ${wiringBean}`);
         }
 
         return null;
@@ -338,11 +338,11 @@ export function Optional(name?: string): Function {
 
 function autowiredFunc(target: any, name: string | undefined, optional: boolean, classPrototype: any, methodOrAttributeName: string, index: number | null) {
     if (name === null) {
-        console.error("ag-Grid: Autowired name should not be null");
+        console.error("AG Grid: Autowired name should not be null");
         return;
     }
     if (typeof index === "number") {
-        console.error("ag-Grid: Autowired should be on an attribute");
+        console.error("AG Grid: Autowired should be on an attribute");
         return;
     }
 

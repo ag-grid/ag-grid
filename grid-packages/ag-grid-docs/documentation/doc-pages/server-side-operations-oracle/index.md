@@ -22,7 +22,7 @@ The source code can be found here: [https://github.com/ag-grid/ag-grid-server-si
 
 ## Overview
 
-When designing a grid based application, one of the key considerations is how much data needs to be sent from the server to the client. As a developer using ag-Grid you won't need to switch between grids based on the answer to this question, instead just select the appropriate Row Model used by the grid.
+When designing a grid based application, one of the key considerations is how much data needs to be sent from the server to the client. As a developer using AG Grid you won't need to switch between grids based on the answer to this question, instead just select the appropriate Row Model used by the grid.
 
 ### Client-Side Row Model
 

@@ -58,11 +58,11 @@ export interface ColGroupDef extends AbstractColDef {
     openByDefault?: boolean;
     /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
     marryChildren?: boolean;
-    /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
+    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used**/
     headerGroupComponent?: string | { new(): IHeaderGroupComp; };
-    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
+    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used**/
     headerGroupComponentFramework?: any;
-    /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
+    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used**/
     headerGroupComponentParams?: any;
 }
 
@@ -364,9 +364,9 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];
 
-    /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
+    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid is used**/
     headerComponent?: string | { new(): any; };
-    /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
+    /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used**/
     headerComponentFramework?: any;
     /** The custom header component parameters**/
     headerComponentParams?: any;

@@ -23,7 +23,7 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
                     {/* eslint-enable jsx-a11y/control-has-associated-label */}
                 </div>
 
-                <h1 className={styles['title']}>ag-Charts Gallery: {name}</h1>
+                <h1 className={styles['title']}>AG Charts Gallery: {name}</h1>
                 <p dangerouslySetInnerHTML={{ __html: description }}></p>
 
                 <ExampleRunner

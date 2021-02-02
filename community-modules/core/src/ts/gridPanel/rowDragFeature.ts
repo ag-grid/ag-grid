@@ -331,12 +331,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     public addRowDropZone(params: RowDropZoneParams): void {
         if (!params.getContainer()) {
-            doOnce(() => console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'), 'add-drop-zone-empty-target');
+            doOnce(() => console.warn('AG Grid: addRowDropZone - A container target needs to be provided'), 'add-drop-zone-empty-target');
             return;
         }
 
         if (this.dragAndDropService.findExternalZone(params)) {
-            console.warn('ag-Grid: addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.');
+            console.warn('AG Grid: addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.');
             return;
         }
 

@@ -212,7 +212,7 @@ export class MenuItemMapper extends BeanStub {
                 if (chartMenuItem) {
                     return chartMenuItem;
                 } else {
-                    console.warn(`ag-Grid: unknown menu item type ${key}`);
+                    console.warn(`AG Grid: unknown menu item type ${key}`);
                     return null;
                 }
         }

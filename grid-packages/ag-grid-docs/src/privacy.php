@@ -7,7 +7,7 @@ gtm_data_layer('privacy');
 <html lang="en">
 <head>
 <?php
-meta_and_links("ag-Grid: Privacy Policy", "About ag-Grid", "We take your privacy very seriously at ag-Grid. This page outlines our privacy policy which we have updated in light of GDPR.", true);
+meta_and_links("AG Grid: Privacy Policy", "About AG Grid", "We take your privacy very seriously at AG Grid. This page outlines our privacy policy which we have updated in light of GDPR.", true);
 ?>
 <script src="dist/homepage.js"></script>
 <link rel="stylesheet" href="dist/homepage.css">
@@ -26,10 +26,10 @@ meta_and_links("ag-Grid: Privacy Policy", "About ag-Grid", "We take your privacy
 			<div class="row">
 				<section>
 					<div id="introduction" class="text-left">
-						<h1 class="text-left">ag-Grid Privacy Policy</h1>
+						<h1 class="text-left">AG Grid Privacy Policy</h1>
 						<hr>
 						<h4 class="mb-5">Effective Date: May 17, 2018</h4>
-						<p>Welcome to ag-Grid's Privacy Policy.</p>
+						<p>Welcome to AG Grid's Privacy Policy.</p>
 						<p><strong>Your privacy is important to us.</strong></p>
 						<p>At ag-grid, we are fully committed to protecting your personal data and complying with all data privacy laws. </p>
 						<p>
@@ -59,11 +59,11 @@ meta_and_links("ag-Grid: Privacy Policy", "About ag-Grid", "We take your privacy
 								<p>
 								This privacy notice provides you with details of how we collect and process your personal data through your use of our <a href="https://www.ag-grid.com/">site.</a>
 								By providing us with your data, you warrant to us that you are over 13 years of age.
-								ag-Grid Ltd. is the data controller and we are responsible for your personal data (referred to as “we”, “us” or “our” in this privacy notice).
+								AG Grid Ltd. is the data controller and we are responsible for your personal data (referred to as “we”, “us” or “our” in this privacy notice).
 								<h4><strong>Contact Details</strong></h4>
 								<p>Our full details are: </p>
 								<p>
-									Full name of legal entity: <strong>ag-Grid Ltd.</strong><br>
+									Full name of legal entity: <strong>AG Grid Ltd.</strong><br>
 									Email address: <a href="mailto:info@ag-grid.com" target="_top">info@ag-grid.com</a><br>
 									Postal address: <strong>Bank Chambers, 6 Borough High Street, London, SE1 9QQ, United Kingdom.</strong><br>
 								</p>

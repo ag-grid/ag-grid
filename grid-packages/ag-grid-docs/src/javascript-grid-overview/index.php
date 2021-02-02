@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Overlays: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Overlays. Full control of Overlays to display messages to the user on top of the grid. Version 24.1.0 is available for download now, take it for a free two month trial.";
-$pageKeywords = "ag-Grid Overlays";
+$pageDescription = "Core feature of AG Grid supporting Angular, React, Javascript and more. One such feature is Overlays. Full control of Overlays to display messages to the user on top of the grid. Version 24.1.0 is available for download now, take it for a free two month trial.";
+$pageKeywords = "AG Grid Overlays";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
@@ -9,13 +9,13 @@ include '../documentation-main/documentation_header.php';
     <h1>Documentation Overview</h1>
 
     <p class="lead">
-        ag-Grid is not just about the JavaScript code we write, it is about the documentation as well.
+        AG Grid is not just about the JavaScript code we write, it is about the documentation as well.
         We believe documentation and examples are vital to assisting the developer on their
-        journey of learning ag-Grid.
+        journey of learning AG Grid.
     </p>
 
     <p>
-        We take as much pride in our documentation as we do in the ag-Grid library itself.
+        We take as much pride in our documentation as we do in the AG Grid library itself.
         We are developers, these documentation pages are written for you, developers talking
         to developers.
     </p>
@@ -24,13 +24,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Start with the <a href="../javascript-grid-getting-started/">Getting Started</a> section
-        relevant to your framework. Learn how to set up a simple instance of ag-Grid and learn
-        the difference between ag-Grid Community and ag-Grid Enterprise.
+        relevant to your framework. Learn how to set up a simple instance of AG Grid and learn
+        the difference between AG Grid Community and AG Grid Enterprise.
     </p>
 
     <p>
-        We invite all JavaScript developers to use ag-Grid Community for free and then those
-        who want to go the extra mile to become our customers of ag-Grid Enterprise.
+        We invite all JavaScript developers to use AG Grid Community for free and then those
+        who want to go the extra mile to become our customers of AG Grid Enterprise.
     </p>
 
     <h2>Where to go Next</h2>

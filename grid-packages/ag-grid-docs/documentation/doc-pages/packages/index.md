@@ -1,8 +1,8 @@
 ---
-title: "ag-Grid Packages"
+title: "AG Grid Packages"
 ---
 
-ag-Grid `packages` are the easiest way to get started with ag-Grid, but the trade-off will be a larger overall bundle size may be larger than required if you don't need all features within a given package.
+AG Grid `packages` are the easiest way to get started with AG Grid, but the trade-off will be a larger overall bundle size may be larger than required if you don't need all features within a given package.
 
 ## Introduction
 

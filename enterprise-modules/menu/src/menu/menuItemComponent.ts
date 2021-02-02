@@ -219,7 +219,7 @@ export class MenuItemComponent extends Component {
             } else if (typeof this.params.icon === 'string') {
                 icon.innerHTML = this.params.icon;
             } else {
-                console.warn('ag-Grid: menu item icon must be DOM node or string');
+                console.warn('AG Grid: menu item icon must be DOM node or string');
             }
         }
 

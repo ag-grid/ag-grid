@@ -2,10 +2,10 @@
 title: "Date Component"
 ---
 
-You can create your own date components, and ag-Grid will use them every time it needs to ask the user for a date value. The date components are currently used in **date filters**.
+You can create your own date components, and AG Grid will use them every time it needs to ask the user for a date value. The date components are currently used in **date filters**.
 
 
-By default the grid will use the browser provided date picker for Chrome and Firefox (as we think it's nice), but for all other browsers it will just provide a simple text field. You can use your own date picker to ag-Grid by providing a custom Date Component via the grid property `dateComponent` as follows:
+By default the grid will use the browser provided date picker for Chrome and Firefox (as we think it's nice), but for all other browsers it will just provide a simple text field. You can use your own date picker to AG Grid by providing a custom Date Component via the grid property `dateComponent` as follows:
 
 
 ```js

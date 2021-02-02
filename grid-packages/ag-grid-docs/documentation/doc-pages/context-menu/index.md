@@ -10,7 +10,7 @@ The user can bring up the context menu by right clicking on a cell. By default, 
 | It is not possible because of a browser security restriction that JavaScript cannot
 | take data from the clipboard without the user explicitly doing a paste command from the browser
 | (e.g. Ctrl+V or from the browser menu). If JavaScript could do this, then websites could steal
-| data from the client by accessing the clipboard maliciously. The reason why ag-Grid keeps
+| data from the client by accessing the clipboard maliciously. The reason why AG Grid keeps
 | the disabled paste option in the menu is to indicate to the user that paste is possible and it provides
 | the keyboard shortcut as a hint to the user.
 
@@ -75,7 +75,7 @@ The following is a list of all the default built in menu items with the rules ab
 
 ## Default Context Menu
 
-One drawback of using the ag-Grid context menu is that you may want to show the browsers context menu when debugging, for example in order to access your browsers dev tools. If you want the grid to do nothing (and hence allow the browser to display its context menu) then hold down the ctrl key while clicking for the context menu.
+One drawback of using the AG Grid context menu is that you may want to show the browsers context menu when debugging, for example in order to access your browsers dev tools. If you want the grid to do nothing (and hence allow the browser to display its context menu) then hold down the ctrl key while clicking for the context menu.
 
 Holding down ctrl & context menu bypasses the grids context menu. If you do want the grids context menu, even when ctrl is pressed, then set `allowContextMenuWithControlKey=true`.
 

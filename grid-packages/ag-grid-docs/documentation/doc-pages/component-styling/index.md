@@ -4,7 +4,7 @@ frameworks: ["react"]
 ---
 
 [[only-react]]
-|### Components Containers in ag-Grid
+|### Components Containers in AG Grid
 |
 |By default user supplied React components will be wrapped in a `div` but it is possible to have your component
 |wrapped in a container of your choice (i.e. a `span` etc), perhaps to override/control a third party component.

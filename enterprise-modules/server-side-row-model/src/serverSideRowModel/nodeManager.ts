@@ -8,7 +8,7 @@ export class NodeManager {
     public addRowNode(rowNode: RowNode): void {
         const id = rowNode.id!;
         if (this.rowNodes[id]) {
-            console.warn('ag-Grid: duplicate node id ' + rowNode.id);
+            console.warn('AG Grid: duplicate node id ' + rowNode.id);
             console.warn('first instance', this.rowNodes[id]!.data);
             console.warn('second instance', rowNode.data);
         }

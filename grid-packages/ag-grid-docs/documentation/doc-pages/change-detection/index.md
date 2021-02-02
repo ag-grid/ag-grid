@@ -33,12 +33,12 @@ The grid keeps a local copy of all values rendered in each cell. When a refresh 
 
 [[note]]
 | You might ask, is checking every cell against it's value a performance problem? The answer is no.
-| What ag-Grid does is similar to the change detection algorithm's in frameworks such as React or Angular.
+| What AG Grid does is similar to the change detection algorithm's in frameworks such as React or Angular.
 | Doing this many check's in JavaScript is not a problem. Slowness comes when the DOM is updated
-| many times. ag-Grid minimises the DOM updates by only updating the DOM where changes are detected.
+| many times. AG Grid minimises the DOM updates by only updating the DOM where changes are detected.
 | <br/>
 | <br/>
-| You might also ask, does ag-Grid have a cool Virtual DOM like React does? The answer is no. The grid has
+| You might also ask, does AG Grid have a cool Virtual DOM like React does? The answer is no. The grid has
 | state stored in the Row Model. So rather than comparing the actual DOM with a virtual DOM,
 | the grid compares 'the value that was rendered last time into the DOM' with with the value's
 | in the Row Model. Having a virtual DOM in this case would be redundant as the grid already has

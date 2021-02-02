@@ -114,7 +114,7 @@ NumberFilter.prototype.init = function(params) {
     this.setupGui();
 };
 
-// not called by ag-Grid, just for us to help setup
+// not called by AG Grid, just for us to help setup
 NumberFilter.prototype.setupGui = function() {
     this.gui = document.createElement('div');
     this.gui.innerHTML =

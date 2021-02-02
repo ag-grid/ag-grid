@@ -74,7 +74,7 @@ it just arbitrarily sets row span on some cells for demonstration purposes.
 
 ## Row Spanning Complex Example
 
-Row spanning will typically be used for creating reports with ag-Grid. Below
+Row spanning will typically be used for creating reports with AG Grid. Below
 is something that would be more typical of the row spanning feature. The following
 can be noted from the example:
 

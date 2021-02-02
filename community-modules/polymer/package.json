@@ -1,7 +1,7 @@
 {
   "name": "@ag-grid-community/polymer",
   "version": "25.0.0",
-  "description": "ag-Grid Polymer 3 Web Component",
+  "description": "AG Grid Polymer 3 Web Component",
   "main": "index.js",
   "repository": {
     "type": "git",

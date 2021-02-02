@@ -110,7 +110,7 @@ export class RowCssClassCalculator {
         const rowClass = this.gridOptionsWrapper.getRowClass();
         if (rowClass) {
             if (typeof rowClass === 'function') {
-                console.warn('ag-Grid: rowClass should not be a function, please use getRowClass instead');
+                console.warn('AG Grid: rowClass should not be a function, please use getRowClass instead');
                 return [];
             }
             process(rowClass);

@@ -5,17 +5,17 @@ IF YOU DON'T FILL OUT THE FOLLOWING INFORMATION WE MIGHT CLOSE YOUR ISSUE WITHOU
 **I'm submitting a ...**  (check one with "x")
 ```
 [] bug report => see 'Providing a Reproducible Scenario'
-[] feature request => do not use Github for feature requests, see 'Customers of ag-Grid'
+[] feature request => do not use Github for feature requests, see 'Customers of AG Grid'
 [] support request => see 'Requesting Community Support'
 ```
 
-**Customers of ag-Grid**
+**Customers of AG Grid**
 
-If you are a customer you are entitled to use the ag-Grid's customer support system (powered by Zendesk). Please use that channel for guaranteed response from the ag-Grid team with regards bugs, feature requests and support.
+If you are a customer you are entitled to use the AG Grid's customer support system (powered by Zendesk). Please use that channel for guaranteed response from the AG Grid team with regards bugs, feature requests and support.
 
 **Requesting Community Support**
 
-If you are not a customer of ag-Grid, ag-grid staff will label your issue as managed-by-the-community. This means that ag-Grid staff is not going to be actively looking into it and it will get closed if inactive for more than one month. The community is welcome to help with this question/support issue.
+If you are not a customer of AG Grid, ag-grid staff will label your issue as managed-by-the-community. This means that AG Grid staff is not going to be actively looking into it and it will get closed if inactive for more than one month. The community is welcome to help with this question/support issue.
 
 **Providing a Reproducible Scenario**
 Accepted reproducible scenarios are
@@ -44,8 +44,8 @@ Expected behaviour. If possible back this up with our docs/examples if possible
 **Please tell us about your environment:**
 <!-- Operating system, IDE, package manager, HTTP server, ... -->
 
-* **ag-Grid version:** X.X.X
-<!-- Check whether this is still an issue in the most recent ag-Grid version -->
+* **AG Grid version:** X.X.X
+<!-- Check whether this is still an issue in the most recent AG Grid version -->
 
 * **Browser:**
 <!-- Run `navigator.userAgent` in console of all of the browsers where this could be reproduced -->

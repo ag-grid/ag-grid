@@ -1000,7 +1000,7 @@ export class CellComp extends Component implements TooltipParentComp {
             // happens so no longer need to fire event.
             addRowCompListener: this.rowComp ? this.rowComp.addEventListener.bind(this.rowComp) : null,
             addRenderedRowListener: (eventType: string, listener: Function) => {
-                console.warn('ag-Grid: since ag-Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
+                console.warn('AG Grid: since AG Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
                 if (this.rowComp) {
                     this.rowComp.addEventListener(eventType, listener);
                 }
@@ -1184,7 +1184,7 @@ export class CellComp extends Component implements TooltipParentComp {
             if (!isPopup) { return cellEditorComp; }
 
             if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-                console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
+                console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                     '- either turn off fullRowEdit, or stop using popup editors.');
             }
 
@@ -1218,11 +1218,11 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         if (!cellEditor.getGui) {
-            console.warn(`ag-Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
+            console.warn(`AG Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
 
             // no getGui, for React guys, see if they attached a react component directly
             if ((cellEditor as any).render) {
-                console.warn(`ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?`);
+                console.warn(`AG Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?`);
             }
 
             this.beans.context.destroyBean(cellEditor);
@@ -2066,14 +2066,14 @@ export class CellComp extends Component implements TooltipParentComp {
         if (rowDragManaged) {
             // row dragging only available in default row model
             if (!clientSideRowModelActive) {
-                doOnce(() => console.warn('ag-Grid: managed row dragging is only allowed in the Client Side Row Model'),
+                doOnce(() => console.warn('AG Grid: managed row dragging is only allowed in the Client Side Row Model'),
                     'CellComp.addRowDragging');
 
                 return;
             }
 
             if (pagination) {
-                doOnce(() => console.warn('ag-Grid: managed row dragging is not possible when doing pagination'),
+                doOnce(() => console.warn('AG Grid: managed row dragging is not possible when doing pagination'),
                     'CellComp.addRowDragging');
 
                 return;

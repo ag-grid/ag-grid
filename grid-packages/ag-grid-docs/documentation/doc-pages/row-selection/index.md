@@ -24,7 +24,7 @@ When you pass data to the grid, it wraps each data item in a node object. This i
 - `api.getSelectedNodes()`: Returns an array of the selected nodes.
 - `api.getSelectedRows()`: Returns an array of data from the selected rows.
 
-Working with ag-Grid nodes is preferred over the row data as it provides you with more information and maps better to the internal representation of ag-Grid.
+Working with AG Grid nodes is preferred over the row data as it provides you with more information and maps better to the internal representation of AG Grid.
 
 ### Example: Single Row Selection
 

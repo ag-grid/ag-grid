@@ -1,7 +1,7 @@
 {
   "name": "ag-charts-react",
   "version": "3.0.0",
-  "description": "ag-Charts React Component",
+  "description": "AG Charts React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
   "scripts": {

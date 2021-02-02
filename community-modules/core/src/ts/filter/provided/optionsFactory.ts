@@ -29,7 +29,7 @@ export class OptionsFactory {
 
             if (every(requiredProperties, key => {
                 if (!filterOption[key]) {
-                    console.warn(`ag-Grid: ignoring FilterOptionDef as it doesn't contain a '${key}'`);
+                    console.warn(`AG Grid: ignoring FilterOptionDef as it doesn't contain a '${key}'`);
                     return false;
                 }
 
@@ -51,10 +51,10 @@ export class OptionsFactory {
             } else if (firstFilterOption.displayKey) {
                 this.defaultOption = firstFilterOption.displayKey;
             } else {
-                console.warn(`ag-Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'`);
+                console.warn(`AG Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'`);
             }
         } else {
-            console.warn('ag-Grid: no filter options for filter');
+            console.warn('AG Grid: no filter options for filter');
         }
     }
 

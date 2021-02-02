@@ -11,7 +11,7 @@ include '../jira_reports/jira_utilities.php';
 <html lang="en">
 <head lang="en">
     <?php
-    meta_and_links("ag-Grid: Pipeline of Upcoming Features and Roadmap", "ag-Grid javascript grid pipeline changelog release notes", "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Pipeline lists all known bugs, upcoming features and our Roadmap for major future releases. Version 23 is out now.", false);
+    meta_and_links("AG Grid: Pipeline of Upcoming Features and Roadmap", "AG Grid javascript grid pipeline changelog release notes", "AG Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Pipeline lists all known bugs, upcoming features and our Roadmap for major future releases. Version 23 is out now.", false);
     ?>
     <link rel="stylesheet" href="../dist/homepage.css">
     <link rel="stylesheet" href="../dist/aui/css/aui.css" media="all">
@@ -90,7 +90,7 @@ include '../jira_reports/jira_utilities.php';
 
                     <div class="note">
                         <p>
-                    The ag-Grid pipeline visualises the features and bug fixes we have in our internal issue tracker (JIRA).
+                    The AG Grid pipeline visualises the features and bug fixes we have in our internal issue tracker (JIRA).
                         The issues commonly have an ID, that looks like <code>AG-XXX</code>.</p>
                         <p>The next release tab contains items that we are looking into for our next release, that usually has a
                         scheduled release date.<br/></p>

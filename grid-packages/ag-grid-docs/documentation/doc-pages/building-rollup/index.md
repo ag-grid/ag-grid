@@ -1,16 +1,16 @@
 ---
-title: "Building ag-Grid with Rollup.js"
+title: "Building AG Grid with Rollup.js"
 ---
 
-We walk through the main steps required when using ag-Grid with Rollup.js.
+We walk through the main steps required when using AG Grid with Rollup.js.
 
 [[note]]
-| A full working example of using Rollup.js with ag-Grid can be found on
+| A full working example of using Rollup.js with AG Grid can be found on
 | [Github](https://github.com/seanlandsman/ag-grid-rollup).
 
 [[note]]
 | This walkthrough uses the `@ag-grid-community/all-modules` package which will include all
-| features of ag-Grid. If you're using Rollup to reduce your bundle size you probably want to be selective
+| features of AG Grid. If you're using Rollup to reduce your bundle size you probably want to be selective
 | in which packages you include - please see the [Modules](../modules/) documentation for more
 | information.
 

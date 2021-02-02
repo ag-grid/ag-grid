@@ -2,12 +2,12 @@
 title: "Floating Filter Component"
 ---
 
-Floating Filter components allow you to add your own floating filter types to ag-Grid. Use this:
+Floating Filter components allow you to add your own floating filter types to AG Grid. Use this:
 
 - When the provided floating filter for a provided filter does not meet your requirements and you want to replace with one of your own
 - When you have a custom filter and want to provide a floating filter for your custom filter
 
-This page focusses on writing your own floating filter components. To see general information about floating filters in ag-Grid see [floating filters](../floating-filters/).
+This page focusses on writing your own floating filter components. To see general information about floating filters in AG Grid see [floating filters](../floating-filters/).
 
 ## Floating Filter Lifecycle
 
@@ -74,7 +74,7 @@ interface IFloatingFilterParams {
 
     // Gets a reference to the parent filter. The result is returned asynchronously
     // via a callback as the parent filter may not exist yet. If it does
-    // not exist, it is created and asynchronously returned (ag-Grid itself
+    // not exist, it is created and asynchronously returned (AG Grid itself
     // does not create components asynchronously, however if providing a framework
     // provided filter e.g. React, it might be).
     //
@@ -168,8 +168,8 @@ Note that:
 [[only-angular]]
 | ## Floating Filters
 |
-| It is possible to provide an Angular floating filter for ag-Grid to use if you are are using the Angular version of
-| ag-Grid. See [registering framework components](../components/#registering-framework-components) for how to
+| It is possible to provide an Angular floating filter for AG Grid to use if you are are using the Angular version of
+| AG Grid. See [registering framework components](../components/#registering-framework-components) for how to
 | register framework components.
 |
 | The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Angular.
@@ -179,7 +179,7 @@ Note that:
 [[only-react]]
 | ## Floating Filters
 |
-| It is possible to provide a React floating filter for ag-Grid to use if you are are using the React version of ag-Grid.
+| It is possible to provide a React floating filter for AG Grid to use if you are are using the React version of AG Grid.
 | See [registering framework components](../components/#registering-framework-components) for how to register
 | framework components.
 |
@@ -193,8 +193,8 @@ Note that:
 [[only-vue]]
 | ## Vue Floating Filters
 |
-| It is possible to provide a Vue floating filter for ag-Grid to use if you are are using the Vue version of
-| ag-Grid. See [registering framework components](../components/#registering-framework-components) for how
+| It is possible to provide a Vue floating filter for AG Grid to use if you are are using the Vue version of
+| AG Grid. See [registering framework components](../components/#registering-framework-components) for how
 | to register framework components.
 |
 | The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Vue.

@@ -15,9 +15,9 @@ A Viewport is a row model that allows showing a 'window' of data in your client.
 
 To enable the Viewport Row Model, set the grid property `rowModelType='viewport'`.
 
-The term 'viewport' is a common term in GUIs used to describe the visible area when scrolls are used to display content that is larger than the visible area. In ag-Grid, the viewport is referred to as the vertical scroll position, thus it defines the rows that are currently rendered by the grid.
+The term 'viewport' is a common term in GUIs used to describe the visible area when scrolls are used to display content that is larger than the visible area. In AG Grid, the viewport is referred to as the vertical scroll position, thus it defines the rows that are currently rendered by the grid.
 
-ag-Grid uses 'DOM row virtualisation' which means it only renders the rows you currently see, so ag-Grid already uses the concept of a viewport for rendering the rows. The grid extends this concept and maps the viewport information to the Viewport Row Model.
+AG Grid uses 'DOM row virtualisation' which means it only renders the rows you currently see, so AG Grid already uses the concept of a viewport for rendering the rows. The grid extends this concept and maps the viewport information to the Viewport Row Model.
 
 Use a viewport to manage large live sets of data in the grid, where you only want to load a subset of the data into the grid and the data is updating at the source (typically a server), with the source sending updates to the grid when displayed data is changed.
 

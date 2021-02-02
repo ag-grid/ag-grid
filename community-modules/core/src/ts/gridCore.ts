@@ -235,7 +235,7 @@ export class GridCore extends ManagedFocusComponent {
     public setSideBarVisible(show: boolean) {
         if (!this.sideBarComp) {
             if (show) {
-                console.warn('ag-Grid: sideBar is not loaded');
+                console.warn('AG Grid: sideBar is not loaded');
             }
             return;
         }
@@ -245,7 +245,7 @@ export class GridCore extends ManagedFocusComponent {
 
     public setSideBarPosition(position: 'left' | 'right') {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: sideBar is not loaded');
+            console.warn('AG Grid: sideBar is not loaded');
             return;
         }
         this.sideBarComp.setSideBarPosition(position);
@@ -253,7 +253,7 @@ export class GridCore extends ManagedFocusComponent {
 
     public closeToolPanel() {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
             return;
         }
 
@@ -266,7 +266,7 @@ export class GridCore extends ManagedFocusComponent {
 
     public getToolPanelInstance(key: string): IToolPanel | undefined {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
             return;
         }
         return this.sideBarComp.getToolPanelInstance(key);
@@ -296,7 +296,7 @@ export class GridCore extends ManagedFocusComponent {
 
     public openToolPanel(key: string) {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
             return;
         }
 

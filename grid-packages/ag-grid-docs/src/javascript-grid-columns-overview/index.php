@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Columns";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers downloading the JavaScript packages for ag-Grid and ag-Grid Enterprise.";
+$pageTitle = "AG Grid Columns";
+$pageDescription = "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers downloading the JavaScript packages for AG Grid and AG Grid Enterprise.";
 $pageKeywords = "JavaScript Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';

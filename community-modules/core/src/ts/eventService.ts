@@ -27,7 +27,7 @@ export class EventService implements IEventEmitter {
     // use autowired attributes, as that would be confusing, as sometimes the attributes
     // would be wired, and sometimes not.
     //
-    // the global event servers used by ag-Grid is autowired by the context once, and this
+    // the global event servers used by AG Grid is autowired by the context once, and this
     // setBeans method gets called once.
     //
     // the times when this class is used outside of the context (eg RowNode has an instance of this

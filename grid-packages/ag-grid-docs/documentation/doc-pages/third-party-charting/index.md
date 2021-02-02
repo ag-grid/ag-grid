@@ -10,7 +10,7 @@ This section goes through examples of integrating the grid with [D3](https://d3j
 
 ## External Graphs using D3
 
-D3 is a powerful Graphing Library. In this example we provide an example that displays a simple ag-Grid table of stock
+D3 is a powerful Graphing Library. In this example we provide an example that displays a simple AG Grid table of stock
 data that when clicked on provides a simple time-series chart of the corresponding data. Multiple rows (or stocks) can be
 selected to provide a comparison between stocks.
 
@@ -18,7 +18,7 @@ selected to provide a comparison between stocks.
 
 ## Inline Graphs using jQuery Sparklines
 
-jQuery Sparklines is a great library that offers small but rich graphs - ideal for use within ag-Grid.
+jQuery Sparklines is a great library that offers small but rich graphs - ideal for use within AG Grid.
 
 In this example we demonstrate the following:
 

@@ -38,7 +38,7 @@ var myColumns = {
 
 ## Header Component
 
-This section details how to put a header component into ag-Grid. How to create header group components is explained in the next section.
+This section details how to put a header component into AG Grid. How to create header group components is explained in the next section.
 
 ### Grid vs Your Responsibilities
 
@@ -46,11 +46,11 @@ A Header Component allows customising the inside part of the header. The compone
 
 
 ```html
-    <!-- the ag-header-cell is always provided by ag-Grid -->
+    <!-- the ag-header-cell is always provided by AG Grid -->
     <!-- column moving and resize logic is put on this element by the grid -->
     <div class="ag-header-cell">
 
-    <!-- ag-Grid will also always provide a resize bar (if column resizing
+    <!-- AG Grid will also always provide a resize bar (if column resizing
     is enabled) and take care of all the resize logic. the grid usually
     floats this element to the right.-->
     <div class="ag-header-cell-resize"></div>
@@ -77,7 +77,7 @@ The header component (your bit) will be responsible for the following:
 
 ### Header Component Interface
 
-Header components work similar to other component types in ag-Grid in which they should implement the following interface:
+Header components work similar to other component types in AG Grid in which they should implement the following interface:
 
 ```ts
 interface IHeaderComp {
@@ -302,10 +302,10 @@ The example below shows a header component in action. The following can be obser
 
 <grid-example title='Header component' name='header-component' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
 
-This section details how to put a header group component into ag-Grid.
+This section details how to put a header group component into AG Grid.
 ### Grid vs Your Responsibilities
 
-As with normal headers, ag-Grid will always handle resize and column moving. The grid does not handle selection checkbox as this feature is only at the non-grouped header level. The header group component (your bit) is responsible for the following:
+As with normal headers, AG Grid will always handle resize and column moving. The grid does not handle selection checkbox as this feature is only at the non-grouped header level. The header group component (your bit) is responsible for the following:
 
 - **Group Open / Close:** If the group can expand (one or more columns visibility depends on the open / closed state of the group) then your header group component should handle the interaction with the user for opening and closing groups.
 - **Anything Else:** Whatever you want, it's your component!
