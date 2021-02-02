@@ -235,7 +235,7 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
     createChartGalleryPages(createPage);
 };
 
-exports.onCreateWebpackConfig = ({ actions }) => {
+exports.onCreateWebpackConfig = ({ actions, getConfig }) => {
     actions.setWebpackConfig({
         /* We use fs to write some files during the build, but fs is only available at compile time. This allows the
          * site to load at runtime by providing a dummy fs */
@@ -247,4 +247,16 @@ exports.onCreateWebpackConfig = ({ actions }) => {
             modules: [path.resolve(__dirname, 'src'), 'node_modules'],
         }
     });
+
+    const config = getConfig();
+    const { rules } = config.module;
+
+    rules.forEach(rule => {
+        const urlLoaders = Array.isArray(rule.use) ? rule.use.filter(use => use.loader.indexOf('/url-loader/') >= 0) : [];
+
+        // reduce maximum size for inlined assets to 512 bytes
+        urlLoaders.forEach(loader => loader.options.limit = 512);
+    });
+
+    actions.replaceWebpackConfig(config);
 };
