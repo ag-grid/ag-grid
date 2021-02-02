@@ -56,26 +56,21 @@ Which row model you use is set as a grid property `rowModelType`. Set it to one 
 Which row model you use will depend on your application. Here are some quick rules of thumb:
 
 - If using **ag-Grid Community**, use **Client-Side Row Model** if you want to load all your data into the browser, or **Infinite Row Model** if you want to load it in blocks.
-
 - If using **ag-Grid Enterprise**, use **Client-Side Row Model** if you want to load all your data into the browser, or **Server-Side Row Model** if you want to load it in blocks. Server-Side Row Model is Infinite Row Model plus more. So if you are an ag-Grid Enterprise customer, you should prefer Server-Side Row Model over Infinite Row Model.
-
 - Don't use **Viewport Row Model** unless you understand what its advantages are and when you need them. We find many of our users use Viewport Row Model when they don't need to and end up with more complicated applications as a result.
 
 Here are more detailed rules of thumb.
 
 - If you are not sure, use default **[Client-Side](../client-side-model/)**. The grid can handle massive amounts of data (100k+ rows). The grid will only render what's visible on the screen (40 rows approximately, depending on your screen size) even if you have thousands of rows returned from your server. You will not kill the grid with too much data - rather your browser will run out of memory before the grid gets into problems. So if you are unsure, go with Client-Side Row Model first and only change if you need to. With Client-Side, you get sorting, filtering, grouping, pivoting and aggregation all done for you by the grid. All of the examples in the documentation use the Client-Side model unless specified otherwise.
-
 - If you do not want to shift all the data from your server to your client, as the amount of data is too large to shift over the network or to extract from the underlying datasource, then use either Infinite, Server-Side or Viewport. Each one takes data from the server in different ways.
-
 - Use **[Infinite](../infinite-scrolling/)** or **[Server-Side](../server-side-model/)** to bring back a list of data one block at a time from the server. As the user scrolls, the grid will ask for more rows. Server-Side has more features than Infinite and will allow row grouping, aggregation, lazy-loading of groups and slice and dice of data.
-
 - Use **[Viewport](../viewport/)** if you want the server to know exactly what the user is looking at. This is best when you have a large amount of changing data and want to push updates to the client when the server-side data changes. Knowing exactly what the user is looking at means you only have to push updates to the relevant users. All the row models can receive updates but only the Viewport row model provides the server with the information of the rows the users currently sees on screen without scrolling.
 
 ## Row Model Comparisons
 
 Below is a quick feature comparison of all the grid's features across all four row models.
 
-<matrix-table src='row-models/resources/rowModels.json' rootnode='features' columns='{ "feature": "Feature", "clientSide": "Client-Side", "infinite": "Infinite", "serverSide": "Server-Side", "viewport": "Viewport" }'></matrix-table>
+<matrix-table src='row-models/resources/row-models.json' rootnode='features' columns='{ "feature": "Feature", "clientSide": "Client-Side", "infinite": "Infinite", "serverSide": "Server-Side", "viewport": "Viewport" }'></matrix-table>
 
 ## Deeper Understanding of Row Models
 
@@ -83,11 +78,10 @@ The grid follows an MVC pattern. Each data item is wrapped in a **Row Node** and
 stored in the **Row Model**. The grid rendering engine is called **Row Renderer** and
 listens for changes to the row model and updates the DOM accordingly.
 
-
 Below shows a simplified version of a class diagram showing the relationships between
 the major classes involved with the row models.
 
-<img src="resources/rowmodels.svg" alt="Diagram of Major Classes involved with the Row Models" style="max-width: 100%; margin-bottom: 1rem;" />
+<img src="resources/row-models.svg" alt="Diagram of Major Classes involved with the Row Models" style="max-width: 100%; margin-bottom: 1rem;" />
 
 The following should be noted from the diagram:
 

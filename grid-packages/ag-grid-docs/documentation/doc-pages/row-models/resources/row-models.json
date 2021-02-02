@@ -16,17 +16,17 @@
         },
         {
             "feature": "<a href='../row-sorting/'>Row Sorting</a>",
-            "clientSide": "(client)",
-            "infinite": "(server)",
-            "serverSide": "(client OR server)",
-            "viewport": "(server)"
+            "clientSide": "client",
+            "infinite": "server",
+            "serverSide": "client OR server",
+            "viewport": "server"
         },
         {
             "feature": "<a href='../filtering/'>Row Filtering</a>",
-            "clientSide": "(client)",
-            "infinite": "(server)",
-            "serverSide": "(client OR server)",
-            "viewport": "(server)"
+            "clientSide": "client",
+            "infinite": "server",
+            "serverSide": "client OR server",
+            "viewport": "server"
         },
         {
             "feature": "<a href='../filter-quick/'>Quick Filter</a>",
@@ -51,16 +51,16 @@
         },
         {
             "feature": "<a href='../grouping/'>Row Grouping</a>",
-            "clientSide": "(client)",
+            "clientSide": "client",
             "infinite": false,
-            "serverSide": "(server)",
+            "serverSide": "server",
             "viewport": false
         },
         {
             "feature": "<a href='../grouping/'>Row Pivoting</a>",
-            "clientSide": "(client)",
+            "clientSide": "client",
             "infinite": false,
-            "serverSide": "(server)",
+            "serverSide": "server",
             "viewport": false
         },
         {
@@ -72,9 +72,9 @@
         },
         {
             "feature": "<a href='../aggregation/'>Value Aggregation</a>",
-            "clientSide": "(client)",
+            "clientSide": "client",
             "infinite": false,
-            "serverSide": "(server)",
+            "serverSide": "server",
             "viewport": false
         },
         {
@@ -192,16 +192,16 @@
         {
             "feature": "<a href='../csv-export/'>CSV Export</a>",
             "clientSide": true,
-            "infinite": "(Data on screen)",
-            "serverSide": "(Data on screen)",
-            "viewport": "(Data on screen)"
+            "infinite": "data on screen",
+            "serverSide": "data on screen",
+            "viewport": "data on screen"
         },
         {
             "feature": "<a href='../excel-export/'>Excel Export</a>",
             "clientSide": true,
-            "infinite": "(Data on screen)",
-            "serverSide": "(Data on screen)",
-            "viewport": "(Data on screen)"
+            "infinite": "data on screen",
+            "serverSide": "data on screen",
+            "viewport": "data on screen"
         },
         {
             "feature": "<a href='../clipboard/'>Clipboard Copy & Paste</a>",
@@ -213,7 +213,7 @@
         {
             "feature": "<a href='../data-update-transactions/'>Update via Transaction</a>",
             "clientSide": true,
-            "infinite": "(Add Only)",
+            "infinite": "add only",
             "serverSide": false,
             "viewport": false
         },
