@@ -416,9 +416,7 @@ export class RowRenderer extends BeanStub {
     public redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         this.getLockOnRefresh();
 
-        const focusedCell: CellPosition | null =
-            params.cellToFocus ? params.cellToFocus :
-            this.getCellToRestoreFocusToAfterRefresh(params);
+        const focusedCell: CellPosition | null = this.getCellToRestoreFocusToAfterRefresh(params);
 
         this.sizeContainerToPageHeight();
         this.scrollToTopIfNewData(params);
