@@ -47,7 +47,7 @@ import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
-import {ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams} from "./interfaces/iClientSideRowModel";
+import { ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams } from "./interfaces/iClientSideRowModel";
 import { RowDataTransaction } from "./interfaces/rowDataTransaction";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { IImmutableService } from "./interfaces/iImmutableService";

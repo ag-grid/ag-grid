@@ -380,13 +380,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         if (!this.gridOptionsWrapper.isSuppressModelUpdateAfterUpdateTransaction()) { return false; }
 
         // return true if we are only doing update transactions
-        if (params.rowNodeTransactions==null) { return false;}
+        if (params.rowNodeTransactions == null) { return false; }
 
         const transWithAddsOrDeletes = _.filter(params.rowNodeTransactions, tx =>
-            (tx.add!=null && tx.add.length>0) || (tx.remove!=null && tx.remove.length>0)
+            (tx.add != null && tx.add.length > 0) || (tx.remove != null && tx.remove.length > 0)
         );
 
-        const transactionsContainUpdatesOnly = transWithAddsOrDeletes==null || transWithAddsOrDeletes.length == 0;
+        const transactionsContainUpdatesOnly = transWithAddsOrDeletes == null || transWithAddsOrDeletes.length == 0;
 
         return transactionsContainUpdatesOnly;
     }

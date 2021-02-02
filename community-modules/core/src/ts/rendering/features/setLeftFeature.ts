@@ -8,7 +8,7 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
 import { last } from "../../utils/array";
 import { exists } from "../../utils/generic";
-import {Events} from "../../eventKeys";
+import { Events } from "../../eventKeys";
 
 export class SetLeftFeature extends BeanStub {
 

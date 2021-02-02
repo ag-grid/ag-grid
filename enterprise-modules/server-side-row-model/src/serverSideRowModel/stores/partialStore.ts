@@ -189,11 +189,11 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     private isBlockFocused(block: PartialStoreBlock): boolean {
         const focusedCell = this.focusController.getFocusCellToUseAfterRefresh();
         if (!focusedCell) { return false; }
-        if (focusedCell.rowPinned!=null) { return false; }
+        if (focusedCell.rowPinned != null) { return false; }
 
         const blockIndexStart = block.getDisplayIndexStart();
         const blockIndexEnd = block.getDisplayIndexEnd();
-        if (blockIndexEnd==null || blockIndexStart==null) { return false; }
+        if (blockIndexEnd == null || blockIndexStart == null) { return false; }
 
         const hasFocus = focusedCell.rowIndex >= blockIndexStart && focusedCell.rowIndex < blockIndexEnd;
         return hasFocus;

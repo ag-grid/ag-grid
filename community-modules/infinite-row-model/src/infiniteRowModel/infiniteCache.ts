@@ -173,7 +173,7 @@ export class InfiniteCache extends BeanStub {
     private isBlockFocused(block: InfiniteBlock): boolean {
         const focusedCell = this.focusController.getFocusCellToUseAfterRefresh();
         if (!focusedCell) { return false; }
-        if (focusedCell.rowPinned!=null) { return false; }
+        if (focusedCell.rowPinned != null) { return false; }
 
         const blockIndexStart = block.getStartRow();
         const blockIndexEnd = block.getEndRow();
