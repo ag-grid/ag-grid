@@ -383,11 +383,6 @@ export class RowRenderer extends BeanStub {
     public redrawRows(rowNodes: RowNode[]): void {
         if (!rowNodes || rowNodes.length == 0) { return; }
 
-        // we work out the focused cell here rather than in redrawAfterModelUpdate
-        // in case the focused row is about to get removed, by which time it's to late
-        // to call getFocusedCell() as it would return back null
-        const cellFocused = this.focusController.getFocusCellToUseAfterRefresh();
-
         const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
 
         // remove the rows
@@ -395,8 +390,7 @@ export class RowRenderer extends BeanStub {
 
         // add draw them again
         this.redrawAfterModelUpdate({
-            recycleRows: true,
-            cellToFocus: cellFocused || undefined
+            recycleRows: true
         });
     }
 
@@ -1646,5 +1640,4 @@ export interface RefreshViewParams {
     // when new data, grid scrolls back to top
     newData?: boolean;
     newPage?: boolean;
-    cellToFocus?: CellPosition;
 }

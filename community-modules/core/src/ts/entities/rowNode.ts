@@ -535,8 +535,10 @@ export class RowNode implements IEventEmitter {
 
         this.mainEventService.dispatchEvent(event);
 
+        // when using footers we need to refresh the group row, as the aggregation
+        // values jump between group and footer
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.rowRenderer.redrawRows([this]);
+            this.rowRenderer.refreshCells({rowNodes: [this]});
         }
     }
 
