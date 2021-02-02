@@ -536,7 +536,7 @@ export class RowNode implements IEventEmitter {
         this.mainEventService.dispatchEvent(event);
 
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.rowRenderer.redrawRows([this], true);
+            this.rowRenderer.redrawRows([this]);
         }
     }
 

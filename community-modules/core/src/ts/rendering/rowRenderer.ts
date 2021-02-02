@@ -380,21 +380,13 @@ export class RowRenderer extends BeanStub {
         return result;
     }
 
-    public redrawRows(rowNodes: RowNode[], forceRestoreFocus: boolean = false): void {
+    public redrawRows(rowNodes: RowNode[]): void {
         if (!rowNodes || rowNodes.length == 0) { return; }
 
-        // we only need to be worried about rendered rows, as this method is
-        // called to what's rendered. if the row isn't rendered, we don't care
-        let focusedCell: CellPosition | null = null;
-
-        if (forceRestoreFocus) {
-            const cellFocused = this.focusController.getFocusCellToUseAfterRefresh();
-            const rowNode: RowNode | null = find(rowNodes, (rowNode) => this.rowPositionUtils.sameRow(
-                { rowIndex: rowNode.rowIndex!, rowPinned: rowNode.rowPinned }, cellFocused as RowPosition));
-            if (rowNode && cellFocused) {
-                focusedCell = cellFocused;
-            }
-        }
+        // we work out the focused cell here rather than in redrawAfterModelUpdate
+        // in case the focused row is about to get removed, by which time it's to late
+        // to call getFocusedCell() as it would return back null
+        const cellFocused = this.focusController.getFocusCellToUseAfterRefresh();
 
         const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
 
@@ -403,12 +395,9 @@ export class RowRenderer extends BeanStub {
 
         // add draw them again
         this.redrawAfterModelUpdate({
-            recycleRows: true
+            recycleRows: true,
+            cellToFocus: cellFocused || undefined
         });
-
-        if (focusedCell) {
-            this.restoreFocusedCell(focusedCell);
-        }
     }
 
     private getCellToRestoreFocusToAfterRefresh(params: RefreshViewParams): CellPosition | null {
@@ -433,7 +422,9 @@ export class RowRenderer extends BeanStub {
     public redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         this.getLockOnRefresh();
 
-        const focusedCell: CellPosition | null = this.getCellToRestoreFocusToAfterRefresh(params);
+        const focusedCell: CellPosition | null =
+            params.cellToFocus ? params.cellToFocus :
+            this.getCellToRestoreFocusToAfterRefresh(params);
 
         this.sizeContainerToPageHeight();
         this.scrollToTopIfNewData(params);
@@ -1655,4 +1646,5 @@ export interface RefreshViewParams {
     // when new data, grid scrolls back to top
     newData?: boolean;
     newPage?: boolean;
+    cellToFocus?: CellPosition;
 }
