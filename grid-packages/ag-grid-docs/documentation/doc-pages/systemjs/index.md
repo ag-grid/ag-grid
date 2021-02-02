@@ -2,8 +2,8 @@
 title: "Angular - Building with SystemJS"
 ---
 
-We document the main steps required when using SystemJS and SystemJS-Builder below, but please 
-refer to [ag-grid-angular-example](https://github.com/ag-grid/ag-grid-angular-example) on GitHub 
+We document the main steps required when using SystemJS and SystemJS-Builder below, but please
+refer to [ag-grid-angular-example](https://github.com/ag-grid/ag-grid-angular-example) on GitHub
 for a full working example of this.
 
 ## Initialise Project
@@ -25,12 +25,12 @@ npm i --save-dev systemjs@0.19.x systemjs-builder@0.15.33 concurrently@2.2.0 lit
 npm i --save @ag-grid-enterprise/all-modules
 ```
 
-Our application will be a very simple one, consisting of a single Module, a single Component and a 
+Our application will be a very simple one, consisting of a single Module, a single Component and a
 bootstrap file, as well a few utility & configuration files.
 
 The resulting project structure will look like this:
 
-```
+```bash
 ag-grid-systemjs
 ├── aot
 │   ├── ag-grid.css
@@ -56,7 +56,7 @@ ag-grid-systemjs
 ```
 
 ```ts
-// app/app.module.ts 
+// app/app.module.ts
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 // ag-grid
@@ -80,7 +80,7 @@ export class AppModule {
 ```
 
 ```ts
-// app/app.component.ts 
+// app/app.component.ts
 import { Component } from "@angular/core";
 import { GridOptions } from "@ag-grid-community/all-modules";
 
@@ -115,11 +115,11 @@ export class AppComponent {
 ```
 
 ```html
-<!-- app/app.component.html --> 
+<!-- app/app.component.html -->
 
 <ag-grid-angular
     #agGrid
-    style="width: 500px; height: 150px;" 
+    style="width: 500px; height: 150px;"
     class="ag-theme-alpine"
     [gridOptions]="gridOptions"
     [columnDefs]="columnDefs"
@@ -132,7 +132,7 @@ export class AppComponent {
 Our boot file for Just in Time (JIT) looks like this:
 
 ```ts
-// app/boot.ts 
+// app/boot.ts
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { AppModule } from "./app.module";
 
@@ -143,11 +143,11 @@ import { AppModule } from "./app.module";
 platformBrowserDynamic().bootstrapModule(AppModule);
 ```
 
-Our tsconfig.json file looks like this - note we're excluding the AOT related files 
+Our tsconfig.json file looks like this - note we're excluding the AOT related files
 (see [AOT](#for-ahead-of-time-aot-compilation) below) here:
 
 ```json
-// tsconfig.json 
+// tsconfig.json
 {
   "compilerOptions": {
     "target": "es5",
@@ -173,7 +173,7 @@ Our tsconfig.json file looks like this - note we're excluding the AOT related fi
 For Just in Time (JIT) compilation our SystemJS Configuration file looks like this:
 
 ```js
-// systemjs.config.js 
+// systemjs.config.js
 (function (global) {
     System.config({
             defaultJSExtensions: true,
@@ -207,7 +207,7 @@ For Just in Time (JIT) compilation our SystemJS Configuration file looks like th
 ```
 
 ```html
-<!-- index.html --> 
+<!-- index.html -->
 <!DOCTYPE html>
 <html>
 
@@ -263,11 +263,11 @@ We can now run `npm start` to run the development setup.
 
 ### For Ahead-of-Time (AOT) Compilation
 
-Our boot file for Ahead-of-Time (AOT) is a bit different this time - this time 
+Our boot file for Ahead-of-Time (AOT) is a bit different this time - this time
 we'll make use of the compiled factories:
 
 ```ts
-// app/boot-aot.ts 
+// app/boot-aot.ts
 import { platformBrowser } from "@angular/platform-browser";
 import { AppModuleNgFactory } from "../aot/app/app.module.ngfactory";
 
@@ -279,7 +279,7 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</snippet>
 
     We have a separate tsconfig file (tsconfig-aot.json) for AOT mode::
     <snippet>
-// tsconfig-aot.json 
+// tsconfig-aot.json
 {
   "compilerOptions": {
     "target": "es5",
@@ -308,7 +308,7 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</snippet>
 Our SystemJS config file is different for AOT:
 
 ```js
-// aot/systemjs.config.js 
+// aot/systemjs.config.js
 (function (global) {
     System.config({
             defaultJSExtensions: true,
@@ -354,7 +354,7 @@ Our SystemJS config file is different for AOT:
 })(this);
 ```
 
-Our AOT index.html file - this time we'll be using a bundled AOT version of the code. This 
+Our AOT index.html file - this time we'll be using a bundled AOT version of the code. This
 will result is quicker startup and runtime behaviour, as well as less network traffic:
 
 ```html
@@ -445,8 +445,8 @@ Finally, we can add the following utlity scripts to our package.json:
 
 <img src="../webpack/resources/seed.png" alt="Grid Example" />
 
-All the above items are specific to either Angular, SystemJS or SystemJS Builder. The above 
-is intended to point you in the right direction. If you need more information on this, please 
+All the above items are specific to either Angular, SystemJS or SystemJS Builder. The above
+is intended to point you in the right direction. If you need more information on this, please
 see the documentation for those projects.
 
 ##  Angular Grid Resources
