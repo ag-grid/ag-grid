@@ -8,6 +8,8 @@ import { siteMetadata } from './gatsby-config';
  * still required to be installed as they are used elsewhere, so we import the versions here to ensure we are
  * consistent. */
 export const onRenderBody = ({ setPostBodyComponents }) => {
+    const scrollOffset = 80;
+
     setPostBodyComponents([
         <script
             key="jquery"
@@ -16,7 +18,20 @@ export const onRenderBody = ({ setPostBodyComponents }) => {
         <script
             key="bootstrap"
             src={`https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/${dependencies['bootstrap']}/js/bootstrap.bundle.min.js`}
-            crossOrigin="anonymous" />
+            crossOrigin="anonymous" />,
+        <script
+            key="smooth-scroll"
+            src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scroll/16.1.3/smooth-scroll.polyfills.min.js"
+            crossOrigin="anonymous" />,
+        <script key="initialise-smooth-scroll" dangerouslySetInnerHTML={{
+            __html: `
+            var scroll = new SmoothScroll(
+                'a[href*="#"]',
+                {
+                    speed: 200,
+                    speedAsDuration: true,
+                    offset: function() { return ${scrollOffset}; }
+                });`}} />,
     ]);
 };
 
@@ -36,7 +51,8 @@ export const wrapPageElement = ({ element, props: { location: { pathname } } }) 
 };
 
 export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents }) => {
-    const headComponents = getHeadComponents();
+    // remove script that causes issues with scroll position when a page is first loaded
+    const headComponents = getHeadComponents().filter(el => el.key !== 'gatsby-remark-autolink-headers-script');
 
     if (process.env.NODE_ENV === 'production') {
         headComponents.forEach(el => {

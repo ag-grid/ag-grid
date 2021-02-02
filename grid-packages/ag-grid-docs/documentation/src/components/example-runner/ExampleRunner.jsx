@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
 import classnames from 'classnames';
 import fs from 'fs';
@@ -46,23 +46,14 @@ const writeIndexHtmlFiles = exampleInfo => {
 const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, set }) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
-    const [exampleInfo, setExampleInfo] = useState(null);
+    const exampleInfo = useMemo(
+        () => getExampleInfo(nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact),
+        [nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact]
+    );
 
     if (isServerSideRendering()) {
-        const exampleInfo = getExampleInfo(
-            nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
-
         writeIndexHtmlFiles(exampleInfo);
     }
-
-    useEffect(() => {
-        const updatedExampleInfo = getExampleInfo(
-            nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
-
-        setExampleInfo(updatedExampleInfo);
-    }, [nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact]);
-
-    if (!exampleInfo) { return null; }
 
     const exampleStyle = {
         width: '100%',
