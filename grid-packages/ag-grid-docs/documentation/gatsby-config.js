@@ -59,10 +59,6 @@ const plugins = [
                 classes: 'note warning',
                 title: 'optional'
               },
-              info: {
-                classes: 'note info',
-                title: 'optional'
-              },
               'only-javascript': {
                 classes: 'javascript-only-section',
               },

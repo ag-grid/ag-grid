@@ -12,9 +12,7 @@ Under normal usage, your application should set the width and height of the grid
 <div id="myGrid" class="ag-theme-alpine" style="width: 500px; height: 200px;"></div>
 ```
 
-[[warning]]
-| **Pitfall When Using Percent Width & Height**
-|
+[[warning | Pitfall When Using Percent Width & Height]]
 | If using % for your height, then make sure the container you are putting the grid into
 | also has height specified, as the browser will fit the div according to a percentage of
 | the parents height, and if the parent has no height, then this % will always be zero.
@@ -41,16 +39,14 @@ To allow the grid to auto-size it's height to fit rows, set grid property `domLa
 
 When `domLayout='autoHeight'` then your application **should not** set height on the grid div, as the div should be allowed flow naturally to fit the grid contents. When auto height is off then your application **should** set height on the grid div, as the grid will fill the div you provide it.
 
-[[note]]
-| Don't use Grid Auto Height when displaying large numbers of rows.
-|
+[[warning | Don't use Grid Auto Height when displaying large numbers of rows]]
 | If using Grid Auto Height, then the grid will render all rows
 | into the DOM. This is different to normal operation where the grid will only render
 | rows that are visible inside the grid's scrollable viewport. For large grids (eg >1,000
 | rows) the draw time of the grid will be slow, or for very large grids, your application
 | can freeze. This is not a problem with the grid, it is a limitation on browsers
 | on how much data they can easily display on one web page. For this reason, if showing
-| large amounts of data, it is not adviseable to use Grid Auto Height. Instead use
+| large amounts of data, it is not advisable to use Grid Auto Height. Instead use
 | the grid as normal and the grid's row virtualisation will take care of this problem
 | for you.
 
@@ -65,7 +61,7 @@ The example below demonstrates the autoHeight feature. Notice the following:
 
 [[note]]
 | The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.
-| Note that if you use the example inlined the scroll bars shown are for the containing iframe, not the grid.
+| Note that if you use the example inlined the scroll bars shown are for the containing `iframe`, not the grid.
 
 <grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 660, "noStyle": 1, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 

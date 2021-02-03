@@ -137,7 +137,12 @@ main {
     &:global(.note) {
         @extend .alert, .alert-primary;
 
-        background-color: #e9f4ff;
+        background-image: url("../images/info.svg");
+        background-size: 3rem;
+        background-repeat: no-repeat;
+        background-position: 1rem 1rem;
+        padding-left: 5rem;
+        min-height: 5rem;
 
         :global(code.language-text) {
             background-color: $pink;
@@ -154,15 +159,12 @@ main {
 
         &:global(.warning) {
             @extend .alert-warning;
-        }
-
-        &:global(.info) {
-            @extend .alert-info;
+            background-image: url("../images/warning.svg");
         }
     }
 
     &:global(-heading) {
-        @extend .alert-heading;
+        @extend .alert-heading, .h5;
     }
 
     &:global(-body) {
