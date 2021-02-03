@@ -7,8 +7,8 @@ import Footer from 'components/footer/Footer';
 import Search from 'components/search/Search';
 import FrameworkSelector from 'components/FrameworkSelector';
 import { getPageName } from 'utils/get-page-name';
-import styles from './index.module.scss';
 import favIcons from '../images/favicons';
+import styles from './index.module.scss';
 
 const TopBar = ({ frameworks, framework, path }) => (
     <div className={styles['top-bar']}>
@@ -41,16 +41,8 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
 
     return <GlobalContextProvider>
         <Helmet>
-            <link rel="icon" sizes="196x196" href={ favIcons.favIcon196 } ></link>
-            <link rel="icon" sizes="192x192" href={ favIcons.favIcon192 } ></link>
-            <link rel="icon" sizes="180x180" href={ favIcons.favIcon180 } ></link>
-            <link rel="icon" sizes="167x167" href={ favIcons.favIcon167 } ></link>
-            <link rel="icon" sizes="152x152" href={ favIcons.favIcon152 } ></link>
-            <link rel="icon" sizes="128x128" href={ favIcons.favIcon128 } ></link>
-            <link rel="icon" sizes="32x32" href={ favIcons.favIcon32 } ></link>
-            <link rel="apple-touch-icon" sizes="180x180" href={ favIcons.favIcon180Touch }></link>
-            <link rel="apple-touch-icon" sizes="167x167" href={ favIcons.favIcon167Touch }></link>
-            <link rel="apple-touch-icon" sizes="152x152" href={ favIcons.favIcon152Touch }></link>
+            {getFavicons()}
+            {getAppleTouchIcons()}
         </Helmet>
         <div className={styles['main-container']}>
             <Helmet htmlAttributes={{ lang: 'en' }} />
@@ -74,5 +66,11 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
         <Footer framework={framework} />
     </GlobalContextProvider>;
 };
+
+const getFavicons = () =>
+    [196, 192, 180, 167, 152, 128, 32].map(size => <link rel="icon" type="image/png" sizes={`${size}x${size}`} href={favIcons[`favIcon${size}`]} />);
+
+const getAppleTouchIcons = () =>
+    [180, 167, 152].map(size => <link rel="apple-touch-icon" sizes={`${size}x${size}`} href={favIcons[`favIcon${size}Touch`]} />);
 
 export default Layout;
