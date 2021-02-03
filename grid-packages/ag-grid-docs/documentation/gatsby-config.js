@@ -1,4 +1,6 @@
 require('dotenv').config();
+
+const isDevelopment = require('./src/utils/is-development');
 const fs = require('fs');
 const gracefulFs = require('graceful-fs');
 gracefulFs.gracefulify(fs);
@@ -37,7 +39,8 @@ const plugins = [
   {
     resolve: 'gatsby-plugin-page-creator',
     options: {
-      path: `${__dirname}/src/pages`,
+      path: `${__dirname}/pages`,
+      ignore: isDevelopment() ? undefined : ['example-runner.jsx'],
     },
   },
   {
