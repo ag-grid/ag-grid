@@ -131,9 +131,8 @@ export class GridSerializer extends BeanStub {
         function processRow(node: RowNode): void {
             const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
             const shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
-            const shouldSkipOpenParents = hideOpenParents && node.expanded && !node.displayed;
 
-            if (node.group && (params.skipGroups || shouldSkipCurrentGroup || shouldSkipOpenParents)) {
+            if (node.group && (params.skipGroups || shouldSkipCurrentGroup || hideOpenParents)) {
                 return;
             }
 
