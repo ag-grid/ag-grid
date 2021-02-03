@@ -48,9 +48,9 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
             <link rel="icon" sizes="152x152" href={ favIcons.favIcon152 } ></link>
             <link rel="icon" sizes="128x128" href={ favIcons.favIcon128 } ></link>
             <link rel="icon" sizes="32x32" href={ favIcons.favIcon32 } ></link>
-            <link rel="apple-touch-icon" sizes="180x180" href={ favIcons.favIcon180 }></link>
-            <link rel="apple-touch-icon" sizes="167x167" href={ favIcons.favIcon167 }></link>
-            <link rel="apple-touch-icon" sizes="152x152" href={ favIcons.favIcon152 }></link>
+            <link rel="apple-touch-icon" sizes="180x180" href={ favIcons.favIcon180Touch }></link>
+            <link rel="apple-touch-icon" sizes="167x167" href={ favIcons.favIcon167Touch }></link>
+            <link rel="apple-touch-icon" sizes="152x152" href={ favIcons.favIcon152Touch }></link>
         </Helmet>
         <div className={styles['main-container']}>
             <Helmet htmlAttributes={{ lang: 'en' }} />

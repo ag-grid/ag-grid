@@ -85,6 +85,9 @@ META;
     <link rel="icon" type="image/png" sizes="152x152" href="{$prefix}_assets/favicons/favicon-152.png" />
     <link rel="icon" type="image/png" sizes="128x128" href="{$prefix}_assets/favicons/favicon-128.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="{$prefix}_assets/favicons/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{$prefix}_assets/favicons/favicon-180-touch.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="{$prefix}_assets/favicons/favicon-167-touch.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="{$prefix}_assets/favicons/favicon-152-touch.png" />
     ${GLOBALS['LINKEDIN_SCRIPT']}
 META;
 }
