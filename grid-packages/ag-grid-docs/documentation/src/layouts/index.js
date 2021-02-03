@@ -8,6 +8,7 @@ import Search from 'components/search/Search';
 import FrameworkSelector from 'components/FrameworkSelector';
 import { getPageName } from 'utils/get-page-name';
 import styles from './index.module.scss';
+import favIcons from '../images/favicons';
 
 const TopBar = ({ frameworks, framework, path }) => (
     <div className={styles['top-bar']}>
@@ -39,6 +40,15 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
     const pageName = getPageName(path);
 
     return <GlobalContextProvider>
+        <Helmet>
+            <link rel="icon" sizes="196x196" href={ favIcons.favIcon196 } ></link>
+            <link rel="icon" sizes="192x192" href={ favIcons.favIcon192 } ></link>
+            <link rel="icon" sizes="180x180" href={ favIcons.favIcon180 } ></link>
+            <link rel="icon" sizes="167x167" href={ favIcons.favIcon167 } ></link>
+            <link rel="icon" sizes="152x152" href={ favIcons.favIcon152 } ></link>
+            <link rel="icon" sizes="128x128" href={ favIcons.favIcon128 } ></link>
+            <link rel="icon" sizes="32x32" href={ favIcons.favIcon32 } ></link>
+        </Helmet>
         <div className={styles['main-container']}>
             <Helmet htmlAttributes={{ lang: 'en' }} />
             <header className={styles.header}>
