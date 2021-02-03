@@ -1,18 +1,18 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
-import { RowNode } from "./rowNode";
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnApi";
-import { Column } from "./column";
-import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { ICellRenderer, ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
-import { IDatasource } from "../interfaces/iDatasource";
-import { CellPosition } from "./cellPosition";
-import { IDateComp } from "../rendering/dateComponent";
-import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
-import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
+import { RowNode } from './rowNode';
+import { GridApi } from '../gridApi';
+import { ColumnApi } from '../columnController/columnApi';
+import { Column } from './column';
+import { IViewportDatasource } from '../interfaces/iViewportDatasource';
+import { ICellRenderer, ICellRendererComp, ICellRendererFunc } from '../rendering/cellRenderers/iCellRenderer';
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './colDef';
+import { IDatasource } from '../interfaces/iDatasource';
+import { CellPosition } from './cellPosition';
+import { IDateComp } from '../rendering/dateComponent';
+import { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
+import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from '../interfaces/exportParams';
 import {
     AsyncTransactionsFlushed,
     BodyScrollEvent,
@@ -80,17 +80,22 @@ import {
     ToolPanelVisibleChangedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent
-} from "../events";
-import { IComponent } from "../interfaces/iComponent";
-import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
-import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
-import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
-import { StatusPanelDef } from "../interfaces/iStatusPanel";
-import { SideBarDef } from "./sideBar";
-import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
-import {AgChartOptions, AgChartTheme, AgChartThemeOptions, AgChartThemeOverrides} from "../interfaces/iAgChartOptions";
-import { HeaderPosition } from "../headerRendering/header/headerPosition";
+    VirtualRowRemovedEvent,
+} from '../events';
+import { IComponent } from '../interfaces/iComponent';
+import { AgGridRegisteredComponentInput } from '../components/framework/userComponentRegistry';
+import { ILoadingOverlayComp } from '../rendering/overlays/loadingOverlayComponent';
+import { INoRowsOverlayComp } from '../rendering/overlays/noRowsOverlayComponent';
+import { StatusPanelDef } from '../interfaces/iStatusPanel';
+import { SideBarDef } from './sideBar';
+import { ChartMenuOptions, ChartOptions, ChartType } from '../interfaces/iChartOptions';
+import {
+    AgChartOptions,
+    AgChartTheme,
+    AgChartThemeOptions,
+    AgChartThemeOverrides,
+} from '../interfaces/iAgChartOptions';
+import { HeaderPosition } from '../headerRendering/header/headerPosition';
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -147,6 +152,7 @@ export interface GridOptions {
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
+    rowFillExtraWidth?: boolean;
 
     /** @deprecated Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
@@ -206,7 +212,7 @@ export interface GridOptions {
     allowShowChangeAfterFilter?: boolean;
     quickFilterText?: string;
     cacheQuickFilter?: boolean;
-    aggFuncs?: { [key: string]: IAggFunc; };
+    aggFuncs?: { [key: string]: IAggFunc };
     suppressColumnVirtualisation?: boolean;
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
@@ -322,7 +328,7 @@ export interface GridOptions {
     keepDetailRows?: boolean;
     keepDetailRowsCount?: number;
     isRowMaster?: IsRowMaster;
-    detailCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    detailCellRenderer?: { new (): ICellRendererComp } | ICellRendererFunc | string;
     detailCellRendererFramework?: any;
     detailCellRendererParams?: any;
     detailRowAutoHeight?: boolean;
@@ -333,7 +339,7 @@ export interface GridOptions {
     pinnedBottomRowData?: any[];
     sideBar?: SideBarDef | string | boolean;
     columnDefs?: (ColDef | ColGroupDef)[];
-    columnTypes?: { [key: string]: ColDef; };
+    columnTypes?: { [key: string]: ColDef };
     datasource?: IDatasource;
     viewportDatasource?: IViewportDatasource;
     serverSideDatasource?: IServerSideDatasource;
@@ -352,15 +358,15 @@ export interface GridOptions {
     // callbacks
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
     postProcessPopup?: (params: PostProcessPopupParams) => void;
-    frameworkComponents?: { [p: string]: { new(): any; }; } | any;
-    components?: { [p: string]: AgGridRegisteredComponentInput<IComponent<any>>; };
-    dateComponent?: string | { new(): IDateComp; };
+    frameworkComponents?: { [p: string]: { new (): any } } | any;
+    components?: { [p: string]: AgGridRegisteredComponentInput<IComponent<any>> };
+    dateComponent?: string | { new (): IDateComp };
     dateComponentFramework?: any;
-    groupRowRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    groupRowRenderer?: { new (): ICellRendererComp } | ICellRendererFunc | string;
     groupRowRendererFramework?: any;
     groupRowRendererParams?: any;
     /** @deprecated - this is now groupRowRendererParams.innerRenderer */
-    groupRowInnerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    groupRowInnerRenderer?: { new (): ICellRendererComp } | ICellRendererFunc | string;
     /** @deprecated - this is now groupRowRendererParams.innerRendererFramework */
     groupRowInnerRendererFramework?: any;
     createChartContainer?: (params: ChartRef) => void;
@@ -371,8 +377,8 @@ export interface GridOptions {
     doesExternalFilterPass?(node: RowNode): boolean;
 
     getRowStyle?: Function;
-    getRowClass?: (params: any) => (string | string[]);
-    rowClassRules?: { [cssClassName: string]: (((params: any) => boolean) | string); };
+    getRowClass?: (params: any) => string | string[];
+    rowClassRules?: { [cssClassName: string]: ((params: any) => boolean) | string };
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
@@ -386,19 +392,19 @@ export interface GridOptions {
     getDocument?: () => Document;
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
-    loadingCellRenderer?: { new(): ICellRenderer; } | string;
+    loadingCellRenderer?: { new (): ICellRenderer } | string;
     loadingCellRendererFramework?: any;
     loadingCellRendererParams?: any;
 
-    loadingOverlayComponent?: { new(): ILoadingOverlayComp; } | string;
+    loadingOverlayComponent?: { new (): ILoadingOverlayComp } | string;
     loadingOverlayComponentFramework?: any;
     loadingOverlayComponentParams?: any;
 
-    noRowsOverlayComponent?: { new(): INoRowsOverlayComp; } | string;
+    noRowsOverlayComponent?: { new (): INoRowsOverlayComp } | string;
     noRowsOverlayComponentFramework?: any;
     noRowsOverlayComponentParams?: any;
 
-    fullWidthCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    fullWidthCellRenderer?: { new (): ICellRendererComp } | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;
     fullWidthCellRendererParams?: any;
 
@@ -623,9 +629,9 @@ export interface IsApplyServerSideTransaction {
 }
 
 export interface IsApplyServerSideTransactionParams {
-    transaction: ServerSideTransaction,
-    parentNode: RowNode,
-    storeInfo: any
+    transaction: ServerSideTransaction;
+    parentNode: RowNode;
+    storeInfo: any;
 }
 
 export interface GetServerSideGroupKey {
@@ -775,7 +781,7 @@ export interface ChartRef {
 
 export enum ServerSideStoreType {
     Full = 'full',
-    Partial = 'partial'
+    Partial = 'partial',
 }
 
 export interface ServerSideStoreParams {

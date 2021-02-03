@@ -8,7 +8,8 @@ import {
     GetRowNodeIdFunc,
     GridOptions,
     IsRowMaster,
-    IsRowSelectable, IsServerSideGroupOpenByDefaultParams,
+    IsRowSelectable,
+    IsServerSideGroupOpenByDefaultParams,
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
@@ -16,7 +17,7 @@ import {
     ProcessChartOptionsParams,
     ProcessDataFromClipboardParams,
     TabToNextCellParams,
-    TabToNextHeaderParams
+    TabToNextHeaderParams,
 } from './entities/gridOptions';
 import { EventService } from './eventService';
 import { Constants } from './constants/constants';
@@ -40,7 +41,7 @@ import { AutoHeightCalculator } from './rendering/row/autoHeightCalculator';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
-import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import { AgChartTheme, AgChartThemeOverrides } from './interfaces/iAgChartOptions';
 import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { exists, missing, values } from './utils/generic';
@@ -71,14 +72,18 @@ function toNumber(value: any): number {
 }
 
 function zeroOrGreater(value: any, defaultValue: number): number {
-    if (value >= 0) { return value; }
+    if (value >= 0) {
+        return value;
+    }
 
     // zero gets returned if number is missing or the wrong type
     return defaultValue;
 }
 
 function oneOrGreater(value: any, defaultValue: number): number {
-    if (value > 0) { return value; }
+    if (value > 0) {
+        return value;
+    }
     // zero gets returned if number is missing or the wrong type
     return defaultValue;
 }
@@ -166,7 +171,9 @@ export class GridOptionsWrapper {
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
         if (this.isGroupSelectsChildren() && this.isSuppressParentsInRowNodes()) {
-            console.warn("ag-Grid: 'groupSelectsChildren' does not work with 'suppressParentsInRowNodes', this selection method needs the part in rowNode to work");
+            console.warn(
+                "ag-Grid: 'groupSelectsChildren' does not work with 'suppressParentsInRowNodes', this selection method needs the part in rowNode to work"
+            );
         }
 
         if (this.isGroupSelectsChildren()) {
@@ -176,8 +183,8 @@ export class GridOptionsWrapper {
             if (this.isRowModelServerSide()) {
                 console.warn(
                     'ag-Grid: group selects children is NOT support for Server Side Row Model. ' +
-                    'This is because the rows are lazy loaded, so selecting a group is not possible as' +
-                    'the grid has no way of knowing what the children are.'
+                        'This is because the rows are lazy loaded, so selecting a group is not possible as' +
+                        'the grid has no way of knowing what the children are.'
                 );
             }
         }
@@ -206,12 +213,16 @@ export class GridOptionsWrapper {
         }
 
         if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {
-            console.warn("ag-Grid: 'enableRangeHandle' and 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
+            console.warn(
+                "ag-Grid: 'enableRangeHandle' and 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true"
+            );
         }
 
         const warnOfDeprecaredIcon = (name: string) => {
             if (this.gridOptions.icons && this.gridOptions.icons[name]) {
-                console.warn(`gridOptions.icons.${name} is no longer supported. For information on how to style checkboxes and radio buttons, see https://www.ag-grid.com/javascript-grid-icons/`);
+                console.warn(
+                    `gridOptions.icons.${name} is no longer supported. For information on how to style checkboxes and radio buttons, see https://www.ag-grid.com/javascript-grid-icons/`
+                );
             }
         };
         warnOfDeprecaredIcon('radioButtonOff');
@@ -229,9 +240,11 @@ export class GridOptionsWrapper {
     }
 
     private checkColumnDefProperties() {
-        if (this.gridOptions.columnDefs == null) { return; }
+        if (this.gridOptions.columnDefs == null) {
+            return;
+        }
 
-        this.gridOptions.columnDefs.forEach(colDef => {
+        this.gridOptions.columnDefs.forEach((colDef) => {
             const userProperties: string[] = Object.getOwnPropertyNames(colDef);
             const validProperties: string[] = [...ColDefUtil.ALL_PROPERTIES, ...ColDefUtil.FRAMEWORK_PROPERTIES];
 
@@ -250,7 +263,7 @@ export class GridOptionsWrapper {
         const validProperties: string[] = [
             ...PropertyKeys.ALL_PROPERTIES,
             ...PropertyKeys.FRAMEWORK_PROPERTIES,
-            ...values<any>(Events).map(event => ComponentUtil.getCallbackForEvent(event))
+            ...values<any>(Events).map((event) => ComponentUtil.getCallbackForEvent(event)),
         ];
 
         const validPropertiesAndExceptions: string[] = [...validProperties, 'api', 'columnApi'];
@@ -271,14 +284,18 @@ export class GridOptionsWrapper {
         containerName: string,
         docsUrl: string
     ) {
-        const invalidProperties: { [p: string]: string[]; } = fuzzyCheckStrings(
+        const invalidProperties: { [p: string]: string[] } = fuzzyCheckStrings(
             userProperties,
             validPropertiesAndExceptions,
             validProperties
         );
 
         iterateObject<any>(invalidProperties, (key, value) => {
-            console.warn(`ag-grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`);
+            console.warn(
+                `ag-grid: invalid ${containerName} property '${key}' did you mean any of these: ${value
+                    .slice(0, 8)
+                    .join(', ')}`
+            );
         });
 
         if (Object.keys(invalidProperties).length > 0) {
@@ -357,8 +374,10 @@ export class GridOptionsWrapper {
     }
 
     public isRowModelDefault() {
-        return (missing(this.gridOptions.rowModelType) ||
-            this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE);
+        return (
+            missing(this.gridOptions.rowModelType) ||
+            this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE
+        );
     }
 
     public isFullRowEdit() {
@@ -527,7 +546,7 @@ export class GridOptionsWrapper {
         const validLayouts = [
             Constants.DOM_LAYOUT_PRINT,
             Constants.DOM_LAYOUT_AUTO_HEIGHT,
-            Constants.DOM_LAYOUT_NORMAL
+            Constants.DOM_LAYOUT_NORMAL,
         ];
 
         if (validLayouts.indexOf(domLayout) === -1) {
@@ -652,7 +671,9 @@ export class GridOptionsWrapper {
         return this.gridOptions.serverSideStoreType;
     }
 
-    public getServerSideStoreParamsFunc(): ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined {
+    public getServerSideStoreParamsFunc():
+        | ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams)
+        | undefined {
         return this.gridOptions.getServerSideStoreParams;
     }
 
@@ -769,7 +790,9 @@ export class GridOptionsWrapper {
 
     public isPaginateChildRows(): boolean {
         const shouldPaginate = this.isGroupRemoveSingleChildren() || this.isGroupRemoveLowestSingleChildren();
-        if (shouldPaginate) { return true; }
+        if (shouldPaginate) {
+            return true;
+        }
         return isTrue(this.gridOptions.paginateChildRows);
     }
 
@@ -831,7 +854,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.columnDefs;
     }
 
-    public getColumnTypes(): { [key: string]: ColDef; } | undefined {
+    public getColumnTypes(): { [key: string]: ColDef } | undefined {
         return this.gridOptions.columnTypes;
     }
 
@@ -916,7 +939,9 @@ export class GridOptionsWrapper {
     }
 
     public getAsyncTransactionWaitMillis(): number | undefined {
-        return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : Constants.BATCH_WAIT_MILLIS;
+        return exists(this.gridOptions.asyncTransactionWaitMillis)
+            ? this.gridOptions.asyncTransactionWaitMillis
+            : Constants.BATCH_WAIT_MILLIS;
     }
 
     public isSuppressMovableColumns() {
@@ -925,7 +950,9 @@ export class GridOptionsWrapper {
 
     public isAnimateRows() {
         // never allow animating if enforcing the row order
-        if (this.isEnsureDomOrder()) { return false; }
+        if (this.isEnsureDomOrder()) {
+            return false;
+        }
 
         return isTrue(this.gridOptions.animateRows);
     }
@@ -951,7 +978,10 @@ export class GridOptionsWrapper {
     }
 
     public isEnableRangeSelection(): boolean {
-        return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
+        return (
+            ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) &&
+            isTrue(this.gridOptions.enableRangeSelection)
+        );
     }
 
     public isEnableRangeHandle(): boolean {
@@ -965,10 +995,18 @@ export class GridOptionsWrapper {
     public getFillHandleDirection(): 'x' | 'y' | 'xy' {
         const direction = this.gridOptions.fillHandleDirection;
 
-        if (!direction) { return 'xy'; }
+        if (!direction) {
+            return 'xy';
+        }
 
         if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
-            doOnce(() => console.warn(`ag-Grid: valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`), 'warn invalid fill direction');
+            doOnce(
+                () =>
+                    console.warn(
+                        `ag-Grid: valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`
+                    ),
+                'warn invalid fill direction'
+            );
             return 'xy';
         }
 
@@ -995,7 +1033,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.icons;
     }
 
-    public getAggFuncs(): { [key: string]: IAggFunc; } | undefined {
+    public getAggFuncs(): { [key: string]: IAggFunc } | undefined {
         return this.gridOptions.aggFuncs;
     }
 
@@ -1117,7 +1155,9 @@ export class GridOptionsWrapper {
         return this.gridOptions.isServerSideGroup;
     }
 
-    public getIsServerSideGroupOpenByDefaultFunc(): ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined {
+    public getIsServerSideGroupOpenByDefaultFunc():
+        | ((params: IsServerSideGroupOpenByDefaultParams) => boolean)
+        | undefined {
         return this.gridOptions.isServerSideGroupOpenByDefault;
     }
 
@@ -1239,7 +1279,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.chartThemeOverrides;
     }
 
-    public getCustomChartThemes(): { [name: string]: AgChartTheme; } | undefined {
+    public getCustomChartThemes(): { [name: string]: AgChartTheme } | undefined {
         return this.gridOptions.customChartThemes;
     }
 
@@ -1265,7 +1305,7 @@ export class GridOptionsWrapper {
             const event: PropertyChangedEvent = {
                 type: key,
                 currentValue: value,
-                previousValue: previousValue
+                previousValue: previousValue,
             };
             this.propertyEventService.dispatchEvent(event);
         }
@@ -1284,7 +1324,7 @@ export class GridOptionsWrapper {
         const domLayoutPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
         const domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
 
-        this.layoutElements.forEach(e => {
+        this.layoutElements.forEach((e) => {
             addOrRemoveCssClass(e, 'ag-layout-auto-height', domLayoutAutoHeight);
             addOrRemoveCssClass(e, 'ag-layout-normal', domLayoutNormal);
             addOrRemoveCssClass(e, 'ag-layout-print', domLayoutPrint);
@@ -1357,6 +1397,10 @@ export class GridOptionsWrapper {
         return false;
     }
 
+    public isRowFillExtraWidth() {
+        return isTrue(this.gridOptions.rowFillExtraWidth);
+    }
+
     public doesExternalFilterPass(node: RowNode) {
         if (typeof this.gridOptions.doesExternalFilterPass === 'function') {
             return this.gridOptions.doesExternalFilterPass(node);
@@ -1414,7 +1458,10 @@ export class GridOptionsWrapper {
     }
 
     public getColWidth() {
-        if (typeof this.gridOptions.colWidth !== 'number' || this.gridOptions.colWidth < GridOptionsWrapper.MIN_COL_WIDTH) {
+        if (
+            typeof this.gridOptions.colWidth !== 'number' ||
+            this.gridOptions.colWidth < GridOptionsWrapper.MIN_COL_WIDTH
+        ) {
             return 200;
         }
 
@@ -1448,14 +1495,15 @@ export class GridOptionsWrapper {
     // allow the user to provide the scroll width before we work it out.
     public getScrollbarWidth() {
         if (this.scrollbarWidth == null) {
-            const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
+            const useGridOptions =
+                typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
             const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
 
             if (scrollbarWidth != null) {
                 this.scrollbarWidth = scrollbarWidth;
 
                 this.eventService.dispatchEvent({
-                    type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED
+                    type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED,
                 });
             }
         }
@@ -1469,7 +1517,9 @@ export class GridOptionsWrapper {
         const options: any = this.gridOptions;
 
         if (options.deprecatedEmbedFullWidthRows) {
-            console.warn(`ag-Grid: since v21.2, deprecatedEmbedFullWidthRows has been replaced with embedFullWidthRows.`);
+            console.warn(
+                `ag-Grid: since v21.2, deprecatedEmbedFullWidthRows has been replaced with embedFullWidthRows.`
+            );
         }
 
         if (options.enableOldSetFilterModel) {
@@ -1500,7 +1550,9 @@ export class GridOptionsWrapper {
 
         const checkRenamedProperty = (oldProp: string, newProp: string, version: string) => {
             if (options[oldProp] != null) {
-                console.warn(`ag-grid: since version ${version}, '${oldProp}' is deprecated / renamed, please use the new property name '${newProp}' instead.`);
+                console.warn(
+                    `ag-grid: since version ${version}, '${oldProp}' is deprecated / renamed, please use the new property name '${newProp}' instead.`
+                );
                 if (options[newProp] == null) {
                     options[newProp] = options[oldProp];
                 }
@@ -1518,9 +1570,17 @@ export class GridOptionsWrapper {
 
         checkRenamedProperty('suppressSetColumnStateEvents', 'suppressColumnStateEvents', '24.0.x');
 
-        if (options.groupRowInnerRenderer || options.groupRowInnerRendererParams || options.groupRowInnerRendererFramework) {
-            console.warn('ag-Grid: since v24.0, grid properties groupRowInnerRenderer, groupRowInnerRendererFramework and groupRowInnerRendererParams are no longer used.');
-            console.warn('  Instead use the grid properties groupRowRendererParams.innerRenderer, groupRowRendererParams.innerRendererFramework and groupRowRendererParams.innerRendererParams.');
+        if (
+            options.groupRowInnerRenderer ||
+            options.groupRowInnerRendererParams ||
+            options.groupRowInnerRendererFramework
+        ) {
+            console.warn(
+                'ag-Grid: since v24.0, grid properties groupRowInnerRenderer, groupRowInnerRendererFramework and groupRowInnerRendererParams are no longer used.'
+            );
+            console.warn(
+                '  Instead use the grid properties groupRowRendererParams.innerRenderer, groupRowRendererParams.innerRendererFramework and groupRowRendererParams.innerRendererParams.'
+            );
             console.warn('  For example instead of this:');
             console.warn('    groupRowInnerRenderer: "myRenderer"');
             console.warn('    groupRowInnerRendererParams: {x: a}');
@@ -1529,7 +1589,9 @@ export class GridOptionsWrapper {
             console.warn('      innerRenderer: "myRenderer",');
             console.warn('      innerRendererParams: {x: a}');
             console.warn('    }');
-            console.warn('  We have copied the properties over for you. However to stop this error message, please change your application code.');
+            console.warn(
+                '  We have copied the properties over for you. However to stop this error message, please change your application code.'
+            );
             if (!options.groupRowRendererParams) {
                 options.groupRowRendererParams = {};
             }
@@ -1546,11 +1608,15 @@ export class GridOptionsWrapper {
         }
 
         if (options.rememberGroupStateWhenNewData) {
-            console.warn('ag-Grid: since v24.0, grid property rememberGroupStateWhenNewData is deprecated. This feature was provided before Transaction Updates worked (which keep group state). Now that transaction updates are possible and they keep group state, this feature is no longer needed.');
+            console.warn(
+                'ag-Grid: since v24.0, grid property rememberGroupStateWhenNewData is deprecated. This feature was provided before Transaction Updates worked (which keep group state). Now that transaction updates are possible and they keep group state, this feature is no longer needed.'
+            );
         }
 
         if (options.detailCellRendererParams && options.detailCellRendererParams.autoHeight) {
-            console.warn('ag-Grid: since v24.1, grid property detailCellRendererParams.autoHeight is replaced with grid property detailRowAutoHeight. This allows this feature to work when you provide a custom DetailCellRenderer');
+            console.warn(
+                'ag-Grid: since v24.1, grid property detailCellRendererParams.autoHeight is replaced with grid property detailRowAutoHeight. This allows this feature to work when you provide a custom DetailCellRenderer'
+            );
             options.detailRowAutoHeight = true;
         }
 
@@ -1563,7 +1629,9 @@ export class GridOptionsWrapper {
     }
 
     private checkForViolations() {
-        if (this.isTreeData()) { this.treeDataViolations(); }
+        if (this.isTreeData()) {
+            this.treeDataViolations();
+        }
     }
 
     private treeDataViolations() {
@@ -1571,7 +1639,7 @@ export class GridOptionsWrapper {
             if (missing(this.getDataPathFunc())) {
                 console.warn(
                     'ag-Grid: property usingTreeData=true with rowModel=clientSide, but you did not ' +
-                    'provide getDataPath function, please provide getDataPath function if using tree data.'
+                        'provide getDataPath function, please provide getDataPath function if using tree data.'
                 );
             }
         }
@@ -1579,13 +1647,13 @@ export class GridOptionsWrapper {
             if (missing(this.getIsServerSideGroupFunc())) {
                 console.warn(
                     'ag-Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
-                    'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.'
+                        'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.'
                 );
             }
             if (missing(this.getServerSideGroupKeyFunc())) {
                 console.warn(
                     'ag-Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
-                    'provide getServerSideGroupKey function, please provide getServerSideGroupKey function if using tree data.'
+                        'provide getServerSideGroupKey function, please provide getServerSideGroupKey function if using tree data.'
                 );
             }
         }
@@ -1630,7 +1698,7 @@ export class GridOptionsWrapper {
         return this.getDefaultRowHeight();
     }
 
-    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): { height: number; estimated: boolean; } {
+    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): { height: number; estimated: boolean } {
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
         // used for pinned rows and the number for the body rows.
@@ -1643,7 +1711,7 @@ export class GridOptionsWrapper {
                 node: rowNode,
                 data: rowNode.data,
                 api: this.gridOptions.api,
-                context: this.gridOptions.context
+                context: this.gridOptions.context,
             };
             const height = this.gridOptions.getRowHeight(params);
             if (this.isNumeric(height)) {
@@ -1660,7 +1728,10 @@ export class GridOptionsWrapper {
         }
 
         const defaultRowHeight = this.getDefaultRowHeight();
-        const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
+        const rowHeight =
+            this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)
+                ? this.gridOptions.rowHeight
+                : defaultRowHeight;
 
         const minRowHeight = Math.min(defaultRowHeight, rowHeight);
 
@@ -1683,7 +1754,6 @@ export class GridOptionsWrapper {
 
     public getListItemHeight() {
         return this.getFromTheme(20, 'listItemHeight');
-
     }
 
     public chartMenuPanelWidth() {
