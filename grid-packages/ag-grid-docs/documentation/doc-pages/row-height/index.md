@@ -161,7 +161,7 @@ The example below changes the row height in the different ways described above.
 - **Russia Leaf Rows:** The row height is set directly on the `rowNode`, and then the grid is told to reposition all rows again by calling `api.onRowHeightChanged()`.
 
 Note that this example uses AG Grid Enterprise as it uses grouping. Setting the row
-height is an AG Grid free feature, we just demonstrate it against groups and normal
+height is an AG Grid Community feature, we just demonstrate it against groups and normal
 rows below.
 
 <grid-example title='Changing Row Height' name='row-height-change' type='generated' options=' { "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>

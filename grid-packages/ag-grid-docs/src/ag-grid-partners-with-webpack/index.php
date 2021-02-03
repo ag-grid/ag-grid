@@ -16,19 +16,19 @@ include('../includes/mediaHeader.php');
 
 
         <p>
-            AG Grid started life as an open source project and true to these roots, it now comes in two versions; AG Grid Free 
-            and AG Grid Enterprise. AG Grid Free is a feature rich datagrid that is and will always remain free to use.
+            AG Grid started life as an open source project and true to these roots, it now comes in two versions; AG Grid Community
+            and AG Grid Enterprise. AG Grid Community is a feature rich datagrid that is and will always remain free to use.
         </p>
 
         <p>
-            AG Grid Enterprise funds the company as it continues it’s work creating the best JavaScript datagrid in the world. 
+            AG Grid Enterprise funds the company as it continues it’s work creating the best JavaScript datagrid in the world.
             Since launching a year ago, it has attracted over 500 customers including 10% of the Fortune 500.
         </p>
 
         <h3>Living the Coder’s Dream</h3>
 
         <p>
-            We have somehow managed to live the coder’s dream — transitioning an open-source project into a successful commercial 
+            We have somehow managed to live the coder’s dream — transitioning an open-source project into a successful commercial
             offering.
         </p>
 
@@ -37,7 +37,7 @@ include('../includes/mediaHeader.php');
             <i>We found ourselves in a unique position with a strong revenue stream and the ability to contribute to the community we started in.</i>
             </blockquote>
         </p>
-            For us, the path forward was clear, continue our mission with AG Grid Enterprise, supporting and improving the 
+            For us, the path forward was clear, continue our mission with AG Grid Enterprise, supporting and improving the
             product with the idea of giving back always in mind. We were just looking for the right opportunity.
         </p>
 
@@ -100,9 +100,9 @@ include('../includes/mediaHeader.php');
 
         <p>
             <blockquote>
-            <i>If AG Grid had a conscience, it would be proud of itself right now.</i>    
+            <i>If AG Grid had a conscience, it would be proud of itself right now.</i>
             </blockquote>
-         </p>   
+         </p>
 
         <p>
             If you are a profitable company, then I urge you to do the same. Great projects like webpack do need help and companies like us can provide that help. It is not possible for these projects to survive on donations alone.

@@ -7,7 +7,7 @@ gtm_data_layer('community-enterprise');
 <html lang="en">
 <head>
     <?php
-    meta_and_links("AG Grid: License and Pricing", "AG Grid Javascript Grid License and Pricing", "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This page describes the License and Pricing details for AG Grid Enterprise.", true);
+    meta_and_links("AG Grid: License and Pricing", "AG Grid Javascript Grid License and Pricing", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This page describes the License and Pricing details for AG Grid Enterprise.", true);
     ?>
 
     <!-- Facebook Pixel Code -->

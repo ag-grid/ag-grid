@@ -4,9 +4,9 @@ title: "Touch"
 
 AG Grid is designed to work on touch devices. By default, browsers convert tap events to mouse click events. This means, for example, if you tap on a cell in AG Grid, the cell will get selected just like you clicked on the cell with a mouse. The remainder of this page explains touch gestured understood by the grid which are NOT simply the grid reacting to taps as mouse clicks. They are touch gestures coded into the grid.
 
-## Touch Gestures for AG Grid Free
+## Touch Gestures for AG Grid Community
 
-The following touch gestures are supported by AG Grid free.
+The following touch gestures are supported by AG Grid Community.
 
 - Move columns by touch-dragging the column header with a touch.
 - Move column groups by touch-dragging the column group header with a touch.
@@ -15,7 +15,7 @@ The following touch gestures are supported by AG Grid free.
 
 ## Touch Gestures for AG Grid Enterprise
 
-The following touch gestures are support by AG Grid Enterprise - these are in addition to the AG Grid free gestures mentioned above - they are are relevant to AG Grid Enterprise only features.
+The following touch gestures are support by AG Grid Enterprise - these are in addition to the AG Grid Community gestures mentioned above - they are are relevant to AG Grid Enterprise only features.
 
 - Drag columns out of the tool panel using drag.
 - Drag columns out of the row group and pivot drop zones by dragging.

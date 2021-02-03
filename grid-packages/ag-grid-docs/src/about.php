@@ -8,7 +8,7 @@
 
 <head lang="en">
     <?php
-            meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", true);
+            meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", true);
             ?>
     <link rel="stylesheet" href="dist/homepage.css">
     <script src="dist/homepage.js"></script>

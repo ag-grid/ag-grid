@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "AG Grid: Change Log for Releases";
-$pageDescription = "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This page lists all the Changes completed in recent releases.";
+$pageDescription = "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This page lists all the Changes completed in recent releases.";
 $pageKeywords = "AG Grid Change Log";
 $pageGroup = "misc";
 include('../includes/mediaHeader.php');
@@ -2454,7 +2454,7 @@ params = {
 
     <li>Major Build Changes:
         <ul>
-            <li>CSS now bundled in AG Grid.js file</li>
+            <li>CSS now bundled in ag-Grid.js file</li>
             <li>Took out TypeScript internal modules</li>
             <li>Moved to ECMA 6 style imports (instead of require)</li>
             <li>Moved to WebPack for bundling</li>

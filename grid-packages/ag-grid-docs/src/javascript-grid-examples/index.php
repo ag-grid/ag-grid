@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "AG Grid Examples: Overview showcasing our features";
-$pageDescription = "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. We have built lots of examples so you can see the datagrid in action with your framework of choice. This page is the jumping off point for those examples.";
+$pageDescription = "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. We have built lots of examples so you can see the datagrid in action with your framework of choice. This page is the jumping off point for those examples.";
 $pageKeywords = "AG Grid Examples";
 $pageGroup = "examples";
 define('skipInPageNav', true);
@@ -11,8 +11,8 @@ include '../documentation-main/documentation_header.php';
 
     <h1>Examples</h1>
 
-    <p class="lead">In this section we show 
-            complex examples combining different features of the grid 
+    <p class="lead">In this section we show
+            complex examples combining different features of the grid
             or using frameworks where the implementation is significantly different to
             the plain JavaScript version. For example how to build use Redux with React, or RxJS with Angular.
     </p>

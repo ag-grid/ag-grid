@@ -12,7 +12,7 @@ gtm_data_layer('support');
 <html lang="en">
 <head lang="en">
 <?php
-/*meta_and_links("How to get Support for AG Grid", "AG Grid Javascript Grid Support", "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This page explains the different support models for the free and Enterprise versions of AG Grid.", false);
+/*meta_and_links("How to get Support for AG Grid", "AG Grid Javascript Grid Support", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This page explains the different support models for the free and Enterprise versions of AG Grid.", false);
 */?>
 <link rel="stylesheet" href="../dist/homepage.css">
 </head>
@@ -32,7 +32,7 @@ include './includes/navbar.php';
 
             <h2>Changelog and Pipeline of Work</h2>
 
-            <p>You have encountered a bug or you have a feature request in mind? 
+            <p>You have encountered a bug or you have a feature request in mind?
                 Chances are that we are already aware of it. Please check the changelog and the pipeline first.</p>
 
             <ul class="content-list">
@@ -50,15 +50,15 @@ include './includes/navbar.php';
             <p>
                 If you are only interested in the free features of AG Grid but require support, you can
                 purchase a <strong>Enterprise license</strong> to access support. If you don't require support, you can
-                "give back" to the AG Grid project by purchasing a token license. 
+                "give back" to the AG Grid project by purchasing a token license.
                 The donation will contribute towards the product future growth.
             </p>
 
             <h2 class="heading-enterprise">Enterprise Support</h2>
 
             <p>
-                AG Grid Enterprise users have access to guaranteed support through our <strong>private ticketing system</strong>.  
-                Feature requests and bugs raised by Enterprise users will be given priority and serious consideration. 
+                AG Grid Enterprise users have access to guaranteed support through our <strong>private ticketing system</strong>.
+                Feature requests and bugs raised by Enterprise users will be given priority and serious consideration.
                 Discussions had with Enterprise users will also help dictate the AG Grid roadmap.
             </p>
 
@@ -104,8 +104,8 @@ include './includes/navbar.php';
 <div class="container-fluid"> <div class="row"> <div class="col-md-6">
                 <h4>AG Grid (MIT)</h4>
 <ul class="content-list">
-<li>Browse the documentation section and find an example similar to your case.</li> 
-<li>Launch a new plunker from the example and modify it so that the issue is reproducible. </li> 
+<li>Browse the documentation section and find an example similar to your case.</li>
+<li>Launch a new plunker from the example and modify it so that the issue is reproducible. </li>
 <li>Post the plunker url along with the necessary steps to reproduce as a <a href="https://github.com/ag-grid/ag-grid/issues">Github issue in the ag-grid project</a>.  </li>
 </ul>
 

@@ -22,24 +22,24 @@ The remainder of this page gives information that is common across all the compo
 
 md-include:declare-vue.md
 md-include:declare-angular.md
- 
-md-include:register-javascript.md 
+
+md-include:register-javascript.md
 md-include:register-angular.md
-md-include:register-react.md 
+md-include:register-react.md
 md-include:register-vue.md
 
 [[only-angular]]
-md-include:advantages-common.md 
+md-include:advantages-common.md
 [[only-react]]
-md-include:advantages-common.md 
+md-include:advantages-common.md
 md-include:advantages-vue.md
 
 md-include:component-usage-javascript.md
-md-include:component-usage-angular.md 
+md-include:component-usage-angular.md
 md-include:component-usage-react.md
 md-include:component-usage-vue.md
- 
-md-include:js-fw-angular.md 
+
+md-include:js-fw-angular.md
 md-include:js-fw-react.md
 md-include:js-fw-vue.md
 
@@ -56,9 +56,9 @@ The grid comes with pre-registered components that can be used. Each component p
     <tbody>
         <tr>
             <td>agDateInput</td>
-            <td>Default date input used by filters.</td> 
-        </tr> 
-        <tr> 
+            <td>Default date input used by filters.</td>
+        </tr>
+        <tr>
             <td colspan="2"><h3>Column Headers</h3></td>
         </tr>
         <tr>
@@ -78,12 +78,12 @@ The grid comes with pre-registered components that can be used. Each component p
         </tr>
         <tr>
             <td>agTextColumnFilter</td>
-            <td>Simple text filter (default when using AG Grid Free).</td>
+            <td>Simple text filter (default when using AG Grid Community).</td>
         </tr>
-        <tr> 
+        <tr>
             <td>agNumberColumnFilter</td>
             <td>Number filter.</td>
-        </tr> 
+        </tr>
         <tr>
             <td>agDateColumnFilter</td>
             <td>Date filter.</td>
@@ -97,7 +97,7 @@ The grid comes with pre-registered components that can be used. Each component p
         </tr>
         <tr>
             <td>agTextColumnFloatingFilter</td>
-            <td>Floating text filter.</td> 
+            <td>Floating text filter.</td>
         </tr>
         <tr>
             <td>agNumberColumnFloatingFilter</td>
@@ -136,7 +136,7 @@ The grid comes with pre-registered components that can be used. Each component p
         <tr>
             <td>agNoRowsOverlay</td>
             <td>No rows overlay.</td>
-        </tr> 
+        </tr>
         <tr>
             <td colspan="2"><h3>Cell Editors</h3></td>
         </tr>
@@ -160,7 +160,7 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>agPopupSelectCellEditor</td>
             <td>Popup select cell editor.</td>
         </tr>
-        <tr> 
+        <tr>
             <td>agLargeTextCellEditor</td>
             <td>Large text cell editor.</td>
         </tr>

@@ -16,7 +16,7 @@ An example full locale file is provided below. To support other languages, the f
 
 You can download the full file from [here](../../examples/localisation/localisation/locale.en.js).
 
-There is one locale file for all of the grid. The file covers all modules across all of AG Grid Enterprise and AG Grid Free. This was done on purpose as having multiple files for each module would provide to much confusion. The decision was made to keep it simple in one file.
+There is one locale file for all of the grid. The file covers all modules across all of AG Grid Enterprise and AG Grid Community. This was done on purpose as having multiple files for each module would provide to much confusion. The decision was made to keep it simple in one file.
 
 
 ## Installing a Locale

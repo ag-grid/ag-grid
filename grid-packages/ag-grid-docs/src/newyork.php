@@ -1,4 +1,4 @@
-<?php 
+<?php
 $navKey = "about";
 include_once 'includes/html-helpers.php';
 gtm_data_layer('about');
@@ -7,14 +7,14 @@ gtm_data_layer('about');
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", true);
+meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", true);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
 
 <body>
 <header id="nav" class="compact">
-<?php 
+<?php
     $version = 'latest';
     include './includes/navbar.php';
 ?>
@@ -40,9 +40,9 @@ New York, United States.</font>
                 <font size="+1.5">
                 Come to meet and hear from the creators of AG Grid:
 <br>
-                 Get to understand the features behind the feature-rich grid. 
+                 Get to understand the features behind the feature-rich grid.
                  <br>
-                 How AG Grid is dedicated to supporting frameworks. 
+                 How AG Grid is dedicated to supporting frameworks.
                  <br>
                  The story behind the meteoric rise of AG Grid and what the future holds and much more!
              </font>
@@ -53,7 +53,7 @@ New York, United States.</font>
 Join us in NYC this October for an in-depth look into the industry juggernaut that is AG Grid.
 </strong>
             </p>
-            <h4 class="text-center"> 
+            <h4 class="text-center">
                 Limited spaces so grab your seat early!
             </h4>
             <div>
@@ -88,7 +88,7 @@ Followed by a Q&A
         <hr></h5>
     <h6 class="card-subtitle mb-2 text-muted">Core Team<br>13:00 | 14:30</h6>
     <p><font size="-0">
-        
+
     </font>
     </p>
       </div>
@@ -136,7 +136,7 @@ Followed by a Q&A
     </p>
       </div>
 </div>
-        
+
     </div>
     <div class="col">
 <h3 class="text-center"><strong>Speakers</strong>
@@ -210,8 +210,8 @@ Followed by a Q&A
 <h2 class="text-center" style="background-color: whitesmoke;padding-top: 10px;padding-bottom: 10px">
     Tickets
 </h2>
-<p class="text-muted, text-center"> 
-    Tickets get you access to speaker presentations throughout the day, swag and refreshments. 
+<p class="text-muted, text-center">
+    Tickets get you access to speaker presentations throughout the day, swag and refreshments.
 </p>
 <div class="card">
   <div class="card-body">
@@ -222,7 +222,7 @@ Followed by a Q&A
 </font>
     </strong>
     <br>
-    With limited spaces, register your space early. If spaces fill early, we will look into acquiring a larger space.  
+    With limited spaces, register your space early. If spaces fill early, we will look into acquiring a larger space.
     <br><br>
     <a href="https://www.eventbrite.com/e/ag-grid-in-nyc-the-best-javascript-grid-in-the-world-tickets-49731529343" target="_blank"><button type="button" class="btn btn-primary btn-lg btn-block" style="padding-bottom: 5px;padding-top: 5px">Register Now!</button></a>
   </div>

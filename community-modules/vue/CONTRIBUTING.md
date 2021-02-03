@@ -17,7 +17,7 @@ Please, do not open issues for general support questions as we want to keep GitH
 
 If you're using the Enterprise version of AG Grid (ag-grid-enterprise), then you should use our [Support Portal](https://ag-grid.zendesk.com/) - you'll get a much quicker response there. Please contact accounts@ag-grid.com for access.
 
-To save your and our time we will be systematically closing all the issues that are requests for general support (for AG Grid Free) and redirecting people to StackOverflow.
+To save your and our time we will be systematically closing all the issues that are requests for general support (for AG Grid Community) and redirecting people to StackOverflow.
 
 ## <a name="issue"></a> Found a Bug?
 If you find a bug in the source code, you can help us by
