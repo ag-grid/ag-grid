@@ -3520,7 +3520,7 @@ export class ColumnController extends BeanStub {
                     this.updateBodyWidths();
                 }
                 if (params?.skipSetLeft !== true) {
-                    this.setLeftValues('sizeRowToFill');
+                    this.setLeftValues('fillExtraWidth');
                     this.gridApi.refreshHeader();
                 }
             }
