@@ -11,8 +11,8 @@ agCharts.AgChart.create({
         nodePadding: 3,
         valueDomain: [0, 2, 4],
         valueRange: ['#d73027', '#fee08b', '#1a9850'],
-        sizeKey: '',
-        valueKey: '', // if empty, depth will be used an the value, where root has 0 depth
+        sizeKey: undefined,
+        valueKey: undefined, // if undefined, depth will be used an the value, where root has 0 depth
     }],
     title: {
         text: 'Organizational Chart'

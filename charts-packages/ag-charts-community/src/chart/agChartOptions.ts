@@ -698,6 +698,25 @@ interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {
     padding?: number;
 }
 
+interface AgTreemapNodeDatum {
+    data: any;
+    parent?: AgTreemapNodeDatum;
+    children?: AgTreemapNodeDatum[];
+    depth: number;
+}
+
+interface AgTreemapSeriesTooltipRendererParams {
+    datum: AgTreemapNodeDatum;
+    sizeKey: string;
+    labelKey: string;
+    valueKey: string;
+    color: string;
+}
+
+export interface AgTreemapSeriesTooltip extends AgSeriesTooltip {
+    renderer?: (params: AgTreemapSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+}
+
 export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
     type?: 'treemap';
     title?: AgTreemapSeriesLabelOptions;
@@ -708,6 +727,8 @@ export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
         small?: AgChartLabelOptions;
         value?: AgChartLabelOptions;
     },
+    labelKey?: string;
+    tooltip?: AgTreemapSeriesTooltip;
     nodePadding?: number;
 }
 
@@ -736,8 +757,8 @@ export interface AgPolarChartOptions<TAxisOptions = AgPolarAxisOptions[], TSerie
 }
 
 export interface AgHierarchyChartOptions<TSeriesOptions = AgHierarchySeriesOptions[]> extends AgBaseChartOptions {
-    type: 'hierarchy' | 'treemap';
-    data: any;
+    type?: 'hierarchy' | 'treemap';
+    data?: any;
     series?: TSeriesOptions;
 }
 

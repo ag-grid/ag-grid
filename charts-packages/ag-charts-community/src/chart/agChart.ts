@@ -19,11 +19,13 @@ import {
     AgChartOptions,
     AgPolarChartOptions,
     AgChartTheme,
-    AgChartThemeName
+    AgChartThemeName,
+    AgHierarchyChartOptions
 } from "./agChartOptions";
 import mappings from './agChartMappings';
 import { CartesianChart } from "./cartesianChart";
 import { PolarChart } from "./polarChart";
+import { HierarchyChart } from "./hierarchyChart";
 
 type ThemeMap = { [key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme };
 
@@ -80,6 +82,7 @@ export function getChartTheme(value?: string | ChartTheme | AgChartTheme): Chart
 type AgChartType<T> =
     T extends AgCartesianChartOptions ? CartesianChart :
     T extends AgPolarChartOptions ? PolarChart :
+    T extends AgHierarchyChartOptions ? HierarchyChart :
     never;
 
 let firstColorIndex = 0;
@@ -512,3 +515,10 @@ function provideDefaultOptions(path: string, options: any, mapping: any, theme?:
 
     return options;
 }
+
+const chart = AgChart.create({
+    type: 'hierarchy',
+    data: {},
+    series: [{
+    }]
+});

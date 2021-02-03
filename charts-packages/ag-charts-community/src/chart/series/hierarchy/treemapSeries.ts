@@ -34,9 +34,9 @@ interface TreemapNodeDatum extends SeriesNodeDatum {
 
 export interface TreemapTooltipRendererParams {
     datum: TreemapNodeDatum;
-    sizeKey: string;
     labelKey: string;
-    valueKey: string;
+    sizeKey?: string;
+    valueKey?: string;
     color: string;
 }
 
@@ -133,11 +133,11 @@ export class TreemapSeries extends HierarchySeries {
     }
 
     @reactive('dataChange') labelKey: string = 'label';
-    @reactive('dataChange') sizeKey: string = 'size';
-    @reactive('dataChange') valueKey: string = 'value';
+    @reactive('dataChange') sizeKey?: string = 'size';
+    @reactive('dataChange') valueKey?: string = 'value';
     @reactive('dataChange') valueDomain: number[] = [-5, 5];
     @reactive('dataChange') valueRange: string[] = ['#cb4b3f', '#6acb64'];
-    @reactive('dataChange') colorParents: boolean = true;
+    @reactive('dataChange') colorParents: boolean = false;
     @reactive('update') gradient: boolean = true;
 
     valueName: string = 'Value';
