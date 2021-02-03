@@ -20,8 +20,8 @@ const HitCount = connectStateResults(({ searchResults }) => {
     ) : null;
 });
 
-const PageHit = ({ hit }) => (
-    <Link to={hit.path}>
+const PageHit = ({ hit, onResultClicked }) => (
+    <Link to={hit.path} onClick={onResultClicked}>
         <h4>
             <Highlight attribute="title" hit={hit} tagName="mark" />
         </h4>
@@ -29,17 +29,17 @@ const PageHit = ({ hit }) => (
     </Link>
 );
 
-const HitsInIndex = ({ index }) => (
+const HitsInIndex = ({ index, onResultClicked }) => (
     <Index indexName={index.name}>
         <HitCount />
-        <Hits hitComponent={PageHit} />
+        <Hits hitComponent={props => PageHit({ ...props, onResultClicked })} />
     </Index>
 );
 
-const SearchResult = ({ indices, show }) => (
+const SearchResult = ({ indices, show, onResultClicked }) => (
     <div className={classnames(styles['search-result'], { [styles['search-result--show']]: show })}>
         {indices.map(index => (
-            <HitsInIndex index={index} key={index.name} />
+            <HitsInIndex index={index} key={index.name} onResultClicked={onResultClicked} />
         ))}
     </div>
 );
