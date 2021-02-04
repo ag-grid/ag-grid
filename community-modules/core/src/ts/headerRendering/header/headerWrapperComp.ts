@@ -100,6 +100,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.onFilterChanged();
 
         this.createManagedBean(new SelectAllFeature(this.cbSelectAll, this.column));
+        this.cbSelectAll.setParentComponent(this);
         this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
 
         this.addAttributes();

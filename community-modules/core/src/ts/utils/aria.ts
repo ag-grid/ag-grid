@@ -38,6 +38,10 @@ export function getAriaPosInSet(element: HTMLElement): number {
     return parseInt(element.getAttribute('aria-posinset')!, 10);
 }
 
+export function getAriaDescribedBy(element: HTMLElement): string {
+    return element.getAttribute('aria-describedby') || '';
+}
+
 // ARIA ATTRIBUTE SETTERS
 export function setAriaLabel(element: HTMLElement, label: string): void {
     setAriaAttribute(element, 'label', label);
