@@ -18,13 +18,13 @@ of CSS styles, or a function returning an object of CSS styles.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
-    columnDefs: [ 
+    columnDefs: [
         // same style for each row
         {
             headerName: 'Static Styles',
             field: 'static',
             cellStyle: {color: 'red', 'background-color': 'green'}
-        }, 
+        },
         // different styles for each row
         {
             headerName: 'Dynamic Styles',
@@ -52,21 +52,21 @@ Provides a class for the cells in this column. Can be a string (a class), array 
 const gridOptions = {
     columnDefs: [
         // return same class for each row
-        { 
-            headerName: 'Static Class', 
-            field: 'static', 
-            cellClass: 'my-class' 
+        {
+            headerName: 'Static Class',
+            field: 'static',
+            cellClass: 'my-class'
         },
         // return same array of classes for each row
-        {   
-            headerName: 'Static Array of Classes', 
-            field: 'staticArray', 
-            cellClass: ['my-class1','my-class2'], 
+        {
+            headerName: 'Static Array of Classes',
+            field: 'staticArray',
+            cellClass: ['my-class1','my-class2'],
         },
         // return class based on function
-        { 
-            headerName: 'Function Returns String', 
-            field: 'function', 
+        {
+            headerName: 'Function Returns String',
+            field: 'function',
             cellClass: params => {
                 return params.value === 'something' ? 'my-class-1' : 'my-class-2';
             },
@@ -173,39 +173,30 @@ cellClass and cellClassRules are all applied again. This has the following
 effect:
 
 - `cellStyle`: All new styles are applied. If a new style is the same as an old style, the new style overwrites the old style. If a new style is not present, the old style is left (the grid will NOT remove styles).
-
 - `cellClass`: All new classes are applied. Old classes are not removed so be aware that classes will accumulate. If you want to remove old classes, then use cellClassRules.
-
-- `cellClassRules`: Rules that return true will have the class applied the second time. Rules that return false will have the class removed
-    second time.
-
+- `cellClassRules`: Rules that return true will have the class applied the second time. Rules that return false will have the class removed second time.
 
 [[note]]
 | If you are using cellStyle to highlight changing data, then please take note that grid will not remove styles. For example if you are setting text color to 'red' for a condition, then you should explicitly set it back to default eg 'black' when the condition is not met. Otherwise the highlight will remain once it's first applied.
 |
 | ```js
 | // unsafe, the red will stay after initially applied
-| cellStyle: params => params.value > 80 ? {color: 'red'} : null
+| cellStyle: params => params.value > 80 ? { color: 'red' } : null
 | ```
+|
 | ```js
 | // safe, to black will override the red when the condition is not true
-| cellStyle: params => params.value > 80 ? {color: 'red'} : {color: 'black'}
+| cellStyle: params => params.value > 80 ? { color: 'red' } : { color: 'black' }
 | ```
-
 
 ## Example Cell Styling
 
 Below shows both cssClassRules snippets above in a full working example. The example demonstrates the following:
 
-
 - Age uses `cellClassRules` with expressions (strings instead of functions). Editing the cell will update the style.
-
 - Year uses `cellClassRules` with functions. Editing the cell will update the style.
-
 - Date and Sport use `cellClass`, Date sets explicitly, Sport sets using a function. Because a function is used for Sport, it can select class based on data value. Editing Sport will have undetermined results as the class values will accumulate.
-
 - Gold sets `cellStyle` implicitly. It is not dependent on the cell value.
-
 - Silver and Bronze set `cellStyle` using a function and depends on the value. Editing will update the cellStyle.
 
 <grid-example title='Cell Styling' name='cell-styling' type='generated'></grid-example>

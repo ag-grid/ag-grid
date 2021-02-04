@@ -29,28 +29,25 @@ The example below demonstrates simple filters. The following can be noted:
 
 ## Configuring Filters on Columns
 
-
-Set filtering on a column using the column definition property `filter`. The property can have
-one of the following values:
+Set filtering on a column using the column definition property `filter`. The property can have one of the following values:
 
 - `boolean`: Set to `true` to enable the default filter. The default is [Text Filter](../filter-text/) for AG Grid Community and [Set Filter](../filter-set/) for AG Grid Enterprise.
 - `string` / `Component`: Provide a specific filter to use instead of the default filter.
 
 The code below shows some column definitions with filters set:
 
-
 <snippet>
 |const gridOptions = {
 |    columnDefs: [
 |        // sets the text filter
 |        { field: 'athlete', filter: 'agTextColumnFilter' },
-|    
+|
 |        // sets the number filter
 |        { field: 'age', filter: 'agNumberColumnFilter' },
-|    
+|
 |        // use the default filter
 |        { field: 'gold', filter: true },
-|    
+|
 |        // use no filter (leaving unspecified means use no filter)
 |        { field: 'sport' },
 |    ]
@@ -63,7 +60,7 @@ If you want to enable filters on all columns, you should set a filter on the [De
 |const gridOptions = {
 |    // anything specified in defaultColDef gets applied to all columns
 |    defaultColDef: {
-|        // set filtering on for all columns    
+|        // set filtering on for all columns
 |        filter: true,
 |    },
 |    columnDefs: [
@@ -84,11 +81,11 @@ Each filter can take additional filter parameters by setting `colDef.filterParam
 The code below shows configuring the text filter on the Athlete column and providing extra filter parameters (what the `buttons` do is explained in [Apply, Clear, Reset and Cancel Buttons](../filter-provided/#apply-clear-reset-and-cancel-buttons)).
 
 <snippet spaceBetweenProperties="true">
-const gridOptions = { 
+const gridOptions = {
     columnDefs: [
         // column configured to use text filter
-        { 
-            field: 'athlete', 
+        {
+            field: 'athlete',
             filter: 'agTextColumnFilter',
             // pass in additional parameters to the text filter
             filterParams: {
@@ -113,17 +110,14 @@ To enable animation of the rows when filtering, set the grid property `animateRo
 
 ## Relation to Quick Filter and External Filter
 
-
 Column filters work independently of [Quick Filter](../filter-quick/) and [External Filter](../filter-external/). If a quick filter and / or external filter are applied along with a column filter, each filter type is considered and the row will only show if it passes all three types.
 
 Column filters are tied to a specific column. Quick filter and external filter are not tied to any particular column. This section of the documentation talks about column filters only. For quick filter and external filter, click the links above to learn more.
 
 ## Provided Filters
 
-
 There are four filters that are provided by the grid. These are as follows:
 
 <api-documentation source='filtering/resources/filtering.json' section="providedFilters"></api-documentation>
-
 
 See the [Provided Filters](../filter-provided/) section for more details on using them.
