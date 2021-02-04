@@ -68,9 +68,9 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
 };
 
 const getFavicons = () =>
-    [196, 192, 180, 167, 152, 128, 32].map(size => <link rel="icon" type="image/png" sizes={`${size}x${size}`} href={favIcons[`favIcon${size}`]} />);
+    [196, 192, 180, 167, 152, 128, 32].map(size => <link key={size} rel="icon" type="image/png" sizes={`${size}x${size}`} href={favIcons[`favIcon${size}`]} />);
 
 const getAppleTouchIcons = () =>
-    [180, 167, 152].map(size => <link rel="apple-touch-icon" sizes={`${size}x${size}`} href={favIcons[`favIcon${size}Touch`]} />);
+    [180, 167, 152].map(size => <link key={size} rel="apple-touch-icon" sizes={`${size}x${size}`} href={favIcons[`favIcon${size}Touch`]} />);
 
 export default Layout;
