@@ -741,11 +741,12 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         callbackNow: (element: HTMLTextAreaElement) => void,
         callbackAfter?: (element: HTMLTextAreaElement) => void
     ): void {
-        const eTempInput = document.createElement('textarea');
+        const eDoc = this.gridOptionsWrapper.getDocument();
+        const eTempInput = eDoc.createElement('textarea');
         eTempInput.style.width = '1px';
         eTempInput.style.height = '1px';
-        eTempInput.style.top = '0px';
-        eTempInput.style.left = '0px';
+        eTempInput.style.top = eDoc.documentElement.scrollTop + 'px';
+        eTempInput.style.left = eDoc.documentElement.scrollLeft + 'px';
         eTempInput.style.position = 'absolute';
         eTempInput.style.opacity = '0.0';
 
