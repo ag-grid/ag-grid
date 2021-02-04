@@ -143,7 +143,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     updateReactPortal(oldPortal: ReactPortal, newPortal: ReactPortal) {
-        this.portals = this.portals.filter(portal => portal !== oldPortal).concat(newPortal);
+        this.portals[this.portals.indexOf(oldPortal)] = newPortal;
         this.batchUpdate();
     }
 
