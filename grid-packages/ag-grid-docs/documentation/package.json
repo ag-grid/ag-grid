@@ -18,6 +18,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@babel/plugin-transform-spread": "7.12.1",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
     "@fortawesome/free-solid-svg-icons": "5.15.2",
     "@fortawesome/react-fontawesome": "0.1.14",
@@ -82,7 +83,7 @@
   },
   "devDependencies": {
     "babel-jest": "26.6.3",
-    "babel-preset-gatsby": "0.11.0",
+    "babel-preset-gatsby": "0.12.0",
     "identity-obj-proxy": "3.0.0",
     "jest": "26.6.3",
     "prettier": "2.2.1",
