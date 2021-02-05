@@ -245,7 +245,8 @@ export class ColumnController extends BeanStub {
         this.autoGroupsNeedBuilding = true;
 
         const oldPrimaryColumns = this.primaryColumns;
-        const balancedTreeResult = this.columnFactory.createColumnTree(columnDefs, true, oldPrimaryColumns);
+        const oldPrimaryTree = this.primaryColumnTree;
+        const balancedTreeResult = this.columnFactory.createColumnTree(columnDefs, true, oldPrimaryTree);
 
         this.primaryColumnTree = balancedTreeResult.columnTree;
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;

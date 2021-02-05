@@ -25,7 +25,7 @@ export class ColumnFactory extends BeanStub {
         this.logger = loggerFactory.create('ColumnFactory');
     }
 
-    public createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingColumns?: Column[])
+    public createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingTree?: OriginalColumnGroupChild[])
         : { columnTree: OriginalColumnGroupChild[], treeDept: number; } {
 
         // column key creator dishes out unique column id's in a deterministic way,
@@ -33,17 +33,12 @@ export class ColumnFactory extends BeanStub {
         // then this ensures the two grids use identical id's.
         const columnKeyCreator = new ColumnKeyCreator();
 
-        if (existingColumns) {
-            const existingKeys: string[] = existingColumns.map(col => col.getId());
-            columnKeyCreator.addExistingKeys(existingKeys);
-        }
-
-        // we take a copy of the columns as we are going to be removing from them
-        const existingColsCopy = existingColumns ? existingColumns.slice() : null;
+        const {existingCols, existingGroups, existingColKeys} = this.extractExistingTreeData(existingTree);
+        columnKeyCreator.addExistingKeys(existingColKeys);
 
         // create am unbalanced tree that maps the provided definitions
         const unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns,
-            existingColsCopy, columnKeyCreator);
+            existingCols, columnKeyCreator, existingGroups);
         const treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
@@ -63,6 +58,33 @@ export class ColumnFactory extends BeanStub {
             columnTree,
             treeDept
         };
+    }
+
+    private extractExistingTreeData(existingTree?: OriginalColumnGroupChild[]):
+        {
+            existingCols: Column[],
+            existingGroups: OriginalColumnGroup[],
+            existingColKeys: string[]
+        }  {
+
+        const existingCols: Column[] = [];
+        const existingGroups: OriginalColumnGroup[] = [];
+        const existingColKeys: string[] = [];
+
+        if (existingTree) {
+            this.columnUtils.depthFirstOriginalTreeSearch(null, existingTree, (item: OriginalColumnGroupChild) => {
+                if (item instanceof OriginalColumnGroup) {
+                    const group = item as OriginalColumnGroup;
+                    existingGroups.push(group);
+                } else {
+                    const col = item as Column;
+                    existingColKeys.push(col.getId());
+                    existingCols.push(col);
+                }
+            });
+        }
+
+        return {existingCols, existingGroups, existingColKeys};
     }
 
     public createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[] {
@@ -196,8 +218,9 @@ export class ColumnFactory extends BeanStub {
         defs: (ColDef | ColGroupDef)[] | null,
         level: number,
         primaryColumns: boolean,
-        existingColsCopy: Column[] | null,
+        existingColsCopy: Column[],
         columnKeyCreator: ColumnKeyCreator,
+        existingGroups: OriginalColumnGroup[]
     ): OriginalColumnGroupChild[] {
         const result: OriginalColumnGroupChild[] = [];
 
@@ -208,7 +231,7 @@ export class ColumnFactory extends BeanStub {
 
             if (this.isColumnGroup(def)) {
                 newGroupOrColumn = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,
-                    columnKeyCreator);
+                    columnKeyCreator, existingGroups);
             } else {
                 newGroupOrColumn = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator);
             }
@@ -223,8 +246,9 @@ export class ColumnFactory extends BeanStub {
         primaryColumns: boolean,
         colGroupDef: ColGroupDef,
         level: number,
-        existingColumns: Column[] | null,
-        columnKeyCreator: ColumnKeyCreator
+        existingColumns: Column[],
+        columnKeyCreator: ColumnKeyCreator,
+        existingGroups: OriginalColumnGroup[]
     ): OriginalColumnGroup {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
@@ -232,8 +256,13 @@ export class ColumnFactory extends BeanStub {
 
         this.context.createBean(originalGroup);
 
+        const existingGroup = this.findExistingGroup(colGroupDef, existingGroups);
+        if (existingGroup && existingGroup.isExpanded()) {
+            originalGroup.setExpanded(true);
+        }
+
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
-            level + 1, primaryColumns, existingColumns, columnKeyCreator);
+            level + 1, primaryColumns, existingColumns, columnKeyCreator, existingGroups);
 
         originalGroup.setChildren(children);
 
@@ -346,6 +375,30 @@ export class ColumnFactory extends BeanStub {
         // one column instance for colDef with common id
         if (existingColsCopy && res) {
             removeFromArray(existingColsCopy, res);
+        }
+
+        return res;
+    }
+
+    public findExistingGroup(newGroupDef: ColGroupDef, existingGroups: OriginalColumnGroup[]): OriginalColumnGroup | null {
+        const res: OriginalColumnGroup | null = find(existingGroups, existingGroup => {
+
+            const existingDef = existingGroup.getColGroupDef()
+            if (!existingDef) { return false; }
+
+            const newHasId = newGroupDef.groupId != null;
+
+            if (newHasId) {
+                return existingGroup.getId() === newGroupDef.groupId;
+            }
+
+            return false;
+        });
+
+        // make sure we remove, so if user provided duplicate id, then we don't have more than
+        // one column instance for colDef with common id
+        if (res) {
+            removeFromArray(existingGroups, res);
         }
 
         return res;
