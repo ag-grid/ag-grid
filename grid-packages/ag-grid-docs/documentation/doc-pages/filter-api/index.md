@@ -6,15 +6,15 @@ You can access and set the models for filters through the grid API, or access in
 
 ## Get / Set All Filter Models
 
-It is possible to get the state of all filters using the grid API method `getFilterModel()`, and to set the state using 
-`setFilterModel()`. These methods manage the filters states via the `getModel()` and `setModel()` methods of the 
+It is possible to get the state of all filters using the grid API method `getFilterModel()`, and to set the state using
+`setFilterModel()`. These methods manage the filters states via the `getModel()` and `setModel()` methods of the
 individual filters.
 
 <snippet>
-|// Gets filter model via the grid API 
+|// Gets filter model via the grid API
 |const model = gridOptions.api.getFilterModel();
 |
-|// Sets the filter model via the grid API 
+|// Sets the filter model via the grid API
 |gridOptions.api.setFilterModel(model);
 </snippet>
 
@@ -82,7 +82,6 @@ gridOptions.api.getFilterInstance('name', filterInstance => {
 
 ### Re-running Grid Filtering
 
-
 After filters have been changed via their API, you must ensure the method `gridApi.onFilterChanged()` is called to tell the grid to filter the rows again. If `gridApi.onFilterChanged()` is not called, the grid will still show the data relevant to the filters before they were updated through the API.
 
 <snippet>
@@ -115,7 +114,7 @@ You can reset a filter to its original state by getting the filter instance and 
 |gridOptions.api.onFilterChanged();
 </snippet>
 
-<h3>Example: Accessing Individual Filters</h2>
+### Example: Accessing Individual Filters
 
 The example below shows how you can interact with an individual filter instance, using the Set Filter as an example.
 

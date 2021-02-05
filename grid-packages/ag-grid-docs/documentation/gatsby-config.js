@@ -147,17 +147,6 @@ const plugins = [
   'gatsby-plugin-remove-generator',
 ];
 
-if (process.env.GATSBY_UPDATE_ALGOLIA === 'true') {
-  plugins.push({
-    resolve: 'gatsby-plugin-algolia',
-    options: {
-      appId: process.env.GATSBY_ALGOLIA_APP_ID,
-      apiKey: process.env.GATSBY_ALGOLIA_ADMIN_KEY,
-      queries: require('./src/utils/algolia-queries')
-    }
-  });
-}
-
 module.exports = {
   pathPrefix: `${process.env.GATSBY_ROOT_DIRECTORY || ''}/documentation`,
   siteMetadata: {

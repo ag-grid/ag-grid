@@ -65,7 +65,7 @@ However if you are using expressions / code parsing, the rule is:
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src data:">
 ```
 
-<h2>Security Vulnerability Testing</h2>
+## Security Vulnerability Testing
 
 Applications may be required to pass an Application Security Test prior to being put into production. If your application is using AG Grid, you will want to make sure that AG Grid has also been tested for security vulnerabilities.
 

@@ -11,11 +11,10 @@ const VideoSection = ({ src, title, header, children }) => (
             className={styles['video-section__frame']}
             title={title}
             src={src}
-            frameBorder='0'
-            modestbranding='1'
-            allow='accelerometer; encrypted-media; gyroscope; picture-in-picture'
-            allowFullScreen={true}>
-        </iframe>
+            frameBorder="0"
+            modestbranding="1"
+            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen />
     </div>
 );
 
