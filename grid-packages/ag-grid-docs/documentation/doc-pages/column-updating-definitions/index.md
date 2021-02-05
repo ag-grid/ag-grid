@@ -222,3 +222,30 @@ The current column definitions can be retrieved with `getColumnDefs`:
 | gridApi.getColumnDefs();
 | ```
 
+## Column Groups
+
+Column Groups can be updated in the same way as Columns, you just update the Column Group Definition. For expandable
+groups, to have open / closed state to be maintained, you need to assign `groupId` in the Column Group Definition.
+
+<snippet suppressFrameworkContext=true>
+const gridOptions = {
+    columnDefs: [
+        {
+            headerName: 'Group A',
+            groupId: 'groupA',
+            children: [
+                { field: 'name' },
+                { field: 'age', columnGroupShow: 'open' }
+            ]
+        }
+    ]
+}
+</snippet>
+
+In the example below, note the following:
+1. Clicking the top buttons alternatives the columns from two sets of definitions.
+1. Column Group A - `groupId` is provided, so expand / collapse is preserved. The Header Name also changes.
+1. Column Group B - `groupId` is NOT provided, so expand / collapse is lost, group always closes when updates happen.
+1. Column Group C - `groupId` is provided, so expand / collapse is preserved. Child columns are changed.
+
+<grid-example title='Column Groups' name='column-groups' type='mixed' options='{ "modules": true }'></grid-example>
