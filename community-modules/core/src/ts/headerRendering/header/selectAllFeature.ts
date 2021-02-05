@@ -9,6 +9,8 @@ import { Constants } from "../../constants/constants";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { SelectionController } from "../../selectionController";
+import { getAriaDescribedBy, setAriaDescribedBy } from "../../utils/aria";
+import { isVisible } from "../../utils/dom";
 
 export class SelectAllFeature extends BeanStub {
 
@@ -55,6 +57,30 @@ export class SelectAllFeature extends BeanStub {
             this.checkRightRowModelType();
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
+        }
+        this.refreshHeaderAriaDescribedBy(this.cbSelectAllVisible);
+    }
+
+    private refreshHeaderAriaDescribedBy(isSelectAllVisible: boolean): void {
+        const parentHeader = this.cbSelectAll.getParentComponent();
+        const parentHeaderGui = parentHeader && parentHeader.getGui();
+        if (!parentHeaderGui || !isVisible(parentHeaderGui)) { return; }
+
+        let describedByIds = '';
+
+        if (parentHeaderGui) {
+            describedByIds = getAriaDescribedBy(parentHeaderGui);
+        }
+
+        const cbSelectAllId = this.cbSelectAll.getInputElement().id;
+        const describedByIdsHasSelectAllFeature = describedByIds.indexOf(cbSelectAllId) !== -1;
+
+        if (isSelectAllVisible) {
+            if (!describedByIdsHasSelectAllFeature) {
+                setAriaDescribedBy(parentHeaderGui, `${cbSelectAllId} ${describedByIds.trim()}`);
+            }
+        } else if (describedByIdsHasSelectAllFeature) {
+            setAriaDescribedBy(parentHeaderGui, describedByIds.trim().split(' ').filter(id => id === cbSelectAllId).join(' '));
         }
     }
 

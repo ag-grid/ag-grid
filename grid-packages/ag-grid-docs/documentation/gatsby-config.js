@@ -106,7 +106,15 @@ const plugins = [
         },
         'gatsby-remark-copy-linked-files',
         'gatsby-remark-embed-snippet',
-        'gatsby-remark-prismjs',
+        {
+          resolve: 'gatsby-remark-prismjs',
+          options: {
+            aliases: {
+              sh: 'bash',
+            },
+            noInlineHighlight: true,
+          }
+        }
       ]
     }
   },

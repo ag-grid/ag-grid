@@ -3,8 +3,8 @@ title: "Angular Webpack 3"
 frameworks: ["angular"]
 ---
 
-We walk through the main steps required when using AG Grid, Angular and Webpack 3 below, 
-but please refer to [ag-grid-angular-example](https://github.com/ag-grid/ag-grid-angular-example) on 
+We walk through the main steps required when using AG Grid, Angular and Webpack 3 below,
+but please refer to [ag-grid-angular-example](https://github.com/ag-grid/ag-grid-angular-example) on
 GitHub for a full working example of this.
 
 ## Initialise Project
@@ -30,12 +30,12 @@ npm i --save-dev css-loader style-loader html-loader html-webpack-plugin raw-loa
 
 ## Create Application
 
-Our application will be a very simple one, consisting of a single Module, a single Component and a 
+Our application will be a very simple one, consisting of a single Module, a single Component and a
 bootstrap file, as well a few utility files for vendor & polyfills.
 
 The resulting project structure will look like this:
 
-```
+```bash
 └── ag-grid-webpack3
     ├── app
     │   ├── app.component.html
@@ -51,12 +51,11 @@ The resulting project structure will look like this:
     │   └── webpack.prod.js
     ├── node_modules
     ├── package.json
-    └── tsconfig.json</snippet>
-
+    └── tsconfig.json
 ```
 
 ```js
-// app/app.module.ts 
+// app/app.module.ts
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 // ag-grid
@@ -80,7 +79,7 @@ export class AppModule {
 ```
 
 ```js
-// app/app.component.ts 
+// app/app.component.ts
 import { Component } from "@angular/core";
 import { GridOptions } from "ag-grid-community";
 
@@ -117,10 +116,10 @@ export class AppComponent {
 ```
 
 ```html
-<!-- app/app.component.html-->  
-<ag-grid-angular 
-    #agGrid 
-    style="width: 500px; height: 150px;" 
+<!-- app/app.component.html-->
+<ag-grid-angular
+    #agGrid
+    style="width: 500px; height: 150px;"
     class="ag-theme-alpine"
     [gridOptions]="gridOptions"
     [columnDefs]="columnDefs"
@@ -129,7 +128,7 @@ export class AppComponent {
 ```
 
 ```js
-// app/boot.ts 
+// app/boot.ts
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { AppModule } from "./app.module";
 
@@ -141,7 +140,7 @@ platformBrowserDynamic().bootstrapModule(AppModule);
 ```
 
 ```js
-// app/polyfills.ts 
+// app/polyfills.ts
 import "core-js/es6";
 import "core-js/es7/reflect";
 require('zone.js/dist/zone');
@@ -155,7 +154,7 @@ if (process.env.ENV === 'production') {
 ```
 
 ```ts
-// app/vendor.ts 
+// app/vendor.ts
 // Angular
 import '@angular/platform-browser';
 import '@angular/platform-browser-dynamic';
@@ -178,7 +177,7 @@ import '@ag-grid-community/angular'
 
 ## tsconfig.json
 
-We use this to let the TypeScript compiler know what our target is (es5), what libraries 
+We use this to let the TypeScript compiler know what our target is (es5), what libraries
 we depend on (dom and es2015) and so on:
 
 ```json
@@ -204,9 +203,9 @@ we depend on (dom and es2015) and so on:
 
 ## Webpack Configuration
 
-We have 2 Webpack Configurations in the example project - a dev configuration and a production 
-configuration. In both of these configurations we make use of an html file where our generated 
-bundle(s) will be inserted and will serve as our application starting point, as well as a helper 
+We have 2 Webpack Configurations in the example project - a dev configuration and a production
+configuration. In both of these configurations we make use of an html file where our generated
+bundle(s) will be inserted and will serve as our application starting point, as well as a helper
 file for within use of the webpack configurations:
 
 ```js
@@ -234,8 +233,8 @@ exports.root = root;
 </html>
 ```
 
-`helpers.js` helps us to resolve path easily, and `index.html` will be used by the 
-`HtmlWebpackPlugin` plugin to ensure the generated bundles are inserted dynamically, 
+`helpers.js` helps us to resolve path easily, and `index.html` will be used by the
+`HtmlWebpackPlugin` plugin to ensure the generated bundles are inserted dynamically,
 instead of us needing to manage this ourselves.
 
 ### Webpack Development Configuration
@@ -324,8 +323,8 @@ module.exports = {
 
 ### entry
 
-We could generate one large bundle, but it's better to break the bundle up into the fairly 
-"static" dependencies and the more fluid application code. Using the `entry` property we 
+We could generate one large bundle, but it's better to break the bundle up into the fairly
+"static" dependencies and the more fluid application code. Using the `entry` property we
 can specify the entry points we want to use - we have specified 3 here:
 
 - polyfills: polyfills we require to run Angular / ES6 applications in current browsers.
@@ -334,13 +333,13 @@ can specify the entry points we want to use - we have specified 3 here:
 
 ### resolve
 
-As our imports done specify what file extension to use, we need to specify what file types we 
-want to match on - in this case we're looking at TypeScript and JavaScript files, but you 
+As our imports done specify what file extension to use, we need to specify what file types we
+want to match on - in this case we're looking at TypeScript and JavaScript files, but you
 could also add CSS & HTML files too.
 
 ### module.loaders
 
-Loaders tell Webpack how & what to do with certain types of file - we have specified a few here 
+Loaders tell Webpack how & what to do with certain types of file - we have specified a few here
 to deal with Typescript, HTML, CSS and Images:
 
 - awesome-typescript-loader: transpile Typescript to ES5
@@ -450,9 +449,9 @@ module.exports = {
 };
 ```
 
-We don't use a development server with this configuration - we generate the final artifacts in the 
-dist/ folder and expect this to be deploy to a server. We use the plugins to remove duplicates and 
-minify and extract the CSS into cache busting hash named files. Finally, we use the DefinePlugin to 
+We don't use a development server with this configuration - we generate the final artifacts in the
+dist/ folder and expect this to be deploy to a server. We use the plugins to remove duplicates and
+minify and extract the CSS into cache busting hash named files. Finally, we use the DefinePlugin to
 provide an environment variable that we can use in our application code to `enableProdMode()`
 
 ```js
@@ -470,7 +469,7 @@ With all this in place, we can now add the following npm scripts to our package.
 },
 ```
 
-Now we can either run `npm start` to run the development setup, or `npm run build` for the 
+Now we can either run `npm start` to run the development setup, or `npm run build` for the
 production build. In the case of the production build the generated files will be under the `dist/` folder.
 
 If we now run our application with the above code we will see this:
@@ -479,7 +478,7 @@ If we now run our application with the above code we will see this:
 
 ## Override AG Grid CSS
 
-There are many ways to override the CSS with Webpack, but if you use the configuration above 
+There are many ways to override the CSS with Webpack, but if you use the configuration above
 then you can override AG Grid CSS as follows:
 
 - Place your application-wide CSS file(s) in a directory other than `./app` - for example `./css/`. Remember that CSS under `./app` is treated differently - it is used for component-scoped styles.
@@ -490,7 +489,7 @@ then you can override AG Grid CSS as follows:
 import '../css/app.css';
 ```
 
-And that's it - you can now override AG Grid CSS with your own in `./css/app.css`. 
+And that's it - you can now override AG Grid CSS with your own in `./css/app.css`.
 For example, the following would set the cell background to green across the board.
 
 ```css

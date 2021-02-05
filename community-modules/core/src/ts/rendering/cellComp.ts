@@ -28,7 +28,7 @@ import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DndSourceComp } from "./dndSourceComp";
 import { TooltipFeature } from "../widgets/tooltipFeature";
 import { TooltipParentComp } from '../widgets/tooltipFeature';
-import { setAriaColIndex, setAriaSelected } from "../utils/aria";
+import { setAriaColIndex, setAriaDescribedBy, setAriaSelected } from "../utils/aria";
 import { get, getValueUsingField } from "../utils/object";
 import { escapeString } from "../utils/string";
 import { exists, missing } from "../utils/generic";
@@ -2036,6 +2036,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
             this.eCellValue = this.getRefElement('eCellValue');
             this.eCellWrapper = this.getRefElement('eCellWrapper');
+            this.eCellValue.id = `cell-${this.getCompId()}`;
+            let describedByIds = '';
 
             if (this.includeRowDraggingComponent) {
                 this.addRowDragging();
@@ -2046,8 +2048,10 @@ export class CellComp extends Component implements TooltipParentComp {
             }
 
             if (this.includeSelectionComponent) {
-                this.addSelectionCheckbox();
+                describedByIds += this.addSelectionCheckbox().getCheckboxId();
             }
+
+            setAriaDescribedBy(this.getGui(), `${describedByIds} ${this.eCellValue.id}`);
         } else {
             this.eCellValue = this.getGui();
             this.eCellWrapper = this.eCellValue;
@@ -2095,7 +2099,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eCellValue);
     }
 
-    private addSelectionCheckbox(): void {
+    private addSelectionCheckbox(): CheckboxSelectionComponent {
         const cbSelectionComponent = new CheckboxSelectionComponent();
         this.beans.context.createBean(cbSelectionComponent);
 
@@ -2107,6 +2111,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eCellValue);
+        return cbSelectionComponent;
     }
 
     private addDomData(): void {

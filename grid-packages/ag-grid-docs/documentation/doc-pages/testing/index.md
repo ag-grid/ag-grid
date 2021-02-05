@@ -84,7 +84,7 @@ title: "Testing AG Grid"
 |
 | Remember that the interaction between your tests and the browser is as follows:
 |
-| ```
+| ```bash
 | [Test Scripts] < ------------ > [Selenium Server] < ------------ > [Browser Drivers]
 | ```
 |
@@ -841,7 +841,7 @@ title: "Testing AG Grid"
 | If you experience the error above then depending on your build configuration you may need to exclude either
 | `ag-grid-vue` or `@ag-grid-community/vue` in your Jest configuration:
 |
-| ```
+| ```js
 | module.exports = {
 |   ...other configuration...
 |   transformIgnorePatterns: ["/node_modules/(?!ag-grid-vue)"],

@@ -17,6 +17,8 @@ export default function Search({ indices }) {
 
     useClickOutside(rootRef, () => setFocus(false));
 
+    const onResultClicked = () => setFocus(false);
+
     return (
         <div className={styles['search-form']} ref={rootRef}>
             <InstantSearch
@@ -27,7 +29,7 @@ export default function Search({ indices }) {
                 <SearchResult
                     show={query && query.length > 0 && hasFocus}
                     indices={indices}
-                />
+                    onResultClicked={onResultClicked} />
             </InstantSearch>
         </div>
     );

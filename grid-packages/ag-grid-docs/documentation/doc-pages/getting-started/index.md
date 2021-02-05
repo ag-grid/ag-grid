@@ -2039,6 +2039,7 @@ title: "Get Started with AG Grid"
 |     </div>
 | </template>
 | ```
+|
 | ```html
 | <script>
 |     import { AgGridVue } from "ag-grid-vue";
@@ -2146,6 +2147,7 @@ title: "Get Started with AG Grid"
 |     </div>
 | </template>
 | ```
+|
 | ```html
 | <script>
 |     import { AgGridVue } from "ag-grid-vue";
