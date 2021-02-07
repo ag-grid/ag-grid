@@ -77,6 +77,7 @@ export {
     DragSource,
     DraggingEvent
 } from "./dragAndDrop/dragAndDropService";
+export { RowDropZoneParams } from "./gridPanel/rowDragFeature";
 export { DragService } from "./dragAndDrop/dragService";
 export { IRowDragItem } from "./rendering/row/rowDragComp";
 

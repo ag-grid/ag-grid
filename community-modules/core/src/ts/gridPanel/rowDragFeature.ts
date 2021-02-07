@@ -31,7 +31,6 @@ export interface RowDropZoneEvents {
 
 export interface RowDropZoneParams extends RowDropZoneEvents {
     getContainer: () => HTMLElement;
-    fromGrid?: boolean;
 }
 
 export class RowDragFeature extends BeanStub implements DropTarget {
@@ -344,8 +343,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             getContainer: params.getContainer
         };
 
-        if (params.fromGrid) {
-            params.fromGrid = undefined;
+        if ((params as any).fromGrid) {
+            (params as any).fromGrid = undefined;
             processedParams = params;
         } else {
             if (params.onDragEnter) {
@@ -386,7 +385,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const onDragStop = this.onDragStop.bind(this);
 
         if (!events) {
-            return { getContainer, onDragEnter, onDragLeave, onDragging, onDragStop, fromGrid: true };
+            return { getContainer, onDragEnter, onDragLeave, onDragging, onDragStop, /* @private */ fromGrid: true } as RowDropZoneParams;
         }
 
         return {
@@ -415,8 +414,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     events.onDragStop!(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_END, e as any));
                 })
                 : onDragStop,
-            fromGrid: true
-        };
+            fromGrid: true /* @private */
+        } as RowDropZoneParams;
     }
 
     private draggingToRowDragEvent(type: string, draggingEvent: DraggingEvent): RowDragEvent {
