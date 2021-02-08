@@ -170,7 +170,12 @@ const processIndexForFramework = async framework => {
         const index = algoliaClient.initIndex(indexName);
 
         index.setSettings({
+            searchableAttributes: ['title', 'heading', 'subHeading', 'text'],
             attributesToSnippet: ['text:80'],
+            distinct: 1,
+            attributeForDistinct: 'breadcrumb',
+            customRanking: ['desc(rank)'],
+            camelCaseAttributes: ['text']
         });
 
         try {
