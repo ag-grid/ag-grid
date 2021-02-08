@@ -5,13 +5,11 @@ export default Vue.extend({
         <span>Field: {{this.params.colDef.field}}, Value: {{this.params.value}}</span>
     `,
     data: function () {
-        return {
-        };
+        return {};
     },
     beforeMount() {
     },
     mounted() {
     },
-    methods: {
-    }
+    methods: {}
 });

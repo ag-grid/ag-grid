@@ -15,7 +15,7 @@ export default class CurrencyRenderer extends Component {
 
     // noinspection JSUnusedGlobalSymbols
     refresh(params) {
-        if(params.value !== this.state.value) {
+        if (params.value !== this.state.value) {
             this.setState({
                 value: params.value
             })

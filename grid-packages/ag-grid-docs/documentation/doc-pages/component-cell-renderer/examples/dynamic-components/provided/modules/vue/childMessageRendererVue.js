@@ -7,8 +7,7 @@ export default Vue.extend({
         </span>
     `,
     data: function () {
-        return {
-        };
+        return {};
     },
     beforeMount() {
     },

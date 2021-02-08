@@ -5,11 +5,10 @@ export default Vue.extend({
         <span>{{formattedValue}}</span>
     `,
     data: function () {
-        return {
-        };
+        return {};
     },
     computed: {
-        formattedValue: function() {
+        formattedValue: function () {
             return this.formatValueToCurrency('EUR', this.params.value)
         }
     },
@@ -22,7 +21,7 @@ export default Vue.extend({
             return `${currency}${value.toFixed(2)}`
         },
         refresh(params) {
-            if(params.value !== this.params.value) {
+            if (params.value !== this.params.value) {
                 this.params = params;
             }
             return true;

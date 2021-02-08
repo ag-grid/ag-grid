@@ -20,7 +20,7 @@
 |
 |```js
 |<template>
-|   <ag-grid-vue ...other properties>
+|   <ag-grid-vue :columnDefs="columnDefs" ...other properties>
 |   </ag-grid-vue>
 |</template>
 |

@@ -23,30 +23,6 @@ var gridOptions = {
     }
 };
 
-// cell renderer class
-function MedalCellRenderer() { }
-
-// init method gets the details of the cell to be renderer
-MedalCellRenderer.prototype.init = function(params) {
-    this.params = params;
-    this.eGui = document.createElement('span');
-    var text = '';
-    // one star for each medal
-    for (var i = 0; i < params.value; i++) {
-        text += '#';
-    }
-    this.eGui.innerHTML = text;
-};
-
-MedalCellRenderer.prototype.getGui = function() {
-    return this.eGui;
-};
-
-MedalCellRenderer.prototype.medalUserFunction = function() {
-    console.log('user function called for medal column: row = ' + this.params.rowIndex
-        + ', column = ' + this.params.column.getId());
-};
-
 function onCallGold() {
     console.log('=========> calling all gold');
     // pass in list of columns, here it's gold only

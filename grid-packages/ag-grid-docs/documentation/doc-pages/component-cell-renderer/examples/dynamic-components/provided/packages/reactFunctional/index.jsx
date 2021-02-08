@@ -1,8 +1,8 @@
 'use strict';
 
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
-import { render } from 'react-dom';
-import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+import React, {forwardRef, useImperativeHandle, useState} from 'react';
+import {render} from 'react-dom';
+import {AgGridColumn, AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
@@ -52,7 +52,7 @@ const ChildMessageRenderer = props => {
         props.context.methodFromParent(`Row: ${props.node.rowIndex}, Col: ${props.colDef.field}`);
     };
 
-    return <span><button style={{ height: 20, lineHeight: 0.5 }} onClick={invokeParentMethod} className="btn btn-info">Invoke Parent</button></span>;
+    return <span><button style={{height: 20, lineHeight: 0.5}} onClick={invokeParentMethod} className="btn btn-info">Invoke Parent</button></span>;
 };
 
 const createRowData = () => {
@@ -73,7 +73,7 @@ const GridExample = () => {
     const refreshEvenRowsCurrencyData = () => {
         const newRowData = [];
         for (const data of rowData) {
-            let newData = { ...data };
+            let newData = {...data};
             if (newData.value % 2 === 0) {
                 newData.currency = newData.value + Number(Math.random().toFixed(2));
             }
@@ -87,51 +87,50 @@ const GridExample = () => {
     };
 
     return (
-        <div style={{ width: '100%', height: '100%' }}>
-            <div className="test-container">
-                <div className="test-header">
-                    <button onClick={refreshEvenRowsCurrencyData} style={{ marginBottom: 10 }}
+        <div style={{width: '100%', height: '100%'}}>
+            <div className="example-wrapper">
+                <button onClick={() => refreshEvenRowsCurrencyData()} style={{"marginBottom": "10px"}}
                         className="btn btn-primary">
-                        Refresh Even Row Currency Data
-                    </button>
-                    <div
-                        style={{
-                            height: '100%',
-                            width: '100%'
+                    Refresh Even Row Currency Data
+                </button>
+                <div
+                    id="myGrid"
+                    style={{
+                        height: '100%',
+                        width: '100%'
+                    }}
+                    className="ag-theme-alpine">
+                    <AgGridReact
+                        rowData={rowData}
+                        // we use immutableData here to ensure that we only re-render what has changed in the grid
+                        // see https://www.ag-grid.com/javascript/immutable-data/ for more information
+                        immutableData={true}
+                        getRowNodeId={data => data.row}
+                        context={{
+                            methodFromParent
                         }}
-                        className="ag-theme-alpine test-grid">
-                        <AgGridReact
-                            rowData={rowData}
-                            // we use immutableData here to ensure that we only re-render what has changed in the grid
-                            // see https://www.ag-grid.com/javascript/immutable-data/ for more information
-                            immutableData={true}
-                            getRowNodeId={data => data.row}
-                            context={{
-                                methodFromParent
-                            }}
-                            frameworkComponents={{
-                                squareRenderer: SquareRenderer,
-                                cubeRenderer: CubeRenderer,
-                                paramsRenderer: ParamsRenderer,
-                                currencyRenderer: CurrencyRenderer,
-                                childMessageRenderer: ChildMessageRenderer
-                            }}
-                            defaultColDef={{
-                                editable: true,
-                                sortable: true,
-                                flex: 1,
-                                minWidth: 100,
-                                filter: true,
-                                resizable: true
-                            }}>
-                            <AgGridColumn field="row" width={150} />
-                            <AgGridColumn field="value" cellRenderer='squareRenderer' editable={true} colId="square" />
-                            <AgGridColumn field="value" cellRenderer='cubeRenderer' colId="cube" />
-                            <AgGridColumn field="row" cellRenderer='paramsRenderer' colId="params" />
-                            <AgGridColumn field="currency" cellRenderer='currencyRenderer' colId="currency" />
-                            <AgGridColumn field="value" cellRenderer='childMessageRenderer' colId="params" />
-                        </AgGridReact>
-                    </div>
+                        frameworkComponents={{
+                            squareRenderer: SquareRenderer,
+                            cubeRenderer: CubeRenderer,
+                            paramsRenderer: ParamsRenderer,
+                            currencyRenderer: CurrencyRenderer,
+                            childMessageRenderer: ChildMessageRenderer
+                        }}
+                        defaultColDef={{
+                            editable: true,
+                            sortable: true,
+                            flex: 1,
+                            minWidth: 100,
+                            filter: true,
+                            resizable: true
+                        }}>
+                        <AgGridColumn field="row" width={150}/>
+                        <AgGridColumn field="value" cellRenderer='squareRenderer' editable={true} colId="square"/>
+                        <AgGridColumn field="value" cellRenderer='cubeRenderer' colId="cube"/>
+                        <AgGridColumn field="row" cellRenderer='paramsRenderer' colId="params"/>
+                        <AgGridColumn field="currency" cellRenderer='currencyRenderer' colId="currency"/>
+                        <AgGridColumn field="value" cellRenderer='childMessageRenderer' colId="params"/>
+                    </AgGridReact>
                 </div>
             </div>
         </div>
@@ -139,6 +138,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample />,
+    <GridExample/>,
     document.querySelector('#root')
 );
