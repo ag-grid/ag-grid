@@ -106,12 +106,12 @@ export class AppComponent {
 ### Render the grid as the `@ag-grid-community/angular` child component
 
 ```html
-<@ag-grid-community/angular
+<ag-grid-angular
 	style="width: 500px; height: 500px;"
 	class="ag-theme-alpine"
 	[rowData]="rowData"
 	[columnDefs]="columnDefs">
-</@ag-grid-community/angular>
+</ag-grid-angular>
 ```
 
 ## Issue Reporting
