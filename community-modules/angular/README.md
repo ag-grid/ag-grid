@@ -103,7 +103,7 @@ export class AppComponent {
 }
 ```
 
-### Render the grid as the `@ag-grid-community/angular` child component
+### Render the grid as the `ag-grid-angular` child component
 
 ```html
 <ag-grid-angular
