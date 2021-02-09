@@ -1,5 +1,3 @@
-import { index } from "d3";
-
 export class HierarchyNode {
     data: any;
     value: number = 0;
