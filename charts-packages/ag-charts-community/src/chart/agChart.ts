@@ -515,10 +515,3 @@ function provideDefaultOptions(path: string, options: any, mapping: any, theme?:
 
     return options;
 }
-
-const chart = AgChart.create({
-    type: 'hierarchy',
-    data: {},
-    series: [{
-    }]
-});

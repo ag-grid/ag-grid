@@ -45,9 +45,6 @@
     "not operamobile >= 0"
   ],
   "homepage": "http://www.ag-grid.com/",
-  "dependencies": {
-    "d3": "^5.7.0"
-  },
   "jest": {
     "setupFiles": [
       "jest-canvas-mock"
@@ -57,7 +54,6 @@
   "devDependencies": {
     "@babel/types": "7.12.7",
     "@types/jest": "^25.2.1",
-    "@types/d3": "^5.7.0",
     "canvas": "2.6.1",
     "eslint": "^6.8.0",
     "eslint-plugin-compat": "^3.5.1",

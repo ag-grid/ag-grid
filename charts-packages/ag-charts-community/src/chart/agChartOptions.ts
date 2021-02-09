@@ -730,6 +730,8 @@ export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
     labelKey?: string;
     tooltip?: AgTreemapSeriesTooltip;
     nodePadding?: number;
+    colorParents?: boolean;
+    gradient?: boolean;
 }
 
 type AgCartesianSeriesOptions =

@@ -4,7 +4,6 @@ import { reactive } from "../../../util/observable";
 import { Label } from "../../label";
 import { HighlightStyle, SeriesNodeDatum, SeriesTooltip } from "../series";
 import { HierarchySeries } from "./hierarchySeries";
-import * as d3 from "d3";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { Group } from "../../../scene/group";
 import { Text } from "../../../scene/shape/text";
@@ -13,6 +12,8 @@ import { DropShadow } from "../../../scene/dropShadow";
 import { LinearScale } from "../../../scale/linearScale";
 import { ChartAxisDirection } from "../../chartAxis";
 import { LegendDatum } from "../../legend";
+import { Treemap } from "../../../layout/treemap";
+import { hierarchy, HierarchyNode } from "../../../layout/hierarchy";
 
 interface TreemapNodeDatum extends SeriesNodeDatum {
     data: any;
@@ -62,8 +63,8 @@ export class TreemapSeries extends HierarchySeries {
 
     private colorMap = new Map<Rect, string>();
     private tickerMap = new Map<string, Text | undefined>();
-    private layout = d3.treemap().round(true);
-    private dataRoot?: d3.HierarchyNode<any>;
+    private layout = new Treemap();
+    private dataRoot?: HierarchyNode;
 
     constructor() {
         super();
@@ -171,34 +172,53 @@ export class TreemapSeries extends HierarchySeries {
     private updateLayoutPadding() {
         const { title, subtitle, nodePadding, labelKey } = this;
 
-        this.layout
-            .paddingRight(nodePadding)
-            .paddingBottom(nodePadding)
-            .paddingLeft(nodePadding)
-            .paddingTop(node => {
-                let name = (node.data as any)[labelKey] || '';
-                if (node.children) {
-                    name = name.toUpperCase();
-                }
-                const font = node.depth > 1 ? subtitle : title;
-                const textSize = HdpiCanvas.getTextSize(
-                    name, [font.fontWeight, font.fontSize + 'px', font.fontFamily].join(' ').trim()
-                );
-                const innerNodeWidth = node.x1 - node.x0 - nodePadding * 2;
-                const hasTitle = node.depth > 0 && node.children && textSize.width <= innerNodeWidth;
-                (node as any).hasTitle = hasTitle;
+        this.layout.paddingRight = _ => nodePadding;
+        this.layout.paddingBottom = _ => nodePadding;
+        this.layout.paddingLeft = _ => nodePadding;
+        this.layout.paddingTop = (node: any) => {
+            let name = (node.data as any)[labelKey] || '';
+            if (node.children) {
+                name = name.toUpperCase();
+            }
+            const font = node.depth > 1 ? subtitle : title;
+            const textSize = HdpiCanvas.getTextSize(
+                name, [font.fontWeight, font.fontSize + 'px', font.fontFamily].join(' ').trim()
+            );
+            const innerNodeWidth = node.x1 - node.x0 - nodePadding * 2;
+            const hasTitle = node.depth > 0 && node.children && textSize.width <= innerNodeWidth;
+            (node as any).hasTitle = hasTitle;
 
-                return hasTitle ? textSize.height + nodePadding * 2 : nodePadding;
-            });
+            return hasTitle ? textSize.height + nodePadding * 2 : nodePadding;
+        };
+
+        // this.layout
+        //     .paddingRight(nodePadding)
+        //     .paddingBottom(nodePadding)
+        //     .paddingLeft(nodePadding)
+        //     .paddingTop(node => {
+        //         let name = (node.data as any)[labelKey] || '';
+        //         if (node.children) {
+        //             name = name.toUpperCase();
+        //         }
+        //         const font = node.depth > 1 ? subtitle : title;
+        //         const textSize = HdpiCanvas.getTextSize(
+        //             name, [font.fontWeight, font.fontSize + 'px', font.fontFamily].join(' ').trim()
+        //         );
+        //         const innerNodeWidth = node.x1 - node.x0 - nodePadding * 2;
+        //         const hasTitle = node.depth > 0 && node.children && textSize.width <= innerNodeWidth;
+        //         (node as any).hasTitle = hasTitle;
+
+        //         return hasTitle ? textSize.height + nodePadding * 2 : nodePadding;
+        //     });
     }
 
     processData(): boolean {
         const { data, sizeKey, labelKey, valueKey, valueDomain, valueRange, colorParents } = this;
 
         if (sizeKey) {
-            this.dataRoot = d3.hierarchy(data).sum(datum => datum.children ? 1 : datum[sizeKey]);
+            this.dataRoot = hierarchy(data).sum(datum => datum.children ? 1 : datum[sizeKey]);
         } else {
-            this.dataRoot = d3.hierarchy(data).sum(datum => datum.children ? 0 : 1);
+            this.dataRoot = hierarchy(data).sum(datum => datum.children ? 0 : 1);
         }
 
         const colorScale = new LinearScale();
@@ -251,10 +271,10 @@ export class TreemapSeries extends HierarchySeries {
             return;
         }
 
-        this.layout = this.layout.size([seriesRect.width, seriesRect.height]).round(true);
+        this.layout.size = [seriesRect.width, seriesRect.height];
         this.updateLayoutPadding();
 
-        const descendants = this.layout(dataRoot).descendants();
+        const descendants = this.layout.processData(dataRoot).descendants();
 
         const updateGroups = this.groupSelection.setData(descendants);
         updateGroups.exit.remove();
