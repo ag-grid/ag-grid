@@ -6,10 +6,10 @@ import Styles from './Styles';
 import SystemJs from './SystemJs';
 import MetaData from './MetaData';
 
-const ReactTemplate = ({ modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+const ReactTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
     <html lang="en">
         <head>
-            <MetaData title="React example" modifiedTimeMs={modifiedTimeMs} />
+            <MetaData title="React example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle rootId="root" />
             <Styles files={styleFiles} />
             <Extras options={options} />

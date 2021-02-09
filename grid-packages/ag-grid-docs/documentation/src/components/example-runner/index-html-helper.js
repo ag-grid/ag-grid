@@ -32,6 +32,16 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
     const modifiedTimeMs = modifiedTimeFile ? modifiedTimeFile.mtimeMs : new Date().getTime();
 
     let element;
+
+    const templateProps = {
+        isExecuting,
+        modifiedTimeMs,
+        library,
+        appLocation,
+        options,
+        styleFiles
+    };
+
     switch (framework) {
         case 'javascript': {
             const indexHtml = exampleInfo.getFile('index.html');
@@ -41,13 +51,9 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
             }
 
             element = <VanillaTemplate
-                modifiedTimeMs={modifiedTimeMs}
-                library={library}
-                appLocation={appLocation}
-                options={options}
                 indexFragment={indexHtml.childHtmlRehype.html}
                 scriptFiles={[...scriptFiles, getFileUrl(exampleInfo.getFile('main.js'))]}
-                styleFiles={styleFiles} />;
+                {...templateProps} />;
 
             break;
         }
@@ -64,13 +70,9 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
             const FrameworkTemplate = frameworkTemplates[framework];
 
             element = <FrameworkTemplate
-                modifiedTimeMs={modifiedTimeMs}
-                library={library}
                 boilerplatePath={boilerplatePath}
-                appLocation={appLocation}
-                options={options}
                 scriptFiles={scriptFiles}
-                styleFiles={styleFiles} />;
+                {...templateProps} />;
 
             break;
         }
@@ -78,9 +80,9 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
         default:
             element =
                 <html lang="en">
-                <body>
-                <div>An unknown framework "{framework}" was requested.</div>
-                </body>
+                    <body>
+                        <div>An unknown framework "{framework}" was requested.</div>
+                    </body>
                 </html>;
             break;
     }

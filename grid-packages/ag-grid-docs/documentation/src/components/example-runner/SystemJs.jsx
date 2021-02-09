@@ -223,16 +223,19 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options })
 
     return <>
         <script dangerouslySetInnerHTML={{
-            __html: `var appLocation = '${appLocation}';
-        var boilerplatePath = '${boilerplatePath}';
-        var systemJsMap = ${JSON.stringify(systemJsMap, null, 2)};
-        ${Object.keys(systemJsPaths).length > 0 ? `var systemJsPaths = ${JSON.stringify(systemJsPaths, null, 2)};` : ''}`
-        }}></script>
-
-        <script src="https://unpkg.com/systemjs@0.19.47/dist/system.js"></script>
-        <script src={systemJsPath}></script>
-        <script dangerouslySetInnerHTML={{ __html: `System.import('${startFile}').catch(function(err) { console.error(err); });` }}></script>
+            __html: `
+            var appLocation = '${appLocation}';
+            var boilerplatePath = '${boilerplatePath}';
+            var systemJsMap = ${format(systemJsMap)};
+            ${Object.keys(systemJsPaths).length > 0 ? `var systemJsPaths = ${format(systemJsPaths)};` : ''}
+        `
+        }} />
+        <script src="https://unpkg.com/systemjs@0.19.47/dist/system.js" />
+        <script src={systemJsPath} />
+        <script dangerouslySetInnerHTML={{ __html: `System.import('${startFile}').catch(function(err) { console.error(err); });` }} />
     </>;
 };
+
+const format = value => JSON.stringify(value, null, 4).replace(/\n/g, '\n            ');
 
 export default SystemJs;

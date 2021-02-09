@@ -6,13 +6,10 @@ import Styles from './Styles';
 import SystemJs from './SystemJs';
 import MetaData from './MetaData';
 
-const VueTemplate = ({ modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+const VueTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
     <html lang="en">
         <head>
-            <MetaData title="Vue example" modifiedTimeMs={modifiedTimeMs} />
-            <meta charSet="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <meta name="robots" content="noindex" />
+            <MetaData title="Vue example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle rootId="app" />
             <Styles files={styleFiles} />
             <Extras options={options} />

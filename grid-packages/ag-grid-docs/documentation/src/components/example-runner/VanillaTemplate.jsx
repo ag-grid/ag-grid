@@ -11,10 +11,10 @@ import MetaData from './MetaData';
 
 const getCacheBustingUrl = (url, timestamp) => `${url}?t=${timestamp}`;
 
-const VanillaTemplate = ({ modifiedTimeMs, library, appLocation, options, scriptFiles, styleFiles, indexFragment }) =>
+const VanillaTemplate = ({ isExecuting, modifiedTimeMs, library, appLocation, options, scriptFiles, styleFiles, indexFragment }) =>
     <html lang="en">
         <head>
-            <MetaData title="JavaScript example" modifiedTimeMs={modifiedTimeMs} />
+            <MetaData title="JavaScript example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle />
             <VanillaStyles library={library} files={isDevelopment() ? styleFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
             <Extras options={options} />
