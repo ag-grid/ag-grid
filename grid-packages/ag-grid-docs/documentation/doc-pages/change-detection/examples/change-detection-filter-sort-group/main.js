@@ -39,11 +39,13 @@ var gridOptions = {
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
     animateRows: true,
-    onCellValueChanged: function(params) {
-        var changedData = [params.data];
-        params.api.applyTransaction({update: changedData});
-    }
+    onCellValueChanged: onCellValueChanged
 };
+
+function onCellValueChanged(params) {
+    var changedData = [params.data];
+    params.api.applyTransaction({update: changedData});
+}
 
 function getRowData() {
     var rowData = [];
