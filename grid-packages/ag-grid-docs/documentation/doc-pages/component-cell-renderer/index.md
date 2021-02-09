@@ -10,13 +10,16 @@ The example below shows a simple cell renderer in action. It uses a cell rendere
 
 <grid-example title='Simple Cell Renderer' name='simple-javascript' type='generated' options='{ "exampleHeight": 460 }'></grid-example>
 
-md-include:interface-javascript.md
-
-md-include:simple-renderer-javascript.md
-
 ## Registering Cell Renderers with Columns
 
 See the section [registering custom components](../components/#registering-custom-components) for details on registering and using custom cell renderers.
+
+md-include:component-interface-javascript.md
+md-include:component-interface-angular.md  
+md-include:component-interface-react.md  
+md-include:component-interface-vue.md  
+ 
+md-include:simple-renderer-javascript.md
 
 ## Component Refresh
 

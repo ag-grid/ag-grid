@@ -25,6 +25,7 @@ import {
 export interface AgFrameworkComponent<T> {
     agInit(params: T): void;
 
+    /* deprecated */
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 
