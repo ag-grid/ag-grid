@@ -15,31 +15,19 @@ import { getIndexHtml } from './index-html-helper';
 import anchorIcon from 'images/anchor';
 import styles from './ExampleRunner.module.scss';
 
-const writeIndexHtmlFiles = exampleInfo => {
+const isGeneratedExample = type => ['generated', 'mixed'].includes(type);
+
+const writeIndexHtmlFile = exampleInfo => {
+    const { appLocation, type } = exampleInfo;
     const indexHtml = getIndexHtml(exampleInfo, true);
-    const { appLocation, type, framework, library } = exampleInfo;
 
-    if (type === 'generated' || type === 'mixed') {
-        const modulesLocation = appLocation; // because modules is the default
+    fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
 
-        fs.writeFileSync(`public${modulesLocation}index.html`, indexHtml);
+    const templateIndexHtmlPath = `public${appLocation}../../index.html`;
 
-        const packagesLocation = modulesLocation.replace('/modules/', '/packages/');
-
-        fs.writeFileSync(`public${packagesLocation}index.html`, indexHtml);
-
-        if (framework === 'react' && library === 'grid') {
-            // need to ensure functional version is also generated
-            fs.writeFileSync(`public${modulesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
-            fs.writeFileSync(`public${packagesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
-        }
-
+    if (isGeneratedExample(type) && fs.existsSync(templateIndexHtmlPath)) {
         // don't publish the template index.html
-        if (framework === 'javascript') {
-            fs.rmSync(`public${appLocation}../../index.html`);
-        }
-    } else {
-        fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
+        fs.rmSync(templateIndexHtmlPath);
     }
 };
 
@@ -52,7 +40,28 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
     );
 
     if (isServerSideRendering()) {
-        writeIndexHtmlFiles(exampleInfo);
+        writeIndexHtmlFile(exampleInfo);
+
+        if (isGeneratedExample(type)) {
+            // Need to generate the different permutations of index file:
+            // 1. Modules version - this is saved already as it is the default
+
+            // 2. Packages version
+            const packagesExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, 'packages', useFunctionalReact);
+
+            writeIndexHtmlFile(packagesExampleInfo);
+
+            // 3. For React, the functional versions (because classic is the default)
+            if (framework === 'react' && library === 'grid') {
+                const functionalModulesExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, 'modules', true);
+
+                writeIndexHtmlFile(functionalModulesExampleInfo);
+
+                const functionalPackagesExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, 'packages', true);
+
+                writeIndexHtmlFile(functionalPackagesExampleInfo);
+            }
+        }
     }
 
     const exampleStyle = {
