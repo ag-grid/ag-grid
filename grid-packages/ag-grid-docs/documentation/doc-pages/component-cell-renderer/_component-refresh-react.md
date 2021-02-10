@@ -8,6 +8,9 @@
 |
 |If you provide a `refresh` method then this method will be called over the component's props being refreshed.
 |
+|Note that if you're using Hooks for a Cell Renderer and decide to implement the `refresh` method then you'll need to expose it with
+|`forwardRef` & `useImperativeHandle`. Please refer to the [Hook](../react-hooks) documentation (or the examples on this page) for more information.
+|
 |In the context of "refresh" being referenced from here on then it'll refer to either of the mechanisms above, whichever you choose to implement.
 |
 |The grid can refresh the data in the browser, but not every refresh / redraw of the grid results in the refresh method of your cell renderer getting called, or for props to be updated.
@@ -36,7 +39,6 @@
 ||
 ||Using Immutable Data is analogous to providing a `key` to an array of components in React - it allows for cells to be refreshed (if possible) instead
 ||of being replaced.
-||   
 |
 |### Grid vs Component Refresh
 |
