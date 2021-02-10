@@ -3,6 +3,7 @@ import { Bean, PostConstruct } from "../context/context";
 import { AnimationQueueEmptyEvent } from "../events";
 import { Events } from "../eventKeys";
 import { BeanStub } from "../context/beanStub";
+import { GridPanel } from "../gridPanel/gridPanel";
 
 interface TaskItem {
     task: () => void;
@@ -38,6 +39,8 @@ export class AnimationFrameService extends BeanStub {
     private taskCount = 0;
     private cancelledTasks = new Set();
 
+    private gridPanel: GridPanel;
+
     public setScrollTop(scrollTop: number): void {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
         this.lastScrollTop = scrollTop;
@@ -46,6 +49,10 @@ export class AnimationFrameService extends BeanStub {
     @PostConstruct
     private init(): void {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     // this method is for our AG Grid sanity only - if animation frames are turned off,
@@ -107,24 +114,26 @@ export class AnimationFrameService extends BeanStub {
 
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
+
         while (noMaxMillis || duration < millis) {
-            let task: () => void;
+            if (!this.gridPanel.executeAnimationFrameScroll()) {
+                let task: () => void;
+                if (p1Tasks.length) {
+                    this.sortTaskList(p1TaskList);
+                    task = p1Tasks.pop()!.task;
+                } else if (p2Tasks.length) {
+                    this.sortTaskList(p2TaskList);
+                    task = p2Tasks.pop()!.task;
+                } else if (destroyTasks.length) {
+                    task = destroyTasks.pop()!;
+                } else {
+                    this.cancelledTasks.clear();
+                    break;
+                }
 
-            if (p1Tasks.length) {
-                this.sortTaskList(p1TaskList);
-                task = p1Tasks.pop()!.task;
-            } else if (p2Tasks.length) {
-                this.sortTaskList(p2TaskList);
-                task = p2Tasks.pop()!.task;
-            } else if (destroyTasks.length) {
-                task = destroyTasks.pop()!;
-            } else {
-                this.cancelledTasks.clear();
-                break;
-            }
-
-            if (!this.cancelledTasks.has(task)) {
-                task();
+                if (!this.cancelledTasks.has(task)) {
+                    task();
+                }
             }
 
             duration = (new Date().getTime()) - frameStart;

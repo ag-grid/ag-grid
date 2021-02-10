@@ -199,6 +199,7 @@ export class GridPanel extends Component {
 
     private scrollLeft = -1;
     private scrollTop = -1;
+    private nextScrollTop = -1;
 
     private centerWidth: number;
 
@@ -320,6 +321,7 @@ export class GridPanel extends Component {
         this.mouseEventService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
+        this.animationFrameService.registerGridComp(this);
         if (this.contextMenuFactory) {
             this.contextMenuFactory.registerGridComp(this);
         }
@@ -1496,11 +1498,26 @@ export class GridPanel extends Component {
         const scrollTop: number = this.eBodyViewport.scrollTop;
 
         if (this.shouldBlockScrollUpdate('vertical', scrollTop, true)) { return; }
-
         this.animationFrameService.setScrollTop(scrollTop);
+        this.nextScrollTop = scrollTop;
 
-        this.scrollTop = scrollTop;
-        this.redrawRowsAfterScroll();
+       if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
+           this.scrollTop = this.nextScrollTop;
+           this.redrawRowsAfterScroll();
+        } else {
+            this.animationFrameService.schedule();
+        }
+    }
+
+    public executeAnimationFrameScroll(): boolean {
+        const frameNeeded = this.scrollTop != this.nextScrollTop;
+
+        if (frameNeeded) {
+            this.scrollTop = this.nextScrollTop;
+            this.redrawRowsAfterScroll();
+        }
+
+        return frameNeeded;
     }
 
     private shouldBlockScrollUpdate(direction: ScrollDirection, scrollTo: number, touchOnly: boolean = false): boolean {
