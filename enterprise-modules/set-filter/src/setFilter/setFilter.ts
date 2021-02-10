@@ -495,6 +495,9 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
     public refreshFilterValues(): void {
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
+        // the model is still being initialised
+        if (!this.valueModel.isInitialised()) { return; }
+
         this.valueModel.refreshValues().then(() => {
             this.refresh();
             this.onUiChanged();
