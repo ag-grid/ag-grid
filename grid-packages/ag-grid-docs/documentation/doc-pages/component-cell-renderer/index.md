@@ -52,10 +52,14 @@ See the section [registering custom components](../components/#registering-custo
  
 Component refresh needs a bit more explanation. Here we go through some of the finer details.
 
-md-include:component-refresh-javascript.md
-md-include:component-refresh-angular.md
+[[only-javascript]]
+md-include:component-refresh-general.md
+[[only-angular]]
+md-include:component-refresh-general.md
+[[only-vue]]
+md-include:component-refresh-general.md
+
 md-include:component-refresh-react.md
-md-include:component-refresh-vue.md
  
 ### Change Detection
  
@@ -80,6 +84,14 @@ In short, a value is prepared. The value comes using either the `colDef.field` o
 |<image-caption src='resources/valueGetterFlowFw.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true'></image-caption>
 [[only-vue]]
 |<image-caption src='resources/valueGetterFlowFw.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true'></image-caption>
+
+## Complementing Cell Renderer Params
+
+On top of the parameters provided by the grid, you can also provide your own parameters. This is useful if you want to
+'configure' your cell renderer. For example, you might have a cell renderer for formatting currency but you need to
+provide what currency for your cell renderer to use.
+
+Provide params to a cell renderer using the colDef option `cellRendererParams`.
 
 md-include:complementing-component-javascript.md 
 md-include:complementing-component-angular.md

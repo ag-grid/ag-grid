@@ -1,7 +1,7 @@
-[[only-javascript]]
 |### Events Causing Refresh
 |
-|The grid can refresh the data in the browser, but not every refresh / redraw of the grid results in the refresh method of your cell renderer getting called. The following items are those that **do** cause refresh to be called:
+|The grid can refresh the data in the browser, but not every refresh / redraw of the grid results in the refresh method 
+|of your cell renderer getting called. The following items are those that **do** cause refresh to be called:
 |
 |- Calling `rowNode.setDataValue(colKey, value)` to set a value directly onto the `rowNode`. This is the preferred API way to change one value from outside of the grid.
 |- When editing a cell and editing is stopped, so that cell displays new value after editing.
