@@ -12,22 +12,22 @@
 |
 |```js
 |// put the value in bold
-|colDef.cellRenderer = function(params) {
+|colDef.cellRenderer = params => {
 |    return '**' + params.value.toUpperCase() + '**';
 |}
 |
 |// put a tooltip on the value
-|colDef.cellRenderer = function(params) {
+|colDef.cellRenderer = params => {
 |    return '<span title="the tooltip">' + params.value + '</span>';
 |}
 |
 |// create a DOM object
-|colDef.cellRenderer = function(params) {
-|    var eDiv = document.createElement('div');
+|colDef.cellRenderer = params => {
+|    const eDiv = document.createElement('div');
 |    eDiv.innerHTML = '<span class="my-css-class"><button class="btn-simple">Push Me</button></span>';
-|    var eButton = eDiv.querySelectorAll('.btn-simple')[0];
+|    const eButton = eDiv.querySelectorAll('.btn-simple')[0];
 |
-|    eButton.addEventListener('click', function() {
+|    eButton.addEventListener('click', () => {
 |        console.log('button was clicked!!');
 |    });
 |

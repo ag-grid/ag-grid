@@ -1,17 +1,17 @@
-var columnDefs = [
-    { field: 'athlete' },
-    { field: 'country' },
-    { field: 'year', width: 100 },
-    { field: 'gold', width: 100, cellRenderer: 'medalCellRenderer' },
-    { field: 'silver', width: 100, cellRenderer: 'medalCellRenderer' },
-    { field: 'bronze', width: 100, cellRenderer: 'medalCellRenderer' },
-    { field: 'total', width: 100 }
+const columnDefs = [
+    {field: 'athlete'},
+    {field: 'year'},
+    {field: 'gold', cellRenderer: 'medalCellRenderer'},
+    {field: 'silver', cellRenderer: 'medalCellRenderer'},
+    {field: 'bronze', cellRenderer: 'medalCellRenderer'},
+    {field: 'total', minWidth: 175, cellRenderer: 'totalValueRenderer'}
 ];
 
-var gridOptions = {
+const gridOptions = {
     columnDefs: columnDefs,
     components: {
-        'medalCellRenderer': MedalCellRenderer
+        'medalCellRenderer': MedalCellRenderer,
+        'totalValueRenderer': TotalValueRenderer
     },
     defaultColDef: {
         editable: true,
@@ -24,12 +24,12 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+        .then(data => {
             gridOptions.api.setRowData(data);
         });
 });

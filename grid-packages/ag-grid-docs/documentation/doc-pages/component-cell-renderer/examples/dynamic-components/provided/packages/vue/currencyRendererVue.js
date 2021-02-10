@@ -8,7 +8,7 @@ export default Vue.extend({
         return {};
     },
     computed: {
-        formattedValue: function () {
+        formattedValue() {
             return this.formatValueToCurrency('EUR', this.params.value)
         }
     },

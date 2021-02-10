@@ -125,8 +125,8 @@ export class AppComponent {
     }
 
     createRowData() {
-        var rowData = [];
-        for (var i = 0; i < 15; i++) {
+        const rowData = [];
+        for (let i = 0; i < 15; i++) {
             rowData.push({
                 row: 'Row ' + i,
                 value: i,

@@ -4,25 +4,52 @@ title: "Cell Renderer"
 
 The job of the grid is to lay out the cells. By default the grid will create the cell values using simple text. If you want more complex HTML inside the cells you can achieve this using cell renderers.
 
+## Simple Cell Renderer 
+ 
+md-include:simple-renderer-javascript.md
+md-include:simple-renderer-angular.md
+md-include:simple-renderer-react.md
+md-include:simple-renderer-vue.md
+ 
 ## Simple Cell Renderer Example
 
-The example below shows a simple cell renderer in action. It uses a cell renderer to render a hash (`#`) symbol for each medal won,  instead of the medal count.
+The example below shows a simple cell renderer in action. It uses a cell renderer to render a hash (`#`) symbol for each medal won
+(instead of the medal count), and the `MedalCellRenderer` defined in the code snippet above for the `Total` column:
 
 <grid-example title='Simple Cell Renderer' name='simple-javascript' type='generated' options='{ "exampleHeight": 460 }'></grid-example>
+
+md-include:component-interface-javascript.md
+md-include:component-interface-angular.md  
+md-include:component-interface-react.md  
+md-include:component-interface-vue.md
+  
+```ts
+interface ICellRendererParams {
+    value: any, // value to be rendered
+    valueFormatted: any, // value to be rendered formatted
+    getValue: () => any, // convenience function to get most recent up to date value
+    setValue: (value: any) => void, // convenience to set the value
+    formatValue: (value: any) => any, // convenience to format a value using the column's formatter
+    data: any, // the row's data
+    node: RowNode, // row node
+    colDef: ColDef, // the cell's column definition
+    column: Column, // the cell's column
+    rowIndex: number, // the current index of the row (this changes after filter and sort)
+    api: GridApi, // the grid API
+    eGridCell: HTMLElement, // the grid's cell, a DOM div element
+    eParentOfValue: HTMLElement, // the parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection
+    columnApi: ColumnApi, // grid column API
+    context: any, // the grid's context
+    refreshCell: () => void // convenience function to refresh the cell
+}
+```
 
 ## Registering Cell Renderers with Columns
 
 See the section [registering custom components](../components/#registering-custom-components) for details on registering and using custom cell renderers.
 
-md-include:component-interface-javascript.md
-md-include:component-interface-angular.md  
-md-include:component-interface-react.md  
-md-include:component-interface-vue.md  
- 
-md-include:simple-renderer-javascript.md
-
 ## Component Refresh
-
+ 
 Component refresh needs a bit more explanation. Here we go through some of the finer details.
 
 md-include:component-refresh-javascript.md
@@ -47,13 +74,13 @@ The diagram below (which is taken from the section [Value Getters &amp; Formatte
 In short, a value is prepared. The value comes using either the `colDef.field` or the `colDef.valueGetter`. The value is also optionally passed through a `colDef.valueFormatter` if it exists. Then the value is finally placed into the DOM, either directly, or by using the chosen `colDef.cellRenderer`.
 
 [[only-javascript]]
-|<image-caption src='value-getters/resources/valueGetterFlow.svg' alt='Value Getter Flow' constrained='true'></image-caption>
+|<image-caption src='value-getters/resources/valueGetterFlow.svg' idth="55rem" centered="true" alt='Value Getter Flow' constrained='true'></image-caption>
 [[only-angular]]
-|<image-caption src='resources/valueGetterFlowFw.svg' alt='Value Getter Flow' constrained='true'></image-caption>
+|<image-caption src='resources/valueGetterFlowFw.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true'></image-caption>
 [[only-react]]
-|<image-caption src='resources/valueGetterFlowFw.svg' alt='Value Getter Flow' constrained='true'></image-caption>
+|<image-caption src='resources/valueGetterFlowFw.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true'></image-caption>
 [[only-vue]]
-|<image-caption src='resources/valueGetterFlowFw.svg' alt='Value Getter Flow' constrained='true'></image-caption>
+|<image-caption src='resources/valueGetterFlowFw.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true'></image-caption>
 
 md-include:complementing-component-javascript.md 
 md-include:complementing-component-angular.md
@@ -115,13 +142,13 @@ An example of getting the cell renderer for exactly one cell is as follows:
 
 ```js
 // example - get cell renderer for first row and column 'gold'
-var firstRowNode = gridOptions.api.getDisplayedRowAtIndex(0);
-var params = { columns: ['gold'], rowNodes: [firstRowNode] };
-var instances = gridOptions.api.getCellRendererInstances(params);
+const firstRowNode = gridOptions.api.getDisplayedRowAtIndex(0);
+const params = { columns: ['gold'], rowNodes: [firstRowNode] };
+const instances = gridOptions.api.getCellRendererInstances(params);
 
 if (instances.length > 0) {
     // got it, user must be scrolled so that it exists
-    var instance = instances[0];
+    const instance = instances[0];
 }
 ```
 
@@ -133,7 +160,7 @@ The example below demonstrates custom methods on cell renderers called by the ap
 - The **Gold** method executes a method on all instances of the cell renderer in the gold column.
 - The **First Row Gold** method executes a method on the gold cell of the first row only. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled past the first row.
 - The **All Cells** method executes a method on all instances of all cell renderers.
-
+ 
 <grid-example title='Get Cell Renderer' name='get-cell-renderer' type='generated'></grid-example>
 
 If your are using a framework component (detailed below), then the returned object is a wrapper and you can get the underlying cell renderer using `getFrameworkComponentInstance()`
@@ -141,14 +168,14 @@ If your are using a framework component (detailed below), then the returned obje
 
 ```js
 // example - get cell renderer for first row and column 'gold'
-var firstRowNode = gridOptions.api.getDisplayedRowAtIndex(0);
-var params = { columns: ['gold'], rowNodes: [firstRowNode] };
-var instances = gridOptions.api.getCellRendererInstances(params); 
-
+const firstRowNode = gridOptions.api.getDisplayedRowAtIndex(0);
+const params = { columns: ['gold'], rowNodes: [firstRowNode] };
+const instances = gridOptions.api.getCellRendererInstances(params); 
+ 
 if (instances.length > 0) {
     // got it, user must be scrolled so that it exists
-    var wrapperInstance = instances[0];
-    var frameworkInstance = wrapperInstance.getFrameworkComponentInstance();
+    const wrapperInstance = instances[0];
+    const frameworkInstance = wrapperInstance.getFrameworkComponentInstance();
 }
 ```
 
