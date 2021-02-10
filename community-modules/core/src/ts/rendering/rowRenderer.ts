@@ -1081,8 +1081,6 @@ export class RowRenderer extends BeanStub {
             // on EVENT_FIRST_DATA_RENDERED to fail.
             window.setTimeout(() => this.eventService.dispatchEventOnce(event), 50);
         }
-
-        console.log(`first = ${this.firstRenderedRow}, last = ${this.lastRenderedRow}`);
     }
 
     private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): void {
