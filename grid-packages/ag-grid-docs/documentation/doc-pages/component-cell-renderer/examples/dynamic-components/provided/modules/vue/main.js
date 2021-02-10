@@ -116,7 +116,7 @@ const VueExample = {
             return rowData;
         },
         refreshEvenRowsCurrencyData() {
-            this.gridApi.forEachNode(function (rowNode) {
+            this.gridApi.forEachNode(rowNode => {
                 if (rowNode.data.value % 2 === 0) {
                     rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
                 }

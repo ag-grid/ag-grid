@@ -8,9 +8,7 @@
 |
 |```js
 |// define cellRenderer to be reused
-|var myCellRenderer = function(params) {
-|    return '<span style="color: ' + params.color + '">' + params.value + '</span>';
-|}
+|const myCellRenderer = params => `<span style="color: ${params.color}">${params.value}</span>`;
 |
 |// use with a colour
 |colDef.cellRenderer = myCellRenderer;
