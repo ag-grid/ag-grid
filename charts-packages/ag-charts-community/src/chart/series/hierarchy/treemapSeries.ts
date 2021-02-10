@@ -37,7 +37,7 @@ export interface TreemapTooltipRendererParams {
     datum: TreemapNodeDatum;
     labelKey: string;
     sizeKey?: string;
-    valueKey?: string;
+    colorKey?: string;
     color: string;
 }
 
@@ -50,7 +50,7 @@ export class TreemapSeriesLabel extends Label {
 }
 
 enum TextNodeTag {
-    Label,
+    Name,
     Value
 }
 
@@ -75,7 +75,7 @@ export class TreemapSeries extends HierarchySeries {
         this.labels.small.addEventListener('change', this.update, this);
         this.labels.medium.addEventListener('change', this.update, this);
         this.labels.large.addEventListener('change', this.update, this);
-        this.labels.value.addEventListener('change', this.update, this);
+        this.labels.color.addEventListener('change', this.update, this);
     }
 
     readonly title: TreemapSeriesLabel = (() => {
@@ -114,7 +114,7 @@ export class TreemapSeries extends HierarchySeries {
             label.fontSize = 10;
             return label;
         })(),
-        value: (() => {
+        color: (() => {
             const label = new Label();
             label.color = 'white';
             return label;
@@ -135,13 +135,13 @@ export class TreemapSeries extends HierarchySeries {
 
     @reactive('dataChange') labelKey: string = 'label';
     @reactive('dataChange') sizeKey?: string = 'size';
-    @reactive('dataChange') valueKey?: string = 'value';
-    @reactive('dataChange') valueDomain: number[] = [-5, 5];
-    @reactive('dataChange') valueRange: string[] = ['#cb4b3f', '#6acb64'];
+    @reactive('dataChange') colorKey?: string = 'color';
+    @reactive('dataChange') colorDomain: number[] = [-5, 5];
+    @reactive('dataChange') colorRange: string[] = ['#cb4b3f', '#6acb64'];
     @reactive('dataChange') colorParents: boolean = false;
     @reactive('update') gradient: boolean = true;
 
-    valueName: string = 'Value';
+    colorName: string = 'Value';
     rootName: string = 'Root';
 
     protected _shadow: DropShadow = (() => {
@@ -213,7 +213,7 @@ export class TreemapSeries extends HierarchySeries {
     }
 
     processData(): boolean {
-        const { data, sizeKey, labelKey, valueKey, valueDomain, valueRange, colorParents } = this;
+        const { data, sizeKey, labelKey, colorKey, colorDomain, colorRange, colorParents } = this;
 
         if (sizeKey) {
             this.dataRoot = hierarchy(data).sum(datum => datum.children ? 1 : datum[sizeKey]) as unknown as TreemapNodeDatum;
@@ -222,14 +222,14 @@ export class TreemapSeries extends HierarchySeries {
         }
 
         const colorScale = new LinearScale();
-        colorScale.domain = valueDomain;
-        colorScale.range = valueRange;
+        colorScale.domain = colorDomain;
+        colorScale.range = colorRange;
 
         const series = this;
         function traverse(root: TreemapNodeDatum, depth = 0) {
             const { children, data } = root;
             const label = data[labelKey];
-            const effectiveValue = valueKey ? data[valueKey] : depth;
+            const effectiveValue = colorKey ? data[colorKey] : depth;
 
             root.series = series;
             root.fill = !children || colorParents ? colorScale.convert(effectiveValue) : '#272931';
@@ -281,7 +281,7 @@ export class TreemapSeries extends HierarchySeries {
 
         const enterGroups = updateGroups.enter.append(Group);
         enterGroups.append(Rect);
-        enterGroups.append(Text).each((node: any) => node.tag = TextNodeTag.Label);
+        enterGroups.append(Text).each((node: any) => node.tag = TextNodeTag.Name);
         enterGroups.append(Text).each((node: any) => node.tag = TextNodeTag.Value);
 
         this.groupSelection = updateGroups.merge(enterGroups) as any;
@@ -323,7 +323,7 @@ export class TreemapSeries extends HierarchySeries {
             rect.height = datum.y1 - datum.y0;
         });
 
-        this.groupSelection.selectByTag<Text>(TextNodeTag.Label).each((text, datum, index) => {
+        this.groupSelection.selectByTag<Text>(TextNodeTag.Name).each((text, datum, index) => {
             const isLeaf = !datum.children;
             const innerNodeWidth = datum.x1 - datum.x0 - nodePadding * 2;
             const innerNodeHeight = datum.y1 - datum.y0 - nodePadding * 2;
@@ -378,13 +378,10 @@ export class TreemapSeries extends HierarchySeries {
         });
 
         this.groupSelection.selectByTag<Text>(TextNodeTag.Value).each((text, datum) => {
-            const isLeaf = !datum.children;
             const innerNodeWidth = datum.x1 - datum.x0 - nodePadding * 2;
             const highlighted = datum === highlightedDatum;
             const value = datum.effectiveValue;
-            const label = labels.value;
-            // const innerNodeHeight = datum.y1 - datum.y0 - nodePadding * 2;
-            // const font = innerNodeHeight > 40 && innerNodeWidth > 40 ? fonts.label.big : innerNodeHeight > 20  && innerNodeHeight > 20 ? fonts.label.medium : fonts.label.small
+            const label = labels.color;
 
             text.fontSize = label.fontSize;
             text.fontFamily = label.fontFamily;
@@ -422,7 +419,7 @@ export class TreemapSeries extends HierarchySeries {
     }
 
     getTooltipHtml(datum: TreemapNodeDatum): string {
-        const { tooltip, sizeKey, labelKey, valueKey, valueName, rootName } = this;
+        const { tooltip, sizeKey, labelKey, colorKey, colorName, rootName } = this;
         const { data } = datum;
         const { renderer: tooltipRenderer } = tooltip;
 
@@ -430,10 +427,10 @@ export class TreemapSeries extends HierarchySeries {
         let content: string | undefined = undefined;
         const color = datum.fill || 'gray';
 
-        if (valueKey && valueName) {
-            const value = data[valueKey];
+        if (colorKey && colorName) {
+            const value = data[colorKey];
             if (typeof value === 'number' && isFinite(value)) {
-                content = `<b>${valueName}</b>: ${data[valueKey].toFixed(2)}`;
+                content = `<b>${colorName}</b>: ${data[colorKey].toFixed(2)}`;
             }
         }
 
@@ -448,7 +445,7 @@ export class TreemapSeries extends HierarchySeries {
                 datum,
                 sizeKey,
                 labelKey,
-                valueKey,
+                colorKey,
                 color
             }), defaults);
         }

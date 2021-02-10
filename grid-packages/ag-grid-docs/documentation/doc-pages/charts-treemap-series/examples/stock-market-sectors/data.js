@@ -3444,7 +3444,7 @@ let data = {
 function traverse(root) {
     const { children } = root;
 
-    root.value = -5 + Math.random() * 10;
+    root.color = -5 + Math.random() * 10;
 
     if (children) {
         children.forEach(child => traverse(child));

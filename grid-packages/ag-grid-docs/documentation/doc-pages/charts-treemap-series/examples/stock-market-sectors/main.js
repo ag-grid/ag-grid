@@ -4,7 +4,9 @@ agCharts.AgChart.create({
     data,
     series: [{
         type: 'treemap',
-        labelKey: 'name',
+        labelKey: 'name', // defaults to 'label', but current dataset uses 'name'
+        sizeKey: 'size', // default (can be omitted for current dataset)
+        colorKey: 'color', // default (can be omitted for current dataset)
         tooltip: {
             // renderer: tooltipRenderer
             renderer: params => {
