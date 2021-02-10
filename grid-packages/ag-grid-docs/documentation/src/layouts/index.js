@@ -23,7 +23,7 @@ const TopBar = ({ frameworks, framework, path }) => (
                     aria-label="Toggle navigation">
                     <span className={styles['top-bar__nav-button-icon']}></span>
                 </button>
-                <Search indices={[{ name: `ag-grid_${framework}`, title: "Documentation Pages" }]} />
+                <Search currentFramework={framework} />
             </div>
             <div className={styles['top-bar__framework-selector']}>
                 <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />

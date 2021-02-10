@@ -3,7 +3,7 @@ import { Link } from 'gatsby';
 import {
     connectStateResults,
     Highlight,
-    Hits,
+    InfiniteHits,
     Index,
     Snippet,
 } from 'react-instantsearch-dom';
@@ -13,26 +13,34 @@ import styles from './SearchResult.module.scss';
 const HitCount = connectStateResults(({ searchResults }) => {
     const hitCount = searchResults && searchResults.nbHits;
 
-    return hitCount > 0 ? (
-        <div className={styles['search-result__hit-wrapper']}>
-            <div className={styles['search-result__hit-count']}>Results: {hitCount}</div>
-        </div>
-    ) : null;
+    return <div className={styles['search-result__hit-wrapper']}>
+        <div className={styles['search-result__hit-count']}>Results: {hitCount}</div>
+    </div>;
 });
 
 const PageHit = ({ hit, onResultClicked }) => (
     <Link to={hit.path} onClick={onResultClicked}>
+        <div className={styles['search-result__hit-item__breadcrumb']}>{hit.breadcrumb}</div>
         <h4>
             <Highlight attribute="title" hit={hit} tagName="mark" />
+            {hit.heading && <>{`: `}<Highlight attribute="heading" hit={hit} tagName="mark" /></>}
         </h4>
         <Snippet attribute="text" hit={hit} tagName="mark" />
     </Link>
 );
 
+const Results = connectStateResults(({ searchState, searchResults, children }) =>
+    searchResults && searchResults.nbHits > 0 ?
+        children :
+        <div className={styles['search-result__no-results']}>We couldn't find any matches for "{searchState.query}".</div>
+);
+
 const HitsInIndex = ({ index, onResultClicked }) => (
     <Index indexName={index.name}>
         <HitCount />
-        <Hits hitComponent={props => PageHit({ ...props, onResultClicked })} />
+        <Results>
+            <InfiniteHits hitComponent={props => PageHit({ ...props, onResultClicked })} />
+        </Results>
     </Index>
 );
 

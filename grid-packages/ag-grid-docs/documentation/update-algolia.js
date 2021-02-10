@@ -7,6 +7,8 @@ const menu = require('./doc-pages/licensing/menu.json');
 const supportedFrameworks = require('./src/utils/supported-frameworks');
 
 const debug = true;
+const indexNamePrefix = 'ag-grid-dev';
+
 const { JSDOM } = jsdom;
 
 console.log(`Updating Algolia using App ID ${process.env.GATSBY_ALGOLIA_APP_ID} and admin key ${process.env.ALGOLIA_ADMIN_KEY}`);
@@ -133,7 +135,7 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
 const processIndexForFramework = async framework => {
     let rank = 10000;
     const records = [];
-    const indexName = `ag-grid-dev_${framework}`;
+    const indexName = `${indexNamePrefix}_${framework}`;
 
     console.log(`Generating records for ${indexName}...`);
 
@@ -171,7 +173,7 @@ const processIndexForFramework = async framework => {
 
         index.setSettings({
             searchableAttributes: ['title', 'heading', 'subHeading', 'text'],
-            attributesToSnippet: ['text:80'],
+            attributesToSnippet: ['text:40'],
             distinct: 1,
             attributeForDistinct: 'breadcrumb',
             customRanking: ['desc(rank)'],
