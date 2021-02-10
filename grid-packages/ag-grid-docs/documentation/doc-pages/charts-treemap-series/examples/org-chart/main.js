@@ -1,23 +1,22 @@
 agCharts.AgChart.create({
     type: 'hierarchy',
     container: document.getElementById('myChart'),
-    autoSize: true,
     data,
     series: [{
         type: 'treemap',
         labelKey: 'orgHierarchy',
         colorParents: true,
         gradient: false,
-        nodePadding: 3,
-        valueDomain: [0, 2, 4],
-        valueRange: ['#d73027', '#fee08b', '#1a9850'],
+        nodePadding: 5,
         sizeKey: undefined,
-        valueKey: undefined, // if undefined, depth will be used an the value, where root has 0 depth
+        colorKey: undefined, // if undefined, depth will be used an the value, where root has 0 depth
+        colorDomain: [0, 2, 4],
+        colorRange: ['#d73027', '#fee08b', '#1a9850']
     }],
     title: {
         text: 'Organizational Chart'
     },
     subtitle: {
-        text: 'of yet another big company'
+        text: 'of a top secret startup'
     }
 });

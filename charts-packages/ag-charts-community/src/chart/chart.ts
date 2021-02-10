@@ -53,6 +53,11 @@ const defaultTooltipCss = `
     overflow: hidden;
 }
 
+.ag-chart-tooltip-content:empty {
+    padding: 0;
+    height: 7px;
+}
+
 .ag-chart-tooltip-arrow::before {
     content: "";
 

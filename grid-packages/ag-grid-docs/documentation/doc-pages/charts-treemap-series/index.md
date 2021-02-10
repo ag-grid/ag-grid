@@ -17,11 +17,11 @@ Treemap series would be a great fit for visualizing a directory structure (the o
 the algorithm), components of a stock market index, shares of products within product categories,
 or sales breakdown by city, state, and country. And these are just a few examples.
 
-## Stock Market Sectors Example
+## Stock Market Index Example
 
-<chart-example title='Stock Market Sectors' name='stock-market-sectors' type='generated'></chart-example>
+<chart-example title='Stock Market Index' name='stock-market-index' type='generated'></chart-example>
 
-## Stock Market Sectors Example
+## Organizational Chart Example
 
 <chart-example title='Organizational Chart' name='org-chart' type='generated'></chart-example>
 
