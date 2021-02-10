@@ -1,4 +1,4 @@
-const rowData = [
+let rowData = [
     { orgHierarchy: ['Erica Rogers'], jobTitle: "CEO", employmentType: "Permanent" },
     { orgHierarchy: ['Erica Rogers', 'Malcolm Barrett'], jobTitle: "Exec. Vice President", employmentType: "Permanent" },
 
@@ -15,7 +15,7 @@ const rowData = [
     { orgHierarchy: ['Erica Rogers', 'Malcolm Barrett', 'Francis Strickland', 'Joel Cooper'], jobTitle: "Sales Executive", employmentType: "Permanent" }
 ];
 
-const data = convertGridTreeData(rowData);
+let data = convertGridTreeData(rowData);
 
 function convertGridTreeData(data) {
     const root = {};

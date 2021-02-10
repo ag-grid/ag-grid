@@ -1455,6 +1455,10 @@
               {
                 "title": "Pie/Doughnut",
                 "url": "../charts-pie-series/"
+              },
+              {
+                "title": "Treemap",
+                "url": "../charts-treemap-series/"
               }
             ]
           },

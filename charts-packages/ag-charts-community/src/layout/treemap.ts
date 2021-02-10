@@ -124,9 +124,9 @@ export class Treemap {
 
     private dx: number = 1;
     private dy: number = 1;
-    set size(value: [number, number]) {
-        this.dx = value[0];
-        this.dy = value[1];
+    set size(size: [number, number]) {
+        this.dx = size[0];
+        this.dy = size[1];
     }
     get size(): [number, number] {
         return [this.dx, this.dy];

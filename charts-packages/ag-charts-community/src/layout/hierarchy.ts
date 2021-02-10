@@ -118,7 +118,7 @@ export class HierarchyNode {
         });
     }
 
-    sort(compare?: (a: HierarchyNode, b: HierarchyNode) => number) {
+    sort(compare?: (a: HierarchyNode, b: HierarchyNode) => number): this {
         return this.eachBefore(function (node) {
             if (node.children) {
                 node.children.sort(compare);
@@ -164,7 +164,7 @@ export class HierarchyNode {
         return nodes;
     }
 
-    leaves() {
+    leaves(): HierarchyNode[] {
         const leaves: HierarchyNode[] = [];
         this.eachBefore(node => {
             if (!node.children) {
@@ -186,7 +186,7 @@ export class HierarchyNode {
     }
 
     copy() {
-
+        // TODO
     }
 
     iterator(callback: (node: HierarchyNode) => any) {

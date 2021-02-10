@@ -13,7 +13,7 @@ import { LinearScale } from "../../../scale/linearScale";
 import { ChartAxisDirection } from "../../chartAxis";
 import { LegendDatum } from "../../legend";
 import { Treemap } from "../../../layout/treemap";
-import { hierarchy, HierarchyNode } from "../../../layout/hierarchy";
+import { hierarchy } from "../../../layout/hierarchy";
 
 interface TreemapNodeDatum extends SeriesNodeDatum {
     data: any;
@@ -30,7 +30,7 @@ interface TreemapNodeDatum extends SeriesNodeDatum {
     fill: string;
     label: string;
     hasTitle: boolean;
-    $value: number;
+    effectiveValue: number;
 }
 
 export interface TreemapTooltipRendererParams {
@@ -64,7 +64,7 @@ export class TreemapSeries extends HierarchySeries {
     private colorMap = new Map<Rect, string>();
     private tickerMap = new Map<string, Text | undefined>();
     private layout = new Treemap();
-    private dataRoot?: HierarchyNode;
+    private dataRoot?: TreemapNodeDatum;
 
     constructor() {
         super();
@@ -216,9 +216,9 @@ export class TreemapSeries extends HierarchySeries {
         const { data, sizeKey, labelKey, valueKey, valueDomain, valueRange, colorParents } = this;
 
         if (sizeKey) {
-            this.dataRoot = hierarchy(data).sum(datum => datum.children ? 1 : datum[sizeKey]);
+            this.dataRoot = hierarchy(data).sum(datum => datum.children ? 1 : datum[sizeKey]) as unknown as TreemapNodeDatum;
         } else {
-            this.dataRoot = hierarchy(data).sum(datum => datum.children ? 0 : 1);
+            this.dataRoot = hierarchy(data).sum(datum => datum.children ? 0 : 1) as unknown as TreemapNodeDatum;
         }
 
         const colorScale = new LinearScale();
@@ -226,14 +226,14 @@ export class TreemapSeries extends HierarchySeries {
         colorScale.range = valueRange;
 
         const series = this;
-        function traverse(root: any, depth = 0) {
+        function traverse(root: TreemapNodeDatum, depth = 0) {
             const { children, data } = root;
             const label = data[labelKey];
-            const value = valueKey ? data[valueKey] : depth;
+            const effectiveValue = valueKey ? data[valueKey] : depth;
 
             root.series = series;
-            root.fill = !children || colorParents ? colorScale.convert(value) : '#272931';
-            root.$value = value;
+            root.fill = !children || colorParents ? colorScale.convert(effectiveValue) : '#272931';
+            root.effectiveValue = effectiveValue;
 
             if (label) {
                 root.label = children ? label.toUpperCase() : label;
@@ -381,7 +381,7 @@ export class TreemapSeries extends HierarchySeries {
             const isLeaf = !datum.children;
             const innerNodeWidth = datum.x1 - datum.x0 - nodePadding * 2;
             const highlighted = datum === highlightedDatum;
-            const value = datum.$value;
+            const value = datum.effectiveValue;
             const label = labels.value;
             // const innerNodeHeight = datum.y1 - datum.y0 - nodePadding * 2;
             // const font = innerNodeHeight > 40 && innerNodeWidth > 40 ? fonts.label.big : innerNodeHeight > 20  && innerNodeHeight > 20 ? fonts.label.medium : fonts.label.small
@@ -393,7 +393,7 @@ export class TreemapSeries extends HierarchySeries {
             text.textBaseline = 'top';
             text.textAlign = 'center';
             text.text = typeof value === 'number' && isFinite(value)
-                ? String(datum.$value.toFixed(2)) + '%'
+                ? String(datum.effectiveValue.toFixed(2)) + '%'
                 : '';
 
             const textBBox = text.computeBBox();

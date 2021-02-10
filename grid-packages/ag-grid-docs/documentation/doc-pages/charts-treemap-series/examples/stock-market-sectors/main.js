@@ -1,20 +1,25 @@
 agCharts.AgChart.create({
     type: 'hierarchy',
     container: document.getElementById('myChart'),
-    autoSize: true,
     data,
     series: [{
         type: 'treemap',
         labelKey: 'name',
         tooltip: {
-            renderer: tooltipRenderer
+            // renderer: tooltipRenderer
+            renderer: params => {
+                debugger;
+                return {
+                    content: 22
+                };
+            }
         }
     }],
     title: {
-        text: 'Standard and Poor\'s 500 index stocks categorized by sectors and industries.'
+        text: 'S&P 500 index stocks categorized by sectors and industries.'
     },
     subtitle: {
-        text: 'Size represents market cap.'
+        text: 'Area represents market cap.'
     }
 });
 

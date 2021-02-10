@@ -1,4 +1,4 @@
-const data = {
+let data = {
     "name": "Root",
     "size": 813792,
     "children": [
