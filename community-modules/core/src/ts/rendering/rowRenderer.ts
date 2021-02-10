@@ -1001,6 +1001,7 @@ export class RowRenderer extends BeanStub {
             newLast = this.paginationProxy.getPageLastRow();
         } else {
             const paginationOffset = this.paginationProxy.getPixelOffset();
+            const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
             const maxDivHeightScaler = this.maxDivHeightScaler.getOffset();
 
             const bodyVRange = this.gridPanel.getVScrollPosition();
@@ -1009,8 +1010,8 @@ export class RowRenderer extends BeanStub {
 
             const bufferPixels = this.gridOptionsWrapper.getRowBufferInPixels();
 
-            const firstPixel = bodyTopPixel + paginationOffset + maxDivHeightScaler - bufferPixels;
-            const lastPixel = bodyBottomPixel + paginationOffset + maxDivHeightScaler + bufferPixels;
+            const firstPixel = Math.max(bodyTopPixel + paginationOffset - bufferPixels, pageFirstPixel) + maxDivHeightScaler;
+            const lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + maxDivHeightScaler;
 
             this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
 
@@ -1080,6 +1081,8 @@ export class RowRenderer extends BeanStub {
             // on EVENT_FIRST_DATA_RENDERED to fail.
             window.setTimeout(() => this.eventService.dispatchEventOnce(event), 50);
         }
+
+        console.log(`first = ${this.firstRenderedRow}, last = ${this.lastRenderedRow}`);
     }
 
     private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): void {
