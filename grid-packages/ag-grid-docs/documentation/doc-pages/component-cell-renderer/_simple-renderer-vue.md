@@ -5,9 +5,9 @@
 |const MedalCellRenderer = {
 |    template: `
 |        <span>
-|              <span>{{cellValue}}</span>
-|              <button @click="buttonClicked()">Push For Total</button>
-|          </span>
+|           <span>{{cellValue}}</span>
+|           <button @click="buttonClicked()">Push For Total</button>
+|        </span>
 |    `,
 |    data: function () {
 |        return {

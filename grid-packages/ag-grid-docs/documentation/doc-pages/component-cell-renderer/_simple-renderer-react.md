@@ -11,9 +11,9 @@
 |
 |    return (
 |        <span>
-|              <span>{cellValue}</span>&nbsp;
-|              <button onClick={() => buttonClicked()}>Push For Total</button>
-|            </span>
+|           <span>{cellValue}</span>&nbsp;
+|           <button onClick={() => buttonClicked()}>Push For Total</button>
+|        </span>
 |    );
 |}
 |```

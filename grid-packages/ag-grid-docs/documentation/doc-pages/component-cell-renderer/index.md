@@ -60,8 +60,7 @@ md-include:component-refresh-vue.md
 ### Change Detection
  
 As mentioned in the section on [Change Detection](../change-detection/), the refresh of the cell will not take place if the value getting rendered has not changed.
-
-
+ 
 md-include:component-lifecycle-javascript.md
 md-include:component-lifecycle-angular.md 
 md-include:component-lifecycle-react.md
