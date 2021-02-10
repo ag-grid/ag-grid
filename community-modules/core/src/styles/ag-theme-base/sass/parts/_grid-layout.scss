@@ -19,9 +19,13 @@
             @include ag-theme-rtl(( padding-left: $i * ag-param(row-group-indent-size) ));
         }
 
-        .ag-row-level-#{$i} .ag-row-group-leaf-indent {
+        .ag-row-level-#{$i} .ag-pivot-leaf-group {
             @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
         }
+    }
+
+    .ag-row-group-leaf-indent {
+        @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
     }
 
     .ag-value-change-delta {
