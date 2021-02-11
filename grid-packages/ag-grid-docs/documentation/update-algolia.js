@@ -177,11 +177,14 @@ const processIndexForFramework = async framework => {
             distinct: 1,
             attributeForDistinct: 'breadcrumb',
             customRanking: ['desc(rank)'],
-            camelCaseAttributes: ['text']
+            camelCaseAttributes: ['text'],
+            hitsPerPage: 10,
+            snippetEllipsisText: '…'
         });
 
         try {
-            const result = await index.saveObjects(records);
+            // reverse records when storing so that content higher up the page is returned first
+            const result = await index.saveObjects(records.reverse());
 
             console.log(`Response from Algolia:`, result);
         } catch (e) {

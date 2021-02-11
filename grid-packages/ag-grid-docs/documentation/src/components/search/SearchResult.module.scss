@@ -34,7 +34,7 @@
         }
     }
 
-    &__no-results {
+    &__message {
         composes: p-2 from global;
     }
 }
@@ -93,11 +93,22 @@
     border-right: none;
     border-bottom: none;
 
-    &:hover,
-    &:focus {
-        background-color: $primary;
-        color: $light;
+    &:not(:global(.ais-InfiniteHits-loadMore--disabled)) {
+        &:hover,
+        &:focus {
+            background-color: $primary;
+            color: $light;
+        }
     }
+}
+
+:global(.ais-InfiniteHits-loadMore--disabled) {
+    &::before {
+        content: "No more results";
+        font-size: 0.8rem;
+    }
+
+    font-size: 0;
 }
 
 :global {

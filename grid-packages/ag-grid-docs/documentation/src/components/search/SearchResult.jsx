@@ -29,11 +29,15 @@ const PageHit = ({ hit, onResultClicked }) => (
     </Link>
 );
 
-const Results = connectStateResults(({ searchState, searchResults, children }) =>
-    searchResults && searchResults.nbHits > 0 ?
-        children :
-        <div className={styles['search-result__no-results']}>We couldn't find any matches for "{searchState.query}".</div>
-);
+const Results = connectStateResults(({ searchState, searchResults, children, isSearchStalled }) => {
+    if (searchResults && searchResults.nbHits > 0) {
+        return children;
+    } else {
+        return <div className={styles['search-result__message']}>
+            {isSearchStalled ? 'Loading...' : `We couldn't find any matches for "${searchState.query}"`}
+        </div>;
+    }
+});
 
 const HitsInIndex = ({ index, onResultClicked }) => (
     <Index indexName={index.name}>
