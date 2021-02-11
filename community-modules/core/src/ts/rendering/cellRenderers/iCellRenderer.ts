@@ -23,7 +23,7 @@ export interface ICellRendererParams {
     refreshCell: () => void;
     eGridCell: HTMLElement;
     eParentOfValue: HTMLElement;
-    registerRowDragger: (element: HTMLElement) => void;
+    registerRowDragger: (rowDraggerElement: HTMLElement) => void;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
 }
 

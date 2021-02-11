@@ -229,11 +229,11 @@ Unmanaged row dragging will work with any of the row models [Infinite](../infini
 
 Because the grid implementation with regards to row dragging is identical to the above, examples of row dragging with the other row models are not given. How your application behaves with regards to the row drag events is the difficult bit, but that part is specific to your application and how your application stores its state. Giving an example here with a different data store would be redundant.
 
-## Customising the Row Dragger
+## Customisation
 
-Bla bla bla
+There are some options that can be used to customise the Row Drag experience, so it has a better integration with your application.
 
-## Custom Row Drag Text
+### Custom Row Drag Text
 
 When a row drag starts, a "floating" DOM element is created to indicate which row is being dragged. By default, this DOM
 element will contain the same value as the cell that started the row drag. It's possible to override that text by using
@@ -277,10 +277,13 @@ The example below shows dragging with custom text. The following can be noted:
 
 <grid-example title='Row Drag With Custom Text' name='custom-drag-text' type='generated'></grid-example>
 
-## Row Dragger with Custom Cell Renderers
+### Row Dragger inside Custom Cell Renderers
 
-Due to the complexity of some applications, sometimes, it could be required to render the Row Drag component inside of a Custom Cell Renderer. This can be achieved, 
-by using the `registerRowDragger` method in the `ICellRendererParams` as follows: 
+Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved, by using the `registerRowDragger` method in the [ICellRendererParams](../component-cell-renderer/#cell-renderer-component) as follows: 
+
+[[warning]]
+| When using `registerRowDragger` you should **not** set the property `rowDrag=true` in the Column Definition. 
+| Doing that will cause the cell to have two row draggers.
 
 ```js
 CustomCellComponent.prototype.init = function(params) {

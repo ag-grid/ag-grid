@@ -2089,8 +2089,8 @@ export class CellComp extends Component implements TooltipParentComp {
         const rowDraggingComp = new RowDragComp(this.rowNode, this.column, () => this.value, this.beans, customElement);
         this.createManagedBean(rowDraggingComp, this.beans.context);
 
-        // put the checkbox in before the value
-        if (this.includeRowDraggingComponent) {
+        if (!customElement) {
+            // put the checkbox in before the value
             this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eCellValue);
         }
     }
