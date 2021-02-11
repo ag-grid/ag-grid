@@ -30,7 +30,8 @@ import {
     SelectionController,
     ValueCache,
     ValueService,
-    AsyncTransactionsFlushed
+    AsyncTransactionsFlushed,
+    AnimationFrameService
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -56,6 +57,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
 
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
@@ -74,6 +76,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
     private lastHighlightedRow: RowNode | null;
     private applyAsyncTransactionsTimeout: number | undefined;
+    private onRowGroupOpenedPending = false;
 
     @PostConstruct
     public init(): void {
@@ -328,8 +331,27 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private onRowGroupOpened(): void {
-        const animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
+
+        // because the user can call rowNode.setExpanded() many times in on VM turn,
+        // we debounce the call using animationFrameService. we use animationFrameService
+        // rather than _.debounce() so this will get done if anyone flushes the animationFrameService
+        // (eg user calls api.ensureRowVisible(), which in turn flushes ).
+
+        if (this.onRowGroupOpenedPending) { return; }
+
+        this.onRowGroupOpenedPending = true;
+
+        const action = () => {
+            this.onRowGroupOpenedPending = false;
+            const animate = this.gridOptionsWrapper.isAnimateRows();
+            this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
+        };
+
+        if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
+            action();
+        } else {
+            this.animationFrameService.addDestroyTask(action);
+        }
     }
 
     private onFilterChanged(event: FilterChangedEvent): void {

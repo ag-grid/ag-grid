@@ -330,8 +330,6 @@ gridOptions.api.forEachNode(node => {
 });
 </snippet>
 
-Calling `node.setExpanded()` causes the grid to get redrawn. If you have many nodes you want to expand, then it is best to set node.expanded=true directly, and then call `api.onGroupExpandedOrCollapsed()` when finished to get the grid to redraw the grid again just once.
-
 ## Grouping Complex Objects with Keys
 
 <video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=817s" time="13:37"></video-link>
