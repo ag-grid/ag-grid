@@ -39,10 +39,9 @@ The following example demonstrates this behaviour. Note the following:
 
 ## Custom Searches
 
-Sometimes it is necessary to provide custom handling for Mini Filter searches, for example to substitute accented characters or to perform case-sensitive searches.
+Sometimes it is necessary to provide custom handling for Mini Filter searches, for example to substitute accented characters.
 
 As with the [Text Filter](../filter-text/#text-formatter) it is possible to supply a Text Formatter to the Set Filter which formats the text before applying the Mini Filter compare logic. The snippet below shows how this can be configured:
-
 
 <snippet>
 const gridOptions = {
@@ -53,7 +52,6 @@ const gridOptions = {
             filterParams: {
                 textFormatter: value => {
                     return value
-                        .toLowerCase()
                         .replace(/\s/g, '')
                         .replace(/[àáâãäå]/g, 'a')
                         .replace(/æ/g, 'ae')
@@ -74,7 +72,6 @@ const gridOptions = {
 </snippet>
 
 The following example demonstrates searching when there are accented characters. Note the following:
-
 
 - The Athlete column's Set filter is supplied a text formatter via `filterParams.textFormatter` to ignore accents.
 - Searching using `'bjorn'` will return all values containing `'björn'`.

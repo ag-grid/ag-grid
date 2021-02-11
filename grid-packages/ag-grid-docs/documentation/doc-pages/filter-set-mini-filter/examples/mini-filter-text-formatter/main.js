@@ -25,7 +25,6 @@ var gridOptions = {
 
 function replaceAccents(value) {
     return value
-        .toLowerCase()
         .replace(new RegExp('[àáâãäå]', 'g'), 'a')
         .replace(new RegExp('æ', 'g'), 'ae')
         .replace(new RegExp('ç', 'g'), 'c')

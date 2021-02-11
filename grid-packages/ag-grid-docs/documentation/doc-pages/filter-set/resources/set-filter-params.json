@@ -69,7 +69,7 @@
             }
         },
         "textFormatter": {
-            "description": "If specified, this formats the text before applying the Mini Filter compare logic, useful for instance if substituting accented characters or if you want to perform case-sensitive Mini Filtering.",
+            "description": "If specified, this formats the text before applying the Mini Filter compare logic, useful for instance to substitute accented characters.",
             "more": {
                 "name": "Custom Searches",
                 "url": "../filter-set-mini-filter/#custom-searches"

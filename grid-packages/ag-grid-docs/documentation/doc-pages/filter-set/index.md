@@ -47,12 +47,10 @@ Parameters that are common to all [Provided Filters](../filter-provided/):
 
 <api-documentation source='filter-provided/resources/providedFilters.json' section='filterParams'></api-documentation>
 
-
 Parameters that are specific to the Set Filter:
 
-<api-documentation source='filter-set/resources/setFilterParams.json' section='filterParams'></api-documentation>
+<api-documentation source='filter-set/resources/set-filter-params.json' section='filterParams'></api-documentation>
 
 ## Next Up
-
 
 Continue to the next section: [Filter List](../filter-set-filter-list/).
