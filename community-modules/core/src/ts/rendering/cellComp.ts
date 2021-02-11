@@ -993,6 +993,8 @@ export class CellComp extends Component implements TooltipParentComp {
             eGridCell: this.getGui(),
             eParentOfValue: this.eCellValue,
 
+            registerRowDragger: element => this.addRowDragging(element),
+
             // these bits are not documented anywhere, so we could drop them?
             // it was in the olden days to allow user to register for when rendered
             // row was removed (the row comp was removed), however now that the user
@@ -2062,7 +2064,7 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.beans.frameworkOverrides;
     }
 
-    private addRowDragging(): void {
+    private addRowDragging(customElement?: HTMLElement): void {
         const pagination = this.beans.gridOptionsWrapper.isPagination();
         const rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
         const clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
@@ -2084,11 +2086,13 @@ export class CellComp extends Component implements TooltipParentComp {
             }
         }
 
-        const rowDraggingComp = new RowDragComp(this.rowNode, this.column, () => this.value, this.beans);
+        const rowDraggingComp = new RowDragComp(this.rowNode, this.column, () => this.value, this.beans, customElement);
         this.createManagedBean(rowDraggingComp, this.beans.context);
 
         // put the checkbox in before the value
-        this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eCellValue);
+        if (this.includeRowDraggingComponent) {
+            this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eCellValue);
+        }
     }
 
     private addDndSource(): void {

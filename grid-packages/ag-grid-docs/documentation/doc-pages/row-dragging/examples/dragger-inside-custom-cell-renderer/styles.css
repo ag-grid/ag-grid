@@ -1,0 +1,42 @@
+.ag-ltr .ag-has-focus .ag-cell.custom-athlete-cell.ag-cell-focus:not(.ag-cell-range-selected) {
+    border: 1px solid #ff7b7b;
+}
+.ag-cell.custom-athlete-cell {
+    padding: 0;
+}
+
+.my-custom-cell-renderer {
+    line-height: initial;
+    display: flex;
+    font-size: 0.7rem;
+    background-color: #4180d6;
+    color: white;
+    padding: 0.25rem;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.my-custom-cell-renderer i {
+    visibility: hidden;
+    cursor: move;
+    color: orange;
+}
+
+.my-custom-cell-renderer:hover i {
+    visibility: visible;
+}
+
+
+.my-custom-cell-renderer .athlete-info {
+    display: flex;
+    flex-direction: column;
+    width: 85px;
+    max-width: 85px;
+}
+
+.my-custom-cell-renderer .athlete-info > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

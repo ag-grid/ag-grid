@@ -14,23 +14,29 @@ export interface IRowDragItem extends DragItem {
 }
 
 export class RowDragComp extends Component {
+    public isCustomGui: boolean = false;
 
     constructor(
         private readonly rowNode: RowNode,
         private readonly column: Column,
         private readonly cellValueFn: () => string,
-        private readonly beans: Beans
-    ) {
-        super(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
-    }
+        private readonly beans: Beans,
+        private readonly customGui?: HTMLElement
+    ) { super(); }
 
     @PostConstruct
     private postConstruct(): void {
-        const eGui = this.getGui();
+        if (!this.customGui) {
+            this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
+            const eGui = this.getGui();
+            eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null)!);
+        } else {
+            this.isCustomGui = true;
+            this.setTemplateFromElement(this.customGui);
+        }
 
-        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null)!);
+
         this.addDragSource();
-
         this.checkCompatibility();
 
         const strategy = this.beans.gridOptionsWrapper.isRowDragManaged() ?
@@ -108,7 +114,7 @@ class VisibilityStrategy extends BeanStub {
         if (neverDisplayed) {
             this.parent.setDisplayed(false);
         } else {
-            const shown = this.column.isRowDrag(this.rowNode);
+            const shown = this.column.isRowDrag(this.rowNode) || this.parent.isCustomGui;
             const isShownSometimes = isFunction(this.column.getColDef().rowDrag);
 
             // if shown sometimes, them some rows can have drag handle while other don't,
