@@ -1,4 +1,4 @@
-agCharts.AgChart.create({
+var options = {
     type: 'hierarchy',
     container: document.getElementById('myChart'),
     data,
@@ -19,4 +19,6 @@ agCharts.AgChart.create({
     subtitle: {
         text: 'of a top secret startup'
     }
-});
+};
+
+agCharts.AgChart.create(options);
