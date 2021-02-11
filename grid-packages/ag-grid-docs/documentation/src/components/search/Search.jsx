@@ -1,35 +1,43 @@
+import React, { createRef, useState, useMemo } from 'react';
 import algoliasearch from 'algoliasearch/lite';
-import React, { createRef, useState } from 'react';
-import { InstantSearch } from 'react-instantsearch-dom';
+import { InstantSearch, connectSearchBox } from 'react-instantsearch-dom';
 import SearchBox from './SearchBox';
 import SearchResult from './SearchResult';
 import useClickOutside from './use-click-outside';
 import isDevelopment from 'utils/is-development';
 import styles from './Search.module.scss';
 
-export default function Search({ currentFramework }) {
-    const rootRef = createRef();
+const Search = ({ currentFramework }) => {
     const [query, setQuery] = useState();
+    const searchClient = useMemo(() =>
+        algoliasearch(process.env.GATSBY_ALGOLIA_APP_ID, process.env.GATSBY_ALGOLIA_SEARCH_KEY), []);
+
+    const indices = [{ name: `ag-grid${isDevelopment() ? '-dev' : ''}_${currentFramework}` }];
+
+    return (
+        <InstantSearch
+            searchClient={searchClient}
+            indexName={indices[0].name}
+            onSearchStateChange={({ query }) => setQuery(query)}>
+            <SearchComponents indices={indices} query={query} />
+        </InstantSearch>
+    );
+};
+
+const SearchComponents = connectSearchBox(({ indices, query, refine }) => {
+    const rootRef = createRef();
     const [hasFocus, setFocus] = useState(false);
-    const searchClient = algoliasearch(process.env.GATSBY_ALGOLIA_APP_ID, process.env.GATSBY_ALGOLIA_SEARCH_KEY);
+    const onResultClicked = () => { setFocus(false); refine(''); };
 
     useClickOutside(rootRef, () => setFocus(false));
 
-    const indices = [{ name: `ag-grid${isDevelopment() ? '-dev' : ''}_${currentFramework}` }];
-    const onResultClicked = () => setFocus(false);
+    return <div className={styles['search-form']} ref={rootRef}>
+        <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} />
+        <SearchResult
+            show={query && query.length > 0 && hasFocus}
+            indices={indices}
+            onResultClicked={onResultClicked} />
+    </div>;
+});
 
-    return (
-        <div className={styles['search-form']} ref={rootRef}>
-            <InstantSearch
-                searchClient={searchClient}
-                indexName={indices[0].name}
-                onSearchStateChange={({ query }) => setQuery(query)}>
-                <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} />
-                <SearchResult
-                    show={query && query.length > 0 && hasFocus}
-                    indices={indices}
-                    onResultClicked={onResultClicked} />
-            </InstantSearch>
-        </div>
-    );
-}
+export default Search;

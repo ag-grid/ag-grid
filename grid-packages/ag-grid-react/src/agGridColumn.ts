@@ -20,7 +20,7 @@ export class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGrou
     }
 
     public static mapChildColumnDefs(children: any) {
-        return React.Children.map(children, child => AgGridColumn.toColDef(child.props));
+        return React.Children.map(children, child => !!child ?  AgGridColumn.toColDef(child.props) : null);
     }
 
     public static toColDef(columnProps: any): ColDef {

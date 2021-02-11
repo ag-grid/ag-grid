@@ -25,7 +25,7 @@
     "@typescript-eslint/eslint-plugin": "4.14.2",
     "@typescript-eslint/parser": "4.14.2",
     "ag-charts-community": "^3.0.0",
-    "algoliasearch": "4.8.4",
+    "algoliasearch": "4.8.5",
     "bootstrap": "4.6.0",
     "classnames": "2.2.6",
     "eslint": "7.19.0",
