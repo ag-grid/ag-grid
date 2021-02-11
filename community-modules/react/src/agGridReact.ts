@@ -55,6 +55,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     protected eGridDiv!: HTMLElement;
 
+    readonly SYNCHRONOUS_CHANGE_PROPERTIES = ['context']
 
     constructor(public props: any) {
         super(props);
@@ -116,7 +117,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             if (Date.now() - startTime >= this.props.maxComponentCreationTimeMs && !this.hasPendingPortalUpdate) {
                 // last check - we check if this is a null value being rendered - we do this last as using SSR to check the value
                 // can mess up contexts
-                if(reactComponent.isNullValue()) {
+                if (reactComponent.isNullValue()) {
                     resolve(reactComponent);
                     return;
                 }
@@ -206,14 +207,8 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         this.extractGridPropertyChanges(prevProps, nextProps, changes);
         this.extractDeclarativeColDefChanges(nextProps, changes);
 
-        if (Object.keys(changes).length > 0) {
-            window.setTimeout(() => {
-                // destroyed?
-                if(this.api) {
-                    ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi)
-                }
-            });
-        }
+        this.processSynchronousChanges(changes);
+        this.processAsynchronousChanges(changes);
     }
 
     private extractDeclarativeColDefChanges(nextProps: any, changes: any) {
@@ -300,6 +295,35 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     public isLegacyComponentRendering(): boolean {
         return this.props.legacyComponentRendering;
+    }
+
+    private processSynchronousChanges(changes: any): {} {
+        const asyncChanges = {...changes};
+        if (Object.keys(asyncChanges).length > 0) {
+            const synchronousChanges: { [key: string]: any } = {};
+            this.SYNCHRONOUS_CHANGE_PROPERTIES.forEach((synchronousChangeProperty: string) => {
+                if (asyncChanges[synchronousChangeProperty]) {
+                    synchronousChanges[synchronousChangeProperty] = asyncChanges[synchronousChangeProperty];
+                    delete asyncChanges.context;
+                }
+            })
+
+            if(Object.keys(synchronousChanges).length > 0 && !!this.api) {
+                ComponentUtil.processOnChange({context: asyncChanges.context}, this.gridOptions, this.api, this.columnApi!)
+            }
+        }
+        return asyncChanges;
+    }
+
+    private processAsynchronousChanges(changes: {}) {
+        if (Object.keys(changes).length > 0) {
+            window.setTimeout(() => {
+                // destroyed?
+                if (this.api) {
+                    ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi)
+                }
+            });
+        }
     }
 }
 
