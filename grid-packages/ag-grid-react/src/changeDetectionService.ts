@@ -106,6 +106,9 @@ class DeepValueStrategy implements ChangeDetectionStrategy {
             (a.$$typeof && a.$$typeof.toString() === "Symbol(react.element)")) {
             return a == b; //for boolean, number, string, function, xml
         }
+        if(Object.isFrozen(a) || Object.isFrozen(b)) {
+            return a === b;
+        }
 
         const newA = a.areEquivPropertyTracking === undefined,
             newB = b.areEquivPropertyTracking === undefined;
