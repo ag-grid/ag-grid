@@ -4,73 +4,25 @@ import { AnimationQueueEmptyEvent } from "../events";
 import { Events } from "../eventKeys";
 import { BeanStub } from "../context/beanStub";
 import { GridPanel } from "../gridPanel/gridPanel";
-import {LinkedList} from "./linkedList";
 
-enum Direction { Up, Down};
-
-interface TaskRow {
-    rowIndex: number;
-    tasks: LinkedList<() => void>;
+interface TaskItem {
+    task: () => void;
+    index: number;
+    createOrder: number;
 }
 
-class TaskBag {
-
-    private taskRows: TaskRow[] = [];
-    private mapToTaskRows: {[rowIndex: number]: TaskRow} = {};
-
-    private sorted = false;
-
-    public add(task: () => void, rowIndex: number): void {
-        let taskRow = this.mapToTaskRows[rowIndex];
-        if (taskRow==null) {
-            taskRow = {rowIndex, tasks: new LinkedList<() => void>()};
-            this.mapToTaskRows[rowIndex] = taskRow;
-            this.taskRows.push(taskRow)
-            this.sorted = false;
-        }
-        taskRow.tasks.add(task);
-    }
-
-    public ensureSorted(): void {
-        if (this.sorted) { return; }
-
-        this.taskRows.sort( (a: TaskRow, b: TaskRow) => {
-            return a.rowIndex - b.rowIndex;
-        });
-
-        this.sorted = true;
-    }
-
-    public pullTask(direction: Direction): ()=>void {
-        this.ensureSorted();
-
-        // if doing down, use first row index, if going up use last row index
-        const indexOfTask = direction == Direction.Down ? 0 : this.taskRows.length - 1;
-
-        const tasksForRow = this.taskRows[indexOfTask];
-        const res = tasksForRow.tasks.remove();
-
-        if (tasksForRow.tasks.isEmpty()) {
-            delete this.mapToTaskRows[tasksForRow.rowIndex];
-            this.taskRows.splice(indexOfTask, 1);
-        }
-
-        return res;
-    }
-
-    public isEmpty(): boolean {
-        return this.taskRows.length == 0;
-    }
+interface TaskList {
+    list: TaskItem[];
+    sorted: boolean;
 }
-
 @Bean('animationFrameService')
 export class AnimationFrameService extends BeanStub {
 
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use
     // TaskItem so we know what index the item is for.
-    private createTasksP1: TaskBag = new TaskBag(); // eg drawing back-ground of rows
-    private createTasksP2: TaskBag = new TaskBag(); // eg cell renderers, adding hover functionality
+    private createTasksP1: TaskList = { list: [], sorted: false }; // eg drawing back-ground of rows
+    private createTasksP2: TaskList = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
 
     // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
     // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
@@ -84,6 +36,7 @@ export class AnimationFrameService extends BeanStub {
     private scrollGoingDown = true;
     private lastScrollTop = 0;
 
+    private taskCount = 0;
     private cancelledTasks = new Set();
 
     private gridPanel: GridPanel;
@@ -114,16 +67,29 @@ export class AnimationFrameService extends BeanStub {
 
     public createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2') {
         this.verifyAnimationFrameOn(list);
-        if (list=="createTasksP1") {
-            this.createTasksP1.add(task, index);
-        } else {
-            this.createTasksP2.add(task, index);
-        }
+        const taskItem: TaskItem = { task, index, createOrder: ++this.taskCount };
+        this.addTaskToList(this[list], taskItem);
         this.schedule();
     }
 
     public cancelTask(task: () => void) {
         this.cancelledTasks.add(task);
+    }
+
+    private addTaskToList(taskList: TaskList, task: TaskItem): void {
+        taskList.list.push(task);
+        taskList.sorted = false;
+    }
+
+    private sortTaskList(taskList: TaskList) {
+        if (taskList.sorted) { return; }
+
+        const sortDirection = this.scrollGoingDown ? 1 : -1;
+
+        // sort first by row index (taking into account scroll direction), then by
+        // order of task creation (always ascending, so cells will render left-to-right)
+        taskList.list.sort((a, b) => a.index !== b.index ? sortDirection * (b.index - a.index) : b.createOrder - a.createOrder);
+        taskList.sorted = true;
     }
 
     public addDestroyTask(task: () => void): void {
@@ -135,23 +101,31 @@ export class AnimationFrameService extends BeanStub {
     private executeFrame(millis: number): void {
         this.verifyAnimationFrameOn('executeFrame');
 
+        const p1TaskList = this.createTasksP1;
+        const p1Tasks = p1TaskList.list;
+
+        const p2TaskList = this.createTasksP2;
+        const p2Tasks = p2TaskList.list;
+
+        const destroyTasks = this.destroyTasks;
+
         const frameStart = new Date().getTime();
-        let duration = 0;
+        let duration = (new Date().getTime()) - frameStart;
 
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
 
-        const direction = this.scrollGoingDown ? Direction.Down : Direction.Up;
-
         while (noMaxMillis || duration < millis) {
             if (!this.gridPanel.executeAnimationFrameScroll()) {
                 let task: () => void;
-                if (!this.createTasksP1.isEmpty()) {
-                    task = this.createTasksP1.pullTask(direction);
-                } else if (!this.createTasksP2.isEmpty()) {
-                    task = this.createTasksP2.pullTask(direction);
-                } else if (this.destroyTasks.length) {
-                    task = this.destroyTasks.pop()!;
+                if (p1Tasks.length) {
+                    this.sortTaskList(p1TaskList);
+                    task = p1Tasks.pop()!.task;
+                } else if (p2Tasks.length) {
+                    this.sortTaskList(p2TaskList);
+                    task = p2Tasks.pop()!.task;
+                } else if (destroyTasks.length) {
+                    task = destroyTasks.pop()!;
                 } else {
                     this.cancelledTasks.clear();
                     break;
@@ -165,11 +139,7 @@ export class AnimationFrameService extends BeanStub {
             duration = (new Date().getTime()) - frameStart;
         }
 
-        const p1sExist = !this.createTasksP1.isEmpty();
-        const p2sExist = !this.createTasksP2.isEmpty();
-        const removesExist = this.destroyTasks.length>0;
-
-        if (p1sExist || p2sExist || removesExist) {
+        if (p1Tasks.length || p2Tasks.length || destroyTasks.length) {
             this.requestFrame();
         } else {
             this.stopTicking();
