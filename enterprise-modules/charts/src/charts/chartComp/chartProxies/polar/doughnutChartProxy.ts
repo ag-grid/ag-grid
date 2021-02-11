@@ -195,6 +195,13 @@ export class DoughnutChartProxy extends PolarChartProxy {
         const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
         const pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series') as PieSeries;
 
+        if (!existingSeries) {
+            if (this.crossFiltering && !pieSeries.tooltip.renderer) {
+                // only add renderer if user hasn't provided one
+                this.addCrossFilteringTooltipRenderer(pieSeries);
+            }
+        }
+
         pieSeries.angleName = updateParams.field.displayName!;
         pieSeries.labelKey = updateParams.params.category.id;
         pieSeries.labelName = updateParams.params.category.name;

@@ -1,4 +1,11 @@
-import { AgChart, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart } from "ag-charts-community";
+import {
+    AgChart,
+    AgPolarChartOptions,
+    ChartTheme,
+    PieSeries,
+    PieTooltipRendererParams,
+    PolarChart
+} from "ag-charts-community";
 import { AgPieSeriesOptions, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
@@ -142,6 +149,11 @@ export class PieChartProxy extends PolarChartProxy {
                     renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
                 },
             }, 'pie.series');
+
+            if (this.crossFiltering && !pieSeries.tooltip.renderer) {
+                // only add renderer if user hasn't provided one
+                this.addCrossFilteringTooltipRenderer(pieSeries);
+            }
         }
 
         pieSeries.angleName = field.displayName!;
@@ -170,7 +182,6 @@ export class PieChartProxy extends PolarChartProxy {
                     pieSeries.callout.colors = strokes;
                 }
             }
-
             chart.tooltip.delay = 500;
 
             // disable series highlighting by default
