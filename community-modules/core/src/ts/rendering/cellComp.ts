@@ -94,6 +94,8 @@ export class CellComp extends Component implements TooltipParentComp {
     private includeRowDraggingComponent: boolean;
     private includeDndSourceComponent: boolean;
 
+    private rowDraggingComp: RowDragComp | undefined;
+
     private cellFocused: boolean;
     private editingCell = false;
     private cellEditorInPopup: boolean;
@@ -2085,14 +2087,18 @@ export class CellComp extends Component implements TooltipParentComp {
                 return;
             }
         }
-
-        const rowDraggingComp = new RowDragComp(this.rowNode, this.column, () => this.value, this.beans, customElement);
-        this.createManagedBean(rowDraggingComp, this.beans.context);
+        if (!this.rowDraggingComp) {
+            this.rowDraggingComp = new RowDragComp(this.rowNode, this.column, () => this.value, this.beans, customElement);
+            this.createManagedBean(this.rowDraggingComp, this.beans.context);
+        } else if (customElement) {
+            // if the rowDraggingComp is already present, means we should only set the drag element
+            this.rowDraggingComp.setDragElement(customElement);
+        }
 
         // If there is a custom element, the Cell Renderer is responsible for displaying it.
         if (!customElement) {
             // put the checkbox in before the value
-            this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eCellValue);
+            this.eCellWrapper.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue);
         }
     }
 

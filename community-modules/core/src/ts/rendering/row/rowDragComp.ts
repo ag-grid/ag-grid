@@ -15,6 +15,7 @@ export interface IRowDragItem extends DragItem {
 
 export class RowDragComp extends Component {
     public isCustomGui: boolean = false;
+    private dragSource: DragSource | null = null;
 
     constructor(
         private readonly rowNode: RowNode,
@@ -30,13 +31,12 @@ export class RowDragComp extends Component {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
             const eGui = this.getGui();
             eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null)!);
+            this.addDragSource();
         } else {
             this.isCustomGui = true;
-            this.setTemplateFromElement(this.customGui);
+            this.setDragElement(this.customGui);
         }
 
-
-        this.addDragSource();
         this.checkCompatibility();
 
         const strategy = this.beans.gridOptionsWrapper.isRowDragManaged() ?
@@ -44,6 +44,11 @@ export class RowDragComp extends Component {
             new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
 
         this.createManagedBean(strategy, this.beans.context);
+    }
+
+    public setDragElement(dragElement: HTMLElement) {
+        this.setTemplateFromElement(dragElement);
+        this.addDragSource();
     }
 
     private getSelectedCount(): number {
@@ -69,6 +74,9 @@ export class RowDragComp extends Component {
     }
 
     private addDragSource(): void {
+        // if this is changing the drag element, delete the previous dragSource
+        if (this.dragSource) { this.removeDragSource(); }
+
         const dragItem: IRowDragItem = {
             rowNode: this.rowNode,
             columns: [this.column],
@@ -77,7 +85,7 @@ export class RowDragComp extends Component {
 
         const rowDragText = this.column.getColDef().rowDragText;
 
-        const dragSource: DragSource = {
+        this.dragSource = {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
             dragItemName: () => {
@@ -93,8 +101,15 @@ export class RowDragComp extends Component {
             dragSourceDomDataKey: this.beans.gridOptionsWrapper.getDomDataKey()
         };
 
-        this.beans.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc(() => this.beans.dragAndDropService.removeDragSource(dragSource));
+        this.beans.dragAndDropService.addDragSource(this.dragSource, true);
+        this.addDestroyFunc(() => this.removeDragSource());
+    }
+
+    private removeDragSource() {
+        if (this.dragSource) {
+            this.beans.dragAndDropService.removeDragSource(this.dragSource);
+        }
+        this.dragSource = null;
     }
 }
 
