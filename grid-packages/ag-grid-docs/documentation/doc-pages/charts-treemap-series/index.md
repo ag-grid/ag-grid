@@ -21,7 +21,7 @@ or sales breakdown by city, state, and country. And these are just a few example
 
 `cartesian` and `polar` charts are meant to be used with linear data or, in other words, arrays.
 But since treemaps are used to render tree data, to create a basic treemap we need to use
-another type of chart, a `hierarchy` chart. A basic treemap configuration would therefore looks
+another type of chart, a `hierarchy` chart. A basic treemap configuration would therefore look
 like this:
 
 ```js
@@ -35,13 +35,41 @@ series: [{
 }]
 ```
 
+The `labelKey`, `sizeKey` and `colorKey` configs can be omitted, if the node objects in your data
+happen to have the `label`, `size` and `color` fields.
+
 [[note]]
 | Any treemap series covers the whole series area of a chart, so it doesn't make sense to have more than
 | a single treemap series in a chart, even though it's technically supported.
 
+Let's take a look at how we can use the treemap series to render a snapshot of the S&P 500 stock market index.
+Feel free to open this example in Plunker to enlarge the size of the component and notice how the treemap reveals more data as it grows bigger.
+
 ## Stock Market Index Example
 
 <chart-example title='Stock Market Index' name='stock-market-index' type='generated'></chart-example>
+
+## Alternative Configuration
+
+Although not very common, treemaps can be used to show the hierarchy without emphasizing size.
+In such a case, you can set the `colorKey` to `undefined`. This will make all sibling tiles within
+the same parent have the same area (but not necessarily the same shape).
+
+The org chart example below takes advantage of that by using the following config:
+
+```js
+type: 'hierarchy',
+data,
+series: [{
+    type: 'treemap',
+    labelKey: 'orgHierarchy',
+    sizeKey: undefined,  // make all siblings within a parent the same size
+    colorKey: undefined, // use node depth value to determine the tile color
+    colorParents: true,  // assign color to parent tiles based on their depth too (not just leaf tiles)
+    colorDomain: [0, 2, 4], // depth of 0 will correspond to 'red', of 2 to 'green' and so on
+    colorRange: ['red', 'green', 'blue'] // tiles with a depth of 1 will be a blend of 'red' and 'green'
+}]
+```
 
 ## Organizational Chart Example
 
