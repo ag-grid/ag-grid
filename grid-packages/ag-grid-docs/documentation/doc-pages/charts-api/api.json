@@ -2255,27 +2255,33 @@
     },
     "sizeKey": {
       "type": "string",
+      "default": "size",
       "description": "The key to use to retrieve the values from the data that will determine the size of each tile. If undefined, each sibling within a parent will have the same size."
     },
     "labelKey": {
       "type": "string",
+      "default": "label",
       "isRequired": true,
       "description": "The key to use to retrieve label values from the data."
     },
     "colorKey": {
       "type": "string",
+      "default": "color",
       "description": "The key to use to retrieve the values from the data that will determine the color of each tile. If undefined, the depth of each node (tile) will be used as an integer color value, starting with the root with a depth of zero."
     },
     "colorDomain": {
       "type": "number[]",
+      "default": "[-5, 5]",
       "description": "Two or more numbers that constitute the domain of the 'colorKey' values. This helps determine where in the domain any given color value is and how to interpolate it into a tile color."
     },
     "colorRange": {
       "type": "string[]",
+      "default": "['#cb4b3f', '#6acb64']",
       "description": "Two or more CSS colors that constitute the range of the 'colorKey' values. This specifies which colors to interpolate the color values from the data into."
     },
     "colorName": {
       "type": "string",
+      "default": "Change",
       "description": "The name of the color value that will be shown in tooltips."
     },
     "gradient": {
@@ -2290,6 +2296,7 @@
     },
     "rootName": {
       "type": "string",
+      "default": "Root",
       "description": "The name of the root node that will be shown in tooltips."
     },
     "nodePadding": {

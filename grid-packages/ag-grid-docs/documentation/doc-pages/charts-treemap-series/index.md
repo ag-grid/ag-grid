@@ -17,13 +17,31 @@ Treemap series would be a great fit for visualizing a directory structure (the o
 the algorithm), components of a stock market index, shares of products within product categories,
 or sales breakdown by city, state, and country. And these are just a few examples.
 
-## Stock Market Index Example
+## Basic Configuration
 
-<chart-example title='Stock Market Index' name='stock-market-index' type='generated'></chart-example>
+`cartesian` and `polar` charts are meant to be used with linear data or, in other words, arrays.
+But since treemaps are used to render tree data, to create a basic treemap we need to use
+another type of chart, a `hierarchy` chart. A basic treemap configuration would therefore looks
+like this:
+
+```js
+type: 'hierarchy',
+data, // the root node of the hierarchy
+series: [{
+    type: 'treemap',
+    labelKey: 'label', // the name of the key to fetch the label value from
+    sizeKey: 'size',   // the name of the key to fetch the value that will determine tile size
+    colorKey: 'color', // the name of the key to fetch the value that will determine tile color
+}]
+```
 
 [[note]]
 | Any treemap series covers the whole series area of a chart, so it doesn't make sense to have more than
 | a single treemap series in a chart, even though it's technically supported.
+
+## Stock Market Index Example
+
+<chart-example title='Stock Market Index' name='stock-market-index' type='generated'></chart-example>
 
 ## Organizational Chart Example
 
