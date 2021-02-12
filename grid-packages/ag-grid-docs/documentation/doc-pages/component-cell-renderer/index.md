@@ -41,6 +41,7 @@ interface ICellRendererParams {
     columnApi: ColumnApi, // grid column API
     context: any, // the grid's context
     refreshCell: () => void // convenience function to refresh the cell
+    registerRowDragger: (rowDraggerElement: HTMLElement) => void; // convenience function to register a DOM element as Row Dragger
 }
 ```
 

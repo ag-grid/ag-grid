@@ -87,51 +87,6 @@ The example below is almost identical to the [Managed Dragging](#managed-draggin
 - Applying a sort or a filter to the grid will also suppress the drag icons.
 
 <grid-example title='Suppress Row Drag' name='suppress-row-drag' type='generated'></grid-example>
-
-## Custom Row Drag Text
-
-When a row drag starts, a "floating" DOM element is created to indicate which row is being dragged. By default, this DOM
-element will contain the same value as the cell that started the row drag. It's possible to override that text by using
-the `colDef.rowDragText` callback.
-
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'athlete',
-            rowDrag: true,
-            rowDragText: (params, dragItemCount) => {
-                return (
-                    dragItemCount > 1
-                        ? (dragItemCount + ' items')
-                        : params.defaultTextValue + ' is'
-                ) + ' being dragged...';
-            }
-        }
-    ]
-}
-</snippet>
-
-The interface for the rowDragText callback is as follows:
-
-```ts
-// function for rowDragText
-function rowDragText(params: IRowDragItem, dragItemCount: number) => string;
-
-// interface for params
-interface IRowDragItem {
-    rowNode: RowNode; // the current RowNode
-    columns: Column[]; // an array containing the column that initiated the drag
-    defaultTextValue: string; // The default text that would be applied to this Drag Element
-}
-```
-
-The example below shows dragging with custom text. The following can be noted:
-
-- When you drag row of the year 2012, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
-
-<grid-example title='Row Drag With Custom Text' name='custom-drag-text' type='generated'></grid-example>
-
 ## Unmanaged Dragging
 
 Unmanaged dragging is the default dragging for the grid. To use it, do not set the property `rowDragManaged`. Unmanaged dragging differs from managed dragging in the following ways:
@@ -274,3 +229,110 @@ Unmanaged row dragging will work with any of the row models [Infinite](../infini
 
 Because the grid implementation with regards to row dragging is identical to the above, examples of row dragging with the other row models are not given. How your application behaves with regards to the row drag events is the difficult bit, but that part is specific to your application and how your application stores its state. Giving an example here with a different data store would be redundant.
 
+## Customisation
+
+There are some options that can be used to customise the Row Drag experience, so it has a better integration with your application.
+
+### Custom Row Drag Text
+
+When a row drag starts, a "floating" DOM element is created to indicate which row is being dragged. By default, this DOM
+element will contain the same value as the cell that started the row drag. It's possible to override that text by using
+the `colDef.rowDragText` callback.
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            rowDrag: true,
+            rowDragText: (params, dragItemCount) => {
+                return (
+                    dragItemCount > 1
+                        ? (dragItemCount + ' items')
+                        : params.defaultTextValue + ' is'
+                ) + ' being dragged...';
+            }
+        }
+    ]
+}
+</snippet>
+
+The interface for the rowDragText callback is as follows:
+
+```ts
+// function for rowDragText
+function rowDragText(params: IRowDragItem, dragItemCount: number) => string;
+
+// interface for params
+interface IRowDragItem {
+    rowNode: RowNode; // the current RowNode
+    columns: Column[]; // an array containing the column that initiated the drag
+    defaultTextValue: string; // The default text that would be applied to this Drag Element
+}
+```
+
+The example below shows dragging with custom text. The following can be noted:
+
+- When you drag row of the year 2012, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
+
+<grid-example title='Row Drag With Custom Text' name='custom-drag-text' type='generated'></grid-example>
+
+### Row Dragger inside Custom Cell Renderers
+
+Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved, by using the `registerRowDragger` method in the [ICellRendererParams](../component-cell-renderer/#cell-renderer-component) as follows: 
+
+[[only-javascript]]
+| ```js
+| // your custom cell renderer init code
+| const rowDragger = document.createElement('div')
+| this.eGui.appendChild(rowDragger);
+|
+| // register it as a row dragger
+| params.registerRowDragger(rowDragger);
+| ```
+
+[[only-angular]]
+| ```js
+| // your custom cell renderer code
+| @ViewChild('myref') myRef;
+|
+| agInit(params: ICellRendererParams): void {
+|     this.cellRendererParams = params;
+| }
+| 
+| ngAfterViewInit() {
+|     this.cellRendererParams.registerRowDragger(this.myRef.nativeElement);
+| }
+| ```
+
+[[only-react]]
+| ```js
+| // your custom cell renderer code
+|
+| // this will hold the reference to the element you want to
+| // to act as row dragger.
+| myRef = React.createRef();
+|
+| componentDidMount() {
+|     this.props.registerRowDragger(this.myRef.current);
+| }
+| ```
+
+
+[[only-vue]]
+| ```js
+| // your custom cell renderer code
+| mounted() {
+|     this.params.registerRowDragger(this.$refs.myRef);
+| }
+| ```
+
+[[warning]]
+| When using `registerRowDragger` you should **not** set the property `rowDrag=true` in the Column Definition. 
+| Doing that will cause the cell to have two row draggers.
+
+The example below shows a custom cell renderer, with using the `registerRowDragger` callback to render the Row Dragger inside itself.
+
+- When you hover the cells, an arrow will appear, and this arrow can be used to **drag** the rows.
+
+<grid-example title='Row Drag With Custom Cell Renderer' name='dragger-inside-custom-cell-renderer' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
