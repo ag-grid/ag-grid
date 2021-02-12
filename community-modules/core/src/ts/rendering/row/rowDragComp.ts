@@ -1,5 +1,5 @@
 import { Component } from "../../widgets/component";
-import { PostConstruct } from "../../context/context";
+import { PostConstruct, PreDestroy } from "../../context/context";
 import { RowNode } from "../../entities/rowNode";
 import { DragItem, DragSource, DragSourceType } from "../../dragAndDrop/dragAndDropService";
 import { Events } from "../../eventKeys";
@@ -102,9 +102,9 @@ export class RowDragComp extends Component {
         };
 
         this.beans.dragAndDropService.addDragSource(this.dragSource, true);
-        this.addDestroyFunc(() => this.removeDragSource());
     }
 
+    @PreDestroy
     private removeDragSource() {
         if (this.dragSource) {
             this.beans.dragAndDropService.removeDragSource(this.dragSource);
