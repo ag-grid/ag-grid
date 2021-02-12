@@ -2,7 +2,7 @@ import { Selection } from "../../../scene/selection";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
 import { reactive } from "../../../util/observable";
 import { Label } from "../../label";
-import { HighlightStyle, SeriesNodeDatum, SeriesTooltip } from "../series";
+import { HighlightStyle, SeriesNodeDatum, SeriesTooltip, TooltipRendererParams } from "../series";
 import { HierarchySeries } from "./hierarchySeries";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { Group } from "../../../scene/group";
@@ -14,6 +14,7 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { LegendDatum } from "../../legend";
 import { Treemap } from "../../../layout/treemap";
 import { hierarchy } from "../../../layout/hierarchy";
+import { toFixed } from "../../../util/number";
 
 interface TreemapNodeDatum extends SeriesNodeDatum {
     data: any;
@@ -33,12 +34,11 @@ interface TreemapNodeDatum extends SeriesNodeDatum {
     colorValue: number;
 }
 
-export interface TreemapTooltipRendererParams {
+export interface TreemapTooltipRendererParams extends TooltipRendererParams {
     datum: TreemapNodeDatum;
     labelKey: string;
     sizeKey?: string;
     colorKey?: string;
-    color: string;
 }
 
 export class TreemapSeriesTooltip extends SeriesTooltip {
@@ -194,11 +194,13 @@ export class TreemapSeries extends HierarchySeries {
     processData(): boolean {
         const { data, sizeKey, labelKey, colorKey, colorDomain, colorRange, colorParents } = this;
 
+        let dataRoot: unknown;
         if (sizeKey) {
-            this.dataRoot = hierarchy(data).sum(datum => datum.children ? 1 : datum[sizeKey]) as unknown as TreemapNodeDatum;
+            dataRoot = hierarchy(data).sum(datum => datum.children ? 1 : datum[sizeKey]);
         } else {
-            this.dataRoot = hierarchy(data).sum(datum => datum.children ? 0 : 1) as unknown as TreemapNodeDatum;
+            dataRoot = hierarchy(data).sum(datum => datum.children ? 0 : 1);
         }
+        this.dataRoot = dataRoot as TreemapNodeDatum;
 
         const colorScale = new LinearScale();
         colorScale.domain = colorDomain;
@@ -281,8 +283,12 @@ export class TreemapSeries extends HierarchySeries {
 
         this.groupSelection.selectByClass(Rect).each((rect, datum) => {
             const highlighted = datum === highlightedDatum;
-            const fill = highlighted && highlightFill !== undefined ? highlightFill : datum.fill;
-            const stroke = highlighted && highlightStroke !== undefined ? highlightStroke : datum.depth < 2 ? undefined : 'black';
+            const fill = highlighted && highlightFill !== undefined
+                ? highlightFill
+                : datum.fill;
+            const stroke = highlighted && highlightStroke !== undefined
+                ? highlightStroke
+                : datum.depth < 2 ? undefined : 'black';
 
             rect.fill = fill;
             rect.stroke = stroke;
@@ -361,7 +367,7 @@ export class TreemapSeries extends HierarchySeries {
             text.textBaseline = 'top';
             text.textAlign = 'center';
             text.text = typeof value === 'number' && isFinite(value)
-                ? String(datum.colorValue.toFixed(2)) + '%'
+                ? String(toFixed(datum.colorValue)) + '%'
                 : '';
 
             const textBBox = text.computeBBox();
@@ -399,9 +405,9 @@ export class TreemapSeries extends HierarchySeries {
         const color = datum.fill || 'gray';
 
         if (colorKey && colorName) {
-            const value = data[colorKey];
-            if (typeof value === 'number' && isFinite(value)) {
-                content = `<b>${colorName}</b>: ${data[colorKey].toFixed(2)}`;
+            const colorValue = data[colorKey];
+            if (typeof colorValue === 'number' && isFinite(colorValue)) {
+                content = `<b>${colorName}</b>: ${toFixed(data[colorKey])}`;
             }
         }
 
@@ -417,6 +423,7 @@ export class TreemapSeries extends HierarchySeries {
                 sizeKey,
                 labelKey,
                 colorKey,
+                title,
                 color
             }), defaults);
         }

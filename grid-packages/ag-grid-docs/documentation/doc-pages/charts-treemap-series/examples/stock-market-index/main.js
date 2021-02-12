@@ -1,4 +1,4 @@
-agCharts.AgChart.create({
+var options = {
     type: 'hierarchy',
     container: document.getElementById('myChart'),
     data,
@@ -21,4 +21,6 @@ agCharts.AgChart.create({
     subtitle: {
         text: 'Area represents market cap. Color represents change from the day before.'
     }
-});
+};
+
+agCharts.AgChart.create(options);

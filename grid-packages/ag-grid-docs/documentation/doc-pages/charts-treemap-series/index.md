@@ -21,11 +21,17 @@ or sales breakdown by city, state, and country. And these are just a few example
 
 <chart-example title='Stock Market Index' name='stock-market-index' type='generated'></chart-example>
 
+[[note]]
+| Any treemap series covers the whole series area of a chart, so it doesn't make sense to have more than
+| a single treemap series in a chart, even though it's technically supported.
+
 ## Organizational Chart Example
 
 <chart-example title='Organizational Chart' name='org-chart' type='generated'></chart-example>
 
+## API Reference
 
+<api-documentation source='charts-api/api.json' section='treemap' config='{ "showSnippets": true }'></api-documentation>
 
 ## Next Up
 
