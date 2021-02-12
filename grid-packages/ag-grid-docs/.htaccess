@@ -1,5 +1,8 @@
 ErrorDocument 404 /404.php
 
+# add MIME types for serving example files
+AddType text/javascript ts jsx
+
 <IfModule mod_expires.c>
     # Adds caching headers
     ExpiresActive On
