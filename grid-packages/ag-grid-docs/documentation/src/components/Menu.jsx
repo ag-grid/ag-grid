@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'gatsby';
 import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,8 +10,8 @@ import styles from './Menu.module.scss';
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
     return <li key={title} className={styles['menu__section']}>
         <div
-            onClick={() => toggleActive()}
-            onKeyDown={() => toggleActive()}
+            onClick={toggleActive}
+            onKeyDown={toggleActive}
             role="button"
             tabIndex="0"
             className={styles['menu__section__heading']}>
@@ -55,7 +55,6 @@ const MenuItem = ({ item, currentFramework }) => {
 
 const Menu = ({ currentFramework, currentPage }) => {
     const [activeSection, setActiveSection] = useState(null);
-    const listEl = useRef(null);
     const combinedMenuItems = menuData.reduce((combined, group) => [...combined, ...group.items], []);
     const containsPage = (items, frameworks) => items.reduce(
         (hasPage, item) => {
@@ -70,21 +69,24 @@ const Menu = ({ currentFramework, currentPage }) => {
     useEffect(() => {
         const sectionContainingPage = combinedMenuItems.filter(item => containsPage(item.items))[0];
 
-        // closes the menu when page reloads
-        if (listEl.current) {
-            listEl.current.classList.remove('show');
-        }
-
         if (sectionContainingPage) {
             setActiveSection(sectionContainingPage.title);
         }
     }, [currentPage, currentFramework]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <div className={styles['menu']}>
-        <ul id="side-nav" ref={listEl} className={styles['menu__sections']}>
+        <ul id="side-nav" className={styles['menu__sections']}>
             {combinedMenuItems.map(item => {
                 const { title } = item;
                 const isActive = title === activeSection;
+
+                const toggleActive = event => {
+                    if (event.key && event.key !== 'Enter') {
+                        return;
+                    }
+
+                    setActiveSection(isActive ? null : title);
+                };
 
                 return (
                     <MenuSection
@@ -93,7 +95,7 @@ const Menu = ({ currentFramework, currentPage }) => {
                         items={item.items}
                         currentFramework={currentFramework}
                         isActive={isActive}
-                        toggleActive={() => setActiveSection(isActive ? null : title)}
+                        toggleActive={toggleActive}
                     />
                 );
             })}
