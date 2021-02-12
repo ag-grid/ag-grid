@@ -83,5 +83,4 @@ In the example below, note the following:
 - New rows can be created by clicking on the red, green and blue buttons.
 
 
-<grid-example title='Two Grids' name='two-grids' type='vanilla' options='{ "extras": ["fontawesome"] }'></grid-example>
-
+<grid-example title='Two Grids' name='two-grids' type='multi' options='{ "extras": ["fontawesome"] }'></grid-example>
