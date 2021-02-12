@@ -2,7 +2,7 @@ var columnDefs = [
     {
         field: "athlete",
         cellClass: 'custom-athlete-cell',
-        cellRenderer: 'customCellComponent'
+        cellRenderer: 'myCustomCell'
     },
     { field: "country" },
     { field: "year", width: 100 },
@@ -23,7 +23,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     animateRows: true,
     components: {
-        customCellComponent: CustomCellComponent
+        myCustomCell: CustomCellRenderer
     }
 };
 

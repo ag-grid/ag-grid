@@ -2,11 +2,14 @@
     border: 1px solid #ff7b7b;
 }
 .ag-cell.custom-athlete-cell {
-    padding: 0;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+.ag-cell.custom-athlete-cell > div {
+    height: 100%;
 }
 
 .my-custom-cell-renderer {
-    line-height: initial;
     display: flex;
     font-size: 0.7rem;
     background-color: #4180d6;
@@ -14,8 +17,12 @@
     padding: 0.25rem;
     align-items: center;
     justify-content: space-between;
-    height: 100%;
     box-sizing: border-box;
+    height: 100%;
+}
+
+.my-custom-cell-renderer > * {
+    line-height: normal;
 }
 
 .my-custom-cell-renderer i {

@@ -281,33 +281,55 @@ The example below shows dragging with custom text. The following can be noted:
 
 Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved, by using the `registerRowDragger` method in the [ICellRendererParams](../component-cell-renderer/#cell-renderer-component) as follows: 
 
+[[only-javascript]]
+| ```js
+| // your custom cell renderer init code
+| const rowDragger = document.createElement('div')
+| this.eGui.appendChild(rowDragger);
+|
+| // register it as a row dragger
+| params.registerRowDragger(rowDragger);
+| ```
+
+[[only-angular]]
+| ```js
+| // your custom cell renderer code
+| @ViewChild('myref') myRef;
+|
+| agInit(params: ICellRendererParams): void {
+|     this.cellRendererParams = params;
+| }
+| 
+| ngAfterViewInit() {
+|     this.cellRendererParams.registerRowDragger(this.myRef.nativeElement);
+| }
+| ```
+
+[[only-react]]
+| ```js
+| // your custom cell renderer code
+|
+| // this will hold the reference to the element you want to
+| // to act as row dragger.
+| myRef = React.createRef();
+|
+| componentDidMount() {
+|     this.props.registerRowDragger(this.myRef.current);
+| }
+| ```
+
+
+[[only-vue]]
+| ```js
+| // your custom cell renderer code
+| mounted() {
+|     this.params.registerRowDragger(this.$refs.myRef);
+| }
+| ```
+
 [[warning]]
 | When using `registerRowDragger` you should **not** set the property `rowDrag=true` in the Column Definition. 
 | Doing that will cause the cell to have two row draggers.
-
-```js
-CustomCellComponent.prototype.init = function(params) {
-    this.eGui = document.createElement('div');
-    this.eGui.classList.add('my-custom-cell-renderer');
-    var content = '';
-    content += '<div class="athlete-info">'
-    content +=     '<span>' + params.data.athlete + '</span>';
-    content +=     '<span>' + params.data.country + '</span>';
-    content += '</div>';
-    content += '<span>' + params.data.year + '</span>';
-
-    this.eGui.innerHTML = content;
-
-    // creates the row dragger element
-    var rowDragger = document.createElement('i');
-    content += '<i class="fas fa-arrows-alt-v"></i>';
-    rowDragger.classList.add('fas fa-arrows-alt-v')
-    this.eGui.appendChild(rowDragger);
-
-    // registers as a row dragger
-    params.registerRowDragger(rowDragger);
-};
-```
 
 The example below shows a custom cell renderer, with using the `registerRowDragger` callback to render the Row Dragger inside itself.
 
