@@ -53,11 +53,11 @@ The Join Operator decides how Condition 1 and Condition 2 are joined, using eith
 
 Simple Filters are configured though the `filterParams` attribute of the column definition. All of the parameters from Provided Filters are available:
 
-<api-documentation source='filter-provided/resources/providedFilters.json' section="filterParams"></api-documentation>
+<api-documentation source='filter-provided/resources/provided-filters.json' section="filterParams"></api-documentation>
 
 In addition, the following parameters are also available, depending on the type of filter being used:
 
-<api-documentation source='filter-provided-simple/resources/simpleFilters.json' section="filterParams"></api-documentation>
+<api-documentation source='filter-provided-simple/resources/simple-filters.json' section="filterParams"></api-documentation>
 
 ### Example: Simple Filter Options
 

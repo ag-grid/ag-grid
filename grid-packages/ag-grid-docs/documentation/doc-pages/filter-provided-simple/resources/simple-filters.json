@@ -97,6 +97,13 @@
                 "Text"
             ]
         },
+        "trimInput": {
+            "default": false,
+            "description": "If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed. If only whitespace is entered, it will be left as-is. If you enable `trimInput`, it is best to also increase the `debounceMs` to give users more time to enter text.",
+            "relevantTo": [
+                "Text"
+            ]
+        },
         "inRangeInclusive": {
             "description": "If `true`, the `'inRange'` filter option will include values equal to the start and end of the range.",
             "relevantTo": [

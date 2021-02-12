@@ -45,7 +45,7 @@ The following example demonstrates how the Set Filter can be enabled. Note the f
 
 Parameters that are common to all [Provided Filters](../filter-provided/):
 
-<api-documentation source='filter-provided/resources/providedFilters.json' section='filterParams'></api-documentation>
+<api-documentation source='filter-provided/resources/provided-filters.json' section='filterParams'></api-documentation>
 
 Parameters that are specific to the Set Filter:
 

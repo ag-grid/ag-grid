@@ -10,11 +10,11 @@ The [Provided Filters](../filter-provided/) and [Simple Filters](../filter-provi
 
 Text Filters are configured though the `filterParams` attribute of the column definition. All of the parameters from Provided Filters are available:
 
-<api-documentation source='filter-provided/resources/providedFilters.json' section='filterParams'></api-documentation>
+<api-documentation source='filter-provided/resources/provided-filters.json' section='filterParams'></api-documentation>
 
 In addition, the following parameters are also available:
 
-<api-documentation source='filter-provided-simple/resources/simpleFilters.json' section='filterParams' names='["Text"]'></api-documentation>
+<api-documentation source='filter-provided-simple/resources/simple-filters.json' section='filterParams' names='["Text"]'></api-documentation>
 
 ## Text Custom Comparator
 
@@ -39,7 +39,6 @@ function textCustomComparator(filter: string, gridValue: any, filterText: string
 - `returns: boolean` Set to `true` if the value passes the filter, otherwise `false`.
 
 The following is an example of a `textCustomComparator` that mimics the current implementation of AG Grid. This can be used as a template to create your own.
-
 
 <snippet>
 const gridOptions = {
@@ -70,7 +69,7 @@ const gridOptions = {
                             console.warn('invalid filter type ' + filter);
                             return false;
                     }
-                } 
+                }
             }
         }
     ]
@@ -94,7 +93,6 @@ The following is an example function to remove accents and convert to lower case
 ```js
 const toLowerWithoutAccents = value =>
     value.toLowerCase()
-        .replace(/\s/g, '')
         .replace(/[àáâãäå]/g, 'a')
         .replace(/æ/g, 'ae')
         .replace(/ç/g, 'c')
@@ -104,8 +102,7 @@ const toLowerWithoutAccents = value =>
         .replace(/[òóôõö]/g, 'o')
         .replace(/œ/g, 'oe')
         .replace(/[ùúûü]/g, 'u')
-        .replace(/[ýÿ]/g, 'y')
-        .replace(/\W/g, '');
+        .replace(/[ýÿ]/g, 'y');
 ```
 
 ## Example: Text Filter
@@ -116,8 +113,8 @@ const toLowerWithoutAccents = value =>
 - The **Athlete** column filter has the AND/OR additional filter suppressed (`suppressAndOrCondition = true`)
 - The **Country** column has only one filter option: `filterOptions = ['contains']`
 - The **Country** column has a `textCustomComparator` so that aliases can be entered in the filter, e.g. if you filter using the text `'usa'` it will match `United States` or `'holland'` will match `'Netherlands'`
-- The **Country** column filter has a debounce of 2000ms (`debounceMs = 2000`)
-- The **Year** column has one filter option: `filterOptions = ['inRange']`
+- The **Country** column will trim the input when the filter is applied (`trimInput = true`)
+- The **Country** column filter has a debounce of 1000ms (`debounceMs = 1000`)
 - The **Sport** column has a different default option (`defaultOption = 'startsWith'`)
 - The **Sport** column filter is case-sensitive (`caseSensitive = true`)
 

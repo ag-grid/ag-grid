@@ -8,11 +8,11 @@ Date filters allow you to filter date data. The [Provided Filters](../filter-pro
 
 Date Filters are configured though the `filterParams` attribute of the column definition. All of the parameters from Provided Filters are available:
 
-<api-documentation source='filter-provided/resources/providedFilters.json' section='filterParams'></api-documentation>
+<api-documentation source='filter-provided/resources/provided-filters.json' section='filterParams'></api-documentation>
 
 In addition, the following parameters are also available:
 
-<api-documentation source='filter-provided-simple/resources/simpleFilters.json' section='filterParams' names='["Date"]'></api-documentation>
+<api-documentation source='filter-provided-simple/resources/simple-filters.json' section='filterParams' names='["Date"]'></api-documentation>
 
 ## Date Selection Component
 
@@ -40,18 +40,18 @@ Below is an example of using a date filter with a comparator.
 |    columnDefs: [
 |        // column definition configured to use a date filter
 |        {
-|            field: 'date',   
+|            field: 'date',
 |            filter: 'agDateColumnFilter',
 |            // add extra parameters for the date filter
 |            filterParams: {
 |                // provide comparator function
 |                comparator: (filterLocalDateAtMidnight, cellValue) => {
 |                    const dateAsString = cellValue;
-|        
+|
 |                    if (dateAsString == null) {
 |                        return 0;
 |                    }
-|        
+|
 |                    // In the example application, dates are stored as dd/mm/yyyy
 |                    // We create a Date object for comparison against the filter date
 |                    const dateParts = dateAsString.split('/');
@@ -59,7 +59,7 @@ Below is an example of using a date filter with a comparator.
 |                    const month = Number(dateParts[1]) - 1;
 |                    const year = Number(dateParts[0]);
 |                    const cellDate = new Date(year, month, day);
-|        
+|
 |                    // Now that both parameters are Date objects, we can compare
 |                    if (cellDate < filterLocalDateAtMidnight) {
 |                        return -1;

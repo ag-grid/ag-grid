@@ -29,6 +29,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
     textCustomComparator?: TextComparator;
     caseSensitive?: boolean;
     textFormatter?: (from: string) => string;
+    trimInput?: boolean;
 }
 
 export class TextFilter extends SimpleFilter<TextFilterModel> {
@@ -79,7 +80,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         super('textFilter');
     }
 
-    public static cleanInput(value?: string | null): string | null | undefined {
+    public static trimInput(value?: string | null): string | null | undefined {
         const trimmedInput = value && value.trim();
 
         // trim the input, unless it is all whitespace (this is consistent with Excel behaviour)
@@ -91,7 +92,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     private getCleanValue(inputField: AgInputTextField): string | null | undefined {
-        return TextFilter.cleanInput(makeNull(inputField.getValue()));
+        const value = makeNull(inputField.getValue());
+
+        return this.textFilterParams.trimInput ? TextFilter.trimInput(value) : value;
     }
 
     private addValueChangedListeners(): void {
@@ -106,9 +109,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         this.textFilterParams = params;
         this.comparator = this.textFilterParams.textCustomComparator || TextFilter.DEFAULT_COMPARATOR;
         this.formatter = this.textFilterParams.textFormatter ||
-            (this.textFilterParams.caseSensitive == true
-                ? TextFilter.DEFAULT_FORMATTER
-                : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
+            (this.textFilterParams.caseSensitive ? TextFilter.DEFAULT_FORMATTER : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
 
         this.addValueChangedListeners();
     }

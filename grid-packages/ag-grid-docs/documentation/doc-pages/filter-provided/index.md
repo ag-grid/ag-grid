@@ -19,25 +19,25 @@ The rest of this section will cover concepts that are common to every provided f
 
 The diagram below outlines the structure of the filters. Each box represents a filter type with the functions listed in it. For example, all provided filters have button logic, but only the Date filter has a Date Comparator or a Date Picker.
 
-<image-caption src="filter-provided/resources/providedFilters.png" alt="Provided Filters" width="52rem" centered="true"></image-caption>
+<image-caption src="filter-provided/resources/provided-filters.png" alt="Provided Filters" width="52rem" centered="true"></image-caption>
 
 ## Provided Filter UI
 
 Each provided filter is displayed in a UI with optional buttons at the bottom.
 
-<image-caption src="filter-provided/resources/filterContent.png" alt="Filter Content" width="18rem" centered="true"></image-caption>
+<image-caption src="filter-provided/resources/filter-content.png" alt="Filter Content" width="18rem" centered="true"></image-caption>
 
 ## Provided Filter Params
 
 All of the provided filters have the following parameters:
 
-<api-documentation source='filter-provided/resources/providedFilters.json' section='filterParams'></api-documentation>
+<api-documentation source='filter-provided/resources/provided-filters.json' section='filterParams'></api-documentation>
 
 ## Provided Filter API
 
 Provided Filters provide the following methods:
 
-<api-documentation sources='["filter-api/resources/filterApi.json", "filter-provided/resources/providedFilters.json"]' section='api'></api-documentation>
+<api-documentation sources='["filter-api/resources/filterApi.json", "filter-provided/resources/provided-filters.json"]' section='api'></api-documentation>
 
 ## Apply, Clear, Reset and Cancel Buttons
 

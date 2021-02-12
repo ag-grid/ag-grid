@@ -8,7 +8,6 @@ var athleteFilterParams = {
         if (r == null) return null;
 
         return r.toLowerCase()
-            .replace(/\s/g, '')
             .replace(/[àáâãäå]/g, 'a')
             .replace(/æ/g, 'ae')
             .replace(/ç/g, 'c')
@@ -18,8 +17,7 @@ var athleteFilterParams = {
             .replace(/[òóôõö]/g, 'o')
             .replace(/œ/g, 'oe')
             .replace(/[ùúûü]/g, 'u')
-            .replace(/[ýÿ]/g, 'y')
-            .replace(/\W/g, '');
+            .replace(/[ýÿ]/g, 'y');
     },
     debounceMs: 200,
     suppressAndOrCondition: true
@@ -42,27 +40,22 @@ var countryFilterParams = {
         };
 
         var literalMatch = contains(valueLowerCase, filterTextLowerCase);
+
         return literalMatch || contains(valueLowerCase, aliases[filterTextLowerCase]);
     },
-    debounceMs: 2000
+    trimInput: true,
+    debounceMs: 1000,
 };
 
 var columnDefs = [
     {
         field: 'athlete',
-        filter: 'agTextColumnFilter',
         filterParams: athleteFilterParams
     },
     {
         field: 'country',
+        filter: 'agTextColumnFilter',
         filterParams: countryFilterParams
-    },
-    {
-        field: 'year',
-        filter: 'agNumberColumnFilter',
-        filterParams: {
-            filterOptions: ['inRange']
-        }
     },
     {
         field: 'sport',
