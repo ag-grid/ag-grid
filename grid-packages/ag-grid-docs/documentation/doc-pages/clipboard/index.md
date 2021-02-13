@@ -54,6 +54,22 @@ Pasting is on by default as long as cells are editable (non-editable cells canno
 
 The colDef has a property `suppressPaste` where you can specify to not allowing clipboard paste for a particular cell. This can be a boolean or a function (use a function to specify for a particular cell, or boolean for the whole column).
 
+```ts
+// function to enable/disable Suppress Paste
+function suppressPaste(params: IColumnFunctionCallbackParams) => boolean;
+
+// interface for params
+interface IColumnFunctionCallbackParams {
+    node: RowNode;
+    data: any;
+    column: Column;
+    colDef: ColDef;
+    context: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+}
+```
+
 ## Clipboard Events
 
 The following events are relevant to clipboard operations:

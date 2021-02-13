@@ -7,7 +7,7 @@ import {
     ColSpanParams,
     IAggFunc,
     IsColumnFunc,
-    IsColumnFuncParams,
+    IColumnFunctionCallbackParams,
     RowSpanParams
 } from "./colDef";
 import { EventService } from "../eventService";
@@ -341,7 +341,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.eventService.removeEventListener(eventType, listener);
     }
 
-    private createIsColumnFuncParams(rowNode: RowNode): IsColumnFuncParams {
+    private createColumnFunctionCallbackParams(rowNode: RowNode): IColumnFunctionCallbackParams {
         return {
             node: rowNode,
             data: rowNode.data,
@@ -361,7 +361,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         // if function, then call the function to find out
         if (typeof this.colDef.suppressNavigable === 'function') {
-            const params = this.createIsColumnFuncParams(rowNode);
+            const params = this.createColumnFunctionCallbackParams(rowNode);
             const userFunc = this.colDef.suppressNavigable;
             return userFunc(params);
         }
@@ -399,7 +399,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.colDef.resizable === true;
     }
 
-    private isColumnFunc(rowNode: RowNode, value?: boolean | IsColumnFunc | null): boolean {
+    private isColumnFunc(rowNode: RowNode, value?: boolean | ((params: IColumnFunctionCallbackParams) => boolean) | null): boolean {
         // if boolean set, then just use it
         if (typeof value === 'boolean') {
             return value;
@@ -407,7 +407,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         // if function, then call the function to find out
         if (typeof value === 'function') {
-            const params = this.createIsColumnFuncParams(rowNode);
+            const params = this.createColumnFunctionCallbackParams(rowNode);
             const editableFunc = value;
             return editableFunc(params);
         }

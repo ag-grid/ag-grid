@@ -352,7 +352,7 @@
         },
         "suppressNavigable": {
             "default": false,
-            "description": "Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`. Can also be a function to have different rows navigable."
+            "description": "Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`. Can also be a callback function to have different rows navigable."
         },
         "suppressCellFlash": {
             "default": false,

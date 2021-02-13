@@ -31,6 +31,24 @@ const gridOptions = {
 }
 </snippet>
 
+The `rowDrag` property can also be a callback function in the the form: 
+
+```ts
+// function to enable/disable RowDrag
+function rowDragFunction(params: IColumnFunctionCallbackParams) => boolean;
+
+// interface for params
+interface IColumnFunctionCallbackParams {
+    node: RowNode;
+    data: any;
+    column: Column;
+    colDef: ColDef;
+    context: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+}
+```
+
 There are two ways in which row dragging works in the grid, managed and unmanaged:
 
 - **Managed Dragging**: This is the simplest, where the grid will rearrange rows as you drag them.

@@ -24,8 +24,25 @@ This section outlines how the grid fits in with native operating system drag and
 
 To allow dragging from the grid, set the property `dndSource=true` on one of the columns.
 This will result in the column having a drag handle displayed. When the dragging starts, the grid
-will by default create a JSON representation of the data and set this as MIME types `application/json`
-and also `text/plain`.
+will by default create a JSON representation of the data and set this as MIME types `application/json` and also `text/plain`.
+
+`dndSource=true` can also be set to a callback function in the following format:
+
+```ts
+// function to enable/disable DnD Source
+function dndSource(params: IColumnFunctionCallbackParams) => boolean;
+
+// interface for params
+interface IColumnFunctionCallbackParams {
+    node: RowNode;
+    data: any;
+    column: Column;
+    colDef: ColDef;
+    context: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+}
+```
 
 In the example below, note the following:
 

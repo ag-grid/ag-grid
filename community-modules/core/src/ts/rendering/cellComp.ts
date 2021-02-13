@@ -2115,9 +2115,12 @@ export class CellComp extends Component implements TooltipParentComp {
         this.beans.context.createBean(cbSelectionComponent);
 
         let visibleFunc = this.getComponentHolder().checkboxSelection;
-        visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
 
-        cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc });
+        if (typeof visibleFunc !== 'function') {
+            visibleFunc = undefined;
+        }
+
+        cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column, visibleFunc });
         this.addDestroyFunc(() => this.beans.context.destroyBean(cbSelectionComponent));
 
         // put the checkbox in before the value

@@ -285,8 +285,10 @@ export {
     NewValueParams,
     CellClassParams,
     GetQuickFilterTextParams,
+    IColumnFunctionCallbackParams,
+    // deprecated params
     IsColumnFunc,
-    IsColumnFuncParams,
+    IsColumnFuncParams
 } from "./entities/colDef";
 export {
     GridOptions,

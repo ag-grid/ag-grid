@@ -63,7 +63,23 @@ To include checkbox selection for a column, set the attribute `'checkboxSelectio
 
 To enable checkbox selection for groups, set the attribute `'checkbox'` to `true` for the group renderer. See the grouping section for details on the group renderer.
 
-`colDef.checkboxSelection` can also be a function that returns `true`/`false` - use this if you want checkboxes on some rows but not others. `gridOptions.checkboxSelection` can also be specified as a function - use this if you want, for example, the first column to have checkbox selection regardless of which column it is (you would do this by looping the columns using the column API, and check if the first column is the current one).
+`checkboxSelection` can also be specified as a function - use this if you want, for example, the first column to have checkbox selection regardless of which column it is (you would do this by looping the columns using the column API, and check if the first column is the current one).
+
+```ts
+// function to enable/disable Checkbox Selection
+function checkboxSelection(params: IColumnFunctionCallbackParams) => boolean;
+
+// interface for params
+interface IColumnFunctionCallbackParams {
+    node: RowNode;
+    data: any;
+    column: Column;
+    colDef: ColDef;
+    context: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+}
+```
 
 ## Group Selection
 
