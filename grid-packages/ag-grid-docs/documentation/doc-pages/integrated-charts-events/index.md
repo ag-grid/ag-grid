@@ -34,11 +34,11 @@ interface ChartRangeSelectionChanged {
 
 interface CellRangeParams {
     // start row
-    rowStartIndex?: number;
+    rowStartIndex: number | null;
     rowStartPinned?: string;
 
     // end row
-    rowEndIndex?: number;
+    rowEndIndex: number | null;
     rowEndPinned?: string;
 
     // columns

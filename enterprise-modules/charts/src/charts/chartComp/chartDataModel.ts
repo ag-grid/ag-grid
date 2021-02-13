@@ -166,8 +166,8 @@ export class ChartDataModel extends BeanStub {
     public getCellRangeParams(): CellRangeParams {
         const cellRanges = this.getCellRanges();
         const firstCellRange = cellRanges[0];
-        const startRow = firstCellRange && firstCellRange.startRow;
-        const endRow = firstCellRange && firstCellRange.endRow;
+        const startRow = (firstCellRange && firstCellRange.startRow) || null;
+        const endRow = (firstCellRange && firstCellRange.endRow) || null;
 
         return {
             rowStartIndex: startRow && startRow.rowIndex,

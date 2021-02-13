@@ -87,11 +87,11 @@ Adds a range to the selection. This keeps any previous ranges. If you wish to on
 ```ts
 interface AddCellRangeParams {
     // start row
-    rowStartIndex?: number;
+    rowStartIndex: number | null;
     rowStartPinned?: string; // either 'top', 'bottom' or undefined
     
     // end row
-    rowEndIndex?: number;
+    rowEndIndex: number | null;
     rowEndPinned?: string; // either 'top', 'bottom' or undefined
     
     // columns

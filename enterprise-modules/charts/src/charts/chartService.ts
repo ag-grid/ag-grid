@@ -20,7 +20,8 @@ import {
     Optional,
     PreDestroy,
     ProcessChartOptionsParams,
-    SeriesOptions
+    SeriesOptions,
+    CellRangeParams
 } from "@ag-grid-community/core";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 
@@ -101,7 +102,9 @@ export class ChartService extends BeanStub implements IChartService {
         }
 
         // pivot chart range contains all visible column without a row range to include all rows
-        const chartAllRangeParams = {
+        const chartAllRangeParams: CellRangeParams = {
+            rowStartIndex: null,
+            rowEndIndex: null,
             columns: this.columnController.getAllDisplayedColumns().map(col => col.getColId())
         };
 
