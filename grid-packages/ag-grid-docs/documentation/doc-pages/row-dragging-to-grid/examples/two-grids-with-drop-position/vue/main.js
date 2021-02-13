@@ -21,9 +21,9 @@ function createDataItem(color) {
     return obj;
 }
 
-function createLeftRowData() {
-    return ['Red', 'Green', 'Blue'].map((color) => createDataItem(color));
-}
+const createRowBlock = (blocks) => Array.apply(null, Array(blocks || 1))
+    .map(() => ['Red', 'Green', 'Blue'].map((color) => createDataItem(color)))
+    .reduce((prev, curr) => prev.concat(curr), []);
 
 const VueExample = {
     template: /* html */
@@ -124,7 +124,8 @@ const VueExample = {
         };
     },
     beforeMount() {
-        this.leftRowData = createLeftRowData();
+        this.leftRowData = createRowBlock(2);
+        this.rightRowData = createRowBlock(2);
     },
     methods: {
         getRowNodeId(data) {
@@ -138,9 +139,13 @@ const VueExample = {
             } else {
                 this.rightApi = api;
             }
-    
-            this.addBinZone(api);
-            this.addGridDropZone(side, api);
+
+            if (this.leftApi && this.rightApi) {
+                this.addBinZone(this.leftApi);
+                this.addBinZone(this.rightApi);
+                this.addGridDropZone('Left', this.leftApi);
+                this.addGridDropZone('Right', this.rightApi);
+            }
         },
     
         addRecordToGrid(side, data) {
@@ -212,11 +217,8 @@ const VueExample = {
         },
     
         addGridDropZone(side, api) {
-            const dropSide = side === 'Left' ? 'Right' : 'Left';
-            const dropZone = {
-                getContainer: () => dropSide === 'Left' ? this.$refs.eLeftGrid : this.$refs.eRightGrid,
-                onDragStop: (dragParams) => this.addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data)
-            };
+            const dropApi = side === 'Left' ? this.rightApi : this.leftApi;
+            const dropZone = dropApi.getRowDropZoneParams();
     
             api.addRowDropZone(dropZone);
         }

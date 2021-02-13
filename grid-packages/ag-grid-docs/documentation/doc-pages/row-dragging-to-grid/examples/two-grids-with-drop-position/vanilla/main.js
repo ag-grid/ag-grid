@@ -91,7 +91,7 @@ function addRecordToGrid(side, data) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var api = side == 'left' ? leftGridOptions.api : rightGridOptions.api,
+    var api = side === 'left' ? leftGridOptions.api : rightGridOptions.api,
         // do nothing if row is already in the grid, otherwise we would have duplicates
         rowAlreadyInGrid = !!api.getRowNode(data.id),
         transaction;
@@ -126,7 +126,7 @@ function binDrop(data) {
     };
 
     [leftGridOptions, rightGridOptions].forEach(function(option) {
-        rowsInGrid = !!option.api.getRowNode(data.id);
+        var rowsInGrid = !!option.api.getRowNode(data.id);
 
         if (rowsInGrid) {
             option.api.applyTransaction(transaction);
@@ -136,7 +136,7 @@ function binDrop(data) {
 
 function addBinZone(params) {
     var eBin = document.querySelector('.bin'),
-        icon = eBin.querySelector('i');
+        icon = eBin.querySelector('i'),
         dropZone = {
             getContainer: function() { return eBin; },
             onDragEnter: function() {
