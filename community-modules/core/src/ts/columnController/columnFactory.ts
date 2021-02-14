@@ -74,7 +74,7 @@ export class ColumnFactory extends BeanStub {
         if (existingTree) {
             this.columnUtils.depthFirstOriginalTreeSearch(null, existingTree, (item: OriginalColumnGroupChild) => {
                 if (item instanceof OriginalColumnGroup) {
-                    const group = item as OriginalColumnGroup;
+                    const group = item;
                     existingGroups.push(group);
                 } else {
                     const col = item as Column;

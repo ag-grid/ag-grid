@@ -6,7 +6,6 @@ import {
     ColDef,
     ColSpanParams,
     IAggFunc,
-    IsColumnFunc,
     IColumnFunctionCallbackParams,
     RowSpanParams
 } from "./colDef";

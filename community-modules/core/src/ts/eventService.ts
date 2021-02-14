@@ -35,8 +35,8 @@ export class EventService implements IEventEmitter {
     public setBeans(
         @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
         @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-        @Qualifier('globalEventListener') globalEventListener: Function | null = null,
-        @Qualifier('frameworkOverrides') frameworkOverrides: IFrameworkOverrides) {
+        @Qualifier('frameworkOverrides') frameworkOverrides: IFrameworkOverrides,
+        @Qualifier('globalEventListener') globalEventListener: Function | null = null) {
         this.logger = loggerFactory.create('EventService');
         this.frameworkOverrides = frameworkOverrides;
 

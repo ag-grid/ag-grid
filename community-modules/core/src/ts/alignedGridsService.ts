@@ -1,4 +1,4 @@
-import { ColumnController, ColumnState } from "./columnController/columnController";
+import { ColumnController } from "./columnController/columnController";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
@@ -15,7 +15,6 @@ import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { BeanStub } from "./context/beanStub";
-import { ApplyColumnStateParams } from "./columnController/columnApi";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
@@ -179,7 +178,6 @@ export class AlignedGridsService extends BeanStub {
 
         // in time, all the methods below should use the column ids, it's a more generic way
         // of handling columns, and also allows for single or multi column events
-        const columnIds = this.getColumnIds(colEvent);
         const masterColumns = this.getMasterColumns(colEvent);
 
         switch (colEvent.type) {

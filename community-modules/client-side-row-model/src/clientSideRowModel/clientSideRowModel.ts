@@ -6,7 +6,6 @@ import {
     ChangedPath,
     ColumnApi,
     ColumnController,
-    Constants as constants,
     Constants,
     Events,
     ExpandCollapseAllEvent,

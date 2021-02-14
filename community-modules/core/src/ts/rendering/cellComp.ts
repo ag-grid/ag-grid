@@ -586,9 +586,6 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private replaceContentsAfterRefresh(): void {
-        const isUsingWrapper = this.usingWrapper;
-        // otherwise we rip out the cell and replace it
-
         this.setUsingWrapper();
         clearElement(this.eCellValue);
 

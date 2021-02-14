@@ -28,7 +28,7 @@ import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { missing, exists, find } from "../utils/generic";
+import { missing, exists } from "../utils/generic";
 import { iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
 import { pushAll, last } from "../utils/array";

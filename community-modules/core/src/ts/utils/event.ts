@@ -1,5 +1,4 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
-import { CellComp } from '../rendering/cellComp';
 import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { includes } from './array';
 
