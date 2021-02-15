@@ -79,9 +79,14 @@ The following operations will **automatically** trigger change detection on all 
 1. Using the `api.applyTransaction(transaction)` API method.
 
 
-If you do not want change detection to be automatically done, then set the grid property `suppressChangeDetection=true`. This will stop the change detection process firing when the above events happen. Ideally you should not want to turn off change detection, however the option is there if you choose to turn it off. One thing that may entice you to turn it off is if you have some custom value getters that are doing some time intensive calculations, you may want limit the number of times they are called and have more control over when refreshing is done.
+If you do not want change detection to be automatically done, then set the grid property 
+`suppressChangeDetection=true`. This will stop the change detection process firing when the above events happen. 
+Ideally you should not want to turn off change detection, however the option is there if you choose to turn it off. 
+One thing that may entice you to turn it off is if you have some custom Value Getters or Cell Class Rules that are 
+doing some time intensive calculations, you may want limit the number of times they are called and have more 
+control over when refreshing is done.
 
-To **manually** run value change detection to refresh all visible cells call [api.refreshCells()](../view-refresh/).
+To **manually** run Value Change Detection to refresh all visible cells call [api.refreshCells()](../view-refresh/).
 
 ## 2. Aggregation Change Detection
 
