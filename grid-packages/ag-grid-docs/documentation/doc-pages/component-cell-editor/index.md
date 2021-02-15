@@ -4,57 +4,31 @@ title: "Cell Editors"
 
 Create your own cell editor by providing a cell editor component.
 
+## Simple Cell Renderer
+
+md-include:simple-editor-javascript.md
+md-include:simple-editor-angular.md
+md-include:simple-editor-react.md
+md-include:simple-editor-vue.md
+
+## Simple Cell Editor Example
+
+The example below shows a few simple cell editors in action. 
+ 
+- The `Doubling` Cell Editor will double a given input and reject values over a 1000
+- The `Mood` Cell Editor illustrates a slightly more complicated editor with values changed depending on the smiley chosen
+- The `Numeric` Cell Editor illustrates a slightly more complicated numeric editor to the `Doubling` editor above, with 
+increased input validation and better initial carot behaviour 
+
+<grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370 }'></grid-example>
+
 The interface for the cell editor component is as follows:
-
-```ts
-interface ICellEditorComp {
-
-    // gets called once after the editor is created
-    init?(params: ICellEditorParams): void;
-
-    // Gets called once after GUI is attached to DOM.
-    // Useful if you want to focus or highlight a component
-    // (this is not possible when the element is not attached)
-    afterGuiAttached?(): void;
-
-    // Return the DOM element of your editor, this is what the grid puts into the DOM
-    getGui(): HTMLElement;
-
-    // Should return the final value to the grid, the result of the editing
-    getValue(): any;
-
-    // Gets called once by grid after editing is finished
-    // if your editor needs to do any cleanup, do it here
-    destroy?(): void;
-
-    // Gets called once after initialised.
-    // If you return true, the editor will appear in a popup
-    isPopup?(): boolean;
-
-    // Gets called once, only if isPopup() returns true. Return "over" if the
-    // popup should cover the cell, or "under" if it should be positioned below
-    // leaving the cell value visible. If this method is not present, the
-    // default is "over"
-    getPopupPosition?(): string;
-
-    // Gets called once before editing starts, to give editor a chance to
-    // cancel the editing before it even starts.
-    isCancelBeforeStart?(): boolean;
-
-    // Gets called once when editing is finished (eg if enter is pressed).
-    // If you return true, then the result of the edit will be ignored.
-    isCancelAfterEnd?(): boolean;
-
-    // If doing full row edit, then gets called when tabbing into the cell.
-    focusIn?(): boolean;
-
-    // If doing full row edit, then gets called when tabbing out of the cell.
-    focusOut?(): boolean;
-}
-```
-
-The params object provided to the init method of the cell editor has the following interface:
-
+ 
+md-include:component-interface-javascript.md
+md-include:component-interface-angular.md
+md-include:component-interface-react.md
+md-include:component-interface-vue.md
+ 
 ```ts
 interface ICellEditorParams {
     // current value of the cell
@@ -112,67 +86,19 @@ interface ICellEditorParams {
 }
 ```
 
-Below is a simple example of Cell Editor:
+## Registering Cell Editors with Columns
 
-```js
-// function to act as a class
-function MyCellEditor () {}
-
-// gets called once before the renderer is used
-MyCellEditor.prototype.init = function(params) {
-    // create the cell
-    this.eInput = document.createElement('input');
-    this.eInput.value = params.value;
-};
-
-// gets called once when grid ready to insert the element
-MyCellEditor.prototype.getGui = function() {
-    return this.eInput;
-};
-
-// focus and select can be done after the gui is attached
-MyCellEditor.prototype.afterGuiAttached = function() {
-    this.eInput.focus();
-    this.eInput.select();
-};
-
-// returns the new value after editing
-MyCellEditor.prototype.getValue = function() {
-    return this.eInput.value;
-};
-
-// any cleanup we need to be done here
-MyCellEditor.prototype.destroy = function() {
-    // but this example is simple, no cleanup, we could
-    // even leave this method out as it's optional
-};
-
-// if true, then this editor will appear in a popup
-MyCellEditor.prototype.isPopup = function() {
-    // and we could leave this method out also, false is the default
-    return false;
-};
-```
+See the section [registering custom components](../components/#registering-custom-components) for details on registering and using custom cell editors.
 
 ## Complementing Cell Editor Params
 
-Again like cell renderers, cell editors can also be provided with additional parameters. Do this using `cellEditorParams` like in the following example which will pass 'Ireland' as the 'country' parameter:
+As with cell renderers, cell editors can also be provided with additional parameters. Do this using `cellEditorParams` as in the following example which will pass 'Ireland' as the 'country' parameter:
 
-```js
-// define cell renderer to be reused
-var myCellEditor = .....
-
-// use with a color
-colDef.cellEditor = ... // provide cellEditor as before
-colDef.cellEditorParams = {
-    country: 'Ireland'
-}
-```
-
-## Registering Cell Renderers with Columns
-
-See the section [registering custom components](../components/#registering-custom-components) for details on registering and using custom cell renderers.
-
+md-include:complementing-component-javascript.md
+md-include:complementing-component-angular.md
+md-include:complementing-component-react.md
+md-include:complementing-component-vue.md
+ 
 ## Keyboard Navigation While Editing
 
 If you provide a cell editor, you may wish to disable some of the grids keyboard navigation. For example, if you are providing a simple text editor, you may wish the grid to do nothing when you press the right and left arrows (the default is the grid will move to the next / previous cell) as you may want the right and left arrows to move the cursor inside your editor. In other cell editors, you may wish the grid to behave as normal.
@@ -190,50 +116,19 @@ If you don't want the grid to act on an event, call `event.stopPropagation()`. T
 
 The follow code snippet is one you could include for a simple text editor, which would stop the grid from doing navigation.
 
-
-```js
-var KEY_LEFT = 37;
-var KEY_UP = 38;
-var KEY_RIGHT = 39;
-var KEY_DOWN = 40;
-var KEY_PAGE_UP = 33;
-var KEY_PAGE_DOWN = 34;
-var KEY_PAGE_HOME = 36;
-var KEY_PAGE_END = 35;
-
-eInputDomElement.addEventListener('keydown', function(event) {
-    var keyCode = event.keyCode;
-
-    var isNavigationKey = keyCode===KEY_LEFT || keyCode===KEY_RIGHT || keyCode===KEY_UP
-    || keyCode===KEY_DOWN || keyCode===KEY_PAGE_DOWN || keyCode===KEY_PAGE_UP
-    || keyCode===KEY_PAGE_HOME || keyCode===KEY_PAGE_END;
-
-    if (isNavigationKey) {
-        // this stops the grid from receiving the event and executing keyboard navigation
-        event.stopPropagation();
-    }
-}
-```
+md-include:keyboard-option-1-javascript.md
+md-include:keyboard-option-1-angular.md
+md-include:keyboard-option-1-react.md
+md-include:keyboard-option-1-vue.md
 
 ### Option 2 - Suppress Keyboard Event
 
 If you implement `colDef.suppressKeyboardEvent()`, you can tell the grid which events you want process and which not. The advantage of this method of the previous method is it takes the responsibility out of the cell editor and into the column definition. So if you are using a reusable, or third party, cell editor, and the editor doesn't have this logic in it, you can add the logic via configuration.
-
-
-```js
-var KEY_UP = 38;
-var KEY_DOWN = 40;
-
-colDef.suppressKeyboardEvent = function(params) {
-    console.log('cell is editing: ' + params.editing);
-    console.log('keyboard event:', params.event);
-
-    // return true (to suppress) if editing and user hit up/down keys
-    var keyCode = params.event.keyCode;
-    var gridShouldDoNothing = params.editing && (keyCode===KEY_UP || keyCode===KEY_DOWN);
-    return gridShouldDoNothing;
-}
-```
+ 
+md-include:keyboard-option-2-javascript.md
+md-include:keyboard-option-2-angular.md
+md-include:keyboard-option-2-react.md
+md-include:keyboard-option-2-vue.md
 
 The params for `suppressKeyboardEvent( )` are as follows:
 
@@ -265,7 +160,7 @@ The example below illustrates:
 - 'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. Tab & Esc (amongst others) will exit editing in this field, Shift+Enter will allow newlines.
 - 'Country' columns shows using 'richSelect' for a complex object - the cell renderer takes care of only rendering the country name.
 
-<grid-example title='Editor Component' name='vanilla-editor-component' type='vanilla' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Simple Editor Components' name='component-editor-2' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
 
 ## Accessing Cell Editor Instances
 
@@ -317,114 +212,3 @@ if (instances.length > 0) {
     var frameworkInstance = wrapperInstance.getFrameworkComponentInstance();
 }
 ```
-[[only-angular]]
-| ## Cell Editing
-|
-| It is possible to provide Angular cell editors's for AG Grid to use if you are are using the Angular version of
-| AG Grid. See [registering framework components](../components/#registering-framework-components) for how to
-| register framework components.
-|
-| Your components need to implement `AgEditorComponent`. The ag Framework expects to find the `agInit` method
-| on the created component, and uses it to supply the cell `params`.
-|
-| ###  Methods / Lifecycle
-|
-| All of the methods in the `ICellEditor` interface described above are applicable to the Component with the
-| following exceptions:
-|
-| - `init()` is not used. Instead implement the `agInit` method (on the `AgRendererComponent` interface).
-| - `destroy()` is not used. Instead implement the Angular`OnDestroy` interface (`ngOnDestroy`) for any cleanup you
-| need to do.
-| - `getGui()` is not used. Instead do normal Angular magic in your Component via the Angular template.
-| - `afterGuiAttached()` is not used. Instead implement `AfterViewInit` (`ngAfterViewInit`) for any post Gui setup (ie
-| to focus on an element).
-|
-| All of the other methods (`isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()` etc) should be put
-| onto your Component and will work as normal.
-|
-| ### Example: Cell Editing using Components
-|
-| Using Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
-|
-|
-| <grid-example title='Angular Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
-
-[[only-react]]
-| ## Cell Editing
-|
-| It is possible to provide React cell editors for AG Grid to use if you are are using the React version of AG Grid.
-| See [registering framework components](../components/#registering-framework-components) for how to register
-| framework components.
-|
-| ###  React Props
-|
-| The React component will get the 'Cell Editor Params' as described above as its React Props. Therefore you can
-| access all the parameters as React Props.
-|
-| ###  Methods / Lifecycle
-|
-| All of the methods in the `ICellEditor` interface described above are applicable to the React Component with
-| the following exceptions:
-|
-| - `init()` is not used. Instead use the React props passed to your Component.
-| - `destroy()` is not used. Instead use the React `componentWillUnmount()` method for any cleanup you need to do.
-| - `getGui()` is not used. Instead do normal React magic in your `render()` method.
-|
-| All of the other methods (`isPopup(), isCancelBeforeStart(), isCancelAfterEnd(), afterGuiAttached()` etc) should
-| be put onto your React component and will work as normal.
-|
-| ### Example: Cell Editing using React Components
-| Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
-|
-| <grid-example title='React Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
-|
-| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see
-| [here](../react-hooks/) for more information.
-
-
-[[only-vue]]
-| ##  Cell Editing
-|
-| It is possible to provide VueJS cell editors for AG Grid to use if you are are using the VueJS version of
-| AG Grid. See [registering framework components](../components/#registering-framework-components) for how to
-| register framework components.
-|
-| ###  VueJS Parameters
-|
-| The Grid cell's value will be made available implicitly in a data value names `params`. This value will be
-| available to you from the `created` VueJS lifecycle hook. You can think of this as you having defined the following:
-|
-| ```js
-| export default {
-|     data () {
-|         return {
-|             params: null
-|         }
-|     },
-|     ...
-| }
-| ```
-|
-| but you do not need to do this - this is made available to you behind the scenes, and contains the cells value.
-|
-| ### Methods / Lifecycle
-| All of the methods in the `ICellEditor` interface described above are applicable to the VueJS Component with
-| the following exceptions:
-|
-| - `init()` is not used. The cells value is made available implicitly via a data field called `params`.
-| - `getGui()` is not used. Instead do normal VueJS magic in your Component via the VueJS template.
-| - `afterGuiAttached()` is not used. Instead implement the `mounted` VueJS lifecycle hook for any post Gui
-| setup (ie to focus on an element).
-|
-| All of the other methods (`isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()` etc) should be
-| put onto your VueJS component and will work as normal.
-|
-| ### Example: Cell Editing using VueJS Components
-|
-| Using Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
-|
-| A Component can be defined in a few different ways (please see
-| [Defining VueJS Components](../framework-misc/#define_component) for all the options), but in this example we're
-| going to define our editor as a Single File Component:
-|
-| <grid-example title='Vue Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>

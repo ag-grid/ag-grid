@@ -1,26 +1,10 @@
 var columnDefs = [
     {
-        field: "name",
-        width: 300,
+        headerName: "Doubling",
+        field: "number",
+        cellEditor: "doublingEditor",
         editable: true,
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            values: [
-                "Bob",
-                "Harry",
-                "Sally",
-                "Mary",
-                "John",
-                "Jack",
-                "Sue",
-                "Sean",
-                "Niall",
-                "Albert",
-                "Fred",
-                "Jenny",
-                "Larry"
-            ]
-        }
+        width: 300
     },
     {
         field: "mood",
@@ -62,6 +46,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: this.createRowData(),
     components: {
+        doublingEditor: DoublingEditor,
         moodRenderer: MoodRenderer,
         moodEditor: MoodEditor,
         numericEditor: NumericEditor
