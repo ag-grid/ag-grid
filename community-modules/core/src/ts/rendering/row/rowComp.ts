@@ -33,6 +33,7 @@ import { iterateObject, assign } from "../../utils/object";
 import { cssStyleObjectToMarkup } from "../../utils/general";
 import { AngularRowUtils } from "./angularRowUtils";
 import { CellPosition } from "../../entities/cellPosition";
+import { RowPosition } from "../../entities/rowPosition";
 
 interface CellTemplate {
     template: string;
@@ -630,6 +631,13 @@ export class RowComp extends Component {
         this.refreshCells();
     }
 
+    public getRowPosition(): RowPosition {
+        return {
+            rowPinned: this.rowNode.rowPinned,
+            rowIndex: this.rowNode.rowIndex as number
+        };
+    }
+
     public onKeyboardNavigate(keyboardEvent: KeyboardEvent) {
         const node = this.rowNode;
         const lastFocusedCell = this.beans.focusController.getFocusedCell();
@@ -640,6 +648,12 @@ export class RowComp extends Component {
         };
         this.beans.rowRenderer.navigateToNextCell(keyboardEvent, keyboardEvent.keyCode, cellPosition, true);
         keyboardEvent.preventDefault();
+    }
+
+    public onTabKeyDown(keyboardEvent: KeyboardEvent) {
+        if (this.isFullWidth()) {
+            this.beans.rowRenderer.onTabKeyDown(this, keyboardEvent);
+        }
     }
 
     public onFullWidthRowFocused(event: CellFocusedEvent) {
@@ -1527,7 +1541,7 @@ export class RowComp extends Component {
         return this.rowNode;
     }
 
-    public getRenderedCellForColumn(column: Column): CellComp | null | undefined {
+    public getRenderedCellForColumn(column: Column): CellComp | null {
         const cellComp = this.cellComps[column.getColId()];
 
         if (cellComp) { return cellComp; }
@@ -1536,7 +1550,7 @@ export class RowComp extends Component {
             .map(name => this.cellComps[name])
             .filter(cmp => cmp && cmp.getColSpanningList().indexOf(column) !== -1);
 
-        return spanList.length ? spanList[0] : undefined;
+        return spanList.length ? spanList[0] : null;
     }
 
     private onRowIndexChanged(): void {

@@ -655,9 +655,10 @@ export class GridPanel extends Component {
                 switch (key) {
                     case KeyName.UP:
                     case KeyName.DOWN:
-                    case KeyName.TAB:
                         rowComp.onKeyboardNavigate(keyboardEvent);
                         break;
+                    case KeyName.TAB:
+                        rowComp.onTabKeyDown(keyboardEvent);
                     default:
                 }
             }

@@ -41,6 +41,7 @@ import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../utils/browser";
 import { doOnce } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
 import { ITooltipParams } from "./tooltipComponent";
+import { RowPosition } from "../entities/rowPosition";
 
 const CSS_CELL = 'ag-cell';
 const CSS_CELL_VALUE = 'ag-cell-value';
@@ -1682,6 +1683,13 @@ export class CellComp extends Component implements TooltipParentComp {
             rowIndex: this.rowNode.rowIndex!,
             rowPinned: this.rowNode.rowPinned,
             column: this.column
+        };
+    }
+
+    public getRowPosition(): RowPosition {
+        return {
+            rowIndex: this.cellPosition.rowIndex,
+            rowPinned: this.cellPosition.rowPinned
         };
     }
 
