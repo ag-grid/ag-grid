@@ -1365,6 +1365,18 @@
                 ]
               },
               {
+                "title": "Treemap",
+                "url": "../charts/#treemap",
+                "disableActive": true,
+                "hideChildren": true,
+                "items": [
+                  {
+                    "title": "Market Index Treemap",
+                    "url": "../charts/market-index-treemap/"
+                  }
+                ]
+              },
+              {
                 "title": "Feature Highlights",
                 "url": "../charts/#feature-highlights",
                 "disableActive": true,

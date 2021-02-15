@@ -192,6 +192,10 @@ export class TreemapSeries extends HierarchySeries {
     }
 
     processData(): boolean {
+        if (!this.data) {
+            return false;
+        }
+
         const { data, sizeKey, labelKey, colorKey, colorDomain, colorRange, colorParents } = this;
 
         let dataRoot: unknown;

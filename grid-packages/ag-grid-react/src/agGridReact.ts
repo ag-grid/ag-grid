@@ -309,7 +309,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             })
 
             if(Object.keys(synchronousChanges).length > 0 && !!this.api) {
-                ComponentUtil.processOnChange({context: asyncChanges.context}, this.gridOptions, this.api, this.columnApi!)
+                ComponentUtil.processOnChange({context: asyncChanges.context}, this.gridOptions, this.api, this.columnApi)
             }
         }
         return asyncChanges;

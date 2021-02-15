@@ -86,6 +86,11 @@
             "description": "Here we bin the data by car engine size, but plot the average highway mpg in the y-axis, revealing the relationship between these two fields. We also plot the same data as a scatter series to illustrate the aggregation."
         }
     },
+    "Treemap": {
+        "Market Index Treemap": {
+            "description": "A treemap of a snapshot of the S&P 500 stock market index."
+        }
+    },
     "Feature Highlights": {
         "Time Axis With Irregular Intervals": {
             "description": "A time axis represents a continuous length of time, and so can be easily used to visualise data with irregular time intervals."
