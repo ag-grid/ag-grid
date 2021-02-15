@@ -179,16 +179,23 @@ interface GetCellEditorInstancesParams {
 }
 ```
 
-If you are doing normal editing, then only on cell is editable at any given time. For this reason if you call `getCellEditorInstances()` with no params, it will return back the editing cell's editor if a cell is editing, or an empty list if no cell is editing.
+If you are doing normal editing, then only one cell is editable at any given time. For this reason if you call `getCellEditorInstances()` with no params, it will return back the editing cell's editor if a cell is editing, or an empty list if no cell is editing.
 
 An example of calling `getCellEditorInstances()` is as follows:
 
 ```js
-var instances = gridOptions.api.getCellRendererInstances(params);
+const instances = gridOptions.api.getCellEditorInstances(params);
 if (instances.length > 0) {
-    var instance = instances[0];
+    const instance = instances[0]; 
 }
 ```
+
+[[only-angular]]
+md-include:editor-instance-fw.md
+[[only-react]]
+md-include:editor-instance-fw.md
+[[only-vue]]
+md-include:editor-instance-fw.md
 
 The example below shows using `getCellEditorInstances`. The following can be noted:
 
@@ -197,18 +204,4 @@ The example below shows using `getCellEditorInstances`. The following can be not
 - All other columns use the provided `MySimpleCellEditor` editor.
 - The example sets an interval to print information from the active cell editor. There are three results: 1) No editing 2) Editing with default cell renderer and 3) editing with the custom cell editor. All results are printed to the developer console.
 
-
-<grid-example title='Get Editor Instance' name='get-editor-instance' type='vanilla' options='{ "enterprise": true }'></grid-example>
-
-If your are using a framework component (detailed below), then the returned object is a wrapper and you can get the underlying cell editor using `getFrameworkComponentInstance()`
-
-
-```js
-// example - get cell editor
-var instances = gridOptions.api.getCellEditorInstances(params);
-if (instances.length > 0) {
-    // got it, user must be scrolled so that it exists
-    var wrapperInstance = instances[0];
-    var frameworkInstance = wrapperInstance.getFrameworkComponentInstance();
-}
-```
+<grid-example title='Get Editor Instance' name='get-editor-instance' type='generated' options='{ "enterprise": true }'></grid-example>
