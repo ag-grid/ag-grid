@@ -1,15 +1,16 @@
 import {Component, OnDestroy} from "@angular/core";
 
-import {ICellRendererAngularComp} from "ag-grid-angular";
+import {ICellRendererParams} from "ag-grid-community";
+import {AgRendererComponent} from "ag-grid-angular";
 
 @Component({
     selector: 'square-cell',
     template: `{{valueSquared()}}`
 })
-export class SquareRenderer implements ICellRendererAngularComp, OnDestroy {
-    private params: any;
+export class SquareRenderer implements AgRendererComponent, OnDestroy {
+    private params: ICellRendererParams;
 
-    agInit(params: any): void {
+    agInit(params: ICellRendererParams): void {
         this.params = params;
     }
 

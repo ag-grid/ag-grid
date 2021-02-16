@@ -7,9 +7,9 @@
 |    template: `<span [style.colour]="params.color">{{params.value}}</span>`
 |})
 |class ColourCellRenderer {
-|    params: any;
+|    params: ICellRendererParams;
 |
-|    agInit(params) {
+|    agInit(ICellRendererParams) {
 |        this.params = params;
 |    }
 |}

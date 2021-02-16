@@ -1,5 +1,6 @@
 import {Component} from "@angular/core";
 
+import {AgRendererComponent} from "@ag-grid-community/angular";
 import {ICellRendererParams} from "@ag-grid-community/core";
 
 @Component({
@@ -11,7 +12,7 @@ import {ICellRendererParams} from "@ag-grid-community/core";
           </span>
     `
 })
-export class TotalValueRenderer {
+export class TotalValueRenderer implements AgRendererComponent {
     private cellValue: string;
 
     // gets called once before the renderer is used
