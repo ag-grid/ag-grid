@@ -181,7 +181,7 @@ const gridOptions = {
         let nextInsertPos = 0;
         for (let i = 0; i < rowNodes.length; i++) {
             const country = rowNodes[i].data.country;      
-            if (country === 'Ireland') {        
+            if (country === 'Ireland') {
                 rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
                 nextInsertPos++;
             }
@@ -190,6 +190,7 @@ const gridOptions = {
 };
 </snippet>
 
-The following example uses this configuration to perform a post-sort on the rows.
+The following example uses this configuration to perform a post-sort on the rows. The custom function
+puts rows with Ireland at the top always.
 
 <grid-example title='Post Sort' name='post-sort' type='generated'></grid-example>
