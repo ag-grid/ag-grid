@@ -15,8 +15,6 @@ Use **page up** and **page down** to move the scroll up and down by one page. Us
 [[note]]
 | When a header cell is focused, commands like **page up**, **page down**, **home**, **end**, **ctrl + left / right** will not work as they do when a grid cell is focused.
 
-If using grouping and `groupUseEntireRow=true`, then the group row is not focusable. When navigating, the grouping row is skipped.
-
 ## Groups
 
 If on a group element, hitting the **enter key** will expand or collapse the group. This only works when displaying groups in a column (`groupUseEntireRow=false`), as otherwise the group cell is not selectable.
