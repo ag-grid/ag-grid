@@ -9,9 +9,9 @@
 |    template: `<span>{{params?.data?.theBoldValue}}</span>`
 |})
 |class CellRendererComponent {
-|    params: any;
+|    params: ICellRendererParams;
 |
-|    agInit(params) {
+|    agInit(ICellRendererParams) {
 |        this.params = params;
 |    }
 |}

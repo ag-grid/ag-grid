@@ -54,4 +54,4 @@
 |        return params.valueFormatted ? params.valueFormatted : params.value;
 |    }
 |}
-||```
+|```

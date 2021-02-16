@@ -73,6 +73,6 @@
 |if you decide for example to switch this component out for another.
 |
 |[[note]]
-||A React Component in this context can be an valid React Component - A Class Based Component, a Hook or even an inline
+||A React Component in this context can be any valid React Component - A Class Based Component, a Hook or even an inline
 ||Functional Component. 
 ||The same rules apply regardless of the type of component used.

@@ -1,5 +1,6 @@
 import {Component} from "@angular/core";
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
+import {ICellRendererParams} from "@ag-grid-community/core";
+import {AgRendererComponent} from "@ag-grid-community/angular";
 
 // both this and the parent component could be folded into one component as they're both simple, but it illustrates how
 // a fuller example could work
@@ -20,12 +21,12 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
         }
     `]
 })
-export class RatioParentComponent implements ICellRendererAngularComp {
-    public params: any = {
+export class RatioParentComponent implements AgRendererComponent {
+    public params: ICellRendererParams = {
         value: {top: 0.25, bottom: 0.75}
     };
 
-    agInit(params: any): void {
+    agInit(params: ICellRendererParams): void {
         this.params = params;
     }
 

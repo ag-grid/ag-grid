@@ -4,7 +4,7 @@
 |The interface for the cell renderer component is as follows:
 |
 |```ts
-|interface ICellRendererAngularComp {
+|interface AgRendererComponent {
 |    // Optional - Params for rendering
 |    agInit(params: ICellRendererParams): void;
 |

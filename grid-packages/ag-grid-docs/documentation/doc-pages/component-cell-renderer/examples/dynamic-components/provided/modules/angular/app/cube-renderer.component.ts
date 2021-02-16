@@ -1,13 +1,13 @@
 import {Component} from "@angular/core";
 
 import {ICellRendererParams} from "@ag-grid-community/core";
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
+import {AgRendererComponent} from "@ag-grid-community/angular";
 
 @Component({
     selector: 'cube-cell',
     template: `{{valueCubed()}}`
 })
-export class CubeRenderer implements ICellRendererAngularComp {
+export class CubeRenderer implements AgRendererComponent {
     private params: ICellRendererParams;
     private cubed: number;
 
