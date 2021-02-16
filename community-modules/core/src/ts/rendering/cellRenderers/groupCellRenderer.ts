@@ -591,13 +591,14 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const pivotMode = columnController.isPivotMode();
         const pivotModeAndLeafGroup = pivotMode && displayedGroup.leafGroup;
         const addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
+        const isTotalFooterNode = node.footer && node.level === -1;
 
         this.addOrRemoveCssClass('ag-cell-expandable', addExpandableCss);
         this.addOrRemoveCssClass('ag-row-group', addExpandableCss);
 
         if (pivotMode) {
             this.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeafGroup);
-        } else {
+        } else if (!isTotalFooterNode) {
             this.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
         }
     }
