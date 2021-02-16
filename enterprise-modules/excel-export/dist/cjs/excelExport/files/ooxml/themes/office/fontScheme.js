@@ -1,0 +1,140 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = require("@ag-grid-community/core");
+var getFont = function (props) {
+    var type = props[0], typeface = props[1], script = props[2], panose = props[3];
+    return {
+        name: "a:" + type,
+        properties: {
+            rawMap: {
+                script: script,
+                typeface: typeface,
+                panose: panose
+            }
+        }
+    };
+};
+var fontScheme = {
+    getTemplate: function () {
+        var utf8_encode = core_1._.utf8_encode;
+        return {
+            name: "a:fontScheme",
+            properties: {
+                rawMap: {
+                    name: "Office"
+                }
+            },
+            children: [{
+                    name: 'a:majorFont',
+                    children: [
+                        getFont(['latin', 'Calibri Light', undefined, '020F0302020204030204']),
+                        getFont(['ea', '']),
+                        getFont(['cs', '']),
+                        getFont(['font', utf8_encode('游ゴシック Light'), 'Jpan']),
+                        getFont(['font', utf8_encode('맑은 고딕'), 'Hang']),
+                        getFont(['font', utf8_encode('等线 Light'), 'Hans']),
+                        getFont(['font', utf8_encode('新細明體'), 'Hant']),
+                        getFont(['font', 'Times New Roman', 'Arab']),
+                        getFont(['font', 'Times New Roman', 'Hebr']),
+                        getFont(['font', 'Tahoma', 'Thai']),
+                        getFont(['font', 'Nyala', 'Ethi']),
+                        getFont(['font', 'Vrinda', 'Beng']),
+                        getFont(['font', 'Shruti', 'Gujr']),
+                        getFont(['font', 'MoolBoran', 'Khmr']),
+                        getFont(['font', 'Tunga', 'Knda']),
+                        getFont(['font', 'Raavi', 'Guru']),
+                        getFont(['font', 'Euphemia', 'Cans']),
+                        getFont(['font', 'Plantagenet Cherokee', 'Cher']),
+                        getFont(['font', 'Microsoft Yi Baiti', 'Yiii']),
+                        getFont(['font', 'Microsoft Himalaya', 'Tibt']),
+                        getFont(['font', 'MV Boli', 'Thaa']),
+                        getFont(['font', 'Mangal', 'Deva']),
+                        getFont(['font', 'Gautami', 'Telu']),
+                        getFont(['font', 'Latha', 'Taml']),
+                        getFont(['font', 'Estrangelo Edessa', 'Syrc']),
+                        getFont(['font', 'Kalinga', 'Orya']),
+                        getFont(['font', 'Kartika', 'Mlym']),
+                        getFont(['font', 'DokChampa', 'Laoo']),
+                        getFont(['font', 'Iskoola Pota', 'Sinh']),
+                        getFont(['font', 'Mongolian Baiti', 'Mong']),
+                        getFont(['font', 'Times New Roman', 'Viet']),
+                        getFont(['font', 'Microsoft Uighur', 'Uigh']),
+                        getFont(['font', 'Sylfaen', 'Geor']),
+                        getFont(['font', 'Arial', 'Armn']),
+                        getFont(['font', 'Leelawadee UI', 'Bugi']),
+                        getFont(['font', 'Microsoft JhengHei', 'Bopo']),
+                        getFont(['font', 'Javanese Text', 'Java']),
+                        getFont(['font', 'Segoe UI', 'Lisu']),
+                        getFont(['font', 'Myanmar Text', 'Mymr']),
+                        getFont(['font', 'Ebrima', 'Nkoo']),
+                        getFont(['font', 'Nirmala UI', 'Olck']),
+                        getFont(['font', 'Ebrima', 'Osma']),
+                        getFont(['font', 'Phagspa', 'Phag']),
+                        getFont(['font', 'Estrangelo Edessa', 'Syrn']),
+                        getFont(['font', 'Estrangelo Edessa', 'Syrj']),
+                        getFont(['font', 'Estrangelo Edessa', 'Syre']),
+                        getFont(['font', 'Nirmala UI', 'Sora']),
+                        getFont(['font', 'Microsoft Tai Le', 'Tale']),
+                        getFont(['font', 'Microsoft New Tai Lue', 'Talu']),
+                        getFont(['font', 'Ebrima', 'Tfng'])
+                    ]
+                }, {
+                    name: 'a:minorFont',
+                    children: [
+                        getFont(['latin', 'Calibri', undefined, '020F0502020204030204']),
+                        getFont(['ea', '']),
+                        getFont(['cs', '']),
+                        getFont(['font', utf8_encode('游ゴシック'), 'Jpan']),
+                        getFont(['font', utf8_encode('맑은 고딕'), 'Hang']),
+                        getFont(['font', utf8_encode('等线'), 'Hans']),
+                        getFont(['font', utf8_encode('新細明體'), 'Hant']),
+                        getFont(['font', 'Arial', 'Arab']),
+                        getFont(['font', 'Arial', 'Hebr']),
+                        getFont(['font', 'Tahoma', 'Thai']),
+                        getFont(['font', 'Nyala', 'Ethi']),
+                        getFont(['font', 'Vrinda', 'Beng']),
+                        getFont(['font', 'Shruti', 'Gujr']),
+                        getFont(['font', 'DaunPenh', 'Khmr']),
+                        getFont(['font', 'Tunga', 'Knda']),
+                        getFont(['font', 'Raavi', 'Guru']),
+                        getFont(['font', 'Euphemia', 'Cans']),
+                        getFont(['font', 'Plantagenet Cherokee', 'Cher']),
+                        getFont(['font', 'Microsoft Yi Baiti', 'Yiii']),
+                        getFont(['font', 'Microsoft Himalaya', 'Tibt']),
+                        getFont(['font', 'MV Boli', 'Thaa']),
+                        getFont(['font', 'Mangal', 'Deva']),
+                        getFont(['font', 'Gautami', 'Telu']),
+                        getFont(['font', 'Latha', 'Taml']),
+                        getFont(['font', 'Estrangelo Edessa', 'Syrc']),
+                        getFont(['font', 'Kalinga', 'Orya']),
+                        getFont(['font', 'Kartika', 'Mlym']),
+                        getFont(['font', 'DokChampa', 'Laoo']),
+                        getFont(['font', 'Iskoola Pota', 'Sinh']),
+                        getFont(['font', 'Mongolian Baiti', 'Mong']),
+                        getFont(['font', 'Arial', 'Viet']),
+                        getFont(['font', 'Microsoft Uighur', 'Uigh']),
+                        getFont(['font', 'Sylfaen', 'Geor']),
+                        getFont(['font', 'Arial', 'Armn']),
+                        getFont(['font', 'Leelawadee UI', 'Bugi']),
+                        getFont(['font', 'Microsoft JhengHei', 'Bopo']),
+                        getFont(['font', 'Javanese Text', 'Java']),
+                        getFont(['font', 'Segoe UI', 'Lisu']),
+                        getFont(['font', 'Myanmar Text', 'Mymr']),
+                        getFont(['font', 'Ebrima', 'Nkoo']),
+                        getFont(['font', 'Nirmala UI', 'Olck']),
+                        getFont(['font', 'Ebrima', 'Osma']),
+                        getFont(['font', 'Phagspa', 'Phag']),
+                        getFont(['font', 'Estrangelo Edessa', 'Syrn']),
+                        getFont(['font', 'Estrangelo Edessa', 'Syrj']),
+                        getFont(['font', 'Estrangelo Edessa', 'Syre']),
+                        getFont(['font', 'Nirmala UI', 'Sora']),
+                        getFont(['font', 'Microsoft Tai Le', 'Tale']),
+                        getFont(['font', 'Microsoft New Tai Lue', 'Talu']),
+                        getFont(['font', 'Ebrima', 'Tfng'])
+                    ]
+                }]
+        };
+    }
+};
+exports.default = fontScheme;
+//# sourceMappingURL=fontScheme.js.map
