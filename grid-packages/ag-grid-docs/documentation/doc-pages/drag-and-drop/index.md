@@ -30,10 +30,10 @@ will by default create a JSON representation of the data and set this as MIME ty
 
 ```ts
 // function to enable/disable DnD Source
-function dndSource(params: IColumnFunctionCallbackParams) => boolean;
+function dndSource(params: DndSourceCallbackParams) => boolean;
 
 // interface for params
-interface IColumnFunctionCallbackParams {
+interface DndSourceCallbackParams {
     node: RowNode;
     data: any;
     column: Column;

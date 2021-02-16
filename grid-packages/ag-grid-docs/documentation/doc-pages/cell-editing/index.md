@@ -18,10 +18,10 @@ It is possible to have only a few cells in a column editable; to do so, instead 
 
 ```ts
 // function to enable/disable column editable.
-function isEditable(params: IColumnFunctionCallbackParams) => boolean;
+function isEditable(params: EditableCallbackParams) => boolean;
 
 // interface for params
-interface IColumnFunctionCallbackParams {
+interface EditableCallbackParams {
     node: RowNode; // The `RowNode` of the row being rendered.
     data: any; // Any data associated with the node.
     column: Column; // The column being rendered (in AG Grid, each `colDef` is wrapped by a `Column`).

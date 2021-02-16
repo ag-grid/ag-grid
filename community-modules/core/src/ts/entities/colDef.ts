@@ -232,7 +232,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     pivotComparator?: (valueA: string, valueB: string) => number;
 
     /** Set to true to render a selection checkbox in the column. */
-    checkboxSelection?: boolean | ((params: IColumnFunctionCallbackParams) => boolean);
+    checkboxSelection?: boolean | ((params: CheckboxSelectionCallbackParams) => boolean);
 
     /** If true, a 'select all' checkbox will be put into the header */
     headerCheckboxSelection?: boolean | ((params: any) => boolean);
@@ -241,13 +241,13 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     headerCheckboxSelectionFilteredOnly?: boolean;
 
     /** For grid row dragging, set to true to enable row dragging within the grid */
-    rowDrag?: boolean | ((params: IColumnFunctionCallbackParams) => boolean);
+    rowDrag?: boolean | ((params: RowDragCallbackParams) => boolean);
 
     /** To configure the text to be displayed in the floating div while dragging a row when rowDrag is true */
     rowDragText?: ((params: IRowDragItem, dragItemCount: number) => string);
 
     /** For native drag and drop, set to true to enable drag source */
-    dndSource?: boolean | ((params: IColumnFunctionCallbackParams) => boolean);
+    dndSource?: boolean | ((params: DndSourceCallbackParams) => boolean);
 
     /** For native drag and drop, set to true to allow custom onRowDrag processing */
     dndSourceOnRowDrag?: ((params: { rowNode: RowNode, dragEvent: DragEvent; }) => void);
@@ -302,17 +302,17 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     enableValue?: boolean;
 
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
-    editable?: boolean | ((params: IColumnFunctionCallbackParams) => boolean);
+    editable?: boolean | ((params: EditableCallbackParams) => boolean);
 
     colSpan?: (params: ColSpanParams) => number;
 
     rowSpan?: (params: RowSpanParams) => number;
 
     /** Set to true if this col should not be allowed take new values from the clipboard . */
-    suppressPaste?: boolean | ((params: IColumnFunctionCallbackParams) => boolean);
+    suppressPaste?: boolean | ((params: SuppressPasteCallbackParams) => boolean);
 
     /** Set to true if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
-    suppressNavigable?: boolean | ((params: IColumnFunctionCallbackParams) => boolean);
+    suppressNavigable?: boolean | ((params: SuppressNavigableCallbackParams) => boolean);
 
     /** To create the quick filter text for this column, if toString is not good enough on the value. */
     getQuickFilterText?: (params: GetQuickFilterTextParams) => string;
@@ -383,21 +383,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     columnsMenuParams?: ColumnsMenuParams;
 }
 
-/**
- * @deprecated
- * No longer in use. Replaced with (params: IColumnFunctionCallbackParams) => boolean.
- */
-export interface IsColumnFunc {
-    (params: IsColumnFuncParams): boolean;
-}
-
-/**
- * @deprecated
- * Replaced with IColumnFunctionCallbackParams
- */
-export interface IsColumnFuncParams extends IColumnFunctionCallbackParams {}
-
-export interface IColumnFunctionCallbackParams {
+export interface ColumnFunctionCallbackParams {
     node: RowNode;
     data: any;
     column: Column;
@@ -406,6 +392,27 @@ export interface IColumnFunctionCallbackParams {
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
 }
+
+export interface CheckboxSelectionCallbackParams extends ColumnFunctionCallbackParams {}
+export interface RowDragCallbackParams extends ColumnFunctionCallbackParams {}
+export interface DndSourceCallbackParams extends ColumnFunctionCallbackParams {}
+export interface EditableCallbackParams extends ColumnFunctionCallbackParams {}
+export interface SuppressPasteCallbackParams extends ColumnFunctionCallbackParams {}
+export interface SuppressNavigableCallbackParams extends ColumnFunctionCallbackParams {}
+
+/**
+ * @deprecated
+ * No longer in use. Replaced with (params: ColumnFunctionCallbackParams) => boolean.
+ */
+export interface IsColumnFunc {
+    (params: IsColumnFuncParams): boolean;
+}
+
+/**
+ * @deprecated
+ * Replaced with ColumnFunctionCallbackParams
+ */
+export interface IsColumnFuncParams extends ColumnFunctionCallbackParams {}
 
 export interface GetQuickFilterTextParams {
     value: any;
@@ -462,7 +469,7 @@ export interface ColSpanParams extends BaseColDefParams {
 export interface RowSpanParams extends BaseColDefParams {
 }
 
-export interface SuppressKeyboardEventParams extends IColumnFunctionCallbackParams {
+export interface SuppressKeyboardEventParams extends ColumnFunctionCallbackParams {
     // the keyboard event the grid received
     event: KeyboardEvent;
     // whether the cell is editing or not

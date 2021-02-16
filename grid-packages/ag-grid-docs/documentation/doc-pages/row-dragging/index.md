@@ -35,10 +35,10 @@ The `rowDrag` property can also be a callback function in the the form:
 
 ```ts
 // function to enable/disable RowDrag
-function rowDragFunction(params: IColumnFunctionCallbackParams) => boolean;
+function rowDragFunction(params: RowDragCallbackParams) => boolean;
 
 // interface for params
-interface IColumnFunctionCallbackParams {
+interface RowDragCallbackParams {
     node: RowNode;
     data: any;
     column: Column;

@@ -56,10 +56,10 @@ The colDef has a property `suppressPaste` where you can specify to not allowing 
 
 ```ts
 // function to enable/disable Suppress Paste
-function suppressPaste(params: IColumnFunctionCallbackParams) => boolean;
+function suppressPaste(params: SuppressPasteCallbackParams) => boolean;
 
 // interface for params
-interface IColumnFunctionCallbackParams {
+interface SuppressPasteCallbackParams {
     node: RowNode;
     data: any;
     column: Column;
