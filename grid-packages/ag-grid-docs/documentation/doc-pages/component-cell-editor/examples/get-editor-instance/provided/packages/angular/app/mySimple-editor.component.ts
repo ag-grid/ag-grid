@@ -1,9 +1,8 @@
 import {AfterViewInit, Component, ViewChild, ViewContainerRef} from "@angular/core";
-import {ICellEditorParams} from "@ag-grid-community/core";
-import {AgEditorComponent} from "@ag-grid-community/angular";
+import {ICellEditorParams} from "ag-grid-community";
+import {AgEditorComponent} from "ag-grid-angular";
 
 const KEY_BACKSPACE = 8;
-const KEY_F2 = 113;
 const KEY_DELETE = 46;
 
 @Component({

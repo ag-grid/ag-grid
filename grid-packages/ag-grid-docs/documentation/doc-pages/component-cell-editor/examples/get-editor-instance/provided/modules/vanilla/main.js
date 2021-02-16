@@ -79,7 +79,8 @@ const gridOptions = {
     components: {
         mySimpleEditor: MySimpleEditor
     },
-    onGridReady: function() {
+    onGridReady: function () {
+        console.log("here!!!");
         setInterval(() => {
             const instances = gridOptions.api.getCellEditorInstances();
             if (instances.length > 0) {
