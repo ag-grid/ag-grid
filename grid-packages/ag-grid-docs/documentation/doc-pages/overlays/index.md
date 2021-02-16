@@ -2,12 +2,18 @@
 title: "Overlays"
 ---
 
-At present, there are two overlays for the grid:
+At present, there are two overlays for the grid when using [Client-side Data Row Model](../client-side-model/):
 
 - **Loading**: Gets displayed when the grid is loading data.
 - **No Rows**: Gets displayed when loading has complete but no rows to show.
 
 The grid manages showing and hiding of the overlays for you, so you may not ever need to call the above API methods. When the table is first initialised, the loading panel is displayed if `rowData` is set to `null` or `undefined`. When the API function `setRowData` is called, the loading panel is hidden.
+
+[[note]]
+| Overlays are not used when using [Server-side Data Row Models](../row-models/). This is because data is
+| loaded differently. With regards the 'Loading' overlay, it doesn't make sense to overlay the entire grid as
+| rows are loaded in sections - an overlay would block access to previously loaded rows. The regards the 'No Rows'
+| overlay, this doesn't make sense as there could be row, but a filter is applied that filters out all rows.
 
 ## Overlay API
 
