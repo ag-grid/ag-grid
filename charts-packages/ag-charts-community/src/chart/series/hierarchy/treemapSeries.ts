@@ -315,9 +315,9 @@ export class TreemapSeries extends HierarchySeries {
 
             let label;
             if (isLeaf) {
-                if (innerNodeHeight > 40 && innerNodeWidth > 40) {
+                if (innerNodeWidth > 40 && innerNodeWidth > 40) {
                     label = labels.large;
-                } else if (innerNodeHeight > 20 && innerNodeHeight > 20) {
+                } else if (innerNodeWidth > 20 && innerNodeHeight > 20) {
                     label = labels.medium;
                 } else {
                     label = labels.small;
