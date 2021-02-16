@@ -8,7 +8,7 @@ The grid responds to keyboard interactions from the user as well as emitting eve
 
 Use the **arrow keys** to move focus up, down, left and right. If the focused cell is already on the boundary for that position (eg if on the first column and the left key is pressed) then the key press has no effect. Use **ctrl + left and right** to move to start and end of the line.
 
-If a cell on the first grid row is focused and you you press `arrow up`, the focus will be moved into the grid header. The header navigation focus navigation works the same as the grid's, arrows will move up/down/left/right, tab will move the focus horizontally until the last header cell and the move on to the next row.
+If a cell on the first grid row is focused and you press `arrow up`, the focus will be moved into the grid header. The header navigation focus navigation works the same as the grid's, arrows will move up/down/left/right, tab will move the focus horizontally until the last header cell and the move on to the next row.
 
 Use **page up** and **page down** to move the scroll up and down by one page. Use **home** and **end** to go to the first and last rows.
 
