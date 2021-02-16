@@ -17,7 +17,7 @@ Use **page up** and **page down** to move the scroll up and down by one page. Us
 
 ## Groups
 
-If on a group element, hitting the **enter key** will expand or collapse the group. This only works when displaying groups in a column (`groupUseEntireRow=false`), as otherwise the group cell is not selectable.
+If on a group element, hitting the **enter key** will expand or collapse the group.
 
 ## Editing
 
