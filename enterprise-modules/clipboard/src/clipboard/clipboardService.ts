@@ -746,7 +746,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         eTempInput.style.width = '1px';
         eTempInput.style.height = '1px';
 
-        // removing items from the DOM causes the document element to scroll to the 
+        // removing items from the DOM causes the document element to scroll to the
         // position where the element was positioned. Here we set scrollTop / scrollLeft
         // to prevent the document element from scrolling when we remove it from the DOM.
         eTempInput.style.top = eDoc.documentElement.scrollTop + 'px';

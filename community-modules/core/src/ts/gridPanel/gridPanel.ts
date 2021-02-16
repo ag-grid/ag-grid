@@ -43,7 +43,7 @@ import { ColumnController } from '../columnController/columnController';
 import { HeaderNavigationService } from '../headerRendering/header/headerNavigationService';
 import { setAriaMultiSelectable, setAriaRowCount, setAriaColCount } from '../utils/aria';
 import { debounce } from '../utils/function';
-import { 
+import {
     addCssClass,
     addOrRemoveCssClass,
     isHorizontalScrollShowing,
