@@ -234,6 +234,22 @@
           "left"
         ]
       },
+      "listeners": {
+        "meta": {
+          "description": "A map of event names to event listeners."
+        },
+        "click": {
+          "type": {
+            "parameters": {
+              "type": "'click'",
+              "itemId": "string",
+              "enabled": "boolean"
+            },
+            "returnType": "any"
+          },
+          "description": "The listener to call when a legend item is clicked."
+        }
+      },
       "spacing": {
         "default": 20,
         "description": "The spacing in pixels to use outside the legend.",
