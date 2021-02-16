@@ -1,7 +1,7 @@
 [[only-javascript]]
 | ## Grid Options
 |
-| The `gridOptions` object is a 'one stop shop' for the entire interface into the grid. The grid options can be used regardless of the framework you are using, but if you are using a framework you might | find it easier to use your framework's bindings. How to configure for a particular framework is explained further down this page.
+| The `gridOptions` object is a 'one stop shop' for the entire interface into the grid. 
 |
 | The example below shows the different types of items available on `gridOptions`.
 |
@@ -16,12 +16,12 @@
 |
 |     // EVENTS
 |     // Add event handlers
-|     onRowClicked: function(event) { console.log('A row was clicked'); },
-|     onColumnResized: function(event) { console.log('A column was resized'); },
-|     onGridReady: function(event) { console.log('The grid is now ready'); },
+|     onRowClicked: event => console.log('A row was clicked'),
+|     onColumnResized: event => console.log('A column was resized'),
+|     onGridReady: event => console.log('The grid is now ready'),
 |
 |     // CALLBACKS
-|     isScrollLag: function() { return false; }
+|     isScrollLag: () => false
 | }
 | ```
 |
