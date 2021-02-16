@@ -14,23 +14,27 @@ The cell editor for a column is set via `colDef.cellRenderer` and can be any of 
 
 The code snippet below demonstrates each of these method types.
 
-<snippet>
+<snippet spaceBetweenProperties="true">
 const gridOptions = {
     columnDefs: [
         // 1 - undefined / null - Grid renders the value as a string.
         {
+            field: 'name',
             cellRenderer: null,
         },
         // 2 - String - The name of a cell renderer registered with the grid.
         {
+            field: 'age',
             cellRenderer: 'agGroupCellRenderer',
         },
         // 3 - Class - Provide your own cell renderer component directly without registering.
         {
+            field: 'sport',
             cellRenderer: MyCustomCellRendererClass,
         },
         // 4 - Function - A function that returns an HTML string or DOM element for display
         {
+            field: 'year',
             cellRenderer: params => {
                 // put the value in bold
                 return 'Value is **' + params.value + '**';
