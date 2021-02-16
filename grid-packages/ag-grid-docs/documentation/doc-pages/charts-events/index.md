@@ -87,4 +87,4 @@ In this case the contents of the event object passed to the listener will depend
 
 ## Legend Events
 
-<api-documentation source='charts-api/api.json' section='legend.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='chart.legend.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
