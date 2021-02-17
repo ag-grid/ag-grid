@@ -328,7 +328,7 @@ const GridExample = () => {
                     modules={AllModules}
                     rowData={rowData}
                     frameworkComponents={{
-                        doublingRenderer: DoublingEditor,
+                        doublingEditor: DoublingEditor,
                         moodRenderer: MoodRenderer,
                         moodEditor: MoodEditor,
                         numericEditor: NumericEditor
@@ -341,34 +341,13 @@ const GridExample = () => {
                         filter: true,
                         resizable: true
                     }}>
-                    <AgGridColumn field="name"
-                                  width={300}
-                                  editable={true}
-                                  cellEditor="agRichSelectCellEditor"
-                                  cellEditorParams={{
-                                      values: [
-                                          "Bob",
-                                          "Harry",
-                                          "Sally",
-                                          "Mary",
-                                          "John",
-                                          "Jack",
-                                          "Sue",
-                                          "Sean",
-                                          "Niall",
-                                          "Albert",
-                                          "Fred",
-                                          "Jenny",
-                                          "Larry"
-                                      ]
-                                  }}/>
+                    <AgGridColumn headerName="Doubling"
+                                  field="number"
+                                  cellEditor="doublingEditor"
+                                  editable={true}/>
                     <AgGridColumn field="mood"
                                   cellRenderer="moodRenderer"
                                   cellEditor="moodEditor"
-                                  editable={true}/>
-                    <AgGridColumn headerName="Doubling"
-                                  field="number"
-                                  cellEditor="doublingRenderer"
                                   editable={true}/>
                     <AgGridColumn headerName="Numeric"
                                   field="number"
