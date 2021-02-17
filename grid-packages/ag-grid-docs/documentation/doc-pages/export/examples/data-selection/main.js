@@ -81,10 +81,7 @@ var gridOptions = {
             bronze: 244,
             total: 255
         }
-    ],
-    onGridReady: function(params) {
-        document.querySelector("#columnGroups").checked = true;
-    }
+    ]
 };
 
 function getBooleanValue(checkboxSelector) {
