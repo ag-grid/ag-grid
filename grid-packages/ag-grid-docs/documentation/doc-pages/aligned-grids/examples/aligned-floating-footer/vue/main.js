@@ -93,7 +93,19 @@ const VueExample = {
             { field: 'country', width: 150, hide: !this.countryVisible },
             { field: 'year', width: 120 },
             { field: 'date', width: 150 },
-            { field: 'sport', width: 150 }
+            { field: 'sport', width: 150 },
+            // in the total col, we have a value getter, which usually means we don't need to provide a field
+            // however the master/slave depends on the column id (which is derived from the field if provided) in
+            // order ot match up the columns
+            {
+                headerName: 'Total',
+                field: 'total',
+                valueGetter: 'data.gold + data.silver + data.bronze',
+                width: 200
+            },
+            {field: 'gold', width: 100},
+            {field: 'silver', width: 100},
+            {field: 'bronze', width: 100}
         ];
     },
     mounted() {
