@@ -6,6 +6,8 @@ export function stringToArray(strData: string, delimiter = ','): string[][] {
 
     let insideQuotedField = false;
 
+    if (strData === '') { return [['']]; }
+
     // iterate over each character, keep track of current row and column (of the returned array)
     for (let row = 0, column = 0, position = 0; position < strData.length; position++) {
         const previousChar = strData[position - 1];

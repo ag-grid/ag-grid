@@ -124,7 +124,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private processClipboardData(data: string): void {
-        if (_.missingOrEmpty(data)) { return; }
+        if (data == null) { return; }
 
         let parsedData: string[][] | null = _.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
 
@@ -134,7 +134,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             parsedData = userFunc({ data: parsedData });
         }
 
-        if (_.missingOrEmpty(parsedData)) { return; }
+        if (parsedData == null) { return; }
 
         if (this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
             this.removeLastLineIfBlank(parsedData!);
