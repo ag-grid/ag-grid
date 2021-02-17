@@ -3,7 +3,7 @@ import { AgEditorComponent } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'editor-cell',
-    template: `<input type="number" [value]="value" #input style="width: 100%" />`
+    template: `<input type="number" [(ngModel)]="value" #input style="width: 100%" />`
 })
 export class DoublingEditor implements AgEditorComponent, AfterViewInit {
     private params: any;

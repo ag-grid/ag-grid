@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {Component, createRef, forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import ReactDOM, { render } from 'react-dom';
 import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 
@@ -13,6 +13,49 @@ const KEY_DELETE = 46;
 const KEY_F2 = 113;
 const KEY_ENTER = 13;
 const KEY_TAB = 9;
+
+const DoublingEditor = forwardRef((props, ref) => {
+    const [value, setValue] = useState(parseInt(props.value));
+    const refInput = useRef(null);
+
+    useEffect(() => {
+        // focus on the input
+        setTimeout(() => refInput.current.focus());
+    }, []);
+
+    /* Component Editor Lifecycle methods */
+    useImperativeHandle(ref, () => {
+        return {
+            // the final value to send to the grid, on completion of editing
+            getValue() {
+                // this simple editor doubles any value entered into the input
+                return value * 2;
+            },
+
+            // Gets called once before editing starts, to give editor a chance to
+            // cancel the editing before it even starts.
+            isCancelBeforeStart() {
+                return false;
+            },
+
+            // Gets called once when editing is finished (eg if enter is pressed).
+            // If you return true, then the result of the edit will be ignored.
+            isCancelAfterEnd() {
+                // our editor will reject any value greater than 1000
+                return value > 1000;
+            }
+        };
+    });
+
+    return (
+        <input type="number"
+               ref={refInput}
+               value={value}
+               onChange={event => setValue(event.target.value)}
+               style={{width: "100%"}}
+        />
+    );
+});
 
 const MoodRenderer = forwardRef((props, ref) => {
     const imageForMood = mood => 'https://www.ag-grid.com/example-assets/smileys/' + (mood === 'Happy' ? 'happy.png' : 'sad.png');
@@ -283,6 +326,7 @@ const GridExample = () => {
                 <AgGridReact
                     rowData={rowData}
                     frameworkComponents={{
+                        doublingEditor: DoublingEditor,
                         moodRenderer: MoodRenderer,
                         moodEditor: MoodEditor,
                         numericEditor: NumericEditor
@@ -295,32 +339,15 @@ const GridExample = () => {
                         filter: true,
                         resizable: true
                     }}>
-                    <AgGridColumn field="name"
-                        width={300}
-                        editable={true}
-                        cellEditor="agRichSelectCellEditor"
-                        cellEditorParams={{
-                            values: [
-                                "Bob",
-                                "Harry",
-                                "Sally",
-                                "Mary",
-                                "John",
-                                "Jack",
-                                "Sue",
-                                "Sean",
-                                "Niall",
-                                "Albert",
-                                "Fred",
-                                "Jenny",
-                                "Larry"
-                            ]
-                        }} />
+                    <AgGridColumn headerName="Doubling"
+                                  field="number"
+                                  cellEditor="doublingEditor"
+                                  editable={true}/>
                     <AgGridColumn field="mood"
-                        cellRenderer="moodRenderer"
-                        cellEditor="moodEditor"
-                        editable={true}
-                        width={300} />
+                                  cellRenderer="moodRenderer"
+                                  cellEditor="moodEditor"
+                                  editable={true}
+                                  width={300} />
                     <AgGridColumn headerName="Numeric"
                         field="number"
                         cellEditor="numericEditor"

@@ -82,28 +82,28 @@ title: "Get Started with AG Grid"
 
 [[only-javascript]]
 | ```js
-| var columnDefs = [
+| const columnDefs = [
 |   { field: "make" },
 |   { field: "model" },
 |   { field: "price" }
 | ];
 |
 | // specify the data
-| var rowData = [
+| const rowData = [
 |   { make: "Toyota", model: "Celica", price: 35000 },
 |   { make: "Ford", model: "Mondeo", price: 32000 },
 |   { make: "Porsche", model: "Boxter", price: 72000 }
 | ];
 |
 | // let the grid know which columns and what data to use
-| var gridOptions = {
+| const gridOptions = {
 |   columnDefs: columnDefs,
 |   rowData: rowData
 | };
 |
 | // setup the grid after the page has finished loading
-| document.addEventListener('DOMContentLoaded', function() {
-|     var gridDiv = document.querySelector('#myGrid');
+| document.addEventListener('DOMContentLoaded', () => {
+|     const gridDiv = document.querySelector('#myGrid');
 |     new agGrid.Grid(gridDiv, gridOptions);
 | });
 | ```
@@ -154,7 +154,7 @@ title: "Get Started with AG Grid"
 |         { make: "Porsche", model: "Boxter", price: 72000 }
 |     ]);
 |
-|     function onGridReady(params) {
+|     const onGridReady = params => {
 |         setGridApi(params.api);
 |         setGridColumnApi(params.columnApi);
 |     }
@@ -211,7 +211,7 @@ title: "Get Started with AG Grid"
 |             class="ag-theme-alpine"
 |             :columnDefs="columnDefs"
 |             :rowData="rowData">
-|             </ag-grid-vue>
+|         </ag-grid-vue>
 |     `
 | }
 | ```
@@ -362,27 +362,27 @@ title: "Get Started with AG Grid"
 |
 |   <script type="text/javascript" charset="utf-8">
 |     // specify the columns
-|     var columnDefs = [
+|     const columnDefs = [
 |       { field: "make" },
 |       { field: "model" },
 |       { field: "price" }
 |     ];
 |
 |     // specify the data
-|     var rowData = [
+|     const rowData = [
 |       { make: "Toyota", model: "Celica", price: 35000 },
 |       { make: "Ford", model: "Mondeo", price: 32000 },
 |       { make: "Porsche", model: "Boxter", price: 72000 }
 |     ];
 |
 |     // let the grid know which columns and what data to use
-|     var gridOptions = {
+|     const gridOptions = {
 |       columnDefs: columnDefs,
 |       rowData: rowData
 |     };
 |
 |   // lookup the container we want the Grid to use
-|   var eGridDiv = document.querySelector('#myGrid');
+|   const eGridDiv = document.querySelector('#myGrid');
 |
 |   // create the grid passing in the div to use together with the columns & data we want to use
 |   new agGrid.Grid(eGridDiv, gridOptions);
@@ -413,7 +413,7 @@ title: "Get Started with AG Grid"
 | each column.
 |
 | ```js
-| var columnDefs = [
+| const columnDefs = [
 |     { field: "make", sortable: true },
 |     { field: "model", sortable: true },
 |     { field: "price", sortable: true }
@@ -430,7 +430,7 @@ title: "Get Started with AG Grid"
 | As with sorting, enabling filtering is as easy as adding the `filter` property:
 |
 | ```js
-| var columnDefs = [
+| const columnDefs = [
 |     { field: "make", sortable: true, filter: true },
 |     { field: "model", sortable: true, filter: true },
 |     { field: "price", sortable: true, filter: true }
@@ -469,24 +469,24 @@ title: "Get Started with AG Grid"
 |
 |   <script type="text/javascript" charset="utf-8">
 |     // specify the columns
-|     var columnDefs = [
+|     const columnDefs = [
 |       { field: "make" },
 |       { field: "model" },
 |       { field: "price" }
 |     ];
 |
 |     // let the grid know which columns to use
-|     var gridOptions = {
+|     const gridOptions = {
 |       columnDefs: columnDefs
 |     };
 |
 |   // lookup the container we want the Grid to use
-|   var eGridDiv = document.querySelector('#myGrid');
+|   const eGridDiv = document.querySelector('#myGrid');
 |
 |   // create the grid passing in the div to use together with the columns &amp; data we want to use
 |   new agGrid.Grid(eGridDiv, gridOptions);
 |
-|   agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/row-data.json'}).then(function(data) {
+|   agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/row-data.json'}).then(data => {
 |       gridOptions.api.setRowData(data);
 |   });
 |
@@ -516,14 +516,14 @@ title: "Get Started with AG Grid"
 |
 | ```js
 | // specify the columns
-| var columnDefs = [
+| const columnDefs = [
 |   { field: "make", checkboxSelection: true },
 |   { field: "model" },
 |   { field: "price" }
 | ];
 |
 | // let the grid know which columns and what data to use
-| var gridOptions = {
+| const gridOptions = {
 |   columnDefs: columnDefs,
 |   rowSelection: 'multiple'
 | };
@@ -539,11 +539,11 @@ title: "Get Started with AG Grid"
 | ```
 |
 | ```js
-| function getSelectedRows() {
-|     var selectedNodes = gridOptions.api.getSelectedNodes()
-|     var selectedData = selectedNodes.map( function(node) { return node.data })
-|     var selectedDataStringPresentation = selectedData.map( function(node) { return node.make + ' ' + node.model }).join(', ')
-|     alert('Selected nodes: ' + selectedDataStringPresentation);
+| const getSelectedRows = () => {
+|     const selectedNodes = gridOptions.api.getSelectedNodes()
+|     const selectedData = selectedNodes.map( node => node.data )
+|     const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ')
+|     alert(`Selected nodes: ${selectedDataStringPresentation}`);
 | }
 | ```
 |
@@ -585,12 +585,12 @@ title: "Get Started with AG Grid"
 | Now, let's enable grouping! Change the configuration to this:
 |
 | ```js
-| var columnDefs = [
+| const columnDefs = [
 |     { field: "make", rowGroup: true },
 |     { field: "price" }
 | ];
 |
-| var autoGroupColumnDef = {
+| const autoGroupColumnDef = {
 |     headerName: "Model",
 |     field: "model",
 |     cellRenderer:'agGroupCellRenderer',
@@ -600,7 +600,7 @@ title: "Get Started with AG Grid"
 | }
 |
 | // let the grid know which columns and what data to use
-| var gridOptions = {
+| const gridOptions = {
 |     columnDefs: columnDefs,
 |     autoGroupColumnDef: autoGroupColumnDef,
 |     groupSelectsChildren: true,
@@ -634,12 +634,12 @@ title: "Get Started with AG Grid"
 |
 |   <script type="text/javascript" charset="utf-8">
 |     // specify the columns
-|     var columnDefs = [
+|     const columnDefs = [
 |       { field: "make", rowGroup: true },
 |       { field: "price" }
 |     ];
 |
-|     var autoGroupColumnDef = {
+|     const autoGroupColumnDef = {
 |         headerName: "Model",
 |         field: "model",
 |         cellRenderer:'agGroupCellRenderer',
@@ -649,7 +649,7 @@ title: "Get Started with AG Grid"
 |     }
 |
 |     // let the grid know which columns and what data to use
-|     var gridOptions = {
+|     const gridOptions = {
 |       columnDefs: columnDefs,
 |       autoGroupColumnDef: autoGroupColumnDef,
 |       groupSelectsChildren: true,
@@ -657,19 +657,19 @@ title: "Get Started with AG Grid"
 |     };
 |
 |   // lookup the container we want the Grid to use
-|   var eGridDiv = document.querySelector('#myGrid');
+|   const eGridDiv = document.querySelector('#myGrid');
 |
 |   // create the grid passing in the div to use together with the columns & data we want to use
 |   new agGrid.Grid(eGridDiv, gridOptions);
 |
-|   agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/row-data.json'}).then(function(data) {
+|   agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/row-data.json'}).then(data => {
 |       gridOptions.api.setRowData(data);
 |   });
 |
-|   function getSelectedRows() {
+|   const getSelectedRows = () => {
 |     const selectedNodes = gridOptions.api.getSelectedNodes()
-|     const selectedData = selectedNodes.map( function(node) { return node.data })
-|     const selectedDataStringPresentation = selectedData.map( function(node) { return node.make + ' ' + node.model }).join(', ')
+|     const selectedData = selectedNodes.map( node => node.data )
+|     const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}` ).join(', ')
 |     alert('Selected nodes: ' + selectedDataStringPresentation);
 |   }
 |   </script>
@@ -819,7 +819,6 @@ title: "Get Started with AG Grid"
 |     styleUrls: ['./app.component.scss']
 | })
 | export class AppComponent {
-|     title = 'my-app';
 |
 |     columnDefs = [
 |         { field: 'make' },
@@ -941,7 +940,6 @@ title: "Get Started with AG Grid"
 |     styleUrls: ['./app.component.scss']
 | })
 | export class AppComponent implements OnInit {
-|     title = 'my-app';
 |
 |     columnDefs = [
 |         { field: 'make', sortable: true, filter: true },
@@ -949,10 +947,9 @@ title: "Get Started with AG Grid"
 |         { field: 'price', sortable: true, filter: true }
 |     ];
 |
-|     rowData: any;
+|     rowData: any[];
 |
 |     constructor(private http: HttpClient) {
-|
 |     }
 |
 |     ngOnInit() {
@@ -998,7 +995,6 @@ title: "Get Started with AG Grid"
 |     styleUrls: ['./app.component.scss']
 | })
 | export class AppComponent implements OnInit {
-|     title = 'my-app';
 |
 |     columnDefs = [
 |         { field: 'make', sortable: true, filter: true, checkboxSelection: true },
@@ -1006,10 +1002,9 @@ title: "Get Started with AG Grid"
 |         { field: 'price', sortable: true, filter: true }
 |     ];
 |
-|     rowData: any;
+|     rowData: any[];
 |
 |     constructor(private http: HttpClient) {
-|
 |     }
 |
 |     ngOnInit() {
@@ -1070,18 +1065,15 @@ title: "Get Started with AG Grid"
 | export class AppComponent implements OnInit {
 |     @ViewChild('agGrid') agGrid: AgGridAngular;
 |
-|     title = 'my-app';
-|
 |     columnDefs = [
 |         { field: 'make', sortable: true, filter: true, checkboxSelection: true },
 |         { field: 'model', sortable: true, filter: true },
 |         { field: 'price', sortable: true, filter: true }
 |     ];
 |
-|     rowData: any;
+|     rowData: any[];
 |
 |     constructor(private http: HttpClient) {
-|
 |     }
 |
 |     ngOnInit() {
@@ -1106,18 +1098,15 @@ title: "Get Started with AG Grid"
 | export class AppComponent implements OnInit {
 |     @ViewChild('agGrid') agGrid: AgGridAngular;
 |
-|     title = 'my-app';
-|
 |     columnDefs = [
 |         { field: 'make', sortable: true, filter: true, checkboxSelection: true },
 |         { field: 'model', sortable: true, filter: true },
 |         { field: 'price', sortable: true, filter: true }
 |     ];
 |
-|     rowData: any;
+|     rowData: any[];
 |
 |     constructor(private http: HttpClient) {
-|
 |     }
 |
 |     ngOnInit() {
@@ -1127,7 +1116,7 @@ title: "Get Started with AG Grid"
 |     getSelectedRows() {
 |         const selectedNodes = this.agGrid.api.getSelectedNodes();
 |         const selectedData = selectedNodes.map(node => node.data );
-|         const selectedDataStringPresentation = selectedData.map(node => node.make + ' ' + node.model).join(', ');
+|         const selectedDataStringPresentation = selectedData.map(node => `${node.make} ${node.model}`).join(', ');
 |
 |         alert(`Selected nodes: ${selectedDataStringPresentation}`);
 |     }
@@ -1185,8 +1174,6 @@ title: "Get Started with AG Grid"
 | export class AppComponent implements OnInit {
 |     @ViewChild('agGrid') agGrid: AgGridAngular;
 |
-|     title = 'my-app';
-|
 |     defaultColDef = {
 |         sortable: true,
 |         filter: true
@@ -1206,10 +1193,9 @@ title: "Get Started with AG Grid"
 |         }
 |     };
 |
-|     rowData: any;
+|     rowData: any[];
 |
 |     constructor(private http: HttpClient) {
-|
 |     }
 |
 |     ngOnInit() {
@@ -1224,7 +1210,7 @@ title: "Get Started with AG Grid"
 |           }
 |           return node.data;
 |         });
-|         const selectedDataStringPresentation = selectedData.map(node => node.make + ' ' + node.model).join(', ');
+|         const selectedDataStringPresentation = selectedData.map(node => `${node.make} ${node.model}`).join(', ');
 |
 |         alert(`Selected nodes: ${selectedDataStringPresentation}`);
 |     }
@@ -1569,7 +1555,7 @@ title: "Get Started with AG Grid"
 | const onButtonClick = e => {
 |     const selectedNodes = gridApi.getSelectedNodes()
 |     const selectedData = selectedNodes.map( node => node.data )
-|     const selectedDataStringPresentation = selectedData.map( node => node.make + ' ' + node.model).join(', ')
+|     const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ')
 |     alert(`Selected nodes: ${selectedDataStringPresentation}`)
 | }
 | ```
@@ -1741,7 +1727,7 @@ title: "Get Started with AG Grid"
 | | If you unsure what import type to use you should use the package import type
 | | (i.e. `ag-grid-vue`/ `ag-grid-vue3`).
 | |
-| | Our example all use Vue 2 by default.
+| | Our examples all use Vue 2 by default.
 | |
 | | For more information on import types please refer to the documentation [here.](../modules/)
 |
@@ -2063,7 +2049,7 @@ title: "Get Started with AG Grid"
 |             getSelectedRows() {
 |                 const selectedNodes = this.gridApi.getSelectedNodes();
 |                 const selectedData = selectedNodes.map( node => node.data );
-|                 const selectedDataStringPresentation = selectedData.map( node => node.make + ' ' + node.model).join(', ');
+|                 const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ');
 |                 alert(`Selected nodes: ${selectedDataStringPresentation}`);
 |             }
 |         },
@@ -2174,7 +2160,7 @@ title: "Get Started with AG Grid"
 |             getSelectedRows() {
 |                 const selectedNodes = this.gridApi.getSelectedNodes();
 |                 const selectedData = selectedNodes.map(node => node.data);
-|                 const selectedDataStringPresentation = selectedData.map(node => node.make + ' ' + node.model).join(', ');
+|                 const selectedDataStringPresentation = selectedData.map(node => `${node.make} ${node.model}`).join(', ');
 |                 alert(`Selected nodes: ${selectedDataStringPresentation}`);
 |             }
 |         },
