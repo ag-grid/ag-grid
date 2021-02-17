@@ -16,7 +16,7 @@ export default class DetailCellRenderer extends Component {
       ],
       defaultColDef: {
         flex: 1,
-        minWidth: 150
+        minWidth: 120
       },
       rowId: props.node.id,
       masterGridApi: props.api
