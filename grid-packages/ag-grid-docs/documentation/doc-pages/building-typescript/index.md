@@ -1,5 +1,6 @@
 ---
 title: "TypeScript - Building with Webpack"
+frameworks: ["javascript"]
 ---
 
 We walk through the main steps required when using AG Grid, TypeScript and Webpack below, but for more information about either TypeScript or Webpack please refer to those sites for more in depth information around these tools.

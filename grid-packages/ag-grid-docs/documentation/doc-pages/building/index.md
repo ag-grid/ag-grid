@@ -1,5 +1,6 @@
 ---
 title: "Building AG Grid Applications"
+frameworks: ["javascript"]
 ---
 
 This section documents how to build AG Grid applications outside of a framework - for build & bundling using a framework please see the relevant framework section above.
