@@ -104,14 +104,6 @@ In the example below, also of note is the second column, which has both a min an
 
 <grid-example title='Column Resizing' name='column-resizing' type='generated'></grid-example>
 
-## Sizing Columns By Default
-
-It is possible to have the grid auto size the columns to fill the width by default. Do this by calling `api.sizeColumnsToFit()` on the `gridReady` event.
-
-Note that `api.sizeColumnsToFit()` needs to know the grid width in order to do its maths. If the grid is not attached to the DOM, then this will be unknown. In the example below, the grid is not attached to the DOM when it is created (and hence `api.sizeColumnsToFit()` should fail). The grid checks again after 100ms, and tries to resize again. This is needed for some frameworks (e.g. Angular) as DOM objects are used before getting attached.
-
-<grid-example title='Default Resizing' name='default-resizing' type='generated'></grid-example>
-
 ## Column Flex
 
 It's often required that one or more columns fill the entire available space in the grid. For this scenario, it is possible to use the `flex` config. Some columns could be set with a regular `width` config, while other columns would have a flex config.
@@ -136,6 +128,14 @@ The example below shows flex in action. Things to note are as follows:
 
 
 <grid-example title='Column Flex' name='flex-columns' type='generated'></grid-example>
+
+## Sizing Columns By Default
+
+It is possible to have the grid auto size the columns to fill the width by default. Do this by calling `api.sizeColumnsToFit()` on the `gridReady` event.
+
+Note that `api.sizeColumnsToFit()` needs to know the grid width in order to do its maths. If the grid is not attached to the DOM, then this will be unknown. In the example below, the grid is not attached to the DOM when it is created (and hence `api.sizeColumnsToFit()` should fail). The grid checks again after 100ms, and tries to resize again. This is needed for some frameworks (e.g. Angular) as DOM objects are used before getting attached.
+
+<grid-example title='Default Resizing' name='default-resizing' type='generated'></grid-example>
 
 ## Shift Resizing
 
