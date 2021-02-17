@@ -24,7 +24,7 @@ If you do decide to use `packages` you'll need to specify `ag-grid-community` as
 
 ```js
 "dependencies": {
-    "ag-grid-community": "^23.0.0"
+    "ag-grid-community": "~25.1.0"
     //...other dependencies...
 }
 ```
@@ -33,8 +33,8 @@ You can then (optionally) specify `ag-grid-enterprise` if you require Enterprise
 
 ```diff
 "dependencies": {
-    "ag-grid-community": "^23.0.0"
-+   "ag-grid-enterprise": "^23.0.0"
+    "ag-grid-community": "~25.1.0"
++   "ag-grid-enterprise": "~25.1.0"
     //...other dependencies...
 }
 ```
@@ -50,9 +50,9 @@ Finally, if you're using a framework you'll need to specify **one** of the frame
 
 ```diff
 "dependencies": {
-    "ag-grid-community": "^23.0.0"
-    "ag-grid-enterprise": "^23.0.0"
-+   "ag-grid-angular": "^23.0.0"
+    "ag-grid-community": "~25.1.0"
+    "ag-grid-enterprise": "~25.1.0"
++   "ag-grid-angular": "~25.1.0"
     //...other dependencies...
 }
 ```

@@ -57,8 +57,8 @@ You **cannot** mix `packages` and `modules` - in other words you cannot have a m
 
 ```js
 "dependencies": {
-    "ag-grid-community": "^23.0.0" <- a package dependency
-    "@ag-grid-enterprise/all-modules": "^23.0.0"  <- a module dependency
+    "ag-grid-community": "~25.1.0" <- a package dependency
+    "@ag-grid-enterprise/all-modules": "~25.1.0"  <- a module dependency
     //...other dependencies...
 }
 ```
@@ -81,11 +81,11 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
 
 ```js
 "dependencies": {
-    "@ag-grid-community/client-side-row-model": "^23.0.0",
-    "@ag-grid-community/csv-export": "^23.0.0",
-    "@ag-grid-enterprise/excel-export": "^23.0.0",
-    "@ag-grid-enterprise/master-detail": "^23.0.0",
-    "@ag-grid-community/react": "^23.0.0",
+    "@ag-grid-community/client-side-row-model": "~25.1.0",
+    "@ag-grid-community/csv-export": "~25.1.0",
+    "@ag-grid-enterprise/excel-export": "~25.1.0",
+    "@ag-grid-enterprise/master-detail": "~25.1.0",
+    "@ag-grid-community/react": "~25.1.0",
     //...other dependencies...
 }
 ```
@@ -124,11 +124,11 @@ Using the same real-world example above let us assume that we wish to use the `C
 
 ```js
 "dependencies": {
-    "@ag-grid-community/client-side-row-model": "^23.0.0",
-    "@ag-grid-community/csv-export": "^23.0.0",
-    "@ag-grid-enterprise/excel-export": "^23.0.0",
-    "@ag-grid-enterprise/master-detail": "^23.0.0",
-    "@ag-grid-community/react": "^23.0.0",
+    "@ag-grid-community/client-side-row-model": "~25.1.0",
+    "@ag-grid-community/csv-export": "~25.1.0",
+    "@ag-grid-enterprise/excel-export": "~25.1.0",
+    "@ag-grid-enterprise/master-detail": "~25.1.0",
+    "@ag-grid-community/react": "~25.1.0",
     //...other dependencies...
 }
 ```
@@ -218,11 +218,11 @@ Let us assume we have the following modules specified:
 
 ```js
 "dependencies": {
-    "@ag-grid-community/client-side-row-model": "^23.0.0",
-    "@ag-grid-community/csv-export": "^23.0.0",
-    "@ag-grid-enterprise/excel-export": "^23.0.0",
-    "@ag-grid-enterprise/master-detail": "^23.0.0",
-    "@ag-grid-community/react": "^23.0.0",
+    "@ag-grid-community/client-side-row-model": "~25.1.0",
+    "@ag-grid-community/csv-export": "~25.1.0",
+    "@ag-grid-enterprise/excel-export": "~25.1.0",
+    "@ag-grid-enterprise/master-detail": "~25.1.0",
+    "@ag-grid-community/react": "~25.1.0",
     //...other dependencies...
 }
 ```

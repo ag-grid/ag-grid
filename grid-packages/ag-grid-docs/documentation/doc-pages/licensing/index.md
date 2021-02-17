@@ -31,7 +31,7 @@ the following:
 
     ```js
     "dependencies": {
-        "@ag-grid-enterprise/all-modules": "21.0.x"
+        "@ag-grid-enterprise/all-modules": "~25.1.0"
         ...
     }
     ```
