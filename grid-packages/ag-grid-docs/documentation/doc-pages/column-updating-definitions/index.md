@@ -175,8 +175,6 @@ information to the console, so best open the example in a new tab and observe th
 
 <grid-example title='Column Events' name='column-events' type='mixed' options='{ "enterprise": true }'></grid-example>
 
-To suppress events raised when invoking `applyColumnState()` set the grid property `suppressColumnStateEvents=true`.
-
 ## Refreshing Headers
 
 If you are creating your own [Header Components](../component-header/) then you will need to be aware of

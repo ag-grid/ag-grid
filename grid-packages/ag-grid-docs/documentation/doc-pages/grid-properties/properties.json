@@ -65,10 +65,6 @@
         "autoGroupColumnDef": {
             "description": "Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping, this column is not included."
         },
-        "suppressColumnStateEvents": {
-            "default": false,
-            "description": "Set to `true` to suppress column events being raised when `columnApi.applyColumnState(state)` and `columnApi.resetColumnState()` are invoked, or when changing Column State by updating Column Definitions."
-        },
         "allowDragFromColumnsToolPanel": {
             "default": false,
             "description": "Allow reordering and pinning columns by dragging columns from the columns tool panel to the grid."
