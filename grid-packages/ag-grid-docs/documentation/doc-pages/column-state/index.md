@@ -216,12 +216,6 @@ a new tab and observe the dev console.
 
 <grid-example title='Column Events' name='column-events' type='generated' options='{ "enterprise": true }'></grid-example>
 
-To suppress events raised when invoking `applyColumnState()` set the grid property `suppressColumnStateEvents=true`.
-
-The example below is similar to the example above, except no events are raised when the state is changed via the buttons.
-
-<grid-example title='Suppress Events' name='suppress-events' type='generated' options='{ "enterprise": true }'></grid-example>
-
 ## Column Group State
 
 Column Group State is concerned with the state of Column Groups. There is only one state attribute for Column Groups,
