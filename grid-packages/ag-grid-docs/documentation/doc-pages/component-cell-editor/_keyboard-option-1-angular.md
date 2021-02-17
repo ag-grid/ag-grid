@@ -23,14 +23,14 @@
 |    onKeyDown(event) {
 |       const keyCode = event.keyCode;
 |
-|        const isNavigationKey = keyCode===KEY_LEFT ||
-|           keyCode===KEY_RIGHT ||
-|           keyCode===KEY_UP ||
-|           keyCode===KEY_DOWN ||
-|           keyCode===KEY_PAGE_DOWN ||
-|           keyCode===KEY_PAGE_UP ||
-|           keyCode===KEY_PAGE_HOME ||
-|           keyCode===KEY_PAGE_END;
+|        const isNavigationKey = keyCode === KEY_LEFT ||
+|           keyCode === KEY_RIGHT ||
+|           keyCode === KEY_UP ||
+|           keyCode === KEY_DOWN ||
+|           keyCode === KEY_PAGE_DOWN ||
+|           keyCode === KEY_PAGE_UP ||
+|           keyCode === KEY_PAGE_HOME ||
+|           keyCode === KEY_PAGE_END;
 |
 |           if (isNavigationKey) {
 |               // this stops the grid from receiving the event and executing keyboard navigation
