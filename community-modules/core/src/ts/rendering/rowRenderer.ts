@@ -1248,22 +1248,23 @@ export class RowRenderer extends BeanStub {
             return;
         }
 
-        if (this.ensureCellCompVisible(nextCell)) {
-            this.focusPosition(nextCell);
+        // in case we have col spanning we get the cellComp and use it to get the 
+        // position. This was we always focus the first cell inside the spanning.
+        const normalisedPosition = this.getNormalisedPosition(nextCell)
+        if (normalisedPosition) {
+            this.focusPosition(normalisedPosition);
         } else {
             this.tryToFocusFullWidthRow(nextCell);
         }
     }
 
-    private ensureCellCompVisible(cellPosition: CellPosition) {
-        // in case we have col spanning we get the cellComp and use it to
-        // get the position. This was we always focus the first cell inside
-        // the spanning.
-        this.ensureCellVisible(cellPosition); // ensureCellVisible first, to make sure nextCell is rendered
+    private getNormalisedPosition(cellPosition: CellPosition): CellPosition | null {
+        // ensureCellVisible first, to make sure cell at position is rendered.
+        this.ensureCellVisible(cellPosition);
         const cellComp = this.getComponentForCell(cellPosition);
 
         // not guaranteed to have a cellComp when using the SSRM as blocks are loading.
-        if (!cellComp) { return false; }
+        if (!cellComp) { return null; }
 
         cellPosition = cellComp.getCellPosition();
         // we call this again, as nextCell can be different to it's previous value due to Column Spanning
@@ -1273,7 +1274,7 @@ export class RowRenderer extends BeanStub {
         // merged cells.
         this.ensureCellVisible(cellPosition);
 
-        return true;
+        return cellPosition;
     }
 
     private tryToFocusFullWidthRow(position: CellPosition | RowPosition, backwards: boolean = false): boolean {

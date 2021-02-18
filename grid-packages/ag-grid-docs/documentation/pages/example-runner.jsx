@@ -13,7 +13,7 @@ const ExampleRunnerPage = ({ query: { pageName, library, framework, useFunctiona
         <Helmet title={title}>
             <meta name="robots" content="noindex" />
         </Helmet>
-        <ExampleRunnerResult isVisible={true} exampleInfo={exampleInfo} />
+        <ExampleRunnerResult exampleInfo={exampleInfo} />
     </div>;
 };
 

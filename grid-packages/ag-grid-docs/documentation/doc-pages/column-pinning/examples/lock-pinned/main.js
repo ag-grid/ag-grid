@@ -8,7 +8,7 @@ var columnDefs = [
         cellClass: 'lock-pinned'
     },
     {
-        headerName: 'Athlete (locked as not pinnable)',
+        headerName: 'Age (locked as not pinnable)',
         field: "age",
         width: 260,
         lockPinned: true,

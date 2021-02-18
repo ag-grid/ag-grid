@@ -387,7 +387,7 @@ export class TreemapSeries extends HierarchySeries {
                 text.x = this.getLabelCenterX(datum);
                 text.y = this.getLabelCenterY(datum);
             } else {
-                if (nameNode) {
+                if (nameNode && !(datum.children && datum.children.length)) {
                     nameNode.textBaseline = 'middle';
                     nameNode.y = this.getLabelCenterY(datum);
                 }
