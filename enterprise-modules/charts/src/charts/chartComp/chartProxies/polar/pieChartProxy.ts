@@ -3,7 +3,6 @@ import {
     AgPolarChartOptions,
     ChartTheme,
     PieSeries,
-    PieTooltipRendererParams,
     PolarChart
 } from "ag-charts-community";
 import { AgPieSeriesOptions, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
