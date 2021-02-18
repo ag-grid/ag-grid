@@ -11,6 +11,9 @@ export function stringToArray(strData, delimiter) {
     var data = [];
     var isNewline = function (char) { return char === '\r' || char === '\n'; };
     var insideQuotedField = false;
+    if (strData === '') {
+        return [['']];
+    }
     var _loop_1 = function (row, column, position) {
         var previousChar = strData[position - 1];
         var currentChar = strData[position];

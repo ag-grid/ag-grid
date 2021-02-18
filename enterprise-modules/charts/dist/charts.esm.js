@@ -7740,6 +7740,9 @@ function stringToArray(strData, delimiter) {
     var data = [];
     var isNewline = function (char) { return char === '\r' || char === '\n'; };
     var insideQuotedField = false;
+    if (strData === '') {
+        return [['']];
+    }
     var _loop_1 = function (row, column, position) {
         var previousChar = strData[position - 1];
         var currentChar = strData[position];
@@ -8154,6 +8157,10 @@ function isElementChildOfClass(element, cls, maxNest) {
     }
     return false;
 }
+// returns back sizes as doubles instead of strings. similar to
+// getBoundingClientRect, however getBoundingClientRect does not:
+// a) work with fractions (eg browser is zooming)
+// b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values
 function getElementSize(el) {
     var _a = window.getComputedStyle(el), height = _a.height, width = _a.width, paddingTop = _a.paddingTop, paddingRight = _a.paddingRight, paddingBottom = _a.paddingBottom, paddingLeft = _a.paddingLeft, marginTop = _a.marginTop, marginRight = _a.marginRight, marginBottom = _a.marginBottom, marginLeft = _a.marginLeft, boxSizing = _a.boxSizing;
     return {
@@ -14103,12 +14110,13 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var pivotMode = columnController.isPivotMode();
         var pivotModeAndLeafGroup = pivotMode && displayedGroup.leafGroup;
         var addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
+        var isTotalFooterNode = node.footer && node.level === -1;
         this.addOrRemoveCssClass('ag-cell-expandable', addExpandableCss);
         this.addOrRemoveCssClass('ag-row-group', addExpandableCss);
         if (pivotMode) {
             this.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeafGroup);
         }
-        else {
+        else if (!isTotalFooterNode) {
             this.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
         }
     };
@@ -41882,7 +41890,7 @@ var WatermarkComp = /** @class */ (function (_super) {
     WatermarkComp.prototype.shouldDisplayWatermark = function () {
         var isDisplayWatermark = this.licenseManager.isDisplayWatermark();
         var isWhiteListURL = location.hostname.match('^127\.0\.0\.1|localhost|www\.ag-grid\.com$') != null;
-        var isForceWatermark = location.search.indexOf('forceWatermark') !== -1;
+        var isForceWatermark = location.pathname ? location.pathname.indexOf('forceWatermark') !== -1 : false;
         return isForceWatermark || (isDisplayWatermark && !isWhiteListURL);
     };
     __decorate$1V([
@@ -55712,6 +55720,18 @@ var BarSeriesTooltip = /** @class */ (function (_super) {
     ], BarSeriesTooltip.prototype, "renderer", void 0);
     return BarSeriesTooltip;
 }(SeriesTooltip));
+function flat(arr, target) {
+    if (target === void 0) { target = []; }
+    arr.forEach(function (v) {
+        if (Array.isArray(v)) {
+            flat(v, target);
+        }
+        else {
+            target.push(v);
+        }
+    });
+    return target;
+}
 var BarSeries = /** @class */ (function (_super) {
     __extends$2N(BarSeries, _super);
     function BarSeries() {
@@ -55800,7 +55820,7 @@ var BarSeries = /** @class */ (function (_super) {
                 var value = _this[key];
                 if (value) {
                     if (Array.isArray(value)) {
-                        values.push.apply(values, value);
+                        values = values.concat(flat(value));
                     }
                     else {
                         values.push(value);
@@ -58459,10 +58479,10 @@ var TreemapSeries = /** @class */ (function (_super) {
             var highlighted = datum === highlightedDatum;
             var label;
             if (isLeaf) {
-                if (innerNodeHeight > 40 && innerNodeWidth > 40) {
+                if (innerNodeWidth > 40 && innerNodeWidth > 40) {
                     label = labels.large;
                 }
-                else if (innerNodeHeight > 20 && innerNodeHeight > 20) {
+                else if (innerNodeWidth > 20 && innerNodeHeight > 20) {
                     label = labels.medium;
                 }
                 else {

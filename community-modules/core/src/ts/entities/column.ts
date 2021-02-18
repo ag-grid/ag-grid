@@ -6,7 +6,7 @@ import {
     ColDef,
     ColSpanParams,
     IAggFunc,
-    IColumnFunctionCallbackParams,
+    ColumnFunctionCallbackParams,
     RowSpanParams
 } from "./colDef";
 import { EventService } from "../eventService";
@@ -340,7 +340,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.eventService.removeEventListener(eventType, listener);
     }
 
-    private createColumnFunctionCallbackParams(rowNode: RowNode): IColumnFunctionCallbackParams {
+    private createColumnFunctionCallbackParams(rowNode: RowNode): ColumnFunctionCallbackParams {
         return {
             node: rowNode,
             data: rowNode.data,
@@ -398,7 +398,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.colDef.resizable === true;
     }
 
-    private isColumnFunc(rowNode: RowNode, value?: boolean | ((params: IColumnFunctionCallbackParams) => boolean) | null): boolean {
+    private isColumnFunc(rowNode: RowNode, value?: boolean | ((params: ColumnFunctionCallbackParams) => boolean) | null): boolean {
         // if boolean set, then just use it
         if (typeof value === 'boolean') {
             return value;

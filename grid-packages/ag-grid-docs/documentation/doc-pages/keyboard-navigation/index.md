@@ -8,18 +8,16 @@ The grid responds to keyboard interactions from the user as well as emitting eve
 
 Use the **arrow keys** to move focus up, down, left and right. If the focused cell is already on the boundary for that position (eg if on the first column and the left key is pressed) then the key press has no effect. Use **ctrl + left and right** to move to start and end of the line.
 
-If a cell on the first grid row is focused and you you press `arrow up`, the focus will be moved into the grid header. The header navigation focus navigation works the same as the grid's, arrows will move up/down/left/right, tab will move the focus horizontally until the last header cell and the move on to the next row.
+If a cell on the first grid row is focused and you press `arrow up`, the focus will be moved into the grid header. The header navigation focus navigation works the same as the grid's, arrows will move up/down/left/right, tab will move the focus horizontally until the last header cell and the move on to the next row.
 
 Use **page up** and **page down** to move the scroll up and down by one page. Use **home** and **end** to go to the first and last rows.
 
 [[note]]
 | When a header cell is focused, commands like **page up**, **page down**, **home**, **end**, **ctrl + left / right** will not work as they do when a grid cell is focused.
 
-If using grouping and `groupUseEntireRow=true`, then the group row is not focusable. When navigating, the grouping row is skipped.
-
 ## Groups
 
-If on a group element, hitting the **enter key** will expand or collapse the group. This only works when displaying groups in a column (`groupUseEntireRow=false`), as otherwise the group cell is not selectable.
+If on a group element, hitting the **enter key** will expand or collapse the group.
 
 ## Editing
 

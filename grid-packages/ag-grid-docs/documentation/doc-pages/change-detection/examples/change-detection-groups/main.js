@@ -1,6 +1,6 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'group', rowGroup: true, editable: true, hide: true},
+        { field: 'group', rowGroup: true, editable: true },
         { field: 'a', type: 'valueColumn' },
         { field: 'b', type: 'valueColumn' },
         { field: 'c', type: 'valueColumn' },

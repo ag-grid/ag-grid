@@ -1,7 +1,6 @@
 import React, {Component, createRef} from 'react';
 
 const KEY_BACKSPACE = 8;
-const KEY_F2 = 113;
 const KEY_DELETE = 46;
 
 export default class MySimpleEditor extends Component {
@@ -42,14 +41,15 @@ export default class MySimpleEditor extends Component {
 
     myCustomFunction() {
         return {
-            rowIndex: this.params.rowIndex,
-            colId: this.params.column.getId()
+            rowIndex: this.props.rowIndex,
+            colId: this.props.column.getId()
         };
     }
 
     render() {
         return (
-            <input value={this.state.value} ref={this.inputRef} onChange={event => this.setState({value: event.target.value})}/>
+            <input value={this.state.value} ref={this.inputRef}
+                   onChange={event => this.setState({value: event.target.value})}/>
         );
     }
 }

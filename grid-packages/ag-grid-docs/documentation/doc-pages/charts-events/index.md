@@ -84,3 +84,7 @@ In this case, instead of adding the `nodeClick` event to both line and column se
 Fired when a node of any series in the chart is clicked. In case a chart has multiple series, it can be handy to be able to provide a single listener that will be called when a node is clicked in any of them.
 
 In this case the contents of the event object passed to the listener will depend on the type of series the clicked node belongs to.
+
+## Legend Events
+
+<api-documentation source='charts-api/api.json' section='chart.legend.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>

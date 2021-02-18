@@ -13087,6 +13087,18 @@
         ], BarSeriesTooltip.prototype, "renderer", void 0);
         return BarSeriesTooltip;
     }(SeriesTooltip));
+    function flat(arr, target) {
+        if (target === void 0) { target = []; }
+        arr.forEach(function (v) {
+            if (Array.isArray(v)) {
+                flat(v, target);
+            }
+            else {
+                target.push(v);
+            }
+        });
+        return target;
+    }
     var BarSeries = /** @class */ (function (_super) {
         __extends$H(BarSeries, _super);
         function BarSeries() {
@@ -13175,7 +13187,7 @@
                     var value = _this[key];
                     if (value) {
                         if (Array.isArray(value)) {
-                            values.push.apply(values, value);
+                            values = values.concat(flat(value));
                         }
                         else {
                             values.push(value);
@@ -15834,10 +15846,10 @@
                 var highlighted = datum === highlightedDatum;
                 var label;
                 if (isLeaf) {
-                    if (innerNodeHeight > 40 && innerNodeWidth > 40) {
+                    if (innerNodeWidth > 40 && innerNodeWidth > 40) {
                         label = labels.large;
                     }
-                    else if (innerNodeHeight > 20 && innerNodeHeight > 20) {
+                    else if (innerNodeWidth > 20 && innerNodeHeight > 20) {
                         label = labels.medium;
                     }
                     else {

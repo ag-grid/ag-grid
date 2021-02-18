@@ -67,10 +67,10 @@ To enable checkbox selection for groups, set the attribute `'checkbox'` to `true
 
 ```ts
 // function to enable/disable Checkbox Selection
-function checkboxSelection(params: IColumnFunctionCallbackParams) => boolean;
+function checkboxSelection(params: CheckboxSelectionCallbackParams) => boolean;
 
 // interface for params
-interface IColumnFunctionCallbackParams {
+interface CheckboxSelectionCallbackParams {
     node: RowNode;
     data: any;
     column: Column;

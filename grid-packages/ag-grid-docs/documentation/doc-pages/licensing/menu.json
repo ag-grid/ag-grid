@@ -293,18 +293,30 @@
             "title": "Building",
             "url": "../building/",
             "showInCollapsed": true,
+            "frameworks": [
+              "javascript"
+            ],
             "items": [
               {
                 "title": "Rollup",
-                "url": "../building-rollup/"
+                "url": "../building-rollup/",
+                "frameworks": [
+                  "javascript"
+                ]
               },
               {
                 "title": "TypeScript & Webpack",
-                "url": "../building-typescript/"
+                "url": "../building-typescript/",
+                "frameworks": [
+                  "javascript"
+                ]
               },
               {
                 "title": "AMD",
-                "url": "../building-amd/"
+                "url": "../building-amd/",
+                "frameworks": [
+                  "javascript"
+                ]
               }
             ]
           }

@@ -214,14 +214,14 @@
             "feature": "<a href='../data-update-transactions/'>Update via Transaction</a>",
             "clientSide": true,
             "infinite": "add only",
-            "serverSide": false,
+            "serverSide": true,
             "viewport": false
         },
         {
             "feature": "<a href='../data-update-high-frequency/'>Update via Async Transactions</a>",
             "clientSide": true,
             "infinite": false,
-            "serverSide": false,
+            "serverSide": true,
             "viewport": false
         },
         {

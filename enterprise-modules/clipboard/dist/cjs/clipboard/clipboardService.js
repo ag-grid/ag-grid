@@ -71,7 +71,7 @@ var ClipboardService = /** @class */ (function (_super) {
     };
     ClipboardService.prototype.processClipboardData = function (data) {
         var _this = this;
-        if (core_1._.missingOrEmpty(data)) {
+        if (data == null) {
             return;
         }
         var parsedData = core_1._.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
@@ -79,7 +79,7 @@ var ClipboardService = /** @class */ (function (_super) {
         if (userFunc) {
             parsedData = userFunc({ data: parsedData });
         }
-        if (core_1._.missingOrEmpty(parsedData)) {
+        if (parsedData == null) {
             return;
         }
         if (this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {

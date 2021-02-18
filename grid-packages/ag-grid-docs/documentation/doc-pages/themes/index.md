@@ -13,6 +13,10 @@ The grid can be themed using one of the following approaches:
 
 1. Create your own theme from scratch by extending the base theme. This is the best option for apps that look very different from the provided themes.
 
+[[warning]]
+| If you create your own theme, it's name has to follow the `ag-theme-{theme name}` naming convention, 
+| otherwise the grid's rendering will not detect it as being a valid theme.
+
 ## When to Extend the Base Theme
 
 If you extend a provided theme and then very extensively alter it to make a totally different design, you may encounter a couple of issues:

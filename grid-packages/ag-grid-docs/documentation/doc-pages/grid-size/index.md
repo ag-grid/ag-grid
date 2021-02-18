@@ -4,13 +4,53 @@ title: "Grid Size"
 
 Under normal usage, your application should set the width and height of the grid using CSS styles. The grid will then fit the width you provide and use scrolling inside the grid to allow all rows and columns to be viewed.
 
-```html
-<!-- set width using percentages -->
-<div id="myGrid" class="ag-theme-alpine" style="width: 100%; height: 100%;"></div>
+[[only-javascript]]
+| ```html
+| <!-- set width using percentages -->
+| <div id="myGrid" class="ag-theme-alpine" style="width: 100%; height: 100%;"></div>
+|
+| <!-- OR set width using fixed pixels -->
+|<div id="myGrid" class="ag-theme-alpine" style="width: 500px; height: 200px;"></div>
+| ```
 
-<!-- OR set width using fixed pixels -->
-<div id="myGrid" class="ag-theme-alpine" style="width: 500px; height: 200px;"></div>
-```
+[[only-angular]]
+| ```html
+| <!-- set width using percentages -->
+| <div class="ag-theme-alpine">
+|     <ag-grid-angular style="width: 100%; height: 100%;"></ag-grid-angular>
+| </div>
+|
+| <!-- OR set width using fixed pixels -->
+| <div class="ag-theme-alpine">
+|     <ag-grid-angular style="width: 500px; height: 200px"></ag-grid-angular>
+| </div>
+| ```
+
+[[only-react]]
+| ```jsx
+| <!-- set width using percentages -->
+| <div class="ag-theme-alpine">
+|     <AgGridReact style={{ width: '100%', height: '100%;' }} />
+| </div>
+|
+| <!-- OR set width using fixed pixels -->
+| <div class="ag-theme-alpine">
+|     <AgGridReact style={{ width: 500, height: 200 }} />
+| </div>
+| ```
+
+[[only-vue]]
+| ```html
+| <!-- set width using percentages -->
+| <div class="ag-theme-alpine">
+|     <ag-grid-vue style="width: 100%; height: 100%;"></ag-grid-vue>
+| </div>
+|
+| <!-- OR set width using fixed pixels -->
+| <div class="ag-theme-alpine">
+|     <ag-grid-vue style="width: 500px; height: 200px"></ag-grid-vue>
+| </div>
+| ```
 
 [[warning | Pitfall When Using Percent Width & Height]]
 | If using % for your height, then make sure the container you are putting the grid into

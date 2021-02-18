@@ -340,7 +340,7 @@ Loaders tell Webpack how & what to do with certain types of file - we have speci
 - images & fonts
 - css: the first phe pattern matches application-wide styles, and the second handles component-scoped styles (ie with styleUrls)
 
-### `plugins`
+### plugins
 
 - CommonsChunkPlugin: separates our entry points into distinct files (one each for polyfills, vendor and application)
 - HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS & CSS files for us

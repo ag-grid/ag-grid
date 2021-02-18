@@ -1,5 +1,6 @@
 ---
 title: "Building AG Grid with Rollup.js"
+frameworks: ["javascript"]
 ---
 
 We walk through the main steps required when using AG Grid with Rollup.js.

@@ -14,11 +14,9 @@ As with all features, pivoting works with all frameworks the grid supports inclu
 Pivot mode is required to be turned on for pivoting to work. When the grid is in pivot mode, the following will happen:
 
 - Only columns with Group, Pivot or Value active will be included in the grid.
-- Only aggregated rows will be shown, the lowest level rowData will not be displayed.
-
+- Only aggregated rows will be shown, the lowest level `rowData` will not be displayed.
 
 If pivot mode is off, then adding or removing pivot columns will have no effect.
-
 
 [[note]]
 | To allow a column to be used as pivot column via the [Tool Panel](../tool-panel/),
@@ -40,9 +38,9 @@ const gridOptions = {
 
 ## Example: Simple Pivot
 
-The example below shows a simple pivot on the year column using the Gold, Silver and Bronze columns for values.
+The example below shows a simple pivot on the Sport column using the Gold, Silver and Bronze columns for values.
 
-Columns Date and Sport, although defined as columns, are not displayed in the grid as they have no group, pivot or value associated with them.
+Columns Date and Year, although defined as columns, are not displayed in the grid as they have no group, pivot or value associated with them.
 
 <grid-example title='Simple Example' name='simple' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 

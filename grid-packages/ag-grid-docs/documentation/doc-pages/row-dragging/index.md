@@ -35,10 +35,10 @@ The `rowDrag` property can also be a callback function in the the form:
 
 ```ts
 // function to enable/disable RowDrag
-function rowDragFunction(params: IColumnFunctionCallbackParams) => boolean;
+function rowDragFunction(params: RowDragCallbackParams) => boolean;
 
 // interface for params
-interface IColumnFunctionCallbackParams {
+interface RowDragCallbackParams {
     node: RowNode;
     data: any;
     column: Column;
@@ -105,6 +105,7 @@ The example below is almost identical to the [Managed Dragging](#managed-draggin
 - Applying a sort or a filter to the grid will also suppress the drag icons.
 
 <grid-example title='Suppress Row Drag' name='suppress-row-drag' type='generated'></grid-example>
+
 ## Unmanaged Dragging
 
 Unmanaged dragging is the default dragging for the grid. To use it, do not set the property `rowDragManaged`. Unmanaged dragging differs from managed dragging in the following ways:

@@ -169,7 +169,6 @@ var gridOptions = {
         cellRenderer: 'agGroupCellRenderer',
         field: 'symbol'
     },
-    enableRangeSelection: true,
     statusBar: {
         statusPanels: [
             { statusPanel: 'agAggregationComponent', align: 'right' }

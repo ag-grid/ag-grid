@@ -204,4 +204,4 @@ The example below shows using `getCellEditorInstances`. The following can be not
 - All other columns use the provided `MySimpleCellEditor` editor.
 - The example sets an interval to print information from the active cell editor. There are three results: 1) No editing 2) Editing with default cell renderer and 3) editing with the custom cell editor. All results are printed to the developer console.
 
-<grid-example title='Get Editor Instance' name='get-editor-instance' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Get Editor Instance' name='get-editor-instance' type='mixed' options='{ "enterprise": true }'></grid-example>

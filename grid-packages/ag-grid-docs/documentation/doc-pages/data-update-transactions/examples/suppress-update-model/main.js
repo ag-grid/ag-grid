@@ -153,7 +153,11 @@ function onBtClearSelection() {
 }
 
 function onBtUpdateModel() {
-    gridOptions.api.refreshClientSideRowModel('filter');
+    var api = gridOptions.api;
+
+    timeOperation('Update Model', function () {
+        api.refreshClientSideRowModel('filter');
+    });
 }
 
 function timeOperation(name, operation) {

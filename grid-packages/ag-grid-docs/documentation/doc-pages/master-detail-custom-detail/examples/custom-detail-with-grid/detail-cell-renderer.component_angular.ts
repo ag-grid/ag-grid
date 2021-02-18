@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
+import { Component } from '@angular/core';
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'app-detail-cell-renderer',
@@ -31,16 +31,16 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
         this.rowId = params.node.id;
 
         this.colDefs = [
-            {field: 'callId'},
-            {field: 'direction'},
-            {field: 'number'},
-            {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-            {field: 'switchCode'}
+            { field: 'callId' },
+            { field: 'direction' },
+            { field: 'number' },
+            { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
+            { field: 'switchCode' }
         ];
 
         this.defaultColDef = {
             flex: 1,
-            minWidth: 150
+            minWidth: 120
         };
 
         this.rowData = params.data.callRecords;

@@ -78,12 +78,12 @@
 |
 |     // EVENTS
 |     // Add event handlers
-|     onRowClicked: function(event) { console.log('A row was clicked'); },
-|     onColumnResized: function(event) { console.log('A column was resized'); },
-|     onGridReady: function(event) { console.log('The grid is now ready'); },
+|     onRowClicked: event => console.log('A row was clicked'),
+|     onColumnResized: event => console.log('A column was resized'),
+|     onGridReady: event => console.log('The grid is now ready'),
 |
 |     // CALLBACKS
-|     isScrollLag: function() { return false; }
+|     isScrollLag: () => false
 | }
 | ```
 |

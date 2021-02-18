@@ -144,7 +144,6 @@ var gridOptions = {
     immutableData: true,
     rowData: globalRowData,
     animateRows: true,
-    enableRangeSelection: true,
     suppressAggFuncInHeader: true,
     getRowNodeId: function(data) {
         return data.trade;

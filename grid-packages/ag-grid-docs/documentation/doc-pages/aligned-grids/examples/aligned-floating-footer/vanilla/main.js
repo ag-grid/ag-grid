@@ -1,9 +1,9 @@
-var columnDefs = [
-    { field: 'athlete', width: 200 },
-    { field: 'age', width: 100 },
-    { field: 'country', width: 150 },
-    { field: 'year', width: 120 },
-    { field: 'sport', width: 200 },
+const columnDefs = [
+    {field: 'athlete', width: 200},
+    {field: 'age', width: 100},
+    {field: 'country', width: 150},
+    {field: 'year', width: 120},
+    {field: 'sport', width: 200},
     // in the total col, we have a value getter, which usually means we don't need to provide a field
     // however the master/slave depends on the column id (which is derived from the field if provided) in
     // order ot match up the columns
@@ -13,12 +13,12 @@ var columnDefs = [
         valueGetter: 'data.gold + data.silver + data.bronze',
         width: 200
     },
-    { field: 'gold', width: 100 },
-    { field: 'silver', width: 100 },
-    { field: 'bronze', width: 100 }
+    {field: 'gold', width: 100},
+    {field: 'silver', width: 100},
+    {field: 'bronze', width: 100}
 ];
 
-var dataForBottomGrid = [
+const dataForBottomGrid = [
     {
         athlete: 'Total',
         age: '15 - 61',
@@ -33,7 +33,7 @@ var dataForBottomGrid = [
 ];
 
 // this is the grid options for the top grid
-var gridOptionsTop = {
+const gridOptionsTop = {
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -42,7 +42,7 @@ var gridOptionsTop = {
         flex: 1,
         minWidth: 100
     },
-    columnDefs: columnDefs,
+    columnDefs,
     rowData: null,
     debug: true,
     // don't show the horizontal scrollbar on the top grid
@@ -51,7 +51,7 @@ var gridOptionsTop = {
 };
 
 // this is the grid options for the bottom grid
-var gridOptionsBottom = {
+const gridOptionsBottom = {
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -74,15 +74,15 @@ gridOptionsTop.alignedGrids.push(gridOptionsBottom);
 gridOptionsBottom.alignedGrids.push(gridOptionsTop);
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDivTop = document.querySelector('#myGridTop');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDivTop = document.querySelector('#myGridTop');
     new agGrid.Grid(gridDivTop, gridOptionsTop);
 
-    var gridDivBottom = document.querySelector('#myGridBottom');
+    const gridDivBottom = document.querySelector('#myGridBottom');
     new agGrid.Grid(gridDivBottom, gridOptionsBottom);
 
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+        .then(data => {
             gridOptionsTop.api.setRowData(data);
             gridOptionsTop.columnApi.autoSizeAllColumns();
         });

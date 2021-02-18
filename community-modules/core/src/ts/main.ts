@@ -285,7 +285,13 @@ export {
     NewValueParams,
     CellClassParams,
     GetQuickFilterTextParams,
-    IColumnFunctionCallbackParams,
+    ColumnFunctionCallbackParams,
+    CheckboxSelectionCallbackParams,
+    RowDragCallbackParams,
+    DndSourceCallbackParams,
+    EditableCallbackParams,
+    SuppressPasteCallbackParams,
+    SuppressNavigableCallbackParams,
     // deprecated params
     IsColumnFunc,
     IsColumnFuncParams
