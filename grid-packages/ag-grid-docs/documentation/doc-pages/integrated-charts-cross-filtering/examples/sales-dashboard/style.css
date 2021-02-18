@@ -1,31 +1,30 @@
-.wrapper {
+#wrapper {
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
-.top-chart-wrapper {
-    display: flex;
+#top {
     flex: 1;
-    flex-direction: row;
+    display: flex;
     background: #181d1f;
+    height: 25%;
 }
 
-.pie-chart {
-    flex: 2;
-    width: 10%;
-}
-
-.column-chart {
-    flex: 3;
+#columnChart {
     width: 60%;
 }
 
-.bar-chart {
-    flex: 1;
+#pieChart {
+    width: 40%;
 }
 
-.my-grid {
+#barChart {
+    flex: 1;
+    height: 25%;
+}
+
+#myGrid {
     flex: 2;
-    width: 100%;
 }
