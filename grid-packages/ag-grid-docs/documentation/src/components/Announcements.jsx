@@ -8,6 +8,18 @@ import { Announcement } from './Announcement';
 import styles from './Announcements.module.scss';
 
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
+
+    <Announcement date="Feb 19" version="25.1.0">
+        <p className="card-text">
+            Minor release with bug fixes:
+        </p>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                <DocumentationLink framework={framework} href="/charts-treemap-series/">Treemap Series</DocumentationLink>
+            </li>
+        </ul>
+    </Announcement>
+
     <Announcement date="Jan 6" version="25.0.0">
         <p className="card-text">
             Major release with new features and bug fixes:
