@@ -4,7 +4,7 @@ import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} fro
 import ReactDOM, {render} from 'react-dom';
 import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
 
-import {AllModules} from '@ag-grid-enterprise/all-modules';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
@@ -325,7 +325,7 @@ const GridExample = () => {
                 }}
                 className="ag-theme-alpine test-grid">
                 <AgGridReact
-                    modules={AllModules}
+                    modules={AllCommunityModules}
                     rowData={rowData}
                     frameworkComponents={{
                         doublingEditor: DoublingEditor,
