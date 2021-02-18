@@ -67,7 +67,7 @@ $version = 'latest';
             <div class="framework-boxes">
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/fork/react-ts" style="text-decoration: none;">
+                        <a href="/documentation/javascript/getting-started/" style="text-decoration: none;">
                             <div class="box-contents">
                                 <img src="./_assets/fw-logos/javascript.svg">
                                 <div>
@@ -79,7 +79,7 @@ $version = 'latest';
                 </div>
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/fork/angular-ivy" style="text-decoration: none;">
+                        <a href="/documentation/angular/getting-started/" style="text-decoration: none;">
                             <div class="box-contents">
                                 <img src="./_assets/fw-logos/angular.svg">
                                 <div>
@@ -91,7 +91,7 @@ $version = 'latest';
                 </div>
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/fork/react" style="text-decoration: none;">
+                        <a href="/documentation/react/getting-started/" style="text-decoration: none;">
                             <div class="box-contents">
                                 <img src="./_assets/fw-logos/react.svg">
                                 <div>
@@ -103,7 +103,7 @@ $version = 'latest';
                 </div>
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/fork/vue" style="text-decoration: none;">
+                        <a href="/documentation/vue/getting-started/" style="text-decoration: none;">
                             <div class="box-contents">
                                 <img src="./_assets/fw-logos/vue.svg">
                                 <div>
