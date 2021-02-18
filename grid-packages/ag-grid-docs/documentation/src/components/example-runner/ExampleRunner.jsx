@@ -155,20 +155,20 @@ export const ExampleRunner = props => {
 
 const ImportTypeSelector = ({ importType, onChange }) => {
     return <div className={styles['example-runner__import-type']}>
-        <select className={styles['example-runner__import-type__select']} style={{ width: 120 }} value={importType} onChange={onChange} onBlur={onChange}>
+        {!isServerSideRendering() && <select className={styles['example-runner__import-type__select']} style={{ width: 120 }} value={importType} onChange={onChange} onBlur={onChange}>
             {['packages', 'modules'].map(type =>
                 <option key={type} value={type}>{type[0].toUpperCase()}{type.substring(1)}</option>
             )}
-        </select>
+        </select>}
     </div >;
 };
 
 const ReactStyleSelector = ({ useFunctionalReact, onChange }) => {
     return <div className={styles['example-runner__react-style']}>
-        <select className={styles['example-runner__react-style__select']} style={{ width: 120 }} value={JSON.stringify(useFunctionalReact)} onChange={onChange} onBlur={onChange}>
+        {!isServerSideRendering() && <select className={styles['example-runner__react-style__select']} style={{ width: 120 }} value={JSON.stringify(useFunctionalReact)} onChange={onChange} onBlur={onChange}>
             <option value="false">Classes</option>
             <option value="true">Hooks</option>
-        </select>
+        </select>}
     </div>;
 };
 
