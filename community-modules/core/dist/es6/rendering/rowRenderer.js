@@ -1016,22 +1016,23 @@ var RowRenderer = /** @class */ (function (_super) {
             this.focusController.focusHeaderPosition({ headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column });
             return;
         }
-        if (this.ensureCellCompVisible(nextCell)) {
-            this.focusPosition(nextCell);
+        // in case we have col spanning we get the cellComp and use it to get the 
+        // position. This was we always focus the first cell inside the spanning.
+        var normalisedPosition = this.getNormalisedPosition(nextCell);
+        if (normalisedPosition) {
+            this.focusPosition(normalisedPosition);
         }
         else {
             this.tryToFocusFullWidthRow(nextCell);
         }
     };
-    RowRenderer.prototype.ensureCellCompVisible = function (cellPosition) {
-        // in case we have col spanning we get the cellComp and use it to
-        // get the position. This was we always focus the first cell inside
-        // the spanning.
-        this.ensureCellVisible(cellPosition); // ensureCellVisible first, to make sure nextCell is rendered
+    RowRenderer.prototype.getNormalisedPosition = function (cellPosition) {
+        // ensureCellVisible first, to make sure cell at position is rendered.
+        this.ensureCellVisible(cellPosition);
         var cellComp = this.getComponentForCell(cellPosition);
         // not guaranteed to have a cellComp when using the SSRM as blocks are loading.
         if (!cellComp) {
-            return false;
+            return null;
         }
         cellPosition = cellComp.getCellPosition();
         // we call this again, as nextCell can be different to it's previous value due to Column Spanning
@@ -1040,7 +1041,7 @@ var RowRenderer = /** @class */ (function (_super) {
         // ensureCellVisible again, then we could only be showing the last portion (last column) of the
         // merged cells.
         this.ensureCellVisible(cellPosition);
-        return true;
+        return cellPosition;
     };
     RowRenderer.prototype.tryToFocusFullWidthRow = function (position, backwards) {
         if (backwards === void 0) { backwards = false; }

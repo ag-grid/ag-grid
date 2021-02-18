@@ -100,7 +100,7 @@ export declare class RowRenderer extends BeanStub {
     private createRowComp;
     getRenderedNodes(): RowNode[];
     navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: CellPosition, allowUserOverride: boolean): void;
-    private ensureCellCompVisible;
+    private getNormalisedPosition;
     private tryToFocusFullWidthRow;
     private focusPosition;
     private isValidNavigateCell;

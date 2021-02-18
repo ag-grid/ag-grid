@@ -32,12 +32,12 @@ var columnDefs = [
             return params.data.b;
         },
         valueSetter: function(params) {
-            if (params.data.b !== params.newValue) {
-                params.data.b = parseInt(params.newValue);
-                return true;
-            } else {
-                return false;
+            var newValInt = parseInt(params.newValue);
+            var valueChanged = params.data.b !== newValInt;
+            if (valueChanged) {
+                params.data.b = newValInt;
             }
+            return valueChanged;
         }
     },
     {

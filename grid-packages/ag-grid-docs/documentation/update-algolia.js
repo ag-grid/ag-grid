@@ -47,6 +47,7 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
     let text = '';
 
     const titleTag = dom.window.document.querySelector('h1');
+    let positionInPage = 0;
 
     const createRecord = () => {
         if (['next-up', 'next-steps'].includes(key)) {
@@ -69,10 +70,12 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
             path: hashPath,
             text: cleanText,
             rank,
+            positionInPage,
         });
 
         subHeading = undefined;
         text = '';
+        positionInPage++;
     };
 
     const parseContent = startingElement => {
@@ -173,13 +176,14 @@ const processIndexForFramework = async framework => {
 
         index.setSettings({
             searchableAttributes: ['title', 'heading', 'subHeading', 'text'],
+            disableExactOnAttributes: ['text'],
             attributesToSnippet: ['text:40'],
             distinct: 1,
             attributeForDistinct: 'breadcrumb',
-            customRanking: ['desc(rank)'],
-            camelCaseAttributes: ['text'],
+            customRanking: ['desc(rank)', 'asc(positionInPage)'],
+            camelCaseAttributes: ['heading', 'subHeading', 'text'],
             hitsPerPage: 10,
-            snippetEllipsisText: '…'
+            snippetEllipsisText: '…',
         });
 
         try {

@@ -2229,7 +2229,7 @@ var Caption = /** @class */ (function (_super) {
     function Caption() {
         var _this = _super.call(this) || this;
         _this.node = new Text();
-        _this.enabled = true;
+        _this.enabled = false;
         _this.padding = new Padding(10);
         var node = _this.node;
         node.textAlign = 'center';
@@ -5521,7 +5521,6 @@ var Axis = /** @class */ (function () {
             else {
                 titleNode.y = -padding - bbox.width - Math.min(bbox.x, 0);
             }
-            // title.text = `Axis Title: ${sideFlag} ${toDegrees(parallelFlipRotation).toFixed(0)} ${titleRotationFlag}`;
             titleNode.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
         }
         if (title) {
@@ -15911,7 +15910,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                 text.y = _this.getLabelCenterY(datum);
             }
             else {
-                if (nameNode) {
+                if (nameNode && !(datum.children && datum.children.length)) {
                     nameNode.textBaseline = 'middle';
                     nameNode.y = _this.getLabelCenterY(datum);
                 }
@@ -16871,7 +16870,6 @@ var ChartTheme = /** @class */ (function () {
             bottom: {},
             left: {},
             title: {
-                enabled: false,
                 padding: {
                     top: 10,
                     right: 10,
@@ -17745,7 +17743,7 @@ var commonChartMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -17770,7 +17768,7 @@ var commonChartMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -17955,7 +17953,6 @@ var axisMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
                 padding: {
                     meta: {
                         constructor: Padding,

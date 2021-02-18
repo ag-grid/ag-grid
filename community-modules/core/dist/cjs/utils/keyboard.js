@@ -39,7 +39,7 @@ exports.isEventFromPrintableCharacter = isEventFromPrintableCharacter;
  */
 function isUserSuppressingKeyboardEvent(gridOptionsWrapper, keyboardEvent, rowNode, column, editing) {
     var gridOptionsFunc = gridOptionsWrapper.getSuppressKeyboardEventFunc();
-    var colDefFunc = column.getColDef().suppressKeyboardEvent;
+    var colDefFunc = column ? column.getColDef().suppressKeyboardEvent : undefined;
     // if no callbacks provided by user, then do nothing
     if (!gridOptionsFunc && !colDefFunc) {
         return false;

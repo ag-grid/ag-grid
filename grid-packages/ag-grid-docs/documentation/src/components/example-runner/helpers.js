@@ -25,8 +25,8 @@ export const getExampleInfo = (
     type,
     options = {},
     framework = 'javascript',
-    importType = 'modules',
-    useFunctionalReact = false) => {
+    useFunctionalReact = false,
+    importType = 'modules') => {
     if (library === 'charts') {
         // no support for modules or React Hooks in charts yet
         importType = 'packages';

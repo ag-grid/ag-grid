@@ -87,7 +87,6 @@ var ChartTheme = /** @class */ (function () {
             bottom: {},
             left: {},
             title: {
-                enabled: false,
                 padding: {
                     top: 10,
                     right: 10,

@@ -111,11 +111,11 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             this.pasteFromClipboardLegacy();
         }
     }
-
+ 
     private pasteFromClipboardLegacy(): void {
         // Method 2 - if modern API fails, the old school hack
         this.executeOnTempElement(
-            (textArea: HTMLTextAreaElement) => textArea.focus(),
+            (textArea: HTMLTextAreaElement) => textArea.focus({ preventScroll: true }),
             (element: HTMLTextAreaElement) => {
                 const data = element.value;
                 this.processClipboardData(data);
@@ -186,8 +186,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
-        const doc = this.gridOptionsWrapper.getDocument();
-        const focusedElementBefore = doc.activeElement;
         const focusedCell = this.focusController.getFocusedCell();
 
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
@@ -200,12 +198,10 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
 
-        const focusedElementAfter = doc.activeElement;
-
         // if using the clipboard hack with a temp element, then the focus has been lost,
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
-        if (focusedCell && focusedElementBefore != focusedElementAfter) {
+        if (focusedCell) {
             this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
 
@@ -721,7 +717,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
             element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
             element.select();
-            element.focus();
+            element.focus({ preventScroll: true });
 
             const result = document.execCommand('copy');
 
@@ -732,7 +728,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             }
 
             if (focusedElementBefore != null && focusedElementBefore.focus != null) {
-                focusedElementBefore.focus();
+                focusedElementBefore.focus({ preventScroll: true });
             }
         });
     }

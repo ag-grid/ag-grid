@@ -1,31 +1,30 @@
-.wrapper {
+#wrapper {
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
-.top-chart-wrapper {
-    display: flex;
+#top {
     flex: 1;
-    flex-direction: row;
+    display: flex;
     background: #181d1f;
+    height: 25%;
 }
 
-.line-chart {
-    flex: 3;
+#lineChart {
     width: 60%;
 }
 
-.doughnut-chart {
-    flex: 2;
-    width: 10%;
+#doughnutChart {
+    width: 40%;
 }
 
-.area-chart {
+#areaChart {
     flex: 1;
+    height: 25%;
 }
 
-.my-grid {
+#myGrid {
     flex: 2;
-    width: 100%;
 }

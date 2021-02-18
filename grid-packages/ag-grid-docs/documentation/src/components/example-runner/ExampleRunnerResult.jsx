@@ -5,19 +5,22 @@ import { getIndexHtmlUrl } from './helpers';
 import { getIndexHtml } from './index-html-helper';
 import isDevelopment from 'utils/is-development';
 
-const ExampleRunnerResult = ({ isVisible, isActive = true, exampleInfo }) => {
-    const [shouldExecute, setShouldExecute] = useState(isVisible);
+const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, exampleInfo }) => {
+    const [isExecuting, setExecuting] = useState(isOnScreen && resultFrameIsVisible);
     const { pageName, name, internalFramework, importType } = exampleInfo;
 
     useEffect(() => {
-        if (isVisible) {
-            setShouldExecute(true);
+        // trigger the example to execute when it is on screen and the result pane is visible
+        if (isOnScreen && resultFrameIsVisible && !isExecuting) {
+            setExecuting(true);
         }
-    }, [isVisible]);
+    }, [isOnScreen, resultFrameIsVisible]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        if (!isVisible) {
-            setShouldExecute(false);
+        // if the example info changes (e.g. if modules and switched to packages) and the example is off screen,
+        // stop it executing
+        if (!isOnScreen && isExecuting) {
+            setExecuting(false);
         }
     }, [exampleInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -28,19 +31,20 @@ const ExampleRunnerResult = ({ isVisible, isActive = true, exampleInfo }) => {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
         if (isDevelopment()) {
+            // in development mode we generate the index HTML on the fly and inject it into the iframe
             iframeDoc.open();
-            iframeDoc.write(shouldExecute ? getIndexHtml(exampleInfo, true) : '');
+            iframeDoc.write(isExecuting ? getIndexHtml(exampleInfo, true) : '');
             iframeDoc.close();
         } else {
-            iframe.src = getIndexHtmlUrl(exampleInfo);
+            iframe.src = isExecuting ? getIndexHtmlUrl(exampleInfo) : '';
         }
-    }, [shouldExecute, exampleInfo]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isExecuting, exampleInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <iframe
         key={`${pageName}_${name}_${internalFramework}_${importType}`}
         ref={iframeRef}
         title={name}
-        className={classnames(styles['example-runner-result'], { [styles['example-runner-result--hidden']]: !isActive })}></iframe>;
+        className={classnames(styles['example-runner-result'], { [styles['example-runner-result--hidden']]: !resultFrameIsVisible })} />;
 };
 
 export default ExampleRunnerResult;

@@ -100,7 +100,8 @@ var notEqualsFilterParams = {
             displayName: 'Not Equals without Nulls',
             test: function(filterValue, cellValue) {
                 if (cellValue == null) return false;
-                return cellValue !== filterValue;
+
+                return cellValue !== filterValue.toLowerCase();
             }
         }
     ]

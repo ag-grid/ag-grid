@@ -62,7 +62,7 @@ var ClipboardService = /** @class */ (function (_super) {
     ClipboardService.prototype.pasteFromClipboardLegacy = function () {
         var _this = this;
         // Method 2 - if modern API fails, the old school hack
-        this.executeOnTempElement(function (textArea) { return textArea.focus(); }, function (element) {
+        this.executeOnTempElement(function (textArea) { return textArea.focus({ preventScroll: true }); }, function (element) {
             var data = element.value;
             _this.processClipboardData(data);
         });
@@ -113,8 +113,6 @@ var ClipboardService = /** @class */ (function (_super) {
         }
         var cellsToFlash = {};
         var updatedRowNodes = [];
-        var doc = this.gridOptionsWrapper.getDocument();
-        var focusedElementBefore = doc.activeElement;
         var focusedCell = this.focusController.getFocusedCell();
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
         if (changedPath) {
@@ -123,11 +121,10 @@ var ClipboardService = /** @class */ (function (_super) {
         this.rowRenderer.refreshCells();
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
-        var focusedElementAfter = doc.activeElement;
         // if using the clipboard hack with a temp element, then the focus has been lost,
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
-        if (focusedCell && focusedElementBefore != focusedElementAfter) {
+        if (focusedCell) {
             this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
         this.eventService.dispatchEvent({
@@ -531,7 +528,7 @@ var ClipboardService = /** @class */ (function (_super) {
             var focusedElementBefore = _this.gridOptionsWrapper.getDocument().activeElement;
             element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
             element.select();
-            element.focus();
+            element.focus({ preventScroll: true });
             var result = document.execCommand('copy');
             if (!result) {
                 console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
@@ -539,7 +536,7 @@ var ClipboardService = /** @class */ (function (_super) {
                     'the browser will prevent it for security reasons.');
             }
             if (focusedElementBefore != null && focusedElementBefore.focus != null) {
-                focusedElementBefore.focus();
+                focusedElementBefore.focus({ preventScroll: true });
             }
         });
     };

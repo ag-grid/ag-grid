@@ -110,7 +110,7 @@ If pivoting and a filter changes then the set of secondary columns is recalculat
 
 You can change the filter on primary columns using the API at all times, regardless of what columns (primary or secondary) are displayed in the grid.
 
-Below demonstrates the impact of changing filter on pivoting. The pivot is executed on rowData after the filter is complete. Notice that the last option, 'USA and Canada Equestrian' has no 'Canada' in the result as there is no records for Canada and Equestrian.
+Below demonstrates the impact of changing filter on pivoting. The pivot is executed on rowData after the filter is complete.
 
 Filters always belong to primary columns. When in pivot mode, filters are not accessible through the column menu (as secondary columns are used), however filters can always be accessed through the filters tool panel.
 
@@ -142,7 +142,6 @@ The example below demonstrates Pivot Row Totals as follows:
 
 - Pivot Row Totals are positioned before the other pivot group columns using: `gridOption.pivotRowTotals = 'before'`.
 - Pivot Row Totals are added for each of the value columns: 'gold', 'silver' and 'bronze'.
-- Pivot Column Group Total are also added using: `gridOptions.pivotColumnGroupTotals = 'after'`.
 - Expanding pivot column groups reveals the in the last position as 'after' is used.
 
 <grid-example title='Pivot Row Totals' name='row-totals' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>

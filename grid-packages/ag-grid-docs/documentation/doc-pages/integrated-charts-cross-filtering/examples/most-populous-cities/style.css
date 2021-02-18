@@ -1,18 +1,20 @@
-.wrapper {
+#wrapper {
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
-.bubble-chart {
+#bubbleChart {
     flex: 1;
+    height: 25%;
 }
 
-.bar-chart {
+#barChart {
     flex: 1;
+    height: 25%;
 }
 
-.my-grid {
+#myGrid {
     flex: 2;
-    width: 100%;
 }

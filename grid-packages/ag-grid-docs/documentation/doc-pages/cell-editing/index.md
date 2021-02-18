@@ -262,7 +262,11 @@ This does not mean that you cannot show a popup from your 'in cell' editor - you
 
 The example below shows full row editing. In addition to standard full row editing, the following should also be noted:
 
-- The 'Price' column has a custom editor demonstrating how you should implement the `focusIn()` method. Both `focusIn()` and `focusOut()` for this editor are logged to the console.
+- The 'Price' column has a custom editor demonstrating how you should implement the `focusIn()` method. 
+  Both `focusIn()` and `focusOut()` for this editor are logged to the console. Note that `focusIn()`
+  and `focusOut()` are only called when the user is tabbing between cells when editing, they are not called
+  as the user double clicks on a cell to start editing that cell, or the user finishes editing that cell by 
+  e.g. hitting the Enter key.
 - The 'Suppress Navigable' column is not navigable using `Tab`. In other words, when tabbing around the grid, you cannot tab onto this cell.
 - The 'Not Editable' column is not editable, so when the row goes into edit mode, this column is not impacted. Also when editing, this column is not navigated to when tabbing.
 - The button will start editing line two. It uses the API to start editing a cell, however the result is that the whole row will become editable starting with the specified cell.

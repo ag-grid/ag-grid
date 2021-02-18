@@ -1,4 +1,4 @@
-var columnDefs = [
+const columnDefs = [
     {field: 'group', rowGroup: true, hide: true},
     {field: 'id', pinned: 'left', width: 70},
     {field: 'model', width: 180},
@@ -8,28 +8,28 @@ var columnDefs = [
     {field: 'country', width: 120}
 ];
 
-var models = ['Mercedes-AMG C63','BMW M2','Audi TT Roadster','Mazda MX-5','BMW M3','Porsche 718 Boxster','Porsche 718 Cayman'];
-var colors = ['Red','Black','Green','White','Blue'];
-var countries = ['UK', 'Spain', 'France', 'Ireland', 'USA'];
+const models = ['Mercedes-AMG C63', 'BMW M2', 'Audi TT Roadster', 'Mazda MX-5', 'BMW M3', 'Porsche 718 Boxster', 'Porsche 718 Cayman'];
+const colors = ['Red', 'Black', 'Green', 'White', 'Blue'];
+const countries = ['UK', 'Spain', 'France', 'Ireland', 'USA'];
 
-function createRowData() {
-    var rowData = [];
-    for (var i = 0; i<200; i++) {
-        var item = {
+const createRowData = () => {
+    const rowData = [];
+    for (let i = 0; i<200; i++) {
+        const item = {
             id: i + 1,
             group: 'Group ' + (Math.floor(i / 20) + 1),
-            model: models[Math.floor(Math.random()*models.length)],
-            color: colors[Math.floor(Math.random()*colors.length)],
-            country: countries[Math.floor(Math.random()*countries.length)],
+            model: models[Math.floor(Math.random() * models.length)],
+            color: colors[Math.floor(Math.random() * colors.length)],
+            country: countries[Math.floor(Math.random() * countries.length)],
             year: 2018 - Math.floor(Math.random() * 20),
-            price: 20000 + ((Math.floor(Math.random() * 100)*100))
+            price: 20000 + ((Math.floor(Math.random() * 100) * 100))
         };
         rowData.push(item);
     }
     return rowData;
-}
+};
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         sortable: true
     },
@@ -37,13 +37,15 @@ var gridOptions = {
     rowData: createRowData(),
     animateRows: true,
     groupUseEntireRow: true,
-    onGridReady: function(params) {
-        params.api.expandAll();
-    }
+    onFirstDataRendered: onFirstDataRendered
 };
 
+function onFirstDataRendered() {
+    gridOptions.api.expandAll();
+}
+
 function onBtPrint() {
-    var api = gridOptions.api;
+    const api = gridOptions.api;
 
     setPrinterFriendly(api);
 
@@ -54,13 +56,13 @@ function onBtPrint() {
 }
 
 function setPrinterFriendly(api) {
-    var eGridDiv = document.querySelector('#myGrid');
+    const eGridDiv = document.querySelector('#myGrid');
     eGridDiv.style.height = '';
     api.setDomLayout('print');
 }
 
 function setNormal(api) {
-    var eGridDiv = document.querySelector('#myGrid');
+    const eGridDiv = document.querySelector('#myGrid');
     eGridDiv.style.width = '700px';
     eGridDiv.style.height = '200px';
 
@@ -68,7 +70,7 @@ function setNormal(api) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

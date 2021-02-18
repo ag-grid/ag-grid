@@ -108,7 +108,7 @@ function printCacheState() {
 
 function jumpTo500() {
     // first up, need to make sure the grid is actually showing 500 or more rows
-    if (gridOptions.api.setRowCount() < 501) {
+    if (gridOptions.api.getInfiniteRowCount() < 501) {
         gridOptions.api.setRowCount(501, false);
     }
     // next, we can jump to the row

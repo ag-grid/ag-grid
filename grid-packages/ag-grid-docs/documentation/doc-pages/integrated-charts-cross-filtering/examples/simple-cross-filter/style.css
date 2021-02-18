@@ -1,13 +1,13 @@
-.wrapper {
+#wrapper {
+    height: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
-.pie-chart {
+#pieChart {
     flex: 1;
 }
 
-.my-grid {
-    flex: 2;
+#myGrid {
+    flex: 1;
 }

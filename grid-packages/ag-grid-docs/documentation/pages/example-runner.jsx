@@ -7,13 +7,13 @@ import { getExampleInfo } from 'components/example-runner/helpers';
 
 const ExampleRunnerPage = ({ query: { pageName, library, framework, useFunctionalReact, importType, name, title, type, options } }) => {
     const nodes = useExampleFileNodes();
-    const exampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, importType, useFunctionalReact);
+    const exampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, importType);
 
     return <div style={{ height: '100vh', width: '100%' }}>
         <Helmet title={title}>
             <meta name="robots" content="noindex" />
         </Helmet>
-        <ExampleRunnerResult isVisible={true} exampleInfo={exampleInfo} />
+        <ExampleRunnerResult exampleInfo={exampleInfo} />
     </div>;
 };
 

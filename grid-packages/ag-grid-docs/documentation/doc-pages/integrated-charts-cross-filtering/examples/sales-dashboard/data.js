@@ -11,17 +11,17 @@ var names = [
 ];
 
 var phones = [
-    {handset: 'Hauwei P40', price: 599},
-    {handset: 'Google Pixel 5', price: 589},
-    {handset: 'Apple iPhone 12', price: 849},
-    {handset: 'Samsung Galaxy S10', price: 499},
-    {handset: 'Motorola Edge', price: 549},
-    {handset: 'Sony Xperia', price: 279},
+    { handset: 'Huawei P40', price: 599 },
+    { handset: 'Google Pixel 5', price: 589 },
+    { handset: 'Apple iPhone 12', price: 849 },
+    { handset: 'Samsung Galaxy S10', price: 499 },
+    { handset: 'Motorola Edge', price: 549 },
+    { handset: 'Sony Xperia', price: 279 },
 ];
 
 function generateData() {
     var data = [];
-    for(var i = 0; i < numRows; i++) {
+    for (var i = 0; i < numRows; i++) {
         var phone = phones[getRandomNumber(0, phones.length)];
         var saleDate = randomDate(new Date(2020, 0, 1), new Date(2020, 11, 31));
         var quarter = 'Q' + Math.floor((saleDate.getMonth() + 3) / 3);
@@ -35,7 +35,7 @@ function generateData() {
         });
     }
 
-    data.sort(function(a,b) {
+    data.sort(function(a, b) {
         return a.saleDate.getTime() - b.saleDate.getTime();
     });
 

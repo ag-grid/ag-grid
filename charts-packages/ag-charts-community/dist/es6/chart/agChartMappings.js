@@ -74,7 +74,7 @@ var commonChartMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -99,7 +99,7 @@ var commonChartMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -284,7 +284,6 @@ var axisMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
                 padding: {
                     meta: {
                         constructor: Padding,

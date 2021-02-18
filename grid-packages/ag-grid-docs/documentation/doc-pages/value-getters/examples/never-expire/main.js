@@ -104,6 +104,7 @@ function onExpireValueCache(){
 
 function onRefreshCells(){
     console.log('onRefreshCells -> start');
+    gridOptions.api.refreshClientSideRowModel('aggregate');
     gridOptions.api.refreshCells();
     console.log('onRefreshCells -> end');
 }

@@ -353,7 +353,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                 text.y = _this.getLabelCenterY(datum);
             }
             else {
-                if (nameNode) {
+                if (nameNode && !(datum.children && datum.children.length)) {
                     nameNode.textBaseline = 'middle';
                     nameNode.y = _this.getLabelCenterY(datum);
                 }
