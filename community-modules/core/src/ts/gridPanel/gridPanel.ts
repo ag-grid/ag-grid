@@ -1071,7 +1071,7 @@ export class GridPanel extends Component {
         const colLeftPixel = column.getLeft();
         const colRightPixel = colLeftPixel! + column.getActualWidth();
 
-        const viewportWidth = getInnerWidth(this.eCenterViewport);
+        const viewportWidth = this.getCenterWidth();
         const scrollPosition = this.getCenterViewportScrollLeft();
 
         const bodyWidth = this.columnController.getBodyContainerWidth();
@@ -1137,7 +1137,14 @@ export class GridPanel extends Component {
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
     public sizeColumnsToFit(nextTimeout?: number) {
-        const availableWidth = getInnerWidth(this.eBodyViewport);
+        const hasVerticalScroll = this.isVerticalScrollShowing();
+        let diff = 0;
+
+        if (hasVerticalScroll) {
+            diff = this.gridOptionsWrapper.getScrollbarWidth();
+        }
+
+        const availableWidth = getInnerWidth(this.eBodyViewport) - diff;
 
         if (availableWidth > 0) {
             this.columnController.sizeColumnsToFit(availableWidth, "sizeColumnsToFit");
@@ -1449,7 +1456,7 @@ export class GridPanel extends Component {
     // called by scrollHorizontally method and alignedGridsService
     public setHorizontalScrollPosition(hScrollPosition: number): void {
         const minScrollLeft = 0;
-        const maxScrollLeft = this.eCenterViewport.scrollWidth - getInnerWidth(this.eCenterViewport);
+        const maxScrollLeft = this.eCenterViewport.scrollWidth - this.getCenterWidth();
 
         if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
             hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
@@ -1544,7 +1551,7 @@ export class GridPanel extends Component {
         }
 
         if (direction === 'horizontal') {
-            const clientWidth = getInnerWidth(this.eCenterViewport);
+            const clientWidth = this.getCenterWidth();
             const { scrollWidth } = this.eCenterViewport;
 
             if (this.enableRtl && isRtlNegativeScroll()) {
@@ -1626,7 +1633,7 @@ export class GridPanel extends Component {
     // out the virtual columns again. gets called from following locations:
     // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged, API (doLayout)
     private onHorizontalViewportChanged(): void {
-        const scrollWidth = getInnerWidth(this.eCenterViewport);
+        const scrollWidth = this.getCenterWidth();
         const scrollPosition = this.getCenterViewportScrollLeft();
 
         this.columnController.setViewportPosition(scrollWidth, scrollPosition);

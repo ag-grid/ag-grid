@@ -31371,7 +31371,7 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
         }
         var colLeftPixel = column.getLeft();
         var colRightPixel = colLeftPixel + column.getActualWidth();
-        var viewportWidth = Object(dom["getInnerWidth"])(this.eCenterViewport);
+        var viewportWidth = this.getCenterWidth();
         var scrollPosition = this.getCenterViewportScrollLeft();
         var bodyWidth = this.columnController.getBodyContainerWidth();
         var viewportLeftPixel;
@@ -31429,7 +31429,12 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
     // isn't visible, but is just about to be visible.
     GridPanel.prototype.sizeColumnsToFit = function (nextTimeout) {
         var _this = this;
-        var availableWidth = Object(dom["getInnerWidth"])(this.eBodyViewport);
+        var hasVerticalScroll = this.isVerticalScrollShowing();
+        var diff = 0;
+        if (hasVerticalScroll) {
+            diff = this.gridOptionsWrapper.getScrollbarWidth();
+        }
+        var availableWidth = Object(dom["getInnerWidth"])(this.eBodyViewport) - diff;
         if (availableWidth > 0) {
             this.columnController.sizeColumnsToFit(availableWidth, "sizeColumnsToFit");
             return;
@@ -31691,7 +31696,7 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
     // called by scrollHorizontally method and alignedGridsService
     GridPanel.prototype.setHorizontalScrollPosition = function (hScrollPosition) {
         var minScrollLeft = 0;
-        var maxScrollLeft = this.eCenterViewport.scrollWidth - Object(dom["getInnerWidth"])(this.eCenterViewport);
+        var maxScrollLeft = this.eCenterViewport.scrollWidth - this.getCenterWidth();
         if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
             hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
         }
@@ -31770,7 +31775,7 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
             }
         }
         if (direction === 'horizontal') {
-            var clientWidth = Object(dom["getInnerWidth"])(this.eCenterViewport);
+            var clientWidth = this.getCenterWidth();
             var scrollWidth = this.eCenterViewport.scrollWidth;
             if (this.enableRtl && Object(dom["isRtlNegativeScroll"])()) {
                 if (scrollTo > 0) {
@@ -31845,7 +31850,7 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
     // out the virtual columns again. gets called from following locations:
     // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged, API (doLayout)
     GridPanel.prototype.onHorizontalViewportChanged = function () {
-        var scrollWidth = Object(dom["getInnerWidth"])(this.eCenterViewport);
+        var scrollWidth = this.getCenterWidth();
         var scrollPosition = this.getCenterViewportScrollLeft();
         this.columnController.setViewportPosition(scrollWidth, scrollPosition);
     };
