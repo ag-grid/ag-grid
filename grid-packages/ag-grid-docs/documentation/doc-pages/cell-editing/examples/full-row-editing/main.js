@@ -22,14 +22,18 @@ var gridOptions = {
     editType: 'fullRow',
     rowData: getRowData(),
 
-    onCellValueChanged: function(event) {
-        console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
-    },
-    onRowValueChanged: function(event) {
-        var data = event.data;
-        console.log('onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ', ' + data.field5 + ')');
-    }
+    onCellValueChanged: onCellValueChanged,
+    onRowValueChanged: onRowValueChanged
 };
+
+function onCellValueChanged(event) {
+    console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
+}
+
+function onRowValueChanged(event) {
+    var data = event.data;
+    console.log('onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ', ' + data.field5 + ')');
+}
 
 function getRowData() {
     var rowData = [];
