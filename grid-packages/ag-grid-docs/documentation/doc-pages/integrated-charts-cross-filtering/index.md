@@ -10,9 +10,9 @@ automatically filters values in both the grid and other cross-filter charts.
 
 This built-in feature of integrated charts is particularly useful for creating interactive reports and dashboards.
 
-## Creating cross-filter charts 
+## Creating cross-filter charts
 
-Cross-Filter charts are created programmatically using `createCrossFilterChart()` on the grid's API. 
+Cross-Filter charts are created programmatically using `createCrossFilterChart()` on the grid's API.
 
 The following snippet shows how a cross-filtering pie chart can be created:
 
@@ -31,10 +31,10 @@ Note in the snippet above that the `sale` values are aggregated by the `salesRep
 A corresponding column configuration for the chart above is shown in the following snippet:
 
 <snippet>
-const gridOptions = {       
+const gridOptions = {
     columnDefs: [
         { field: 'salesRep', filter: 'agSetColumnFilter', chartDataType: 'category' },
-        { field: 'sale', chartDataType: 'series' },        
+        { field: 'sale', chartDataType: 'series' },
     ],
 }
 </snippet>
@@ -47,14 +47,13 @@ The following example shows how to create a simple cross-filtering pie chart. No
 - **Click** on a sector of the pie chart to filter rows in the grid by the selected sales rep.
 - **Ctrl (Cmd) Click** on another sector to additionally adds rows corresponding to the selected sales rep.
 - **Click Chart Background** to remove / reset the filtering in the grid to restore all rows in the grid.
- 
-<grid-example title='Simple Cross-Filter' name='simple-cross-filter' type='generated' options='{ "exampleHeight": 680, "enterprise":  true }'></grid-example>  
 
+<grid-example title='Simple Cross-Filter' name='simple-cross-filter' type='generated' options='{ "exampleHeight": 680, "enterprise":  true }'></grid-example>
 
-## Cross-filter API 
+## Cross-filter API
 
-The cross-filter api shares a similar api to [Range Chart](../integrated-charts-api/#range-charts), however there are 
-different defaults which make sense for cross-filtering.  
+The cross-filter api shares a similar api to [Range Chart](../integrated-charts-api/#range-charts), however there are
+different defaults which make sense for cross-filtering.
 
 ```ts
 function createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined;
@@ -64,7 +63,7 @@ function createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef 
 
 ## Cross-filter Chart Types
 
-The following examples show the different chart types that support cross-filtering: 
+The following examples show the different chart types that support cross-filtering:
 
 ### Example: Sales Dashboard #1
 
