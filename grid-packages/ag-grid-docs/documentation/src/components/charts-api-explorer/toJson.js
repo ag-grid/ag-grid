@@ -1,6 +1,11 @@
+const path = require('path');
+const root = path.resolve(__dirname, '../../');
+
+require('app-module-path').addPath(root);
+
 require("@babel/register")({
     presets: ["@babel/env", "@babel/react"],
-    plugins: ["babel-plugin-transform-scss", "css-modules-transform"]
+    plugins: ["babel-plugin-transform-scss", "css-modules-transform"],
 });
 
 const fs = require('fs');
