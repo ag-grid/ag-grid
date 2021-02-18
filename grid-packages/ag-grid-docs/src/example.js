@@ -280,6 +280,7 @@ var gridOptions = {
     // columnDefs: [],
     // singleClickEdit: true,
     // suppressClickEdit: true,
+    // suppressClipboardApi: true,
     enterMovesDownAfterEdit: true,
     enterMovesDown: true,
     // domLayout: 'autoHeight',
