@@ -35,8 +35,8 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
     const exampleInfo = useMemo(
-        () => getExampleInfo(nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact),
-        [nodes, library, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact]
+        () => getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, exampleImportType),
+        [nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, exampleImportType]
     );
 
     if (isServerSideRendering()) {
@@ -47,20 +47,25 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
             // 1. Modules version - this is saved already as it is the default
 
             // 2. Packages version
-            const packagesExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, 'packages', useFunctionalReact);
+            const packagesExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, 'packages');
 
             writeIndexHtmlFile(packagesExampleInfo);
 
             // 3. For React, the functional versions (because classic is the default)
             if (framework === 'react' && library === 'grid') {
-                const functionalModulesExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, 'modules', true);
+                const functionalModulesExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, true, 'modules');
 
                 writeIndexHtmlFile(functionalModulesExampleInfo);
 
-                const functionalPackagesExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, 'packages', true);
+                const functionalPackagesExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, true, 'packages');
 
                 writeIndexHtmlFile(functionalPackagesExampleInfo);
             }
+        } else if (type === 'multi' && framework === 'react') {
+            // Also generate the functional React version
+            const functionalExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, true);
+
+            writeIndexHtmlFile(functionalExampleInfo);
         }
     }
 
