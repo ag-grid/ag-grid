@@ -261,19 +261,15 @@ The following example demonstrates this approach in action:
 
 ## Filtering
 
-Aggregations work on filtered values only. If a filter removes rows from a group, the aggregation for the group
-is recalculated to consider only rows remaining after the filter is applied.
+Aggregations work on filtered values only. If a filter removes rows from a group, the aggregation for the group is recalculated to consider only rows remaining after the filter is applied.
 
-To override this and always have aggregated values include filtered values (thus the aggregated values done change
-as filters are applied) set the grid property `suppressAggFilteredOnly`.
+To override this and always have aggregated values include filtered values (so the aggregated values don't change as filters are applied) set the grid property `suppressAggFilteredOnly`.
 
-In the example below, `suppressAggFilteredOnly` is not set. 
-Note that the Year column has a filter. As the filter changes, the aggregation values change.
+In the first example below, `suppressAggFilteredOnly` is **not** set. Note that the Year column has a filter. As the filter changes, the aggregation values change.
 
 <grid-example title='Aggregation and Filters' name='filters' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu"] }'></grid-example>
 
-In the example below, `suppressAggFilteredOnly=true`. 
-Note that the Year column has a filter. As the filter changes, the aggregation values **do not** change.
+In this next example, `suppressAggFilteredOnly=true`. Note that the Year column has a filter. As the filter changes, the aggregation values **do not** change.
 
 <grid-example title='Suppress Filtered Only' name='suppress-filtered-only' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu"] }'></grid-example>
 
@@ -299,7 +295,6 @@ Using `colDef.aggFunc` is the preferred way of doing aggregations. However you m
 | if you cannot achieve what you want as it will make your code more complex. Also note that `groupRowAggNodes`
 | will not work when pivoting.
 
-
 For groups, when aggregating, the grid stores the results in the colId of the column. For example, if you have a group defined as follows:
 
 <snippet>
@@ -316,7 +311,7 @@ const gridOptions = {
 
 Then the result of the aggregation will be stored in `data.aaa` and not in 'abby'. Most of the time this will not matter for you as the colId, if not provided, will default to the field. In order for the grid to display the aggregation result, it must be stored in the correct field name.
 
-Below shows an  example using `groupRowAggNodes`. The example doesn't represent a real world scenario, it's contrived for demonstration. It takes the number of medals as inputs and creates two outputs, one as a normal sum and another by multiplying the result by Math.PI.
+Below shows an  example using `groupRowAggNodes`. The example doesn't represent a real world scenario, it's contrived for demonstration. It takes the number of medals as inputs and creates two outputs, one as a normal sum and another by multiplying the result by `Math.PI`.
 
 <grid-example title='Custom Full Row Aggregation' name='custom-full-row-aggregation' type='generated' options='{ "enterprise": true, "exampleHeight": 620, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 
@@ -331,5 +326,4 @@ The empty aggregation calls happen in the following two scenarios:
 
 ## Recomputing Aggregates
 
-If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates
-through the api method `refreshClientSideRowModel('aggregate')`.
+If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates through the API method `refreshClientSideRowModel('aggregate')`.

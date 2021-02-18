@@ -1,5 +1,6 @@
 ---
 title: "Using AG Grid with AMD"
+frameworks: ["javascript"]
 ---
 
 We walk through the main steps required when using AG Grid with AMD.

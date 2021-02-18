@@ -6,6 +6,7 @@
 |
 |The editor interface is as follows:
 |
+|```
 |interface {
 |
 |    // Should return the final value to the grid, the result of the editing
@@ -35,3 +36,4 @@
 |    // If doing full row edit, then gets called when tabbing out of the cell.
 |    focusOut?(): boolean;
 |}
+|```

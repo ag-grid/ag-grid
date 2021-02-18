@@ -31,19 +31,22 @@
     "title": "Angular Support",
     "module": "@ag-grid-community/angular",
     "framework": true,
-    "exported": "Angular Support"
+    "exported": "Angular Support",
+    "angular": true
   },
   {
     "title": "React Support",
     "module": "@ag-grid-community/react",
     "framework": true,
-    "exported": "React Support"
+    "exported": "React Support",
+    "react": true
   },
   {
     "title": "Vue Support",
     "module": "@ag-grid-community/vue",
     "framework": true,
-    "exported": "Vue Support"
+    "exported": "Vue Support",
+    "vue": true
   },
   {
     "title": "All Community & Enterprise Modules <sup>(!)</sup><enterprise-icon></enterprise-icon>",

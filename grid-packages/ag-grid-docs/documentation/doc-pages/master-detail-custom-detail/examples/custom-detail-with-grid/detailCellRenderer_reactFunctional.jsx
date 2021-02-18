@@ -24,7 +24,7 @@ const DetailCellRenderer = ({ data, node, api }) => {
 
   const defaultColDef = {
     flex: 1,
-    minWidth: 150
+    minWidth: 120
   };
 
   const onGridReady = params => {

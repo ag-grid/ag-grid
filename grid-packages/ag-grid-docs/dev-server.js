@@ -1,9 +1,8 @@
 const os = require('os');
-const fs = require('fs');
+const fs = require('fs-extra');
 const cp = require('child_process');
 const glob = require('glob');
 const resolve = require('path').resolve
-const rimraf = require('rimraf');
 const express = require('express');
 const realWebpack = require('webpack');
 const proxy = require('express-http-proxy');
@@ -17,7 +16,6 @@ const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss } = requir
 const flattenArray = array => [].concat.apply([], array);
 
 const lnk = require('lnk').sync;
-const mkdirp = require('mkdir-p').sync;
 
 const EXPRESS_PORT = 8080;
 const PHP_PORT = 8888;
@@ -136,14 +134,15 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
     // we delete the _dev folder each time we run now as we're constantly adding new modules etc
     // this saves us having to manually delete _dev each time
     if (fs.existsSync('_dev')) {
-        rimraf.sync("_dev");
+        fs.removeSync('_dev');
     }
 
-    mkdirp('_dev/');
-    mkdirp('_dev/@ag-grid-community/');
-    mkdirp('_dev/@ag-grid-enterprise/');
+    fs.ensureDirSync('_dev/');
+    fs.ensureDirSync('_dev/@ag-grid-community/');
+    fs.ensureDirSync('_dev/@ag-grid-enterprise/');
 
     let linkType = 'symbolic';
+
     if (WINDOWS) {
         console.log('creating window links...');
         linkType = 'junction';
@@ -234,7 +233,7 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
 
 const exampleDirMatch = new RegExp('src/([\-\\w]+)/');
 
-function regenerateDocumentationExamplesForFileChange(file) {
+async function regenerateDocumentationExamplesForFileChange(file) {
     let scope;
 
     try {
@@ -244,7 +243,7 @@ function regenerateDocumentationExamplesForFileChange(file) {
     }
 
     if (scope) {
-        generateDocumentationExamples(scope, file);
+        await generateDocumentationExamples(scope, file);
     }
 }
 

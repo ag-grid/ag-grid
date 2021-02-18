@@ -23,7 +23,12 @@ The below table summarizes the modules provided in the AG Grid Community and AG 
 Note that neither `@ag-grid-community/all-modules` nor `@ag-grid-enterprise/all-modules` contain
 framework support - if you require framework support you need to explicitly specify it:
 
-<matrix-table src='modules/modules.json' columns='{ "title": "", "module": "Framework Module", "exported": "Exported" }' stringonly="true" showcondition="in(framework)"></matrix-table>
+[[only-angular]]
+|<matrix-table src='modules/modules.json' columns='{ "title": "", "module": "Framework Module", "exported": "Exported" }' stringonly="true" showcondition="in(angular)"></matrix-table>
+[[only-react]]
+|<matrix-table src='modules/modules.json' columns='{ "title": "", "module": "Framework Module", "exported": "Exported" }' stringonly="true" showcondition="in(react)"></matrix-table>
+[[only-vue]]
+|<matrix-table src='modules/modules.json' columns='{ "title": "", "module": "Framework Module", "exported": "Exported" }' stringonly="true" showcondition="in(vue)"></matrix-table>
 
 ### All Modules Bundles
 

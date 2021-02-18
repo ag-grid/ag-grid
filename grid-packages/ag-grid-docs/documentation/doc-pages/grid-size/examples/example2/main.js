@@ -57,21 +57,23 @@ function onFirstDataRendered(params) {
 
 function onGridSizeChanged(params) {
     // get the height of the grid body - this excludes the height of the headers
-    var gridHeight = document.getElementsByClassName('ag-body-viewport')[0].offsetHeight;
+    const bodyViewport = document.querySelector('.ag-body-viewport');
+    if (!bodyViewport) { return; }
 
+    var gridHeight = bodyViewport.clientHeight;
     // get the rendered rows
-    var renderedRows = params.api.getRenderedNodes();
+    var renderedRowCount = params.api.getDisplayedRowCount();
 
     // if the rendered rows * min height is greater than available height, just just set the height
     // to the min and let the scrollbar do its thing
-    if (renderedRows.length * minRowHeight >= gridHeight) {
+    if (renderedRowCount * minRowHeight >= gridHeight) {
         if (currentRowHeight !== minRowHeight) {
             currentRowHeight = minRowHeight;
             params.api.resetRowHeights();
         }
     } else {
         // set the height of the row to the grid height / number of rows available
-        currentRowHeight = Math.floor(gridHeight / renderedRows.length);
+        currentRowHeight = Math.floor(gridHeight / renderedRowCount);
         params.api.resetRowHeights();
     }
 }

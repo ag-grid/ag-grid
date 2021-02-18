@@ -1,4 +1,4 @@
-function DetailCellRenderer() {}
+function DetailCellRenderer() { }
 
 DetailCellRenderer.prototype.init = function(params) {
   this.params = params;
@@ -23,7 +23,7 @@ DetailCellRenderer.prototype.setupDetailGrid = function() {
     ],
     defaultColDef: {
       flex: 1,
-      minWidth: 150
+      minWidth: 120
     },
     rowData: this.params.data.callRecords
   };
@@ -50,9 +50,9 @@ DetailCellRenderer.prototype.getTemplate = function() {
   var template =
     '<div class="full-width-panel">' +
     '  <div class="full-width-details">' +
-    '    <div class="full-width-detail"><b>Name: </b>'+data.name+'</div>' +
-    '    <div class="full-width-detail"><b>Account: </b>'+data.account+'</div>' +
-    '  </div>'+
+    '    <div class="full-width-detail"><b>Name: </b>' + data.name + '</div>' +
+    '    <div class="full-width-detail"><b>Account: </b>' + data.account + '</div>' +
+    '  </div>' +
     '  <div class="full-width-grid ag-theme-alpine"></div>' +
     '</div>';
 

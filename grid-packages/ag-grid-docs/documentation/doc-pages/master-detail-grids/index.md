@@ -19,13 +19,9 @@ The Grid Options JSON is provided to the Detail Grid using the parameter `detail
 
 The example below shows configuring a Detail Grid with some additional Grid Options set. Note the following:
 
-
 - The `detailGridOptions` is provided inside the `detailCellRendererParams`.
-
-- The Detail Grid Options has the following properties set: `rowSelection=multiple`, `suppressRowClickSelection=true`, `enableRangeSelection=true`, `enableRangeSelection=true`, `pagination=true` and `paginationAutoPageSize=true`.
-
+- The Detail Grid Options has the following properties set: `rowSelection=multiple`, `suppressRowClickSelection=true`, `enableRangeSelection=true`, `pagination=true` and `paginationAutoPageSize=true`.
 - The Detail Grid Options is provided with a Default Column Definition (`defaultColDef`) that makes all columns sortable and use Flex for sizing.
-
 - The first Column Definition is configured to use Checkbox Selection.
 
 <grid-example title='Detail Grid Options' name='grid-options' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel", "range"] }'></grid-example>
@@ -63,7 +59,6 @@ Below shows an example using `setTimeout()` to simulate lazying loading of data 
 
 There will be many instances of Detail Grids within one Master Grid, as each time you expand a Master Row, a new Detail Grid instance is created. It is possible to dynamically create Detail Cell Renderer Params so each Detail Grid gets it's own version of the params, allowing each Detail Grid to be configured differently.
 
-
 This is done by providing a function to `detailCellRendererParams` that in turn returns the params to use for that Detail Grid.
 
 Below shows an example of this, where the Detail Grids are configured with different columns. Note the following:
@@ -72,7 +67,6 @@ Below shows an example of this, where the Detail Grids are configured with diffe
 - Expanding all other rows will use a detail grid with the columns {Call ID, Direction, Duration, Switch Code}.
 
 <grid-example title='Dynamic Params' name='dynamic-params' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
-
 
 ## Changing the Template
 
@@ -96,9 +90,7 @@ For comparison, the default template is as follows. It is simplistic, only inten
 
 To change the Detail Template, set the `template` inside the Detail Cell Renderer Params. The Detail Template can be a String or Function depending on whether you want to provide the template statically or dynamically:
 
-
-- **String Template** - Statically overrides the template used by the grid. The same fixed template is used for each row. This is useful for styling
-or generic information.
+- **String Template** - Statically overrides the template used by the grid. The same fixed template is used for each row. This is useful for styling or generic information.
 
     ```js
     // example override using string template
@@ -111,8 +103,7 @@ or generic information.
     }
     ```
 
-- **Function Template** - Called each time a detail row is shown to dynamically provide a template based on
-the data. Useful for displaying information specific to the Detail Grid dataset
+- **Function Template** - Called each time a detail row is shown to dynamically provide a template based on the data. Useful for displaying information specific to the Detail Grid dataset
 
     ```js
     // override using template callback
@@ -133,8 +124,8 @@ The following two examples demonstrate both approaches.
 
 In this first example, the template is set statically. Note the following:
 
-- All Detail Grid's have a spacing with blue background.
-- All Detail Grid's have the same static title 'Call Details'.
+- All Detail Grids have a spacing with blue background.
+- All Detail Grids have the same static title 'Call Details'.
 
 <grid-example title='Customising via String Template' name='string-template-customisation' type='generated' options='{ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
@@ -142,8 +133,8 @@ In this first example, the template is set statically. Note the following:
 
 In this second example, the template is set dynamically. Note the following:
 
-- All Detail Grid's have a spacing with blue background.
-- All Detail Grid's have the a different dynamic title including the persons name eg 'Mila Smith'.
+- All Detail Grids have a spacing with blue background.
+- All Detail Grids have the a different dynamic title including the persons name e.g. 'Mila Smith'.
 
 <grid-example title='Customising via Template Callback' name='template-callback-customisation' type='generated' options='{ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
@@ -177,12 +168,12 @@ The Detail Grid Info objects are accessed via the Master Grid's API via the foll
     detailGridInfo.api.flashCells();
     </snippet>
 
-    The grid generates ID's for detail grids by prefixing the parent row's ID with `detail_`. For example if the ID of the expanded Master Row is "88", then the ID of the Detail Grid / row will be "detail_88".
+    The grid generates IDs for detail grids by prefixing the parent row's ID with `detail_`. For example if the ID of the expanded Master Row is "88", then the ID of the Detail Grid / row will be "detail_88".
 
 - `forEachDetailGridInfo(callback)`: Calls the callback for each existing instance of a Detail Grid.
 
     <snippet>
-    // iterate over all DetailGridInfo's, and call stopEditing() on each one
+    // iterate over all DetailGridInfos, and call stopEditing() on each one
     gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
         detailGridInfo.api.flashCells();
     });
@@ -190,11 +181,10 @@ The Detail Grid Info objects are accessed via the Master Grid's API via the foll
 
 The following example shows flashing cells on the detail grids by using the Grid API `flashCells()`. Note the following:
 
-
 - The example is made more compact by a) setting Detail Row Height to 200 pixels and b) setting CSS to reduce padding around the Detail Grid.
 - The callback `getRowNodeId` is implemented in the Master Grid to give each row an ID. In this instance the `account` attribute is used.
 - Button 'Flash Mila Smith' uses `getDetailGridInfo` to get access to the Grid API for the Mila Smith Detail Grid.
-- Button 'Flash All' uses `forEachDetailGridInfo` to access all existing Detail Grid's.
+- Button 'Flash All' uses `forEachDetailGridInfo` to access all existing Detail Grids.
 
 <grid-example title='Detail Grid API' name='detail-grid-api' type='generated' options='{ "enterprise": true, "exampleHeight": 535, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
@@ -209,11 +199,8 @@ To prevent losing the context of Details Rows, the grid provides two properties 
 The example below demonstrates keeping Detail Rows. Note the following:
 
 - The Master Grid has property `keepDetailRows=true` to turn on keeping Detail Rows.
-
 - The Master Grid has property `keepDetailRowsCount=2` which sets the number of Details Rows to keep to 2.
-
 - All the Detail Grids allow moving and sorting columns. If you change the state of a Detail Grid (e.g. by sorting a Detail Grid), that state will be kept if you close the Parent Row and then open the Parent Row again.
-
 - The maximum number of Detail Rows kept is two. If you open three Detail Rows and apply sorting on each Detail Grid, then close all three Detail Rows (so none are showing) and then open all three again, only two of them will have the sort state kept.
 
 <grid-example title='Keep Detail Rows' name='keep-detail-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "masterdetail", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
@@ -227,4 +214,3 @@ The full list of Detail Cell Renderer Params are as follows:
 The pattern of setting components such as Cell Renderers and providing parameters to those components is consistent across the grid and explained in [Grid Components](../components/).
 
 As with all components, the parameters object (in this case `detailCellRendererParams`) can either be a JSON Object, or it can be a function that returns a JSON Object. The latter allows providing different parameters for each Detail Grid, allowing Detail Grids to be configured differently.
-

@@ -1,5 +1,6 @@
 ---
 title: "Angular - Building with SystemJS"
+frameworks: ["angular"]
 ---
 
 We document the main steps required when using SystemJS and SystemJS-Builder below, but please
@@ -454,5 +455,5 @@ see the documentation for those projects.
 
 - Get started with Angular Grid in 5 minutes in our [guide](../getting-started/).
 
-- Please take a look at the [components](../framework-components/) section next for more detailed information on using Angular with AG Grid.
+- Please take a look at the [components](../components/) section next for more detailed information on using Angular with AG Grid.
 
