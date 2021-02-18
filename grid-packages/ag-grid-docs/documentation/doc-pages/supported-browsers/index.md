@@ -12,8 +12,9 @@ We test against all the browser below. However we also work with other less comm
 The officially supported desktop browsers are as follows:
 
 <style>
-    img {
+    table img {
         width: 24px;
+        margin-right: 0.5em;
     }
 </style>
 
