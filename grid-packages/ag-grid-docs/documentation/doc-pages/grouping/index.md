@@ -36,7 +36,7 @@ As you can see in the example below, as soon as there is at least one active row
 
 - Sorting works out of the box in the group column. You can test this by clicking on the group column header.
 
-- The country and sport columns used for grouping are still shown as normal. You can hide them by adding `hide: true` to their `colDef` as illustrated in the Multi Auto Column example.
+- The country and year columns used for grouping are still shown as normal. You can hide them by adding `hide: true` to their `colDef` as illustrated in the Multi Auto Column example.
 
 <grid-example title='Auto Column Group' name='auto-column-group' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 
@@ -50,7 +50,7 @@ The grid also lets you automatically create one column for each individual group
 
 - Sorting works out of the box in each of these group column. You can test this by clicking on the group column header.
 
-- The country and sport columns used for grouping are hidden so that we don't show redundant information. This is done by setting `colDef.hide = true`.
+- The country and year columns used for grouping are hidden so that we don't show redundant information. This is done by setting `colDef.hide = true`.
 
 <grid-example title='Multi Auto Column Group' name='multi-auto-column-group' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
