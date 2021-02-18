@@ -129,7 +129,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
             <div className={styles['example-runner__content']}>
                 <VisibilitySensor partialVisibility={true}>
                     {({ isVisible }) =>
-                        <ExampleRunnerResult isActive={!showCode} isVisible={isVisible} exampleInfo={exampleInfo} />
+                        <ExampleRunnerResult resultFrameIsVisible={!showCode} isOnScreen={isVisible} exampleInfo={exampleInfo} />
                     }
                 </VisibilitySensor>
                 <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
