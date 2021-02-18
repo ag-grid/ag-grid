@@ -110,7 +110,7 @@ If pivoting and a filter changes then the set of secondary columns is recalculat
 
 You can change the filter on primary columns using the API at all times, regardless of what columns (primary or secondary) are displayed in the grid.
 
-Below demonstrates the impact of changing filter on pivoting. The pivot is executed on rowData after the filter is complete. Notice that the last option, 'USA and Canada Equestrian' has no 'Canada' in the result as there is no records for Canada and Equestrian.
+Below demonstrates the impact of changing filter on pivoting. The pivot is executed on rowData after the filter is complete.
 
 Filters always belong to primary columns. When in pivot mode, filters are not accessible through the column menu (as secondary columns are used), however filters can always be accessed through the filters tool panel.
 
