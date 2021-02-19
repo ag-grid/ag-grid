@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { withPrefix } from 'gatsby';
-import { getHeaderTitle, getFrameworkName } from 'utils/page-header';
+import { getHeaderTitle } from 'utils/page-header';
 import fwLogos from 'images/fw-logos';
 import supportedFrameworks from 'utils/supported-frameworks';
 import MenuView from 'components/menu-view/MenuView';
@@ -41,6 +41,41 @@ const flatRenderItems = (items, framework) => {
 
 const panelItemsFilter = (pane, framework) => data => ((data.frameworks && data.frameworks.indexOf(framework) !== -1) || !data.frameworks) && data.pane === pane;
 
+const urlMap = {
+    javascript: {
+        'video-tutorial': 'https://youtu.be/KS-wg5zfCXc',
+        'example': 'https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview'
+    },
+    angular: {
+        'video-tutorial': 'https://youtu.be/AeEfiWAGyLc',
+        'example': 'https://stackblitz.com/edit/ag-grid-angular-hello-world',
+        'thinkster': 'https://thinkster.io/tutorials/fundamentals-of-ag-grid-with-angular'
+    },
+    react: {
+        'video-tutorial': 'https://youtu.be/6PA45adHun8',
+        'example': 'https://stackblitz.com/edit/ag-grid-react-hello-world',
+        'thinkster': 'https://thinkster.io/tutorials/using-ag-grid-with-react-getting-started'
+    },
+    vue: {
+        'video-tutorial': 'https://youtu.be/eW3qCti1lsA',
+        'example': 'https://stackblitz.com/edit/ag-grid-vue-hello-world'
+    }
+}
+
+const parseGettingStartedUrl = (url, framework) => {
+    const match = url.match(/{(\w+-?\w*)}/);
+    if (match) {
+        return {
+            href: urlMap[framework][match[1]],
+            target: '_blank',
+            rel: 'noreferrer'
+        }
+    }
+    return {
+        href: withPrefix(url.replace('../', `/${framework}/`))
+    };
+}
+
 const GettingStartedPane = ({ framework, data }) => {
     const linksToRender = flatRenderItems(data, framework);
     const numberOfColumns = Math.ceil(linksToRender.length / 5);
@@ -60,7 +95,7 @@ const GettingStartedPane = ({ framework, data }) => {
                 style={{ gridTemplateColumns: `repeat(${numberOfColumns}, 1fr)` }}>
                 {linksToRender.map(link => <a
                     key={link.title}
-                    href={withPrefix(link.url.replace('../', `/${framework}/`))}>{link.title}</a>)}
+                    {...parseGettingStartedUrl(link.url, framework)}>{link.title}</a>)}
             </div>
         </div>
     );
@@ -84,22 +119,10 @@ const GettingStarted = ({ framework, data }) => {
 const HomePage = ({ pageContext: { framework } }) => {
     // basics / getting started
     const gettingStartedItems = menuData[0].items[0].items;
-    const frameworkName = getFrameworkName(framework);
 
     return (
         <div className={styles['docs-home']}>
             <Helmet title={getHeaderTitle('Documentation', framework)} />
-            <div className={styles['docs-home__intro']}>
-                <h1>AG Grid: {frameworkName} Documentation</h1>
-                <p>
-                    The performance, feature set and quality of AG Grid has not been seen before in
-                    a {frameworkName} datagrid. Many features in AG Grid are unique to AG Grid, and simply put AG Grid
-                    into a class of its own, without compromising on quality or performance.
-                </p>
-                <p>
-                    Our documentation will help you to get up and running with the best {frameworkName} grid in the world.
-                </p>
-            </div>
             <GettingStarted framework={framework} data={gettingStartedItems} />
             <MenuView framework={framework} data={menuData} />
         </div>

@@ -12,6 +12,29 @@
             "pane": "left"
           },
           {
+            "title": "Video Tutorial",
+            "url": "{video-tutorial}",
+            "pane": "left"
+          },
+          {
+            "title": "Plunkr Example",
+            "url": "{example}",
+            "frameworks": ["javascript"],
+            "pane": "left"
+          },
+          {
+            "title": "Stackblitz Example",
+            "url": "{example}",
+            "frameworks": ["angular", "react", "vue"],
+            "pane": "left"
+          },
+          {
+            "title": "Thinkster Course",
+            "url": "{thinkster}",
+            "frameworks": ["angular", "react"],
+            "pane": "left"
+          },
+          {
             "title": "AngularJS",
             "url": "../angularjs/",
             "frameworks": [
