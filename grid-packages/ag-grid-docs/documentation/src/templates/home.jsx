@@ -7,12 +7,12 @@ import MenuView from 'components/menu-view/MenuView';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './home.module.scss';
 
-const backgroundColor = {
-    javascript: '#f8df1e',
-    angular: '#1976d3',
-    react: '#282c34',
-    vue: '#50c297'
-};
+// const backgroundColor = {
+//     javascript: '#f8df1e',
+//     angular: '#1976d3',
+//     react: '#282c34',
+//     vue: '#50c297'
+// };
 
 const processedLogos = (() => ({
     ...logos,
@@ -79,13 +79,12 @@ const getLogo = (name, framework) => {
 
 const GettingStartedPane = ({ framework, data }) => {
     const linksToRender = flatRenderItems(data, framework);
-    debugger;
     return (
         <div className={styles['docs-home__getting-started__item_pane']}>
             {linksToRender.map(link => {
                 const parsedLink = parseGettingStartedUrl(link.url, framework);
                 return (
-                    <div className={styles['docs-home__getting-started__item']}>
+                    <div key={`${framework}_${link.title.replace(/\s/g,'').toLowerCase()}`} className={styles['docs-home__getting-started__item']}>
                         <a {...parsedLink} className={styles['docs-home__getting-started__item_logo']}>
                             <img src={ getLogo(link.icon, framework) } alt={link.title}></img>
                         </a>
