@@ -1,9 +1,9 @@
 import React from 'react';
 import { formatJson } from './utils.jsx';
-import { CodeSnippet } from './CodeSnippet.jsx';
-import styles from './Code.module.scss';
+import Code from '../Code.jsx';
+import styles from './CodeView.module.scss';
 
-export const Code = ({ framework, options }) => {
+export const CodeView = ({ framework, options }) => {
     const codeMap = {
         javascript: VanillaCode,
         angular: AngularCode,
@@ -46,18 +46,18 @@ const VanillaCode = ({ options }) => {
 
     lines.unshift('// create new chart', `chart = AgChart.create(${formatJson(options)});`);
 
-    return <CodeSnippet lines={lines} />;
+    return <Code code={lines} />;
 };
 
-const ReactCode = ({ options }) => <CodeSnippet lines={[`const options = ${formatJson(options)};`, '', '<AgChartsReact options={options} />']} language='jsx' />;
+const ReactCode = ({ options }) =>
+    <Code code={[`const options = ${formatJson(options)};`, '', '<AgChartsReact options={options} />']} language='jsx' />;
 
-const AngularCode = ({ options }) => <React.Fragment>
-    <CodeSnippet lines={[`const options = ${formatJson(options)};`]} />
-    <CodeSnippet lines={['<ag-charts-angular [options]="options">', '</ag-charts-angular>']} language='html' />
-</React.Fragment>;
+const AngularCode = ({ options }) => <>
+    <Code code={[`const options = ${formatJson(options)};`]} />
+    <Code code={['<ag-charts-angular [options]="options">', '</ag-charts-angular>']} language='html' />
+</>;
 
-
-const VueCode = ({ options }) => <React.Fragment>
-    <CodeSnippet lines={[`const options = ${formatJson(options)};`]} />
-    <CodeSnippet lines={['<ag-charts-vue :options="options"></ag-charts-vue>']} language='html' />
-</React.Fragment>;
+const VueCode = ({ options }) => <>
+    <Code code={[`const options = ${formatJson(options)};`]} />
+    <Code code={['<ag-charts-vue :options="options"></ag-charts-vue>']} language='html' />
+</>;
