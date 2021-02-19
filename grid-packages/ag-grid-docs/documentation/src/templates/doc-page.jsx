@@ -83,7 +83,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
         <h1 id="top" className={classnames(styles['doc-page__title'], { [styles['doc-page__title--enterprise']]: page.frontmatter.enterprise })}>{title}</h1>
         {renderAst(ast)}
       </div>
-      <SideMenu headings={page.headings || []} pageName={pageName} hideMenu={() => setShowSideMenu(false)} />
+      <SideMenu headings={page.headings || []} pageName={pageName} pageTitle={title} hideMenu={() => setShowSideMenu(false)} />
     </div>
   );
 };

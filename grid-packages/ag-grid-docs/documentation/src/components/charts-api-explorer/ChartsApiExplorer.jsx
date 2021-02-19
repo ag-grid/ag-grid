@@ -3,7 +3,7 @@ import { getTemplates } from './templates.jsx';
 import { Chart } from './Chart.jsx';
 import { Options } from './Options.jsx';
 import { ChartTypeSelector } from './ChartTypeSelector.jsx';
-import { Code } from './Code.jsx';
+import { CodeView } from './CodeView.jsx';
 import styles from './ChartsApiExplorer.module.scss';
 
 const createOptionsJson = (chartType, options) => {
@@ -195,7 +195,7 @@ export const ChartsApiExplorer = ({ framework }) => {
                 </div>
                 <div className={styles['explorer-container__right']}>
                     <div className={styles['explorer-container__chart']}><Chart options={optionsJson} /></div>
-                    <div className={styles['explorer-container__code']}><Code framework={framework} options={optionsJson} /></div>
+                    <div className={styles['explorer-container__code']}><CodeView framework={framework} options={optionsJson} /></div>
                 </div>
             </div>
         </div>

@@ -13,7 +13,7 @@ import { SolarDark } from "./themes/solarDark";
 import { VividLight } from "./themes/vividLight";
 import { VividDark } from "./themes/vividDark";
 import { find } from "../util/array";
-import { getValue, isObject } from "../util/object";
+import { deepMerge, getValue, isObject } from "../util/object";
 import {
     AgCartesianChartOptions,
     AgChartOptions,
@@ -240,7 +240,13 @@ function create(options: any, path?: string, component?: any, theme?: ChartTheme
                                             if (after.length) {
                                                 modifiedPath += '.' + after.join('.');
                                             }
-                                            return theme.getConfig(modifiedPath);
+                                            const config = theme.getConfig(path);
+                                            const modifiedConfig = theme.getConfig(modifiedPath);
+                                            isObject(theme.getConfig(modifiedPath));
+                                            if (isObject(config) && isObject(modifiedConfig)) {
+                                                return deepMerge(config, modifiedConfig);
+                                            }
+                                            return modifiedConfig;
                                         }
                                     };
                                     update(axis, config, path + '.' + key, fakeTheme);

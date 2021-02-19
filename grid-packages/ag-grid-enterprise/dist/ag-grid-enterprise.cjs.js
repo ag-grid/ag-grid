@@ -28975,7 +28975,13 @@ function create(options, path, component, theme) {
                                         if (after.length) {
                                             modifiedPath += '.' + after.join('.');
                                         }
-                                        return theme.getConfig(modifiedPath);
+                                        var config = theme.getConfig(path);
+                                        var modifiedConfig = theme.getConfig(modifiedPath);
+                                        isObject(theme.getConfig(modifiedPath));
+                                        if (isObject(config) && isObject(modifiedConfig)) {
+                                            return deepMerge(config, modifiedConfig);
+                                        }
+                                        return modifiedConfig;
                                     }
                                 };
                                 update(axis, config, path + '.' + key, fakeTheme);

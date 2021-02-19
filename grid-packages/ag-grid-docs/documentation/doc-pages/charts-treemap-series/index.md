@@ -35,6 +35,27 @@ series: [{
 }]
 ```
 
+The `data` should be a tree structure, where parent nodes use the `children` property to list their children:
+
+```js
+let data = {
+    label: 'Root',
+    children: [
+        {
+            label: 'Utilities',
+            children: [{
+                label: 'AWK',
+                size: 252
+            }]
+        },
+        ...
+    ]
+}
+```
+
+Notice, that only the leaf nodes of a tree are required to have the `sizeKey` property.
+The size of the parent nodes will be automatically determined.
+
 The `labelKey`, `sizeKey` and `colorKey` configs can be omitted, if the node objects in your data
 happen to have the `label`, `size` and `color` fields.
 

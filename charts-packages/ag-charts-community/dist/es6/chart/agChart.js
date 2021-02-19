@@ -29,7 +29,7 @@ import { SolarDark } from "./themes/solarDark";
 import { VividLight } from "./themes/vividLight";
 import { VividDark } from "./themes/vividDark";
 import { find } from "../util/array";
-import { getValue, isObject } from "../util/object";
+import { deepMerge, getValue, isObject } from "../util/object";
 import mappings from './agChartMappings';
 var lightTheme = new ChartTheme();
 var darkTheme = new DarkTheme();
@@ -218,7 +218,13 @@ function create(options, path, component, theme) {
                                         if (after.length) {
                                             modifiedPath += '.' + after.join('.');
                                         }
-                                        return theme.getConfig(modifiedPath);
+                                        var config = theme.getConfig(path);
+                                        var modifiedConfig = theme.getConfig(modifiedPath);
+                                        isObject(theme.getConfig(modifiedPath));
+                                        if (isObject(config) && isObject(modifiedConfig)) {
+                                            return deepMerge(config, modifiedConfig);
+                                        }
+                                        return modifiedConfig;
                                     }
                                 };
                                 update(axis, config, path + '.' + key, fakeTheme);

@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
         // set filters
-        { field: 'athlete', filter: 'agSetColumnFilter' },
+        { field: 'athlete', filter: true },
         { field: 'country', filter: 'agSetColumnFilter' },
 
         // number filters

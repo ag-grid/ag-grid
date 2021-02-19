@@ -4,6 +4,7 @@ import features from './features.json';
 import groups from './feature-groups.json';
 import images from 'images/features';
 import styles from './FeatureOverview.module.scss';
+import Code from './Code';
 
 const featureMap = new Map();
 
@@ -31,9 +32,7 @@ const FeatureOverview = () => (
                         </h4>
                         <div className={styles['feature-overview__feature_description']}>
                             <p dangerouslySetInnerHTML={{ __html: feature.description }} />
-                            {feature.snippet && <pre className="language-js">
-                                <code dangerouslySetInnerHTML={{ __html: Prism.highlight(feature.snippet, Prism.languages.javascript) }}></code>
-                            </pre>}
+                            {feature.snippet && <Code code={feature.snippet} language='js' />}
                         </div>
                         <div className={styles['feature-overview__feature_image']}>
                             <a href={feature.url}>

@@ -7,10 +7,6 @@
         margin-left: calc((100% - 300px) / 2 - 730px);
     }
 
-    &__intro {
-        composes: p-3 from global;
-    }
-
     h2 {
         background-color: $grey-2;
         color: $white;
