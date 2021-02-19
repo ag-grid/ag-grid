@@ -6,8 +6,8 @@ const algoliasearch = require('algoliasearch');
 const menu = require('./doc-pages/licensing/menu.json');
 const supportedFrameworks = require('./src/utils/supported-frameworks');
 
-const debug = true;
-const indexNamePrefix = 'ag-grid-dev';
+const debug = false;
+const indexNamePrefix = 'ag-grid';
 
 const { JSDOM } = jsdom;
 
