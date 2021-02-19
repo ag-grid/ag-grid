@@ -1,5 +1,4 @@
 import React from 'react';
-import Prism from 'prismjs';
 import features from './features.json';
 import groups from './feature-groups.json';
 import images from 'images/features';
