@@ -17,7 +17,7 @@
             "pane": "left"
           },
           {
-            "title": "Plunkr Example",
+            "title": "Plunker Example",
             "url": "{example}",
             "frameworks": ["javascript"],
             "pane": "left"
