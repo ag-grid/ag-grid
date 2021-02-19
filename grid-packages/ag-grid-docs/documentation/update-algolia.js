@@ -7,6 +7,7 @@ const menu = require('./doc-pages/licensing/menu.json');
 const supportedFrameworks = require('./src/utils/supported-frameworks');
 
 const debug = true;
+const clearIndices = true;
 const indexNamePrefix = 'ag-grid-dev';
 
 const { JSDOM } = jsdom;
@@ -187,8 +188,11 @@ const processIndexForFramework = async framework => {
         });
 
         try {
-            // reverse records when storing so that content higher up the page is returned first
-            const result = await index.saveObjects(records.reverse());
+            if (clearIndices) {
+                await index.clearObjects();
+            }
+
+            const result = await index.saveObjects(records);
 
             console.log(`Response from Algolia:`, result);
         } catch (e) {
