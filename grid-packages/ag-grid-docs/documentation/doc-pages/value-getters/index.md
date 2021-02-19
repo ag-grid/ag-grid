@@ -176,21 +176,21 @@ to never invalidate. Note the following:
 
 - When the grid initialises, there are 12 value getter calls. The values are getting cached.<p/>
 
-- After you edit a cell, either through the UI or through the API by pressing **'Update One Value'**, 
-  the value getters are not called again, so the total columns are not correctly refreshed. 
-  Because the grid already executed the value getters for this column, it will not do it again, 
+- After you edit a cell, either through the UI or through the API by pressing **'Update One Value'**,
+  the value getters are not called again, so the total columns are not correctly refreshed.
+  Because the grid already executed the value getters for this column, it will not do it again,
   it will instead take values from the value cache.<p/>
 
-- To get the total column to update after edits, press **'Invalidate Value Cache'** 
+- To get the total column to update after edits, press **'Expire Value Cache'**
   (calls grid API `expireValueCache()`) and then press **'Aggregate Data & Refresh Cells'**
   (calls grid API `refreshClientSideRowModel('aggregate')` followed by grid API `refreshCells()`).
 
   The call `refreshClientSideRowModel('aggregate')` is required as aggregations use Value Getters,
   thus the aggregations at group level (that is the two total column at the two group rows) need aggregation
   to be re-run for their values to be updated.
-  
+
   The call `refreshCells()` is required to update the UI, which
   in turn also calls Value Getters.
-  
+
 
 <grid-example title='Never expire Value change' name='never-expire' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping"] }'></grid-example>
