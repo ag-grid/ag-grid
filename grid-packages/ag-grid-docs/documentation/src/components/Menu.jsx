@@ -30,7 +30,7 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
 const MenuGroup = ({ group, currentFramework, isTopLevel = false }) =>
     <ul className={classnames(styles['menu__group'], { [styles['menu__group--top-level']]: isTopLevel })}>
         {group.items
-            .filter(item => !item.frameworks || item.frameworks.includes(currentFramework))
+            .filter(item => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)))
             .map(item => <MenuItem key={item.title} item={item} currentFramework={currentFramework} />)
         }
     </ul>;

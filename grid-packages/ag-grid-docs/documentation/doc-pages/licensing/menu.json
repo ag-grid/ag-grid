@@ -16,12 +16,14 @@
             "title": "Video Tutorial",
             "url": "{video-tutorial}",
             "icon": "youtube",
+            "menuHide": true,
             "pane": "left"
           },
           {
             "title": "Plunker Example",
             "url": "{example}",
             "icon": "plunker",
+            "menuHide": true,
             "frameworks": ["javascript"],
             "pane": "left"
           },
@@ -29,6 +31,7 @@
             "title": "Stackblitz Example",
             "url": "{example}",
             "icon": "stackblitz",
+            "menuHide": true,
             "frameworks": ["angular", "react", "vue"],
             "pane": "left"
           },
@@ -36,6 +39,7 @@
             "title": "Thinkster Course",
             "url": "{thinkster}",
             "icon": "thinkster",
+            "menuHide": true,
             "frameworks": ["angular", "react"],
             "pane": "left"
           },
