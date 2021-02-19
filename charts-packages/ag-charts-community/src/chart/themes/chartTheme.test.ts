@@ -460,8 +460,8 @@ describe('Position specific axis styling', () => {
 
         expect(chart.axes[1].type).toBe('category');
         expect(chart.axes[1].position).toBe('top');
-        expect(chart.axes[1].line.color).toBe(defaultTheme.getConfig('cartesian.axes.category.line.color'));
-        expect(chart.axes[1].label.fontSize).toBe(defaultTheme.getConfig('cartesian.axes.category.label.fontSize'));
+        expect(chart.axes[1].line.color).toBe('red');
+        expect(chart.axes[1].label.fontSize).toBe(12);
     });
 
     test('Partially themed axes', () => {
