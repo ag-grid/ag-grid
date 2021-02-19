@@ -24,6 +24,7 @@ import { ColumnGroup } from "./entities/columnGroup";
 import { Column } from "./entities/column";
 import { addCssClass, removeCssClass, isVisible } from "./utils/dom";
 import { findIndex, last } from "./utils/array";
+import { FocusController } from "./focusController";
 
 export class GridCore extends ManagedFocusComponent {
 
@@ -103,11 +104,11 @@ export class GridCore extends ManagedFocusComponent {
         const eGui = this.getGui();
 
         this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, () => {
-            addCssClass(eGui, 'ag-keyboard-focus');
+            addCssClass(eGui, FocusController.AG_KEYBOARD_FOCUS);
         });
 
         this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, () => {
-            removeCssClass(eGui, 'ag-keyboard-focus');
+            removeCssClass(eGui, FocusController.AG_KEYBOARD_FOCUS);
         });
 
         super.postConstruct();

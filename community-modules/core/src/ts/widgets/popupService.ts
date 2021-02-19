@@ -10,6 +10,7 @@ import { addCssClass, removeCssClass, getAbsoluteHeight, getAbsoluteWidth, conta
 import { forEach, findIndex, last } from '../utils/array';
 import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
+import { FocusController } from "../focusController";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
@@ -72,6 +73,7 @@ export class PopupService extends BeanStub {
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
     @Autowired('environment') private environment: Environment;
+    @Autowired('focusController') private focusController: FocusController;
 
     private gridCore: GridCore;
     private popupList: AgPopup[] = [];
@@ -80,11 +82,11 @@ export class PopupService extends BeanStub {
         this.gridCore = gridCore;
 
         this.addManagedListener(this.gridCore, Events.EVENT_KEYBOARD_FOCUS, () => {
-            forEach(this.popupList, popup => addCssClass(popup.element, 'ag-keyboard-focus'));
+            forEach(this.popupList, popup => addCssClass(popup.element, FocusController.AG_KEYBOARD_FOCUS));
         });
 
         this.addManagedListener(this.gridCore, Events.EVENT_MOUSE_FOCUS, () => {
-            forEach(this.popupList, popup => removeCssClass(popup.element, 'ag-keyboard-focus'));
+            forEach(this.popupList, popup => removeCssClass(popup.element, FocusController.AG_KEYBOARD_FOCUS));
         });
     }
 
@@ -486,6 +488,10 @@ export class PopupService extends BeanStub {
         addCssClass(eWrapper, 'ag-popup');
         addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
         addCssClass(eChild, 'ag-popup-child');
+
+        if (this.focusController.isKeyboardMode()) {
+            addCssClass(eChild, FocusController.AG_KEYBOARD_FOCUS)
+        }
 
         eWrapper.appendChild(eChild);
         ePopupParent.appendChild(eWrapper);
