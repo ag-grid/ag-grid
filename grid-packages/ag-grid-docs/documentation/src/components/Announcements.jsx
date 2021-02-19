@@ -36,15 +36,6 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
             </li>
         </ul>
     </Announcement>
-    <Announcement>
-        <h5 className="card-title">
-            <a href="https://thinkster.io/topics/ag-grid" aria-label="Thinkster"><img alt="Thinkster" style={{ width: '100%' }} src={thinksterPng} /></a>
-        </h5>
-        <p className="card-text">
-            There are free <a href="https://thinkster.io/topics/ag-grid">Thinkster Courses</a> for learning
-            AG Grid with Angular and React.
-        </p>
-    </Announcement>
     <Announcement title="Best Web Grids for 2020" date="Jan 27th">
         <p className="card-text">
             AG Grid is the "Absolute Winner" according
