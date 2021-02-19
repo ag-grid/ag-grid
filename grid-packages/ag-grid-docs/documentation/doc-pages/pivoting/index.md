@@ -142,7 +142,6 @@ The example below demonstrates Pivot Row Totals as follows:
 
 - Pivot Row Totals are positioned before the other pivot group columns using: `gridOption.pivotRowTotals = 'before'`.
 - Pivot Row Totals are added for each of the value columns: 'gold', 'silver' and 'bronze'.
-- Expanding pivot column groups reveals the in the last position as 'after' is used.
 
 <grid-example title='Pivot Row Totals' name='row-totals' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
