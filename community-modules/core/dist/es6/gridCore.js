@@ -32,6 +32,7 @@ import { ModuleRegistry } from "./modules/moduleRegistry";
 import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 import { addCssClass, removeCssClass, isVisible } from "./utils/dom";
 import { findIndex, last } from "./utils/array";
+import { FocusController } from "./focusController";
 var GridCore = /** @class */ (function (_super) {
     __extends(GridCore, _super);
     function GridCore() {
@@ -71,10 +72,10 @@ var GridCore = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
         var eGui = this.getGui();
         this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, function () {
-            addCssClass(eGui, 'ag-keyboard-focus');
+            addCssClass(eGui, FocusController.AG_KEYBOARD_FOCUS);
         });
         this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, function () {
-            removeCssClass(eGui, 'ag-keyboard-focus');
+            removeCssClass(eGui, FocusController.AG_KEYBOARD_FOCUS);
         });
         _super.prototype.postConstruct.call(this);
     };

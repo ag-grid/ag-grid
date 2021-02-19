@@ -16383,6 +16383,7 @@ var TouchListener = /** @class */ (function () {
 /* harmony import */ var _utils_array__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("26c1");
 /* harmony import */ var _utils_event__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("313e");
 /* harmony import */ var _constants_keyCode__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("cb52");
+/* harmony import */ var _focusController__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("959f");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
  * @version v25.1.0
@@ -16415,6 +16416,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
 var PopupService = /** @class */ (function (_super) {
     __extends(PopupService, _super);
     function PopupService() {
@@ -16426,10 +16428,10 @@ var PopupService = /** @class */ (function (_super) {
         var _this = this;
         this.gridCore = gridCore;
         this.addManagedListener(this.gridCore, _events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_KEYBOARD_FOCUS, function () {
-            Object(_utils_array__WEBPACK_IMPORTED_MODULE_4__["forEach"])(_this.popupList, function (popup) { return Object(_utils_dom__WEBPACK_IMPORTED_MODULE_3__["addCssClass"])(popup.element, 'ag-keyboard-focus'); });
+            Object(_utils_array__WEBPACK_IMPORTED_MODULE_4__["forEach"])(_this.popupList, function (popup) { return Object(_utils_dom__WEBPACK_IMPORTED_MODULE_3__["addCssClass"])(popup.element, _focusController__WEBPACK_IMPORTED_MODULE_7__[/* FocusController */ "a"].AG_KEYBOARD_FOCUS); });
         });
         this.addManagedListener(this.gridCore, _events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_MOUSE_FOCUS, function () {
-            Object(_utils_array__WEBPACK_IMPORTED_MODULE_4__["forEach"])(_this.popupList, function (popup) { return Object(_utils_dom__WEBPACK_IMPORTED_MODULE_3__["removeCssClass"])(popup.element, 'ag-keyboard-focus'); });
+            Object(_utils_array__WEBPACK_IMPORTED_MODULE_4__["forEach"])(_this.popupList, function (popup) { return Object(_utils_dom__WEBPACK_IMPORTED_MODULE_3__["removeCssClass"])(popup.element, _focusController__WEBPACK_IMPORTED_MODULE_7__[/* FocusController */ "a"].AG_KEYBOARD_FOCUS); });
         });
     };
     PopupService.prototype.getPopupParent = function () {
@@ -16709,6 +16711,9 @@ var PopupService = /** @class */ (function (_super) {
         Object(_utils_dom__WEBPACK_IMPORTED_MODULE_3__["addCssClass"])(eWrapper, 'ag-popup');
         Object(_utils_dom__WEBPACK_IMPORTED_MODULE_3__["addCssClass"])(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
         Object(_utils_dom__WEBPACK_IMPORTED_MODULE_3__["addCssClass"])(eChild, 'ag-popup-child');
+        if (this.focusController.isKeyboardMode()) {
+            Object(_utils_dom__WEBPACK_IMPORTED_MODULE_3__["addCssClass"])(eChild, _focusController__WEBPACK_IMPORTED_MODULE_7__[/* FocusController */ "a"].AG_KEYBOARD_FOCUS);
+        }
         eWrapper.appendChild(eChild);
         ePopupParent.appendChild(eWrapper);
         if (alwaysOnTop) {
@@ -16912,6 +16917,9 @@ var PopupService = /** @class */ (function (_super) {
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('environment')
     ], PopupService.prototype, "environment", void 0);
+    __decorate([
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('focusController')
+    ], PopupService.prototype, "focusController", void 0);
     PopupService = __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Bean */ "b"])('popupService')
     ], PopupService);
@@ -20632,6 +20640,12 @@ var FocusController = /** @class */ (function (_super) {
     FocusController.toggleKeyboardMode = function (event) {
         var isKeyboardActive = FocusController_1.keyboardModeActive;
         var isKeyboardEvent = event.type === 'keydown';
+        if (isKeyboardEvent) {
+            // the following keys should not toggle keyboard mode.
+            if (event.ctrlKey || event.metaKey || event.altKey) {
+                return;
+            }
+        }
         if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) {
             return;
         }
@@ -20940,6 +20954,7 @@ var FocusController = /** @class */ (function (_super) {
         return false;
     };
     var FocusController_1;
+    FocusController.AG_KEYBOARD_FOCUS = 'ag-keyboard-focus';
     FocusController.keyboardModeActive = false;
     FocusController.instancesMonitored = new Map();
     __decorate([
@@ -24786,6 +24801,7 @@ var AlignedGridsService = /** @class */ (function (_super) {
 /* harmony import */ var _widgets_managedFocusComponent__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e865");
 /* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("683d");
 /* harmony import */ var _utils_array__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("26c1");
+/* harmony import */ var _focusController__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("959f");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
  * @version v25.1.0
@@ -24811,6 +24827,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -24859,10 +24876,10 @@ var GridCore = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
         var eGui = this.getGui();
         this.addManagedListener(this, _events__WEBPACK_IMPORTED_MODULE_2__[/* Events */ "a"].EVENT_KEYBOARD_FOCUS, function () {
-            Object(_utils_dom__WEBPACK_IMPORTED_MODULE_7__["addCssClass"])(eGui, 'ag-keyboard-focus');
+            Object(_utils_dom__WEBPACK_IMPORTED_MODULE_7__["addCssClass"])(eGui, _focusController__WEBPACK_IMPORTED_MODULE_9__[/* FocusController */ "a"].AG_KEYBOARD_FOCUS);
         });
         this.addManagedListener(this, _events__WEBPACK_IMPORTED_MODULE_2__[/* Events */ "a"].EVENT_MOUSE_FOCUS, function () {
-            Object(_utils_dom__WEBPACK_IMPORTED_MODULE_7__["removeCssClass"])(eGui, 'ag-keyboard-focus');
+            Object(_utils_dom__WEBPACK_IMPORTED_MODULE_7__["removeCssClass"])(eGui, _focusController__WEBPACK_IMPORTED_MODULE_9__[/* FocusController */ "a"].AG_KEYBOARD_FOCUS);
         });
         _super.prototype.postConstruct.call(this);
     };

@@ -94,6 +94,12 @@ var FocusController = /** @class */ (function (_super) {
     FocusController.toggleKeyboardMode = function (event) {
         var isKeyboardActive = FocusController_1.keyboardModeActive;
         var isKeyboardEvent = event.type === 'keydown';
+        if (isKeyboardEvent) {
+            // the following keys should not toggle keyboard mode.
+            if (event.ctrlKey || event.metaKey || event.altKey) {
+                return;
+            }
+        }
         if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) {
             return;
         }
@@ -402,6 +408,7 @@ var FocusController = /** @class */ (function (_super) {
         return false;
     };
     var FocusController_1;
+    FocusController.AG_KEYBOARD_FOCUS = 'ag-keyboard-focus';
     FocusController.keyboardModeActive = false;
     FocusController.instancesMonitored = new Map();
     __decorate([

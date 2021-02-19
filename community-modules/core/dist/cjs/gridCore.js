@@ -34,6 +34,7 @@ var moduleRegistry_1 = require("./modules/moduleRegistry");
 var managedFocusComponent_1 = require("./widgets/managedFocusComponent");
 var dom_1 = require("./utils/dom");
 var array_1 = require("./utils/array");
+var focusController_1 = require("./focusController");
 var GridCore = /** @class */ (function (_super) {
     __extends(GridCore, _super);
     function GridCore() {
@@ -73,10 +74,10 @@ var GridCore = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
         var eGui = this.getGui();
         this.addManagedListener(this, events_1.Events.EVENT_KEYBOARD_FOCUS, function () {
-            dom_1.addCssClass(eGui, 'ag-keyboard-focus');
+            dom_1.addCssClass(eGui, focusController_1.FocusController.AG_KEYBOARD_FOCUS);
         });
         this.addManagedListener(this, events_1.Events.EVENT_MOUSE_FOCUS, function () {
-            dom_1.removeCssClass(eGui, 'ag-keyboard-focus');
+            dom_1.removeCssClass(eGui, focusController_1.FocusController.AG_KEYBOARD_FOCUS);
         });
         _super.prototype.postConstruct.call(this);
     };

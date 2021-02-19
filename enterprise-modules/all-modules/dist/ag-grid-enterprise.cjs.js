@@ -31750,1739 +31750,6 @@ var __decorate$$ = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var PopupService = /** @class */ (function (_super) {
-    __extends$14(PopupService, _super);
-    function PopupService() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.popupList = [];
-        return _this;
-    }
-    PopupService.prototype.registerGridCore = function (gridCore) {
-        var _this = this;
-        this.gridCore = gridCore;
-        this.addManagedListener(this.gridCore, Events.EVENT_KEYBOARD_FOCUS, function () {
-            forEach(_this.popupList, function (popup) { return addCssClass(popup.element, 'ag-keyboard-focus'); });
-        });
-        this.addManagedListener(this.gridCore, Events.EVENT_MOUSE_FOCUS, function () {
-            forEach(_this.popupList, function (popup) { return removeCssClass(popup.element, 'ag-keyboard-focus'); });
-        });
-    };
-    PopupService.prototype.getPopupParent = function () {
-        var ePopupParent = this.gridOptionsWrapper.getPopupParent();
-        if (ePopupParent) {
-            return ePopupParent;
-        }
-        return this.gridCore.getRootGui();
-    };
-    PopupService.prototype.positionPopupForMenu = function (params) {
-        var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.getParentRect();
-        var y = this.keepYWithinBounds(params, sourceRect.top - parentRect.top);
-        var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
-        params.ePopup.style.minWidth = minWidth + "px";
-        var widthOfParent = parentRect.right - parentRect.left;
-        var maxX = widthOfParent - minWidth;
-        // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
-        // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
-        // we try place it first to the left, and then if not to the right.
-        var x;
-        if (this.gridOptionsWrapper.isEnableRtl()) {
-            // for RTL, try left first
-            x = xLeftPosition();
-            if (x < 0) {
-                x = xRightPosition();
-            }
-            if (x > maxX) {
-                x = 0;
-            }
-        }
-        else {
-            // for LTR, try right first
-            x = xRightPosition();
-            if (x > maxX) {
-                x = xLeftPosition();
-            }
-            if (x < 0) {
-                x = 0;
-            }
-        }
-        params.ePopup.style.left = x + "px";
-        params.ePopup.style.top = y + "px";
-        function xRightPosition() {
-            return sourceRect.right - parentRect.left - 2;
-        }
-        function xLeftPosition() {
-            return sourceRect.left - parentRect.left - minWidth;
-        }
-    };
-    PopupService.prototype.positionPopupUnderMouseEvent = function (params) {
-        var _a = this.calculatePointerAlign(params.mouseEvent), x = _a.x, y = _a.y;
-        var ePopup = params.ePopup, nudgeX = params.nudgeX, nudgeY = params.nudgeY;
-        this.positionPopup({
-            ePopup: ePopup,
-            x: x,
-            y: y,
-            nudgeX: nudgeX,
-            nudgeY: nudgeY,
-            keepWithinBounds: true
-        });
-        this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode);
-    };
-    PopupService.prototype.calculatePointerAlign = function (e) {
-        var parentRect = this.getParentRect();
-        return {
-            x: e.clientX - parentRect.left,
-            y: e.clientY - parentRect.top
-        };
-    };
-    PopupService.prototype.positionPopupUnderComponent = function (params) {
-        var sourceRect = params.eventSource.getBoundingClientRect();
-        var alignSide = params.alignSide || 'left';
-        var parentRect = this.getParentRect();
-        var x = sourceRect.left - parentRect.left;
-        if (alignSide === 'right') {
-            x -= (params.ePopup.offsetWidth - sourceRect.width);
-        }
-        this.positionPopup({
-            ePopup: params.ePopup,
-            minWidth: params.minWidth,
-            minHeight: params.minHeight,
-            nudgeX: params.nudgeX,
-            nudgeY: params.nudgeY,
-            x: x,
-            y: sourceRect.top - parentRect.top + sourceRect.height,
-            keepWithinBounds: params.keepWithinBounds
-        });
-        this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
-    };
-    PopupService.prototype.positionPopupOverComponent = function (params) {
-        var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.getParentRect();
-        this.positionPopup({
-            ePopup: params.ePopup,
-            minWidth: params.minWidth,
-            nudgeX: params.nudgeX,
-            nudgeY: params.nudgeY,
-            x: sourceRect.left - parentRect.left,
-            y: sourceRect.top - parentRect.top,
-            keepWithinBounds: params.keepWithinBounds
-        });
-        this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
-    };
-    PopupService.prototype.callPostProcessPopup = function (type, ePopup, eventSource, mouseEvent, column, rowNode) {
-        var callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
-        if (callback) {
-            var params = {
-                column: column,
-                rowNode: rowNode,
-                ePopup: ePopup,
-                type: type,
-                eventSource: eventSource,
-                mouseEvent: mouseEvent
-            };
-            callback(params);
-        }
-    };
-    PopupService.prototype.positionPopup = function (params) {
-        var x = params.x;
-        var y = params.y;
-        if (params.nudgeX) {
-            x += params.nudgeX;
-        }
-        if (params.nudgeY) {
-            y += params.nudgeY;
-        }
-        // if popup is overflowing to the bottom, move it up
-        if (params.keepWithinBounds) {
-            x = this.keepXWithinBounds(params, x);
-            y = this.keepYWithinBounds(params, y);
-        }
-        params.ePopup.style.left = x + "px";
-        params.ePopup.style.top = y + "px";
-    };
-    PopupService.prototype.getActivePopups = function () {
-        return this.popupList.map(function (popup) { return popup.element; });
-    };
-    PopupService.prototype.getParentRect = function () {
-        // subtract the popup parent borders, because popupParent.getBoundingClientRect
-        // returns the rect outside the borders, but the 0,0 coordinate for absolute
-        // positioning is inside the border, leading the popup to be off by the width
-        // of the border
-        var popupParent = this.getPopupParent();
-        var eDocument = this.gridOptionsWrapper.getDocument();
-        if (popupParent === eDocument.body) {
-            popupParent = eDocument.documentElement;
-        }
-        var style = getComputedStyle(popupParent);
-        var bounds = popupParent.getBoundingClientRect();
-        return {
-            top: bounds.top + parseFloat(style.borderTopWidth) || 0,
-            left: bounds.left + parseFloat(style.borderLeftWidth) || 0,
-            right: bounds.right + parseFloat(style.borderRightWidth) || 0,
-            bottom: bounds.bottom + parseFloat(style.borderBottomWidth) || 0,
-        };
-    };
-    PopupService.prototype.keepYWithinBounds = function (params, y) {
-        var eDocument = this.gridOptionsWrapper.getDocument();
-        var docElement = eDocument.documentElement;
-        var popupParent = this.getPopupParent();
-        var parentRect = popupParent.getBoundingClientRect();
-        var documentRect = eDocument.documentElement.getBoundingClientRect();
-        var isBody = popupParent === eDocument.body;
-        var minHeight = Math.min(200, parentRect.height);
-        var diff = 0;
-        if (params.minHeight && params.minHeight < minHeight) {
-            minHeight = params.minHeight;
-        }
-        else if (params.ePopup.offsetHeight > 0) {
-            minHeight = params.ePopup.clientHeight;
-            diff = getAbsoluteHeight(params.ePopup) - minHeight;
-        }
-        var heightOfParent = isBody ? (getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.height;
-        if (isBody) {
-            heightOfParent -= Math.abs(documentRect.top - parentRect.top);
-        }
-        var maxY = heightOfParent - minHeight - diff;
-        return Math.min(Math.max(y, 0), Math.abs(maxY));
-    };
-    PopupService.prototype.keepXWithinBounds = function (params, x) {
-        var eDocument = this.gridOptionsWrapper.getDocument();
-        var docElement = eDocument.documentElement;
-        var popupParent = this.getPopupParent();
-        var parentRect = popupParent.getBoundingClientRect();
-        var documentRect = eDocument.documentElement.getBoundingClientRect();
-        var isBody = popupParent === eDocument.body;
-        var ePopup = params.ePopup;
-        var minWidth = Math.min(200, parentRect.width);
-        var diff = 0;
-        if (params.minWidth && params.minWidth < minWidth) {
-            minWidth = params.minWidth;
-        }
-        else if (ePopup.offsetWidth > 0) {
-            minWidth = ePopup.offsetWidth;
-            ePopup.style.minWidth = minWidth + "px";
-            diff = getAbsoluteWidth(ePopup) - minWidth;
-        }
-        var widthOfParent = isBody ? (getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.width;
-        if (isBody) {
-            widthOfParent -= Math.abs(documentRect.left - parentRect.left);
-        }
-        var maxX = widthOfParent - minWidth - diff;
-        return Math.min(Math.max(x, 0), Math.abs(maxX));
-    };
-    PopupService.prototype.keepPopupPositionedRelativeTo = function (params) {
-        var eParent = this.getPopupParent();
-        var parentRect = eParent.getBoundingClientRect();
-        var sourceRect = params.element.getBoundingClientRect();
-        var initialDiffTop = parentRect.top - sourceRect.top;
-        var initialDiffLeft = parentRect.left - sourceRect.left;
-        var lastDiffTop = initialDiffTop;
-        var lastDiffLeft = initialDiffLeft;
-        var topPx = params.ePopup.style.top;
-        var top = parseInt(topPx.substring(0, topPx.length - 1), 10);
-        var leftPx = params.ePopup.style.left;
-        var left = parseInt(leftPx.substring(0, leftPx.length - 1), 10);
-        var intervalId = window.setInterval(function () {
-            var pRect = eParent.getBoundingClientRect();
-            var sRect = params.element.getBoundingClientRect();
-            var elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
-            if (elementNotInDom) {
-                params.hidePopup();
-                return;
-            }
-            var currentDiffTop = pRect.top - sRect.top;
-            if (currentDiffTop != lastDiffTop) {
-                var newTop = top + initialDiffTop - currentDiffTop;
-                params.ePopup.style.top = newTop + "px";
-            }
-            lastDiffTop = currentDiffTop;
-            var currentDiffLeft = pRect.left - sRect.left;
-            if (currentDiffLeft != lastDiffLeft) {
-                var newLeft = left + initialDiffLeft - currentDiffLeft;
-                params.ePopup.style.left = newLeft + "px";
-            }
-            lastDiffLeft = currentDiffLeft;
-        }, 200);
-        var res = function () {
-            if (intervalId != null) {
-                window.clearInterval(intervalId);
-            }
-            intervalId = undefined;
-        };
-        return res;
-    };
-    PopupService.prototype.addPopup = function (params) {
-        var _this = this;
-        var modal = params.modal, eChild = params.eChild, closeOnEsc = params.closeOnEsc, closedCallback = params.closedCallback, click = params.click, alwaysOnTop = params.alwaysOnTop, afterGuiAttached = params.afterGuiAttached, positionCallback = params.positionCallback, anchorToElement = params.anchorToElement;
-        var eDocument = this.gridOptionsWrapper.getDocument();
-        if (!eDocument) {
-            console.warn('ag-grid: could not find the document, document is empty');
-            return;
-        }
-        var pos = findIndex(this.popupList, function (popup) { return popup.element === eChild; });
-        if (pos !== -1) {
-            var popup = this.popupList[pos];
-            return { hideFunc: popup.hideFunc, stopAnchoringFunc: popup.stopAnchoringFunc };
-        }
-        var ePopupParent = this.getPopupParent();
-        // for angular specifically, but shouldn't cause an issue with js or other fw's
-        // https://github.com/angular/angular/issues/8563
-        ePopupParent.appendChild(eChild);
-        if (eChild.style.top == null) {
-            eChild.style.top = '0px';
-        }
-        if (eChild.style.left == null) {
-            eChild.style.left = '0px';
-        }
-        // add env CSS class to child, in case user provided a popup parent, which means
-        // theme class may be missing
-        var eWrapper = document.createElement('div');
-        var theme = this.environment.getTheme().theme;
-        if (theme) {
-            addCssClass(eWrapper, theme);
-        }
-        addCssClass(eWrapper, 'ag-popup');
-        addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
-        addCssClass(eChild, 'ag-popup-child');
-        eWrapper.appendChild(eChild);
-        ePopupParent.appendChild(eWrapper);
-        if (alwaysOnTop) {
-            this.setAlwaysOnTop(eWrapper, true);
-        }
-        else {
-            this.bringPopupToFront(eWrapper);
-        }
-        var popupHidden = false;
-        var hidePopupOnKeyboardEvent = function (event) {
-            if (!eWrapper.contains(document.activeElement)) {
-                return;
-            }
-            var key = event.which || event.keyCode;
-            if (key === KeyCode.ESCAPE) {
-                hidePopup({ keyboardEvent: event });
-            }
-        };
-        var hidePopupOnMouseEvent = function (event) { return hidePopup({ mouseEvent: event }); };
-        var hidePopupOnTouchEvent = function (event) { return hidePopup({ touchEvent: event }); };
-        var destroyPositionTracker;
-        var hidePopup = function (popupParams) {
-            if (popupParams === void 0) { popupParams = {}; }
-            var mouseEvent = popupParams.mouseEvent, touchEvent = popupParams.touchEvent, keyboardEvent = popupParams.keyboardEvent;
-            if (
-            // we don't hide popup if the event was on the child, or any
-            // children of this child
-            _this.isEventFromCurrentPopup({ mouseEvent: mouseEvent, touchEvent: touchEvent }, eChild) ||
-                // if the event to close is actually the open event, then ignore it
-                _this.isEventSameChainAsOriginalEvent({ originalMouseEvent: click, mouseEvent: mouseEvent, touchEvent: touchEvent }) ||
-                // this method should only be called once. the client can have different
-                // paths, each one wanting to close, so this method may be called multiple times.
-                popupHidden) {
-                return;
-            }
-            popupHidden = true;
-            ePopupParent.removeChild(eWrapper);
-            eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
-            eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
-            eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
-            eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
-            _this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
-            if (closedCallback) {
-                closedCallback(mouseEvent || touchEvent || keyboardEvent);
-            }
-            _this.popupList = _this.popupList.filter(function (popup) { return popup.element !== eChild; });
-            if (destroyPositionTracker) {
-                destroyPositionTracker();
-            }
-        };
-        if (afterGuiAttached) {
-            afterGuiAttached({ hidePopup: hidePopup });
-        }
-        // if we add these listeners now, then the current mouse
-        // click will be included, which we don't want
-        window.setTimeout(function () {
-            if (closeOnEsc) {
-                eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
-            }
-            if (modal) {
-                eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
-                _this.eventService.addEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
-                eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
-                eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
-            }
-        }, 0);
-        if (positionCallback) {
-            positionCallback();
-        }
-        if (anchorToElement) {
-            // keeps popup positioned under created, eg if context menu, if user scrolls
-            // using touchpad and the cell moves, it moves the popup to keep it with the cell.
-            destroyPositionTracker = this.keepPopupPositionedRelativeTo({
-                element: anchorToElement,
-                ePopup: eChild,
-                hidePopup: hidePopup
-            });
-        }
-        this.popupList.push({
-            element: eChild,
-            hideFunc: hidePopup,
-            stopAnchoringFunc: destroyPositionTracker
-        });
-        return {
-            hideFunc: hidePopup,
-            stopAnchoringFunc: destroyPositionTracker
-        };
-    };
-    PopupService.prototype.isEventFromCurrentPopup = function (params, target) {
-        var mouseEvent = params.mouseEvent, touchEvent = params.touchEvent;
-        var event = mouseEvent ? mouseEvent : touchEvent;
-        if (!event) {
-            return false;
-        }
-        var indexOfThisChild = findIndex(this.popupList, function (popup) { return popup.element === target; });
-        if (indexOfThisChild === -1) {
-            return false;
-        }
-        for (var i = indexOfThisChild; i < this.popupList.length; i++) {
-            var popup = this.popupList[i];
-            if (isElementInEventPath(popup.element, event)) {
-                return true;
-            }
-        }
-        // if the user did not write their own Custom Element to be rendered as popup
-        // and this component has an additional popup element, they should have the
-        // `ag-custom-component-popup` class to be detected as part of the Custom Component
-        return this.isElementWithinCustomPopup(event.target);
-    };
-    PopupService.prototype.isElementWithinCustomPopup = function (el) {
-        if (!this.popupList.length) {
-            return false;
-        }
-        while (el && el !== document.body) {
-            if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
-                return true;
-            }
-            el = el.parentElement;
-        }
-        return false;
-    };
-    // in some browsers, the context menu event can be fired before the click event, which means
-    // the context menu event could open the popup, but then the click event closes it straight away.
-    PopupService.prototype.isEventSameChainAsOriginalEvent = function (params) {
-        var originalMouseEvent = params.originalMouseEvent, mouseEvent = params.mouseEvent, touchEvent = params.touchEvent;
-        // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
-        // the event is a different event, however that is an edge case that is not very relevant (the user clicking
-        // twice on the same location isn't a normal path).
-        // event could be mouse event or touch event.
-        var mouseEventOrTouch = null;
-        if (mouseEvent) {
-            // mouse event can be used direction, it has coordinates
-            mouseEventOrTouch = mouseEvent;
-        }
-        else if (touchEvent) {
-            // touch event doesn't have coordinates, need it's touch object
-            mouseEventOrTouch = touchEvent.touches[0];
-        }
-        if (mouseEventOrTouch && originalMouseEvent) {
-            // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
-            // by browser click (when you finger up, touch is interrupted as click in browser)
-            var screenX_1 = mouseEvent ? mouseEvent.screenX : 0;
-            var screenY_1 = mouseEvent ? mouseEvent.screenY : 0;
-            var xMatch = Math.abs(originalMouseEvent.screenX - screenX_1) < 5;
-            var yMatch = Math.abs(originalMouseEvent.screenY - screenY_1) < 5;
-            if (xMatch && yMatch) {
-                return true;
-            }
-        }
-        return false;
-    };
-    PopupService.prototype.getWrapper = function (ePopup) {
-        while (!containsClass(ePopup, 'ag-popup') && ePopup.parentElement) {
-            ePopup = ePopup.parentElement;
-        }
-        return containsClass(ePopup, 'ag-popup') ? ePopup : null;
-    };
-    PopupService.prototype.setAlwaysOnTop = function (ePopup, alwaysOnTop) {
-        var eWrapper = this.getWrapper(ePopup);
-        if (!eWrapper) {
-            return;
-        }
-        addOrRemoveCssClass(eWrapper, 'ag-always-on-top', !!alwaysOnTop);
-        if (alwaysOnTop) {
-            this.bringPopupToFront(eWrapper);
-        }
-    };
-    PopupService.prototype.bringPopupToFront = function (ePopup) {
-        var parent = this.getPopupParent();
-        var popupList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup'));
-        var popupLen = popupList.length;
-        var alwaysOnTopList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup.ag-always-on-top'));
-        var onTopLength = alwaysOnTopList.length;
-        var eWrapper = this.getWrapper(ePopup);
-        if (!eWrapper || popupLen <= 1 || !parent.contains(ePopup)) {
-            return;
-        }
-        var pos = popupList.indexOf(eWrapper);
-        if (onTopLength) {
-            var isPopupAlwaysOnTop = containsClass(eWrapper, 'ag-always-on-top');
-            if (isPopupAlwaysOnTop) {
-                if (pos !== popupLen - 1) {
-                    last(alwaysOnTopList).insertAdjacentElement('afterend', eWrapper);
-                }
-            }
-            else if (pos !== popupLen - onTopLength - 1) {
-                alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
-            }
-        }
-        else if (pos !== popupLen - 1) {
-            last(popupList).insertAdjacentElement('afterend', eWrapper);
-        }
-        var params = {
-            type: 'popupToFront',
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            eWrapper: eWrapper
-        };
-        this.eventService.dispatchEvent(params);
-    };
-    __decorate$$([
-        Autowired('environment')
-    ], PopupService.prototype, "environment", void 0);
-    PopupService = __decorate$$([
-        Bean('popupService')
-    ], PopupService);
-    return PopupService;
-}(BeanStub));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$15 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$10 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __param$7 = (undefined && undefined.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-var LoggerFactory = /** @class */ (function (_super) {
-    __extends$15(LoggerFactory, _super);
-    function LoggerFactory() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    LoggerFactory.prototype.setBeans = function (gridOptionsWrapper) {
-        this.logging = gridOptionsWrapper.isDebug();
-    };
-    LoggerFactory.prototype.create = function (name) {
-        return new Logger(name, this.isLogging.bind(this));
-    };
-    LoggerFactory.prototype.isLogging = function () {
-        return this.logging;
-    };
-    __decorate$10([
-        __param$7(0, Qualifier('gridOptionsWrapper'))
-    ], LoggerFactory.prototype, "setBeans", null);
-    LoggerFactory = __decorate$10([
-        Bean('loggerFactory')
-    ], LoggerFactory);
-    return LoggerFactory;
-}(BeanStub));
-var Logger = /** @class */ (function () {
-    function Logger(name, isLoggingFunc) {
-        this.name = name;
-        this.isLoggingFunc = isLoggingFunc;
-    }
-    Logger.prototype.isLogging = function () {
-        return this.isLoggingFunc();
-    };
-    Logger.prototype.log = function (message) {
-        if (this.isLoggingFunc()) {
-            // tslint:disable-next-line
-            console.log('AG Grid.' + this.name + ': ' + message);
-        }
-    };
-    return Logger;
-}());
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$16 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$11 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var AutoWidthCalculator = /** @class */ (function (_super) {
-    __extends$16(AutoWidthCalculator, _super);
-    function AutoWidthCalculator() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    AutoWidthCalculator.prototype.registerGridComp = function (gridPanel) {
-        this.gridPanel = gridPanel;
-    };
-    AutoWidthCalculator.prototype.registerHeaderRootComp = function (headerRootComp) {
-        this.headerRootComp = headerRootComp;
-    };
-    // this is the trick: we create a dummy container and clone all the cells
-    // into the dummy, then check the dummy's width. then destroy the dummy
-    // as we don't need it any more.
-    // drawback: only the cells visible on the screen are considered
-    AutoWidthCalculator.prototype.getPreferredWidthForColumn = function (column, skipHeader) {
-        var eHeaderCell = this.getHeaderCellForColumn(column);
-        // cell isn't visible
-        if (!eHeaderCell) {
-            return -1;
-        }
-        var eDummyContainer = document.createElement('span');
-        // position fixed, so it isn't restricted to the boundaries of the parent
-        eDummyContainer.style.position = 'fixed';
-        // we put the dummy into the body container, so it will inherit all the
-        // css styles that the real cells are inheriting
-        var eBodyContainer = this.gridPanel.getCenterContainer();
-        eBodyContainer.appendChild(eDummyContainer);
-        // get all the cells that are currently displayed (this only brings back
-        // rendered cells, rows not rendered due to row visualisation will not be here)
-        this.putRowCellsIntoDummyContainer(column, eDummyContainer);
-        if (!skipHeader) {
-            // we only consider the lowest level cell, not the group cell. in 99% of the time, this
-            // will be enough. if we consider groups, then it gets too complicated for what it's worth,
-            // as the groups can span columns and this class only considers one column at a time.
-            this.cloneItemIntoDummy(eHeaderCell, eDummyContainer);
-        }
-        // at this point, all the clones are lined up vertically with natural widths. the dummy
-        // container will have a width wide enough just to fit the largest.
-        var dummyContainerWidth = eDummyContainer.offsetWidth;
-        // we are finished with the dummy container, so get rid of it
-        eBodyContainer.removeChild(eDummyContainer);
-        // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
-        // user can configure the grid to add a few more pixels after the calculated width
-        var autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
-        return dummyContainerWidth + autoSizePadding;
-    };
-    AutoWidthCalculator.prototype.getHeaderCellForColumn = function (column) {
-        var comp = null;
-        // find the rendered header cell
-        this.headerRootComp.forEachHeaderElement(function (headerElement) {
-            if (headerElement instanceof HeaderWrapperComp) {
-                var headerWrapperComp = headerElement;
-                if (headerWrapperComp.getColumn() === column) {
-                    comp = headerWrapperComp;
-                }
-            }
-        });
-        return comp ? comp.getGui() : null;
-    };
-    AutoWidthCalculator.prototype.putRowCellsIntoDummyContainer = function (column, eDummyContainer) {
-        var _this = this;
-        var eCells = this.rowRenderer.getAllCellsForColumn(column);
-        eCells.forEach(function (eCell) { return _this.cloneItemIntoDummy(eCell, eDummyContainer); });
-    };
-    AutoWidthCalculator.prototype.cloneItemIntoDummy = function (eCell, eDummyContainer) {
-        // make a deep clone of the cell
-        var eCellClone = eCell.cloneNode(true);
-        // the original has a fixed width, we remove this to allow the natural width based on content
-        eCellClone.style.width = '';
-        // the original has position = absolute, we need to remove this so it's positioned normally
-        eCellClone.style.position = 'static';
-        eCellClone.style.left = '';
-        // we put the cell into a containing div, as otherwise the cells would just line up
-        // on the same line, standard flow layout, by putting them into divs, they are laid
-        // out one per line
-        var eCloneParent = document.createElement('div');
-        if (containsClass(eCellClone, 'ag-header-cell')) {
-            addCssClass(eCloneParent, 'ag-header');
-            addCssClass(eCloneParent, 'ag-header-row');
-            eCloneParent.style.position = 'static';
-        }
-        else {
-            addCssClass(eCloneParent, 'ag-row');
-        }
-        // table-row, so that each cell is on a row. i also tried display='block', but this
-        // didn't work in IE
-        eCloneParent.style.display = 'table-row';
-        // the twig on the branch, the branch on the tree, the tree in the hole,
-        // the hole in the bog, the bog in the clone, the clone in the parent,
-        // the parent in the dummy, and the dummy down in the vall-e-ooo, OOOOOOOOO! Oh row the rattling bog....
-        eCloneParent.appendChild(eCellClone);
-        eDummyContainer.appendChild(eCloneParent);
-    };
-    __decorate$11([
-        Autowired('rowRenderer')
-    ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
-    AutoWidthCalculator = __decorate$11([
-        Bean('autoWidthCalculator')
-    ], AutoWidthCalculator);
-    return AutoWidthCalculator;
-}(BeanStub));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$17 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$12 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var HorizontalResizeService = /** @class */ (function (_super) {
-    __extends$17(HorizontalResizeService, _super);
-    function HorizontalResizeService() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    HorizontalResizeService.prototype.addResizeBar = function (params) {
-        var _this = this;
-        var dragSource = {
-            dragStartPixels: params.dragStartPixels || 0,
-            eElement: params.eResizeBar,
-            onDragStart: this.onDragStart.bind(this, params),
-            onDragStop: this.onDragStop.bind(this, params),
-            onDragging: this.onDragging.bind(this, params)
-        };
-        this.dragService.addDragSource(dragSource, true);
-        // we pass remove func back to the caller, so call can tell us when they
-        // are finished, and then we remove the listener from the drag source
-        var finishedWithResizeFunc = function () { return _this.dragService.removeDragSource(dragSource); };
-        return finishedWithResizeFunc;
-    };
-    HorizontalResizeService.prototype.onDragStart = function (params, mouseEvent) {
-        this.dragStartX = mouseEvent.clientX;
-        this.setResizeIcons();
-        var shiftKey = mouseEvent instanceof MouseEvent && mouseEvent.shiftKey === true;
-        params.onResizeStart(shiftKey);
-    };
-    HorizontalResizeService.prototype.setResizeIcons = function () {
-        this.oldBodyCursor = this.eGridDiv.style.cursor;
-        this.oldUserSelect = this.eGridDiv.style.userSelect;
-        this.oldWebkitUserSelect = this.eGridDiv.style.webkitUserSelect;
-        // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
-        this.eGridDiv.style.cursor = 'ew-resize';
-        // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
-        this.eGridDiv.style.userSelect = 'none';
-        this.eGridDiv.style.webkitUserSelect = 'none';
-    };
-    HorizontalResizeService.prototype.onDragStop = function (params, mouseEvent) {
-        params.onResizeEnd(this.resizeAmount);
-        this.resetIcons();
-    };
-    HorizontalResizeService.prototype.resetIcons = function () {
-        // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
-        this.eGridDiv.style.cursor = this.oldBodyCursor;
-        this.eGridDiv.style.userSelect = this.oldUserSelect;
-        this.eGridDiv.style.webkitUserSelect = this.oldWebkitUserSelect;
-    };
-    HorizontalResizeService.prototype.onDragging = function (params, mouseEvent) {
-        this.resizeAmount = mouseEvent.clientX - this.dragStartX;
-        params.onResizing(this.resizeAmount);
-    };
-    __decorate$12([
-        Autowired('dragService')
-    ], HorizontalResizeService.prototype, "dragService", void 0);
-    __decorate$12([
-        Autowired('eGridDiv')
-    ], HorizontalResizeService.prototype, "eGridDiv", void 0);
-    HorizontalResizeService = __decorate$12([
-        Bean('horizontalResizeService')
-    ], HorizontalResizeService);
-    return HorizontalResizeService;
-}(BeanStub));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$18 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$13 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var GridCore = /** @class */ (function (_super) {
-    __extends$18(GridCore, _super);
-    function GridCore() {
-        return _super.call(this, undefined, true) || this;
-    }
-    GridCore.prototype.postConstruct = function () {
-        var _this = this;
-        this.logger = this.loggerFactory.create('GridCore');
-        var template = this.createTemplate();
-        this.setTemplate(template);
-        // register with services that need grid core
-        [
-            this.gridApi,
-            this.rowRenderer,
-            this.popupService,
-            this.focusController
-        ].forEach(function (service) { return service.registerGridCore(_this); });
-        if (ModuleRegistry.isRegistered(exports.ModuleNames.ClipboardModule)) {
-            this.clipboardService.registerGridCore(this);
-        }
-        this.gridOptionsWrapper.addLayoutElement(this.getGui());
-        this.eGridDiv.appendChild(this.getGui());
-        this.addDestroyFunc(function () {
-            _this.eGridDiv.removeChild(_this.getGui());
-        });
-        // if using angular, watch for quickFilter changes
-        if (this.$scope) {
-            var quickFilterUnregisterFn = this.$scope.$watch(this.quickFilterOnScope, function (newFilter) { return _this.filterManager.setQuickFilter(newFilter); });
-            this.addDestroyFunc(quickFilterUnregisterFn);
-        }
-        // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
-        // which doLayout indirectly depends on
-        this.addRtlSupport();
-        this.logger.log('ready');
-        this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
-        var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
-        this.addDestroyFunc(function () { return unsubscribeFromResize(); });
-        var eGui = this.getGui();
-        this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, function () {
-            addCssClass(eGui, 'ag-keyboard-focus');
-        });
-        this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, function () {
-            removeCssClass(eGui, 'ag-keyboard-focus');
-        });
-        _super.prototype.postConstruct.call(this);
-    };
-    GridCore.prototype.getFocusableElement = function () {
-        return this.eRootWrapperBody;
-    };
-    GridCore.prototype.createTemplate = function () {
-        var sideBarModuleLoaded = ModuleRegistry.isRegistered(exports.ModuleNames.SideBarModule);
-        var statusBarModuleLoaded = ModuleRegistry.isRegistered(exports.ModuleNames.StatusBarModule);
-        var rowGroupingLoaded = ModuleRegistry.isRegistered(exports.ModuleNames.RowGroupingModule);
-        var enterpriseCoreLoaded = ModuleRegistry.isRegistered(exports.ModuleNames.EnterpriseCoreModule);
-        var dropZones = rowGroupingLoaded ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
-        var sideBar = sideBarModuleLoaded ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
-        var statusBar = statusBarModuleLoaded ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
-        var watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
-        var template = /* html */ "<div ref=\"eRootWrapper\" class=\"ag-root-wrapper\">\n                " + dropZones + "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\">\n                    <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                    " + sideBar + "\n                </div>\n                " + statusBar + "\n                <ag-pagination></ag-pagination>\n                " + watermark + "\n            </div>";
-        return template;
-    };
-    GridCore.prototype.getFocusableContainers = function () {
-        var focusableContainers = [
-            this.gridPanel.getGui()
-        ];
-        if (this.sideBarComp) {
-            focusableContainers.push(this.sideBarComp.getGui());
-        }
-        return focusableContainers.filter(function (el) { return isVisible(el); });
-    };
-    GridCore.prototype.focusNextInnerContainer = function (backwards) {
-        var focusableContainers = this.getFocusableContainers();
-        var idxWithFocus = findIndex(focusableContainers, function (container) { return container.contains(document.activeElement); });
-        var nextIdx = idxWithFocus + (backwards ? -1 : 1);
-        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
-            return false;
-        }
-        if (nextIdx === 0) {
-            return this.focusGridHeader();
-        }
-        return this.focusController.focusInto(focusableContainers[nextIdx]);
-    };
-    GridCore.prototype.focusInnerElement = function (fromBottom) {
-        var focusableContainers = this.getFocusableContainers();
-        if (fromBottom) {
-            if (focusableContainers.length > 1) {
-                return this.focusController.focusInto(last(focusableContainers));
-            }
-            var lastColumn = last(this.columnController.getAllDisplayedColumns());
-            if (this.focusController.focusGridView(lastColumn, true)) {
-                return true;
-            }
-        }
-        return this.focusGridHeader();
-    };
-    GridCore.prototype.focusGridHeader = function () {
-        var firstColumn = this.columnController.getAllDisplayedColumns()[0];
-        if (!firstColumn) {
-            return false;
-        }
-        if (firstColumn.getParent()) {
-            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0);
-        }
-        this.focusController.focusHeaderPosition({ headerRowIndex: 0, column: firstColumn });
-        return true;
-    };
-    GridCore.prototype.onGridSizeChanged = function () {
-        var event = {
-            type: Events.EVENT_GRID_SIZE_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            clientWidth: this.eGridDiv.clientWidth,
-            clientHeight: this.eGridDiv.clientHeight
-        };
-        this.eventService.dispatchEvent(event);
-    };
-    GridCore.prototype.addRtlSupport = function () {
-        var cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
-        addCssClass(this.getGui(), cssClass);
-    };
-    GridCore.prototype.getRootGui = function () {
-        return this.getGui();
-    };
-    GridCore.prototype.isSideBarVisible = function () {
-        if (!this.sideBarComp) {
-            return false;
-        }
-        return this.sideBarComp.isDisplayed();
-    };
-    GridCore.prototype.setSideBarVisible = function (show) {
-        if (!this.sideBarComp) {
-            if (show) {
-                console.warn('AG Grid: sideBar is not loaded');
-            }
-            return;
-        }
-        this.sideBarComp.setDisplayed(show);
-    };
-    GridCore.prototype.setSideBarPosition = function (position) {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: sideBar is not loaded');
-            return;
-        }
-        this.sideBarComp.setSideBarPosition(position);
-    };
-    GridCore.prototype.closeToolPanel = function () {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
-            return;
-        }
-        this.sideBarComp.close();
-    };
-    GridCore.prototype.getSideBar = function () {
-        return this.gridOptions.sideBar;
-    };
-    GridCore.prototype.getToolPanelInstance = function (key) {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
-            return;
-        }
-        return this.sideBarComp.getToolPanelInstance(key);
-    };
-    GridCore.prototype.refreshSideBar = function () {
-        if (this.sideBarComp) {
-            this.sideBarComp.refresh();
-        }
-    };
-    GridCore.prototype.setSideBar = function (def) {
-        if (!this.sideBarComp) {
-            return;
-        }
-        this.eRootWrapperBody.removeChild(this.sideBarComp.getGui());
-        this.gridOptions.sideBar = SideBarDefParser.parse(def);
-        this.sideBarComp.reset();
-        this.eRootWrapperBody.appendChild(this.sideBarComp.getGui());
-    };
-    GridCore.prototype.getOpenedToolPanel = function () {
-        if (!this.sideBarComp) {
-            return null;
-        }
-        return this.sideBarComp.openedItem();
-    };
-    GridCore.prototype.openToolPanel = function (key) {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
-            return;
-        }
-        this.sideBarComp.openToolPanel(key);
-    };
-    GridCore.prototype.isToolPanelShowing = function () {
-        return this.sideBarComp.isToolPanelShowing();
-    };
-    GridCore.prototype.destroy = function () {
-        this.logger.log('Grid DOM removed');
-        _super.prototype.destroy.call(this);
-    };
-    // Valid values for position are bottom, middle and top
-    GridCore.prototype.ensureNodeVisible = function (comparator, position) {
-        if (position === void 0) { position = null; }
-        if (this.doingVirtualPaging) {
-            throw new Error('Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory');
-        }
-        // look for the node index we want to display
-        var rowCount = this.rowModel.getRowCount();
-        var comparatorIsAFunction = typeof comparator === 'function';
-        var indexToSelect = -1;
-        // go through all the nodes, find the one we want to show
-        for (var i = 0; i < rowCount; i++) {
-            var node = this.rowModel.getRow(i);
-            if (comparatorIsAFunction) {
-                if (comparator(node)) {
-                    indexToSelect = i;
-                    break;
-                }
-            }
-            else {
-                // check object equality against node and data
-                if (comparator === node || comparator === node.data) {
-                    indexToSelect = i;
-                    break;
-                }
-            }
-        }
-        if (indexToSelect >= 0) {
-            this.gridPanel.ensureIndexVisible(indexToSelect, position);
-        }
-    };
-    GridCore.prototype.onTabKeyDown = function () { };
-    __decorate$13([
-        Autowired('gridOptions')
-    ], GridCore.prototype, "gridOptions", void 0);
-    __decorate$13([
-        Autowired('rowModel')
-    ], GridCore.prototype, "rowModel", void 0);
-    __decorate$13([
-        Autowired('resizeObserverService')
-    ], GridCore.prototype, "resizeObserverService", void 0);
-    __decorate$13([
-        Autowired('rowRenderer')
-    ], GridCore.prototype, "rowRenderer", void 0);
-    __decorate$13([
-        Autowired('filterManager')
-    ], GridCore.prototype, "filterManager", void 0);
-    __decorate$13([
-        Autowired('eGridDiv')
-    ], GridCore.prototype, "eGridDiv", void 0);
-    __decorate$13([
-        Autowired('$scope')
-    ], GridCore.prototype, "$scope", void 0);
-    __decorate$13([
-        Autowired('quickFilterOnScope')
-    ], GridCore.prototype, "quickFilterOnScope", void 0);
-    __decorate$13([
-        Autowired('popupService')
-    ], GridCore.prototype, "popupService", void 0);
-    __decorate$13([
-        Autowired('columnController')
-    ], GridCore.prototype, "columnController", void 0);
-    __decorate$13([
-        Autowired('loggerFactory')
-    ], GridCore.prototype, "loggerFactory", void 0);
-    __decorate$13([
-        Autowired('columnApi')
-    ], GridCore.prototype, "columnApi", void 0);
-    __decorate$13([
-        Autowired('gridApi')
-    ], GridCore.prototype, "gridApi", void 0);
-    __decorate$13([
-        Optional('clipboardService')
-    ], GridCore.prototype, "clipboardService", void 0);
-    __decorate$13([
-        RefSelector('gridPanel')
-    ], GridCore.prototype, "gridPanel", void 0);
-    __decorate$13([
-        RefSelector('sideBar')
-    ], GridCore.prototype, "sideBarComp", void 0);
-    __decorate$13([
-        RefSelector('rootWrapperBody')
-    ], GridCore.prototype, "eRootWrapperBody", void 0);
-    return GridCore;
-}(ManagedFocusComponent));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$19 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$14 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var StandardMenuFactory = /** @class */ (function (_super) {
-    __extends$19(StandardMenuFactory, _super);
-    function StandardMenuFactory() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    StandardMenuFactory.prototype.registerGridComp = function (gridPanel) {
-        this.gridPanel = gridPanel;
-    };
-    StandardMenuFactory.prototype.hideActiveMenu = function () {
-        if (this.hidePopup) {
-            this.hidePopup();
-        }
-    };
-    StandardMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent) {
-        var _this = this;
-        this.showPopup(column, function (eMenu) {
-            _this.popupService.positionPopupUnderMouseEvent({
-                column: column,
-                type: 'columnMenu',
-                mouseEvent: mouseEvent,
-                ePopup: eMenu
-            });
-        }, mouseEvent.target);
-    };
-    StandardMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource) {
-        var _this = this;
-        this.showPopup(column, function (eMenu) {
-            _this.popupService.positionPopupUnderComponent({
-                type: 'columnMenu',
-                eventSource: eventSource,
-                ePopup: eMenu,
-                keepWithinBounds: true,
-                column: column
-            });
-        }, eventSource);
-    };
-    StandardMenuFactory.prototype.showPopup = function (column, positionCallback, eventSource) {
-        var _this = this;
-        var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
-        var eMenu = document.createElement('div');
-        eMenu.setAttribute('role', 'presentation');
-        addCssClass(eMenu, 'ag-menu');
-        this.tabListener = this.addManagedListener(eMenu, 'keydown', function (e) { return _this.trapFocusWithin(e, eMenu); });
-        filterWrapper.guiPromise.then(function (gui) { return eMenu.appendChild(gui); });
-        var hidePopup;
-        var anchorToElement = eventSource || this.gridPanel.getGui();
-        var closedCallback = function (e) {
-            column.setMenuVisible(false, 'contextMenu');
-            var isKeyboardEvent = e instanceof KeyboardEvent;
-            if (_this.tabListener) {
-                _this.tabListener = _this.tabListener();
-            }
-            if (isKeyboardEvent && eventSource && isVisible(eventSource)) {
-                var focusableEl = _this.focusController.findTabbableParent(eventSource);
-                if (focusableEl) {
-                    focusableEl.focus();
-                }
-            }
-        };
-        var addPopupRes = this.popupService.addPopup({
-            modal: true,
-            eChild: eMenu,
-            closeOnEsc: true,
-            closedCallback: closedCallback,
-            positionCallback: function () { return positionCallback(eMenu); },
-            anchorToElement: anchorToElement
-        });
-        if (addPopupRes) {
-            this.hidePopup = hidePopup = addPopupRes.hideFunc;
-        }
-        filterWrapper.filterPromise.then(function (filter) {
-            // need to make sure the filter is present before positioning, as only
-            // after filter it is visible can we find out what the width of it is
-            positionCallback(eMenu);
-            if (filter.afterGuiAttached) {
-                filter.afterGuiAttached({ container: 'columnMenu', hidePopup: hidePopup });
-            }
-        });
-        column.setMenuVisible(true, 'contextMenu');
-    };
-    StandardMenuFactory.prototype.trapFocusWithin = function (e, menu) {
-        if (e.keyCode !== KeyCode.TAB ||
-            e.defaultPrevented ||
-            this.focusController.findNextFocusableElement(menu, false, e.shiftKey)) {
-            return;
-        }
-        e.preventDefault();
-        this.focusController.focusInto(menu, e.shiftKey);
-    };
-    StandardMenuFactory.prototype.isMenuEnabled = function (column) {
-        // for standard, we show menu if filter is enabled, and the menu is not suppressed
-        return column.isFilterAllowed();
-    };
-    __decorate$14([
-        Autowired('filterManager')
-    ], StandardMenuFactory.prototype, "filterManager", void 0);
-    __decorate$14([
-        Autowired('popupService')
-    ], StandardMenuFactory.prototype, "popupService", void 0);
-    __decorate$14([
-        Autowired('focusController')
-    ], StandardMenuFactory.prototype, "focusController", void 0);
-    StandardMenuFactory = __decorate$14([
-        Bean('menuFactory')
-    ], StandardMenuFactory);
-    return StandardMenuFactory;
-}(BeanStub));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$1a = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$15 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-/** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
- * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
-var DragService = /** @class */ (function (_super) {
-    __extends$1a(DragService, _super);
-    function DragService() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.dragEndFunctions = [];
-        _this.dragSources = [];
-        return _this;
-    }
-    DragService.prototype.init = function () {
-        this.logger = this.loggerFactory.create('DragService');
-    };
-    DragService.prototype.removeAllListeners = function () {
-        this.dragSources.forEach(this.removeListener.bind(this));
-        this.dragSources.length = 0;
-    };
-    DragService.prototype.removeListener = function (dragSourceAndListener) {
-        var element = dragSourceAndListener.dragSource.eElement;
-        var mouseDownListener = dragSourceAndListener.mouseDownListener;
-        element.removeEventListener('mousedown', mouseDownListener);
-        // remove touch listener only if it exists
-        if (dragSourceAndListener.touchEnabled) {
-            var touchStartListener = dragSourceAndListener.touchStartListener;
-            element.removeEventListener('touchstart', touchStartListener, { passive: true });
-        }
-    };
-    DragService.prototype.removeDragSource = function (params) {
-        var dragSourceAndListener = find(this.dragSources, function (item) { return item.dragSource === params; });
-        if (!dragSourceAndListener) {
-            return;
-        }
-        this.removeListener(dragSourceAndListener);
-        removeFromArray(this.dragSources, dragSourceAndListener);
-    };
-    DragService.prototype.setNoSelectToBody = function (noSelect) {
-        var eDocument = this.gridOptionsWrapper.getDocument();
-        var eBody = eDocument.querySelector('body');
-        if (exists(eBody)) {
-            // when we drag the mouse in AG Grid, this class gets added / removed from the body, so that
-            // the mouse isn't selecting text when dragging.
-            addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
-        }
-    };
-    DragService.prototype.isDragging = function () {
-        return this.dragging;
-    };
-    DragService.prototype.addDragSource = function (params, includeTouch) {
-        if (includeTouch === void 0) { includeTouch = false; }
-        var mouseListener = this.onMouseDown.bind(this, params);
-        params.eElement.addEventListener('mousedown', mouseListener);
-        var touchListener = null;
-        var suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
-        if (includeTouch && !suppressTouch) {
-            touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener, { passive: true });
-        }
-        this.dragSources.push({
-            dragSource: params,
-            mouseDownListener: mouseListener,
-            touchStartListener: touchListener,
-            touchEnabled: includeTouch
-        });
-    };
-    // gets called whenever mouse down on any drag source
-    DragService.prototype.onTouchStart = function (params, touchEvent) {
-        var _this = this;
-        this.currentDragParams = params;
-        this.dragging = false;
-        var touch = touchEvent.touches[0];
-        this.touchLastTime = touch;
-        this.touchStart = touch;
-        var touchMoveEvent = function (e) { return _this.onTouchMove(e, params.eElement); };
-        var touchEndEvent = function (e) { return _this.onTouchUp(e, params.eElement); };
-        var documentTouchMove = function (e) { if (e.cancelable) {
-            e.preventDefault();
-        } };
-        var target = params.eElement;
-        var events = [
-            // Prevents the page document from moving while we are dragging items around.
-            // preventDefault needs to be called in the touchmove listener and never inside the
-            // touchstart, because using touchstart causes the click event to be cancelled on touch devices.
-            { target: document, type: 'touchmove', listener: documentTouchMove, options: { passive: false } },
-            { target: target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true } },
-            { target: target, type: 'touchend', listener: touchEndEvent, options: { passive: true } },
-            { target: target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true } }
-        ];
-        // temporally add these listeners, for the duration of the drag
-        this.addTemporaryEvents(events);
-        // see if we want to start dragging straight away
-        if (params.dragStartPixels === 0) {
-            this.onCommonMove(touch, this.touchStart, params.eElement);
-        }
-    };
-    // gets called whenever mouse down on any drag source
-    DragService.prototype.onMouseDown = function (params, mouseEvent) {
-        var _this = this;
-        var e = mouseEvent;
-        if (params.skipMouseEvent && params.skipMouseEvent(mouseEvent)) {
-            return;
-        }
-        // if there are two elements with parent / child relationship, and both are draggable,
-        // when we drag the child, we should NOT drag the parent. an example of this is row moving
-        // and range selection - row moving should get preference when use drags the rowDrag component.
-        if (e._alreadyProcessedByDragService) {
-            return;
-        }
-        e._alreadyProcessedByDragService = true;
-        // only interested in left button clicks
-        if (mouseEvent.button !== 0) {
-            return;
-        }
-        this.currentDragParams = params;
-        this.dragging = false;
-        this.mouseStartEvent = mouseEvent;
-        var eDocument = this.gridOptionsWrapper.getDocument();
-        this.setNoSelectToBody(true);
-        var mouseMoveEvent = function (event) { return _this.onMouseMove(event, params.eElement); };
-        var mouseUpEvent = function (event) { return _this.onMouseUp(event, params.eElement); };
-        var contextEvent = function (event) { return event.preventDefault(); };
-        var target = eDocument;
-        var events = [
-            { target: target, type: 'mousemove', listener: mouseMoveEvent },
-            { target: target, type: 'mouseup', listener: mouseUpEvent },
-            { target: target, type: 'contextmenu', listener: contextEvent }
-        ];
-        // temporally add these listeners, for the duration of the drag
-        this.addTemporaryEvents(events);
-        //see if we want to start dragging straight away
-        if (params.dragStartPixels === 0) {
-            this.onMouseMove(mouseEvent, params.eElement);
-        }
-    };
-    DragService.prototype.addTemporaryEvents = function (events) {
-        events.forEach(function (currentEvent) {
-            var target = currentEvent.target, type = currentEvent.type, listener = currentEvent.listener, options = currentEvent.options;
-            target.addEventListener(type, listener, options);
-        });
-        this.dragEndFunctions.push(function () {
-            events.forEach(function (currentEvent) {
-                var target = currentEvent.target, type = currentEvent.type, listener = currentEvent.listener, options = currentEvent.options;
-                target.removeEventListener(type, listener, options);
-            });
-        });
-    };
-    // returns true if the event is close to the original event by X pixels either vertically or horizontally.
-    // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
-    DragService.prototype.isEventNearStartEvent = function (currentEvent, startEvent) {
-        // by default, we wait 4 pixels before starting the drag
-        var dragStartPixels = this.currentDragParams.dragStartPixels;
-        var requiredPixelDiff = exists(dragStartPixels) ? dragStartPixels : 4;
-        return areEventsNear(currentEvent, startEvent, requiredPixelDiff);
-    };
-    DragService.prototype.getFirstActiveTouch = function (touchList) {
-        for (var i = 0; i < touchList.length; i++) {
-            if (touchList[i].identifier === this.touchStart.identifier) {
-                return touchList[i];
-            }
-        }
-        return null;
-    };
-    DragService.prototype.onCommonMove = function (currentEvent, startEvent, el) {
-        if (!this.dragging) {
-            // if mouse hasn't travelled from the start position enough, do nothing
-            if (!this.dragging && this.isEventNearStartEvent(currentEvent, startEvent)) {
-                return;
-            }
-            this.dragging = true;
-            var event_1 = {
-                type: Events.EVENT_DRAG_STARTED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                target: el
-            };
-            this.eventService.dispatchEvent(event_1);
-            this.currentDragParams.onDragStart(startEvent);
-            // we need ONE drag action at the startEvent, so that we are guaranteed the drop target
-            // at the start gets notified. this is because the drag can start outside of the element
-            // that started it, as the mouse is allowed drag away from the mouse down before it's
-            // considered a drag (the isEventNearStartEvent() above). if we didn't do this, then
-            // it would be possible to click a column by the edge, then drag outside of the drop zone
-            // in less than 4 pixels and the drag officially starts outside of the header but the header
-            // wouldn't be notified of the dragging.
-            this.currentDragParams.onDragging(startEvent);
-        }
-        this.currentDragParams.onDragging(currentEvent);
-    };
-    DragService.prototype.onTouchMove = function (touchEvent, el) {
-        var touch = this.getFirstActiveTouch(touchEvent.touches);
-        if (!touch) {
-            return;
-        }
-        // this.___statusPanel.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
-        this.onCommonMove(touch, this.touchStart, el);
-    };
-    // only gets called after a mouse down - as this is only added after mouseDown
-    // and is removed when mouseUp happens
-    DragService.prototype.onMouseMove = function (mouseEvent, el) {
-        this.onCommonMove(mouseEvent, this.mouseStartEvent, el);
-    };
-    DragService.prototype.onTouchUp = function (touchEvent, el) {
-        var touch = this.getFirstActiveTouch(touchEvent.changedTouches);
-        // i haven't worked this out yet, but there is no matching touch
-        // when we get the touch up event. to get around this, we swap in
-        // the last touch. this is a hack to 'get it working' while we
-        // figure out what's going on, why we are not getting a touch in
-        // current event.
-        if (!touch) {
-            touch = this.touchLastTime;
-        }
-        // if mouse was left up before we started to move, then this is a tap.
-        // we check this before onUpCommon as onUpCommon resets the dragging
-        // let tap = !this.dragging;
-        // let tapTarget = this.currentDragParams.eElement;
-        this.onUpCommon(touch, el);
-        // if tap, tell user
-        // console.log(`${Math.random()} tap = ${tap}`);
-        // if (tap) {
-        //     tapTarget.click();
-        // }
-    };
-    DragService.prototype.onMouseUp = function (mouseEvent, el) {
-        this.onUpCommon(mouseEvent, el);
-    };
-    DragService.prototype.onUpCommon = function (eventOrTouch, el) {
-        if (this.dragging) {
-            this.dragging = false;
-            this.currentDragParams.onDragStop(eventOrTouch);
-            var event_2 = {
-                type: Events.EVENT_DRAG_STOPPED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                target: el
-            };
-            this.eventService.dispatchEvent(event_2);
-        }
-        this.setNoSelectToBody(false);
-        this.mouseStartEvent = null;
-        this.touchStart = null;
-        this.touchLastTime = null;
-        this.currentDragParams = null;
-        this.dragEndFunctions.forEach(function (func) { return func(); });
-        this.dragEndFunctions.length = 0;
-    };
-    __decorate$15([
-        Autowired('loggerFactory')
-    ], DragService.prototype, "loggerFactory", void 0);
-    __decorate$15([
-        Autowired('columnApi')
-    ], DragService.prototype, "columnApi", void 0);
-    __decorate$15([
-        Autowired('gridApi')
-    ], DragService.prototype, "gridApi", void 0);
-    __decorate$15([
-        PostConstruct
-    ], DragService.prototype, "init", null);
-    __decorate$15([
-        PreDestroy
-    ], DragService.prototype, "removeAllListeners", null);
-    DragService = __decorate$15([
-        Bean('dragService')
-    ], DragService);
-    return DragService;
-}(BeanStub));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$1b = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$16 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var SortController = /** @class */ (function (_super) {
-    __extends$1b(SortController, _super);
-    function SortController() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    SortController_1 = SortController;
-    SortController.prototype.progressSort = function (column, multiSort, source) {
-        if (source === void 0) { source = "api"; }
-        var nextDirection = this.getNextSortDirection(column);
-        this.setSortForColumn(column, nextDirection, multiSort, source);
-    };
-    SortController.prototype.setSortForColumn = function (column, sort, multiSort, source) {
-        if (source === void 0) { source = "api"; }
-        // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
-        if (sort !== Constants.SORT_ASC && sort !== Constants.SORT_DESC) {
-            sort = null;
-        }
-        // update sort on current col
-        column.setSort(sort, source);
-        var doingMultiSort = multiSort && !this.gridOptionsWrapper.isSuppressMultiSort();
-        // clear sort on all columns except this one, and update the icons
-        if (!doingMultiSort) {
-            this.clearSortBarThisColumn(column, source);
-        }
-        // sortIndex used for knowing order of cols when multi-col sort
-        this.updateSortIndex(column);
-        this.dispatchSortChangedEvents();
-    };
-    SortController.prototype.updateSortIndex = function (lastColToChange) {
-        // update sortIndex on all sorting cols
-        var allSortedCols = this.getColumnsWithSortingOrdered();
-        var sortIndex = 0;
-        allSortedCols.forEach(function (col) {
-            if (col !== lastColToChange) {
-                col.setSortIndex(sortIndex);
-                sortIndex++;
-            }
-        });
-        // last col to change always gets the last sort index, it's added to the end
-        if (lastColToChange.getSort()) {
-            lastColToChange.setSortIndex(sortIndex);
-        }
-        // clear sort index on all cols not sorting
-        var allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        allCols.filter(function (col) { return col.getSort() == null; }).forEach(function (col) { return col.setSortIndex(); });
-    };
-    // gets called by API, so if data changes, use can call this, which will end up
-    // working out the sort order again of the rows.
-    SortController.prototype.onSortChanged = function () {
-        this.dispatchSortChangedEvents();
-    };
-    SortController.prototype.isSortActive = function () {
-        // pull out all the columns that have sorting set
-        var allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        var sortedCols = allCols.filter(function (column) { return !!column.getSort(); });
-        return sortedCols && sortedCols.length > 0;
-    };
-    SortController.prototype.dispatchSortChangedEvents = function () {
-        var event = {
-            type: Events.EVENT_SORT_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        this.eventService.dispatchEvent(event);
-    };
-    SortController.prototype.clearSortBarThisColumn = function (columnToSkip, source) {
-        this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach(function (columnToClear) {
-            // Do not clear if either holding shift, or if column in question was clicked
-            if (columnToClear !== columnToSkip) {
-                // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
-                // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
-                columnToClear.setSort(undefined, source);
-            }
-        });
-    };
-    SortController.prototype.getNextSortDirection = function (column) {
-        var sortingOrder;
-        if (column.getColDef().sortingOrder) {
-            sortingOrder = column.getColDef().sortingOrder;
-        }
-        else if (this.gridOptionsWrapper.getSortingOrder()) {
-            sortingOrder = this.gridOptionsWrapper.getSortingOrder();
-        }
-        else {
-            sortingOrder = SortController_1.DEFAULT_SORTING_ORDER;
-        }
-        if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
-            console.warn("ag-grid: sortingOrder must be an array with at least one element, currently it's " + sortingOrder);
-            return null;
-        }
-        var currentIndex = sortingOrder.indexOf(column.getSort());
-        var notInArray = currentIndex < 0;
-        var lastItemInArray = currentIndex == sortingOrder.length - 1;
-        var result;
-        if (notInArray || lastItemInArray) {
-            result = sortingOrder[0];
-        }
-        else {
-            result = sortingOrder[currentIndex + 1];
-        }
-        // verify the sort type exists, as the user could provide the sortingOrder, need to make sure it's valid
-        if (SortController_1.DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
-            console.warn('ag-grid: invalid sort type ' + result);
-            return null;
-        }
-        return result;
-    };
-    SortController.prototype.getColumnsWithSortingOrdered = function () {
-        // pull out all the columns that have sorting set
-        var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        var columnsWithSorting = allColumnsIncludingAuto.filter(function (column) { return !!column.getSort(); });
-        // when both cols are missing sortIndex, we use the position of the col in all cols list.
-        // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
-        // cols is sorted by first.
-        var allColsIndexes = {};
-        allColumnsIncludingAuto.forEach(function (col, index) { return allColsIndexes[col.getId()] = index; });
-        // put the columns in order of which one got sorted first
-        columnsWithSorting.sort(function (a, b) {
-            var iA = a.getSortIndex();
-            var iB = b.getSortIndex();
-            if (iA != null && iB != null) {
-                return iA - iB; // both present, normal comparison
-            }
-            else if (iA == null && iB == null) {
-                // both missing, compare using column positions
-                var posA = allColsIndexes[a.getId()];
-                var posB = allColsIndexes[b.getId()];
-                return posA > posB ? 1 : -1;
-            }
-            else if (iB == null) {
-                return -1; // iB missing
-            }
-            else {
-                return 1; // iA missing
-            }
-        });
-        return columnsWithSorting;
-    };
-    // used by server side row models, to sent sort to server
-    SortController.prototype.getSortModel = function () {
-        return this.getColumnsWithSortingOrdered().map(function (column) { return ({
-            sort: column.getSort(),
-            colId: column.getId()
-        }); });
-    };
-    SortController.prototype.getSortOptions = function () {
-        return this.getColumnsWithSortingOrdered().map(function (column) { return ({
-            sort: column.getSort(),
-            column: column
-        }); });
-    };
-    var SortController_1;
-    SortController.DEFAULT_SORTING_ORDER = [Constants.SORT_ASC, Constants.SORT_DESC, null];
-    __decorate$16([
-        Autowired('columnController')
-    ], SortController.prototype, "columnController", void 0);
-    __decorate$16([
-        Autowired('columnApi')
-    ], SortController.prototype, "columnApi", void 0);
-    __decorate$16([
-        Autowired('gridApi')
-    ], SortController.prototype, "gridApi", void 0);
-    SortController = SortController_1 = __decorate$16([
-        Bean('sortController')
-    ], SortController);
-    return SortController;
-}(BeanStub));
-
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends$1c = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$17 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var __spreadArrays$5 = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -33491,7 +31758,7 @@ var __spreadArrays$5 = (undefined && undefined.__spreadArrays) || function () {
     return r;
 };
 var FocusController = /** @class */ (function (_super) {
-    __extends$1c(FocusController, _super);
+    __extends$14(FocusController, _super);
     function FocusController() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -33545,6 +31812,12 @@ var FocusController = /** @class */ (function (_super) {
     FocusController.toggleKeyboardMode = function (event) {
         var isKeyboardActive = FocusController_1.keyboardModeActive;
         var isKeyboardEvent = event.type === 'keydown';
+        if (isKeyboardEvent) {
+            // the following keys should not toggle keyboard mode.
+            if (event.ctrlKey || event.metaKey || event.altKey) {
+                return;
+            }
+        }
         if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) {
             return;
         }
@@ -33853,36 +32126,1776 @@ var FocusController = /** @class */ (function (_super) {
         return false;
     };
     var FocusController_1;
+    FocusController.AG_KEYBOARD_FOCUS = 'ag-keyboard-focus';
     FocusController.keyboardModeActive = false;
     FocusController.instancesMonitored = new Map();
-    __decorate$17([
+    __decorate$$([
         Autowired('columnController')
     ], FocusController.prototype, "columnController", void 0);
-    __decorate$17([
+    __decorate$$([
         Autowired('headerNavigationService')
     ], FocusController.prototype, "headerNavigationService", void 0);
-    __decorate$17([
+    __decorate$$([
         Autowired('columnApi')
     ], FocusController.prototype, "columnApi", void 0);
-    __decorate$17([
+    __decorate$$([
         Autowired('gridApi')
     ], FocusController.prototype, "gridApi", void 0);
-    __decorate$17([
+    __decorate$$([
         Autowired('rowRenderer')
     ], FocusController.prototype, "rowRenderer", void 0);
-    __decorate$17([
+    __decorate$$([
         Autowired('rowPositionUtils')
     ], FocusController.prototype, "rowPositionUtils", void 0);
-    __decorate$17([
+    __decorate$$([
         Optional('rangeController')
     ], FocusController.prototype, "rangeController", void 0);
-    __decorate$17([
+    __decorate$$([
         PostConstruct
     ], FocusController.prototype, "init", null);
-    FocusController = FocusController_1 = __decorate$17([
+    FocusController = FocusController_1 = __decorate$$([
         Bean('focusController')
     ], FocusController);
     return FocusController;
+}(BeanStub));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$15 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$10 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var PopupService = /** @class */ (function (_super) {
+    __extends$15(PopupService, _super);
+    function PopupService() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.popupList = [];
+        return _this;
+    }
+    PopupService.prototype.registerGridCore = function (gridCore) {
+        var _this = this;
+        this.gridCore = gridCore;
+        this.addManagedListener(this.gridCore, Events.EVENT_KEYBOARD_FOCUS, function () {
+            forEach(_this.popupList, function (popup) { return addCssClass(popup.element, FocusController.AG_KEYBOARD_FOCUS); });
+        });
+        this.addManagedListener(this.gridCore, Events.EVENT_MOUSE_FOCUS, function () {
+            forEach(_this.popupList, function (popup) { return removeCssClass(popup.element, FocusController.AG_KEYBOARD_FOCUS); });
+        });
+    };
+    PopupService.prototype.getPopupParent = function () {
+        var ePopupParent = this.gridOptionsWrapper.getPopupParent();
+        if (ePopupParent) {
+            return ePopupParent;
+        }
+        return this.gridCore.getRootGui();
+    };
+    PopupService.prototype.positionPopupForMenu = function (params) {
+        var sourceRect = params.eventSource.getBoundingClientRect();
+        var parentRect = this.getParentRect();
+        var y = this.keepYWithinBounds(params, sourceRect.top - parentRect.top);
+        var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
+        params.ePopup.style.minWidth = minWidth + "px";
+        var widthOfParent = parentRect.right - parentRect.left;
+        var maxX = widthOfParent - minWidth;
+        // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
+        // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
+        // we try place it first to the left, and then if not to the right.
+        var x;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // for RTL, try left first
+            x = xLeftPosition();
+            if (x < 0) {
+                x = xRightPosition();
+            }
+            if (x > maxX) {
+                x = 0;
+            }
+        }
+        else {
+            // for LTR, try right first
+            x = xRightPosition();
+            if (x > maxX) {
+                x = xLeftPosition();
+            }
+            if (x < 0) {
+                x = 0;
+            }
+        }
+        params.ePopup.style.left = x + "px";
+        params.ePopup.style.top = y + "px";
+        function xRightPosition() {
+            return sourceRect.right - parentRect.left - 2;
+        }
+        function xLeftPosition() {
+            return sourceRect.left - parentRect.left - minWidth;
+        }
+    };
+    PopupService.prototype.positionPopupUnderMouseEvent = function (params) {
+        var _a = this.calculatePointerAlign(params.mouseEvent), x = _a.x, y = _a.y;
+        var ePopup = params.ePopup, nudgeX = params.nudgeX, nudgeY = params.nudgeY;
+        this.positionPopup({
+            ePopup: ePopup,
+            x: x,
+            y: y,
+            nudgeX: nudgeX,
+            nudgeY: nudgeY,
+            keepWithinBounds: true
+        });
+        this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode);
+    };
+    PopupService.prototype.calculatePointerAlign = function (e) {
+        var parentRect = this.getParentRect();
+        return {
+            x: e.clientX - parentRect.left,
+            y: e.clientY - parentRect.top
+        };
+    };
+    PopupService.prototype.positionPopupUnderComponent = function (params) {
+        var sourceRect = params.eventSource.getBoundingClientRect();
+        var alignSide = params.alignSide || 'left';
+        var parentRect = this.getParentRect();
+        var x = sourceRect.left - parentRect.left;
+        if (alignSide === 'right') {
+            x -= (params.ePopup.offsetWidth - sourceRect.width);
+        }
+        this.positionPopup({
+            ePopup: params.ePopup,
+            minWidth: params.minWidth,
+            minHeight: params.minHeight,
+            nudgeX: params.nudgeX,
+            nudgeY: params.nudgeY,
+            x: x,
+            y: sourceRect.top - parentRect.top + sourceRect.height,
+            keepWithinBounds: params.keepWithinBounds
+        });
+        this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
+    };
+    PopupService.prototype.positionPopupOverComponent = function (params) {
+        var sourceRect = params.eventSource.getBoundingClientRect();
+        var parentRect = this.getParentRect();
+        this.positionPopup({
+            ePopup: params.ePopup,
+            minWidth: params.minWidth,
+            nudgeX: params.nudgeX,
+            nudgeY: params.nudgeY,
+            x: sourceRect.left - parentRect.left,
+            y: sourceRect.top - parentRect.top,
+            keepWithinBounds: params.keepWithinBounds
+        });
+        this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
+    };
+    PopupService.prototype.callPostProcessPopup = function (type, ePopup, eventSource, mouseEvent, column, rowNode) {
+        var callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
+        if (callback) {
+            var params = {
+                column: column,
+                rowNode: rowNode,
+                ePopup: ePopup,
+                type: type,
+                eventSource: eventSource,
+                mouseEvent: mouseEvent
+            };
+            callback(params);
+        }
+    };
+    PopupService.prototype.positionPopup = function (params) {
+        var x = params.x;
+        var y = params.y;
+        if (params.nudgeX) {
+            x += params.nudgeX;
+        }
+        if (params.nudgeY) {
+            y += params.nudgeY;
+        }
+        // if popup is overflowing to the bottom, move it up
+        if (params.keepWithinBounds) {
+            x = this.keepXWithinBounds(params, x);
+            y = this.keepYWithinBounds(params, y);
+        }
+        params.ePopup.style.left = x + "px";
+        params.ePopup.style.top = y + "px";
+    };
+    PopupService.prototype.getActivePopups = function () {
+        return this.popupList.map(function (popup) { return popup.element; });
+    };
+    PopupService.prototype.getParentRect = function () {
+        // subtract the popup parent borders, because popupParent.getBoundingClientRect
+        // returns the rect outside the borders, but the 0,0 coordinate for absolute
+        // positioning is inside the border, leading the popup to be off by the width
+        // of the border
+        var popupParent = this.getPopupParent();
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        if (popupParent === eDocument.body) {
+            popupParent = eDocument.documentElement;
+        }
+        var style = getComputedStyle(popupParent);
+        var bounds = popupParent.getBoundingClientRect();
+        return {
+            top: bounds.top + parseFloat(style.borderTopWidth) || 0,
+            left: bounds.left + parseFloat(style.borderLeftWidth) || 0,
+            right: bounds.right + parseFloat(style.borderRightWidth) || 0,
+            bottom: bounds.bottom + parseFloat(style.borderBottomWidth) || 0,
+        };
+    };
+    PopupService.prototype.keepYWithinBounds = function (params, y) {
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        var docElement = eDocument.documentElement;
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var isBody = popupParent === eDocument.body;
+        var minHeight = Math.min(200, parentRect.height);
+        var diff = 0;
+        if (params.minHeight && params.minHeight < minHeight) {
+            minHeight = params.minHeight;
+        }
+        else if (params.ePopup.offsetHeight > 0) {
+            minHeight = params.ePopup.clientHeight;
+            diff = getAbsoluteHeight(params.ePopup) - minHeight;
+        }
+        var heightOfParent = isBody ? (getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.height;
+        if (isBody) {
+            heightOfParent -= Math.abs(documentRect.top - parentRect.top);
+        }
+        var maxY = heightOfParent - minHeight - diff;
+        return Math.min(Math.max(y, 0), Math.abs(maxY));
+    };
+    PopupService.prototype.keepXWithinBounds = function (params, x) {
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        var docElement = eDocument.documentElement;
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var isBody = popupParent === eDocument.body;
+        var ePopup = params.ePopup;
+        var minWidth = Math.min(200, parentRect.width);
+        var diff = 0;
+        if (params.minWidth && params.minWidth < minWidth) {
+            minWidth = params.minWidth;
+        }
+        else if (ePopup.offsetWidth > 0) {
+            minWidth = ePopup.offsetWidth;
+            ePopup.style.minWidth = minWidth + "px";
+            diff = getAbsoluteWidth(ePopup) - minWidth;
+        }
+        var widthOfParent = isBody ? (getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.width;
+        if (isBody) {
+            widthOfParent -= Math.abs(documentRect.left - parentRect.left);
+        }
+        var maxX = widthOfParent - minWidth - diff;
+        return Math.min(Math.max(x, 0), Math.abs(maxX));
+    };
+    PopupService.prototype.keepPopupPositionedRelativeTo = function (params) {
+        var eParent = this.getPopupParent();
+        var parentRect = eParent.getBoundingClientRect();
+        var sourceRect = params.element.getBoundingClientRect();
+        var initialDiffTop = parentRect.top - sourceRect.top;
+        var initialDiffLeft = parentRect.left - sourceRect.left;
+        var lastDiffTop = initialDiffTop;
+        var lastDiffLeft = initialDiffLeft;
+        var topPx = params.ePopup.style.top;
+        var top = parseInt(topPx.substring(0, topPx.length - 1), 10);
+        var leftPx = params.ePopup.style.left;
+        var left = parseInt(leftPx.substring(0, leftPx.length - 1), 10);
+        var intervalId = window.setInterval(function () {
+            var pRect = eParent.getBoundingClientRect();
+            var sRect = params.element.getBoundingClientRect();
+            var elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
+            if (elementNotInDom) {
+                params.hidePopup();
+                return;
+            }
+            var currentDiffTop = pRect.top - sRect.top;
+            if (currentDiffTop != lastDiffTop) {
+                var newTop = top + initialDiffTop - currentDiffTop;
+                params.ePopup.style.top = newTop + "px";
+            }
+            lastDiffTop = currentDiffTop;
+            var currentDiffLeft = pRect.left - sRect.left;
+            if (currentDiffLeft != lastDiffLeft) {
+                var newLeft = left + initialDiffLeft - currentDiffLeft;
+                params.ePopup.style.left = newLeft + "px";
+            }
+            lastDiffLeft = currentDiffLeft;
+        }, 200);
+        var res = function () {
+            if (intervalId != null) {
+                window.clearInterval(intervalId);
+            }
+            intervalId = undefined;
+        };
+        return res;
+    };
+    PopupService.prototype.addPopup = function (params) {
+        var _this = this;
+        var modal = params.modal, eChild = params.eChild, closeOnEsc = params.closeOnEsc, closedCallback = params.closedCallback, click = params.click, alwaysOnTop = params.alwaysOnTop, afterGuiAttached = params.afterGuiAttached, positionCallback = params.positionCallback, anchorToElement = params.anchorToElement;
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        if (!eDocument) {
+            console.warn('ag-grid: could not find the document, document is empty');
+            return;
+        }
+        var pos = findIndex(this.popupList, function (popup) { return popup.element === eChild; });
+        if (pos !== -1) {
+            var popup = this.popupList[pos];
+            return { hideFunc: popup.hideFunc, stopAnchoringFunc: popup.stopAnchoringFunc };
+        }
+        var ePopupParent = this.getPopupParent();
+        // for angular specifically, but shouldn't cause an issue with js or other fw's
+        // https://github.com/angular/angular/issues/8563
+        ePopupParent.appendChild(eChild);
+        if (eChild.style.top == null) {
+            eChild.style.top = '0px';
+        }
+        if (eChild.style.left == null) {
+            eChild.style.left = '0px';
+        }
+        // add env CSS class to child, in case user provided a popup parent, which means
+        // theme class may be missing
+        var eWrapper = document.createElement('div');
+        var theme = this.environment.getTheme().theme;
+        if (theme) {
+            addCssClass(eWrapper, theme);
+        }
+        addCssClass(eWrapper, 'ag-popup');
+        addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
+        addCssClass(eChild, 'ag-popup-child');
+        if (this.focusController.isKeyboardMode()) {
+            addCssClass(eChild, FocusController.AG_KEYBOARD_FOCUS);
+        }
+        eWrapper.appendChild(eChild);
+        ePopupParent.appendChild(eWrapper);
+        if (alwaysOnTop) {
+            this.setAlwaysOnTop(eWrapper, true);
+        }
+        else {
+            this.bringPopupToFront(eWrapper);
+        }
+        var popupHidden = false;
+        var hidePopupOnKeyboardEvent = function (event) {
+            if (!eWrapper.contains(document.activeElement)) {
+                return;
+            }
+            var key = event.which || event.keyCode;
+            if (key === KeyCode.ESCAPE) {
+                hidePopup({ keyboardEvent: event });
+            }
+        };
+        var hidePopupOnMouseEvent = function (event) { return hidePopup({ mouseEvent: event }); };
+        var hidePopupOnTouchEvent = function (event) { return hidePopup({ touchEvent: event }); };
+        var destroyPositionTracker;
+        var hidePopup = function (popupParams) {
+            if (popupParams === void 0) { popupParams = {}; }
+            var mouseEvent = popupParams.mouseEvent, touchEvent = popupParams.touchEvent, keyboardEvent = popupParams.keyboardEvent;
+            if (
+            // we don't hide popup if the event was on the child, or any
+            // children of this child
+            _this.isEventFromCurrentPopup({ mouseEvent: mouseEvent, touchEvent: touchEvent }, eChild) ||
+                // if the event to close is actually the open event, then ignore it
+                _this.isEventSameChainAsOriginalEvent({ originalMouseEvent: click, mouseEvent: mouseEvent, touchEvent: touchEvent }) ||
+                // this method should only be called once. the client can have different
+                // paths, each one wanting to close, so this method may be called multiple times.
+                popupHidden) {
+                return;
+            }
+            popupHidden = true;
+            ePopupParent.removeChild(eWrapper);
+            eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
+            eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
+            eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
+            eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
+            _this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
+            if (closedCallback) {
+                closedCallback(mouseEvent || touchEvent || keyboardEvent);
+            }
+            _this.popupList = _this.popupList.filter(function (popup) { return popup.element !== eChild; });
+            if (destroyPositionTracker) {
+                destroyPositionTracker();
+            }
+        };
+        if (afterGuiAttached) {
+            afterGuiAttached({ hidePopup: hidePopup });
+        }
+        // if we add these listeners now, then the current mouse
+        // click will be included, which we don't want
+        window.setTimeout(function () {
+            if (closeOnEsc) {
+                eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
+            }
+            if (modal) {
+                eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
+                _this.eventService.addEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
+                eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
+                eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
+            }
+        }, 0);
+        if (positionCallback) {
+            positionCallback();
+        }
+        if (anchorToElement) {
+            // keeps popup positioned under created, eg if context menu, if user scrolls
+            // using touchpad and the cell moves, it moves the popup to keep it with the cell.
+            destroyPositionTracker = this.keepPopupPositionedRelativeTo({
+                element: anchorToElement,
+                ePopup: eChild,
+                hidePopup: hidePopup
+            });
+        }
+        this.popupList.push({
+            element: eChild,
+            hideFunc: hidePopup,
+            stopAnchoringFunc: destroyPositionTracker
+        });
+        return {
+            hideFunc: hidePopup,
+            stopAnchoringFunc: destroyPositionTracker
+        };
+    };
+    PopupService.prototype.isEventFromCurrentPopup = function (params, target) {
+        var mouseEvent = params.mouseEvent, touchEvent = params.touchEvent;
+        var event = mouseEvent ? mouseEvent : touchEvent;
+        if (!event) {
+            return false;
+        }
+        var indexOfThisChild = findIndex(this.popupList, function (popup) { return popup.element === target; });
+        if (indexOfThisChild === -1) {
+            return false;
+        }
+        for (var i = indexOfThisChild; i < this.popupList.length; i++) {
+            var popup = this.popupList[i];
+            if (isElementInEventPath(popup.element, event)) {
+                return true;
+            }
+        }
+        // if the user did not write their own Custom Element to be rendered as popup
+        // and this component has an additional popup element, they should have the
+        // `ag-custom-component-popup` class to be detected as part of the Custom Component
+        return this.isElementWithinCustomPopup(event.target);
+    };
+    PopupService.prototype.isElementWithinCustomPopup = function (el) {
+        if (!this.popupList.length) {
+            return false;
+        }
+        while (el && el !== document.body) {
+            if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
+                return true;
+            }
+            el = el.parentElement;
+        }
+        return false;
+    };
+    // in some browsers, the context menu event can be fired before the click event, which means
+    // the context menu event could open the popup, but then the click event closes it straight away.
+    PopupService.prototype.isEventSameChainAsOriginalEvent = function (params) {
+        var originalMouseEvent = params.originalMouseEvent, mouseEvent = params.mouseEvent, touchEvent = params.touchEvent;
+        // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
+        // the event is a different event, however that is an edge case that is not very relevant (the user clicking
+        // twice on the same location isn't a normal path).
+        // event could be mouse event or touch event.
+        var mouseEventOrTouch = null;
+        if (mouseEvent) {
+            // mouse event can be used direction, it has coordinates
+            mouseEventOrTouch = mouseEvent;
+        }
+        else if (touchEvent) {
+            // touch event doesn't have coordinates, need it's touch object
+            mouseEventOrTouch = touchEvent.touches[0];
+        }
+        if (mouseEventOrTouch && originalMouseEvent) {
+            // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
+            // by browser click (when you finger up, touch is interrupted as click in browser)
+            var screenX_1 = mouseEvent ? mouseEvent.screenX : 0;
+            var screenY_1 = mouseEvent ? mouseEvent.screenY : 0;
+            var xMatch = Math.abs(originalMouseEvent.screenX - screenX_1) < 5;
+            var yMatch = Math.abs(originalMouseEvent.screenY - screenY_1) < 5;
+            if (xMatch && yMatch) {
+                return true;
+            }
+        }
+        return false;
+    };
+    PopupService.prototype.getWrapper = function (ePopup) {
+        while (!containsClass(ePopup, 'ag-popup') && ePopup.parentElement) {
+            ePopup = ePopup.parentElement;
+        }
+        return containsClass(ePopup, 'ag-popup') ? ePopup : null;
+    };
+    PopupService.prototype.setAlwaysOnTop = function (ePopup, alwaysOnTop) {
+        var eWrapper = this.getWrapper(ePopup);
+        if (!eWrapper) {
+            return;
+        }
+        addOrRemoveCssClass(eWrapper, 'ag-always-on-top', !!alwaysOnTop);
+        if (alwaysOnTop) {
+            this.bringPopupToFront(eWrapper);
+        }
+    };
+    PopupService.prototype.bringPopupToFront = function (ePopup) {
+        var parent = this.getPopupParent();
+        var popupList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup'));
+        var popupLen = popupList.length;
+        var alwaysOnTopList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup.ag-always-on-top'));
+        var onTopLength = alwaysOnTopList.length;
+        var eWrapper = this.getWrapper(ePopup);
+        if (!eWrapper || popupLen <= 1 || !parent.contains(ePopup)) {
+            return;
+        }
+        var pos = popupList.indexOf(eWrapper);
+        if (onTopLength) {
+            var isPopupAlwaysOnTop = containsClass(eWrapper, 'ag-always-on-top');
+            if (isPopupAlwaysOnTop) {
+                if (pos !== popupLen - 1) {
+                    last(alwaysOnTopList).insertAdjacentElement('afterend', eWrapper);
+                }
+            }
+            else if (pos !== popupLen - onTopLength - 1) {
+                alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
+            }
+        }
+        else if (pos !== popupLen - 1) {
+            last(popupList).insertAdjacentElement('afterend', eWrapper);
+        }
+        var params = {
+            type: 'popupToFront',
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            eWrapper: eWrapper
+        };
+        this.eventService.dispatchEvent(params);
+    };
+    __decorate$10([
+        Autowired('environment')
+    ], PopupService.prototype, "environment", void 0);
+    __decorate$10([
+        Autowired('focusController')
+    ], PopupService.prototype, "focusController", void 0);
+    PopupService = __decorate$10([
+        Bean('popupService')
+    ], PopupService);
+    return PopupService;
+}(BeanStub));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$16 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$11 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param$7 = (undefined && undefined.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var LoggerFactory = /** @class */ (function (_super) {
+    __extends$16(LoggerFactory, _super);
+    function LoggerFactory() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    LoggerFactory.prototype.setBeans = function (gridOptionsWrapper) {
+        this.logging = gridOptionsWrapper.isDebug();
+    };
+    LoggerFactory.prototype.create = function (name) {
+        return new Logger(name, this.isLogging.bind(this));
+    };
+    LoggerFactory.prototype.isLogging = function () {
+        return this.logging;
+    };
+    __decorate$11([
+        __param$7(0, Qualifier('gridOptionsWrapper'))
+    ], LoggerFactory.prototype, "setBeans", null);
+    LoggerFactory = __decorate$11([
+        Bean('loggerFactory')
+    ], LoggerFactory);
+    return LoggerFactory;
+}(BeanStub));
+var Logger = /** @class */ (function () {
+    function Logger(name, isLoggingFunc) {
+        this.name = name;
+        this.isLoggingFunc = isLoggingFunc;
+    }
+    Logger.prototype.isLogging = function () {
+        return this.isLoggingFunc();
+    };
+    Logger.prototype.log = function (message) {
+        if (this.isLoggingFunc()) {
+            // tslint:disable-next-line
+            console.log('AG Grid.' + this.name + ': ' + message);
+        }
+    };
+    return Logger;
+}());
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$17 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$12 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var AutoWidthCalculator = /** @class */ (function (_super) {
+    __extends$17(AutoWidthCalculator, _super);
+    function AutoWidthCalculator() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    AutoWidthCalculator.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
+    AutoWidthCalculator.prototype.registerHeaderRootComp = function (headerRootComp) {
+        this.headerRootComp = headerRootComp;
+    };
+    // this is the trick: we create a dummy container and clone all the cells
+    // into the dummy, then check the dummy's width. then destroy the dummy
+    // as we don't need it any more.
+    // drawback: only the cells visible on the screen are considered
+    AutoWidthCalculator.prototype.getPreferredWidthForColumn = function (column, skipHeader) {
+        var eHeaderCell = this.getHeaderCellForColumn(column);
+        // cell isn't visible
+        if (!eHeaderCell) {
+            return -1;
+        }
+        var eDummyContainer = document.createElement('span');
+        // position fixed, so it isn't restricted to the boundaries of the parent
+        eDummyContainer.style.position = 'fixed';
+        // we put the dummy into the body container, so it will inherit all the
+        // css styles that the real cells are inheriting
+        var eBodyContainer = this.gridPanel.getCenterContainer();
+        eBodyContainer.appendChild(eDummyContainer);
+        // get all the cells that are currently displayed (this only brings back
+        // rendered cells, rows not rendered due to row visualisation will not be here)
+        this.putRowCellsIntoDummyContainer(column, eDummyContainer);
+        if (!skipHeader) {
+            // we only consider the lowest level cell, not the group cell. in 99% of the time, this
+            // will be enough. if we consider groups, then it gets too complicated for what it's worth,
+            // as the groups can span columns and this class only considers one column at a time.
+            this.cloneItemIntoDummy(eHeaderCell, eDummyContainer);
+        }
+        // at this point, all the clones are lined up vertically with natural widths. the dummy
+        // container will have a width wide enough just to fit the largest.
+        var dummyContainerWidth = eDummyContainer.offsetWidth;
+        // we are finished with the dummy container, so get rid of it
+        eBodyContainer.removeChild(eDummyContainer);
+        // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
+        // user can configure the grid to add a few more pixels after the calculated width
+        var autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
+        return dummyContainerWidth + autoSizePadding;
+    };
+    AutoWidthCalculator.prototype.getHeaderCellForColumn = function (column) {
+        var comp = null;
+        // find the rendered header cell
+        this.headerRootComp.forEachHeaderElement(function (headerElement) {
+            if (headerElement instanceof HeaderWrapperComp) {
+                var headerWrapperComp = headerElement;
+                if (headerWrapperComp.getColumn() === column) {
+                    comp = headerWrapperComp;
+                }
+            }
+        });
+        return comp ? comp.getGui() : null;
+    };
+    AutoWidthCalculator.prototype.putRowCellsIntoDummyContainer = function (column, eDummyContainer) {
+        var _this = this;
+        var eCells = this.rowRenderer.getAllCellsForColumn(column);
+        eCells.forEach(function (eCell) { return _this.cloneItemIntoDummy(eCell, eDummyContainer); });
+    };
+    AutoWidthCalculator.prototype.cloneItemIntoDummy = function (eCell, eDummyContainer) {
+        // make a deep clone of the cell
+        var eCellClone = eCell.cloneNode(true);
+        // the original has a fixed width, we remove this to allow the natural width based on content
+        eCellClone.style.width = '';
+        // the original has position = absolute, we need to remove this so it's positioned normally
+        eCellClone.style.position = 'static';
+        eCellClone.style.left = '';
+        // we put the cell into a containing div, as otherwise the cells would just line up
+        // on the same line, standard flow layout, by putting them into divs, they are laid
+        // out one per line
+        var eCloneParent = document.createElement('div');
+        if (containsClass(eCellClone, 'ag-header-cell')) {
+            addCssClass(eCloneParent, 'ag-header');
+            addCssClass(eCloneParent, 'ag-header-row');
+            eCloneParent.style.position = 'static';
+        }
+        else {
+            addCssClass(eCloneParent, 'ag-row');
+        }
+        // table-row, so that each cell is on a row. i also tried display='block', but this
+        // didn't work in IE
+        eCloneParent.style.display = 'table-row';
+        // the twig on the branch, the branch on the tree, the tree in the hole,
+        // the hole in the bog, the bog in the clone, the clone in the parent,
+        // the parent in the dummy, and the dummy down in the vall-e-ooo, OOOOOOOOO! Oh row the rattling bog....
+        eCloneParent.appendChild(eCellClone);
+        eDummyContainer.appendChild(eCloneParent);
+    };
+    __decorate$12([
+        Autowired('rowRenderer')
+    ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
+    AutoWidthCalculator = __decorate$12([
+        Bean('autoWidthCalculator')
+    ], AutoWidthCalculator);
+    return AutoWidthCalculator;
+}(BeanStub));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$18 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$13 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var HorizontalResizeService = /** @class */ (function (_super) {
+    __extends$18(HorizontalResizeService, _super);
+    function HorizontalResizeService() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    HorizontalResizeService.prototype.addResizeBar = function (params) {
+        var _this = this;
+        var dragSource = {
+            dragStartPixels: params.dragStartPixels || 0,
+            eElement: params.eResizeBar,
+            onDragStart: this.onDragStart.bind(this, params),
+            onDragStop: this.onDragStop.bind(this, params),
+            onDragging: this.onDragging.bind(this, params)
+        };
+        this.dragService.addDragSource(dragSource, true);
+        // we pass remove func back to the caller, so call can tell us when they
+        // are finished, and then we remove the listener from the drag source
+        var finishedWithResizeFunc = function () { return _this.dragService.removeDragSource(dragSource); };
+        return finishedWithResizeFunc;
+    };
+    HorizontalResizeService.prototype.onDragStart = function (params, mouseEvent) {
+        this.dragStartX = mouseEvent.clientX;
+        this.setResizeIcons();
+        var shiftKey = mouseEvent instanceof MouseEvent && mouseEvent.shiftKey === true;
+        params.onResizeStart(shiftKey);
+    };
+    HorizontalResizeService.prototype.setResizeIcons = function () {
+        this.oldBodyCursor = this.eGridDiv.style.cursor;
+        this.oldUserSelect = this.eGridDiv.style.userSelect;
+        this.oldWebkitUserSelect = this.eGridDiv.style.webkitUserSelect;
+        // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
+        this.eGridDiv.style.cursor = 'ew-resize';
+        // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
+        this.eGridDiv.style.userSelect = 'none';
+        this.eGridDiv.style.webkitUserSelect = 'none';
+    };
+    HorizontalResizeService.prototype.onDragStop = function (params, mouseEvent) {
+        params.onResizeEnd(this.resizeAmount);
+        this.resetIcons();
+    };
+    HorizontalResizeService.prototype.resetIcons = function () {
+        // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
+        this.eGridDiv.style.cursor = this.oldBodyCursor;
+        this.eGridDiv.style.userSelect = this.oldUserSelect;
+        this.eGridDiv.style.webkitUserSelect = this.oldWebkitUserSelect;
+    };
+    HorizontalResizeService.prototype.onDragging = function (params, mouseEvent) {
+        this.resizeAmount = mouseEvent.clientX - this.dragStartX;
+        params.onResizing(this.resizeAmount);
+    };
+    __decorate$13([
+        Autowired('dragService')
+    ], HorizontalResizeService.prototype, "dragService", void 0);
+    __decorate$13([
+        Autowired('eGridDiv')
+    ], HorizontalResizeService.prototype, "eGridDiv", void 0);
+    HorizontalResizeService = __decorate$13([
+        Bean('horizontalResizeService')
+    ], HorizontalResizeService);
+    return HorizontalResizeService;
+}(BeanStub));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$19 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$14 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var GridCore = /** @class */ (function (_super) {
+    __extends$19(GridCore, _super);
+    function GridCore() {
+        return _super.call(this, undefined, true) || this;
+    }
+    GridCore.prototype.postConstruct = function () {
+        var _this = this;
+        this.logger = this.loggerFactory.create('GridCore');
+        var template = this.createTemplate();
+        this.setTemplate(template);
+        // register with services that need grid core
+        [
+            this.gridApi,
+            this.rowRenderer,
+            this.popupService,
+            this.focusController
+        ].forEach(function (service) { return service.registerGridCore(_this); });
+        if (ModuleRegistry.isRegistered(exports.ModuleNames.ClipboardModule)) {
+            this.clipboardService.registerGridCore(this);
+        }
+        this.gridOptionsWrapper.addLayoutElement(this.getGui());
+        this.eGridDiv.appendChild(this.getGui());
+        this.addDestroyFunc(function () {
+            _this.eGridDiv.removeChild(_this.getGui());
+        });
+        // if using angular, watch for quickFilter changes
+        if (this.$scope) {
+            var quickFilterUnregisterFn = this.$scope.$watch(this.quickFilterOnScope, function (newFilter) { return _this.filterManager.setQuickFilter(newFilter); });
+            this.addDestroyFunc(quickFilterUnregisterFn);
+        }
+        // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
+        // which doLayout indirectly depends on
+        this.addRtlSupport();
+        this.logger.log('ready');
+        this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
+        var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
+        this.addDestroyFunc(function () { return unsubscribeFromResize(); });
+        var eGui = this.getGui();
+        this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, function () {
+            addCssClass(eGui, FocusController.AG_KEYBOARD_FOCUS);
+        });
+        this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, function () {
+            removeCssClass(eGui, FocusController.AG_KEYBOARD_FOCUS);
+        });
+        _super.prototype.postConstruct.call(this);
+    };
+    GridCore.prototype.getFocusableElement = function () {
+        return this.eRootWrapperBody;
+    };
+    GridCore.prototype.createTemplate = function () {
+        var sideBarModuleLoaded = ModuleRegistry.isRegistered(exports.ModuleNames.SideBarModule);
+        var statusBarModuleLoaded = ModuleRegistry.isRegistered(exports.ModuleNames.StatusBarModule);
+        var rowGroupingLoaded = ModuleRegistry.isRegistered(exports.ModuleNames.RowGroupingModule);
+        var enterpriseCoreLoaded = ModuleRegistry.isRegistered(exports.ModuleNames.EnterpriseCoreModule);
+        var dropZones = rowGroupingLoaded ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
+        var sideBar = sideBarModuleLoaded ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
+        var statusBar = statusBarModuleLoaded ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
+        var watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
+        var template = /* html */ "<div ref=\"eRootWrapper\" class=\"ag-root-wrapper\">\n                " + dropZones + "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\">\n                    <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                    " + sideBar + "\n                </div>\n                " + statusBar + "\n                <ag-pagination></ag-pagination>\n                " + watermark + "\n            </div>";
+        return template;
+    };
+    GridCore.prototype.getFocusableContainers = function () {
+        var focusableContainers = [
+            this.gridPanel.getGui()
+        ];
+        if (this.sideBarComp) {
+            focusableContainers.push(this.sideBarComp.getGui());
+        }
+        return focusableContainers.filter(function (el) { return isVisible(el); });
+    };
+    GridCore.prototype.focusNextInnerContainer = function (backwards) {
+        var focusableContainers = this.getFocusableContainers();
+        var idxWithFocus = findIndex(focusableContainers, function (container) { return container.contains(document.activeElement); });
+        var nextIdx = idxWithFocus + (backwards ? -1 : 1);
+        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
+            return false;
+        }
+        if (nextIdx === 0) {
+            return this.focusGridHeader();
+        }
+        return this.focusController.focusInto(focusableContainers[nextIdx]);
+    };
+    GridCore.prototype.focusInnerElement = function (fromBottom) {
+        var focusableContainers = this.getFocusableContainers();
+        if (fromBottom) {
+            if (focusableContainers.length > 1) {
+                return this.focusController.focusInto(last(focusableContainers));
+            }
+            var lastColumn = last(this.columnController.getAllDisplayedColumns());
+            if (this.focusController.focusGridView(lastColumn, true)) {
+                return true;
+            }
+        }
+        return this.focusGridHeader();
+    };
+    GridCore.prototype.focusGridHeader = function () {
+        var firstColumn = this.columnController.getAllDisplayedColumns()[0];
+        if (!firstColumn) {
+            return false;
+        }
+        if (firstColumn.getParent()) {
+            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0);
+        }
+        this.focusController.focusHeaderPosition({ headerRowIndex: 0, column: firstColumn });
+        return true;
+    };
+    GridCore.prototype.onGridSizeChanged = function () {
+        var event = {
+            type: Events.EVENT_GRID_SIZE_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            clientWidth: this.eGridDiv.clientWidth,
+            clientHeight: this.eGridDiv.clientHeight
+        };
+        this.eventService.dispatchEvent(event);
+    };
+    GridCore.prototype.addRtlSupport = function () {
+        var cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
+        addCssClass(this.getGui(), cssClass);
+    };
+    GridCore.prototype.getRootGui = function () {
+        return this.getGui();
+    };
+    GridCore.prototype.isSideBarVisible = function () {
+        if (!this.sideBarComp) {
+            return false;
+        }
+        return this.sideBarComp.isDisplayed();
+    };
+    GridCore.prototype.setSideBarVisible = function (show) {
+        if (!this.sideBarComp) {
+            if (show) {
+                console.warn('AG Grid: sideBar is not loaded');
+            }
+            return;
+        }
+        this.sideBarComp.setDisplayed(show);
+    };
+    GridCore.prototype.setSideBarPosition = function (position) {
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: sideBar is not loaded');
+            return;
+        }
+        this.sideBarComp.setSideBarPosition(position);
+    };
+    GridCore.prototype.closeToolPanel = function () {
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
+            return;
+        }
+        this.sideBarComp.close();
+    };
+    GridCore.prototype.getSideBar = function () {
+        return this.gridOptions.sideBar;
+    };
+    GridCore.prototype.getToolPanelInstance = function (key) {
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
+            return;
+        }
+        return this.sideBarComp.getToolPanelInstance(key);
+    };
+    GridCore.prototype.refreshSideBar = function () {
+        if (this.sideBarComp) {
+            this.sideBarComp.refresh();
+        }
+    };
+    GridCore.prototype.setSideBar = function (def) {
+        if (!this.sideBarComp) {
+            return;
+        }
+        this.eRootWrapperBody.removeChild(this.sideBarComp.getGui());
+        this.gridOptions.sideBar = SideBarDefParser.parse(def);
+        this.sideBarComp.reset();
+        this.eRootWrapperBody.appendChild(this.sideBarComp.getGui());
+    };
+    GridCore.prototype.getOpenedToolPanel = function () {
+        if (!this.sideBarComp) {
+            return null;
+        }
+        return this.sideBarComp.openedItem();
+    };
+    GridCore.prototype.openToolPanel = function (key) {
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
+            return;
+        }
+        this.sideBarComp.openToolPanel(key);
+    };
+    GridCore.prototype.isToolPanelShowing = function () {
+        return this.sideBarComp.isToolPanelShowing();
+    };
+    GridCore.prototype.destroy = function () {
+        this.logger.log('Grid DOM removed');
+        _super.prototype.destroy.call(this);
+    };
+    // Valid values for position are bottom, middle and top
+    GridCore.prototype.ensureNodeVisible = function (comparator, position) {
+        if (position === void 0) { position = null; }
+        if (this.doingVirtualPaging) {
+            throw new Error('Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory');
+        }
+        // look for the node index we want to display
+        var rowCount = this.rowModel.getRowCount();
+        var comparatorIsAFunction = typeof comparator === 'function';
+        var indexToSelect = -1;
+        // go through all the nodes, find the one we want to show
+        for (var i = 0; i < rowCount; i++) {
+            var node = this.rowModel.getRow(i);
+            if (comparatorIsAFunction) {
+                if (comparator(node)) {
+                    indexToSelect = i;
+                    break;
+                }
+            }
+            else {
+                // check object equality against node and data
+                if (comparator === node || comparator === node.data) {
+                    indexToSelect = i;
+                    break;
+                }
+            }
+        }
+        if (indexToSelect >= 0) {
+            this.gridPanel.ensureIndexVisible(indexToSelect, position);
+        }
+    };
+    GridCore.prototype.onTabKeyDown = function () { };
+    __decorate$14([
+        Autowired('gridOptions')
+    ], GridCore.prototype, "gridOptions", void 0);
+    __decorate$14([
+        Autowired('rowModel')
+    ], GridCore.prototype, "rowModel", void 0);
+    __decorate$14([
+        Autowired('resizeObserverService')
+    ], GridCore.prototype, "resizeObserverService", void 0);
+    __decorate$14([
+        Autowired('rowRenderer')
+    ], GridCore.prototype, "rowRenderer", void 0);
+    __decorate$14([
+        Autowired('filterManager')
+    ], GridCore.prototype, "filterManager", void 0);
+    __decorate$14([
+        Autowired('eGridDiv')
+    ], GridCore.prototype, "eGridDiv", void 0);
+    __decorate$14([
+        Autowired('$scope')
+    ], GridCore.prototype, "$scope", void 0);
+    __decorate$14([
+        Autowired('quickFilterOnScope')
+    ], GridCore.prototype, "quickFilterOnScope", void 0);
+    __decorate$14([
+        Autowired('popupService')
+    ], GridCore.prototype, "popupService", void 0);
+    __decorate$14([
+        Autowired('columnController')
+    ], GridCore.prototype, "columnController", void 0);
+    __decorate$14([
+        Autowired('loggerFactory')
+    ], GridCore.prototype, "loggerFactory", void 0);
+    __decorate$14([
+        Autowired('columnApi')
+    ], GridCore.prototype, "columnApi", void 0);
+    __decorate$14([
+        Autowired('gridApi')
+    ], GridCore.prototype, "gridApi", void 0);
+    __decorate$14([
+        Optional('clipboardService')
+    ], GridCore.prototype, "clipboardService", void 0);
+    __decorate$14([
+        RefSelector('gridPanel')
+    ], GridCore.prototype, "gridPanel", void 0);
+    __decorate$14([
+        RefSelector('sideBar')
+    ], GridCore.prototype, "sideBarComp", void 0);
+    __decorate$14([
+        RefSelector('rootWrapperBody')
+    ], GridCore.prototype, "eRootWrapperBody", void 0);
+    return GridCore;
+}(ManagedFocusComponent));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$1a = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$15 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var StandardMenuFactory = /** @class */ (function (_super) {
+    __extends$1a(StandardMenuFactory, _super);
+    function StandardMenuFactory() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    StandardMenuFactory.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
+    StandardMenuFactory.prototype.hideActiveMenu = function () {
+        if (this.hidePopup) {
+            this.hidePopup();
+        }
+    };
+    StandardMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent) {
+        var _this = this;
+        this.showPopup(column, function (eMenu) {
+            _this.popupService.positionPopupUnderMouseEvent({
+                column: column,
+                type: 'columnMenu',
+                mouseEvent: mouseEvent,
+                ePopup: eMenu
+            });
+        }, mouseEvent.target);
+    };
+    StandardMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource) {
+        var _this = this;
+        this.showPopup(column, function (eMenu) {
+            _this.popupService.positionPopupUnderComponent({
+                type: 'columnMenu',
+                eventSource: eventSource,
+                ePopup: eMenu,
+                keepWithinBounds: true,
+                column: column
+            });
+        }, eventSource);
+    };
+    StandardMenuFactory.prototype.showPopup = function (column, positionCallback, eventSource) {
+        var _this = this;
+        var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
+        var eMenu = document.createElement('div');
+        eMenu.setAttribute('role', 'presentation');
+        addCssClass(eMenu, 'ag-menu');
+        this.tabListener = this.addManagedListener(eMenu, 'keydown', function (e) { return _this.trapFocusWithin(e, eMenu); });
+        filterWrapper.guiPromise.then(function (gui) { return eMenu.appendChild(gui); });
+        var hidePopup;
+        var anchorToElement = eventSource || this.gridPanel.getGui();
+        var closedCallback = function (e) {
+            column.setMenuVisible(false, 'contextMenu');
+            var isKeyboardEvent = e instanceof KeyboardEvent;
+            if (_this.tabListener) {
+                _this.tabListener = _this.tabListener();
+            }
+            if (isKeyboardEvent && eventSource && isVisible(eventSource)) {
+                var focusableEl = _this.focusController.findTabbableParent(eventSource);
+                if (focusableEl) {
+                    focusableEl.focus();
+                }
+            }
+        };
+        var addPopupRes = this.popupService.addPopup({
+            modal: true,
+            eChild: eMenu,
+            closeOnEsc: true,
+            closedCallback: closedCallback,
+            positionCallback: function () { return positionCallback(eMenu); },
+            anchorToElement: anchorToElement
+        });
+        if (addPopupRes) {
+            this.hidePopup = hidePopup = addPopupRes.hideFunc;
+        }
+        filterWrapper.filterPromise.then(function (filter) {
+            // need to make sure the filter is present before positioning, as only
+            // after filter it is visible can we find out what the width of it is
+            positionCallback(eMenu);
+            if (filter.afterGuiAttached) {
+                filter.afterGuiAttached({ container: 'columnMenu', hidePopup: hidePopup });
+            }
+        });
+        column.setMenuVisible(true, 'contextMenu');
+    };
+    StandardMenuFactory.prototype.trapFocusWithin = function (e, menu) {
+        if (e.keyCode !== KeyCode.TAB ||
+            e.defaultPrevented ||
+            this.focusController.findNextFocusableElement(menu, false, e.shiftKey)) {
+            return;
+        }
+        e.preventDefault();
+        this.focusController.focusInto(menu, e.shiftKey);
+    };
+    StandardMenuFactory.prototype.isMenuEnabled = function (column) {
+        // for standard, we show menu if filter is enabled, and the menu is not suppressed
+        return column.isFilterAllowed();
+    };
+    __decorate$15([
+        Autowired('filterManager')
+    ], StandardMenuFactory.prototype, "filterManager", void 0);
+    __decorate$15([
+        Autowired('popupService')
+    ], StandardMenuFactory.prototype, "popupService", void 0);
+    __decorate$15([
+        Autowired('focusController')
+    ], StandardMenuFactory.prototype, "focusController", void 0);
+    StandardMenuFactory = __decorate$15([
+        Bean('menuFactory')
+    ], StandardMenuFactory);
+    return StandardMenuFactory;
+}(BeanStub));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$1b = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$16 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+/** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
+ * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
+var DragService = /** @class */ (function (_super) {
+    __extends$1b(DragService, _super);
+    function DragService() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.dragEndFunctions = [];
+        _this.dragSources = [];
+        return _this;
+    }
+    DragService.prototype.init = function () {
+        this.logger = this.loggerFactory.create('DragService');
+    };
+    DragService.prototype.removeAllListeners = function () {
+        this.dragSources.forEach(this.removeListener.bind(this));
+        this.dragSources.length = 0;
+    };
+    DragService.prototype.removeListener = function (dragSourceAndListener) {
+        var element = dragSourceAndListener.dragSource.eElement;
+        var mouseDownListener = dragSourceAndListener.mouseDownListener;
+        element.removeEventListener('mousedown', mouseDownListener);
+        // remove touch listener only if it exists
+        if (dragSourceAndListener.touchEnabled) {
+            var touchStartListener = dragSourceAndListener.touchStartListener;
+            element.removeEventListener('touchstart', touchStartListener, { passive: true });
+        }
+    };
+    DragService.prototype.removeDragSource = function (params) {
+        var dragSourceAndListener = find(this.dragSources, function (item) { return item.dragSource === params; });
+        if (!dragSourceAndListener) {
+            return;
+        }
+        this.removeListener(dragSourceAndListener);
+        removeFromArray(this.dragSources, dragSourceAndListener);
+    };
+    DragService.prototype.setNoSelectToBody = function (noSelect) {
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        var eBody = eDocument.querySelector('body');
+        if (exists(eBody)) {
+            // when we drag the mouse in AG Grid, this class gets added / removed from the body, so that
+            // the mouse isn't selecting text when dragging.
+            addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
+        }
+    };
+    DragService.prototype.isDragging = function () {
+        return this.dragging;
+    };
+    DragService.prototype.addDragSource = function (params, includeTouch) {
+        if (includeTouch === void 0) { includeTouch = false; }
+        var mouseListener = this.onMouseDown.bind(this, params);
+        params.eElement.addEventListener('mousedown', mouseListener);
+        var touchListener = null;
+        var suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
+        if (includeTouch && !suppressTouch) {
+            touchListener = this.onTouchStart.bind(this, params);
+            params.eElement.addEventListener('touchstart', touchListener, { passive: true });
+        }
+        this.dragSources.push({
+            dragSource: params,
+            mouseDownListener: mouseListener,
+            touchStartListener: touchListener,
+            touchEnabled: includeTouch
+        });
+    };
+    // gets called whenever mouse down on any drag source
+    DragService.prototype.onTouchStart = function (params, touchEvent) {
+        var _this = this;
+        this.currentDragParams = params;
+        this.dragging = false;
+        var touch = touchEvent.touches[0];
+        this.touchLastTime = touch;
+        this.touchStart = touch;
+        var touchMoveEvent = function (e) { return _this.onTouchMove(e, params.eElement); };
+        var touchEndEvent = function (e) { return _this.onTouchUp(e, params.eElement); };
+        var documentTouchMove = function (e) { if (e.cancelable) {
+            e.preventDefault();
+        } };
+        var target = params.eElement;
+        var events = [
+            // Prevents the page document from moving while we are dragging items around.
+            // preventDefault needs to be called in the touchmove listener and never inside the
+            // touchstart, because using touchstart causes the click event to be cancelled on touch devices.
+            { target: document, type: 'touchmove', listener: documentTouchMove, options: { passive: false } },
+            { target: target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true } },
+            { target: target, type: 'touchend', listener: touchEndEvent, options: { passive: true } },
+            { target: target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true } }
+        ];
+        // temporally add these listeners, for the duration of the drag
+        this.addTemporaryEvents(events);
+        // see if we want to start dragging straight away
+        if (params.dragStartPixels === 0) {
+            this.onCommonMove(touch, this.touchStart, params.eElement);
+        }
+    };
+    // gets called whenever mouse down on any drag source
+    DragService.prototype.onMouseDown = function (params, mouseEvent) {
+        var _this = this;
+        var e = mouseEvent;
+        if (params.skipMouseEvent && params.skipMouseEvent(mouseEvent)) {
+            return;
+        }
+        // if there are two elements with parent / child relationship, and both are draggable,
+        // when we drag the child, we should NOT drag the parent. an example of this is row moving
+        // and range selection - row moving should get preference when use drags the rowDrag component.
+        if (e._alreadyProcessedByDragService) {
+            return;
+        }
+        e._alreadyProcessedByDragService = true;
+        // only interested in left button clicks
+        if (mouseEvent.button !== 0) {
+            return;
+        }
+        this.currentDragParams = params;
+        this.dragging = false;
+        this.mouseStartEvent = mouseEvent;
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        this.setNoSelectToBody(true);
+        var mouseMoveEvent = function (event) { return _this.onMouseMove(event, params.eElement); };
+        var mouseUpEvent = function (event) { return _this.onMouseUp(event, params.eElement); };
+        var contextEvent = function (event) { return event.preventDefault(); };
+        var target = eDocument;
+        var events = [
+            { target: target, type: 'mousemove', listener: mouseMoveEvent },
+            { target: target, type: 'mouseup', listener: mouseUpEvent },
+            { target: target, type: 'contextmenu', listener: contextEvent }
+        ];
+        // temporally add these listeners, for the duration of the drag
+        this.addTemporaryEvents(events);
+        //see if we want to start dragging straight away
+        if (params.dragStartPixels === 0) {
+            this.onMouseMove(mouseEvent, params.eElement);
+        }
+    };
+    DragService.prototype.addTemporaryEvents = function (events) {
+        events.forEach(function (currentEvent) {
+            var target = currentEvent.target, type = currentEvent.type, listener = currentEvent.listener, options = currentEvent.options;
+            target.addEventListener(type, listener, options);
+        });
+        this.dragEndFunctions.push(function () {
+            events.forEach(function (currentEvent) {
+                var target = currentEvent.target, type = currentEvent.type, listener = currentEvent.listener, options = currentEvent.options;
+                target.removeEventListener(type, listener, options);
+            });
+        });
+    };
+    // returns true if the event is close to the original event by X pixels either vertically or horizontally.
+    // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
+    DragService.prototype.isEventNearStartEvent = function (currentEvent, startEvent) {
+        // by default, we wait 4 pixels before starting the drag
+        var dragStartPixels = this.currentDragParams.dragStartPixels;
+        var requiredPixelDiff = exists(dragStartPixels) ? dragStartPixels : 4;
+        return areEventsNear(currentEvent, startEvent, requiredPixelDiff);
+    };
+    DragService.prototype.getFirstActiveTouch = function (touchList) {
+        for (var i = 0; i < touchList.length; i++) {
+            if (touchList[i].identifier === this.touchStart.identifier) {
+                return touchList[i];
+            }
+        }
+        return null;
+    };
+    DragService.prototype.onCommonMove = function (currentEvent, startEvent, el) {
+        if (!this.dragging) {
+            // if mouse hasn't travelled from the start position enough, do nothing
+            if (!this.dragging && this.isEventNearStartEvent(currentEvent, startEvent)) {
+                return;
+            }
+            this.dragging = true;
+            var event_1 = {
+                type: Events.EVENT_DRAG_STARTED,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                target: el
+            };
+            this.eventService.dispatchEvent(event_1);
+            this.currentDragParams.onDragStart(startEvent);
+            // we need ONE drag action at the startEvent, so that we are guaranteed the drop target
+            // at the start gets notified. this is because the drag can start outside of the element
+            // that started it, as the mouse is allowed drag away from the mouse down before it's
+            // considered a drag (the isEventNearStartEvent() above). if we didn't do this, then
+            // it would be possible to click a column by the edge, then drag outside of the drop zone
+            // in less than 4 pixels and the drag officially starts outside of the header but the header
+            // wouldn't be notified of the dragging.
+            this.currentDragParams.onDragging(startEvent);
+        }
+        this.currentDragParams.onDragging(currentEvent);
+    };
+    DragService.prototype.onTouchMove = function (touchEvent, el) {
+        var touch = this.getFirstActiveTouch(touchEvent.touches);
+        if (!touch) {
+            return;
+        }
+        // this.___statusPanel.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
+        this.onCommonMove(touch, this.touchStart, el);
+    };
+    // only gets called after a mouse down - as this is only added after mouseDown
+    // and is removed when mouseUp happens
+    DragService.prototype.onMouseMove = function (mouseEvent, el) {
+        this.onCommonMove(mouseEvent, this.mouseStartEvent, el);
+    };
+    DragService.prototype.onTouchUp = function (touchEvent, el) {
+        var touch = this.getFirstActiveTouch(touchEvent.changedTouches);
+        // i haven't worked this out yet, but there is no matching touch
+        // when we get the touch up event. to get around this, we swap in
+        // the last touch. this is a hack to 'get it working' while we
+        // figure out what's going on, why we are not getting a touch in
+        // current event.
+        if (!touch) {
+            touch = this.touchLastTime;
+        }
+        // if mouse was left up before we started to move, then this is a tap.
+        // we check this before onUpCommon as onUpCommon resets the dragging
+        // let tap = !this.dragging;
+        // let tapTarget = this.currentDragParams.eElement;
+        this.onUpCommon(touch, el);
+        // if tap, tell user
+        // console.log(`${Math.random()} tap = ${tap}`);
+        // if (tap) {
+        //     tapTarget.click();
+        // }
+    };
+    DragService.prototype.onMouseUp = function (mouseEvent, el) {
+        this.onUpCommon(mouseEvent, el);
+    };
+    DragService.prototype.onUpCommon = function (eventOrTouch, el) {
+        if (this.dragging) {
+            this.dragging = false;
+            this.currentDragParams.onDragStop(eventOrTouch);
+            var event_2 = {
+                type: Events.EVENT_DRAG_STOPPED,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                target: el
+            };
+            this.eventService.dispatchEvent(event_2);
+        }
+        this.setNoSelectToBody(false);
+        this.mouseStartEvent = null;
+        this.touchStart = null;
+        this.touchLastTime = null;
+        this.currentDragParams = null;
+        this.dragEndFunctions.forEach(function (func) { return func(); });
+        this.dragEndFunctions.length = 0;
+    };
+    __decorate$16([
+        Autowired('loggerFactory')
+    ], DragService.prototype, "loggerFactory", void 0);
+    __decorate$16([
+        Autowired('columnApi')
+    ], DragService.prototype, "columnApi", void 0);
+    __decorate$16([
+        Autowired('gridApi')
+    ], DragService.prototype, "gridApi", void 0);
+    __decorate$16([
+        PostConstruct
+    ], DragService.prototype, "init", null);
+    __decorate$16([
+        PreDestroy
+    ], DragService.prototype, "removeAllListeners", null);
+    DragService = __decorate$16([
+        Bean('dragService')
+    ], DragService);
+    return DragService;
+}(BeanStub));
+
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v25.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends$1c = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$17 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var SortController = /** @class */ (function (_super) {
+    __extends$1c(SortController, _super);
+    function SortController() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    SortController_1 = SortController;
+    SortController.prototype.progressSort = function (column, multiSort, source) {
+        if (source === void 0) { source = "api"; }
+        var nextDirection = this.getNextSortDirection(column);
+        this.setSortForColumn(column, nextDirection, multiSort, source);
+    };
+    SortController.prototype.setSortForColumn = function (column, sort, multiSort, source) {
+        if (source === void 0) { source = "api"; }
+        // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
+        if (sort !== Constants.SORT_ASC && sort !== Constants.SORT_DESC) {
+            sort = null;
+        }
+        // update sort on current col
+        column.setSort(sort, source);
+        var doingMultiSort = multiSort && !this.gridOptionsWrapper.isSuppressMultiSort();
+        // clear sort on all columns except this one, and update the icons
+        if (!doingMultiSort) {
+            this.clearSortBarThisColumn(column, source);
+        }
+        // sortIndex used for knowing order of cols when multi-col sort
+        this.updateSortIndex(column);
+        this.dispatchSortChangedEvents();
+    };
+    SortController.prototype.updateSortIndex = function (lastColToChange) {
+        // update sortIndex on all sorting cols
+        var allSortedCols = this.getColumnsWithSortingOrdered();
+        var sortIndex = 0;
+        allSortedCols.forEach(function (col) {
+            if (col !== lastColToChange) {
+                col.setSortIndex(sortIndex);
+                sortIndex++;
+            }
+        });
+        // last col to change always gets the last sort index, it's added to the end
+        if (lastColToChange.getSort()) {
+            lastColToChange.setSortIndex(sortIndex);
+        }
+        // clear sort index on all cols not sorting
+        var allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        allCols.filter(function (col) { return col.getSort() == null; }).forEach(function (col) { return col.setSortIndex(); });
+    };
+    // gets called by API, so if data changes, use can call this, which will end up
+    // working out the sort order again of the rows.
+    SortController.prototype.onSortChanged = function () {
+        this.dispatchSortChangedEvents();
+    };
+    SortController.prototype.isSortActive = function () {
+        // pull out all the columns that have sorting set
+        var allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        var sortedCols = allCols.filter(function (column) { return !!column.getSort(); });
+        return sortedCols && sortedCols.length > 0;
+    };
+    SortController.prototype.dispatchSortChangedEvents = function () {
+        var event = {
+            type: Events.EVENT_SORT_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
+    };
+    SortController.prototype.clearSortBarThisColumn = function (columnToSkip, source) {
+        this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach(function (columnToClear) {
+            // Do not clear if either holding shift, or if column in question was clicked
+            if (columnToClear !== columnToSkip) {
+                // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
+                // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
+                columnToClear.setSort(undefined, source);
+            }
+        });
+    };
+    SortController.prototype.getNextSortDirection = function (column) {
+        var sortingOrder;
+        if (column.getColDef().sortingOrder) {
+            sortingOrder = column.getColDef().sortingOrder;
+        }
+        else if (this.gridOptionsWrapper.getSortingOrder()) {
+            sortingOrder = this.gridOptionsWrapper.getSortingOrder();
+        }
+        else {
+            sortingOrder = SortController_1.DEFAULT_SORTING_ORDER;
+        }
+        if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
+            console.warn("ag-grid: sortingOrder must be an array with at least one element, currently it's " + sortingOrder);
+            return null;
+        }
+        var currentIndex = sortingOrder.indexOf(column.getSort());
+        var notInArray = currentIndex < 0;
+        var lastItemInArray = currentIndex == sortingOrder.length - 1;
+        var result;
+        if (notInArray || lastItemInArray) {
+            result = sortingOrder[0];
+        }
+        else {
+            result = sortingOrder[currentIndex + 1];
+        }
+        // verify the sort type exists, as the user could provide the sortingOrder, need to make sure it's valid
+        if (SortController_1.DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
+            console.warn('ag-grid: invalid sort type ' + result);
+            return null;
+        }
+        return result;
+    };
+    SortController.prototype.getColumnsWithSortingOrdered = function () {
+        // pull out all the columns that have sorting set
+        var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        var columnsWithSorting = allColumnsIncludingAuto.filter(function (column) { return !!column.getSort(); });
+        // when both cols are missing sortIndex, we use the position of the col in all cols list.
+        // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
+        // cols is sorted by first.
+        var allColsIndexes = {};
+        allColumnsIncludingAuto.forEach(function (col, index) { return allColsIndexes[col.getId()] = index; });
+        // put the columns in order of which one got sorted first
+        columnsWithSorting.sort(function (a, b) {
+            var iA = a.getSortIndex();
+            var iB = b.getSortIndex();
+            if (iA != null && iB != null) {
+                return iA - iB; // both present, normal comparison
+            }
+            else if (iA == null && iB == null) {
+                // both missing, compare using column positions
+                var posA = allColsIndexes[a.getId()];
+                var posB = allColsIndexes[b.getId()];
+                return posA > posB ? 1 : -1;
+            }
+            else if (iB == null) {
+                return -1; // iB missing
+            }
+            else {
+                return 1; // iA missing
+            }
+        });
+        return columnsWithSorting;
+    };
+    // used by server side row models, to sent sort to server
+    SortController.prototype.getSortModel = function () {
+        return this.getColumnsWithSortingOrdered().map(function (column) { return ({
+            sort: column.getSort(),
+            colId: column.getId()
+        }); });
+    };
+    SortController.prototype.getSortOptions = function () {
+        return this.getColumnsWithSortingOrdered().map(function (column) { return ({
+            sort: column.getSort(),
+            column: column
+        }); });
+    };
+    var SortController_1;
+    SortController.DEFAULT_SORTING_ORDER = [Constants.SORT_ASC, Constants.SORT_DESC, null];
+    __decorate$17([
+        Autowired('columnController')
+    ], SortController.prototype, "columnController", void 0);
+    __decorate$17([
+        Autowired('columnApi')
+    ], SortController.prototype, "columnApi", void 0);
+    __decorate$17([
+        Autowired('gridApi')
+    ], SortController.prototype, "gridApi", void 0);
+    SortController = SortController_1 = __decorate$17([
+        Bean('sortController')
+    ], SortController);
+    return SortController;
 }(BeanStub));
 
 /**
@@ -84607,6 +84620,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
     ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent, anchorToElement) {
         var _this = this;
         var menuItems = this.getMenuItems(node, column, value);
+        var eGridPanelGui = this.gridPanel.getGui();
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) {
             return false;
         }
@@ -84630,7 +84644,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: function () {
-                _.removeCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
+                _.removeCssClass(eGridPanelGui, CSS_CONTEXT_MENU_OPEN);
                 _this.destroyBean(menu);
             },
             click: mouseEvent,
@@ -84639,7 +84653,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             anchorToElement: anchorToElement
         });
         if (addPopupRes) {
-            _.addCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
+            _.addCssClass(eGridPanelGui, CSS_CONTEXT_MENU_OPEN);
             menu.afterGuiAttached({ container: 'contextMenu', hidePopup: addPopupRes.hideFunc });
         }
         // there should never be an active menu at this point, however it was found

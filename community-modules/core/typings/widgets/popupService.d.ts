@@ -28,6 +28,7 @@ export interface AddPopupResult {
 }
 export declare class PopupService extends BeanStub {
     private environment;
+    private focusController;
     private gridCore;
     private popupList;
     registerGridCore(gridCore: GridCore): void;

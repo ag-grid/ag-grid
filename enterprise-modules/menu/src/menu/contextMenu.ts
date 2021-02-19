@@ -104,6 +104,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch, anchorToElement: HTMLElement): boolean {
         const menuItems = this.getMenuItems(node, column, value);
+        const eGridPanelGui = this.gridPanel.getGui();
 
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
 
@@ -130,7 +131,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: () => {
-                _.removeCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
+                _.removeCssClass(eGridPanelGui, CSS_CONTEXT_MENU_OPEN);
                 this.destroyBean(menu);
             },
             click: mouseEvent,
@@ -140,7 +141,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         });
 
         if (addPopupRes) {
-            _.addCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
+            _.addCssClass(eGridPanelGui, CSS_CONTEXT_MENU_OPEN);
             menu.afterGuiAttached({ container: 'contextMenu', hidePopup: addPopupRes.hideFunc });
         }
 
