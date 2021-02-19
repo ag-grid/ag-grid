@@ -9,33 +9,39 @@
           {
             "title": "Tutorial",
             "url": "../getting-started/",
+            "icon": "framework",
             "pane": "left"
           },
           {
             "title": "Video Tutorial",
             "url": "{video-tutorial}",
+            "icon": "youtube",
             "pane": "left"
           },
           {
             "title": "Plunker Example",
             "url": "{example}",
+            "icon": "plunker",
             "frameworks": ["javascript"],
             "pane": "left"
           },
           {
             "title": "Stackblitz Example",
             "url": "{example}",
+            "icon": "stackblitz",
             "frameworks": ["angular", "react", "vue"],
             "pane": "left"
           },
           {
             "title": "Thinkster Course",
             "url": "{thinkster}",
+            "icon": "thinkster",
             "frameworks": ["angular", "react"],
             "pane": "left"
           },
           {
             "title": "AngularJS",
+            "icon": "angularjs",
             "url": "../angularjs/",
             "frameworks": [
               "angular"
