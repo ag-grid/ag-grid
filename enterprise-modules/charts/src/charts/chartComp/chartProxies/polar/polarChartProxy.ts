@@ -10,11 +10,12 @@ export abstract class PolarChartProxy extends ChartProxy<PolarChart, PolarChartO
 
     protected addCrossFilteringTooltipRenderer(pieSeries: PieSeries) {
         pieSeries.tooltip.renderer = (params: PieTooltipRendererParams) => {
+            const label = params.datum[params.labelKey as string];
             const ratio = params.datum[params.radiusKey as string];
             const totalValue = params.angleValue;
             const value = totalValue * ratio;
             return {
-                content: `${value}`,
+                content: `${label}: ${value}`,
             }
         };
     }

@@ -1,3 +1,17 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_25_1_0">
+    <p><b>Release 25.1.0 (19th Feb 2021)</b></p>
+
+    <p>Minor release with bug fixes.</p>
+
+    <p><b>Feature Highlights:</b></p>
+
+    <ul>
+        <li>
+            AG-3028 - Add Treemap Chart Series (see <a rel="nofollow" href="https://www.ag-grid.com/archive/25.1.0/documentation/javascript/charts-treemap-series/">Treemap Series</a>)
+        </li>
+    </ul>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_25_0_0">
     <p><b>Release 25.0.0 (6th Jan 2021)</b></p>
 

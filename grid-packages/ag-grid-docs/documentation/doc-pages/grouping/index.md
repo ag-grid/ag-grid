@@ -356,9 +356,7 @@ const gridOptions = {
       // the column definition for country uses a keyCreator
       {
           field: "country",
-          keyCreator: params => {
-              return params.value.name;
-          }
+          keyCreator: params => params.value.name
       }
     ]
 }
