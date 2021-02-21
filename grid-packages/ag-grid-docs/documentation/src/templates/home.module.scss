@@ -22,26 +22,32 @@
         text-align: left;
 
         &__title {
-            composes: mb-2 p-2 from global;
+            composes: mb-0 p-2 from global;
             font-size: 2.5rem;
             font-weight: 400;
             text-align: left;
         }
 
         &__row {
-            composes: d-flex ml-3 mb-2 from global;
-            height: 9.5rem;
+            composes: d-flex m-0 mb-2 from global;
         }
 
         &__item_pane {
             display: flex;
             flex-grow: 1;
+            flex-wrap: wrap;
         }
 
         &__item {
-            composes: d-flex flex-column justify-content-center align-items-center mr-3 p-2 from global;
-            background: #002f61;
+            composes: d-flex flex-column justify-content-center align-items-center m-2 p-2 from global;
+            background-color: #00407f;
             border-radius: 5px;
+            width: 10rem;
+            height: 10rem;
+            @include media-breakpoint-down(sm) {
+                width: 6.5rem;
+                height: 6.5rem;
+            }
         }
 
         &__item_logo {
@@ -49,6 +55,10 @@
             position: relative;
             width: 7.5rem;
             height: 7.5rem;
+            @include media-breakpoint-down(sm) {
+                width: 4.5rem;
+                height: 4.5rem;
+            }
 
             img {
                 width: 100%;
@@ -58,6 +68,10 @@
 
         &__item_label {
             text-align: center;
+            white-space: nowrap;
+            @include media-breakpoint-down(sm) {
+                font-size: 0.65rem;
+            }
             a {
                 color: white;
             }
