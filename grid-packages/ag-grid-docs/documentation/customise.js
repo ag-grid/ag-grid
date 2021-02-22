@@ -22,7 +22,7 @@ const updateFileContents = (filename, existingContent, newContent) => {
     if (newContents !== contents) {
         fs.writeFileSync(filename, newContents);
     }
-}
+};
 
 const addMarkdownIncludeSupport = () => {
     // updates the method for reading files to automatically replace the Markdown imports with file contents at this stage
@@ -68,12 +68,48 @@ const fixScrollingIssue = () => {
     });
 };
 
+const fixFileLoadingIssue = () => {
+    // adds error handling around loading of files to avoid the Gatsby process periodically dying when file contents
+    // cannot be read correctly when saving examples
+
+    return applyCustomisation('gatsby-source-filesystem', '2.11.0', {
+        name: 'Fix file loading issue',
+        apply: () => updateFileContents(
+            './node_modules/gatsby-source-filesystem/gatsby-node.js',
+            `
+  const createAndProcessNode = path => {
+    const fileNodePromise = createFileNode(path, createNodeId, pluginOptions).then(fileNode => {
+      createNode(fileNode);
+      return null;
+    });
+    return fileNodePromise;
+  };`,
+            `
+  const createAndProcessNode = path => {
+    return createFileNode(path, createNodeId, pluginOptions)
+      .catch(() => {
+        reporter.warn(\`Failed to create filenode for \${path}. Re-trying...\`);
+        return createFileNode(path, createNodeId, pluginOptions);
+      })
+      .then(fileNode => {
+        createNode(fileNode);
+        return null;
+      })
+      .catch(error => {
+        reporter.panic(\`Failed to create node for \${path}\`, error);
+      });
+  };`
+        )
+    });
+};
+
 console.log(`--------------------------------------------------------------------------------`);
 console.log(`Applying customisations...`);
 
 const success = [
     addMarkdownIncludeSupport(),
     fixScrollingIssue(),
+    fixFileLoadingIssue(),
 ].every(x => x);
 
 if (success) {
