@@ -25,3 +25,5 @@ docs_are_running
 
 archive*.zip
 release*.zip
+
+grid-packages/ag-grid-docs/documentation/algolia-ag-grid-dev_*.json
