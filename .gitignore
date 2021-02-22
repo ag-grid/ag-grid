@@ -23,6 +23,10 @@ docs_are_running
 
 .hash
 
+release*.zip
+archive*.zip
+grid-packages/ag-grid-docs/documentation/algolia-ag-grid-dev_*.json
+
 # latest only
 dist
 
