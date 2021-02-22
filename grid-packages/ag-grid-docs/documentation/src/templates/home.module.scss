@@ -59,8 +59,8 @@
         &__item_logo {
             composes: p-2 from global;
             position: relative;
-            width: 7.5rem;
-            height: 7.5rem;
+            width: 6.5rem;
+            height: 6.5rem;
             @include media-breakpoint-down(sm) {
                 width: 4.5rem;
                 height: 4.5rem;
