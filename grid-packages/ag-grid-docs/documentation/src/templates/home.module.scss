@@ -40,10 +40,16 @@
 
         &__item {
             composes: d-flex flex-column justify-content-center align-items-center m-2 p-2 from global;
-            background-color: #00407f;
+            background-color: transparentize($secondary, 0.7);
             border-radius: 5px;
-            width: 10rem;
-            height: 10rem;
+            width: 8.5rem;
+            height: 8.5rem;
+            color: $dark;
+            &:hover {
+                background-color: $grey-2;
+                text-decoration: none;
+                color: white;
+            }
             @include media-breakpoint-down(sm) {
                 width: 6.5rem;
                 height: 6.5rem;
@@ -53,8 +59,8 @@
         &__item_logo {
             composes: p-2 from global;
             position: relative;
-            width: 7.5rem;
-            height: 7.5rem;
+            width: 5rem;
+            height: 5rem;
             @include media-breakpoint-down(sm) {
                 width: 4.5rem;
                 height: 4.5rem;
@@ -69,11 +75,9 @@
         &__item_label {
             text-align: center;
             white-space: nowrap;
+            font-size: 0.9rem;
             @include media-breakpoint-down(sm) {
                 font-size: 0.65rem;
-            }
-            a {
-                color: white;
             }
         }
     }

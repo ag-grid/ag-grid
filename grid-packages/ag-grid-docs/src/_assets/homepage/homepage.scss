@@ -129,9 +129,10 @@ body {
 
         .box-contents {
             display: flex;
-            height: 120px;
+            height: 80px;
             padding: 25px;
             align-items: center;
+            justify-content: center;
         }
 
         .box-contents img {
