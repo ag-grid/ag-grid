@@ -2,28 +2,22 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { withPrefix } from 'gatsby';
 import { getHeaderTitle } from 'utils/page-header';
-import fwLogos from 'images/fw-logos';
-import supportedFrameworks from 'utils/supported-frameworks';
+import logos from 'images/logos';
 import MenuView from 'components/menu-view/MenuView';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './home.module.scss';
 
-const backgroundColor = {
-    javascript: '#f8df1e',
-    angular: '#1976d3',
-    react: '#282c34',
-    vue: '#50c297'
-};
+// const backgroundColor = {
+//     javascript: '#f8df1e',
+//     angular: '#1976d3',
+//     react: '#282c34',
+//     vue: '#50c297'
+// };
 
-const logos = (() => {
-    const obj = {};
-
-    for (let framework of supportedFrameworks) {
-        obj[framework] = fwLogos[framework === 'vue' ? 'vueInverted' : framework];
-    }
-
-    return obj;
-})();
+const processedLogos = (() => ({
+    ...logos,
+    vue: logos.vueInverted
+}))();
 
 const flatRenderItems = (items, framework) => {
     return items.reduce((prev, curr) => {
@@ -31,7 +25,7 @@ const flatRenderItems = (items, framework) => {
 
         if (curr.frameworks && curr.frameworks.indexOf(framework) === -1) { return ret; }
 
-        ret = prev.concat({ title: curr.title, url: curr.url });
+        ret = prev.concat(Object.assign({},{ title: curr.title, url: curr.url }, curr.icon ? { icon: curr.icon } : {}));
 
         if (!curr.items) { return ret; }
 
@@ -76,27 +70,30 @@ const parseGettingStartedUrl = (url, framework) => {
     };
 }
 
+const getLogo = (name, framework) => {
+    if (name === 'framework') {
+        return processedLogos[framework];
+    }
+    return processedLogos[name];
+}
+
 const GettingStartedPane = ({ framework, data }) => {
     const linksToRender = flatRenderItems(data, framework);
-    const numberOfColumns = Math.ceil(linksToRender.length / 5);
-
     return (
-        <div className={styles['docs-home__getting-started__framework_pane']}>
-            <div className={styles['docs-home__getting-started__framework_overview']}>
-                <a href="./getting-started/" className={styles['docs-home__getting-started__framework_logo']}>
-                    <img
-                        style={{ backgroundColor: backgroundColor[framework] }}
-                        alt={framework}
-                        src={logos[framework]} />
-                </a>
-            </div>
-            <div
-                className={styles['docs-home__getting-started__items']}
-                style={{ gridTemplateColumns: `repeat(${numberOfColumns}, 1fr)` }}>
-                {linksToRender.map(link => <a
-                    key={link.title}
-                    {...parseGettingStartedUrl(link.url, framework)}>{link.title}</a>)}
-            </div>
+        <div className={styles['docs-home__getting-started__item_pane']}>
+            {linksToRender.map(link => {
+                const parsedLink = parseGettingStartedUrl(link.url, framework);
+                return (
+                    <div key={`${framework}_${link.title.replace(/\s/g,'').toLowerCase()}`} className={styles['docs-home__getting-started__item']}>
+                        <a {...parsedLink} className={styles['docs-home__getting-started__item_logo']}>
+                            <img src={ getLogo(link.icon, framework) } alt={link.title}></img>
+                        </a>
+                        <div className={styles['docs-home__getting-started__item_label']}>
+                            <a {...parsedLink}>{link.title}</a>
+                        </div>
+                    </div>
+                )
+            })}
         </div>
     );
 };
