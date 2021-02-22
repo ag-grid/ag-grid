@@ -40,10 +40,16 @@
 
         &__item {
             composes: d-flex flex-column justify-content-center align-items-center m-2 p-2 from global;
-            background-color: #00407f;
+            background-color: transparentize($secondary, 0.7);
             border-radius: 5px;
             width: 10rem;
             height: 10rem;
+            color: $dark;
+            &:hover {
+                background-color: $grey-2;
+                text-decoration: none;
+                color: white;
+            }
             @include media-breakpoint-down(sm) {
                 width: 6.5rem;
                 height: 6.5rem;
@@ -71,9 +77,6 @@
             white-space: nowrap;
             @include media-breakpoint-down(sm) {
                 font-size: 0.65rem;
-            }
-            a {
-                color: white;
             }
         }
     }
