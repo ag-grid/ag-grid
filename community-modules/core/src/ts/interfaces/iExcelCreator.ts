@@ -43,7 +43,7 @@ export interface ExcelData {
     value: string | null;
 }
 
-export type ExcelDataType = 'String' | "Number" | "Boolean" | "DateTime" | "Error";
+export type ExcelDataType = 'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error';
 
 export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     sheetName?: string;
@@ -51,6 +51,7 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     exportMode?: "xlsx" | "xml";
     rowHeight?: number;
     headerRowHeight?: number;
+    autoConvertFormulas?: boolean;
 }
 
 export interface IExcelCreator {
@@ -148,7 +149,7 @@ export interface ExcelContentType {
  * (d) Date
  * (e) Error
 */
-export type ExcelOOXMLDataType = 'str' | 's' | 'inlineStr' | 'n' | 'b' | 'd' | 'e' | 'empty';
+export type ExcelOOXMLDataType = 'str' | 's' | 'f' | 'inlineStr' | 'n' | 'b' | 'd' | 'e' | 'empty';
 
 export interface ExcelOOXMLTemplate {
     getTemplate(config?: any, idx?: number): XmlElement;

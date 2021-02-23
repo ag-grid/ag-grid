@@ -9,11 +9,13 @@ const convertLegacyType = (type: string): string => {
 
 const cellFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelCell) {
-        const {ref, data, styleId} = config;
-        const {type, value} = data;
-        let convertedType:string = type;
+        const { ref, data, styleId } = config;
+        const { type, value } = data;
+        let convertedType: string = type;
 
-        if (type.charAt(0) === type.charAt(0).toUpperCase()) {
+        if (type === 'f') {
+            convertedType = 'str'
+        } else if (type.charAt(0) === type.charAt(0).toUpperCase()) {
             convertedType = convertLegacyType(type);
         }
 
@@ -30,7 +32,12 @@ const cellFactory: ExcelOOXMLTemplate = {
 
         let children;
 
-        if (convertedType === 'inlineStr') {
+        if (convertedType === 'str' && type === 'f') {
+            children = [{
+                name: 'f',
+                textNode: value
+            }];
+        } else if (convertedType === 'inlineStr') {
             children = [{
                 name: 'is',
                 children: [{

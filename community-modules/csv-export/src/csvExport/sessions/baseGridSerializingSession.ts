@@ -1,6 +1,7 @@
 import {
     Column,
     ColumnController,
+    ExcelStyle,
     GridOptionsWrapper,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -68,7 +69,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 || (index === 0 && this.gridOptionsWrapper.isGroupUseEntireRow(this.columnController.isPivotMode()))
             );
 
-        let valueForCell: any;
+        let valueForCell: string;
         if (renderGroupSummaryCell) {
             valueForCell = this.createValueForGroupNode(node);
         } else {
@@ -111,7 +112,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return keys.reverse().join(' -> ');
     }
 
-    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string): any {
+    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string): string {
         if (processCellCallback) {
             return processCellCallback({
                 column: column,
@@ -124,6 +125,6 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             });
         }
 
-        return value;
+        return value != null ? value.toString() : '';
     }
 }

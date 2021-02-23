@@ -15,11 +15,12 @@ import {
 } from '@ag-grid-community/core';
 
 import { ExcelCell, ExcelStyle } from '@ag-grid-community/core';
-import { ExcelGridSerializingParams, ExcelXmlSerializingSession } from './excelXmlSerializingSession';
+import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXmlFactory } from './excelXmlFactory';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, Downloader, GridSerializer, ZipContainer, RowType } from "@ag-grid-community/csv-export";
+import { ExcelGridSerializingParams } from './baseExcelSerializingSession';
 
 export interface ExcelMixedStyle {
     key: string;
@@ -93,7 +94,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             sheetName = _.utf8_encode(params.sheetName.toString().substr(0, 31));
         }
 
-        const config: ExcelGridSerializingParams = {
+        const config: ExcelGridSerializingParams<any> = {
             ...params,
             columnController,
             valueService,
@@ -105,7 +106,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             styleLinker: this.styleLinker.bind(this)
         };
 
-        return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)((config));
+        return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)(config);
     }
 
     private styleLinker(rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode): string[] | null {
