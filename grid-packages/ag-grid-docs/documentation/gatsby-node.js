@@ -10,7 +10,26 @@ const chartGallery = require('./doc-pages/charts/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 const isDevelopment = require('./src/utils/is-development');
 
-exports.onPreBootstrap = ({ reporter }) => {
+/**
+ * This hides the config file that we use to show linting in IDEs from Gatsby. See the comment in .eslintrc.js for more
+ * information.
+ */
+const showHideEsLintConfigFile = (reporter, hide) => {
+    const originalFileName = '.eslintrc.js';
+    const hiddenFileName = '_eslintrc.js';
+
+    if (hide && fs.existsSync(originalFileName)) {
+        reporter.info(`Hiding IDE ESLint file...`);
+        fs.moveSync(originalFileName, hiddenFileName);
+    }
+
+    if (!hide && fs.existsSync(hiddenFileName)) {
+        reporter.info(`Restoring IDE ESLint file...`);
+        fs.moveSync(hiddenFileName, originalFileName);
+    }
+};
+
+exports.onPreInit = ({ reporter }) => {
     reporter.info("---[ Initial configuration ]----------------------------------------------------");
 
     Object.keys(process.env).filter(key => key.startsWith('GATSBY_')).forEach(key => {
@@ -18,6 +37,18 @@ exports.onPreBootstrap = ({ reporter }) => {
     });
 
     reporter.info("--------------------------------------------------------------------------------");
+};
+
+exports.onPostBootstrap = ({ reporter }) => {
+    showHideEsLintConfigFile(reporter, true);
+};
+
+exports.onPostBuild = ({ reporter }) => {
+    showHideEsLintConfigFile(reporter, false);
+};
+
+exports.onCreateDevServer = ({ reporter }) => {
+    showHideEsLintConfigFile(reporter, false);
 };
 
 /* This is an override of the code in https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-filesystem/src/extend-file-node.js

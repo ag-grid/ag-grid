@@ -14,18 +14,6 @@ const plugins = [
     }
   },
   {
-    resolve: 'gatsby-plugin-eslint',
-    options: {
-      test: /\.js$|\.jsx$/,
-      exclude: /(node_modules|.cache|public)/,
-      stages: ['develop'],
-      options: {
-        emitWarning: true,
-        failOnError: false
-      }
-    }
-  },
-  {
     resolve: `gatsby-transformer-rehype`,
     options: {
       filter: node => node.sourceInstanceName === 'doc-pages' &&
