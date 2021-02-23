@@ -24,7 +24,9 @@
             "url": "{example}",
             "icon": "plunker",
             "menuHide": true,
-            "frameworks": ["javascript"],
+            "frameworks": [
+              "javascript"
+            ],
             "pane": "left"
           },
           {
@@ -32,7 +34,11 @@
             "url": "{example}",
             "icon": "stackblitz",
             "menuHide": true,
-            "frameworks": ["angular", "react", "vue"],
+            "frameworks": [
+              "angular",
+              "react",
+              "vue"
+            ],
             "pane": "left"
           },
           {
@@ -40,7 +46,10 @@
             "url": "{thinkster}",
             "icon": "thinkster",
             "menuHide": true,
-            "frameworks": ["angular", "react"],
+            "frameworks": [
+              "angular",
+              "react"
+            ],
             "pane": "left"
           },
           {
