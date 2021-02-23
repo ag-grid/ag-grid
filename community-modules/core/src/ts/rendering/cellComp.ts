@@ -993,7 +993,7 @@ export class CellComp extends Component implements TooltipParentComp {
             eGridCell: this.getGui(),
             eParentOfValue: this.eCellValue,
 
-            registerRowDragger: element => this.addRowDragging(element),
+            registerRowDragger: (element, dragStartPixels) => this.addRowDragging(element, dragStartPixels),
 
             // these bits are not documented anywhere, so we could drop them?
             // it was in the olden days to allow user to register for when rendered
@@ -2071,7 +2071,7 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.beans.frameworkOverrides;
     }
 
-    private addRowDragging(customElement?: HTMLElement): void {
+    private addRowDragging(customElement?: HTMLElement, dragStartPixels?: number): void {
         const pagination = this.beans.gridOptionsWrapper.isPagination();
         const rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
         const clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
@@ -2093,11 +2093,11 @@ export class CellComp extends Component implements TooltipParentComp {
             }
         }
         if (!this.rowDraggingComp) {
-            this.rowDraggingComp = new RowDragComp(this.rowNode, this.column, () => this.value, this.beans, customElement);
+            this.rowDraggingComp = new RowDragComp(this.rowNode, this.column, () => this.value, this.beans, customElement, dragStartPixels);
             this.createManagedBean(this.rowDraggingComp, this.beans.context);
         } else if (customElement) {
             // if the rowDraggingComp is already present, means we should only set the drag element
-            this.rowDraggingComp.setDragElement(customElement);
+            this.rowDraggingComp.setDragElement(customElement, dragStartPixels);
         }
 
         // If there is a custom element, the Cell Renderer is responsible for displaying it.

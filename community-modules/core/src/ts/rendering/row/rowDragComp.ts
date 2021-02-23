@@ -22,7 +22,8 @@ export class RowDragComp extends Component {
         private readonly column: Column,
         private readonly cellValueFn: () => string,
         private readonly beans: Beans,
-        private readonly customGui?: HTMLElement
+        private readonly customGui?: HTMLElement,
+        private readonly dragStartPixels?: number
     ) { super(); }
 
     @PostConstruct
@@ -34,7 +35,7 @@ export class RowDragComp extends Component {
             this.addDragSource();
         } else {
             this.isCustomGui = true;
-            this.setDragElement(this.customGui);
+            this.setDragElement(this.customGui, this.dragStartPixels);
         }
 
         this.checkCompatibility();
@@ -46,9 +47,9 @@ export class RowDragComp extends Component {
         this.createManagedBean(strategy, this.beans.context);
     }
 
-    public setDragElement(dragElement: HTMLElement) {
+    public setDragElement(dragElement: HTMLElement, dragStartPixels?: number) {
         this.setTemplateFromElement(dragElement);
-        this.addDragSource();
+        this.addDragSource(dragStartPixels);
     }
 
     private getSelectedCount(): number {
@@ -73,7 +74,7 @@ export class RowDragComp extends Component {
         }
     }
 
-    private addDragSource(): void {
+    private addDragSource(dragStartPixels: number = 0): void {
         // if this is changing the drag element, delete the previous dragSource
         if (this.dragSource) { this.removeDragSource(); }
 
@@ -97,7 +98,7 @@ export class RowDragComp extends Component {
                 return dragItemCount === 1 ? this.cellValueFn() : `${dragItemCount} rows`;
             },
             getDragItem: () => dragItem,
-            dragStartPixels: 0,
+            dragStartPixels,
             dragSourceDomDataKey: this.beans.gridOptionsWrapper.getDomDataKey()
         };
 
