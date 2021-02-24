@@ -21,10 +21,27 @@ export class ExcelXlsxFactory {
     private static sheetNames: string[] = [];
 
     public static createExcel(styles: ExcelStyle[], worksheet: ExcelWorksheet): string {
-        this.sheetNames.push(worksheet.name);
+        this.addSheetName(worksheet);
         registerStyles(styles);
 
         return this.createWorksheet(worksheet);
+    }
+
+    private static addSheetName(worksheet: ExcelWorksheet): void {
+        const name = worksheet.name;
+        let append = '';
+
+        while (this.sheetNames.indexOf(name + append) !== -1) {
+            if (append === '') {
+                append = '_1'
+            } else {
+                const curr = parseInt(append.slice(1), 10);
+                append = `_${curr + 1}`;
+            }
+        }
+
+        worksheet.name += append;
+        this.sheetNames.push(worksheet.name);
     }
 
     public static getStringPosition(str: string): number {
