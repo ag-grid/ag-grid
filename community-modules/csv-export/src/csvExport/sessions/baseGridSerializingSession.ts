@@ -112,7 +112,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return keys.reverse().join(' -> ');
     }
 
-    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string): string {
+    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string): any {
         if (processCellCallback) {
             return processCellCallback({
                 column: column,
@@ -125,6 +125,6 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             });
         }
 
-        return value != null ? value.toString() : '';
+        return value != null ? value : '';
     }
 }
