@@ -1,4 +1,4 @@
-import { Autowired, Bean, BeanStub, XmlElement } from '@ag-grid-community/core';
+import { XmlElement } from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
@@ -15,29 +15,12 @@ import { XmlFactory } from "@ag-grid-community/csv-export";
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
  */
-@Bean('excelXlsxFactory')
-export class ExcelXlsxFactory extends BeanStub {
+export class ExcelXlsxFactory {
 
-    @Autowired('xmlFactory') private xmlFactory: XmlFactory;
+    private static sharedStrings: string[] = [];
+    private static sheetNames: string[];
 
-    private sharedStrings: string[] = [];
-    private sheetNames: string[];
-
-    public createSharedStrings(): string {
-        return this.createXmlPart(sharedStringsFactory.getTemplate(this.sharedStrings));
-    }
-
-    private createXmlPart(body: XmlElement): string {
-        const header = this.xmlFactory.createHeader({
-            encoding: 'UTF-8',
-            standalone: 'yes'
-        });
-
-        const xmlBody = this.xmlFactory.createXml(body);
-        return `${header}${xmlBody}`;
-    }
-
-    public createExcel(styles: ExcelStyle[], worksheets: ExcelWorksheet[], sharedStrings: string[] = []): string {
+    public static createExcel(styles: ExcelStyle[], worksheets: ExcelWorksheet[], sharedStrings: string[] = []): string {
         this.sharedStrings = sharedStrings;
         this.sheetNames = worksheets.map(worksheet => worksheet.name);
 
@@ -46,15 +29,27 @@ export class ExcelXlsxFactory extends BeanStub {
         return this.createWorksheet(worksheets);
     }
 
-    public createCore(): string {
+    public static createWorkbook(): string {
+        return this.createXmlPart(workbookFactory.getTemplate(this.sheetNames));
+    }
+
+    public static createStylesheet(): string {
+        return this.createXmlPart(stylesheetFactory.getTemplate());
+    }
+
+    public static createSharedStrings(): string {
+        return this.createXmlPart(sharedStringsFactory.getTemplate(this.sharedStrings));
+    }
+
+    public static createCore(): string {
         return this.createXmlPart(coreFactory.getTemplate());
     }
 
-    public createContentTypes(): string {
+    public static createContentTypes(): string {
         return this.createXmlPart(contentTypesFactory.getTemplate());
     }
 
-    public createRels(): string {
+    public static createRels(): string {
         const rs = relationshipsFactory.getTemplate([{
             Id: 'rId1',
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument',
@@ -68,19 +63,11 @@ export class ExcelXlsxFactory extends BeanStub {
         return this.createXmlPart(rs);
     }
 
-    public createStylesheet(): string {
-        return this.createXmlPart(stylesheetFactory.getTemplate());
-    }
-
-    public createTheme(): string {
+    public static createTheme(): string {
         return this.createXmlPart(officeThemeFactory.getTemplate());
     }
 
-    public createWorkbook(): string {
-        return this.createXmlPart(workbookFactory.getTemplate(this.sheetNames));
-    }
-
-    public createWorkbookRels(): string {
+    public static createWorkbookRels(): string {
         const rs = relationshipsFactory.getTemplate([{
             Id: 'rId1',
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
@@ -102,7 +89,17 @@ export class ExcelXlsxFactory extends BeanStub {
         return this.createXmlPart(rs);
     }
 
-    public createWorksheet(worksheets: ExcelWorksheet[]): string {
+    private static createXmlPart(body: XmlElement): string {
+        const header = XmlFactory.createHeader({
+            encoding: 'UTF-8',
+            standalone: 'yes'
+        });
+
+        const xmlBody = XmlFactory.createXml(body);
+        return `${header}${xmlBody}`;
+    }
+
+    private static createWorksheet(worksheets: ExcelWorksheet[]): string {
         return this.createXmlPart(worksheetFactory.getTemplate(worksheets[0]));
     }
 }

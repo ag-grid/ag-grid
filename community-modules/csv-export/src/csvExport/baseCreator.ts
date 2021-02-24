@@ -1,4 +1,5 @@
 import { BaseExportParams, ExportParams, _ } from "@ag-grid-community/core";
+import { Downloader } from "./downloader";
 import { BaseCreatorBeans, GridSerializingSession } from "./interfaces";
 
 export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> {
@@ -14,7 +15,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
             console.warn(`ag-grid: Export cancelled. Export is not allowed as per your configuration.`);
             return '';
         }
-        const {mergedParams, data} = this.getMergedParamsAndData(userParams);
+        const { mergedParams, data } = this.getMergedParamsAndData(userParams);
 
         const fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
         let fileName = fileNamePresent ? mergedParams.fileName : this.getDefaultFileName();
@@ -23,7 +24,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
             fileName = fileName + "." + this.getDefaultFileExtension();
         }
 
-        this.beans.downloader.download(fileName!, this.packageFile(data));
+        Downloader.download(fileName!, this.packageFile(data));
 
         return data;
     }
@@ -55,12 +56,8 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     }
 
     public abstract createSerializingSession(params?: P): S;
-
     public abstract getMimeType(): string;
-
     public abstract getDefaultFileName(): string;
-
     public abstract getDefaultFileExtension(): string;
-
     public abstract isExportSuppressed(): boolean;
 }

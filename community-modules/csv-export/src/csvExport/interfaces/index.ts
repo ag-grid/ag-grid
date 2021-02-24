@@ -9,11 +9,9 @@ import {
     RowNode,
     ValueService
 } from "@ag-grid-community/core";
-import { Downloader } from "../downloader";
 import { GridSerializer } from "../gridSerializer";
 
 export interface BaseCreatorBeans {
-    downloader: Downloader;
     gridSerializer: GridSerializer;
     gridOptionsWrapper: GridOptionsWrapper;
 }

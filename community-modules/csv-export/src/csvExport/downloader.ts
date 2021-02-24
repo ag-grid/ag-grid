@@ -1,8 +1,5 @@
-import { Bean } from "@ag-grid-community/core";
-
-@Bean("downloader")
 export class Downloader {
-    download(fileName: string, content: Blob) {
+    public static download(fileName: string, content: Blob) {
         // Internet Explorer
         if (window.navigator.msSaveOrOpenBlob) {
             window.navigator.msSaveOrOpenBlob(content, fileName);

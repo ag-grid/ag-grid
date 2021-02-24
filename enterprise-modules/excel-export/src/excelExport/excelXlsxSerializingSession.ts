@@ -12,7 +12,7 @@ import { RowSpanningAccumulator, RowType } from "@ag-grid-community/csv-export";
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
-export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<ExcelOOXMLDataType, ExcelXlsxFactory> {
+export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<ExcelOOXMLDataType> {
 
     private stringList: string[] = [];
     private stringMap: {[key: string]: number} = {};
@@ -33,7 +33,7 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
     }
 
     protected createExcel(data: ExcelWorksheet[]): string {
-        return this.config.excelFactory.createExcel(this.excelStyles, data, this.stringList);
+        return ExcelXlsxFactory.createExcel(this.excelStyles, data, this.stringList);
     }
 
     protected getDataTypeForValue(valueForCell: string): ExcelOOXMLDataType {

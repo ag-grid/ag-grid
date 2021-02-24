@@ -1,10 +1,9 @@
-import { Bean, BeanStub, HeaderElement, PrefixedXmlAttributes, XmlElement } from "@ag-grid-community/core";
+import { HeaderElement, PrefixedXmlAttributes, XmlElement } from "@ag-grid-community/core";
 
 const LINE_SEPARATOR = '\r\n';
 
-@Bean('xmlFactory')
-export class XmlFactory extends BeanStub {
-    createHeader(headerElement: HeaderElement = {}): string {
+export class XmlFactory {
+    public static createHeader(headerElement: HeaderElement = {}): string {
         const headerStart = '<?';
         const headerEnd = '?>';
         const keys = ['version'];
@@ -17,7 +16,7 @@ export class XmlFactory extends BeanStub {
         return `${headerStart}xml ${att} ${headerEnd}`;
     }
 
-    createXml(xmlElement: XmlElement, booleanTransformer?:(currentValue:boolean) => string) :string {
+    public static createXml(xmlElement: XmlElement, booleanTransformer?:(currentValue:boolean) => string) :string {
         let props: string = '';
         if (xmlElement.properties) {
             if (xmlElement.properties.prefixedAttributes) {
@@ -54,7 +53,7 @@ export class XmlFactory extends BeanStub {
         return result + '</' + xmlElement.name + '>' + LINE_SEPARATOR;
     }
 
-    private returnAttributeIfPopulated(key: string, value: any, booleanTransformer?:(currentValue:boolean) => string) {
+    private static returnAttributeIfPopulated(key: string, value: any, booleanTransformer?:(currentValue:boolean) => string) {
         if (!value && value !== '' && value !== 0) {
             return '';
         }

@@ -17,9 +17,8 @@ import {
 import { ExcelCell, ExcelStyle } from '@ag-grid-community/core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
-import { ExcelXmlFactory } from './excelXmlFactory';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
-import { BaseCreator, Downloader, GridSerializer, ZipContainer, RowType } from "@ag-grid-community/csv-export";
+import { BaseCreator, GridSerializer, ZipContainer, RowType } from "@ag-grid-community/csv-export";
 import { ExcelGridSerializingParams } from './baseExcelSerializingSession';
 
 export interface ExcelMixedStyle {
@@ -33,24 +32,19 @@ type SerializingSession = ExcelXmlSerializingSession | ExcelXlsxSerializingSessi
 @Bean('excelCreator')
 export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession, ExcelExportParams> implements IExcelCreator {
 
-    @Autowired('excelXmlFactory') private excelXmlFactory: ExcelXmlFactory;
-    @Autowired('excelXlsxFactory') private xlsxFactory: ExcelXlsxFactory;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('stylingService') private stylingService: StylingService;
 
-    @Autowired('downloader') private downloader: Downloader;
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('zipContainer') zipContainer: ZipContainer;
 
     private exportMode: string | undefined;
 
     @PostConstruct
     public postConstruct(): void {
         this.setBeans({
-            downloader: this.downloader,
             gridSerializer: this.gridSerializer,
             gridOptionsWrapper: this.gridOptionsWrapper
         });
@@ -84,9 +78,8 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     public createSerializingSession(params: ExcelExportParams): SerializingSession {
-        const {columnController, valueService, gridOptionsWrapper} = this;
+        const { columnController, valueService, gridOptionsWrapper } = this;
         const isXlsx = this.getExportMode() === 'xlsx';
-        const excelFactory = isXlsx ? this.xlsxFactory : this.excelXmlFactory;
 
         let sheetName = 'ag-grid';
 
@@ -94,14 +87,13 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             sheetName = _.utf8_encode(params.sheetName.toString().substr(0, 31));
         }
 
-        const config: ExcelGridSerializingParams<any> = {
+        const config: ExcelGridSerializingParams = {
             ...params,
             columnController,
             valueService,
             gridOptionsWrapper,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             sheetName,
-            excelFactory,
             baseExcelStyles: this.gridOptions.excelStyles || [],
             styleLinker: this.styleLinker.bind(this)
         };
@@ -162,9 +154,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             return super.packageFile(data);
         }
 
-        const {zipContainer, xlsxFactory} = this;
-
-        zipContainer.addFolders([
+        ZipContainer.addFolders([
             'xl/worksheets/',
             'xl/',
             'xl/theme/',
@@ -173,16 +163,16 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             '_rels/'
         ]);
 
-        zipContainer.addFile('xl/worksheets/sheet1.xml', data);
-        zipContainer.addFile('xl/workbook.xml', xlsxFactory.createWorkbook());
-        zipContainer.addFile('xl/styles.xml', xlsxFactory.createStylesheet());
-        zipContainer.addFile('xl/sharedStrings.xml', xlsxFactory.createSharedStrings());
-        zipContainer.addFile('xl/theme/theme1.xml', xlsxFactory.createTheme());
-        zipContainer.addFile('xl/_rels/workbook.xml.rels', xlsxFactory.createWorkbookRels());
-        zipContainer.addFile('docProps/core.xml', xlsxFactory.createCore());
-        zipContainer.addFile('[Content_Types].xml', xlsxFactory.createContentTypes());
-        zipContainer.addFile('_rels/.rels', xlsxFactory.createRels());
+        ZipContainer.addFile('xl/worksheets/sheet1.xml', data);
+        ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook());
+        ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet());
+        ZipContainer.addFile('xl/sharedStrings.xml', ExcelXlsxFactory.createSharedStrings());
+        ZipContainer.addFile('xl/theme/theme1.xml', ExcelXlsxFactory.createTheme());
+        ZipContainer.addFile('xl/_rels/workbook.xml.rels', ExcelXlsxFactory.createWorkbookRels());
+        ZipContainer.addFile('docProps/core.xml', ExcelXlsxFactory.createCore());
+        ZipContainer.addFile('[Content_Types].xml', ExcelXlsxFactory.createContentTypes());
+        ZipContainer.addFile('_rels/.rels', ExcelXlsxFactory.createRels());
 
-        return zipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        return ZipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     }
 }

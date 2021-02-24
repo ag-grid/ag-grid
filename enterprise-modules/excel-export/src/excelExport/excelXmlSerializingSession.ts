@@ -12,7 +12,7 @@ import { ExcelXmlFactory } from './excelXmlFactory';
 import { RowType, RowSpanningAccumulator } from "@ag-grid-community/csv-export";
 import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
-export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<ExcelDataType, ExcelXmlFactory> {
+export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<ExcelDataType> {
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
         const currentCells: ExcelCell[] = [];
@@ -29,9 +29,8 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
     }
 
     protected createExcel(data: ExcelWorksheet[]): string {
-        return this.config.excelFactory.createExcel(this.excelStyles, data, []);
+        return ExcelXmlFactory.createExcel(this.excelStyles, data, []);
     }
-    
 
     protected getDataTypeForValue(valueForCell: string): ExcelDataType {
         return _.isNumeric(valueForCell) ? 'Number' : 'String';

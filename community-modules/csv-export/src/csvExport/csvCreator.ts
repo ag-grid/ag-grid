@@ -10,7 +10,6 @@ import {
     ValueService
 } from "@ag-grid-community/core";
 import { BaseCreator } from "./baseCreator";
-import { Downloader } from "./downloader";
 import { GridSerializer } from "./gridSerializer";
 import { CsvSerializingSession } from "./sessions/csvSerializingSession";
 
@@ -19,15 +18,12 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
-
-    @Autowired('downloader') private downloader: Downloader;
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     @PostConstruct
     public postConstruct(): void {
         this.setBeans({
-            downloader: this.downloader,
             gridSerializer: this.gridSerializer,
             gridOptionsWrapper: this.gridOptionsWrapper
         });

@@ -1,4 +1,4 @@
-import { Bean, BeanStub, _ } from "@ag-grid-community/core";
+import { _ } from "@ag-grid-community/core";
 
 export interface ZipFolder {
     path: string;
@@ -46,23 +46,15 @@ const crcTable:number[] = [
     -1000256840, 1567103746, 711928724, -1274298825, -1022587231, 1510334235, 755167117
 ];
 
-@Bean('zipContainer')
-export class ZipContainer extends BeanStub {
-    private folders: ZipFolder[] = [];
-    private files: ZipFile[] = [];
+export class ZipContainer {
+    private static folders: ZipFolder[] = [];
+    private static files: ZipFile[] = [];
 
-    private addFolder = (path: string): void => {
-        this.folders.push({
-            path,
-            created: new Date()
-        });
+    public static addFolders(paths: string[]): void {
+        paths.forEach(this.addFolder.bind(this));
     }
 
-    public addFolders(paths: string[]): void {
-        paths.forEach(this.addFolder);
-    }
-
-    public addFile(path: string,  content: string): void {
+    public static addFile(path: string,  content: string): void {
         this.files.push({
             path,
             created: new Date(),
@@ -70,12 +62,7 @@ export class ZipContainer extends BeanStub {
         });
     }
 
-    private clearStream(): void {
-        this.folders = [];
-        this.files = [];
-    }
-
-    public getContent(mimeType: string = 'application/zip'): Blob {
+    public static getContent(mimeType: string = 'application/zip'): Blob {
         const textOutput = this.buildFileStream();
         const uInt8Output = this.buildUint8Array(textOutput);
         this.clearStream();
@@ -83,7 +70,19 @@ export class ZipContainer extends BeanStub {
         return new Blob([uInt8Output], { type: mimeType });
     }
 
-    private buildFileStream(fData: string = ''): string {
+    private static addFolder(path: string): void {
+        this.folders.push({
+            path,
+            created: new Date()
+        });
+    }
+
+    private static clearStream(): void {
+        this.folders = [];
+        this.files = [];
+    }
+
+    private static buildFileStream(fData: string = ''): string {
         const totalFiles = this.folders.concat(this.files);
         const len = totalFiles.length;
         let foData = '';
@@ -103,9 +102,9 @@ export class ZipContainer extends BeanStub {
         return fData + foData + foEnd;
     }
 
-    private getHeader(currentFile: ZipFile, offset: number) {
-        const {content, path, created} = currentFile;
-        const {utf8_encode, decToHex} = _;
+    private static getHeader(currentFile: ZipFile, offset: number) {
+        const { content, path, created } = currentFile;
+        const { utf8_encode, decToHex } = _;
 
         const utfPath = utf8_encode(path);
         const isUTF8 = utfPath !== path;
@@ -145,8 +144,8 @@ export class ZipContainer extends BeanStub {
         return { fileHeader, folderHeader, content: content || '' };
     }
 
-    private buildFolderEnd(tLen: number, cLen: number, lLen:number): string {
-        const {decToHex} = _;
+    private static buildFolderEnd(tLen: number, cLen: number, lLen:number): string {
+        const { decToHex } = _;
         return 'PK\x05\x06' + // central folder end
             '\x00\x00' +
             '\x00\x00' +
@@ -157,7 +156,7 @@ export class ZipContainer extends BeanStub {
             '\x00\x00';
     }
 
-    private buildUint8Array(content: string): Uint8Array {
+    private static buildUint8Array(content: string): Uint8Array {
         const uint8 = new Uint8Array(content.length);
 
         for (let i = 0; i < uint8.length; i++) {
@@ -166,7 +165,7 @@ export class ZipContainer extends BeanStub {
         return uint8;
     }
 
-    private getFromCrc32Table(content: string, crc: number = 0): number {
+    private static getFromCrc32Table(content: string, crc: number = 0): number {
         if (!content.length) { return 0; }
 
         crc ^= (-1);
@@ -185,7 +184,7 @@ export class ZipContainer extends BeanStub {
         return crc ^ (-1);
     }
 
-    private convertTime(date: Date): number {
+    private static convertTime(date: Date): number {
         let time = date.getHours();
         time <<= 6;
         time = time | date.getMinutes();
@@ -195,7 +194,7 @@ export class ZipContainer extends BeanStub {
         return time;
     }
 
-    private convertDate(date: Date): number {
+    private static convertDate(date: Date): number {
         let dt = date.getFullYear() - 1980;
         dt <<= 4;
         dt = dt | (date.getMonth() + 1);

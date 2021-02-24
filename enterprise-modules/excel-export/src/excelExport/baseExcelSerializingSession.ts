@@ -7,9 +7,8 @@ export interface ColumnWidthCallbackParams {
     index: number;
 }
 
-export interface ExcelGridSerializingParams<U> extends GridSerializingParams {
+export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;
-    excelFactory: U;
     baseExcelStyles: ExcelStyle[];
     styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column?: Column, node?: RowNode) => string[];
     suppressTextAsCDATA?: boolean;
@@ -19,8 +18,8 @@ export interface ExcelGridSerializingParams<U> extends GridSerializingParams {
     autoConvertFormulas?: boolean;
 }
 
-export abstract class BaseExcelSerializingSession<T, U> extends BaseGridSerializingSession<ExcelCell[][]> {
-    protected readonly config: ExcelGridSerializingParams<U>;
+export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializingSession<ExcelCell[][]> {
+    protected readonly config: ExcelGridSerializingParams;
     protected readonly stylesByIds: { [key: string]: ExcelStyle };
 
     protected mixedStyles: { [key: string]: ExcelMixedStyle } = {};
@@ -32,7 +31,7 @@ export abstract class BaseExcelSerializingSession<T, U> extends BaseGridSerializ
     protected cols: ExcelColumn[];
 
 
-    constructor(config: ExcelGridSerializingParams<U>) {
+    constructor(config: ExcelGridSerializingParams) {
         super(config);
         this.config = _.assign({}, config);
         this.stylesByIds = {};
