@@ -37,7 +37,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         const mergedParams = this.mergeDefaultParams(userParams);
         const data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
 
-        return {mergedParams, data};
+        return { mergedParams, data };
     }
 
     private mergeDefaultParams(userParams?: P): P {

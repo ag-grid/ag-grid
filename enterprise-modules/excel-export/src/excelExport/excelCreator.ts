@@ -18,7 +18,7 @@ import { ExcelCell, ExcelStyle } from '@ag-grid-community/core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
-import { BaseCreator, GridSerializer, ZipContainer, RowType } from "@ag-grid-community/csv-export";
+import { BaseCreator, GridSerializer, ZipContainer, RowType, Downloader } from "@ag-grid-community/csv-export";
 import { ExcelGridSerializingParams } from './baseExcelSerializingSession';
 
 export interface ExcelMixedStyle {
@@ -28,6 +28,36 @@ export interface ExcelMixedStyle {
 }
 
 type SerializingSession = ExcelXmlSerializingSession | ExcelXlsxSerializingSession;
+
+export const getMultipleSheetsAsExcel = (rawData: string[]) => {
+    ZipContainer.addFolders([
+        'xl/worksheets/',
+        'xl/',
+        'xl/theme/',
+        'xl/_rels/',
+        'docProps/',
+        '_rels/'
+    ]);
+
+    const sheetLen = rawData.length;
+    rawData.forEach((value, idx) => {
+        ZipContainer.addFile(`xl/worksheets/sheet${idx + 1}.xml`, value);
+    });
+    ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook());
+    ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet());
+    ZipContainer.addFile('xl/sharedStrings.xml', ExcelXlsxFactory.createSharedStrings());
+    ZipContainer.addFile('xl/theme/theme1.xml', ExcelXlsxFactory.createTheme());
+    ZipContainer.addFile('xl/_rels/workbook.xml.rels', ExcelXlsxFactory.createWorkbookRels(sheetLen));
+    ZipContainer.addFile('docProps/core.xml', ExcelXlsxFactory.createCore());
+    ZipContainer.addFile('[Content_Types].xml', ExcelXlsxFactory.createContentTypes(sheetLen));
+    ZipContainer.addFile('_rels/.rels', ExcelXlsxFactory.createRels());
+
+    return ZipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+}
+
+export const exportMultipleSheetsAsExcel = (rawData: string[], fileName: string = 'export.xlsx') => {
+    Downloader.download(fileName, getMultipleSheetsAsExcel(rawData));
+}
 
 @Bean('excelCreator')
 export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession, ExcelExportParams> implements IExcelCreator {
@@ -63,6 +93,18 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         }
 
         return this.packageFile(data);
+    }
+
+    public getGridRawDataForExcel(params: ExcelExportParams): string {
+        return this.getData(params || {});
+    }
+
+    public getMultipleSheetsAsExcel(gridRawData: string[]): Blob {
+        return getMultipleSheetsAsExcel(gridRawData);
+    }
+
+    public exportMultipleSheetsAsExcel(gridRawData: string[], fileName?: string) {
+        return exportMultipleSheetsAsExcel(gridRawData, fileName);
     }
 
     public getMimeType(): string {
@@ -154,25 +196,6 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             return super.packageFile(data);
         }
 
-        ZipContainer.addFolders([
-            'xl/worksheets/',
-            'xl/',
-            'xl/theme/',
-            'xl/_rels/',
-            'docProps/',
-            '_rels/'
-        ]);
-
-        ZipContainer.addFile('xl/worksheets/sheet1.xml', data);
-        ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook());
-        ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet());
-        ZipContainer.addFile('xl/sharedStrings.xml', ExcelXlsxFactory.createSharedStrings());
-        ZipContainer.addFile('xl/theme/theme1.xml', ExcelXlsxFactory.createTheme());
-        ZipContainer.addFile('xl/_rels/workbook.xml.rels', ExcelXlsxFactory.createWorkbookRels());
-        ZipContainer.addFile('docProps/core.xml', ExcelXlsxFactory.createCore());
-        ZipContainer.addFile('[Content_Types].xml', ExcelXlsxFactory.createContentTypes());
-        ZipContainer.addFile('_rels/.rels', ExcelXlsxFactory.createRels());
-
-        return ZipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        return getMultipleSheetsAsExcel([data]);
     }
 }

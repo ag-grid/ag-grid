@@ -57,6 +57,9 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
 export interface IExcelCreator {
     exportDataAsExcel(params?: ExcelExportParams): void;
     getDataAsExcel(params?: ExcelExportParams): Blob | string;
+    getGridRawDataForExcel(params?: ExcelExportParams): string;
+    getMultipleSheetsAsExcel(gridRawData: string[]): Blob;
+    exportMultipleSheetsAsExcel(gridRawData: string[], fileName?: string): void;
 }
 
 // XML

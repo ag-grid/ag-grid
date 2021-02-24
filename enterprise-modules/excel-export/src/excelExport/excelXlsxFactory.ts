@@ -45,8 +45,8 @@ export class ExcelXlsxFactory {
         return this.createXmlPart(coreFactory.getTemplate());
     }
 
-    public static createContentTypes(): string {
-        return this.createXmlPart(contentTypesFactory.getTemplate());
+    public static createContentTypes(sheetLen: number): string {
+        return this.createXmlPart(contentTypesFactory.getTemplate(sheetLen));
     }
 
     public static createRels(): string {
@@ -67,21 +67,25 @@ export class ExcelXlsxFactory {
         return this.createXmlPart(officeThemeFactory.getTemplate());
     }
 
-    public static createWorkbookRels(): string {
-        const rs = relationshipsFactory.getTemplate([{
-            Id: 'rId1',
+    public static createWorkbookRels(sheetLen: number): string {
+        const worksheets = new Array(sheetLen).fill(undefined).map((v, i) => ({
+            Id: `rId${i + 1}`,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
-            Target: 'worksheets/sheet1.xml'
-        }, {
-            Id: 'rId2',
+            Target: `worksheets/sheet${i + 1}.xml`
+        }));
+
+        const rs = relationshipsFactory.getTemplate([
+            ...worksheets,
+        {
+            Id: `rId${sheetLen + 1}`,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme',
             Target: 'theme/theme1.xml'
         }, {
-            Id: 'rId3',
+            Id: `rId${sheetLen + 2}`,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
             Target: 'styles.xml'
         }, {
-            Id: 'rId4',
+            Id: `rId${sheetLen + 3}`,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings',
             Target: 'sharedStrings.xml'
         }]);

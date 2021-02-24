@@ -2,7 +2,13 @@ import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import contentTypeFactory from './contentType';
 
 const contentTypesFactory: ExcelOOXMLTemplate = {
-    getTemplate() {
+    getTemplate(sheetLen: number) {
+
+        const worksheets = new Array(sheetLen).fill(undefined).map((v, i) => ({
+            name: 'Override',
+            ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml',
+            PartName: `/xl/worksheets/sheet${i + 1}.xml`
+        }));
 
         const children = [{
             name: 'Default',
@@ -16,11 +22,9 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml',
             PartName: "/xl/workbook.xml"
-        }, {
-            name: 'Override',
-            ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml',
-            PartName: '/xl/worksheets/sheet1.xml'
-        }, {
+        }, 
+        ...worksheets,
+        {
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.theme+xml',
             PartName: '/xl/theme/theme1.xml'

@@ -261,6 +261,24 @@ export class GridApi {
         }
     }
 
+    public getGridRawDataForExcel(params?: ExcelExportParams): string | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getGridRawDataForExcel')) {
+            return this.excelCreator.getGridRawDataForExcel(params);
+        }
+    }
+
+    public getMultipleSheetsAsExcel(gridRawData: string[]): Blob | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel')) {
+            return this.excelCreator.getMultipleSheetsAsExcel(gridRawData);
+        }
+    }
+
+    public exportMultipleSheetsAsExcel(gridRawData: string[], fileName?: string): void {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel')) {
+            return this.excelCreator.exportMultipleSheetsAsExcel(gridRawData, fileName);
+        }
+    }
+
     /** @deprecated */
     public setEnterpriseDatasource(datasource: IServerSideDatasource) {
         console.warn(`ag-grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()`);
