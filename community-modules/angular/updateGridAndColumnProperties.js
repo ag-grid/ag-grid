@@ -1,6 +1,7 @@
 const replace = require('replace-in-file');
 const typescriptSimple = require('typescript-simple');
 const fs = require('fs');
+const { EOL } = require('os');
 
 // satisfy ag-grid HTMLElement dependencies
 HTMLElement = typeof HTMLElement === 'undefined' ? function() {
@@ -23,15 +24,15 @@ function getGridPropertiesAndEventsJs() {
 
     ComponentUtil.ALL_PROPERTIES.forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property} : any = undefined;\n`;
+            result += `    @Input() public ${property}: any = undefined;${EOL}`;
         }
     });
 
     // for readability
-    result += '\n';
+    result += EOL;
 
     ComponentUtil.EVENTS.forEach((event) => {
-        result += `    @Output() public ${event}: EventEmitter<any> = new EventEmitter<any>();\n`;
+        result += `    @Output() public ${event}: EventEmitter<any> = new EventEmitter<any>();${EOL}`;
     });
 
     return result;
@@ -57,7 +58,7 @@ function getGridColumnPropertiesJs() {
 
     ColDefUtil.ALL_PROPERTIES.filter(unique).forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property}: any;\n`;
+            result += `    @Input() public ${property}: any;${EOL}`;
         }
     });
 
@@ -88,15 +89,15 @@ function getGridPropertiesAndEventsTs() {
 
     exports.PropertyKeys.ALL_PROPERTIES.forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property} : any = undefined;\n`;
+            result += `    @Input() public ${property}: any = undefined;${EOL}`;
         }
     });
 
     // for readability
-    result += '\n';
+    result += EOL;
 
     events.forEach((event) => {
-        result += `    @Output() public ${event}: EventEmitter<any> = new EventEmitter<any>();\n`;
+        result += `    @Output() public ${event}: EventEmitter<any> = new EventEmitter<any>();${EOL}`;
     });
 
     return result;
@@ -123,7 +124,7 @@ function getGridColumnPropertiesTs() {
 
     exports.ColDefUtil.ALL_PROPERTIES.filter(unique).forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property}: any;\n`;
+            result += `    @Input() public ${property}: any;${EOL}`;
         }
     });
 
@@ -136,7 +137,7 @@ const updateGridProperties = (resolve, getGridPropertiesAndEvents) => {
     const optionsForGrid = {
         files: './projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts',
         from: /(\/\/ @START@)[^]*(\/\/ @END@)/,
-        to: `// @START@\n${gridPropertiesAndEvents}    // @END@`,
+        to: `// @START@${EOL}${gridPropertiesAndEvents}    // @END@`,
     };
 
     replace(optionsForGrid)
@@ -157,7 +158,7 @@ const updateColProperties = (resolve, getGridColumnProperties) => {
     const optionsForGridColumn = {
         files: './projects/ag-grid-angular/src/lib/ag-grid-column.component.ts',
         from: /(\/\/ @START@)[^]*(\s.*\/\/ @END@)/,
-        to: `// @START@\n${gridColumnProperties}    // @END@`,
+        to: `// @START@${EOL}${gridColumnProperties}    // @END@`,
     };
 
     replace(optionsForGridColumn)
