@@ -274,7 +274,7 @@ const updateLegacyWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModu
         ''
     ].join(EOL);
 
-    const getFilteredModules = modules =
+    const getFilteredModules = modules =>
         modules.filter(module => module.moduleDirName !== 'core' && module.moduleDirName !== 'all-modules');
 
     const communityModulesEntries = getFilteredModules(gridCommunityModules).map(getImport);
@@ -395,8 +395,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         gridCommunityModules,
         [],
         module => `        "${module.publishedName}": \`\${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js\`,`,
-        () => {
-        });
+        () => { });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
@@ -411,12 +410,11 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '        /* END OF GRID CSS DEV - DO NOT DELETE */',
         cssFiles,
         [],
-        cssFile => {
-            return `        "@ag-grid-community/all-modules/dist/styles/${cssFile}": \`\${localPrefix}/@ag-grid-community/all-modules/dist/styles/${cssFile}\`,
-        "@ag-grid-community/core/dist/styles/${cssFile}": \`\${localPrefix}/@ag-grid-community/core/dist/styles/${cssFile}\`,`;
-        },
-        () => {
-        });
+        cssFile => [
+            `        "@ag-grid-community/all-modules/dist/styles/${cssFile}": \`\${localPrefix}/@ag-grid-community/all-modules/dist/styles/${cssFile}\`,`,
+            `        "@ag-grid-community/core/dist/styles/${cssFile}": \`\${localPrefix}/@ag-grid-community/core/dist/styles/${cssFile}\`,`
+        ].join(EOL),
+        () => { });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
@@ -424,8 +422,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         gridCommunityModules,
         [],
         module => `        "${module.publishedName}": \`https://unpkg.com/@ag-grid-community/all-modules@\${agGridVersion}/dist/ag-grid-community.cjs.js\`,`,
-        () => {
-        });
+        () => { });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
@@ -440,12 +437,11 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '        /* END OF GRID CSS PROD - DO NOT DELETE */',
         cssFiles,
         [],
-        cssFile => {
-            return `        "@ag-grid-community/all-modules/dist/styles/${cssFile}": \`https://unpkg.com/@ag-grid-community/all-modules@\${agGridVersion}/dist/styles/${cssFile}\`,
-        "@ag-grid-community/core/dist/styles/${cssFile}": \`https://unpkg.com/@ag-grid-community/core@\${agGridVersion}/dist/styles/${cssFile}\`,`;
-        },
-        () => {
-        });
+        cssFile => [
+            `        "@ag-grid-community/all-modules/dist/styles/${cssFile}": \`https://unpkg.com/@ag-grid-community/all-modules@\${agGridVersion}/dist/styles/${cssFile}\`,`,
+            `        "@ag-grid-community/core/dist/styles/${cssFile}": \`https://unpkg.com/@ag-grid-community/core@\${agGridVersion}/dist/styles/${cssFile}\`,`
+        ].join(EOL),
+        () => { });
 
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
@@ -604,6 +600,13 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
         './documentation/static/example-runner/grid-react-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-vue-boilerplate/systemjs.config.dev.js'];
 
+    const getModuleConfig = module => [
+        `            '${module.publishedName}': {`,
+        `                main: './dist/cjs/main.js',`,
+        `                defaultExtension: 'js'`,
+        `            },`
+    ].join(EOL);
+
     systemJsFiles.forEach(systemJsFile => {
         const fileLines = fs.readFileSync(systemJsFile, 'UTF-8');
 
@@ -612,16 +615,8 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
             '            /* END OF MODULES - DO NOT DELETE */',
             gridCommunityModules.concat(chartsCommunityModules),
             gridEnterpriseModules,
-            module => `            '${module.publishedName}': {
-                main: './dist/cjs/main.js',
-                defaultExtension: 'js'
-            },`
-            ,
-            module => `            '${module.publishedName}': {
-                main: './dist/cjs/main.js',
-                defaultExtension: 'js'
-            },`
-            ,
+            getModuleConfig,
+            getModuleConfig,
         );
 
         fs.writeFileSync(systemJsFile, updateFileLines, 'UTF-8');
