@@ -42,7 +42,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     }
 
     public abstract onNewHeaderGroupingRow(): RowSpanningAccumulator;
-    protected abstract createExcel(data: ExcelWorksheet[]): string;
+    protected abstract createExcel(data: ExcelWorksheet): string;
     protected abstract getDataTypeForValue(valueForCell: string): T;
     protected abstract onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void;
     protected abstract getType(type: T, style: ExcelStyle | null, value: string | null): T | null;
@@ -65,13 +65,13 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             this.cols.push(this.convertColumnToExcel(null, this.cols.length + 1));
         }
 
-        const data: ExcelWorksheet [] = [{
+        const data: ExcelWorksheet = {
             name: this.config.sheetName,
             table: {
                 columns: this.cols,
                 rows: this.rows
             }
-        }];
+        };
 
         return this.createExcel(data);
     }

@@ -21,21 +21,21 @@ import { XmlFactory } from "@ag-grid-community/csv-export";
  */
 export class ExcelXmlFactory {
 
-    public static createExcel(styles: ExcelStyle[], worksheets: ExcelWorksheet[], sharedStrings?: string[]): string {
+    public static createExcel(styles: ExcelStyle[], worksheet: ExcelWorksheet, sharedStrings?: string[]): string {
         const header = this.excelXmlHeader();
         const docProps = documentProperties.getTemplate();
         const eWorkbook = excelWorkbook.getTemplate();
-        const wb = this.workbook(docProps, eWorkbook, styles, worksheets);
+        const wb = this.workbook(docProps, eWorkbook, styles, worksheet);
 
         return `${header}${XmlFactory.createXml(wb, boolean => boolean ? '1' : '0')}`;
     }
 
-    private static workbook(docProperties: XmlElement, eWorkbook: XmlElement, styles: ExcelStyle[], worksheets: ExcelWorksheet[]): XmlElement {
+    private static workbook(docProperties: XmlElement, eWorkbook: XmlElement, styles: ExcelStyle[], currentWorksheet: ExcelWorksheet): XmlElement {
         const children: XmlElement[] = [
             docProperties,
             eWorkbook,
             this.stylesXmlElement(styles)
-        ].concat(worksheets.map(it => worksheet.getTemplate(it)));
+        ].concat(worksheet.getTemplate(currentWorksheet));
 
         return _.assign({}, workbook.getTemplate(), {children});
     }

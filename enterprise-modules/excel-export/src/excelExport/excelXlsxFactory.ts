@@ -17,16 +17,28 @@ import { XmlFactory } from "@ag-grid-community/csv-export";
  */
 export class ExcelXlsxFactory {
 
-    private static sharedStrings: string[] = [];
-    private static sheetNames: string[];
+    private static sharedStrings: Map<string, number> = new Map();
+    private static sheetNames: string[] = [];
 
-    public static createExcel(styles: ExcelStyle[], worksheets: ExcelWorksheet[], sharedStrings: string[] = []): string {
-        this.sharedStrings = sharedStrings;
-        this.sheetNames = worksheets.map(worksheet => worksheet.name);
-
+    public static createExcel(styles: ExcelStyle[], worksheet: ExcelWorksheet): string {
+        this.sheetNames.push(worksheet.name);
         registerStyles(styles);
 
-        return this.createWorksheet(worksheets);
+        return this.createWorksheet(worksheet);
+    }
+
+    public static getStringPosition(str: string): number {
+        if (this.sharedStrings.has(str)) {
+            return this.sharedStrings.get(str)!;
+        }
+
+        this.sharedStrings.set(str, this.sharedStrings.size);
+        return this.sharedStrings.size - 1;
+    }
+
+    public static resetFactory(): void {
+        this.sharedStrings = new Map();
+        this.sheetNames = [];
     }
 
     public static createWorkbook(): string {
@@ -103,7 +115,7 @@ export class ExcelXlsxFactory {
         return `${header}${xmlBody}`;
     }
 
-    private static createWorksheet(worksheets: ExcelWorksheet[]): string {
-        return this.createXmlPart(worksheetFactory.getTemplate(worksheets[0]));
+    private static createWorksheet(worksheet: ExcelWorksheet): string {
+        return this.createXmlPart(worksheetFactory.getTemplate(worksheet));
     }
 }

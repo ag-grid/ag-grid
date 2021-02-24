@@ -52,6 +52,8 @@ export const getMultipleSheetsAsExcel = (rawData: string[]) => {
     ZipContainer.addFile('[Content_Types].xml', ExcelXlsxFactory.createContentTypes(sheetLen));
     ZipContainer.addFile('_rels/.rels', ExcelXlsxFactory.createRels());
 
+    ExcelXlsxFactory.resetFactory();
+
     return ZipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 }
 

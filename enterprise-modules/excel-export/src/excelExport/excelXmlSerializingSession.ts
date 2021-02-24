@@ -28,7 +28,7 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
         };
     }
 
-    protected createExcel(data: ExcelWorksheet[]): string {
+    protected createExcel(data: ExcelWorksheet): string {
         return ExcelXmlFactory.createExcel(this.excelStyles, data, []);
     }
 

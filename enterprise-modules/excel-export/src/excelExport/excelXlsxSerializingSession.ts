@@ -14,9 +14,6 @@ import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
 export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<ExcelOOXMLDataType> {
 
-    private stringList: string[] = [];
-    private stringMap: {[key: string]: number} = {};
-
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
         const currentCells: ExcelCell[] = [];
 
@@ -32,8 +29,8 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
         };
     }
 
-    protected createExcel(data: ExcelWorksheet[]): string {
-        return ExcelXlsxFactory.createExcel(this.excelStyles, data, this.stringList);
+    protected createExcel(data: ExcelWorksheet): string {
+        return ExcelXlsxFactory.createExcel(this.excelStyles, data);
     }
 
     protected getDataTypeForValue(valueForCell: string): ExcelOOXMLDataType {
@@ -91,29 +88,18 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
             styleId: !!this.getStyleById(styleId) ? styleId! : undefined,
             data: {
                 type: type,
-                value: value
+                value: type === 's'? ExcelXlsxFactory.getStringPosition(value == null ? '' : value).toString() : value
             },
             mergeAcross: numOfCells
         };
     }
 
-    private getStringPosition(val: string): number {
-        let pos: number | undefined = this.stringMap[val];
-
-        if (pos === undefined) {
-            pos = this.stringMap[val] = this.stringList.length;
-            this.stringList.push(val);
-        }
-
-        return pos;
-    }
-
     private getCellValue(type: ExcelOOXMLDataType, value: string | null): string | null {
-        if (value == null) { return this.getStringPosition('').toString(); }
+        if (value == null) { return ExcelXlsxFactory.getStringPosition('').toString(); }
 
         switch (type) {
             case 's':
-                return this.getStringPosition(value).toString();
+                return ExcelXlsxFactory.getStringPosition(value).toString();
             case 'f':
                 return value.slice(1);
             case 'n':
