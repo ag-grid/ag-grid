@@ -64,7 +64,7 @@ function updateBetweenStrings(
     const communityModuleEntries = gridCommunityModules.map(communityMappingFunc);
     const enterpriseModuleEntries = gridEnterpriseModules.map(enterpriseMappingFunc);
 
-    const fragmentToBeInserted = communityModuleEntries.concat(enterpriseModuleEntries).replace('\n', EOL).join(EOL);
+    const fragmentToBeInserted = communityModuleEntries.concat(enterpriseModuleEntries).join(EOL);
 
     return `${fileContents.substring(0, startIndex)}${EOL}${fragmentToBeInserted}${EOL}${fileContents.substring(endIndex)}`;
 }

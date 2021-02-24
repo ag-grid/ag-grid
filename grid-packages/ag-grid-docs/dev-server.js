@@ -12,6 +12,7 @@ const tcpPortUsed = require('tcp-port-used');
 const { generateExamples: generateDocumentationExamples } = require('./example-generator-documentation');
 const { updateBetweenStrings, getAllModules } = require('./utils');
 const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss } = require('./lernaOperations');
+const { EOL } = os;
 
 const flattenArray = array => [].concat.apply([], array);
 
@@ -267,34 +268,29 @@ async function watchAndGenerateExamples() {
 }
 
 const updateLegacyWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
-    const communityModulesEntries = gridCommunityModules
-        .filter(module => module.moduleDirName !== 'core')
-        .filter(module => module.moduleDirName !== 'all-modules')
-        .map(module => `require("../../../${module.fullJsPath.replace('.ts', '')}");
-const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};
-        `);
+    const getImport = module => [
+        `require("../../../${module.fullJsPath.replace('.ts', '')}");`,
+        `const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};`,
+        ''
+    ].join(EOL);
 
-    const communityRegisterModuleLines = gridCommunityModules
-        .filter(module => module.moduleDirName !== 'core')
-        .filter(module => module.moduleDirName !== 'all-modules')
+    const getFilteredModules = modules =
+        modules.filter(module => module.moduleDirName !== 'core' && module.moduleDirName !== 'all-modules');
+
+    const communityModulesEntries = getFilteredModules(gridCommunityModules).map(getImport);
+
+    const communityRegisterModuleLines = getFilteredModules(gridCommunityModules)
         .map(module => `ModuleRegistry.ModuleRegistry.register(${module.moduleName});`);
 
-    const enterpriseModulesEntries = gridEnterpriseModules
-        .filter(module => module.moduleDirName !== 'core')
-        .filter(module => module.moduleDirName !== 'all-modules')
-        .map(module => `require("../../../${module.fullJsPath.replace('.ts', '')}");
-const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};
-        `);
+    const enterpriseModulesEntries = getFilteredModules(gridEnterpriseModules).map(getImport);
 
-    const enterpriseRegisterModuleLines = gridEnterpriseModules
-        .filter(module => module.moduleDirName !== 'core')
-        .filter(module => module.moduleDirName !== 'all-modules')
+    const enterpriseRegisterModuleLines = getFilteredModules(gridEnterpriseModules)
         .map(module => `ModuleRegistry.ModuleRegistry.register(${module.moduleName});`);
 
     const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd.js';
     const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd.js';
 
-    const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split('\n');
+    const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split(EOL);
     let modulesLineFound = false;
     const newEnterpriseBundleLines = [];
     existingEnterpriseBundleLines.forEach(line => {
@@ -304,9 +300,9 @@ const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts'
         }
     });
     const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries).concat(communityModulesEntries);
-    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
+    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).join(EOL), 'UTF-8');
 
-    const existingCommunityLines = fs.readFileSync(communityFilename).toString().split('\n');
+    const existingCommunityLines = fs.readFileSync(communityFilename).toString().split(EOL);
     modulesLineFound = false;
     const newCommunityLines = [];
     existingCommunityLines.forEach(line => {
@@ -315,7 +311,7 @@ const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts'
             newCommunityLines.push(line);
         }
     });
-    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
+    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join(EOL), 'UTF-8');
 };
 
 const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
@@ -342,7 +338,7 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
     const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd-beta.js';
     const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd-beta.js';
 
-    const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split('\n');
+    const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split(EOL);
     let modulesLineFound = false;
     const newEnterpriseBundleLines = [];
     existingEnterpriseBundleLines.forEach(line => {
@@ -352,9 +348,9 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
         }
     });
     const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries).concat(communityModulesEntries);
-    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
+    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).join(EOL), 'UTF-8');
 
-    const existingCommunityLines = fs.readFileSync(communityFilename).toString().split('\n');
+    const existingCommunityLines = fs.readFileSync(communityFilename).toString().split(EOL);
     modulesLineFound = false;
     const newCommunityLines = [];
     existingCommunityLines.forEach(line => {
@@ -363,7 +359,7 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
             newCommunityLines.push(line);
         }
     });
-    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
+    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join(EOL), 'UTF-8');
 };
 
 function updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules) {
