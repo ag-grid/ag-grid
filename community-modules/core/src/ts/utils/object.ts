@@ -1,7 +1,7 @@
 import { missing, exists, values } from './generic';
 import { forEach } from './array';
 
-export function iterateObject<T>(object: { [p: string]: T; } | T[] | undefined, callback: (key: string, value: T) => void) {
+export function iterateObject<T>(object: { [p: string]: T; } | T[] | null | undefined, callback: (key: string, value: T) => void) {
     if (object == null) { return; }
 
     if (Array.isArray(object)) {
@@ -32,7 +32,7 @@ export function deepCloneObject<T>(object: T): T {
 // this is used for eg creating copies of Column Definitions, where we want to
 // deep copy all objects, but do not want to deep copy functions (eg when user provides
 // a function or class for colDef.cellRenderer)
-export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T {
+export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined {
     if (!object) { return; }
 
     const obj = object as any;
@@ -171,7 +171,7 @@ export function get(source: any, expression: string, defaultValue: any): any {
     let objectToRead = source;
 
     while (keys.length > 1) {
-        objectToRead = objectToRead[keys.shift()];
+        objectToRead = objectToRead[keys.shift()!];
 
         if (objectToRead == null) {
             return defaultValue;
@@ -190,7 +190,7 @@ export function set(target: any, expression: string, value: any) {
     let objectToUpdate = target;
 
     while (keys.length > 1) {
-        objectToUpdate = objectToUpdate[keys.shift()];
+        objectToUpdate = objectToUpdate[keys.shift()!];
 
         if (objectToUpdate == null) {
             return;
@@ -237,7 +237,7 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
 // used by ColumnAPI and GridAPI to remove all references, so keeping grid in memory resulting in a
 // memory leak if user is not disposing of the GridAPI or ColumnApi references
 export function removeAllReferences(obj: any, objectName: string): void {
-    Object.keys(obj).forEach( key => {
+    Object.keys(obj).forEach(key => {
         const value = obj[key];
         // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
         // we don't care about
@@ -248,15 +248,17 @@ export function removeAllReferences(obj: any, objectName: string): void {
     const proto = Object.getPrototypeOf(obj);
     const properties: any = {};
 
-    Object.keys(proto).forEach( key => {
+    Object.keys(proto).forEach(key => {
         const value = proto[key];
         // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
         if (typeof value === 'function') {
-            const func = ()=> {
-                console.warn(`ag-Grid: ${objectName} function ${key}() cannot be called as the grid has been 
-destroyed. Please don't call grid API functions on destroyed grids - as a matter of fact you 
-shouldn't be keeping the API reference, your application has a memory leak! Remove the API reference 
-when the grid is destroyed.`);
+            const func = () => {
+                console.warn(
+                    `AG Grid: ${objectName} function ${key}() cannot be called as the grid has been destroyed.
+                     Please don't call grid API functions on destroyed grids - as a matter of fact you shouldn't
+                     be keeping the API reference, your application has a memory leak! Remove the API reference
+                     when the grid is destroyed.`
+                );
             };
             properties[key] = { value: func, writable: true };
         }

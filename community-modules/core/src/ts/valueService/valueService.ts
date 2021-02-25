@@ -128,7 +128,7 @@ export class ValueService extends BeanStub {
         // need either a field or a newValueHandler for this to work
         if (missing(field) && missing(newValueHandler) && missing(valueSetter)) {
             // we don't tell user about newValueHandler, as that is deprecated
-            console.warn(`ag-Grid: you need either field or valueSetter set on colDef for editing to work`);
+            console.warn(`AG Grid: you need either field or valueSetter set on colDef for editing to work`);
             return;
         }
 
@@ -186,12 +186,12 @@ export class ValueService extends BeanStub {
         const event: CellValueChangedEvent = {
             type: Events.EVENT_CELL_VALUE_CHANGED,
             event: null,
-            rowIndex: rowNode.rowIndex,
+            rowIndex: rowNode.rowIndex!,
             rowPinned: rowNode.rowPinned,
             column: params.column,
-            api: params.api,
+            api: params.api!,
+            columnApi: params.columnApi!,
             colDef: params.colDef,
-            columnApi: params.columnApi,
             context: params.context,
             data: rowNode.data,
             node: rowNode,
@@ -300,7 +300,7 @@ export class ValueService extends BeanStub {
 
         if (result === '[object Object]') {
             doOnce(() => {
-                console.warn('ag-Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se ag-Grid docs) or b) to toString() on the object to return a key');
+                console.warn('AG Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se AG Grid docs) or b) to toString() on the object to return a key');
             }, 'getKeyForNode - warn about [object,object]');
         }
 

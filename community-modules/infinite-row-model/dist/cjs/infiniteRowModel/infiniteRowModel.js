@@ -55,9 +55,6 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             this.datasource = null;
         }
     };
-    InfiniteRowModel.prototype.isLastRowFound = function () {
-        return this.infiniteCache != null && this.infiniteCache.isMaxRowFound();
-    };
     InfiniteRowModel.prototype.addEventListeners = function () {
         this.addManagedListener(this.eventService, core_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
@@ -143,10 +140,6 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         // if not first time creating a cache, need to destroy the old one
         this.destroyCache();
         var maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        var blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
-        // there is a bi-directional dependency between the loader and the cache,
-        // so we create loader here, and then pass dependencies in setDependencies() method later
-        this.rowNodeBlockLoader = this.createBean(new core_1.RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis));
         this.cacheParams = {
             // the user provided datasource
             datasource: this.datasource,
@@ -172,7 +165,6 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             lastAccessedSequence: new core_1.NumberSequence()
         };
         this.infiniteCache = this.createBean(new infiniteCache_1.InfiniteCache(this.cacheParams));
-        this.infiniteCache.addEventListener(core_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
     };
     InfiniteRowModel.prototype.defaultIfInvalid = function (value, defaultValue) {
         return value > 0 ? value : defaultValue;
@@ -180,9 +172,6 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     InfiniteRowModel.prototype.destroyCache = function () {
         if (this.infiniteCache) {
             this.infiniteCache = this.destroyBean(this.infiniteCache);
-        }
-        if (this.rowNodeBlockLoader) {
-            this.rowNodeBlockLoader = this.destroyBean(this.rowNodeBlockLoader);
         }
     };
     InfiniteRowModel.prototype.onCacheUpdated = function () {
@@ -203,11 +192,8 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     };
     InfiniteRowModel.prototype.forEachNode = function (callback) {
         if (this.infiniteCache) {
-            this.infiniteCache.forEachNodeDeep(callback, new core_1.NumberSequence());
+            this.infiniteCache.forEachNodeDeep(callback);
         }
-    };
-    InfiniteRowModel.prototype.getCurrentPageHeight = function () {
-        return this.getRowCount() * this.rowHeight;
     };
     InfiniteRowModel.prototype.getTopLevelRowCount = function () {
         return this.getRowCount();
@@ -231,20 +217,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         }
     };
     InfiniteRowModel.prototype.getRowCount = function () {
-        return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() : 0;
-    };
-    InfiniteRowModel.prototype.updateRowData = function (transaction) {
-        if (core_1._.exists(transaction.remove) || core_1._.exists(transaction.update)) {
-            console.warn('ag-Grid: updateRowData for InfiniteRowModel does not support remove or update, only add');
-            return;
-        }
-        if (core_1._.missing(transaction.addIndex)) {
-            console.warn('ag-Grid: updateRowData for InfiniteRowModel requires add and addIndex to be set');
-            return;
-        }
-        if (this.infiniteCache) {
-            this.infiniteCache.insertItemsAtIndex(transaction.addIndex, transaction.add);
-        }
+        return this.infiniteCache ? this.infiniteCache.getRowCount() : 0;
     };
     InfiniteRowModel.prototype.isRowPresent = function (rowNode) {
         var foundRowNode = this.getRowNode(rowNode.id);
@@ -260,30 +233,18 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             this.infiniteCache.purgeCache();
         }
     };
-    InfiniteRowModel.prototype.getVirtualRowCount = function () {
+    // for iRowModel
+    InfiniteRowModel.prototype.isLastRowIndexKnown = function () {
         if (this.infiniteCache) {
-            return this.infiniteCache.getVirtualRowCount();
+            return this.infiniteCache.isLastRowIndexKnown();
         }
         else {
-            return null;
+            return false;
         }
     };
-    InfiniteRowModel.prototype.isMaxRowFound = function () {
+    InfiniteRowModel.prototype.setRowCount = function (rowCount, lastRowIndexKnown) {
         if (this.infiniteCache) {
-            return this.infiniteCache.isMaxRowFound();
-        }
-    };
-    InfiniteRowModel.prototype.setVirtualRowCount = function (rowCount, maxRowFound) {
-        if (this.infiniteCache) {
-            this.infiniteCache.setVirtualRowCount(rowCount, maxRowFound);
-        }
-    };
-    InfiniteRowModel.prototype.getBlockState = function () {
-        if (this.rowNodeBlockLoader) {
-            return this.rowNodeBlockLoader.getBlockState();
-        }
-        else {
-            return null;
+            this.infiniteCache.setRowCount(rowCount, lastRowIndexKnown);
         }
     };
     __decorate([
@@ -304,6 +265,9 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('rowRenderer')
     ], InfiniteRowModel.prototype, "rowRenderer", void 0);
+    __decorate([
+        core_1.Autowired('rowNodeBlockLoader')
+    ], InfiniteRowModel.prototype, "rowNodeBlockLoader", void 0);
     __decorate([
         core_1.PostConstruct
     ], InfiniteRowModel.prototype, "init", null);

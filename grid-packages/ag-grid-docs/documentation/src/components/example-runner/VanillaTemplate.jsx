@@ -2,24 +2,28 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
-import { localPrefix, agGridVersion, agChartsVersion } from './consts';
-import { getCssFilePaths, isDevelopment, isUsingPublishedPackages } from './helpers';
+import { localPrefix, agGridVersion, agChartsVersion } from 'utils/consts';
+import { getCssFilePaths, isUsingPublishedPackages } from './helpers';
+import isDevelopment from 'utils/is-development';
 import Scripts from './Scripts';
 import Styles from './Styles';
+import MetaData from './MetaData';
 
-const VanillaTemplate = ({ library, appLocation, options, scriptFiles, styleFiles, indexFragment }) =>
+const getCacheBustingUrl = (url, timestamp) => `${url}?t=${timestamp}`;
+
+const VanillaTemplate = ({ isExecuting, modifiedTimeMs, library, appLocation, options, scriptFiles, styleFiles, indexFragment }) =>
     <html lang="en">
         <head>
-            <title>JavaScript example</title>
+            <MetaData title="JavaScript example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle />
-            <VanillaStyles library={library} files={styleFiles} />
+            <VanillaStyles library={library} files={isDevelopment() ? styleFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : styleFiles} />
             <Extras options={options} />
         </head>
         <VanillaBody
             library={library}
             appLocation={appLocation}
             options={options}
-            scriptFiles={scriptFiles}
+            scriptFiles={isDevelopment() ? scriptFiles.map(file => getCacheBustingUrl(file, modifiedTimeMs)) : scriptFiles}
             indexFragment={indexFragment} />
     </html>;
 

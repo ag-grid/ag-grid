@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare enum ChartType {
@@ -216,6 +216,8 @@ export interface BarSeriesOptions extends SeriesOptions {
     shadow: DropShadowOptions;
     label: BarSeriesLabelOptions;
     tooltip: TooltipOptions<BarTooltipRendererParams>;
+    lineDash: number[];
+    lineDashOffset: number;
 }
 export interface HistogramSeriesOptions extends BarSeriesOptions {
     binCount?: number;
@@ -230,6 +232,8 @@ export interface BarTooltipRendererParams extends CartesianTooltipRendererParams
 export interface LineSeriesOptions extends SeriesOptions {
     marker: MarkerOptions;
     tooltip: TooltipOptions<LineTooltipRendererParams>;
+    lineDash: number[];
+    lineDashOffset: number;
 }
 export interface MarkerOptions {
     enabled: boolean;
@@ -258,6 +262,8 @@ export interface AreaSeriesOptions extends SeriesOptions {
     marker: MarkerOptions;
     shadow: DropShadowOptions;
     tooltip: TooltipOptions<AreaTooltipRendererParams>;
+    lineDash: number[];
+    lineDashOffset: number;
 }
 export interface AreaTooltipRendererParams extends CartesianTooltipRendererParams {
 }
@@ -267,9 +273,11 @@ export interface PieSeriesOptions extends SeriesOptions {
     callout: PieSeriesCalloutOptions;
     shadow: DropShadowOptions;
     tooltip: TooltipOptions<PieTooltipRendererParams>;
+    lineDash: number[];
+    lineDashOffset: number;
 }
 export interface PieSeriesLabelOptions extends SeriesLabelOptions {
-    minRequiredAngle: number;
+    minAngle: number;
     offset: number;
 }
 export interface PieSeriesCalloutOptions {

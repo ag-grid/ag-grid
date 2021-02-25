@@ -9,8 +9,8 @@ import {
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ChartController} from "../../../chartController";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ChartController } from "../../../chartController";
 
 export class ShadowPanel extends Component {
 

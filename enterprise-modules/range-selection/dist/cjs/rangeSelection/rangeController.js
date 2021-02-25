@@ -513,13 +513,13 @@ var RangeController = /** @class */ (function (_super) {
         var isSameColumn = columnFrom === columnTo;
         var fromIndex = allColumns.indexOf(columnFrom);
         if (fromIndex < 0) {
-            console.warn("ag-Grid: column " + columnFrom.getId() + " is not visible");
-            return undefined;
+            console.warn("AG Grid: column " + columnFrom.getId() + " is not visible");
+            return;
         }
         var toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo);
         if (toIndex < 0) {
-            console.warn("ag-Grid: column " + columnTo.getId() + " is not visible");
-            return undefined;
+            console.warn("AG Grid: column " + columnTo.getId() + " is not visible");
+            return;
         }
         if (isSameColumn) {
             return [columnFrom];

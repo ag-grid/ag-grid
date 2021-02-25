@@ -71,7 +71,7 @@ export class DateTimeList extends Component {
         this.columnLabels.forEach((columnLabel, i) => _.setDisplayed(columnLabel, i < page.columns.length));
     }
 
-    private getRowComp(index: number ) {
+    private getRowComp(index: number) {
         if (!this.rowComps[index]) {
             const rowComp = new DateTimeListPageEntriesRowComp(this.onValueSelect);
             this.appendChild(rowComp, this.eEntriesTable);
@@ -80,7 +80,7 @@ export class DateTimeList extends Component {
         return this.rowComps[index];
     }
 
-    private getColumnLabel(index: number ) {
+    private getColumnLabel(index: number) {
         if (!this.columnLabels[index]) {
             const label = _.loadTemplate(`<div class="ag-date-time-list-page-column-label"></div>`);
             this.appendChild(label, this.eLabelsRow);
@@ -119,7 +119,6 @@ export class DateTimeList extends Component {
     }
 }
 
-
 class DateTimeListPageEntriesRowComp extends Component {
     private static TEMPLATE = /*html*/ `<div class="ag-date-time-list-page-entries-row"></div>`;
 
@@ -147,7 +146,6 @@ class DateTimeListPageEntriesRowComp extends Component {
     }
 }
 
-
 class DateTimeListPageEntryComp extends Component {
     private static TEMPLATE = /*html*/ `<div class="ag-date-time-list-page-entry"></div>`;
 
@@ -165,7 +163,7 @@ class DateTimeListPageEntryComp extends Component {
         }
         this.entry = entry;
         this.getGui().textContent = entry.label;
-        _.addOrRemoveCssClass(this.getGui(), 'ag-date-time-list-page-entry-is-padding', entry.isPadding);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-date-time-list-page-entry-is-padding', !!entry.isPadding);
         this.onDataChange();
     }
 
@@ -179,7 +177,7 @@ class DateTimeListPageEntryComp extends Component {
     }
 
     private onDataChange() {
-        console.log(this.entry.value, this.currentValue)
+        // console.log(this.entry.value, this.currentValue);
         _.addOrRemoveCssClass(this.getGui(),
             'ag-date-time-list-page-entry-is-current',
             this.entry.value && this.currentValue && this.entry.value.getTime() === this.currentValue.getTime());

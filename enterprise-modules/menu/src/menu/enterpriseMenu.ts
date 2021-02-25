@@ -116,7 +116,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         const eMenuGui = menu.getGui();
 
-        const anchorToElement = eventSource ? eventSource : this.gridPanel.getGui();
+        const anchorToElement = eventSource || this.gridPanel.getGui();
 
         const closedFuncs: ((e?: Event) => void)[] = [];
 
@@ -144,7 +144,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             },
             afterGuiAttached: params => menu.afterGuiAttached(params),
             positionCallback: () => positionCallback(menu),
-            anchorToElement,
+            anchorToElement
         });
 
         if (addPopupRes) {
@@ -418,7 +418,7 @@ export class EnterpriseMenu extends BeanStub {
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-        let allowExpandAndContract = isInMemoryRowModel && (usingTreeData || rowGroupCount > (pivotModeOn ? 1 : 0));
+        const allowExpandAndContract = isInMemoryRowModel && (usingTreeData || rowGroupCount > (pivotModeOn ? 1 : 0));
 
         if (allowExpandAndContract) {
             result.push('expandAll');
@@ -438,7 +438,7 @@ export class EnterpriseMenu extends BeanStub {
         this.mainMenuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
-            title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
+            title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column)!,
             titleLabel: EnterpriseMenu.TAB_GENERAL.replace('MenuTab', ''),
             bodyPromise: AgPromise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
@@ -471,14 +471,14 @@ export class EnterpriseMenu extends BeanStub {
             // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
             // async and is confusing if you don't have this context
             filterWrapper.filterPromise.then(filter => {
-                if (filter.afterGuiAttached) {
+                if (filter && filter.afterGuiAttached) {
                     filter.afterGuiAttached(params);
                 }
             });
         };
 
         this.tabItemFilter = {
-            title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
+            title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column)!,
             titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
             bodyPromise: filterWrapper.guiPromise as AgPromise<HTMLElement>,
             afterAttachedCallback: afterFilterAttachedCallback,
@@ -495,7 +495,7 @@ export class EnterpriseMenu extends BeanStub {
         this.columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
 
         let columnsMenuParams = this.column.getColDef().columnsMenuParams;
-        if (!columnsMenuParams) columnsMenuParams = {};
+        if (!columnsMenuParams) { columnsMenuParams = {}; }
 
         this.columnSelectPanel.init(false, {
             suppressValues: false,
@@ -516,7 +516,7 @@ export class EnterpriseMenu extends BeanStub {
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 
         this.tabItemColumns = {
-            title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column), //createColumnsIcon(),
+            title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column)!, //createColumnsIcon(),
             titleLabel: EnterpriseMenu.TAB_COLUMNS.replace('MenuTab', ''),
             bodyPromise: AgPromise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS

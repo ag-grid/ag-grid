@@ -478,7 +478,6 @@ var Axis = /** @class */ (function () {
             else {
                 titleNode.y = -padding - bbox.width - Math.min(bbox.x, 0);
             }
-            // title.text = `Axis Title: ${sideFlag} ${toDegrees(parallelFlipRotation).toFixed(0)} ${titleRotationFlag}`;
             titleNode.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
         }
         if (title) {

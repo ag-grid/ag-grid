@@ -1,54 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
-import Prism from 'prismjs';
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-bash';
-import 'prismjs/components/prism-jsx';
-import 'prismjs/components/prism-java';
-import 'prismjs/components/prism-sql';
-import 'prismjs/components/prism-diff';
-import 'prismjs/components/prism-scss';
-import isServerSideRendering from '../../utils/is-server-side-rendering';
-import { useExampleFileNodes } from './use-example-file-nodes';
-import { getExampleFiles } from './helpers';
-import { doOnEnter } from '../key-handlers';
+import isServerSideRendering from 'utils/is-server-side-rendering';
+import { getEntryFile, getExampleFiles } from './helpers';
+import { doOnEnter } from 'components/key-handlers';
 import styles from './CodeViewer.module.scss';
+import Code from '../Code';
 
-const updateFiles = (nodes, exampleInfo, setFiles, setActiveFile) => {
+const updateFiles = (exampleInfo, setFiles, setActiveFile) => {
     if (isServerSideRendering()) { return; }
-
-    const defaultFile = {
-        'react': 'index.jsx',
-        'angular': 'app/app.component.ts'
-    };
 
     const { framework } = exampleInfo;
 
-    getExampleFiles(nodes, exampleInfo).then(files => {
+    getExampleFiles(exampleInfo).then(files => {
         setFiles(files);
 
-        const mainFile = defaultFile[framework] || 'main.js';
+        const entryFile = getEntryFile(framework);
 
-        if (files[mainFile]) {
-            setActiveFile(mainFile);
+        if (files[entryFile]) {
+            setActiveFile(entryFile);
         } else {
             setActiveFile(Object.keys(files).sort()[0]);
         }
     });
 };
 
-const CodeViewer = ({ exampleInfo }) => {
+const CodeViewer = ({ isActive, exampleInfo }) => {
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
-    const nodes = useExampleFileNodes();
 
-    useEffect(() => updateFiles(nodes, exampleInfo, setFiles, setActiveFile), [nodes, exampleInfo]);
+    useEffect(() => {
+        updateFiles(exampleInfo, setFiles, setActiveFile);
+    }, [exampleInfo]);
 
     const keys = files ? Object.keys(files).sort() : [];
     const exampleFiles = keys.filter(key => !files[key].isFramework);
     const frameworkFiles = keys.filter(key => files[key].isFramework);
 
-    return <div className={styles['code-viewer']}>
+    return <div className={classnames(styles['code-viewer'], { [styles['code-viewer--hidden']]: !isActive })}>
         <div className={styles['code-viewer__files']}>
             {frameworkFiles.length > 0 && <div className={styles['code-viewer__file-title']}>App</div>}
             {exampleFiles.map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}
@@ -60,7 +48,7 @@ const CodeViewer = ({ exampleInfo }) => {
         </div>
         <div className={styles['code-viewer__code']}>
             {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
-            {files && activeFile && <FileView path={activeFile} code={files[activeFile].source} />}
+            {files && activeFile && <FileView key={activeFile} path={activeFile} code={files[activeFile].source} />}
         </div>
     </div>;
 };
@@ -76,25 +64,16 @@ const FileItem = ({ path, isActive, onClick }) =>
         {path}
     </div>;
 
-const LanguageMap = {
-    js: Prism.languages.javascript,
-    ts: Prism.languages.typescript,
-    css: Prism.languages.css,
-    sh: Prism.languages.bash,
-    html: Prism.languages.html,
-    jsx: Prism.languages.jsx,
-    java: Prism.languages.java,
-    sql: Prism.languages.sql,
-    vue: Prism.languages.html,
-    diff: Prism.languages.diff,
-    scss: Prism.languages.scss
+const ExtensionMap = {
+    sh: 'bash',
+    vue: 'html',
 };
 
 const FileView = ({ path, code }) => {
     const parts = path.split('.');
     const extension = parts[parts.length - 1];
 
-    return <pre className="language-"><code dangerouslySetInnerHTML={{ __html: Prism.highlight(code || '', LanguageMap[extension]) }}></code></pre>;
+    return <Code code={code} language={ExtensionMap[extension] || extension} />;
 };
 
 export default CodeViewer;

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColGroupDef } from "../../entities/colDef";
@@ -17,7 +17,7 @@ export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private gridApi;
     private columnApi;
     protected readonly column: ColumnGroup;
-    protected readonly pinned: string;
+    protected readonly pinned: string | null;
     private eHeaderCellResize;
     private resizeCols;
     private resizeStartWidth;
@@ -27,7 +27,7 @@ export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private resizeTakeFromRatios;
     private expandable;
     private removeChildListenersFuncs;
-    constructor(columnGroup: ColumnGroup, pinned: string);
+    constructor(columnGroup: ColumnGroup, pinned: string | null);
     protected postConstruct(): void;
     protected onFocusIn(e: FocusEvent): void;
     protected handleKeyDown(e: KeyboardEvent): void;

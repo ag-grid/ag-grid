@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
@@ -17,7 +17,7 @@ export declare class OriginalColumnGroup implements OriginalColumnGroupChild, IE
     private expanded;
     private padding;
     private level;
-    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean, level: number);
+    constructor(colGroupDef: ColGroupDef | null, groupId: string, padding: boolean, level: number);
     setOriginalParent(originalParent: OriginalColumnGroup | null): void;
     getOriginalParent(): OriginalColumnGroup | null;
     getLevel(): number;
@@ -30,13 +30,13 @@ export declare class OriginalColumnGroup implements OriginalColumnGroupChild, IE
     getId(): string;
     setChildren(children: OriginalColumnGroupChild[]): void;
     getChildren(): OriginalColumnGroupChild[];
-    getColGroupDef(): ColGroupDef;
+    getColGroupDef(): ColGroupDef | null;
     getLeafColumns(): Column[];
     private addLeafColumns;
     getColumnGroupShow(): string | undefined;
     setupExpandable(): void;
     setExpandable(): void;
-    findChildren(): OriginalColumnGroupChild[];
+    private findChildrenRemovingPadding;
     private onColumnVisibilityChanged;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;

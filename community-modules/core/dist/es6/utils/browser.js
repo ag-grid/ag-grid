@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -120,9 +120,9 @@ export function getScrollbarWidth() {
     var width = div.offsetWidth - div.clientWidth;
     // if width is 0 and client width is 0, means the DOM isn't ready
     if (width === 0 && div.clientWidth === 0) {
-        return null;
+        width = null;
     }
-    // remove divs
+    // remove div
     if (div.parentNode) {
         div.parentNode.removeChild(div);
     }

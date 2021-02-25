@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "./component";
@@ -21,7 +21,7 @@ export declare class AgList extends Component {
     addOptions(listOptions: ListOption[]): this;
     addOption(listOption: ListOption): this;
     private renderOption;
-    setValue(value?: string, silent?: boolean): this;
+    setValue(value?: string | null, silent?: boolean): this;
     setValueByIndex(idx: number): this;
     getValue(): string | null;
     getDisplayValue(): string | null;

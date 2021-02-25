@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IToolPanelComp } from "../interfaces/iToolPanel";
@@ -25,6 +25,6 @@ export declare class SideBarDefParser {
     static readonly DEFAULT_BY_KEY: {
         [p: string]: ToolPanelDef;
     };
-    static parse(toParse: SideBarDef | string | string[] | boolean): SideBarDef;
-    static parseComponents(from: (ToolPanelDef | string)[]): ToolPanelDef[];
+    static parse(toParse: SideBarDef | string | string[] | boolean): SideBarDef | null;
+    static parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[];
 }

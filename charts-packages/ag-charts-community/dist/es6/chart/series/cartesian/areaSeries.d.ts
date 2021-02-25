@@ -1,5 +1,5 @@
 import { DropShadow } from "../../../scene/dropShadow";
-import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererParams, HighlightStyle } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererParams, HighlightStyle, SeriesTooltip } from "../series";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
@@ -24,11 +24,18 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
     readonly yValue: number;
 }
 export { AreaTooltipRendererParams };
+export declare class AreaSeriesTooltip extends SeriesTooltip {
+    renderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
+    format?: string;
+}
 export declare class AreaSeries extends CartesianSeries {
     static className: string;
     static type: string;
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
-    tooltipFormat?: string;
+    tooltip: AreaSeriesTooltip;
     private areaGroup;
     private strokeGroup;
     private markerGroup;

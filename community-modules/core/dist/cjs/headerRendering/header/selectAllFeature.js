@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,6 +30,8 @@ var beanStub_1 = require("../../context/beanStub");
 var context_1 = require("../../context/context");
 var events_1 = require("../../events");
 var constants_1 = require("../../constants/constants");
+var aria_1 = require("../../utils/aria");
+var dom_1 = require("../../utils/dom");
 var SelectAllFeature = /** @class */ (function (_super) {
     __extends(SelectAllFeature, _super);
     function SelectAllFeature(cbSelectAll, column) {
@@ -60,6 +62,28 @@ var SelectAllFeature = /** @class */ (function (_super) {
             this.checkRightRowModelType();
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
+        }
+        this.refreshHeaderAriaDescribedBy(this.cbSelectAllVisible);
+    };
+    SelectAllFeature.prototype.refreshHeaderAriaDescribedBy = function (isSelectAllVisible) {
+        var parentHeader = this.cbSelectAll.getParentComponent();
+        var parentHeaderGui = parentHeader && parentHeader.getGui();
+        if (!parentHeaderGui || !dom_1.isVisible(parentHeaderGui)) {
+            return;
+        }
+        var describedByIds = '';
+        if (parentHeaderGui) {
+            describedByIds = aria_1.getAriaDescribedBy(parentHeaderGui);
+        }
+        var cbSelectAllId = this.cbSelectAll.getInputElement().id;
+        var describedByIdsHasSelectAllFeature = describedByIds.indexOf(cbSelectAllId) !== -1;
+        if (isSelectAllVisible) {
+            if (!describedByIdsHasSelectAllFeature) {
+                aria_1.setAriaDescribedBy(parentHeaderGui, cbSelectAllId + " " + describedByIds.trim());
+            }
+        }
+        else if (describedByIdsHasSelectAllFeature) {
+            aria_1.setAriaDescribedBy(parentHeaderGui, describedByIds.trim().split(' ').filter(function (id) { return id === cbSelectAllId; }).join(' '));
         }
     };
     SelectAllFeature.prototype.onModelChanged = function () {
@@ -141,7 +165,7 @@ var SelectAllFeature = /** @class */ (function (_super) {
         var rowModelType = this.rowModel.getType();
         var rowModelMatches = rowModelType === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         if (!rowModelMatches) {
-            console.warn("ag-Grid: selectAllCheckbox is only available if using normal row model, you are using " + rowModelType);
+            console.warn("AG Grid: selectAllCheckbox is only available if using normal row model, you are using " + rowModelType);
         }
     };
     SelectAllFeature.prototype.onCbSelectAll = function () {

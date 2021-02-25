@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from '../../entities/column';
@@ -18,10 +18,10 @@ export declare class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private readonly eButtonWrapper;
     private readonly eButtonShowMainFilter;
     protected readonly column: Column;
-    protected readonly pinned: string;
+    protected readonly pinned: string | null;
     private suppressFilterButton;
     private floatingFilterCompPromise;
-    constructor(column: Column, pinned: string);
+    constructor(column: Column, pinned: string | null);
     protected postConstruct(): void;
     protected onTabKeyDown(e: KeyboardEvent): void;
     protected handleKeyDown(e: KeyboardEvent): void;
@@ -37,7 +37,7 @@ export declare class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private setupWithFloatingFilter;
     private parentFilterInstance;
     private getFilterComponent;
-    static getDefaultFloatingFilterType(def: IFilterDef): string;
+    static getDefaultFloatingFilterType(def: IFilterDef): string | null;
     private getFloatingFilterInstance;
     private createDynamicParams;
     private getFilterComponentPrototype;

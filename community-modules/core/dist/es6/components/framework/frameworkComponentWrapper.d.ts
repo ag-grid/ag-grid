@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../../interfaces/iComponent";
@@ -10,7 +10,7 @@ import { ComponentType } from "./componentTypes";
 export interface FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(frameworkComponent: {
         new (): any;
-    }, methodList: string[], optionalMethodList: string[], componentType: ComponentType, componentName?: string): A;
+    } | null, methodList: string[], optionalMethodList: string[], componentType: ComponentType, componentName?: string | null): A;
 }
 export interface WrapableInterface {
     hasMethod(name: string): boolean;

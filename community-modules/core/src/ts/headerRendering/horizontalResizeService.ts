@@ -21,7 +21,7 @@ export class HorizontalResizeService extends BeanStub {
 
     private oldBodyCursor: string;
     private oldUserSelect: string;
-    private oldWebkitUserSelect: string;
+    private oldWebkitUserSelect: string | null;
 
     public addResizeBar(params: HorizontalResizeParams): () => void {
         const dragSource: DragListenerParams = {
@@ -46,7 +46,7 @@ export class HorizontalResizeService extends BeanStub {
 
         this.setResizeIcons();
 
-        const shiftKey = mouseEvent instanceof MouseEvent ? (mouseEvent as MouseEvent).shiftKey === true : false;
+        const shiftKey = mouseEvent instanceof MouseEvent && mouseEvent.shiftKey === true;
         params.onResizeStart(shiftKey);
     }
 

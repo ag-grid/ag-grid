@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,7 +54,7 @@ var Component = /** @class */ (function (_super) {
         }
         return _this;
     }
-    Component.prototype.postConstructOnComponent = function () {
+    Component.prototype.preConstructOnComponent = function () {
         this.usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
     };
     Component.prototype.getCompId = function () {
@@ -104,10 +104,10 @@ var Component = /** @class */ (function (_super) {
             if (!(childNode instanceof HTMLElement)) {
                 return;
             }
-            var childComp = _this.createComponentFromElement(childNode, function (childComp) {
+            var childComp = _this.createComponentFromElement(childNode, function (comp) {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
-                _this.copyAttributesFromNode(childNode, childComp.getGui());
+                _this.copyAttributesFromNode(childNode, comp.getGui());
             }, paramsMap);
             if (childComp) {
                 if (childComp.addItems && childNode.children.length) {
@@ -361,8 +361,8 @@ var Component = /** @class */ (function (_super) {
         context_1.Autowired('agStackComponentsRegistry')
     ], Component.prototype, "agStackComponentsRegistry", void 0);
     __decorate([
-        context_1.PostConstruct
-    ], Component.prototype, "postConstructOnComponent", null);
+        context_1.PreConstruct
+    ], Component.prototype, "preConstructOnComponent", null);
     __decorate([
         context_1.PreConstruct
     ], Component.prototype, "createChildComponentsPreConstruct", null);

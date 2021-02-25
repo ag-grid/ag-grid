@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -7,10 +7,8 @@ export interface SetScrollsVisibleParams {
     verticalScrollShowing: boolean;
 }
 export declare class ScrollVisibleService extends BeanStub {
-    private columnController;
     private columnApi;
     private gridApi;
-    private gridOptionsWrapper;
     private horizontalScrollShowing;
     private verticalScrollShowing;
     setScrollsVisible(params: SetScrollsVisibleParams): void;

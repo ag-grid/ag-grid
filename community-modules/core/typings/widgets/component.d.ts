@@ -19,19 +19,19 @@ export declare class Component extends BeanStub {
     private tooltipText;
     private tooltipFeature;
     constructor(template?: string);
-    private postConstructOnComponent;
+    private preConstructOnComponent;
     getCompId(): number;
     getTooltipParams(): ITooltipParams;
     setTooltip(newTooltipText: string | undefined): void;
     private createChildComponentsFromTags;
     createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: {
         [key: string]: any;
-    }): Component;
+    }): Component | null;
     private copyAttributesFromNode;
     private swapComponentForNode;
     private swapInComponentForQuerySelectors;
     private iterateOverQuerySelectors;
-    setTemplate(template: string, paramsMap?: {
+    setTemplate(template: string | null, paramsMap?: {
         [key: string]: any;
     }): void;
     setTemplateFromElement(element: HTMLElement, paramsMap?: {

@@ -20,9 +20,10 @@ import {
     Optional,
     PreDestroy,
     ProcessChartOptionsParams,
-    SeriesOptions
+    SeriesOptions,
+    CellRangeParams
 } from "@ag-grid-community/core";
-import {GridChartComp, GridChartParams} from "./chartComp/gridChartComp";
+import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 
 export interface CrossFilteringContext {
     lastSelectedChartId: string;
@@ -58,13 +59,26 @@ export class ChartService extends BeanStub implements IChartService {
         return this.createChart(selectedRange, chartType);
     }
 
+    public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
+        if (!model) {
+            console.warn("AG Grid - unable to restore chart as no chart model is provided");
+            return;
+        }
+
+        if (model.modelType && model.modelType === 'pivot') {
+            return this.createPivotChart(this.mapToPivotParams(model, chartContainer));
+        }
+
+        return this.createRangeChart(this.mapToRangeParam(model, chartContainer));
+    }
+
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
         const cellRange = this.rangeController
             ? this.rangeController.createCellRangeFromCellRangeParams(params.cellRange)
             : undefined;
 
         if (!cellRange) {
-            console.warn("ag-Grid - unable to create chart as no range is selected");
+            console.warn("AG Grid - unable to create chart as no range is selected");
             return;
         }
 
@@ -88,7 +102,9 @@ export class ChartService extends BeanStub implements IChartService {
         }
 
         // pivot chart range contains all visible column without a row range to include all rows
-        const chartAllRangeParams = {
+        const chartAllRangeParams: CellRangeParams = {
+            rowStartIndex: null,
+            rowEndIndex: null,
             columns: this.columnController.getAllDisplayedColumns().map(col => col.getColId())
         };
 
@@ -97,7 +113,7 @@ export class ChartService extends BeanStub implements IChartService {
             : undefined;
 
         if (!cellRange) {
-            console.warn("ag-Grid - unable to create chart as there are no columns in the grid.");
+            console.warn("AG Grid - unable to create chart as there are no columns in the grid.");
             return;
         }
 
@@ -120,7 +136,7 @@ export class ChartService extends BeanStub implements IChartService {
             : undefined;
 
         if (!cellRange) {
-            console.warn("ag-Grid - unable to create chart as no range is selected");
+            console.warn("AG Grid - unable to create chart as no range is selected");
             return;
         }
 
@@ -228,6 +244,29 @@ export class ChartService extends BeanStub implements IChartService {
     private getSelectedRange(): CellRange {
         const ranges = this.rangeController.getCellRanges();
         return ranges.length > 0 ? ranges[0] : {} as CellRange;
+    }
+
+    private mapToRangeParam(model: ChartModel, chartContainer?: HTMLElement): CreateRangeChartParams {
+        return {
+            cellRange: model.cellRange,
+            chartType: model.chartType,
+            chartThemeName: model.chartThemeName,
+            chartContainer: chartContainer,
+            suppressChartRanges: model.suppressChartRanges,
+            aggFunc: model.aggFunc,
+            unlinkChart: model.unlinkChart,
+            processChartOptions: () => model.chartOptions
+        };
+    }
+
+    private mapToPivotParams(model: ChartModel, chartContainer?: HTMLElement): CreatePivotChartParams {
+        return {
+            chartType: model.chartType,
+            chartThemeName: model.chartThemeName,
+            chartContainer: chartContainer,
+            unlinkChart: model.unlinkChart,
+            processChartOptions: () => model.chartOptions
+        };
     }
 
     @PreDestroy

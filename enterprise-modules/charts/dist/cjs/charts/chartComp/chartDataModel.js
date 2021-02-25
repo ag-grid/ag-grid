@@ -34,7 +34,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.dimensionColState = [];
         _this.valueColState = [];
-        _this.detached = false;
+        _this.unlinked = false;
         _this.grouping = false;
         _this.crossFiltering = false;
         _this.columnNames = {};
@@ -86,7 +86,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         var colId = this.getSelectedDimension().colId;
         var displayedGroupCols = this.columnController.getGroupDisplayColumns();
         var groupDimensionSelected = displayedGroupCols.map(function (col) { return col.getColId(); }).some(function (id) { return id === colId; });
-        return this.isGroupActive() && groupDimensionSelected;
+        return !!this.isGroupActive() && groupDimensionSelected;
     };
     ChartDataModel.prototype.isPivotActive = function () {
         return this.columnController.isPivotActive();
@@ -97,28 +97,23 @@ var ChartDataModel = /** @class */ (function (_super) {
     ChartDataModel.prototype.isPivotChart = function () {
         return this.pivotChart;
     };
-    ;
     ChartDataModel.prototype.getChartId = function () {
         return this.chartId;
     };
-    ;
     ChartDataModel.prototype.getValueColState = function () {
         return this.valueColState.map(this.displayNameMapper.bind(this));
     };
-    ;
     ChartDataModel.prototype.getDimensionColState = function () {
         return this.dimensionColState;
     };
-    ;
     ChartDataModel.prototype.getCellRanges = function () {
         return [this.dimensionCellRange, this.valueCellRange].filter(function (r) { return r; });
     };
-    ;
     ChartDataModel.prototype.getCellRangeParams = function () {
         var cellRanges = this.getCellRanges();
         var firstCellRange = cellRanges[0];
-        var startRow = firstCellRange && firstCellRange.startRow;
-        var endRow = firstCellRange && firstCellRange.endRow;
+        var startRow = (firstCellRange && firstCellRange.startRow) || null;
+        var endRow = (firstCellRange && firstCellRange.endRow) || null;
         return {
             rowStartIndex: startRow && startRow.rowIndex,
             rowStartPinned: startRow && startRow.rowPinned,
@@ -133,7 +128,6 @@ var ChartDataModel = /** @class */ (function (_super) {
     ChartDataModel.prototype.getChartType = function () {
         return this.chartType;
     };
-    ;
     ChartDataModel.prototype.setChartThemeName = function (chartThemeName) {
         this.chartThemeName = chartThemeName;
     };
@@ -143,26 +137,24 @@ var ChartDataModel = /** @class */ (function (_super) {
     ChartDataModel.prototype.isSuppressChartRanges = function () {
         return this.suppressChartRanges;
     };
-    ;
-    ChartDataModel.prototype.isDetached = function () {
-        return this.detached;
+    ChartDataModel.prototype.isUnlinked = function () {
+        return this.unlinked;
     };
-    ;
-    ChartDataModel.prototype.toggleDetached = function () {
-        this.detached = !this.detached;
+    ChartDataModel.prototype.toggleUnlinked = function () {
+        this.unlinked = !this.unlinked;
+    };
+    ChartDataModel.prototype.getAggFunc = function () {
+        return this.aggFunc;
     };
     ChartDataModel.prototype.getSelectedValueColState = function () {
         return this.getValueColState().filter(function (cs) { return cs.selected; });
     };
-    ;
     ChartDataModel.prototype.getSelectedValueCols = function () {
         return this.valueColState.filter(function (cs) { return cs.selected; }).map(function (cs) { return cs.column; });
     };
-    ;
     ChartDataModel.prototype.getSelectedDimension = function () {
         return this.dimensionColState.filter(function (cs) { return cs.selected; })[0];
     };
-    ;
     ChartDataModel.prototype.createCellRange = function (type) {
         var columns = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -215,8 +207,6 @@ var ChartDataModel = /** @class */ (function (_super) {
                 // chart data type was specified explicitly
                 switch (chartDataType) {
                     case 'category':
-                        dimensionCols.add(col);
-                        return;
                     case 'time':
                         dimensionCols.add(col);
                         return;
@@ -226,7 +216,7 @@ var ChartDataModel = /** @class */ (function (_super) {
                     case 'excluded':
                         return;
                     default:
-                        console.warn("ag-Grid: unexpected chartDataType value '" + chartDataType + "' supplied, instead use 'category', 'series' or 'excluded'");
+                        console.warn("AG Grid: unexpected chartDataType value '" + chartDataType + "' supplied, instead use 'category', 'series' or 'excluded'");
                         break;
                 }
             }

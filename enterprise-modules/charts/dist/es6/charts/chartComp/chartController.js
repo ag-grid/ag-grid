@@ -35,7 +35,7 @@ var ChartController = /** @class */ (function (_super) {
                 _this.updateForRangeChange();
             }
         });
-        if (this.model.isDetached()) {
+        if (this.model.isUnlinked()) {
             if (this.rangeController) {
                 this.rangeController.setCellRanges([]);
             }
@@ -48,14 +48,14 @@ var ChartController = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
     };
     ChartController.prototype.updateForGridChange = function () {
-        if (this.model.isDetached()) {
+        if (this.model.isUnlinked()) {
             return;
         }
         this.model.updateCellRanges();
         this.setChartRange();
     };
     ChartController.prototype.updateForDataChange = function () {
-        if (this.model.isDetached()) {
+        if (this.model.isUnlinked()) {
             return;
         }
         this.model.updateData();
@@ -72,7 +72,9 @@ var ChartController = /** @class */ (function (_super) {
     };
     ChartController.prototype.getChartModel = function () {
         var _this = this;
+        var modelType = this.model.isPivotChart() ? 'pivot' : 'range';
         return {
+            modelType: modelType,
             chartId: this.model.getChartId(),
             chartType: this.model.getChartType(),
             chartThemeName: this.getThemeName(),
@@ -81,7 +83,10 @@ var ChartController = /** @class */ (function (_super) {
             chart: this.chartProxy.getChart(),
             getChartImageDataURL: function (params) {
                 return _this.chartProxy.getChartImageDataURL(params.type);
-            }
+            },
+            suppressChartRanges: this.model.isSuppressChartRanges(),
+            aggFunc: this.model.getAggFunc(),
+            unlinkChart: this.model.isUnlinked(),
         };
     };
     ChartController.prototype.getChartType = function () {
@@ -130,7 +135,7 @@ var ChartController = /** @class */ (function (_super) {
     };
     ChartController.prototype.setChartRange = function (silent) {
         if (silent === void 0) { silent = false; }
-        if (this.rangeController && !this.model.isSuppressChartRanges() && !this.model.isDetached()) {
+        if (this.rangeController && !this.model.isSuppressChartRanges() && !this.model.isUnlinked()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
         if (!silent) {
@@ -139,8 +144,8 @@ var ChartController = /** @class */ (function (_super) {
     };
     ChartController.prototype.detachChartRange = function () {
         // when chart is detached it won't listen to changes from the grid
-        this.model.toggleDetached();
-        if (this.model.isDetached()) {
+        this.model.toggleUnlinked();
+        if (this.model.isUnlinked()) {
             // remove range from grid
             if (this.rangeController) {
                 this.rangeController.setCellRanges([]);
@@ -161,7 +166,7 @@ var ChartController = /** @class */ (function (_super) {
         return _.includes([ChartType.Scatter, ChartType.Bubble], this.getChartType());
     };
     ChartController.prototype.isChartLinked = function () {
-        return !this.model.isDetached();
+        return !this.model.isUnlinked();
     };
     ChartController.prototype.raiseChartUpdatedEvent = function () {
         var event = Object.freeze({

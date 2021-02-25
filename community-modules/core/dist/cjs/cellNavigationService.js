@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -71,7 +71,7 @@ var CellNavigationService = /** @class */ (function (_super) {
                     break;
                 default:
                     pointer = null;
-                    console.warn('ag-Grid: unknown key for navigation ' + key);
+                    console.warn('AG Grid: unknown key for navigation ' + key);
                     break;
             }
             if (pointer) {
@@ -96,6 +96,9 @@ var CellNavigationService = /** @class */ (function (_super) {
             default:
                 rowNode = this.rowModel.getRow(gridCell.rowIndex);
                 break;
+        }
+        if (!rowNode) {
+            return false;
         }
         var suppressNavigable = column.isSuppressNavigable(rowNode);
         return !suppressNavigable;

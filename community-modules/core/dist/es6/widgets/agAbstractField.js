@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,9 @@ var AgAbstractField = /** @class */ (function (_super) {
     }
     AgAbstractField.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);
-        addCssClass(this.getGui(), this.className);
+        if (this.className) {
+            addCssClass(this.getGui(), this.className);
+        }
     };
     AgAbstractField.prototype.onValueChange = function (callbackFn) {
         var _this = this;

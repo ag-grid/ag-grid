@@ -22,25 +22,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var InfiniteBlock = /** @class */ (function (_super) {
     __extends(InfiniteBlock, _super);
-    function InfiniteBlock(pageNumber, params) {
-        var _this = _super.call(this, pageNumber, params) || this;
-        _this.cacheParams = params;
+    function InfiniteBlock(id, parentCache, params) {
+        var _this = _super.call(this, id) || this;
+        _this.parentCache = parentCache;
+        _this.params = params;
+        // we don't need to calculate these now, as the inputs don't change,
+        // however it makes the code easier to read if we work them out up front
+        _this.startRow = id * params.blockSize;
+        _this.endRow = _this.startRow + params.blockSize;
         return _this;
     }
-    InfiniteBlock.prototype.getDisplayIndexStart = function () {
-        return this.getBlockNumber() * this.cacheParams.blockSize;
+    InfiniteBlock.prototype.postConstruct = function () {
+        this.createRowNodes();
     };
-    // this is an estimate, as the last block will probably only be partially full. however
-    // this method is used to know if this block is been rendered, before destroying, so
-    // and this estimate works in that use case.
-    InfiniteBlock.prototype.getDisplayIndexEnd = function () {
-        return this.getDisplayIndexStart() + this.cacheParams.blockSize;
-    };
-    InfiniteBlock.prototype.createBlankRowNode = function (rowIndex) {
-        var rowNode = _super.prototype.createBlankRowNode.call(this);
-        rowNode.uiLevel = 0;
-        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
-        return rowNode;
+    InfiniteBlock.prototype.getBlockStateJson = function () {
+        return {
+            id: '' + this.getId(),
+            state: {
+                blockNumber: this.getId(),
+                startRow: this.getStartRow(),
+                endRow: this.getEndRow(),
+                pageStatus: this.getState()
+            }
+        };
     };
     InfiniteBlock.prototype.setDataAndId = function (rowNode, data, index) {
         if (core_1._.exists(data)) {
@@ -54,29 +58,11 @@ var InfiniteBlock = /** @class */ (function (_super) {
             rowNode.setDataAndId(undefined, undefined);
         }
     };
-    InfiniteBlock.prototype.setRowNode = function (rowIndex, rowNode) {
-        _super.prototype.setRowNode.call(this, rowIndex, rowNode);
-        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
-    };
-    // no need for @postConstruct, as attached to parent
-    InfiniteBlock.prototype.init = function () {
-        _super.prototype.init.call(this);
-    };
-    InfiniteBlock.prototype.getNodeIdPrefix = function () {
-        return null;
-    };
-    InfiniteBlock.prototype.getRow = function (displayIndex) {
-        return this.getRowUsingLocalIndex(displayIndex);
-    };
-    InfiniteBlock.prototype.setIndexAndTopOnRowNode = function (rowNode, rowIndex) {
-        rowNode.setRowIndex(rowIndex);
-        rowNode.rowTop = this.cacheParams.rowHeight * rowIndex;
-    };
     InfiniteBlock.prototype.loadFromDatasource = function () {
         var _this = this;
         var params = this.createLoadParams();
         if (core_1._.missing(this.params.datasource.getRows)) {
-            console.warn("ag-Grid: datasource is missing getRows method");
+            console.warn("AG Grid: datasource is missing getRows method");
             return;
         }
         // put in timeout, to force result to be async
@@ -138,7 +124,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
             rowNode.setRowHeight(this.params.rowHeight);
             rowNode.uiLevel = 0;
             rowNode.setRowIndex(rowIndex);
-            rowNode.rowTop = this.params.rowHeight * rowIndex;
+            rowNode.setRowTop(this.params.rowHeight * rowIndex);
             this.rowNodes.push(rowNode);
         }
     };
@@ -161,9 +147,8 @@ var InfiniteBlock = /** @class */ (function (_super) {
     InfiniteBlock.prototype.destroyRowNodes = function () {
         this.rowNodes.forEach(function (rowNode) {
             // this is needed, so row render knows to fade out the row, otherwise it
-            // sees row top is present, and thinks the row should be shown. maybe
-            // rowNode should have a flag on whether it is visible???
-            rowNode.clearRowTop();
+            // sees row top is present, and thinks the row should be shown.
+            rowNode.clearRowTopAndRowIndex();
         });
     };
     __decorate([

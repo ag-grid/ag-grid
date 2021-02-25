@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -11,11 +11,11 @@ export declare class ColumnApi {
     private columnController;
     sizeColumnsToFit(gridWidth: any): void;
     setColumnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void;
-    getColumnGroup(name: string, instanceId?: number): ColumnGroup;
-    getOriginalColumnGroup(name: string): OriginalColumnGroup;
+    getColumnGroup(name: string, instanceId?: number): ColumnGroup | null;
+    getOriginalColumnGroup(name: string): OriginalColumnGroup | null;
     getDisplayNameForColumn(column: Column, location: string | null): string;
     getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string;
-    getColumn(key: any): Column;
+    getColumn(key: any): Column | null;
     applyColumnState(params: ApplyColumnStateParams): boolean;
     getColumnState(): ColumnState[];
     resetColumnState(): void;
@@ -31,13 +31,13 @@ export declare class ColumnApi {
     isPinning(): boolean;
     isPinningLeft(): boolean;
     isPinningRight(): boolean;
-    getDisplayedColAfter(col: Column): Column;
-    getDisplayedColBefore(col: Column): Column;
+    getDisplayedColAfter(col: Column): Column | null;
+    getDisplayedColBefore(col: Column): Column | null;
     setColumnVisible(key: string | Column, visible: boolean): void;
     setColumnsVisible(keys: (string | Column)[], visible: boolean): void;
     setColumnPinned(key: string | Column, pinned: string): void;
     setColumnsPinned(keys: (string | Column)[], pinned: string): void;
-    getAllColumns(): Column[];
+    getAllColumns(): Column[] | null;
     getAllGridColumns(): Column[];
     getDisplayedLeftColumns(): Column[];
     getDisplayedCenterColumns(): Column[];
@@ -56,7 +56,7 @@ export declare class ColumnApi {
     }[], finished?: boolean): void;
     setPivotMode(pivotMode: boolean): void;
     isPivotMode(): boolean;
-    getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column;
+    getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null;
     setValueColumns(colKeys: (string | Column)[]): void;
     getValueColumns(): Column[];
     removeValueColumn(colKey: (string | Column)): void;
@@ -78,13 +78,13 @@ export declare class ColumnApi {
     getLeftDisplayedColumnGroups(): ColumnGroupChild[];
     getCenterDisplayedColumnGroups(): ColumnGroupChild[];
     getRightDisplayedColumnGroups(): ColumnGroupChild[];
-    getAllDisplayedColumnGroups(): ColumnGroupChild[];
+    getAllDisplayedColumnGroups(): ColumnGroupChild[] | null;
     autoSizeColumn(key: string | Column, skipHeader?: boolean): void;
     autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void;
     autoSizeAllColumns(skipHeader?: boolean): void;
     setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void;
-    getSecondaryColumns(): Column[];
-    getPrimaryColumns(): Column[];
+    getSecondaryColumns(): Column[] | null;
+    getPrimaryColumns(): Column[] | null;
     private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid;
     columnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void;
     hideColumns(colIds: any, hide: any): void;

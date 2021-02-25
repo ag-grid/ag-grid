@@ -173,16 +173,16 @@ function aggAvg(params) {
     var count = 0;
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (var i = 0; i < values.length; i++) {
-        var value_1 = values[i];
+        var currentValue = values[i];
         var valueToAdd = null;
-        if (typeof value_1 === 'number' || typeof value_1 === 'bigint') {
-            valueToAdd = value_1;
+        if (typeof currentValue === 'number' || typeof currentValue === 'bigint') {
+            valueToAdd = currentValue;
             count++;
         }
-        else if (value_1 != null && (typeof value_1.value === 'number' || typeof value_1.value === 'bigint') && typeof value_1.count === 'number') {
+        else if (currentValue != null && (typeof currentValue.value === 'number' || typeof currentValue.value === 'bigint') && typeof currentValue.count === 'number') {
             // we are aggregating groups, so we take the aggregated values to calculated a weighted average
-            valueToAdd = value_1.value * (typeof value_1.value === 'number' ? value_1.count : BigInt(value_1.count));
-            count += value_1.count;
+            valueToAdd = currentValue.value * (typeof currentValue.value === 'number' ? currentValue.count : BigInt(currentValue.count));
+            count += currentValue.count;
         }
         if (typeof valueToAdd === 'number') {
             sum += typeof sum === 'number' ? valueToAdd : BigInt(valueToAdd);

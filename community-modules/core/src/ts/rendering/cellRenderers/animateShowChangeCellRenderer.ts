@@ -81,7 +81,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         const value = params.value;
 
         if (value === this.lastValue) {
-            return;
+            return false;
         }
 
         if (exists(params.valueFormatted)) {
@@ -95,7 +95,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
         // with regards processingFilterChange
         if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
-            return;
+            return false;
         }
 
         if (typeof value === 'number' && typeof this.lastValue === 'number') {

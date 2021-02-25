@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -29,7 +29,7 @@ export declare class BeanStub implements IEventEmitter {
     isAlive: () => boolean;
     addDestroyFunc(func: () => void): void;
     createManagedBean<T>(bean: T, context?: Context): T;
-    protected createBean<T>(bean: T, context?: Context, afterPreCreateCallback?: (comp: Component) => void): T;
-    protected destroyBean<T>(bean: T, context?: Context): T;
+    protected createBean<T>(bean: T, context?: Context | null, afterPreCreateCallback?: (comp: Component) => void): T;
+    protected destroyBean<T>(bean: T, context?: Context): T | undefined;
     protected destroyBeans<T>(beans: T[], context?: Context): T[];
 }

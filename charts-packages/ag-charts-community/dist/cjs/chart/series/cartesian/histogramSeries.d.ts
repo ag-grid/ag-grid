@@ -1,6 +1,6 @@
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { DropShadow } from "../../../scene/dropShadow";
-import { HighlightStyle, SeriesNodeDatum, CartesianTooltipRendererParams as HistogramTooltipRendererParams } from "../series";
+import { HighlightStyle, SeriesNodeDatum, CartesianTooltipRendererParams as HistogramTooltipRendererParams, SeriesTooltip } from "../series";
 import { Label } from "../../label";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
@@ -52,6 +52,9 @@ export declare class HistogramBin {
     calculateAggregatedValue(aggregationName: HistogramAggregation, yKey: string): void;
     getY(areaPlot: boolean): number;
 }
+export declare class HistogramSeriesTooltip extends SeriesTooltip {
+    renderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult;
+}
 export declare class HistogramSeries extends CartesianSeries {
     static className: string;
     static type: string;
@@ -64,7 +67,11 @@ export declare class HistogramSeries extends CartesianSeries {
     private yDomain;
     readonly label: HistogramSeriesLabel;
     private seriesItemEnabled;
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult;
+    tooltip: HistogramSeriesTooltip;
     fill: string | undefined;
     stroke: string | undefined;
     fillOpacity: number;
@@ -82,11 +89,11 @@ export declare class HistogramSeries extends CartesianSeries {
     private _areaPlot;
     areaPlot: boolean;
     private _bins;
-    bins: [number, number][];
+    bins: [number, number][] | undefined;
     private _aggregation;
     aggregation: HistogramAggregation;
     private _binCount;
-    binCount: number;
+    binCount: number | undefined;
     protected _xName: string;
     xName: string;
     protected _yKey: string;

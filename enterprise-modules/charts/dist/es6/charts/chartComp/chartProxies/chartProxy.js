@@ -95,7 +95,7 @@ var ChartProxy = /** @class */ (function () {
         var customChartThemes = this.chartProxyParams.customChartThemes;
         var customChartTheme = customChartThemes && customChartThemes[name];
         if (!customChartTheme) {
-            console.warn("ag-Grid: no stock theme exists with the name '" + name + "' and no " +
+            console.warn("AG Grid: no stock theme exists with the name '" + name + "' and no " +
                 "custom chart theme with that name was supplied to 'customChartThemes'");
         }
         return customChartTheme;
@@ -104,10 +104,12 @@ var ChartProxy = /** @class */ (function () {
         return _.includes(Object.keys(themes), themeName);
     };
     ChartProxy.prototype.mergeThemeOverrides = function (gridOptionsThemeOverrides, apiThemeOverrides) {
-        if (!gridOptionsThemeOverrides)
+        if (!gridOptionsThemeOverrides) {
             return apiThemeOverrides;
-        if (!apiThemeOverrides)
+        }
+        if (!apiThemeOverrides) {
             return gridOptionsThemeOverrides;
+        }
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     };
     ChartProxy.prototype.integratedToStandaloneChartType = function (integratedChartType) {
@@ -152,8 +154,9 @@ var ChartProxy = /** @class */ (function () {
             // due to series default refactoring it's possible for fills and strokes to have undefined values
             var invalidFills = _.includes(fillsOverridden, undefined);
             var invalidStrokes = _.includes(strokesOverridden, undefined);
-            if (invalidFills || invalidStrokes)
+            if (invalidFills || invalidStrokes) {
                 return;
+            }
             // both fills and strokes will need to be overridden
             this.customPalette = {
                 fills: fillsOverridden,

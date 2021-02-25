@@ -1,4 +1,4 @@
-import { isBrowserChrome, isBrowserSafari, isBrowserFirefox } from './browser';
+import { isBrowserChrome, isBrowserSafari } from './browser';
 import { exists } from './generic';
 import { isNonNullObject } from './object';
 import { hyphenToCamelCase } from './string';
@@ -66,7 +66,7 @@ export function addOrRemoveCssClass(element: HTMLElement, className: string, add
  */
 export function radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null) {
     const parent = element.parentElement;
-    let sibling = parent.firstChild as HTMLElement;
+    let sibling = parent && parent.firstChild as HTMLElement;
 
     while (sibling) {
         if (elementClass) {
@@ -135,7 +135,7 @@ export function setDisabled(element: HTMLElement, disabled: boolean) {
     nodeListForEach(element.querySelectorAll('input'), input => addOrRemoveDisabledAttribute(input));
 }
 
-export function isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean {
+export function isElementChildOfClass(element: HTMLElement | null, cls: string, maxNest?: number): boolean {
     let counter = 0;
 
     while (element) {
@@ -151,6 +151,10 @@ export function isElementChildOfClass(element: HTMLElement, cls: string, maxNest
     return false;
 }
 
+// returns back sizes as doubles instead of strings. similar to
+// getBoundingClientRect, however getBoundingClientRect does not:
+// a) work with fractions (eg browser is zooming)
+// b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values
 export function getElementSize(el: HTMLElement): {
     height: number,
     width: number,
@@ -179,16 +183,16 @@ export function getElementSize(el: HTMLElement): {
     } = window.getComputedStyle(el);
 
     return {
-        height: parseFloat(height),
-        width: parseFloat(width),
-        paddingTop: parseFloat(paddingTop),
-        paddingRight: parseFloat(paddingRight),
-        paddingBottom: parseFloat(paddingBottom),
-        paddingLeft: parseFloat(paddingLeft),
-        marginTop: parseFloat(marginTop),
-        marginRight: parseFloat(marginRight),
-        marginBottom: parseFloat(marginBottom),
-        marginLeft: parseFloat(marginLeft),
+        height: parseFloat(height!),
+        width: parseFloat(width!),
+        paddingTop: parseFloat(paddingTop!),
+        paddingRight: parseFloat(paddingRight!),
+        paddingBottom: parseFloat(paddingBottom!),
+        paddingLeft: parseFloat(paddingLeft!),
+        marginTop: parseFloat(marginTop!),
+        marginRight: parseFloat(marginRight!),
+        marginBottom: parseFloat(marginBottom!),
+        marginLeft: parseFloat(marginLeft!),
         boxSizing
     };
 }
@@ -249,7 +253,7 @@ export function isRtlNegativeScroll(): boolean {
     document.body.appendChild(template);
 
     template.scrollLeft = 1;
-    rtlNegativeScroll = template.scrollLeft === 0;
+    rtlNegativeScroll = Math.floor(template.scrollLeft) === 0;
     document.body.removeChild(template);
 
     return rtlNegativeScroll;
@@ -346,7 +350,7 @@ export function offsetWidth(element: HTMLElement) {
     return element && element.clientWidth ? element.clientWidth : 0;
 }
 
-export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void {
+export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void {
     // if already in right order, do nothing
     if (eChildBefore && eChildBefore.nextSibling === eChild) {
         return;
@@ -369,13 +373,13 @@ export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eCh
     }
 }
 
-export function setDomChildOrder(eContainer: HTMLElement, orderedChildren: HTMLElement[]): void {
+export function setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTMLElement | null)[]): void {
     for (let i = 0; i < orderedChildren.length; i++) {
         const correctCellAtIndex = orderedChildren[i];
         const actualCellAtIndex = eContainer.children[i];
 
         if (actualCellAtIndex !== correctCellAtIndex) {
-            eContainer.insertBefore(correctCellAtIndex, actualCellAtIndex);
+            eContainer.insertBefore(correctCellAtIndex!, actualCellAtIndex);
         }
     }
 }
@@ -383,7 +387,7 @@ export function setDomChildOrder(eContainer: HTMLElement, orderedChildren: HTMLE
 export function insertTemplateWithDomOrder(
     eContainer: HTMLElement,
     htmlTemplate: string,
-    eChildBefore: HTMLElement
+    eChildBefore: HTMLElement | null
 ): HTMLElement {
     let res: HTMLElement;
 
@@ -434,9 +438,9 @@ export function isVerticalScrollShowing(element: HTMLElement): boolean {
 
 export function setElementWidth(element: HTMLElement, width: string | number) {
     if (width === 'flex') {
-        element.style.width = null;
-        element.style.minWidth = null;
-        element.style.maxWidth = null;
+        element.style.removeProperty('width');
+        element.style.removeProperty('minWidth');
+        element.style.removeProperty('maxWidth');
         element.style.flex = '1 1 auto';
     } else {
         setFixedWidth(element, width);
@@ -452,9 +456,9 @@ export function setFixedWidth(element: HTMLElement, width: string | number) {
 
 export function setElementHeight(element: HTMLElement, height: string | number) {
     if (height === 'flex') {
-        element.style.height = null;
-        element.style.minHeight = null;
-        element.style.maxHeight = null;
+        element.style.removeProperty('height');
+        element.style.removeProperty('minHeight');
+        element.style.removeProperty('maxHeight');
         element.style.flex = '1 1 auto';
     } else {
         setFixedHeight(element, height);
@@ -514,7 +518,7 @@ export function isNodeOrElement(o: any) {
  * @param {NodeList} nodeList
  * @returns {Node[]}
  */
-export function copyNodeList(nodeList: NodeList): Node[] {
+export function copyNodeList(nodeList: NodeListOf<Node> | null): Node[] {
     if (nodeList == null) { return []; }
 
     const result: Node[] = [];
@@ -553,7 +557,7 @@ export function addOrRemoveAttribute(element: HTMLElement, name: string, value: 
     }
 }
 
-export function nodeListForEach<T extends Node>(nodeList: NodeListOf<T>, action: (value: T) => void): void {
+export function nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null, action: (value: T) => void): void {
     if (nodeList == null) { return; }
 
     for (let i = 0; i < nodeList.length; i++) {

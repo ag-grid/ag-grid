@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,19 +47,15 @@ var ColumnFactory = /** @class */ (function (_super) {
     ColumnFactory.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ColumnFactory');
     };
-    ColumnFactory.prototype.createColumnTree = function (defs, primaryColumns, existingColumns) {
+    ColumnFactory.prototype.createColumnTree = function (defs, primaryColumns, existingTree) {
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that could be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
         var columnKeyCreator = new columnKeyCreator_1.ColumnKeyCreator();
-        if (existingColumns) {
-            var existingKeys = existingColumns.map(function (col) { return col.getId(); });
-            columnKeyCreator.addExistingKeys(existingKeys);
-        }
-        // we take a copy of the columns as we are going to be removing from them
-        var existingColsCopy = existingColumns ? existingColumns.slice() : null;
+        var _a = this.extractExistingTreeData(existingTree), existingCols = _a.existingCols, existingGroups = _a.existingGroups, existingColKeys = _a.existingColKeys;
+        columnKeyCreator.addExistingKeys(existingColKeys);
         // create am unbalanced tree that maps the provided definitions
-        var unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns, existingColsCopy, columnKeyCreator, null);
+        var unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns, existingCols, columnKeyCreator, existingGroups);
         var treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         var columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
@@ -76,6 +72,25 @@ var ColumnFactory = /** @class */ (function (_super) {
             columnTree: columnTree,
             treeDept: treeDept
         };
+    };
+    ColumnFactory.prototype.extractExistingTreeData = function (existingTree) {
+        var existingCols = [];
+        var existingGroups = [];
+        var existingColKeys = [];
+        if (existingTree) {
+            this.columnUtils.depthFirstOriginalTreeSearch(null, existingTree, function (item) {
+                if (item instanceof originalColumnGroup_1.OriginalColumnGroup) {
+                    var group = item;
+                    existingGroups.push(group);
+                }
+                else {
+                    var col = item;
+                    existingColKeys.push(col.getId());
+                    existingCols.push(col);
+                }
+            });
+        }
+        return { existingCols: existingCols, existingGroups: existingGroups, existingColKeys: existingColKeys };
     };
     ColumnFactory.prototype.createForAutoGroups = function (autoGroupCols, gridBalancedTree) {
         var _this = this;
@@ -141,9 +156,9 @@ var ColumnFactory = /** @class */ (function (_super) {
                     }
                 }
                 // likewise this if statement will not run if no padded groups
-                if (firstPaddedGroup) {
+                if (firstPaddedGroup && currentPaddedGroup) {
                     result.push(firstPaddedGroup);
-                    var hasGroups = unbalancedTree.some(function (child) { return child instanceof originalColumnGroup_1.OriginalColumnGroup; });
+                    var hasGroups = unbalancedTree.some(function (leaf) { return leaf instanceof originalColumnGroup_1.OriginalColumnGroup; });
                     if (hasGroups) {
                         currentPaddedGroup.setChildren([child]);
                         continue;
@@ -172,7 +187,7 @@ var ColumnFactory = /** @class */ (function (_super) {
         }
         return maxDeptThisLevel;
     };
-    ColumnFactory.prototype.recursivelyCreateColumns = function (defs, level, primaryColumns, existingColsCopy, columnKeyCreator, parent) {
+    ColumnFactory.prototype.recursivelyCreateColumns = function (defs, level, primaryColumns, existingColsCopy, columnKeyCreator, existingGroups) {
         var _this = this;
         var result = [];
         if (!defs) {
@@ -181,21 +196,25 @@ var ColumnFactory = /** @class */ (function (_super) {
         defs.forEach(function (def) {
             var newGroupOrColumn;
             if (_this.isColumnGroup(def)) {
-                newGroupOrColumn = _this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, parent);
+                newGroupOrColumn = _this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, existingGroups);
             }
             else {
-                newGroupOrColumn = _this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator, parent);
+                newGroupOrColumn = _this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator);
             }
             result.push(newGroupOrColumn);
         });
         return result;
     };
-    ColumnFactory.prototype.createColumnGroup = function (primaryColumns, colGroupDef, level, existingColumns, columnKeyCreator, parent) {
+    ColumnFactory.prototype.createColumnGroup = function (primaryColumns, colGroupDef, level, existingColumns, columnKeyCreator, existingGroups) {
         var colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
-        var groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
+        var groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
         var originalGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
         this.context.createBean(originalGroup);
-        var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, primaryColumns, existingColumns, columnKeyCreator, originalGroup);
+        var existingGroup = this.findExistingGroup(colGroupDef, existingGroups);
+        if (existingGroup && existingGroup.isExpanded()) {
+            originalGroup.setExpanded(true);
+        }
+        var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, primaryColumns, existingColumns, columnKeyCreator, existingGroups);
         originalGroup.setChildren(children);
         return originalGroup;
     };
@@ -206,7 +225,7 @@ var ColumnFactory = /** @class */ (function (_super) {
         this.checkForDeprecatedItems(colGroupDefMerged);
         return colGroupDefMerged;
     };
-    ColumnFactory.prototype.createColumn = function (primaryColumns, colDef, existingColsCopy, columnKeyCreator, parent) {
+    ColumnFactory.prototype.createColumn = function (primaryColumns, colDef, existingColsCopy, columnKeyCreator) {
         var colDefMerged = this.mergeColDefs(colDef);
         this.checkForDeprecatedItems(colDefMerged);
         // see if column already exists
@@ -284,8 +303,27 @@ var ColumnFactory = /** @class */ (function (_super) {
         });
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
-        if (res) {
+        if (existingColsCopy && res) {
             array_1.removeFromArray(existingColsCopy, res);
+        }
+        return res;
+    };
+    ColumnFactory.prototype.findExistingGroup = function (newGroupDef, existingGroups) {
+        var res = generic_1.find(existingGroups, function (existingGroup) {
+            var existingDef = existingGroup.getColGroupDef();
+            if (!existingDef) {
+                return false;
+            }
+            var newHasId = newGroupDef.groupId != null;
+            if (newHasId) {
+                return existingGroup.getId() === newGroupDef.groupId;
+            }
+            return false;
+        });
+        // make sure we remove, so if user provided duplicate id, then we don't have more than
+        // one column instance for colDef with common id
+        if (res) {
+            array_1.removeFromArray(existingGroups, res);
         }
         return res;
     };
@@ -296,9 +334,12 @@ var ColumnFactory = /** @class */ (function (_super) {
         var defaultColDef = this.gridOptionsWrapper.getDefaultColDef();
         object_1.mergeDeep(colDefMerged, defaultColDef, true, true);
         // merge properties from column type properties
-        if (colDef.type || (defaultColDef && defaultColDef.type)) {
-            // if type of both colDef and defaultColDef, then colDef gets preference
-            var columnType = colDef.type ? colDef.type : defaultColDef.type;
+        var columnType = colDef.type;
+        if (!columnType) {
+            columnType = defaultColDef && defaultColDef.type;
+        }
+        // if type of both colDef and defaultColDef, then colDef gets preference
+        if (columnType) {
             this.assignColumnTypes(columnType, colDefMerged);
         }
         // merge properties from column definitions
@@ -306,7 +347,7 @@ var ColumnFactory = /** @class */ (function (_super) {
         return colDefMerged;
     };
     ColumnFactory.prototype.assignColumnTypes = function (type, colDefMerged) {
-        var typeKeys;
+        var typeKeys = [];
         if (type instanceof Array) {
             var invalidArray = type.some(function (a) { return typeof a !== 'string'; });
             if (invalidArray) {
@@ -328,7 +369,7 @@ var ColumnFactory = /** @class */ (function (_super) {
         var userTypes = this.gridOptionsWrapper.getColumnTypes() || {};
         object_1.iterateObject(userTypes, function (key, value) {
             if (key in allColumnTypes) {
-                console.warn("ag-Grid: the column type '" + key + "' is a default column type and cannot be overridden.");
+                console.warn("AG Grid: the column type '" + key + "' is a default column type and cannot be overridden.");
             }
             else {
                 allColumnTypes[key] = value;

@@ -1,5 +1,5 @@
 import { DropShadow } from "../../../scene/dropShadow";
-import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle } from "./../series";
+import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle, SeriesTooltip } from "./../series";
 import { Label } from "../../label";
 import { LegendDatum } from "../../legend";
 import { Caption } from "../../../caption";
@@ -60,6 +60,9 @@ declare class PieSeriesCallout extends Observable {
     length: number;
     strokeWidth: number;
 }
+export declare class PieSeriesTooltip extends SeriesTooltip {
+    renderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
+}
 export declare class PieSeries extends PolarSeries {
     static className: string;
     static type: string;
@@ -75,6 +78,11 @@ export declare class PieSeries extends PolarSeries {
     title: Caption | undefined;
     readonly label: PieSeriesLabel;
     readonly callout: PieSeriesCallout;
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
+    tooltipRenderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
+    tooltip: PieSeriesTooltip;
     constructor();
     /**
      * The key of the numeric field to use to determine the angle (for example,
@@ -120,7 +128,6 @@ export declare class PieSeries extends PolarSeries {
     private updateNodes;
     fireNodeClickEvent(event: MouseEvent, datum: PieNodeDatum): void;
     getTooltipHtml(nodeDatum: PieNodeDatum): string;
-    tooltipRenderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
     listSeriesItems(legendData: LegendDatum[]): void;
     toggleSeriesItem(itemId: number, enabled: boolean): void;
 }

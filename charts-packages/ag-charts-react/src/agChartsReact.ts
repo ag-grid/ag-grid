@@ -51,7 +51,7 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     shouldComponentUpdate(nextProps: any) {
         this.processPropsChanges(this.props, nextProps);
 
-        // we want full control of the dom, as ag-Charts doesn't use React internally,
+        // we want full control of the dom, as AG Charts doesn't use React internally,
         // so for performance reasons we tell React we don't need render called after
         // property changes.
         return false;

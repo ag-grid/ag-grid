@@ -203,7 +203,7 @@ var FillHandle = /** @class */ (function (_super) {
                     break;
             }
         };
-        var fillValues = function (values, col, rowNode, updateInitialSet) {
+        var fillValues = function (currentValues, col, rowNode, updateInitialSet) {
             var currentValue;
             if (withinInitialRange) {
                 currentValue = _this.valueService.getValue(col, rowNode);
@@ -211,12 +211,12 @@ var FillHandle = /** @class */ (function (_super) {
                 withinInitialRange = updateInitialSet();
             }
             else {
-                currentValue = _this.processValues(e, values, initialValues, col, rowNode, idx++);
+                currentValue = _this.processValues(e, currentValues, initialValues, col, rowNode, idx++);
                 if (col.isCellEditable(rowNode)) {
                     rowNode.setDataValue(col, currentValue);
                 }
             }
-            values.push(currentValue);
+            currentValues.push(currentValue);
         };
         if (isVertical) {
             initialRange.columns.forEach(function (col) {

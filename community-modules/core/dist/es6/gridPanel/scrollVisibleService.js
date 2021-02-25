@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,17 +54,11 @@ var ScrollVisibleService = /** @class */ (function (_super) {
         return this.verticalScrollShowing;
     };
     __decorate([
-        Autowired('columnController')
-    ], ScrollVisibleService.prototype, "columnController", void 0);
-    __decorate([
         Autowired('columnApi')
     ], ScrollVisibleService.prototype, "columnApi", void 0);
     __decorate([
         Autowired('gridApi')
     ], ScrollVisibleService.prototype, "gridApi", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], ScrollVisibleService.prototype, "gridOptionsWrapper", void 0);
     ScrollVisibleService = __decorate([
         Bean('scrollVisibleService')
     ], ScrollVisibleService);

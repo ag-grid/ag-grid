@@ -80,7 +80,7 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
         var _this = this;
         var menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         var eMenuGui = menu.getGui();
-        var anchorToElement = eventSource ? eventSource : this.gridPanel.getGui();
+        var anchorToElement = eventSource || this.gridPanel.getGui();
         var closedFuncs = [];
         closedFuncs.push(function (e) {
             _this.destroyBean(menu);
@@ -104,7 +104,7 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
             },
             afterGuiAttached: function (params) { return menu.afterGuiAttached(params); },
             positionCallback: function () { return positionCallback(menu); },
-            anchorToElement: anchorToElement,
+            anchorToElement: anchorToElement
         });
         if (addPopupRes) {
             // if user starts showing / hiding columns, or otherwise move the underlying column
@@ -368,7 +368,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
             // async and is confusing if you don't have this context
             filterWrapper.filterPromise.then(function (filter) {
-                if (filter.afterGuiAttached) {
+                if (filter && filter.afterGuiAttached) {
                     filter.afterGuiAttached(params);
                 }
             });
@@ -387,8 +387,9 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         _.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
         this.columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
         var columnsMenuParams = this.column.getColDef().columnsMenuParams;
-        if (!columnsMenuParams)
+        if (!columnsMenuParams) {
             columnsMenuParams = {};
+        }
         this.columnSelectPanel.init(false, {
             suppressValues: false,
             suppressPivots: false,

@@ -45,11 +45,11 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     public start(): void {
         if (this.gridOptionsWrapper.getViewportDatasource()) {
-            this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource());
+            this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource()!);
         }
     }
 
-    public isLastRowFound(): boolean {
+    public isLastRowIndexKnown(): boolean {
         return true;
     }
 
@@ -68,7 +68,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     private calculateFirstRow(firstRenderedRow: number): number {
         const bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
-        const pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
+        const pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize()!;
         const afterBuffer = firstRenderedRow - bufferSize;
 
         if (afterBuffer < 0) { return 0; }
@@ -80,7 +80,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         if (lastRenderedRow === -1) { return lastRenderedRow; }
 
         const bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
-        const pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
+        const pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize()!;
         const afterBuffer = lastRenderedRow + bufferSize;
         const result = Math.ceil(afterBuffer / pageSize) * pageSize;
         const lastRowIndex = this.rowCount - 1;
@@ -118,7 +118,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         this.rowCount = 0;
 
         if (!viewportDatasource.init) {
-            console.warn('ag-Grid: viewport is missing init method.');
+            console.warn('AG Grid: viewport is missing init method.');
         } else {
             viewportDatasource.init({
                 setRowCount: this.setRowCount.bind(this),
@@ -177,10 +177,6 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return topLevelIndex;
     }
 
-    public getCurrentPageHeight(): number {
-        return this.rowCount * this.rowHeight;
-    }
-
     public isEmpty(): boolean {
         return this.rowCount > 0;
     }
@@ -190,8 +186,8 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
-        const firstIndex = _.missing(firstInRange) ? 0 : firstInRange.rowIndex;
-        const lastIndex = lastInRange.rowIndex;
+        const firstIndex = _.missing(firstInRange) ? 0 : firstInRange.rowIndex!;
+        const lastIndex = lastInRange.rowIndex!;
 
         const firstNodeOutOfRange = firstIndex < this.firstRow || firstIndex > this.lastRow;
         const lastNodeOutOfRange = lastIndex < this.firstRow || lastIndex > this.lastRow;

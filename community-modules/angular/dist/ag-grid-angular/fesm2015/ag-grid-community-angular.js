@@ -26,12 +26,10 @@ let AgGridColumn = AgGridColumn_1 = class AgGridColumn {
             return column.toColDef();
         });
     }
-    ;
     createColDefFromGridColumn(from) {
         let { childColumns } = from, colDef = __rest(from, ["childColumns"]);
         return colDef;
     }
-    ;
 };
 __decorate([
     ContentChildren(AgGridColumn_1),
@@ -829,6 +827,7 @@ let AgGridAngular = class AgGridAngular {
         this.suppressRowClickSelection = undefined;
         this.suppressCellSelection = undefined;
         this.suppressHorizontalScroll = undefined;
+        this.alwaysShowHorizontalScroll = undefined;
         this.alwaysShowVerticalScroll = undefined;
         this.debug = undefined;
         this.enableBrowserTooltips = undefined;
@@ -951,6 +950,7 @@ let AgGridAngular = class AgGridAngular {
         this.suppressAggFilteredOnly = undefined;
         this.showOpenedGroup = undefined;
         this.suppressClipboardApi = undefined;
+        this.suppressModelUpdateAfterUpdateTransaction = undefined;
         this.columnEverythingChanged = new EventEmitter();
         this.newColumnsLoaded = new EventEmitter();
         this.columnPivotModeChanged = new EventEmitter();
@@ -1036,6 +1036,7 @@ let AgGridAngular = class AgGridAngular {
         this.columnAggFuncChangeRequest = new EventEmitter();
         this.keyboardFocus = new EventEmitter();
         this.mouseFocus = new EventEmitter();
+        this.storeUpdated = new EventEmitter();
         this._nativeElement = elementDef.nativeElement;
     }
     ngAfterViewInit() {
@@ -1116,7 +1117,7 @@ let AgGridAngular = class AgGridAngular {
             }
         }
         else {
-            console.log('ag-Grid-angular: could not find EventEmitter: ' + eventType);
+            console.log('AG Grid Angular: could not find EventEmitter: ' + eventType);
         }
     }
 };
@@ -1742,6 +1743,10 @@ __decorate([
 __decorate([
     Input(),
     __metadata("design:type", Object)
+], AgGridAngular.prototype, "alwaysShowHorizontalScroll", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
 ], AgGridAngular.prototype, "alwaysShowVerticalScroll", void 0);
 __decorate([
     Input(),
@@ -2228,6 +2233,10 @@ __decorate([
     __metadata("design:type", Object)
 ], AgGridAngular.prototype, "suppressClipboardApi", void 0);
 __decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "suppressModelUpdateAfterUpdateTransaction", void 0);
+__decorate([
     Output(),
     __metadata("design:type", EventEmitter)
 ], AgGridAngular.prototype, "columnEverythingChanged", void 0);
@@ -2567,6 +2576,10 @@ __decorate([
     Output(),
     __metadata("design:type", EventEmitter)
 ], AgGridAngular.prototype, "mouseFocus", void 0);
+__decorate([
+    Output(),
+    __metadata("design:type", EventEmitter)
+], AgGridAngular.prototype, "storeUpdated", void 0);
 AgGridAngular = __decorate([
     Component({
         selector: 'ag-grid-angular',

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "./gridPanel";
@@ -16,9 +16,10 @@ export declare class NavigationService extends BeanStub {
     handlePageScrollingKey(event: KeyboardEvent): boolean;
     private isTimeSinceLastPageEventToRecent;
     private setTimeLastPageEventProcessed;
+    private navigateTo;
     private onPageDown;
     private onPageUp;
-    private navigateTo;
+    private getIndexToFocus;
     private onCtrlUpOrDown;
     private onCtrlLeftOrRight;
     private onHomeOrEndKey;

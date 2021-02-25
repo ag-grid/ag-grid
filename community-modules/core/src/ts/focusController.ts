@@ -34,6 +34,8 @@ export class FocusController extends BeanStub {
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Optional('rangeController') private readonly rangeController: IRangeController;
 
+    public static AG_KEYBOARD_FOCUS: string = 'ag-keyboard-focus';
+
     private gridCore: GridCore;
     private focusedCellPosition: CellPosition | null;
     private focusedHeaderPosition: HeaderPosition | null;
@@ -97,6 +99,11 @@ export class FocusController extends BeanStub {
     private static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void {
         const isKeyboardActive = FocusController.keyboardModeActive;
         const isKeyboardEvent = event.type === 'keydown';
+
+        if (isKeyboardEvent) {
+            // the following keys should not toggle keyboard mode.
+            if (event.ctrlKey || event.metaKey || event.altKey) { return; }
+        }
 
         if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) { return; }
 
@@ -162,7 +169,7 @@ export class FocusController extends BeanStub {
     // first focus a cell, then second click outside the grid, as then the
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
-    public getFocusCellToUseAfterRefresh(): CellPosition {
+    public getFocusCellToUseAfterRefresh(): CellPosition | null {
         if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh() || !this.focusedCellPosition) {
             return null;
         }
@@ -176,7 +183,7 @@ export class FocusController extends BeanStub {
         return this.focusedCellPosition;
     }
 
-    private getGridCellForDomElement(eBrowserCell: Node): CellPosition {
+    private getGridCellForDomElement(eBrowserCell: Node | null): CellPosition | null {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
@@ -197,11 +204,11 @@ export class FocusController extends BeanStub {
         this.onCellFocused(false);
     }
 
-    public getFocusedCell(): CellPosition {
+    public getFocusedCell(): CellPosition | null {
         return this.focusedCellPosition;
     }
 
-    public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | undefined, forceBrowserFocus = false): void {
+    public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | null | undefined, forceBrowserFocus = false): void {
         const gridColumn = this.columnController.getGridColumn(colKey);
 
         // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
@@ -212,7 +219,7 @@ export class FocusController extends BeanStub {
             return;
         }
 
-        this.focusedCellPosition = { rowIndex, rowPinned: makeNull(floating), column: makeNull(gridColumn) };
+        this.focusedCellPosition = gridColumn ? { rowIndex, rowPinned: makeNull(floating), column: gridColumn } : null;
         this.onCellFocused(forceBrowserFocus);
     }
 
@@ -224,7 +231,7 @@ export class FocusController extends BeanStub {
     }
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
-        return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
+        return this.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
     }
 
     public isHeaderWrapperFocused(headerWrapper: AbstractHeaderWrapper): boolean {
@@ -245,7 +252,7 @@ export class FocusController extends BeanStub {
         this.focusedHeaderPosition = null;
     }
 
-    public getFocusedHeader(): HeaderPosition {
+    public getFocusedHeader(): HeaderPosition | null {
         return this.focusedHeaderPosition;
     }
 
@@ -254,8 +261,8 @@ export class FocusController extends BeanStub {
     }
 
     public focusHeaderPosition(
-        headerPosition: HeaderPosition,
-        direction: 'Before' | 'After' = null,
+        headerPosition: HeaderPosition | null,
+        direction: 'Before' | 'After' | undefined | null = null,
         fromTab: boolean = false,
         allowUserOverride: boolean = false,
         event?: KeyboardEvent
@@ -278,7 +285,7 @@ export class FocusController extends BeanStub {
                 }
             } else {
                 const userFunc = gridOptionsWrapper.getNavigateToNextHeaderFunc();
-                if (userFunc) {
+                if (userFunc && event) {
                     const params = {
                         key: event.key,
                         previousHeaderPosition: currentPosition,
@@ -300,10 +307,10 @@ export class FocusController extends BeanStub {
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
 
         const childContainer = this.headerNavigationService.getHeaderContainer(headerPosition.column.getPinned());
-        const rowComps = childContainer.getRowComps();
+        const rowComps = childContainer!.getRowComps();
         const nextRowComp = rowComps[headerPosition.headerRowIndex];
         const headerComps = nextRowComp.getHeaderComps();
-        const nextHeader = headerComps[headerPosition.column.getUniqueId() as string];
+        const nextHeader = headerComps[headerPosition.column.getUniqueId()];
 
         if (nextHeader) {
             // this will automatically call the setFocusedHeader method above
@@ -318,7 +325,7 @@ export class FocusController extends BeanStub {
         return !!this.focusedCellPosition;
     }
 
-    public isRowFocused(rowIndex: number, floating: string): boolean {
+    public isRowFocused(rowIndex: number, floating?: string | null): boolean {
         if (this.focusedCellPosition == null) { return false; }
 
         return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === makeNull(floating);
@@ -359,7 +366,7 @@ export class FocusController extends BeanStub {
         return false;
     }
 
-    public findNextFocusableElement(rootNode: HTMLElement, onlyManaged?: boolean, backwards?: boolean): HTMLElement {
+    public findNextFocusableElement(rootNode: HTMLElement, onlyManaged?: boolean | null, backwards?: boolean): HTMLElement | null {
         const focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
         let currentIndex: number;
 
@@ -392,7 +399,7 @@ export class FocusController extends BeanStub {
         return false;
     }
 
-    public findTabbableParent(node: HTMLElement, limit: number = 5): HTMLElement {
+    public findTabbableParent(node: HTMLElement | null, limit: number = 5): HTMLElement | null {
         let counter = 0;
 
         while (node && getTabIndex(node) === null && ++counter <= limit) {
@@ -408,12 +415,12 @@ export class FocusController extends BeanStub {
         const event: CellFocusedEvent = {
             type: Events.EVENT_CELL_FOCUSED,
             forceBrowserFocus: forceBrowserFocus,
-            rowIndex: null as number,
-            column: null as Column,
-            floating: null as string,
+            rowIndex: null,
+            column: null,
+            floating: null,
             api: this.gridApi,
             columnApi: this.columnApi,
-            rowPinned: null as string
+            rowPinned: null
         };
 
         if (this.focusedCellPosition) {
@@ -435,11 +442,11 @@ export class FocusController extends BeanStub {
         const { rowIndex, rowPinned } = nextRow;
         const focusedHeader = this.getFocusedHeader();
 
-        if (!column) {
+        if (!column && focusedHeader) {
             column = focusedHeader.column as Column;
         }
 
-        if (rowIndex == null) { return false; }
+        if (rowIndex == null || !column) { return false; }
 
         this.rowRenderer.ensureCellVisible({ rowIndex, column, rowPinned });
 
@@ -461,5 +468,7 @@ export class FocusController extends BeanStub {
         if (!backwards) {
             this.gridCore.forceFocusOutOfContainer();
         }
+
+        return false;
     }
 }

@@ -6,47 +6,53 @@ import {
     PostConstruct,
     PreDestroy,
     RowNode,
-    Autowired,
-    PostConstruct,
-    IGetRowsParams,
-    IEventEmitter,
     RowNodeBlock,
     RowRenderer,
-    _
+    LoadSuccessParams
 } from "@ag-grid-community/core";
-import { InfiniteCacheParams } from "./infiniteCache";
+import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
-export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
+export class InfiniteBlock extends RowNodeBlock {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
-    private cacheParams: InfiniteCacheParams;
+    private readonly startRow: number;
+    private readonly endRow: number;
+    private readonly parentCache: InfiniteCache;
 
-    constructor(pageNumber: number, params: InfiniteCacheParams) {
-        super(pageNumber, params);
+    private params: InfiniteCacheParams;
 
-        this.cacheParams = params;
+    private lastAccessed: number;
+
+    public rowNodes: RowNode[];
+
+    constructor(id: number, parentCache: InfiniteCache, params: InfiniteCacheParams) {
+        super(id);
+
+        this.parentCache = parentCache;
+        this.params = params;
+
+        // we don't need to calculate these now, as the inputs don't change,
+        // however it makes the code easier to read if we work them out up front
+        this.startRow = id * params.blockSize!;
+        this.endRow = this.startRow + params.blockSize!;
     }
 
-    public getDisplayIndexStart(): number {
-        return this.getBlockNumber() * this.cacheParams.blockSize;
+    @PostConstruct
+    protected postConstruct(): void {
+        this.createRowNodes();
     }
 
-    // this is an estimate, as the last block will probably only be partially full. however
-    // this method is used to know if this block is been rendered, before destroying, so
-    // and this estimate works in that use case.
-    public getDisplayIndexEnd(): number {
-        return this.getDisplayIndexStart() + this.cacheParams.blockSize;
-    }
-
-    protected createBlankRowNode(rowIndex: number): RowNode {
-        const rowNode = super.createBlankRowNode();
-
-        rowNode.uiLevel = 0;
-
-        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
-
-        return rowNode;
+    public getBlockStateJson(): {id: string, state: any} {
+        return {
+            id: '' + this.getId(),
+            state: {
+                blockNumber: this.getId(),
+                startRow: this.getStartRow(),
+                endRow: this.getEndRow(),
+                pageStatus: this.getState()
+            }
+        };
     }
 
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
@@ -61,22 +67,17 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         }
     }
 
-    public setRowNode(rowIndex: number, rowNode: RowNode): void {
-        super.setRowNode(rowIndex, rowNode);
-        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
-    }
+    protected loadFromDatasource(): void {
+        const params = this.createLoadParams();
+        if (_.missing(this.params.datasource.getRows)) {
+            console.warn(`AG Grid: datasource is missing getRows method`);
+            return;
+        }
 
-    // no need for @postConstruct, as attached to parent
-    protected init(): void {
-        super.init();
-    }
-
-    public getNodeIdPrefix(): string {
-        return null;
-    }
-
-    public getRow(displayIndex: number): RowNode {
-        return this.getRowUsingLocalIndex(displayIndex);
+        // put in timeout, to force result to be async
+        window.setTimeout(() => {
+            this.params.datasource.getRows(params);
+        }, 0);
     }
 
     protected processServerFail(): void {
@@ -97,6 +98,8 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
             filterModel: this.params.filterModel,
             context: this.gridOptionsWrapper.getContext()
         };
+        return params;
+    }
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void,
                        sequence: NumberSequence,
@@ -140,7 +143,7 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
             rowNode.setRowHeight(this.params.rowHeight);
             rowNode.uiLevel = 0;
             rowNode.setRowIndex(rowIndex);
-            rowNode.rowTop = this.params.rowHeight * rowIndex;
+            rowNode.setRowTop(this.params.rowHeight * rowIndex);
 
             this.rowNodes.push(rowNode);
         }
@@ -170,9 +173,8 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
     private destroyRowNodes(): void {
         this.rowNodes.forEach(rowNode => {
             // this is needed, so row render knows to fade out the row, otherwise it
-            // sees row top is present, and thinks the row should be shown. maybe
-            // rowNode should have a flag on whether it is visible???
-            rowNode.clearRowTop();
+            // sees row top is present, and thinks the row should be shown.
+            rowNode.clearRowTopAndRowIndex();
         });
     }
 }

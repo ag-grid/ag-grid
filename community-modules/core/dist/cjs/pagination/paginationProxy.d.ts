@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowBounds } from "../interfaces/iRowModel";
@@ -30,6 +30,10 @@ export declare class PaginationProxy extends BeanStub {
     getRowNode(id: string): RowNode | null;
     getRowIndexAtPixel(pixel: number): number;
     getCurrentPageHeight(): number;
+    getCurrentPagePixelRange(): {
+        pageFirstPixel: number;
+        pageLastPixel: number;
+    };
     isRowPresent(rowNode: RowNode): boolean;
     isEmpty(): boolean;
     isRowsToRender(): boolean;

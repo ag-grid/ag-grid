@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -132,7 +132,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.eventLastTime = mouseEvent;
         this.positionGhost(mouseEvent);
         // check if mouseEvent intersects with any of the drop targets
-        var validDropTargets = this.dropTargets.filter(function (dropTarget) { return _this.isMouseOnDropTarget(mouseEvent, dropTarget); });
+        var validDropTargets = this.dropTargets.filter(function (target) { return _this.isMouseOnDropTarget(mouseEvent, target); });
         var len = validDropTargets.length;
         var dropTarget = null;
         if (len > 0) {
@@ -202,8 +202,8 @@ var DragAndDropService = /** @class */ (function (_super) {
             if (rect.width === 0 || rect.height === 0) {
                 return;
             }
-            var horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
-            var verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
+            var horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX < rect.right;
+            var verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY < rect.bottom;
             if (horizontalFit && verticalFit) {
                 mouseOverTarget = true;
             }
@@ -224,7 +224,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         return generic_1.find(externalTargets, function (zone) { return zone.getContainer() === params.getContainer(); });
     };
     DragAndDropService.prototype.getHorizontalDirection = function (event) {
-        var clientX = this.eventLastTime.clientX;
+        var clientX = this.eventLastTime && this.eventLastTime.clientX;
         var eClientX = event.clientX;
         if (clientX === eClientX) {
             return null;
@@ -232,7 +232,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         return clientX > eClientX ? HorizontalDirection.Left : HorizontalDirection.Right;
     };
     DragAndDropService.prototype.getVerticalDirection = function (event) {
-        var clientY = this.eventLastTime.clientY;
+        var clientY = this.eventLastTime && this.eventLastTime.clientY;
         var eClientY = event.clientY;
         if (clientY === eClientY) {
             return null;
@@ -250,6 +250,9 @@ var DragAndDropService = /** @class */ (function (_super) {
     };
     DragAndDropService.prototype.positionGhost = function (event) {
         var ghost = this.eGhost;
+        if (!ghost) {
+            return;
+        }
         var ghostRect = ghost.getBoundingClientRect();
         var ghostHeight = ghostRect.height;
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
@@ -297,14 +300,15 @@ var DragAndDropService = /** @class */ (function (_super) {
         if (function_1.isFunction(dragItemName)) {
             dragItemName = dragItemName();
         }
-        eText.innerHTML = string_1.escapeString(dragItemName);
+        eText.innerHTML = string_1.escapeString(dragItemName) || '';
         this.eGhost.style.height = '25px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
         var usrDocument = this.gridOptionsWrapper.getDocument();
-        this.eGhostParent = usrDocument.querySelector('body');
+        var targetEl = usrDocument.fullscreenElement || usrDocument.querySelector('body');
+        this.eGhostParent = targetEl;
         if (!this.eGhostParent) {
-            console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
+            console.warn('AG Grid: could not find document body, it is needed for dragging columns');
         }
         else {
             this.eGhostParent.appendChild(this.eGhost);
@@ -313,7 +317,7 @@ var DragAndDropService = /** @class */ (function (_super) {
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
         if (shake === void 0) { shake = false; }
         dom_1.clearElement(this.eGhostIcon);
-        var eIcon;
+        var eIcon = null;
         if (!iconName) {
             iconName = this.dragSource.defaultIconName || DragAndDropService_1.ICON_NOT_ALLOWED;
         }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,6 +51,13 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         }
         else {
             var condition = model;
+            var customOption = this.optionsFactory.getCustomOption(condition.type);
+            // For custom filter options we display the Name of the filter instead
+            // of displaying the `from` value, as it wouldn't be relevant
+            if (customOption) {
+                this.gridOptionsWrapper.getLocaleTextFunc()(customOption.displayKey, customOption.displayName);
+                return customOption.displayName;
+            }
             return this.conditionToString(condition);
         }
     };
@@ -107,9 +114,8 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         return customFilterOption && customFilterOption.hideFilterInput;
     };
     SimpleFloatingFilter.prototype.isTypeEditable = function (type) {
-        return !this.doesFilterHaveHiddenInput(type) &&
-            type
-            && type !== simpleFilter_1.SimpleFilter.IN_RANGE
+        return !!type && !this.doesFilterHaveHiddenInput(type) &&
+            type !== simpleFilter_1.SimpleFilter.IN_RANGE
             && type !== simpleFilter_1.SimpleFilter.EMPTY;
     };
     return SimpleFloatingFilter;

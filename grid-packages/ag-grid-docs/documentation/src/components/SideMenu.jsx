@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './SideMenu.module.scss';
 
-const SideMenu = ({ headings = [], pageName, hideMenu }) => {
+const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
     const [allHeadings, setAllHeadings] = useState(headings);
 
     useEffect(() => {
@@ -9,7 +9,7 @@ const SideMenu = ({ headings = [], pageName, hideMenu }) => {
         let headings = [];
         let maxLevel = 1;
 
-        const selector = [1, 2, 3, 4, 5, 6].map(depth => `#doc-content h${depth}`).join(',');
+        const selector = [2, 3, 4, 5, 6].map(depth => `#doc-content h${depth}`).join(',');
         const headingsFromDom = document.querySelectorAll(selector);
 
         for (let i = 0; i < headingsFromDom.length; i++) {
@@ -35,19 +35,21 @@ const SideMenu = ({ headings = [], pageName, hideMenu }) => {
 
         setAllHeadings(headings);
 
-        if (headings.length < 2) {
-            // no point in showing the menu if there is only one link
+        if (headings.length < 1) {
+            // no point in showing the menu if there are no links
             hideMenu();
         }
     }, [hideMenu]);
 
-    return allHeadings.length > 1 && (
+    return (
         <div className={styles['side-nav']}>
             <ul className={styles['side-nav__list']}>
+                <li className={styles[`side-nav__item--level-1`]}>
+                    <a className={styles['side-nav__link']} href="#top">{pageTitle}</a>
+                </li>
                 {allHeadings.map(heading => <li key={`${pageName}_${heading.id}`} className={styles[`side-nav__item--level-${heading.depth}`]}>
                     <a className={styles['side-nav__link']} href={`#${heading.id}`}>{heading.value}</a>
-                </li>
-                )}
+                </li>)}
             </ul>
         </div>
     );

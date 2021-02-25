@@ -1,4 +1,4 @@
-import { Autowired, Events, EventService, GridApi, IStatusPanelComp, PostConstruct, _ } from '@ag-grid-community/core';
+import { Autowired, Events, GridApi, IStatusPanelComp, PostConstruct, _ } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
@@ -11,7 +11,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
         // this component is only really useful with client side row model
         if (this.gridApi.getModel().getType() !== 'clientSide') {
-            console.warn(`ag-Grid: agTotalRowCountComponent should only be used with the client side row model.`);
+            console.warn(`AG Grid: agTotalRowCountComponent should only be used with the client side row model.`);
             return;
         }
 

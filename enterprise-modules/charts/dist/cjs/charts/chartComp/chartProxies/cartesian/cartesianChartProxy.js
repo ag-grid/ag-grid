@@ -29,6 +29,7 @@ var core_1 = require("@ag-grid-community/core");
 var ag_charts_community_1 = require("ag-charts-community");
 var chartDataModel_1 = require("../../chartDataModel");
 var typeChecker_1 = require("../../typeChecker");
+var object_1 = require("../../object");
 var CartesianChartProxy = /** @class */ (function (_super) {
     __extends(CartesianChartProxy, _super);
     function CartesianChartProxy(params) {
@@ -51,8 +52,14 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         if (flipXY) {
             _a = [yAxisType, xAxisType], xAxisType = _a[0], yAxisType = _a[1];
         }
-        options.xAxis = theme.getConfig(standaloneChartType + '.axes.' + xAxisType);
-        options.yAxis = theme.getConfig(standaloneChartType + '.axes.' + yAxisType);
+        var xAxisTheme = {};
+        var yAxisTheme = {};
+        xAxisTheme = object_1.deepMerge(xAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + xAxisType));
+        xAxisTheme = object_1.deepMerge(xAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + xAxisType + '.bottom'));
+        yAxisTheme = object_1.deepMerge(yAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + yAxisType));
+        yAxisTheme = object_1.deepMerge(yAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + yAxisType + '.left'));
+        options.xAxis = xAxisTheme;
+        options.yAxis = yAxisTheme;
         return options;
     };
     CartesianChartProxy.prototype.getAxisProperty = function (expression) {
@@ -72,13 +79,22 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         var labelRotation = 0;
         var axisKey = isHorizontalChart ? 'yAxis' : 'xAxis';
         var themeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        var axisPosition = isHorizontalChart ? ag_charts_community_1.ChartAxisPosition.Left : ag_charts_community_1.ChartAxisPosition.Bottom;
         var chartType = this.getStandaloneChartType();
-        var userThemeOverrideRotation = undefined;
+        var userThemeOverrideRotation;
         var commonRotation = core_1._.get(themeOverrides, "common.axes." + axisType + ".label.rotation", undefined);
         var cartesianRotation = core_1._.get(themeOverrides, "cartesian.axes." + axisType + ".label.rotation", undefined);
+        var cartesianPositionRotation = core_1._.get(themeOverrides, "cartesian.axes." + axisType + "." + axisPosition + ".label.rotation", undefined);
         var chartTypeRotation = core_1._.get(themeOverrides, chartType + ".axes." + axisType + ".label.rotation", undefined);
-        if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
+        var chartTypePositionRotation = core_1._.get(themeOverrides, chartType + ".axes." + axisType + "." + axisPosition + ".label.rotation", undefined);
+        if (typeof chartTypePositionRotation === 'number' && isFinite(chartTypePositionRotation)) {
+            userThemeOverrideRotation = chartTypePositionRotation;
+        }
+        else if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
             userThemeOverrideRotation = chartTypeRotation;
+        }
+        else if (typeof cartesianPositionRotation === 'number' && isFinite(cartesianPositionRotation)) {
+            userThemeOverrideRotation = cartesianPositionRotation;
         }
         else if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {
             userThemeOverrideRotation = cartesianRotation;
@@ -97,8 +113,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
                 }
             }
         }
-        var axisPosition = isHorizontalChart ? ag_charts_community_1.ChartAxisPosition.Left : ag_charts_community_1.ChartAxisPosition.Bottom;
-        var axis = ag_charts_community_1.find(this.chart.axes, function (axis) { return axis.position === axisPosition; });
+        var axis = ag_charts_community_1.find(this.chart.axes, function (currentAxis) { return currentAxis.position === axisPosition; });
         if (axis) {
             axis.label.rotation = labelRotation;
         }
@@ -170,7 +185,11 @@ var CartesianChartProxy = /** @class */ (function (_super) {
     };
     CartesianChartProxy.prototype.getXAxisDefaults = function (xAxisType, options) {
         if (xAxisType === 'time') {
-            return this.chartTheme.getConfig(this.getStandaloneChartType() + '.axes.' + 'time');
+            var xAxisTheme = {};
+            var standaloneChartType = this.getStandaloneChartType();
+            xAxisTheme = object_1.deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time'));
+            xAxisTheme = object_1.deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time.bottom'));
+            return xAxisTheme;
         }
         return options.xAxis;
     };

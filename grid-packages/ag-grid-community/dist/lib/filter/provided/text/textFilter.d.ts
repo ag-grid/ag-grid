@@ -3,18 +3,19 @@ import { SimpleFilter, ConditionPosition, ISimpleFilterParams, ISimpleFilterMode
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { AgPromise } from '../../../utils';
 export interface TextFilterModel extends ISimpleFilterModel {
-    filter?: string;
+    filter?: string | null;
 }
 export interface TextComparator {
-    (filter: string, gridValue: any, filterText: string): boolean;
+    (filter: string | null | undefined, gridValue: any, filterText: string | null): boolean;
 }
 export interface TextFormatter {
-    (from: string): string;
+    (from?: string | null): string | null;
 }
 export interface ITextFilterParams extends ISimpleFilterParams {
     textCustomComparator?: TextComparator;
     caseSensitive?: boolean;
     textFormatter?: (from: string) => string;
+    trimInput?: boolean;
 }
 export declare class TextFilter extends SimpleFilter<TextFilterModel> {
     static DEFAULT_FILTER_OPTIONS: string[];
@@ -27,7 +28,7 @@ export declare class TextFilter extends SimpleFilter<TextFilterModel> {
     private formatter;
     private textFilterParams;
     constructor();
-    static cleanInput(value: string): string;
+    static trimInput(value?: string | null): string | null | undefined;
     protected getDefaultDebounceMs(): number;
     private getCleanValue;
     private addValueChangedListeners;

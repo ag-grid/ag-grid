@@ -212,7 +212,7 @@ export class UserComponentRegistry extends BeanStub {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    public retrieve<A extends IComponent<any> & B, B>(rawName: string): RegisteredComponent<A, B> {
+    public retrieve<A extends IComponent<any> & B, B>(rawName: string): RegisteredComponent<A, B> | null {
         const name = this.translateIfDeprecated(rawName);
         const frameworkComponent = this.frameworkComponents[name];
 
@@ -245,7 +245,7 @@ export class UserComponentRegistry extends BeanStub {
         }
 
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
-            console.warn(`ag-Grid: Looking for component [${name}] but it wasn't found.`);
+            console.warn(`AG Grid: Looking for component [${name}] but it wasn't found.`);
         }
 
         return null;

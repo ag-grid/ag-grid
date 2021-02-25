@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from '../../interfaces/iComponent';
@@ -18,7 +18,7 @@ export interface IFloatingFilterParams {
     onFloatingFilterChanged: (change: any) => boolean;
 }
 export interface IFloatingFilter {
-    onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent): void;
+    onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null): void;
 }
 export interface IFloatingFilterComp extends IFloatingFilter, IComponent<IFloatingFilterParams> {
 }

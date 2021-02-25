@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -103,7 +103,9 @@ var HeaderComp = /** @class */ (function (_super) {
             return;
         }
         var eIcon = icon_1.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
-        eParent.appendChild(eIcon);
+        if (eIcon) {
+            eParent.appendChild(eIcon);
+        }
     };
     HeaderComp.prototype.setupTap = function () {
         var _this = this;
@@ -261,7 +263,7 @@ var HeaderComp = /** @class */ (function (_super) {
         var filterPresent = this.params.column.isFilterActive();
         dom_1.addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
     };
-    HeaderComp.TEMPLATE = "<div class=\"ag-cell-label-container\">\n            <span ref=\"eMenu\" class=\"ag-header-icon ag-header-cell-menu-button\" aria-hidden=\"true\"></span>\n            <div ref=\"eLabel\" class=\"ag-header-cell-label\" role=\"presentation\" unselectable=\"on\">\n                <span ref=\"eText\" class=\"ag-header-cell-text\" unselectable=\"on\"></span>\n                <span ref=\"eFilter\" class=\"ag-header-icon ag-header-label-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortOrder\" class=\"ag-header-icon ag-header-label-icon ag-sort-order\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortAsc\" class=\"ag-header-icon ag-header-label-icon ag-sort-ascending-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortDesc\" class=\"ag-header-icon ag-header-label-icon ag-sort-descending-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortNone\" class=\"ag-header-icon ag-header-label-icon ag-sort-none-icon\" aria-hidden=\"true\"></span>\n            </div>\n        </div>";
+    HeaderComp.TEMPLATE = "<div class=\"ag-cell-label-container\" role=\"presentation\">\n            <span ref=\"eMenu\" class=\"ag-header-icon ag-header-cell-menu-button\" aria-hidden=\"true\"></span>\n            <div ref=\"eLabel\" class=\"ag-header-cell-label\" role=\"presentation\" unselectable=\"on\">\n                <span ref=\"eText\" class=\"ag-header-cell-text\" unselectable=\"on\"></span>\n                <span ref=\"eFilter\" class=\"ag-header-icon ag-header-label-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortOrder\" class=\"ag-header-icon ag-header-label-icon ag-sort-order\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortAsc\" class=\"ag-header-icon ag-header-label-icon ag-sort-ascending-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortDesc\" class=\"ag-header-icon ag-header-label-icon ag-sort-descending-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortNone\" class=\"ag-header-icon ag-header-label-icon ag-sort-none-icon\" aria-hidden=\"true\"></span>\n            </div>\n        </div>";
     __decorate([
         context_1.Autowired('sortController')
     ], HeaderComp.prototype, "sortController", void 0);

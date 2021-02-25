@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -145,13 +145,13 @@ var DisplayedGroupCreator = /** @class */ (function (_super) {
     DisplayedGroupCreator.prototype.getOriginalPathForColumn = function (balancedColumnTree, column) {
         var result = [];
         var found = false;
-        var recursePath = function (balancedColumnTree, dept) {
-            for (var i = 0; i < balancedColumnTree.length; i++) {
+        var recursePath = function (columnTree, dept) {
+            for (var i = 0; i < columnTree.length; i++) {
                 // quit the search, so 'result' is kept with the found result
                 if (found) {
                     return;
                 }
-                var node = balancedColumnTree[i];
+                var node = columnTree[i];
                 if (node instanceof originalColumnGroup_1.OriginalColumnGroup) {
                     var nextNode = node;
                     recursePath(nextNode.getChildren(), dept + 1);

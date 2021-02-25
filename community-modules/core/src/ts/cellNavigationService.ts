@@ -57,7 +57,7 @@ export class CellNavigationService extends BeanStub {
                     break;
                 default:
                     pointer = null;
-                    console.warn('ag-Grid: unknown key for navigation ' + key);
+                    console.warn('AG Grid: unknown key for navigation ' + key);
                     break;
             }
 
@@ -73,7 +73,7 @@ export class CellNavigationService extends BeanStub {
 
     private isCellGoodToFocusOn(gridCell: CellPosition): boolean {
         const column: Column = gridCell.column;
-        let rowNode: RowNode;
+        let rowNode: RowNode | null;
 
         switch (gridCell.rowPinned) {
             case Constants.PINNED_TOP:
@@ -86,6 +86,8 @@ export class CellNavigationService extends BeanStub {
                 rowNode = this.rowModel.getRow(gridCell.rowIndex);
                 break;
         }
+
+        if (!rowNode) { return false; }
 
         const suppressNavigable = column.isSuppressNavigable(rowNode);
         return !suppressNavigable;
@@ -256,7 +258,7 @@ export class CellNavigationService extends BeanStub {
         const displayedColumns = this.columnController.getAllDisplayedColumns();
 
         let newRowIndex: number | null = gridCell.rowIndex;
-        let newFloating: string | null = gridCell.rowPinned;
+        let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
         let newColumn = this.columnController.getDisplayedColAfter(gridCell.column);
@@ -286,7 +288,7 @@ export class CellNavigationService extends BeanStub {
         const displayedColumns = this.columnController.getAllDisplayedColumns();
 
         let newRowIndex: number | null = gridCell.rowIndex;
-        let newFloating: string | null = gridCell.rowPinned;
+        let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
         let newColumn = this.columnController.getDisplayedColBefore(gridCell.column);

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -22,7 +22,7 @@ export interface ICellEditor {
      * should cover the cell, or "under" if it should be positioned below leaving the
      * cell value visible. If this method is not present, the default is "over".
      */
-    getPopupPosition?(): string;
+    getPopupPosition?(): string | undefined;
     /** Gets called once after initialised. If you return true, the editor will not be
      * used and the grid will continue editing. Use this to make a decision on editing
      * inside the init() function, eg maybe you want to only start editing if the user

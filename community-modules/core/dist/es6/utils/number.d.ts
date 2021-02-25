@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare function padStart(value: number, totalStringSize: number): string;
@@ -11,7 +11,7 @@ export declare function createArrayOfNumbers(first: number, last: number): numbe
  */
 export declare function isNumeric(value: any): boolean;
 export declare function getMaxSafeInteger(): number;
-export declare function cleanNumber(value: any): number;
+export declare function cleanNumber(value: any): number | null;
 export declare function decToHex(number: number, bytes: number): string;
 export declare function formatNumberTwoDecimalPlacesAndCommas(value: number): string;
 /**
@@ -22,4 +22,4 @@ export declare function formatNumberTwoDecimalPlacesAndCommas(value: number): st
  * @returns {string}
  */
 export declare function formatNumberCommas(value: number): string;
-export declare function sum(values: number[]): number;
+export declare function sum(values: number[] | null): number;

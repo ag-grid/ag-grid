@@ -1,6 +1,6 @@
 import { forEach } from './array';
 
-export type ResolveAndRejectCallback<T> = (resolve: (value: T) => void, reject: (params: any) => void) => void;
+export type ResolveAndRejectCallback<T> = (resolve: (value: T | null) => void, reject: (params: any) => void) => void;
 
 export enum AgPromiseStatus {
     IN_PROGRESS, RESOLVED
@@ -9,12 +9,12 @@ export enum AgPromiseStatus {
 export class AgPromise<T> {
     private status: AgPromiseStatus = AgPromiseStatus.IN_PROGRESS;
     private resolution: T | null = null;
-    private waiters: ((value: T) => void)[] = [];
+    private waiters: ((value: T | null) => void)[] = [];
 
     static all<T>(promises: AgPromise<T | null>[]): AgPromise<(T | null)[]> {
         return new AgPromise(resolve => {
             let remainingToResolve = promises.length;
-            const combinedValues = new Array<T>(remainingToResolve);
+            const combinedValues = new Array<T | null>(remainingToResolve);
 
             forEach(promises, (promise, index) => {
                 promise.then(value => {

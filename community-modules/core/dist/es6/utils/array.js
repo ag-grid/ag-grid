@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,7 @@ export function existsAndNotEmpty(value) {
 }
 export function last(arr) {
     if (!arr || !arr.length) {
-        return undefined;
+        return;
     }
     return arr[arr.length - 1];
 }

@@ -20,7 +20,7 @@ export class ChartCrossFilter extends BeanStub {
             // update filters based on current chart selections
             this.updateFilters(filterModel, event);
         } else {
-            console.warn("ag-Grid: cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
+            console.warn("AG Grid: cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
                 "to be defined on the column with id: '" + colId + "'");
         }
     }

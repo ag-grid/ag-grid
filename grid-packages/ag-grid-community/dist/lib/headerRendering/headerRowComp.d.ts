@@ -25,7 +25,10 @@ export declare class HeaderRowComp extends Component {
     private setWidth;
     private getWidthForRow;
     private onDisplayedColumnsChanged;
-    private getItemsAtDepth;
+    private getColumnsInViewport;
+    private getColumnsInViewportPrintLayout;
+    private getActualDepth;
+    private getColumnsInViewportNormalLayout;
     private onVirtualColumnsChanged;
     private createHeaderComp;
     getHeaderComps(): {

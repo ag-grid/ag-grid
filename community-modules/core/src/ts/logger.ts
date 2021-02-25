@@ -23,22 +23,22 @@ export class LoggerFactory extends BeanStub {
 
 export class Logger {
 
-    private isLoggingFunc: () => boolean;
+    private isLoggingFunc: () => boolean | undefined;
     private name: string;
 
-    constructor(name: string, isLoggingFunc: () => boolean) {
+    constructor(name: string, isLoggingFunc: () => boolean | undefined) {
         this.name = name;
         this.isLoggingFunc = isLoggingFunc;
     }
 
-    public isLogging(): boolean {
+    public isLogging(): boolean | undefined {
         return this.isLoggingFunc();
     }
 
     public log(message: string) {
         if (this.isLoggingFunc()) {
             // tslint:disable-next-line
-            console.log('ag-Grid.' + this.name + ': ' + message);
+            console.log('AG Grid.' + this.name + ': ' + message);
         }
     }
 

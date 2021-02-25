@@ -29,7 +29,7 @@ import { SolarDark } from "./themes/solarDark";
 import { VividLight } from "./themes/vividLight";
 import { VividDark } from "./themes/vividDark";
 import { find } from "../util/array";
-import { getValue, isObject } from "../util/object";
+import { deepMerge, getValue, isObject } from "../util/object";
 import mappings from './agChartMappings';
 var lightTheme = new ChartTheme();
 var darkTheme = new DarkTheme();
@@ -110,6 +110,11 @@ var AgChart = /** @class */ (function () {
             chart.autoSize = true;
         }
     };
+    AgChart.save = function (component) {
+        var target = {};
+        save(component, target);
+        return target;
+    };
     AgChart.createComponent = create;
     return AgChart;
 }());
@@ -133,6 +138,29 @@ var actualSeriesTypeMap = (function () {
     map['column'] = 'bar';
     return map;
 })();
+function save(component, target, mapping) {
+    if (target === void 0) { target = {}; }
+    if (mapping === void 0) { mapping = mappings; }
+    if (component.constructor && component.constructor.type && !mapping.meta) {
+        mapping = mapping[component.constructor.type];
+    }
+    var defaults = mapping && mapping.meta && mapping.meta.defaults;
+    var keys = Object.keys(defaults);
+    keys.forEach(function (key) {
+        var value = component[key];
+        if (isObject(value) && (!mapping.meta.nonSerializable || mapping.meta.nonSerializable.indexOf(key) < 0)) {
+            target[key] = {};
+            // save(value, target[key], mapping[key]);
+        }
+        else if (Array.isArray(value)) {
+            // target[key] = [];
+            // save(value, target[key], map[key]);
+        }
+        else {
+            target[key] = component[key];
+        }
+    });
+}
 function create(options, path, component, theme) {
     var _a;
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
@@ -180,7 +208,28 @@ function create(options, path, component, theme) {
                     if (Array.isArray(value)) {
                         var subComponents = value
                             .map(function (config) {
-                            return create(config, path + '.' + key, undefined, theme);
+                            var axis = create(config, path + '.' + key, undefined, theme);
+                            if (theme && key === 'axes') {
+                                var fakeTheme = {
+                                    getConfig: function (path) {
+                                        var parts = path.split('.');
+                                        var modifiedPath = parts.slice(0, 3).join('.') + '.' + axis.position;
+                                        var after = parts.slice(3);
+                                        if (after.length) {
+                                            modifiedPath += '.' + after.join('.');
+                                        }
+                                        var config = theme.getConfig(path);
+                                        var modifiedConfig = theme.getConfig(modifiedPath);
+                                        isObject(theme.getConfig(modifiedPath));
+                                        if (isObject(config) && isObject(modifiedConfig)) {
+                                            return deepMerge(config, modifiedConfig);
+                                        }
+                                        return modifiedConfig;
+                                    }
+                                };
+                                update(axis, config, path + '.' + key, fakeTheme);
+                            }
+                            return axis;
                         })
                             .filter(function (instance) { return !!instance; });
                         component[key] = subComponents;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,7 +39,9 @@ var LoadingCellRenderer = /** @class */ (function (_super) {
     };
     LoadingCellRenderer.prototype.setupLoading = function () {
         var eLoadingIcon = createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
-        this.eLoadingIcon.appendChild(eLoadingIcon);
+        if (eLoadingIcon) {
+            this.eLoadingIcon.appendChild(eLoadingIcon);
+        }
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
     };

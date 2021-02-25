@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -22,5 +22,5 @@ export declare class ChangedPath {
     addParentNode(rowNode: RowNode | null, columns?: Column[]): void;
     canSkip(rowNode: RowNode): boolean;
     getValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[];
-    getNotValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[];
+    getNotValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] | null;
 }

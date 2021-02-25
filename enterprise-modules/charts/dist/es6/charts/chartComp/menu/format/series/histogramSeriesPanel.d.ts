@@ -7,6 +7,7 @@ export declare class HistogramSeriesPanel extends Component {
     private seriesBinCountSlider;
     private seriesStrokeWidthSlider;
     private seriesLineOpacitySlider;
+    private seriesLineDashSlider;
     private seriesFillOpacitySlider;
     private chartTranslator;
     private readonly chartController;
@@ -15,6 +16,7 @@ export declare class HistogramSeriesPanel extends Component {
     private init;
     private initSeriesTooltips;
     private initSeriesStrokeWidth;
+    private initSeriesLineDash;
     private initOpacity;
     private initBins;
     private initLabelPanel;

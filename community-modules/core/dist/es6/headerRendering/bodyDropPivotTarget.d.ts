@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
@@ -10,10 +10,10 @@ export declare class BodyDropPivotTarget implements DropListener {
     private columnsToGroup;
     private columnsToPivot;
     private pinned;
-    constructor(pinned: string);
+    constructor(pinned: string | null);
     /** Callback for when drag enters */
     onDragEnter(draggingEvent: DraggingEvent): void;
-    getIconName(): string;
+    getIconName(): string | null;
     /** Callback for when drag leaves */
     onDragLeave(draggingEvent: DraggingEvent): void;
     private clearColumnsList;

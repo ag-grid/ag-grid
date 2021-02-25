@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,7 +46,7 @@ import { Autowired, Optional, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { last } from '../utils/array';
 import { BeanStub } from "../context/beanStub";
-import { missingOrEmpty } from "../utils/generic";
+import { exists, missingOrEmpty } from "../utils/generic";
 import { doOnce } from "../utils/function";
 var RowDragFeature = /** @class */ (function (_super) {
     __extends(RowDragFeature, _super);
@@ -99,7 +99,7 @@ var RowDragFeature = /** @class */ (function (_super) {
     };
     RowDragFeature.prototype.getRowNodes = function (draggingEvent) {
         if (!this.isFromThisGrid(draggingEvent)) {
-            return draggingEvent.dragItem.rowNodes;
+            return draggingEvent.dragItem.rowNodes || [];
         }
         var enableMultiRowDragging = this.gridOptionsWrapper.isEnableMultiRowDragging();
         var selectedNodes = this.selectionController.getSelectedNodes();
@@ -239,7 +239,7 @@ var RowDragFeature = /** @class */ (function (_super) {
         this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
     };
     RowDragFeature.prototype.ensureIntervalCleared = function () {
-        if (!this.moveInterval) {
+        if (!exists(this.movingIntervalId)) {
             return;
         }
         window.clearInterval(this.movingIntervalId);
@@ -254,7 +254,7 @@ var RowDragFeature = /** @class */ (function (_super) {
         if (pixelsToMove > 100) {
             pixelsToMove = 100;
         }
-        var pixelsMoved;
+        var pixelsMoved = null;
         if (this.needToMoveDown) {
             pixelsMoved = this.gridPanel.scrollVertically(pixelsToMove);
         }
@@ -268,11 +268,11 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.addRowDropZone = function (params) {
         var _this = this;
         if (!params.getContainer()) {
-            doOnce(function () { return console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'); }, 'add-drop-zone-empty-target');
+            doOnce(function () { return console.warn('AG Grid: addRowDropZone - A container target needs to be provided'); }, 'add-drop-zone-empty-target');
             return;
         }
         if (this.dragAndDropService.findExternalZone(params)) {
-            console.warn('ag-Grid: addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.');
+            console.warn('AG Grid: addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.');
             return;
         }
         var processedParams = {
@@ -314,7 +314,7 @@ var RowDragFeature = /** @class */ (function (_super) {
         var onDragging = this.onDragging.bind(this);
         var onDragStop = this.onDragStop.bind(this);
         if (!events) {
-            return { getContainer: getContainer, onDragEnter: onDragEnter, onDragLeave: onDragLeave, onDragging: onDragging, onDragStop: onDragStop, fromGrid: true };
+            return { getContainer: getContainer, onDragEnter: onDragEnter, onDragLeave: onDragLeave, onDragging: onDragging, onDragStop: onDragStop, /* @private */ fromGrid: true };
         }
         return {
             getContainer: getContainer,
@@ -342,12 +342,12 @@ var RowDragFeature = /** @class */ (function (_super) {
                     events.onDragStop(_this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_END, e));
                 })
                 : onDragStop,
-            fromGrid: true
+            fromGrid: true /* @private */
         };
     };
     RowDragFeature.prototype.draggingToRowDragEvent = function (type, draggingEvent) {
         var yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
-        var mouseIsPastLastRow = yNormalised > this.rowModel.getCurrentPageHeight();
+        var mouseIsPastLastRow = yNormalised > this.paginationProxy.getCurrentPageHeight();
         var overIndex = -1;
         var overNode = null;
         if (!mouseIsPastLastRow) {
@@ -415,6 +415,9 @@ var RowDragFeature = /** @class */ (function (_super) {
     __decorate([
         Autowired('rowModel')
     ], RowDragFeature.prototype, "rowModel", void 0);
+    __decorate([
+        Autowired('paginationProxy')
+    ], RowDragFeature.prototype, "paginationProxy", void 0);
     __decorate([
         Autowired('columnController')
     ], RowDragFeature.prototype, "columnController", void 0);

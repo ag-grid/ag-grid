@@ -30,7 +30,7 @@ var AggregationComp = /** @class */ (function (_super) {
     };
     AggregationComp.prototype.postConstruct = function () {
         if (!this.isValidRowModel()) {
-            console.warn("ag-Grid: agAggregationComponent should only be used with the client and server side row model.");
+            console.warn("AG Grid: agAggregationComponent should only be used with the client and server side row model.");
             return;
         }
         this.avgAggregationComp.setLabel('average', 'Average');

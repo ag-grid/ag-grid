@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,7 +24,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Component } from "../../widgets/component";
-import { PostConstruct } from "../../context/context";
+import { PostConstruct, PreDestroy } from "../../context/context";
 import { RowNode } from "../../entities/rowNode";
 import { DragSourceType } from "../../dragAndDrop/dragAndDropService";
 import { Events } from "../../eventKeys";
@@ -33,23 +33,37 @@ import { createIconNoSpan } from "../../utils/icon";
 import { doOnce, isFunction } from "../../utils/function";
 var RowDragComp = /** @class */ (function (_super) {
     __extends(RowDragComp, _super);
-    function RowDragComp(rowNode, column, cellValueFn, beans) {
-        var _this = _super.call(this, /* html */ "<div class=\"ag-drag-handle ag-row-drag\" aria-hidden=\"true\"></div>") || this;
+    function RowDragComp(rowNode, column, cellValueFn, beans, customGui) {
+        var _this = _super.call(this) || this;
         _this.rowNode = rowNode;
         _this.column = column;
         _this.cellValueFn = cellValueFn;
         _this.beans = beans;
+        _this.customGui = customGui;
+        _this.isCustomGui = false;
+        _this.dragSource = null;
         return _this;
     }
     RowDragComp.prototype.postConstruct = function () {
-        var eGui = this.getGui();
-        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
-        this.addDragSource();
+        if (!this.customGui) {
+            this.setTemplate(/* html */ "<div class=\"ag-drag-handle ag-row-drag\" aria-hidden=\"true\"></div>");
+            var eGui = this.getGui();
+            eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
+            this.addDragSource();
+        }
+        else {
+            this.isCustomGui = true;
+            this.setDragElement(this.customGui);
+        }
         this.checkCompatibility();
         var strategy = this.beans.gridOptionsWrapper.isRowDragManaged() ?
             new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
             new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
         this.createManagedBean(strategy, this.beans.context);
+    };
+    RowDragComp.prototype.setDragElement = function (dragElement) {
+        this.setTemplateFromElement(dragElement);
+        this.addDragSource();
     };
     RowDragComp.prototype.getSelectedCount = function () {
         var multiRowEnabled = this.beans.gridOptionsWrapper.isEnableMultiRowDragging();
@@ -65,19 +79,23 @@ var RowDragComp = /** @class */ (function (_super) {
         var treeData = this.beans.gridOptionsWrapper.isTreeData();
         if (treeData && managed) {
             doOnce(function () {
-                return console.warn('ag-Grid: If using row drag with tree data, you cannot have rowDragManaged=true');
+                return console.warn('AG Grid: If using row drag with tree data, you cannot have rowDragManaged=true');
             }, 'RowDragComp.managedAndTreeData');
         }
     };
     RowDragComp.prototype.addDragSource = function () {
         var _this = this;
+        // if this is changing the drag element, delete the previous dragSource
+        if (this.dragSource) {
+            this.removeDragSource();
+        }
         var dragItem = {
             rowNode: this.rowNode,
             columns: [this.column],
             defaultTextValue: this.cellValueFn(),
         };
         var rowDragText = this.column.getColDef().rowDragText;
-        var dragSource = {
+        this.dragSource = {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
             dragItemName: function () {
@@ -91,12 +109,20 @@ var RowDragComp = /** @class */ (function (_super) {
             dragStartPixels: 0,
             dragSourceDomDataKey: this.beans.gridOptionsWrapper.getDomDataKey()
         };
-        this.beans.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc(function () { return _this.beans.dragAndDropService.removeDragSource(dragSource); });
+        this.beans.dragAndDropService.addDragSource(this.dragSource, true);
+    };
+    RowDragComp.prototype.removeDragSource = function () {
+        if (this.dragSource) {
+            this.beans.dragAndDropService.removeDragSource(this.dragSource);
+        }
+        this.dragSource = null;
     };
     __decorate([
         PostConstruct
     ], RowDragComp.prototype, "postConstruct", null);
+    __decorate([
+        PreDestroy
+    ], RowDragComp.prototype, "removeDragSource", null);
     return RowDragComp;
 }(Component));
 export { RowDragComp };
@@ -114,7 +140,7 @@ var VisibilityStrategy = /** @class */ (function (_super) {
             this.parent.setDisplayed(false);
         }
         else {
-            var shown = this.column.isRowDrag(this.rowNode);
+            var shown = this.column.isRowDrag(this.rowNode) || this.parent.isCustomGui;
             var isShownSometimes = isFunction(this.column.getColDef().rowDrag);
             // if shown sometimes, them some rows can have drag handle while other don't,
             // so we use setVisible to keep the handles horizontally aligned (as setVisible

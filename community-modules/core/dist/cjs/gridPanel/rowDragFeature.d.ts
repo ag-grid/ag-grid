@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
@@ -13,11 +13,11 @@ export interface RowDropZoneEvents {
 }
 export interface RowDropZoneParams extends RowDropZoneEvents {
     getContainer: () => HTMLElement;
-    fromGrid?: boolean;
 }
 export declare class RowDragFeature extends BeanStub implements DropTarget {
     private dragAndDropService;
     private rowModel;
+    private paginationProxy;
     private columnController;
     private focusController;
     private sortController;

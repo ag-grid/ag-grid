@@ -1,9 +1,9 @@
 export declare function iterateObject<T>(object: {
     [p: string]: T;
-} | T[] | undefined, callback: (key: string, value: T) => void): void;
+} | T[] | null | undefined, callback: (key: string, value: T) => void): void;
 export declare function cloneObject<T>(object: T): T;
 export declare function deepCloneObject<T>(object: T): T;
-export declare function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T;
+export declare function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined;
 export declare function getProperty<T, K extends keyof T>(object: T, key: K): any;
 export declare function setProperty<T, K extends keyof T>(object: T, key: K, value: any): void;
 /**

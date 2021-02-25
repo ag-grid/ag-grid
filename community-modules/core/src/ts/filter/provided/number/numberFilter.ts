@@ -9,13 +9,13 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isBrowserChrome, isBrowserEdge } from '../../../utils/browser';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
-    filter?: number;
-    filterTo?: number;
+    filter?: number | null;
+    filterTo?: number | null;
 }
 
 export interface INumberFilterParams extends IScalarFilterParams {
     allowedCharPattern?: string;
-    numberParser?: (text: string) => number;
+    numberParser?: (text: string | null) => number;
 }
 
 export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
@@ -41,7 +41,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         super('numberFilter');
     }
 
-    protected mapRangeFromModel(filterModel: NumberFilterModel): { from: number, to: number; } {
+    protected mapRangeFromModel(filterModel: NumberFilterModel): { from: number | null | undefined, to: number | null | undefined; } {
         return {
             from: filterModel.filter,
             to: filterModel.filterTo
@@ -195,7 +195,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return 'number';
     }
 
-    private stringToFloat(value: string | number): number {
+    private stringToFloat(value?: string | number | null): number | null {
         if (typeof value === 'number') {
             return value;
         }

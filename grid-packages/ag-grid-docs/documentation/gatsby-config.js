@@ -1,13 +1,9 @@
 require('dotenv').config();
+
+const isDevelopment = require('./src/utils/is-development');
 const fs = require('fs');
 const gracefulFs = require('graceful-fs');
 gracefulFs.gracefulify(fs);
-
-console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-console.log("GATSBY_HOST:", process.env.GATSBY_HOST);
-console.log("GATSBY_ROOT_DIRECTORY:", process.env.GATSBY_ROOT_DIRECTORY);
-console.log("GATSBY_USE_PUBLISHED_PACKAGES:", process.env.GATSBY_USE_PUBLISHED_PACKAGES);
-console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
 const plugins = [
   {
@@ -18,9 +14,21 @@ const plugins = [
     }
   },
   {
+    resolve: 'gatsby-plugin-eslint',
+    options: {
+      test: /\.js$|\.jsx$/,
+      exclude: /(node_modules|.cache|public)/,
+      stages: ['develop'],
+      options: {
+        emitWarning: true,
+        failOnError: false
+      }
+    }
+  },
+  {
     resolve: `gatsby-transformer-rehype`,
     options: {
-      filter: node => node.sourceInstanceName === 'pages' &&
+      filter: node => node.sourceInstanceName === 'doc-pages' &&
         node.relativePath.indexOf('/_gen/') < 0 &&
         node.ext === '.html',
     },
@@ -31,15 +39,15 @@ const plugins = [
   {
     resolve: 'gatsby-plugin-page-creator',
     options: {
-      path: `${__dirname}/src/pages`,
-      ignore: ['**/examples/**'],
+      path: `${__dirname}/pages`,
+      ignore: isDevelopment() ? undefined : ['example-runner.jsx'],
     },
   },
   {
     resolve: 'gatsby-source-filesystem',
     options: {
-      path: `${__dirname}/src/pages`,
-      name: 'pages',
+      path: `${__dirname}/doc-pages`,
+      name: 'doc-pages',
     },
   },
   {
@@ -66,10 +74,6 @@ const plugins = [
                 classes: 'note warning',
                 title: 'optional'
               },
-              info: {
-                classes: 'note info',
-                title: 'optional'
-              },
               'only-javascript': {
                 classes: 'javascript-only-section',
               },
@@ -81,6 +85,9 @@ const plugins = [
               },
               'only-vue': {
                 classes: 'vue-only-section',
+              },
+              'only-angular-or-vue': {
+                classes: 'angular-or-vue-only-section',
               },
               'only-frameworks': {
                 classes: 'frameworks-only-section',
@@ -99,14 +106,22 @@ const plugins = [
         },
         'gatsby-remark-copy-linked-files',
         'gatsby-remark-embed-snippet',
-        'gatsby-remark-prismjs',
+        {
+          resolve: 'gatsby-remark-prismjs',
+          options: {
+            aliases: {
+              sh: 'bash',
+            },
+            noInlineHighlight: true,
+          }
+        }
       ]
     }
   },
   {
     resolve: 'gatsby-plugin-sass',
     options: {
-      data: `@import './src/custom.module';`,
+      additionalData: `@import './src/custom.module';`,
       cssLoaderOptions: {
         camelCase: false,
       },
@@ -129,28 +144,15 @@ const plugins = [
       includeInDevelopment: false,
     },
   },
+  'gatsby-plugin-remove-generator',
 ];
-
-if (process.env.GATSBY_UPDATE_ALGOLIA === 'true') {
-  plugins.push({
-    resolve: 'gatsby-plugin-algolia',
-    options: {
-      appId: process.env.GATSBY_ALGOLIA_APP_ID,
-      apiKey: process.env.GATSBY_ALGOLIA_ADMIN_KEY,
-      queries: require('./src/utils/algolia-queries')
-    }
-  });
-}
 
 module.exports = {
   pathPrefix: `${process.env.GATSBY_ROOT_DIRECTORY || ''}/documentation`,
   siteMetadata: {
-    title: 'AG-Grid Documentation',
-    author: 'AG-Grid',
-    siteUrl: `https://www.ag-grid.com`,
-  },
-  flags: {
-    LAZY_IMAGES: true,
+    title: 'AG Grid Documentation',
+    author: 'AG Grid',
+    siteUrl: `https://${process.env.GATSBY_HOST || 'www.ag-grid.com'}`,
   },
   plugins,
 };

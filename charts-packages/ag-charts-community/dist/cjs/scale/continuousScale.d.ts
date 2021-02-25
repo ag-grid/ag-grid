@@ -45,6 +45,7 @@ export default abstract class ContinuousScale implements Scale<any, any> {
      */
     private normalize;
     private bimap;
+    private polymap;
     convert(x: any): any;
     invert(y: any): any;
 }

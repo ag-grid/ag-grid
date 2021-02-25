@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -76,11 +76,11 @@ export interface DragSource {
 export interface DropTarget {
     /** The main container that will get the drop. */
     getContainer(): HTMLElement;
-    /** If any secondary containers. For example when moving columns in ag-Grid, we listen for drops
+    /** If any secondary containers. For example when moving columns in AG Grid, we listen for drops
      * in the header as well as the body (main rows and pinned rows) of the grid. */
     getSecondaryContainers?(): HTMLElement[];
     /** Icon to show when drag is over */
-    getIconName?(): string;
+    getIconName?(): string | null;
     isInterestedIn(type: DragSourceType): boolean;
     /** Callback for when drag enters */
     onDragEnter?(params: DraggingEvent): void;
@@ -104,8 +104,8 @@ export interface DraggingEvent {
     event: MouseEvent;
     x: number;
     y: number;
-    vDirection: VerticalDirection;
-    hDirection: HorizontalDirection;
+    vDirection: VerticalDirection | null;
+    hDirection: HorizontalDirection | null;
     dragSource: DragSource;
     dragItem: DragItem;
     fromNudge: boolean;
@@ -162,12 +162,12 @@ export declare class DragAndDropService extends BeanStub {
     addDropTarget(dropTarget: DropTarget): void;
     removeDropTarget(dropTarget: DropTarget): void;
     hasExternalDropZones(): boolean;
-    findExternalZone(params: RowDropZoneParams): DropTarget;
-    getHorizontalDirection(event: MouseEvent): HorizontalDirection;
-    getVerticalDirection(event: MouseEvent): VerticalDirection;
-    createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): DraggingEvent;
+    findExternalZone(params: RowDropZoneParams): DropTarget | null;
+    getHorizontalDirection(event: MouseEvent): HorizontalDirection | null;
+    getVerticalDirection(event: MouseEvent): VerticalDirection | null;
+    createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HorizontalDirection | null, vDirection: VerticalDirection | null, fromNudge: boolean): DraggingEvent;
     private positionGhost;
     private removeGhost;
     private createGhost;
-    setGhostIcon(iconName: string, shake?: boolean): void;
+    setGhostIcon(iconName: string | null, shake?: boolean): void;
 }

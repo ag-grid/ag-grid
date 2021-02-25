@@ -1,7 +1,7 @@
 import { IDoesFilterPassParams, ISetFilterParams, ProvidedFilter, IAfterGuiAttachedParams, AgPromise } from '@ag-grid-community/core';
 import { SetValueModel } from './setValueModel';
 import { SetFilterModel } from './setFilterModel';
-export declare class SetFilter extends ProvidedFilter {
+export declare class SetFilter extends ProvidedFilter<SetFilterModel> {
     static SELECT_ALL_VALUE: string;
     private readonly eMiniFilter;
     private readonly eFilterLoading;
@@ -25,7 +25,7 @@ export declare class SetFilter extends ProvidedFilter {
     getModelFromUi(): SetFilterModel | null;
     getModel(): SetFilterModel;
     getFilterType(): string;
-    getValueModel(): SetValueModel;
+    getValueModel(): SetValueModel | null;
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean;
     setParams(params: ISetFilterParams): void;
     private applyExcelModeOptions;
@@ -66,8 +66,8 @@ export declare class SetFilter extends ProvidedFilter {
     private focusRowIfAlive;
     private onSelectAll;
     private onItemSelected;
-    setMiniFilter(newMiniFilter: string): void;
-    getMiniFilter(): string;
+    setMiniFilter(newMiniFilter: string | null): void;
+    getMiniFilter(): string | null;
     /** @deprecated since version 23.2. Please use setModel instead. */
     selectEverything(): void;
     /** @deprecated since version 23.2. Please use setModel instead. */
@@ -86,8 +86,8 @@ export declare class SetFilter extends ProvidedFilter {
     /** @deprecated since version 23.2. Please use getValues instead. */
     getUniqueValueCount(): number;
     /** @deprecated since version 23.2. Please use getValues instead. */
-    getUniqueValue(index: any): string;
-    getValues(): string[];
+    getUniqueValue(index: any): string | null;
+    getValues(): (string | null)[];
     refreshVirtualList(): void;
     private translateForSetFilter;
     private isSelectAllSelected;

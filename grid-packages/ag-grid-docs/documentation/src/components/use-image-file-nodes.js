@@ -3,7 +3,7 @@ import { graphql, useStaticQuery } from 'gatsby';
 export const useImageFileNodes = () => {
     const { fluidImages: { nodes: fluidImages }, images: { nodes: images } } = useStaticQuery(graphql`
     {
-        fluidImages: allFile(filter: { sourceInstanceName: { eq: "pages" }, ext: { in: [".jpg", ".png"] } }) {
+        fluidImages: allFile(filter: { sourceInstanceName: { eq: "doc-pages" }, ext: { in: [".jpg", ".png"] } }) {
             nodes {
                 relativePath
                 childImageSharp {
@@ -13,7 +13,7 @@ export const useImageFileNodes = () => {
                 }
             }
         }
-        images: allFile(filter: { sourceInstanceName: { eq: "pages" }, ext: { in: [".svg", ".gif"] } }) {
+        images: allFile(filter: { sourceInstanceName: { eq: "doc-pages" }, ext: { in: [".svg", ".gif"] } }) {
             nodes {
                 relativePath
                 publicURL

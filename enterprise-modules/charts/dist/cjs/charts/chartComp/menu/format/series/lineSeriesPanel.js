@@ -38,6 +38,7 @@ var LineSeriesPanel = /** @class */ (function (_super) {
         this.initSeriesGroup();
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
+        this.initSeriesLineDash();
         this.initMarkersPanel();
     };
     LineSeriesPanel.prototype.initSeriesGroup = function () {
@@ -65,6 +66,15 @@ var LineSeriesPanel = /** @class */ (function (_super) {
             .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
             .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.width", newValue); });
     };
+    LineSeriesPanel.prototype.initSeriesLineDash = function () {
+        var _this = this;
+        this.seriesLineDashSlider
+            .setLabel(this.chartTranslator.translate('lineDash'))
+            .setMaxValue(30)
+            .setTextFieldWidth(45)
+            .setValue(this.getChartProxy().getSeriesOption("lineDash"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("lineDash", [newValue]); });
+    };
     LineSeriesPanel.prototype.initMarkersPanel = function () {
         var markersPanelComp = this.createBean(new markersPanel_1.MarkersPanel(this.chartController));
         this.seriesGroup.addItem(markersPanelComp);
@@ -84,7 +94,7 @@ var LineSeriesPanel = /** @class */ (function (_super) {
         this.destroyActivePanels();
         _super.prototype.destroy.call(this);
     };
-    LineSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    LineSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineDashSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
         core_1.RefSelector('seriesGroup')
     ], LineSeriesPanel.prototype, "seriesGroup", void 0);
@@ -94,6 +104,9 @@ var LineSeriesPanel = /** @class */ (function (_super) {
     __decorate([
         core_1.RefSelector('seriesLineWidthSlider')
     ], LineSeriesPanel.prototype, "seriesLineWidthSlider", void 0);
+    __decorate([
+        core_1.RefSelector('seriesLineDashSlider')
+    ], LineSeriesPanel.prototype, "seriesLineDashSlider", void 0);
     __decorate([
         core_1.Autowired('chartTranslator')
     ], LineSeriesPanel.prototype, "chartTranslator", void 0);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,7 +30,7 @@ import { find, exists } from "../utils/generic";
 import { removeFromArray } from "../utils/array";
 import { addOrRemoveCssClass } from "../utils/dom";
 import { areEventsNear } from "../utils/mouse";
-/** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
+/** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 var DragService = /** @class */ (function (_super) {
     __extends(DragService, _super);
@@ -69,7 +69,7 @@ var DragService = /** @class */ (function (_super) {
         var eDocument = this.gridOptionsWrapper.getDocument();
         var eBody = eDocument.querySelector('body');
         if (exists(eBody)) {
-            // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
+            // when we drag the mouse in AG Grid, this class gets added / removed from the body, so that
             // the mouse isn't selecting text when dragging.
             addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
         }
@@ -147,9 +147,9 @@ var DragService = /** @class */ (function (_super) {
         this.mouseStartEvent = mouseEvent;
         var eDocument = this.gridOptionsWrapper.getDocument();
         this.setNoSelectToBody(true);
-        var mouseMoveEvent = function (e, el) { return _this.onMouseMove(e, params.eElement); };
-        var mouseUpEvent = function (e, el) { return _this.onMouseUp(e, params.eElement); };
-        var contextEvent = function (e) { return e.preventDefault(); };
+        var mouseMoveEvent = function (event) { return _this.onMouseMove(event, params.eElement); };
+        var mouseUpEvent = function (event) { return _this.onMouseUp(event, params.eElement); };
+        var contextEvent = function (event) { return event.preventDefault(); };
         var target = eDocument;
         var events = [
             { target: target, type: 'mousemove', listener: mouseMoveEvent },

@@ -7,10 +7,11 @@ import {
     RowNodeTransaction,
     SortController,
     StageExecuteParams,
-    BeanStub
+    BeanStub,
+    SortOption
 } from "@ag-grid-community/core";
 
-import {SortOption, SortService} from "./sortService";
+import { SortService } from "./sortService";
 
 @Bean('sortStage')
 export class SortStage extends BeanStub {
@@ -20,7 +21,7 @@ export class SortStage extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
 
     public execute(params: StageExecuteParams): void {
-        const sortOptions: SortOption[] = this.sortController.getSortForRowController();
+        const sortOptions: SortOption[] = this.sortController.getSortOptions();
 
         const sortActive = _.exists(sortOptions) && sortOptions.length > 0;
         const deltaSort = sortActive
@@ -40,22 +41,23 @@ export class SortStage extends BeanStub {
         this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath, noAggregations);
     }
 
-    private calculateDirtyNodes(rowNodeTransactions: RowNodeTransaction[]): { [nodeId: string]: boolean } {
-
+    private calculateDirtyNodes(rowNodeTransactions?: RowNodeTransaction[] | null): { [nodeId: string]: boolean } {
         const dirtyNodes: { [nodeId: string]: boolean } = {};
 
         const addNodesFunc = (rowNodes: RowNode[]) => {
             if (rowNodes) {
-                rowNodes.forEach(rowNode => dirtyNodes[rowNode.id] = true);
+                rowNodes.forEach(rowNode => dirtyNodes[rowNode.id!] = true);
             }
         };
 
         // all leaf level nodes in the transaction were impacted
-        rowNodeTransactions.forEach(tran => {
-            addNodesFunc(tran.add);
-            addNodesFunc(tran.update);
-            addNodesFunc(tran.remove);
-        });
+        if (rowNodeTransactions) {
+            rowNodeTransactions.forEach(tran => {
+                addNodesFunc(tran.add);
+                addNodesFunc(tran.update);
+                addNodesFunc(tran.remove);
+            });
+        }
 
         return dirtyNodes;
     }

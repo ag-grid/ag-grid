@@ -79,14 +79,14 @@ var GroupStage = /** @class */ (function (_super) {
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
-            if (_.existsAndNotEmpty(tran.add)) {
-                _this.insertNodes(tran.add, details, false);
-            }
             if (_.existsAndNotEmpty(tran.remove)) {
                 _this.removeNodes(tran.remove, details, batchRemover);
             }
             if (_.existsAndNotEmpty(tran.update)) {
                 _this.moveNodesInWrongPath(tran.update, details, batchRemover);
+            }
+            if (_.existsAndNotEmpty(tran.add)) {
+                _this.insertNodes(tran.add, details, false);
             }
             // must flush here, and not allow another transaction to be applied,
             // as each transaction must finish leaving the data in a consistent state.
@@ -253,10 +253,8 @@ var GroupStage = /** @class */ (function (_super) {
                 // if not linked, then group was already removed
                 return false;
             }
-            else {
-                // if still not removed, then we remove if this group is empty
-                return rowNode.isEmptyRowGroupNode();
-            }
+            // if still not removed, then we remove if this group is empty
+            return !!rowNode.isEmptyRowGroupNode();
         };
         var _loop_1 = function () {
             checkAgain = false;
@@ -283,6 +281,7 @@ var GroupStage = /** @class */ (function (_super) {
     // a) removing from childrenAfterGroup (using batchRemover if present, otherwise immediately)
     // b) removing from childrenMapped (immediately)
     // c) setRowTop(null) - as the rowRenderer uses this to know the RowNode is no longer needed
+    // d) setRowIndex(null) - as the rowNode will no longer be displayed.
     GroupStage.prototype.removeFromParent = function (child, batchRemover) {
         if (child.parent) {
             if (batchRemover) {
@@ -300,6 +299,7 @@ var GroupStage = /** @class */ (function (_super) {
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
         child.setRowTop(null);
+        child.setRowIndex(null);
     };
     GroupStage.prototype.addToParent = function (child, parent) {
         var mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
@@ -349,7 +349,7 @@ var GroupStage = /** @class */ (function (_super) {
         var path = this.getGroupInfo(childNode, details);
         var parentGroup = this.findParentForNode(childNode, path, details);
         if (!parentGroup.group) {
-            console.warn("ag-Grid: duplicate group keys for row data, keys should be unique", [parentGroup.data, childNode.data]);
+            console.warn("AG Grid: duplicate group keys for row data, keys should be unique", [parentGroup.data, childNode.data]);
         }
         if (this.usingTreeData) {
             this.swapGroupWithUserNode(parentGroup, childNode, isMove);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -80,7 +80,7 @@ var DetailRowCompCache = /** @class */ (function (_super) {
     };
     DetailRowCompCache.prototype.getCacheItem = function (rowNode, autoCreate) {
         if (autoCreate === void 0) { autoCreate = false; }
-        var res;
+        var res = null;
         for (var i = 0; i < this.cacheItems.length; i++) {
             var item = this.cacheItems[i];
             if (item.rowNode === rowNode) {
@@ -120,7 +120,7 @@ var DetailRowCompCache = /** @class */ (function (_super) {
     };
     DetailRowCompCache.prototype.get = function (rowNode, pinned) {
         if (!rowNode.detail) {
-            return undefined;
+            return;
         }
         var item = this.getCacheItem(rowNode);
         var res;

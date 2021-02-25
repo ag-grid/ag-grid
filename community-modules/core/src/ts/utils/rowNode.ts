@@ -12,8 +12,8 @@ export function sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: st
     if (!rowNodes) { return; }
 
     const comparator = (nodeA: RowNode, nodeB: RowNode) => {
-        const positionA = rowNodeOrder[nodeA.id];
-        const positionB = rowNodeOrder[nodeB.id];
+        const positionA = rowNodeOrder[nodeA.id!];
+        const positionB = rowNodeOrder[nodeB.id!];
 
         const aHasIndex = positionA !== undefined;
         const bHasIndex = positionB !== undefined;
@@ -67,12 +67,14 @@ export function sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: st
     }
 }
 
-export function traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string) => void): void {
+export function traverseNodesWithKey(nodes: RowNode[] | null, callback: (node: RowNode, key: string) => void): void {
     const keyParts: any[] = [];
 
     recursiveSearchNodes(nodes);
 
-    function recursiveSearchNodes(currentNodes: RowNode[]): void {
+    function recursiveSearchNodes(currentNodes: RowNode[] | null): void {
+        if (!currentNodes) { return; }
+
         currentNodes.forEach((node: RowNode) => {
 
             // also checking for children for tree data

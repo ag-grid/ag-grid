@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ConditionPosition, ISimpleFilterModel } from '../simpleFilter';
@@ -6,8 +6,8 @@ import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
 import { AgPromise } from '../../../utils';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 export interface DateFilterModel extends ISimpleFilterModel {
-    dateFrom: string;
-    dateTo: string;
+    dateFrom: string | null;
+    dateTo: string | null;
 }
 export interface IDateFilterParams extends IScalarFilterParams {
     comparator?: IDateComparatorFunc;
@@ -32,8 +32,8 @@ export declare class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     constructor();
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
     protected mapRangeFromModel(filterModel: DateFilterModel): {
-        from: Date;
-        to: Date;
+        from: Date | null;
+        to: Date | null;
     };
     protected setValueFromFloatingFilter(value: string): void;
     protected setConditionIntoUi(model: DateFilterModel, position: ConditionPosition): void;

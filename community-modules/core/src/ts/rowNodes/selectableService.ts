@@ -18,19 +18,21 @@ export class SelectableService extends BeanStub {
 
     public updateSelectableAfterGrouping(rowNode: RowNode): void {
         if (this.isRowSelectableFunc) {
-            const nextChildrenFunc = (rowNode: RowNode) => rowNode.childrenAfterGroup;
+            const nextChildrenFunc = (node: RowNode) => node.childrenAfterGroup;
             this.recurseDown(rowNode.childrenAfterGroup, nextChildrenFunc);
         }
     }
 
     public updateSelectableAfterFiltering(rowNode: RowNode): void {
         if (this.isRowSelectableFunc) {
-            const nextChildrenFunc = (rowNode: RowNode) => rowNode.childrenAfterFilter;
+            const nextChildrenFunc = (node: RowNode) => node.childrenAfterFilter;
             this.recurseDown(rowNode.childrenAfterGroup, nextChildrenFunc);
         }
     }
 
-    private recurseDown(children: RowNode[], nextChildrenFunc: (rowNode: RowNode) => RowNode[]): void {
+    private recurseDown(children: RowNode[] | null, nextChildrenFunc: ((rowNode: RowNode) => RowNode[] | null)): void {
+        if (!children) { return; }
+
         children.forEach((child: RowNode) => {
 
             if (!child.group) { return; } // only interested in groups

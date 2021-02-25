@@ -1,4 +1,3 @@
-
 import { AgCheckbox } from "../../widgets/agCheckbox";
 import { BeanStub } from "../../context/beanStub";
 import { PostConstruct, Autowired } from "../../context/context";
@@ -10,6 +9,8 @@ import { Constants } from "../../constants/constants";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { SelectionController } from "../../selectionController";
+import { getAriaDescribedBy, setAriaDescribedBy } from "../../utils/aria";
+import { isVisible } from "../../utils/dom";
 
 export class SelectAllFeature extends BeanStub {
 
@@ -57,6 +58,30 @@ export class SelectAllFeature extends BeanStub {
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
+        this.refreshHeaderAriaDescribedBy(this.cbSelectAllVisible);
+    }
+
+    private refreshHeaderAriaDescribedBy(isSelectAllVisible: boolean): void {
+        const parentHeader = this.cbSelectAll.getParentComponent();
+        const parentHeaderGui = parentHeader && parentHeader.getGui();
+        if (!parentHeaderGui || !isVisible(parentHeaderGui)) { return; }
+
+        let describedByIds = '';
+
+        if (parentHeaderGui) {
+            describedByIds = getAriaDescribedBy(parentHeaderGui);
+        }
+
+        const cbSelectAllId = this.cbSelectAll.getInputElement().id;
+        const describedByIdsHasSelectAllFeature = describedByIds.indexOf(cbSelectAllId) !== -1;
+
+        if (isSelectAllVisible) {
+            if (!describedByIdsHasSelectAllFeature) {
+                setAriaDescribedBy(parentHeaderGui, `${cbSelectAllId} ${describedByIds.trim()}`);
+            }
+        } else if (describedByIdsHasSelectAllFeature) {
+            setAriaDescribedBy(parentHeaderGui, describedByIds.trim().split(' ').filter(id => id === cbSelectAllId).join(' '));
+        }
     }
 
     private onModelChanged(): void {
@@ -69,7 +94,7 @@ export class SelectAllFeature extends BeanStub {
         this.updateStateOfCheckbox();
     }
 
-    private getNextCheckboxState(selectionCount: SelectionCount): boolean {
+    private getNextCheckboxState(selectionCount: SelectionCount): boolean | null {
         // if no rows, always have it unselected
         if (selectionCount.selected === 0 && selectionCount.notSelected === 0) {
             return false;
@@ -97,7 +122,7 @@ export class SelectAllFeature extends BeanStub {
         const selectionCount = this.getSelectionCount();
         const allSelected = this.getNextCheckboxState(selectionCount);
 
-        this.cbSelectAll.setValue(allSelected);
+        this.cbSelectAll.setValue(allSelected!);
         this.refreshSelectAllLabel();
 
         this.processingEventFromCheckbox = false;
@@ -146,7 +171,7 @@ export class SelectAllFeature extends BeanStub {
         const rowModelMatches = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
         if (!rowModelMatches) {
-            console.warn(`ag-Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
+            console.warn(`AG Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
         }
     }
 

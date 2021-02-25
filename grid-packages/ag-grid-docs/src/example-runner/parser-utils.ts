@@ -1,6 +1,6 @@
 export type ImportType = 'packages' | 'modules';
 
-const moduleMapping = require('../../documentation/src/pages/modules/modules.json');
+const moduleMapping = require('../../documentation/doc-pages/modules/modules.json');
 
 export function modulesProcessor(modules: string[]) {
     const moduleImports = [];

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDateParams } from '../../../rendering/dateComponent';
@@ -14,8 +14,8 @@ export declare class DateCompWrapper {
     private context;
     constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: IDateParams, eParent: HTMLElement);
     destroy(): void;
-    getDate(): Date;
-    setDate(value: Date): void;
+    getDate(): Date | null;
+    setDate(value: Date | null): void;
     setInputPlaceholder(placeholder: string): void;
     setInputAriaLabel(label: string): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;

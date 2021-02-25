@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -32,7 +32,7 @@ export declare class RowContainerComponent {
     private postConstruct;
     private checkDomOrder;
     getRowElement(compId: number): HTMLElement;
-    setHeight(height: number): void;
+    setHeight(height: number | null): void;
     flushRowTemplates(): void;
     appendRowTemplate(rowTemplate: string, callback: () => void): void;
     ensureDomOrder(eRow: HTMLElement): void;

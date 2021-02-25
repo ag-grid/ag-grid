@@ -72,7 +72,7 @@ var DateTimeListModel = /** @class */ (function () {
 }());
 exports.DateTimeListModel = DateTimeListModel;
 // modulo function that, unline the JS % operator, is safe for negative numbers
-var modulo = function (value, modulo) { return ((value % modulo) + modulo) % modulo; };
+var modulo = function (value, mod) { return ((value % mod) + mod) % mod; };
 var splitArray = function (array, chunkSize) {
     var chunks = [];
     array.forEach(function (value, i) {

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62,21 +62,21 @@ var Context = /** @class */ (function () {
         this.logger.log("created beans: " + createdBeanNames);
     };
     // tslint:disable-next-line
-    Context.prototype.createBeanWrapper = function (Bean) {
-        var metaData = Bean.__agBeanMetaData;
+    Context.prototype.createBeanWrapper = function (BeanClass) {
+        var metaData = BeanClass.__agBeanMetaData;
         if (!metaData) {
             var beanName = void 0;
-            if (Bean.prototype.constructor) {
-                beanName = getFunctionName(Bean.prototype.constructor);
+            if (BeanClass.prototype.constructor) {
+                beanName = getFunctionName(BeanClass.prototype.constructor);
             }
             else {
-                beanName = "" + Bean;
+                beanName = "" + BeanClass;
             }
             console.error("Context item " + beanName + " is not a bean");
             return;
         }
         var beanEntry = {
-            bean: Bean,
+            bean: BeanClass,
             beanInstance: null,
             beanName: metaData.beanName
         };
@@ -156,7 +156,7 @@ var Context = /** @class */ (function () {
             return beanEntry.beanInstance;
         }
         if (!optional) {
-            console.error("ag-Grid: unable to find bean reference " + beanName + " while initialising " + wiringBean);
+            console.error("AG Grid: unable to find bean reference " + beanName + " while initialising " + wiringBean);
         }
         return null;
     };
@@ -265,11 +265,11 @@ export function Optional(name) {
 }
 function autowiredFunc(target, name, optional, classPrototype, methodOrAttributeName, index) {
     if (name === null) {
-        console.error("ag-Grid: Autowired name should not be null");
+        console.error("AG Grid: Autowired name should not be null");
         return;
     }
     if (typeof index === "number") {
-        console.error("ag-Grid: Autowired should be on an attribute");
+        console.error("AG Grid: Autowired should be on an attribute");
         return;
     }
     // it's an attribute on the class

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,7 +41,7 @@ var SelectCellEditor = /** @class */ (function (_super) {
         var _this = this;
         this.focusAfterAttached = params.cellStartedEdit;
         if (generic_1.missing(params.values)) {
-            console.warn('ag-Grid: no values found for select cellEditor');
+            console.warn('AG Grid: no values found for select cellEditor');
             return;
         }
         this.startedByEnter = params.keyPress === keyCode_1.KeyCode.ENTER;

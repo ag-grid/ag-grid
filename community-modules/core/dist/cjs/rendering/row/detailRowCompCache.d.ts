@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
@@ -16,11 +16,11 @@ export declare class DetailRowCompCache extends BeanStub {
     private maxCacheSize;
     private active;
     private postConstruct;
-    addOrDestroy(rowNode: RowNode, pinned: string, comp: ICellRendererComp): void;
+    addOrDestroy(rowNode: RowNode, pinned: string | null, comp: ICellRendererComp): void;
     private getCacheItem;
     private stampCacheItem;
     private destroyFullWidthRow;
     private purgeCache;
-    get(rowNode: RowNode, pinned: string): ICellRendererComp;
+    get(rowNode: RowNode, pinned: string | null): ICellRendererComp | undefined;
     protected destroy(): void;
 }

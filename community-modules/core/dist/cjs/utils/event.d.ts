@@ -1,22 +1,21 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
-import { CellComp } from '../rendering/cellComp';
 import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 /**
  * a user once raised an issue - they said that when you opened a popup (eg context menu)
  * and then clicked on a selection checkbox, the popup wasn't closed. this is because the
  * popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
  * checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
- * to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
+ * to get around this, we have a pattern to stop propagation for the purposes of AG Grid,
  * but we still let the event pass back to the body.
  * @param {Event} event
  */
 export declare function stopPropagationForAgGrid(event: Event): void;
 export declare function isStopPropagationForAgGrid(event: Event): boolean;
 export declare const isEventSupported: (eventName: any) => boolean;
-export declare function getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, event: Event): CellComp;
+export declare function getComponentForEvent<T>(gridOptionsWrapper: GridOptionsWrapper, event: Event, type: string): T | null;
 /**
  * @deprecated
  * Adds all type of change listeners to an element, intended to be a text field

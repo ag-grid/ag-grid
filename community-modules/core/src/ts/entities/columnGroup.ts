@@ -13,7 +13,6 @@ export class ColumnGroup implements ColumnGroupChild {
 
     public static HEADER_GROUP_SHOW_OPEN = 'open';
     public static HEADER_GROUP_SHOW_CLOSED = 'closed';
-    public static HEADER_GROUP_PADDING = 'padding';
 
     public static EVENT_LEFT_CHANGED = 'leftChanged';
     public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
@@ -26,23 +25,23 @@ export class ColumnGroup implements ColumnGroupChild {
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     // all the children of this group, regardless of whether they are opened or closed
-    private children: ColumnGroupChild[];
+    private children: ColumnGroupChild[] | null;
     // depends on the open/closed state of the group, only displaying columns are stored here
-    private displayedChildren: ColumnGroupChild[] = [];
+    private displayedChildren: ColumnGroupChild[] | null = [];
 
     private readonly groupId: string;
     private readonly instanceId: number;
     private readonly originalColumnGroup: OriginalColumnGroup;
-    private readonly pinned: 'left' | 'right';
+    private readonly pinned: 'left' | 'right' | null;
 
     // private moving = false
-    private left: number;
-    private oldLeft: number;
+    private left: number | null;
+    private oldLeft: number | null;
     private localEventService: EventService = new EventService();
 
-    private parent: ColumnGroup;
+    private parent: ColumnGroup | null;
 
-    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right') {
+    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right' | null) {
         this.groupId = groupId;
         this.instanceId = instanceId;
         this.originalColumnGroup = originalColumnGroup;
@@ -58,7 +57,7 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     public getParent(): ColumnGroup {
-        return this.parent;
+        return this.parent!;
     }
 
     public setParent(parent: ColumnGroup): void {
@@ -70,7 +69,7 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     public isEmptyGroup(): boolean {
-        return this.displayedChildren.length === 0;
+        return this.displayedChildren!.length === 0;
     }
 
     public isMoving(): boolean {
@@ -82,20 +81,20 @@ export class ColumnGroup implements ColumnGroupChild {
 
     public checkLeft(): void {
         // first get all children to setLeft, as it impacts our decision below
-        this.displayedChildren.forEach((child: ColumnGroupChild) => {
+        this.displayedChildren!.forEach((child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
-                (child as ColumnGroup).checkLeft();
+                child.checkLeft();
             }
         });
 
         // set our left based on first displayed column
-        if (this.displayedChildren.length > 0) {
+        if (this.displayedChildren!.length > 0) {
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                const lastChild = last(this.displayedChildren);
+                const lastChild = last(this.displayedChildren!);
                 const lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);
             } else {
-                const firstChildLeft = this.displayedChildren[0].getLeft();
+                const firstChildLeft = this.displayedChildren![0].getLeft();
                 this.setLeft(firstChildLeft);
             }
         } else {
@@ -105,15 +104,15 @@ export class ColumnGroup implements ColumnGroupChild {
         }
     }
 
-    public getLeft(): number {
+    public getLeft(): number | null {
         return this.left;
     }
 
-    public getOldLeft(): number {
+    public getOldLeft(): number | null {
         return this.oldLeft;
     }
 
-    public setLeft(left: number) {
+    public setLeft(left: number | null) {
         this.oldLeft = left;
         if (this.left !== left) {
             this.left = left;
@@ -121,7 +120,7 @@ export class ColumnGroup implements ColumnGroupChild {
         }
     }
 
-    public getPinned(): 'left' | 'right' {
+    public getPinned(): 'left' | 'right' | null {
         return this.pinned;
     }
 
@@ -148,12 +147,12 @@ export class ColumnGroup implements ColumnGroupChild {
     public isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean {
         let result = false;
 
-        this.children.forEach((foundChild: ColumnGroupChild) => {
+        this.children!.forEach((foundChild: ColumnGroupChild) => {
             if (wantedChild === foundChild) {
                 result = true;
             }
             if (foundChild instanceof ColumnGroup) {
-                if ((foundChild as ColumnGroup).isChildInThisGroupDeepSearch(wantedChild)) {
+                if (foundChild.isChildInThisGroupDeepSearch(wantedChild)) {
                     result = true;
                 }
             }
@@ -188,8 +187,8 @@ export class ColumnGroup implements ColumnGroupChild {
 
     public getMinWidth(): number {
         let result = 0;
-        this.displayedChildren.forEach((groupChild: ColumnGroupChild) => {
-            result += groupChild.getMinWidth();
+        this.displayedChildren!.forEach((groupChild: ColumnGroupChild) => {
+            result += groupChild.getMinWidth() || 0;
         });
         return result;
     }
@@ -201,7 +200,7 @@ export class ColumnGroup implements ColumnGroupChild {
         this.children.push(child);
     }
 
-    public getDisplayedChildren(): ColumnGroupChild[] {
+    public getDisplayedChildren(): ColumnGroupChild[] | null {
         return this.displayedChildren;
     }
 
@@ -218,11 +217,11 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     // why two methods here doing the same thing?
-    public getDefinition(): AbstractColDef {
+    public getDefinition(): AbstractColDef | null {
         return this.originalColumnGroup.getColGroupDef();
     }
 
-    public getColGroupDef(): ColGroupDef {
+    public getColGroupDef(): ColGroupDef | null {
         return this.originalColumnGroup.getColGroupDef();
     }
 
@@ -243,26 +242,26 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     private addDisplayedLeafColumns(leafColumns: Column[]): void {
-        this.displayedChildren.forEach((child: ColumnGroupChild) => {
+        this.displayedChildren!.forEach((child: ColumnGroupChild) => {
             if (child instanceof Column) {
-                leafColumns.push(child as Column);
+                leafColumns.push(child);
             } else if (child instanceof ColumnGroup) {
-                (child as ColumnGroup).addDisplayedLeafColumns(leafColumns);
+                child.addDisplayedLeafColumns(leafColumns);
             }
         });
     }
 
     private addLeafColumns(leafColumns: Column[]): void {
-        this.children.forEach((child: ColumnGroupChild) => {
+        this.children!.forEach((child: ColumnGroupChild) => {
             if (child instanceof Column) {
-                leafColumns.push(child as Column);
+                leafColumns.push(child);
             } else if (child instanceof ColumnGroup) {
-                (child as ColumnGroup).addLeafColumns(leafColumns);
+                child.addLeafColumns(leafColumns);
             }
         });
     }
 
-    public getChildren(): ColumnGroupChild[] {
+    public getChildren(): ColumnGroupChild[] | null {
         return this.children;
     }
 
@@ -287,53 +286,48 @@ export class ColumnGroup implements ColumnGroupChild {
     public calculateDisplayedColumns() {
         // clear out last time we calculated
         this.displayedChildren = [];
-        let topLevelGroup: ColumnGroup = this;
 
         // find the column group that is controlling expandable. this is relevant when we have padding (empty)
         // groups, where the expandable is actually the first parent that is not a padding group.
-        if (this.isPadding()) {
-            while (topLevelGroup.getParent() && topLevelGroup.isPadding()) {
-                topLevelGroup = topLevelGroup.getParent();
-            }
+        let parentWithExpansion: ColumnGroup = this;
+        while (parentWithExpansion != null && parentWithExpansion.isPadding()) {
+            parentWithExpansion = parentWithExpansion.getParent();
         }
 
-        const isExpandable = topLevelGroup.originalColumnGroup.isExpandable();
+        const isExpandable = parentWithExpansion ? parentWithExpansion.originalColumnGroup.isExpandable() : false;
         // it not expandable, everything is visible
         if (!isExpandable) {
             this.displayedChildren = this.children;
-        } else {
-            // Add cols based on columnGroupShow
-            // Note - the below also adds padding groups, these are always added because they never have
-            // colDef.columnGroupShow set.
-            this.children.forEach(abstractColumn => {
-                const headerGroupShow = abstractColumn.getColumnGroupShow();
-                switch (headerGroupShow) {
-                    case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
-                        // when set to open, only show col if group is open
-                        if (topLevelGroup.originalColumnGroup.isExpanded()) {
-                            this.displayedChildren.push(abstractColumn);
-                        }
-                        break;
-                    case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
-                        // when set to open, only show col if group is open
-                        if (!topLevelGroup.originalColumnGroup.isExpanded()) {
-                            this.displayedChildren.push(abstractColumn);
-                        }
-                        break;
-                    default:
-                        // if this abstractColumn is padding, we just want to add it
-                        // to the displayedChildren list if it has displayedChildren itself.
-                        if (!(
-                            abstractColumn instanceof ColumnGroup &&
-                            abstractColumn.isPadding() &&
-                            !abstractColumn.displayedChildren.length)
-                        ) {
-                            this.displayedChildren.push(abstractColumn);
-                        }
-                        break;
-                }
-            });
+            return;
         }
+
+        // Add cols based on columnGroupShow
+        // Note - the below also adds padding groups, these are always added because they never have
+        // colDef.columnGroupShow set.
+        this.children!.forEach(child => {
+            // never add empty groups
+            const emptyGroup = child instanceof ColumnGroup && (!child.displayedChildren || !child.displayedChildren.length);
+            if (emptyGroup) { return; }
+
+            const headerGroupShow = child.getColumnGroupShow();
+            switch (headerGroupShow) {
+                case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
+                    // when set to open, only show col if group is open
+                    if (parentWithExpansion.originalColumnGroup.isExpanded()) {
+                        this.displayedChildren!.push(child);
+                    }
+                    break;
+                case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
+                    // when set to open, only show col if group is open
+                    if (!parentWithExpansion.originalColumnGroup.isExpanded()) {
+                        this.displayedChildren!.push(child);
+                    }
+                    break;
+                default:
+                    this.displayedChildren!.push(child);
+                    break;
+            }
+        });
 
         this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
     }

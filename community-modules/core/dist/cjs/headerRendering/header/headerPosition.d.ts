@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../../entities/column";
@@ -11,6 +11,6 @@ export interface HeaderPosition {
 export declare class HeaderPositionUtils extends BeanStub {
     private columnController;
     private headerNavigationService;
-    findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition;
-    findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition;
+    findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined;
+    findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined;
 }

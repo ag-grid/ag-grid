@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../../interfaces/iComponent";
@@ -25,12 +25,13 @@ export interface ICellRendererParams {
     refreshCell: () => void;
     eGridCell: HTMLElement;
     eParentOfValue: HTMLElement;
+    registerRowDragger: (rowDraggerElement: HTMLElement) => void;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
 }
 export interface ISetFilterCellRendererParams {
     value: any;
     valueFormatted: any;
-    api: GridApi;
+    api?: GridApi | null;
     context: any;
 }
 export interface ICellRenderer {

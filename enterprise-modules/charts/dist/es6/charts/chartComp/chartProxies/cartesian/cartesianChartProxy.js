@@ -27,6 +27,7 @@ import { _ } from "@ag-grid-community/core";
 import { AreaSeries, LineSeries, CategoryAxis, ChartAxisPosition, find, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";
 import { ChartDataModel } from "../../chartDataModel";
 import { isDate } from "../../typeChecker";
+import { deepMerge } from "../../object";
 var CartesianChartProxy = /** @class */ (function (_super) {
     __extends(CartesianChartProxy, _super);
     function CartesianChartProxy(params) {
@@ -49,8 +50,14 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         if (flipXY) {
             _a = [yAxisType, xAxisType], xAxisType = _a[0], yAxisType = _a[1];
         }
-        options.xAxis = theme.getConfig(standaloneChartType + '.axes.' + xAxisType);
-        options.yAxis = theme.getConfig(standaloneChartType + '.axes.' + yAxisType);
+        var xAxisTheme = {};
+        var yAxisTheme = {};
+        xAxisTheme = deepMerge(xAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + xAxisType));
+        xAxisTheme = deepMerge(xAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + xAxisType + '.bottom'));
+        yAxisTheme = deepMerge(yAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + yAxisType));
+        yAxisTheme = deepMerge(yAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + yAxisType + '.left'));
+        options.xAxis = xAxisTheme;
+        options.yAxis = yAxisTheme;
         return options;
     };
     CartesianChartProxy.prototype.getAxisProperty = function (expression) {
@@ -70,13 +77,22 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         var labelRotation = 0;
         var axisKey = isHorizontalChart ? 'yAxis' : 'xAxis';
         var themeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        var axisPosition = isHorizontalChart ? ChartAxisPosition.Left : ChartAxisPosition.Bottom;
         var chartType = this.getStandaloneChartType();
-        var userThemeOverrideRotation = undefined;
+        var userThemeOverrideRotation;
         var commonRotation = _.get(themeOverrides, "common.axes." + axisType + ".label.rotation", undefined);
         var cartesianRotation = _.get(themeOverrides, "cartesian.axes." + axisType + ".label.rotation", undefined);
+        var cartesianPositionRotation = _.get(themeOverrides, "cartesian.axes." + axisType + "." + axisPosition + ".label.rotation", undefined);
         var chartTypeRotation = _.get(themeOverrides, chartType + ".axes." + axisType + ".label.rotation", undefined);
-        if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
+        var chartTypePositionRotation = _.get(themeOverrides, chartType + ".axes." + axisType + "." + axisPosition + ".label.rotation", undefined);
+        if (typeof chartTypePositionRotation === 'number' && isFinite(chartTypePositionRotation)) {
+            userThemeOverrideRotation = chartTypePositionRotation;
+        }
+        else if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
             userThemeOverrideRotation = chartTypeRotation;
+        }
+        else if (typeof cartesianPositionRotation === 'number' && isFinite(cartesianPositionRotation)) {
+            userThemeOverrideRotation = cartesianPositionRotation;
         }
         else if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {
             userThemeOverrideRotation = cartesianRotation;
@@ -95,8 +111,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
                 }
             }
         }
-        var axisPosition = isHorizontalChart ? ChartAxisPosition.Left : ChartAxisPosition.Bottom;
-        var axis = find(this.chart.axes, function (axis) { return axis.position === axisPosition; });
+        var axis = find(this.chart.axes, function (currentAxis) { return currentAxis.position === axisPosition; });
         if (axis) {
             axis.label.rotation = labelRotation;
         }
@@ -168,7 +183,11 @@ var CartesianChartProxy = /** @class */ (function (_super) {
     };
     CartesianChartProxy.prototype.getXAxisDefaults = function (xAxisType, options) {
         if (xAxisType === 'time') {
-            return this.chartTheme.getConfig(this.getStandaloneChartType() + '.axes.' + 'time');
+            var xAxisTheme = {};
+            var standaloneChartType = this.getStandaloneChartType();
+            xAxisTheme = deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time'));
+            xAxisTheme = deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time.bottom'));
+            return xAxisTheme;
         }
         return options.xAxis;
     };

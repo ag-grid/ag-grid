@@ -26,7 +26,7 @@ export declare class BlockUtils extends BeanStub {
     }): void;
     binarySearchForDisplayIndex(displayRowIndex: number, rowNodes: RowNode[]): RowNode | null;
     extractRowBounds(rowNode: RowNode, index: number): RowBounds | undefined;
-    getIndexAtPixel(rowNode: RowNode, pixel: number): number | undefined;
+    getIndexAtPixel(rowNode: RowNode, pixel: number): number | null;
     createNodeIdPrefix(parentRowNode: RowNode): string | undefined;
     checkOpenByDefault(rowNode: RowNode): void;
 }

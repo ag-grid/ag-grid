@@ -33,7 +33,7 @@ export declare class OriginalColumnGroup implements OriginalColumnGroupChild, IE
     getColumnGroupShow(): string | undefined;
     setupExpandable(): void;
     setExpandable(): void;
-    findChildren(): OriginalColumnGroupChild[];
+    private findChildrenRemovingPadding;
     private onColumnVisibilityChanged;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;

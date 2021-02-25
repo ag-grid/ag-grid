@@ -24,6 +24,7 @@ var selection_1 = require("../../../scene/selection");
 var rect_1 = require("../../../scene/shape/rect");
 var text_1 = require("../../../scene/shape/text");
 var bandScale_1 = require("../../../scale/bandScale");
+var series_1 = require("../series");
 var label_1 = require("../../label");
 var node_1 = require("../../../scene/node");
 var cartesianSeries_1 = require("./cartesianSeries");
@@ -48,6 +49,29 @@ var BarSeriesLabel = /** @class */ (function (_super) {
     ], BarSeriesLabel.prototype, "formatter", void 0);
     return BarSeriesLabel;
 }(label_1.Label));
+var BarSeriesTooltip = /** @class */ (function (_super) {
+    __extends(BarSeriesTooltip, _super);
+    function BarSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate([
+        observable_1.reactive('change')
+    ], BarSeriesTooltip.prototype, "renderer", void 0);
+    return BarSeriesTooltip;
+}(series_1.SeriesTooltip));
+exports.BarSeriesTooltip = BarSeriesTooltip;
+function flat(arr, target) {
+    if (target === void 0) { target = []; }
+    arr.forEach(function (v) {
+        if (Array.isArray(v)) {
+            flat(v, target);
+        }
+        else {
+            target.push(v);
+        }
+    });
+    return target;
+}
 var BarSeries = /** @class */ (function (_super) {
     __extends(BarSeries, _super);
     function BarSeries() {
@@ -70,6 +94,7 @@ var BarSeries = /** @class */ (function (_super) {
          * in the {@link yKeys} setter.
          */
         _this.seriesItemEnabled = new Map();
+        _this.tooltip = new BarSeriesTooltip();
         _this.flipXY = false;
         _this.fills = [
             '#c16068',
@@ -135,7 +160,7 @@ var BarSeries = /** @class */ (function (_super) {
                 var value = _this[key];
                 if (value) {
                     if (Array.isArray(value)) {
-                        values.push.apply(values, value);
+                        values = values.concat(flat(value));
                     }
                     else {
                         values.push(value);

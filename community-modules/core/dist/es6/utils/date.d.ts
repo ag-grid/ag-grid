@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /**
@@ -8,8 +8,8 @@
  * @param includeTime Whether to include the time in the serialised string
  * @param separator The separator to use between date parts
  */
-export declare function serialiseDate(date: Date, includeTime?: boolean, separator?: string): string | null;
+export declare function serialiseDate(date: Date | null, includeTime?: boolean, separator?: string): string | null;
 /**
  * Parses a date and time from a string in the format `yyyy-MM-dd HH:mm:ss`
  */
-export declare function parseDateTimeFromString(value: string): Date | null;
+export declare function parseDateTimeFromString(value?: string | null): Date | null;

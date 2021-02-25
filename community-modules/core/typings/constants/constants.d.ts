@@ -1,10 +1,4 @@
 export declare class Constants {
-    static STEP_EVERYTHING: number;
-    static STEP_FILTER: number;
-    static STEP_SORT: number;
-    static STEP_MAP: number;
-    static STEP_AGGREGATE: number;
-    static STEP_PIVOT: number;
     static ROW_BUFFER_SIZE: number;
     static LAYOUT_INTERVAL: number;
     static BATCH_WAIT_MILLIS: number;

@@ -6,18 +6,18 @@ import { addCssClass, setFixedHeight, getAbsoluteHeight, setFixedWidth, getAbsol
 import { createIconNoSpan } from "../utils/icon";
 
 export interface PanelOptions {
-    component?: Component;
-    hideTitleBar?: boolean;
-    closable?: boolean;
-    title?: string;
-    minWidth?: number;
-    width?: number | string;
-    minHeight?: number;
-    height?: number | string;
-    centered?: boolean;
-    cssIdentifier?: string;
-    x?: number;
-    y?: number;
+    component?: Component | null;
+    hideTitleBar?: boolean | null;
+    closable?: boolean | null;
+    title?: string | null;
+    minWidth?: number | null;
+    width?: number | string | null;
+    minHeight?: number | null;
+    height?: number | string | null;
+    centered?: boolean | null;
+    cssIdentifier?: string | null;
+    x?: number | null;
+    y?: number | null;
 }
 
 export class AgPanel extends Component {
@@ -29,7 +29,7 @@ export class AgPanel extends Component {
     protected closable = true;
     protected config: PanelOptions | undefined;
 
-    protected closeButtonComp: Component;
+    protected closeButtonComp: Component | undefined;
     protected popupParent: HTMLElement;
     protected minWidth: number;
     protected minHeight?: number;
@@ -87,7 +87,7 @@ export class AgPanel extends Component {
             centered,
             x,
             y
-        } = this.config;
+        } = this.config as PanelOptions;
 
         const eGui = this.getGui();
 
@@ -143,7 +143,7 @@ export class AgPanel extends Component {
         if (centered) {
             this.center();
         } else if (x || y) {
-            this.offsetElement(x, y);
+            this.offsetElement(x!, y!);
         }
 
         this.positioned = true;
@@ -155,7 +155,7 @@ export class AgPanel extends Component {
         eGui.focus();
 
         this.close = () => {
-            eGui.parentElement.removeChild(eGui);
+            eGui.parentElement!.removeChild(eGui);
             this.destroy();
         };
     }
@@ -181,7 +181,7 @@ export class AgPanel extends Component {
         // skip if cursor is outside of popupParent horizontally
         let skipX = (
             parentRect.left >= e.clientX && this.position.x <= 0 ||
-            parentRect.right <= e.clientX && parentRect.right <= this.position.x + parentRect.left + width
+            parentRect.right <= e.clientX && parentRect.right <= this.position.x + parentRect.left + width!
         );
 
         if (!skipX) {
@@ -199,7 +199,7 @@ export class AgPanel extends Component {
                     // if anywhereWithin is true, we allow to move
                     // as long as the cursor is within the dialog
                     skipX = (
-                        (movementX < 0 && e.clientX > this.position.x + parentRect.left + width) ||
+                        (movementX < 0 && e.clientX > this.position.x + parentRect.left + width!) ||
                         (movementX > 0 && e.clientX < this.position.x + parentRect.left)
                     );
                 } else {
@@ -207,10 +207,10 @@ export class AgPanel extends Component {
                         // if the movement is bound to the right side of the dialog
                         // we skip if we are moving to the left and the cursor
                         // is to the right of the dialog
-                        (movementX < 0 && e.clientX > this.position.x + parentRect.left + width) ||
+                        (movementX < 0 && e.clientX > this.position.x + parentRect.left + width!) ||
                         // or skip if we are moving to the right and the cursor
                         // is to the left of the right side anchor
-                        (movementX > 0 && e.clientX < this.position.x + parentRect.left + width)
+                        (movementX > 0 && e.clientX < this.position.x + parentRect.left + width!)
                     );
                 }
             }
@@ -221,7 +221,7 @@ export class AgPanel extends Component {
         const skipY = (
             // skip if cursor is outside of popupParent vertically
             parentRect.top >= e.clientY && this.position.y <= 0 ||
-            parentRect.bottom <= e.clientY && parentRect.bottom <= this.position.y + parentRect.top + height ||
+            parentRect.bottom <= e.clientY && parentRect.bottom <= this.position.y + parentRect.top + height! ||
             isTop && (
                 // skip if we are moving to towards top and the cursor is
                 // below the top anchor + topBuffer
@@ -235,11 +235,11 @@ export class AgPanel extends Component {
             !isTop && (
                 // skip if we are moving towards the top and the cursor
                 // is below the bottom anchor
-                (movementY < 0 && e.clientY > this.position.y + parentRect.top + height) ||
+                (movementY < 0 && e.clientY > this.position.y + parentRect.top + height!) ||
 
                 // skip if we are moving towards the bottom and the cursor
                 // is above the bottom anchor
-                (movementY > 0 && e.clientY < this.position.y + parentRect.top + height)
+                (movementY > 0 && e.clientY < this.position.y + parentRect.top + height!)
             )
         );
 
@@ -272,23 +272,24 @@ export class AgPanel extends Component {
             keepWithinBounds: true
         });
 
-        this.position.x = parseInt(ePopup.style.left, 10);
-        this.position.y = parseInt(ePopup.style.top, 10);
+        this.position.x = parseInt(ePopup.style.left!, 10);
+        this.position.y = parseInt(ePopup.style.top!, 10);
     }
 
-    public getHeight(): number {
+    public getHeight(): number | undefined {
         return this.size.height;
     }
 
     public setHeight(height: number | string) {
         const eGui = this.getGui();
         let isPercent = false;
+
         if (typeof height === 'string' && height.indexOf('%') !== -1) {
             setFixedHeight(eGui, height);
             height = getAbsoluteHeight(eGui);
             isPercent = true;
         } else {
-            height = Math.max(this.minHeight, height as number);
+            height = Math.max(this.minHeight!, height as number);
             const offsetParent = eGui.offsetParent;
             if (offsetParent && offsetParent.clientHeight && (height + this.position.y > offsetParent.clientHeight)) {
                 height = offsetParent.clientHeight - this.position.y;
@@ -307,13 +308,14 @@ export class AgPanel extends Component {
         }
     }
 
-    public getWidth(): number {
+    public getWidth(): number | undefined {
         return this.size.width;
     }
 
     public setWidth(width: number | string) {
         const eGui = this.getGui();
         let isPercent = false;
+
         if (typeof width === 'string' && width.indexOf('%') !== -1) {
             setFixedWidth(eGui, width);
             width = getAbsoluteWidth(eGui);
@@ -341,8 +343,8 @@ export class AgPanel extends Component {
     public center() {
         const eGui = this.getGui();
 
-        const x = (eGui.offsetParent.clientWidth / 2) - (this.getWidth() / 2);
-        const y = (eGui.offsetParent.clientHeight / 2) - (this.getHeight() / 2);
+        const x = (eGui.offsetParent!.clientWidth / 2) - (this.getWidth()! / 2);
+        const y = (eGui.offsetParent!.clientHeight / 2) - (this.getHeight()! / 2);
 
         this.offsetElement(x, y);
     }
@@ -358,15 +360,15 @@ export class AgPanel extends Component {
 
             const eGui = closeButtonComp.getGui();
             eGui.appendChild(addCssClass(
-                createIconNoSpan('close', this.gridOptionsWrapper),
-                'ag-panel-title-bar-button-icon')
+                createIconNoSpan('close', this.gridOptionsWrapper)!,
+                'ag-panel-title-bar-button-icon')!
             );
 
             this.addTitleBarButton(closeButtonComp);
             closeButtonComp.addManagedListener(eGui, 'click', this.onBtClose.bind(this));
         } else if (this.closeButtonComp) {
             const eGui = this.closeButtonComp.getGui();
-            eGui.parentElement.removeChild(eGui);
+            eGui.parentElement!.removeChild(eGui);
 
             this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }

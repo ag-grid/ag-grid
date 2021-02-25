@@ -55,6 +55,7 @@ export interface GridOptions {
     accentedSort?: boolean;
     deltaSort?: boolean;
     suppressHorizontalScroll?: boolean;
+    alwaysShowHorizontalScroll?: boolean;
     alwaysShowVerticalScroll?: boolean;
     debounceVerticalScrollbar?: boolean;
     unSortIcon?: boolean;
@@ -121,6 +122,7 @@ export interface GridOptions {
     allowContextMenuWithControlKey?: boolean;
     /** @deprecated - no longer needed, transaction updates keep group state */
     rememberGroupStateWhenNewData?: boolean;
+    suppressModelUpdateAfterUpdateTransaction?: boolean;
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
@@ -455,6 +457,15 @@ export interface IsRowMaster {
 }
 export interface IsRowSelectable {
     (node: RowNode): boolean;
+}
+export interface RowClassParams {
+    data: any;
+    node: RowNode;
+    rowIndex: number;
+    $scope: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
 }
 export interface ProcessChartOptionsParams {
     type: ChartType;

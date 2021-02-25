@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
@@ -15,4 +15,4 @@ export declare const iconNameClassMap: {
  * @returns {HTMLElement}
  */
 export declare function createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement;
-export declare function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column, forceCreate?: boolean): HTMLElement;
+export declare function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null, forceCreate?: boolean): HTMLElement | undefined;

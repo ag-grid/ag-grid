@@ -1,0 +1,439 @@
+{
+    "columnsAndColumnGroups": {
+        "meta": {
+            "displayName": "Columns and Column Groups"
+        },
+        "headerName": {
+            "description": "The name to render in the column header. If not specified and field is specified, the field name will be used as the header name."
+        },
+        "columnGroupShow": {
+            "description": "Whether to show the column when the group is open / closed."
+        },
+        "headerClass": {
+            "description": "Class to use for the header cell. Can be a string, array of strings, or function."
+        },
+        "toolPanelClass": {
+            "description": "Class to use for the tool panel cell. Can be a string, array of strings, or function."
+        },
+        "suppressColumnsToolPanel": {
+            "default": false,
+            "description": "Set to `true` if you do not want this column or group to appear in the Columns Tool Panel."
+        },
+        "suppressFiltersToolPanel": {
+            "default": false,
+            "description": "Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel."
+        }
+    },
+    "columnsOnly": {
+        "meta": {
+            "displayName": "Columns Only"
+        },
+        "field": {
+            "description": "The field of the row to get the cells data from."
+        },
+        "colId": {
+            "description": "The unique ID to give the column. This is optional. If missing, the ID will default to the field. If both field and `colId` are missing, a unique ID will be generated. This ID is used to identify the column in the API for sorting, filtering etc."
+        },
+        "type": {
+            "description": "A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column. This helps to reduce duplication of properties when you have a lot of common column properties."
+        },
+        "width": {
+            "description": "Initial width in pixels for the cell."
+        },
+        "defaultWidth": {
+            "description": "Same as 'width', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "minWidth": {
+            "description": "Minimum width in pixels for the cell."
+        },
+        "maxWidth": {
+            "description": "Maximum width in pixels for the cell."
+        },
+        "flex": {
+            "description": "Used instead of `width` when the goal is to fill the remaining empty space of the grid.",
+            "more": {
+                "name": "Column Flex",
+                "url": "../column-sizing/#column-flex"
+            }
+        },
+        "initialFlex": {
+            "description": "Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "filter<br />filterFramework": {
+            "description": "Filter component to use for this column. Set to `true` to use the default filter."
+        },
+        "filterParams": {
+            "description": "Custom params to be passed to filter component."
+        },
+        "floatingFilter": {
+            "default": false,
+            "description": "Whether to show a floating filter for this column."
+        },
+        "floatingFilterComponent<br/>floatingFilterComponentFramework": {
+            "description": "Floating filter component to use for this column."
+        },
+        "floatingFilterComponentParams": {
+            "description": "Custom params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`."
+        },
+        "hide": {
+            "default": false,
+            "description": "Set to `true` for this column to be hidden. You might think it would make more sense to call this field `visible` and mark it `false` to hide, but we want all default values to be `false` and we want columns to be visible by default."
+        },
+        "initialHide": {
+            "description": "Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "pinned": {
+            "options": [
+                "left",
+                "right"
+            ],
+            "description": "Pin a column to one side."
+        },
+        "initialPinned": {
+            "description": "Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "lockPosition": {
+            "default": false,
+            "description": "Set to `true` to always have this column displayed first."
+        },
+        "lockVisible": {
+            "default": false,
+            "description": "Set to `true` to block making column visible / hidden via the UI (API will still work)."
+        },
+        "lockPinned": {
+            "default": false,
+            "description": "Set to `true` to block pinning column via the UI (API will still work)."
+        },
+        "sortable": {
+            "default": false,
+            "description": "Set to `true` to allow sorting on this column."
+        },
+        "sort": {
+            "options": [
+                null,
+                "asc",
+                "desc"
+            ],
+            "description": "Set to sort this column."
+        },
+        "initialSort": {
+            "description": "Same as 'sort', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "sortIndex": {
+            "description": "If doing multi-sort by default, the order which column sorts are applied."
+        },
+        "initialSortIndex": {
+            "description": "Same as 'sortIndex', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "sortingOrder": {
+            "options": [
+                null,
+                "asc",
+                "desc"
+            ],
+            "description": "Array defining the order in which sorting occurs (if sorting is enabled)."
+        },
+        "resizable": {
+            "default": false,
+            "description": "Set to `true` to allow column to be resized."
+        },
+        "headerTooltip": {
+            "description": "Tooltip for the column header"
+        },
+        "tooltipField": {
+            "description": "The field of the tooltip to apply to the cell."
+        },
+        "tooltipValueGetter": {
+            "type": {
+                "parameters": {
+                    "api": "GridApi",
+                    "columnApi": "ColumnApi",
+                    "colDef": "ColDef",
+                    "column": "Column",
+                    "context": "Context",
+                    "value?": "any",
+                    "valueFormatted?": "any",
+                    "rowIndex?": "number",
+                    "node?": "RowNode",
+                    "data?": "any"
+                },
+                "returnType": "string"
+            },
+            "description": "Callback that should return the string used for a tooltip."
+        },
+        "checkboxSelection": {
+            "default": false,
+            "description": "`boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column."
+        },
+        "rowDrag": {
+            "default": false,
+            "description": "`boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging."
+        },
+        "rowDragText": {
+            "type": {
+                "parameters": {
+                    "rowNode": "RowNode",
+                    "columns": "Column[]",
+                    "defaultTextValue": "string"
+                },
+                "returnType": "string"
+            },
+            "description": "A callback that should return a string to be displayed by the `rowDragComp` while dragging a row. If this callback is not set, the current cell value will be used."
+        },
+        "dndSource": {
+            "default": false,
+            "description": "`boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop."
+        },
+        "dndSourceOnRowDrag": {
+            "description": "Function to allow custom drag functionality for native drag and drop."
+        },
+        "cellStyle": {
+            "description": "The style to give a particular cell.",
+            "more": {
+                "name": "Cell Style",
+                "url": "../cell-styles/#cell-style"
+            }
+        },
+        "cellClass": {
+            "description": "The class to give a particular cell.",
+            "more": {
+                "name": "Cell Class",
+                "url": "../cell-styles/#cell-class"
+            }
+        },
+        "cellClassRules": {
+            "description": "Rules which can be applied to include certain CSS classes.",
+            "more": {
+                "name": "Cell Class Rules",
+                "url": "../cell-styles/#cell-class-rules"
+            }
+        },
+        "editable": {
+            "default": false,
+            "description": "Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable."
+        },
+        "onCellValueChanged(params)": {
+            "description": "Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`."
+        },
+        "cellRenderer<br />cellRendererFramework": {
+            "description": "`cellRenderer` to use for this column."
+        },
+        "cellRendererParams": {
+            "description": "Params to be passed to cell renderer component."
+        },
+        "pinnedRowCellRenderer<br />pinnedRowCellRendererFramework": {
+            "description": "`cellRenderer` to use for pinned rows in this column. Pinned cells will use `pinnedCellRenderer` if available, or `cellRenderer` if not."
+        },
+        "pinnedRowCellRendererParams": {
+            "description": "Params to be passed to pinned row cell renderer component."
+        },
+        "cellRendererSelector<br/>cellEditorSelector": {
+            "description": "Callback to select which cell renderer / cell editor to be used for a given row within the same column."
+        },
+        "cellEditor<br />cellEditorFramework": {
+            "description": "`cellEditor` to use for this column."
+        },
+        "cellEditorParams": {
+            "description": "Params to be passed to cell editor component."
+        },
+        "headerComponent<br />headerComponentFramework": {
+            "description": "Header component to use for this column."
+        },
+        "headerComponentParams": {
+            "description": "Params to be passed to header component."
+        },
+        "valueGetter(params)": {
+            "description": "Function or expression. Gets the value from your data for display."
+        },
+        "headerValueGetter(params)": {
+            "description": "Function or expression. Gets the value for display in the header."
+        },
+        "filterValueGetter(params)": {
+            "description": "Function or expression. Gets the value for filtering purposes."
+        },
+        "valueFormatter(params)": {
+            "description": "Function or expression. Formats the value for display."
+        },
+        "pinnedRowValueFormatter(params)": {
+            "description": "Function or expression. Formatter to use for a pinned row. If missing, the normal `valueFormatter` will be used."
+        },
+        "valueSetter(params)": {
+            "description": "Function or expression. Sets the value into your data for saving. Return `true` if the data changed."
+        },
+        "valueParser(params)": {
+            "description": "Function or expression. Parses the value for saving."
+        },
+        "keyCreator(params)": {
+            "description": "Function to return a string key for a value. This string is used for grouping, set filtering, and searching within cell editor dropdowns. When filtering and searching the string is exposed to the user, so make sure to return a human-readable value."
+        },
+        "getQuickFilterText": {
+            "description": "A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value)."
+        },
+        "aggFunc": {
+            "options": [
+                "sum",
+                "min",
+                "max",
+                "first",
+                "last"
+            ],
+            "description": "Name of function to use for aggregation. You can also provide your own agg function."
+        },
+        "initialAggFunc": {
+            "description": "Same as 'aggFunc', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "allowedAggFuncs": {
+            "description": "Aggregation functions allowed on this column e.g. `['sum', 'avg']`. If missing, all installed functions are allowed. This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API."
+        },
+        "rowGroup": {
+            "description": "Set to true to row group by this column"
+        },
+        "initialRowGroup": {
+            "description": "Same as 'rowGroup', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "rowGroupIndex": {
+            "description": "Set this in columns you want to group by. If only grouping by one column, set this to any number (e.g. `0`). If grouping by multiple columns, set this to where you want this column to be in the group (e.g. `0` for first, `1` for second, and so on)."
+        },
+        "initialRowGroupIndex": {
+            "description": "Same as 'rowGroupIndex', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "pivot": {
+            "description": "Set to true to pivot by this column"
+        },
+        "initialPivot": {
+            "description": "Same as 'pivot', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "pivotIndex": {
+            "description": "Set this in columns you want to pivot by. If only pivoting by one column, set this to any number (e.g. `0`). If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. `0` for first, `1` for second, and so on)."
+        },
+        "initialPivotIndex": {
+            "description": "Same as 'pivotIndex', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "comparator(valueA, valueB, nodeA, nodeB, isInverted)": {
+            "description": "Comparator function for custom sorting."
+        },
+        "pivotComparator(valueA, valueB)": {
+            "description": "Comparator to use when ordering the pivot columns, when this column is used to pivot on. The values will always be strings, as the pivot service uses strings as keys for the pivot groups."
+        },
+        "unSortIcon": {
+            "default": false,
+            "description": "Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column."
+        },
+        "enableRowGroup": {
+            "default": false,
+            "description": "(Enterprise only) Set to `true` if you want to be able to row group by this column via the GUI. This will not block the API or properties being used to achieve row grouping."
+        },
+        "enablePivot": {
+            "default": false,
+            "description": "(Enterprise only) Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot."
+        },
+        "enableValue": {
+            "default": false,
+            "description": "(Enterprise only) Set to `true` if you want to be able to aggregate by this column via the GUI. This will not block the API or properties being used to achieve aggregation."
+        },
+        "enableCellChangeFlash": {
+            "default": false,
+            "description": "Set to `true` to flash a cell when it's refreshed."
+        },
+        "menuTabs": {
+            "description": "Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`. This is used to figure out which menu tabs are present and in which order the tabs are shown."
+        },
+        "suppressMenu": {
+            "default": false,
+            "description": "Set to `true` if no menu should be shown for this column header."
+        },
+        "suppressSizeToFit": {
+            "default": false,
+            "description": "Set to `true` if you want this column's width to be fixed during 'size to fit' operations."
+        },
+        "suppressMovable": {
+            "default": false,
+            "description": "Set to `true` if you do not want this column to be movable via dragging."
+        },
+        "suppressNavigable": {
+            "default": false,
+            "description": "Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`. Can also be a callback function to have different rows navigable."
+        },
+        "suppressCellFlash": {
+            "default": false,
+            "description": "Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid."
+        },
+        "suppressHeaderKeyboardEvent(params)": {
+            "default": false,
+            "description": "Suppress the grid taking action for the relevant keyboard event when a header is focused.",
+            "more": {
+                "name": "Suppress Keyboard Events",
+                "url": "../keyboard-navigation/#suppressheaderkeyboardevent"
+            }
+        },
+        "suppressKeyboardEvent(params)": {
+            "default": false,
+            "description": "Suppress the grid taking action for the relevant keyboard event when a cell is focused.",
+            "more": {
+                "name": "Suppress Keyboard Events",
+                "url": "../keyboard-navigation/#suppresskeyboardevent"
+            }
+        },
+        "onCellClicked(params)": {
+            "description": "Callback called when a cell is clicked."
+        },
+        "onCellDoubleClicked(params)": {
+            "description": "Callback called when a cell is double clicked."
+        },
+        "onCellContextMenu(params)": {
+            "description": "Callback called when a cell is right clicked."
+        },
+        "autoHeight": {
+            "default": false,
+            "description": "Set to `true` to have the grid calculate the height of a row based on contents of this column."
+        },
+        "wrapText": {
+            "default": false,
+            "description": "Set to `true` to have the text wrap inside the cell."
+        },
+        "singleClickEdit": {
+            "default": false,
+            "description": "Set to `true` to have cells under this column enter edit mode after single click."
+        },
+        "chartDataType": {
+            "options": [
+                "category",
+                "series",
+                "excluded"
+            ],
+            "description": "Defines the chart data type that should be used for a column."
+        },
+        "columnsMenuParams": {
+            "description": "Params used to change the behaviour and appearance of the Columns Menu tab.",
+            "more": {
+                "name": "Customising the Columns Menu Tab",
+                "url": "../column-menu/#customising-the-columns-menu-tab"
+            }
+        }
+    },
+    "columnGroupsOnly": {
+        "meta": {
+            "displayName": "Column Groups Only"
+        },
+        "groupId": {
+            "description": "The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API."
+        },
+        "children": {
+            "description": "A list containing a mix of columns and column groups."
+        },
+        "marryChildren": {
+            "default": false,
+            "description": "Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed."
+        },
+        "openByDefault": {
+            "default": false,
+            "description": "Set to `true` if this group should be opened by default."
+        },
+        "headerGroupComponent<br />headerGroupComponentFramework": {
+            "description": "Component to use header group."
+        },
+        "headerGroupComponentParams": {
+            "description": "Params for the header group component."
+        }
+    }
+}

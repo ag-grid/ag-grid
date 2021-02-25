@@ -2,8 +2,8 @@ import { BeanStub, CellRange, CellRangeParams, ChartType, Column, IAggFunc } fro
 export interface ColState {
     column?: Column;
     colId: string;
-    displayName: string;
-    selected: boolean;
+    displayName: string | null;
+    selected?: boolean;
     order: number;
 }
 export interface ChartModelParams {
@@ -37,7 +37,7 @@ export declare class ChartDataModel extends BeanStub {
     private chartType;
     private chartThemeName;
     private datasource;
-    private detached;
+    private unlinked;
     private grouping;
     private crossFiltering;
     private columnNames;
@@ -60,11 +60,12 @@ export declare class ChartDataModel extends BeanStub {
     setChartThemeName(chartThemeName: string): void;
     getChartThemeName(): string;
     isSuppressChartRanges(): boolean;
-    isDetached(): boolean;
-    toggleDetached(): void;
+    isUnlinked(): boolean;
+    toggleUnlinked(): void;
+    getAggFunc(): string | IAggFunc | undefined;
     getSelectedValueColState(): {
         colId: string;
-        displayName: string;
+        displayName: string | null;
     }[];
     getSelectedValueCols(): Column[];
     getSelectedDimension(): ColState;

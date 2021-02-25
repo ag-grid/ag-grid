@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,7 +48,7 @@ var MoveColumnController = /** @class */ (function () {
             // will be visible again. otherwise a group with three columns (but only two visible) could
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             var visibleState_1 = draggingEvent.dragItem.visibleState;
-            var visibleColumns = columns.filter(function (column) { return visibleState_1[column.getId()]; });
+            var visibleColumns = (columns || []).filter(function (column) { return visibleState_1[column.getId()]; });
             this.setColumnsVisible(visibleColumns, true, "uiColumnDragged");
         }
         this.setColumnsPinned(columns, this.pinned, "uiColumnDragged");
@@ -138,10 +138,8 @@ var MoveColumnController = /** @class */ (function () {
                 // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
                 return col.getPinned() == _this.pinned;
             }
-            else {
-                // if not pin locked, then always allowed to be in this container
-                return true;
-            }
+            // if not pin locked, then always allowed to be in this container
+            return true;
         });
         this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, mouseXNormalised, fromEnter);
     };
@@ -150,7 +148,7 @@ var MoveColumnController = /** @class */ (function () {
             switch (hDirection) {
                 case dragAndDropService_1.HorizontalDirection.Left: return dragAndDropService_1.HorizontalDirection.Right;
                 case dragAndDropService_1.HorizontalDirection.Right: return dragAndDropService_1.HorizontalDirection.Left;
-                default: console.error("ag-Grid: Unknown direction " + hDirection);
+                default: console.error("AG Grid: Unknown direction " + hDirection);
             }
         }
         else {
@@ -338,7 +336,7 @@ var MoveColumnController = /** @class */ (function () {
         }
     };
     MoveColumnController.prototype.ensureIntervalCleared = function () {
-        if (this.moveInterval) {
+        if (this.movingIntervalId) {
             window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
             this.dragAndDropService.setGhostIcon(dragAndDropService_1.DragAndDropService.ICON_MOVE);
@@ -353,7 +351,7 @@ var MoveColumnController = /** @class */ (function () {
         if (pixelsToMove > 100) {
             pixelsToMove = 100;
         }
-        var pixelsMoved;
+        var pixelsMoved = null;
         if (this.needToMoveLeft) {
             pixelsMoved = this.gridPanel.scrollHorizontally(-pixelsToMove);
         }

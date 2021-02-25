@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -169,7 +169,7 @@ var SelectionController = /** @class */ (function (_super) {
     // to be like before the id was changed.
     SelectionController.prototype.syncInOldRowNode = function (rowNode, oldNode) {
         var oldNodeHasDifferentId = generic_1.exists(oldNode) && (rowNode.id !== oldNode.id);
-        if (oldNodeHasDifferentId) {
+        if (oldNodeHasDifferentId && oldNode) {
             var oldNodeSelected = generic_1.exists(this.selectedNodes[oldNode.id]);
             if (oldNodeSelected) {
                 this.selectedNodes[oldNode.id] = oldNode;
@@ -244,7 +244,7 @@ var SelectionController = /** @class */ (function (_super) {
         var rowModelClientSide = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         if (justFiltered) {
             if (!rowModelClientSide) {
-                console.error('ag-Grid: selecting just filtered only works with In Memory Row Model');
+                console.error('AG Grid: selecting just filtered only works with In Memory Row Model');
                 return;
             }
             var clientSideRowModel = this.rowModel;

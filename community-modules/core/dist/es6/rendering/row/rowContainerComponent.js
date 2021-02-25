@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,7 +31,7 @@ var RowContainerComponent = /** @class */ (function () {
         if (params.eWrapper) {
             this.eWrapper = params.eWrapper;
         }
-        this.hideWhenNoChildren = params.hideWhenNoChildren;
+        this.hideWhenNoChildren = !!params.hideWhenNoChildren;
     }
     RowContainerComponent.prototype.setVerticalScrollPosition = function (verticalScrollPosition) {
         this.scrollTop = verticalScrollPosition;

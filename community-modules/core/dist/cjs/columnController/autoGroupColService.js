@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,7 +43,7 @@ var AutoGroupColService = /** @class */ (function (_super) {
         var doingTreeData = this.gridOptionsWrapper.isTreeData();
         var doingMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
         if (doingTreeData && doingMultiAutoColumn) {
-            console.warn('ag-Grid: you cannot mix groupMultiAutoColumn with treeData, only one column can be used to display groups when doing tree data');
+            console.warn('AG Grid: you cannot mix groupMultiAutoColumn with treeData, only one column can be used to display groups when doing tree data');
             doingMultiAutoColumn = false;
         }
         // if doing groupMultiAutoColumn, then we call the method multiple times, once

@@ -26,7 +26,7 @@ export declare class BeanStub implements IEventEmitter {
     isAlive: () => boolean;
     addDestroyFunc(func: () => void): void;
     createManagedBean<T>(bean: T, context?: Context): T;
-    protected createBean<T>(bean: T, context?: Context, afterPreCreateCallback?: (comp: Component) => void): T;
-    protected destroyBean<T>(bean: T, context?: Context): T;
+    protected createBean<T>(bean: T, context?: Context | null, afterPreCreateCallback?: (comp: Component) => void): T;
+    protected destroyBean<T>(bean: T, context?: Context): T | undefined;
     protected destroyBeans<T>(beans: T[], context?: Context): T[];
 }

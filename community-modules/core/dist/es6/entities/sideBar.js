@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,6 +51,9 @@ var SideBarDefParser = /** @class */ (function () {
     };
     SideBarDefParser.parseComponents = function (from) {
         var result = [];
+        if (!from) {
+            return result;
+        }
         from.forEach(function (it) {
             var toAdd = null;
             if (typeof it === 'string') {

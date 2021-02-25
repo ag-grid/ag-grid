@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Announcement renders with title 1`] = `
+<div
+  className="announcement announcement--highlighted"
+>
+  <div
+    className="card-body"
+  >
+    <h5
+      className="card-title"
+    >
+      My Title
+    </h5>
+    My content
+  </div>
+</div>
+`;

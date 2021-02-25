@@ -1,0 +1,13 @@
+#wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#pieChart {
+    flex: 1;
+}
+
+#myGrid {
+    flex: 1;
+}

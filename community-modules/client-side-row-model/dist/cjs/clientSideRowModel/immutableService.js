@@ -33,12 +33,12 @@ var ImmutableService = /** @class */ (function (_super) {
     // converts the setRowData() command to a transaction
     ImmutableService.prototype.createTransactionForRowData = function (data) {
         if (core_1._.missing(this.clientSideRowModel)) {
-            console.error('ag-Grid: ImmutableService only works with ClientSideRowModel');
+            console.error('AG Grid: ImmutableService only works with ClientSideRowModel');
             return;
         }
         var getRowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
         if (!getRowNodeIdFunc || core_1._.missing(getRowNodeIdFunc)) {
-            console.error('ag-Grid: ImmutableService requires getRowNodeId() callback to be implemented, your row data need IDs!');
+            console.error('AG Grid: ImmutableService requires getRowNodeId() callback to be implemented, your row data need IDs!');
             return;
         }
         // convert the data into a transaction object by working out adds, removes and updates

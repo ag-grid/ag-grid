@@ -5,9 +5,9 @@ import {
     SelectableService,
     StageExecuteParams,
     BeanStub
-} from "@ag-grid-community/core"
+} from "@ag-grid-community/core";
 
-import {FilterService} from "./filterService";
+import { FilterService } from "./filterService";
 
 @Bean('filterStage')
 export class FilterStage extends BeanStub implements IRowNodeStage {
@@ -16,9 +16,9 @@ export class FilterStage extends BeanStub implements IRowNodeStage {
     @Autowired('filterService') private filterService: FilterService;
 
     public execute(params: StageExecuteParams): void {
-        const {rowNode, changedPath} = params;
+        const { rowNode, changedPath } = params;
 
-        this.filterService.filter(changedPath);
+        this.filterService.filter(changedPath!);
 
         this.selectableService.updateSelectableAfterFiltering(rowNode);
     }

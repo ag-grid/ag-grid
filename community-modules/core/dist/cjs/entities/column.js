@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -186,10 +186,10 @@ var Column = /** @class */ (function () {
             rowGroupingItems.forEach(function (item) {
                 if (generic_1.exists(colDefAny[item])) {
                     if (moduleRegistry_1.ModuleRegistry.isPackageBased()) {
-                        warnOnce("ag-Grid: " + item + " is only valid in ag-grid-enterprise, your column definition should not have " + item, 'ColumnRowGroupingMissing' + item);
+                        warnOnce("AG Grid: " + item + " is only valid in ag-grid-enterprise, your column definition should not have " + item, 'ColumnRowGroupingMissing' + item);
                     }
                     else {
-                        warnOnce("ag-Grid: " + item + " is only valid with ag-Grid Enterprise Module " + moduleNames_1.ModuleNames.RowGroupingModule + " - your column definition should not have " + item, 'ColumnRowGroupingMissing' + item);
+                        warnOnce("AG Grid: " + item + " is only valid with AG Grid Enterprise Module " + moduleNames_1.ModuleNames.RowGroupingModule + " - your column definition should not have " + item, 'ColumnRowGroupingMissing' + item);
                     }
                 }
             });
@@ -197,20 +197,20 @@ var Column = /** @class */ (function () {
         if (!moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RichSelectModule)) {
             if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
                 if (moduleRegistry_1.ModuleRegistry.isPackageBased()) {
-                    warnOnce("ag-Grid: " + this.colDef.cellEditor + " can only be used with ag-grid-enterprise", 'ColumnRichSelectMissing');
+                    warnOnce("AG Grid: " + this.colDef.cellEditor + " can only be used with ag-grid-enterprise", 'ColumnRichSelectMissing');
                 }
                 else {
-                    warnOnce("ag-Grid: " + this.colDef.cellEditor + " can only be used with ag-Grid Enterprise Module " + moduleNames_1.ModuleNames.RichSelectModule, 'ColumnRichSelectMissing');
+                    warnOnce("AG Grid: " + this.colDef.cellEditor + " can only be used with AG Grid Enterprise Module " + moduleNames_1.ModuleNames.RichSelectModule, 'ColumnRichSelectMissing');
                 }
             }
         }
         if (!moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.DateTimeCellEditorModule)) {
             if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agDateTimeCellEditor') {
                 if (moduleRegistry_1.ModuleRegistry.isPackageBased()) {
-                    warnOnce("ag-Grid: " + this.colDef.cellEditor + " can only be used with ag-grid-enterprise", 'ColumnDateTimeMissing');
+                    warnOnce("AG Grid: " + this.colDef.cellEditor + " can only be used with ag-grid-enterprise", 'ColumnDateTimeMissing');
                 }
                 else {
-                    warnOnce("ag-Grid: " + this.colDef.cellEditor + " can only be used with ag-Grid Enterprise Module " + moduleNames_1.ModuleNames.DateTimeCellEditorModule, 'ColumnDateTimeMissing');
+                    warnOnce("AG Grid: " + this.colDef.cellEditor + " can only be used with AG Grid Enterprise Module " + moduleNames_1.ModuleNames.DateTimeCellEditorModule, 'ColumnDateTimeMissing');
                 }
             }
         }
@@ -218,12 +218,12 @@ var Column = /** @class */ (function () {
             var itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(function (item) {
                 if (generic_1.exists(colDefAny[item])) {
-                    warnOnce("ag-Grid: " + item + " is not possible when doing tree data, your column definition should not have " + item, 'TreeDataCannotRowGroup');
+                    warnOnce("AG Grid: " + item + " is not possible when doing tree data, your column definition should not have " + item, 'TreeDataCannotRowGroup');
                 }
             });
         }
         if (generic_1.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
-            warnOnce('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
+            warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
         }
     };
     Column.prototype.addEventListener = function (eventType, listener) {
@@ -232,7 +232,7 @@ var Column = /** @class */ (function () {
     Column.prototype.removeEventListener = function (eventType, listener) {
         this.eventService.removeEventListener(eventType, listener);
     };
-    Column.prototype.createIsColumnFuncParams = function (rowNode) {
+    Column.prototype.createColumnFunctionCallbackParams = function (rowNode) {
         return {
             node: rowNode,
             data: rowNode.data,
@@ -250,7 +250,7 @@ var Column = /** @class */ (function () {
         }
         // if function, then call the function to find out
         if (typeof this.colDef.suppressNavigable === 'function') {
-            var params = this.createIsColumnFuncParams(rowNode);
+            var params = this.createColumnFunctionCallbackParams(rowNode);
             var userFunc = this.colDef.suppressNavigable;
             return userFunc(params);
         }
@@ -285,7 +285,7 @@ var Column = /** @class */ (function () {
         }
         // if function, then call the function to find out
         if (typeof value === 'function') {
-            var params = this.createIsColumnFuncParams(rowNode);
+            var params = this.createColumnFunctionCallbackParams(rowNode);
             var editableFunc = value;
             return editableFunc(params);
         }
@@ -535,7 +535,9 @@ var Column = /** @class */ (function () {
     };
     Column.prototype.setMinimum = function (source) {
         if (source === void 0) { source = "api"; }
-        this.setActualWidth(this.minWidth, source);
+        if (generic_1.exists(this.minWidth)) {
+            this.setActualWidth(this.minWidth, source);
+        }
     };
     Column.prototype.setRowGroupActive = function (rowGroup, source) {
         if (source === void 0) { source = "api"; }
@@ -592,19 +594,19 @@ var Column = /** @class */ (function () {
     // this used to be needed, as previous version of ag-grid had lockPosition as column state,
     // so couldn't depend on colDef version.
     Column.prototype.isLockPosition = function () {
-        console.warn('ag-Grid: since v21, col.isLockPosition() should not be used, please use col.getColDef().lockPosition instead.');
+        console.warn('AG Grid: since v21, col.isLockPosition() should not be used, please use col.getColDef().lockPosition instead.');
         return this.colDef ? !!this.colDef.lockPosition : false;
     };
     // this used to be needed, as previous version of ag-grid had lockVisible as column state,
     // so couldn't depend on colDef version.
     Column.prototype.isLockVisible = function () {
-        console.warn('ag-Grid: since v21, col.isLockVisible() should not be used, please use col.getColDef().lockVisible instead.');
+        console.warn('AG Grid: since v21, col.isLockVisible() should not be used, please use col.getColDef().lockVisible instead.');
         return this.colDef ? !!this.colDef.lockVisible : false;
     };
     // this used to be needed, as previous version of ag-grid had lockPinned as column state,
     // so couldn't depend on colDef version.
     Column.prototype.isLockPinned = function () {
-        console.warn('ag-Grid: since v21, col.isLockPinned() should not be used, please use col.getColDef().lockPinned instead.');
+        console.warn('AG Grid: since v21, col.isLockPinned() should not be used, please use col.getColDef().lockPinned instead.');
         return this.colDef ? !!this.colDef.lockPinned : false;
     };
     // + renderedHeaderCell - for making header cell transparent when moving

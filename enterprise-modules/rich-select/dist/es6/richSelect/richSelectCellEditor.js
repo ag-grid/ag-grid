@@ -43,7 +43,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         }
         this.renderSelectedValue();
         if (_.missing(params.values)) {
-            console.warn('ag-Grid: richSelectCellEditor requires values for it to work');
+            console.warn('AG Grid: richSelectCellEditor requires values for it to work');
             return;
         }
         var values = params.values;

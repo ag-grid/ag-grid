@@ -5,6 +5,7 @@ export declare class BarSeriesPanel extends Component {
     private seriesGroup;
     private seriesTooltipsToggle;
     private seriesStrokeWidthSlider;
+    private seriesLineDashSlider;
     private seriesLineOpacitySlider;
     private seriesFillOpacitySlider;
     private chartTranslator;
@@ -14,6 +15,7 @@ export declare class BarSeriesPanel extends Component {
     private init;
     private initSeriesTooltips;
     private initSeriesStrokeWidth;
+    private initSeriesLineDash;
     private initOpacity;
     private initLabelPanel;
     private initShadowPanel;

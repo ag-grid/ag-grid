@@ -5,7 +5,7 @@ import { Column } from "../entities/column";
 // represented by a PathItem
 interface PathItem {
     rowNode: RowNode; // the node this item points to
-    children: PathItem[]; // children of this node - will be a subset of all the nodes children
+    children: PathItem[] | null; // children of this node - will be a subset of all the nodes children
 }
 
 // when doing transactions, or change detection, and grouping is present
@@ -51,7 +51,7 @@ export class ChangedPath {
             rowNode: rootNode,
             children: null
         };
-        this.mapToItems[rootNode.id] = this.pathRoot;
+        this.mapToItems[rootNode.id!] = this.pathRoot;
     }
 
     // can be set inactive by:
@@ -108,14 +108,14 @@ export class ChangedPath {
     private createPathItems(rowNode: RowNode): number {
         let pointer = rowNode;
         let newEntryCount = 0;
-        while (!this.mapToItems[pointer.id]) {
+        while (!this.mapToItems[pointer.id!]) {
             const newEntry: PathItem = {
                 rowNode: pointer,
                 children: null
             };
-            this.mapToItems[pointer.id] = newEntry;
+            this.mapToItems[pointer.id!] = newEntry;
             newEntryCount++;
-            pointer = pointer.parent;
+            pointer = pointer.parent!;
         }
         return newEntryCount;
     }
@@ -127,24 +127,24 @@ export class ChangedPath {
         while (pointer) {
             // if columns, add the columns in all the way to parent, merging
             // in any other columns that might be there already
-            if (!this.nodeIdsToColumns[pointer.id]) {
-                this.nodeIdsToColumns[pointer.id] = {};
+            if (!this.nodeIdsToColumns[pointer.id!]) {
+                this.nodeIdsToColumns[pointer.id!] = {};
             }
-            columns.forEach(col => this.nodeIdsToColumns[pointer.id][col.getId()] = true);
-            pointer = pointer.parent;
+            columns.forEach(col => this.nodeIdsToColumns[pointer.id!][col.getId()] = true);
+            pointer = pointer.parent!;
         }
     }
 
     private linkPathItems(rowNode: RowNode, newEntryCount: number): void {
         let pointer = rowNode;
         for (let i = 0; i < newEntryCount; i++) {
-            const thisItem = this.mapToItems[pointer.id];
-            const parentItem = this.mapToItems[pointer.parent.id];
+            const thisItem = this.mapToItems[pointer.id!];
+            const parentItem = this.mapToItems[pointer.parent!.id!];
             if (!parentItem.children) {
                 parentItem.children = [];
             }
             parentItem.children.push(thisItem);
-            pointer = pointer.parent;
+            pointer = pointer.parent!;
         }
     }
 
@@ -167,25 +167,25 @@ export class ChangedPath {
         this.linkPathItems(rowNode, newEntryCount);
 
         // update columns
-        this.populateColumnsMap(rowNode, columns);
+        this.populateColumnsMap(rowNode, columns!);
     }
 
     public canSkip(rowNode: RowNode): boolean {
-        return this.active && !this.mapToItems[rowNode.id];
+        return this.active && !this.mapToItems[rowNode.id!];
     }
 
     public getValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] {
         if (!this.keepingColumns) { return valueColumns; }
 
-        const colsForThisNode = this.nodeIdsToColumns[rowNode.id];
+        const colsForThisNode = this.nodeIdsToColumns[rowNode.id!];
         const result = valueColumns.filter(col => colsForThisNode[col.getId()]);
         return result;
     }
 
-    public getNotValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] {
+    public getNotValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] | null {
         if (!this.keepingColumns) { return null; }
 
-        const colsForThisNode = this.nodeIdsToColumns[rowNode.id];
+        const colsForThisNode = this.nodeIdsToColumns[rowNode.id!];
         const result = valueColumns.filter(col => !colsForThisNode[col.getId()]);
         return result;
     }

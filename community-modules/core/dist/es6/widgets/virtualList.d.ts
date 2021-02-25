@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from './component';
@@ -6,7 +6,7 @@ import { ManagedFocusComponent } from './managedFocusComponent';
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
-    isRowSelected?(index: number): boolean;
+    isRowSelected?(index: number): boolean | undefined;
 }
 export declare class VirtualList extends ManagedFocusComponent {
     private readonly cssIdentifier;
@@ -28,9 +28,9 @@ export declare class VirtualList extends ManagedFocusComponent {
     protected handleKeyDown(e: KeyboardEvent): void;
     protected onTabKeyDown(e: KeyboardEvent): void;
     private navigate;
-    getLastFocusedRow(): number;
+    getLastFocusedRow(): number | null;
     focusRow(rowNumber: number): void;
-    getComponentAt(rowIndex: number): Component;
+    getComponentAt(rowIndex: number): Component | undefined;
     private static getTemplate;
     private getItemHeight;
     ensureIndexVisible(index: number): void;

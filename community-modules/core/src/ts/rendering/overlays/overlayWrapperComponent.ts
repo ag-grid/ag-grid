@@ -69,17 +69,19 @@ export class OverlayWrapperComponent extends Component {
 
         this.inProgress = true;
 
-        workItem.then(comp => {
-            this.inProgress = false;
+        if (workItem) {
+            workItem.then(comp => {
+                this.inProgress = false;
 
-            this.eOverlayWrapper.appendChild(comp.getGui());
-            this.activeOverlay = comp;
+                this.eOverlayWrapper.appendChild(comp!.getGui());
+                this.activeOverlay = comp!;
 
-            if (this.destroyRequested) {
-                this.destroyRequested = false;
-                this.destroyActiveOverlay();
-            }
-        });
+                if (this.destroyRequested) {
+                    this.destroyRequested = false;
+                    this.destroyActiveOverlay();
+                }
+            });
+        }
 
         this.setDisplayed(true);
     }
@@ -94,7 +96,7 @@ export class OverlayWrapperComponent extends Component {
             return;
         }
 
-        this.activeOverlay = this.getContext().destroyBean(this.activeOverlay);
+        this.activeOverlay = this.getContext().destroyBean(this.activeOverlay)!;
 
         clearElement(this.eOverlayWrapper);
     }

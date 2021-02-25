@@ -11,11 +11,14 @@ export declare class ChartService extends BeanStub implements IChartService {
     private crossFilteringContext;
     getChartModels(): ChartModel[];
     createChartFromCurrentRange(chartType?: ChartType): ChartRef | undefined;
+    restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
     createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
     createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
     createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined;
     private createChart;
     private createChartRef;
     private getSelectedRange;
+    private mapToRangeParam;
+    private mapToPivotParams;
     private destroyAllActiveCharts;
 }

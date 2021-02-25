@@ -23,6 +23,19 @@ var group_1 = require("../../scene/group");
 var observable_1 = require("../../util/observable");
 var chartAxis_1 = require("../chartAxis");
 var id_1 = require("../../util/id");
+var SeriesTooltip = /** @class */ (function (_super) {
+    __extends(SeriesTooltip, _super);
+    function SeriesTooltip() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.enabled = true;
+        return _this;
+    }
+    __decorate([
+        observable_1.reactive('change')
+    ], SeriesTooltip.prototype, "enabled", void 0);
+    return SeriesTooltip;
+}(observable_1.Observable));
+exports.SeriesTooltip = SeriesTooltip;
 var Series = /** @class */ (function (_super) {
     __extends(Series, _super);
     function Series() {
@@ -33,6 +46,9 @@ var Series = /** @class */ (function (_super) {
          */
         _this.group = new group_1.Group();
         _this.directions = [chartAxis_1.ChartAxisDirection.X, chartAxis_1.ChartAxisDirection.Y];
+        /**
+         * @deprecated Use {@link tooltip.enabled} instead.
+         */
         _this.tooltipEnabled = true;
         _this.data = undefined;
         _this.visible = true;

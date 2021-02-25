@@ -40,10 +40,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
         const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
         options.seriesDefaults = {
             title: seriesDefaults.title,
-            label: {
-                ...seriesDefaults.label,
-                minRequiredAngle: seriesDefaults.label.minAngle
-            },
+            label: seriesDefaults.label,
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
@@ -59,6 +56,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
+            lineDash: seriesDefaults.lineDash,
+            lineDashOffset: seriesDefaults.lineDashOffset,
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
             listeners: seriesDefaults.listeners
         } as PieSeriesOptions;
@@ -87,7 +86,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
         const seriesMap: { [id: string]: PieSeries } = {};
 
         doughnutChart.series.forEach((series: PieSeries) => {
-            const pieSeries = series as PieSeries;
+            const pieSeries = series;
             const id = pieSeries.angleKey;
             if (_.includes(fieldIds, id)) {
                 seriesMap[id] = pieSeries;
@@ -196,6 +195,13 @@ export class DoughnutChartProxy extends PolarChartProxy {
         const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
         const pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series') as PieSeries;
 
+        if (!existingSeries) {
+            if (this.crossFiltering && !pieSeries.tooltip.renderer) {
+                // only add renderer if user hasn't provided one
+                this.addCrossFilteringTooltipRenderer(pieSeries);
+            }
+        }
+
         pieSeries.angleName = updateParams.field.displayName!;
         pieSeries.labelKey = updateParams.params.category.id;
         pieSeries.labelName = updateParams.params.category.name;
@@ -289,7 +295,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 ...fontOptions,
                 enabled: false,
                 offset: 3,
-                minRequiredAngle: 0,
+                minAngle: 0,
             },
             tooltip: {
                 enabled: true,

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,7 +50,7 @@ var HorizontalResizeService = /** @class */ (function (_super) {
     HorizontalResizeService.prototype.onDragStart = function (params, mouseEvent) {
         this.dragStartX = mouseEvent.clientX;
         this.setResizeIcons();
-        var shiftKey = mouseEvent instanceof MouseEvent ? mouseEvent.shiftKey === true : false;
+        var shiftKey = mouseEvent instanceof MouseEvent && mouseEvent.shiftKey === true;
         params.onResizeStart(shiftKey);
     };
     HorizontalResizeService.prototype.setResizeIcons = function () {

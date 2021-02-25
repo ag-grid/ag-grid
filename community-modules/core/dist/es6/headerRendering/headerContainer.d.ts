@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { HeaderRowComp } from './headerRowComp';
@@ -14,7 +14,7 @@ export declare class HeaderContainer extends BeanStub {
     private filtersRowComp;
     private columnsRowComp;
     private groupsRowComps;
-    constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string);
+    constructor(eContainer: HTMLElement, eViewport: HTMLElement | null, pinned: string | null);
     forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void;
     private init;
     private onColumnResized;

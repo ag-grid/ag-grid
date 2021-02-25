@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from '../events';
@@ -20,10 +20,10 @@ export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, b
     setReadOnly(readOnly: boolean): void;
     setDisabled(disabled: boolean): this;
     toggle(): void;
-    getValue(): boolean;
+    getValue(): boolean | undefined;
     setValue(value?: boolean, silent?: boolean): this;
     setName(name: string): this;
-    protected isSelected(): boolean;
+    protected isSelected(): boolean | undefined;
     private setSelected;
     private dispatchChange;
     private onCheckboxClick;

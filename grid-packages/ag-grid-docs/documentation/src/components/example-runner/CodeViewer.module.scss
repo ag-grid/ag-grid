@@ -4,6 +4,10 @@
     border: 0;
     height: 100%;
 
+    &--hidden {
+        composes: d-none from global;
+    }
+
     &__files {
         composes: mt-2 ml-2 mb-2 py-2 from global;
 
@@ -54,7 +58,6 @@
         overflow: auto;
 
         pre {
-            font-size: 0.8rem;
             flex: 1;
             margin: 0;
         }

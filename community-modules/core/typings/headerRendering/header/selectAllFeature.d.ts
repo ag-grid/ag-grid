@@ -14,6 +14,7 @@ export declare class SelectAllFeature extends BeanStub {
     constructor(cbSelectAll: AgCheckbox, column: Column);
     private postConstruct;
     private showOrHideSelectAll;
+    private refreshHeaderAriaDescribedBy;
     private onModelChanged;
     private onSelectionChanged;
     private getNextCheckboxState;

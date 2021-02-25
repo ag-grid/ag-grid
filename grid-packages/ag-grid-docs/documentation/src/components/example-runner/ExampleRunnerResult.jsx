@@ -1,49 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import fs from 'fs';
-import isServerSideRendering from '../../utils/is-server-side-rendering';
-import { useExampleFileNodes } from './use-example-file-nodes';
-import { getIndexHtml } from './index-html-helper';
+import classnames from 'classnames';
 import styles from './ExampleRunnerResult.module.scss';
+import { getIndexHtmlUrl } from './helpers';
+import { getIndexHtml } from './index-html-helper';
+import isDevelopment from 'utils/is-development';
 
-const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
-    const [shouldExecute, setShouldExecute] = useState(isVisible);
-
-    const nodes = useExampleFileNodes();
-    const { pageName, name, appLocation, framework, internalFramework, type, library, importType } = exampleInfo;
-    const indexHtml = getIndexHtml(nodes, exampleInfo, true);
-
-    if (isServerSideRendering()) {
-        // generate code for the website to read at runtime
-        if (type === 'generated' || type === 'mixed') {
-            const modulesLocation = appLocation; // because modules is the default
-
-            fs.writeFileSync(`public${modulesLocation}index.html`, indexHtml);
-
-            const packagesLocation = modulesLocation.replace('/modules/', '/packages/');
-
-            fs.writeFileSync(`public${packagesLocation}index.html`, indexHtml);
-
-            if (framework === 'react' && library === 'grid') {
-                // need to ensure functional version is also generated
-                fs.writeFileSync(`public${modulesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
-                fs.writeFileSync(`public${packagesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
-            }
-        } else if (type === 'polymer') {
-            fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
-        }
-    }
+const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, exampleInfo }) => {
+    const [isExecuting, setExecuting] = useState(isOnScreen && resultFrameIsVisible);
+    const { pageName, name, internalFramework, importType } = exampleInfo;
 
     useEffect(() => {
-        if (isVisible) {
-            setShouldExecute(true);
+        // trigger the example to execute when it is on screen and the result pane is visible
+        if (isOnScreen && resultFrameIsVisible && !isExecuting) {
+            setExecuting(true);
         }
-    }, [isVisible]);
+    }, [isOnScreen, resultFrameIsVisible]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        if (!isVisible) {
-            setShouldExecute(false);
+        // if the example info changes (e.g. if modules and switched to packages) and the example is off screen,
+        // stop it executing
+        if (!isOnScreen && isExecuting) {
+            setExecuting(false);
         }
-    }, [indexHtml]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [exampleInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const iframeRef = React.createRef();
 
@@ -51,16 +30,21 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
         const iframe = iframeRef.current;
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-        iframeDoc.open();
-        iframeDoc.write(shouldExecute ? indexHtml : '');
-        iframeDoc.close();
-    }, [shouldExecute, indexHtml]); // eslint-disable-line react-hooks/exhaustive-deps
+        if (isDevelopment()) {
+            // in development mode we generate the index HTML on the fly and inject it into the iframe
+            iframeDoc.open();
+            iframeDoc.write(isExecuting ? getIndexHtml(exampleInfo, true) : '');
+            iframeDoc.close();
+        } else {
+            iframe.src = isExecuting ? getIndexHtmlUrl(exampleInfo) : '';
+        }
+    }, [isExecuting, exampleInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <iframe
         key={`${pageName}_${name}_${internalFramework}_${importType}`}
         ref={iframeRef}
         title={name}
-        className={styles['example-runner-result']}></iframe>;
+        className={classnames(styles['example-runner-result'], { [styles['example-runner-result--hidden']]: !resultFrameIsVisible })} />;
 };
 
 export default ExampleRunnerResult;

@@ -16,10 +16,12 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabe
     protected postConstruct(): void {
         super.postConstruct();
 
-        addCssClass(this.getGui(), this.className);
+        if (this.className) {
+            addCssClass(this.getGui(), this.className);
+        }
     }
 
-    public onValueChange(callbackFn: (newValue: TValue) => void) {
+    public onValueChange(callbackFn: (newValue?: TValue | null) => void) {
         this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => callbackFn(this.getValue()));
 
         return this;
@@ -43,7 +45,7 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabe
         return this.value;
     }
 
-    public setValue(value: TValue, silent?: boolean): this {
+    public setValue(value?: TValue | null, silent?: boolean): this {
         if (this.value === value) {
             return this;
         }

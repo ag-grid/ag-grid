@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,6 +66,7 @@ export { TabbedLayout } from "./layout/tabbedLayout";
 // misc
 export { simpleHttpRequest } from "./misc/simpleHttpRequest";
 export { ResizeObserverService } from "./misc/resizeObserverService";
+export { AnimationFrameService } from "./misc/animationFrameService";
 export { LargeTextCellEditor } from "./rendering/cellEditors/largeTextCellEditor";
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
 export { PopupSelectCellEditor } from "./rendering/cellEditors/popupSelectCellEditor";
@@ -86,11 +87,12 @@ export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 // row models
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
+export { ServerSideTransactionResultStatus } from "./interfaces/serverSideTransaction";
 export { ChangedPath } from "./utils/changedPath";
-export { RowNodeBlock } from "./modules/rowNodeCache/rowNodeBlock";
-export { RowNodeBlockLoader } from "./modules/rowNodeCache/rowNodeBlockLoader";
-export { RowNodeCache } from "./modules/rowNodeCache/rowNodeCache";
+export { RowNodeBlock } from "./rowNodeCache/rowNodeBlock";
+export { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 export { PaginationProxy } from "./pagination/paginationProxy";
+export { ClientSideRowModelSteps } from "./interfaces/iClientSideRowModel";
 //styling
 export { StylingService } from "./styling/stylingService";
 // widgets
@@ -112,7 +114,7 @@ export { AgPanel } from "./widgets/agPanel";
 export { Component } from "./widgets/component";
 export { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 export { PopupComponent } from "./widgets/popupComponent";
-export { PopupService, } from "./widgets/popupService";
+export { PopupService } from "./widgets/popupService";
 export { TouchListener } from "./widgets/touchListener";
 export { VirtualList } from "./widgets/virtualList";
 // range
@@ -132,6 +134,7 @@ export { defaultGroupComparator } from "./functions";
 export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
+export { RowNodeSorter } from "./rowNodes/rowNodeSorter";
 export { GridCore } from "./gridCore";
 export { Logger, LoggerFactory } from "./logger";
 export { SelectionController } from "./selectionController";
@@ -145,6 +148,7 @@ export { CellPositionUtils } from "./entities/cellPosition";
 export { RowPositionUtils } from "./entities/rowPosition";
 export { HeaderPositionUtils } from "./headerRendering/header/headerPosition";
 export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/header/headerNavigationService";
+export { ServerSideStoreType } from "./entities/gridOptions";
 export * from "./propertyKeys";
 export { ColumnApi } from "./columnController/columnApi";
 export { BaseComponentWrapper } from "./components/framework/frameworkComponentWrapper";

@@ -193,7 +193,7 @@
     var btDestroyGrid;
 
     // wait for the document to be loaded, otherwise
-    // ag-Grid will not find the div in the document.
+    // AG Grid will not find the div in the document.
     var loadGrid = function() {
         btBringGridBack = document.querySelector("#btBringGridBack");
         btDestroyGrid = document.querySelector("#btDestroyGrid");

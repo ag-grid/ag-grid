@@ -45,7 +45,7 @@ var PieChartProxy = /** @class */ (function (_super) {
         var seriesDefaults = theme.getConfig('pie.series.pie');
         options.seriesDefaults = {
             title: seriesDefaults.title,
-            label: __assign(__assign({}, seriesDefaults.label), { minRequiredAngle: seriesDefaults.label.minAngle }),
+            label: seriesDefaults.label,
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
@@ -61,6 +61,8 @@ var PieChartProxy = /** @class */ (function (_super) {
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
+            lineDash: seriesDefaults.lineDash,
+            lineDashOffset: seriesDefaults.lineDashOffset,
             highlightStyle: seriesDefaults.highlightStyle,
             listeners: seriesDefaults.listeners
         };
@@ -113,6 +115,10 @@ var PieChartProxy = /** @class */ (function (_super) {
                     enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
                     renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
                 } }), 'pie.series');
+            if (this.crossFiltering && !pieSeries.tooltip.renderer) {
+                // only add renderer if user hasn't provided one
+                this.addCrossFilteringTooltipRenderer(pieSeries);
+            }
         }
         pieSeries.angleName = field.displayName;
         pieSeries.labelKey = params.category.id;
@@ -162,7 +168,7 @@ var PieChartProxy = /** @class */ (function (_super) {
                 colors: strokes,
                 length: 10,
                 strokeWidth: 2,
-            }, label: __assign(__assign({}, fontOptions), { enabled: false, offset: 3, minRequiredAngle: 0 }), tooltip: {
+            }, label: __assign(__assign({}, fontOptions), { enabled: false, offset: 3, minAngle: 0 }), tooltip: {
                 enabled: true,
             }, shadow: this.getDefaultDropShadowOptions() });
         return options;

@@ -1,7 +1,7 @@
-import {_, Autowired, Component, FontStyle, FontWeight, PostConstruct} from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
+import { _, Autowired, Component, FontStyle, FontWeight, PostConstruct } from "@ag-grid-community/core";
+import { ChartController } from "../../../chartController";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export default class TitlePanel extends Component {
 
@@ -38,13 +38,13 @@ export default class TitlePanel extends Component {
         const hasTitle = this.hasTitle;
 
         const setFont = (font: Font) => {
-            const chartProxy = this.chartController.getChartProxy();
+            const proxy = this.chartController.getChartProxy();
 
-            if (font.family) { chartProxy.setTitleOption('fontFamily', font.family); }
-            if (font.weight) { chartProxy.setTitleOption('fontWeight', font.weight); }
-            if (font.style) { chartProxy.setTitleOption('fontStyle', font.style); }
-            if (font.size) { chartProxy.setTitleOption('fontSize', font.size); }
-            if (font.color) { chartProxy.setTitleOption('color', font.color); }
+            if (font.family) { proxy.setTitleOption('fontFamily', font.family); }
+            if (font.weight) { proxy.setTitleOption('fontWeight', font.weight); }
+            if (font.style) { proxy.setTitleOption('fontStyle', font.style); }
+            if (font.size) { proxy.setTitleOption('fontSize', font.size); }
+            if (font.color) { proxy.setTitleOption('color', font.color); }
         };
 
         const initialFont = {
@@ -66,15 +66,15 @@ export default class TitlePanel extends Component {
             initialFont,
             setFont,
             setEnabled: (enabled) => {
-                const chartProxy = this.chartController.getChartProxy();
+                const proxy = this.chartController.getChartProxy();
 
                 if (enabled) {
                     const newTitle = this.disabledTitle || this.chartTranslator.translate('titlePlaceholder');
-                    chartProxy.setTitleOption('text', newTitle);
+                    proxy.setTitleOption('text', newTitle);
                     this.disabledTitle = '';
                 } else {
-                    this.disabledTitle = this.chartController.getChartProxy().getTitleOption('text');
-                    chartProxy.setTitleOption('text', '');
+                    this.disabledTitle = proxy.getTitleOption('text');
+                    proxy.setTitleOption('text', '');
                 }
             }
         };

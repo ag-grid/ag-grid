@@ -3,7 +3,7 @@ import { MD5 } from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager extends BeanStub {
-    private static RELEASE_INFORMATION: string = 'MTYxMDYzNDc3NzU5OA==';
+    private static RELEASE_INFORMATION: string = 'MTYxMzQ2MjUzMTEzNw==';
     private static licenseKey: string;
     private watermarkMessage: string | undefined = undefined;
 
@@ -73,7 +73,7 @@ export class LicenseManager extends BeanStub {
     }
 
     public getWatermarkMessage() : string {
-        return this.watermarkMessage!;
+        return this.watermarkMessage || '';
     }
 
     private static formatDate(date: any): string {
@@ -165,14 +165,12 @@ export class LicenseManager extends BeanStub {
     }
 
     private validateLicenseKeyForVersion(version: string, isTrial: boolean, license: string) {
-        switch (version) {
-            case "2":
-                if (isTrial) {
-                    this.validateForTrial(license);
-                } else {
-                    this.validateLegacyKey(license);
-                }
-                break;
+        if (version !== '2') { return; }
+
+        if (isTrial) {
+            this.validateForTrial(license);
+        } else {
+            this.validateLegacyKey(license);
         }
     }
 
@@ -218,9 +216,9 @@ export class LicenseManager extends BeanStub {
 
     private outputInvalidLicenseKey() {
         console.error('*****************************************************************************************************************');
-        console.error('***************************************** ag-Grid Enterprise License ********************************************');
+        console.error('***************************************** AG Grid Enterprise License ********************************************');
         console.error('********************************************* Invalid License ***************************************************');
-        console.error('* Your license for ag-Grid Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');
+        console.error('* Your license for AG Grid Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');
         console.error('*****************************************************************************************************************');
         console.error('*****************************************************************************************************************');
 
@@ -229,9 +227,9 @@ export class LicenseManager extends BeanStub {
 
     private outputExpiredTrialKey(formattedExpiryDate: string) {
         console.error('****************************************************************************************************************');
-        console.error('***************************************** ag-Grid Enterprise License *******************************************');
+        console.error('***************************************** AG Grid Enterprise License *******************************************');
         console.error('*****************************************   Trial Period Expired.    *******************************************');
-        console.error(`* Your license for ag-Grid Enterprise expired on ${formattedExpiryDate}.                                                *`);
+        console.error(`* Your license for AG Grid Enterprise expired on ${formattedExpiryDate}.                                                *`);
         console.error('* Please email info@ag-grid.com to purchase a license.                                                         *');
         console.error('****************************************************************************************************************');
         console.error('****************************************************************************************************************');
@@ -241,9 +239,9 @@ export class LicenseManager extends BeanStub {
 
     private outputMissingLicenseKey() {
         console.error('****************************************************************************************************************');
-        console.error('***************************************** ag-Grid Enterprise License *******************************************');
+        console.error('***************************************** AG Grid Enterprise License *******************************************');
         console.error('****************************************** License Key Not Found ***********************************************');
-        console.error('* All ag-Grid Enterprise features are unlocked.                                                                *');
+        console.error('* All AG Grid Enterprise features are unlocked.                                                                *');
         console.error('* This is an evaluation only version, it is not licensed for development projects intended for production.     *');
         console.error('* If you want to hide the watermark, please email info@ag-grid.com for a trial license.                        *');
         console.error('****************************************************************************************************************');
@@ -255,17 +253,17 @@ export class LicenseManager extends BeanStub {
     private outputIncompatibleVersion(formattedExpiryDate: string, formattedReleaseDate: string) {
         console.error('****************************************************************************************************************************');
         console.error('****************************************************************************************************************************');
-        console.error('*                                             ag-Grid Enterprise License                                                   *');
-        console.error('*                           License not compatible with installed version of ag-Grid Enterprise.                           *');
+        console.error('*                                             AG Grid Enterprise License                                                   *');
+        console.error('*                           License not compatible with installed version of AG Grid Enterprise.                           *');
         console.error('*                                                                                                                          *');
-        console.error(`* Your ag-Grid License entitles you to all versions of ag-Grid that we release within the time covered by your license     *`);
-        console.error(`* - typically we provide one year licenses which entitles you to all releases / updates of ag-Grid within that year.       *`);
-        console.error(`* Your license has an end (expiry) date which stops the license key working with versions of ag-Grid released after the    *`);
-        console.error(`* license end date. The license key that you have expires on ${formattedExpiryDate}, however the version of ag-Grid you    *`);
+        console.error(`* Your AG Grid License entitles you to all versions of AG Grid that we release within the time covered by your license     *`);
+        console.error(`* - typically we provide one year licenses which entitles you to all releases / updates of AG Grid within that year.       *`);
+        console.error(`* Your license has an end (expiry) date which stops the license key working with versions of AG Grid released after the    *`);
+        console.error(`* license end date. The license key that you have expires on ${formattedExpiryDate}, however the version of AG Grid you    *`);
         console.error(`* are trying to use was released on ${formattedReleaseDate}.                                                               *`);
         console.error('*                                                                                                                          *');
         console.error('* Please contact info@ag-grid.com to renew your subscription to new versions and get a new license key to work with this   *');
-        console.error('* version of ag-Grid.                                                                                                      *');
+        console.error('* version of AG Grid.                                                                                                      *');
         console.error('****************************************************************************************************************************');
         console.error('****************************************************************************************************************************');
 

@@ -19,6 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
+import { SeriesTooltip } from "../series";
 import { finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { LinearScale } from "../../../scale/linearScale";
@@ -28,6 +29,17 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { toTooltipHtml } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
+var ScatterSeriesTooltip = /** @class */ (function (_super) {
+    __extends(ScatterSeriesTooltip, _super);
+    function ScatterSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate([
+        reactive('change')
+    ], ScatterSeriesTooltip.prototype, "renderer", void 0);
+    return ScatterSeriesTooltip;
+}(SeriesTooltip));
+export { ScatterSeriesTooltip };
 var ScatterSeries = /** @class */ (function (_super) {
     __extends(ScatterSeries, _super);
     function ScatterSeries() {
@@ -53,6 +65,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         _this.yName = '';
         _this.sizeName = 'Size';
         _this.labelName = 'Label';
+        _this.tooltip = new ScatterSeriesTooltip();
         var marker = _this.marker;
         marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
         marker.addEventListener('change', _this.update, _this);
@@ -293,7 +306,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         if (!xKey || !yKey) {
             return '';
         }
-        var _b = this, tooltipRenderer = _b.tooltipRenderer, xName = _b.xName, yName = _b.yName, sizeKey = _b.sizeKey, sizeName = _b.sizeName, labelKey = _b.labelKey, labelName = _b.labelName, fill = _b.fill;
+        var _b = this, tooltip = _b.tooltip, xName = _b.xName, yName = _b.yName, sizeKey = _b.sizeKey, sizeName = _b.sizeName, labelKey = _b.labelKey, labelName = _b.labelName, fill = _b.fill;
+        var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c;
         var color = fill || 'gray';
         var title = this.title || yName;
         var datum = nodeDatum.seriesDatum;

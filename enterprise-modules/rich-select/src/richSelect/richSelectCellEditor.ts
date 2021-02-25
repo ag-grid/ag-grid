@@ -57,8 +57,8 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.focusAfterAttached = params.cellStartedEdit;
 
         const icon = _.createIconNoSpan('smallDown', this.gridOptionsWrapper);
-        _.addCssClass(icon, 'ag-rich-select-value-icon');
-        this.eValue.appendChild(icon);
+        _.addCssClass(icon!, 'ag-rich-select-value-icon');
+        this.eValue.appendChild(icon!);
 
         this.virtualList = this.getContext().createBean(new VirtualList('rich-select'));
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
@@ -71,7 +71,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.renderSelectedValue();
 
         if (_.missing(params.values)) {
-            console.warn('ag-Grid: richSelectCellEditor requires values for it to work');
+            console.warn('AG Grid: richSelectCellEditor requires values for it to work');
             return;
         }
 
@@ -94,7 +94,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.clearSearchString = _.debounce(this.clearSearchString, debounceDelay);
 
         if (_.exists(params.charPress)) {
-            this.searchText(params.charPress as string);
+            this.searchText(params.charPress);
         }
     }
 

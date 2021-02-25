@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel } from "./simpleFilter";
@@ -25,8 +25,8 @@ export declare abstract class ScalarFilter<M extends ISimpleFilterModel, T> exte
     private scalarFilterParams;
     protected abstract comparator(): Comparator<T>;
     protected abstract mapRangeFromModel(filterModel: ISimpleFilterModel): {
-        from: T;
-        to: T;
+        from: T | null | undefined;
+        to: T | null | undefined;
     };
     protected setParams(params: IScalarFilterParams): void;
     private checkDeprecatedParams;

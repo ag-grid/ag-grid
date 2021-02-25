@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,9 +50,7 @@ var ComponentUtil = /** @class */ (function () {
         if (!eventName || eventName.length < 2) {
             return eventName;
         }
-        else {
-            return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
-        }
+        return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
     };
     ComponentUtil.processOnChange = function (changes, gridOptions, api, columnApi) {
         if (!changes) {
@@ -136,24 +134,19 @@ var ComponentUtil = /** @class */ (function () {
         if (typeof value === 'boolean') {
             return value;
         }
-        else if (typeof value === 'string') {
+        if (typeof value === 'string') {
             // for boolean, compare to empty String to allow attributes appearing with
             // no value to be treated as 'true'
             return value.toUpperCase() === 'TRUE' || value == '';
         }
-        else {
-            return false;
-        }
+        return false;
     };
     ComponentUtil.toNumber = function (value) {
         if (typeof value === 'number') {
             return value;
         }
-        else if (typeof value === 'string') {
+        if (typeof value === 'string') {
             return Number(value);
-        }
-        else {
-            return undefined;
         }
     };
     // all the events are populated in here AFTER this class (at the bottom of the file).

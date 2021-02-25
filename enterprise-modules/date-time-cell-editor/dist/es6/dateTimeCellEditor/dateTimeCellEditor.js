@@ -35,7 +35,6 @@ var DateTimeCellEditor = /** @class */ (function (_super) {
             else {
                 initialValue = defaultDate;
             }
-            initialValue = new Date();
         }
         this.editor = new DateTimeList({
             onValueSelect: this.handleValueSelect.bind(this),

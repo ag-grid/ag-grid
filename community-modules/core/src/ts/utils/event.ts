@@ -1,5 +1,4 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
-import { CellComp } from '../rendering/cellComp';
 import { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { includes } from './array';
 
@@ -12,7 +11,7 @@ const supports: { [key: string]: boolean; } = {};
  * and then clicked on a selection checkbox, the popup wasn't closed. this is because the
  * popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
  * checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
- * to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
+ * to get around this, we have a pattern to stop propagation for the purposes of AG Grid,
  * but we still let the event pass back to the body.
  * @param {Event} event
  */
@@ -35,12 +34,12 @@ export const isEventSupported = (() => {
         abort: 'img'
     } as any;
 
-    const isEventSupported = (eventName: any) => {
+    const eventChecker = (eventName: any) => {
         if (typeof supports[eventName] === 'boolean') {
             return supports[eventName];
         }
 
-        let el = document.createElement(tags[eventName] || 'div');
+        const el = document.createElement(tags[eventName] || 'div');
         eventName = 'on' + eventName;
 
         let isSupported = (eventName in el);
@@ -49,25 +48,24 @@ export const isEventSupported = (() => {
             el.setAttribute(eventName, 'return;');
             isSupported = typeof el[eventName] == 'function';
         }
-        el = null;
 
         return supports[eventName] = isSupported;
     };
 
-    return isEventSupported;
+    return eventChecker;
 })();
 
-export function getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, event: Event): CellComp {
+export function getComponentForEvent<T>(gridOptionsWrapper: GridOptionsWrapper, event: Event, type: string): T | null {
     let sourceElement = getTarget(event);
 
     while (sourceElement) {
-        const renderedCell = gridOptionsWrapper.getDomData(sourceElement, 'cellComp');
+        const renderedComp = gridOptionsWrapper.getDomData(sourceElement, type);
 
-        if (renderedCell) {
-            return renderedCell as CellComp;
+        if (renderedComp) {
+            return renderedComp as T;
         }
 
-        sourceElement = sourceElement.parentElement;
+        sourceElement = sourceElement.parentElement!;
     }
 
     return null;

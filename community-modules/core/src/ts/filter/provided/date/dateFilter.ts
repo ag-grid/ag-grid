@@ -12,8 +12,8 @@ import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedPa
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
 export interface DateFilterModel extends ISimpleFilterModel {
-    dateFrom: string;
-    dateTo: string;
+    dateFrom: string | null;
+    dateTo: string | null;
 }
 
 export interface IDateFilterParams extends IScalarFilterParams {
@@ -173,7 +173,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
         const [compFrom, compTo] = this.getFromToComponents(position);
         const minValidYear = this.dateFilterParams.minValidYear == null ? 1000 : this.dateFilterParams.minValidYear;
-        const isValidDate = (value: Date) => value != null && value.getUTCFullYear() > minValidYear;
+        const isValidDate = (value: Date | null) => value != null && value.getUTCFullYear() > minValidYear;
 
         return isValidDate(compFrom.getDate()) && (!this.showValueTo(option) || isValidDate(compTo.getDate()));
     }

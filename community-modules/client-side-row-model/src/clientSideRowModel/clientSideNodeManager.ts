@@ -33,7 +33,7 @@ export class ClientSideNodeManager {
 
     private static ROOT_NODE_ID = 'ROOT_NODE_ID';
 
-    private isRowMasterFunc: IsRowMaster;
+    private isRowMasterFunc?: IsRowMaster;
     private suppressParentsInRowNodes: boolean;
 
     private doingTreeData: boolean;
@@ -83,7 +83,7 @@ export class ClientSideNodeManager {
         return this.allNodesMap[id];
     }
 
-    public setRowData(rowData: any[]): RowNode[] {
+    public setRowData(rowData: any[]): RowNode[] | undefined {
         this.rootNode.childrenAfterFilter = null;
         this.rootNode.childrenAfterGroup = null;
         this.rootNode.childrenAfterSort = null;
@@ -103,10 +103,10 @@ export class ClientSideNodeManager {
         // we add rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
         // sets the parent node on each row (even if we are not grouping). so setting parent node
         // here is for benefit of ag-grid-community users
-        this.rootNode.allLeafChildren = this.recursiveFunction(rowData, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
+        this.rootNode.allLeafChildren = this.recursiveFunction(rowData, this.rootNode, ClientSideNodeManager.TOP_LEVEL)!;
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number} | null | undefined): RowNodeTransaction | null {
+    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number} | null | undefined): RowNodeTransaction {
         const rowNodeTransaction: RowNodeTransaction = {
             remove: [],
             update: [],
@@ -115,9 +115,9 @@ export class ClientSideNodeManager {
 
         const nodesToUnselect: RowNode[] = [];
 
-        this.executeAdd(rowDataTran, rowNodeTransaction);
         this.executeRemove(rowDataTran, rowNodeTransaction, nodesToUnselect);
         this.executeUpdate(rowDataTran, rowNodeTransaction, nodesToUnselect);
+        this.executeAdd(rowDataTran, rowNodeTransaction);
 
         this.updateSelection(nodesToUnselect);
 
@@ -159,12 +159,12 @@ export class ClientSideNodeManager {
         const useIndex = typeof addIndex === 'number' && addIndex >= 0;
         if (useIndex) {
             // items get inserted in reverse order for index insertion
-            add.reverse().forEach(item => {
-                const newRowNode: RowNode = this.addRowNode(item, addIndex);
+            add!.reverse().forEach(item => {
+                const newRowNode: RowNode = this.addRowNode(item, addIndex!);
                 rowNodeTransaction.add.push(newRowNode);
             });
         } else {
-            add.forEach(item => {
+            add!.forEach(item => {
                 const newRowNode: RowNode = this.addRowNode(item);
                 rowNodeTransaction.add.push(newRowNode);
             });
@@ -178,7 +178,7 @@ export class ClientSideNodeManager {
 
         const rowIdsRemoved: {[key: string]: boolean} = {};
 
-        remove.forEach(item => {
+        remove!.forEach(item => {
             const rowNode = this.lookupRowNode(item);
 
             if (!rowNode) { return; }
@@ -190,25 +190,25 @@ export class ClientSideNodeManager {
             }
 
             // so row renderer knows to fade row out (and not reposition it)
-            rowNode.clearRowTop();
+            rowNode.clearRowTopAndRowIndex();
 
             // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
             // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
-            rowIdsRemoved[rowNode.id] = true;
+            rowIdsRemoved[rowNode.id!] = true;
             // _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
-            delete this.allNodesMap[rowNode.id];
+            delete this.allNodesMap[rowNode.id!];
 
             rowNodeTransaction.remove.push(rowNode);
         });
 
-        this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter(rowNode => !rowIdsRemoved[rowNode.id]);
+        this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter(rowNode => !rowIdsRemoved[rowNode.id!]);
     }
 
     private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
         const {update} = rowDataTran;
         if (_.missingOrEmpty(update)) { return; }
 
-        update.forEach(item => {
+        update!.forEach(item => {
             const rowNode = this.lookupRowNode(item);
 
             if (!rowNode) { return; }
@@ -236,23 +236,23 @@ export class ClientSideNodeManager {
         return newNode;
     }
 
-    private lookupRowNode(data: any): RowNode {
+    private lookupRowNode(data: any): RowNode | null {
         const rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
 
-        let rowNode: RowNode;
+        let rowNode: RowNode | null;
         if (_.exists(rowNodeIdFunc)) {
             // find rowNode using id
             const id: string = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error(`ag-Grid: could not find row id=${id}, data item was not found for this id`);
+                console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
                 return null;
             }
         } else {
             // find rowNode using object references
-            rowNode = _.find(this.rootNode.allLeafChildren, rowNode => rowNode.data === data);
+            rowNode = _.find(this.rootNode.allLeafChildren, node => node.data === data);
             if (!rowNode) {
-                console.error(`ag-Grid: could not find data item as object was not found`, data);
+                console.error(`AG Grid: could not find data item as object was not found`, data);
                 return null;
             }
         }
@@ -260,10 +260,10 @@ export class ClientSideNodeManager {
         return rowNode;
     }
 
-    private recursiveFunction(rowData: any[], parent: RowNode, level: number): RowNode[] {
+    private recursiveFunction(rowData: any[], parent: RowNode, level: number): RowNode[] | undefined {
         // make sure the rowData is an array and not a string of json - this was a commonly reported problem on the forum
         if (typeof rowData === 'string') {
-            console.warn('ag-Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
+            console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
             return;
         }
 
@@ -287,10 +287,10 @@ export class ClientSideNodeManager {
         node.level = level;
         node.setDataAndId(dataItem, this.nextId.toString());
 
-        if (this.allNodesMap[node.id]) {
+        if (this.allNodesMap[node.id!]) {
             console.warn(`ag-grid: duplicate node id '${node.id}' detected from getRowNodeId callback, this could cause issues in your grid.`);
         }
-        this.allNodesMap[node.id] = node;
+        this.allNodesMap[node.id!] = node;
 
         this.nextId++;
 
@@ -333,9 +333,8 @@ export class ClientSideNodeManager {
         const expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
         if (expandByDefault === -1) {
             return true;
-        } else {
-            return level < expandByDefault;
         }
+        return level < expandByDefault!;
     }
 
     // this is only used for doing legacy tree data

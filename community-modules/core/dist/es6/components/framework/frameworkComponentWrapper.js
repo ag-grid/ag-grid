@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ var BaseComponentWrapper = /** @class */ (function () {
                 return wrapper.callMethod(methodName, arguments);
             }
             if (mandatory) {
-                console.warn('ag-Grid: Framework component is missing the method ' + methodName + '()');
+                console.warn('AG Grid: Framework component is missing the method ' + methodName + '()');
             }
             return null;
         };

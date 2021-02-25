@@ -27,6 +27,9 @@ var SetFilter = /** @class */ (function (_super) {
     __extends(SetFilter, _super);
     function SetFilter() {
         var _this = _super.call(this, 'setFilter') || this;
+        _this.valueModel = null;
+        _this.setFilterParams = null;
+        _this.virtualList = null;
         // To make the filtering super fast, we store the values in an object, and check for the boolean value.
         // Although Set would be a more natural choice of data structure, its performance across browsers is
         // significantly worse than using an object: https://jsbench.me/hdk91jbw1h/
@@ -53,7 +56,7 @@ var SetFilter = /** @class */ (function (_super) {
         }
     };
     SetFilter.prototype.handleKeySpace = function (e) {
-        if (!this.eSetFilterList.contains(document.activeElement)) {
+        if (!this.eSetFilterList.contains(document.activeElement) || !this.virtualList) {
             return;
         }
         var currentItem = this.virtualList.getLastFocusedRow();
@@ -66,6 +69,9 @@ var SetFilter = /** @class */ (function (_super) {
         }
     };
     SetFilter.prototype.handleKeyEnter = function (e) {
+        if (!this.setFilterParams) {
+            return;
+        }
         if (this.setFilterParams.excelMode) {
             e.preventDefault();
             // in Excel Mode, hitting Enter is the same as pressing the Apply button
@@ -84,24 +90,25 @@ var SetFilter = /** @class */ (function (_super) {
         return this.valueModel ? this.valueModel.setModel(values).then(function () { return _this.refresh(); }) : core_1.AgPromise.resolve();
     };
     SetFilter.prototype.resetUiToDefaults = function () {
-        var _this = this;
         this.setMiniFilter(null);
-        return this.valueModel.setModel(null).then(function () { return _this.refresh(); });
+        return this.setModelAndRefresh(null);
     };
     SetFilter.prototype.setModelIntoUi = function (model) {
-        var _this = this;
         this.setMiniFilter(null);
         if (model instanceof Array) {
-            var message_1 = 'ag-Grid: The Set Filter Model is no longer an array and models as arrays are ' +
+            var message_1 = 'AG Grid: The Set Filter Model is no longer an array and models as arrays are ' +
                 'deprecated. Please check the docs on what the set filter model looks like. Future versions of ' +
-                'ag-Grid will have the array version of the model removed.';
+                'AG Grid will have the array version of the model removed.';
             core_1._.doOnce(function () { return console.warn(message_1); }, 'setFilter.modelAsArray');
         }
         // also supporting old filter model for backwards compatibility
         var values = model == null ? null : (model instanceof Array ? model : model.values);
-        return this.valueModel.setModel(values).then(function () { return _this.refresh(); });
+        return this.setModelAndRefresh(values);
     };
     SetFilter.prototype.getModelFromUi = function () {
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         var values = this.valueModel.getModel();
         if (!values) {
             return null;
@@ -134,7 +141,7 @@ var SetFilter = /** @class */ (function (_super) {
         _super.prototype.setParams.call(this, params);
         this.checkSetFilterDeprecatedParams(params);
         this.setFilterParams = params;
-        this.valueModel = new setValueModel_1.SetValueModel(params.rowModel, params.valueGetter, params, params.colDef, params.column, params.doesRowPassOtherFilter, params.suppressSorting, function (loading) { return _this.showOrHideLoadingScreen(loading); }, this.valueFormatterService, function (key) { return _this.translateForSetFilter(key); });
+        this.valueModel = new setValueModel_1.SetValueModel(params, function (loading) { return _this.showOrHideLoadingScreen(loading); }, this.valueFormatterService, function (key) { return _this.translateForSetFilter(key); });
         this.initialiseFilterBodyUi();
         if (params.rowModel.getType() === core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
             !params.values &&
@@ -166,23 +173,23 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.checkSetFilterDeprecatedParams = function (params) {
         if (params.syncValuesLikeExcel) {
-            var message_2 = 'ag-Grid: since version 22.x, the Set Filter param syncValuesLikeExcel is no longer' +
+            var message_2 = 'AG Grid: since version 22.x, the Set Filter param syncValuesLikeExcel is no longer' +
                 ' used as this is the default behaviour. To turn this default behaviour off, use the' +
                 ' param suppressSyncValuesAfterDataChange';
             core_1._.doOnce(function () { return console.warn(message_2); }, 'syncValuesLikeExcel deprecated');
         }
         if (params.selectAllOnMiniFilter) {
-            var message_3 = 'ag-Grid: since version 22.x, the Set Filter param selectAllOnMiniFilter is no longer' +
+            var message_3 = 'AG Grid: since version 22.x, the Set Filter param selectAllOnMiniFilter is no longer' +
                 ' used as this is the default behaviour.';
             core_1._.doOnce(function () { return console.warn(message_3); }, 'selectAllOnMiniFilter deprecated');
         }
         if (params.suppressSyncValuesAfterDataChange) {
-            var message_4 = 'ag-Grid: since version 23.1, the Set Filter param suppressSyncValuesAfterDataChange has' +
+            var message_4 = 'AG Grid: since version 23.1, the Set Filter param suppressSyncValuesAfterDataChange has' +
                 ' been deprecated and will be removed in a future major release.';
             core_1._.doOnce(function () { return console.warn(message_4); }, 'suppressSyncValuesAfterDataChange deprecated');
         }
         if (params.suppressRemoveEntries) {
-            var message_5 = 'ag-Grid: since version 23.1, the Set Filter param suppressRemoveEntries has' +
+            var message_5 = 'AG Grid: since version 23.1, the Set Filter param suppressRemoveEntries has' +
                 ' been deprecated and will be removed in a future major release.';
             core_1._.doOnce(function () { return console.warn(message_5); }, 'suppressRemoveEntries deprecated');
         }
@@ -192,7 +199,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, core_1.Events.EVENT_ROW_DATA_UPDATED, function () { return _this.syncAfterDataChange(); });
         this.addManagedListener(this.eventService, core_1.Events.EVENT_CELL_VALUE_CHANGED, function (event) {
             // only interested in changes to do with this column
-            if (event.column === _this.setFilterParams.column) {
+            if (_this.setFilterParams && event.column === _this.setFilterParams.column) {
                 _this.syncAfterDataChange();
             }
         });
@@ -211,14 +218,14 @@ var SetFilter = /** @class */ (function (_super) {
         else if (!keepSelection) {
             promise = this.valueModel.setModel(null);
         }
-        promise.then(function () {
+        return promise.then(function () {
             _this.refresh();
             _this.onBtApply(false, true);
         });
     };
     /** @deprecated since version 23.2. The loading screen is displayed automatically when the set filter is retrieving values. */
     SetFilter.prototype.setLoading = function (loading) {
-        var message = 'ag-Grid: since version 23.2, setLoading has been deprecated. The loading screen is displayed automatically when the set filter is retrieving values.';
+        var message = 'AG Grid: since version 23.2, setLoading has been deprecated. The loading screen is displayed automatically when the set filter is retrieving values.';
         core_1._.doOnce(function () { return console.warn(message); }, 'setFilter.setLoading');
         this.showOrHideLoadingScreen(loading);
     };
@@ -231,6 +238,12 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.initVirtualList = function () {
         var _this = this;
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         var virtualList = this.virtualList = this.createBean(new core_1.VirtualList('filter'));
         var eSetFilterList = this.getRefElement('eSetFilterList');
         if (eSetFilterList) {
@@ -251,18 +264,31 @@ var SetFilter = /** @class */ (function (_super) {
         virtualList.setModel(model);
     };
     SetFilter.prototype.getSelectAllLabel = function () {
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         var key = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
             'selectAll' : 'selectAllSearchResults';
         return this.translateForSetFilter(key);
     };
     SetFilter.prototype.createSetListItem = function (value) {
         var _this = this;
-        if (value === SetFilter.SELECT_ALL_VALUE) {
-            var listItem_1 = this.createBean(new setFilterListItem_1.SetFilterListItem(function () { return _this.getSelectAllLabel(); }, this.setFilterParams, function (key) { return _this.translateForSetFilter(key); }, this.isSelectAllSelected()));
-            listItem_1.addEventListener(setFilterListItem_1.SetFilterListItem.EVENT_SELECTION_CHANGED, function (e) { return _this.onSelectAll(e.isSelected); });
-            return listItem_1;
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
         }
-        var listItem = this.createBean(new setFilterListItem_1.SetFilterListItem(value, this.setFilterParams, function (key) { return _this.translateForSetFilter(key); }, this.valueModel.isValueSelected(value)));
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        var listItem;
+        if (value === SetFilter.SELECT_ALL_VALUE) {
+            listItem = this.createBean(new setFilterListItem_1.SetFilterListItem(function () { return _this.getSelectAllLabel(); }, this.setFilterParams, function (key) { return _this.translateForSetFilter(key); }, this.isSelectAllSelected()));
+            listItem.addEventListener(setFilterListItem_1.SetFilterListItem.EVENT_SELECTION_CHANGED, function (e) { return _this.onSelectAll(e.isSelected); });
+            return listItem;
+        }
+        listItem = this.createBean(new setFilterListItem_1.SetFilterListItem(value, this.setFilterParams, function (key) { return _this.translateForSetFilter(key); }, this.valueModel.isValueSelected(value)));
         listItem.addEventListener(setFilterListItem_1.SetFilterListItem.EVENT_SELECTION_CHANGED, function (e) { return _this.onItemSelected(value, e.isSelected); });
         return listItem;
     };
@@ -285,6 +311,9 @@ var SetFilter = /** @class */ (function (_super) {
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
     SetFilter.prototype.afterGuiAttached = function (params) {
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
         _super.prototype.afterGuiAttached.call(this, params);
         this.refreshVirtualList();
         if (this.setFilterParams.excelMode) {
@@ -297,32 +326,37 @@ var SetFilter = /** @class */ (function (_super) {
         }
     };
     SetFilter.prototype.applyModel = function () {
-        var _this = this;
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         if (this.setFilterParams.excelMode && this.valueModel.isEverythingVisibleSelected()) {
             // In Excel, if the filter is applied with all visible values selected, then any active filter on the
             // column is removed. This ensures the filter is removed in this situation.
             this.valueModel.selectAllMatchingMiniFilter();
         }
         var result = _super.prototype.applyModel.call(this);
-        if (result) {
-            // keep appliedModelValues in sync with the applied model
-            var appliedModel = this.getModel();
-            if (appliedModel) {
-                this.appliedModelValues = {};
-                core_1._.forEach(appliedModel.values, function (value) { return _this.appliedModelValues[value] = true; });
-            }
-            else {
-                this.appliedModelValues = null;
-            }
+        // keep appliedModelValues in sync with the applied model
+        var appliedModel = this.getModel();
+        if (appliedModel) {
+            this.appliedModelValues = core_1._.reduce(appliedModel.values, function (values, value) {
+                values[String(value)] = true;
+                return values;
+            }, {});
+        }
+        else {
+            this.appliedModelValues = null;
         }
         return result;
     };
     SetFilter.prototype.isModelValid = function (model) {
-        return this.setFilterParams.excelMode ? model == null || model.values.length > 0 : true;
+        return this.setFilterParams && this.setFilterParams.excelMode ? model == null || model.values.length > 0 : true;
     };
     SetFilter.prototype.doesFilterPass = function (params) {
         var _this = this;
-        if (this.appliedModelValues == null) {
+        if (!this.setFilterParams || !this.valueModel || !this.appliedModelValues) {
             return true;
         }
         var _a = this.setFilterParams, valueGetter = _a.valueGetter, keyCreator = _a.colDef.keyCreator;
@@ -339,6 +373,9 @@ var SetFilter = /** @class */ (function (_super) {
         return this.appliedModelValues[value] === true;
     };
     SetFilter.prototype.onNewRowsLoaded = function () {
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         var valuesType = this.valueModel.getValuesType();
         var keepSelection = this.isNewRowsActionKeep();
         this.syncAfterDataChange(valuesType === setValueModel_1.SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES, keepSelection);
@@ -351,6 +388,9 @@ var SetFilter = /** @class */ (function (_super) {
      */
     SetFilter.prototype.setFilterValues = function (options) {
         var _this = this;
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         this.valueModel.overrideValues(options, this.isNewRowsActionKeep()).then(function () {
             _this.refresh();
             _this.onUiChanged();
@@ -361,11 +401,21 @@ var SetFilter = /** @class */ (function (_super) {
      * Public method provided so the user can reset the values of the filter once that it has started.
      */
     SetFilter.prototype.resetFilterValues = function () {
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         this.valueModel.setValuesType(setValueModel_1.SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
         this.syncAfterDataChange(true, this.isNewRowsActionKeep());
     };
     SetFilter.prototype.refreshFilterValues = function () {
         var _this = this;
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        // the model is still being initialised
+        if (!this.valueModel.isInitialised()) {
+            return;
+        }
         this.valueModel.refreshValues().then(function () {
             _this.refresh();
             _this.onUiChanged();
@@ -374,9 +424,20 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.onAnyFilterChanged = function () {
         var _this = this;
         // don't block the current action when updating the values for this filter
-        setTimeout(function () { return _this.valueModel.refreshAfterAnyFilterChanged().then(function () { return _this.refresh(); }); }, 0);
+        setTimeout(function () {
+            if (!_this.valueModel) {
+                throw new Error('Value model has not been created.');
+            }
+            _this.valueModel.refreshAfterAnyFilterChanged().then(function () { return _this.refresh(); });
+        }, 0);
     };
     SetFilter.prototype.onMiniFilterInput = function () {
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
             if (this.setFilterParams.applyMiniFilterWhileTyping) {
                 this.filterOnAllVisibleValues(false);
@@ -387,6 +448,12 @@ var SetFilter = /** @class */ (function (_super) {
         }
     };
     SetFilter.prototype.updateUiAfterMiniFilterChange = function () {
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         if (this.setFilterParams.excelMode) {
             if (this.valueModel.getMiniFilter() == null) {
                 this.resetUiToActiveModel();
@@ -403,23 +470,32 @@ var SetFilter = /** @class */ (function (_super) {
         this.showOrHideResults();
     };
     SetFilter.prototype.showOrHideResults = function () {
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         var hideResults = this.valueModel.getMiniFilter() != null && this.valueModel.getDisplayedValueCount() < 1;
         core_1._.setDisplayed(this.eNoMatches, hideResults);
         core_1._.setDisplayed(this.eSetFilterList, !hideResults);
     };
     SetFilter.prototype.resetUiToActiveModel = function () {
         var _this = this;
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         this.eMiniFilter.setValue(null, true);
         this.valueModel.setMiniFilter(null);
         this.setModelIntoUi(this.getModel()).then(function () { return _this.onUiChanged(false, 'prevent'); });
     };
     SetFilter.prototype.onMiniFilterKeyPress = function (e) {
-        if (core_1._.isKeyPressed(e, core_1.KeyCode.ENTER) && !this.setFilterParams.excelMode) {
+        if (core_1._.isKeyPressed(e, core_1.KeyCode.ENTER) && (!this.setFilterParams || !this.setFilterParams.excelMode)) {
             this.filterOnAllVisibleValues();
         }
     };
     SetFilter.prototype.filterOnAllVisibleValues = function (applyImmediately) {
         if (applyImmediately === void 0) { applyImmediately = true; }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         this.valueModel.selectAllMatchingMiniFilter(true);
         this.refresh();
         this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
@@ -427,13 +503,25 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.focusRowIfAlive = function (rowIndex) {
         var _this = this;
+        if (rowIndex == null) {
+            return;
+        }
         window.setTimeout(function () {
+            if (!_this.virtualList) {
+                throw new Error('Virtual list has not been created.');
+            }
             if (_this.isAlive()) {
                 _this.virtualList.focusRow(rowIndex);
             }
         }, 0);
     };
     SetFilter.prototype.onSelectAll = function (isSelected) {
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        if (!this.virtualList) {
+            throw new Error('Virtual list has not been created.');
+        }
         if (isSelected) {
             this.valueModel.selectAllMatchingMiniFilter();
         }
@@ -446,6 +534,12 @@ var SetFilter = /** @class */ (function (_super) {
         this.focusRowIfAlive(focusedRow);
     };
     SetFilter.prototype.onItemSelected = function (value, isSelected) {
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        if (!this.virtualList) {
+            throw new Error('Virtual list has not been created.');
+        }
         if (isSelected) {
             this.valueModel.selectValue(value);
         }
@@ -462,74 +556,104 @@ var SetFilter = /** @class */ (function (_super) {
         this.onMiniFilterInput();
     };
     SetFilter.prototype.getMiniFilter = function () {
-        return this.valueModel.getMiniFilter();
+        return this.valueModel ? this.valueModel.getMiniFilter() : null;
     };
     /** @deprecated since version 23.2. Please use setModel instead. */
     SetFilter.prototype.selectEverything = function () {
-        var message = 'ag-Grid: since version 23.2, selectEverything has been deprecated. Please use setModel instead.';
+        var message = 'AG Grid: since version 23.2, selectEverything has been deprecated. Please use setModel instead.';
         core_1._.doOnce(function () { return console.warn(message); }, 'setFilter.selectEverything');
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         this.valueModel.selectAllMatchingMiniFilter();
         this.refresh();
     };
     /** @deprecated since version 23.2. Please use setModel instead. */
     SetFilter.prototype.selectNothing = function () {
-        var message = 'ag-Grid: since version 23.2, selectNothing has been deprecated. Please use setModel instead.';
+        var message = 'AG Grid: since version 23.2, selectNothing has been deprecated. Please use setModel instead.';
         core_1._.doOnce(function () { return console.warn(message); }, 'setFilter.selectNothing');
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         this.valueModel.deselectAllMatchingMiniFilter();
         this.refresh();
     };
     /** @deprecated since version 23.2. Please use setModel instead. */
     SetFilter.prototype.unselectValue = function (value) {
-        var message = 'ag-Grid: since version 23.2, unselectValue has been deprecated. Please use setModel instead.';
+        var message = 'AG Grid: since version 23.2, unselectValue has been deprecated. Please use setModel instead.';
         core_1._.doOnce(function () { return console.warn(message); }, 'setFilter.unselectValue');
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         this.valueModel.deselectValue(value);
         this.refresh();
     };
     /** @deprecated since version 23.2. Please use setModel instead. */
     SetFilter.prototype.selectValue = function (value) {
-        var message = 'ag-Grid: since version 23.2, selectValue has been deprecated. Please use setModel instead.';
+        var message = 'AG Grid: since version 23.2, selectValue has been deprecated. Please use setModel instead.';
         core_1._.doOnce(function () { return console.warn(message); }, 'setFilter.selectValue');
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         this.valueModel.selectValue(value);
         this.refresh();
     };
     SetFilter.prototype.refresh = function () {
+        if (!this.virtualList) {
+            throw new Error('Virtual list has not been created.');
+        }
         this.virtualList.refresh();
     };
     /** @deprecated since version 23.2. Please use getModel instead. */
     SetFilter.prototype.isValueSelected = function (value) {
-        var message = 'ag-Grid: since version 23.2, isValueSelected has been deprecated. Please use getModel instead.';
+        var message = 'AG Grid: since version 23.2, isValueSelected has been deprecated. Please use getModel instead.';
         core_1._.doOnce(function () { return console.warn(message); }, 'setFilter.isValueSelected');
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         return this.valueModel.isValueSelected(value);
     };
     /** @deprecated since version 23.2. Please use getModel instead. */
     SetFilter.prototype.isEverythingSelected = function () {
-        var message = 'ag-Grid: since version 23.2, isEverythingSelected has been deprecated. Please use getModel instead.';
+        var message = 'AG Grid: since version 23.2, isEverythingSelected has been deprecated. Please use getModel instead.';
         core_1._.doOnce(function () { return console.warn(message); }, 'setFilter.isEverythingSelected');
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         return this.valueModel.isEverythingVisibleSelected();
     };
     /** @deprecated since version 23.2. Please use getModel instead. */
     SetFilter.prototype.isNothingSelected = function () {
-        var message = 'ag-Grid: since version 23.2, isNothingSelected has been deprecated. Please use getModel instead.';
+        var message = 'AG Grid: since version 23.2, isNothingSelected has been deprecated. Please use getModel instead.';
         core_1._.doOnce(function () { return console.warn(message); }, 'setFilter.isNothingSelected');
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         return this.valueModel.isNothingVisibleSelected();
     };
     /** @deprecated since version 23.2. Please use getValues instead. */
     SetFilter.prototype.getUniqueValueCount = function () {
-        var message = 'ag-Grid: since version 23.2, getUniqueValueCount has been deprecated. Please use getValues instead.';
+        var message = 'AG Grid: since version 23.2, getUniqueValueCount has been deprecated. Please use getValues instead.';
         core_1._.doOnce(function () { return console.warn(message); }, 'setFilter.getUniqueValueCount');
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         return this.valueModel.getUniqueValueCount();
     };
     /** @deprecated since version 23.2. Please use getValues instead. */
     SetFilter.prototype.getUniqueValue = function (index) {
-        var message = 'ag-Grid: since version 23.2, getUniqueValue has been deprecated. Please use getValues instead.';
+        var message = 'AG Grid: since version 23.2, getUniqueValue has been deprecated. Please use getValues instead.';
         core_1._.doOnce(function () { return console.warn(message); }, 'setFilter.getUniqueValue');
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
         return this.valueModel.getUniqueValue(index);
     };
     SetFilter.prototype.getValues = function () {
-        return this.valueModel.getValues();
+        return this.valueModel ? this.valueModel.getValues() : [];
     };
     SetFilter.prototype.refreshVirtualList = function () {
-        if (this.setFilterParams.refreshValuesOnOpen) {
+        if (this.setFilterParams && this.setFilterParams.refreshValuesOnOpen) {
             this.refreshFilterValues();
         }
         else {
@@ -541,6 +665,9 @@ var SetFilter = /** @class */ (function (_super) {
         return translate(key, localeText_1.DEFAULT_LOCALE_TEXT[key]);
     };
     SetFilter.prototype.isSelectAllSelected = function () {
+        if (!this.setFilterParams || !this.valueModel) {
+            return false;
+        }
         if (!this.setFilterParams.defaultToNothingSelected) {
             // everything selected by default
             if (this.valueModel.hasSelections() && this.valueModel.isNothingVisibleSelected()) {
@@ -559,6 +686,7 @@ var SetFilter = /** @class */ (function (_super) {
                 return false;
             }
         }
+        // returning `undefined` means the checkbox status is indeterminate.
         return undefined;
     };
     SetFilter.prototype.destroy = function () {

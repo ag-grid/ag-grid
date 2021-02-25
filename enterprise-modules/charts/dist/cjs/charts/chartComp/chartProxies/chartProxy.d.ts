@@ -28,7 +28,7 @@ export interface ChartProxyParams {
 }
 export interface FieldDefinition {
     colId: string;
-    displayName: string;
+    displayName: string | null;
 }
 export interface UpdateChartParams {
     data: any[];
@@ -70,7 +70,7 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     protected initChartOptions(): void;
     private paletteOverridden;
     private initChartTheme;
-    lookupCustomChartTheme(name: string): AgChartTheme;
+    lookupCustomChartTheme(name: string): AgChartTheme | undefined;
     isStockTheme(themeName: string): boolean;
     private mergeThemeOverrides;
     private integratedToStandaloneChartType;

@@ -23,7 +23,7 @@ export declare class ExcelCreator extends BaseCreator<ExcelCell[][], Serializing
     private exportMode;
     postConstruct(): void;
     exportDataAsExcel(params?: ExcelExportParams): string;
-    getDataAsExcelXml(params?: ExcelExportParams): string;
+    getDataAsExcel(params?: ExcelExportParams): Blob | string;
     getMimeType(): string;
     getDefaultFileName(): string;
     getDefaultFileExtension(): string;

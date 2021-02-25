@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import footerItems from './footerItems.json';
-import DocumentationLink from '../DocumentationLink';
+import footerItems from './footer-items.json';
+import DocumentationLink from 'components/DocumentationLink';
 import styles from './Footer.module.scss';
 
 const SocialMediaButtons = () => (
@@ -45,8 +45,8 @@ const Footer = ({ framework }) => (
                 <SocialMediaButtons />
             </div>
             <div className={styles['footer__row']}>
-                <p>ag-Grid Limited registered in the United Kingdom. Company No. 07318192.</p>
-                <p>{`\u00A9`} ag-Grid Ltd. 2015-{new Date().getFullYear()}</p>
+                <p>AG Grid Limited registered in the United Kingdom. Company No. 07318192.</p>
+                <p>{`\u00A9`} AG Grid Ltd. 2015-{new Date().getFullYear()}</p>
             </div>
         </div>
     </footer>

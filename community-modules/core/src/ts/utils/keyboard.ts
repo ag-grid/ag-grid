@@ -45,7 +45,7 @@ export function isUserSuppressingKeyboardEvent(
     editing: boolean
 ): boolean {
     const gridOptionsFunc = gridOptionsWrapper.getSuppressKeyboardEventFunc();
-    const colDefFunc = column.getColDef().suppressKeyboardEvent;
+    const colDefFunc = column ? column.getColDef().suppressKeyboardEvent : undefined;
 
     // if no callbacks provided by user, then do nothing
     if (!gridOptionsFunc && !colDefFunc) { return false; }

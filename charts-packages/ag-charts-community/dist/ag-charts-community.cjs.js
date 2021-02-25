@@ -1,5 +1,5 @@
 /**
- * ag-charts-community - Advanced Charting / Charts supporting Javascript / React / Angular * @version v3.0.0
+ * ag-charts-community - Advanced Charting / Charts supporting Javascript / React / Angular * @version v3.1.0
  * @link http://www.ag-grid.com/
 ' * @license MIT
  */
@@ -2229,7 +2229,7 @@ var Caption = /** @class */ (function (_super) {
     function Caption() {
         var _this = _super.call(this) || this;
         _this.node = new Text();
-        _this.enabled = true;
+        _this.enabled = false;
         _this.padding = new Padding(10);
         var node = _this.node;
         node.textAlign = 'center';
@@ -2388,17 +2388,505 @@ function object (a, b) {
     };
 }
 
+var Color = /** @class */ (function () {
+    /**
+     * Every color component should be in the [0, 1] range.
+     * Some easing functions (such as elastic easing) can overshoot the target value by some amount.
+     * So, when animating colors, if the source or target color components are already near
+     * or at the edge of the allowed [0, 1] range, it is possible for the intermediate color
+     * component value to end up outside of that range mid-animation. For this reason the constructor
+     * performs range checking/constraining.
+     * @param r Red component.
+     * @param g Green component.
+     * @param b Blue component.
+     * @param a Alpha (opacity) component.
+     */
+    function Color(r, g, b, a) {
+        if (a === void 0) { a = 1; }
+        // NaN is treated as 0.
+        this.r = Math.min(1, Math.max(0, r || 0));
+        this.g = Math.min(1, Math.max(0, g || 0));
+        this.b = Math.min(1, Math.max(0, b || 0));
+        this.a = Math.min(1, Math.max(0, a || 0));
+    }
+    /**
+     * The given string can be in one of the following formats:
+     * - #rgb
+     * - #rrggbb
+     * - rgb(r, g, b)
+     * - rgba(r, g, b, a)
+     * - CSS color name such as 'white', 'orange', 'cyan', etc.
+     * @param str
+     */
+    Color.fromString = function (str) {
+        // hexadecimal notation
+        if (str.indexOf('#') >= 0) { // there can be some leading whitespace
+            return Color.fromHexString(str);
+        }
+        // color name
+        var hex = Color.nameToHex[str];
+        if (hex) {
+            return Color.fromHexString(hex);
+        }
+        // rgb(a) notation
+        if (str.indexOf('rgb') >= 0) {
+            return Color.fromRgbaString(str);
+        }
+        throw new Error("Invalid color string: '" + str + "'");
+    };
+    // Using separate RegExp for the short hex notation because strings like `#abcd`
+    // are matched as ['#abcd', 'ab', 'c', 'd', undefined] when the `{1,2}` quantifier is used.
+    Color.fromHexString = function (str) {
+        var values = str.match(Color.hexRe);
+        if (values) {
+            var r = parseInt(values[1], 16);
+            var g = parseInt(values[2], 16);
+            var b = parseInt(values[3], 16);
+            var a = values[4] !== undefined ? parseInt(values[4], 16) : 255;
+            return new Color(r / 255, g / 255, b / 255, a / 255);
+        }
+        values = str.match(Color.shortHexRe);
+        if (values) {
+            var r = parseInt(values[1], 16);
+            var g = parseInt(values[2], 16);
+            var b = parseInt(values[3], 16);
+            var a = values[4] !== undefined ? parseInt(values[4], 16) : 15;
+            r += r * 16;
+            g += g * 16;
+            b += b * 16;
+            a += a * 16;
+            return new Color(r / 255, g / 255, b / 255, a / 255);
+        }
+        throw new Error("Malformed hexadecimal color string: '" + str + "'");
+    };
+    Color.fromRgbaString = function (str) {
+        var values = str.match(Color.rgbRe);
+        if (values) {
+            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255);
+        }
+        values = str.match(Color.rgbaRe);
+        if (values) {
+            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255, +values[4]);
+        }
+        throw new Error("Malformed rgb/rgba color string: '" + str + "'");
+    };
+    Color.fromArray = function (arr) {
+        if (arr.length === 4) {
+            return new Color(arr[0], arr[1], arr[2], arr[3]);
+        }
+        if (arr.length === 3) {
+            return new Color(arr[0], arr[1], arr[2]);
+        }
+        throw new Error('The given array should contain 3 or 4 color components (numbers).');
+    };
+    Color.fromHSB = function (h, s, b, alpha) {
+        if (alpha === void 0) { alpha = 1; }
+        var rgb = Color.HSBtoRGB(h, s, b);
+        return new Color(rgb[0], rgb[1], rgb[2], alpha);
+    };
+    Color.padHex = function (str) {
+        // Can't use `padStart(2, '0')` here because of IE.
+        return str.length === 1 ? '0' + str : str;
+    };
+    Color.prototype.toHexString = function () {
+        var hex = '#'
+            + Color.padHex(Math.round(this.r * 255).toString(16))
+            + Color.padHex(Math.round(this.g * 255).toString(16))
+            + Color.padHex(Math.round(this.b * 255).toString(16));
+        if (this.a < 1) {
+            hex += Color.padHex(Math.round(this.a * 255).toString(16));
+        }
+        return hex;
+    };
+    Color.prototype.toRgbaString = function (fractionDigits) {
+        if (fractionDigits === void 0) { fractionDigits = 3; }
+        var components = [
+            Math.round(this.r * 255),
+            Math.round(this.g * 255),
+            Math.round(this.b * 255)
+        ];
+        var k = Math.pow(10, fractionDigits);
+        if (this.a !== 1) {
+            components.push(Math.round(this.a * k) / k);
+            return "rgba(" + components.join(', ') + ")";
+        }
+        return "rgb(" + components.join(', ') + ")";
+    };
+    Color.prototype.toString = function () {
+        if (this.a === 1) {
+            return this.toHexString();
+        }
+        return this.toRgbaString();
+    };
+    Color.prototype.toHSB = function () {
+        return Color.RGBtoHSB(this.r, this.g, this.b);
+    };
+    /**
+     * Converts the given RGB triple to an array of HSB (HSV) components.
+     * The hue component will be `NaN` for achromatic colors.
+     */
+    Color.RGBtoHSB = function (r, g, b) {
+        var min = Math.min(r, g, b);
+        var max = Math.max(r, g, b);
+        var S = max !== 0 ? (max - min) / max : 0;
+        var H = NaN;
+        // min == max, means all components are the same
+        // and the color is a shade of gray with no hue (H is NaN)
+        if (min !== max) {
+            var delta = max - min;
+            var rc = (max - r) / delta;
+            var gc = (max - g) / delta;
+            var bc = (max - b) / delta;
+            if (r === max) {
+                H = bc - gc;
+            }
+            else if (g === max) {
+                H = 2.0 + rc - bc;
+            }
+            else {
+                H = 4.0 + gc - rc;
+            }
+            H /= 6.0;
+            if (H < 0) {
+                H = H + 1.0;
+            }
+        }
+        return [H * 360, S, max];
+    };
+    /**
+     * Converts the given HSB (HSV) triple to an array of RGB components.
+     */
+    Color.HSBtoRGB = function (H, S, B) {
+        if (isNaN(H)) {
+            H = 0;
+        }
+        H = (((H % 360) + 360) % 360) / 360; // normalize hue to [0, 360] interval, then scale to [0, 1]
+        var r = 0;
+        var g = 0;
+        var b = 0;
+        if (S === 0) {
+            r = g = b = B;
+        }
+        else {
+            var h = (H - Math.floor(H)) * 6;
+            var f = h - Math.floor(h);
+            var p = B * (1 - S);
+            var q = B * (1 - S * f);
+            var t = B * (1 - (S * (1 - f)));
+            switch (h >> 0) { // discard the floating point part of the number
+                case 0:
+                    r = B;
+                    g = t;
+                    b = p;
+                    break;
+                case 1:
+                    r = q;
+                    g = B;
+                    b = p;
+                    break;
+                case 2:
+                    r = p;
+                    g = B;
+                    b = t;
+                    break;
+                case 3:
+                    r = p;
+                    g = q;
+                    b = B;
+                    break;
+                case 4:
+                    r = t;
+                    g = p;
+                    b = B;
+                    break;
+                case 5:
+                    r = B;
+                    g = p;
+                    b = q;
+                    break;
+            }
+        }
+        return [r, g, b];
+    };
+    Color.prototype.derive = function (hueShift, saturationFactor, brightnessFactor, opacityFactor) {
+        var hsb = Color.RGBtoHSB(this.r, this.g, this.b);
+        var b = hsb[2];
+        if (b == 0 && brightnessFactor > 1.0) {
+            b = 0.05;
+        }
+        var h = (((hsb[0] + hueShift) % 360) + 360) % 360;
+        var s = Math.max(Math.min(hsb[1] * saturationFactor, 1.0), 0.0);
+        b = Math.max(Math.min(b * brightnessFactor, 1.0), 0.0);
+        var a = Math.max(Math.min(this.a * opacityFactor, 1.0), 0.0);
+        var rgba = Color.HSBtoRGB(h, s, b);
+        rgba.push(a);
+        return Color.fromArray(rgba);
+    };
+    Color.prototype.brighter = function () {
+        return this.derive(0, 1.0, 1.0 / 0.7, 1.0);
+    };
+    Color.prototype.darker = function () {
+        return this.derive(0, 1.0, 0.7, 1.0);
+    };
+    // See https://drafts.csswg.org/css-color/#hex-notation
+    Color.hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*$/;
+    Color.shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*$/;
+    Color.rgbRe = /\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)\s*/;
+    Color.rgbaRe = /\s*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([.\d]+)\)\s*/;
+    /**
+     * CSS Color Module Level 4:
+     * https://drafts.csswg.org/css-color/#named-colors
+     */
+    Color.nameToHex = Object.freeze({
+        aliceblue: '#F0F8FF',
+        antiquewhite: '#FAEBD7',
+        aqua: '#00FFFF',
+        aquamarine: '#7FFFD4',
+        azure: '#F0FFFF',
+        beige: '#F5F5DC',
+        bisque: '#FFE4C4',
+        black: '#000000',
+        blanchedalmond: '#FFEBCD',
+        blue: '#0000FF',
+        blueviolet: '#8A2BE2',
+        brown: '#A52A2A',
+        burlywood: '#DEB887',
+        cadetblue: '#5F9EA0',
+        chartreuse: '#7FFF00',
+        chocolate: '#D2691E',
+        coral: '#FF7F50',
+        cornflowerblue: '#6495ED',
+        cornsilk: '#FFF8DC',
+        crimson: '#DC143C',
+        cyan: '#00FFFF',
+        darkblue: '#00008B',
+        darkcyan: '#008B8B',
+        darkgoldenrod: '#B8860B',
+        darkgray: '#A9A9A9',
+        darkgreen: '#006400',
+        darkgrey: '#A9A9A9',
+        darkkhaki: '#BDB76B',
+        darkmagenta: '#8B008B',
+        darkolivegreen: '#556B2F',
+        darkorange: '#FF8C00',
+        darkorchid: '#9932CC',
+        darkred: '#8B0000',
+        darksalmon: '#E9967A',
+        darkseagreen: '#8FBC8F',
+        darkslateblue: '#483D8B',
+        darkslategray: '#2F4F4F',
+        darkslategrey: '#2F4F4F',
+        darkturquoise: '#00CED1',
+        darkviolet: '#9400D3',
+        deeppink: '#FF1493',
+        deepskyblue: '#00BFFF',
+        dimgray: '#696969',
+        dimgrey: '#696969',
+        dodgerblue: '#1E90FF',
+        firebrick: '#B22222',
+        floralwhite: '#FFFAF0',
+        forestgreen: '#228B22',
+        fuchsia: '#FF00FF',
+        gainsboro: '#DCDCDC',
+        ghostwhite: '#F8F8FF',
+        gold: '#FFD700',
+        goldenrod: '#DAA520',
+        gray: '#808080',
+        green: '#008000',
+        greenyellow: '#ADFF2F',
+        grey: '#808080',
+        honeydew: '#F0FFF0',
+        hotpink: '#FF69B4',
+        indianred: '#CD5C5C',
+        indigo: '#4B0082',
+        ivory: '#FFFFF0',
+        khaki: '#F0E68C',
+        lavender: '#E6E6FA',
+        lavenderblush: '#FFF0F5',
+        lawngreen: '#7CFC00',
+        lemonchiffon: '#FFFACD',
+        lightblue: '#ADD8E6',
+        lightcoral: '#F08080',
+        lightcyan: '#E0FFFF',
+        lightgoldenrodyellow: '#FAFAD2',
+        lightgray: '#D3D3D3',
+        lightgreen: '#90EE90',
+        lightgrey: '#D3D3D3',
+        lightpink: '#FFB6C1',
+        lightsalmon: '#FFA07A',
+        lightseagreen: '#20B2AA',
+        lightskyblue: '#87CEFA',
+        lightslategray: '#778899',
+        lightslategrey: '#778899',
+        lightsteelblue: '#B0C4DE',
+        lightyellow: '#FFFFE0',
+        lime: '#00FF00',
+        limegreen: '#32CD32',
+        linen: '#FAF0E6',
+        magenta: '#FF00FF',
+        maroon: '#800000',
+        mediumaquamarine: '#66CDAA',
+        mediumblue: '#0000CD',
+        mediumorchid: '#BA55D3',
+        mediumpurple: '#9370DB',
+        mediumseagreen: '#3CB371',
+        mediumslateblue: '#7B68EE',
+        mediumspringgreen: '#00FA9A',
+        mediumturquoise: '#48D1CC',
+        mediumvioletred: '#C71585',
+        midnightblue: '#191970',
+        mintcream: '#F5FFFA',
+        mistyrose: '#FFE4E1',
+        moccasin: '#FFE4B5',
+        navajowhite: '#FFDEAD',
+        navy: '#000080',
+        oldlace: '#FDF5E6',
+        olive: '#808000',
+        olivedrab: '#6B8E23',
+        orange: '#FFA500',
+        orangered: '#FF4500',
+        orchid: '#DA70D6',
+        palegoldenrod: '#EEE8AA',
+        palegreen: '#98FB98',
+        paleturquoise: '#AFEEEE',
+        palevioletred: '#DB7093',
+        papayawhip: '#FFEFD5',
+        peachpuff: '#FFDAB9',
+        peru: '#CD853F',
+        pink: '#FFC0CB',
+        plum: '#DDA0DD',
+        powderblue: '#B0E0E6',
+        purple: '#800080',
+        rebeccapurple: '#663399',
+        red: '#FF0000',
+        rosybrown: '#BC8F8F',
+        royalblue: '#4169E1',
+        saddlebrown: '#8B4513',
+        salmon: '#FA8072',
+        sandybrown: '#F4A460',
+        seagreen: '#2E8B57',
+        seashell: '#FFF5EE',
+        sienna: '#A0522D',
+        silver: '#C0C0C0',
+        skyblue: '#87CEEB',
+        slateblue: '#6A5ACD',
+        slategray: '#708090',
+        slategrey: '#708090',
+        snow: '#FFFAFA',
+        springgreen: '#00FF7F',
+        steelblue: '#4682B4',
+        tan: '#D2B48C',
+        teal: '#008080',
+        thistle: '#D8BFD8',
+        tomato: '#FF6347',
+        turquoise: '#40E0D0',
+        violet: '#EE82EE',
+        wheat: '#F5DEB3',
+        white: '#FFFFFF',
+        whitesmoke: '#F5F5F5',
+        yellow: '#FFFF00',
+        yellowgreen: '#9ACD32'
+    });
+    return Color;
+}());
+
+function color (a, b) {
+    if (typeof a === 'string') {
+        try {
+            a = Color.fromString(a);
+        }
+        catch (e) {
+            a = Color.fromArray([0, 0, 0]);
+        }
+    }
+    if (typeof b === 'string') {
+        try {
+            b = Color.fromString(b);
+        }
+        catch (e) {
+            b = Color.fromArray([0, 0, 0]);
+        }
+    }
+    var red = interpolateNumber(a.r, b.r);
+    var green = interpolateNumber(a.g, b.g);
+    var blue = interpolateNumber(a.b, b.b);
+    var alpha = interpolateNumber(a.a, b.a);
+    return function (t) {
+        return Color.fromArray([red(t), green(t), blue(t), alpha(t)]).toRgbaString();
+    };
+}
+
 function interpolateValue (a, b) {
     var t = typeof b;
-    // let c;
-    return b == null || t === 'boolean' ? constant(b)
-        : (t === 'number' ? interpolateNumber
-            // : t === 'string' ? ((c = color(b)) ? (b = c, rgb) : string)
-            //     : b instanceof color ? rgb
-            : b instanceof Date ? date
-                : Array.isArray(b) ? array
-                    : typeof b.valueOf !== 'function' && typeof b.toString !== 'function' || isNaN(b) ? object
-                        : interpolateNumber)(a, b);
+    var c;
+    if (b == null || t === 'boolean') {
+        return constant(b);
+    }
+    if (t === 'number') {
+        return interpolateNumber(a, b);
+    }
+    if (t === 'string') {
+        try {
+            c = Color.fromString(b);
+            b = c;
+            return color(a, b);
+        }
+        catch (e) {
+            // return string(a, b);
+        }
+    }
+    if (b instanceof Color) {
+        return color(a, b);
+    }
+    if (b instanceof Date) {
+        return date(a, b);
+    }
+    if (Array.isArray(b)) {
+        return array(a, b);
+    }
+    if (typeof b.valueOf !== 'function' && typeof b.toString !== 'function' || isNaN(b)) {
+        return object(a, b);
+    }
+    return interpolateNumber(a, b);
+}
+
+function ascending(a, b) {
+    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+}
+
+function bisectRight(list, x, comparator, lo, hi) {
+    if (lo === void 0) { lo = 0; }
+    if (hi === void 0) { hi = list.length; }
+    while (lo < hi) {
+        var mid = (lo + hi) >>> 1;
+        if (comparator(list[mid], x) > 0) { // list[mid] > x
+            hi = mid;
+        }
+        else {
+            lo = mid + 1;
+        }
+    }
+    return lo;
+}
+function complexBisectRight(list, x, map, lo, hi) {
+    if (lo === void 0) { lo = 0; }
+    if (hi === void 0) { hi = list.length; }
+    var comparator = ascendingComparator(map);
+    while (lo < hi) {
+        var mid = (lo + hi) >>> 1;
+        if (comparator(list[mid], x) < 0) {
+            lo = mid + 1;
+        }
+        else {
+            hi = mid;
+        }
+    }
+    return lo;
+}
+function ascendingComparator(map) {
+    return function (item, x) {
+        return ascending(map(item), x);
+    };
 }
 
 var constant$1 = function (x) { return function () { return x; }; };
@@ -2479,7 +2967,9 @@ var ContinuousScale = /** @class */ (function () {
         configurable: true
     });
     ContinuousScale.prototype.rescale = function () {
-        if (Math.min(this.domain.length, this.range.length) > 2) ;
+        if (Math.min(this.domain.length, this.range.length) > 2) {
+            this.piecewise = this.polymap;
+        }
         else {
             this.piecewise = this.bimap;
         }
@@ -2513,23 +3003,24 @@ var ContinuousScale = /** @class */ (function () {
         }
         return function (x) { return ty(xt(x)); }; // domain value x --> t in [0, 1] --> range value y
     };
-    // private polymap(domain: any[], range: any[], interpolate: (a: any, b: any) => (t: number) => any): Reinterpolator<any> {
-    //     // number of segments in the polylinear scale
-    //     const n = Math.min(domain.length, range.length) - 1;
-    //     if (domain[n] < domain[0]) {
-    //         domain = domain.slice().reverse();
-    //         range = range.slice().reverse();
-    //     }
-    //     // deinterpolators from domain segment value to t
-    //     const dt = Array.from( {length: n}, (_, i) => this.normalize(domain[i], domain[i+1]) );
-    //     // reinterpolators from t to range segment value
-    //     const tr = Array.from( {length: n}, (_, i) => interpolate(range[i], range[i+1]) );
-    //     return (x) => {
-    //         const i = bisectRight(domain, x, ascending, 1, n) - 1; // Find the domain segment that `x` belongs to.
-    //         // This also tells us which deinterpolator/reinterpolator pair to use.
-    //         return tr[i](dt[i](x));
-    //     };
-    // }
+    ContinuousScale.prototype.polymap = function (domain, range, interpolate) {
+        var _this = this;
+        // number of segments in the polylinear scale
+        var n = Math.min(domain.length, range.length) - 1;
+        if (domain[n] < domain[0]) {
+            domain = domain.slice().reverse();
+            range = range.slice().reverse();
+        }
+        // deinterpolators from domain segment value to t
+        var dt = Array.from({ length: n }, function (_, i) { return _this.normalize(domain[i], domain[i + 1]); });
+        // reinterpolators from t to range segment value
+        var tr = Array.from({ length: n }, function (_, i) { return interpolate(range[i], range[i + 1]); });
+        return function (x) {
+            var i = bisectRight(domain, x, ascending, 1, n) - 1; // Find the domain segment that `x` belongs to.
+            // This also tells us which deinterpolator/reinterpolator pair to use.
+            return tr[i](dt[i](x));
+        };
+    };
     ContinuousScale.prototype.convert = function (x) {
         x = +x;
         if (isNaN(x)) {
@@ -5030,7 +5521,6 @@ var Axis = /** @class */ (function () {
             else {
                 titleNode.y = -padding - bbox.width - Math.min(bbox.x, 0);
             }
-            // title.text = `Axis Title: ${sideFlag} ${toDegrees(parallelFlipRotation).toFixed(0)} ${titleRotationFlag}`;
             titleNode.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
         }
         if (title) {
@@ -6672,31 +7162,6 @@ function field$4(date) {
 }
 var year = new CountableTimeInterval(floor$6, offset$6, count$6, field$4);
 
-function ascending(a, b) {
-    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-}
-
-function complexBisectRight(list, x, map, lo, hi) {
-    if (lo === void 0) { lo = 0; }
-    if (hi === void 0) { hi = list.length; }
-    var comparator = ascendingComparator(map);
-    while (lo < hi) {
-        var mid = (lo + hi) >>> 1;
-        if (comparator(list[mid], x) < 0) {
-            lo = mid + 1;
-        }
-        else {
-            hi = mid;
-        }
-    }
-    return lo;
-}
-function ascendingComparator(map) {
-    return function (item, x) {
-        return ascending(map(item), x);
-    };
-}
-
 function floor$7(date) {
     date.setUTCHours(0, 0, 0, 0);
 }
@@ -7773,7 +8238,56 @@ var Scene = /** @class */ (function () {
     return Scene;
 }());
 
+var Gradient = /** @class */ (function () {
+    function Gradient() {
+        this.stops = [];
+    }
+    return Gradient;
+}());
+
 var __extends$g = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var LinearGradient = /** @class */ (function (_super) {
+    __extends$g(LinearGradient, _super);
+    function LinearGradient() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.angle = 0;
+        return _this;
+    }
+    LinearGradient.prototype.generateGradient = function (ctx, bbox) {
+        var stops = this.stops;
+        var radians = (this.angle % 360) * Math.PI / 180;
+        var cos = Math.cos(radians);
+        var sin = Math.sin(radians);
+        var w = bbox.width;
+        var h = bbox.height;
+        var cx = bbox.x + w * 0.5;
+        var cy = bbox.y + h * 0.5;
+        if (w > 0 && h > 0) {
+            var l = (Math.sqrt(h * h + w * w) * Math.abs(Math.cos(radians - Math.atan(h / w)))) / 2;
+            var gradient_1 = ctx.createLinearGradient(cx + cos * l, cy + sin * l, cx - cos * l, cy - sin * l);
+            stops.forEach(function (stop) {
+                gradient_1.addColorStop(stop.offset, stop.color);
+            });
+            return gradient_1;
+        }
+        return 'black';
+    };
+    return LinearGradient;
+}(Gradient));
+
+var __extends$h = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -7791,7 +8305,7 @@ var __extends$g = (undefined && undefined.__extends) || (function () {
     RectSizing[RectSizing["Border"] = 1] = "Border";
 })(exports.RectSizing || (exports.RectSizing = {}));
 var Rect = /** @class */ (function (_super) {
-    __extends$g(Rect, _super);
+    __extends$h(Rect, _super);
     function Rect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._x = 0;
@@ -7805,6 +8319,7 @@ var Rect = /** @class */ (function (_super) {
          * when a rect is translated by a sub-pixel value on each frame.
          */
         _this._crisp = false;
+        _this._gradient = false;
         _this.effectiveStrokeWidth = Shape.defaultStyles.strokeWidth;
         /**
          * Similar to https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing
@@ -7885,6 +8400,54 @@ var Rect = /** @class */ (function (_super) {
             if (this._crisp !== value) {
                 this._crisp = value;
                 this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Rect.prototype, "gradient", {
+        get: function () {
+            return this._gradient;
+        },
+        set: function (value) {
+            if (this._gradient !== value) {
+                this._gradient = value;
+                this.updateGradientInstance();
+                this.dirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Rect.prototype.updateGradientInstance = function () {
+        if (this.gradient) {
+            var fill = this.fill;
+            if (fill) {
+                var gradient = new LinearGradient();
+                gradient.angle = 270;
+                gradient.stops = [{
+                        offset: 0,
+                        color: Color.fromString(fill).brighter().toString()
+                    }, {
+                        offset: 1,
+                        color: Color.fromString(fill).darker().toString()
+                    }];
+                this.gradientInstance = gradient;
+            }
+        }
+        else {
+            this.gradientInstance = undefined;
+        }
+    };
+    Object.defineProperty(Rect.prototype, "fill", {
+        get: function () {
+            return this._fill;
+        },
+        set: function (value) {
+            if (this._fill !== value) {
+                this._fill = value;
+                this.updateGradientInstance();
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -7975,7 +8538,12 @@ var Rect = /** @class */ (function (_super) {
         }
         var pixelRatio = this.scene.canvas.pixelRatio || 1;
         if (this.fill) {
-            ctx.fillStyle = this.fill;
+            if (this.gradientInstance) {
+                ctx.fillStyle = this.gradientInstance.generateGradient(ctx, this.computeBBox());
+            }
+            else {
+                ctx.fillStyle = this.fill;
+            }
             ctx.globalAlpha = this.opacity * this.fillOpacity;
             // The canvas context scaling (depends on the device's pixel ratio)
             // has no effect on shadows, so we have to account for the pixel ratio
@@ -8020,7 +8588,7 @@ var Rect = /** @class */ (function (_super) {
     return Rect;
 }(Path));
 
-var __extends$h = (undefined && undefined.__extends) || (function () {
+var __extends$i = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8034,7 +8602,7 @@ var __extends$h = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Marker = /** @class */ (function (_super) {
-    __extends$h(Marker, _super);
+    __extends$i(Marker, _super);
     function Marker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._x = 0;
@@ -8089,7 +8657,7 @@ var Marker = /** @class */ (function (_super) {
     return Marker;
 }(Path));
 
-var __extends$i = (undefined && undefined.__extends) || (function () {
+var __extends$j = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8103,7 +8671,7 @@ var __extends$i = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Square = /** @class */ (function (_super) {
-    __extends$i(Square, _super);
+    __extends$j(Square, _super);
     function Square() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -8122,7 +8690,7 @@ var Square = /** @class */ (function (_super) {
     return Square;
 }(Marker));
 
-var __extends$j = (undefined && undefined.__extends) || (function () {
+var __extends$k = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8136,7 +8704,7 @@ var __extends$j = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MarkerLabel = /** @class */ (function (_super) {
-    __extends$j(MarkerLabel, _super);
+    __extends$k(MarkerLabel, _super);
     function MarkerLabel() {
         var _this = _super.call(this) || this;
         _this.label = new Text();
@@ -8326,7 +8894,7 @@ var MarkerLabel = /** @class */ (function (_super) {
     return MarkerLabel;
 }(Group));
 
-var __extends$k = (undefined && undefined.__extends) || (function () {
+var __extends$l = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8340,7 +8908,7 @@ var __extends$k = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Circle = /** @class */ (function (_super) {
-    __extends$k(Circle, _super);
+    __extends$l(Circle, _super);
     function Circle() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -8355,7 +8923,7 @@ var Circle = /** @class */ (function (_super) {
     return Circle;
 }(Marker));
 
-var __extends$l = (undefined && undefined.__extends) || (function () {
+var __extends$m = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8369,7 +8937,7 @@ var __extends$l = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Cross = /** @class */ (function (_super) {
-    __extends$l(Cross, _super);
+    __extends$m(Cross, _super);
     function Cross() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -8396,7 +8964,7 @@ var Cross = /** @class */ (function (_super) {
     return Cross;
 }(Marker));
 
-var __extends$m = (undefined && undefined.__extends) || (function () {
+var __extends$n = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8410,7 +8978,7 @@ var __extends$m = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Diamond = /** @class */ (function (_super) {
-    __extends$m(Diamond, _super);
+    __extends$n(Diamond, _super);
     function Diamond() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -8430,7 +8998,7 @@ var Diamond = /** @class */ (function (_super) {
     return Diamond;
 }(Marker));
 
-var __extends$n = (undefined && undefined.__extends) || (function () {
+var __extends$o = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8444,7 +9012,7 @@ var __extends$n = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Heart = /** @class */ (function (_super) {
-    __extends$n(Heart, _super);
+    __extends$o(Heart, _super);
     function Heart() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -8465,7 +9033,7 @@ var Heart = /** @class */ (function (_super) {
     return Heart;
 }(Marker));
 
-var __extends$o = (undefined && undefined.__extends) || (function () {
+var __extends$p = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8479,7 +9047,7 @@ var __extends$o = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Plus = /** @class */ (function (_super) {
-    __extends$o(Plus, _super);
+    __extends$p(Plus, _super);
     function Plus() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -8507,7 +9075,7 @@ var Plus = /** @class */ (function (_super) {
     return Plus;
 }(Marker));
 
-var __extends$p = (undefined && undefined.__extends) || (function () {
+var __extends$q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8521,7 +9089,7 @@ var __extends$p = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Triangle = /** @class */ (function (_super) {
-    __extends$p(Triangle, _super);
+    __extends$q(Triangle, _super);
     function Triangle() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -8568,7 +9136,7 @@ function getMarker(shape) {
     return Square;
 }
 
-var __extends$q = (undefined && undefined.__extends) || (function () {
+var __extends$r = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8598,7 +9166,7 @@ var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, 
     LegendPosition["Left"] = "left";
 })(exports.LegendPosition || (exports.LegendPosition = {}));
 var LegendLabel = /** @class */ (function (_super) {
-    __extends$q(LegendLabel, _super);
+    __extends$r(LegendLabel, _super);
     function LegendLabel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.color = 'black';
@@ -8624,7 +9192,7 @@ var LegendLabel = /** @class */ (function (_super) {
     return LegendLabel;
 }(Observable));
 var LegendMarker = /** @class */ (function (_super) {
-    __extends$q(LegendMarker, _super);
+    __extends$r(LegendMarker, _super);
     function LegendMarker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.size = 15;
@@ -8650,7 +9218,7 @@ var LegendMarker = /** @class */ (function (_super) {
     return LegendMarker;
 }(Observable));
 var LegendItem = /** @class */ (function (_super) {
-    __extends$q(LegendItem, _super);
+    __extends$r(LegendItem, _super);
     function LegendItem() {
         var _this = _super.call(this) || this;
         _this.marker = new LegendMarker();
@@ -8684,7 +9252,7 @@ var LegendItem = /** @class */ (function (_super) {
     return LegendItem;
 }(Observable));
 var Legend = /** @class */ (function (_super) {
-    __extends$q(Legend, _super);
+    __extends$r(Legend, _super);
     function Legend() {
         var _this = _super.call(this) || this;
         _this.id = createId(_this);
@@ -9130,7 +9698,7 @@ var SizeMonitor = /** @class */ (function () {
     return SizeMonitor;
 }());
 
-var __extends$r = (undefined && undefined.__extends) || (function () {
+var __extends$s = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9149,8 +9717,20 @@ var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var SeriesTooltip = /** @class */ (function (_super) {
+    __extends$s(SeriesTooltip, _super);
+    function SeriesTooltip() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.enabled = true;
+        return _this;
+    }
+    __decorate$2([
+        reactive('change')
+    ], SeriesTooltip.prototype, "enabled", void 0);
+    return SeriesTooltip;
+}(Observable));
 var Series = /** @class */ (function (_super) {
-    __extends$r(Series, _super);
+    __extends$s(Series, _super);
     function Series() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.id = createId(_this);
@@ -9159,6 +9739,9 @@ var Series = /** @class */ (function (_super) {
          */
         _this.group = new Group();
         _this.directions = [exports.ChartAxisDirection.X, exports.ChartAxisDirection.Y];
+        /**
+         * @deprecated Use {@link tooltip.enabled} instead.
+         */
         _this.tooltipEnabled = true;
         _this.data = undefined;
         _this.visible = true;
@@ -9257,7 +9840,7 @@ var Series = /** @class */ (function (_super) {
     return Series;
 }(Observable));
 
-var __extends$s = (undefined && undefined.__extends) || (function () {
+var __extends$t = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9277,7 +9860,7 @@ var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SeriesMarker = /** @class */ (function (_super) {
-    __extends$s(SeriesMarker, _super);
+    __extends$t(SeriesMarker, _super);
     function SeriesMarker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.enabled = true;
@@ -9324,7 +9907,7 @@ var SeriesMarker = /** @class */ (function (_super) {
     return SeriesMarker;
 }(Observable));
 
-var __extends$t = (undefined && undefined.__extends) || (function () {
+var __extends$u = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9338,7 +9921,7 @@ var __extends$t = (undefined && undefined.__extends) || (function () {
     };
 })();
 var CartesianSeries = /** @class */ (function (_super) {
-    __extends$t(CartesianSeries, _super);
+    __extends$u(CartesianSeries, _super);
     function CartesianSeries() {
         var _a;
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -9351,14 +9934,14 @@ var CartesianSeries = /** @class */ (function (_super) {
     return CartesianSeries;
 }(Series));
 var CartesianSeriesMarker = /** @class */ (function (_super) {
-    __extends$t(CartesianSeriesMarker, _super);
+    __extends$u(CartesianSeriesMarker, _super);
     function CartesianSeriesMarker() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return CartesianSeriesMarker;
 }(SeriesMarker));
 
-var __extends$u = (undefined && undefined.__extends) || (function () {
+var __extends$v = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9388,7 +9971,7 @@ var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: table;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-hidden {\n    top: -10000px !important;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: table;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-hidden {\n    top: -10000px !important;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n    overflow: hidden;\n}\n\n.ag-chart-tooltip-content:empty {\n    padding: 0;\n    height: 7px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
 function toTooltipHtml(input, defaults) {
     if (typeof input === 'string') {
         return input;
@@ -9399,7 +9982,7 @@ function toTooltipHtml(input, defaults) {
     return titleHtml + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + content + "</div>";
 }
 var ChartTooltip = /** @class */ (function (_super) {
-    __extends$u(ChartTooltip, _super);
+    __extends$v(ChartTooltip, _super);
     function ChartTooltip(chart) {
         var _this = _super.call(this) || this;
         _this.element = document.createElement('div');
@@ -9412,6 +9995,7 @@ var ChartTooltip = /** @class */ (function (_super) {
          */
         _this.tracking = true;
         _this.showTimeout = 0;
+        _this.constrained = false;
         _this.chart = chart;
         _this.class = '';
         var tooltipRoot = document.body;
@@ -9470,17 +10054,22 @@ var ChartTooltip = /** @class */ (function (_super) {
         }
         var left = meta.pageX - el.clientWidth / 2;
         var top = meta.pageY - el.clientHeight - 8;
+        this.constrained = false;
         if (this.chart.container) {
             var tooltipRect = el.getBoundingClientRect();
             var minLeft = 0;
             var maxLeft = window.innerWidth - tooltipRect.width;
             if (left < minLeft) {
                 left = minLeft;
-                this.updateClass(true, true);
+                this.updateClass(true, this.constrained = true);
             }
             else if (left > maxLeft) {
                 left = maxLeft;
-                this.updateClass(true, true);
+                this.updateClass(true, this.constrained = true);
+            }
+            if (top < window.pageYOffset) {
+                top = meta.pageY + 20;
+                this.updateClass(true, this.constrained = true);
             }
         }
         el.style.left = left + "px";
@@ -9502,7 +10091,7 @@ var ChartTooltip = /** @class */ (function (_super) {
                 this.chart.lastPick = undefined;
             }
         }
-        this.updateClass(visible);
+        this.updateClass(visible, this.constrained);
     };
     ChartTooltip.prototype.destroy = function () {
         var parentNode = this.element.parentNode;
@@ -9528,7 +10117,7 @@ var ChartTooltip = /** @class */ (function (_super) {
     return ChartTooltip;
 }(Observable));
 var Chart = /** @class */ (function (_super) {
-    __extends$u(Chart, _super);
+    __extends$v(Chart, _super);
     function Chart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this) || this;
@@ -10102,6 +10691,9 @@ var Chart = /** @class */ (function (_super) {
         chartElement.removeEventListener('mouseout', this._onMouseOut);
         chartElement.removeEventListener('click', this._onClick);
     };
+    Chart.prototype.getSeriesRect = function () {
+        return this.seriesRect;
+    };
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
     Chart.prototype.pickSeriesNode = function (x, y) {
         if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
@@ -10279,7 +10871,7 @@ var Chart = /** @class */ (function (_super) {
             event: event
         };
         this.highlightDatum(datum);
-        var html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
+        var html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
         if (html) {
             this.tooltip.show(meta, html);
         }
@@ -10308,7 +10900,7 @@ var Chart = /** @class */ (function (_super) {
     return Chart;
 }(Observable));
 
-var __extends$v = (undefined && undefined.__extends) || (function () {
+var __extends$w = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10327,7 +10919,7 @@ var __extends$v = (undefined && undefined.__extends) || (function () {
  * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
  */
 var ClipRect = /** @class */ (function (_super) {
-    __extends$v(ClipRect, _super);
+    __extends$w(ClipRect, _super);
     function ClipRect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.isContainerNode = true;
@@ -10464,7 +11056,7 @@ var ClipRect = /** @class */ (function (_super) {
     return ClipRect;
 }(Node));
 
-var __extends$w = (undefined && undefined.__extends) || (function () {
+var __extends$x = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10478,7 +11070,7 @@ var __extends$w = (undefined && undefined.__extends) || (function () {
     };
 })();
 var RangeHandle = /** @class */ (function (_super) {
-    __extends$w(RangeHandle, _super);
+    __extends$x(RangeHandle, _super);
     function RangeHandle() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._fill = '#f2f2f2';
@@ -10613,7 +11205,7 @@ var RangeHandle = /** @class */ (function (_super) {
     return RangeHandle;
 }(Path));
 
-var __extends$x = (undefined && undefined.__extends) || (function () {
+var __extends$y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10627,7 +11219,7 @@ var __extends$x = (undefined && undefined.__extends) || (function () {
     };
 })();
 var RangeMask = /** @class */ (function (_super) {
-    __extends$x(RangeMask, _super);
+    __extends$y(RangeMask, _super);
     function RangeMask() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._stroke = '#999999';
@@ -10769,7 +11361,7 @@ var RangeMask = /** @class */ (function (_super) {
     return RangeMask;
 }(Path));
 
-var __extends$y = (undefined && undefined.__extends) || (function () {
+var __extends$z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10783,7 +11375,7 @@ var __extends$y = (undefined && undefined.__extends) || (function () {
     };
 })();
 var RangeSelector = /** @class */ (function (_super) {
-    __extends$y(RangeSelector, _super);
+    __extends$z(RangeSelector, _super);
     function RangeSelector() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.isContainerNode = true;
@@ -11231,7 +11823,7 @@ var Navigator = /** @class */ (function () {
     return Navigator;
 }());
 
-var __extends$z = (undefined && undefined.__extends) || (function () {
+var __extends$A = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11245,7 +11837,7 @@ var __extends$z = (undefined && undefined.__extends) || (function () {
     };
 })();
 var CartesianChart = /** @class */ (function (_super) {
-    __extends$z(CartesianChart, _super);
+    __extends$A(CartesianChart, _super);
     function CartesianChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
@@ -11476,7 +12068,97 @@ var CartesianChart = /** @class */ (function (_super) {
     return CartesianChart;
 }(Chart));
 
-var __extends$A = (undefined && undefined.__extends) || (function () {
+var __extends$B = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var HierarchyChart = /** @class */ (function (_super) {
+    __extends$B(HierarchyChart, _super);
+    function HierarchyChart(document) {
+        if (document === void 0) { document = window.document; }
+        var _this = _super.call(this, document) || this;
+        _this._data = {};
+        _this._seriesRoot = new ClipRect();
+        // Prevent the scene from rendering chart components in an invalid state
+        // (before first layout is performed).
+        _this.scene.root.visible = false;
+        var root = _this.scene.root;
+        root.append(_this.seriesRoot);
+        root.append(_this.legend.group);
+        return _this;
+    }
+    Object.defineProperty(HierarchyChart.prototype, "seriesRoot", {
+        get: function () {
+            return this._seriesRoot;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    HierarchyChart.prototype.performLayout = function () {
+        if (this.dataPending) {
+            return;
+        }
+        this.scene.root.visible = true;
+        var _a = this, width = _a.width, height = _a.height, legend = _a.legend;
+        var shrinkRect = new BBox(0, 0, width, height);
+        this.positionCaptions();
+        this.positionLegend();
+        if (legend.enabled && legend.data.length) {
+            var legendAutoPadding = this.legendAutoPadding;
+            var legendPadding = this.legend.spacing;
+            shrinkRect.x += legendAutoPadding.left;
+            shrinkRect.y += legendAutoPadding.top;
+            shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
+            shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
+            switch (this.legend.position) {
+                case 'right':
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case 'bottom':
+                    shrinkRect.height -= legendPadding;
+                    break;
+                case 'left':
+                    shrinkRect.x += legendPadding;
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case 'top':
+                    shrinkRect.y += legendPadding;
+                    shrinkRect.height -= legendPadding;
+                    break;
+            }
+        }
+        var _b = this, captionAutoPadding = _b.captionAutoPadding, padding = _b.padding;
+        shrinkRect.x += padding.left;
+        shrinkRect.width -= padding.left + padding.right;
+        shrinkRect.y += padding.top + captionAutoPadding;
+        shrinkRect.height -= padding.top + captionAutoPadding + padding.bottom;
+        this.seriesRect = shrinkRect;
+        this.series.forEach(function (series) {
+            series.group.translationX = Math.floor(shrinkRect.x);
+            series.group.translationY = Math.floor(shrinkRect.y);
+            series.update(); // this has to happen after the `updateAxes` call
+        });
+        var seriesRoot = this.seriesRoot;
+        seriesRoot.x = shrinkRect.x;
+        seriesRoot.y = shrinkRect.y;
+        seriesRoot.width = shrinkRect.width;
+        seriesRoot.height = shrinkRect.height;
+    };
+    HierarchyChart.className = 'HierarchyChart';
+    HierarchyChart.type = 'hierarchy';
+    return HierarchyChart;
+}(Chart));
+
+var __extends$C = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11490,7 +12172,7 @@ var __extends$A = (undefined && undefined.__extends) || (function () {
     };
 })();
 var GroupedCategoryChart = /** @class */ (function (_super) {
-    __extends$A(GroupedCategoryChart, _super);
+    __extends$C(GroupedCategoryChart, _super);
     function GroupedCategoryChart() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -11527,7 +12209,7 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
     return GroupedCategoryChart;
 }(CartesianChart));
 
-var __extends$B = (undefined && undefined.__extends) || (function () {
+var __extends$D = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11541,7 +12223,7 @@ var __extends$B = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarSeries = /** @class */ (function (_super) {
-    __extends$B(PolarSeries, _super);
+    __extends$D(PolarSeries, _super);
     function PolarSeries() {
         var _a;
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -11568,14 +12250,14 @@ var PolarSeries = /** @class */ (function (_super) {
     return PolarSeries;
 }(Series));
 var PolarSeriesMarker = /** @class */ (function (_super) {
-    __extends$B(PolarSeriesMarker, _super);
+    __extends$D(PolarSeriesMarker, _super);
     function PolarSeriesMarker() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return PolarSeriesMarker;
 }(SeriesMarker));
 
-var __extends$C = (undefined && undefined.__extends) || (function () {
+var __extends$E = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11595,7 +12277,7 @@ var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PolarChart = /** @class */ (function (_super) {
-    __extends$C(PolarChart, _super);
+    __extends$E(PolarChart, _super);
     function PolarChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
@@ -11759,7 +12441,7 @@ function interpolate(input, values, formats) {
     });
 }
 
-var __extends$D = (undefined && undefined.__extends) || (function () {
+var __extends$F = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11778,10 +12460,24 @@ var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var AreaSeriesTooltip = /** @class */ (function (_super) {
+    __extends$F(AreaSeriesTooltip, _super);
+    function AreaSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$6([
+        reactive('change')
+    ], AreaSeriesTooltip.prototype, "renderer", void 0);
+    __decorate$6([
+        reactive('change')
+    ], AreaSeriesTooltip.prototype, "format", void 0);
+    return AreaSeriesTooltip;
+}(SeriesTooltip));
 var AreaSeries = /** @class */ (function (_super) {
-    __extends$D(AreaSeries, _super);
+    __extends$F(AreaSeries, _super);
     function AreaSeries() {
         var _this = _super.call(this) || this;
+        _this.tooltip = new AreaSeriesTooltip();
         _this.areaGroup = _this.group.appendChild(new Group);
         _this.strokeGroup = _this.group.appendChild(new Group);
         _this.markerGroup = _this.group.appendChild(new Group);
@@ -12194,7 +12890,8 @@ var AreaSeries = /** @class */ (function (_super) {
         if (!xKey || !yKey) {
             return '';
         }
-        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltipFormat = _a.tooltipFormat, tooltipRenderer = _a.tooltipRenderer;
+        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltip = _a.tooltip;
+        var _b = tooltip.renderer, tooltipRenderer = _b === void 0 ? this.tooltipRenderer : _b, tooltipFormat = tooltip.format;
         var datum = nodeDatum.seriesDatum;
         var xValue = datum[xKey];
         var yValue = datum[yKey];
@@ -12293,7 +12990,7 @@ var AreaSeries = /** @class */ (function (_super) {
     return AreaSeries;
 }(CartesianSeries));
 
-var __extends$E = (undefined && undefined.__extends) || (function () {
+var __extends$G = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -12313,7 +13010,7 @@ var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Label = /** @class */ (function (_super) {
-    __extends$E(Label, _super);
+    __extends$G(Label, _super);
     function Label() {
         var _this = _super.call(this) || this;
         _this.enabled = true;
@@ -12343,7 +13040,7 @@ var Label = /** @class */ (function (_super) {
     return Label;
 }(Observable));
 
-var __extends$F = (undefined && undefined.__extends) || (function () {
+var __extends$H = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -12368,7 +13065,7 @@ var BarSeriesNodeTag;
     BarSeriesNodeTag[BarSeriesNodeTag["Label"] = 1] = "Label";
 })(BarSeriesNodeTag || (BarSeriesNodeTag = {}));
 var BarSeriesLabel = /** @class */ (function (_super) {
-    __extends$F(BarSeriesLabel, _super);
+    __extends$H(BarSeriesLabel, _super);
     function BarSeriesLabel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -12377,8 +13074,30 @@ var BarSeriesLabel = /** @class */ (function (_super) {
     ], BarSeriesLabel.prototype, "formatter", void 0);
     return BarSeriesLabel;
 }(Label));
+var BarSeriesTooltip = /** @class */ (function (_super) {
+    __extends$H(BarSeriesTooltip, _super);
+    function BarSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$8([
+        reactive('change')
+    ], BarSeriesTooltip.prototype, "renderer", void 0);
+    return BarSeriesTooltip;
+}(SeriesTooltip));
+function flat(arr, target) {
+    if (target === void 0) { target = []; }
+    arr.forEach(function (v) {
+        if (Array.isArray(v)) {
+            flat(v, target);
+        }
+        else {
+            target.push(v);
+        }
+    });
+    return target;
+}
 var BarSeries = /** @class */ (function (_super) {
-    __extends$F(BarSeries, _super);
+    __extends$H(BarSeries, _super);
     function BarSeries() {
         var _a;
         var _this = _super.call(this) || this;
@@ -12399,6 +13118,7 @@ var BarSeries = /** @class */ (function (_super) {
          * in the {@link yKeys} setter.
          */
         _this.seriesItemEnabled = new Map();
+        _this.tooltip = new BarSeriesTooltip();
         _this.flipXY = false;
         _this.fills = [
             '#c16068',
@@ -12464,7 +13184,7 @@ var BarSeries = /** @class */ (function (_super) {
                 var value = _this[key];
                 if (value) {
                     if (Array.isArray(value)) {
-                        values.push.apply(values, value);
+                        values = values.concat(flat(value));
                     }
                     else {
                         values.push(value);
@@ -13023,7 +13743,7 @@ var BarSeries = /** @class */ (function (_super) {
     return BarSeries;
 }(CartesianSeries));
 
-var __extends$G = (undefined && undefined.__extends) || (function () {
+var __extends$I = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -13042,8 +13762,21 @@ var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var LineSeriesTooltip = /** @class */ (function (_super) {
+    __extends$I(LineSeriesTooltip, _super);
+    function LineSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$9([
+        reactive('change')
+    ], LineSeriesTooltip.prototype, "renderer", void 0);
+    __decorate$9([
+        reactive('change')
+    ], LineSeriesTooltip.prototype, "format", void 0);
+    return LineSeriesTooltip;
+}(SeriesTooltip));
 var LineSeries = /** @class */ (function (_super) {
-    __extends$G(LineSeries, _super);
+    __extends$I(LineSeries, _super);
     function LineSeries() {
         var _this = _super.call(this) || this;
         _this.xDomain = [];
@@ -13061,6 +13794,7 @@ var LineSeries = /** @class */ (function (_super) {
         _this.lineDashOffset = 0;
         _this.strokeWidth = 2;
         _this.strokeOpacity = 1;
+        _this.tooltip = new LineSeriesTooltip();
         _this._xKey = '';
         _this.xName = '';
         _this._yKey = '';
@@ -13305,7 +14039,8 @@ var LineSeries = /** @class */ (function (_super) {
         if (!xKey || !yKey) {
             return '';
         }
-        var _b = this, xName = _b.xName, yName = _b.yName, color = _b.stroke, tooltipRenderer = _b.tooltipRenderer;
+        var _b = this, xName = _b.xName, yName = _b.yName, color = _b.stroke, tooltip = _b.tooltip;
+        var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c, tooltipFormat = tooltip.format;
         var datum = nodeDatum.seriesDatum;
         var xValue = datum[xKey];
         var yValue = datum[yKey];
@@ -13318,10 +14053,9 @@ var LineSeries = /** @class */ (function (_super) {
             backgroundColor: color,
             content: content
         };
-        if (tooltipRenderer) {
-            var datum_1 = nodeDatum.seriesDatum;
-            return toTooltipHtml(tooltipRenderer({
-                datum: datum_1,
+        if (tooltipFormat || tooltipRenderer) {
+            var params = {
+                datum: datum,
                 xKey: xKey,
                 xValue: xValue,
                 xName: xName,
@@ -13330,7 +14064,15 @@ var LineSeries = /** @class */ (function (_super) {
                 yName: yName,
                 title: title,
                 color: color
-            }), defaults);
+            };
+            if (tooltipFormat) {
+                return toTooltipHtml({
+                    content: interpolate(tooltipFormat, params)
+                }, defaults);
+            }
+            if (tooltipRenderer) {
+                return toTooltipHtml(tooltipRenderer(params), defaults);
+            }
         }
         return toTooltipHtml(defaults);
     };
@@ -13383,7 +14125,7 @@ var LineSeries = /** @class */ (function (_super) {
     return LineSeries;
 }(CartesianSeries));
 
-var __extends$H = (undefined && undefined.__extends) || (function () {
+var __extends$J = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -13402,8 +14144,18 @@ var __decorate$a = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var ScatterSeriesTooltip = /** @class */ (function (_super) {
+    __extends$J(ScatterSeriesTooltip, _super);
+    function ScatterSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$a([
+        reactive('change')
+    ], ScatterSeriesTooltip.prototype, "renderer", void 0);
+    return ScatterSeriesTooltip;
+}(SeriesTooltip));
 var ScatterSeries = /** @class */ (function (_super) {
-    __extends$H(ScatterSeries, _super);
+    __extends$J(ScatterSeries, _super);
     function ScatterSeries() {
         var _this = _super.call(this) || this;
         _this.xDomain = [];
@@ -13427,6 +14179,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         _this.yName = '';
         _this.sizeName = 'Size';
         _this.labelName = 'Label';
+        _this.tooltip = new ScatterSeriesTooltip();
         var marker = _this.marker;
         marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
         marker.addEventListener('change', _this.update, _this);
@@ -13667,7 +14420,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         if (!xKey || !yKey) {
             return '';
         }
-        var _b = this, tooltipRenderer = _b.tooltipRenderer, xName = _b.xName, yName = _b.yName, sizeKey = _b.sizeKey, sizeName = _b.sizeName, labelKey = _b.labelKey, labelName = _b.labelName, fill = _b.fill;
+        var _b = this, tooltip = _b.tooltip, xName = _b.xName, yName = _b.yName, sizeKey = _b.sizeKey, sizeName = _b.sizeName, labelKey = _b.labelKey, labelName = _b.labelName, fill = _b.fill;
+        var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c;
         var color = fill || 'gray';
         var title = this.title || yName;
         var datum = nodeDatum.seriesDatum;
@@ -13745,7 +14499,7 @@ var ScatterSeries = /** @class */ (function (_super) {
     return ScatterSeries;
 }(CartesianSeries));
 
-var __extends$I = (undefined && undefined.__extends) || (function () {
+var __extends$K = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -13777,7 +14531,7 @@ var HistogramSeriesNodeTag;
     HistogramSeriesNodeTag[HistogramSeriesNodeTag["Label"] = 1] = "Label";
 })(HistogramSeriesNodeTag || (HistogramSeriesNodeTag = {}));
 var HistogramSeriesLabel = /** @class */ (function (_super) {
-    __extends$I(HistogramSeriesLabel, _super);
+    __extends$K(HistogramSeriesLabel, _super);
     function HistogramSeriesLabel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -13832,8 +14586,18 @@ var HistogramBin = /** @class */ (function () {
     };
     return HistogramBin;
 }());
+var HistogramSeriesTooltip = /** @class */ (function (_super) {
+    __extends$K(HistogramSeriesTooltip, _super);
+    function HistogramSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$b([
+        reactive('change')
+    ], HistogramSeriesTooltip.prototype, "renderer", void 0);
+    return HistogramSeriesTooltip;
+}(SeriesTooltip));
 var HistogramSeries = /** @class */ (function (_super) {
-    __extends$I(HistogramSeries, _super);
+    __extends$K(HistogramSeries, _super);
     function HistogramSeries() {
         var _a;
         var _this = _super.call(this) || this;
@@ -13850,6 +14614,7 @@ var HistogramSeries = /** @class */ (function (_super) {
         _this.yDomain = [];
         _this.label = new HistogramSeriesLabel();
         _this.seriesItemEnabled = true;
+        _this.tooltip = new HistogramSeriesTooltip();
         _this.fill = undefined;
         _this.stroke = undefined;
         _this.fillOpacity = 1;
@@ -13862,6 +14627,9 @@ var HistogramSeries = /** @class */ (function (_super) {
             _a);
         _this._xKey = '';
         _this._areaPlot = false;
+        _this._bins = undefined;
+        _this._aggregation = 'count';
+        _this._binCount = undefined;
         _this._xName = '';
         _this._yKey = '';
         _this._yName = '';
@@ -14017,8 +14785,8 @@ var HistogramSeries = /** @class */ (function (_super) {
         this.fill = fills[0];
         this.stroke = strokes[0];
     };
-    /*  during processData phase, used to unify different ways of the user specifying
-        the bins. Returns bins in format [[min1, max1], [min2, max2] ... ] */
+    // During processData phase, used to unify different ways of the user specifying
+    // the bins. Returns bins in format[[min1, max1], [min2, max2], ... ].
     HistogramSeries.prototype.deriveBins = function () {
         var _this = this;
         var _a = this, bins = _a.bins, binCount = _a.binCount;
@@ -14026,10 +14794,9 @@ var HistogramSeries = /** @class */ (function (_super) {
             return [];
         }
         if (bins && binCount) {
-            console.warn('bin domain and bin count both specified - these are mutually exclusive properties');
+            console.warn('bins and bitCount are mutually exclusive properties.');
         }
         if (bins) {
-            // we have explicity set bins from user. Use those.
             return bins;
         }
         var xData = this.data.map(function (datum) { return datum[_this.xKey]; });
@@ -14059,13 +14826,18 @@ var HistogramSeries = /** @class */ (function (_super) {
         });
         var currentBin = 0;
         var bins = [new HistogramBin(derivedBins[0])];
-        sortedData.forEach(function (datum) {
+        loop: for (var i = 0, ln = sortedData.length; i < ln; i++) {
+            var datum = sortedData[i];
             while (datum[xKey] > derivedBins[currentBin][1]) {
                 currentBin++;
-                bins.push(new HistogramBin(derivedBins[currentBin]));
+                var bin = derivedBins[currentBin];
+                if (!bin) {
+                    break loop;
+                }
+                bins.push(new HistogramBin(bin));
             }
             bins[currentBin].addDatum(datum);
-        });
+        }
         bins.forEach(function (b) { return b.calculateAggregatedValue(_this._aggregation, _this.yKey); });
         return bins;
     };
@@ -14232,7 +15004,8 @@ var HistogramSeries = /** @class */ (function (_super) {
         if (!xKey) {
             return '';
         }
-        var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
+        var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltip = _b.tooltip, aggregation = _b.aggregation;
+        var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c;
         var bin = nodeDatum.seriesDatum;
         var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _d = bin.domain, rangeMin = _d[0], rangeMax = _d[1];
         var title = (xName || xKey) + ": " + toFixed(rangeMin) + " - " + toFixed(rangeMax);
@@ -14307,7 +15080,905 @@ var HistogramSeries = /** @class */ (function (_super) {
     return HistogramSeries;
 }(CartesianSeries));
 
-var __extends$J = (undefined && undefined.__extends) || (function () {
+var __extends$L = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var HierarchySeries = /** @class */ (function (_super) {
+    __extends$L(HierarchySeries, _super);
+    function HierarchySeries() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = undefined;
+        return _this;
+    }
+    __decorate$c([
+        reactive('dataChange')
+    ], HierarchySeries.prototype, "data", void 0);
+    return HierarchySeries;
+}(Series));
+
+var __extends$M = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var DropShadow = /** @class */ (function (_super) {
+    __extends$M(DropShadow, _super);
+    function DropShadow() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.enabled = true;
+        _this.color = 'rgba(0, 0, 0, 0.5)';
+        _this.xOffset = 0;
+        _this.yOffset = 0;
+        _this.blur = 5;
+        return _this;
+    }
+    __decorate$d([
+        reactive('change')
+    ], DropShadow.prototype, "enabled", void 0);
+    __decorate$d([
+        reactive('change')
+    ], DropShadow.prototype, "color", void 0);
+    __decorate$d([
+        reactive('change')
+    ], DropShadow.prototype, "xOffset", void 0);
+    __decorate$d([
+        reactive('change')
+    ], DropShadow.prototype, "yOffset", void 0);
+    __decorate$d([
+        reactive('change')
+    ], DropShadow.prototype, "blur", void 0);
+    return DropShadow;
+}(Observable));
+
+function slice(parent, x0, y0, x1, y1) {
+    var nodes = parent.children;
+    var k = parent.value && (y1 - y0) / parent.value;
+    nodes.forEach(function (node) {
+        node.x0 = x0;
+        node.x1 = x1;
+        node.y0 = y0;
+        node.y1 = y0 += node.value * k;
+    });
+}
+function dice(parent, x0, y0, x1, y1) {
+    var nodes = parent.children;
+    var k = parent.value && (x1 - x0) / parent.value;
+    nodes.forEach(function (node) {
+        node.x0 = x0;
+        node.x1 = x0 += node.value * k;
+        node.y0 = y0;
+        node.y1 = y1;
+    });
+}
+function roundNode(node) {
+    node.x0 = Math.round(node.x0);
+    node.y0 = Math.round(node.y0);
+    node.x1 = Math.round(node.x1);
+    node.y1 = Math.round(node.y1);
+}
+function squarifyRatio(ratio, parent, x0, y0, x1, y1) {
+    var rows = [];
+    var nodes = parent.children;
+    var n = nodes.length;
+    var value = parent.value;
+    var i0 = 0;
+    var i1 = 0;
+    var dx;
+    var dy;
+    var nodeValue;
+    var sumValue;
+    var minValue;
+    var maxValue;
+    var newRatio;
+    var minRatio;
+    var alpha;
+    var beta;
+    while (i0 < n) {
+        dx = x1 - x0;
+        dy = y1 - y0;
+        // Find the next non-empty node.
+        do {
+            sumValue = nodes[i1++].value;
+        } while (!sumValue && i1 < n);
+        minValue = maxValue = sumValue;
+        alpha = Math.max(dy / dx, dx / dy) / (value * ratio);
+        beta = sumValue * sumValue * alpha;
+        minRatio = Math.max(maxValue / beta, beta / minValue);
+        // Keep adding nodes while the aspect ratio maintains or improves.
+        for (; i1 < n; ++i1) {
+            nodeValue = nodes[i1].value;
+            sumValue += nodeValue;
+            if (nodeValue < minValue) {
+                minValue = nodeValue;
+            }
+            if (nodeValue > maxValue) {
+                maxValue = nodeValue;
+            }
+            beta = sumValue * sumValue * alpha;
+            newRatio = Math.max(maxValue / beta, beta / minValue);
+            if (newRatio > minRatio) {
+                sumValue -= nodeValue;
+                break;
+            }
+            minRatio = newRatio;
+        }
+        // Position and record the row orientation.
+        var row = {
+            value: sumValue,
+            dice: dx < dy,
+            children: nodes.slice(i0, i1)
+        };
+        rows.push(row);
+        if (row.dice) {
+            dice(row, x0, y0, x1, value ? y0 += dy * sumValue / value : y1);
+        }
+        else {
+            slice(row, x0, y0, value ? x0 += dx * sumValue / value : x1, y1);
+        }
+        value -= sumValue;
+        i0 = i1;
+    }
+    return rows;
+}
+var phi = (1 + Math.sqrt(5)) / 2;
+var squarify = (function custom(ratio) {
+    function squarify(parent, x0, y0, x1, y1) {
+        squarifyRatio(ratio, parent, x0, y0, x1, y1);
+    }
+    squarify.ratio = function (x) { return custom((x = +x) > 1 ? x : 1); };
+    return squarify;
+})(phi);
+var Treemap = /** @class */ (function () {
+    function Treemap() {
+        this.paddingStack = [0];
+        this.dx = 1;
+        this.dy = 1;
+        this.round = true;
+        this.tile = squarify;
+        this.paddingInner = function (_) { return 0; };
+        this.paddingTop = function (_) { return 0; };
+        this.paddingRight = function (_) { return 0; };
+        this.paddingBottom = function (_) { return 0; };
+        this.paddingLeft = function (_) { return 0; };
+    }
+    Object.defineProperty(Treemap.prototype, "size", {
+        get: function () {
+            return [this.dx, this.dy];
+        },
+        set: function (size) {
+            this.dx = size[0];
+            this.dy = size[1];
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Treemap.prototype.processData = function (root) {
+        root.x0 = 0;
+        root.y0 = 0;
+        root.x1 = this.dx;
+        root.y1 = this.dy;
+        root.eachBefore(this.positionNode.bind(this));
+        this.paddingStack = [0];
+        if (this.round) {
+            root.eachBefore(roundNode);
+        }
+        return root;
+    };
+    Treemap.prototype.positionNode = function (node) {
+        var p = this.paddingStack[node.depth];
+        var x0 = node.x0 + p;
+        var y0 = node.y0 + p;
+        var x1 = node.x1 - p;
+        var y1 = node.y1 - p;
+        if (x1 < x0) {
+            x0 = x1 = (x0 + x1) / 2;
+        }
+        if (y1 < y0) {
+            y0 = y1 = (y0 + y1) / 2;
+        }
+        node.x0 = x0;
+        node.y0 = y0;
+        node.x1 = x1;
+        node.y1 = y1;
+        if (node.children) {
+            p = this.paddingStack[node.depth + 1] = this.paddingInner(node) / 2;
+            x0 += this.paddingLeft(node) - p;
+            y0 += this.paddingTop(node) - p;
+            x1 -= this.paddingRight(node) - p;
+            y1 -= this.paddingBottom(node) - p;
+            if (x1 < x0) {
+                x0 = x1 = (x0 + x1) / 2;
+            }
+            if (y1 < y0) {
+                y0 = y1 = (y0 + y1) / 2;
+            }
+            this.tile(node, x0, y0, x1, y1);
+        }
+    };
+    return Treemap;
+}());
+
+var HierarchyNode = /** @class */ (function () {
+    function HierarchyNode(data) {
+        this.value = 0;
+        this.depth = 0;
+        this.height = 0;
+        this.parent = undefined;
+        this.children = undefined;
+        this.data = data;
+    }
+    HierarchyNode.prototype.countFn = function (node) {
+        var sum = 0, children = node.children;
+        if (!children || !children.length) {
+            sum = 1;
+        }
+        else {
+            var i = children.length;
+            while (--i >= 0) {
+                sum += children[i].value;
+            }
+        }
+        node.value = sum;
+    };
+    HierarchyNode.prototype.count = function () {
+        return this.eachAfter(this.countFn);
+    };
+    HierarchyNode.prototype.each = function (callback, scope) {
+        var _this = this;
+        var index = -1;
+        this.iterator(function (node) {
+            callback.call(scope, node, ++index, _this);
+        });
+        return this;
+    };
+    /**
+     * Invokes the given callback for each node in post-order traversal.
+     * @param callback
+     * @param scope
+     */
+    HierarchyNode.prototype.eachAfter = function (callback, scope) {
+        var node = this;
+        var nodes = [node];
+        var next = [];
+        while (node = nodes.pop()) {
+            next.push(node);
+            var children = node.children;
+            if (children) {
+                for (var i = 0, n = children.length; i < n; ++i) {
+                    nodes.push(children[i]);
+                }
+            }
+        }
+        var index = -1;
+        while (node = next.pop()) {
+            callback.call(scope, node, ++index, this);
+        }
+        return this;
+    };
+    /**
+     * Invokes the given callback for each node in pre-order traversal.
+     * @param callback
+     * @param scope
+     */
+    HierarchyNode.prototype.eachBefore = function (callback, scope) {
+        var node = this;
+        var nodes = [node];
+        var index = -1;
+        while (node = nodes.pop()) {
+            callback.call(scope, node, ++index, this);
+            var children = node.children;
+            if (children) {
+                for (var i = children.length - 1; i >= 0; --i) {
+                    var child = children[i];
+                    nodes.push(child);
+                }
+            }
+        }
+        return this;
+    };
+    HierarchyNode.prototype.find = function (callback, scope) {
+        var _this = this;
+        var index = -1;
+        var result;
+        this.iterator(function (node) {
+            if (callback.call(scope, node, ++index, _this)) {
+                result = node;
+                return false;
+            }
+        });
+        return result;
+    };
+    HierarchyNode.prototype.sum = function (value) {
+        return this.eachAfter(function (node) {
+            var sum = +value(node.data) || 0;
+            var children = node.children;
+            if (children) {
+                var i = children.length;
+                while (--i >= 0) {
+                    sum += children[i].value;
+                }
+            }
+            node.value = sum;
+        });
+    };
+    HierarchyNode.prototype.sort = function (compare) {
+        return this.eachBefore(function (node) {
+            if (node.children) {
+                node.children.sort(compare);
+            }
+        });
+    };
+    HierarchyNode.prototype.path = function (end) {
+        var start = this;
+        var ancestor = leastCommonAncestor(start, end);
+        var nodes = [start];
+        while (start !== ancestor) {
+            start = start.parent;
+            nodes.push(start);
+        }
+        var k = nodes.length;
+        while (end !== ancestor) {
+            nodes.splice(k, 0, end);
+            end = end.parent;
+        }
+        // const otherBranch = [];
+        // while (end !== ancestor) {
+        //     otherBranch.push(end);
+        //     end = end.parent;
+        // }
+        // nodes.concat(otherBranch.reverse());
+        return nodes;
+    };
+    HierarchyNode.prototype.ancestors = function () {
+        var node = this;
+        var nodes = [node];
+        while (node = node.parent) {
+            nodes.push(node);
+        }
+        return nodes;
+    };
+    HierarchyNode.prototype.descendants = function () {
+        var nodes = [];
+        this.iterator(function (node) { return nodes.push(node); });
+        return nodes;
+    };
+    HierarchyNode.prototype.leaves = function () {
+        var leaves = [];
+        this.eachBefore(function (node) {
+            if (!node.children) {
+                leaves.push(node);
+            }
+        });
+        return leaves;
+    };
+    HierarchyNode.prototype.links = function () {
+        var root = this;
+        var links = [];
+        root.each(function (node) {
+            if (node !== root) { // Don’t include the root’s parent, if any.
+                links.push({ source: node.parent, target: node });
+            }
+        });
+        return links;
+    };
+    HierarchyNode.prototype.copy = function () {
+        // TODO
+    };
+    HierarchyNode.prototype.iterator = function (callback) {
+        var node = this;
+        var next = [node];
+        var current;
+        doLoop: do {
+            current = next.reverse();
+            next = [];
+            while (node = current.pop()) {
+                if (callback(node) === false) {
+                    break doLoop;
+                }
+                var children = node.children;
+                if (children) {
+                    for (var i = 0, n = children.length; i < n; ++i) {
+                        next.push(children[i]);
+                    }
+                }
+            }
+        } while (next.length);
+    };
+    return HierarchyNode;
+}());
+function hierarchy(data, children) {
+    if (data instanceof Map) {
+        data = [undefined, data];
+        if (children === undefined) {
+            children = mapChildren;
+        }
+    }
+    else if (children === undefined) {
+        children = objectChildren;
+    }
+    var root = new HierarchyNode(data);
+    var nodes = [root];
+    var node;
+    var child, childs, i, n;
+    while (node = nodes.pop()) {
+        if ((childs = children(node.data)) && (n = (childs = Array.from(childs)).length)) {
+            node.children = childs;
+            for (i = n - 1; i >= 0; --i) {
+                nodes.push(child = childs[i] = new HierarchyNode(childs[i]));
+                child.parent = node;
+                child.depth = node.depth + 1;
+            }
+        }
+    }
+    return root.eachBefore(computeHeight);
+}
+function computeHeight(node) {
+    var height = 0;
+    do {
+        node.height = height;
+    } while ((node = node.parent) && (node.height < ++height));
+}
+function mapChildren(d) {
+    return Array.isArray(d) ? d[1] : undefined;
+}
+function objectChildren(d) {
+    return d.children;
+}
+function leastCommonAncestor(a, b) {
+    if (!(a && b)) {
+        return undefined;
+    }
+    if (a === b) {
+        return a;
+    }
+    var aNodes = a.ancestors();
+    var bNodes = b.ancestors();
+    var c = undefined;
+    a = aNodes.pop();
+    b = bNodes.pop();
+    while (a === b) {
+        c = a;
+        a = aNodes.pop();
+        b = bNodes.pop();
+    }
+    return c;
+}
+
+var __extends$N = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var TreemapSeriesTooltip = /** @class */ (function (_super) {
+    __extends$N(TreemapSeriesTooltip, _super);
+    function TreemapSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$e([
+        reactive('change')
+    ], TreemapSeriesTooltip.prototype, "renderer", void 0);
+    return TreemapSeriesTooltip;
+}(SeriesTooltip));
+var TreemapSeriesLabel = /** @class */ (function (_super) {
+    __extends$N(TreemapSeriesLabel, _super);
+    function TreemapSeriesLabel() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.padding = 10;
+        return _this;
+    }
+    __decorate$e([
+        reactive('change')
+    ], TreemapSeriesLabel.prototype, "padding", void 0);
+    return TreemapSeriesLabel;
+}(Label));
+var TextNodeTag;
+(function (TextNodeTag) {
+    TextNodeTag[TextNodeTag["Name"] = 0] = "Name";
+    TextNodeTag[TextNodeTag["Value"] = 1] = "Value";
+})(TextNodeTag || (TextNodeTag = {}));
+var TreemapSeries = /** @class */ (function (_super) {
+    __extends$N(TreemapSeries, _super);
+    function TreemapSeries() {
+        var _this = _super.call(this) || this;
+        _this.groupSelection = Selection.select(_this.group).selectAll();
+        _this.labelMap = new Map();
+        _this.layout = new Treemap();
+        _this.title = (function () {
+            var label = new TreemapSeriesLabel();
+            label.fontWeight = 'bold';
+            label.fontSize = 12;
+            label.fontFamily = 'Verdana, sans-serif';
+            label.padding = 15;
+            return label;
+        })();
+        _this.subtitle = (function () {
+            var label = new TreemapSeriesLabel();
+            label.fontSize = 9;
+            label.fontFamily = 'Verdana, sans-serif';
+            label.padding = 13;
+            return label;
+        })();
+        _this.labels = {
+            large: (function () {
+                var label = new Label();
+                label.fontWeight = 'bold';
+                label.fontSize = 18;
+                return label;
+            })(),
+            medium: (function () {
+                var label = new Label();
+                label.fontWeight = 'bold';
+                label.fontSize = 14;
+                return label;
+            })(),
+            small: (function () {
+                var label = new Label();
+                label.fontWeight = 'bold';
+                label.fontSize = 10;
+                return label;
+            })(),
+            color: (function () {
+                var label = new Label();
+                label.color = 'white';
+                return label;
+            })()
+        };
+        _this._nodePadding = 2;
+        _this.labelKey = 'label';
+        _this.sizeKey = 'size';
+        _this.colorKey = 'color';
+        _this.colorDomain = [-5, 5];
+        _this.colorRange = ['#cb4b3f', '#6acb64'];
+        _this.colorParents = false;
+        _this.gradient = true;
+        _this.colorName = 'Change';
+        _this.rootName = 'Root';
+        _this._shadow = (function () {
+            var shadow = new DropShadow();
+            shadow.color = 'rgba(0, 0, 0, 0.4)';
+            shadow.xOffset = 1.5;
+            shadow.yOffset = 1.5;
+            return shadow;
+        })();
+        _this.highlightStyle = { fill: 'yellow' };
+        _this.tooltip = new TreemapSeriesTooltip();
+        _this.shadow.addEventListener('change', _this.update, _this);
+        _this.title.addEventListener('change', _this.update, _this);
+        _this.subtitle.addEventListener('change', _this.update, _this);
+        _this.labels.small.addEventListener('change', _this.update, _this);
+        _this.labels.medium.addEventListener('change', _this.update, _this);
+        _this.labels.large.addEventListener('change', _this.update, _this);
+        _this.labels.color.addEventListener('change', _this.update, _this);
+        return _this;
+    }
+    Object.defineProperty(TreemapSeries.prototype, "nodePadding", {
+        get: function () {
+            return this._nodePadding;
+        },
+        set: function (value) {
+            if (this._nodePadding !== value) {
+                this._nodePadding = value;
+                this.updateLayoutPadding();
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TreemapSeries.prototype, "shadow", {
+        get: function () {
+            return this._shadow;
+        },
+        set: function (value) {
+            if (this._shadow !== value) {
+                this._shadow = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    TreemapSeries.prototype.onHighlightChange = function () {
+        this.updateNodes();
+    };
+    TreemapSeries.prototype.updateLayoutPadding = function () {
+        var _a = this, title = _a.title, subtitle = _a.subtitle, nodePadding = _a.nodePadding, labelKey = _a.labelKey;
+        this.layout.paddingRight = function (_) { return nodePadding; };
+        this.layout.paddingBottom = function (_) { return nodePadding; };
+        this.layout.paddingLeft = function (_) { return nodePadding; };
+        this.layout.paddingTop = function (node) {
+            var name = node.data[labelKey] || '';
+            if (node.children) {
+                name = name.toUpperCase();
+            }
+            var font = node.depth > 1 ? subtitle : title;
+            var textSize = HdpiCanvas.getTextSize(name, [font.fontWeight, font.fontSize + 'px', font.fontFamily].join(' ').trim());
+            var innerNodeWidth = node.x1 - node.x0 - nodePadding * 2;
+            var hasTitle = node.depth > 0 && node.children && textSize.width <= innerNodeWidth;
+            node.hasTitle = hasTitle;
+            return hasTitle ? textSize.height + nodePadding * 2 : nodePadding;
+        };
+    };
+    TreemapSeries.prototype.processData = function () {
+        if (!this.data) {
+            return false;
+        }
+        var _a = this, data = _a.data, sizeKey = _a.sizeKey, labelKey = _a.labelKey, colorKey = _a.colorKey, colorDomain = _a.colorDomain, colorRange = _a.colorRange, colorParents = _a.colorParents;
+        var dataRoot;
+        if (sizeKey) {
+            dataRoot = hierarchy(data).sum(function (datum) { return datum.children ? 1 : datum[sizeKey]; });
+        }
+        else {
+            dataRoot = hierarchy(data).sum(function (datum) { return datum.children ? 0 : 1; });
+        }
+        this.dataRoot = dataRoot;
+        var colorScale = new LinearScale();
+        colorScale.domain = colorDomain;
+        colorScale.range = colorRange;
+        var series = this;
+        function traverse(root, depth) {
+            if (depth === void 0) { depth = 0; }
+            var children = root.children, data = root.data;
+            var label = data[labelKey];
+            var colorValue = colorKey ? data[colorKey] : depth;
+            root.series = series;
+            root.fill = !children || colorParents ? colorScale.convert(colorValue) : '#272931';
+            root.colorValue = colorValue;
+            if (label) {
+                root.label = children ? label.toUpperCase() : label;
+            }
+            else {
+                root.label = '';
+            }
+            if (children) {
+                children.forEach(function (child) { return traverse(child, depth + 1); });
+            }
+        }
+        traverse(this.dataRoot);
+        return true;
+    };
+    TreemapSeries.prototype.getLabelCenterX = function (datum) {
+        return (datum.x0 + datum.x1) / 2;
+    };
+    TreemapSeries.prototype.getLabelCenterY = function (datum) {
+        return (datum.y0 + datum.y1) / 2 + 2;
+    };
+    TreemapSeries.prototype.update = function () {
+        var _a = this, chart = _a.chart, dataRoot = _a.dataRoot;
+        if (!chart || !dataRoot) {
+            return;
+        }
+        var seriesRect = chart.getSeriesRect();
+        if (!seriesRect) {
+            return;
+        }
+        this.layout.size = [seriesRect.width, seriesRect.height];
+        this.updateLayoutPadding();
+        var descendants = this.layout.processData(dataRoot).descendants();
+        var updateGroups = this.groupSelection.setData(descendants);
+        updateGroups.exit.remove();
+        var enterGroups = updateGroups.enter.append(Group);
+        enterGroups.append(Rect);
+        enterGroups.append(Text).each(function (node) { return node.tag = TextNodeTag.Name; });
+        enterGroups.append(Text).each(function (node) { return node.tag = TextNodeTag.Value; });
+        this.groupSelection = updateGroups.merge(enterGroups);
+        this.updateNodes();
+    };
+    TreemapSeries.prototype.updateNodes = function () {
+        var _this = this;
+        var chart = this.chart;
+        if (!chart) {
+            return;
+        }
+        var highlightedDatum = chart.highlightedDatum;
+        var _a = this.highlightStyle, highlightFill = _a.fill, highlightStroke = _a.stroke;
+        var _b = this, colorKey = _b.colorKey, labelMap = _b.labelMap, nodePadding = _b.nodePadding, title = _b.title, subtitle = _b.subtitle, labels = _b.labels, shadow = _b.shadow, gradient = _b.gradient;
+        this.groupSelection.selectByClass(Rect).each(function (rect, datum) {
+            var highlighted = datum === highlightedDatum;
+            var fill = highlighted && highlightFill !== undefined
+                ? highlightFill
+                : datum.fill;
+            var stroke = highlighted && highlightStroke !== undefined
+                ? highlightStroke
+                : datum.depth < 2 ? undefined : 'black';
+            rect.fill = fill;
+            rect.stroke = stroke;
+            rect.strokeWidth = 1;
+            rect.crisp = true;
+            rect.gradient = gradient;
+            rect.x = datum.x0;
+            rect.y = datum.y0;
+            rect.width = datum.x1 - datum.x0;
+            rect.height = datum.y1 - datum.y0;
+        });
+        this.groupSelection.selectByTag(TextNodeTag.Name).each(function (text, datum, index) {
+            var isLeaf = !datum.children;
+            var innerNodeWidth = datum.x1 - datum.x0 - nodePadding * 2;
+            var innerNodeHeight = datum.y1 - datum.y0 - nodePadding * 2;
+            var hasTitle = datum.hasTitle;
+            var highlighted = datum === highlightedDatum;
+            var label;
+            if (isLeaf) {
+                if (innerNodeWidth > 40 && innerNodeWidth > 40) {
+                    label = labels.large;
+                }
+                else if (innerNodeWidth > 20 && innerNodeHeight > 20) {
+                    label = labels.medium;
+                }
+                else {
+                    label = labels.small;
+                }
+            }
+            else {
+                if (datum.depth > 1) {
+                    label = subtitle;
+                }
+                else {
+                    label = title;
+                }
+            }
+            text.fontWeight = label.fontWeight;
+            text.fontSize = label.fontSize;
+            text.fontFamily = label.fontFamily;
+            text.textBaseline = isLeaf ? 'bottom' : (hasTitle ? 'top' : 'middle');
+            text.textAlign = hasTitle ? 'left' : 'center';
+            text.text = datum.label;
+            var textBBox = text.computeBBox();
+            var hasLabel = isLeaf && !!textBBox
+                && textBBox.width <= innerNodeWidth
+                && textBBox.height * 2 + 8 <= innerNodeHeight;
+            labelMap.set(index, text);
+            text.fill = highlighted ? 'black' : 'white';
+            text.fillShadow = hasLabel && !highlighted ? shadow : undefined;
+            text.visible = hasTitle || hasLabel;
+            if (hasTitle) {
+                text.x = datum.x0 + nodePadding;
+                text.y = datum.y0 + nodePadding;
+            }
+            else {
+                text.x = _this.getLabelCenterX(datum);
+                text.y = _this.getLabelCenterY(datum);
+            }
+        });
+        this.groupSelection.selectByTag(TextNodeTag.Value).each(function (text, datum, index) {
+            var innerNodeWidth = datum.x1 - datum.x0 - nodePadding * 2;
+            var highlighted = datum === highlightedDatum;
+            var value = datum.colorValue;
+            var label = labels.color;
+            text.fontSize = label.fontSize;
+            text.fontFamily = label.fontFamily;
+            text.fontStyle = label.fontStyle;
+            text.fontWeight = label.fontWeight;
+            text.textBaseline = 'top';
+            text.textAlign = 'center';
+            text.text = typeof value === 'number' && isFinite(value)
+                ? String(toFixed(datum.colorValue)) + '%'
+                : '';
+            var textBBox = text.computeBBox();
+            var nameNode = labelMap.get(index);
+            var hasLabel = !!nameNode && nameNode.visible;
+            var isVisible = !!colorKey && hasLabel && !!textBBox && textBBox.width < innerNodeWidth;
+            text.fill = highlighted ? 'black' : label.color;
+            text.fillShadow = highlighted ? undefined : shadow;
+            text.visible = isVisible;
+            if (isVisible) {
+                text.x = _this.getLabelCenterX(datum);
+                text.y = _this.getLabelCenterY(datum);
+            }
+            else {
+                if (nameNode && !(datum.children && datum.children.length)) {
+                    nameNode.textBaseline = 'middle';
+                    nameNode.y = _this.getLabelCenterY(datum);
+                }
+            }
+        });
+    };
+    TreemapSeries.prototype.getDomain = function (direction) {
+        return [0, 1];
+    };
+    TreemapSeries.prototype.getTooltipHtml = function (datum) {
+        var _a = this, tooltip = _a.tooltip, sizeKey = _a.sizeKey, labelKey = _a.labelKey, colorKey = _a.colorKey, colorName = _a.colorName, rootName = _a.rootName;
+        var data = datum.data;
+        var tooltipRenderer = tooltip.renderer;
+        var title = datum.depth ? data[labelKey] : (rootName || data[labelKey]);
+        var content = undefined;
+        var color = datum.fill || 'gray';
+        if (colorKey && colorName) {
+            var colorValue = data[colorKey];
+            if (typeof colorValue === 'number' && isFinite(colorValue)) {
+                content = "<b>" + colorName + "</b>: " + toFixed(data[colorKey]);
+            }
+        }
+        var defaults = {
+            title: title,
+            backgroundColor: color,
+            content: content
+        };
+        if (tooltipRenderer) {
+            return toTooltipHtml(tooltipRenderer({
+                datum: datum,
+                sizeKey: sizeKey,
+                labelKey: labelKey,
+                colorKey: colorKey,
+                title: title,
+                color: color
+            }), defaults);
+        }
+        return toTooltipHtml(defaults);
+    };
+    TreemapSeries.prototype.listSeriesItems = function (legendData) {
+    };
+    TreemapSeries.className = 'TreemapSeries';
+    TreemapSeries.type = 'treemap';
+    __decorate$e([
+        reactive('dataChange')
+    ], TreemapSeries.prototype, "labelKey", void 0);
+    __decorate$e([
+        reactive('dataChange')
+    ], TreemapSeries.prototype, "sizeKey", void 0);
+    __decorate$e([
+        reactive('dataChange')
+    ], TreemapSeries.prototype, "colorKey", void 0);
+    __decorate$e([
+        reactive('dataChange')
+    ], TreemapSeries.prototype, "colorDomain", void 0);
+    __decorate$e([
+        reactive('dataChange')
+    ], TreemapSeries.prototype, "colorRange", void 0);
+    __decorate$e([
+        reactive('dataChange')
+    ], TreemapSeries.prototype, "colorParents", void 0);
+    __decorate$e([
+        reactive('update')
+    ], TreemapSeries.prototype, "gradient", void 0);
+    return TreemapSeries;
+}(HierarchySeries));
+
+var __extends$O = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14321,7 +15992,7 @@ var __extends$J = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Sector = /** @class */ (function (_super) {
-    __extends$J(Sector, _super);
+    __extends$O(Sector, _super);
     function Sector() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.path = new Path2D();
@@ -14541,409 +16212,7 @@ var Sector = /** @class */ (function (_super) {
     return Sector;
 }(Shape));
 
-var Color = /** @class */ (function () {
-    /**
-     * Every color component should be in the [0, 1] range.
-     * Some easing functions (such as elastic easing) can overshoot the target value by some amount.
-     * So, when animating colors, if the source or target color components are already near
-     * or at the edge of the allowed [0, 1] range, it is possible for the intermediate color
-     * component value to end up outside of that range mid-animation. For this reason the constructor
-     * performs range checking/constraining.
-     * @param r Red component.
-     * @param g Green component.
-     * @param b Blue component.
-     * @param a Alpha (opacity) component.
-     */
-    function Color(r, g, b, a) {
-        if (a === void 0) { a = 1; }
-        // NaN is treated as 0.
-        this.r = Math.min(1, Math.max(0, r || 0));
-        this.g = Math.min(1, Math.max(0, g || 0));
-        this.b = Math.min(1, Math.max(0, b || 0));
-        this.a = Math.min(1, Math.max(0, a || 0));
-    }
-    /**
-     * The given string can be in one of the following formats:
-     * - #rgb
-     * - #rrggbb
-     * - rgb(r, g, b)
-     * - rgba(r, g, b, a)
-     * - CSS color name such as 'white', 'orange', 'cyan', etc.
-     * @param str
-     */
-    Color.fromString = function (str) {
-        // hexadecimal notation
-        if (str.indexOf('#') >= 0) { // there can be some leading whitespace
-            return Color.fromHexString(str);
-        }
-        // color name
-        var hex = Color.nameToHex[str];
-        if (hex) {
-            return Color.fromHexString(hex);
-        }
-        // rgb(a) notation
-        if (str.indexOf('rgb') >= 0) {
-            return Color.fromRgbaString(str);
-        }
-        throw new Error("Invalid color string: '" + str + "'");
-    };
-    // Using separate RegExp for the short hex notation because strings like `#abcd`
-    // are matched as ['#abcd', 'ab', 'c', 'd', undefined] when the `{1,2}` quantifier is used.
-    Color.fromHexString = function (str) {
-        var values = str.match(Color.hexRe);
-        if (values) {
-            var r = parseInt(values[1], 16);
-            var g = parseInt(values[2], 16);
-            var b = parseInt(values[3], 16);
-            var a = values[4] !== undefined ? parseInt(values[4], 16) : 255;
-            return new Color(r / 255, g / 255, b / 255, a / 255);
-        }
-        values = str.match(Color.shortHexRe);
-        if (values) {
-            var r = parseInt(values[1], 16);
-            var g = parseInt(values[2], 16);
-            var b = parseInt(values[3], 16);
-            var a = values[4] !== undefined ? parseInt(values[4], 16) : 15;
-            r += r * 16;
-            g += g * 16;
-            b += b * 16;
-            a += a * 16;
-            return new Color(r / 255, g / 255, b / 255, a / 255);
-        }
-        throw new Error("Malformed hexadecimal color string: '" + str + "'");
-    };
-    Color.fromRgbaString = function (str) {
-        var values = str.match(Color.rgbRe);
-        if (values) {
-            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255);
-        }
-        values = str.match(Color.rgbaRe);
-        if (values) {
-            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255, +values[4]);
-        }
-        throw new Error("Malformed rgb/rgba color string: '" + str + "'");
-    };
-    Color.fromArray = function (arr) {
-        if (arr.length === 4) {
-            return new Color(arr[0], arr[1], arr[2], arr[3]);
-        }
-        if (arr.length === 3) {
-            return new Color(arr[0], arr[1], arr[2]);
-        }
-        throw new Error('The given array should contain 3 or 4 color components (numbers).');
-    };
-    Color.fromHSB = function (h, s, b, alpha) {
-        if (alpha === void 0) { alpha = 1; }
-        var rgb = Color.HSBtoRGB(h, s, b);
-        return new Color(rgb[0], rgb[1], rgb[2], alpha);
-    };
-    Color.padHex = function (str) {
-        // Can't use `padStart(2, '0')` here because of IE.
-        return str.length === 1 ? '0' + str : str;
-    };
-    Color.prototype.toHexString = function () {
-        var hex = '#'
-            + Color.padHex(Math.round(this.r * 255).toString(16))
-            + Color.padHex(Math.round(this.g * 255).toString(16))
-            + Color.padHex(Math.round(this.b * 255).toString(16));
-        if (this.a < 1) {
-            hex += Color.padHex(Math.round(this.a * 255).toString(16));
-        }
-        return hex;
-    };
-    Color.prototype.toRgbaString = function (fractionDigits) {
-        if (fractionDigits === void 0) { fractionDigits = 3; }
-        var components = [
-            Math.round(this.r * 255),
-            Math.round(this.g * 255),
-            Math.round(this.b * 255)
-        ];
-        var k = Math.pow(10, fractionDigits);
-        if (this.a !== 1) {
-            components.push(Math.round(this.a * k) / k);
-            return "rgba(" + components.join(', ') + ")";
-        }
-        return "rgb(" + components.join(', ') + ")";
-    };
-    Color.prototype.toString = function () {
-        if (this.a === 1) {
-            return this.toHexString();
-        }
-        return this.toRgbaString();
-    };
-    Color.prototype.toHSB = function () {
-        return Color.RGBtoHSB(this.r, this.g, this.b);
-    };
-    /**
-     * Converts the given RGB triple to an array of HSB (HSV) components.
-     * The hue component will be `NaN` for achromatic colors.
-     */
-    Color.RGBtoHSB = function (r, g, b) {
-        var min = Math.min(r, g, b);
-        var max = Math.max(r, g, b);
-        var S = max !== 0 ? (max - min) / max : 0;
-        var H = NaN;
-        // min == max, means all components are the same
-        // and the color is a shade of gray with no hue (H is NaN)
-        if (min !== max) {
-            var delta = max - min;
-            var rc = (max - r) / delta;
-            var gc = (max - g) / delta;
-            var bc = (max - b) / delta;
-            if (r === max) {
-                H = bc - gc;
-            }
-            else if (g === max) {
-                H = 2.0 + rc - bc;
-            }
-            else {
-                H = 4.0 + gc - rc;
-            }
-            H /= 6.0;
-            if (H < 0) {
-                H = H + 1.0;
-            }
-        }
-        return [H * 360, S, max];
-    };
-    /**
-     * Converts the given HSB (HSV) triple to an array of RGB components.
-     */
-    Color.HSBtoRGB = function (H, S, B) {
-        if (isNaN(H)) {
-            H = 0;
-        }
-        H = (((H % 360) + 360) % 360) / 360; // normalize hue to [0, 360] interval, then scale to [0, 1]
-        var r = 0;
-        var g = 0;
-        var b = 0;
-        if (S === 0) {
-            r = g = b = B;
-        }
-        else {
-            var h = (H - Math.floor(H)) * 6;
-            var f = h - Math.floor(h);
-            var p = B * (1 - S);
-            var q = B * (1 - S * f);
-            var t = B * (1 - (S * (1 - f)));
-            switch (h >> 0) { // discard the floating point part of the number
-                case 0:
-                    r = B;
-                    g = t;
-                    b = p;
-                    break;
-                case 1:
-                    r = q;
-                    g = B;
-                    b = p;
-                    break;
-                case 2:
-                    r = p;
-                    g = B;
-                    b = t;
-                    break;
-                case 3:
-                    r = p;
-                    g = q;
-                    b = B;
-                    break;
-                case 4:
-                    r = t;
-                    g = p;
-                    b = B;
-                    break;
-                case 5:
-                    r = B;
-                    g = p;
-                    b = q;
-                    break;
-            }
-        }
-        return [r, g, b];
-    };
-    Color.prototype.derive = function (hueShift, saturationFactor, brightnessFactor, opacityFactor) {
-        var hsb = Color.RGBtoHSB(this.r, this.g, this.b);
-        var b = hsb[2];
-        if (b == 0 && brightnessFactor > 1.0) {
-            b = 0.05;
-        }
-        var h = (((hsb[0] + hueShift) % 360) + 360) % 360;
-        var s = Math.max(Math.min(hsb[1] * saturationFactor, 1.0), 0.0);
-        b = Math.max(Math.min(b * brightnessFactor, 1.0), 0.0);
-        var a = Math.max(Math.min(this.a * opacityFactor, 1.0), 0.0);
-        var rgba = Color.HSBtoRGB(h, s, b);
-        rgba.push(a);
-        return Color.fromArray(rgba);
-    };
-    Color.prototype.brighter = function () {
-        return this.derive(0, 1.0, 1.0 / 0.7, 1.0);
-    };
-    Color.prototype.darker = function () {
-        return this.derive(0, 1.0, 0.7, 1.0);
-    };
-    // See https://drafts.csswg.org/css-color/#hex-notation
-    Color.hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*$/;
-    Color.shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*$/;
-    Color.rgbRe = /\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)\s*/;
-    Color.rgbaRe = /\s*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([.\d]+)\)\s*/;
-    /**
-     * CSS Color Module Level 4:
-     * https://drafts.csswg.org/css-color/#named-colors
-     */
-    Color.nameToHex = Object.freeze({
-        aliceblue: '#F0F8FF',
-        antiquewhite: '#FAEBD7',
-        aqua: '#00FFFF',
-        aquamarine: '#7FFFD4',
-        azure: '#F0FFFF',
-        beige: '#F5F5DC',
-        bisque: '#FFE4C4',
-        black: '#000000',
-        blanchedalmond: '#FFEBCD',
-        blue: '#0000FF',
-        blueviolet: '#8A2BE2',
-        brown: '#A52A2A',
-        burlywood: '#DEB887',
-        cadetblue: '#5F9EA0',
-        chartreuse: '#7FFF00',
-        chocolate: '#D2691E',
-        coral: '#FF7F50',
-        cornflowerblue: '#6495ED',
-        cornsilk: '#FFF8DC',
-        crimson: '#DC143C',
-        cyan: '#00FFFF',
-        darkblue: '#00008B',
-        darkcyan: '#008B8B',
-        darkgoldenrod: '#B8860B',
-        darkgray: '#A9A9A9',
-        darkgreen: '#006400',
-        darkgrey: '#A9A9A9',
-        darkkhaki: '#BDB76B',
-        darkmagenta: '#8B008B',
-        darkolivegreen: '#556B2F',
-        darkorange: '#FF8C00',
-        darkorchid: '#9932CC',
-        darkred: '#8B0000',
-        darksalmon: '#E9967A',
-        darkseagreen: '#8FBC8F',
-        darkslateblue: '#483D8B',
-        darkslategray: '#2F4F4F',
-        darkslategrey: '#2F4F4F',
-        darkturquoise: '#00CED1',
-        darkviolet: '#9400D3',
-        deeppink: '#FF1493',
-        deepskyblue: '#00BFFF',
-        dimgray: '#696969',
-        dimgrey: '#696969',
-        dodgerblue: '#1E90FF',
-        firebrick: '#B22222',
-        floralwhite: '#FFFAF0',
-        forestgreen: '#228B22',
-        fuchsia: '#FF00FF',
-        gainsboro: '#DCDCDC',
-        ghostwhite: '#F8F8FF',
-        gold: '#FFD700',
-        goldenrod: '#DAA520',
-        gray: '#808080',
-        green: '#008000',
-        greenyellow: '#ADFF2F',
-        grey: '#808080',
-        honeydew: '#F0FFF0',
-        hotpink: '#FF69B4',
-        indianred: '#CD5C5C',
-        indigo: '#4B0082',
-        ivory: '#FFFFF0',
-        khaki: '#F0E68C',
-        lavender: '#E6E6FA',
-        lavenderblush: '#FFF0F5',
-        lawngreen: '#7CFC00',
-        lemonchiffon: '#FFFACD',
-        lightblue: '#ADD8E6',
-        lightcoral: '#F08080',
-        lightcyan: '#E0FFFF',
-        lightgoldenrodyellow: '#FAFAD2',
-        lightgray: '#D3D3D3',
-        lightgreen: '#90EE90',
-        lightgrey: '#D3D3D3',
-        lightpink: '#FFB6C1',
-        lightsalmon: '#FFA07A',
-        lightseagreen: '#20B2AA',
-        lightskyblue: '#87CEFA',
-        lightslategray: '#778899',
-        lightslategrey: '#778899',
-        lightsteelblue: '#B0C4DE',
-        lightyellow: '#FFFFE0',
-        lime: '#00FF00',
-        limegreen: '#32CD32',
-        linen: '#FAF0E6',
-        magenta: '#FF00FF',
-        maroon: '#800000',
-        mediumaquamarine: '#66CDAA',
-        mediumblue: '#0000CD',
-        mediumorchid: '#BA55D3',
-        mediumpurple: '#9370DB',
-        mediumseagreen: '#3CB371',
-        mediumslateblue: '#7B68EE',
-        mediumspringgreen: '#00FA9A',
-        mediumturquoise: '#48D1CC',
-        mediumvioletred: '#C71585',
-        midnightblue: '#191970',
-        mintcream: '#F5FFFA',
-        mistyrose: '#FFE4E1',
-        moccasin: '#FFE4B5',
-        navajowhite: '#FFDEAD',
-        navy: '#000080',
-        oldlace: '#FDF5E6',
-        olive: '#808000',
-        olivedrab: '#6B8E23',
-        orange: '#FFA500',
-        orangered: '#FF4500',
-        orchid: '#DA70D6',
-        palegoldenrod: '#EEE8AA',
-        palegreen: '#98FB98',
-        paleturquoise: '#AFEEEE',
-        palevioletred: '#DB7093',
-        papayawhip: '#FFEFD5',
-        peachpuff: '#FFDAB9',
-        peru: '#CD853F',
-        pink: '#FFC0CB',
-        plum: '#DDA0DD',
-        powderblue: '#B0E0E6',
-        purple: '#800080',
-        rebeccapurple: '#663399',
-        red: '#FF0000',
-        rosybrown: '#BC8F8F',
-        royalblue: '#4169E1',
-        saddlebrown: '#8B4513',
-        salmon: '#FA8072',
-        sandybrown: '#F4A460',
-        seagreen: '#2E8B57',
-        seashell: '#FFF5EE',
-        sienna: '#A0522D',
-        silver: '#C0C0C0',
-        skyblue: '#87CEEB',
-        slateblue: '#6A5ACD',
-        slategray: '#708090',
-        slategrey: '#708090',
-        snow: '#FFFAFA',
-        springgreen: '#00FF7F',
-        steelblue: '#4682B4',
-        tan: '#D2B48C',
-        teal: '#008080',
-        thistle: '#D8BFD8',
-        tomato: '#FF6347',
-        turquoise: '#40E0D0',
-        violet: '#EE82EE',
-        wheat: '#F5DEB3',
-        white: '#FFFFFF',
-        whitesmoke: '#F5F5F5',
-        yellow: '#FFFF00',
-        yellowgreen: '#9ACD32'
-    });
-    return Color;
-}());
-
-var __extends$K = (undefined && undefined.__extends) || (function () {
+var __extends$P = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14956,7 +16225,7 @@ var __extends$K = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -14969,23 +16238,23 @@ var PieNodeTag;
     PieNodeTag[PieNodeTag["Label"] = 2] = "Label";
 })(PieNodeTag || (PieNodeTag = {}));
 var PieSeriesLabel = /** @class */ (function (_super) {
-    __extends$K(PieSeriesLabel, _super);
+    __extends$P(PieSeriesLabel, _super);
     function PieSeriesLabel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.offset = 3; // from the callout line
         _this.minAngle = 20; // in degrees
         return _this;
     }
-    __decorate$c([
+    __decorate$f([
         reactive('change')
     ], PieSeriesLabel.prototype, "offset", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('dataChange')
     ], PieSeriesLabel.prototype, "minAngle", void 0);
     return PieSeriesLabel;
 }(Label));
 var PieSeriesCallout = /** @class */ (function (_super) {
-    __extends$K(PieSeriesCallout, _super);
+    __extends$P(PieSeriesCallout, _super);
     function PieSeriesCallout() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.colors = [];
@@ -14993,19 +16262,29 @@ var PieSeriesCallout = /** @class */ (function (_super) {
         _this.strokeWidth = 1;
         return _this;
     }
-    __decorate$c([
+    __decorate$f([
         reactive('change')
     ], PieSeriesCallout.prototype, "colors", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('change')
     ], PieSeriesCallout.prototype, "length", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('change')
     ], PieSeriesCallout.prototype, "strokeWidth", void 0);
     return PieSeriesCallout;
 }(Observable));
+var PieSeriesTooltip = /** @class */ (function (_super) {
+    __extends$P(PieSeriesTooltip, _super);
+    function PieSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$f([
+        reactive('change')
+    ], PieSeriesTooltip.prototype, "renderer", void 0);
+    return PieSeriesTooltip;
+}(SeriesTooltip));
 var PieSeries = /** @class */ (function (_super) {
-    __extends$K(PieSeries, _super);
+    __extends$P(PieSeries, _super);
     function PieSeries() {
         var _this = _super.call(this) || this;
         _this.radiusScale = new LinearScale();
@@ -15026,6 +16305,7 @@ var PieSeries = /** @class */ (function (_super) {
         _this.seriesItemEnabled = [];
         _this.label = new PieSeriesLabel();
         _this.callout = new PieSeriesCallout();
+        _this.tooltip = new PieSeriesTooltip();
         /**
          * The key of the numeric field to use to determine the angle (for example,
          * a pie slice angle).
@@ -15347,7 +16627,8 @@ var PieSeries = /** @class */ (function (_super) {
         if (!angleKey) {
             return '';
         }
-        var _a = this, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer, angleName = _a.angleName, radiusKey = _a.radiusKey, radiusName = _a.radiusName, labelKey = _a.labelKey, labelName = _a.labelName;
+        var _a = this, fills = _a.fills, tooltip = _a.tooltip, angleName = _a.angleName, radiusKey = _a.radiusKey, radiusName = _a.radiusName, labelKey = _a.labelKey, labelName = _a.labelName;
+        var _b = tooltip.renderer, tooltipRenderer = _b === void 0 ? this.tooltipRenderer : _b;
         var color = fills[nodeDatum.index % fills.length];
         var datum = nodeDatum.seriesDatum;
         var label = labelKey ? datum[labelKey] + ": " : '';
@@ -15406,110 +16687,62 @@ var PieSeries = /** @class */ (function (_super) {
     };
     PieSeries.className = 'PieSeries';
     PieSeries.type = 'pie';
-    __decorate$c([
+    __decorate$f([
         reactive('dataChange')
     ], PieSeries.prototype, "angleKey", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('update')
     ], PieSeries.prototype, "angleName", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('dataChange')
     ], PieSeries.prototype, "radiusKey", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('update')
     ], PieSeries.prototype, "radiusName", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('dataChange')
     ], PieSeries.prototype, "radiusMin", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('dataChange')
     ], PieSeries.prototype, "radiusMax", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('dataChange')
     ], PieSeries.prototype, "labelKey", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('update')
     ], PieSeries.prototype, "labelName", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('layoutChange')
     ], PieSeries.prototype, "fillOpacity", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('layoutChange')
     ], PieSeries.prototype, "strokeOpacity", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('update')
     ], PieSeries.prototype, "lineDash", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('update')
     ], PieSeries.prototype, "lineDashOffset", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('update')
     ], PieSeries.prototype, "formatter", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('dataChange')
     ], PieSeries.prototype, "rotation", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('layoutChange')
     ], PieSeries.prototype, "outerRadiusOffset", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('dataChange')
     ], PieSeries.prototype, "innerRadiusOffset", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('layoutChange')
     ], PieSeries.prototype, "strokeWidth", void 0);
-    __decorate$c([
+    __decorate$f([
         reactive('layoutChange')
     ], PieSeries.prototype, "shadow", void 0);
     return PieSeries;
 }(PolarSeries));
-
-var __extends$L = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var DropShadow = /** @class */ (function (_super) {
-    __extends$L(DropShadow, _super);
-    function DropShadow() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.enabled = true;
-        _this.color = 'rgba(0, 0, 0, 0.5)';
-        _this.xOffset = 0;
-        _this.yOffset = 0;
-        _this.blur = 5;
-        return _this;
-    }
-    __decorate$d([
-        reactive('change')
-    ], DropShadow.prototype, "enabled", void 0);
-    __decorate$d([
-        reactive('change')
-    ], DropShadow.prototype, "color", void 0);
-    __decorate$d([
-        reactive('change')
-    ], DropShadow.prototype, "xOffset", void 0);
-    __decorate$d([
-        reactive('change')
-    ], DropShadow.prototype, "yOffset", void 0);
-    __decorate$d([
-        reactive('change')
-    ], DropShadow.prototype, "blur", void 0);
-    return DropShadow;
-}(Observable));
 
 function floor$9(date) {
     date.setUTCSeconds(0, 0);
@@ -15632,8 +16865,11 @@ var ChartTheme = /** @class */ (function () {
     };
     ChartTheme.getAxisDefaults = function () {
         return {
+            top: {},
+            right: {},
+            bottom: {},
+            left: {},
             title: {
-                enabled: false,
                 padding: {
                     top: 10,
                     right: 10,
@@ -15675,7 +16911,11 @@ var ChartTheme = /** @class */ (function () {
     };
     ChartTheme.getSeriesDefaults = function () {
         return {
-            tooltipEnabled: true,
+            tooltip: {
+                enabled: true,
+                renderer: undefined,
+                format: undefined
+            },
             visible: true,
             showInLegend: true
         };
@@ -15883,7 +17123,7 @@ var ChartTheme = /** @class */ (function () {
                 }, tooltipRenderer: undefined, highlightStyle: {
                     fill: 'yellow'
                 }, marker: __assign$2(__assign$2({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { enabled: false }) }),
-            histogram: __assign$2(__assign$2({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
+            histogram: __assign$2(__assign$2({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, binCount: undefined, bins: undefined, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
                     fill: 'yellow'
                 }, label: {
                     enabled: false,
@@ -15958,6 +17198,9 @@ var ChartTheme = /** @class */ (function () {
                         yOffset: 3,
                         blur: 5
                     } })
+            } }),
+        hierarchy: __assign$2(__assign$2({}, ChartTheme.getChartDefaults()), { series: {
+                treemap: __assign$2({}, ChartTheme.getSeriesDefaults())
             } })
     };
     ChartTheme.cartesianSeriesTypes = ['line', 'area', 'bar', 'column', 'scatter', 'histogram'];
@@ -15969,7 +17212,7 @@ function arrayMerge(target, source, options) {
     return source;
 }
 
-var __extends$M = (undefined && undefined.__extends) || (function () {
+var __extends$Q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -15994,7 +17237,7 @@ var __assign$3 = (undefined && undefined.__assign) || function () {
     return __assign$3.apply(this, arguments);
 };
 var DarkTheme = /** @class */ (function (_super) {
-    __extends$M(DarkTheme, _super);
+    __extends$Q(DarkTheme, _super);
     function DarkTheme(options) {
         return _super.call(this, options) || this;
     }
@@ -16057,7 +17300,7 @@ var DarkTheme = /** @class */ (function (_super) {
     return DarkTheme;
 }(ChartTheme));
 
-var __extends$N = (undefined && undefined.__extends) || (function () {
+var __extends$R = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16109,7 +17352,7 @@ var palette$1 = {
     ]
 };
 var MaterialLight = /** @class */ (function (_super) {
-    __extends$N(MaterialLight, _super);
+    __extends$R(MaterialLight, _super);
     function MaterialLight() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16119,7 +17362,7 @@ var MaterialLight = /** @class */ (function (_super) {
     return MaterialLight;
 }(ChartTheme));
 
-var __extends$O = (undefined && undefined.__extends) || (function () {
+var __extends$S = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16171,7 +17414,7 @@ var palette$2 = {
     ]
 };
 var MaterialDark = /** @class */ (function (_super) {
-    __extends$O(MaterialDark, _super);
+    __extends$S(MaterialDark, _super);
     function MaterialDark() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16181,7 +17424,7 @@ var MaterialDark = /** @class */ (function (_super) {
     return MaterialDark;
 }(DarkTheme));
 
-var __extends$P = (undefined && undefined.__extends) || (function () {
+var __extends$T = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16213,7 +17456,7 @@ var palette$3 = {
     ]
 };
 var PastelLight = /** @class */ (function (_super) {
-    __extends$P(PastelLight, _super);
+    __extends$T(PastelLight, _super);
     function PastelLight() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16223,7 +17466,7 @@ var PastelLight = /** @class */ (function (_super) {
     return PastelLight;
 }(ChartTheme));
 
-var __extends$Q = (undefined && undefined.__extends) || (function () {
+var __extends$U = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16255,7 +17498,7 @@ var palette$4 = {
     ]
 };
 var PastelDark = /** @class */ (function (_super) {
-    __extends$Q(PastelDark, _super);
+    __extends$U(PastelDark, _super);
     function PastelDark() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16265,7 +17508,7 @@ var PastelDark = /** @class */ (function (_super) {
     return PastelDark;
 }(DarkTheme));
 
-var __extends$R = (undefined && undefined.__extends) || (function () {
+var __extends$V = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16305,7 +17548,7 @@ var palette$5 = {
     ]
 };
 var SolarLight = /** @class */ (function (_super) {
-    __extends$R(SolarLight, _super);
+    __extends$V(SolarLight, _super);
     function SolarLight() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16315,7 +17558,7 @@ var SolarLight = /** @class */ (function (_super) {
     return SolarLight;
 }(ChartTheme));
 
-var __extends$S = (undefined && undefined.__extends) || (function () {
+var __extends$W = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16355,7 +17598,7 @@ var palette$6 = {
     ]
 };
 var SolarDark = /** @class */ (function (_super) {
-    __extends$S(SolarDark, _super);
+    __extends$W(SolarDark, _super);
     function SolarDark() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16365,7 +17608,7 @@ var SolarDark = /** @class */ (function (_super) {
     return SolarDark;
 }(DarkTheme));
 
-var __extends$T = (undefined && undefined.__extends) || (function () {
+var __extends$X = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16397,7 +17640,7 @@ var palette$7 = {
     ]
 };
 var VividLight = /** @class */ (function (_super) {
-    __extends$T(VividLight, _super);
+    __extends$X(VividLight, _super);
     function VividLight() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16407,7 +17650,7 @@ var VividLight = /** @class */ (function (_super) {
     return VividLight;
 }(ChartTheme));
 
-var __extends$U = (undefined && undefined.__extends) || (function () {
+var __extends$Y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16439,7 +17682,7 @@ var palette$8 = {
     ]
 };
 var VividDark = /** @class */ (function (_super) {
-    __extends$U(VividDark, _super);
+    __extends$Y(VividDark, _super);
     function VividDark() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16460,7 +17703,7 @@ var __assign$4 = (undefined && undefined.__assign) || function () {
     };
     return __assign$4.apply(this, arguments);
 };
-var _a, _b, _c, _d;
+var _a, _b, _c, _d, _e;
 /*
     This file defines the specs for creating different kinds of charts, but
     contains no code that uses the specs to actually create charts
@@ -16500,7 +17743,7 @@ var commonChartMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -16525,7 +17768,7 @@ var commonChartMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -16620,6 +17863,7 @@ var chartMeta = {
     // There is no actual `document` property on the chart, it can only be supplied during instantiation.
     constructorParams: ['document'],
     setAsIs: ['container', 'data', 'tooltipOffset'],
+    nonSerializable: ['container', 'data']
 };
 var axisDefaults = {
     defaults: {
@@ -16685,6 +17929,17 @@ var barLabelMapping = {
         }
     }
 };
+var tooltipMapping = {
+    tooltip: {
+        meta: {
+            defaults: {
+                enabled: true,
+                renderer: undefined,
+                format: undefined
+            }
+        }
+    }
+};
 var axisMappings = {
     line: {
         meta: {
@@ -16698,7 +17953,6 @@ var axisMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -16759,24 +18013,24 @@ var mappings = (_a = {},
             _b[GroupedCategoryAxis.type] = __assign$4({ meta: __assign$4({ constructor: GroupedCategoryAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
             _b[TimeAxis.type] = __assign$4({ meta: __assign$4({ constructor: TimeAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
             _b), series: (_c = {
-                column: __assign$4(__assign$4({ meta: {
+                column: __assign$4(__assign$4(__assign$4({ meta: {
                         constructor: BarSeries,
+                        setAsIs: ['lineDash'],
                         defaults: __assign$4(__assign$4({ flipXY: false }, seriesDefaults), columnSeriesDefaults)
-                    }, highlightStyle: {} }, barLabelMapping), shadowMapping)
+                    }, highlightStyle: {} }, tooltipMapping), barLabelMapping), shadowMapping)
             },
-            _c[BarSeries.type] = __assign$4(__assign$4({ meta: {
+            _c[BarSeries.type] = __assign$4(__assign$4(__assign$4({ meta: {
                     constructor: BarSeries,
+                    setAsIs: ['lineDash'],
                     defaults: __assign$4(__assign$4({ flipXY: true }, seriesDefaults), columnSeriesDefaults)
-                }, highlightStyle: {} }, barLabelMapping), shadowMapping),
-            _c[LineSeries.type] = {
-                meta: {
+                }, highlightStyle: {} }, tooltipMapping), barLabelMapping), shadowMapping),
+            _c[LineSeries.type] = __assign$4(__assign$4({ meta: {
                     constructor: LineSeries,
-                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, tooltipRenderer: undefined, highlightStyle: {
+                    setAsIs: ['lineDash'],
+                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, highlightStyle: {
                             fill: 'yellow'
                         } })
-                },
-                highlightStyle: {},
-                marker: {
+                } }, tooltipMapping), { highlightStyle: {}, marker: {
                     meta: {
                         constructor: CartesianSeriesMarker,
                         defaults: {
@@ -16788,17 +18042,13 @@ var mappings = (_a = {},
                             formatter: undefined
                         }
                     }
-                }
-            },
-            _c[ScatterSeries.type] = {
-                meta: {
+                } }),
+            _c[ScatterSeries.type] = __assign$4(__assign$4({ meta: {
                     constructor: ScatterSeries,
-                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
+                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, highlightStyle: {
                             fill: 'yellow'
                         } })
-                },
-                highlightStyle: {},
-                marker: {
+                } }, tooltipMapping), { highlightStyle: {}, marker: {
                     meta: {
                         constructor: CartesianSeriesMarker,
                         defaults: {
@@ -16810,14 +18060,14 @@ var mappings = (_a = {},
                             formatter: undefined
                         }
                     }
-                }
-            },
-            _c[AreaSeries.type] = __assign$4({ meta: {
+                } }),
+            _c[AreaSeries.type] = __assign$4(__assign$4(__assign$4({ meta: {
                     constructor: AreaSeries,
-                    defaults: __assign$4(__assign$4({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: undefined, tooltipRenderer: undefined, highlightStyle: {
+                    setAsIs: ['lineDash'],
+                    defaults: __assign$4(__assign$4({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
-                }, highlightStyle: {}, marker: {
+                } }, tooltipMapping), { highlightStyle: {}, marker: {
                     meta: {
                         constructor: CartesianSeriesMarker,
                         defaults: {
@@ -16829,17 +18079,18 @@ var mappings = (_a = {},
                             formatter: undefined
                         }
                     }
-                } }, shadowMapping),
-            _c[HistogramSeries.type] = __assign$4({ meta: {
+                } }), shadowMapping),
+            _c[HistogramSeries.type] = __assign$4(__assign$4(__assign$4({ meta: {
                     constructor: HistogramSeries,
-                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
+                    setAsIs: ['lineDash'],
+                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, binCount: undefined, bins: undefined, aggregation: 'sum', highlightStyle: {
                             fill: 'yellow'
                         } })
-                }, highlightStyle: {}, label: {
+                } }, tooltipMapping), { highlightStyle: {}, label: {
                     meta: {
                         defaults: __assign$4(__assign$4({}, labelDefaults), { formatter: undefined })
                     }
-                } }, shadowMapping),
+                } }), shadowMapping),
             _c), navigator: {
             meta: {
                 constructor: Navigator,
@@ -16901,10 +18152,11 @@ var mappings = (_a = {},
                         }
                     }
                 } }) }) }, commonChartMappings), { series: (_d = {},
-            _d[PieSeries.type] = __assign$4({ meta: {
+            _d[PieSeries.type] = __assign$4(__assign$4(__assign$4({ meta: {
                     constructor: PieSeries,
+                    setAsIs: ['lineDash'],
                     defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, callout: {}, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, shadow: undefined })
-                }, highlightStyle: {}, title: {
+                } }, tooltipMapping), { highlightStyle: {}, title: {
                     meta: {
                         constructor: Caption,
                         defaults: {
@@ -16939,14 +18191,21 @@ var mappings = (_a = {},
                             strokeWidth: 1
                         }
                     }
-                } }, shadowMapping),
+                } }), shadowMapping),
             _d) }),
+    _a[HierarchyChart.type] = __assign$4(__assign$4({ meta: __assign$4(__assign$4({ constructor: HierarchyChart }, chartMeta), { defaults: __assign$4({}, chartDefaults) }) }, commonChartMappings), { series: (_e = {},
+            _e[TreemapSeries.type] = __assign$4({ meta: {
+                    constructor: TreemapSeries,
+                    defaults: __assign$4(__assign$4({}, seriesDefaults), { showInLegend: false })
+                } }, tooltipMapping),
+            _e) }),
     _a);
 // Amend the `mappings` object with aliases for different chart types.
 {
     var typeToAliases = {
         cartesian: ['line', 'area', 'bar', 'column'],
-        polar: ['pie']
+        polar: ['pie'],
+        hierarchy: ['treemap']
     };
     var _loop_1 = function (type) {
         typeToAliases[type].forEach(function (alias) {
@@ -17069,6 +18328,11 @@ var AgChart = /** @class */ (function () {
             chart.autoSize = true;
         }
     };
+    AgChart.save = function (component) {
+        var target = {};
+        save(component, target);
+        return target;
+    };
     AgChart.createComponent = create;
     return AgChart;
 }());
@@ -17091,6 +18355,26 @@ var actualSeriesTypeMap = (function () {
     map['column'] = 'bar';
     return map;
 })();
+function save(component, target, mapping) {
+    if (target === void 0) { target = {}; }
+    if (mapping === void 0) { mapping = mappings; }
+    if (component.constructor && component.constructor.type && !mapping.meta) {
+        mapping = mapping[component.constructor.type];
+    }
+    var defaults = mapping && mapping.meta && mapping.meta.defaults;
+    var keys = Object.keys(defaults);
+    keys.forEach(function (key) {
+        var value = component[key];
+        if (isObject(value) && (!mapping.meta.nonSerializable || mapping.meta.nonSerializable.indexOf(key) < 0)) {
+            target[key] = {};
+            // save(value, target[key], mapping[key]);
+        }
+        else if (Array.isArray(value)) ;
+        else {
+            target[key] = component[key];
+        }
+    });
+}
 function create(options, path, component, theme) {
     var _a;
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
@@ -17138,7 +18422,28 @@ function create(options, path, component, theme) {
                     if (Array.isArray(value)) {
                         var subComponents = value
                             .map(function (config) {
-                            return create(config, path + '.' + key, undefined, theme);
+                            var axis = create(config, path + '.' + key, undefined, theme);
+                            if (theme && key === 'axes') {
+                                var fakeTheme = {
+                                    getConfig: function (path) {
+                                        var parts = path.split('.');
+                                        var modifiedPath = parts.slice(0, 3).join('.') + '.' + axis.position;
+                                        var after = parts.slice(3);
+                                        if (after.length) {
+                                            modifiedPath += '.' + after.join('.');
+                                        }
+                                        var config = theme.getConfig(path);
+                                        var modifiedConfig = theme.getConfig(modifiedPath);
+                                        isObject(theme.getConfig(modifiedPath));
+                                        if (isObject(config) && isObject(modifiedConfig)) {
+                                            return deepMerge(config, modifiedConfig);
+                                        }
+                                        return modifiedConfig;
+                                    }
+                                };
+                                update(axis, config, path + '.' + key, fakeTheme);
+                            }
+                            return axis;
                         })
                             .filter(function (instance) { return !!instance; });
                         component[key] = subComponents;
@@ -17421,8 +18726,10 @@ var time = {
 exports.AgChart = AgChart;
 exports.Arc = Arc;
 exports.AreaSeries = AreaSeries;
+exports.AreaSeriesTooltip = AreaSeriesTooltip;
 exports.BandScale = BandScale;
 exports.BarSeries = BarSeries;
+exports.BarSeriesTooltip = BarSeriesTooltip;
 exports.Caption = Caption;
 exports.CartesianChart = CartesianChart;
 exports.CategoryAxis = CategoryAxis;
@@ -17435,6 +18742,7 @@ exports.DropShadow = DropShadow;
 exports.Group = Group;
 exports.GroupedCategoryAxis = GroupedCategoryAxis;
 exports.GroupedCategoryChart = GroupedCategoryChart;
+exports.HierarchyChart = HierarchyChart;
 exports.HistogramBin = HistogramBin;
 exports.HistogramSeries = HistogramSeries;
 exports.HistogramSeriesTooltip = HistogramSeriesTooltip;
@@ -17444,19 +18752,25 @@ exports.LegendLabel = LegendLabel;
 exports.LegendMarker = LegendMarker;
 exports.Line = Line;
 exports.LineSeries = LineSeries;
+exports.LineSeriesTooltip = LineSeriesTooltip;
 exports.LinearScale = LinearScale;
 exports.Marker = Marker;
 exports.NumberAxis = NumberAxis;
 exports.Padding = Padding;
 exports.Path = Path;
 exports.PieSeries = PieSeries;
+exports.PieSeriesTooltip = PieSeriesTooltip;
 exports.PolarChart = PolarChart;
 exports.Rect = Rect;
 exports.ScatterSeries = ScatterSeries;
+exports.ScatterSeriesTooltip = ScatterSeriesTooltip;
 exports.Scene = Scene;
 exports.Sector = Sector;
 exports.Shape = Shape;
 exports.TimeAxis = TimeAxis;
+exports.TreemapSeries = TreemapSeries;
+exports.TreemapSeriesLabel = TreemapSeriesLabel;
+exports.TreemapSeriesTooltip = TreemapSeriesTooltip;
 exports.copy = copy;
 exports.darkThemes = darkThemes;
 exports.extent = extent;

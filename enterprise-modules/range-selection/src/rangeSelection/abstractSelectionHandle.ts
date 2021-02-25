@@ -36,7 +36,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     private rangeEndRow: RowPosition;
 
     private cellHoverListener: (() => void) | undefined;
-    private lastCellHovered: CellPosition | undefined;
+    private lastCellHovered: CellPosition | null | undefined;
     protected changedCalculatedValues: boolean = false;
     private dragging: boolean = false;
 
@@ -120,7 +120,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         this.rangeEndRow = row;
     }
 
-    protected getLastCellHovered(): CellPosition | undefined {
+    protected getLastCellHovered(): CellPosition | null | undefined {
         return this.lastCellHovered;
     }
 
@@ -145,7 +145,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     protected updateValuesOnMove(e: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(e);
-        
+
         if (cell === this.lastCellHovered) { return; }
 
         this.lastCellHovered = cell;
@@ -160,10 +160,10 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         const oldCellComp = this.getCellComp();
         const eGui = this.getGui();
 
-        const cellRange = _.last(this.rangeController.getCellRanges()) as CellRange;
+        const cellRange = _.last(this.rangeController.getCellRanges());
 
-        const start = cellRange.startRow as RowPosition;
-        const end = cellRange.endRow as RowPosition;
+        const start = cellRange.startRow;
+        const end = cellRange.endRow;
 
         if (start && end) {
             const isBefore = this.rowPositionUtils.before(end, start);

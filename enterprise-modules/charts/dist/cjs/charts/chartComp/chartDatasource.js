@@ -177,9 +177,9 @@ var ChartDatasource = /** @class */ (function (_super) {
                     var groupItem_1 = currentMap[key];
                     if (!groupItem_1) {
                         groupItem_1 = { __children: [] };
-                        dimensionCols.forEach(function (col) {
-                            var colId = col.colId;
-                            groupItem_1[colId] = data[colId];
+                        dimensionCols.forEach(function (dimCol) {
+                            var dimColId = dimCol.colId;
+                            groupItem_1[dimColId] = data[dimColId];
                         });
                         currentMap[key] = groupItem_1;
                         dataAggregated.push(groupItem_1);
@@ -228,8 +228,9 @@ var ChartDatasource = /** @class */ (function (_super) {
     };
     ChartDatasource.prototype.updatePivotKeysForSSRM = function () {
         var secondaryColumns = this.columnController.getSecondaryColumns();
-        if (!secondaryColumns)
+        if (!secondaryColumns) {
             return;
+        }
         // we don't know what the application will use for the pivot key separator (i.e. '_' or '|' ) as the
         // secondary columns are provided to grid by the application via columnApi.setSecondaryColumns()
         var pivotKeySeparator = this.extractPivotKeySeparator(secondaryColumns);
@@ -237,12 +238,13 @@ var ChartDatasource = /** @class */ (function (_super) {
         // the same logic can be used for CSRM and SSRM to extract legend names in extractRowsFromGridRowModel()
         secondaryColumns.forEach(function (col) {
             var keys = col.getColId().split(pivotKeySeparator);
-            col.getColDef()['pivotKeys'] = keys.slice(0, keys.length - 1);
+            col.getColDef().pivotKeys = keys.slice(0, keys.length - 1);
         });
     };
     ChartDatasource.prototype.extractPivotKeySeparator = function (secondaryColumns) {
-        if (secondaryColumns.length === 0)
+        if (secondaryColumns.length === 0) {
             return "";
+        }
         var extractSeparator = function (columnGroup, childId) {
             var groupId = columnGroup.getGroupId();
             if (!columnGroup.getParent()) {

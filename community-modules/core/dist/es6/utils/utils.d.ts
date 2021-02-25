@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare const _: {
@@ -96,7 +96,7 @@ export declare const _: {
     callIfPresent(func: Function): void;
     stopPropagationForAgGrid(event: Event): void;
     isStopPropagationForAgGrid(event: Event): boolean;
-    getCellCompForEvent(gridOptionsWrapper: import("../gridOptionsWrapper").GridOptionsWrapper, event: Event): import("../main").CellComp;
+    getComponentForEvent<T_21>(gridOptionsWrapper: import("../gridOptionsWrapper").GridOptionsWrapper, event: Event, type: string): T_21;
     addChangeListener(element: HTMLElement, listener: EventListener): void;
     getTarget(event: Event): Element;
     isElementInEventPath(element: HTMLElement, event: Event): boolean;
@@ -144,7 +144,7 @@ export declare const _: {
     getElementAttribute(element: any, attributeName: string): string;
     offsetHeight(element: HTMLElement): number;
     offsetWidth(element: HTMLElement): number;
-    ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
+    ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement): void;
     setDomChildOrder(eContainer: HTMLElement, orderedChildren: HTMLElement[]): void;
     insertTemplateWithDomOrder(eContainer: HTMLElement, htmlTemplate: string, eChildBefore: HTMLElement): HTMLElement;
     prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
@@ -159,13 +159,13 @@ export declare const _: {
     isNode(o: any): boolean;
     isElement(o: any): boolean;
     isNodeOrElement(o: any): boolean;
-    copyNodeList(nodeList: NodeList): Node[];
+    copyNodeList(nodeList: NodeListOf<Node>): Node[];
     iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     setCheckboxState(eCheckbox: HTMLInputElement, state: any): void;
     addOrRemoveAttribute(element: HTMLElement, name: string, value: any): void;
-    nodeListForEach<T_21 extends Node>(nodeList: NodeListOf<T_21>, action: (value: T_21) => void): void;
+    nodeListForEach<T_22 extends Node>(nodeList: NodeListOf<T_22>, action: (value: T_22) => void): void;
     serialiseDate(date: Date, includeTime?: boolean, separator?: string): string;
-    parseDateTimeFromString(value: string): Date;
+    parseDateTimeFromString(value?: string): Date;
     stringToArray(strData: string, delimiter?: string): string[][];
     isBrowserIE(): boolean;
     isBrowserEdge(): boolean;
@@ -181,35 +181,36 @@ export declare const _: {
     getBodyHeight(): number;
     firstExistingValue<A>(...values: A[]): A;
     anyExists(values: any[]): boolean;
-    existsAndNotEmpty<T_22>(value?: T_22[]): boolean;
-    last<T_23>(arr: T_23[]): T_23;
-    last<T_24 extends Node>(arr: NodeListOf<T_24>): T_24;
-    areEqual<T_25>(a?: T_25[], b?: T_25[], comparator?: (a: T_25, b: T_25) => boolean): boolean;
+    existsAndNotEmpty<T_23>(value?: T_23[]): boolean;
+    last<T_24>(arr: T_24[]): T_24;
+    last<T_25 extends Node>(arr: NodeListOf<T_25>): T_25;
+    areEqual<T_26>(a?: T_26[], b?: T_26[], comparator?: (a: T_26, b: T_26) => boolean): boolean;
     compareArrays(array1?: any[], array2?: any[]): boolean;
     shallowCompare(arr1: any[], arr2: any[]): boolean;
     sortNumerically(array: number[]): number[];
-    removeRepeatsFromArray<T_26>(array: T_26[], object: T_26): void;
-    removeFromArray<T_27>(array: T_27[], object: T_27): void;
-    removeAllFromArray<T_28>(array: T_28[], toRemove: T_28[]): void;
-    insertIntoArray<T_29>(array: T_29[], object: T_29, toIndex: number): void;
-    insertArrayIntoArray<T_30>(dest: T_30[], src: T_30[], toIndex: number): void;
-    moveInArray<T_31>(array: T_31[], objectsToMove: T_31[], toIndex: number): void;
-    includes<T_32>(array: T_32[], value: T_32): boolean;
+    removeRepeatsFromArray<T_27>(array: T_27[], object: T_27): void;
+    removeFromArray<T_28>(array: T_28[], object: T_28): void;
+    removeAllFromArray<T_29>(array: T_29[], toRemove: T_29[]): void;
+    insertIntoArray<T_30>(array: T_30[], object: T_30, toIndex: number): void;
+    insertArrayIntoArray<T_31>(dest: T_31[], src: T_31[], toIndex: number): void;
+    moveInArray<T_32>(array: T_32[], objectsToMove: T_32[], toIndex: number): void;
+    includes<T_33>(array: T_33[], value: T_33): boolean;
     flatten(arrayOfArrays: any[]): any[];
-    pushAll<T_33>(target: T_33[], source: T_33[]): void;
-    toStrings<T_34>(array: T_34[]): string[];
-    findIndex<T_35>(collection: T_35[], predicate: (item: T_35, idx: number, collection: T_35[]) => boolean): number;
-    every<T_36>(list: T_36[], predicate: (value: T_36, index: number) => boolean): boolean;
-    some<T_37>(list: T_37[], predicate: (value: T_37, index: number) => boolean): boolean;
-    forEach<T_38>(list: T_38[], action: (value: T_38, index: number) => void): void;
-    forEachReverse<T_39>(list: T_39[], action: (value: T_39, index: number) => void): void;
-    map<T_40, V_2>(list: T_40[], process: (value: T_40, index: number) => V_2): V_2[];
-    filter<T_41>(list: T_41[], predicate: (value: T_41, index: number) => boolean): T_41[];
-    reduce<T_42, V_3>(list: T_42[], step: (acc: V_3, value: T_42, index: number) => V_3, initial: V_3): V_3;
-    forEachSnapshotFirst<T_43>(list: T_43[], callback: (item: T_43) => void): void;
+    pushAll<T_34>(target: T_34[], source: T_34[]): void;
+    toStrings<T_35>(array: T_35[]): string[];
+    findIndex<T_36>(collection: T_36[], predicate: (item: T_36, idx: number, collection: T_36[]) => boolean): number;
+    every<T_37>(list: T_37[], predicate: (value: T_37, index: number) => boolean): boolean;
+    some<T_38>(list: T_38[], predicate: (value: T_38, index: number) => boolean): boolean;
+    forEach<T_39>(list: T_39[], action: (value: T_39, index: number) => void): void;
+    forEachReverse<T_40>(list: T_40[], action: (value: T_40, index: number) => void): void;
+    map<T_41, V_2>(list: T_41[], process: (value: T_41, index: number) => V_2): V_2[];
+    filter<T_42>(list: T_42[], predicate: (value: T_42, index: number) => boolean): T_42[];
+    reduce<T_43, V_3>(list: T_43[], step: (acc: V_3, value: T_43, index: number) => V_3, initial: V_3): V_3;
+    forEachSnapshotFirst<T_44>(list: T_44[], callback: (item: T_44) => void): void;
     getAriaSortState(column: import("../main").Column): "none" | "ascending" | "descending";
     getAriaLevel(element: HTMLElement): number;
     getAriaPosInSet(element: HTMLElement): number;
+    getAriaDescribedBy(element: HTMLElement): string;
     setAriaLabel(element: HTMLElement, label: string): void;
     setAriaLabelledBy(element: HTMLElement, labelledBy: string): void;
     setAriaDescribedBy(element: HTMLElement, describedby: string): void;

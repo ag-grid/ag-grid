@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /**
@@ -7,7 +7,7 @@
  * @param {string} s
  * @returns {string}
  */
-export declare function utf8_encode(s: string): string;
+export declare function utf8_encode(s: string | null): string;
 /**
  * Converts a camelCase string into hyphenated string
  * from https://gist.github.com/youssman/745578062609e8acac9f

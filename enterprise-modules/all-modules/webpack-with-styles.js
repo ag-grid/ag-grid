@@ -26,13 +26,13 @@ var StatusBarModule = require('../../enterprise-modules/status-bar');
 var ViewportRowModelModule = require('../../enterprise-modules/viewport-row-model');
 require('./dist/es6/main');
 
-// add in exports for ag-Grid-Enterprise
+// add in exports for AG Grid Enterprise
 var agGridEnterprise = require('./dist/es6/main');
 Object.keys(agGridEnterprise).forEach(function(key) {
     exports[key] = agGridEnterprise[key];
 });
 
-// also add in in exports for ag-Grid-Standard, as it's webpack, we want both packed up
+// also add in in exports for AG Grid Community, as it's webpack, we want both packed up
 var agGrid = require('@ag-grid-community/all-modules');
 Object.keys(agGrid).forEach(function(key) {
     exports[key] = agGrid[key];

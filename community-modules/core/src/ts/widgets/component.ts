@@ -62,8 +62,8 @@ export class Component extends BeanStub {
         }
     }
 
-    @PostConstruct
-    private postConstructOnComponent(): void {
+    @PreConstruct
+    private preConstructOnComponent(): void {
         this.usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
     }
 
@@ -120,10 +120,10 @@ export class Component extends BeanStub {
                 return;
             }
 
-            const childComp = this.createComponentFromElement(childNode, (childComp) => {
+            const childComp = this.createComponentFromElement(childNode, comp => {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
-                this.copyAttributesFromNode(childNode, childComp.getGui());
+                this.copyAttributesFromNode(childNode, comp.getGui());
             }, paramsMap);
 
             if (childComp) {
@@ -143,9 +143,13 @@ export class Component extends BeanStub {
         });
     }
 
-    public createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: { [key: string]: any; }): Component {
+    public createComponentFromElement(
+        element: HTMLElement,
+        afterPreCreateCallback?: (comp: Component) => void,
+        paramsMap?: { [key: string]: any; }
+    ): Component | null {
         const key = element.nodeName;
-        const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
+        const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')!] : undefined;
         const ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
 
         if (ComponentClass) {
@@ -193,7 +197,7 @@ export class Component extends BeanStub {
         }
     }
 
-    public setTemplate(template: string, paramsMap?: { [key: string]: any; }): void {
+    public setTemplate(template: string | null, paramsMap?: { [key: string]: any; }): void {
         const eGui = loadTemplate(template as string);
         this.setTemplateFromElement(eGui, paramsMap);
     }
@@ -230,7 +234,7 @@ export class Component extends BeanStub {
             const resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
 
             if (resultOfQuery) {
-                thisNoType[querySelector.attributeName] = (resultOfQuery as any).__agComponent || resultOfQuery;
+                thisNoType[querySelector.attributeName] = resultOfQuery.__agComponent || resultOfQuery;
             } else {
                 // put debug msg in here if query selector fails???
             }

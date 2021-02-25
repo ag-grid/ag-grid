@@ -8,9 +8,9 @@ const columnFactory: ExcelOOXMLTemplate = {
         const {min, max, s, width, hidden, bestFit} = config;
         let excelWidth = 1;
         let customWidth = '0';
-        
-        if (width > 1) {
-            excelWidth = getExcelCellWidth(width);
+
+        if (width! > 1) {
+            excelWidth = getExcelCellWidth(width!);
             customWidth = '1';
         }
 

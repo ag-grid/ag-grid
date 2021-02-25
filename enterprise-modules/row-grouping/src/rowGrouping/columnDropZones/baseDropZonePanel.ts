@@ -288,7 +288,7 @@ export abstract class BaseDropZonePanel extends Component {
     private addColumns(columnsToAdd: Column[]): void {
         if (!columnsToAdd) { return; }
         const newColumnList = this.getExistingColumns().slice();
-        const colsToAddNoDuplicates = columnsToAdd.filter( col => newColumnList.indexOf(col)<0 );
+        const colsToAddNoDuplicates = columnsToAdd.filter(col => newColumnList.indexOf(col) < 0);
         _.insertArrayIntoArray(newColumnList, colsToAddNoDuplicates, this.insertIndex);
         this.updateColumns(newColumnList);
     }
@@ -433,7 +433,7 @@ export abstract class BaseDropZonePanel extends Component {
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
             const enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-            const icon = _.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsWrapper);
+            const icon = _.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsWrapper)!;
             this.addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);
         }

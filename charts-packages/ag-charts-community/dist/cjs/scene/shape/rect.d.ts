@@ -23,6 +23,11 @@ export declare class Rect extends Path {
      */
     private _crisp;
     crisp: boolean;
+    private _gradient;
+    gradient: boolean;
+    private gradientInstance?;
+    private updateGradientInstance;
+    fill: string | undefined;
     private effectiveStrokeWidth;
     strokeWidth: number;
     /**

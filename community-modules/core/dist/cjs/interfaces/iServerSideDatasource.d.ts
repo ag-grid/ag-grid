@@ -1,10 +1,11 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
 import { ColumnVO } from "./iColumnVO";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
+import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
 export interface IServerSideGetRowsRequest {
     startRow: number;
     endRow: number;
@@ -20,7 +21,9 @@ export interface IServerSideGetRowsParams {
     request: IServerSideGetRowsRequest;
     parentNode: RowNode;
     successCallback(rowsThisPage: any[], lastRow: number): void;
+    success(params: LoadSuccessParams): void;
     failCallback(): void;
+    fail(): void;
     api: GridApi;
     columnApi: ColumnApi;
 }

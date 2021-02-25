@@ -8,8 +8,8 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {ChartTranslator} from "../../../chartTranslator";
+import { ChartController } from "../../../chartController";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class PaddingPanel extends Component {
 

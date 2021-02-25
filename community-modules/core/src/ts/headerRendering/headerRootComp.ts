@@ -111,7 +111,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
      }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        let direction: HeaderNavigationDirection;
+        let direction: HeaderNavigationDirection | null = null;
 
         switch (e.key) {
             case KeyName.LEFT:

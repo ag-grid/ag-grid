@@ -10,7 +10,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var _a, _b, _c, _d;
+var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
 var padding_1 = require("../util/padding");
 var cartesianChart_1 = require("./cartesianChart");
@@ -35,6 +35,8 @@ var navigatorMask_1 = require("./navigator/navigatorMask");
 var navigatorHandle_1 = require("./navigator/navigatorHandle");
 var cartesianSeries_1 = require("./series/cartesian/cartesianSeries");
 var chart_1 = require("./chart");
+var hierarchyChart_1 = require("./hierarchyChart");
+var treemapSeries_1 = require("./series/hierarchy/treemapSeries");
 /*
     This file defines the specs for creating different kinds of charts, but
     contains no code that uses the specs to actually create charts
@@ -74,7 +76,7 @@ var commonChartMappings = {
         meta: {
             constructor: caption_1.Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: padding_1.Padding,
@@ -99,7 +101,7 @@ var commonChartMappings = {
         meta: {
             constructor: caption_1.Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: padding_1.Padding,
@@ -194,6 +196,7 @@ var chartMeta = {
     // There is no actual `document` property on the chart, it can only be supplied during instantiation.
     constructorParams: ['document'],
     setAsIs: ['container', 'data', 'tooltipOffset'],
+    nonSerializable: ['container', 'data']
 };
 var axisDefaults = {
     defaults: {
@@ -259,6 +262,17 @@ var barLabelMapping = {
         }
     }
 };
+var tooltipMapping = {
+    tooltip: {
+        meta: {
+            defaults: {
+                enabled: true,
+                renderer: undefined,
+                format: undefined
+            }
+        }
+    }
+};
 var axisMappings = {
     line: {
         meta: {
@@ -272,7 +286,6 @@ var axisMappings = {
         meta: {
             constructor: caption_1.Caption,
             defaults: {
-                enabled: true,
                 padding: {
                     meta: {
                         constructor: padding_1.Padding,
@@ -333,24 +346,24 @@ var mappings = (_a = {},
             _b[groupedCategoryAxis_1.GroupedCategoryAxis.type] = __assign({ meta: __assign({ constructor: groupedCategoryAxis_1.GroupedCategoryAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
             _b[timeAxis_1.TimeAxis.type] = __assign({ meta: __assign({ constructor: timeAxis_1.TimeAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
             _b), series: (_c = {
-                column: __assign(__assign({ meta: {
+                column: __assign(__assign(__assign({ meta: {
                         constructor: barSeries_1.BarSeries,
+                        setAsIs: ['lineDash'],
                         defaults: __assign(__assign({ flipXY: false }, seriesDefaults), columnSeriesDefaults)
-                    }, highlightStyle: {} }, barLabelMapping), shadowMapping)
+                    }, highlightStyle: {} }, tooltipMapping), barLabelMapping), shadowMapping)
             },
-            _c[barSeries_1.BarSeries.type] = __assign(__assign({ meta: {
+            _c[barSeries_1.BarSeries.type] = __assign(__assign(__assign({ meta: {
                     constructor: barSeries_1.BarSeries,
+                    setAsIs: ['lineDash'],
                     defaults: __assign(__assign({ flipXY: true }, seriesDefaults), columnSeriesDefaults)
-                }, highlightStyle: {} }, barLabelMapping), shadowMapping),
-            _c[lineSeries_1.LineSeries.type] = {
-                meta: {
+                }, highlightStyle: {} }, tooltipMapping), barLabelMapping), shadowMapping),
+            _c[lineSeries_1.LineSeries.type] = __assign(__assign({ meta: {
                     constructor: lineSeries_1.LineSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, tooltipRenderer: undefined, highlightStyle: {
+                    setAsIs: ['lineDash'],
+                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, highlightStyle: {
                             fill: 'yellow'
                         } })
-                },
-                highlightStyle: {},
-                marker: {
+                } }, tooltipMapping), { highlightStyle: {}, marker: {
                     meta: {
                         constructor: cartesianSeries_1.CartesianSeriesMarker,
                         defaults: {
@@ -362,17 +375,13 @@ var mappings = (_a = {},
                             formatter: undefined
                         }
                     }
-                }
-            },
-            _c[scatterSeries_1.ScatterSeries.type] = {
-                meta: {
+                } }),
+            _c[scatterSeries_1.ScatterSeries.type] = __assign(__assign({ meta: {
                     constructor: scatterSeries_1.ScatterSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
+                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, highlightStyle: {
                             fill: 'yellow'
                         } })
-                },
-                highlightStyle: {},
-                marker: {
+                } }, tooltipMapping), { highlightStyle: {}, marker: {
                     meta: {
                         constructor: cartesianSeries_1.CartesianSeriesMarker,
                         defaults: {
@@ -384,14 +393,14 @@ var mappings = (_a = {},
                             formatter: undefined
                         }
                     }
-                }
-            },
-            _c[areaSeries_1.AreaSeries.type] = __assign({ meta: {
+                } }),
+            _c[areaSeries_1.AreaSeries.type] = __assign(__assign(__assign({ meta: {
                     constructor: areaSeries_1.AreaSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: undefined, tooltipRenderer: undefined, highlightStyle: {
+                    setAsIs: ['lineDash'],
+                    defaults: __assign(__assign({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
-                }, highlightStyle: {}, marker: {
+                } }, tooltipMapping), { highlightStyle: {}, marker: {
                     meta: {
                         constructor: cartesianSeries_1.CartesianSeriesMarker,
                         defaults: {
@@ -403,17 +412,18 @@ var mappings = (_a = {},
                             formatter: undefined
                         }
                     }
-                } }, shadowMapping),
-            _c[histogramSeries_1.HistogramSeries.type] = __assign({ meta: {
+                } }), shadowMapping),
+            _c[histogramSeries_1.HistogramSeries.type] = __assign(__assign(__assign({ meta: {
                     constructor: histogramSeries_1.HistogramSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
+                    setAsIs: ['lineDash'],
+                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, binCount: undefined, bins: undefined, aggregation: 'sum', highlightStyle: {
                             fill: 'yellow'
                         } })
-                }, highlightStyle: {}, label: {
+                } }, tooltipMapping), { highlightStyle: {}, label: {
                     meta: {
                         defaults: __assign(__assign({}, labelDefaults), { formatter: undefined })
                     }
-                } }, shadowMapping),
+                } }), shadowMapping),
             _c), navigator: {
             meta: {
                 constructor: navigator_1.Navigator,
@@ -475,10 +485,11 @@ var mappings = (_a = {},
                         }
                     }
                 } }) }) }, commonChartMappings), { series: (_d = {},
-            _d[pieSeries_1.PieSeries.type] = __assign({ meta: {
+            _d[pieSeries_1.PieSeries.type] = __assign(__assign(__assign({ meta: {
                     constructor: pieSeries_1.PieSeries,
+                    setAsIs: ['lineDash'],
                     defaults: __assign(__assign({}, seriesDefaults), { title: undefined, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, callout: {}, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, shadow: undefined })
-                }, highlightStyle: {}, title: {
+                } }, tooltipMapping), { highlightStyle: {}, title: {
                     meta: {
                         constructor: caption_1.Caption,
                         defaults: {
@@ -513,14 +524,21 @@ var mappings = (_a = {},
                             strokeWidth: 1
                         }
                     }
-                } }, shadowMapping),
+                } }), shadowMapping),
             _d) }),
+    _a[hierarchyChart_1.HierarchyChart.type] = __assign(__assign({ meta: __assign(__assign({ constructor: hierarchyChart_1.HierarchyChart }, chartMeta), { defaults: __assign({}, chartDefaults) }) }, commonChartMappings), { series: (_e = {},
+            _e[treemapSeries_1.TreemapSeries.type] = __assign({ meta: {
+                    constructor: treemapSeries_1.TreemapSeries,
+                    defaults: __assign(__assign({}, seriesDefaults), { showInLegend: false })
+                } }, tooltipMapping),
+            _e) }),
     _a);
 // Amend the `mappings` object with aliases for different chart types.
 {
     var typeToAliases = {
         cartesian: ['line', 'area', 'bar', 'column'],
-        polar: ['pie']
+        polar: ['pie'],
+        hierarchy: ['treemap']
     };
     var _loop_1 = function (type) {
         typeToAliases[type].forEach(function (alias) {

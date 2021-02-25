@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,9 +44,7 @@ function cleanNumber(value) {
     if (typeof value === 'number') {
         return Math.floor(value);
     }
-    else {
-        return null;
-    }
+    return null;
 }
 exports.cleanNumber = cleanNumber;
 function decToHex(number, bytes) {

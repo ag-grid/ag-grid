@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "ag-Grid Blog: The Best HTML5 Grid for Streaming Updates";
-$pageDescription = "Demonstrates ag-Grid processing large amounts of streaming data updates.";
+$pageTitle = "AG Grid Blog: The Best HTML5 Grid for Streaming Updates";
+$pageDescription = "Demonstrates AG Grid processing large amounts of streaming data updates.";
 $pageKeywords = "javascript datagrid streaming updates";
 $socialUrl = "https://www.ag-grid.com/ag-grid-the-best-html5-grid-for-streaming-updates/";
 $socialImage = "https://www.ag-grid.com/ag-grid-the-best-html5-grid-for-streaming-updates/TheFastestGrid.png";
@@ -12,7 +12,7 @@ include('../includes/mediaHeader.php');
 <div>
 
     <!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
-    <h1>ag-Grid - The Best HTML5 Grid for Streaming Updates</h1>
+    <h1>AG Grid - The Best HTML5 Grid for Streaming Updates</h1>
     <p class="blog-author">Niall Crosby | 1st February 2018</p>
 
     <div>
@@ -36,9 +36,9 @@ include('../includes/mediaHeader.php');
     <div class="col-md-8">
 
         <p class="lead">
-            ag-Grid can process over <b>150,000 updates per second</b>.
+            AG Grid can process over <b>150,000 updates per second</b>.
             Together with the latest browsers
-            and ag-Grid's cutting edge algorithms, let me introduce you to the
+            and AG Grid's cutting edge algorithms, let me introduce you to the
             fastest JavaScript datagrid in the world!!!
         </p>
 
@@ -50,7 +50,7 @@ include('../includes/mediaHeader.php');
             starts up with a load test for processing 1,000 updates every second.
         </p>
 
-        <?= grid_example('Load and Stress Test of ag-Grid', 'load-and-stress-test', 'vanilla', ['enterprise' => true]) ?>
+        <?= grid_example('Load and Stress Test of AG Grid', 'load-and-stress-test', 'vanilla', ['enterprise' => true]) ?>
 
         <h2>Test Results</h2>
 
@@ -104,7 +104,7 @@ include('../includes/mediaHeader.php');
         <p>
             So the use case presented in this demo (over 10,000 records with over 1,000
             record updates per second) is either an unlikely situation or an edge case situation.
-            So the demo can be seen as ag-Grid demonstrating it is more powerful than you
+            So the demo can be seen as AG Grid demonstrating it is more powerful than you
             will probably ever need with data updates - it can manage and update data faster than
             humans are able to consume.
         </p>
@@ -113,7 +113,7 @@ include('../includes/mediaHeader.php');
 
         <p>
             The demo is doing more than cell updates. Here are some other things to look out
-            for where ag-Grid is going above and beyond what other grids do.
+            for where AG Grid is going above and beyond what other grids do.
         </p>
 
         <ul>
@@ -184,7 +184,7 @@ include('../includes/mediaHeader.php');
                 <h3>Range Selection</h3>
 
                 <p>
-                    ag-Grid allows you to do range selections like in Excel.
+                    AG Grid allows you to do range selections like in Excel.
                     In the demo, try dragging the mouse over a selection of cells.
                     On the bottom right of the grid information appears with aggregations
                     (sum, average e.t.c.) of the values in the selected range.
@@ -230,14 +230,14 @@ include('../includes/mediaHeader.php');
                     Customising the grid would be difficult, it is not possible to merge
                     HTML and Canvas together. For example if you want to customise the contents
                     of a cell, it must be doing using 2D drawing API rather than simple
-                    HTML or an Angular or React component (all of which is possible with ag-Grid).
+                    HTML or an Angular or React component (all of which is possible with AG Grid).
                 </li>
             </ul>
         </p>
 
         <p>
             So to sum up canvas grids - they are not necessary. The example on this page demonstrates
-            that standard HTML elements can achieve the performance required. Given ag-Grid can
+            that standard HTML elements can achieve the performance required. Given AG Grid can
             do the job with plain HTML then why would you want all the disadvantages of Canvas?
         </p>
 
@@ -282,7 +282,7 @@ include('../includes/mediaHeader.php');
         <h2>Grid API</h2>
 
         <p>
-            Users of ag-Grid might wonder if there are any tricks used to get the grid to work
+            Users of AG Grid might wonder if there are any tricks used to get the grid to work
             this fast. There are no tricks. The only item to take note of is the use of
             <a href="../javascript-grid-data-update-high-frequency/">Async Transactions</a>
             with the grid API <code>applyTransactionAsync()</code>.
@@ -291,7 +291,7 @@ include('../includes/mediaHeader.php');
         <h2>Conclusion</h2>
 
         <p>
-            ag-Grid can handle the performance required by modern day enterprise applications.
+            AG Grid can handle the performance required by modern day enterprise applications.
             In addition to the performance, it also includes many features that are not available
             in other grids.
         </p>

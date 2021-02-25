@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgAbstractLabel, LabelAlignment, IAgLabel } from "./agAbstractLabel";
@@ -15,7 +15,7 @@ export declare class AgSlider extends AgAbstractLabel {
     setTextFieldWidth(width: number): this;
     setMinValue(minValue: number): this;
     setMaxValue(maxValue: number): this;
-    getValue(): string;
+    getValue(): string | null | undefined;
     setValue(value: string): this;
     setStep(step: number): this;
 }

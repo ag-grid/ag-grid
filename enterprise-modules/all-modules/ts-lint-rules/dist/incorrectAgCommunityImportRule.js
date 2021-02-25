@@ -22,7 +22,7 @@ var Rule = /** @class */ (function (_super) {
     Rule.prototype.apply = function (sourceFile) {
         return this.applyWithWalker(new NoImportsWalker(sourceFile, this.getOptions()));
     };
-    Rule.FAILURE_STRING = "Relative import of ag-Grid Community";
+    Rule.FAILURE_STRING = "Relative import of AG Grid Community";
     return Rule;
 }(Lint.Rules.AbstractRule));
 exports.Rule = Rule;

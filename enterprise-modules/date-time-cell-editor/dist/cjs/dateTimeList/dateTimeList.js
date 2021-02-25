@@ -160,7 +160,7 @@ var DateTimeListPageEntryComp = /** @class */ (function (_super) {
         }
         this.entry = entry;
         this.getGui().textContent = entry.label;
-        core_1._.addOrRemoveCssClass(this.getGui(), 'ag-date-time-list-page-entry-is-padding', entry.isPadding);
+        core_1._.addOrRemoveCssClass(this.getGui(), 'ag-date-time-list-page-entry-is-padding', !!entry.isPadding);
         this.onDataChange();
     };
     DateTimeListPageEntryComp.prototype.setCurrentValue = function (value) {
@@ -171,7 +171,7 @@ var DateTimeListPageEntryComp = /** @class */ (function (_super) {
         this.onValueSelect(this.entry.value);
     };
     DateTimeListPageEntryComp.prototype.onDataChange = function () {
-        console.log(this.entry.value, this.currentValue);
+        // console.log(this.entry.value, this.currentValue);
         core_1._.addOrRemoveCssClass(this.getGui(), 'ag-date-time-list-page-entry-is-current', this.entry.value && this.currentValue && this.entry.value.getTime() === this.currentValue.getTime());
     };
     DateTimeListPageEntryComp.TEMPLATE = "<div class=\"ag-date-time-list-page-entry\"></div>";

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -110,7 +110,7 @@ export declare class Events {
     /** The displayed page for pagination has changed. For example the data was filtered or sorted,
      * or the user has moved to a different page. */
     static EVENT_PAGINATION_CHANGED: string;
-    /** Only used by React, Angular 2+, Web Components and VueJS ag-Grid components
+    /** Only used by React, Angular 2+, Web Components and VueJS AG Grid components
      * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
      * to bound properties, this event fires after the grid has finished processing the change. */
     static EVENT_COMPONENT_STATE_CHANGED: string;
@@ -132,4 +132,5 @@ export declare class Events {
     static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST: string;
     static EVENT_KEYBOARD_FOCUS: string;
     static EVENT_MOUSE_FOCUS: string;
+    static EVENT_STORE_UPDATED: string;
 }

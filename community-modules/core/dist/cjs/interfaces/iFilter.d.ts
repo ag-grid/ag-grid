@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from '../entities/column';
@@ -18,7 +18,7 @@ export interface IFilterDef {
     filterFramework?: any;
     /** The filter params are specific to each filter! */
     filterParams?: any;
-    /** The custom component to be used for rendering the floating filter. If none is specified the default ag-Grid is used. **/
+    /** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. **/
     floatingFilterComponent?: string | {
         new (): IFloatingFilterComp;
     };
@@ -46,14 +46,14 @@ export interface IFilter {
      * on it if you want. */
     getFrameworkComponentInstance?(): any;
     /**
-     * Optional method used by ag-Grid when rendering floating filters and there isn't a floating filter
+     * Optional method used by AG Grid when rendering floating filters and there isn't a floating filter
      * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
      * filter.
      */
     getModelAsString?(model: any): string;
 }
 export interface ProvidedFilterModel {
-    filterType: string;
+    filterType?: string;
 }
 export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 }

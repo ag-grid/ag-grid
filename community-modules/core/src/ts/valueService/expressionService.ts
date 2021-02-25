@@ -16,14 +16,14 @@ export class ExpressionService extends BeanStub {
     public evaluate(expressionOrFunc: Function | string | undefined, params: any): any {
         if (typeof expressionOrFunc === 'function') {
             // valueGetter is a function, so just call it
-            const func = expressionOrFunc as Function;
+            const func = expressionOrFunc;
             return func(params);
         } else if (typeof expressionOrFunc === 'string') {
             // valueGetter is an expression, so execute the expression
-            const expression = expressionOrFunc as string;
+            const expression = expressionOrFunc;
             return this.evaluateExpression(expression, params);
         } else {
-            console.error('ag-Grid: value should be either a string or a function', expressionOrFunc);
+            console.error('AG Grid: value should be either a string or a function', expressionOrFunc);
         }
     }
 

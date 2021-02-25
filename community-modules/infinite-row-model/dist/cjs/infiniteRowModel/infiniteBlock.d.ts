@@ -15,11 +15,6 @@ export declare class InfiniteBlock extends RowNodeBlock {
         state: any;
     };
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void;
-    setRowNode(rowIndex: number, rowNode: RowNode): void;
-    protected init(): void;
-    getNodeIdPrefix(): string;
-    getRow(displayIndex: number): RowNode;
-    private setIndexAndTopOnRowNode;
     protected loadFromDatasource(): void;
     protected processServerFail(): void;
     protected createLoadParams(): any;

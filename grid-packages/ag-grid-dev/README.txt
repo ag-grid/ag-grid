@@ -1,6 +1,6 @@
 # ag-grid-dev
 
-This package build and test that modules in ag-Grid aren't automatically included in either community or enterprise bundles
+This package build and test that modules in AG Grid aren't automatically included in either community or enterprise bundles
 
 The process works in 3 stages:
 

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridCore } from "../gridCore";
@@ -6,7 +6,7 @@ import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { BeanStub } from "../context/beanStub";
 export interface PopupEventParams {
-    originalMouseEvent?: MouseEvent | Touch;
+    originalMouseEvent?: MouseEvent | Touch | null;
     mouseEvent?: MouseEvent;
     touchEvent?: TouchEvent;
     keyboardEvent?: KeyboardEvent;
@@ -31,6 +31,7 @@ export interface AddPopupResult {
 }
 export declare class PopupService extends BeanStub {
     private environment;
+    private focusController;
     private gridCore;
     private popupList;
     registerGridCore(gridCore: GridCore): void;
@@ -65,7 +66,7 @@ export declare class PopupService extends BeanStub {
     positionPopupOverComponent(params: {
         type: string;
         eventSource: HTMLElement;
-        ePopup: HTMLElement | null;
+        ePopup: HTMLElement;
         column: Column;
         rowNode: RowNode;
         minWidth?: number;
@@ -75,7 +76,7 @@ export declare class PopupService extends BeanStub {
     }): void;
     private callPostProcessPopup;
     positionPopup(params: {
-        ePopup: HTMLElement | null;
+        ePopup: HTMLElement;
         minWidth?: number;
         minHeight?: number;
         nudgeX?: number;

@@ -1,4 +1,4 @@
-// ag-grid-react v25.0.1
+// ag-grid-react v25.1.0
 import * as React from "react";
 import { Component, ReactPortal } from "react";
 import { ColumnApi, GridApi, GridOptions, Module } from "ag-grid-community";
@@ -31,6 +31,7 @@ export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     hasPendingPortalUpdate: boolean;
     destroyed: boolean;
     protected eGridDiv: HTMLElement;
+    readonly SYNCHRONOUS_CHANGE_PROPERTIES: string[];
     constructor(props: any);
     render(): React.DetailedReactHTMLElement<{
         style: any;
@@ -59,4 +60,6 @@ export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     componentWillUnmount(): void;
     isDisableStaticMarkup(): boolean;
     isLegacyComponentRendering(): boolean;
+    private processSynchronousChanges;
+    private processAsynchronousChanges;
 }

@@ -126,16 +126,16 @@ export const iconNameClassMap: { [key: string]: string; } = {
 export function createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement {
     const iconContents = createIconNoSpan(iconName, gridOptionsWrapper, column);
 
-    if (iconContents.className.indexOf('ag-icon') > -1) {
+    if (iconContents && iconContents.className.indexOf('ag-icon') > -1) {
         return iconContents;
     }
 
     const eResult = document.createElement('span');
-    eResult.appendChild(iconContents);
+    eResult.appendChild(iconContents!);
     return eResult;
 }
 
-export function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column, forceCreate?: boolean): HTMLElement {
+export function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null, forceCreate?: boolean): HTMLElement | undefined {
     let userProvidedIcon: Function | string | null = null;
 
     // check col for icon first
@@ -170,17 +170,17 @@ export function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptio
         }
 
         if (isNodeOrElement(rendererResult)) {
-            return rendererResult;
+            return rendererResult as HTMLElement;
         }
 
-        console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
+        console.warn('AG Grid: iconRenderer should return back a string or a dom object');
     } else {
         const span = document.createElement('span');
         let cssClass = iconNameClassMap[iconName];
 
         if (!cssClass) {
             if (!forceCreate) {
-                console.warn(`ag-Grid: Did not find icon ${iconName}`);
+                console.warn(`AG Grid: Did not find icon ${iconName}`);
                 cssClass = '';
             } else {
                 cssClass = iconName;

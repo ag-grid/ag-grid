@@ -1,4 +1,4 @@
-// ag-grid-react v25.0.1
+// ag-grid-react v25.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -50,6 +50,7 @@ var AgGridReact = /** @class */ (function (_super) {
         _this.portals = [];
         _this.hasPendingPortalUpdate = false;
         _this.destroyed = false;
+        _this.SYNCHRONOUS_CHANGE_PROPERTIES = ['context'];
         return _this;
     }
     AgGridReact.prototype.render = function () {
@@ -104,7 +105,7 @@ var AgGridReact = /** @class */ (function (_super) {
                     resolve(reactComponent);
                     return;
                 }
-                console.error("ag-Grid: React Component '" + reactComponent.getReactComponentName() + "' not created within " + AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS + "ms");
+                console.error("AG Grid: React Component '" + reactComponent.getReactComponentName() + "' not created within " + AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS + "ms");
                 return;
             }
             window.setTimeout(function () {
@@ -123,7 +124,7 @@ var AgGridReact = /** @class */ (function (_super) {
         this.batchUpdate();
     };
     AgGridReact.prototype.updateReactPortal = function (oldPortal, newPortal) {
-        this.portals = this.portals.filter(function (portal) { return portal !== oldPortal; }).concat(newPortal);
+        this.portals[this.portals.indexOf(oldPortal)] = newPortal;
         this.batchUpdate();
     };
     AgGridReact.prototype.batchUpdate = function () {
@@ -162,7 +163,7 @@ var AgGridReact = /** @class */ (function (_super) {
     };
     AgGridReact.prototype.shouldComponentUpdate = function (nextProps) {
         this.processPropsChanges(this.props, nextProps);
-        // we want full control of the dom, as ag-Grid doesn't use React internally,
+        // we want full control of the dom, as AG Grid doesn't use React internally,
         // so for performance reasons we tell React we don't need render called after
         // property changes.
         return false;
@@ -171,18 +172,11 @@ var AgGridReact = /** @class */ (function (_super) {
         this.processPropsChanges(prevProps, this.props);
     };
     AgGridReact.prototype.processPropsChanges = function (prevProps, nextProps) {
-        var _this = this;
         var changes = {};
         this.extractGridPropertyChanges(prevProps, nextProps, changes);
         this.extractDeclarativeColDefChanges(nextProps, changes);
-        if (Object.keys(changes).length > 0) {
-            window.setTimeout(function () {
-                // destroyed?
-                if (_this.api) {
-                    ag_grid_community_1.ComponentUtil.processOnChange(changes, _this.gridOptions, _this.api, _this.columnApi);
-                }
-            });
-        }
+        this.processSynchronousChanges(changes);
+        this.processAsynchronousChanges(changes);
     };
     AgGridReact.prototype.extractDeclarativeColDefChanges = function (nextProps, changes) {
         // if columnDefs are provided on gridOptions we use those - you can't combine both
@@ -256,6 +250,33 @@ var AgGridReact = /** @class */ (function (_super) {
     };
     AgGridReact.prototype.isLegacyComponentRendering = function () {
         return this.props.legacyComponentRendering;
+    };
+    AgGridReact.prototype.processSynchronousChanges = function (changes) {
+        var asyncChanges = __assign({}, changes);
+        if (Object.keys(asyncChanges).length > 0) {
+            var synchronousChanges_1 = {};
+            this.SYNCHRONOUS_CHANGE_PROPERTIES.forEach(function (synchronousChangeProperty) {
+                if (asyncChanges[synchronousChangeProperty]) {
+                    synchronousChanges_1[synchronousChangeProperty] = asyncChanges[synchronousChangeProperty];
+                    delete asyncChanges.context;
+                }
+            });
+            if (Object.keys(synchronousChanges_1).length > 0 && !!this.api) {
+                ag_grid_community_1.ComponentUtil.processOnChange({ context: asyncChanges.context }, this.gridOptions, this.api, this.columnApi);
+            }
+        }
+        return asyncChanges;
+    };
+    AgGridReact.prototype.processAsynchronousChanges = function (changes) {
+        var _this = this;
+        if (Object.keys(changes).length > 0) {
+            window.setTimeout(function () {
+                // destroyed?
+                if (_this.api) {
+                    ag_grid_community_1.ComponentUtil.processOnChange(changes, _this.gridOptions, _this.api, _this.columnApi);
+                }
+            });
+        }
     };
     AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS = 1000; // a second should be more than enough to instantiate a component
     AgGridReact.defaultProps = {

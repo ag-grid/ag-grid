@@ -1,7 +1,7 @@
 <?php
-$pageTitle = "React Charts Component | ag-Grid
+$pageTitle = "React Charts Component | AG Grid
 .";
-$pageDescription = "Fastest, most feature-rich React Data Grid component from ag-Grid. Integrate seamlessly with React to deliver 63+ core and enterprise features including filtering, grouping and pagination. React Grid examples and demo on this page. Built to deal with large data sets, ease of integration, heavily customizable and a developer friendly API.
+$pageDescription = "Fastest, most feature-rich React Data Grid component from AG Grid. Integrate seamlessly with React to deliver 63+ core and enterprise features including filtering, grouping and pagination. React Grid examples and demo on this page. Built to deal with large data sets, ease of integration, heavily customizable and a developer friendly API.
 ";
 ?>
 <head>
@@ -27,16 +27,16 @@ $pageDescription = "Fastest, most feature-rich React Data Grid component from ag
 <div class="collapse navbar-collapse" id="navbarNav">
 <ul class="navbar-nav ml-auto">
 <li class="nav-item">
-<a class="nav-link" href="../example.php">Demo<span class="sr-only">(current)</span></a>
+<a class="nav-link" href="/example.php">Demo<span class="sr-only">(current)</span></a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="../documentation/">Documentation</a>
+<a class="nav-link" href="/documentation/">Documentation</a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="../features-overview/">Features Overview</a>
+<a class="nav-link" href="/features-overview/">Features Overview</a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="../license-pricing.php">Pricing</a>
+<a class="nav-link" href="/license-pricing.php">Pricing</a>
 </li>
 <li class="nav-item">
 <a class="nav-link" id="get-started" href="../documentation/javascript/getting-started/">Get Started</a>
@@ -262,7 +262,7 @@ The grid comes with charting integration allowing users to chart data directly f
 Standalone Library(in development)
 </h3>
 <p>
-ag-Grid will also release it's own standalone library, which is currently in development.
+AG Grid will also release it's own standalone library, which is currently in development.
 </p>
 </div>
 </div>

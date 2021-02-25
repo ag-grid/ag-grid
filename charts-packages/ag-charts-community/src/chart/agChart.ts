@@ -13,17 +13,19 @@ import { SolarDark } from "./themes/solarDark";
 import { VividLight } from "./themes/vividLight";
 import { VividDark } from "./themes/vividDark";
 import { find } from "../util/array";
-import { getValue, isObject } from "../util/object";
+import { deepMerge, getValue, isObject } from "../util/object";
 import {
     AgCartesianChartOptions,
     AgChartOptions,
     AgPolarChartOptions,
     AgChartTheme,
-    AgChartThemeName
+    AgChartThemeName,
+    AgHierarchyChartOptions
 } from "./agChartOptions";
 import mappings from './agChartMappings';
 import { CartesianChart } from "./cartesianChart";
 import { PolarChart } from "./polarChart";
+import { HierarchyChart } from "./hierarchyChart";
 
 type ThemeMap = { [key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme };
 
@@ -80,6 +82,7 @@ export function getChartTheme(value?: string | ChartTheme | AgChartTheme): Chart
 type AgChartType<T> =
     T extends AgCartesianChartOptions ? CartesianChart :
     T extends AgPolarChartOptions ? PolarChart :
+    T extends AgHierarchyChartOptions ? HierarchyChart :
     never;
 
 let firstColorIndex = 0;
@@ -126,6 +129,12 @@ export abstract class AgChart {
         }
     }
 
+    static save(component: any): any {
+        const target: any = {};
+        save(component, target);
+        return target;
+    }
+
     static createComponent = create;
 }
 
@@ -149,6 +158,26 @@ const actualSeriesTypeMap = (() => {
     map['column'] = 'bar';
     return map;
 })();
+
+function save(component: any, target: any = {}, mapping: any = mappings) {
+    if (component.constructor && component.constructor.type && !mapping.meta) {
+        mapping = mapping[component.constructor.type];
+    }
+    const defaults = mapping && mapping.meta && mapping.meta.defaults;
+    const keys = Object.keys(defaults);
+    keys.forEach(key => {
+        const value = component[key];
+        if (isObject(value) && (!mapping.meta.nonSerializable || mapping.meta.nonSerializable.indexOf(key) < 0)) {
+            target[key] = {};
+            // save(value, target[key], mapping[key]);
+        } else if (Array.isArray(value)) {
+            // target[key] = [];
+            // save(value, target[key], map[key]);
+        } else {
+            target[key] = component[key];
+        }
+    });
+}
 
 function create(options: any, path?: string, component?: any, theme?: ChartTheme) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
@@ -201,7 +230,28 @@ function create(options: any, path?: string, component?: any, theme?: ChartTheme
                     if (Array.isArray(value)) {
                         const subComponents = value
                             .map(config => {
-                                return create(config, path + '.' + key, undefined, theme);
+                                const axis = create(config, path + '.' + key, undefined, theme);
+                                if (theme && key === 'axes') {
+                                    const fakeTheme: any = {
+                                        getConfig(path: string): any {
+                                            const parts = path.split('.');
+                                            let modifiedPath = parts.slice(0, 3).join('.') + '.' + axis.position;
+                                            const after = parts.slice(3);
+                                            if (after.length) {
+                                                modifiedPath += '.' + after.join('.');
+                                            }
+                                            const config = theme.getConfig(path);
+                                            const modifiedConfig = theme.getConfig(modifiedPath);
+                                            isObject(theme.getConfig(modifiedPath));
+                                            if (isObject(config) && isObject(modifiedConfig)) {
+                                                return deepMerge(config, modifiedConfig);
+                                            }
+                                            return modifiedConfig;
+                                        }
+                                    };
+                                    update(axis, config, path + '.' + key, fakeTheme);
+                                }
+                                return axis;
                             })
                             .filter(instance => !!instance);
                         component[key] = subComponents;

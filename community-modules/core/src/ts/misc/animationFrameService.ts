@@ -3,6 +3,7 @@ import { Bean, PostConstruct } from "../context/context";
 import { AnimationQueueEmptyEvent } from "../events";
 import { Events } from "../eventKeys";
 import { BeanStub } from "../context/beanStub";
+import { GridPanel } from "../gridPanel/gridPanel";
 
 interface TaskItem {
     task: () => void;
@@ -38,6 +39,8 @@ export class AnimationFrameService extends BeanStub {
     private taskCount = 0;
     private cancelledTasks = new Set();
 
+    private gridPanel: GridPanel;
+
     public setScrollTop(scrollTop: number): void {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
         this.lastScrollTop = scrollTop;
@@ -48,13 +51,17 @@ export class AnimationFrameService extends BeanStub {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
     }
 
-    // this method is for our ag-Grid sanity only - if animation frames are turned off,
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
+
+    // this method is for our AG Grid sanity only - if animation frames are turned off,
     // then no place in the code should be looking to add any work to be done in animation
     // frames. this stops bugs - where some code is asking for a frame to be executed
     // when it should not.
     private verifyAnimationFrameOn(methodName: string): void {
         if (this.useAnimationFrame === false) {
-            console.warn(`ag-Grid: AnimationFrameService.${methodName} called but animation frames are off`);
+            console.warn(`AG Grid: AnimationFrameService.${methodName} called but animation frames are off`);
         }
     }
 
@@ -107,24 +114,26 @@ export class AnimationFrameService extends BeanStub {
 
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
+
         while (noMaxMillis || duration < millis) {
-            let task: () => void;
+            if (!this.gridPanel.executeAnimationFrameScroll()) {
+                let task: () => void;
+                if (p1Tasks.length) {
+                    this.sortTaskList(p1TaskList);
+                    task = p1Tasks.pop()!.task;
+                } else if (p2Tasks.length) {
+                    this.sortTaskList(p2TaskList);
+                    task = p2Tasks.pop()!.task;
+                } else if (destroyTasks.length) {
+                    task = destroyTasks.pop()!;
+                } else {
+                    this.cancelledTasks.clear();
+                    break;
+                }
 
-            if (p1Tasks.length) {
-                this.sortTaskList(p1TaskList);
-                task = p1Tasks.pop().task;
-            } else if (p2Tasks.length) {
-                this.sortTaskList(p2TaskList);
-                task = p2Tasks.pop().task;
-            } else if (destroyTasks.length) {
-                task = destroyTasks.pop();
-            } else {
-                this.cancelledTasks.clear();
-                break;
-            }
-
-            if (!this.cancelledTasks.has(task)) {
-                task();
+                if (!this.cancelledTasks.has(task)) {
+                    task();
+                }
             }
 
             duration = (new Date().getTime()) - frameStart;
@@ -141,8 +150,8 @@ export class AnimationFrameService extends BeanStub {
         this.ticking = false;
         const event: AnimationQueueEmptyEvent = {
             type: Events.EVENT_ANIMATION_QUEUE_EMPTY,
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            api: this.gridOptionsWrapper.getApi()
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            api: this.gridOptionsWrapper.getApi()!
         };
         this.eventService.dispatchEvent(event);
     }

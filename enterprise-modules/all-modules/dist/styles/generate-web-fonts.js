@@ -60,14 +60,14 @@ const generate = (theme) => {
     );
 }
 
-const theme = process.argv[2];
+const selectedTheme = process.argv[2];
 
-if (!theme) {
+if (!selectedTheme) {
     themes.forEach(generate);
 } else {
-    if (themes.includes(theme)) {
-        generate(theme);
+    if (themes.includes(selectedTheme)) {
+        generate(selectedTheme);
     } else {
-        console.error(`No such theme '${theme}', try one of: ${themes.join(', ')}.`);
+        console.error(`No such theme '${selectedTheme}', try one of: ${themes.join(', ')}.`);
     }
 }

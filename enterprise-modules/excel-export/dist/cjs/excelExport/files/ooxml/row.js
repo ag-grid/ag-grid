@@ -19,7 +19,7 @@ var addEmptyCells = function (cells, rowIdx) {
                 pos: i,
                 excelPos: posCounter
             });
-            posCounter += cells[i].mergeAcross;
+            posCounter += cell.mergeAcross;
         }
         posCounter++;
     }

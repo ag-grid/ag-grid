@@ -25,6 +25,7 @@ var text_1 = require("../../../scene/shape/text");
 var selection_1 = require("../../../scene/selection");
 var linearScale_1 = require("../../../scale/linearScale");
 var sector_1 = require("../../../scene/shape/sector");
+var series_1 = require("./../series");
 var label_1 = require("../../label");
 var node_1 = require("../../../scene/node");
 var angle_1 = require("../../../util/angle");
@@ -76,6 +77,17 @@ var PieSeriesCallout = /** @class */ (function (_super) {
     ], PieSeriesCallout.prototype, "strokeWidth", void 0);
     return PieSeriesCallout;
 }(observable_1.Observable));
+var PieSeriesTooltip = /** @class */ (function (_super) {
+    __extends(PieSeriesTooltip, _super);
+    function PieSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate([
+        observable_1.reactive('change')
+    ], PieSeriesTooltip.prototype, "renderer", void 0);
+    return PieSeriesTooltip;
+}(series_1.SeriesTooltip));
+exports.PieSeriesTooltip = PieSeriesTooltip;
 var PieSeries = /** @class */ (function (_super) {
     __extends(PieSeries, _super);
     function PieSeries() {
@@ -98,6 +110,7 @@ var PieSeries = /** @class */ (function (_super) {
         _this.seriesItemEnabled = [];
         _this.label = new PieSeriesLabel();
         _this.callout = new PieSeriesCallout();
+        _this.tooltip = new PieSeriesTooltip();
         /**
          * The key of the numeric field to use to determine the angle (for example,
          * a pie slice angle).
@@ -420,7 +433,8 @@ var PieSeries = /** @class */ (function (_super) {
         if (!angleKey) {
             return '';
         }
-        var _a = this, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer, angleName = _a.angleName, radiusKey = _a.radiusKey, radiusName = _a.radiusName, labelKey = _a.labelKey, labelName = _a.labelName;
+        var _a = this, fills = _a.fills, tooltip = _a.tooltip, angleName = _a.angleName, radiusKey = _a.radiusKey, radiusName = _a.radiusName, labelKey = _a.labelKey, labelName = _a.labelName;
+        var _b = tooltip.renderer, tooltipRenderer = _b === void 0 ? this.tooltipRenderer : _b;
         var color = fills[nodeDatum.index % fills.length];
         var datum = nodeDatum.seriesDatum;
         var label = labelKey ? datum[labelKey] + ": " : '';

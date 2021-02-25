@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node generator.js"
   },
-  "author": "ag-Grid",
+  "author": "AG Grid",
   "license": "ISC",
   "devDependencies": {
     "@vusion/webfonts-generator": "^0.6.0",

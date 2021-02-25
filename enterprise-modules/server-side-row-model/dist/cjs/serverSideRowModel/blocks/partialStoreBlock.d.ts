@@ -67,7 +67,7 @@ export declare class PartialStoreBlock extends RowNodeBlock {
     protected loadFromDatasource(): void;
     isPixelInRange(pixel: number): boolean;
     getRowBounds(index: number): RowBounds | undefined;
-    getRowIndexAtPixel(pixel: number): number | undefined;
+    getRowIndexAtPixel(pixel: number): number | null;
     clearDisplayIndexes(): void;
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: {
         value: number;

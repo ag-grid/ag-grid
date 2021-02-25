@@ -47,11 +47,13 @@ export class SetFilterListItem extends Component {
 
         this.eCheckbox.setValue(this.isSelected, true);
         this.eCheckbox.onValueChange(value => {
-            this.isSelected = value;
+            const parsedValue = value || false;
+
+            this.isSelected = parsedValue;
 
             const event: SetFilterListItemSelectionChangedEvent = {
                 type: SetFilterListItem.EVENT_SELECTION_CHANGED,
-                isSelected: value,
+                isSelected: parsedValue,
             };
 
             this.dispatchEvent(event);
@@ -67,7 +69,7 @@ export class SetFilterListItem extends Component {
         const { params: { column } } = this;
 
         let { value } = this;
-        let formattedValue: string = null;
+        let formattedValue: string | null = null;
 
         if (typeof value === 'function') {
             value = value();
@@ -102,7 +104,7 @@ export class SetFilterListItem extends Component {
     }
 
     private getFormattedValue(filterParams: ISetFilterParams, column: Column, value: any) {
-        const formatter = filterParams == null ? null : filterParams.valueFormatter;
+        const formatter = filterParams && filterParams.valueFormatter;
 
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     }
@@ -119,8 +121,10 @@ export class SetFilterListItem extends Component {
         }
 
         cellRendererPromise.then(component => {
-            this.eCheckbox.setLabel(component.getGui());
-            this.addDestroyFunc(() => this.destroyBean(component));
+            if (component) {
+                this.eCheckbox.setLabel(component.getGui());
+                this.addDestroyFunc(() => this.destroyBean(component));
+            }
         });
     }
 

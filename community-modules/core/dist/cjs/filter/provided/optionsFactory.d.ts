@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IFilterOptionDef } from '../../interfaces/iFilter';
@@ -14,5 +14,5 @@ export declare class OptionsFactory {
     private mapCustomOptions;
     private selectDefaultItem;
     getDefaultOption(): string;
-    getCustomOption(name: string): IFilterOptionDef;
+    getCustomOption(name?: string | null): IFilterOptionDef | undefined;
 }

@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, BeanStub, ChangedPath, Constants as constants, Constants, Events, GridOptionsWrapper, Optional, PostConstruct, RowNode } from "@ag-grid-community/core";
+import { _, Autowired, Bean, BeanStub, ChangedPath, Constants, Events, GridOptionsWrapper, Optional, PostConstruct, ClientSideRowModelSteps, RowNode } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 var RecursionType;
 (function (RecursionType) {
@@ -29,12 +29,14 @@ var RecursionType;
 var ClientSideRowModel = /** @class */ (function (_super) {
     __extends(ClientSideRowModel, _super);
     function ClientSideRowModel() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.onRowGroupOpenedPending = false;
+        return _this;
     }
     ClientSideRowModel.prototype.init = function () {
-        var refreshEverythingFunc = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING });
+        var refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
         var refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
-            step: Constants.STEP_EVERYTHING,
+            step: ClientSideRowModelSteps.EVERYTHING,
             afterColumnsChanged: true,
             keepRenderedRows: true,
             animate: true
@@ -42,13 +44,13 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refreshEverythingAfterColsChangedFunc);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: Constants.STEP_PIVOT }));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
         var refreshMapListener = this.refreshModel.bind(this, {
-            step: Constants.STEP_MAP,
+            step: ClientSideRowModelSteps.MAP,
             keepRenderedRows: true,
             animate: true
         });
@@ -109,7 +111,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         }
     };
     ClientSideRowModel.prototype.resetRowTops = function (rowNode, changedPath) {
-        rowNode.clearRowTop();
+        rowNode.clearRowTopAndRowIndex();
         if (rowNode.hasChildren()) {
             if (rowNode.childrenAfterGroup) {
                 // if a changedPath is active, it means we are here because of a transaction update or
@@ -125,11 +127,11 @@ var ClientSideRowModel = /** @class */ (function (_super) {
                 }
             }
             if (rowNode.sibling) {
-                rowNode.sibling.clearRowTop();
+                rowNode.sibling.clearRowTopAndRowIndex();
             }
         }
         if (rowNode.detailNode) {
-            rowNode.detailNode.clearRowTop();
+            rowNode.detailNode.clearRowTopAndRowIndex();
         }
     };
     // returns false if row was moved, otherwise true
@@ -148,7 +150,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
             _.insertIntoArray(_this.rootNode.allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
         });
         this.refreshModel({
-            step: Constants.STEP_EVERYTHING,
+            step: ClientSideRowModelSteps.EVERYTHING,
             keepRenderedRows: true,
             animate: true,
             keepEditingRows: true
@@ -187,7 +189,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.getLastHighlightedRowNode = function () {
         return this.lastHighlightedRow;
     };
-    ClientSideRowModel.prototype.isLastRowFound = function () {
+    ClientSideRowModel.prototype.isLastRowIndexKnown = function () {
         return true;
     };
     ClientSideRowModel.prototype.getRowCount = function () {
@@ -231,29 +233,47 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         return null;
     };
     ClientSideRowModel.prototype.onRowGroupOpened = function () {
-        var animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({ step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate });
+        // because the user can call rowNode.setExpanded() many times in on VM turn,
+        // we debounce the call using animationFrameService. we use animationFrameService
+        // rather than _.debounce() so this will get done if anyone flushes the animationFrameService
+        // (eg user calls api.ensureRowVisible(), which in turn flushes ).
+        var _this = this;
+        if (this.onRowGroupOpenedPending) {
+            return;
+        }
+        this.onRowGroupOpenedPending = true;
+        var action = function () {
+            _this.onRowGroupOpenedPending = false;
+            var animate = _this.gridOptionsWrapper.isAnimateRows();
+            _this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
+        };
+        if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
+            action();
+        }
+        else {
+            this.animationFrameService.addDestroyTask(action);
+        }
     };
     ClientSideRowModel.prototype.onFilterChanged = function (event) {
         if (event.afterDataChange) {
             return;
         }
         var animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({ step: Constants.STEP_FILTER, keepRenderedRows: true, animate: animate });
+        this.refreshModel({ step: ClientSideRowModelSteps.FILTER, keepRenderedRows: true, animate: animate });
     };
     ClientSideRowModel.prototype.onSortChanged = function () {
         var animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({ step: Constants.STEP_SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true });
+        this.refreshModel({ step: ClientSideRowModelSteps.SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true });
     };
     ClientSideRowModel.prototype.getType = function () {
         return Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
     };
     ClientSideRowModel.prototype.onValueChanged = function () {
         if (this.columnController.isPivotActive()) {
-            this.refreshModel({ step: Constants.STEP_PIVOT });
+            this.refreshModel({ step: ClientSideRowModelSteps.PIVOT });
         }
         else {
-            this.refreshModel({ step: Constants.STEP_AGGREGATE });
+            this.refreshModel({ step: ClientSideRowModelSteps.AGGREGATE });
         }
     };
     ClientSideRowModel.prototype.createChangePath = function (rowNodeTransactions) {
@@ -271,13 +291,30 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         }
         return changedPath;
     };
+    ClientSideRowModel.prototype.isSuppressModelUpdateAfterUpdateTransaction = function (params) {
+        if (!this.gridOptionsWrapper.isSuppressModelUpdateAfterUpdateTransaction()) {
+            return false;
+        }
+        // return true if we are only doing update transactions
+        if (params.rowNodeTransactions == null) {
+            return false;
+        }
+        var transWithAddsOrDeletes = _.filter(params.rowNodeTransactions, function (tx) {
+            return (tx.add != null && tx.add.length > 0) || (tx.remove != null && tx.remove.length > 0);
+        });
+        var transactionsContainUpdatesOnly = transWithAddsOrDeletes == null || transWithAddsOrDeletes.length == 0;
+        return transactionsContainUpdatesOnly;
+    };
     ClientSideRowModel.prototype.refreshModel = function (params) {
+        var _this = this;
+        if (this.isSuppressModelUpdateAfterUpdateTransaction(params)) {
+            return;
+        }
         // this goes through the pipeline of stages. what's in my head is similar
         // to the diagram on this page:
         // http://commons.apache.org/sandbox/commons-pipeline/pipeline_basics.html
         // however we want to keep the results of each stage, hence we manually call
         // each step rather than have them chain each other.
-        var _this = this;
         // fallthrough in below switch is on purpose,
         // eg if STEP_FILTER, then all steps below this
         // step get done
@@ -285,25 +322,25 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         // console.log('======= start =======');
         var changedPath = this.createChangePath(params.rowNodeTransactions);
         switch (params.step) {
-            case constants.STEP_EVERYTHING:
+            case ClientSideRowModelSteps.EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState, params.rowNodeTransactions, params.rowNodeOrder, changedPath, params.afterColumnsChanged);
+                this.doRowGrouping(params.groupState, params.rowNodeTransactions, params.rowNodeOrder, changedPath, !!params.afterColumnsChanged);
             // console.log('rowGrouping = ' + (new Date().getTime() - start));
-            case constants.STEP_FILTER:
+            case ClientSideRowModelSteps.FILTER:
                 // start = new Date().getTime();
                 this.doFilter(changedPath);
             // console.log('filter = ' + (new Date().getTime() - start));
-            case constants.STEP_PIVOT:
+            case ClientSideRowModelSteps.PIVOT:
                 this.doPivot(changedPath);
-            case constants.STEP_AGGREGATE: // depends on agg fields
+            case ClientSideRowModelSteps.AGGREGATE: // depends on agg fields
                 // start = new Date().getTime();
                 this.doAggregate(changedPath);
             // console.log('aggregation = ' + (new Date().getTime() - start));
-            case constants.STEP_SORT:
+            case ClientSideRowModelSteps.SORT:
                 // start = new Date().getTime();
                 this.doSort(params.rowNodeTransactions, changedPath);
             // console.log('sort = ' + (new Date().getTime() - start));
-            case constants.STEP_MAP:
+            case ClientSideRowModelSteps.MAP:
                 // start = new Date().getTime();
                 this.doRowsToDisplay();
             // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
@@ -374,7 +411,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         return result;
     };
     ClientSideRowModel.prototype.setDatasource = function (datasource) {
-        console.error('ag-Grid: should never call setDatasource on clientSideRowController');
+        console.error('AG Grid: should never call setDatasource on clientSideRowController');
     };
     ClientSideRowModel.prototype.getTopLevelNodes = function () {
         return this.rootNode ? this.rootNode.childrenAfterGroup : null;
@@ -424,14 +461,6 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         var bottomPixel = rowNode.rowTop + rowNode.rowHeight;
         var pixelInRow = topPixel <= pixelToMatch && bottomPixel > pixelToMatch;
         return pixelInRow;
-    };
-    ClientSideRowModel.prototype.getCurrentPageHeight = function () {
-        if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
-            var lastRow = _.last(this.rowsToDisplay);
-            var lastPixel = lastRow.rowTop + lastRow.rowHeight;
-            return lastPixel;
-        }
-        return 0;
     };
     ClientSideRowModel.prototype.forEachLeafNode = function (callback) {
         if (this.rootNode.allLeafChildren) {
@@ -514,7 +543,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
                 }
             });
         }
-        this.refreshModel({ step: Constants.STEP_MAP });
+        this.refreshModel({ step: ClientSideRowModelSteps.MAP });
         var eventSource = expand ? 'expandAll' : 'collapseAll';
         var event = {
             api: this.gridApi,
@@ -614,7 +643,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         };
         this.eventService.dispatchEvent(rowDataChangedEvent);
         this.refreshModel({
-            step: Constants.STEP_EVERYTHING,
+            step: ClientSideRowModelSteps.EVERYTHING,
             groupState: groupState,
             newData: true
         });
@@ -690,7 +719,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         if (suppressSortOrder) {
             return;
         }
-        var orderMap = suppressSortOrder ? null : {};
+        var orderMap = {};
         if (this.rootNode && this.rootNode.allLeafChildren) {
             for (var index = 0; index < this.rootNode.allLeafChildren.length; index++) {
                 var node = this.rootNode.allLeafChildren[index];
@@ -705,7 +734,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
             rowNodeOrder = this.createRowNodeOrder();
         }
         this.refreshModel({
-            step: Constants.STEP_EVERYTHING,
+            step: ClientSideRowModelSteps.EVERYTHING,
             rowNodeTransactions: rowNodeTrans,
             rowNodeOrder: rowNodeOrder,
             keepRenderedRows: true,
@@ -723,7 +752,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         this.rowsToDisplay = this.flattenStage.execute({ rowNode: this.rootNode });
     };
     ClientSideRowModel.prototype.onRowHeightChanged = function () {
-        this.refreshModel({ step: Constants.STEP_MAP, keepRenderedRows: true, keepEditingRows: true });
+        this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true });
     };
     ClientSideRowModel.prototype.resetRowHeights = function () {
         var atLeastOne = false;
@@ -766,6 +795,9 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     __decorate([
         Autowired('gridApi')
     ], ClientSideRowModel.prototype, "gridApi", void 0);
+    __decorate([
+        Autowired('animationFrameService')
+    ], ClientSideRowModel.prototype, "animationFrameService", void 0);
     __decorate([
         Autowired('filterStage')
     ], ClientSideRowModel.prototype, "filterStage", void 0);

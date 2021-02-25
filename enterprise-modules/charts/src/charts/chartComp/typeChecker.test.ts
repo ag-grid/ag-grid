@@ -1,4 +1,4 @@
-import {isDate} from './typeChecker';
+import { isDate } from './typeChecker';
 
 describe('isDate', () => {
     it('returns true if value is instance of Date', () => {

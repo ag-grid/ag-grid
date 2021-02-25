@@ -54,6 +54,10 @@ export interface HighlightStyle {
     stroke?: string;
 }
 
+export class SeriesTooltip extends Observable {
+    @reactive('change') enabled = true;
+}
+
 export abstract class Series extends Observable {
 
     readonly id = createId(this);
@@ -75,13 +79,17 @@ export abstract class Series extends Observable {
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
     directionKeys: { [key in ChartAxisDirection]?: string[] };
 
+    /**
+     * @deprecated Use {@link tooltip.enabled} instead.
+     */
     tooltipEnabled: boolean = true;
-
-    setColors(fills: string[], strokes: string[]) {}
+    tooltip: SeriesTooltip;
 
     @reactive('dataChange') data?: any[] = undefined;
     @reactive('dataChange') visible = true;
     @reactive('layoutChange') showInLegend = true;
+
+    setColors(fills: string[], strokes: string[]) { }
 
     /**
      * Returns the actual keys used (to fetch the values from `data` items) for the given direction.

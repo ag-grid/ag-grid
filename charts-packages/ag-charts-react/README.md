@@ -1,13 +1,13 @@
 [![npm](https://img.shields.io/npm/dm/ag-charts-community.svg)](https://www.npmjs.com/package/ag-charts-community)
 [![npm](https://img.shields.io/npm/dt/ag-charts-community.svg)](https://www.npmjs.com/package/ag-charts-community)
 
-# ag-Charts Community
+# AG Charts Community
 
-ag-Charts is a fully-featured and highly customizable JavaScript charting library.
+AG Charts is a fully-featured and highly customizable JavaScript charting library.
 
 ## Features
 
-Here are some of the features that make ag-Charts stand out:
+Here are some of the features that make AG Charts stand out:
 
 * modern, lightweight and performant
 * thin, easy-to-use wrappers for all popular frameworks: React, Angular, Vue
@@ -53,7 +53,7 @@ Look for similar problems on [StackOverflow](https://stackoverflow.com/questions
 
 ## Contributing
 
-ag-Charts is developed by a team of co-located developers in London. If you want to join the team check out our [jobs board](https://www.ag-grid.com/ag-grid-jobs-board/?utm_source=ag-charts-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
+AG Charts is developed by a team of co-located developers in London. If you want to join the team check out our [jobs board](https://www.ag-grid.com/ag-grid-jobs-board/?utm_source=ag-charts-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
 
 ## License
 

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgAbstractLabel, IAgLabel } from './agAbstractLabel';
@@ -11,7 +11,7 @@ export declare abstract class AgAbstractField<TValue, TConfig extends IAgLabel =
     protected disabled: boolean;
     constructor(config?: TConfig, template?: string, className?: string);
     protected postConstruct(): void;
-    onValueChange(callbackFn: (newValue: TValue) => void): this;
+    onValueChange(callbackFn: (newValue?: TValue | null) => void): this;
     getWidth(): number;
     setWidth(width: number): this;
     getPreviousValue(): TValue | null | undefined;

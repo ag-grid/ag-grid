@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -22,14 +22,14 @@ export declare class MoveColumnController implements DropListener {
     private lastDraggingEvent;
     private failedMoveAttempts;
     private eContainer;
-    constructor(pinned: string, eContainer: HTMLElement);
+    constructor(pinned: string | null, eContainer: HTMLElement);
     registerGridComp(gridPanel: GridPanel): void;
     init(): void;
     getIconName(): string;
     onDragEnter(draggingEvent: DraggingEvent): void;
     onDragLeave(draggingEvent: DraggingEvent): void;
-    setColumnsVisible(columns: Column[], visible: boolean, source?: ColumnEventType): void;
-    setColumnsPinned(columns: Column[], pinned: string, source?: ColumnEventType): void;
+    setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source?: ColumnEventType): void;
+    setColumnsPinned(columns: Column[] | null | undefined, pinned: string | null, source?: ColumnEventType): void;
     onDragStop(): void;
     private normaliseX;
     private checkCenterForScrolling;

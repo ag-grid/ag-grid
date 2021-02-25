@@ -2,7 +2,7 @@ import { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
 import { AgPromise } from './promise';
 /** @deprecated */
 export declare function getNameOfClass(theClass: any): string;
-export declare function findLineByLeastSquares(values: number[]): any[];
+export declare function findLineByLeastSquares(values: number[]): number[];
 /**
  * Converts a CSS object into string
  * @param {Object} stylesToUse an object eg: {color: 'black', top: '25px'}
@@ -12,7 +12,7 @@ export declare function cssStyleObjectToMarkup(stylesToUse: any): string;
 /**
  * Displays a message to the browser. this is useful in iPad, where you can't easily see the console.
  * so the javascript code can use this to give feedback. this is NOT intended to be called in production.
- * it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
+ * it is intended the AG Grid developer calls this to troubleshoot, but then takes out the calls before
  * checking in.
  * @param {string} msg
  */

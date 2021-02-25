@@ -14,6 +14,8 @@ var __extends = (this && this.__extends) || (function () {
 import { Path } from "./path";
 import { Shape } from "./shape";
 import { BBox } from "../bbox";
+import { LinearGradient } from "../gradient/linearGradient";
+import { Color } from "../../util/color";
 export var RectSizing;
 (function (RectSizing) {
     RectSizing[RectSizing["Content"] = 0] = "Content";
@@ -34,6 +36,7 @@ var Rect = /** @class */ (function (_super) {
          * when a rect is translated by a sub-pixel value on each frame.
          */
         _this._crisp = false;
+        _this._gradient = false;
         _this.effectiveStrokeWidth = Shape.defaultStyles.strokeWidth;
         /**
          * Similar to https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing
@@ -114,6 +117,54 @@ var Rect = /** @class */ (function (_super) {
             if (this._crisp !== value) {
                 this._crisp = value;
                 this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Rect.prototype, "gradient", {
+        get: function () {
+            return this._gradient;
+        },
+        set: function (value) {
+            if (this._gradient !== value) {
+                this._gradient = value;
+                this.updateGradientInstance();
+                this.dirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Rect.prototype.updateGradientInstance = function () {
+        if (this.gradient) {
+            var fill = this.fill;
+            if (fill) {
+                var gradient = new LinearGradient();
+                gradient.angle = 270;
+                gradient.stops = [{
+                        offset: 0,
+                        color: Color.fromString(fill).brighter().toString()
+                    }, {
+                        offset: 1,
+                        color: Color.fromString(fill).darker().toString()
+                    }];
+                this.gradientInstance = gradient;
+            }
+        }
+        else {
+            this.gradientInstance = undefined;
+        }
+    };
+    Object.defineProperty(Rect.prototype, "fill", {
+        get: function () {
+            return this._fill;
+        },
+        set: function (value) {
+            if (this._fill !== value) {
+                this._fill = value;
+                this.updateGradientInstance();
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -204,7 +255,12 @@ var Rect = /** @class */ (function (_super) {
         }
         var pixelRatio = this.scene.canvas.pixelRatio || 1;
         if (this.fill) {
-            ctx.fillStyle = this.fill;
+            if (this.gradientInstance) {
+                ctx.fillStyle = this.gradientInstance.generateGradient(ctx, this.computeBBox());
+            }
+            else {
+                ctx.fillStyle = this.fill;
+            }
             ctx.globalAlpha = this.opacity * this.fillOpacity;
             // The canvas context scaling (depends on the device's pixel ratio)
             // has no effect on shadows, so we have to account for the pixel ratio

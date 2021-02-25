@@ -20,168 +20,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var gridSerializer_1 = require("./gridSerializer");
-var LINE_SEPARATOR = '\r\n';
-var CsvSerializingSession = /** @class */ (function (_super) {
-    __extends(CsvSerializingSession, _super);
-    function CsvSerializingSession(config) {
-        var _this = _super.call(this, config) || this;
-        _this.isFirstLine = true;
-        _this.result = '';
-        var suppressQuotes = config.suppressQuotes, columnSeparator = config.columnSeparator;
-        _this.suppressQuotes = suppressQuotes;
-        _this.columnSeparator = columnSeparator;
-        return _this;
-    }
-    CsvSerializingSession.prototype.addCustomContent = function (content) {
-        var _this = this;
-        if (!content) {
-            return;
-        }
-        if (typeof content === 'string') {
-            // we used to require the customFooter to be prefixed with a newline but no longer do,
-            // so only add the newline if the user has not supplied one
-            if (!/^\s*\n/.test(content)) {
-                this.beginNewLine();
-            }
-            // replace whatever newlines are supplied with the style we're using
-            content = content.replace(/\r?\n/g, LINE_SEPARATOR);
-            this.result += content;
-        }
-        else {
-            content.forEach(function (row) {
-                _this.beginNewLine();
-                row.forEach(function (cell, index) {
-                    if (index !== 0) {
-                        _this.result += _this.columnSeparator;
-                    }
-                    _this.result += _this.putInQuotes(cell.data.value || '');
-                    if (cell.mergeAcross) {
-                        _this.appendEmptyCells(cell.mergeAcross);
-                    }
-                });
-            });
-        }
-    };
-    CsvSerializingSession.prototype.onNewHeaderGroupingRow = function () {
-        this.beginNewLine();
-        return {
-            onColumn: this.onNewHeaderGroupingRowColumn.bind(this)
-        };
-    };
-    CsvSerializingSession.prototype.onNewHeaderGroupingRowColumn = function (header, index, span) {
-        if (index != 0) {
-            this.result += this.columnSeparator;
-        }
-        this.result += this.putInQuotes(header);
-        this.appendEmptyCells(span);
-    };
-    CsvSerializingSession.prototype.appendEmptyCells = function (count) {
-        for (var i = 1; i <= count; i++) {
-            this.result += this.columnSeparator + this.putInQuotes("");
-        }
-    };
-    CsvSerializingSession.prototype.onNewHeaderRow = function () {
-        this.beginNewLine();
-        return {
-            onColumn: this.onNewHeaderRowColumn.bind(this)
-        };
-    };
-    CsvSerializingSession.prototype.onNewHeaderRowColumn = function (column, index, node) {
-        if (index != 0) {
-            this.result += this.columnSeparator;
-        }
-        this.result += this.putInQuotes(this.extractHeaderValue(column));
-    };
-    CsvSerializingSession.prototype.onNewBodyRow = function () {
-        this.beginNewLine();
-        return {
-            onColumn: this.onNewBodyRowColumn.bind(this)
-        };
-    };
-    CsvSerializingSession.prototype.onNewBodyRowColumn = function (column, index, node) {
-        if (index != 0) {
-            this.result += this.columnSeparator;
-        }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, core_1.Constants.EXPORT_TYPE_CSV, node));
-    };
-    CsvSerializingSession.prototype.putInQuotes = function (value) {
-        if (this.suppressQuotes) {
-            return value;
-        }
-        if (value === null || value === undefined) {
-            return '""';
-        }
-        var stringValue;
-        if (typeof value === 'string') {
-            stringValue = value;
-        }
-        else if (typeof value.toString === 'function') {
-            stringValue = value.toString();
-        }
-        else {
-            console.warn('unknown value type during csv conversion');
-            stringValue = '';
-        }
-        // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
-        var valueEscaped = stringValue.replace(/"/g, "\"\"");
-        return '"' + valueEscaped + '"';
-    };
-    CsvSerializingSession.prototype.parse = function () {
-        return this.result;
-    };
-    CsvSerializingSession.prototype.beginNewLine = function () {
-        if (!this.isFirstLine) {
-            this.result += LINE_SEPARATOR;
-        }
-        this.isFirstLine = false;
-    };
-    return CsvSerializingSession;
-}(gridSerializer_1.BaseGridSerializingSession));
-exports.CsvSerializingSession = CsvSerializingSession;
-var BaseCreator = /** @class */ (function () {
-    function BaseCreator() {
-    }
-    BaseCreator.prototype.setBeans = function (beans) {
-        this.beans = beans;
-    };
-    BaseCreator.prototype.export = function (userParams) {
-        if (this.isExportSuppressed()) {
-            console.warn("ag-grid: Export cancelled. Export is not allowed as per your configuration.");
-            return '';
-        }
-        var _a = this.getMergedParamsAndData(userParams), mergedParams = _a.mergedParams, data = _a.data;
-        var fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
-        var fileName = fileNamePresent ? mergedParams.fileName : this.getDefaultFileName();
-        if (fileName.indexOf(".") === -1) {
-            fileName = fileName + "." + this.getDefaultFileExtension();
-        }
-        this.beans.downloader.download(fileName, this.packageFile(data));
-        return data;
-    };
-    BaseCreator.prototype.getData = function (params) {
-        return this.getMergedParamsAndData(params).data;
-    };
-    BaseCreator.prototype.getMergedParamsAndData = function (userParams) {
-        var mergedParams = this.mergeDefaultParams(userParams);
-        var data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
-        return { mergedParams: mergedParams, data: data };
-    };
-    BaseCreator.prototype.mergeDefaultParams = function (userParams) {
-        var baseParams = this.beans.gridOptionsWrapper.getDefaultExportParams();
-        var params = {};
-        core_1._.assign(params, baseParams);
-        core_1._.assign(params, userParams);
-        return params;
-    };
-    BaseCreator.prototype.packageFile = function (data) {
-        return new Blob(["\ufeff", data], {
-            type: window.navigator.msSaveOrOpenBlob ? this.getMimeType() : 'octet/stream'
-        });
-    };
-    return BaseCreator;
-}());
-exports.BaseCreator = BaseCreator;
+var baseCreator_1 = require("./baseCreator");
+var csvSerializingSession_1 = require("./sessions/csvSerializingSession");
 var CsvCreator = /** @class */ (function (_super) {
     __extends(CsvCreator, _super);
     function CsvCreator() {
@@ -211,8 +51,8 @@ var CsvCreator = /** @class */ (function (_super) {
     };
     CsvCreator.prototype.createSerializingSession = function (params) {
         var _a = this, columnController = _a.columnController, valueService = _a.valueService, gridOptionsWrapper = _a.gridOptionsWrapper;
-        var processCellCallback = params.processCellCallback, processHeaderCallback = params.processHeaderCallback, processGroupHeaderCallback = params.processGroupHeaderCallback, processRowGroupCallback = params.processRowGroupCallback, suppressQuotes = params.suppressQuotes, columnSeparator = params.columnSeparator;
-        return new CsvSerializingSession({
+        var _b = params, processCellCallback = _b.processCellCallback, processHeaderCallback = _b.processHeaderCallback, processGroupHeaderCallback = _b.processGroupHeaderCallback, processRowGroupCallback = _b.processRowGroupCallback, suppressQuotes = _b.suppressQuotes, columnSeparator = _b.columnSeparator;
+        return new csvSerializingSession_1.CsvSerializingSession({
             columnController: columnController,
             valueService: valueService,
             gridOptionsWrapper: gridOptionsWrapper,
@@ -249,6 +89,6 @@ var CsvCreator = /** @class */ (function (_super) {
         core_1.Bean('csvCreator')
     ], CsvCreator);
     return CsvCreator;
-}(BaseCreator));
+}(baseCreator_1.BaseCreator));
 exports.CsvCreator = CsvCreator;
 //# sourceMappingURL=csvCreator.js.map

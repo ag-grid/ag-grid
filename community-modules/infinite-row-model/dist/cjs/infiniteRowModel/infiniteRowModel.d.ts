@@ -1,4 +1,4 @@
-import { BeanStub, IDatasource, RowBounds, RowDataTransaction, RowNode, IInfiniteRowModel } from "@ag-grid-community/core";
+import { BeanStub, IDatasource, RowBounds, RowNode, IInfiniteRowModel } from "@ag-grid-community/core";
 export declare class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     private readonly filterManager;
     private readonly sortController;
@@ -6,8 +6,8 @@ export declare class InfiniteRowModel extends BeanStub implements IInfiniteRowMo
     private readonly gridApi;
     private readonly columnApi;
     private readonly rowRenderer;
+    private readonly rowNodeBlockLoader;
     private infiniteCache;
-    private rowNodeBlockLoader;
     private datasource;
     private rowHeight;
     private cacheParams;
@@ -16,7 +16,6 @@ export declare class InfiniteRowModel extends BeanStub implements IInfiniteRowMo
     init(): void;
     start(): void;
     private destroyDatasource;
-    isLastRowFound(): boolean;
     private addEventListeners;
     private onFilterChanged;
     private onSortChanged;
@@ -36,17 +35,13 @@ export declare class InfiniteRowModel extends BeanStub implements IInfiniteRowMo
     getRow(rowIndex: number): RowNode | null;
     getRowNode(id: string): RowNode | null;
     forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
-    getCurrentPageHeight(): number;
     getTopLevelRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     getRowIndexAtPixel(pixel: number): number;
     getRowCount(): number;
-    updateRowData(transaction: RowDataTransaction): void;
     isRowPresent(rowNode: RowNode): boolean;
     refreshCache(): void;
     purgeCache(): void;
-    getVirtualRowCount(): number | null;
-    isMaxRowFound(): boolean | undefined;
-    setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
-    getBlockState(): any;
+    isLastRowIndexKnown(): boolean;
+    setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void;
 }

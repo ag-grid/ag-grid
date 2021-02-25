@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -94,20 +94,21 @@ var Environment = /** @class */ (function (_super) {
         if (!CALCULATED_SIZES[theme]) {
             CALCULATED_SIZES[theme] = {};
         }
-        if (CALCULATED_SIZES[theme][key]) {
-            return CALCULATED_SIZES[theme][key];
+        var size = CALCULATED_SIZES[theme][key];
+        if (size != null) {
+            return size;
         }
         if (SASS_PROPERTY_BUILDER[key]) {
             var classList = SASS_PROPERTY_BUILDER[key];
             var div = document.createElement('div');
             dom_1.addCssClass(div, theme);
             div.style.position = 'absolute';
-            var el = classList.reduce(function (el, currentClass) {
-                var div = document.createElement('div');
-                div.style.position = 'static';
-                dom_1.addCssClass(div, currentClass);
-                el.appendChild(div);
-                return div;
+            var el = classList.reduce(function (prevEl, currentClass) {
+                var currentDiv = document.createElement('div');
+                currentDiv.style.position = 'static';
+                dom_1.addCssClass(currentDiv, currentClass);
+                prevEl.appendChild(currentDiv);
+                return currentDiv;
             }, div);
             if (document.body) {
                 document.body.appendChild(div);
@@ -130,11 +131,11 @@ var Environment = /** @class */ (function (_super) {
     Environment.prototype.getTheme = function () {
         var reg = /\bag-(material|(?:theme-([\w\-]*)))\b/;
         var el = this.eGridDiv;
-        var themeMatch;
+        var themeMatch = null;
         while (el) {
             themeMatch = reg.exec(el.className);
             if (!themeMatch) {
-                el = el.parentElement;
+                el = el.parentElement || undefined;
             }
             else {
                 break;
@@ -147,7 +148,7 @@ var Environment = /** @class */ (function (_super) {
         var usingOldTheme = themeMatch[2] === undefined;
         if (usingOldTheme) {
             var newTheme_1 = theme.replace('ag-', 'ag-theme-');
-            function_1.doOnce(function () { return console.warn("ag-Grid: As of v19 old theme are no longer provided. Please replace " + theme + " with " + newTheme_1 + "."); }, 'using-old-theme');
+            function_1.doOnce(function () { return console.warn("AG Grid: As of v19 old theme are no longer provided. Please replace " + theme + " with " + newTheme_1 + "."); }, 'using-old-theme');
         }
         return { theme: theme, el: el, themeFamily: theme.replace(/-dark$/, '') };
     };

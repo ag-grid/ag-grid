@@ -21,6 +21,7 @@ import { Path } from "../../../scene/shape/path";
 import ContinuousScale from "../../../scale/continuousScale";
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
+import { SeriesTooltip } from "../series";
 import { numericExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { PointerEvents } from "../../../scene/node";
@@ -29,6 +30,21 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { reactive } from "../../../util/observable";
 import { toTooltipHtml } from "../../chart";
+import { interpolate } from "../../../util/string";
+var LineSeriesTooltip = /** @class */ (function (_super) {
+    __extends(LineSeriesTooltip, _super);
+    function LineSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate([
+        reactive('change')
+    ], LineSeriesTooltip.prototype, "renderer", void 0);
+    __decorate([
+        reactive('change')
+    ], LineSeriesTooltip.prototype, "format", void 0);
+    return LineSeriesTooltip;
+}(SeriesTooltip));
+export { LineSeriesTooltip };
 var LineSeries = /** @class */ (function (_super) {
     __extends(LineSeries, _super);
     function LineSeries() {
@@ -48,6 +64,7 @@ var LineSeries = /** @class */ (function (_super) {
         _this.lineDashOffset = 0;
         _this.strokeWidth = 2;
         _this.strokeOpacity = 1;
+        _this.tooltip = new LineSeriesTooltip();
         _this._xKey = '';
         _this.xName = '';
         _this._yKey = '';
@@ -292,7 +309,8 @@ var LineSeries = /** @class */ (function (_super) {
         if (!xKey || !yKey) {
             return '';
         }
-        var _b = this, xName = _b.xName, yName = _b.yName, color = _b.stroke, tooltipRenderer = _b.tooltipRenderer;
+        var _b = this, xName = _b.xName, yName = _b.yName, color = _b.stroke, tooltip = _b.tooltip;
+        var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c, tooltipFormat = tooltip.format;
         var datum = nodeDatum.seriesDatum;
         var xValue = datum[xKey];
         var yValue = datum[yKey];
@@ -305,10 +323,9 @@ var LineSeries = /** @class */ (function (_super) {
             backgroundColor: color,
             content: content
         };
-        if (tooltipRenderer) {
-            var datum_1 = nodeDatum.seriesDatum;
-            return toTooltipHtml(tooltipRenderer({
-                datum: datum_1,
+        if (tooltipFormat || tooltipRenderer) {
+            var params = {
+                datum: datum,
                 xKey: xKey,
                 xValue: xValue,
                 xName: xName,
@@ -317,7 +334,15 @@ var LineSeries = /** @class */ (function (_super) {
                 yName: yName,
                 title: title,
                 color: color
-            }), defaults);
+            };
+            if (tooltipFormat) {
+                return toTooltipHtml({
+                    content: interpolate(tooltipFormat, params)
+                }, defaults);
+            }
+            if (tooltipRenderer) {
+                return toTooltipHtml(tooltipRenderer(params), defaults);
+            }
         }
         return toTooltipHtml(defaults);
     };

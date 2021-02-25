@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -125,6 +125,8 @@ export declare class GridApi {
     private statusBarService;
     private chartService;
     private undoRedoService;
+    private rowNodeBlockLoader;
+    private serverSideTransactionManager;
     private gridPanel;
     private gridCore;
     private headerRootComp;
@@ -141,11 +143,11 @@ export declare class GridApi {
     __getAlignedGridService(): AlignedGridsService;
     addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void;
     removeDetailGridInfo(id: string): void;
-    getDetailGridInfo(id: string): DetailGridInfo;
+    getDetailGridInfo(id: string): DetailGridInfo | undefined;
     forEachDetailGridInfo(callback: (gridInfo: DetailGridInfo, index: number) => void): void;
-    getDataAsCsv(params?: CsvExportParams): string;
+    getDataAsCsv(params?: CsvExportParams): string | undefined;
     exportDataAsCsv(params?: CsvExportParams): void;
-    getDataAsExcel(params?: ExcelExportParams): string;
+    getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined;
     exportDataAsExcel(params?: ExcelExportParams): void;
     /** @deprecated */
     setEnterpriseDatasource(datasource: IServerSideDatasource): void;
@@ -183,6 +185,7 @@ export declare class GridApi {
         left: number;
         right: number;
     };
+    setAlwaysShowHorizontalScroll(show: boolean): void;
     setAlwaysShowVerticalScroll(show: boolean): void;
     refreshToolPanel(): void;
     refreshCells(params?: RefreshCellsParams): void;
@@ -212,14 +215,14 @@ export declare class GridApi {
     refreshInMemoryRowModel(step?: string): any;
     refreshClientSideRowModel(step?: string): any;
     isAnimationFrameQueueEmpty(): boolean;
-    getRowNode(id: string): RowNode;
+    getRowNode(id: string): RowNode | null;
     getSizesForCurrentTheme(): {
         rowHeight: number;
         headerHeight: number;
     };
     expandAll(): void;
     collapseAll(): void;
-    getToolPanelInstance(id: string): IToolPanel;
+    getToolPanelInstance(id: string): IToolPanel | undefined;
     addVirtualRowListener(eventName: string, rowIndex: number, callback: Function): void;
     addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
     setQuickFilter(newFilter: any): void;
@@ -239,7 +242,7 @@ export declare class GridApi {
     isNodeSelected(node: any): any;
     getSelectedNodesById(): {
         [nodeId: number]: RowNode;
-    };
+    } | null;
     getSelectedNodes(): RowNode[];
     getSelectedRows(): any[];
     getBestCostNodeSelection(): any;
@@ -253,10 +256,10 @@ export declare class GridApi {
     forEachNodeAfterFilter(callback: (rowNode: RowNode, index: number) => void): void;
     forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void): void;
     getFilterApiForColDef(colDef: any): any;
-    getFilterInstance(key: string | Column, callback?: (filter: IFilterComp) => void): IFilterComp;
+    getFilterInstance(key: string | Column, callback?: (filter: IFilterComp) => void): IFilterComp | null | undefined;
     getFilterApi(key: string | Column): IFilterComp;
     destroyFilter(key: string | Column): void;
-    getStatusPanel(key: string): IStatusPanelComp;
+    getStatusPanel(key: string): IStatusPanelComp | undefined;
     getColumnDef(key: string | Column): ColDef;
     getColumnDefs(): (ColDef | ColGroupDef)[];
     onFilterChanged(): void;
@@ -270,7 +273,7 @@ export declare class GridApi {
     getFilterModel(): {
         [key: string]: any;
     };
-    getFocusedCell(): CellPosition;
+    getFocusedCell(): CellPosition | null;
     clearFocusedCell(): void;
     setFocusedCell(rowIndex: number, colKey: string | Column, floating?: string): void;
     setSuppressRowDrag(value: boolean): void;
@@ -279,7 +282,7 @@ export declare class GridApi {
     addRowDropZone(params: RowDropZoneParams): void;
     removeRowDropZone(params: RowDropZoneParams): void;
     getRowDropZoneParams(events: RowDropZoneEvents): RowDropZoneParams;
-    setHeaderHeight(headerHeight: number): void;
+    setHeaderHeight(headerHeight?: number): void;
     setDomLayout(domLayout: string): void;
     setEnableCellTextSelection(selectable: boolean): void;
     setFillHandleDirection(direction: 'x' | 'y' | 'xy'): void;
@@ -292,7 +295,7 @@ export declare class GridApi {
     setSideBarPosition(position: 'left' | 'right'): void;
     openToolPanel(key: string): void;
     closeToolPanel(): void;
-    getOpenedToolPanel(): string;
+    getOpenedToolPanel(): string | null;
     getSideBar(): SideBarDef;
     setSideBar(def: SideBarDef): void;
     setSuppressClipboardPaste(value: boolean): void;
@@ -313,8 +316,8 @@ export declare class GridApi {
     private warnIfDestroyed;
     resetQuickFilter(): void;
     getRangeSelections(): any;
-    getCellRanges(): CellRange[];
-    camelCaseToHumanReadable(camelCase: string): string;
+    getCellRanges(): CellRange[] | null;
+    camelCaseToHumanReadable(camelCase: string): string | null;
     addRangeSelection(deprecatedNoLongerUsed: any): void;
     addCellRange(params: CellRangeParams): void;
     clearRangeSelection(): void;
@@ -322,7 +325,7 @@ export declare class GridApi {
     redoCellEditing(): void;
     getCurrentUndoSize(): number;
     getCurrentRedoSize(): number;
-    getChartModels(): ChartModel[];
+    getChartModels(): ChartModel[] | undefined;
     createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
     createCrossFilterChart(params: CreateRangeChartParams): ChartRef | undefined;
     restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
@@ -352,7 +355,7 @@ export declare class GridApi {
     flushServerSideAsyncTransactions(): void;
     applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null | undefined;
     /** @deprecated */
-    updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
+    updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null | undefined;
     applyTransactionAsync(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
     flushAsyncTransactions(): void;
     /** @deprecated */
@@ -378,6 +381,7 @@ export declare class GridApi {
     isLastRowIndexKnown(): boolean | undefined;
     setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
     setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void;
+    setRowCount(rowCount: number, maxRowFound?: boolean): void;
     getVirtualPageState(): any;
     getInfinitePageState(): any;
     getCacheBlockState(): any;
@@ -386,11 +390,11 @@ export declare class GridApi {
     getFirstDisplayedRow(): number;
     getLastRenderedRow(): number;
     getLastDisplayedRow(): number;
-    getDisplayedRowAtIndex(index: number): RowNode;
+    getDisplayedRowAtIndex(index: number): RowNode | null;
     getDisplayedRowCount(): number;
     paginationIsLastPageFound(): boolean;
     paginationGetPageSize(): number;
-    paginationSetPageSize(size: number): void;
+    paginationSetPageSize(size?: number): void;
     paginationGetCurrentPage(): number;
     paginationGetTotalPages(): number;
     paginationGetRowCount(): number;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,9 +74,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         if (params.filterParams && params.filterParams.browserDatePicker != null) {
             return params.filterParams.browserDatePicker;
         }
-        else {
-            return isBrowserChrome() || isBrowserFirefox();
-        }
+        return isBrowserChrome() || isBrowserFirefox();
     };
     __decorate([
         RefSelector('eDateInput')

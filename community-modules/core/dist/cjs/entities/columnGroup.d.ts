@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -10,7 +10,6 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 export declare class ColumnGroup implements ColumnGroupChild {
     static HEADER_GROUP_SHOW_OPEN: string;
     static HEADER_GROUP_SHOW_CLOSED: string;
-    static HEADER_GROUP_PADDING: string;
     static EVENT_LEFT_CHANGED: string;
     static EVENT_DISPLAYED_CHILDREN_CHANGED: string;
     static createUniqueId(groupId: string, instanceId: number): string;
@@ -25,7 +24,7 @@ export declare class ColumnGroup implements ColumnGroupChild {
     private oldLeft;
     private localEventService;
     private parent;
-    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right');
+    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right' | null);
     reset(): void;
     getParent(): ColumnGroup;
     setParent(parent: ColumnGroup): void;
@@ -33,10 +32,10 @@ export declare class ColumnGroup implements ColumnGroupChild {
     isEmptyGroup(): boolean;
     isMoving(): boolean;
     checkLeft(): void;
-    getLeft(): number;
-    getOldLeft(): number;
-    setLeft(left: number): void;
-    getPinned(): 'left' | 'right';
+    getLeft(): number | null;
+    getOldLeft(): number | null;
+    setLeft(left: number | null): void;
+    getPinned(): 'left' | 'right' | null;
     private createAgEvent;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
@@ -47,18 +46,18 @@ export declare class ColumnGroup implements ColumnGroupChild {
     isResizable(): boolean;
     getMinWidth(): number;
     addChild(child: ColumnGroupChild): void;
-    getDisplayedChildren(): ColumnGroupChild[];
+    getDisplayedChildren(): ColumnGroupChild[] | null;
     getLeafColumns(): Column[];
     getDisplayedLeafColumns(): Column[];
-    getDefinition(): AbstractColDef;
-    getColGroupDef(): ColGroupDef;
+    getDefinition(): AbstractColDef | null;
+    getColGroupDef(): ColGroupDef | null;
     isPadding(): boolean;
     isExpandable(): boolean;
     isExpanded(): boolean;
     setExpanded(expanded: boolean): void;
     private addDisplayedLeafColumns;
     private addLeafColumns;
-    getChildren(): ColumnGroupChild[];
+    getChildren(): ColumnGroupChild[] | null;
     getColumnGroupShow(): string | undefined;
     getOriginalColumnGroup(): OriginalColumnGroup;
     getPaddingLevel(): number;

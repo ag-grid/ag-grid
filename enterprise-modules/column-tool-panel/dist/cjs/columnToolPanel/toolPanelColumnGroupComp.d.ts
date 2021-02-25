@@ -43,7 +43,7 @@ export declare class ToolPanelColumnGroupComp extends Component {
     private refreshAriaExpanded;
     getDisplayName(): string | null;
     onSelectAllChanged(value: boolean): void;
-    isSelected(): boolean;
+    isSelected(): boolean | undefined;
     isSelectable(): boolean;
     setSelected(selected: boolean): void;
 }

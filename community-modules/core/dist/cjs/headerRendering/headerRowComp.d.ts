@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from '../widgets/component';
@@ -15,7 +15,7 @@ export declare class HeaderRowComp extends Component {
     private readonly type;
     private dept;
     private headerComps;
-    constructor(dept: number, type: HeaderRowType, pinned: string);
+    constructor(dept: number, type: HeaderRowType, pinned: string | null);
     forEachHeaderElement(callback: (comp: Component) => void): void;
     private setRowIndex;
     getRowIndex(): number;
@@ -28,7 +28,10 @@ export declare class HeaderRowComp extends Component {
     private setWidth;
     private getWidthForRow;
     private onDisplayedColumnsChanged;
-    private getItemsAtDepth;
+    private getColumnsInViewport;
+    private getColumnsInViewportPrintLayout;
+    private getActualDepth;
+    private getColumnsInViewportNormalLayout;
     private onVirtualColumnsChanged;
     private createHeaderComp;
     getHeaderComps(): {

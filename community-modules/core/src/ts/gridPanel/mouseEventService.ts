@@ -7,7 +7,7 @@ import { GridPanel } from "./gridPanel";
 import { Constants } from "../constants/constants";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
-import { getEventPath, getCellCompForEvent } from "../utils/event";
+import { getEventPath, getComponentForEvent } from "../utils/event";
 import { exists } from "../utils/generic";
 
 @Bean('mouseEventService')
@@ -37,8 +37,8 @@ export class MouseEventService extends BeanStub {
         (this.eGridDiv as any)[MouseEventService.GRID_DOM_KEY] = this.gridInstanceId;
     }
 
-    public getRenderedCellForEvent(event: Event): CellComp {
-        return getCellCompForEvent(this.gridOptionsWrapper, event);
+    public getRenderedCellForEvent(event: Event): CellComp | null {
+        return getComponentForEvent<CellComp>(this.gridOptionsWrapper, event, 'cellComp');
     }
 
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
@@ -60,7 +60,7 @@ export class MouseEventService extends BeanStub {
         return false;
     }
 
-    public getCellPositionForEvent(event: MouseEvent | KeyboardEvent): CellPosition {
+    public getCellPositionForEvent(event: MouseEvent | KeyboardEvent): CellPosition | null {
         const cellComp = this.getRenderedCellForEvent(event);
         return cellComp ? cellComp.getCellPosition() : null;
     }

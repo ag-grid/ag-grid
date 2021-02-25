@@ -138,7 +138,7 @@ var FullStore = /** @class */ (function (_super) {
         this.nodesAfterFilter = [];
         this.allNodesMap = {};
         if (!params.rowData) {
-            var message_1 = 'ag-Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
+            var message_1 = 'AG Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
             core_1._.doOnce(function () { return console.warn(message_1, params); }, 'FullStore.noData');
         }
         this.createOrRecycleNodes(nodesToRecycle, params.rowData);
@@ -295,11 +295,9 @@ var FullStore = /** @class */ (function (_super) {
             if (pixel >= lastRowNodeBottomPx && lastRowNode.expanded && lastRowNode.childStore) {
                 return lastRowNode.childStore.getRowIndexAtPixel(pixel);
             }
-            else {
-                return lastRowNode.rowIndex;
-            }
+            return lastRowNode.rowIndex;
         }
-        var res;
+        var res = null;
         this.nodesAfterSort.forEach(function (rowNode) {
             var res2 = _this.blockUtils.getIndexAtPixel(rowNode, pixel);
             if (res2 != null) {
@@ -432,7 +430,7 @@ var FullStore = /** @class */ (function (_super) {
                 nodesToUnselect.push(rowNode);
             }
             // so row renderer knows to fade row out (and not reposition it)
-            rowNode.clearRowTop();
+            rowNode.clearRowTopAndRowIndex();
             // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
             // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
             rowIdsRemoved[rowNode.id] = true;
@@ -468,7 +466,7 @@ var FullStore = /** @class */ (function (_super) {
             var id = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error("ag-Grid: could not find row id=" + id + ", data item was not found for this id");
+                console.error("AG Grid: could not find row id=" + id + ", data item was not found for this id");
                 return null;
             }
         }
@@ -476,7 +474,7 @@ var FullStore = /** @class */ (function (_super) {
             // find rowNode using object references
             rowNode = core_1._.find(this.allRowNodes, function (currentRowNode) { return currentRowNode.data === data; });
             if (!rowNode) {
-                console.error("ag-Grid: could not find data item as object was not found", data);
+                console.error("AG Grid: could not find data item as object was not found", data);
                 return null;
             }
         }

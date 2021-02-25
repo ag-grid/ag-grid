@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -149,7 +149,7 @@ var ColumnGroup = /** @class */ (function () {
     ColumnGroup.prototype.getMinWidth = function () {
         var result = 0;
         this.displayedChildren.forEach(function (groupChild) {
-            result += groupChild.getMinWidth();
+            result += groupChild.getMinWidth() || 0;
         });
         return result;
     };
@@ -231,55 +231,50 @@ var ColumnGroup = /** @class */ (function () {
         var _this = this;
         // clear out last time we calculated
         this.displayedChildren = [];
-        var topLevelGroup = this;
         // find the column group that is controlling expandable. this is relevant when we have padding (empty)
         // groups, where the expandable is actually the first parent that is not a padding group.
-        if (this.isPadding()) {
-            while (topLevelGroup.getParent() && topLevelGroup.isPadding()) {
-                topLevelGroup = topLevelGroup.getParent();
-            }
+        var parentWithExpansion = this;
+        while (parentWithExpansion != null && parentWithExpansion.isPadding()) {
+            parentWithExpansion = parentWithExpansion.getParent();
         }
-        var isExpandable = topLevelGroup.originalColumnGroup.isExpandable();
+        var isExpandable = parentWithExpansion ? parentWithExpansion.originalColumnGroup.isExpandable() : false;
         // it not expandable, everything is visible
         if (!isExpandable) {
             this.displayedChildren = this.children;
+            return;
         }
-        else {
-            // Add cols based on columnGroupShow
-            // Note - the below also adds padding groups, these are always added because they never have
-            // colDef.columnGroupShow set.
-            this.children.forEach(function (abstractColumn) {
-                var headerGroupShow = abstractColumn.getColumnGroupShow();
-                switch (headerGroupShow) {
-                    case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
-                        // when set to open, only show col if group is open
-                        if (topLevelGroup.originalColumnGroup.isExpanded()) {
-                            _this.displayedChildren.push(abstractColumn);
-                        }
-                        break;
-                    case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
-                        // when set to open, only show col if group is open
-                        if (!topLevelGroup.originalColumnGroup.isExpanded()) {
-                            _this.displayedChildren.push(abstractColumn);
-                        }
-                        break;
-                    default:
-                        // if this abstractColumn is padding, we just want to add it
-                        // to the displayedChildren list if it has displayedChildren itself.
-                        if (!(abstractColumn instanceof ColumnGroup &&
-                            abstractColumn.isPadding() &&
-                            !abstractColumn.displayedChildren.length)) {
-                            _this.displayedChildren.push(abstractColumn);
-                        }
-                        break;
-                }
-            });
-        }
+        // Add cols based on columnGroupShow
+        // Note - the below also adds padding groups, these are always added because they never have
+        // colDef.columnGroupShow set.
+        this.children.forEach(function (child) {
+            // never add empty groups
+            var emptyGroup = child instanceof ColumnGroup && (!child.displayedChildren || !child.displayedChildren.length);
+            if (emptyGroup) {
+                return;
+            }
+            var headerGroupShow = child.getColumnGroupShow();
+            switch (headerGroupShow) {
+                case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
+                    // when set to open, only show col if group is open
+                    if (parentWithExpansion.originalColumnGroup.isExpanded()) {
+                        _this.displayedChildren.push(child);
+                    }
+                    break;
+                case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
+                    // when set to open, only show col if group is open
+                    if (!parentWithExpansion.originalColumnGroup.isExpanded()) {
+                        _this.displayedChildren.push(child);
+                    }
+                    break;
+                default:
+                    _this.displayedChildren.push(child);
+                    break;
+            }
+        });
         this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
     };
     ColumnGroup.HEADER_GROUP_SHOW_OPEN = 'open';
     ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
-    ColumnGroup.HEADER_GROUP_PADDING = 'padding';
     ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
     ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
     __decorate([

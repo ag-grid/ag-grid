@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -63,7 +63,7 @@ var Logger = /** @class */ (function () {
     Logger.prototype.log = function (message) {
         if (this.isLoggingFunc()) {
             // tslint:disable-next-line
-            console.log('ag-Grid.' + this.name + ': ' + message);
+            console.log('AG Grid.' + this.name + ': ' + message);
         }
     };
     return Logger;

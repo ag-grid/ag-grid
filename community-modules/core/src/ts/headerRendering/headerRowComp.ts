@@ -5,7 +5,6 @@ import { ColumnGroupChild } from '../entities/columnGroupChild';
 import { ColumnGroup } from '../entities/columnGroup';
 import { ColumnController } from '../columnController/columnController';
 import { Column } from '../entities/column';
-import { DropTarget } from '../dragAndDrop/dragAndDropService';
 import { Events } from '../events';
 import { HeaderWrapperComp } from './header/headerWrapperComp';
 import { HeaderGroupWrapperComp } from './headerGroup/headerGroupWrapperComp';
@@ -28,14 +27,14 @@ export class HeaderRowComp extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('focusController') private focusController: FocusController;
 
-    private readonly pinned: string;
+    private readonly pinned: string | null;
 
     private readonly type: HeaderRowType;
     private dept: number;
 
     private headerComps: { [key: string]: AbstractHeaderWrapper; } = {};
 
-    constructor(dept: number, type: HeaderRowType, pinned: string) {
+    constructor(dept: number, type: HeaderRowType, pinned: string | null) {
         super(/* html */`<div class="ag-header-row" role="row"></div>`);
         this.setRowIndex(dept);
         this.type = type;
@@ -76,18 +75,9 @@ export class HeaderRowComp extends Component {
         this.destroyChildComponents(idsOfAllChildren);
     }
 
-    private destroyChildComponents(idsToDestroy: string[], keepFocused?: boolean): void {
+    private destroyChildComponents(idsToDestroy: string[]): void {
         idsToDestroy.forEach(id => {
             const childHeaderWrapper: AbstractHeaderWrapper = this.headerComps[id];
-
-            if (
-                keepFocused &&
-                !childHeaderWrapper.getColumn().isMoving() &&
-                this.focusController.isHeaderWrapperFocused(childHeaderWrapper)
-            ) {
-                return;
-            }
-
             this.getGui().removeChild(childHeaderWrapper.getGui());
             this.destroyBean(childHeaderWrapper);
             delete this.headerComps[id];
@@ -99,8 +89,8 @@ export class HeaderRowComp extends Component {
         const sizes: number[] = [];
 
         let numberOfFloating = 0;
-        let groupHeight: number;
-        let headerHeight: number;
+        let groupHeight: number | null | undefined;
+        let headerHeight: number | null | undefined;
 
         if (this.columnController.isPivotMode()) {
             groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
@@ -118,11 +108,11 @@ export class HeaderRowComp extends Component {
         const numberOfNonGroups = 1 + numberOfFloating;
         const numberOfGroups = headerRowCount - numberOfNonGroups;
 
-        for (let i = 0; i < numberOfGroups; i++) { sizes.push(groupHeight); }
+        for (let i = 0; i < numberOfGroups; i++) { sizes.push(groupHeight as number); }
 
-        sizes.push(headerHeight);
+        sizes.push(headerHeight as number);
 
-        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight()); }
+        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight() as number); }
 
         let rowHeight = 0;
 
@@ -181,57 +171,46 @@ export class HeaderRowComp extends Component {
         return this.columnController.getContainerWidth(this.pinned);
     }
 
-    // private onGridColumnsChanged(): void {
-    //     this.removeAndDestroyAllChildComponents();
-    // }
-
-    // private removeAndDestroyAllChildComponents(): void {
-    //     const idsOfAllChildren = Object.keys(this.headerComps);
-    //     this.destroyChildComponents(idsOfAllChildren);
-    // }
-
     private onDisplayedColumnsChanged(): void {
         this.onVirtualColumnsChanged();
         this.setWidth();
     }
 
-    private getItemsAtDepth(): ColumnGroupChild[] {
+    private getColumnsInViewport(): ColumnGroupChild[] {
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
+    }
 
-        if (printLayout) {
-            // for print layout, we add all columns into the center
-            const centerContainer = missing(this.pinned);
-            if (centerContainer) {
-                let result: ColumnGroupChild[] = [];
-                [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
-                    const items = this.columnController.getVirtualHeaderGroupRow(
-                        pinned,
-                        this.type == HeaderRowType.FLOATING_FILTER ?
-                            this.dept - 1 :
-                            this.dept
-                    );
-                    result = result.concat(items);
-                });
-                return result;
-            }
-            return [];
-        }
+    private getColumnsInViewportPrintLayout(): ColumnGroupChild[] {
+        // for print layout, we add all columns into the center
+        if (this.pinned != null) { return []; }
 
+        let viewportColumns: ColumnGroupChild[] = [];
+        const actualDepth = this.getActualDepth();
+
+        [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
+            const items = this.columnController.getVirtualHeaderGroupRow(pinned, actualDepth);
+            viewportColumns = viewportColumns.concat(items);
+        });
+
+        return viewportColumns;
+    }
+
+    private getActualDepth(): number {
+        return this.type == HeaderRowType.FLOATING_FILTER ? this.dept - 1 : this.dept;
+    }
+
+    private getColumnsInViewportNormalLayout(): ColumnGroupChild[] {
         // when in normal layout, we add the columns for that container only
-        return this.columnController.getVirtualHeaderGroupRow(
-            this.pinned,
-            this.type == HeaderRowType.FLOATING_FILTER ?
-                this.dept - 1 :
-                this.dept
-        );
+        return this.columnController.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
     }
 
     private onVirtualColumnsChanged(): void {
         const compIdsToRemove = Object.keys(this.headerComps);
         const compIdsWanted: string[] = [];
-        const itemsAtDepth = this.getItemsAtDepth();
+        const columns = this.getColumnsInViewport();
 
-        itemsAtDepth.forEach((child: ColumnGroupChild) => {
+        columns.forEach((child: ColumnGroupChild) => {
             // skip groups that have no displayed children. this can happen when the group is broken,
             // and this section happens to have nothing to display for the open / closed state.
             // (a broken group is one that is split, ie columns in the group have a non-group column
@@ -244,7 +223,7 @@ export class HeaderRowComp extends Component {
             const eParentContainer = this.getGui();
 
             // if we already have this cell rendered, do nothing
-            let previousComp = this.headerComps[idOfChild];
+            let previousComp: AbstractHeaderWrapper | undefined = this.headerComps[idOfChild];
 
             // it's possible there is a new Column with the same ID, but it's for a different Column.
             // this is common with pivoting, where the pivot cols change, but the id's are still pivot_0,
@@ -270,8 +249,24 @@ export class HeaderRowComp extends Component {
             compIdsWanted.push(idOfChild);
         });
 
+        // we want to keep columns that are focused, otherwise keyboard navigation breaks
+        const isFocusedAndDisplayed = (colId: string) => {
+            const wrapper = this.headerComps[colId];
+            const isFocused = this.focusController.isHeaderWrapperFocused(wrapper);
+            if (!isFocused) { return false; }
+            const isDisplayed = this.columnController.isDisplayed(wrapper.getColumn());
+            return isDisplayed;
+        };
+
+        const focusedAndDisplayedComps = compIdsToRemove.filter(isFocusedAndDisplayed);
+
+        focusedAndDisplayedComps.forEach(colId => {
+            removeFromArray(compIdsToRemove, colId);
+            compIdsWanted.push(colId);
+        });
+
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
-        this.destroyChildComponents(compIdsToRemove, true);
+        this.destroyChildComponents(compIdsToRemove);
 
         const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         if (ensureDomOrder) {
@@ -284,14 +279,14 @@ export class HeaderRowComp extends Component {
         let result: AbstractHeaderWrapper;
 
         switch (this.type) {
-            case HeaderRowType.COLUMN:
-                result = new HeaderWrapperComp(columnGroupChild as Column, this.pinned);
-                break;
             case HeaderRowType.COLUMN_GROUP:
                 result = new HeaderGroupWrapperComp(columnGroupChild as ColumnGroup, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER:
                 result = new FloatingFilterWrapper(columnGroupChild as Column, this.pinned);
+                break;
+            default:
+                result = new HeaderWrapperComp(columnGroupChild as Column, this.pinned);
                 break;
         }
 

@@ -69,7 +69,7 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
             }
         });
         if (invalidColIds.length > 0) {
-            console.warn('ag-Grid: unable to find grid columns for the supplied colDef(s):', invalidColIds);
+            console.warn('AG Grid: unable to find grid columns for the supplied colDef(s):', invalidColIds);
         }
         return mappedResults;
     };
@@ -137,14 +137,16 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
             return bothPathsAreGroups && _this.getId(pathA) === _this.getId(pathB);
         };
         var mergeTrees = function (treeA, treeB) {
-            if (!_this.isColGroupDef(treeB))
+            if (!_this.isColGroupDef(treeB)) {
                 return treeA;
+            }
             var mergeResult = treeA;
             var groupToMerge = treeB;
             if (groupToMerge.children && groupToMerge.groupId) {
                 var added = _this.addChildrenToGroup(mergeResult, groupToMerge.groupId, groupToMerge.children[0]);
-                if (added)
+                if (added) {
                     return mergeResult;
+                }
             }
             groupToMerge.children.forEach(function (child) { return mergeTrees(mergeResult, child); });
             return mergeResult;
@@ -166,15 +168,16 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
     };
     ToolPanelColDefService.prototype.addChildrenToGroup = function (tree, groupId, colDef) {
         var _this = this;
-        var subGroupIsSplit = function (currentGroup, groupToAdd) {
-            var existingChildIds = currentGroup.children.map(_this.getId);
-            var childGroupAlreadyExists = core_1._.includes(existingChildIds, _this.getId(groupToAdd));
-            var lastChild = core_1._.last(currentGroup.children);
-            var lastChildIsDifferent = lastChild && _this.getId(lastChild) !== _this.getId(groupToAdd);
+        var subGroupIsSplit = function (currentSubGroup, currentSubGroupToAdd) {
+            var existingChildIds = currentSubGroup.children.map(_this.getId);
+            var childGroupAlreadyExists = core_1._.includes(existingChildIds, _this.getId(currentSubGroupToAdd));
+            var lastChild = core_1._.last(currentSubGroup.children);
+            var lastChildIsDifferent = lastChild && _this.getId(lastChild) !== _this.getId(currentSubGroupToAdd);
             return childGroupAlreadyExists && lastChildIsDifferent;
         };
-        if (!this.isColGroupDef(tree))
+        if (!this.isColGroupDef(tree)) {
             return true;
+        }
         var currentGroup = tree;
         var groupToAdd = colDef;
         if (subGroupIsSplit(currentGroup, groupToAdd)) {

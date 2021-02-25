@@ -1,4 +1,4 @@
-<?php 
+<?php
 $navKey = "about";
 include_once 'includes/html-helpers.php';
 gtm_data_layer('about');
@@ -7,14 +7,14 @@ gtm_data_layer('about');
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
+meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", true);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
 
 <body>
 <header id="nav" class="compact">
-<?php 
+<?php
     $version = 'latest';
     include './includes/navbar.php';
 ?>
@@ -28,7 +28,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
         <section>
             <hr>
                         <p class="text-center">
-                ag-Grid, the <strong>number one Javascript Grid in the world</strong> is holding it's first ever event in <strong>New York</strong>.
+                AG Grid, the <strong>number one Javascript Grid in the world</strong> is holding it's first ever event in <strong>New York</strong>.
 <br>
 <font size="-1">Oct 10th
 <br>
@@ -38,22 +38,22 @@ New York, United States.</font>
   <div class="card-body">
 <p class="text-center">
                 <font size="+1.5">
-                Come to meet and hear from the creators of ag-Grid:
+                Come to meet and hear from the creators of AG Grid:
 <br>
-                 Get to understand the features behind the feature-rich grid. 
+                 Get to understand the features behind the feature-rich grid.
                  <br>
-                 How ag-Grid is dedicated to supporting frameworks. 
+                 How AG Grid is dedicated to supporting frameworks.
                  <br>
-                 The story behind the meteoric rise of ag-Grid and what the future holds and much more!
+                 The story behind the meteoric rise of AG Grid and what the future holds and much more!
              </font>
   </div>
 </div>
             <p class="text-center"><br>
                 <strong>
-Join us in NYC this October for an in-depth look into the industry juggernaut that is ag-Grid.
+Join us in NYC this October for an in-depth look into the industry juggernaut that is AG Grid.
 </strong>
             </p>
-            <h4 class="text-center"> 
+            <h4 class="text-center">
                 Limited spaces so grab your seat early!
             </h4>
             <div>
@@ -65,7 +65,7 @@ Join us in NYC this October for an in-depth look into the industry juggernaut th
 What To Expect
 <p class="text-muted">
     <font size="-1">
-    Enjoy talks from the brains behind ag-Grid, an in-depth look into what makes our grid the best and the story behind the industry disruptor that is ag-Grid from it's fruition in 2016.
+    Enjoy talks from the brains behind AG Grid, an in-depth look into what makes our grid the best and the story behind the industry disruptor that is AG Grid from it's fruition in 2016.
 </font>
 </p>
         <hr>
@@ -83,12 +83,12 @@ What To Expect
 </h3>
     <div class="card">
   <div class="card-body" style="background-color: #f3f3f3">
-    <h5 class="card-title">Technical look into ag-Grid's features with the Core team<br>
+    <h5 class="card-title">Technical look into AG Grid's features with the Core team<br>
 Followed by a Q&A
         <hr></h5>
     <h6 class="card-subtitle mb-2 text-muted">Core Team<br>13:00 | 14:30</h6>
     <p><font size="-0">
-        
+
     </font>
     </p>
       </div>
@@ -97,10 +97,10 @@ Followed by a Q&A
 <br>
 <div class="card">
   <div class="card-body" style="background-color: #f3f3f3">
-    <h5 class="card-title">How ag-Grid Manages Complexity internally<hr></h5>
+    <h5 class="card-title">How AG Grid Manages Complexity internally<hr></h5>
     <h6 class="card-subtitle mb-2 text-muted">Niall Crosby<br>15:00 | 15:30</h6>
     <p>
-        Looking at how ag-Grid built it's own IoC container and Component Library under the hood rather than relying on frameworks, and how it all integrates with all the frameworks.
+        Looking at how AG Grid built it's own IoC container and Component Library under the hood rather than relying on frameworks, and how it all integrates with all the frameworks.
     </p>
       </div>
 </div>
@@ -129,14 +129,14 @@ Followed by a Q&A
 <br>
         <div class="card">
   <div class="card-body" style="background-color: #f3f3f3">
-    <h5 class="card-title">Origins of ag-Grid, Current State, and Roadmap<hr></h5>
+    <h5 class="card-title">Origins of AG Grid, Current State, and Roadmap<hr></h5>
     <h6 class="card-subtitle mb-2 text-muted">Niall Crosby<br>17:00 | 17:30</h6>
     <p>
-         The story of ag-Grid, where we are, where we are going.
+         The story of AG Grid, where we are, where we are going.
     </p>
       </div>
 </div>
-        
+
     </div>
     <div class="col">
 <h3 class="text-center"><strong>Speakers</strong>
@@ -154,10 +154,10 @@ Followed by a Q&A
                             <img src='images/team/niall.jpg' alt="Niall Crosby, CEO"/>
                         </div>
                         <h3>Niall Crosby</h3>
-                        <h4>CEO / CTO, <br> ag-Grid</h4>
+                        <h4>CEO / CTO, <br> AG Grid</h4>
                         <hr>
                         <p>
-                            Niall provides the technical vision for ag-Grid, juggling this with the usual CEO duties.
+                            Niall provides the technical vision for AG Grid, juggling this with the usual CEO duties.
                         </p>
                     </div>
 
@@ -169,7 +169,7 @@ Followed by a Q&A
                         <h4>Lead Developer, <br> Frameworks</h4>
                         <hr>
                         <p>
-                            Sean ensures that we can keep the agnostic in ag-Grid. He is responsible for integrating with all of our supported frameworks.
+                            Sean ensures that we can keep the agnostic in AG Grid. He is responsible for integrating with all of our supported frameworks.
                         </p>
                     </div>
 
@@ -192,7 +192,7 @@ Followed by a Q&A
                         <h4>Lead Developer, <br> Enterprise Applications</h4>
                         <hr>
                         <p>
-                            An expert in numerous server and client side programming languages and technologies which he uses to drive forward the core engine of ag-Grid.
+                            An expert in numerous server and client side programming languages and technologies which he uses to drive forward the core engine of AG Grid.
                         </p>
                     </div>
 </div>
@@ -210,8 +210,8 @@ Followed by a Q&A
 <h2 class="text-center" style="background-color: whitesmoke;padding-top: 10px;padding-bottom: 10px">
     Tickets
 </h2>
-<p class="text-muted, text-center"> 
-    Tickets get you access to speaker presentations throughout the day, swag and refreshments. 
+<p class="text-muted, text-center">
+    Tickets get you access to speaker presentations throughout the day, swag and refreshments.
 </p>
 <div class="card">
   <div class="card-body">
@@ -222,7 +222,7 @@ Followed by a Q&A
 </font>
     </strong>
     <br>
-    With limited spaces, register your space early. If spaces fill early, we will look into acquiring a larger space.  
+    With limited spaces, register your space early. If spaces fill early, we will look into acquiring a larger space.
     <br><br>
     <a href="https://www.eventbrite.com/e/ag-grid-in-nyc-the-best-javascript-grid-in-the-world-tickets-49731529343" target="_blank"><button type="button" class="btn btn-primary btn-lg btn-block" style="padding-bottom: 5px;padding-top: 5px">Register Now!</button></a>
   </div>

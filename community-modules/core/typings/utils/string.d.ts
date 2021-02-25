@@ -4,7 +4,7 @@
  * @param {string} s
  * @returns {string}
  */
-export declare function utf8_encode(s: string): string;
+export declare function utf8_encode(s: string | null): string;
 /**
  * Converts a camelCase string into hyphenated string
  * from https://gist.github.com/youssman/745578062609e8acac9f

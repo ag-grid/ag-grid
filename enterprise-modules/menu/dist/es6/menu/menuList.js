@@ -76,7 +76,7 @@ var MenuList = /** @class */ (function (_super) {
                 _this.addSeparator();
             }
             else if (typeof menuItemOrString === 'string') {
-                console.warn("ag-Grid: unrecognised menu item " + menuItemOrString);
+                console.warn("AG Grid: unrecognised menu item " + menuItemOrString);
             }
             else {
                 _this.addItem(menuItemOrString);
@@ -101,7 +101,7 @@ var MenuList = /** @class */ (function (_super) {
         });
     };
     MenuList.prototype.activateFirstItem = function () {
-        var item = this.menuItems.filter(function (item) { return !item.isDisabled(); })[0];
+        var item = this.menuItems.filter(function (currentItem) { return !currentItem.isDisabled(); })[0];
         if (!item) {
             return;
         }

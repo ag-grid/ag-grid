@@ -1,4 +1,5 @@
 import { BeanStub } from "../context/beanStub";
+import { GridPanel } from "../gridPanel/gridPanel";
 export declare class AnimationFrameService extends BeanStub {
     private createTasksP1;
     private createTasksP2;
@@ -9,8 +10,10 @@ export declare class AnimationFrameService extends BeanStub {
     private lastScrollTop;
     private taskCount;
     private cancelledTasks;
+    private gridPanel;
     setScrollTop(scrollTop: number): void;
     private init;
+    registerGridComp(gridPanel: GridPanel): void;
     private verifyAnimationFrameOn;
     createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2'): void;
     cancelTask(task: () => void): void;

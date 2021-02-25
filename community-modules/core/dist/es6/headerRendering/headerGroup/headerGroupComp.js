@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -98,7 +98,9 @@ var HeaderGroupComp = /** @class */ (function (_super) {
     };
     HeaderGroupComp.prototype.addInIcon = function (iconName, refName) {
         var eIcon = createIconNoSpan(iconName, this.gridOptionsWrapper, null);
-        this.getRefElement(refName).appendChild(eIcon);
+        if (eIcon) {
+            this.getRefElement(refName).appendChild(eIcon);
+        }
     };
     HeaderGroupComp.prototype.addGroupExpandIcon = function () {
         if (!this.params.columnGroup.isExpandable()) {
@@ -112,7 +114,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         var displayName = this.params.displayName;
         if (exists(displayName)) {
             var displayNameSanitised = escapeString(displayName);
-            this.getRefElement("agLabel").innerHTML = displayNameSanitised;
+            this.getRefElement('agLabel').innerHTML = displayNameSanitised;
         }
     };
     HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\" ref=\"agContainer\" role=\"presentation\">\n            <span ref=\"agLabel\" class=\"ag-header-group-text\" role=\"presentation\"></span>\n            <span ref=\"agOpened\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded\"></span>\n            <span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>\n        </div>";

@@ -83,7 +83,7 @@ var VueFrameworkComponentWrapper = /** @class */ (function (_super) {
                 return wrapper.callMethod(methodName, arguments);
             }
             if (mandatory) {
-                console.warn('ag-Grid: Framework component is missing the method ' + methodName + '()');
+                console.warn('AG Grid: Framework component is missing the method ' + methodName + '()');
             }
             return null;
         };

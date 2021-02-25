@@ -1,9 +1,10 @@
-// ag-grid-react v25.0.1
+// ag-grid-react v25.1.0
 import { ComponentType, AgPromise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
 import { ReactComponent } from './reactComponent';
 export declare class NewReactComponent extends ReactComponent {
     private key;
+    private portalKey;
     private oldPortal;
     private reactElement;
     private params;

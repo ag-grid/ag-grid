@@ -22,12 +22,13 @@ export interface ICellRendererParams {
     refreshCell: () => void;
     eGridCell: HTMLElement;
     eParentOfValue: HTMLElement;
+    registerRowDragger: (rowDraggerElement: HTMLElement) => void;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
 }
 export interface ISetFilterCellRendererParams {
     value: any;
     valueFormatted: any;
-    api: GridApi;
+    api?: GridApi | null;
     context: any;
 }
 export interface ICellRenderer {

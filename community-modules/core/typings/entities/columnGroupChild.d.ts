@@ -4,15 +4,15 @@ import { ColumnGroup } from "./columnGroup";
 export interface ColumnGroupChild extends IEventEmitter {
     getUniqueId(): string;
     getActualWidth(): number;
-    getMinWidth(): number;
-    getLeft(): number;
-    getOldLeft(): number;
-    getDefinition(): AbstractColDef;
+    getMinWidth(): number | null | undefined;
+    getLeft(): number | null;
+    getOldLeft(): number | null;
+    getDefinition(): AbstractColDef | null;
     getColumnGroupShow(): string | undefined;
     getParent(): ColumnGroupChild;
     isResizable(): boolean;
-    setParent(parent: ColumnGroup): void;
+    setParent(parent: ColumnGroup | null): void;
     isEmptyGroup(): boolean;
     isMoving(): boolean;
-    getPinned(): string;
+    getPinned(): string | null | undefined;
 }

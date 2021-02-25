@@ -13,9 +13,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var ag_charts_community_1 = require("ag-charts-community");
 var core_1 = require("@ag-grid-community/core");
 var miniChartWithAxes_1 = require("./miniChartWithAxes");
-var ag_charts_community_1 = require("ag-charts-community");
 var MiniBar = /** @class */ (function (_super) {
     __extends(MiniBar, _super);
     function MiniBar(container, fills, strokes) {

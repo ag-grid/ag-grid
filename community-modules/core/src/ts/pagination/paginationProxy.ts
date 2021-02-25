@@ -1,6 +1,6 @@
 import { IRowModel, RowBounds } from "../interfaces/iRowModel";
 import { BeanStub } from "../context/beanStub";
-import {AgGridEvent, Events, ModelUpdatedEvent, PaginationChangedEvent} from "../events";
+import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ColumnApi } from "../columnController/columnApi";
@@ -120,11 +120,17 @@ export class PaginationProxy extends BeanStub {
         return Math.max(this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop, 0);
     }
 
+    public getCurrentPagePixelRange(): {pageFirstPixel: number, pageLastPixel: number} {
+        const pageFirstPixel = this.topRowBounds ? this.topRowBounds.rowTop : 0;
+        const pageLastPixel = this.bottomRowBounds ? this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight : 0;
+        return {pageFirstPixel, pageLastPixel};
+    }
+
     public isRowPresent(rowNode: RowNode): boolean {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;
         }
-        const nodeIsInPage = rowNode.rowIndex >= this.topDisplayedRowIndex && rowNode.rowIndex <= this.bottomDisplayedRowIndex;
+        const nodeIsInPage = rowNode.rowIndex! >= this.topDisplayedRowIndex && rowNode.rowIndex! <= this.bottomDisplayedRowIndex;
         return nodeIsInPage;
     }
 
@@ -149,17 +155,17 @@ export class PaginationProxy extends BeanStub {
     }
 
     public getRowBounds(index: number): RowBounds {
-        const res = this.rowModel.getRowBounds(index);
+        const res = this.rowModel.getRowBounds(index)!;
         res.rowIndex = index;
         return res;
     }
 
     public getPageFirstRow(): number {
-        return this.topRowBounds ? this.topRowBounds.rowIndex : -1;
+        return this.topRowBounds ? this.topRowBounds.rowIndex! : -1;
     }
 
     public getPageLastRow(): number {
-        return this.bottomRowBounds ? this.bottomRowBounds.rowIndex : -1;
+        return this.bottomRowBounds ? this.bottomRowBounds.rowIndex! : -1;
     }
 
     public getRowCount(): number {
@@ -184,7 +190,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public isLastPageFound(): boolean {
-        return this.rowModel.isLastRowFound();
+        return this.rowModel.isLastRowIndexKnown();
     }
 
     public getCurrentPage(): number {
@@ -226,7 +232,6 @@ export class PaginationProxy extends BeanStub {
     }
 
     private calculatePages(): void {
-
         if (this.active) {
             this.setPageSize();
             if (this.paginateChildRows) {
@@ -238,12 +243,12 @@ export class PaginationProxy extends BeanStub {
             this.calculatedPagesNotActive();
         }
 
-        this.topRowBounds = this.rowModel.getRowBounds(this.topDisplayedRowIndex);
+        this.topRowBounds = this.rowModel.getRowBounds(this.topDisplayedRowIndex)!;
         if (this.topRowBounds) {
             this.topRowBounds.rowIndex = this.topDisplayedRowIndex;
         }
 
-        this.bottomRowBounds = this.rowModel.getRowBounds(this.bottomDisplayedRowIndex);
+        this.bottomRowBounds = this.rowModel.getRowBounds(this.bottomDisplayedRowIndex)!;
         if (this.bottomRowBounds) {
             this.bottomRowBounds.rowIndex = this.bottomDisplayedRowIndex;
         }

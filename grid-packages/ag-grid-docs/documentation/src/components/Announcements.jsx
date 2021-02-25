@@ -1,14 +1,24 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import classnames from 'classnames';
 import DocumentationLink from './DocumentationLink';
-import thinksterPng from '../images/thinkster.png';
-import communitySvg from '../images/community.svg';
-import enterpriseSvg from '../images/enterprise.svg';
-import flags from '../images/flags';
+import communitySvg from 'images/community.svg';
+import enterpriseSvg from 'images/enterprise.svg';
+import { Announcement } from './Announcement';
 import styles from './Announcements.module.scss';
 
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
+
+    <Announcement date="Feb 19" version="25.1.0">
+        <p className="card-text">
+            Minor release with bug fixes:
+        </p>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                <DocumentationLink framework={framework} href="/charts-treemap-series/">Treemap Series</DocumentationLink>
+            </li>
+        </ul>
+    </Announcement>
+
     <Announcement date="Jan 6" version="25.0.0">
         <p className="card-text">
             Major release with new features and bug fixes:
@@ -25,31 +35,22 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
             </li>
         </ul>
     </Announcement>
-    <Announcement>
-        <h5 className="card-title">
-            <a href="https://thinkster.io/topics/ag-grid" aria-label="Thinkster"><img alt="Thinkster" style={{ width: '100%' }} src={thinksterPng} /></a>
-        </h5>
-        <p className="card-text">
-            There are free <a href="https://thinkster.io/topics/ag-grid">Thinkster Courses</a> for learning
-            ag-Grid with Angular and React.
-        </p>
-    </Announcement>
     <Announcement title="Best Web Grids for 2020" date="Jan 27th">
         <p className="card-text">
-            ag-Grid is the "Absolute Winner" according
-            to <a href="https://www.crankuptheamps.com//blog/posts/2020/01/23/grid-comparison-2/">Best Web Grids for 2020</a>.
+            AG Grid is the "Absolute Winner" according
+            to <a href="https://www.crankuptheamps.com/blog/posts/2020/01/23/grid-comparison-2/">Best Web Grids for 2020</a>.
         </p>
     </Announcement>
     <Announcement title="Community or Enterprise?">
         <img style={{ width: '30px', float: 'left', marginRight: '6px' }} src={communitySvg} alt="Community" />
         <p >
-            Everyone can use ag-Grid Community for free.
+            Everyone can use AG Grid Community for free.
             It's MIT licensed and Open Source. No restrictions. No strings attached.
         </p>
         <img style={{ width: '30px', float: 'left', marginRight: '6px' }} src={enterpriseSvg} alt="Enterprise" />
         <p>
-            Do you want more features? Then <DocumentationLink framework={framework} href="/licensing/">get started with ag-Grid Enterprise</DocumentationLink>.
-            You don't need to contact us to evaluate ag-Grid Enterprise. A license is only required
+            Do you want more features? Then <DocumentationLink framework={framework} href="/licensing/">get started with AG Grid Enterprise</DocumentationLink>.
+            You don't need to contact us to evaluate AG Grid Enterprise. A license is only required
             when you start developing for production.
         </p>
     </Announcement>
@@ -58,15 +59,15 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
 
         <h6 className="card-subtitle mb-2 text-muted">Angular</h6>
 
-        <img src={flags.us} alt="United States" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/us.png' alt="United States" className={styles['announcement__flag']} />
         <a href="https://www.ng-conf.org" target="_blank" rel="noreferrer">ng-Conf</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Postponed</p>
 
-        <img src={flags.no} alt="Norway" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/no.png' alt="Norway" className={styles['announcement__flag']} />
         <a href="https://ngvikings.org" target="_blank" rel="noreferrer">ngVikings</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Postponed</p>
 
-        <img src={flags.gb} alt="United Kingdom" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/gb.png' alt="United Kingdom" className={styles['announcement__flag']} />
         <a href="https://angularconnect.com" target="_blank" rel="noreferrer">Angular Connect</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Oct 13-14</p>
 
@@ -74,11 +75,11 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
 
         <h6 className="card-subtitle mb-2 text-muted">React</h6>
 
-        <img src={flags.nl} alt="Netherlands" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/nl.png' alt="Netherlands" className={styles['announcement__flag']} />
         <a href="https://reactsummit.com" target="_blank" rel="noreferrer">React Summit</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>11th September</p>
 
-        <img src={flags.gb} alt="United Kingdom" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/gb.png' alt="United Kingdom" className={styles['announcement__flag']} />
         <a href="https://reactadvanced.com" target="_blank" rel="noreferrer">React Advanced</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Oct 25</p>
 
@@ -86,38 +87,21 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
 
         <h6 className="card-subtitle mb-2 text-muted">JavaScript</h6>
 
-        <img src={flags.gb} alt="United Kingdom" className={styles['announcement__flag']} />
+        <img src='https://flagcdn.com/h24/gb.png' alt="United Kingdom" className={styles['announcement__flag']} />
         <a href="https://halfstackconf.com/online/" target="_blank" rel="noreferrer">Half Stack Online</a>
         <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>May 22</p>
     </Announcement>
     <MailingListSignup />
     <Announcement highlight={false}>
-        <p>Work at ag-Grid:</p>
+        <p>Work at AG Grid:</p>
         <h5 className="card-title"><a href="/ag-grid-jobs-board/">JavaScript Developers</a></h5>
         <h6 className="card-subtitle mb-2 text-muted">London, United Kingdom</h6>
         <p className="card-text">
-            Would you like to join the ag-Grid team in London?<br /><br />
+            Would you like to join the AG Grid team in London?<br /><br />
             Check the <a href="/ag-grid-jobs-board/">jobs board</a>
         </p>
     </Announcement>
 </div>;
-
-const Announcement = ({ title, date, children, version, highlight = true }) => {
-    return <div className={classnames(styles['announcement'], { [styles['announcement--highlighted']]: highlight })}>
-        <div className="card-body">
-            {version &&
-                <h5 className="card-title"><a href={`/ag-grid-changelog/?fixVersion=${version}`}>Version {version}</a></h5>
-            }
-            {title && <h5 className="card-title">{title}</h5>}
-            {date && <h6 className="card-subtitle mb-2 text-muted">{date}</h6>}
-            {children}
-            {version &&
-                <p className="text-right">
-                    <a href={`/ag-grid-changelog/?fixVersion=${version}`}>Change Log</a>
-                </p>}
-        </div>
-    </div>;
-};
 
 const MailingListSignup = () => {
     return <>
@@ -136,7 +120,7 @@ const MailingListSignup = () => {
                 method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" className="validate"
                 target="_blank" noValidate>
                 <div id="mc_embed_signup_scroll">
-                    <h2>ag-Grid Mailing List</h2>
+                    <h2>AG Grid Mailing List</h2>
                     <div className="mc-field-group">
                         <label htmlFor="mce-EMAIL">Email Address <span className="asterisk">*</span>
                             <input type="email" defaultValue="" name="EMAIL" className="required email" id="mce-EMAIL" />

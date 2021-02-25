@@ -23,11 +23,8 @@ var MenuPanel = /** @class */ (function (_super) {
         return _this;
     }
     MenuPanel.prototype.handleKeyDown = function (e) {
-        switch (e.keyCode) {
-            case core_1.KeyCode.ESCAPE: {
-                this.closePanel();
-                break;
-            }
+        if (e.keyCode === core_1.KeyCode.ESCAPE) {
+            this.closePanel();
         }
     };
     MenuPanel.prototype.onTabKeyDown = function (e) {

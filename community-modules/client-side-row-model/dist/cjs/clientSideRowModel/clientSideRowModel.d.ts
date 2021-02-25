@@ -15,6 +15,7 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     private valueCache;
     private columnApi;
     private gridApi;
+    private animationFrameService;
     private filterStage;
     private sortStage;
     private flattenStage;
@@ -27,6 +28,7 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     private rowDataTransactionBatch;
     private lastHighlightedRow;
     private applyAsyncTransactionsTimeout;
+    private onRowGroupOpenedPending;
     init(): void;
     start(): void;
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
@@ -36,7 +38,7 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
     getHighlightPosition(pixel: number, rowNode?: RowNode): 'above' | 'below';
     getLastHighlightedRowNode(): RowNode | null;
-    isLastRowFound(): boolean;
+    isLastRowIndexKnown(): boolean;
     getRowCount(): number;
     getTopLevelRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
@@ -47,6 +49,7 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     getType(): string;
     private onValueChanged;
     private createChangePath;
+    private isSuppressModelUpdateAfterUpdateTransaction;
     refreshModel(params: RefreshModelParams): void;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
@@ -58,7 +61,6 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     isRowPresent(rowNode: RowNode): boolean;
     getRowIndexAtPixel(pixelToMatch: number): number;
     private isRowInPixel;
-    getCurrentPageHeight(): number;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
     forEachNode(callback: (node: RowNode, index: number) => void): void;
     forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void): void;

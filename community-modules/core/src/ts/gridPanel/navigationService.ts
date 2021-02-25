@@ -1,4 +1,4 @@
-import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
+import { Autowired, Bean, Optional } from "../context/context";
 import { CellPosition } from "../entities/cellPosition";
 import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../pagination/paginationProxy";
@@ -12,6 +12,18 @@ import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { last } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
+
+interface NavigateParams {
+     // The rowIndex to vertically scroll to
+    scrollIndex: number;
+     // The position to put scroll index
+    scrollType: 'top' | 'bottom' | null;
+    //  The column to horizontally scroll to
+    scrollColumn: Column | null;
+    // For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub).
+    focusIndex: number;
+    focusColumn: Column;
+}
 
 @Bean('navigationService')
 export class NavigationService extends BeanStub {
@@ -34,9 +46,9 @@ export class NavigationService extends BeanStub {
     public handlePageScrollingKey(event: KeyboardEvent): boolean {
         const key = event.which || event.keyCode;
         const alt = event.altKey;
-        const ctrl = event.ctrlKey;
+        const ctrl = event.ctrlKey || event.metaKey;
 
-        const currentCell: CellPosition = this.mouseEventService.getCellPositionForEvent(event);
+        const currentCell: CellPosition | null = this.mouseEventService.getCellPositionForEvent(event);
         if (!currentCell) { return false; }
 
         let processed = false;
@@ -107,74 +119,9 @@ export class NavigationService extends BeanStub {
         this.timeLastPageEventProcessed = new Date().getTime();
     }
 
-    private onPageDown(gridCell: CellPosition): void {
-        if (this.isTimeSinceLastPageEventToRecent()) { return; }
+    private navigateTo(navigateParams: NavigateParams): void {
+        const { scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn } = navigateParams;
 
-        const scrollPosition = this.gridPanel.getVScrollPosition();
-        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
-        let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
-
-        if (this.gridPanel.isHorizontalScrollShowing()) {
-            pixelsInOnePage -= scrollbarWidth;
-        }
-
-        const pagingPixelOffset = this.paginationProxy.getPixelOffset();
-
-        const currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
-        const currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
-        let scrollIndex = currentPageBottomRow;
-
-        const currentCellPixel = this.paginationProxy.getRow(gridCell.rowIndex).rowTop;
-        const nextCellPixel = currentCellPixel + pixelsInOnePage - pagingPixelOffset;
-        let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
-
-        const pageLastRow = this.paginationProxy.getPageLastRow();
-
-        if (focusIndex > pageLastRow) { focusIndex = pageLastRow; }
-        if (scrollIndex > pageLastRow) { scrollIndex = pageLastRow; }
-
-        this.navigateTo(scrollIndex, 'top', null, focusIndex, gridCell.column);
-
-        this.setTimeLastPageEventProcessed();
-    }
-
-    private onPageUp(gridCell: CellPosition): void {
-        if (this.isTimeSinceLastPageEventToRecent()) { return; }
-
-        const scrollPosition = this.gridPanel.getVScrollPosition();
-        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
-        let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
-
-        if (this.gridPanel.isHorizontalScrollShowing()) {
-            pixelsInOnePage -= scrollbarWidth;
-        }
-
-        const pagingPixelOffset = this.paginationProxy.getPixelOffset();
-
-        const currentPageTopPixel = scrollPosition.top;
-        const currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
-        let scrollIndex = currentPageTopRow;
-
-        const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
-        const nextCellPixel = currentRowNode.rowTop + currentRowNode.rowHeight - pixelsInOnePage - pagingPixelOffset;
-        let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
-
-        const firstRow = this.paginationProxy.getPageFirstRow();
-
-        if (focusIndex < firstRow) { focusIndex = firstRow; }
-        if (scrollIndex < firstRow) { scrollIndex = firstRow; }
-
-        this.navigateTo(scrollIndex, 'bottom', null, focusIndex, gridCell.column);
-
-        this.setTimeLastPageEventProcessed();
-    }
-
-    // common logic to navigate. takes parameters:
-    // scrollIndex - what row to vertically scroll to
-    // scrollType - what position to put scroll index ie top/bottom
-    // scrollColumn - what column to horizontally scroll to
-    // focusIndex / focusColumn - for page up / down, we want to scroll to one row/column, but focus another
-    private navigateTo(scrollIndex: number, scrollType: string, scrollColumn: Column, focusIndex: number, focusColumn: Column): void {
         if (exists(scrollColumn)) {
             this.gridPanel.ensureColumnVisible(scrollColumn);
         }
@@ -196,12 +143,107 @@ export class NavigationService extends BeanStub {
         }
     }
 
+    private onPageDown(gridCell: CellPosition): void {
+        if (this.isTimeSinceLastPageEventToRecent()) { return; }
+
+        const scrollPosition = this.gridPanel.getVScrollPosition();
+        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
+        let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
+
+        if (this.gridPanel.isHorizontalScrollShowing()) {
+            pixelsInOnePage -= scrollbarWidth;
+        }
+
+        const pagingPixelOffset = this.paginationProxy.getPixelOffset();
+
+        const currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
+        const currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
+        let scrollIndex = currentPageBottomRow;
+
+        const currentCellPixel = this.paginationProxy.getRow(gridCell.rowIndex)!.rowTop;
+        const nextCellPixel = currentCellPixel! + pixelsInOnePage - pagingPixelOffset;
+        let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
+
+        const pageLastRow = this.paginationProxy.getPageLastRow();
+
+        if (focusIndex > pageLastRow) { focusIndex = pageLastRow; }
+        if (scrollIndex > pageLastRow) { scrollIndex = pageLastRow; }
+
+        this.navigateTo({
+            scrollIndex,
+            scrollType: 'top',
+            scrollColumn: null,
+            focusIndex,
+            focusColumn: gridCell.column
+        });
+
+        this.setTimeLastPageEventProcessed();
+    }
+
+    private onPageUp(gridCell: CellPosition): void {
+        if (this.isTimeSinceLastPageEventToRecent()) { return; }
+
+        const scrollPosition = this.gridPanel.getVScrollPosition();
+        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
+        let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
+
+        if (this.gridPanel.isHorizontalScrollShowing()) {
+            pixelsInOnePage -= scrollbarWidth;
+        }
+
+        const pagingPixelOffset = this.paginationProxy.getPixelOffset();
+
+        const currentPageTopPixel = scrollPosition.top;
+        const currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
+        let scrollIndex = currentPageTopRow;
+
+        const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex)!;
+        const nextCellPixel = currentRowNode.rowTop! + currentRowNode.rowHeight! - pixelsInOnePage - pagingPixelOffset;
+        let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
+
+        const firstRow = this.paginationProxy.getPageFirstRow();
+
+        if (focusIndex < firstRow) { focusIndex = firstRow; }
+        if (scrollIndex < firstRow) { scrollIndex = firstRow; }
+
+        this.navigateTo({
+            scrollIndex,
+            scrollType: 'bottom',
+            scrollColumn: null,
+            focusIndex,
+            focusColumn: gridCell.column
+        });
+
+        this.setTimeLastPageEventProcessed();
+    }
+
+    private getIndexToFocus(indexToScrollTo: number, isDown: boolean) {
+        let indexToFocus = indexToScrollTo;
+
+        // for SSRM, when user hits ctrl+down, we can end up trying to focus the loading row.
+        // instead we focus the last row with data instead.
+        if (isDown) {
+            const node = this.paginationProxy.getRow(indexToScrollTo);
+            if (node && node.stub) {
+                indexToFocus -= 1;
+            }
+        }
+
+        return indexToFocus;
+    }
+
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
     private onCtrlUpOrDown(key: number, gridCell: CellPosition): void {
         const upKey = key === KeyCode.UP;
-        const rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
+        const rowIndexToScrollTo = upKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
-        this.navigateTo(rowIndexToScrollTo, null, gridCell.column, rowIndexToScrollTo, gridCell.column);
+        this.navigateTo({
+            scrollIndex: rowIndexToScrollTo,
+            scrollType: null,
+            scrollColumn: gridCell.column,
+            focusIndex: this.getIndexToFocus(rowIndexToScrollTo, !upKey),
+            focusColumn: gridCell.column
+        });
     }
 
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
@@ -210,7 +252,13 @@ export class NavigationService extends BeanStub {
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
         const columnToSelect: Column = leftKey ? allColumns[0] : last(allColumns);
 
-        this.navigateTo(gridCell.rowIndex, null, columnToSelect, gridCell.rowIndex, columnToSelect);
+        this.navigateTo({
+            scrollIndex: gridCell.rowIndex,
+            scrollType: null,
+            scrollColumn: columnToSelect,
+            focusIndex: gridCell.rowIndex,
+            focusColumn: columnToSelect
+        });
     }
 
     // home brings focus to top left cell, end brings focus to bottom right, grid scrolled to bring
@@ -219,8 +267,14 @@ export class NavigationService extends BeanStub {
         const homeKey = key === KeyCode.PAGE_HOME;
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
         const columnToSelect = homeKey ? allColumns[0] : last(allColumns);
-        const rowIndexToScrollTo = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
+        const scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
-        this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);
+        this.navigateTo({
+            scrollIndex: scrollIndex,
+            scrollType: null,
+            scrollColumn: columnToSelect,
+            focusIndex: this.getIndexToFocus(scrollIndex, !homeKey),
+            focusColumn: columnToSelect
+        });
     }
 }

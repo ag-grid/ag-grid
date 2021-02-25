@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -142,7 +142,7 @@ var AlignedGridsService = /** @class */ (function (_super) {
                 case Events.EVENT_COLUMN_PIVOT_CHANGED:
                     // we cannot support pivoting with aligned grids as the columns will be out of sync as the
                     // grids will have columns created based on the row data of the grid.
-                    console.warn('ag-Grid: pivoting is not supported with aligned grids. ' +
+                    console.warn('AG Grid: pivoting is not supported with aligned grids. ' +
                         'You can only use one of these features at a time in a grid.');
                     break;
             }
@@ -151,7 +151,7 @@ var AlignedGridsService = /** @class */ (function (_super) {
     AlignedGridsService.prototype.processGroupOpenedEvent = function (groupOpenedEvent) {
         // likewise for column group
         var masterColumnGroup = groupOpenedEvent.columnGroup;
-        var otherColumnGroup;
+        var otherColumnGroup = null;
         if (masterColumnGroup) {
             var groupId = masterColumnGroup.getGroupId();
             otherColumnGroup = this.columnController.getOriginalColumnGroup(groupId);
@@ -167,7 +167,7 @@ var AlignedGridsService = /** @class */ (function (_super) {
         // the column in the event is from the master grid. need to
         // look up the equivalent from this (other) grid
         var masterColumn = colEvent.column;
-        var otherColumn;
+        var otherColumn = null;
         if (masterColumn) {
             otherColumn = this.columnController.getPrimaryColumn(masterColumn.getColId());
         }
@@ -178,7 +178,6 @@ var AlignedGridsService = /** @class */ (function (_super) {
         }
         // in time, all the methods below should use the column ids, it's a more generic way
         // of handling columns, and also allows for single or multi column events
-        var columnIds = this.getColumnIds(colEvent);
         var masterColumns = this.getMasterColumns(colEvent);
         switch (colEvent.type) {
             case Events.EVENT_COLUMN_MOVED:
@@ -225,9 +224,13 @@ var AlignedGridsService = /** @class */ (function (_super) {
         }
         var isVerticalScrollShowing = this.gridPanel.isVerticalScrollShowing();
         var alignedGrids = this.gridOptionsWrapper.getAlignedGrids();
-        alignedGrids.forEach(function (grid) {
-            grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
-        });
+        if (alignedGrids) {
+            alignedGrids.forEach(function (grid) {
+                if (grid.api) {
+                    grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
+                }
+            });
+        }
     };
     __decorate([
         Autowired('columnController')

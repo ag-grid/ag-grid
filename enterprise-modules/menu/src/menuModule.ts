@@ -11,4 +11,3 @@ export const MenuModule: Module = {
         EnterpriseCoreModule
     ]
 };
-

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgAbstractField } from "./agAbstractField";
@@ -16,7 +16,7 @@ export declare abstract class AgPickerField<TElement extends HTMLElement, TValue
     protected readonly eWrapper: HTMLElement;
     protected readonly eDisplayField: TElement;
     private readonly eIcon;
-    constructor(config?: IAgLabel, className?: string, pickerIcon?: string, popupRole?: string);
+    constructor(config?: IAgLabel, className?: string, pickerIcon?: string | undefined, popupRole?: string);
     protected postConstruct(): void;
     protected refreshLabel(): void;
     setAriaLabel(label: string): this;

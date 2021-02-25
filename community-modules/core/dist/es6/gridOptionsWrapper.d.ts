@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from './entities/rowNode';
@@ -54,7 +54,7 @@ export declare class GridOptionsWrapper {
     private checkGridOptionsProperties;
     private checkProperties;
     getDomDataKey(): string;
-    getDomData(element: Node, key: string): any;
+    getDomData(element: Node | null, key: string): any;
     setDomData(element: Element, key: string, value: any): any;
     isRowSelection(): boolean;
     isSuppressRowDeselection(): boolean;
@@ -111,6 +111,7 @@ export declare class GridOptionsWrapper {
     isSuppressHorizontalScroll(): boolean;
     isSuppressMaxRenderedRowRestriction(): boolean;
     isExcludeChildrenWhenTreeDataFiltering(): boolean;
+    isAlwaysShowHorizontalScroll(): boolean;
     isAlwaysShowVerticalScroll(): boolean;
     isDebounceVerticalScrollbar(): boolean;
     isSuppressLoadingOverlay(): boolean;
@@ -128,7 +129,7 @@ export declare class GridOptionsWrapper {
     isEnterMovesDownAfterEdit(): boolean;
     isEnterMovesDown(): boolean;
     isUndoRedoCellEditing(): boolean;
-    getUndoRedoCellEditingLimit(): number;
+    getUndoRedoCellEditingLimit(): number | undefined;
     getRowStyle(): any;
     getRowClass(): string | string[];
     getRowStyleFunc(): Function;
@@ -144,12 +145,13 @@ export declare class GridOptionsWrapper {
     getPostProcessPopupFunc(): ((params: PostProcessPopupParams) => void) | undefined;
     getPaginationNumberFormatterFunc(): ((params: PaginationNumberFormatterParams) => string) | undefined;
     getChildCountFunc(): (dataItem: any) => number;
+    getIsApplyServerSideTransactionFunc(): IsApplyServerSideTransaction | undefined;
     getDefaultGroupSortComparator(): (nodeA: RowNode, nodeB: RowNode) => number;
     getIsFullWidthCellFunc(): ((rowNode: RowNode) => boolean) | undefined;
     getFullWidthCellRendererParams(): any;
     isEmbedFullWidthRows(): boolean;
     isDetailRowAutoHeight(): boolean;
-    getSuppressKeyboardEventFunc(): (params: SuppressKeyboardEventParams) => boolean;
+    getSuppressKeyboardEventFunc(): ((params: SuppressKeyboardEventParams) => boolean) | undefined;
     getBusinessKeyForNodeFunc(): (node: RowNode) => string;
     getApi(): GridApi | undefined | null;
     getColumnApi(): ColumnApi | undefined | null;
@@ -161,7 +163,7 @@ export declare class GridOptionsWrapper {
     isSuppressClickEdit(): boolean;
     isStopEditingWhenGridLosesFocus(): boolean;
     getGroupDefaultExpanded(): number | undefined;
-    getMaxConcurrentDatasourceRequests(): number;
+    getMaxConcurrentDatasourceRequests(): number | undefined;
     getMaxBlocksInCache(): number | undefined;
     getCacheOverflowSize(): number | undefined;
     getPaginationPageSize(): number | undefined;
@@ -184,7 +186,7 @@ export declare class GridOptionsWrapper {
         [key: string]: ColDef;
     } | undefined;
     getDatasource(): IDatasource | undefined;
-    getViewportDatasource(): IViewportDatasource;
+    getViewportDatasource(): IViewportDatasource | undefined;
     getServerSideDatasource(): IServerSideDatasource | undefined;
     isAccentedSort(): boolean;
     isEnableBrowserTooltips(): boolean;
@@ -202,7 +204,7 @@ export declare class GridOptionsWrapper {
     isSuppressLastEmptyLineOnPaste(): boolean;
     isPagination(): boolean;
     isSuppressEnterpriseResetOnNewColumns(): boolean;
-    getProcessDataFromClipboardFunc(): ((params: ProcessDataFromClipboardParams) => string[][]) | undefined;
+    getProcessDataFromClipboardFunc(): ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined;
     getAsyncTransactionWaitMillis(): number | undefined;
     isSuppressMovableColumns(): boolean;
     isAnimateRows(): boolean;
@@ -227,7 +229,7 @@ export declare class GridOptionsWrapper {
     getAlignedGrids(): GridOptions[] | undefined;
     isMasterDetail(): boolean;
     isKeepDetailRows(): boolean;
-    getKeepDetailRowsCount(): number;
+    getKeepDetailRowsCount(): number | undefined;
     getIsRowMasterFunc(): IsRowMaster | undefined;
     getIsRowSelectableFunc(): IsRowSelectable | undefined;
     getGroupRowRendererParams(): any;
@@ -272,7 +274,7 @@ export declare class GridOptionsWrapper {
     getProcessCellForClipboardFunc(): ((params: ProcessCellForExportParams) => any) | undefined;
     getProcessHeaderForClipboardFunc(): ((params: ProcessHeaderForExportParams) => any) | undefined;
     getProcessCellFromClipboardFunc(): ((params: ProcessCellForExportParams) => any) | undefined;
-    getViewportRowModelPageSize(): number;
+    getViewportRowModelPageSize(): number | undefined;
     getViewportRowModelBufferSize(): number;
     isServerSideSortingAlwaysResets(): boolean;
     isServerSideFilteringAlwaysResets(): boolean;
@@ -283,7 +285,7 @@ export declare class GridOptionsWrapper {
         [name: string]: AgChartTheme;
     } | undefined;
     getChartThemes(): string[];
-    getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions<any>;
+    getProcessChartOptionsFunc(): ((params: ProcessChartOptionsParams) => ChartOptions<any>) | undefined;
     getClipboardDeliminator(): string;
     setProperty(key: string, value: any, force?: boolean): void;
     addLayoutElement(element: HTMLElement): void;
@@ -292,15 +294,16 @@ export declare class GridOptionsWrapper {
     removeEventListener(key: string, listener: Function): void;
     isSkipHeaderOnAutoSize(): boolean;
     getAutoSizePadding(): number;
-    getHeaderHeight(): number;
-    getFloatingFiltersHeight(): number;
-    getGroupHeaderHeight(): number;
-    getPivotHeaderHeight(): number;
-    getPivotGroupHeaderHeight(): number;
+    getHeaderHeight(): number | null | undefined;
+    getFloatingFiltersHeight(): number | null | undefined;
+    getGroupHeaderHeight(): number | null | undefined;
+    getPivotHeaderHeight(): number | null | undefined;
+    getPivotGroupHeaderHeight(): number | null | undefined;
     isExternalFilterPresent(): boolean;
     doesExternalFilterPass(node: RowNode): boolean;
-    getTooltipShowDelay(): number;
+    getTooltipShowDelay(): number | null;
     isTooltipMouseTrack(): boolean;
+    isSuppressModelUpdateAfterUpdateTransaction(): boolean;
     getDocument(): Document;
     getMinColWidth(): number;
     getMaxColWidth(): number;
@@ -315,7 +318,7 @@ export declare class GridOptionsWrapper {
     globalEventHandler(eventName: string, event?: any): void;
     getRowHeightAsNumber(): number;
     getRowHeightForNode(rowNode: RowNode, allowEstimate?: boolean): {
-        height: number;
+        height: number | null | undefined;
         estimated: boolean;
     };
     isDynamicRowHeight(): boolean;

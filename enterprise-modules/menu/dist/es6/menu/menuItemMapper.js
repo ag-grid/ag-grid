@@ -67,19 +67,19 @@ var MenuItemMapper = /** @class */ (function (_super) {
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
                     action: function () { return _this.columnController.setColumnPinned(column, Constants.PINNED_LEFT, "contextMenu"); },
-                    checked: column.isPinnedLeft()
+                    checked: !!column && column.isPinnedLeft()
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
                     action: function () { return _this.columnController.setColumnPinned(column, Constants.PINNED_RIGHT, "contextMenu"); },
-                    checked: column.isPinnedRight()
+                    checked: !!column && column.isPinnedRight()
                 };
             case 'clearPinned':
                 return {
                     name: localeTextFunc('noPin', 'No Pin'),
                     action: function () { return _this.columnController.setColumnPinned(column, null, "contextMenu"); },
-                    checked: !column.isPinned()
+                    checked: !!column && !column.isPinned()
                 };
             case 'valueAggSubMenu':
                 if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Aggregation from Menu')) {
@@ -117,7 +117,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: function () { return _this.columnController.resetColumnState(false, "contextMenu"); }
+                    action: function () { return _this.columnController.resetColumnState("contextMenu"); }
                 };
             case 'expandAll':
                 return {
@@ -209,7 +209,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return chartMenuItem;
                 }
                 else {
-                    console.warn("ag-Grid: unknown menu item type " + key);
+                    console.warn("AG Grid: unknown menu item type " + key);
                     return null;
                 }
         }

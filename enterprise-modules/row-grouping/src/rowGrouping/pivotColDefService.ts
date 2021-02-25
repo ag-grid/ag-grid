@@ -60,20 +60,20 @@ export class PivotColDefService extends BeanStub {
     // @index - how far the column is from the top (also same as pivotKeys.length)
     // @uniqueValues - the values for which we should create a col for
     // @pivotKeys - the keys for the pivot, eg if pivoting on {Language,Country} then could be {English,Ireland}
-    private recursivelyAddGroup(parentChildren: (ColGroupDef | ColDef)[],
-                                pivotColumnDefs: ColDef[],
-                                index: number,
-                                uniqueValues: any,
-                                pivotKeys: string[],
-                                columnIdSequence: NumberSequence,
-                                levelsDeep: number,
-                                primaryPivotColumns: Column[]): void {
-
+    private recursivelyAddGroup(
+        parentChildren: (ColGroupDef | ColDef)[],
+        pivotColumnDefs: ColDef[],
+        index: number,
+        uniqueValues: any,
+        pivotKeys: string[],
+        columnIdSequence: NumberSequence,
+        levelsDeep: number,
+        primaryPivotColumns: Column[]
+    ): void {
         _.iterateObject(uniqueValues, (key: string, value: any) => {
-
             const newPivotKeys = [...pivotKeys, key];
-
             const createGroup = index !== levelsDeep;
+
             if (createGroup) {
                 const groupDef: ColGroupDef = {
                     children: [],
@@ -84,7 +84,6 @@ export class PivotColDefService extends BeanStub {
                 };
 
                 parentChildren.push(groupDef);
-
                 this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index + 1, value, newPivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns);
             } else {
                 const measureColumns = this.columnController.getValueColumns();
@@ -116,40 +115,45 @@ export class PivotColDefService extends BeanStub {
             }
         });
         // sort by either user provided comparator, or our own one
-        const colDef = primaryPivotColumns[index - 1].getColDef();
-        const userComparator = colDef.pivotComparator;
+        const primaryPivotColumnDefs = primaryPivotColumns[index - 1].getColDef();
+        const userComparator = primaryPivotColumnDefs.pivotComparator;
         const comparator = this.headerNameComparator.bind(this, userComparator);
 
         parentChildren.sort(comparator);
     }
 
-    private addExpandablePivotGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
-                                      pivotColumnDefs: ColDef[],
-                                      columnIdSequence: NumberSequence) {
-
-        if (this.gridOptionsWrapper.isSuppressExpandablePivotGroups() || this.gridOptionsWrapper.getPivotColumnGroupTotals()) {
+    private addExpandablePivotGroups(
+        pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
+        pivotColumnDefs: ColDef[],
+        columnIdSequence: NumberSequence
+    ) {
+        if (
+            this.gridOptionsWrapper.isSuppressExpandablePivotGroups() ||
+            this.gridOptionsWrapper.getPivotColumnGroupTotals()
+        ) {
             return;
         }
 
-        const recursivelyAddSubTotals = (groupDef: (ColGroupDef | ColDef),
-                                         pivotColumnDefs: ColDef[],
-                                         columnIdSequence: NumberSequence,
-                                         acc: Map<string, string[]>) => {
-
+        const recursivelyAddSubTotals = (
+            groupDef: (ColGroupDef | ColDef),
+            currentPivotColumnDefs: ColDef[],
+            currentColumnIdSequence: NumberSequence,
+            acc: Map<string, string[]>
+        ) => {
             const group = groupDef as ColGroupDef;
 
             if (group.children) {
                 const childAcc = new Map();
 
                 group.children.forEach((grp: ColDef | ColGroupDef) => {
-                    recursivelyAddSubTotals(grp, pivotColumnDefs, columnIdSequence, childAcc);
+                    recursivelyAddSubTotals(grp, currentPivotColumnDefs, currentColumnIdSequence, childAcc);
                 });
 
                 const firstGroup = !group.children.some(child => (child as ColGroupDef).children);
 
                 this.columnController.getValueColumns().forEach(valueColumn => {
                     const columnName: string | null = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
-                    const totalColDef = this.createColDef(valueColumn, columnName, groupDef.pivotKeys, columnIdSequence);
+                    const totalColDef = this.createColDef(valueColumn, columnName, groupDef.pivotKeys, currentColumnIdSequence);
                     totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.getColId());
 
                     totalColDef.columnGroupShow = 'closed';
@@ -160,7 +164,7 @@ export class PivotColDefService extends BeanStub {
                         // add total colDef to group and pivot colDefs array
                         const children = (groupDef as ColGroupDef).children;
                         children.push(totalColDef);
-                        pivotColumnDefs.push(totalColDef);
+                        currentPivotColumnDefs.push(totalColDef);
                     }
                 });
 
@@ -170,13 +174,13 @@ export class PivotColDefService extends BeanStub {
                 const def: ColDef = groupDef as ColDef;
 
                 // check that value column exists, i.e. aggFunc is supplied
-                if (!def.pivotValueColumn) return;
+                if (!def.pivotValueColumn) { return; }
 
                 const pivotValueColId = def.pivotValueColumn.getColId();
 
                 const arr = acc.has(pivotValueColId) ? acc.get(pivotValueColId) : [];
-                arr.push(def.colId);
-                acc.set(pivotValueColId, arr);
+                arr!.push(def.colId!);
+                acc.set(pivotValueColId, arr!);
             }
         };
 
@@ -198,7 +202,7 @@ export class PivotColDefService extends BeanStub {
 
         // don't add pivot totals if there is less than 1 aggFunc or they are not all the same
         if (!aggFuncs || aggFuncs.length < 1 || !this.sameAggFuncs(aggFuncs)) {
-            // console.warn('ag-Grid: aborting adding pivot total columns - value columns require same aggFunc');
+            // console.warn('AG Grid: aborting adding pivot total columns - value columns require same aggFunc');
             return;
         }
 
@@ -376,18 +380,20 @@ export class PivotColDefService extends BeanStub {
 
             if (a.headerName < b.headerName) {
                 return -1;
-            } else if (a.headerName > b.headerName) {
-                return 1;
-            } else {
-                return 0;
             }
+
+            if (a.headerName > b.headerName) {
+                return 1;
+            }
+
+            return 0;
         }
     }
 
     private merge(m1: Map<string, string[]>, m2: Map<any, any>) {
         m2.forEach((value, key, map) => {
             const existingList = m1.has(key) ? m1.get(key) : [];
-            const updatedList = [...existingList, ...value];
+            const updatedList = [...existingList!, ...value];
             m1.set(key, updatedList);
         });
     }

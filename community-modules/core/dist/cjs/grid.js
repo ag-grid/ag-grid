@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -91,14 +91,16 @@ var generic_1 = require("./utils/generic");
 var object_1 = require("./utils/object");
 var columnDefFactory_1 = require("./columnController/columnDefFactory");
 var rowCssClassCalculator_1 = require("./rendering/row/rowCssClassCalculator");
+var rowNodeBlockLoader_1 = require("./rowNodeCache/rowNodeBlockLoader");
+var rowNodeSorter_1 = require("./rowNodes/rowNodeSorter");
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
-            console.error('ag-Grid: no div element provided to the grid');
+            console.error('AG Grid: no div element provided to the grid');
             return;
         }
         if (!gridOptions) {
-            console.error('ag-Grid: no gridOptions provided to the grid');
+            console.error('AG Grid: no gridOptions provided to the grid');
             return;
         }
         var debug = !!gridOptions.debug;
@@ -114,7 +116,7 @@ var Grid = /** @class */ (function () {
             beanClasses: beanClasses,
             debug: debug
         };
-        this.logger = new logger_1.Logger('ag-Grid', function () { return gridOptions.debug; });
+        this.logger = new logger_1.Logger('AG Grid', function () { return gridOptions.debug; });
         var contextLogger = new logger_1.Logger('Context', function () { return contextParams.debug; });
         this.context = new context_1.Context(contextParams, contextLogger);
         this.registerModuleUserComponents(registeredModules);
@@ -138,17 +140,17 @@ var Grid = /** @class */ (function () {
         var allModules = [];
         var mapNames = {};
         // adds to list and removes duplicates
-        function addModule(moduleBased, module) {
-            function addIndividualModule(module) {
-                if (!mapNames[module.moduleName]) {
-                    mapNames[module.moduleName] = true;
-                    allModules.push(module);
-                    moduleRegistry_1.ModuleRegistry.register(module, moduleBased);
+        function addModule(moduleBased, mod) {
+            function addIndividualModule(currentModule) {
+                if (!mapNames[currentModule.moduleName]) {
+                    mapNames[currentModule.moduleName] = true;
+                    allModules.push(currentModule);
+                    moduleRegistry_1.ModuleRegistry.register(currentModule, moduleBased);
                 }
             }
-            addIndividualModule(module);
-            if (module.dependantModules) {
-                module.dependantModules.forEach(addModule.bind(null, moduleBased));
+            addIndividualModule(mod);
+            if (mod.dependantModules) {
+                mod.dependantModules.forEach(addModule.bind(null, moduleBased));
             }
         }
         if (passedViaConstructor) {
@@ -230,7 +232,7 @@ var Grid = /** @class */ (function () {
             stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService, sortController_1.SortController, columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService,
             selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService, changeDetectionService_1.ChangeDetectionService, animationFrameService_1.AnimationFrameService,
             detailRowCompCache_1.DetailRowCompCache, undoRedoService_1.UndoRedoService, agStackComponentsRegistry_1.AgStackComponentsRegistry, columnDefFactory_1.ColumnDefFactory,
-            rowCssClassCalculator_1.RowCssClassCalculator
+            rowCssClassCalculator_1.RowCssClassCalculator, rowNodeBlockLoader_1.RowNodeBlockLoader, rowNodeSorter_1.RowNodeSorter
         ];
         var moduleBeans = this.extractModuleEntity(registeredModules, function (module) { return module.beans ? module.beans : []; });
         beans.push.apply(beans, moduleBeans);
@@ -281,17 +283,17 @@ var Grid = /** @class */ (function () {
             return rowModelClass;
         }
         if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_INFINITE) {
-            console.error("ag-Grid: Row Model \"Infinite\" not found. Please ensure the " + moduleNames_1.ModuleNames.InfiniteRowModelModule + " is registered.';");
+            console.error("AG Grid: Row Model \"Infinite\" not found. Please ensure the " + moduleNames_1.ModuleNames.InfiniteRowModelModule + " is registered.';");
         }
-        console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
+        console.error('AG Grid: could not find matching row model for rowModelType ' + rowModelType);
         if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_VIEWPORT) {
-            console.error("ag-Grid: Row Model \"Viewport\" not found. Please ensure the ag-Grid Enterprise Module " + moduleNames_1.ModuleNames.ViewportRowModelModule + " is registered.';");
+            console.error("AG Grid: Row Model \"Viewport\" not found. Please ensure the AG Grid Enterprise Module " + moduleNames_1.ModuleNames.ViewportRowModelModule + " is registered.';");
         }
         if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-            console.error("ag-Grid: Row Model \"Server Side\" not found. Please ensure the ag-Grid Enterprise Module " + moduleNames_1.ModuleNames.ServerSideRowModelModule + " is registered.';");
+            console.error("AG Grid: Row Model \"Server Side\" not found. Please ensure the AG Grid Enterprise Module " + moduleNames_1.ModuleNames.ServerSideRowModelModule + " is registered.';");
         }
         if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.error("ag-Grid: Row Model \"Client Side\" not found. Please ensure the " + moduleNames_1.ModuleNames.ClientSideRowModelModule + " is registered.';");
+            console.error("AG Grid: Row Model \"Client Side\" not found. Please ensure the " + moduleNames_1.ModuleNames.ClientSideRowModelModule + " is registered.';");
         }
     };
     Grid.prototype.destroy = function () {

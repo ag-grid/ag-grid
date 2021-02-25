@@ -70,4 +70,3 @@ export class XmlFactory extends BeanStub {
     }
 
 }
-

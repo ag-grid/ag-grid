@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -98,7 +98,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
      * It takes
      *  @param definitionObject: This is the context for which this component needs to be created, it can be gridOptions
      *      (global) or columnDef mostly.
-     *  @param paramsFromGrid: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
+     *  @param paramsFromGrid: Params to be passed to the component and passed by AG Grid. This will get merged with any params
      *      specified by the user in the configuration
      *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
      *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
@@ -127,9 +127,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         if (deferredInit == null) {
             return utils_1.AgPromise.resolve(componentInstance);
         }
-        else {
-            return deferredInit.then(function () { return componentInstance; });
-        }
+        return deferredInit.then(function () { return componentInstance; });
     };
     UserComponentFactory.prototype.addReactHacks = function (params) {
         // a temporary fix for AG-1574
@@ -148,7 +146,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
      *  @param clazz: The class to instantiate,
-     *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
+     *  @param agGridParams: Params to be passed to the component and passed by AG Grid. This will get merged with any params
      *      specified by the user in the configuration
      *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
@@ -189,7 +187,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         var HardcodedJsComponent = null;
         var hardcodedJsFunction = null;
         var HardcodedFwComponent = null;
-        var componentSelectorFunc;
+        var componentSelectorFunc = null;
         if (definitionObject != null) {
             var componentPropertyValue = definitionObject[propertyName];
             // for filters only, we allow 'true' for the component, which means default filter to be used
@@ -320,7 +318,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
      *      (global) or columnDef mostly.
      *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
      *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param paramsFromGrid: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
+     *  @param paramsFromGrid: Params to be passed to the component and passed by AG Grid. This will get merged with any params
      *      specified by the user in the configuration
      * @returns {TParams} It merges the user agGridParams with the actual params specified by the user.
      */

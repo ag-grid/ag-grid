@@ -24,6 +24,7 @@ import { ColumnGroup } from "./entities/columnGroup";
 import { Column } from "./entities/column";
 import { addCssClass, removeCssClass, isVisible } from "./utils/dom";
 import { findIndex, last } from "./utils/array";
+import { FocusController } from "./focusController";
 
 export class GridCore extends ManagedFocusComponent {
 
@@ -103,11 +104,11 @@ export class GridCore extends ManagedFocusComponent {
         const eGui = this.getGui();
 
         this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, () => {
-            addCssClass(eGui, 'ag-keyboard-focus');
+            addCssClass(eGui, FocusController.AG_KEYBOARD_FOCUS);
         });
 
         this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, () => {
-            removeCssClass(eGui, 'ag-keyboard-focus');
+            removeCssClass(eGui, FocusController.AG_KEYBOARD_FOCUS);
         });
 
         super.postConstruct();
@@ -128,7 +129,7 @@ export class GridCore extends ManagedFocusComponent {
         const statusBar = statusBarModuleLoaded ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
         const watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
 
-        const template =
+        const template = /* html */
             `<div ref="eRootWrapper" class="ag-root-wrapper">
                 ${dropZones}
                 <div class="ag-root-wrapper-body" ref="rootWrapperBody">
@@ -194,7 +195,7 @@ export class GridCore extends ManagedFocusComponent {
         if (!firstColumn) { return false; }
 
         if (firstColumn.getParent()) {
-            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0);
+            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0)!;
         }
 
         this.focusController.focusHeaderPosition(
@@ -235,7 +236,7 @@ export class GridCore extends ManagedFocusComponent {
     public setSideBarVisible(show: boolean) {
         if (!this.sideBarComp) {
             if (show) {
-                console.warn('ag-Grid: sideBar is not loaded');
+                console.warn('AG Grid: sideBar is not loaded');
             }
             return;
         }
@@ -245,7 +246,7 @@ export class GridCore extends ManagedFocusComponent {
 
     public setSideBarPosition(position: 'left' | 'right') {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: sideBar is not loaded');
+            console.warn('AG Grid: sideBar is not loaded');
             return;
         }
         this.sideBarComp.setSideBarPosition(position);
@@ -253,7 +254,7 @@ export class GridCore extends ManagedFocusComponent {
 
     public closeToolPanel() {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
             return;
         }
 
@@ -266,7 +267,7 @@ export class GridCore extends ManagedFocusComponent {
 
     public getToolPanelInstance(key: string): IToolPanel | undefined {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
             return;
         }
         return this.sideBarComp.getToolPanelInstance(key);
@@ -286,7 +287,7 @@ export class GridCore extends ManagedFocusComponent {
         this.eRootWrapperBody.appendChild(this.sideBarComp.getGui());
     }
 
-    public getOpenedToolPanel(): string {
+    public getOpenedToolPanel(): string | null {
         if (!this.sideBarComp) {
             return null;
         }
@@ -296,7 +297,7 @@ export class GridCore extends ManagedFocusComponent {
 
     public openToolPanel(key: string) {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
             return;
         }
 
@@ -331,7 +332,7 @@ export class GridCore extends ManagedFocusComponent {
                 }
             } else {
                 // check object equality against node and data
-                if (comparator === node || comparator === node.data) {
+                if (comparator === node || comparator === node!.data) {
                     indexToSelect = i;
                     break;
                 }

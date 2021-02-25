@@ -1,13 +1,15 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Beans } from "../beans";
 import { CellComp } from "../cellComp";
 import { RowNode } from "../../entities/rowNode";
 import { Column } from "../../entities/column";
+import { CellFocusedEvent } from "../../events";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { Component } from "../../widgets/component";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
+import { RowPosition } from "../../entities/rowPosition";
 export declare class RowComp extends Component {
     static DOM_DATA_KEY_RENDERED_ROW: string;
     private static FULL_WIDTH_CELL_RENDERER;
@@ -66,7 +68,7 @@ export declare class RowComp extends Component {
     init(): void;
     private setupAngular1Scope;
     private createTemplate;
-    getCellForCol(column: Column): HTMLElement;
+    getCellForCol(column: Column): HTMLElement | null;
     afterFlush(): void;
     private executeProcessRowPostCreateFunc;
     private getInitialRowTopStyle;
@@ -96,6 +98,11 @@ export declare class RowComp extends Component {
     private getContainerForCell;
     private onVirtualColumnsChanged;
     private onColumnResized;
+    getRowPosition(): RowPosition;
+    onKeyboardNavigate(keyboardEvent: KeyboardEvent): void;
+    onTabKeyDown(keyboardEvent: KeyboardEvent): void;
+    onFullWidthRowFocused(event: CellFocusedEvent): void;
+    refreshCell(cellComp: CellComp): void;
     private refreshCells;
     private refreshCellsInAnimationFrame;
     private onColumnMoved;
@@ -152,7 +159,7 @@ export declare class RowComp extends Component {
     private setRowTop;
     getAndClearNextVMTurnFunctions(): Function[];
     getRowNode(): RowNode;
-    getRenderedCellForColumn(column: Column): CellComp | undefined;
+    getRenderedCellForColumn(column: Column): CellComp | null;
     private onRowIndexChanged;
     private updateRowIndexes;
     ensureDomOrder(): void;

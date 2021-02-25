@@ -23,8 +23,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var serverSideCache_1 = require("./serverSideCache");
-var serverSideBlock_1 = require("./serverSideBlock");
 var ServerSideRowModel = /** @class */ (function (_super) {
     __extends(ServerSideRowModel, _super);
     function ServerSideRowModel() {
@@ -33,11 +31,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         return _this;
     }
     // we don't implement as lazy row heights is not supported in this row model
-    ServerSideRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) { return false; };
-    ServerSideRowModel.prototype.postConstruct = function () {
-        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.addEventListeners();
-    };
+    ServerSideRowModel.prototype.ensureRowHeightsValid = function () { return false; };
     ServerSideRowModel.prototype.start = function () {
         var datasource = this.gridOptionsWrapper.getServerSideDatasource();
         if (datasource) {
@@ -57,11 +51,6 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     ServerSideRowModel.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ServerSideRowModel');
     };
-    ServerSideRowModel.prototype.applyTransaction = function (rowDataTransaction, route) {
-        this.executeOnCache(route, function (cache) {
-            cache.applyTransaction(rowDataTransaction);
-        });
-    };
     ServerSideRowModel.prototype.addEventListeners = function () {
         this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
@@ -74,13 +63,14 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     ServerSideRowModel.prototype.setDatasource = function (datasource) {
         this.destroyDatasource();
         this.datasource = datasource;
-        this.reset();
+        this.resetRootStore();
     };
-    ServerSideRowModel.prototype.isLastRowFound = function () {
-        if (this.cacheExists()) {
-            return this.rootNode.childrenCache.isMaxRowFound();
+    ServerSideRowModel.prototype.isLastRowIndexKnown = function () {
+        var cache = this.getRootStore();
+        if (!cache) {
+            return false;
         }
-        return false;
+        return cache.isLastRowIndexKnown();
     };
     ServerSideRowModel.prototype.onColumnEverything = function () {
         // this is a hack for one customer only, so they can suppress the resetting of the columns.
@@ -91,24 +81,23 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             return;
         }
         // every other customer can continue as normal and have it working!!!
+        // if first time, alwasy reset
+        if (!this.storeParams) {
+            this.resetRootStore();
+            return;
+        }
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
         // it has not, don't reset
-        var resetRequired;
-        if (!this.cacheParams) {
-            resetRequired = true;
-        }
-        else {
-            var rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
-            var valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
-            var pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
-            var sortModelDifferent = !core_1._.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
-            var rowGroupDifferent = !core_1._.jsonEquals(this.cacheParams.rowGroupCols, rowGroupColumnVos);
-            var pivotDifferent = !core_1._.jsonEquals(this.cacheParams.pivotCols, pivotColumnVos);
-            var valuesDifferent = !core_1._.jsonEquals(this.cacheParams.valueCols, valueColumnVos);
-            resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
-        }
+        var rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
+        var valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
+        var pivotColumnVos = this.columnsToValueObjects(this.columnController.getPivotColumns());
+        var sortModelDifferent = !core_1._.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
+        var rowGroupDifferent = !core_1._.jsonEquals(this.storeParams.rowGroupCols, rowGroupColumnVos);
+        var pivotDifferent = !core_1._.jsonEquals(this.storeParams.pivotCols, pivotColumnVos);
+        var valuesDifferent = !core_1._.jsonEquals(this.storeParams.valueCols, valueColumnVos);
+        var resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
         if (resetRequired) {
-            this.reset();
+            this.resetRootStore();
         }
     };
     ServerSideRowModel.prototype.destroyRootStore = function () {
@@ -126,26 +115,11 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         if (!rootStore) {
             return;
         }
-        var shouldAnimate = function () {
-            var rowAnimationEnabled = _this.gridOptionsWrapper.isAnimateRows();
-            if (rowNode.master) {
-                return rowAnimationEnabled && rowNode.expanded;
-            }
-            return rowAnimationEnabled;
-        };
-        this.updateRowIndexesAndBounds();
-        var modelUpdatedEvent = {
-            type: core_1.Events.EVENT_MODEL_UPDATED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            newPage: false,
-            newData: false,
-            animate: shouldAnimate(),
-            keepRenderedRows: true
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
+        rootStore.refreshAfterSort(params);
+        this.onStoreUpdated();
     };
-    ServerSideRowModel.prototype.reset = function () {
+    ServerSideRowModel.prototype.resetRootStore = function () {
+        this.destroyRootStore();
         this.rootNode = new core_1.RowNode();
         this.rootNode.group = true;
         this.rootNode.level = -1;
@@ -165,31 +139,9 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
         // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
         // to treat the rows as new rows, as it's all new data
-        var modelUpdatedEvent = {
-            type: core_1.Events.EVENT_MODEL_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            animate: false,
-            keepRenderedRows: false,
-            newData: false,
-            newPage: false
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
+        this.dispatchModelUpdated(true);
     };
-    ServerSideRowModel.prototype.createNewRowNodeBlockLoader = function () {
-        this.destroyRowNodeBlockLoader();
-        var maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        var blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
-        this.rowNodeBlockLoader = new core_1.RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.createBean(this.rowNodeBlockLoader);
-    };
-    ServerSideRowModel.prototype.destroyRowNodeBlockLoader = function () {
-        if (this.rowNodeBlockLoader) {
-            this.destroyBean(this.rowNodeBlockLoader);
-            this.rowNodeBlockLoader = undefined;
-        }
-    };
-    ServerSideRowModel.prototype.toValueObjects = function (columns) {
+    ServerSideRowModel.prototype.columnsToValueObjects = function (columns) {
         var _this = this;
         return columns.map(function (col) { return ({
             id: col.getId(),
@@ -198,30 +150,11 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             field: col.getColDef().field
         }); });
     };
-    ServerSideRowModel.prototype.createCacheParams = function () {
-        var rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
-        var valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
-        var pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
+    ServerSideRowModel.prototype.createStoreParams = function () {
+        var rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
+        var valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
+        var pivotColumnVos = this.columnsToValueObjects(this.columnController.getPivotColumns());
         var dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
-        var maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
-        if (dynamicRowHeight && maxBlocksInCache >= 0) {
-            console.warn('ag-Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
-                'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
-            maxBlocksInCache = undefined;
-        }
-        if (maxBlocksInCache >= 0 && this.columnController.isAutoRowHeightActive()) {
-            console.warn('ag-Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
-                'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
-            maxBlocksInCache = undefined;
-        }
-        var userProvidedBlockSize = this.gridOptionsWrapper.getCacheBlockSize();
-        var blockSize;
-        if (typeof userProvidedBlockSize == 'number' && userProvidedBlockSize > 0) {
-            blockSize = userProvidedBlockSize;
-        }
-        else {
-            blockSize = serverSideBlock_1.ServerSideBlock.DefaultBlockSize;
-        }
         var params = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
@@ -230,33 +163,25 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             pivotMode: this.columnController.isPivotMode(),
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.extractSortModel(),
-            rowNodeBlockLoader: this.rowNodeBlockLoader,
+            sortModel: this.sortListener.extractSortModel(),
             datasource: this.datasource,
             lastAccessedSequence: new core_1.NumberSequence(),
-            overflowSize: 1,
-            initialRowCount: 1,
-            maxBlocksInCache: maxBlocksInCache,
-            blockSize: blockSize,
-            rowHeight: this.rowHeight,
+            // blockSize: blockSize == null ? 100 : blockSize,
             dynamicRowHeight: dynamicRowHeight
         };
         return params;
     };
-    ServerSideRowModel.prototype.createNodeCache = function (rowNode) {
-        var cache = new serverSideCache_1.ServerSideCache(this.cacheParams, rowNode);
-        this.getContext().createBean(cache);
-        cache.addEventListener(core_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
-        rowNode.childrenCache = cache;
+    ServerSideRowModel.prototype.getParams = function () {
+        return this.storeParams;
     };
-    ServerSideRowModel.prototype.onCacheUpdated = function () {
-        this.updateRowIndexesAndBounds();
+    ServerSideRowModel.prototype.dispatchModelUpdated = function (reset) {
+        if (reset === void 0) { reset = false; }
         var modelUpdatedEvent = {
             type: core_1.Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
-            animate: this.gridOptionsWrapper.isAnimateRows(),
-            keepRenderedRows: true,
+            animate: !reset,
+            keepRenderedRows: !reset,
             newPage: false,
             newData: false
         };
@@ -273,24 +198,14 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     };
     ServerSideRowModel.prototype.onRowHeightChanged = function () {
         this.updateRowIndexesAndBounds();
-        var modelUpdatedEvent = {
-            type: core_1.Events.EVENT_MODEL_UPDATED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            newPage: false,
-            newData: false,
-            animate: true,
-            keepRenderedRows: true
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
+        this.dispatchModelUpdated();
     };
     ServerSideRowModel.prototype.updateRowIndexesAndBounds = function () {
-        if (this.cacheExists()) {
-            // NOTE: should not be casting here, the RowModel should use IServerSideRowModel interface?
-            var serverSideCache = this.rootNode.childrenCache;
-            this.resetRowTops(serverSideCache);
-            this.setDisplayIndexes(serverSideCache);
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
         }
+        rootStore.setDisplayIndexes(new core_1.NumberSequence(), { value: 0 });
     };
     ServerSideRowModel.prototype.retryLoads = function () {
         var rootStore = this.getRootStore();
@@ -335,75 +250,70 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         if (this.rootNode && this.rootNode.childStore) {
             return this.rootNode.childStore;
         }
-        return null;
     };
     ServerSideRowModel.prototype.getRowCount = function () {
-        if (!this.cacheExists()) {
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
             return 1;
         }
-        var serverSideCache = this.rootNode.childrenCache;
-        var res = serverSideCache.getDisplayIndexEnd();
-        return res;
+        return rootStore.getDisplayIndexEnd();
     };
     ServerSideRowModel.prototype.getTopLevelRowCount = function () {
-        if (!this.cacheExists()) {
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
             return 1;
         }
-        var serverSideCache = this.rootNode.childrenCache;
-        return serverSideCache.getVirtualRowCount();
+        return rootStore.getRowCount();
     };
     ServerSideRowModel.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
-        if (!this.cacheExists()) {
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
             return topLevelIndex;
         }
-        var serverSideCache = this.rootNode.childrenCache;
-        return serverSideCache.getTopLevelRowDisplayedIndex(topLevelIndex);
+        return rootStore.getTopLevelRowDisplayedIndex(topLevelIndex);
     };
     ServerSideRowModel.prototype.getRowBounds = function (index) {
-        if (!this.cacheExists()) {
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            var rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
             return {
                 rowTop: 0,
-                rowHeight: this.rowHeight
+                rowHeight: rowHeight
             };
         }
-        var serverSideCache = this.rootNode.childrenCache;
-        return serverSideCache.getRowBounds(index);
+        return rootStore.getRowBounds(index);
     };
     ServerSideRowModel.prototype.getRowIndexAtPixel = function (pixel) {
-        if (pixel === 0) {
+        var rootStore = this.getRootStore();
+        if (pixel <= 0 || !rootStore) {
             return 0;
         }
-        if (!this.cacheExists()) {
-            return 0;
-        }
-        var serverSideCache = this.rootNode.childrenCache;
-        return serverSideCache.getRowIndexAtPixel(pixel);
-    };
-    ServerSideRowModel.prototype.getCurrentPageHeight = function () {
-        return this.rowHeight * this.getRowCount();
+        return rootStore.getRowIndexAtPixel(pixel);
     };
     ServerSideRowModel.prototype.isEmpty = function () {
         return false;
     };
     ServerSideRowModel.prototype.isRowsToRender = function () {
-        return this.cacheExists() && this.getRowCount() > 0;
+        return this.getRootStore() != null && this.getRowCount() > 0;
     };
     ServerSideRowModel.prototype.getType = function () {
         return core_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE;
     };
     ServerSideRowModel.prototype.forEachNode = function (callback) {
-        if (this.cacheExists()) {
-            this.rootNode.childrenCache.forEachNodeDeep(callback);
-        }
-    };
-    ServerSideRowModel.prototype.executeOnCache = function (route, callback) {
-        if (!this.cacheExists()) {
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
             return;
         }
-        var topLevelCache = this.rootNode.childrenCache;
-        var cacheToPurge = topLevelCache.getChildCache(route);
-        if (cacheToPurge) {
-            callback(cacheToPurge);
+        rootStore.forEachNodeDeep(callback);
+    };
+    ServerSideRowModel.prototype.executeOnStore = function (route, callback) {
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
+        }
+        var storeToExecuteOn = rootStore.getChildStore(route);
+        if (storeToExecuteOn) {
+            callback(storeToExecuteOn);
         }
     };
     ServerSideRowModel.prototype.refreshStore = function (params) {
@@ -441,107 +351,6 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         var foundRowNode = this.getRowNode(rowNode.id);
         return !!foundRowNode;
     };
-    ServerSideRowModel.prototype.extractSortModel = function () {
-        var sortModel = this.sortController.getSortModel();
-        // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
-        // into it's constitute group columns as they are not defined up front and can vary per node.
-        if (this.gridOptionsWrapper.isTreeData()) {
-            return sortModel;
-        }
-        var rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
-        // find index of auto group column in sort model
-        var autoGroupIndex = -1;
-        for (var i = 0; i < sortModel.length; ++i) {
-            if (sortModel[i].colId === core_1.Constants.GROUP_AUTO_COLUMN_ID) {
-                autoGroupIndex = i;
-                break;
-            }
-        }
-        // replace auto column with individual group columns
-        if (autoGroupIndex > -1) {
-            var individualGroupCols = rowGroupCols.map(function (group) {
-                return {
-                    colId: group.id,
-                    sort: sortModel[autoGroupIndex].sort
-                };
-            });
-            // remove auto group column
-            sortModel.splice(autoGroupIndex, 1);
-            var _loop_1 = function (i) {
-                var individualGroupCol = individualGroupCols[i];
-                // don't add individual group column if non group column already exists as it gets precedence
-                var sameNonGroupColumnExists = sortModel.some(function (sm) { return sm.colId === individualGroupCol.colId; });
-                if (sameNonGroupColumnExists) {
-                    return "continue";
-                }
-                sortModel.splice(autoGroupIndex++, 0, individualGroupCol);
-            };
-            // insert individual group columns
-            for (var i = 0; i < individualGroupCols.length; i++) {
-                _loop_1(i);
-            }
-        }
-        // strip out multi-column prefix on colId's
-        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
-            var multiColumnPrefix = core_1.Constants.GROUP_AUTO_COLUMN_ID + "-";
-            for (var i = 0; i < sortModel.length; ++i) {
-                if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
-                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
-                }
-            }
-        }
-        return sortModel;
-    };
-    ServerSideRowModel.prototype.isSortingWithValueColumn = function (changedColumnsInSort) {
-        var valueColIds = this.columnController.getValueColumns().map(function (col) { return col.getColId(); });
-        for (var i = 0; i < changedColumnsInSort.length; i++) {
-            if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
-                return true;
-            }
-        }
-        return false;
-    };
-    ServerSideRowModel.prototype.isSortingWithSecondaryColumn = function (changedColumnsInSort) {
-        if (!this.columnController.getSecondaryColumns()) {
-            return false;
-        }
-        var secondaryColIds = this.columnController.getSecondaryColumns().map(function (col) { return col.getColId(); });
-        for (var i = 0; i < changedColumnsInSort.length; i++) {
-            if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
-                return true;
-            }
-        }
-        return false;
-    };
-    ServerSideRowModel.prototype.cacheExists = function () {
-        return core_1._.exists(this.rootNode) && core_1._.exists(this.rootNode.childrenCache);
-    };
-    ServerSideRowModel.prototype.createDetailNode = function (masterNode) {
-        if (core_1._.exists(masterNode.detailNode)) {
-            return masterNode.detailNode;
-        }
-        var detailNode = new core_1.RowNode();
-        this.getContext().createBean(detailNode);
-        detailNode.detail = true;
-        detailNode.selectable = false;
-        detailNode.parent = masterNode;
-        if (core_1._.exists(masterNode.id)) {
-            detailNode.id = 'detail_' + masterNode.id;
-        }
-        detailNode.data = masterNode.data;
-        detailNode.level = masterNode.level + 1;
-        var defaultDetailRowHeight = 200;
-        var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode).height;
-        detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
-        masterNode.detailNode = detailNode;
-        return detailNode;
-    };
-    ServerSideRowModel.prototype.isLoading = function () {
-        return this.rowNodeBlockLoader ? this.rowNodeBlockLoader.isLoading() : false;
-    };
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ServerSideRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnController')
     ], ServerSideRowModel.prototype, "columnController", void 0);
@@ -576,8 +385,11 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         __param(0, core_1.Qualifier('loggerFactory'))
     ], ServerSideRowModel.prototype, "setBeans", null);
     __decorate([
+        core_1.PostConstruct
+    ], ServerSideRowModel.prototype, "addEventListeners", null);
+    __decorate([
         core_1.PreDestroy
-    ], ServerSideRowModel.prototype, "destroyRowNodeBlockLoader", null);
+    ], ServerSideRowModel.prototype, "destroyRootStore", null);
     ServerSideRowModel = __decorate([
         core_1.Bean('rowModel')
     ], ServerSideRowModel);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,7 +39,7 @@ exports.isEventFromPrintableCharacter = isEventFromPrintableCharacter;
  */
 function isUserSuppressingKeyboardEvent(gridOptionsWrapper, keyboardEvent, rowNode, column, editing) {
     var gridOptionsFunc = gridOptionsWrapper.getSuppressKeyboardEventFunc();
-    var colDefFunc = column.getColDef().suppressKeyboardEvent;
+    var colDefFunc = column ? column.getColDef().suppressKeyboardEvent : undefined;
     // if no callbacks provided by user, then do nothing
     if (!gridOptionsFunc && !colDefFunc) {
         return false;

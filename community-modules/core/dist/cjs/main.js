@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -130,6 +130,8 @@ var simpleHttpRequest_1 = require("./misc/simpleHttpRequest");
 exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
 var resizeObserverService_1 = require("./misc/resizeObserverService");
 exports.ResizeObserverService = resizeObserverService_1.ResizeObserverService;
+var animationFrameService_1 = require("./misc/animationFrameService");
+exports.AnimationFrameService = animationFrameService_1.AnimationFrameService;
 var largeTextCellEditor_1 = require("./rendering/cellEditors/largeTextCellEditor");
 exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
 var popupEditorWrapper_1 = require("./rendering/cellEditors/popupEditorWrapper");
@@ -167,16 +169,18 @@ exports.ValueFormatterService = valueFormatterService_1.ValueFormatterService;
 // row models
 var pinnedRowModel_1 = require("./pinnedRowModel/pinnedRowModel");
 exports.PinnedRowModel = pinnedRowModel_1.PinnedRowModel;
+var serverSideTransaction_1 = require("./interfaces/serverSideTransaction");
+exports.ServerSideTransactionResultStatus = serverSideTransaction_1.ServerSideTransactionResultStatus;
 var changedPath_1 = require("./utils/changedPath");
 exports.ChangedPath = changedPath_1.ChangedPath;
-var rowNodeBlock_1 = require("./modules/rowNodeCache/rowNodeBlock");
+var rowNodeBlock_1 = require("./rowNodeCache/rowNodeBlock");
 exports.RowNodeBlock = rowNodeBlock_1.RowNodeBlock;
-var rowNodeBlockLoader_1 = require("./modules/rowNodeCache/rowNodeBlockLoader");
+var rowNodeBlockLoader_1 = require("./rowNodeCache/rowNodeBlockLoader");
 exports.RowNodeBlockLoader = rowNodeBlockLoader_1.RowNodeBlockLoader;
-var rowNodeCache_1 = require("./modules/rowNodeCache/rowNodeCache");
-exports.RowNodeCache = rowNodeCache_1.RowNodeCache;
 var paginationProxy_1 = require("./pagination/paginationProxy");
 exports.PaginationProxy = paginationProxy_1.PaginationProxy;
+var iClientSideRowModel_1 = require("./interfaces/iClientSideRowModel");
+exports.ClientSideRowModelSteps = iClientSideRowModel_1.ClientSideRowModelSteps;
 //styling
 var stylingService_1 = require("./styling/stylingService");
 exports.StylingService = stylingService_1.StylingService;
@@ -256,6 +260,8 @@ var eventService_1 = require("./eventService");
 exports.EventService = eventService_1.EventService;
 var selectableService_1 = require("./rowNodes/selectableService");
 exports.SelectableService = selectableService_1.SelectableService;
+var rowNodeSorter_1 = require("./rowNodes/rowNodeSorter");
+exports.RowNodeSorter = rowNodeSorter_1.RowNodeSorter;
 var gridCore_1 = require("./gridCore");
 exports.GridCore = gridCore_1.GridCore;
 var logger_1 = require("./logger");
@@ -283,6 +289,8 @@ exports.HeaderPositionUtils = headerPosition_1.HeaderPositionUtils;
 var headerNavigationService_1 = require("./headerRendering/header/headerNavigationService");
 exports.HeaderNavigationService = headerNavigationService_1.HeaderNavigationService;
 exports.HeaderNavigationDirection = headerNavigationService_1.HeaderNavigationDirection;
+var gridOptions_1 = require("./entities/gridOptions");
+exports.ServerSideStoreType = gridOptions_1.ServerSideStoreType;
 __export(require("./propertyKeys"));
 var columnApi_1 = require("./columnController/columnApi");
 exports.ColumnApi = columnApi_1.ColumnApi;

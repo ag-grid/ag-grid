@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare function addCssClass(element: HTMLElement, className: string): HTMLElement;
@@ -17,7 +17,7 @@ export declare function isFocusableFormField(element: HTMLElement): boolean;
 export declare function setDisplayed(element: HTMLElement, displayed: boolean): void;
 export declare function setVisible(element: HTMLElement, visible: boolean): void;
 export declare function setDisabled(element: HTMLElement, disabled: boolean): void;
-export declare function isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean;
+export declare function isElementChildOfClass(element: HTMLElement | null, cls: string, maxNest?: number): boolean;
 export declare function getElementSize(el: HTMLElement): {
     height: number;
     width: number;
@@ -55,9 +55,9 @@ export declare function appendHtml(eContainer: HTMLElement, htmlTemplate: string
 export declare function getElementAttribute(element: any, attributeName: string): string | null;
 export declare function offsetHeight(element: HTMLElement): number;
 export declare function offsetWidth(element: HTMLElement): number;
-export declare function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
-export declare function setDomChildOrder(eContainer: HTMLElement, orderedChildren: HTMLElement[]): void;
-export declare function insertTemplateWithDomOrder(eContainer: HTMLElement, htmlTemplate: string, eChildBefore: HTMLElement): HTMLElement;
+export declare function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void;
+export declare function setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTMLElement | null)[]): void;
+export declare function insertTemplateWithDomOrder(eContainer: HTMLElement, htmlTemplate: string, eChildBefore: HTMLElement | null): HTMLElement;
 /** @deprecated */
 export declare function prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
 export declare function addStylesToElement(eElement: any, styles: any): void;
@@ -88,9 +88,9 @@ export declare function isNodeOrElement(o: any): boolean;
  * @param {NodeList} nodeList
  * @returns {Node[]}
  */
-export declare function copyNodeList(nodeList: NodeList): Node[];
+export declare function copyNodeList(nodeList: NodeListOf<Node> | null): Node[];
 export declare function iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
 /** @deprecated */
 export declare function setCheckboxState(eCheckbox: HTMLInputElement, state: any): void;
 export declare function addOrRemoveAttribute(element: HTMLElement, name: string, value: any): void;
-export declare function nodeListForEach<T extends Node>(nodeList: NodeListOf<T>, action: (value: T) => void): void;
+export declare function nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null, action: (value: T) => void): void;

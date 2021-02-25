@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,6 +28,9 @@ var BodyDropPivotTarget = /** @class */ (function () {
             return;
         }
         var dragColumns = draggingEvent.dragItem.columns;
+        if (!dragColumns) {
+            return;
+        }
         dragColumns.forEach(function (column) {
             // we don't allow adding secondary columns
             if (!column.isPrimary()) {
@@ -52,9 +55,7 @@ var BodyDropPivotTarget = /** @class */ (function () {
         if (totalColumns > 0) {
             return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
         }
-        else {
-            return null;
-        }
+        return null;
     };
     /** Callback for when drag leaves */
     BodyDropPivotTarget.prototype.onDragLeave = function (draggingEvent) {

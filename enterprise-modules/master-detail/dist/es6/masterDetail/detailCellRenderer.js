@@ -52,7 +52,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             }, 0);
         }
         else {
-            console.warn('ag-Grid: reference to eDetailGrid was missing from the details template. ' +
+            console.warn('AG Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
         }
         this.addManagedListener(params.node.parent, RowNode.EVENT_DATA_CHANGED, function () {
@@ -89,20 +89,21 @@ var DetailCellRenderer = /** @class */ (function (_super) {
     };
     DetailCellRenderer.prototype.checkForDeprecations = function () {
         if (this.params.suppressRefresh) {
-            console.warn("ag-Grid: as of v23.2.0, cellRendererParams.suppressRefresh for Detail Cell Renderer is no " +
+            console.warn("AG Grid: as of v23.2.0, cellRendererParams.suppressRefresh for Detail Cell Renderer is no " +
                 "longer used. Please set cellRendererParams.refreshStrategy = 'nothing' instead.");
             this.params.refreshStrategy = 'nothing';
         }
     };
     DetailCellRenderer.prototype.ensureValidRefreshStrategy = function () {
         switch (this.params.refreshStrategy) {
-            case 'rows': return;
-            case 'nothing': return;
-            case 'everything': return;
+            case 'rows':
+            case 'nothing':
+            case 'everything':
+                return;
         }
         // check for incorrectly supplied refresh strategy
         if (this.params.refreshStrategy) {
-            console.warn("ag-Grid: invalid cellRendererParams.refreshStrategy = '" + this.params.refreshStrategy +
+            console.warn("AG Grid: invalid cellRendererParams.refreshStrategy = '" + this.params.refreshStrategy +
                 "' supplied, defaulting to refreshStrategy = 'rows'.");
         }
         // use default strategy
@@ -156,7 +157,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
                 this.setTemplate(template);
             }
             else {
-                console.warn('ag-Grid: detailCellRendererParams.template should be function or string');
+                console.warn('AG Grid: detailCellRendererParams.template should be function or string');
                 setDefaultTemplate();
             }
         }
@@ -168,7 +169,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         var _this = this;
         var gridOptions = this.params.detailGridOptions;
         if (_.missing(gridOptions)) {
-            console.warn('ag-Grid: could not find detail grid options for master detail, ' +
+            console.warn('AG Grid: could not find detail grid options for master detail, ' +
                 'please set gridOptions.detailCellRendererParams.detailGridOptions');
         }
         // IMPORTANT - gridOptions must be cloned
@@ -202,7 +203,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         var versionThisCall = this.loadRowDataVersion;
         var userFunc = this.params.getDetailRowData;
         if (!userFunc) {
-            console.warn('ag-Grid: could not find getDetailRowData for master / detail, ' +
+            console.warn('AG Grid: could not find getDetailRowData for master / detail, ' +
                 'please set gridOptions.detailCellRendererParams.getDetailRowData');
             return;
         }

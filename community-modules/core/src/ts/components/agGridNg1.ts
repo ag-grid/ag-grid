@@ -19,7 +19,7 @@ function AngularDirectiveController($element: any, $scope: any, $compile: any, $
     quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
     gridOptions = $scope.$eval(keyOfGridInScope);
     if (!gridOptions) {
-        console.warn("WARNING - grid options for ag-Grid not found. Please ensure the attribute ag-grid points to a valid object on the scope");
+        console.warn("WARNING - grid options for AG Grid not found. Please ensure the attribute ag-grid points to a valid object on the scope");
         return;
     }
 
@@ -29,10 +29,12 @@ function AngularDirectiveController($element: any, $scope: any, $compile: any, $
         $compile: $compile,
         quickFilterOnScope: quickFilterOnScope
     };
-    let grid = new Grid(eGridDiv, gridOptions, gridParams);
+    let grid: Grid | null = new Grid(eGridDiv, gridOptions, gridParams);
 
     $scope.$on("$destroy", function() {
-        grid.destroy();
+        if (grid) {
+            grid.destroy();
+        }
         grid = null;
     });
 }

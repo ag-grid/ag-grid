@@ -14,55 +14,55 @@
         "date": "27th February 2018"
     },
     {
-        "title": "Plunker is now backed by ag-Grid",
+        "title": "Plunker is now backed by AG Grid",
         "link": "../ag-grid-proud-to-support-plunker/",
         "author": "john",
         "date": "17th January 2018",
         "medium": "https://medium.com/ag-grid/plunker-is-now-backed-by-ag-grid-601c17440fca"
     },
     {
-        "title": "Happy New ag-Grid v15.0.0",
+        "title": "Happy New AG Grid v15.0.0",
         "link": "../ag-grid-blog-15-0-0/",
         "author": "sophia",
         "date": "13th December 2017",
         "medium": "https://medium.com/ag-grid/happy-new-ag-grid-v15-0-0-698f3f405069"
     },
     {
-        "title": "Building a CRUD Application with ag-Grid - Part 4",
+        "title": "Building a CRUD Application with AG Grid - Part 4",
         "link": "../ag-grid-datagrid-crud-part-4/",
         "date": "5th December 2017",
         "author": "sean",
         "medium": "https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-4-3189034df922"
     },
     {
-        "title": "Building a CRUD Application with ag-Grid - Part 3",
+        "title": "Building a CRUD Application with AG Grid - Part 3",
         "link": "../ag-grid-datagrid-crud-part-3/",
         "date": "21st November 2017",
         "author": "sean"
     },
     {
-        "title": "What's New in ag-Grid v14.2.0",
+        "title": "What's New in AG Grid v14.2.0",
         "link": "../ag-grid-blog-14-2-0/",
         "date": "14th November 2017",
         "author": "sophia",
         "medium": "https://medium.com/ag-grid/whats-new-in-ag-grid-v14-2-0-6cf06f953109"
     },
     {
-        "title": "Building a CRUD Application with ag-Grid - Part 2",
+        "title": "Building a CRUD Application with AG Grid - Part 2",
         "link": "../ag-grid-datagrid-crud-part-2/",
         "date": "7th November 2017",
         "author": "sean",
         "medium": "https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-2-c5e5e4548bf"
     },
     {
-        "title": "ag-Grid v14 Released",
+        "title": "AG Grid v14 Released",
         "link": "../ag-grid-blog-14-0-0/",
         "date": "2nd November 2017",
         "author": "niall",
         "medium": "https://medium.com/ag-grid/ag-grid-v14-halloween-released-fb53e674bfc"
     },
     {
-        "title": "Building a CRUD Application with ag-Grid - Part 1",
+        "title": "Building a CRUD Application with AG Grid - Part 1",
         "link": "../ag-grid-datagrid-crud-part-1/",
         "date": "24th October 2017",
         "author": "sean",
@@ -76,7 +76,7 @@
         "medium": "https://medium.com/ag-grid/delivering-big-data-in-the-small-browser-41704f1058f0"
     },
     {
-        "title": "Building a React Datagrid with Redux and ag-Grid",
+        "title": "Building a React Datagrid with Redux and AG Grid",
         "link": "../ag-grid-react-datagrid/",
         "date": "13th May 2017",
         "author": "sean",
@@ -97,7 +97,7 @@
         "medium": "https://medium.com/ag-grid/using-ag-grid-inside-a-vuejs-application-b6c442d77da8"
     },
     {
-        "title": "From Hater to Fan – How I fell in Love with ag-Grid",
+        "title": "From Hater to Fan – How I fell in Love with AG Grid",
         "link": "../review-of-angularjs-grids/",
         "date": "15th february 2017",
         "author": "amit",
@@ -125,42 +125,42 @@
         "medium": "https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845"
     },
     {
-        "title": "ag-Grid v7: AOT & Angular 2 Components",
+        "title": "AG Grid v7: AOT & Angular 2 Components",
         "link": "../ag-grid-angular2-support-v7/",
         "date": "30th November 2016",
         "author": "sean",
         "medium": "https://medium.com/ag-grid/ag-grid-v7-aot-angular-2-components-7130fdb8f480"
     },
     {
-        "title": "8 reasons to choose ag-Grid as your JavaScript Datagrid",
+        "title": "8 reasons to choose AG Grid as your JavaScript Datagrid",
         "link": "../javascript-datagrid/",
         "date": "27th October 2016",
         "author": "niall",
         "medium": "https://medium.com/ag-grid/8-reasons-to-choose-ag-grid-as-your-javascript-datagrid-eb4a767a351f"
     },
     {
-        "title": "We're gonna need a bigger boat: from speaker to sponsor with ag-Grid",
+        "title": "We're gonna need a bigger boat: from speaker to sponsor with AG Grid",
         "link": "../ag-grid-angular-connect-2016/",
         "date": "5th October 2016",
         "author": "niall",
         "medium": "https://medium.com/ag-grid/were-gonna-need-a-bigger-boat-from-speaker-to-sponsor-with-ag-grid-cf5e01a2d9ba"
     },
     {
-        "title": "Announcing ag-Grid v6 and Angular 2 Support",
+        "title": "Announcing AG Grid v6 and Angular 2 Support",
         "link": "../ag-grid-angular2-support-v6/",
         "date": "21st September 2016",
         "author": "niall",
         "medium": "https://medium.com/ag-grid/announcing-ag-grid-v6-and-angular-2-datagrid-support-34ceef54872b"
     },
     {
-        "title": "Announcing ag-Grid v5 and Pivot",
+        "title": "Announcing AG Grid v5 and Pivot",
         "link": "../ag-grid-javascript-pivot-grid/",
         "date": "13th July 2016",
         "author": "niall",
         "medium": "https://medium.com/ag-grid/announcing-ag-grid-v5-and-pivot-417fa7649ccb"
     },
     {
-        "title": "ag-Grid Goes Commercial",
+        "title": "AG Grid Goes Commercial",
         "link": "../ag-grid-goes-commercial/",
         "date": "9th March 2016",
         "author": "niall", 
@@ -174,14 +174,14 @@
         "medium": "https://medium.com/ag-grid/understand-packaging-for-javascript-typescript-commonjs-and-everything-else-1fe835f3243a"
     },
     {
-        "title": "Announcing React and ag-Grid",
+        "title": "Announcing React and AG Grid",
         "link": "../react-and-ag-grid/",
         "date": "28th January 2016",
         "author": "niall",
         "medium": "https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb"
     },
     {
-        "title": "Stepping it Up, ag-Grid Focuses on Agnostic in 2016",
+        "title": "Stepping it Up, AG Grid Focuses on Agnostic in 2016",
         "link": "../ag-grid-in-2016/",
         "date": "25th October 2015",
         "author": "niall",
@@ -195,14 +195,14 @@
         "medium": "https://medium.com/ag-grid/building-performant-components-for-angularjs-1-x-b4b22c1a3da9"
     },
     {
-        "title": "Embracing the Future with Angular 2.0, Web Components and ag-Grid",
+        "title": "Embracing the Future with Angular 2.0, Web Components and AG Grid",
         "link": "../embracing-the-future-with-angularjs2-web-components-and-ag-grid/",
         "date": "25th September 2015",
         "author": "niall",
         "medium": "https://medium.com/ag-grid/embracing-the-future-with-angular-2-0-web-components-and-ag-grid-fec000d5a304"
     },
     {
-        "title": "Angular Air Episode 32: ag-Grid",
+        "title": "Angular Air Episode 32: AG Grid",
         "link": "https://www.youtube.com/watch?v=jQ_nyTiKbZg",
         "date": "15th September 2015",
         "author": "niall"

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellPosition } from "../entities/cellPosition";
@@ -15,9 +15,9 @@ export declare class MouseEventService extends BeanStub {
     private init;
     registerGridComp(gridPanel: GridPanel): void;
     private stampDomElementWithGridInstance;
-    getRenderedCellForEvent(event: Event): CellComp;
+    getRenderedCellForEvent(event: Event): CellComp | null;
     isEventFromThisGrid(event: MouseEvent | KeyboardEvent): boolean;
-    getCellPositionForEvent(event: MouseEvent | KeyboardEvent): CellPosition;
+    getCellPositionForEvent(event: MouseEvent | KeyboardEvent): CellPosition | null;
     getNormalisedPosition(event: MouseEvent | DraggingEvent): {
         x: number;
         y: number;

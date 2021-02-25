@@ -9,7 +9,7 @@ export default class PolymerFrameworkComponentWrapper {
                     return wrapper.getFrameworkComponentInstance()[methodName].apply(componentRef, arguments)
                 } else {
                     if (mandatory) {
-                        console.warn('ag-Grid: Polymer Element is missing the method ' + methodName + '()');
+                        console.warn('AG Grid: Polymer Element is missing the method ' + methodName + '()');
                     }
                     return null;
                 }

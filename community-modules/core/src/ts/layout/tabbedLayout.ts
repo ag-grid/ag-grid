@@ -110,7 +110,7 @@ export class TabbedLayout extends ManagedFocusComponent {
         this.items.forEach((itemWrapper: TabbedItemWrapper) => {
             clearElement(eDummyBody);
 
-            const eClone: HTMLElement = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body => body.cloneNode(true)) as HTMLElement;
+            const eClone: HTMLElement = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body => body!.cloneNode(true)) as HTMLElement;
             if (eClone == null) { return; }
 
             eDummyBody.appendChild(eClone);
@@ -167,7 +167,7 @@ export class TabbedLayout extends ManagedFocusComponent {
         }
 
         if (this.activeItem === wrapper) {
-            callIfPresent(this.params.onActiveItemClicked);
+            callIfPresent(this.params.onActiveItemClicked!);
             return;
         }
 

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,7 +15,7 @@ var supports = {};
  * and then clicked on a selection checkbox, the popup wasn't closed. this is because the
  * popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
  * checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
- * to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
+ * to get around this, we have a pattern to stop propagation for the purposes of AG Grid,
  * but we still let the event pass back to the body.
  * @param {Event} event
  */
@@ -37,7 +37,7 @@ exports.isEventSupported = (function () {
         load: 'img',
         abort: 'img'
     };
-    var isEventSupported = function (eventName) {
+    var eventChecker = function (eventName) {
         if (typeof supports[eventName] === 'boolean') {
             return supports[eventName];
         }
@@ -48,23 +48,22 @@ exports.isEventSupported = (function () {
             el.setAttribute(eventName, 'return;');
             isSupported = typeof el[eventName] == 'function';
         }
-        el = null;
         return supports[eventName] = isSupported;
     };
-    return isEventSupported;
+    return eventChecker;
 })();
-function getCellCompForEvent(gridOptionsWrapper, event) {
+function getComponentForEvent(gridOptionsWrapper, event, type) {
     var sourceElement = getTarget(event);
     while (sourceElement) {
-        var renderedCell = gridOptionsWrapper.getDomData(sourceElement, 'cellComp');
-        if (renderedCell) {
-            return renderedCell;
+        var renderedComp = gridOptionsWrapper.getDomData(sourceElement, type);
+        if (renderedComp) {
+            return renderedComp;
         }
         sourceElement = sourceElement.parentElement;
     }
     return null;
 }
-exports.getCellCompForEvent = getCellCompForEvent;
+exports.getComponentForEvent = getComponentForEvent;
 /**
  * @deprecated
  * Adds all type of change listeners to an element, intended to be a text field

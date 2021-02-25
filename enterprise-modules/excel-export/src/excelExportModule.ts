@@ -20,4 +20,3 @@ export const ExcelExportModule: Module = {
         EnterpriseCoreModule
     ]
 };
-

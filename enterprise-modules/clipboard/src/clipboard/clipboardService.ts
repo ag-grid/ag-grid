@@ -15,7 +15,6 @@ import {
     Constants,
     CsvExportParams,
     Events,
-    EventService,
     FlashCellsEvent,
     FocusController,
     GridApi,
@@ -42,7 +41,7 @@ import {
 } from "@ag-grid-community/core";
 
 interface RowCallback {
-    (gridRow: RowPosition, rowNode: RowNode, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
+    (gridRow: RowPosition, rowNode: RowNode | null, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
 }
 
 interface ColumnCallback {
@@ -90,18 +89,33 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // Method 1 - native clipboard API, available in modern chrome browsers
         const allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
-        if (allowNavigator && navigator.clipboard) {
+        // Some browsers (Firefox) do not allow Web Applications to read from
+        // the clipboard so verify if not only the ClipboardAPI is available,
+        // but also if the `readText` method is public.
+        if (allowNavigator && navigator.clipboard && navigator.clipboard.readText) {
             navigator.clipboard.readText()
                 .then(this.processClipboardData.bind(this))
-                .catch(() => {
-                    // no processing, if fails, do nothing, paste doesn't happen
+                .catch((e) => {
+                    _.doOnce(() => {
+                        console.warn(e);
+                        console.warn(
+                            'AG Grid: Unable to use the Clipboard API (navigator.clipboard.readText()). ' +
+                            'The reason why it could not be used has been logged in the previous line. ' +
+                            'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
+                            'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
+                            'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API');
+                    }, 'clipboardApiError');
+                    this.pasteFromClipboardLegacy();
                 });
-            return;
+        } else {
+            this.pasteFromClipboardLegacy();
         }
-
+    }
+ 
+    private pasteFromClipboardLegacy(): void {
         // Method 2 - if modern API fails, the old school hack
         this.executeOnTempElement(
-            (textArea: HTMLTextAreaElement) => textArea.focus(),
+            (textArea: HTMLTextAreaElement) => textArea.focus({ preventScroll: true }),
             (element: HTMLTextAreaElement) => {
                 const data = element.value;
                 this.processClipboardData(data);
@@ -110,7 +124,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private processClipboardData(data: string): void {
-        if (_.missingOrEmpty(data)) { return; }
+        if (data == null) { return; }
 
         let parsedData: string[][] | null = _.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
 
@@ -120,7 +134,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             parsedData = userFunc({ data: parsedData });
         }
 
-        if (_.missingOrEmpty(parsedData)) { return; }
+        if (parsedData == null) { return; }
 
         if (this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
             this.removeLastLineIfBlank(parsedData!);
@@ -149,7 +163,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private doPasteOperation(pasteOperationFunc: (
         cellsToFlash: any,
         updatedRowNodes: RowNode[],
-        focusedCell: CellPosition,
+        focusedCell: CellPosition | null,
         changedPath: ChangedPath | undefined) => void
     ): void {
         const api = this.gridOptionsWrapper.getApi();
@@ -163,7 +177,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             source
         } as PasteStartEvent);
 
-        let changedPath: ChangedPath;
+        let changedPath: ChangedPath | undefined;
 
         if (this.clientSideRowModel) {
             const onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
@@ -172,8 +186,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
-        const doc = this.gridOptionsWrapper.getDocument();
-        const focusedElementBefore = doc.activeElement;
         const focusedCell = this.focusController.getFocusedCell();
 
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
@@ -186,12 +198,10 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
 
-        const focusedElementAfter = doc.activeElement;
-
         // if using the clipboard hack with a temp element, then the focus has been lost,
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
-        if (focusedCell && focusedElementBefore != focusedElementAfter) {
+        if (focusedCell) {
             this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
 
@@ -289,7 +299,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     // if range is active, and only one cell, then we paste this cell into all cells in the active range.
     private isPasteSingleValueIntoRange(parsedData: string[][]): boolean {
         return this.hasOnlyOneValueToPaste(parsedData)
-            && this.rangeController!=null
+            && this.rangeController != null
             && !this.rangeController.isEmpty();
     }
 
@@ -385,11 +395,11 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 type: Events.EVENT_ROW_VALUE_CHANGED,
                 node: rowNode,
                 data: rowNode.data,
-                rowIndex: rowNode.rowIndex,
+                rowIndex: rowNode.rowIndex!,
                 rowPinned: rowNode.rowPinned,
                 context: this.gridOptionsWrapper.getContext(),
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi()
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!
             };
 
             this.eventService.dispatchEvent(event);
@@ -487,7 +497,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
         if (!this.rangeController || this.rangeController.isEmpty()) { return; }
 
-        const cellRanges = this.rangeController.getCellRanges() as CellRange[];
+        const cellRanges = this.rangeController.getCellRanges();
 
         if (onlyFirst) {
             this.iterateActiveRange(cellRanges[0], rowCallback, columnCallback, true);
@@ -499,7 +509,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private iterateActiveRange(range: CellRange, rowCallback: RowCallback, columnCallback?: ColumnCallback, isLastRange?: boolean): void {
         if (!this.rangeController) { return; }
 
-        let currentRow = this.rangeController.getRangeStartRow(range);
+        let currentRow: RowPosition | null = this.rangeController.getRangeStartRow(range);
         const lastRow = this.rangeController.getRangeEndRow(range);
 
         if (columnCallback && range.columns) {
@@ -682,19 +692,32 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // method 2 - native clipboard API, available in modern chrome browsers
         const allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
         if (allowNavigator && navigator.clipboard) {
-            navigator.clipboard.writeText(data).catch(() => {
-                // no processing, if fails, do nothing, copy doesn't happen
+            navigator.clipboard.writeText(data).catch((e) => {
+                _.doOnce(() => {
+                    console.warn(e);
+                    console.warn(
+                        'AG Grid: Unable to use the Clipboard API (navigator.clipboard.writeText()). ' +
+                        'The reason why it could not be used has been logged in the previous line. ' +
+                        'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
+                        'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
+                        'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.');
+                }, 'clipboardApiError');
+                this.copyDataToClipboardLegacy(data);
             });
             return;
         }
 
+        this.copyDataToClipboardLegacy(data);
+    }
+
+    private copyDataToClipboardLegacy(data: string): void {
         // method 3 - if all else fails, the old school hack
         this.executeOnTempElement(element => {
             const focusedElementBefore = this.gridOptionsWrapper.getDocument().activeElement as HTMLElement;
 
             element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
             element.select();
-            element.focus();
+            element.focus({ preventScroll: true });
 
             const result = document.execCommand('copy');
 
@@ -705,7 +728,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             }
 
             if (focusedElementBefore != null && focusedElementBefore.focus != null) {
-                focusedElementBefore.focus();
+                focusedElementBefore.focus({ preventScroll: true });
             }
         });
     }
@@ -714,13 +737,19 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         callbackNow: (element: HTMLTextAreaElement) => void,
         callbackAfter?: (element: HTMLTextAreaElement) => void
     ): void {
-        const eTempInput = document.createElement('textarea');
+        const eDoc = this.gridOptionsWrapper.getDocument();
+        const eTempInput = eDoc.createElement('textarea');
         eTempInput.style.width = '1px';
         eTempInput.style.height = '1px';
-        eTempInput.style.top = '0px';
-        eTempInput.style.left = '0px';
+
+        // removing items from the DOM causes the document element to scroll to the
+        // position where the element was positioned. Here we set scrollTop / scrollLeft
+        // to prevent the document element from scrolling when we remove it from the DOM.
+        eTempInput.style.top = eDoc.documentElement.scrollTop + 'px';
+        eTempInput.style.left = eDoc.documentElement.scrollLeft + 'px';
+
         eTempInput.style.position = 'absolute';
-        eTempInput.style.opacity = '0.0';
+        eTempInput.style.opacity = '0';
 
         const guiRoot = this.gridCore.getRootGui();
 

@@ -123,7 +123,10 @@ var FlattenStage = /** @class */ (function (_super) {
             footerNode[key] = groupNode[key];
         });
         footerNode.footer = true;
-        footerNode.rowTop = null;
+        footerNode.setRowTop(null);
+        footerNode.setRowIndex(null);
+        // manually set oldRowTop to null so we discard any
+        // previous information about its position.
         footerNode.oldRowTop = null;
         if (core_1._.exists(footerNode.id)) {
             footerNode.id = 'rowGroupFooter_' + footerNode.id;

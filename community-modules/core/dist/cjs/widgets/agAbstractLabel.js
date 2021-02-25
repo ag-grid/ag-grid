@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -59,10 +59,17 @@ var AgAbstractLabel = /** @class */ (function (_super) {
         if (typeof this.label === 'string') {
             this.eLabel.innerText = this.label + this.labelSeparator;
         }
-        else {
+        else if (this.label) {
             this.eLabel.appendChild(this.label);
         }
-        dom_1.addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
+        if (this.label === '') {
+            dom_1.addCssClass(this.eLabel, 'ag-hidden');
+            this.eLabel.setAttribute('role', 'presentation');
+        }
+        else {
+            dom_1.removeCssClass(this.eLabel, 'ag-hidden');
+            this.eLabel.removeAttribute('role');
+        }
     };
     AgAbstractLabel.prototype.setLabelSeparator = function (labelSeparator) {
         if (this.labelSeparator === labelSeparator) {

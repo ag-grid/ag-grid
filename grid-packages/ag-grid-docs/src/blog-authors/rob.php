@@ -6,6 +6,6 @@
     <p>
         Rob is a Software Architect and Developer who specialises in complex data-centric enterprise applications within
         Finance. He is expert in numerous server and client side programming languages and technologies which he uses to
-        drive forward the core engine of ag-Grid.
+        drive forward the core engine of AG Grid.
     </p>
 </div>

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -77,7 +77,7 @@ var HeaderNavigationService = /** @class */ (function (_super) {
         var rowLen = this.getHeaderRowCount();
         var isUp = direction === HeaderNavigationDirection.UP;
         var nextRow = isUp ? headerRowIndex - 1 : headerRowIndex + 1;
-        var nextFocusColumn;
+        var nextFocusColumn = null;
         var skipColumn = false;
         if (nextRow < 0) {
             nextRow = 0;
@@ -136,7 +136,7 @@ var HeaderNavigationService = /** @class */ (function (_super) {
     };
     HeaderNavigationService.prototype.focusNextHeaderRow = function (focusedHeader, direction, event) {
         var currentIndex = focusedHeader.headerRowIndex;
-        var nextPosition;
+        var nextPosition = null;
         var nextRowIndex;
         if (direction === 'Before') {
             if (currentIndex > 0) {

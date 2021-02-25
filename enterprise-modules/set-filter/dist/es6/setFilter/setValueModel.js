@@ -7,13 +7,9 @@ export var SetFilterModelValuesType;
     SetFilterModelValuesType[SetFilterModelValuesType["TAKEN_FROM_GRID_VALUES"] = 2] = "TAKEN_FROM_GRID_VALUES";
 })(SetFilterModelValuesType || (SetFilterModelValuesType = {}));
 var SetValueModel = /** @class */ (function () {
-    function SetValueModel(rowModel, valueGetter, filterParams, colDef, column, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, translate) {
+    function SetValueModel(filterParams, setIsLoading, valueFormatterService, translate) {
         var _this = this;
         this.filterParams = filterParams;
-        this.colDef = colDef;
-        this.column = column;
-        this.doesRowPassOtherFilters = doesRowPassOtherFilters;
-        this.suppressSorting = suppressSorting;
         this.setIsLoading = setIsLoading;
         this.valueFormatterService = valueFormatterService;
         this.translate = translate;
@@ -31,11 +27,17 @@ var SetValueModel = /** @class */ (function () {
         this.displayedValues = [];
         /** Values that have been selected for this filter. */
         this.selectedValues = new Set();
+        this.initialised = false;
+        var column = filterParams.column, colDef = filterParams.colDef, textFormatter = filterParams.textFormatter, doesRowPassOtherFilter = filterParams.doesRowPassOtherFilter, suppressSorting = filterParams.suppressSorting, comparator = filterParams.comparator, rowModel = filterParams.rowModel, valueGetter = filterParams.valueGetter, values = filterParams.values;
+        this.column = column;
+        this.colDef = colDef;
+        this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
+        this.doesRowPassOtherFilters = doesRowPassOtherFilter;
+        this.suppressSorting = suppressSorting || false;
+        this.comparator = comparator || colDef.comparator || _.defaultComparator;
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(rowModel, colDef, valueGetter);
         }
-        this.formatter = this.filterParams.textFormatter || TextFilter.DEFAULT_FORMATTER;
-        var values = this.filterParams.values;
         if (values == null) {
             this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
         }
@@ -45,7 +47,7 @@ var SetValueModel = /** @class */ (function () {
                 SetFilterModelValuesType.PROVIDED_CALLBACK;
             this.providedValues = values;
         }
-        this.updateAllValues().then(function (values) { return _this.resetSelectionState(values); });
+        this.updateAllValues().then(function (updatedValues) { return _this.resetSelectionState(updatedValues || []); });
     }
     SetValueModel.prototype.addEventListener = function (eventType, listener, async) {
         this.localEventService.addEventListener(eventType, listener, async);
@@ -88,6 +90,9 @@ var SetValueModel = /** @class */ (function () {
             this.allValuesPromise.then(function (values) { return _this.updateAvailableValues(values || []); }) :
             AgPromise.resolve();
     };
+    SetValueModel.prototype.isInitialised = function () {
+        return this.initialised;
+    };
     SetValueModel.prototype.updateAllValues = function () {
         var _this = this;
         this.allValuesPromise = new AgPromise(function (resolve) {
@@ -96,7 +101,7 @@ var SetValueModel = /** @class */ (function () {
                 case SetFilterModelValuesType.PROVIDED_LIST: {
                     var values = _this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ?
                         _this.getValuesFromRows(false) : _.toStrings(_this.providedValues);
-                    var sortedValues = _this.sortValues(values);
+                    var sortedValues = _this.sortValues(values || []);
                     _this.allValues = sortedValues;
                     resolve(sortedValues);
                     break;
@@ -108,7 +113,7 @@ var SetValueModel = /** @class */ (function () {
                         success: function (values) {
                             var processedValues = _.toStrings(values);
                             _this.setIsLoading(false);
-                            var sortedValues = _this.sortValues(processedValues);
+                            var sortedValues = _this.sortValues(processedValues || []);
                             _this.allValues = sortedValues;
                             resolve(sortedValues);
                         },
@@ -121,7 +126,7 @@ var SetValueModel = /** @class */ (function () {
                     throw new Error('Unrecognised valuesType');
             }
         });
-        this.allValuesPromise.then(function (values) { return _this.updateAvailableValues(values); });
+        this.allValuesPromise.then(function (values) { return _this.updateAvailableValues(values || []); }).then(function () { return _this.initialised = true; });
         return this.allValuesPromise;
     };
     SetValueModel.prototype.setValuesType = function (value) {
@@ -147,20 +152,17 @@ var SetValueModel = /** @class */ (function () {
         if (this.suppressSorting) {
             return values;
         }
-        var comparator = this.filterParams.comparator ||
-            this.colDef.comparator ||
-            _.defaultComparator;
         if (!this.filterParams.excelMode || values.indexOf(null) < 0) {
-            return values.sort(comparator);
+            return values.sort(this.comparator);
         }
         // ensure the blank value always appears last
-        return _.filter(values, function (v) { return v != null; }).sort(comparator).concat(null);
+        return _.filter(values, function (v) { return v != null; }).sort(this.comparator).concat(null);
     };
     SetValueModel.prototype.getValuesFromRows = function (removeUnavailableValues) {
         var _this = this;
         if (removeUnavailableValues === void 0) { removeUnavailableValues = false; }
         if (!this.clientSideValuesExtractor) {
-            console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
+            console.error('AG Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             return [];
         }
         var predicate = function (node) { return (!removeUnavailableValues || _this.doesRowPassOtherFilters(node)); };
@@ -190,7 +192,7 @@ var SetValueModel = /** @class */ (function () {
         // if filter present, we filter down the list
         this.displayedValues = [];
         // to allow for case insensitive searches, upper-case both filter text and value
-        var formattedFilterText = this.formatter(this.miniFilterText).toUpperCase();
+        var formattedFilterText = (this.formatter(this.miniFilterText) || '').toUpperCase();
         var matchesFilter = function (valueToCheck) {
             return valueToCheck != null && valueToCheck.toUpperCase().indexOf(formattedFilterText) >= 0;
         };
@@ -284,12 +286,12 @@ var SetValueModel = /** @class */ (function () {
         var _this = this;
         return this.allValuesPromise.then(function (values) {
             if (model == null) {
-                _this.resetSelectionState(values);
+                _this.resetSelectionState(values || []);
             }
             else {
                 // select all values from the model that exist in the filter
                 _this.selectedValues.clear();
-                var allValues_1 = _.convertToSet(values);
+                var allValues_1 = _.convertToSet(values || []);
                 _.forEach(model, function (value) {
                     if (allValues_1.has(value)) {
                         _this.selectedValues.add(value);
@@ -303,7 +305,7 @@ var SetValueModel = /** @class */ (function () {
             this.selectedValues.clear();
         }
         else {
-            this.selectedValues = _.convertToSet(values);
+            this.selectedValues = _.convertToSet(values || []);
         }
     };
     SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';

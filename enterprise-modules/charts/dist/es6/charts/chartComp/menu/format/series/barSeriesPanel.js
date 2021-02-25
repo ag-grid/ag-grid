@@ -41,6 +41,7 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             .hideEnabledCheckbox(true);
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
+        this.initSeriesLineDash();
         this.initOpacity();
         this.initLabelPanel();
         this.initShadowPanel();
@@ -63,6 +64,15 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             .setTextFieldWidth(45)
             .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
             .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.width", newValue); });
+    };
+    BarSeriesPanel.prototype.initSeriesLineDash = function () {
+        var _this = this;
+        this.seriesLineDashSlider
+            .setLabel(this.chartTranslator.translate('lineDash'))
+            .setMaxValue(30)
+            .setTextFieldWidth(45)
+            .setValue(this.getChartProxy().getSeriesOption("lineDash"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("lineDash", [newValue]); });
     };
     BarSeriesPanel.prototype.initOpacity = function () {
         initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.getChartProxy());
@@ -93,7 +103,7 @@ var BarSeriesPanel = /** @class */ (function (_super) {
         this.destroyActivePanels();
         _super.prototype.destroy.call(this);
     };
-    BarSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    BarSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineDashSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
         RefSelector('seriesGroup')
     ], BarSeriesPanel.prototype, "seriesGroup", void 0);
@@ -103,6 +113,9 @@ var BarSeriesPanel = /** @class */ (function (_super) {
     __decorate([
         RefSelector('seriesStrokeWidthSlider')
     ], BarSeriesPanel.prototype, "seriesStrokeWidthSlider", void 0);
+    __decorate([
+        RefSelector('seriesLineDashSlider')
+    ], BarSeriesPanel.prototype, "seriesLineDashSlider", void 0);
     __decorate([
         RefSelector('seriesLineOpacitySlider')
     ], BarSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);

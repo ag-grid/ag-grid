@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,7 +33,7 @@ var TextFilter = /** @class */ (function (_super) {
     function TextFilter() {
         return _super.call(this, 'textFilter') || this;
     }
-    TextFilter.cleanInput = function (value) {
+    TextFilter.trimInput = function (value) {
         var trimmedInput = value && value.trim();
         // trim the input, unless it is all whitespace (this is consistent with Excel behaviour)
         return trimmedInput === '' ? value : trimmedInput;
@@ -42,7 +42,8 @@ var TextFilter = /** @class */ (function (_super) {
         return 500;
     };
     TextFilter.prototype.getCleanValue = function (inputField) {
-        return TextFilter.cleanInput(makeNull(inputField.getValue()));
+        var value = makeNull(inputField.getValue());
+        return this.textFilterParams.trimInput ? TextFilter.trimInput(value) : value;
     };
     TextFilter.prototype.addValueChangedListeners = function () {
         var _this = this;
@@ -55,9 +56,7 @@ var TextFilter = /** @class */ (function (_super) {
         this.textFilterParams = params;
         this.comparator = this.textFilterParams.textCustomComparator || TextFilter.DEFAULT_COMPARATOR;
         this.formatter = this.textFilterParams.textFormatter ||
-            (this.textFilterParams.caseSensitive == true
-                ? TextFilter.DEFAULT_FORMATTER
-                : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
+            (this.textFilterParams.caseSensitive ? TextFilter.DEFAULT_FORMATTER : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
         this.addValueChangedListeners();
     };
     TextFilter.prototype.setConditionIntoUi = function (model, position) {
@@ -165,9 +164,7 @@ var TextFilter = /** @class */ (function (_super) {
         SimpleFilter.ENDS_WITH
     ];
     TextFilter.DEFAULT_FORMATTER = function (from) { return from; };
-    TextFilter.DEFAULT_LOWERCASE_FORMATTER = function (from) {
-        return from == null ? null : from.toString().toLowerCase();
-    };
+    TextFilter.DEFAULT_LOWERCASE_FORMATTER = function (from) { return from == null ? null : from.toString().toLowerCase(); };
     TextFilter.DEFAULT_COMPARATOR = function (filter, value, filterText) {
         switch (filter) {
             case TextFilter.CONTAINS:

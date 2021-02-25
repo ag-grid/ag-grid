@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12,12 +12,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @returns {T | null}
  */
 function makeNull(value) {
-    return value == null || value === '' ? null : value;
+    if (value == null || value === '') {
+        return null;
+    }
+    return value;
 }
 exports.makeNull = makeNull;
 function exists(value, allowEmptyString) {
     if (allowEmptyString === void 0) { allowEmptyString = false; }
-    return value != null && (allowEmptyString || value !== '');
+    return value != null && (value !== '' || allowEmptyString);
 }
 exports.exists = exists;
 function missing(value) {
@@ -25,11 +28,11 @@ function missing(value) {
 }
 exports.missing = missing;
 function missingOrEmpty(value) {
-    return !value || missing(value) || value.length === 0;
+    return value == null || value.length === 0;
 }
 exports.missingOrEmpty = missingOrEmpty;
 function toStringOrNull(value) {
-    return exists(value) && value.toString ? value.toString() : null;
+    return value != null && typeof value.toString === 'function' ? value.toString() : null;
 }
 exports.toStringOrNull = toStringOrNull;
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined
@@ -59,7 +62,7 @@ function attrToBoolean(value) {
         // null means clear
         return false;
     }
-    if (value === true || value === false) {
+    if (typeof value === 'boolean') {
         // if simple boolean, return the boolean
         return value;
     }
@@ -168,9 +171,9 @@ function find(collection, predicate, value) {
 exports.find = find;
 function values(object) {
     if (object instanceof Set || object instanceof Map) {
-        var values_1 = [];
-        object.forEach(function (value) { return values_1.push(value); });
-        return values_1;
+        var arr_1 = [];
+        object.forEach(function (value) { return arr_1.push(value); });
+        return arr_1;
     }
     return Object.keys(object).map(function (key) { return object[key]; });
 }

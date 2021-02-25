@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,15 +74,8 @@ var StandardMenuFactory = /** @class */ (function (_super) {
         this.tabListener = this.addManagedListener(eMenu, 'keydown', function (e) { return _this.trapFocusWithin(e, eMenu); });
         filterWrapper.guiPromise.then(function (gui) { return eMenu.appendChild(gui); });
         var hidePopup;
-        var bodyScrollListener = function (event) {
-            // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal' && hidePopup) {
-                hidePopup();
-            }
-        };
-        this.eventService.addEventListener('bodyScroll', bodyScrollListener);
+        var anchorToElement = eventSource || this.gridPanel.getGui();
         var closedCallback = function (e) {
-            _this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
             column.setMenuVisible(false, 'contextMenu');
             var isKeyboardEvent = e instanceof KeyboardEvent;
             if (_this.tabListener) {
@@ -99,7 +92,9 @@ var StandardMenuFactory = /** @class */ (function (_super) {
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,
-            closedCallback: closedCallback
+            closedCallback: closedCallback,
+            positionCallback: function () { return positionCallback(eMenu); },
+            anchorToElement: anchorToElement
         });
         if (addPopupRes) {
             this.hidePopup = hidePopup = addPopupRes.hideFunc;

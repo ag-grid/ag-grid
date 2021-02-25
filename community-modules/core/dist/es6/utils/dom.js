@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -68,7 +68,7 @@ export function addOrRemoveCssClass(element, className, addOrRemove) {
  */
 export function radioCssClass(element, elementClass, otherElementClass) {
     var parent = element.parentElement;
-    var sibling = parent.firstChild;
+    var sibling = parent && parent.firstChild;
     while (sibling) {
         if (elementClass) {
             addOrRemoveCssClass(sibling, elementClass, sibling === element);
@@ -134,6 +134,10 @@ export function isElementChildOfClass(element, cls, maxNest) {
     }
     return false;
 }
+// returns back sizes as doubles instead of strings. similar to
+// getBoundingClientRect, however getBoundingClientRect does not:
+// a) work with fractions (eg browser is zooming)
+// b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values
 export function getElementSize(el) {
     var _a = window.getComputedStyle(el), height = _a.height, width = _a.width, paddingTop = _a.paddingTop, paddingRight = _a.paddingRight, paddingBottom = _a.paddingBottom, paddingLeft = _a.paddingLeft, marginTop = _a.marginTop, marginRight = _a.marginRight, marginBottom = _a.marginBottom, marginLeft = _a.marginLeft, boxSizing = _a.boxSizing;
     return {
@@ -190,7 +194,7 @@ export function isRtlNegativeScroll() {
         "<div style=\"width: 2px\">\n            <span style=\"display: inline-block; width: 1px\"></span>\n            <span style=\"display: inline-block; width: 1px\"></span>\n        </div>";
     document.body.appendChild(template);
     template.scrollLeft = 1;
-    rtlNegativeScroll = template.scrollLeft === 0;
+    rtlNegativeScroll = Math.floor(template.scrollLeft) === 0;
     document.body.removeChild(template);
     return rtlNegativeScroll;
 }
@@ -351,9 +355,9 @@ export function isVerticalScrollShowing(element) {
 }
 export function setElementWidth(element, width) {
     if (width === 'flex') {
-        element.style.width = null;
-        element.style.minWidth = null;
-        element.style.maxWidth = null;
+        element.style.removeProperty('width');
+        element.style.removeProperty('minWidth');
+        element.style.removeProperty('maxWidth');
         element.style.flex = '1 1 auto';
     }
     else {
@@ -368,9 +372,9 @@ export function setFixedWidth(element, width) {
 }
 export function setElementHeight(element, height) {
     if (height === 'flex') {
-        element.style.height = null;
-        element.style.minHeight = null;
-        element.style.maxHeight = null;
+        element.style.removeProperty('height');
+        element.style.removeProperty('minHeight');
+        element.style.removeProperty('maxHeight');
         element.style.flex = '1 1 auto';
     }
     else {

@@ -29,7 +29,7 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
     TotalAndFilteredRowsComp.prototype.postConstruct = function () {
         // this component is only really useful with client side row model
         if (this.gridApi.getModel().getType() !== 'clientSide') {
-            console.warn("ag-Grid: agTotalAndFilteredRowCountComponent should only be used with the client side row model.");
+            console.warn("AG Grid: agTotalAndFilteredRowCountComponent should only be used with the client side row model.");
             return;
         }
         this.setLabel('totalAndFilteredRows', 'Rows');

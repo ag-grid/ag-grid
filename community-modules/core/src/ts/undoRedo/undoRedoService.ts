@@ -40,7 +40,7 @@ export class UndoRedoService extends BeanStub {
         }
 
         const undoRedoLimit = this.gridOptionsWrapper.getUndoRedoCellEditingLimit();
-        if (undoRedoLimit <= 0) {
+        if (undoRedoLimit! <= 0) {
             return;
         }
 
@@ -75,11 +75,11 @@ export class UndoRedoService extends BeanStub {
         const { rowPinned, rowIndex, column, oldValue, value } = event;
 
         const cellValueChange: CellValueChange = {
-            rowPinned: rowPinned,
-            rowIndex: rowIndex,
+            rowPinned,
+            rowIndex: rowIndex!,
             columnId: column.getColId(),
-            oldValue: oldValue,
-            newValue: value
+            newValue: value,
+            oldValue
         };
 
         this.cellValueChanges.push(cellValueChange);
@@ -103,7 +103,7 @@ export class UndoRedoService extends BeanStub {
             return;
         }
 
-        const undoAction: UndoRedoAction = this.undoStack.pop();
+        const undoAction: UndoRedoAction | undefined = this.undoStack.pop();
         if (!undoAction || !undoAction.cellValueChanges) {
             return;
         }
@@ -124,7 +124,7 @@ export class UndoRedoService extends BeanStub {
             return;
         }
 
-        const redoAction: UndoRedoAction = this.redoStack.pop();
+        const redoAction: UndoRedoAction | undefined = this.redoStack.pop();
         if (!redoAction || !redoAction.cellValueChanges) {
             return;
         }
@@ -147,32 +147,34 @@ export class UndoRedoService extends BeanStub {
             const currentRow = this.getRowNode(rowPosition);
 
             // checks if the row has been filtered out
-            if (currentRow.rowTop == null) {
+            if (!currentRow!.displayed) {
                 return;
             }
 
-            currentRow.setDataValue(columnId, valueExtractor(cellValueChange));
+            currentRow!.setDataValue(columnId, valueExtractor(cellValueChange));
         });
     }
 
     private processRangeAndCellFocus(cellValueChanges: CellValueChange[], range?: CellRange) {
+        let lastFocusedCell: LastFocusedCell;
+
         if (range) {
             const startRow = range.startRow;
             const endRow = range.endRow;
 
-            const lastFocusedCell: LastFocusedCell = {
-                rowPinned: startRow.rowPinned,
-                rowIndex: startRow.rowIndex,
+            lastFocusedCell = {
+                rowPinned: startRow!.rowPinned,
+                rowIndex: startRow!.rowIndex,
                 columnId: range.startColumn.getColId()
             };
 
             this.setLastFocusedCell(lastFocusedCell);
 
             const cellRangeParams: CellRangeParams = {
-                rowStartIndex: startRow.rowIndex,
-                rowStartPinned: startRow.rowPinned,
-                rowEndIndex: endRow.rowIndex,
-                rowEndPinned: endRow.rowPinned,
+                rowStartIndex: startRow!.rowIndex,
+                rowStartPinned: startRow!.rowPinned,
+                rowEndIndex: endRow!.rowIndex,
+                rowEndPinned: endRow!.rowPinned,
                 columnStart: range.startColumn,
                 columns: range.columns
             };
@@ -187,9 +189,9 @@ export class UndoRedoService extends BeanStub {
         const rowPosition: RowPosition = { rowIndex, rowPinned };
         const row = this.getRowNode(rowPosition);
 
-        const lastFocusedCell: LastFocusedCell = {
+        lastFocusedCell = {
             rowPinned: cellValueChange.rowPinned,
-            rowIndex: row.rowIndex,
+            rowIndex: row!.rowIndex!,
             columnId: cellValueChange.columnId
         };
 

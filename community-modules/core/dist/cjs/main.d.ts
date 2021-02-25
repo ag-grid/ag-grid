@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./columnController/columnFactory";
@@ -19,6 +19,7 @@ export { Context, ComponentMeta, Autowired, PostConstruct, PreConstruct, Optiona
 export { QuerySelector, GuiListener, RefSelector, GridListener } from "./widgets/componentAnnotations";
 export { IExcelCreator, ExcelAlignment, ExcelBorder, ExcelBorders, ExcelCell, ExcelColumn, ExcelContentType, ExcelData, ExcelDataType, ExcelExportParams, ExcelFont, ExcelInterior, ExcelNumberFormat, ExcelOOXMLDataType, ExcelOOXMLTemplate, ExcelProtection, ExcelRelationship, ExcelRow, ExcelStyle, ExcelTable, ExcelXMLTemplate, ExcelWorksheet } from "./interfaces/iExcelCreator";
 export { DragAndDropService, DragSourceType, HorizontalDirection, VerticalDirection, DropTarget, DragSource, DraggingEvent } from "./dragAndDrop/dragAndDropService";
+export { RowDropZoneParams } from "./gridPanel/rowDragFeature";
 export { DragService } from "./dragAndDrop/dragService";
 export { IRowDragItem } from "./rendering/row/rowDragComp";
 export { Column } from "./entities/column";
@@ -55,6 +56,7 @@ export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
 export { simpleHttpRequest } from "./misc/simpleHttpRequest";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
+export { AnimationFrameService } from "./misc/animationFrameService";
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
 export { LargeTextCellEditor } from "./rendering/cellEditors/largeTextCellEditor";
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
@@ -84,13 +86,12 @@ export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/ce
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { RowDataTransaction } from "./interfaces/rowDataTransaction";
+export { ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus } from "./interfaces/serverSideTransaction";
 export { ChangedPath } from "./utils/changedPath";
-export { RowNodeBlock } from "./modules/rowNodeCache/rowNodeBlock";
-export { RowNodeBlockLoader } from "./modules/rowNodeCache/rowNodeBlockLoader";
-export { RowNodeCache, RowNodeCacheParams } from "./modules/rowNodeCache/rowNodeCache";
+export { RowNodeBlock, LoadCompleteEvent, LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
+export { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 export { PaginationProxy } from "./pagination/paginationProxy";
-export { RefreshModelParams } from "./interfaces/refreshModelParams";
-export { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
+export { IClientSideRowModel, ClientSideRowModelSteps, RefreshModelParams } from "./interfaces/iClientSideRowModel";
 export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 export { ColumnVO } from "./interfaces/iColumnVO";
 export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
@@ -117,7 +118,7 @@ export { AgPanel } from "./widgets/agPanel";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 export { PopupComponent } from "./widgets/popupComponent";
-export { PopupService, } from "./widgets/popupService";
+export { PopupService } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 export { CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeController, ISelectionHandle, SelectionHandleType, ISelectionHandleFactory } from "./interfaces/iRangeController";
@@ -139,10 +140,11 @@ export { defaultGroupComparator } from "./functions";
 export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
+export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
 export { GridCore } from "./gridCore";
 export { Logger, LoggerFactory } from "./logger";
 export { SelectionController } from "./selectionController";
-export { SortController } from "./sortController";
+export { SortController, SortModelItem } from "./sortController";
 export { TemplateService } from "./templateService";
 export * from "./utils";
 export { ValueService } from "./valueService/valueService";
@@ -156,8 +158,8 @@ export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
 export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
 export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/header/headerPosition";
 export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/header/headerNavigationService";
-export { IAggFunc, IAggFuncParams, ColGroupDef, ColDef, AbstractColDef, ValueSetterParams, ValueParserParams, ValueFormatterParams, ColSpanParams, RowSpanParams, SuppressKeyboardEventParams, SuppressHeaderKeyboardEventParams, ValueGetterParams, NewValueParams, CellClassParams, GetQuickFilterTextParams, IsColumnFunc, IsColumnFuncParams, } from "./entities/colDef";
-export { GridOptions, IsServerSideGroupOpenByDefaultParams, IsApplyServerSideTransactionParams, IsApplyServerSideTransaction, GetContextMenuItemsParams, GetContextMenuItems, GetChartToolbarItemsParams, GetDataPath, IsRowMaster, IsRowSelectable, MenuItemDef, GetMainMenuItemsParams, GetMainMenuItems, GetRowNodeIdFunc, ProcessRowParams, NavigateToNextHeaderParams, TabToNextHeaderParams, NavigateToNextCellParams, TabToNextCellParams, PostProcessPopupParams, ProcessDataFromClipboardParams, ChartRef, ProcessChartOptionsParams, ProcessChartParams, ServerSideStoreType, ServerSideStoreParams, GetServerSideStoreParamsParams } from "./entities/gridOptions";
+export { IAggFunc, IAggFuncParams, ColGroupDef, ColDef, AbstractColDef, ValueSetterParams, ValueParserParams, ValueFormatterParams, ColSpanParams, RowSpanParams, SuppressKeyboardEventParams, SuppressHeaderKeyboardEventParams, ValueGetterParams, NewValueParams, CellClassParams, GetQuickFilterTextParams, ColumnFunctionCallbackParams, CheckboxSelectionCallbackParams, RowDragCallbackParams, DndSourceCallbackParams, EditableCallbackParams, SuppressPasteCallbackParams, SuppressNavigableCallbackParams, IsColumnFunc, IsColumnFuncParams } from "./entities/colDef";
+export { GridOptions, IsServerSideGroupOpenByDefaultParams, IsApplyServerSideTransactionParams, IsApplyServerSideTransaction, GetContextMenuItemsParams, GetContextMenuItems, GetChartToolbarItemsParams, GetDataPath, IsRowMaster, IsRowSelectable, MenuItemDef, GetMainMenuItemsParams, GetMainMenuItems, GetRowNodeIdFunc, ProcessRowParams, NavigateToNextHeaderParams, TabToNextHeaderParams, NavigateToNextCellParams, TabToNextCellParams, PostProcessPopupParams, ProcessDataFromClipboardParams, ChartRef, ProcessChartOptionsParams, ProcessChartParams, RowClassParams, ServerSideStoreType, ServerSideStoreParams, GetServerSideStoreParamsParams } from "./entities/gridOptions";
 export * from "./propertyKeys";
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { ColumnGroupChild } from "./entities/columnGroupChild";

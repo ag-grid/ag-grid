@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellRange } from "../interfaces/iRangeController";
@@ -10,7 +10,7 @@ export interface CellValueChange {
     newValue: any;
 }
 export interface LastFocusedCell {
-    rowPinned?: string;
+    rowPinned?: string | null;
     rowIndex: number;
     columnId: string;
 }
@@ -28,7 +28,7 @@ export declare class UndoRedoStack {
     private readonly maxStackSize;
     private actionStack;
     constructor(maxStackSize?: number);
-    pop(): UndoRedoAction;
+    pop(): UndoRedoAction | undefined;
     push(item: UndoRedoAction): void;
     clear(): void;
     getCurrentStackSize(): number;

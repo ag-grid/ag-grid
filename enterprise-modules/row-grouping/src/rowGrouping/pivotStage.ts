@@ -57,7 +57,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
         const aggregationColumns = this.columnController.getValueColumns();
         const aggregationColumnsHash = aggregationColumns.map((column) => column.getId()).join('#');
-        const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc().toString()).join('#');
+        const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc()!.toString()).join('#');
 
         const aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
         const aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;
@@ -103,7 +103,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
             if (rowNode.leafGroup) {
                 this.bucketRowNode(rowNode, uniqueValues);
             } else {
-                rowNode.childrenAfterFilter.forEach(child => {
+                rowNode.childrenAfterFilter!.forEach(child => {
                     recursivelySearchForLeafNodes(child);
                 });
             }
@@ -123,7 +123,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
             return;
         }
 
-        rowNode.childrenMapped = this.bucketChildren(rowNode.childrenAfterFilter, pivotColumns, 0, uniqueValues);
+        rowNode.childrenMapped = this.bucketChildren(rowNode.childrenAfterFilter!, pivotColumns, 0, uniqueValues);
     }
 
     private bucketChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number, uniqueValues: any): any {

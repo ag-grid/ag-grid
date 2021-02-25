@@ -169,14 +169,11 @@ var MultiFilter = /** @class */ (function (_super) {
         return 'multi';
     };
     MultiFilter.prototype.getModelFromUi = function () {
-        if (!this.isFilterActive()) {
-            return null;
-        }
         var model = {
             filterType: this.getFilterType(),
             filterModels: _.map(this.filters, function (filter) {
                 var providedFilter = filter;
-                if (filter.isFilterActive() && typeof providedFilter.getModelFromUi === 'function') {
+                if (typeof providedFilter.getModelFromUi === 'function') {
                     return providedFilter.getModelFromUi();
                 }
                 return null;

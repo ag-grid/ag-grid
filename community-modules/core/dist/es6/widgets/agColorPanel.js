@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -209,7 +209,7 @@ var AgColorPanel = /** @class */ (function (_super) {
             return;
         }
         // remove duplicate color
-        recentColors = recentColors.filter(function (color) { return color != rgbaColor; });
+        recentColors = recentColors.filter(function (currentColor) { return currentColor != rgbaColor; });
         // add color to head
         recentColors = [rgbaColor].concat(recentColors);
         // ensure we don't exceed max number of recent colors

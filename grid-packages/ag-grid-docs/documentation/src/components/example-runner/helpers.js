@@ -1,6 +1,10 @@
 import { withPrefix } from 'gatsby';
-import { agGridVersion, localPrefix, getLocalPrefix } from './consts';
+import { encodeQueryParams } from 'use-query-params';
+import { stringify } from 'query-string';
+import { agGridVersion, localPrefix } from 'utils/consts';
 import { getIndexHtml } from './index-html-helper';
+import { ParameterConfig } from '../../../pages/example-runner';
+import isDevelopment from 'utils/is-development';
 
 const getInternalFramework = (framework, useFunctionalReact) => {
     if (framework === 'javascript') {
@@ -12,7 +16,17 @@ const getInternalFramework = (framework, useFunctionalReact) => {
     return framework;
 };
 
-export const getExampleInfo = (nodes, library, pageName, name, title, type, options, framework, importType, useFunctionalReact) => {
+export const getExampleInfo = (
+    nodes,
+    library,
+    pageName,
+    name,
+    title,
+    type,
+    options = {},
+    framework = 'javascript',
+    useFunctionalReact = false,
+    importType = 'modules') => {
     if (library === 'charts') {
         // no support for modules or React Hooks in charts yet
         importType = 'packages';
@@ -59,6 +73,11 @@ export const getExampleInfo = (nodes, library, pageName, name, title, type, opti
         boilerplatePath,
         appLocation,
         getFile: name => nodes.filter(file => file.relativePath === sourcePath + name)[0],
+        getFiles: (extension, exclude = () => false) =>
+            nodes.filter(file => file.relativePath.startsWith(sourcePath) &&
+                (!extension || file.base.endsWith(`.${extension}`)) &&
+                !exclude(file)
+            )
     };
 };
 
@@ -78,11 +97,11 @@ const getFrameworkFiles = framework => {
     return files;
 };
 
-export const getExampleFiles = (nodes, exampleInfo) => {
+export const getExampleFiles = exampleInfo => {
     const { sourcePath, framework, boilerplatePath } = exampleInfo;
 
-    const filesForExample = nodes
-        .filter(node => node.relativePath.startsWith(sourcePath))
+    const filesForExample = exampleInfo
+        .getFiles()
         .map(node => ({
             path: node.relativePath.replace(sourcePath, ''),
             publicURL: node.publicURL,
@@ -109,17 +128,17 @@ export const getExampleFiles = (nodes, exampleInfo) => {
     });
 
     files['index.html'] = {
-        source: getIndexHtml(nodes, exampleInfo),
+        source: getIndexHtml(exampleInfo),
         isFramework: false,
     };
 
     return Promise.all(promises).then(() => files);
 };
 
-export const openPlunker = (nodes, exampleInfo) => {
+export const openPlunker = exampleInfo => {
     const { title } = exampleInfo;
 
-    getExampleFiles(nodes, exampleInfo).then(files => {
+    getExampleFiles(exampleInfo).then(files => {
         const form = document.createElement('form');
         form.method = 'post';
         form.style.display = 'none';
@@ -141,14 +160,7 @@ export const openPlunker = (nodes, exampleInfo) => {
         addHiddenInput('description', title);
 
         Object.keys(files).forEach(key => {
-            let { source } = files[key];
-
-            if (isDevelopment() && window.location) {
-                // swap out to match hostname so Plunkers from localhost can be shared
-                source = source.replace(new RegExp(localPrefix, 'g'), getLocalPrefix(`${window.location.hostname}:8080`));
-            }
-
-            addHiddenInput(`files[${key}]`, source);
+            addHiddenInput(`files[${key}]`, files[key].source);
         });
 
         document.body.appendChild(form);
@@ -157,7 +169,6 @@ export const openPlunker = (nodes, exampleInfo) => {
     });
 };
 
-export const isDevelopment = () => process.env.NODE_ENV === 'development';
 export const isUsingPublishedPackages = () => process.env.GATSBY_USE_PUBLISHED_PACKAGES === 'true';
 
 export const getCssFilePaths = theme => {
@@ -175,4 +186,47 @@ export const getCssFilePaths = theme => {
         `${localPrefix}/@ag-grid-community/all-modules/dist/styles/${file}`;
 
     return cssFiles.map(getCssFilePath);
+};
+
+export const getEntryFile = framework => {
+    const entryFile = {
+        'react': 'index.jsx',
+        'angular': 'app/app.component.ts'
+    };
+
+    return entryFile[framework] || 'main.js';
+};
+
+export const getIndexHtmlUrl = exampleInfo => {
+    if (isDevelopment()) {
+        const {
+            pageName,
+            library,
+            framework,
+            useFunctionalReact,
+            importType,
+            name,
+            title,
+            type,
+            options,
+        } = exampleInfo;
+
+        const queryParams = encodeQueryParams(
+            ParameterConfig,
+            {
+                pageName,
+                library,
+                framework,
+                useFunctionalReact,
+                importType,
+                name,
+                title,
+                type,
+                options,
+            });
+
+        return withPrefix(`/example-runner/?${stringify(queryParams)}`);
+    } else {
+        return withPrefix(`${exampleInfo.appLocation}index.html`);
+    }
 };

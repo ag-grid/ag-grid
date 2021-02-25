@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from '../../../widgets/component';
@@ -9,7 +9,7 @@ export declare class DefaultDateComponent extends Component implements IDateComp
     constructor();
     destroy(): void;
     init(params: IDateParams): void;
-    getDate(): Date;
+    getDate(): Date | null;
     setDate(date: Date): void;
     setInputPlaceholder(placeholder: string): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;

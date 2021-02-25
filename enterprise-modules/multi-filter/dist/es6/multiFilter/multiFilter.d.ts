@@ -8,7 +8,7 @@ export interface IMultiFilterParams extends IFilterParams {
 }
 export interface IMultiFilterModel {
     filterType: string;
-    filterModels: any[];
+    filterModels: any[] | null;
 }
 export declare class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     private readonly filterManager;

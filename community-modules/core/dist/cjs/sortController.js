@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,15 +32,7 @@ var events_1 = require("./events");
 var SortController = /** @class */ (function (_super) {
     __extends(SortController, _super);
     function SortController() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        // used by server side row models, to send sorting to server
-        _this.getSortModel = function () {
-            return _this.getColumnsWithSortingOrdered().map(function (column) { return ({
-                colId: column.getColId(),
-                sort: column.getSort()
-            }); });
-        };
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     SortController_1 = SortController;
     SortController.prototype.progressSort = function (column, multiSort, source) {
@@ -81,7 +73,7 @@ var SortController = /** @class */ (function (_super) {
         }
         // clear sort index on all cols not sorting
         var allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        allCols.filter(function (col) { return col.getSort() == null; }).forEach(function (col) { return col.setSortIndex(undefined); });
+        allCols.filter(function (col) { return col.getSort() == null; }).forEach(function (col) { return col.setSortIndex(); });
     };
     // gets called by API, so if data changes, use can call this, which will end up
     // working out the sort order again of the rows.
@@ -105,7 +97,7 @@ var SortController = /** @class */ (function (_super) {
     SortController.prototype.clearSortBarThisColumn = function (columnToSkip, source) {
         this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach(function (columnToClear) {
             // Do not clear if either holding shift, or if column in question was clicked
-            if (!(columnToClear === columnToSkip)) {
+            if (columnToClear !== columnToSkip) {
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
                 // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
                 columnToClear.setSort(undefined, source);
@@ -175,15 +167,18 @@ var SortController = /** @class */ (function (_super) {
         });
         return columnsWithSorting;
     };
-    // used by row controller, when doing the sorting
-    SortController.prototype.getSortForRowController = function () {
-        return this.getColumnsWithSortingOrdered().map(function (column) {
-            var isAscending = column.getSort() === constants_1.Constants.SORT_ASC;
-            return {
-                inverter: isAscending ? 1 : -1,
-                column: column
-            };
-        });
+    // used by server side row models, to sent sort to server
+    SortController.prototype.getSortModel = function () {
+        return this.getColumnsWithSortingOrdered().map(function (column) { return ({
+            sort: column.getSort(),
+            colId: column.getId()
+        }); });
+    };
+    SortController.prototype.getSortOptions = function () {
+        return this.getColumnsWithSortingOrdered().map(function (column) { return ({
+            sort: column.getSort(),
+            column: column
+        }); });
     };
     var SortController_1;
     SortController.DEFAULT_SORTING_ORDER = [constants_1.Constants.SORT_ASC, constants_1.Constants.SORT_DESC, null];

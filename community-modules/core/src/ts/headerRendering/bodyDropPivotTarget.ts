@@ -14,9 +14,9 @@ export class BodyDropPivotTarget implements DropListener {
     private columnsToGroup: Column[] = [];
     private columnsToPivot: Column[] = [];
 
-    private pinned: string;
+    private pinned: string | null;
 
-    constructor(pinned: string) {
+    constructor(pinned: string | null) {
         this.pinned = pinned;
     }
 
@@ -27,7 +27,9 @@ export class BodyDropPivotTarget implements DropListener {
         // in pivot mode, we don't accept any drops if functions are read only
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return; }
 
-        const dragColumns: Column[] = draggingEvent.dragItem.columns;
+        const dragColumns: Column[] | undefined = draggingEvent.dragItem.columns;
+
+        if (!dragColumns) { return; }
 
         dragColumns.forEach(column => {
             // we don't allow adding secondary columns
@@ -46,13 +48,13 @@ export class BodyDropPivotTarget implements DropListener {
         });
     }
 
-    public getIconName(): string {
+    public getIconName(): string | null {
         const totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length + this.columnsToPivot.length;
         if (totalColumns > 0) {
             return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /** Callback for when drag leaves */

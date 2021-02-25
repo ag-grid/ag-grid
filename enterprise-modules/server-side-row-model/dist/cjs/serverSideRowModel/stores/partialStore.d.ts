@@ -9,6 +9,7 @@ export declare class PartialStore extends BeanStub implements IServerSideStore {
     private rowNodeBlockLoader;
     private storeUtils;
     private columnController;
+    private focusController;
     private readonly ssrmParams;
     private readonly storeParams;
     private readonly parentRowNode;
@@ -34,6 +35,7 @@ export declare class PartialStore extends BeanStub implements IServerSideStore {
     onBlockLoadFailed(block: PartialStoreBlock): void;
     onBlockLoaded(block: PartialStoreBlock, params: LoadSuccessParams): void;
     private purgeBlocksIfNeeded;
+    private isBlockFocused;
     private isBlockCurrentlyDisplayed;
     removeDuplicateNode(id: string): void;
     private checkRowCount;

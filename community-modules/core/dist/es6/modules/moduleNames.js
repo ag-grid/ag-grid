@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,7 +14,6 @@ export var ModuleNames;
     ModuleNames["InfiniteRowModelModule"] = "@ag-grid-community/infinite-row-model";
     ModuleNames["ClientSideRowModelModule"] = "@ag-grid-community/client-side-row-model";
     ModuleNames["CsvExportModule"] = "@ag-grid-community/csv-export";
-    ModuleNames["RowNodeCache"] = "@ag-grid-community/row-node-cache";
     // enterprise core - users never import on this, but other enterprise modules do
     ModuleNames["EnterpriseCoreModule"] = "@ag-grid-enterprise/core";
     // when not using modules, user references this

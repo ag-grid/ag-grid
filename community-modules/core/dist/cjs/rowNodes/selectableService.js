@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,18 +39,21 @@ var SelectableService = /** @class */ (function (_super) {
     };
     SelectableService.prototype.updateSelectableAfterGrouping = function (rowNode) {
         if (this.isRowSelectableFunc) {
-            var nextChildrenFunc = function (rowNode) { return rowNode.childrenAfterGroup; };
+            var nextChildrenFunc = function (node) { return node.childrenAfterGroup; };
             this.recurseDown(rowNode.childrenAfterGroup, nextChildrenFunc);
         }
     };
     SelectableService.prototype.updateSelectableAfterFiltering = function (rowNode) {
         if (this.isRowSelectableFunc) {
-            var nextChildrenFunc = function (rowNode) { return rowNode.childrenAfterFilter; };
+            var nextChildrenFunc = function (node) { return node.childrenAfterFilter; };
             this.recurseDown(rowNode.childrenAfterGroup, nextChildrenFunc);
         }
     };
     SelectableService.prototype.recurseDown = function (children, nextChildrenFunc) {
         var _this = this;
+        if (!children) {
+            return;
+        }
         children.forEach(function (child) {
             if (!child.group) {
                 return;

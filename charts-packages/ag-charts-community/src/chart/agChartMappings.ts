@@ -21,6 +21,9 @@ import { NavigatorMask } from "./navigator/navigatorMask";
 import { NavigatorHandle } from "./navigator/navigatorHandle";
 import { CartesianSeriesMarker } from "./series/cartesian/cartesianSeries";
 import { Chart } from "./chart";
+import { HierarchyChart } from "./hierarchyChart";
+import { HierarchySeries } from "./series/hierarchy/hierarchySeries";
+import { TreemapSeries } from "./series/hierarchy/treemapSeries";
 
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -62,7 +65,7 @@ const commonChartMappings: any = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -87,7 +90,7 @@ const commonChartMappings: any = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -184,6 +187,7 @@ const chartMeta = {
     // There is no actual `document` property on the chart, it can only be supplied during instantiation.
     constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
     setAsIs: ['container', 'data', 'tooltipOffset'], // Properties that should be set on the component as is (without pre-processing).
+    nonSerializable: ['container', 'data']
 };
 
 const axisDefaults: any = {
@@ -259,6 +263,18 @@ const barLabelMapping: any = {
     }
 };
 
+const tooltipMapping: any = {
+    tooltip: {
+        meta: {
+            defaults: {
+                enabled: true,
+                renderer: undefined,
+                format: undefined
+            }
+        }
+    }
+};
+
 const axisMappings: any = {
     line: {
         meta: {
@@ -272,7 +288,6 @@ const axisMappings: any = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -376,6 +391,7 @@ const mappings: any = {
             column: {
                 meta: {
                     constructor: BarSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         flipXY: false, // vertical bars
                         ...seriesDefaults,
@@ -383,12 +399,14 @@ const mappings: any = {
                     }
                 },
                 highlightStyle: {},
+                ...tooltipMapping,
                 ...barLabelMapping,
                 ...shadowMapping
             },
             [BarSeries.type]: {
                 meta: {
                     constructor: BarSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         flipXY: true, // horizontal bars
                         ...seriesDefaults,
@@ -396,12 +414,14 @@ const mappings: any = {
                     }
                 },
                 highlightStyle: {},
+                ...tooltipMapping,
                 ...barLabelMapping,
                 ...shadowMapping
             },
             [LineSeries.type]: {
                 meta: {
                     constructor: LineSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
@@ -413,12 +433,12 @@ const mappings: any = {
                         strokeOpacity: 1,
                         lineDash: undefined,
                         lineDashOffset: 0,
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 marker: {
                     meta: {
@@ -451,12 +471,12 @@ const mappings: any = {
                         strokeWidth: 2,
                         fillOpacity: 1,
                         strokeOpacity: 1,
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 marker: {
                     meta: {
@@ -475,6 +495,7 @@ const mappings: any = {
             [AreaSeries.type]: {
                 meta: {
                     constructor: AreaSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         xKey: '',
@@ -488,12 +509,12 @@ const mappings: any = {
                         lineDash: undefined,
                         lineDashOffset: 0,
                         shadow: undefined,
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 marker: {
                     meta: {
@@ -513,6 +534,7 @@ const mappings: any = {
             [HistogramSeries.type]: {
                 meta: {
                     constructor: HistogramSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
@@ -526,13 +548,15 @@ const mappings: any = {
                         lineDash: undefined,
                         lineDashOffset: 0,
                         areaPlot: false,
+                        binCount: undefined,
+                        bins: undefined,
                         aggregation: 'sum',
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 label: {
                     meta: {
@@ -620,6 +644,7 @@ const mappings: any = {
             [PieSeries.type]: {
                 meta: {
                     constructor: PieSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
@@ -641,6 +666,7 @@ const mappings: any = {
                         shadow: undefined
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 title: {
                     meta: {
@@ -687,6 +713,28 @@ const mappings: any = {
                 ...shadowMapping
             }
         }
+    },
+    [HierarchyChart.type]: {
+        meta: {
+            constructor: HierarchyChart,
+            ...chartMeta,
+            defaults: {
+                ...chartDefaults
+            }
+        },
+        ...commonChartMappings,
+        series: {
+            [TreemapSeries.type]: {
+                meta: {
+                    constructor: TreemapSeries,
+                    defaults: {
+                        ...seriesDefaults,
+                        showInLegend: false
+                    }
+                },
+                ...tooltipMapping,
+            }
+        }
     }
 };
 
@@ -694,7 +742,8 @@ const mappings: any = {
 {
     const typeToAliases: { [key in string]: string[] } = {
         cartesian: ['line', 'area', 'bar', 'column'],
-        polar: ['pie']
+        polar: ['pie'],
+        hierarchy: ['treemap']
     };
     for (const type in typeToAliases) {
         typeToAliases[type].forEach(alias => {

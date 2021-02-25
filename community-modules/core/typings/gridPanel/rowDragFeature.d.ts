@@ -10,11 +10,11 @@ export interface RowDropZoneEvents {
 }
 export interface RowDropZoneParams extends RowDropZoneEvents {
     getContainer: () => HTMLElement;
-    fromGrid?: boolean;
 }
 export declare class RowDragFeature extends BeanStub implements DropTarget {
     private dragAndDropService;
     private rowModel;
+    private paginationProxy;
     private columnController;
     private focusController;
     private sortController;

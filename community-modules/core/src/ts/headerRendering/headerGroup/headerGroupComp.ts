@@ -120,7 +120,9 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     private addInIcon(iconName: string, refName: string): void {
         const eIcon = createIconNoSpan(iconName, this.gridOptionsWrapper, null);
-        this.getRefElement(refName).appendChild(eIcon);
+        if (eIcon) {
+            this.getRefElement(refName).appendChild(eIcon);
+        }
     }
 
     private addGroupExpandIcon() {
@@ -137,7 +139,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
         if (exists(displayName)) {
             const displayNameSanitised = escapeString(displayName);
-            this.getRefElement("agLabel").innerHTML = displayNameSanitised;
+            this.getRefElement('agLabel').innerHTML = displayNameSanitised!;
         }
     }
 }

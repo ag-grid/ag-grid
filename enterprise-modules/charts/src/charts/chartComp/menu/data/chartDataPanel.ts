@@ -16,9 +16,9 @@ import {
     PostConstruct,
     VerticalDirection
 } from "@ag-grid-community/core";
-import {ChartController} from "../../chartController";
-import {ColState} from "../../chartDataModel";
-import {ChartTranslator} from "../../chartTranslator";
+import { ChartController } from "../../chartController";
+import { ColState } from "../../chartDataModel";
+import { ChartTranslator } from "../../chartTranslator";
 
 export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper"></div>`;
@@ -112,7 +112,7 @@ export class ChartDataPanel extends Component {
             comp.setInputName(inputName);
 
             this.addChangeListener(comp, col);
-            this.categoriesGroupComp.addItem(comp);
+            this.categoriesGroupComp!.addItem(comp);
             this.columnComps.set(col.colId, comp);
         });
 
@@ -149,7 +149,7 @@ export class ChartDataPanel extends Component {
         const getSeriesLabel = this.generateGetSeriesLabel();
 
         columns.forEach(col => {
-            const comp = this.seriesGroupComp.createManagedBean(new AgCheckbox());
+            const comp = this.seriesGroupComp!.createManagedBean(new AgCheckbox());
             comp.addCssClass('ag-data-select-checkbox');
 
             const label = getSeriesLabel(col);
@@ -158,7 +158,7 @@ export class ChartDataPanel extends Component {
             comp.setValue(col.selected);
 
             this.addChangeListener(comp, col);
-            this.seriesGroupComp.addItem(comp);
+            this.seriesGroupComp!.addItem(comp);
             this.columnComps.set(col.colId, comp);
 
             this.addDragHandle(comp, col);
@@ -176,7 +176,7 @@ export class ChartDataPanel extends Component {
     }
 
     private addDragHandle(comp: AgCheckbox, col: ColState): void {
-        const eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
+        const eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
 
         _.addCssClass(eDragHandle, 'ag-drag-handle');
         _.addCssClass(eDragHandle, 'ag-chart-data-column-drag-handle');
@@ -188,7 +188,7 @@ export class ChartDataPanel extends Component {
             eElement: eDragHandle,
             dragItemName: col.displayName,
             defaultIconName: DragAndDropService.ICON_MOVE,
-            getDragItem: () => ({ columns: [col.column] }),
+            getDragItem: () => ({ columns: [col.column!] }),
             onDragStopped: () => { this.insertIndex = undefined; }
         };
 
@@ -256,12 +256,12 @@ export class ChartDataPanel extends Component {
 
     private onDragging(draggingEvent: DraggingEvent): void {
         if (this.checkInsertIndex(draggingEvent)) {
-            const column = draggingEvent.dragItem.columns[0];
+            const column = draggingEvent.dragItem.columns![0];
             const { dimensionCols, valueCols } = this.chartController.getColStateForMenu();
             [...dimensionCols, ...valueCols]
                 .filter(state => state.column === column)
                 .forEach(state => {
-                    state.order = this.insertIndex;
+                    state.order = this.insertIndex!;
                     this.chartController.updateForPanelChange(state);
                 });
         }

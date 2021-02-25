@@ -88,7 +88,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
 
         series.data = params.data;
         series.xKey = xField.colId;
-        series.xName = xField.displayName;
+        series.xName = xField.displayName!;
 
         // for now, only constant width is supported via integrated charts
         series.areaPlot = false;

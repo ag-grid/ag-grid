@@ -9,7 +9,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
     protected postConstruct(): void {
 
         if (!this.isValidRowModel()) {
-            console.warn(`ag-Grid: agSelectedRowCountComponent should only be used with the client and server side row model.`);
+            console.warn(`AG Grid: agSelectedRowCountComponent should only be used with the client and server side row model.`);
             return;
         }
 

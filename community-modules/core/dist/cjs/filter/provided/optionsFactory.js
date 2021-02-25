@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,7 +32,7 @@ var OptionsFactory = /** @class */ (function () {
             var requiredProperties = ['displayKey', 'displayName', 'test'];
             if (array_1.every(requiredProperties, function (key) {
                 if (!filterOption[key]) {
-                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a '" + key + "'");
+                    console.warn("AG Grid: ignoring FilterOptionDef as it doesn't contain a '" + key + "'");
                     return false;
                 }
                 return true;
@@ -54,11 +54,11 @@ var OptionsFactory = /** @class */ (function () {
                 this.defaultOption = firstFilterOption.displayKey;
             }
             else {
-                console.warn("ag-Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'");
+                console.warn("AG Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'");
             }
         }
         else {
-            console.warn('ag-Grid: no filter options for filter');
+            console.warn('AG Grid: no filter options for filter');
         }
     };
     OptionsFactory.prototype.getDefaultOption = function () {

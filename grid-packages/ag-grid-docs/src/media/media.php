@@ -2,8 +2,8 @@
 header("Location: https://medium.com/ag-grid", true, 301);
 exit;
 
-$pageTitle = "ag-Grid Blog: Home";
-$pageDescription = "Welcome to the ag-Grid Blog where we provide information on our new releases and lots of useful tutorials and guides to our products and the frameworks that we support.";
+$pageTitle = "AG Grid Blog: Home";
+$pageDescription = "Welcome to the AG Grid Blog where we provide information on our new releases and lots of useful tutorials and guides to our products and the frameworks that we support.";
 $pageKeywords = "blogs ag-grid angular react webpack";
 include('../includes/mediaHeader.php');
 
@@ -86,7 +86,7 @@ HTML;
     );
 
     featuredBlog(
-        'Plunker is now backed by ag-Grid',
+        'Plunker is now backed by AG Grid',
         '../images/Plunker_Cover_Smaller.png',
         '../ag-grid-proud-to-support-plunker/',
         'john',
@@ -94,7 +94,7 @@ HTML;
     );
 
     featuredBlog(
-        'Happy New ag-Grid v15.0.0',
+        'Happy New AG Grid v15.0.0',
         '../ag-grid-blog-15-0-0/img15-0-0.png',
         '../ag-grid-blog-15-0-0/',
         'sophia',

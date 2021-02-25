@@ -34,13 +34,13 @@ export class AgSlider extends AgAbstractLabel {
     public onValueChange(callbackFn: (newValue: number) => void) {
         const eventChanged = AgAbstractField.EVENT_CHANGED;
         this.addManagedListener(this.eText, eventChanged, () => {
-            const textValue = parseFloat(this.eText.getValue());
+            const textValue = parseFloat(this.eText.getValue()!);
             this.eSlider.setValue(textValue.toString(), true);
             callbackFn(textValue || 0);
         });
 
         this.addManagedListener(this.eSlider, eventChanged, () => {
-            const sliderValue = this.eSlider.getValue();
+            const sliderValue = this.eSlider.getValue()!;
             this.eText.setValue(sliderValue, true);
             callbackFn(parseFloat(sliderValue));
         });
@@ -71,7 +71,7 @@ export class AgSlider extends AgAbstractLabel {
         return this;
     }
 
-    public getValue(): string {
+    public getValue(): string | null | undefined {
         return this.eText.getValue();
     }
 

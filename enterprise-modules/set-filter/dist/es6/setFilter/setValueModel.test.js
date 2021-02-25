@@ -1,3 +1,14 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -13,7 +24,6 @@ function createSetValueModel(gridValues, filterParams, doesRowPassOtherFilters, 
     if (filterParams === void 0) { filterParams = {}; }
     if (doesRowPassOtherFilters === void 0) { doesRowPassOtherFilters = function (_) { return true; }; }
     if (suppressSorting === void 0) { suppressSorting = false; }
-    var colDef = {};
     var rowModel = {
         getType: function () { return Constants.ROW_MODEL_TYPE_CLIENT_SIDE; },
         forEachLeafNode: function (callback) {
@@ -23,7 +33,8 @@ function createSetValueModel(gridValues, filterParams, doesRowPassOtherFilters, 
     };
     var valueFormatterService = mock('formatValue');
     valueFormatterService.formatValue.mockImplementation(function (_1, _2, _3, value) { return value; });
-    return new SetValueModel(rowModel, function (node) { return node.data.value; }, filterParams, colDef, null, doesRowPassOtherFilters, suppressSorting, function (_) { }, valueFormatterService, function (key) { return key === 'blanks' ? '(Blanks)' : null; });
+    var params = __assign({ rowModel: rowModel, valueGetter: function (node) { return node.data.value; }, colDef: {}, doesRowPassOtherFilter: doesRowPassOtherFilters, suppressSorting: suppressSorting }, filterParams);
+    return new SetValueModel(params, function (_) { }, valueFormatterService, function (key) { return key === 'blanks' ? '(Blanks)' : ''; });
 }
 function getDisplayedValues(model) {
     var values = [];

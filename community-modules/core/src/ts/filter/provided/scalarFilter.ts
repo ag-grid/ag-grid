@@ -29,7 +29,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, T> extends Simp
     protected abstract comparator(): Comparator<T>;
 
     // because the date and number filter models have different attribute names, we have to map
-    protected abstract mapRangeFromModel(filterModel: ISimpleFilterModel): { from: T, to: T; };
+    protected abstract mapRangeFromModel(filterModel: ISimpleFilterModel): { from: T | null | undefined, to: T | null | undefined; };
 
     protected setParams(params: IScalarFilterParams): void {
         super.setParams(params);
@@ -39,7 +39,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, T> extends Simp
 
     private checkDeprecatedParams(): void {
         if (this.scalarFilterParams.nullComparator) {
-            console.warn('ag-Grid: Since v21.0, the property filterParams.nullComparator is deprecated. ' +
+            console.warn('AG Grid: Since v21.0, the property filterParams.nullComparator is deprecated. ' +
                 'Please use filterParams.includeBlanksInEquals, filterParams.includeBlanksInLessThan and ' +
                 'filterParams.includeBlanksInGreaterThan instead.');
 
@@ -97,7 +97,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, T> extends Simp
         }
 
         const comparator = this.comparator();
-        const compareResult = comparator(filterValue, cellValue);
+        const compareResult = comparator(filterValue!, cellValue);
 
         switch (filterType) {
             case ScalarFilter.EQUALS:
@@ -119,7 +119,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, T> extends Simp
                 return compareResult <= 0;
 
             case ScalarFilter.IN_RANGE: {
-                const compareToResult = comparator(filterValueTo, cellValue);
+                const compareToResult = comparator(filterValueTo!, cellValue);
 
                 return this.scalarFilterParams.inRangeInclusive ?
                     compareResult >= 0 && compareToResult <= 0 :

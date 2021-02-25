@@ -86,14 +86,18 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     };
     ToolPanelFilterComp.prototype.expand = function () {
         var _this = this;
-        if (this.expanded)
+        if (this.expanded) {
             return;
+        }
         this.expanded = true;
         var container = core_1._.loadTemplate(/* html */ "<div class=\"ag-filter-toolpanel-instance-filter\"></div>");
         var filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
         if (filterPromise) {
             filterPromise.then(function (filter) {
                 _this.underlyingFilter = filter;
+                if (!filter) {
+                    return;
+                }
                 container.appendChild(filter.getGui());
                 _this.agFilterToolPanelBody.appendChild(container);
                 if (filter.afterGuiAttached) {
@@ -105,8 +109,9 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         core_1._.setDisplayed(this.eExpandUnchecked, false);
     };
     ToolPanelFilterComp.prototype.collapse = function () {
-        if (!this.expanded)
+        if (!this.expanded) {
             return;
+        }
         this.expanded = false;
         this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
         core_1._.setDisplayed(this.eExpandChecked, false);
@@ -117,8 +122,9 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
             return;
         }
         var filter = this.underlyingFilter;
-        if (!filter)
+        if (!filter) {
             return;
+        }
         // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
         // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
         // scroll position in the filter list panel

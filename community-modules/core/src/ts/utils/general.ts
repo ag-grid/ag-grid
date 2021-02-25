@@ -43,7 +43,7 @@ export function findLineByLeastSquares(values: number[]) {
     const m = (len * sum_xy - sum_x * sum_y) / (len * sum_xx - sum_x * sum_x);
     const b = (sum_y / len) - (m * sum_x) / len;
 
-    const result = [];
+    const result: number[] = [];
 
     for (let x = 0; x <= len; x++) {
         result.push(parseFloat((x * m + b).toFixed(maxDecimals)));
@@ -73,7 +73,7 @@ export function cssStyleObjectToMarkup(stylesToUse: any): string {
 /**
  * Displays a message to the browser. this is useful in iPad, where you can't easily see the console.
  * so the javascript code can use this to give feedback. this is NOT intended to be called in production.
- * it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
+ * it is intended the AG Grid developer calls this to troubleshoot, but then takes out the calls before
  * checking in.
  * @param {string} msg
  */
@@ -104,7 +104,7 @@ export function message(msg: string): void {
  */
 export function bindCellRendererToHtmlElement(cellRendererPromise: AgPromise<ICellRendererComp>, eTarget: HTMLElement) {
     cellRendererPromise.then(cellRenderer => {
-        const gui: HTMLElement | string = cellRenderer.getGui();
+        const gui: HTMLElement | string = cellRenderer!.getGui();
 
         if (gui != null) {
             if (typeof gui === 'object') {

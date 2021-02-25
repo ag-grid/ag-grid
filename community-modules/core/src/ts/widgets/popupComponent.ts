@@ -18,7 +18,7 @@ export class PopupComponent extends Component implements IPopupComponent<any> {
         const hasParent = parentComp && parentComp.isAlive();
 
         if (hasParent) {
-            removeCssClass(parentComp.getGui(), 'ag-has-popup');
+            removeCssClass(parentComp!.getGui(), 'ag-has-popup');
         }
 
         super.destroy();

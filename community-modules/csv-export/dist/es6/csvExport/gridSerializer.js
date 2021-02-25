@@ -17,93 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, ColumnGroup, Constants, GroupInstanceIdCreator, BeanStub } from "@ag-grid-community/core";
-var BaseGridSerializingSession = /** @class */ (function () {
-    function BaseGridSerializingSession(config) {
-        this.groupColumns = [];
-        var columnController = config.columnController, valueService = config.valueService, gridOptionsWrapper = config.gridOptionsWrapper, processCellCallback = config.processCellCallback, processHeaderCallback = config.processHeaderCallback, processGroupHeaderCallback = config.processGroupHeaderCallback, processRowGroupCallback = config.processRowGroupCallback;
-        this.columnController = columnController;
-        this.valueService = valueService;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-        this.processCellCallback = processCellCallback;
-        this.processHeaderCallback = processHeaderCallback;
-        this.processGroupHeaderCallback = processGroupHeaderCallback;
-        this.processRowGroupCallback = processRowGroupCallback;
-    }
-    BaseGridSerializingSession.prototype.prepare = function (columnsToExport) {
-        this.groupColumns = _.filter(columnsToExport, function (col) { return !!col.getColDef().showRowGroup; });
-    };
-    BaseGridSerializingSession.prototype.extractHeaderValue = function (column) {
-        var value = this.getHeaderName(this.processHeaderCallback, column);
-        return value != null ? value : '';
-    };
-    BaseGridSerializingSession.prototype.extractRowCellValue = function (column, index, type, node) {
-        // we render the group summary text e.g. "-> Parent -> Child"...
-        var groupIndex = this.gridOptionsWrapper.isGroupMultiAutoColumn() ? node.rowGroupIndex : 0;
-        var renderGroupSummaryCell = 
-        // on group rows
-        node && node.group
-            && (
-            // in the group column if groups appear in regular grid cells
-            index === groupIndex && this.groupColumns.indexOf(column) !== -1
-                // or the first cell in the row, if we're doing full width rows
-                || (index === 0 && this.gridOptionsWrapper.isGroupUseEntireRow(this.columnController.isPivotMode())));
-        var valueForCell;
-        if (renderGroupSummaryCell) {
-            valueForCell = this.createValueForGroupNode(node);
-        }
-        else {
-            valueForCell = this.valueService.getValue(column, node);
-        }
-        var value = this.processCell(node, column, valueForCell, this.processCellCallback, type);
-        return value != null ? value : '';
-    };
-    BaseGridSerializingSession.prototype.getHeaderName = function (callback, column) {
-        if (callback) {
-            return callback({
-                column: column,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext()
-            });
-        }
-        return this.columnController.getDisplayNameForColumn(column, 'csv', true);
-    };
-    BaseGridSerializingSession.prototype.createValueForGroupNode = function (node) {
-        if (this.processRowGroupCallback) {
-            return this.processRowGroupCallback({
-                node: node,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext(),
-            });
-        }
-        var keys = [node.key];
-        if (!this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
-            while (node.parent) {
-                node = node.parent;
-                keys.push(node.key);
-            }
-        }
-        return keys.reverse().join(' -> ');
-    };
-    BaseGridSerializingSession.prototype.processCell = function (rowNode, column, value, processCellCallback, type) {
-        if (processCellCallback) {
-            return processCellCallback({
-                column: column,
-                node: rowNode,
-                value: value,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext(),
-                type: type
-            });
-        }
-        return value;
-    };
-    return BaseGridSerializingSession;
-}());
-export { BaseGridSerializingSession };
+import { Autowired, Bean, BeanStub, ColumnGroup, Constants, GroupInstanceIdCreator, _ } from "@ag-grid-community/core";
 var GridSerializer = /** @class */ (function (_super) {
     __extends(GridSerializer, _super);
     function GridSerializer() {
@@ -112,11 +26,13 @@ var GridSerializer = /** @class */ (function (_super) {
     GridSerializer.prototype.serialize = function (gridSerializingSession, params) {
         if (params === void 0) { params = {}; }
         var rowSkipper = params.shouldRowBeSkipped || (function () { return false; });
-        var api = this.gridOptionsWrapper.getApi();
-        var columnApi = this.gridOptionsWrapper.getColumnApi();
-        var skipSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
-        var skipLowestSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
-        var context = this.gridOptionsWrapper.getContext();
+        var gridOptionsWrapper = this.gridOptionsWrapper;
+        var api = gridOptionsWrapper.getApi();
+        var columnApi = gridOptionsWrapper.getColumnApi();
+        var skipSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveSingleChildren();
+        var skipLowestSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
+        var hideOpenParents = gridOptionsWrapper.isGroupHideOpenParents();
+        var context = gridOptionsWrapper.getContext();
         // when in pivot mode, we always render cols on screen, never 'all columns'
         var isPivotMode = this.columnController.isPivotMode();
         var rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
@@ -127,7 +43,7 @@ var GridSerializer = /** @class */ (function (_super) {
         }
         else if (params.allColumns && !isPivotMode) {
             // add auto group column for tree data
-            columnsToExport = this.gridOptionsWrapper.isTreeData() ?
+            columnsToExport = gridOptionsWrapper.isTreeData() ?
                 this.columnController.getGridColumns([Constants.GROUP_AUTO_COLUMN_ID]) : [];
             columnsToExport = columnsToExport.concat(this.columnController.getAllPrimaryColumns() || []);
         }
@@ -151,13 +67,16 @@ var GridSerializer = /** @class */ (function (_super) {
             });
         }
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
+        var rowModel = this.rowModel;
+        var clientSideRowModel = this.rowModel;
         if (isPivotMode) {
-            if (this.rowModel.forEachPivotNode) {
-                this.rowModel.forEachPivotNode(processRow);
+            // @ts-ignore - ignore tautology below as we are using it to check if it's clientSideRowModel
+            if (clientSideRowModel.forEachPivotNode) {
+                clientSideRowModel.forEachPivotNode(processRow);
             }
             else {
-                //Must be enterprise, so we can just loop through all the nodes
-                this.rowModel.forEachNode(processRow);
+                // n=must be enterprise, so we can just loop through all the nodes
+                rowModel.forEachNode(processRow);
             }
         }
         else {
@@ -165,7 +84,7 @@ var GridSerializer = /** @class */ (function (_super) {
             // other pages, so cannot use the standard row model as it won't have rows from
             // other pages.
             // onlySelectedNonStandardModel: if user wants selected in non standard row model
-            // (eg viewport) then again rowmodel cannot be used, so need to use selected instead.
+            // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
             if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
                 var selectedNodes = this.selectionController.getSelectedNodes();
                 selectedNodes.forEach(function (node) {
@@ -177,10 +96,10 @@ var GridSerializer = /** @class */ (function (_super) {
                 // the selection model even when just using selected, so that the result is the order
                 // of the rows appearing on the screen.
                 if (rowModelNormal) {
-                    this.rowModel.forEachNodeAfterFilterAndSort(processRow);
+                    clientSideRowModel.forEachNodeAfterFilterAndSort(processRow);
                 }
                 else {
-                    this.rowModel.forEachNode(processRow);
+                    rowModel.forEachNode(processRow);
                 }
             }
         }
@@ -191,7 +110,7 @@ var GridSerializer = /** @class */ (function (_super) {
         function processRow(node) {
             var shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
             var shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
-            if (node.group && (params.skipGroups || shouldSkipCurrentGroup)) {
+            if (node.group && (params.skipGroups || shouldSkipCurrentGroup || hideOpenParents)) {
                 return;
             }
             if (params.skipFooters && node.footer) {
@@ -281,9 +200,6 @@ var GridSerializer = /** @class */ (function (_super) {
     __decorate([
         Autowired('selectionController')
     ], GridSerializer.prototype, "selectionController", void 0);
-    __decorate([
-        Autowired('columnFactory')
-    ], GridSerializer.prototype, "columnFactory", void 0);
     GridSerializer = __decorate([
         Bean("gridSerializer")
     ], GridSerializer);

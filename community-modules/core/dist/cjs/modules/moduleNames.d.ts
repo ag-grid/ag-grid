@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare enum ModuleNames {
@@ -7,7 +7,6 @@ export declare enum ModuleNames {
     InfiniteRowModelModule = "@ag-grid-community/infinite-row-model",
     ClientSideRowModelModule = "@ag-grid-community/client-side-row-model",
     CsvExportModule = "@ag-grid-community/csv-export",
-    RowNodeCache = "@ag-grid-community/row-node-cache",
     EnterpriseCoreModule = "@ag-grid-enterprise/core",
     EnterpriseAllModules = "@ag-grid-enterprise/all",
     RowGroupingModule = "@ag-grid-enterprise/row-grouping",

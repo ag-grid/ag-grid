@@ -22,7 +22,7 @@ export declare class RowCssClassCalculator {
     stylingService: StylingService;
     gridOptionsWrapper: GridOptionsWrapper;
     getInitialRowClasses(params: RowCssClassCalculatorParams): string[];
-    processClassesFromGridOptions(rowNode: RowNode): string[];
+    processClassesFromGridOptions(rowNode: RowNode, scope: any): string[];
     private preProcessRowClassRules;
     processRowClassRules(rowNode: RowNode, scope: any, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
     calculateRowLevel(rowNode: RowNode): number;

@@ -23,7 +23,7 @@ export class AutoGroupColService extends BeanStub {
         let doingMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
 
         if (doingTreeData && doingMultiAutoColumn) {
-            console.warn('ag-Grid: you cannot mix groupMultiAutoColumn with treeData, only one column can be used to display groups when doing tree data');
+            console.warn('AG Grid: you cannot mix groupMultiAutoColumn with treeData, only one column can be used to display groups when doing tree data');
             doingMultiAutoColumn = false;
         }
 
@@ -52,7 +52,7 @@ export class AutoGroupColService extends BeanStub {
             colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }
 
-        const userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        const userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         mergeDeep(defaultAutoColDef, userAutoColDef);
 
         defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef);
@@ -81,7 +81,7 @@ export class AutoGroupColService extends BeanStub {
     }
 
     private generateDefaultColDef(rowGroupCol?: Column): ColDef {
-        const userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        const userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         const defaultAutoColDef: ColDef = {

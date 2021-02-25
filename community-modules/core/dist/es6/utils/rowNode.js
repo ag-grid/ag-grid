@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -65,6 +65,9 @@ export function traverseNodesWithKey(nodes, callback) {
     var keyParts = [];
     recursiveSearchNodes(nodes);
     function recursiveSearchNodes(currentNodes) {
+        if (!currentNodes) {
+            return;
+        }
         currentNodes.forEach(function (node) {
             // also checking for children for tree data
             if (node.group || node.hasChildren()) {

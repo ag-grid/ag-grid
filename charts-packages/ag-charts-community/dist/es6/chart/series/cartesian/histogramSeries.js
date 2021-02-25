@@ -28,6 +28,7 @@ import { Group } from "../../../scene/group";
 import { Selection } from "../../../scene/selection";
 import { Rect } from "../../../scene/shape/rect";
 import { Text } from "../../../scene/shape/text";
+import { SeriesTooltip } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { CartesianSeries } from "./cartesianSeries";
@@ -100,7 +101,17 @@ var HistogramBin = /** @class */ (function () {
     return HistogramBin;
 }());
 export { HistogramBin };
-;
+var HistogramSeriesTooltip = /** @class */ (function (_super) {
+    __extends(HistogramSeriesTooltip, _super);
+    function HistogramSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate([
+        reactive('change')
+    ], HistogramSeriesTooltip.prototype, "renderer", void 0);
+    return HistogramSeriesTooltip;
+}(SeriesTooltip));
+export { HistogramSeriesTooltip };
 var HistogramSeries = /** @class */ (function (_super) {
     __extends(HistogramSeries, _super);
     function HistogramSeries() {
@@ -119,6 +130,7 @@ var HistogramSeries = /** @class */ (function (_super) {
         _this.yDomain = [];
         _this.label = new HistogramSeriesLabel();
         _this.seriesItemEnabled = true;
+        _this.tooltip = new HistogramSeriesTooltip();
         _this.fill = undefined;
         _this.stroke = undefined;
         _this.fillOpacity = 1;
@@ -131,6 +143,9 @@ var HistogramSeries = /** @class */ (function (_super) {
             _a);
         _this._xKey = '';
         _this._areaPlot = false;
+        _this._bins = undefined;
+        _this._aggregation = 'count';
+        _this._binCount = undefined;
         _this._xName = '';
         _this._yKey = '';
         _this._yName = '';
@@ -286,8 +301,8 @@ var HistogramSeries = /** @class */ (function (_super) {
         this.fill = fills[0];
         this.stroke = strokes[0];
     };
-    /*  during processData phase, used to unify different ways of the user specifying
-        the bins. Returns bins in format [[min1, max1], [min2, max2] ... ] */
+    // During processData phase, used to unify different ways of the user specifying
+    // the bins. Returns bins in format[[min1, max1], [min2, max2], ... ].
     HistogramSeries.prototype.deriveBins = function () {
         var _this = this;
         var _a = this, bins = _a.bins, binCount = _a.binCount;
@@ -295,10 +310,9 @@ var HistogramSeries = /** @class */ (function (_super) {
             return [];
         }
         if (bins && binCount) {
-            console.warn('bin domain and bin count both specified - these are mutually exclusive properties');
+            console.warn('bins and bitCount are mutually exclusive properties.');
         }
         if (bins) {
-            // we have explicity set bins from user. Use those.
             return bins;
         }
         var xData = this.data.map(function (datum) { return datum[_this.xKey]; });
@@ -328,13 +342,18 @@ var HistogramSeries = /** @class */ (function (_super) {
         });
         var currentBin = 0;
         var bins = [new HistogramBin(derivedBins[0])];
-        sortedData.forEach(function (datum) {
+        loop: for (var i = 0, ln = sortedData.length; i < ln; i++) {
+            var datum = sortedData[i];
             while (datum[xKey] > derivedBins[currentBin][1]) {
                 currentBin++;
-                bins.push(new HistogramBin(derivedBins[currentBin]));
+                var bin = derivedBins[currentBin];
+                if (!bin) {
+                    break loop;
+                }
+                bins.push(new HistogramBin(bin));
             }
             bins[currentBin].addDatum(datum);
-        });
+        }
         bins.forEach(function (b) { return b.calculateAggregatedValue(_this._aggregation, _this.yKey); });
         return bins;
     };
@@ -501,7 +520,8 @@ var HistogramSeries = /** @class */ (function (_super) {
         if (!xKey) {
             return '';
         }
-        var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
+        var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltip = _b.tooltip, aggregation = _b.aggregation;
+        var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c;
         var bin = nodeDatum.seriesDatum;
         var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _d = bin.domain, rangeMin = _d[0], rangeMax = _d[1];
         var title = (xName || xKey) + ": " + toFixed(rangeMin) + " - " + toFixed(rangeMax);

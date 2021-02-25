@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -23,7 +23,7 @@ export declare class SelectionController extends BeanStub {
     getNodeForIdIfSelected(id: number): RowNode | undefined;
     clearOtherNodes(rowNodeToKeepSelected: RowNode): number;
     private onRowSelected;
-    syncInRowNode(rowNode: RowNode, oldNode: RowNode): void;
+    syncInRowNode(rowNode: RowNode, oldNode: RowNode | null): void;
     private syncInOldRowNode;
     private syncInNewRowNode;
     reset(): void;

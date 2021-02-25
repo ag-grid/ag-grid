@@ -1,3 +1,8 @@
+ErrorDocument 404 /404.php
+
+# add MIME types for serving example files
+AddType text/javascript ts jsx
+
 <IfModule mod_expires.c>
     # Adds caching headers
     ExpiresActive On
@@ -5,6 +10,7 @@
     # Default directive
     ExpiresDefault "access plus 1 year"
 
+    ExpiresByType application/json "access plus 1 hour"
     ExpiresByType text/html "access plus 1 hour"
     ExpiresByType text/plain "access plus 1 hour"
     ExpiresByType text/richtext "access plus 1 hour"
@@ -77,6 +83,10 @@
     RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
     RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/(?:\ Ballot169)?
     RewriteRule ^(.*)/index\.php$ /$1/ [R=301,L]
+
+    # Add trailing slash for directories
+    RewriteCond %{REQUEST_URI} /+[^\.]+$
+    RewriteRule ^(.+[^/])$ %{REQUEST_URI}/ [R=301,L]
 
     # Redirect old pages to new documentation structure
     Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /documentation/javascript/8-performance-hacks-for-javascript/
@@ -173,12 +183,14 @@
     Redirect 301 /best-vuejs-data-grid/ /documentation/vue/getting-started/
     Redirect 301 /best-vuejs-grid/ /documentation/vue/getting-started/
     Redirect 301 /documentation-main/documentation.php /documentation/
+    Redirect 301 /documentation/javascript/selection/ /documentation/javascript/row-selection/
     Redirect 301 /embracing-the-future-with-angularjs2-web-components-and-ag-grid/ https://medium.com/ag-grid/embracing-the-future-with-angular-2-0-web-components-and-ag-grid-fec000d5a304
     Redirect 301 /example-angular-material-design/ /documentation/angular/material-design/
     Redirect 301 /example-angular-rxjs/ /documentation/angular/angular-rxjs/
     Redirect 301 /example-excel-import/ /documentation/javascript/excel-import/
     Redirect 301 /example-expressions-and-context/ /documentation/javascript/expressions-and-context/
     Redirect 301 /example-react-redux/ /documentation/react/redux-integration-pt1/
+    Redirect 301 /features-overview/ /documentation/javascript/grid-features/
     Redirect 301 /git-color/ https://medium.com/ag-grid/git-on-the-command-line-improving-the-experience-5a604cb14cf6
     Redirect 301 /graphql-server-side-operations/ /documentation/javascript/server-side-operations-graphql/
     Redirect 301 /javascript-charts/ /documentation/javascript/charts-getting-started/
@@ -219,6 +231,19 @@
     Redirect 301 /javascript-grid-cell-styles/ /documentation/javascript/cell-styles/
     Redirect 301 /javascript-grid-cell-template/ /documentation/angular/getting-started/
     Redirect 301 /javascript-grid-change-detection/ /documentation/javascript/change-detection/
+    Redirect 301 /javascript-grid-charts-chart-range-api/ /documentation/javascript/integrated-charts-api/
+    Redirect 301 /javascript-grid-charts-chart-toolbar/ /documentation/javascript/integrated-charts-toolbar/
+    Redirect 301 /javascript-grid-charts-container/ /documentation/javascript/integrated-charts-container/
+    Redirect 301 /javascript-grid-charts-customisation/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-general/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-bar/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-line/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-scatter/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-area/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-customisation-pie/ /documentation/javascript/integrated-charts-customisation/
+    Redirect 301 /javascript-grid-charts-overview/ /documentation/javascript/integrated-charts/
+    Redirect 301 /javascript-grid-charts-pivot-chart/ /documentation/javascript/integrated-charts-pivot-chart/
+    Redirect 301 /javascript-grid-charts-range-chart/ /documentation/javascript/integrated-charts-range-chart/
     Redirect 301 /javascript-grid-charts-integrated-chart-events/ /documentation/javascript/integrated-charts-events/
     Redirect 301 /javascript-grid-charts-integrated-chart-range-api/ /documentation/javascript/integrated-charts-api/
     Redirect 301 /javascript-grid-charts-integrated-chart-toolbar/ /documentation/javascript/integrated-charts-toolbar/
@@ -354,9 +379,10 @@
     Redirect 301 /javascript-grid-row-spanning/ /documentation/javascript/row-spanning/
     Redirect 301 /javascript-grid-row-styles/ /documentation/javascript/row-styles/
     Redirect 301 /javascript-grid-rtl/ /documentation/javascript/rtl/
+    Redirect 301 /javascript-grid-rxjs/ /documentation/angular/rxjs/
     Redirect 301 /javascript-grid-scrolling-scenarios/ /documentation/javascript/scrolling-scenarios/
     Redirect 301 /javascript-grid-security/ /documentation/javascript/security/
-    Redirect 301 /javascript-grid-selection/ /documentation/javascript/selection/
+    Redirect 301 /javascript-grid-selection/ /documentation/javascript/row-selection/
     Redirect 301 /javascript-grid-selection-overview/ /documentation/javascript/selection-overview/
     Redirect 301 /javascript-grid-server-side-model/ /documentation/javascript/server-side-model/
     Redirect 301 /javascript-grid-server-side-model-changing-columns/ /documentation/javascript/server-side-model-changing-columns/
@@ -406,6 +432,7 @@
     Redirect 301 /nodejs-server-side-operations/ /documentation/javascript/server-side-operations-nodejs/
     Redirect 301 /oracle-server-side-operations/ /documentation/javascript/server-side-operations-oracle/
     Redirect 301 /polymer-getting-started/ /documentation/javascript/polymer-getting-started/
+    Redirect 301 /polymer-more-details/ /documentation/javascript/polymer-more-details/
     Redirect 301 /react-15/ /documentation/react/react-15/
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
     Redirect 301 /react-apis/ /documentation/react/framework-apis/

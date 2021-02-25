@@ -38,6 +38,7 @@ export declare class ChartTooltip extends Observable {
     isVisible(): boolean;
     updateClass(visible?: boolean, constrained?: boolean): void;
     private showTimeout;
+    private constrained;
     /**
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
@@ -57,8 +58,8 @@ export declare abstract class Chart extends Observable {
     static readonly defaultTooltipClass = "ag-chart-tooltip";
     private _container;
     container: HTMLElement | undefined | null;
-    private _data;
-    data: any[];
+    protected _data: any;
+    data: any;
     width: number;
     height: number;
     protected _autoSize: boolean;
@@ -124,6 +125,7 @@ export declare abstract class Chart extends Observable {
     protected setupDomListeners(chartElement: HTMLCanvasElement): void;
     protected cleanupDomListeners(chartElement: HTMLCanvasElement): void;
     protected seriesRect?: BBox;
+    getSeriesRect(): Readonly<BBox | undefined>;
     private pickSeriesNode;
     lastPick?: {
         datum: SeriesNodeDatum;

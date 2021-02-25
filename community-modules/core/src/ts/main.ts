@@ -77,6 +77,7 @@ export {
     DragSource,
     DraggingEvent
 } from "./dragAndDrop/dragAndDropService";
+export { RowDropZoneParams } from "./gridPanel/rowDragFeature";
 export { DragService } from "./dragAndDrop/dragService";
 export { IRowDragItem } from "./rendering/row/rowDragComp";
 
@@ -128,6 +129,7 @@ export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
 export { simpleHttpRequest } from "./misc/simpleHttpRequest";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
+export { AnimationFrameService } from "./misc/animationFrameService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
@@ -173,13 +175,12 @@ export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/ce
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { RowDataTransaction } from "./interfaces/rowDataTransaction";
+export { ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus } from "./interfaces/serverSideTransaction";
 export { ChangedPath } from "./utils/changedPath";
-export { RowNodeBlock } from "./modules/rowNodeCache/rowNodeBlock";
-export { RowNodeBlockLoader } from "./modules/rowNodeCache/rowNodeBlockLoader";
-export { RowNodeCache, RowNodeCacheParams } from "./modules/rowNodeCache/rowNodeCache";
+export { RowNodeBlock, LoadCompleteEvent, LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
+export { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 export { PaginationProxy } from "./pagination/paginationProxy";
-export { RefreshModelParams } from "./interfaces/refreshModelParams";
-export { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
+export { IClientSideRowModel, ClientSideRowModelSteps, RefreshModelParams } from "./interfaces/iClientSideRowModel";
 export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 
 export { ColumnVO } from "./interfaces/iColumnVO";
@@ -213,7 +214,7 @@ export { AgPanel } from "./widgets/agPanel";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 export { PopupComponent } from "./widgets/popupComponent";
-export { PopupService,  } from "./widgets/popupService";
+export { PopupService } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 
@@ -247,10 +248,11 @@ export { defaultGroupComparator } from "./functions";
 export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
+export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
 export { GridCore } from "./gridCore";
 export { Logger, LoggerFactory } from "./logger";
 export { SelectionController } from "./selectionController";
-export { SortController } from "./sortController";
+export { SortController, SortModelItem } from "./sortController";
 export { TemplateService } from "./templateService";
 export * from "./utils";
 export { ValueService } from "./valueService/valueService";
@@ -283,8 +285,16 @@ export {
     NewValueParams,
     CellClassParams,
     GetQuickFilterTextParams,
+    ColumnFunctionCallbackParams,
+    CheckboxSelectionCallbackParams,
+    RowDragCallbackParams,
+    DndSourceCallbackParams,
+    EditableCallbackParams,
+    SuppressPasteCallbackParams,
+    SuppressNavigableCallbackParams,
+    // deprecated params
     IsColumnFunc,
-    IsColumnFuncParams,
+    IsColumnFuncParams
 } from "./entities/colDef";
 export {
     GridOptions,
@@ -310,7 +320,11 @@ export {
     ProcessDataFromClipboardParams,
     ChartRef,
     ProcessChartOptionsParams,
-    ProcessChartParams
+    ProcessChartParams,
+    RowClassParams,
+    ServerSideStoreType,
+    ServerSideStoreParams,
+    GetServerSideStoreParamsParams
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";

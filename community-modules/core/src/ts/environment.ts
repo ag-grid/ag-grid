@@ -73,7 +73,7 @@ export class Environment extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
-    public getSassVariable(theme: string, key: SASS_PROPERTIES): number {
+    public getSassVariable(theme: string, key: SASS_PROPERTIES): number | undefined {
         const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
         const defaultValue = HARD_CODED_SIZES[useTheme][key];
         let calculatedValue = 0;
@@ -82,8 +82,10 @@ export class Environment extends BeanStub {
             CALCULATED_SIZES[theme] = {};
         }
 
-        if (CALCULATED_SIZES[theme][key]) {
-            return CALCULATED_SIZES[theme][key];
+        const size = CALCULATED_SIZES[theme][key];
+
+        if (size != null) {
+            return size;
         }
 
         if (SASS_PROPERTY_BUILDER[key]) {
@@ -92,19 +94,19 @@ export class Environment extends BeanStub {
             addCssClass(div, theme);
             div.style.position = 'absolute';
 
-            const el: HTMLDivElement = classList.reduce((el: HTMLDivElement, currentClass: string) => {
-                const div = document.createElement('div');
-                div.style.position = 'static';
-                addCssClass(div, currentClass);
-                el.appendChild(div);
+            const el: HTMLDivElement = classList.reduce((prevEl: HTMLDivElement, currentClass: string) => {
+                const currentDiv = document.createElement('div');
+                currentDiv.style.position = 'static';
+                addCssClass(currentDiv, currentClass);
+                prevEl.appendChild(currentDiv);
 
-                return div;
+                return currentDiv;
             }, div);
 
             if (document.body) {
                 document.body.appendChild(div);
                 const sizeName = key.toLowerCase().indexOf('height') !== -1 ? 'height' : 'width';
-                calculatedValue = parseInt(window.getComputedStyle(el)[sizeName], 10);
+                calculatedValue = parseInt(window.getComputedStyle(el)[sizeName]!, 10);
                 document.body.removeChild(div);
             }
         }
@@ -121,18 +123,18 @@ export class Environment extends BeanStub {
 
     public chartMenuPanelWidth() {
         const theme = this.getTheme().themeFamily;
-        return this.getSassVariable(theme, 'chartMenuPanelWidth');
+        return this.getSassVariable(theme!, 'chartMenuPanelWidth');
     }
 
     public getTheme(): { theme?: string; el?: HTMLElement; themeFamily?: string; } {
         const reg = /\bag-(material|(?:theme-([\w\-]*)))\b/;
-        let el: HTMLElement = this.eGridDiv;
-        let themeMatch: RegExpMatchArray;
+        let el: HTMLElement | undefined = this.eGridDiv;
+        let themeMatch: RegExpMatchArray | null = null;
 
         while (el) {
             themeMatch = reg.exec(el.className);
             if (!themeMatch) {
-                el = el.parentElement;
+                el = el.parentElement || undefined;
             } else {
                 break;
             }
@@ -145,7 +147,7 @@ export class Environment extends BeanStub {
 
         if (usingOldTheme) {
             const newTheme = theme.replace('ag-', 'ag-theme-');
-            doOnce(() => console.warn(`ag-Grid: As of v19 old theme are no longer provided. Please replace ${theme} with ${newTheme}.`), 'using-old-theme');
+            doOnce(() => console.warn(`AG Grid: As of v19 old theme are no longer provided. Please replace ${theme} with ${newTheme}.`), 'using-old-theme');
         }
 
         return { theme, el, themeFamily: theme.replace(/-dark$/, '') };

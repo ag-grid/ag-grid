@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -57,13 +57,16 @@ var AnimationFrameService = /** @class */ (function (_super) {
     AnimationFrameService.prototype.init = function () {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
     };
-    // this method is for our ag-Grid sanity only - if animation frames are turned off,
+    AnimationFrameService.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
+    // this method is for our AG Grid sanity only - if animation frames are turned off,
     // then no place in the code should be looking to add any work to be done in animation
     // frames. this stops bugs - where some code is asking for a frame to be executed
     // when it should not.
     AnimationFrameService.prototype.verifyAnimationFrameOn = function (methodName) {
         if (this.useAnimationFrame === false) {
-            console.warn("ag-Grid: AnimationFrameService." + methodName + " called but animation frames are off");
+            console.warn("AG Grid: AnimationFrameService." + methodName + " called but animation frames are off");
         }
     };
     AnimationFrameService.prototype.createTask = function (task, index, list) {
@@ -106,24 +109,26 @@ var AnimationFrameService = /** @class */ (function (_super) {
         // 16ms is 60 fps
         var noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
-            var task = void 0;
-            if (p1Tasks.length) {
-                this.sortTaskList(p1TaskList);
-                task = p1Tasks.pop().task;
-            }
-            else if (p2Tasks.length) {
-                this.sortTaskList(p2TaskList);
-                task = p2Tasks.pop().task;
-            }
-            else if (destroyTasks.length) {
-                task = destroyTasks.pop();
-            }
-            else {
-                this.cancelledTasks.clear();
-                break;
-            }
-            if (!this.cancelledTasks.has(task)) {
-                task();
+            if (!this.gridPanel.executeAnimationFrameScroll()) {
+                var task = void 0;
+                if (p1Tasks.length) {
+                    this.sortTaskList(p1TaskList);
+                    task = p1Tasks.pop().task;
+                }
+                else if (p2Tasks.length) {
+                    this.sortTaskList(p2TaskList);
+                    task = p2Tasks.pop().task;
+                }
+                else if (destroyTasks.length) {
+                    task = destroyTasks.pop();
+                }
+                else {
+                    this.cancelledTasks.clear();
+                    break;
+                }
+                if (!this.cancelledTasks.has(task)) {
+                    task();
+                }
             }
             duration = (new Date().getTime()) - frameStart;
         }

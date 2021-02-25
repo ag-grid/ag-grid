@@ -4,8 +4,8 @@ import { ColumnController, ColumnState } from "./columnController";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
-import {Autowired, Bean, PreDestroy} from "../context/context";
-import {_} from "../utils";
+import { Autowired, Bean, PreDestroy } from "../context/context";
+import { _ } from "../utils";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -16,21 +16,21 @@ export class ColumnApi {
         // AG-3403 validate that gridWidth is provided because this method has the same name as
         // a method on the grid API that takes no arguments, and it's easy to confuse the two
         if (typeof gridWidth === "undefined") {
-            console.error('ag-Grid: missing parameter to columnApi.sizeColumnsToFit(gridWidth)');
+            console.error('AG Grid: missing parameter to columnApi.sizeColumnsToFit(gridWidth)');
         }
         this.columnController.sizeColumnsToFit(gridWidth, 'api');
     }
     public setColumnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void { this.columnController.setColumnGroupOpened(group, newValue, 'api'); }
-    public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this.columnController.getColumnGroup(name, instanceId); }
-    public getOriginalColumnGroup(name: string): OriginalColumnGroup { return this.columnController.getOriginalColumnGroup(name); }
+    public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.columnController.getColumnGroup(name, instanceId); }
+    public getOriginalColumnGroup(name: string): OriginalColumnGroup | null { return this.columnController.getOriginalColumnGroup(name); }
 
     public getDisplayNameForColumn(column: Column, location: string | null): string { return this.columnController.getDisplayNameForColumn(column, location) || ''; }
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string { return this.columnController.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
-    public getColumn(key: any): Column { return this.columnController.getPrimaryColumn(key); }
+    public getColumn(key: any): Column | null { return this.columnController.getPrimaryColumn(key); }
     public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnController.applyColumnState(params, 'api'); }
     public getColumnState(): ColumnState[] { return this.columnController.getColumnState(); }
-    public resetColumnState(): void { this.columnController.resetColumnState(false, 'api'); }
+    public resetColumnState(): void { this.columnController.resetColumnState('api'); }
     public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnController.getColumnGroupState(); }
     public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[]): void {this.columnController.setColumnGroupState(stateItems, 'api'); }
     public resetColumnGroupState(): void { this.columnController.resetColumnGroupState('api'); }
@@ -38,25 +38,25 @@ export class ColumnApi {
     public isPinning(): boolean { return this.columnController.isPinningLeft() || this.columnController.isPinningRight(); }
     public isPinningLeft(): boolean { return this.columnController.isPinningLeft(); }
     public isPinningRight(): boolean { return this.columnController.isPinningRight(); }
-    public getDisplayedColAfter(col: Column): Column { return this.columnController.getDisplayedColAfter(col); }
-    public getDisplayedColBefore(col: Column): Column { return this.columnController.getDisplayedColBefore(col); }
+    public getDisplayedColAfter(col: Column): Column | null { return this.columnController.getDisplayedColAfter(col); }
+    public getDisplayedColBefore(col: Column): Column | null { return this.columnController.getDisplayedColBefore(col); }
     public setColumnVisible(key: string | Column, visible: boolean): void { this.columnController.setColumnVisible(key, visible, 'api'); }
     public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.columnController.setColumnsVisible(keys, visible, 'api'); }
     public setColumnPinned(key: string | Column, pinned: string): void { this.columnController.setColumnPinned(key, pinned, 'api'); }
     public setColumnsPinned(keys: (string | Column)[], pinned: string): void { this.columnController.setColumnsPinned(keys, pinned, 'api'); }
 
-    public getAllColumns(): Column[] { return this.columnController.getAllPrimaryColumns(); }
+    public getAllColumns(): Column[] | null { return this.columnController.getAllPrimaryColumns(); }
     public getAllGridColumns(): Column[] { return this.columnController.getAllGridColumns(); }
     public getDisplayedLeftColumns(): Column[] { return this.columnController.getDisplayedLeftColumns(); }
     public getDisplayedCenterColumns(): Column[] { return this.columnController.getDisplayedCenterColumns(); }
     public getDisplayedRightColumns(): Column[] { return this.columnController.getDisplayedRightColumns(); }
     public getAllDisplayedColumns(): Column[] { return this.columnController.getAllDisplayedColumns(); }
-    public getAllDisplayedVirtualColumns(): Column[] { return this.columnController.getAllDisplayedVirtualColumns(); }
+    public getAllDisplayedVirtualColumns(): Column[] { return this.columnController.getViewportColumns(); }
 
     public moveColumn(key: string | Column, toIndex: number): void {
         if (typeof key === 'number') {
             // moveColumn used to take indexes, so this is advising user who hasn't moved to new method name
-            console.warn('ag-Grid: you are using moveColumn(fromIndex, toIndex) - moveColumn takes a column key and a destination index, not two indexes, to move with indexes use moveColumnByIndex(from,to) instead');
+            console.warn('AG Grid: you are using moveColumn(fromIndex, toIndex) - moveColumn takes a column key and a destination index, not two indexes, to move with indexes use moveColumnByIndex(from,to) instead');
             this.columnController.moveColumnByIndex(key as number, toIndex, 'api');
         } else {
             this.columnController.moveColumn(key, toIndex, 'api');
@@ -77,7 +77,7 @@ export class ColumnApi {
 
     public setPivotMode(pivotMode: boolean): void { this.columnController.setPivotMode(pivotMode); }
     public isPivotMode(): boolean { return this.columnController.isPivotMode(); }
-    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column { return this.columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); }
+    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null { return this.columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
     public setValueColumns(colKeys: (string | Column)[]): void { this.columnController.setValueColumns(colKeys, 'api'); }
     public getValueColumns(): Column[] { return this.columnController.getValueColumns(); }
@@ -100,18 +100,18 @@ export class ColumnApi {
     public addPivotColumns(colKeys: (string | Column)[]): void { this.columnController.addPivotColumns(colKeys, 'api'); }
     public getPivotColumns(): Column[] { return this.columnController.getPivotColumns(); }
 
-    public getLeftDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getLeftDisplayedColumnGroups(); }
-    public getCenterDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getCenterDisplayedColumnGroups(); }
-    public getRightDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getRightDisplayedColumnGroups(); }
-    public getAllDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getAllDisplayedColumnGroups(); }
+    public getLeftDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getDisplayedTreeLeft(); }
+    public getCenterDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getDisplayedTreeCentre(); }
+    public getRightDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getDisplayedTreeRight(); }
+    public getAllDisplayedColumnGroups(): ColumnGroupChild[] | null { return this.columnController.getAllDisplayedTrees(); }
     public autoSizeColumn(key: string | Column, skipHeader?: boolean): void {return this.columnController.autoSizeColumn(key, skipHeader, 'api'); }
     public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void {return this.columnController.autoSizeColumns(keys, skipHeader, 'api'); }
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnController.autoSizeAllColumns(skipHeader, 'api'); }
 
     public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnController.setSecondaryColumns(colDefs, 'api'); }
 
-    public getSecondaryColumns(): Column[] { return this.columnController.getSecondaryColumns(); }
-    public getPrimaryColumns(): Column[] { return this.columnController.getAllPrimaryColumns(); }
+    public getSecondaryColumns(): Column[] | null { return this.columnController.getSecondaryColumns(); }
+    public getPrimaryColumns(): Column[] | null { return this.columnController.getAllPrimaryColumns(); }
 
     @PreDestroy
     private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {
@@ -132,64 +132,64 @@ export class ColumnApi {
     // }
 
     public columnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void {
-        console.error('ag-Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
+        console.error('AG Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
         this.setColumnGroupOpened(group, newValue);
     }
     public hideColumns(colIds: any, hide: any): void {
-        console.error('ag-Grid: hideColumns is deprecated, use setColumnsVisible');
+        console.error('AG Grid: hideColumns is deprecated, use setColumnsVisible');
         this.columnController.setColumnsVisible(colIds, !hide, 'api');
     }
     public hideColumn(colId: any, hide: any): void {
-        console.error('ag-Grid: hideColumn is deprecated, use setColumnVisible');
+        console.error('AG Grid: hideColumn is deprecated, use setColumnVisible');
         this.columnController.setColumnVisible(colId, !hide, 'api');
     }
 
     public setState(columnState: ColumnState[]): boolean {
-        console.error('ag-Grid: setState is deprecated, use setColumnState');
+        console.error('AG Grid: setState is deprecated, use setColumnState');
         return this.setColumnState(columnState);
     }
 
     public getState(): ColumnState[] {
-        console.error('ag-Grid: getState is deprecated, use getColumnState');
+        console.error('AG Grid: getState is deprecated, use getColumnState');
         return this.getColumnState();
     }
     public resetState(): void {
-        console.error('ag-Grid: resetState is deprecated, use resetColumnState');
+        console.error('AG Grid: resetState is deprecated, use resetColumnState');
         this.resetColumnState();
     }
 
     public getAggregationColumns(): Column[] {
-        console.error('ag-Grid: getAggregationColumns is deprecated, use getValueColumns');
+        console.error('AG Grid: getAggregationColumns is deprecated, use getValueColumns');
         return this.columnController.getValueColumns();
     }
 
     public removeAggregationColumn(colKey: (string | Column)): void {
-        console.error('ag-Grid: removeAggregationColumn is deprecated, use removeValueColumn');
+        console.error('AG Grid: removeAggregationColumn is deprecated, use removeValueColumn');
         this.columnController.removeValueColumn(colKey, 'api');
     }
 
     public removeAggregationColumns(colKeys: (string | Column)[]): void {
-        console.error('ag-Grid: removeAggregationColumns is deprecated, use removeValueColumns');
+        console.error('AG Grid: removeAggregationColumns is deprecated, use removeValueColumns');
         this.columnController.removeValueColumns(colKeys, 'api');
     }
 
     public addAggregationColumn(colKey: (string | Column)): void {
-        console.error('ag-Grid: addAggregationColumn is deprecated, use addValueColumn');
+        console.error('AG Grid: addAggregationColumn is deprecated, use addValueColumn');
         this.columnController.addValueColumn(colKey, 'api');
     }
 
     public addAggregationColumns(colKeys: (string | Column)[]): void {
-        console.error('ag-Grid: addAggregationColumns is deprecated, use addValueColumns');
+        console.error('AG Grid: addAggregationColumns is deprecated, use addValueColumns');
         this.columnController.addValueColumns(colKeys, 'api');
     }
 
     public setColumnAggFunction(column: Column, aggFunc: string): void {
-        console.error('ag-Grid: setColumnAggFunction is deprecated, use setColumnAggFunc');
+        console.error('AG Grid: setColumnAggFunction is deprecated, use setColumnAggFunc');
         this.columnController.setColumnAggFunc(column, aggFunc, 'api');
     }
 
     public getDisplayNameForCol(column: any): string {
-        console.error('ag-Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
+        console.error('AG Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
         return this.getDisplayNameForColumn(column, null);
     }
 

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,8 +18,19 @@ import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { assign, getAllKeysInObjects } from "../utils/object";
 var RowNode = /** @class */ (function () {
     function RowNode() {
+        /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
+        this.rowIndex = null;
         /** Children mapped by the pivot columns */
         this.childrenMapped = {};
+        /**
+         * True if the RowNode is not filtered, or in a collapsed group.
+         */
+        this.displayed = false;
+        /** The top pixel for this row */
+        this.rowTop = null;
+        /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
+         * it is used so new rows can animate in from their old position. */
+        this.oldRowTop = null;
         /** True by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
         this.selectable = true;
         /** Used by sorting service - to give deterministic sort to groups. Previously we
@@ -31,12 +42,23 @@ var RowNode = /** @class */ (function () {
         this.selected = false;
     }
     RowNode.prototype.setData = function (data) {
+        this.setDataCommon(data, false);
+    };
+    // similar to setRowData, however it is expected that the data is the same data item. this
+    // is intended to be used with Redux type stores, where the whole data can be changed. we are
+    // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
+    // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
+    // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
+    RowNode.prototype.updateData = function (data) {
+        this.setDataCommon(data, true);
+    };
+    RowNode.prototype.setDataCommon = function (data, update) {
         var oldData = this.data;
         this.data = data;
         this.valueCache.onDataChanged();
         this.updateDataOnDetailNode();
         this.checkRowSelectable();
-        var event = this.createDataChangedEvent(data, oldData, false);
+        var event = this.createDataChangedEvent(data, oldData, update);
         this.dispatchLocalEvent(event);
     };
     // when we are doing master / detail, the detail node is lazy created, but then kept around.
@@ -61,20 +83,6 @@ var RowNode = /** @class */ (function () {
             type: type,
             node: this
         };
-    };
-    // similar to setRowData, however it is expected that the data is the same data item. this
-    // is intended to be used with Redux type stores, where the whole data can be changed. we are
-    // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
-    // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
-    // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
-    RowNode.prototype.updateData = function (data) {
-        var oldData = this.data;
-        this.data = data;
-        this.updateDataOnDetailNode();
-        this.checkRowSelectable();
-        this.updateDataOnDetailNode();
-        var event = this.createDataChangedEvent(data, oldData, true);
-        this.dispatchLocalEvent(event);
     };
     RowNode.prototype.getRowIndexString = function () {
         if (this.rowPinned === Constants.PINNED_TOP) {
@@ -133,7 +141,7 @@ var RowNode = /** @class */ (function () {
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
                 if (this.id && this.id.startsWith && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
-                    console.error("ag-Grid: Row ID's cannot start with " + RowNode.ID_PREFIX_ROW_GROUP + ", this is a reserved prefix for ag-Grid's row grouping feature.");
+                    console.error("AG Grid: Row ID's cannot start with " + RowNode.ID_PREFIX_ROW_GROUP + ", this is a reserved prefix for AG Grid's row grouping feature.");
                 }
             }
             else {
@@ -148,11 +156,10 @@ var RowNode = /** @class */ (function () {
         }
     };
     RowNode.prototype.isPixelInRange = function (pixel) {
+        if (!exists(this.rowTop) || !exists(this.rowHeight)) {
+            return false;
+        }
         return pixel >= this.rowTop && pixel < (this.rowTop + this.rowHeight);
-    };
-    RowNode.prototype.clearRowTop = function () {
-        this.oldRowTop = this.rowTop;
-        this.setRowTop(null);
     };
     RowNode.prototype.setFirstChild = function (firstChild) {
         if (this.firstChild === firstChild) {
@@ -188,6 +195,21 @@ var RowNode = /** @class */ (function () {
         this.rowTop = rowTop;
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
+        }
+        this.setDisplayed(rowTop !== null);
+    };
+    RowNode.prototype.clearRowTopAndRowIndex = function () {
+        this.oldRowTop = this.rowTop;
+        this.setRowTop(null);
+        this.setRowIndex(null);
+    };
+    RowNode.prototype.setDisplayed = function (displayed) {
+        if (this.displayed === displayed) {
+            return;
+        }
+        this.displayed = displayed;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DISPLAYED_CHANGED));
         }
     };
     RowNode.prototype.setDragging = function (dragging) {
@@ -266,8 +288,10 @@ var RowNode = /** @class */ (function () {
             expanded: expanded
         });
         this.mainEventService.dispatchEvent(event);
+        // when using footers we need to refresh the group row, as the aggregation
+        // values jump between group and footer
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.gridApi.redrawRows({ rowNodes: [this] });
+            this.rowRenderer.refreshCells({ rowNodes: [this] });
         }
     };
     RowNode.prototype.createGlobalRowEvent = function (type) {
@@ -334,7 +358,7 @@ var RowNode = /** @class */ (function () {
         // if children exist.
         var newValue = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
         if (newValue !== this.__hasChildren) {
-            this.__hasChildren = newValue;
+            this.__hasChildren = !!newValue;
             if (this.eventService) {
                 this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
             }
@@ -446,11 +470,11 @@ var RowNode = /** @class */ (function () {
         // groupSelectsFiltered only makes sense when group selects children
         var groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
         if (this.id === undefined) {
-            console.warn('ag-Grid: cannot select node until id for node is known');
+            console.warn('AG Grid: cannot select node until id for node is known');
             return 0;
         }
         if (this.rowPinned) {
-            console.warn('ag-Grid: cannot select pinned rows');
+            console.warn('AG Grid: cannot select pinned rows');
             return 0;
         }
         // if we are a footer, we don't do selection, just pass the info
@@ -564,7 +588,7 @@ var RowNode = /** @class */ (function () {
     RowNode.prototype.selectChildNodes = function (newValue, groupSelectsFiltered) {
         var children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
         if (missing(children)) {
-            return;
+            return 0;
         }
         var updatedCount = 0;
         for (var i = 0; i < children.length; i++) {
@@ -596,7 +620,7 @@ var RowNode = /** @class */ (function () {
         var currentRowNode = this;
         var isCandidate = true;
         var foundFirstChildPath = false;
-        var nodeToSwapIn;
+        var nodeToSwapIn = null;
         // if we are hiding groups, then if we are the first child, of the first child,
         // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {
@@ -644,6 +668,7 @@ var RowNode = /** @class */ (function () {
     RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
     RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';
     RowNode.EVENT_TOP_CHANGED = 'topChanged';
+    RowNode.EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     RowNode.EVENT_FIRST_CHILD_CHANGED = 'firstChildChanged';
     RowNode.EVENT_LAST_CHILD_CHANGED = 'lastChildChanged';
     RowNode.EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
@@ -657,6 +682,9 @@ var RowNode = /** @class */ (function () {
     __decorate([
         Autowired('eventService')
     ], RowNode.prototype, "mainEventService", void 0);
+    __decorate([
+        Autowired('rowRenderer')
+    ], RowNode.prototype, "rowRenderer", void 0);
     __decorate([
         Autowired('gridOptionsWrapper')
     ], RowNode.prototype, "gridOptionsWrapper", void 0);

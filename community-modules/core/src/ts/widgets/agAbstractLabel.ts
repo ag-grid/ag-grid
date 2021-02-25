@@ -1,6 +1,6 @@
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
-import { addCssClass, clearElement, addOrRemoveCssClass, setElementWidth } from "../utils/dom";
+import { addCssClass, clearElement, addOrRemoveCssClass, setElementWidth, removeCssClass } from "../utils/dom";
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 
@@ -53,11 +53,17 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
 
         if (typeof this.label === 'string') {
             this.eLabel.innerText = this.label + this.labelSeparator;
-        } else {
+        } else if (this.label) {
             this.eLabel.appendChild(this.label);
         }
 
-        addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
+        if (this.label === '') {
+            addCssClass(this.eLabel, 'ag-hidden');
+            this.eLabel.setAttribute('role', 'presentation');
+        } else {
+            removeCssClass(this.eLabel, 'ag-hidden');
+            this.eLabel.removeAttribute('role');
+        }
     }
 
     public setLabelSeparator(labelSeparator: string): this {

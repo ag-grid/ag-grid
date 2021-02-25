@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import classnames from 'classnames';
 import { formatJson } from './utils.jsx';
 import * as Config from './config.jsx';
-import { CodeSnippet } from './CodeSnippet.jsx';
 import styles from './Options.module.scss';
-import { doOnEnter } from '../key-handlers.js';
+import { doOnEnter } from 'components/key-handlers.js';
+import Code from '../Code.jsx';
 
 const getType = value => {
     if (value == null) {
@@ -38,7 +38,7 @@ const FunctionDefinition = ({ definition }) => {
         );
     }
 
-    return <CodeSnippet language="ts" lines={lines} />;
+    return <Code code={lines} />;
 };
 
 const Option = ({ name, isVisible, isAlternate, isRequired, type, description, defaultValue, Editor, editorProps }) => {

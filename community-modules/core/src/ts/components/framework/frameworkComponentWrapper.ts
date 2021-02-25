@@ -6,11 +6,11 @@ import { ComponentType } from "./componentTypes";
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
 export interface FrameworkComponentWrapper {
-    wrap<A extends IComponent<any>>(frameworkComponent: { new(): any },
+    wrap<A extends IComponent<any>>(frameworkComponent: { new(): any } | null,
                                     methodList: string[],
                                     optionalMethodList: string[],
                                     componentType: ComponentType,
-                                    componentName?: string
+                                    componentName?: string | null
     ): A;
 }
 
@@ -55,7 +55,7 @@ export abstract class BaseComponentWrapper<F extends WrapableInterface> implemen
             }
 
             if (mandatory) {
-                console.warn('ag-Grid: Framework component is missing the method ' + methodName + '()');
+                console.warn('AG Grid: Framework component is missing the method ' + methodName + '()');
             }
             return null;
         };

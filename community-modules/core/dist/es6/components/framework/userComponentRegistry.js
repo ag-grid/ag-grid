@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -216,7 +216,7 @@ var UserComponentRegistry = /** @class */ (function (_super) {
             };
         }
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
-            console.warn("ag-Grid: Looking for component [" + name + "] but it wasn't found.");
+            console.warn("AG Grid: Looking for component [" + name + "] but it wasn't found.");
         }
         return null;
     };

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64,6 +64,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         this.addManagedListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
         this.createManagedBean(new SelectAllFeature(this.cbSelectAll, this.column));
+        this.cbSelectAll.setParentComponent(this);
         this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
@@ -111,8 +112,8 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
             || this.colDefHeaderComponentFramework != colDef.headerComponentFramework;
         var headerCompRefreshed = newHeaderCompConfigured ? false : this.attemptHeaderCompRefresh();
         if (headerCompRefreshed) {
-            var dragSourceIsMissing = this.draggable && !this.dragAndDropService;
-            var dragSourceNeedsRemoving = !this.draggable && this.dragAndDropService;
+            var dragSourceIsMissing = this.draggable && !this.moveDragSource;
+            var dragSourceNeedsRemoving = !this.draggable && this.moveDragSource;
             if (dragSourceIsMissing || dragSourceNeedsRemoving) {
                 this.attachDraggingToHeaderComp();
             }
@@ -216,7 +217,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         var _this = this;
         var eGui = this.getGui();
         var updateSortableCssClass = function () {
-            addOrRemoveCssClass(eGui, 'ag-header-cell-sortable', _this.sortable);
+            addOrRemoveCssClass(eGui, 'ag-header-cell-sortable', !!_this.sortable);
         };
         var updateAriaSort = function () {
             if (_this.sortable) {
@@ -298,7 +299,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         var colCanMove = !isSuppressMovableColumns && !colDef.suppressMovable && !colDef.lockPosition;
         // we should still be allowed drag the column, even if it can't be moved, if the column
         // can be dragged to a rowGroup or pivot drop zone
-        return colCanMove || colDef.enableRowGroup || colDef.enablePivot;
+        return !!colCanMove || !!colDef.enableRowGroup || !!colDef.enablePivot;
     };
     HeaderWrapperComp.prototype.attachDraggingToHeaderComp = function () {
         var _this = this;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -71,7 +71,7 @@ exports.cssStyleObjectToMarkup = cssStyleObjectToMarkup;
 /**
  * Displays a message to the browser. this is useful in iPad, where you can't easily see the console.
  * so the javascript code can use this to give feedback. this is NOT intended to be called in production.
- * it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
+ * it is intended the AG Grid developer calls this to troubleshoot, but then takes out the calls before
  * checking in.
  * @param {string} msg
  */
