@@ -1,11 +1,11 @@
 import { Component, FontStyle, FontWeight } from "@ag-grid-community/core";
-export declare type Font = {
+export interface Font {
     family?: string;
     style?: FontStyle;
     weight?: FontWeight;
     size?: number;
     color?: string;
-};
+}
 export interface FontPanelParams {
     name?: string;
     enabled: boolean;

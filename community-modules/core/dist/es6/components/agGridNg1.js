@@ -33,7 +33,9 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
     };
     var grid = new Grid(eGridDiv, gridOptions, gridParams);
     $scope.$on("$destroy", function () {
-        grid.destroy();
+        if (grid) {
+            grid.destroy();
+        }
         grid = null;
     });
 }

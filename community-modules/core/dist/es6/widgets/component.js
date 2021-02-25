@@ -102,10 +102,10 @@ var Component = /** @class */ (function (_super) {
             if (!(childNode instanceof HTMLElement)) {
                 return;
             }
-            var childComp = _this.createComponentFromElement(childNode, function (childComp) {
+            var childComp = _this.createComponentFromElement(childNode, function (comp) {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
-                _this.copyAttributesFromNode(childNode, childComp.getGui());
+                _this.copyAttributesFromNode(childNode, comp.getGui());
             }, paramsMap);
             if (childComp) {
                 if (childComp.addItems && childNode.children.length) {

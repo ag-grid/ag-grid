@@ -89,7 +89,11 @@ export class ChartTheme {
 
     private static getSeriesDefaults(): any {
         return {
-            tooltipEnabled: true,
+            tooltip: {
+                enabled: true,
+                renderer: undefined,
+                format: undefined
+            },
             visible: true,
             showInLegend: true
         };
@@ -328,6 +332,8 @@ export class ChartTheme {
                 lineDash: undefined,
                 lineDashOffset: 0,
                 areaPlot: false,
+                binCount: undefined,
+                bins: undefined,
                 aggregation: 'sum',
                 tooltipRenderer: undefined,
                 highlightStyle: {

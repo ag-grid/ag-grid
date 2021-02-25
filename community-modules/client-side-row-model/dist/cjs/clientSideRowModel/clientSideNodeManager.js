@@ -186,7 +186,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         }
         else {
             // find rowNode using object references
-            rowNode = core_1._.find(this.rootNode.allLeafChildren, function (rowNode) { return rowNode.data === data; });
+            rowNode = core_1._.find(this.rootNode.allLeafChildren, function (node) { return node.data === data; });
             if (!rowNode) {
                 console.error("AG Grid: could not find data item as object was not found", data);
                 return null;
@@ -261,9 +261,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         if (expandByDefault === -1) {
             return true;
         }
-        else {
-            return level < expandByDefault;
-        }
+        return level < expandByDefault;
     };
     // this is only used for doing legacy tree data
     ClientSideNodeManager.prototype.setLeafChildren = function (node) {

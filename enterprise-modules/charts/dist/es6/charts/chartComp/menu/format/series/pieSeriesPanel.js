@@ -95,21 +95,21 @@ var PieSeriesPanel = /** @class */ (function (_super) {
             color: chartProxy.getSeriesOption("label.color")
         };
         var setFont = function (font) {
-            var chartProxy = _this.getChartProxy();
+            var proxy = _this.getChartProxy();
             if (font.family) {
-                chartProxy.setSeriesOption("label.fontFamily", font.family);
+                proxy.setSeriesOption("label.fontFamily", font.family);
             }
             if (font.weight) {
-                chartProxy.setSeriesOption("label.fontWeight", font.weight);
+                proxy.setSeriesOption("label.fontWeight", font.weight);
             }
             if (font.style) {
-                chartProxy.setSeriesOption("label.fontStyle", font.style);
+                proxy.setSeriesOption("label.fontStyle", font.style);
             }
             if (font.size) {
-                chartProxy.setSeriesOption("label.fontSize", font.size);
+                proxy.setSeriesOption("label.fontSize", font.size);
             }
             if (font.color) {
-                chartProxy.setSeriesOption("label.color", font.color);
+                proxy.setSeriesOption("label.color", font.color);
             }
         };
         var params = {

@@ -943,7 +943,7 @@ var Chart = /** @class */ (function (_super) {
             event: event
         };
         this.highlightDatum(datum);
-        var html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
+        var html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
         if (html) {
             this.tooltip.show(meta, html);
         }

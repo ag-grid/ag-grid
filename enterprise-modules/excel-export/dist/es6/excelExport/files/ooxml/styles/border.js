@@ -79,7 +79,7 @@ export var convertLegacyBorder = function (type, weight) {
     if (type === 'Continuous') {
         return namedWeight;
     }
-    if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) > 0) {
+    if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) !== -1) {
         return "medium" + mappedName;
     }
     return mappedName.charAt(0).toLowerCase() + mappedName.substr(1);

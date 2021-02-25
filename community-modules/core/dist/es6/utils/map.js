@@ -5,7 +5,7 @@
  * @license MIT
  */
 export function keys(map) {
-    var keys = [];
-    map.forEach(function (_, key) { return keys.push(key); });
-    return keys;
+    var arr = [];
+    map.forEach(function (_, key) { return arr.push(key); });
+    return arr;
 }

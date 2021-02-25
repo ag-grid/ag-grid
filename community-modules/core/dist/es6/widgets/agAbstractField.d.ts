@@ -11,7 +11,7 @@ export declare abstract class AgAbstractField<TValue, TConfig extends IAgLabel =
     protected disabled: boolean;
     constructor(config?: TConfig, template?: string, className?: string);
     protected postConstruct(): void;
-    onValueChange(callbackFn: (newValue: TValue) => void): this;
+    onValueChange(callbackFn: (newValue?: TValue | null) => void): this;
     getWidth(): number;
     setWidth(width: number): this;
     getPreviousValue(): TValue | null | undefined;

@@ -6,12 +6,12 @@ import { ConditionPosition, ISimpleFilterModel } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 export interface NumberFilterModel extends ISimpleFilterModel {
-    filter?: number;
-    filterTo?: number;
+    filter?: number | null;
+    filterTo?: number | null;
 }
 export interface INumberFilterParams extends IScalarFilterParams {
     allowedCharPattern?: string;
-    numberParser?: (text: string) => number;
+    numberParser?: (text: string | null) => number;
 }
 export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     static DEFAULT_FILTER_OPTIONS: string[];
@@ -22,8 +22,8 @@ export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number
     private numberFilterParams;
     constructor();
     protected mapRangeFromModel(filterModel: NumberFilterModel): {
-        from: number;
-        to: number;
+        from: number | null | undefined;
+        to: number | null | undefined;
     };
     protected getDefaultDebounceMs(): number;
     protected resetUiToDefaults(silent?: boolean): AgPromise<void>;

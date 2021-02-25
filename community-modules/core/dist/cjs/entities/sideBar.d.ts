@@ -25,6 +25,6 @@ export declare class SideBarDefParser {
     static readonly DEFAULT_BY_KEY: {
         [p: string]: ToolPanelDef;
     };
-    static parse(toParse: SideBarDef | string | string[] | boolean): SideBarDef;
-    static parseComponents(from: (ToolPanelDef | string)[]): ToolPanelDef[];
+    static parse(toParse: SideBarDef | string | string[] | boolean): SideBarDef | null;
+    static parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[];
 }

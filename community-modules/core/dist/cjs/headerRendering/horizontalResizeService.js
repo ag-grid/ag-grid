@@ -50,7 +50,7 @@ var HorizontalResizeService = /** @class */ (function (_super) {
     HorizontalResizeService.prototype.onDragStart = function (params, mouseEvent) {
         this.dragStartX = mouseEvent.clientX;
         this.setResizeIcons();
-        var shiftKey = mouseEvent instanceof MouseEvent ? mouseEvent.shiftKey === true : false;
+        var shiftKey = mouseEvent instanceof MouseEvent && mouseEvent.shiftKey === true;
         params.onResizeStart(shiftKey);
     };
     HorizontalResizeService.prototype.setResizeIcons = function () {

@@ -121,7 +121,7 @@ var FilterManager = /** @class */ (function (_super) {
         this.allAdvancedFilters.forEach(function (filterWrapper, key) {
             // because user can provide filters, we provide useful error checking and messages
             var filterPromise = filterWrapper.filterPromise;
-            var filter = filterPromise.resolveNow(null, function (filter) { return filter; });
+            var filter = filterPromise.resolveNow(null, function (promiseFilter) { return promiseFilter; });
             if (filter == null) {
                 return null;
             }
@@ -148,7 +148,8 @@ var FilterManager = /** @class */ (function (_super) {
         this.activeAdvancedFilters.length = 0;
         this.allAdvancedFilters.forEach(function (filterWrapper) {
             if (filterWrapper.filterPromise.resolveNow(false, function (filter) { return filter.isFilterActive(); })) {
-                _this.activeAdvancedFilters.push(filterWrapper.filterPromise.resolveNow(null, function (filter) { return filter; }));
+                var resolvedPromise = filterWrapper.filterPromise.resolveNow(null, function (filter) { return filter; });
+                _this.activeAdvancedFilters.push(resolvedPromise);
             }
         });
     };
@@ -233,7 +234,7 @@ var FilterManager = /** @class */ (function (_super) {
         return this.quickFilter !== null;
     };
     FilterManager.prototype.doesRowPassOtherFilters = function (filterToSkip, node) {
-        return this.doesRowPassFilter(node, filterToSkip);
+        return this.doesRowPassFilter({ rowNode: node, filterInstanceToSkip: filterToSkip });
     };
     FilterManager.prototype.doesRowPassQuickFilterNoCache = function (node, filterPart) {
         var _this = this;
@@ -257,20 +258,20 @@ var FilterManager = /** @class */ (function (_super) {
             return usingCache ? _this.doesRowPassQuickFilterCache(node, part) : _this.doesRowPassQuickFilterNoCache(node, part);
         });
     };
-    FilterManager.prototype.doesRowPassFilter = function (node, filterToSkip) {
+    FilterManager.prototype.doesRowPassFilter = function (params) {
         // the row must pass ALL of the filters, so if any of them fail,
         // we return true. that means if a row passes the quick filter,
         // but fails the column filter, it fails overall
         // first up, check quick filter
-        if (this.isQuickFilterPresent() && !this.doesRowPassQuickFilter(node)) {
+        if (this.isQuickFilterPresent() && !this.doesRowPassQuickFilter(params.rowNode)) {
             return false;
         }
         // secondly, give the client a chance to reject this row
-        if (this.externalFilterPresent && !this.gridOptionsWrapper.doesExternalFilterPass(node)) {
+        if (this.externalFilterPresent && !this.gridOptionsWrapper.doesExternalFilterPass(params.rowNode)) {
             return false;
         }
         // lastly, check our internal advanced filter
-        if (this.isAdvancedFilterPresent() && !this.doAdvancedFiltersPass(node, filterToSkip)) {
+        if (this.isAdvancedFilterPresent() && !this.doAdvancedFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
             return false;
         }
         // got this far, all filters pass
@@ -329,7 +330,7 @@ var FilterManager = /** @class */ (function (_super) {
     };
     FilterManager.prototype.isFilterActive = function (column) {
         var filterWrapper = this.cachedFilter(column);
-        return filterWrapper && filterWrapper.filterPromise.resolveNow(false, function (filter) { return filter.isFilterActive(); });
+        return !!filterWrapper && filterWrapper.filterPromise.resolveNow(false, function (filter) { return filter.isFilterActive(); });
     };
     FilterManager.prototype.getOrCreateFilterWrapper = function (column, source) {
         var filterWrapper = this.cachedFilter(column);
@@ -375,11 +376,11 @@ var FilterManager = /** @class */ (function (_super) {
             column: column,
             colDef: object_1.cloneObject(colDef),
             rowModel: this.rowModel,
-            filterChangedCallback: null,
-            filterModifiedCallback: null,
+            filterChangedCallback: function () { },
+            filterModifiedCallback: function () { },
             valueGetter: this.createValueGetter(column),
             context: this.gridOptionsWrapper.getContext(),
-            doesRowPassOtherFilter: null
+            doesRowPassOtherFilter: function () { return true; },
         };
         // hack in scope if using AngularJS
         if ($scope) {

@@ -129,7 +129,7 @@ export class GridCore extends ManagedFocusComponent {
         const statusBar = statusBarModuleLoaded ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
         const watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
 
-        const template =
+        const template = /* html */
             `<div ref="eRootWrapper" class="ag-root-wrapper">
                 ${dropZones}
                 <div class="ag-root-wrapper-body" ref="rootWrapperBody">
@@ -195,7 +195,7 @@ export class GridCore extends ManagedFocusComponent {
         if (!firstColumn) { return false; }
 
         if (firstColumn.getParent()) {
-            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0);
+            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0)!;
         }
 
         this.focusController.focusHeaderPosition(
@@ -287,7 +287,7 @@ export class GridCore extends ManagedFocusComponent {
         this.eRootWrapperBody.appendChild(this.sideBarComp.getGui());
     }
 
-    public getOpenedToolPanel(): string {
+    public getOpenedToolPanel(): string | null {
         if (!this.sideBarComp) {
             return null;
         }
@@ -332,7 +332,7 @@ export class GridCore extends ManagedFocusComponent {
                 }
             } else {
                 // check object equality against node and data
-                if (comparator === node || comparator === node.data) {
+                if (comparator === node || comparator === node!.data) {
                     indexToSelect = i;
                     break;
                 }

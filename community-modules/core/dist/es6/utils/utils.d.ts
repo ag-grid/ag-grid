@@ -144,7 +144,7 @@ export declare const _: {
     getElementAttribute(element: any, attributeName: string): string;
     offsetHeight(element: HTMLElement): number;
     offsetWidth(element: HTMLElement): number;
-    ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
+    ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement): void;
     setDomChildOrder(eContainer: HTMLElement, orderedChildren: HTMLElement[]): void;
     insertTemplateWithDomOrder(eContainer: HTMLElement, htmlTemplate: string, eChildBefore: HTMLElement): HTMLElement;
     prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
@@ -159,13 +159,13 @@ export declare const _: {
     isNode(o: any): boolean;
     isElement(o: any): boolean;
     isNodeOrElement(o: any): boolean;
-    copyNodeList(nodeList: NodeList): Node[];
+    copyNodeList(nodeList: NodeListOf<Node>): Node[];
     iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     setCheckboxState(eCheckbox: HTMLInputElement, state: any): void;
     addOrRemoveAttribute(element: HTMLElement, name: string, value: any): void;
     nodeListForEach<T_22 extends Node>(nodeList: NodeListOf<T_22>, action: (value: T_22) => void): void;
     serialiseDate(date: Date, includeTime?: boolean, separator?: string): string;
-    parseDateTimeFromString(value: string): Date;
+    parseDateTimeFromString(value?: string): Date;
     stringToArray(strData: string, delimiter?: string): string[][];
     isBrowserIE(): boolean;
     isBrowserEdge(): boolean;

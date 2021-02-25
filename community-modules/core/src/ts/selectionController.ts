@@ -77,7 +77,7 @@ export class SelectionController extends BeanStub {
     public removeGroupsFromSelection(): void {
         iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
             if (rowNode && rowNode.group) {
-                this.selectedNodes[rowNode.id] = undefined;
+                this.selectedNodes[rowNode.id!] = undefined;
             }
         });
     }
@@ -125,14 +125,14 @@ export class SelectionController extends BeanStub {
         let updatedCount = 0;
         iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode) => {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
-                const rowNode = this.selectedNodes[otherRowNode.id];
+                const rowNode = this.selectedNodes[otherRowNode.id!];
                 updatedCount += rowNode!.setSelectedParams({
                     newValue: false,
                     clearSelection: false,
                     suppressFinishActions: true
                 });
                 if (this.groupSelectsChildren && otherRowNode.parent) {
-                    groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
+                    groupsToRefresh[otherRowNode.parent.id!] = otherRowNode.parent;
                 }
             }
         });
@@ -157,7 +157,7 @@ export class SelectionController extends BeanStub {
         }
     }
 
-    public syncInRowNode(rowNode: RowNode, oldNode: RowNode): void {
+    public syncInRowNode(rowNode: RowNode, oldNode: RowNode | null): void {
         this.syncInOldRowNode(rowNode, oldNode);
         this.syncInNewRowNode(rowNode);
     }
@@ -173,20 +173,20 @@ export class SelectionController extends BeanStub {
     // daemon is removed. the daemon, because it's an oldNode, is not
     // used by the grid for rendering, it's a copy of what the node used
     // to be like before the id was changed.
-    private syncInOldRowNode(rowNode: RowNode, oldNode: RowNode): void {
+    private syncInOldRowNode(rowNode: RowNode, oldNode: RowNode | null): void {
         const oldNodeHasDifferentId = exists(oldNode) && (rowNode.id !== oldNode.id);
-        if (oldNodeHasDifferentId) {
-            const oldNodeSelected = exists(this.selectedNodes[oldNode.id]);
+        if (oldNodeHasDifferentId && oldNode) {
+            const oldNodeSelected = exists(this.selectedNodes[oldNode.id!]);
             if (oldNodeSelected) {
-                this.selectedNodes[oldNode.id] = oldNode;
+                this.selectedNodes[oldNode.id!] = oldNode;
             }
         }
     }
 
     private syncInNewRowNode(rowNode: RowNode): void {
-        if (exists(this.selectedNodes[rowNode.id])) {
+        if (exists(this.selectedNodes[rowNode.id!])) {
             rowNode.setSelectedInitialValue(true);
-            this.selectedNodes[rowNode.id] = rowNode;
+            this.selectedNodes[rowNode.id!] = rowNode;
         } else {
             rowNode.setSelectedInitialValue(false);
         }

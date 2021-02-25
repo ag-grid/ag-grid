@@ -2,7 +2,7 @@ import { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
 import { AgPromise } from './promise';
 /** @deprecated */
 export declare function getNameOfClass(theClass: any): string;
-export declare function findLineByLeastSquares(values: number[]): any[];
+export declare function findLineByLeastSquares(values: number[]): number[];
 /**
  * Converts a CSS object into string
  * @param {Object} stylesToUse an object eg: {color: 'black', top: '25px'}

@@ -311,8 +311,12 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var eExpandedIcon = createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
         var eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         setAriaExpanded(eGroupCell, !!params.node.expanded);
-        this.eExpanded.appendChild(eExpandedIcon);
-        this.eContracted.appendChild(eContractedIcon);
+        if (eExpandedIcon) {
+            this.eExpanded.appendChild(eExpandedIcon);
+        }
+        if (eContractedIcon) {
+            this.eContracted.appendChild(eContractedIcon);
+        }
         this.addManagedListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
         this.addManagedListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
         // expand / contract as the user hits enter

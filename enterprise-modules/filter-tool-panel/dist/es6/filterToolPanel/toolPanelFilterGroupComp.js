@@ -166,7 +166,7 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
     ToolPanelFilterGroupComp.prototype.setGroupTitle = function () {
         this.filterGroupName = (this.columnGroup instanceof OriginalColumnGroup) ?
             this.getColumnGroupName(this.columnGroup) : this.getColumnName(this.columnGroup);
-        this.filterGroupComp.setTitle(this.filterGroupName);
+        this.filterGroupComp.setTitle(this.filterGroupName || '');
     };
     ToolPanelFilterGroupComp.prototype.getColumnGroupName = function (columnGroup) {
         return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'filterToolPanel');

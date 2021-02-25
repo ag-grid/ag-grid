@@ -9,9 +9,9 @@ import {
     RowDataTransaction,
     RowNode,
     BeanStub
-} from "@ag-grid-community/core"
+} from "@ag-grid-community/core";
 
-import {ClientSideRowModel} from "./clientSideRowModel";
+import { ClientSideRowModel } from "./clientSideRowModel";
 
 @Bean('immutableService')
 export class ImmutableService extends BeanStub implements IImmutableService {
@@ -28,8 +28,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     }
 
     // converts the setRowData() command to a transaction
-    public createTransactionForRowData(data: any[]): ([RowDataTransaction, { [id: string]: number }]) | undefined {
-
+    public createTransactionForRowData(data: any[]): ([RowDataTransaction, { [id: string]: number } | null]) | undefined {
         if (_.missing(this.clientSideRowModel)) {
             console.error('AG Grid: ImmutableService only works with ClientSideRowModel');
             return;
@@ -51,7 +50,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
 
         const suppressSortOrder = this.gridOptionsWrapper.isSuppressMaintainUnsortedOrder();
-        const orderMap: { [id: string]: number } = suppressSortOrder ? null : {};
+        const orderMap: { [id: string]: number } | null = suppressSortOrder ? null : {};
 
         if (_.exists(data)) {
             // split all the new data in the following:
@@ -88,7 +87,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
             }
         });
 
-        return [transaction, orderMap];
+        return [ transaction, orderMap ];
     }
 
 }

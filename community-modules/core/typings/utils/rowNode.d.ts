@@ -10,4 +10,4 @@ import { RowNode } from '../entities/rowNode';
 export declare function sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: {
     [id: string]: number;
 }): void;
-export declare function traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string) => void): void;
+export declare function traverseNodesWithKey(nodes: RowNode[] | null, callback: (node: RowNode, key: string) => void): void;

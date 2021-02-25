@@ -7,7 +7,6 @@ function createSetValueModel(
     filterParams: any = {},
     doesRowPassOtherFilters: (row: RowNode) => boolean = _ => true,
     suppressSorting = false) {
-    const colDef = {} as ColDef;
     const rowModel = {
         getType: () => Constants.ROW_MODEL_TYPE_CLIENT_SIDE,
         forEachLeafNode: (callback: (node: RowNode) => void) => {
@@ -19,21 +18,24 @@ function createSetValueModel(
     const valueFormatterService = mock<ValueFormatterService>('formatValue');
     valueFormatterService.formatValue.mockImplementation((_1, _2, _3, value) => value);
 
-    return new SetValueModel(
+    const params: ISetFilterParams = {
         rowModel,
-        node => node.data.value,
-        filterParams,
-        colDef,
-        null,
-        doesRowPassOtherFilters,
+        valueGetter: (node: RowNode) => node.data.value,
+        colDef: {},
+        doesRowPassOtherFilter: doesRowPassOtherFilters,
         suppressSorting,
+        ...filterParams,
+    };
+
+    return new SetValueModel(
+        params,
         _ => { },
         valueFormatterService,
-        key => key === 'blanks' ? '(Blanks)' : null);
+        key => key === 'blanks' ? '(Blanks)' : '');
 }
 
 function getDisplayedValues(model: SetValueModel) {
-    const values = [];
+    const values: (string | null)[] = [];
 
     for (let i = 0; i < model.getDisplayedValueCount(); i++) {
         values.push(model.getDisplayedValue(i));
@@ -687,4 +689,3 @@ describe('setModel', () => {
         });
     });
 });
-

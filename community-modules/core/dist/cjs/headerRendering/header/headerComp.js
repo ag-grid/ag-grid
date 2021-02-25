@@ -103,7 +103,9 @@ var HeaderComp = /** @class */ (function (_super) {
             return;
         }
         var eIcon = icon_1.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
-        eParent.appendChild(eIcon);
+        if (eIcon) {
+            eParent.appendChild(eIcon);
+        }
     };
     HeaderComp.prototype.setupTap = function () {
         var _this = this;

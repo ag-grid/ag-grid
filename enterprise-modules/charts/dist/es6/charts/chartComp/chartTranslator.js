@@ -93,6 +93,7 @@ var ChartTranslator = /** @class */ (function (_super) {
         xOffset: 'X Offset',
         yOffset: 'Y Offset',
         lineWidth: 'Line Width',
+        lineDash: 'Line Dash',
         normal: 'Normal',
         bold: 'Bold',
         italic: 'Italic',
@@ -125,6 +126,10 @@ var ChartTranslator = /** @class */ (function (_super) {
         histogramTooltip: 'Histogram',
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
+        chartSettingsToolbarTooltip: 'Menu',
+        chartLinkToolbarTooltip: 'Linked to Grid',
+        chartUnlinkToolbarTooltip: 'Unlinked from Grid',
+        chartDownloadToolbarTooltip: 'Download Chart',
     };
     ChartTranslator = ChartTranslator_1 = __decorate([
         Bean("chartTranslator")

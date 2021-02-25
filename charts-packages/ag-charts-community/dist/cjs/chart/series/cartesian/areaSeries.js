@@ -21,6 +21,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var group_1 = require("../../../scene/group");
 var selection_1 = require("../../../scene/selection");
+var series_1 = require("../series");
 var node_1 = require("../../../scene/node");
 var path_1 = require("../../../scene/shape/path");
 var cartesianSeries_1 = require("./cartesianSeries");
@@ -32,10 +33,25 @@ var number_1 = require("../../../util/number");
 var equal_1 = require("../../../util/equal");
 var observable_1 = require("../../../util/observable");
 var string_1 = require("../../../util/string");
+var AreaSeriesTooltip = /** @class */ (function (_super) {
+    __extends(AreaSeriesTooltip, _super);
+    function AreaSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate([
+        observable_1.reactive('change')
+    ], AreaSeriesTooltip.prototype, "renderer", void 0);
+    __decorate([
+        observable_1.reactive('change')
+    ], AreaSeriesTooltip.prototype, "format", void 0);
+    return AreaSeriesTooltip;
+}(series_1.SeriesTooltip));
+exports.AreaSeriesTooltip = AreaSeriesTooltip;
 var AreaSeries = /** @class */ (function (_super) {
     __extends(AreaSeries, _super);
     function AreaSeries() {
         var _this = _super.call(this) || this;
+        _this.tooltip = new AreaSeriesTooltip();
         _this.areaGroup = _this.group.appendChild(new group_1.Group);
         _this.strokeGroup = _this.group.appendChild(new group_1.Group);
         _this.markerGroup = _this.group.appendChild(new group_1.Group);
@@ -448,7 +464,8 @@ var AreaSeries = /** @class */ (function (_super) {
         if (!xKey || !yKey) {
             return '';
         }
-        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltipFormat = _a.tooltipFormat, tooltipRenderer = _a.tooltipRenderer;
+        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltip = _a.tooltip;
+        var _b = tooltip.renderer, tooltipRenderer = _b === void 0 ? this.tooltipRenderer : _b, tooltipFormat = tooltip.format;
         var datum = nodeDatum.seriesDatum;
         var xValue = datum[xKey];
         var yValue = datum[yKey];

@@ -34,7 +34,7 @@ export class ToolPanelFilterGroupComp extends Component {
     private readonly showingColumn: boolean;
     private childFilterComps: ToolPanelFilterItem[];
     private expandedCallback: () => void;
-    private filterGroupName: string;
+    private filterGroupName: string | null;
 
     constructor(columnGroup: OriginalColumnGroupChild, childFilterComps: ToolPanelFilterItem[],
         expandedCallback: () => void, depth: number, showingColumn: boolean) {
@@ -161,7 +161,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
     private addFilterChangedListeners() {
         if (this.columnGroup instanceof OriginalColumnGroup) {
-            const group = this.columnGroup as OriginalColumnGroup;
+            const group = this.columnGroup;
             const anyChildFiltersActive = () => group.getLeafColumns().some(col => col.isFilterActive());
 
             group.getLeafColumns().forEach(column => {
@@ -203,7 +203,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.filterGroupName = (this.columnGroup instanceof OriginalColumnGroup) ?
             this.getColumnGroupName(this.columnGroup) : this.getColumnName(this.columnGroup as Column);
 
-        this.filterGroupComp.setTitle(this.filterGroupName);
+        this.filterGroupComp.setTitle(this.filterGroupName || '');
     }
 
     private getColumnGroupName(columnGroup: OriginalColumnGroup): string | null {

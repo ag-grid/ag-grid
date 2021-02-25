@@ -10,7 +10,7 @@ function cloneUnlessOtherwiseSpecified(value: any, options: any) {
 }
 
 function defaultArrayMerge(target: any, source: any, options: any) {
-    return target.concat(source).map(function (element: any) {
+    return target.concat(source).map(function(element: any) {
         return cloneUnlessOtherwiseSpecified(element, options);
     });
 }
@@ -25,7 +25,7 @@ function getMergeFunction(key: string, options: any) {
 
 function getEnumerableOwnPropertySymbols(target: any): any[] {
     return Object.getOwnPropertySymbols
-        ? Object.getOwnPropertySymbols(target).filter(function (symbol) {
+        ? Object.getOwnPropertySymbols(target).filter(function(symbol) {
             return target.propertyIsEnumerable(symbol);
         })
         : [];
@@ -53,11 +53,11 @@ function propertyIsUnsafe(target: any, key: string) {
 function mergeObject(target: any, source: any, options: any) {
     const destination: any = {};
     if (options.isMergeableObject(target)) {
-        getKeys(target).forEach(function (key) {
+        getKeys(target).forEach(function(key) {
             destination[key] = cloneUnlessOtherwiseSpecified(target[key], options);
         });
     }
-    getKeys(source).forEach(function (key) {
+    getKeys(source).forEach(function(key) {
         if (propertyIsUnsafe(target, key)) {
             return;
         }
@@ -113,7 +113,7 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true, objectsT
 
         if (destValue === sourceValue) { return; }
 
-        const dontCopyOverSourceObject = iteration==0 && destValue == null && sourceValue!=null && objectsThatNeedCopy.indexOf(key)>=0;
+        const dontCopyOverSourceObject = iteration == 0 && destValue == null && sourceValue != null && objectsThatNeedCopy.indexOf(key) >= 0;
         if (dontCopyOverSourceObject) {
             // by putting an empty value into destValue first, it means we end up copying over values from
             // the source object, rather than just copying in the source object in it's entirety.

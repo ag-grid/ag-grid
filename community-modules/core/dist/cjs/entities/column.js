@@ -535,7 +535,9 @@ var Column = /** @class */ (function () {
     };
     Column.prototype.setMinimum = function (source) {
         if (source === void 0) { source = "api"; }
-        this.setActualWidth(this.minWidth, source);
+        if (generic_1.exists(this.minWidth)) {
+            this.setActualWidth(this.minWidth, source);
+        }
     };
     Column.prototype.setRowGroupActive = function (rowGroup, source) {
         if (source === void 0) { source = "api"; }

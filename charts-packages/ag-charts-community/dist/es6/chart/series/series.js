@@ -21,6 +21,19 @@ import { Group } from "../../scene/group";
 import { Observable, reactive } from "../../util/observable";
 import { ChartAxisDirection } from "../chartAxis";
 import { createId } from "../../util/id";
+var SeriesTooltip = /** @class */ (function (_super) {
+    __extends(SeriesTooltip, _super);
+    function SeriesTooltip() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.enabled = true;
+        return _this;
+    }
+    __decorate([
+        reactive('change')
+    ], SeriesTooltip.prototype, "enabled", void 0);
+    return SeriesTooltip;
+}(Observable));
+export { SeriesTooltip };
 var Series = /** @class */ (function (_super) {
     __extends(Series, _super);
     function Series() {
@@ -31,6 +44,9 @@ var Series = /** @class */ (function (_super) {
          */
         _this.group = new Group();
         _this.directions = [ChartAxisDirection.X, ChartAxisDirection.Y];
+        /**
+         * @deprecated Use {@link tooltip.enabled} instead.
+         */
         _this.tooltipEnabled = true;
         _this.data = undefined;
         _this.visible = true;

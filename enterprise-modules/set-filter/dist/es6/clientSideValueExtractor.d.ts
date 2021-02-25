@@ -4,5 +4,5 @@ export declare class ClientSideValuesExtractor {
     private readonly colDef;
     private readonly valueGetter;
     constructor(rowModel: IClientSideRowModel, colDef: ColDef, valueGetter: (node: RowNode) => string);
-    extractUniqueValues(predicate: (node: RowNode) => boolean): string[];
+    extractUniqueValues(predicate: (node: RowNode) => boolean): (string | null)[];
 }

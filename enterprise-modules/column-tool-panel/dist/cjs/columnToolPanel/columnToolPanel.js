@@ -93,7 +93,6 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         if (!this.isRowGroupingModuleLoaded()) {
             return;
         }
-        ;
         if (this.pivotModePanel) {
             this.pivotModePanel.setDisplayed(visible);
         }
@@ -109,7 +108,6 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         if (!this.isRowGroupingModuleLoaded()) {
             return;
         }
-        ;
         if (this.rowGroupDropZonePanel) {
             this.rowGroupDropZonePanel.setDisplayed(visible);
         }
@@ -123,7 +121,6 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         if (!this.isRowGroupingModuleLoaded()) {
             return;
         }
-        ;
         if (this.valuesDropZonePanel) {
             this.valuesDropZonePanel.setDisplayed(visible);
         }
@@ -137,7 +134,6 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         if (!this.isRowGroupingModuleLoaded()) {
             return;
         }
-        ;
         if (this.pivotDropZonePanel) {
             this.pivotDropZonePanel.setDisplayed(visible);
         }
@@ -152,7 +148,8 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         var eGui = this.getGui();
         var columnDrops = Array.prototype.slice.call(eGui.querySelectorAll('.ag-column-drop'));
         columnDrops.forEach(function (columnDrop) { return core_1._.removeCssClass(columnDrop, 'ag-last-column-drop'); });
-        var lastVisible = core_1._.last(eGui.querySelectorAll('.ag-column-drop:not(.ag-hidden)'));
+        var columnDropEls = eGui.querySelectorAll('.ag-column-drop:not(.ag-hidden)');
+        var lastVisible = core_1._.last(columnDropEls);
         if (lastVisible) {
             core_1._.addCssClass(lastVisible, 'ag-last-column-drop');
         }

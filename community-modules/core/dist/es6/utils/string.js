@@ -25,13 +25,16 @@ export function utf8_encode(s) {
     var stringFromCharCode = String.fromCharCode;
     function ucs2decode(string) {
         var output = [];
+        if (!string) {
+            return [];
+        }
+        var len = string.length;
         var counter = 0;
-        var length = string.length;
         var value;
         var extra;
-        while (counter < length) {
+        while (counter < len) {
             value = string.charCodeAt(counter++);
-            if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+            if (value >= 0xD800 && value <= 0xDBFF && counter < len) {
                 // high surrogate, and there is a next character
                 extra = string.charCodeAt(counter++);
                 if ((extra & 0xFC00) == 0xDC00) { // low surrogate
@@ -50,34 +53,34 @@ export function utf8_encode(s) {
         }
         return output;
     }
-    function checkScalarValue(codePoint) {
-        if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
-            throw Error('Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
+    function checkScalarValue(point) {
+        if (point >= 0xD800 && point <= 0xDFFF) {
+            throw Error('Lone surrogate U+' + point.toString(16).toUpperCase() +
                 ' is not a scalar value');
         }
     }
-    function createByte(codePoint, shift) {
-        return stringFromCharCode(((codePoint >> shift) & 0x3F) | 0x80);
+    function createByte(point, shift) {
+        return stringFromCharCode(((point >> shift) & 0x3F) | 0x80);
     }
-    function encodeCodePoint(codePoint) {
-        if ((codePoint & 0xFFFFFF80) == 0) { // 1-byte sequence
-            return stringFromCharCode(codePoint);
+    function encodeCodePoint(point) {
+        if ((point & 0xFFFFFF80) == 0) { // 1-byte sequence
+            return stringFromCharCode(point);
         }
         var symbol = '';
-        if ((codePoint & 0xFFFFF800) == 0) { // 2-byte sequence
-            symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
+        if ((point & 0xFFFFF800) == 0) { // 2-byte sequence
+            symbol = stringFromCharCode(((point >> 6) & 0x1F) | 0xC0);
         }
-        else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
-            checkScalarValue(codePoint);
-            symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
-            symbol += createByte(codePoint, 6);
+        else if ((point & 0xFFFF0000) == 0) { // 3-byte sequence
+            checkScalarValue(point);
+            symbol = stringFromCharCode(((point >> 12) & 0x0F) | 0xE0);
+            symbol += createByte(point, 6);
         }
-        else if ((codePoint & 0xFFE00000) == 0) { // 4-byte sequence
-            symbol = stringFromCharCode(((codePoint >> 18) & 0x07) | 0xF0);
-            symbol += createByte(codePoint, 12);
-            symbol += createByte(codePoint, 6);
+        else if ((point & 0xFFE00000) == 0) { // 4-byte sequence
+            symbol = stringFromCharCode(((point >> 18) & 0x07) | 0xF0);
+            symbol += createByte(point, 12);
+            symbol += createByte(point, 6);
         }
-        symbol += stringFromCharCode((codePoint & 0x3F) | 0x80);
+        symbol += stringFromCharCode((point & 0x3F) | 0x80);
         return symbol;
     }
     var codePoints = ucs2decode(s);

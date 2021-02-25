@@ -26,7 +26,7 @@ var ColumnDefFactory = /** @class */ (function () {
             var child = col;
             while (child.getParent()) {
                 var parent_1 = child.getParent();
-                var parentDef = void 0;
+                var parentDef = null;
                 // we don't include padding groups, as the column groups provided
                 // by application didn't have these. the whole point of padding groups
                 // is to balance the column tree that the user provided.
@@ -45,10 +45,12 @@ var ColumnDefFactory = /** @class */ (function () {
                     break;
                 }
                 parentDef = _this.createDefFromGroup(parent_1);
-                parentDef.children = [childDef];
-                colGroupDefs[parentDef.groupId] = parentDef;
-                childDef = parentDef;
-                child = parent_1;
+                if (parentDef) {
+                    parentDef.children = [childDef];
+                    colGroupDefs[parentDef.groupId] = parentDef;
+                    childDef = parentDef;
+                    child = parent_1;
+                }
             }
             if (addToResult) {
                 res.push(childDef);
@@ -58,7 +60,9 @@ var ColumnDefFactory = /** @class */ (function () {
     };
     ColumnDefFactory.prototype.createDefFromGroup = function (group) {
         var defCloned = deepCloneDefinition(group.getColGroupDef(), ['children']);
-        defCloned.groupId = group.getGroupId();
+        if (defCloned) {
+            defCloned.groupId = group.getGroupId();
+        }
         return defCloned;
     };
     ColumnDefFactory.prototype.createDefFromColumn = function (col, rowGroupColumns, pivotColumns) {

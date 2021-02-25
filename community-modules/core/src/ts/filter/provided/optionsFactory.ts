@@ -62,7 +62,7 @@ export class OptionsFactory {
         return this.defaultOption;
     }
 
-    public getCustomOption(name: string): IFilterOptionDef {
-        return this.customFilterOptions[name];
+    public getCustomOption(name?: string | null): IFilterOptionDef | undefined {
+        return this.customFilterOptions[name!];
     }
 }

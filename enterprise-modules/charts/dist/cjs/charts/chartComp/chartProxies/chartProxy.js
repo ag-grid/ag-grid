@@ -106,10 +106,12 @@ var ChartProxy = /** @class */ (function () {
         return core_1._.includes(Object.keys(ag_charts_community_1.themes), themeName);
     };
     ChartProxy.prototype.mergeThemeOverrides = function (gridOptionsThemeOverrides, apiThemeOverrides) {
-        if (!gridOptionsThemeOverrides)
+        if (!gridOptionsThemeOverrides) {
             return apiThemeOverrides;
-        if (!apiThemeOverrides)
+        }
+        if (!apiThemeOverrides) {
             return gridOptionsThemeOverrides;
+        }
         return object_1.deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     };
     ChartProxy.prototype.integratedToStandaloneChartType = function (integratedChartType) {
@@ -154,8 +156,9 @@ var ChartProxy = /** @class */ (function () {
             // due to series default refactoring it's possible for fills and strokes to have undefined values
             var invalidFills = core_1._.includes(fillsOverridden, undefined);
             var invalidStrokes = core_1._.includes(strokesOverridden, undefined);
-            if (invalidFills || invalidStrokes)
+            if (invalidFills || invalidStrokes) {
                 return;
+            }
             // both fills and strokes will need to be overridden
             this.customPalette = {
                 fills: fillsOverridden,

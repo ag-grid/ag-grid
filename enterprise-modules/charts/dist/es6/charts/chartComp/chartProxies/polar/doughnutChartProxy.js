@@ -54,6 +54,8 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
+            lineDash: seriesDefaults.lineDash,
+            lineDashOffset: seriesDefaults.lineDashOffset,
             highlightStyle: seriesDefaults.highlightStyle,
             listeners: seriesDefaults.listeners
         };

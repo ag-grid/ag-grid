@@ -176,7 +176,7 @@ var PaginationProxy = /** @class */ (function (_super) {
         return rowPage === this.currentPage;
     };
     PaginationProxy.prototype.isLastPageFound = function () {
-        return this.rowModel.isLastRowFound();
+        return this.rowModel.isLastRowIndexKnown();
     };
     PaginationProxy.prototype.getCurrentPage = function () {
         return this.currentPage;

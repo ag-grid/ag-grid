@@ -18,7 +18,7 @@ export declare enum ClientSideRowModelSteps {
 export interface IClientSideRowModel extends IRowModel {
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {
         [id: string]: number;
-    }): RowNodeTransaction | null;
+    } | null): RowNodeTransaction | null;
     setRowData(rowData: any[]): void;
     refreshModel(params: RefreshModelParams): void;
     expandOrCollapseAll(expand: boolean): void;

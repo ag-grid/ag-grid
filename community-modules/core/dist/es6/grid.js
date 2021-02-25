@@ -89,6 +89,8 @@ import { missing, exists } from "./utils/generic";
 import { assign, iterateObject } from "./utils/object";
 import { ColumnDefFactory } from "./columnController/columnDefFactory";
 import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
+import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
+import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -136,17 +138,17 @@ var Grid = /** @class */ (function () {
         var allModules = [];
         var mapNames = {};
         // adds to list and removes duplicates
-        function addModule(moduleBased, module) {
-            function addIndividualModule(module) {
-                if (!mapNames[module.moduleName]) {
-                    mapNames[module.moduleName] = true;
-                    allModules.push(module);
-                    ModuleRegistry.register(module, moduleBased);
+        function addModule(moduleBased, mod) {
+            function addIndividualModule(currentModule) {
+                if (!mapNames[currentModule.moduleName]) {
+                    mapNames[currentModule.moduleName] = true;
+                    allModules.push(currentModule);
+                    ModuleRegistry.register(currentModule, moduleBased);
                 }
             }
-            addIndividualModule(module);
-            if (module.dependantModules) {
-                module.dependantModules.forEach(addModule.bind(null, moduleBased));
+            addIndividualModule(mod);
+            if (mod.dependantModules) {
+                mod.dependantModules.forEach(addModule.bind(null, moduleBased));
             }
         }
         if (passedViaConstructor) {
@@ -228,7 +230,7 @@ var Grid = /** @class */ (function () {
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
-            RowCssClassCalculator
+            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter
         ];
         var moduleBeans = this.extractModuleEntity(registeredModules, function (module) { return module.beans ? module.beans : []; });
         beans.push.apply(beans, moduleBeans);

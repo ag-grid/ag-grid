@@ -12,7 +12,7 @@ export declare class ViewportRowModel extends BeanStub implements IRowModel {
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
     private init;
     start(): void;
-    isLastRowFound(): boolean;
+    isLastRowIndexKnown(): boolean;
     private destroyDatasource;
     private calculateFirstRow;
     private calculateLastRow;
@@ -27,7 +27,6 @@ export declare class ViewportRowModel extends BeanStub implements IRowModel {
     getRowBounds(index: number): RowBounds;
     getTopLevelRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
-    getCurrentPageHeight(): number;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
     getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];

@@ -38,7 +38,7 @@ export class ToolPanelFilterComp extends Component {
     private hideHeader: boolean;
     private column: Column;
     private expanded: boolean = false;
-    private underlyingFilter: IFilterComp;
+    private underlyingFilter: IFilterComp | null;
 
     constructor(hideHeader = false) {
         super(ToolPanelFilterComp.TEMPLATE);
@@ -47,8 +47,8 @@ export class ToolPanelFilterComp extends Component {
 
     @PostConstruct
     private postConstruct() {
-        this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper);
-        this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper);
+        this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper)!;
+        this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper)!;
         this.eExpand.appendChild(this.eExpandChecked);
         this.eExpand.appendChild(this.eExpandUnchecked);
     }
@@ -93,7 +93,7 @@ export class ToolPanelFilterComp extends Component {
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
+        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column)!;
         eParent.appendChild(eIcon);
     }
 
@@ -112,7 +112,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public expand(): void {
-        if (this.expanded) return;
+        if (this.expanded) { return; }
 
         this.expanded = true;
 
@@ -123,6 +123,7 @@ export class ToolPanelFilterComp extends Component {
             filterPromise.then(filter => {
                 this.underlyingFilter = filter;
 
+                if (!filter) { return; }
                 container.appendChild(filter.getGui());
 
                 this.agFilterToolPanelBody.appendChild(container);
@@ -138,7 +139,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public collapse(): void {
-        if (!this.expanded) return;
+        if (!this.expanded) { return; }
 
         this.expanded = false;
         this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
@@ -152,7 +153,7 @@ export class ToolPanelFilterComp extends Component {
 
         const filter = this.underlyingFilter as any;
 
-        if (!filter) return;
+        if (!filter) { return; }
 
         // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
         // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the

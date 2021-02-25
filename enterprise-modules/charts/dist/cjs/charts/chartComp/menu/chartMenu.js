@@ -87,6 +87,11 @@ var ChartMenu = /** @class */ (function (_super) {
         var active = core_1._.containsClass(target, 'ag-icon-linked');
         core_1._.addOrRemoveCssClass(target, 'ag-icon-linked', !active);
         core_1._.addOrRemoveCssClass(target, 'ag-icon-unlinked', active);
+        var tooltipKey = active ? 'chartUnlinkToolbarTooltip' : 'chartLinkToolbarTooltip';
+        var tooltipTitle = this.chartTranslator.translate(tooltipKey);
+        if (tooltipTitle) {
+            target.title = tooltipTitle;
+        }
         this.chartController.detachChartRange();
     };
     ChartMenu.prototype.createButtons = function () {
@@ -98,6 +103,10 @@ var ChartMenu = /** @class */ (function (_super) {
             var iconName = buttonConfig[0], callback = buttonConfig[1];
             var buttonEl = core_1._.createIconNoSpan(iconName, _this.gridOptionsWrapper, undefined, true);
             core_1._.addCssClass(buttonEl, 'ag-chart-menu-icon');
+            var tooltipTitle = _this.chartTranslator.translate(button + 'ToolbarTooltip');
+            if (tooltipTitle) {
+                buttonEl.title = tooltipTitle;
+            }
             _this.addManagedListener(buttonEl, 'click', callback);
             gui.appendChild(buttonEl);
         });

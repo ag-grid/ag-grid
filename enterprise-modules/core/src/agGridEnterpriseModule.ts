@@ -14,4 +14,3 @@ export const EnterpriseCoreModule: Module = {
         { componentName: 'AgWatermark', componentClass: WatermarkComp }
     ]
 };
-

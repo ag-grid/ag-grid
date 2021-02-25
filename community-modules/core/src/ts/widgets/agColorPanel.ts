@@ -292,7 +292,7 @@ export class AgColorPanel extends Component {
         }
 
         // remove duplicate color
-        recentColors = recentColors.filter(color => color != rgbaColor);
+        recentColors = recentColors.filter(currentColor => currentColor != rgbaColor);
 
         // add color to head
         recentColors = [rgbaColor].concat(recentColors);

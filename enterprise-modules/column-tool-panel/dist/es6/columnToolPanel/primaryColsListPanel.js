@@ -170,7 +170,8 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             });
         };
         var createGroupItem = function (columnGroup, dept, parentList) {
-            var skipThisGroup = columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressColumnsToolPanel;
+            var columnGroupDef = columnGroup.getColGroupDef();
+            var skipThisGroup = columnGroupDef && columnGroupDef.suppressColumnsToolPanel;
             if (skipThisGroup) {
                 return;
             }
@@ -320,8 +321,9 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             }
             checked ? checkedCount++ : uncheckedCount++;
         });
-        if (checkedCount > 0 && uncheckedCount > 0)
+        if (checkedCount > 0 && uncheckedCount > 0) {
             return undefined;
+        }
         return !(checkedCount === 0 || uncheckedCount > 0);
     };
     PrimaryColsListPanel.prototype.setFilterText = function (filterText) {
@@ -332,9 +334,11 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     PrimaryColsListPanel.prototype.markFilteredColumns = function () {
         var _this = this;
         var passesFilter = function (item) {
-            if (!_.exists(_this.filterText))
+            if (!_.exists(_this.filterText)) {
                 return true;
-            return item.getDisplayName() != null ? item.getDisplayName().toLowerCase().indexOf(_this.filterText) >= 0 : true;
+            }
+            var displayName = item.getDisplayName();
+            return displayName == null || displayName.toLowerCase().indexOf(_this.filterText) !== -1;
         };
         var recursivelyCheckFilter = function (item, parentPasses) {
             var atLeastOneChildPassed = false;

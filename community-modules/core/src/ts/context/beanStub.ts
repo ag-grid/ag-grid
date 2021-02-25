@@ -97,7 +97,7 @@ export class BeanStub implements IEventEmitter {
         }
 
         if (object instanceof HTMLElement) {
-            addSafePassiveEventListener(this.getFrameworkOverrides(), object as HTMLElement, event, listener);
+            addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
         } else {
             object.addEventListener(event, listener);
         }
@@ -132,11 +132,11 @@ export class BeanStub implements IEventEmitter {
         return res;
     }
 
-    protected createBean<T>(bean: T, context?: Context, afterPreCreateCallback?: (comp: Component) => void): T {
+    protected createBean<T>(bean: T, context?: Context | null, afterPreCreateCallback?: (comp: Component) => void): T {
         return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
     }
 
-    protected destroyBean<T>(bean: T, context?: Context): T {
+    protected destroyBean<T>(bean: T, context?: Context): T | undefined {
         return (context || this.getContext()).destroyBean(bean);
     }
 

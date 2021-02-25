@@ -41,7 +41,9 @@ var LoadingCellRenderer = /** @class */ (function (_super) {
     };
     LoadingCellRenderer.prototype.setupLoading = function () {
         var eLoadingIcon = icon_1.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
-        this.eLoadingIcon.appendChild(eLoadingIcon);
+        if (eLoadingIcon) {
+            this.eLoadingIcon.appendChild(eLoadingIcon);
+        }
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
     };

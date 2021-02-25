@@ -39,7 +39,7 @@ export class PinnedRowModel extends BeanStub {
         }
         for (let i = 0; i < rows.length; i++) {
             const rowNode = rows[i];
-            const rowTopPixel = rowNode.rowTop + rowNode.rowHeight - 1;
+            const rowTopPixel = rowNode.rowTop! + rowNode.rowHeight! - 1;
             // only need to range check against the top pixel, as we are going through the list
             // in order, first row to hit the pixel wins
             if (rowTopPixel >= pixel) {
@@ -85,7 +85,7 @@ export class PinnedRowModel extends BeanStub {
                 rowNode.setRowTop(nextRowTop);
                 rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
                 rowNode.setRowIndex(index);
-                nextRowTop += rowNode.rowHeight;
+                nextRowTop += rowNode.rowHeight!;
                 rowNodes.push(rowNode);
             });
         }
@@ -142,7 +142,7 @@ export class PinnedRowModel extends BeanStub {
         if (!rowNodes || rowNodes.length === 0) { return 0; }
 
         const lastNode = last(rowNodes);
-        return lastNode.rowTop + lastNode.rowHeight;
+        return lastNode.rowTop! + lastNode.rowHeight!;
     }
 
 }

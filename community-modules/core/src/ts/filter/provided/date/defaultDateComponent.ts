@@ -44,7 +44,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         });
     }
 
-    public getDate(): Date {
+    public getDate(): Date | null {
         return parseDateTimeFromString(this.eDateInput.getValue());
     }
 
@@ -65,8 +65,6 @@ export class DefaultDateComponent extends Component implements IDateComp {
     private shouldUseBrowserDatePicker(params: IDateParams): boolean {
         if (params.filterParams && params.filterParams.browserDatePicker != null) {
             return params.filterParams.browserDatePicker;
-        } else {
-            return isBrowserChrome() || isBrowserFirefox();
         }
 
         return isBrowserChrome() || isBrowserFirefox();

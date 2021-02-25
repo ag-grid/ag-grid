@@ -166,9 +166,7 @@ var TextFilter = /** @class */ (function (_super) {
         simpleFilter_1.SimpleFilter.ENDS_WITH
     ];
     TextFilter.DEFAULT_FORMATTER = function (from) { return from; };
-    TextFilter.DEFAULT_LOWERCASE_FORMATTER = function (from) {
-        return from == null ? null : from.toString().toLowerCase();
-    };
+    TextFilter.DEFAULT_LOWERCASE_FORMATTER = function (from) { return from == null ? null : from.toString().toLowerCase(); };
     TextFilter.DEFAULT_COMPARATOR = function (filter, value, filterText) {
         switch (filter) {
             case TextFilter.CONTAINS:

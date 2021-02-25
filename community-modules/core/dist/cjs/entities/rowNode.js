@@ -44,12 +44,23 @@ var RowNode = /** @class */ (function () {
         this.selected = false;
     }
     RowNode.prototype.setData = function (data) {
+        this.setDataCommon(data, false);
+    };
+    // similar to setRowData, however it is expected that the data is the same data item. this
+    // is intended to be used with Redux type stores, where the whole data can be changed. we are
+    // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
+    // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
+    // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
+    RowNode.prototype.updateData = function (data) {
+        this.setDataCommon(data, true);
+    };
+    RowNode.prototype.setDataCommon = function (data, update) {
         var oldData = this.data;
         this.data = data;
         this.valueCache.onDataChanged();
         this.updateDataOnDetailNode();
         this.checkRowSelectable();
-        var event = this.createDataChangedEvent(data, oldData, false);
+        var event = this.createDataChangedEvent(data, oldData, update);
         this.dispatchLocalEvent(event);
     };
     // when we are doing master / detail, the detail node is lazy created, but then kept around.
@@ -74,20 +85,6 @@ var RowNode = /** @class */ (function () {
             type: type,
             node: this
         };
-    };
-    // similar to setRowData, however it is expected that the data is the same data item. this
-    // is intended to be used with Redux type stores, where the whole data can be changed. we are
-    // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
-    // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
-    // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
-    RowNode.prototype.updateData = function (data) {
-        var oldData = this.data;
-        this.data = data;
-        this.updateDataOnDetailNode();
-        this.checkRowSelectable();
-        this.updateDataOnDetailNode();
-        var event = this.createDataChangedEvent(data, oldData, true);
-        this.dispatchLocalEvent(event);
     };
     RowNode.prototype.getRowIndexString = function () {
         if (this.rowPinned === constants_1.Constants.PINNED_TOP) {
@@ -161,6 +158,9 @@ var RowNode = /** @class */ (function () {
         }
     };
     RowNode.prototype.isPixelInRange = function (pixel) {
+        if (!generic_1.exists(this.rowTop) || !generic_1.exists(this.rowHeight)) {
+            return false;
+        }
         return pixel >= this.rowTop && pixel < (this.rowTop + this.rowHeight);
     };
     RowNode.prototype.setFirstChild = function (firstChild) {
@@ -360,7 +360,7 @@ var RowNode = /** @class */ (function () {
         // if children exist.
         var newValue = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
         if (newValue !== this.__hasChildren) {
-            this.__hasChildren = newValue;
+            this.__hasChildren = !!newValue;
             if (this.eventService) {
                 this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
             }
@@ -590,7 +590,7 @@ var RowNode = /** @class */ (function () {
     RowNode.prototype.selectChildNodes = function (newValue, groupSelectsFiltered) {
         var children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
         if (generic_1.missing(children)) {
-            return;
+            return 0;
         }
         var updatedCount = 0;
         for (var i = 0; i < children.length; i++) {
@@ -622,7 +622,7 @@ var RowNode = /** @class */ (function () {
         var currentRowNode = this;
         var isCandidate = true;
         var foundFirstChildPath = false;
-        var nodeToSwapIn;
+        var nodeToSwapIn = null;
         // if we are hiding groups, then if we are the first child, of the first child,
         // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {

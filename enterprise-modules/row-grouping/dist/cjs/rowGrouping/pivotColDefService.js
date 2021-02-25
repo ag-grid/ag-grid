@@ -92,9 +92,9 @@ var PivotColDefService = /** @class */ (function (_super) {
                 // impression that the grid is broken
                 if (measureColumns.length === 0) {
                     // this is the blank column, for when no value columns enabled.
-                    var colDef_1 = _this.createColDef(null, '-', newPivotKeys, columnIdSequence);
-                    valueGroup_1.children.push(colDef_1);
-                    pivotColumnDefs.push(colDef_1);
+                    var colDef = _this.createColDef(null, '-', newPivotKeys, columnIdSequence);
+                    valueGroup_1.children.push(colDef);
+                    pivotColumnDefs.push(colDef);
                 }
                 else {
                     measureColumns.forEach(function (measureColumn) {
@@ -109,27 +109,28 @@ var PivotColDefService = /** @class */ (function (_super) {
             }
         });
         // sort by either user provided comparator, or our own one
-        var colDef = primaryPivotColumns[index - 1].getColDef();
-        var userComparator = colDef.pivotComparator;
+        var primaryPivotColumnDefs = primaryPivotColumns[index - 1].getColDef();
+        var userComparator = primaryPivotColumnDefs.pivotComparator;
         var comparator = this.headerNameComparator.bind(this, userComparator);
         parentChildren.sort(comparator);
     };
     PivotColDefService.prototype.addExpandablePivotGroups = function (pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence) {
         var _this = this;
-        if (this.gridOptionsWrapper.isSuppressExpandablePivotGroups() || this.gridOptionsWrapper.getPivotColumnGroupTotals()) {
+        if (this.gridOptionsWrapper.isSuppressExpandablePivotGroups() ||
+            this.gridOptionsWrapper.getPivotColumnGroupTotals()) {
             return;
         }
-        var recursivelyAddSubTotals = function (groupDef, pivotColumnDefs, columnIdSequence, acc) {
+        var recursivelyAddSubTotals = function (groupDef, currentPivotColumnDefs, currentColumnIdSequence, acc) {
             var group = groupDef;
             if (group.children) {
                 var childAcc_1 = new Map();
                 group.children.forEach(function (grp) {
-                    recursivelyAddSubTotals(grp, pivotColumnDefs, columnIdSequence, childAcc_1);
+                    recursivelyAddSubTotals(grp, currentPivotColumnDefs, currentColumnIdSequence, childAcc_1);
                 });
                 var firstGroup_1 = !group.children.some(function (child) { return child.children; });
                 _this.columnController.getValueColumns().forEach(function (valueColumn) {
                     var columnName = _this.columnController.getDisplayNameForColumn(valueColumn, 'header');
-                    var totalColDef = _this.createColDef(valueColumn, columnName, groupDef.pivotKeys, columnIdSequence);
+                    var totalColDef = _this.createColDef(valueColumn, columnName, groupDef.pivotKeys, currentColumnIdSequence);
                     totalColDef.pivotTotalColumnIds = childAcc_1.get(valueColumn.getColId());
                     totalColDef.columnGroupShow = 'closed';
                     totalColDef.aggFunc = valueColumn.getAggFunc();
@@ -137,7 +138,7 @@ var PivotColDefService = /** @class */ (function (_super) {
                         // add total colDef to group and pivot colDefs array
                         var children = groupDef.children;
                         children.push(totalColDef);
-                        pivotColumnDefs.push(totalColDef);
+                        currentPivotColumnDefs.push(totalColDef);
                     }
                 });
                 _this.merge(acc, childAcc_1);
@@ -145,8 +146,9 @@ var PivotColDefService = /** @class */ (function (_super) {
             else {
                 var def = groupDef;
                 // check that value column exists, i.e. aggFunc is supplied
-                if (!def.pivotValueColumn)
+                if (!def.pivotValueColumn) {
                     return;
+                }
                 var pivotValueColId = def.pivotValueColumn.getColId();
                 var arr = acc.has(pivotValueColId) ? acc.get(pivotValueColId) : [];
                 arr.push(def.colId);
@@ -316,12 +318,10 @@ var PivotColDefService = /** @class */ (function (_super) {
             if (a.headerName < b.headerName) {
                 return -1;
             }
-            else if (a.headerName > b.headerName) {
+            if (a.headerName > b.headerName) {
                 return 1;
             }
-            else {
-                return 0;
-            }
+            return 0;
         }
     };
     PivotColDefService.prototype.merge = function (m1, m2) {

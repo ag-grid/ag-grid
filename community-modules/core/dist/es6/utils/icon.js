@@ -127,7 +127,7 @@ export var iconNameClassMap = {
  */
 export function createIcon(iconName, gridOptionsWrapper, column) {
     var iconContents = createIconNoSpan(iconName, gridOptionsWrapper, column);
-    if (iconContents.className.indexOf('ag-icon') > -1) {
+    if (iconContents && iconContents.className.indexOf('ag-icon') > -1) {
         return iconContents;
     }
     var eResult = document.createElement('span');

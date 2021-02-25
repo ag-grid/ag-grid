@@ -9,6 +9,8 @@ import { ChartOptions, ChartType } from './interfaces/iChartOptions';
 import { IFilterComp } from './interfaces/iFilter';
 import { CellRange, CellRangeParams } from './interfaces/iRangeController';
 import { ChartModel } from './interfaces/IChartService';
+import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
+import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { Events } from './eventKeys';
 export interface ModelUpdatedEvent extends AgGridEvent {
     /** If true, the grid will try and animate the rows to the new positions */
@@ -183,11 +185,11 @@ export interface PaginationChangedEvent extends AgGridEvent {
 export interface PaginationPixelOffsetChangedEvent extends AgGridEvent {
 }
 export interface CellFocusedEvent extends AgGridEvent {
-    rowIndex: number;
-    column: Column;
-    rowPinned: string;
-    forceBrowserFocus: boolean;
-    floating: string;
+    rowIndex: number | null;
+    column: Column | null;
+    rowPinned?: string | null;
+    forceBrowserFocus?: boolean;
+    floating: string | null;
 }
 export interface ExpandCollapseAllEvent extends AgGridEvent {
     source: string;
@@ -203,7 +205,7 @@ export interface ColumnEvent extends AgGridEvent {
 }
 export interface ColumnResizedEvent extends ColumnEvent {
     finished: boolean;
-    flexColumns: Column[];
+    flexColumns: Column[] | null;
 }
 export interface ColumnPivotChangedEvent extends ColumnEvent {
 }
@@ -212,10 +214,10 @@ export interface ColumnRowGroupChangedEvent extends ColumnEvent {
 export interface ColumnValueChangedEvent extends ColumnEvent {
 }
 export interface ColumnMovedEvent extends ColumnEvent {
-    toIndex: number | undefined;
+    toIndex?: number;
 }
 export interface ColumnVisibleEvent extends ColumnEvent {
-    visible: boolean | undefined;
+    visible?: boolean;
 }
 export interface ColumnPinnedEvent extends ColumnEvent {
     pinned: string | null;
@@ -299,4 +301,6 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
     aggFunc: any;
 }
 export interface ScrollVisibilityChangedEvent extends AgGridEvent {
+}
+export interface StoreUpdatedEvent extends AgEvent {
 }

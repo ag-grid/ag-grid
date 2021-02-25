@@ -24,10 +24,10 @@ export declare class HeaderNavigationService extends BeanStub {
     registerGridComp(gridPanel: GridPanel): void;
     registerHeaderRoot(headerRoot: HeaderRootComp): void;
     getHeaderRowCount(): number;
-    getHeaderRowType(idx: number): HeaderRowType;
-    getHeaderContainer(position?: HeaderContainerPosition): HeaderContainer;
+    getHeaderRowType(idx: number): HeaderRowType | undefined;
+    getHeaderContainer(position?: HeaderContainerPosition | null | undefined): HeaderContainer | undefined;
     navigateVertically(direction: HeaderNavigationDirection, fromHeader: HeaderPosition | null, event: KeyboardEvent): boolean;
     navigateHorizontally(direction: HeaderNavigationDirection, fromTab: boolean, event: KeyboardEvent): boolean;
     private focusNextHeaderRow;
-    scrollToColumn(column: Column | ColumnGroup, direction?: 'Before' | 'After'): void;
+    scrollToColumn(column: Column | ColumnGroup, direction?: 'Before' | 'After' | null): void;
 }

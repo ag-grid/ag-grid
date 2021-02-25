@@ -36,7 +36,7 @@ export class MenuItemMapper extends BeanStub {
             let result: MenuItemDef | string | null;
 
             if (typeof menuItemOrString === 'string') {
-                result = this.getStockMenuItem(menuItemOrString as string, column);
+                result = this.getStockMenuItem(menuItemOrString, column);
             } else {
                 result = menuItemOrString;
             }
@@ -59,7 +59,6 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private getStockMenuItem(key: string, column: Column | null): MenuItemDef | string | null {
-
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
 
@@ -74,26 +73,26 @@ export class MenuItemMapper extends BeanStub {
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
                     action: () => this.columnController.setColumnPinned(column, Constants.PINNED_LEFT, "contextMenu"),
-                    checked: (column as Column).isPinnedLeft()
+                    checked: !!column && column.isPinnedLeft()
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
                     action: () => this.columnController.setColumnPinned(column, Constants.PINNED_RIGHT, "contextMenu"),
-                    checked: (column as Column).isPinnedRight()
+                    checked: !!column && column.isPinnedRight()
                 };
             case 'clearPinned':
                 return {
                     name: localeTextFunc('noPin', 'No Pin'),
                     action: () => this.columnController.setColumnPinned(column, null, "contextMenu"),
-                    checked: !(column as Column).isPinned()
+                    checked: !!column && !column.isPinned()
                 };
             case 'valueAggSubMenu':
                 if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Aggregation from Menu')) {
                     return {
                         name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                         icon: _.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
-                        subMenu: this.createAggregationSubMenu((column as Column))
+                        subMenu: this.createAggregationSubMenu(column!)
                     };
                 } else {
                     return null;
@@ -418,7 +417,6 @@ export class MenuItemMapper extends BeanStub {
     }
 
     private createAggregationSubMenu(column: Column): MenuItemDef[] {
-
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         const columnIsAlreadyAggValue = column.isValueActive();
         const funcNames = this.aggFuncService.getFuncNames(column);
@@ -428,7 +426,7 @@ export class MenuItemMapper extends BeanStub {
             columnToUse = column;
         } else {
             const pivotValueColumn = column.getColDef().pivotValueColumn;
-            columnToUse = _.exists(pivotValueColumn) ? pivotValueColumn! : undefined;
+            columnToUse = _.exists(pivotValueColumn) ? pivotValueColumn : undefined;
         }
 
         const result: MenuItemDef[] = [];

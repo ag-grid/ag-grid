@@ -191,7 +191,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.getLastHighlightedRowNode = function () {
         return this.lastHighlightedRow;
     };
-    ClientSideRowModel.prototype.isLastRowFound = function () {
+    ClientSideRowModel.prototype.isLastRowIndexKnown = function () {
         return true;
     };
     ClientSideRowModel.prototype.getRowCount = function () {
@@ -326,7 +326,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         switch (params.step) {
             case core_1.ClientSideRowModelSteps.EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState, params.rowNodeTransactions, params.rowNodeOrder, changedPath, params.afterColumnsChanged);
+                this.doRowGrouping(params.groupState, params.rowNodeTransactions, params.rowNodeOrder, changedPath, !!params.afterColumnsChanged);
             // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case core_1.ClientSideRowModelSteps.FILTER:
                 // start = new Date().getTime();
@@ -463,14 +463,6 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         var bottomPixel = rowNode.rowTop + rowNode.rowHeight;
         var pixelInRow = topPixel <= pixelToMatch && bottomPixel > pixelToMatch;
         return pixelInRow;
-    };
-    ClientSideRowModel.prototype.getCurrentPageHeight = function () {
-        if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
-            var lastRow = core_1._.last(this.rowsToDisplay);
-            var lastPixel = lastRow.rowTop + lastRow.rowHeight;
-            return lastPixel;
-        }
-        return 0;
     };
     ClientSideRowModel.prototype.forEachLeafNode = function (callback) {
         if (this.rootNode.allLeafChildren) {
@@ -729,7 +721,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         if (suppressSortOrder) {
             return;
         }
-        var orderMap = suppressSortOrder ? null : {};
+        var orderMap = {};
         if (this.rootNode && this.rootNode.allLeafChildren) {
             for (var index = 0; index < this.rootNode.allLeafChildren.length; index++) {
                 var node = this.rootNode.allLeafChildren[index];

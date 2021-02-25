@@ -5,7 +5,6 @@ import {
     Autowired,
     ColumnController,
     Events,
-    EventService,
     TouchListener,
     DragAndDropService,
     DropTarget,
@@ -64,8 +63,8 @@ export class DropZoneColumnComp extends Component {
         this.addElementClasses(this.eText, 'text');
         this.addElementClasses(this.eButton, 'button');
 
-        this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsWrapper));
-        this.eButton.appendChild(_.createIconNoSpan('cancel', this.gridOptionsWrapper));
+        this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!);
+        this.eButton.appendChild(_.createIconNoSpan('cancel', this.gridOptionsWrapper)!);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();
@@ -149,7 +148,7 @@ export class DropZoneColumnComp extends Component {
         if (this.valueColumn) {
             const aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
-            const aggFuncString = (typeof aggFunc === 'string') ? aggFunc as string : 'agg';
+            const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
             const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
 

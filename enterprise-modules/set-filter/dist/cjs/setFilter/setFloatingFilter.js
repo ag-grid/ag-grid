@@ -51,6 +51,9 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         var _this = this;
         this.params.parentFilterInstance(function (setFilter) {
             var setValueModel = setFilter.getValueModel();
+            if (!setValueModel) {
+                return;
+            }
             // unlike other filters, what we show in the floating filter can be different, even
             // if another filter changes. this is due to how set filter restricts its values based
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
@@ -77,6 +80,9 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         }
         this.params.parentFilterInstance(function (setFilter) {
             var valueModel = setFilter.getValueModel();
+            if (!valueModel) {
+                return;
+            }
             var availableValues = core_1._.filter(values, function (v) { return valueModel.isValueAvailable(v); });
             var localeTextFunc = _this.gridOptionsWrapper.getLocaleTextFunc();
             // format all the values, if a formatter is provided
@@ -84,7 +90,7 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
                 var _a = _this.params, column = _a.column, filterParams = _a.filterParams;
                 var formattedValue = _this.valueFormatterService.formatValue(column, null, null, value, filterParams.valueFormatter, false);
                 var valueToRender = formattedValue != null ? formattedValue : value;
-                return valueToRender == null ? localeTextFunc('blanks', localeText_1.DEFAULT_LOCALE_TEXT['blanks']) : valueToRender;
+                return valueToRender == null ? localeTextFunc('blanks', localeText_1.DEFAULT_LOCALE_TEXT.blanks) : valueToRender;
             });
             var arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
             var valuesString = "(" + formattedValues.length + ") " + arrayToDisplay.join(',');

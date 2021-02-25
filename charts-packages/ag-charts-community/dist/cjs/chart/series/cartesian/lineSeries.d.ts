@@ -1,4 +1,4 @@
-import { SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams, HighlightStyle } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams, HighlightStyle, SeriesTooltip } from "../series";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
@@ -19,6 +19,10 @@ export interface LineSeriesNodeClickEvent extends TypedEvent {
     readonly yKey: string;
 }
 export { LineTooltipRendererParams };
+export declare class LineSeriesTooltip extends SeriesTooltip {
+    renderer?: (params: LineTooltipRendererParams) => string | TooltipRendererResult;
+    format?: string;
+}
 export declare class LineSeries extends CartesianSeries {
     static className: string;
     static type: string;
@@ -36,7 +40,11 @@ export declare class LineSeries extends CartesianSeries {
     lineDashOffset: number;
     strokeWidth: number;
     strokeOpacity: number;
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: LineTooltipRendererParams) => string | TooltipRendererResult;
+    tooltip: LineSeriesTooltip;
     constructor();
     onMarkerShapeChange(): void;
     protected onMarkerEnabledChange(event: PropertyChangeEvent<CartesianSeriesMarker, boolean>): void;

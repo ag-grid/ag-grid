@@ -44,9 +44,7 @@ function cleanNumber(value) {
     if (typeof value === 'number') {
         return Math.floor(value);
     }
-    else {
-        return null;
-    }
+    return null;
 }
 exports.cleanNumber = cleanNumber;
 function decToHex(number, bytes) {

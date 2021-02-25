@@ -4,25 +4,25 @@
 import { Component } from "./component";
 import { PopupService } from "./popupService";
 export interface PanelOptions {
-    component?: Component;
-    hideTitleBar?: boolean;
-    closable?: boolean;
-    title?: string;
-    minWidth?: number;
-    width?: number | string;
-    minHeight?: number;
-    height?: number | string;
-    centered?: boolean;
-    cssIdentifier?: string;
-    x?: number;
-    y?: number;
+    component?: Component | null;
+    hideTitleBar?: boolean | null;
+    closable?: boolean | null;
+    title?: string | null;
+    minWidth?: number | null;
+    width?: number | string | null;
+    minHeight?: number | null;
+    height?: number | string | null;
+    centered?: boolean | null;
+    cssIdentifier?: string | null;
+    x?: number | null;
+    y?: number | null;
 }
 export declare class AgPanel extends Component {
     protected static CLOSE_BTN_TEMPLATE: string;
     protected readonly popupService: PopupService;
     protected closable: boolean;
     protected config: PanelOptions | undefined;
-    protected closeButtonComp: Component;
+    protected closeButtonComp: Component | undefined;
     protected popupParent: HTMLElement;
     protected minWidth: number;
     protected minHeight?: number;
@@ -61,9 +61,9 @@ export declare class AgPanel extends Component {
     };
     private refreshSize;
     protected offsetElement(x?: number, y?: number): void;
-    getHeight(): number;
+    getHeight(): number | undefined;
     setHeight(height: number | string): void;
-    getWidth(): number;
+    getWidth(): number | undefined;
     setWidth(width: number | string): void;
     center(): void;
     setClosable(closable: boolean): void;

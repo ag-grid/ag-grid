@@ -22,5 +22,5 @@ export declare class ChangedPath {
     addParentNode(rowNode: RowNode | null, columns?: Column[]): void;
     canSkip(rowNode: RowNode): boolean;
     getValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[];
-    getNotValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[];
+    getNotValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] | null;
 }

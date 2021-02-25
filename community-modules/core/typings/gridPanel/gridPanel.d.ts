@@ -106,7 +106,7 @@ export declare class GridPanel extends Component {
     private addPreventScrollWhileDragging;
     private addKeyboardEvents;
     private addBodyViewportListener;
-    getBodyClientRect(): ClientRect;
+    getBodyClientRect(): ClientRect | undefined;
     private getRowForEvent;
     private processKeyboardEvent;
     private processCellKeyboardEvent;

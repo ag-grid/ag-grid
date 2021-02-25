@@ -1132,7 +1132,7 @@ export abstract class Chart extends Observable {
 
         this.highlightDatum(datum);
 
-        const html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
+        const html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
 
         if (html) {
             this.tooltip.show(meta, html);

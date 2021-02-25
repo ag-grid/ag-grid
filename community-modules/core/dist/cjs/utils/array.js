@@ -32,7 +32,7 @@ function existsAndNotEmpty(value) {
 exports.existsAndNotEmpty = existsAndNotEmpty;
 function last(arr) {
     if (!arr || !arr.length) {
-        return undefined;
+        return;
     }
     return arr[arr.length - 1];
 }

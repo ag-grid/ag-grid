@@ -136,8 +136,8 @@ var AggregationStage = /** @class */ (function (_super) {
             if (!pivotTotalColumnIds || !pivotTotalColumnIds.length) {
                 return;
             }
-            pivotTotalColumnIds.forEach(function (colId) {
-                aggResults.push(result[colId]);
+            pivotTotalColumnIds.forEach(function (currentColId) {
+                aggResults.push(result[currentColId]);
             });
             result[colId] = _this.aggregateValues(aggResults, pivotValueColumn.getAggFunc(), pivotValueColumn, rowNode);
         });

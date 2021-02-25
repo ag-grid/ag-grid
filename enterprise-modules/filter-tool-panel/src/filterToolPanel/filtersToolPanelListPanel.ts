@@ -125,12 +125,12 @@ export class FiltersToolPanelListPanel extends Component {
     private recursivelyAddComps(tree: OriginalColumnGroupChild[], depth: number): ToolPanelFilterGroupComp[] {
         return _.flatten(tree.map(child => {
             if (child instanceof OriginalColumnGroup) {
-                return _.flatten(this.recursivelyAddFilterGroupComps(child as OriginalColumnGroup, depth));
+                return _.flatten(this.recursivelyAddFilterGroupComps(child, depth)!);
             }
 
             const column = child as Column;
 
-            if (!this.shouldDisplayFilter(column)) { return []; };
+            if (!this.shouldDisplayFilter(column)) { return []; }
 
             const hideFilterCompHeader = depth === 0;
             const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
@@ -146,17 +146,16 @@ export class FiltersToolPanelListPanel extends Component {
         }));
     }
 
-    private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, depth: number): ToolPanelFilterGroupComp[] {
-        if (!this.filtersExistInChildren(columnGroup.getChildren())) return;
+    private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, depth: number): ToolPanelFilterGroupComp[] | undefined {
+        if (!this.filtersExistInChildren(columnGroup.getChildren())) { return; }
 
-        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressFiltersToolPanel) {
-            return [];
-        }
+        const colGroupDef = columnGroup.getColGroupDef();
+        if (colGroupDef && colGroupDef.suppressFiltersToolPanel) { return []; }
 
         const newDepth = columnGroup.isPadding() ? depth : depth + 1;
         const childFilterComps = _.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth));
 
-        if (columnGroup.isPadding()) return childFilterComps;
+        if (columnGroup.isPadding()) { return childFilterComps; }
 
         const filterGroupComp =
             new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth, false);
@@ -283,7 +282,7 @@ export class FiltersToolPanelListPanel extends Component {
         let notExpandedCount = 0;
 
         const updateExpandCounts = (filterGroup: ToolPanelFilterGroupComp) => {
-            if (!filterGroup.isColumnGroup()) return;
+            if (!filterGroup.isColumnGroup()) { return; }
 
             filterGroup.isExpanded() ? expandedCount++ : notExpandedCount++;
 
@@ -320,7 +319,7 @@ export class FiltersToolPanelListPanel extends Component {
 
         const recursivelySearch = (filterItem: ToolPanelFilterItem, parentPasses: boolean): boolean => {
             if (!(filterItem instanceof ToolPanelFilterGroupComp)) {
-                return passesFilter(filterItem.getColumnFilterName());
+                return passesFilter(filterItem.getColumnFilterName() || '');
             }
 
             const children = filterItem.getChildren();
@@ -346,7 +345,7 @@ export class FiltersToolPanelListPanel extends Component {
             children.forEach((child: ToolPanelFilterItem, index: number) => {
                 const childPasses = recursivelySearch(child, parentPasses);
                 filterItem.hideGroupItem(!childPasses, index);
-                if (childPasses) anyChildPasses = true;
+                if (childPasses) { anyChildPasses = true; }
             });
 
             // hide group if no children pass
@@ -355,8 +354,9 @@ export class FiltersToolPanelListPanel extends Component {
             return anyChildPasses;
         };
 
-        let firstVisible: number;
-        let lastVisible: number;
+        let firstVisible: number | undefined;
+        let lastVisible: number | undefined;
+
         this.filterGroupComps.forEach((filterGroup, idx) => {
             recursivelySearch(filterGroup, false);
             if (firstVisible === undefined) {
@@ -372,7 +372,7 @@ export class FiltersToolPanelListPanel extends Component {
         this.setFirstAndLastVisible(firstVisible, lastVisible);
     }
 
-    private setFirstAndLastVisible(firstIdx: number, lastIdx: number) {
+    private setFirstAndLastVisible(firstIdx?: number, lastIdx?: number) {
         this.filterGroupComps.forEach((filterGroup, idx) => {
             _.removeCssClass(filterGroup.getGui(), 'ag-first-group-visible');
             _.removeCssClass(filterGroup.getGui(), 'ag-last-group-visible');

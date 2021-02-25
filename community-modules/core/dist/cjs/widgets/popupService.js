@@ -351,9 +351,9 @@ var PopupService = /** @class */ (function (_super) {
         var hidePopupOnMouseEvent = function (event) { return hidePopup({ mouseEvent: event }); };
         var hidePopupOnTouchEvent = function (event) { return hidePopup({ touchEvent: event }); };
         var destroyPositionTracker;
-        var hidePopup = function (params) {
-            if (params === void 0) { params = {}; }
-            var mouseEvent = params.mouseEvent, touchEvent = params.touchEvent, keyboardEvent = params.keyboardEvent;
+        var hidePopup = function (popupParams) {
+            if (popupParams === void 0) { popupParams = {}; }
+            var mouseEvent = popupParams.mouseEvent, touchEvent = popupParams.touchEvent, keyboardEvent = popupParams.keyboardEvent;
             if (
             // we don't hide popup if the event was on the child, or any
             // children of this child

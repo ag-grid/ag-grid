@@ -370,7 +370,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
             // async and is confusing if you don't have this context
             filterWrapper.filterPromise.then(function (filter) {
-                if (filter.afterGuiAttached) {
+                if (filter && filter.afterGuiAttached) {
                     filter.afterGuiAttached(params);
                 }
             });
@@ -389,8 +389,9 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         core_1._.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
         this.columnSelectPanel = this.createManagedBean(new column_tool_panel_1.PrimaryColsPanel());
         var columnsMenuParams = this.column.getColDef().columnsMenuParams;
-        if (!columnsMenuParams)
+        if (!columnsMenuParams) {
             columnsMenuParams = {};
+        }
         this.columnSelectPanel.init(false, {
             suppressValues: false,
             suppressPivots: false,

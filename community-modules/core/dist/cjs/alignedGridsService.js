@@ -153,7 +153,7 @@ var AlignedGridsService = /** @class */ (function (_super) {
     AlignedGridsService.prototype.processGroupOpenedEvent = function (groupOpenedEvent) {
         // likewise for column group
         var masterColumnGroup = groupOpenedEvent.columnGroup;
-        var otherColumnGroup;
+        var otherColumnGroup = null;
         if (masterColumnGroup) {
             var groupId = masterColumnGroup.getGroupId();
             otherColumnGroup = this.columnController.getOriginalColumnGroup(groupId);
@@ -169,7 +169,7 @@ var AlignedGridsService = /** @class */ (function (_super) {
         // the column in the event is from the master grid. need to
         // look up the equivalent from this (other) grid
         var masterColumn = colEvent.column;
-        var otherColumn;
+        var otherColumn = null;
         if (masterColumn) {
             otherColumn = this.columnController.getPrimaryColumn(masterColumn.getColId());
         }
@@ -226,9 +226,13 @@ var AlignedGridsService = /** @class */ (function (_super) {
         }
         var isVerticalScrollShowing = this.gridPanel.isVerticalScrollShowing();
         var alignedGrids = this.gridOptionsWrapper.getAlignedGrids();
-        alignedGrids.forEach(function (grid) {
-            grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
-        });
+        if (alignedGrids) {
+            alignedGrids.forEach(function (grid) {
+                if (grid.api) {
+                    grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
+                }
+            });
+        }
     };
     __decorate([
         context_3.Autowired('columnController')

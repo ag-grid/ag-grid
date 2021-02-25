@@ -48,8 +48,8 @@ export class ChartSettingsPanel extends Component {
     private postConstruct() {
         this.resetPalettes();
 
-        this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
-        this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
+        this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper)!);
+        this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper)!);
 
         this.addManagedListener(this.ePrevBtn, 'click', () => this.setActivePalette(this.getPrev(), 'left'));
         this.addManagedListener(this.eNextBtn, 'click', () => this.setActivePalette(this.getNext(), 'right'));
@@ -114,10 +114,6 @@ export class ChartSettingsPanel extends Component {
         }
 
         return prev;
-    }
-
-    private prev() {
-        ;
     }
 
     private getNext(): number {

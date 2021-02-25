@@ -101,7 +101,7 @@ var RowDragFeature = /** @class */ (function (_super) {
     };
     RowDragFeature.prototype.getRowNodes = function (draggingEvent) {
         if (!this.isFromThisGrid(draggingEvent)) {
-            return draggingEvent.dragItem.rowNodes;
+            return draggingEvent.dragItem.rowNodes || [];
         }
         var enableMultiRowDragging = this.gridOptionsWrapper.isEnableMultiRowDragging();
         var selectedNodes = this.selectionController.getSelectedNodes();
@@ -241,7 +241,7 @@ var RowDragFeature = /** @class */ (function (_super) {
         this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
     };
     RowDragFeature.prototype.ensureIntervalCleared = function () {
-        if (!this.moveInterval) {
+        if (!generic_1.exists(this.movingIntervalId)) {
             return;
         }
         window.clearInterval(this.movingIntervalId);
@@ -256,7 +256,7 @@ var RowDragFeature = /** @class */ (function (_super) {
         if (pixelsToMove > 100) {
             pixelsToMove = 100;
         }
-        var pixelsMoved;
+        var pixelsMoved = null;
         if (this.needToMoveDown) {
             pixelsMoved = this.gridPanel.scrollVertically(pixelsToMove);
         }
@@ -349,7 +349,7 @@ var RowDragFeature = /** @class */ (function (_super) {
     };
     RowDragFeature.prototype.draggingToRowDragEvent = function (type, draggingEvent) {
         var yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
-        var mouseIsPastLastRow = yNormalised > this.rowModel.getCurrentPageHeight();
+        var mouseIsPastLastRow = yNormalised > this.paginationProxy.getCurrentPageHeight();
         var overIndex = -1;
         var overNode = null;
         if (!mouseIsPastLastRow) {
@@ -417,6 +417,9 @@ var RowDragFeature = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('rowModel')
     ], RowDragFeature.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('paginationProxy')
+    ], RowDragFeature.prototype, "paginationProxy", void 0);
     __decorate([
         context_1.Autowired('columnController')
     ], RowDragFeature.prototype, "columnController", void 0);

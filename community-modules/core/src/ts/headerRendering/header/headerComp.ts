@@ -71,7 +71,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private lastMovingChanged = 0;
 
     private currentDisplayName: string;
-    private currentTemplate: string;
+    private currentTemplate: string | null;
     private currentShowMenu: boolean;
     private currentSort: boolean;
 
@@ -96,8 +96,8 @@ export class HeaderComp extends Component implements IHeaderComp {
         return true;
     }
 
-    private workOutTemplate(): string {
-        let template:string = firstExistingValue(
+    private workOutTemplate(): string | null {
+        let template: string | null = firstExistingValue(
             this.params.template,
             HeaderComp.TEMPLATE
         );
@@ -125,7 +125,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.currentDisplayName = params.displayName;
             const displayNameSanitised = escapeString(this.currentDisplayName);
             if (this.eText) {
-                this.eText.innerHTML = displayNameSanitised;
+                this.eText.innerHTML = displayNameSanitised!;
             }
         }
     }
@@ -142,7 +142,9 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (eParent == null) { return; }
 
         const eIcon = createIconNoSpan(iconName, this.gridOptionsWrapper, column);
-        eParent.appendChild(eIcon);
+        if (eIcon) {
+            eParent.appendChild(eIcon);
+        }
     }
 
     private setupTap(): void {
@@ -158,7 +160,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (this.params.enableMenu) {
             const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
-                options.getApi().showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
+                options.getApi()!.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
             this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }

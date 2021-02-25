@@ -125,9 +125,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         if (deferredInit == null) {
             return AgPromise.resolve(componentInstance);
         }
-        else {
-            return deferredInit.then(function () { return componentInstance; });
-        }
+        return deferredInit.then(function () { return componentInstance; });
     };
     UserComponentFactory.prototype.addReactHacks = function (params) {
         // a temporary fix for AG-1574
@@ -187,7 +185,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         var HardcodedJsComponent = null;
         var hardcodedJsFunction = null;
         var HardcodedFwComponent = null;
-        var componentSelectorFunc;
+        var componentSelectorFunc = null;
         if (definitionObject != null) {
             var componentPropertyValue = definitionObject[propertyName];
             // for filters only, we allow 'true' for the component, which means default filter to be used

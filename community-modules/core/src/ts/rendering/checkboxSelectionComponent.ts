@@ -131,6 +131,6 @@ export class CheckboxSelectionComponent extends Component {
     private checkboxCallbackExists(): boolean {
         // column will be missing if groupUseEntireRow=true
         const colDef = this.column ? this.column.getColDef() : null;
-        return colDef && typeof colDef.checkboxSelection === 'function';
+        return !!colDef && typeof colDef.checkboxSelection === 'function';
     }
 }

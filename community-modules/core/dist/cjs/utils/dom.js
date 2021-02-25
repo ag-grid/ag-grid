@@ -73,7 +73,7 @@ exports.addOrRemoveCssClass = addOrRemoveCssClass;
  */
 function radioCssClass(element, elementClass, otherElementClass) {
     var parent = element.parentElement;
-    var sibling = parent.firstChild;
+    var sibling = parent && parent.firstChild;
     while (sibling) {
         if (elementClass) {
             addOrRemoveCssClass(sibling, elementClass, sibling === element);
@@ -391,9 +391,9 @@ function isVerticalScrollShowing(element) {
 exports.isVerticalScrollShowing = isVerticalScrollShowing;
 function setElementWidth(element, width) {
     if (width === 'flex') {
-        element.style.width = null;
-        element.style.minWidth = null;
-        element.style.maxWidth = null;
+        element.style.removeProperty('width');
+        element.style.removeProperty('minWidth');
+        element.style.removeProperty('maxWidth');
         element.style.flex = '1 1 auto';
     }
     else {
@@ -410,9 +410,9 @@ function setFixedWidth(element, width) {
 exports.setFixedWidth = setFixedWidth;
 function setElementHeight(element, height) {
     if (height === 'flex') {
-        element.style.height = null;
-        element.style.minHeight = null;
-        element.style.maxHeight = null;
+        element.style.removeProperty('height');
+        element.style.removeProperty('minHeight');
+        element.style.removeProperty('maxHeight');
         element.style.flex = '1 1 auto';
     }
     else {

@@ -28,7 +28,7 @@ export declare class ToolPanelColumnComp extends Component {
     private onColumnStateChanged;
     getDisplayName(): string | null;
     onSelectAllChanged(value: boolean): void;
-    isSelected(): boolean;
+    isSelected(): boolean | undefined;
     isSelectable(): boolean;
     isExpandable(): boolean;
     setExpanded(value: boolean): void;

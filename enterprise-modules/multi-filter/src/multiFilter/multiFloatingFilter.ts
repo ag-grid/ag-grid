@@ -52,7 +52,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             _.forEach(floatingFilters!, (floatingFilter, index) => {
                 this.floatingFilters.push(floatingFilter!);
 
-                const gui = floatingFilter.getGui();
+                const gui = floatingFilter!.getGui();
 
                 this.appendChild(gui);
 
@@ -79,7 +79,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 const lastActiveFloatingFilterIndex = parent.getLastActiveFilterIndex();
 
                 _.forEach(this.floatingFilters, (filter, i) => {
-                    const filterModel = model.filterModels.length > i ? model.filterModels[i] : null;
+                    const filterModel = model.filterModels!.length > i ? model.filterModels![i] : null;
 
                     filter.onParentModelChanged(filterModel, event);
 

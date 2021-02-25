@@ -149,9 +149,9 @@ var DragService = /** @class */ (function (_super) {
         this.mouseStartEvent = mouseEvent;
         var eDocument = this.gridOptionsWrapper.getDocument();
         this.setNoSelectToBody(true);
-        var mouseMoveEvent = function (e, el) { return _this.onMouseMove(e, params.eElement); };
-        var mouseUpEvent = function (e, el) { return _this.onMouseUp(e, params.eElement); };
-        var contextEvent = function (e) { return e.preventDefault(); };
+        var mouseMoveEvent = function (event) { return _this.onMouseMove(event, params.eElement); };
+        var mouseUpEvent = function (event) { return _this.onMouseUp(event, params.eElement); };
+        var contextEvent = function (event) { return event.preventDefault(); };
         var target = eDocument;
         var events = [
             { target: target, type: 'mousemove', listener: mouseMoveEvent },

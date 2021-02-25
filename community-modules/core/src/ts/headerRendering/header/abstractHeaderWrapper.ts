@@ -6,7 +6,7 @@ import { isUserSuppressingHeaderKeyboardEvent } from "../../utils/keyboard";
 export abstract class AbstractHeaderWrapper extends ManagedFocusComponent {
 
     protected abstract readonly column: Column | ColumnGroup;
-    protected abstract readonly pinned: string;
+    protected abstract readonly pinned: string | null;
 
     protected abstract onFocusIn(e: FocusEvent): void;
 
@@ -25,7 +25,7 @@ export abstract class AbstractHeaderWrapper extends ManagedFocusComponent {
         return this.column;
     }
 
-    public getPinned(): string {
+    public getPinned(): string | null {
         return this.pinned;
     }
 }

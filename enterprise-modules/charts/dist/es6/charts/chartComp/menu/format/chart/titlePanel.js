@@ -40,21 +40,21 @@ var TitlePanel = /** @class */ (function (_super) {
         var chartProxy = this.chartController.getChartProxy();
         var hasTitle = this.hasTitle;
         var setFont = function (font) {
-            var chartProxy = _this.chartController.getChartProxy();
+            var proxy = _this.chartController.getChartProxy();
             if (font.family) {
-                chartProxy.setTitleOption('fontFamily', font.family);
+                proxy.setTitleOption('fontFamily', font.family);
             }
             if (font.weight) {
-                chartProxy.setTitleOption('fontWeight', font.weight);
+                proxy.setTitleOption('fontWeight', font.weight);
             }
             if (font.style) {
-                chartProxy.setTitleOption('fontStyle', font.style);
+                proxy.setTitleOption('fontStyle', font.style);
             }
             if (font.size) {
-                chartProxy.setTitleOption('fontSize', font.size);
+                proxy.setTitleOption('fontSize', font.size);
             }
             if (font.color) {
-                chartProxy.setTitleOption('color', font.color);
+                proxy.setTitleOption('color', font.color);
             }
         };
         var initialFont = {
@@ -74,15 +74,15 @@ var TitlePanel = /** @class */ (function (_super) {
             initialFont: initialFont,
             setFont: setFont,
             setEnabled: function (enabled) {
-                var chartProxy = _this.chartController.getChartProxy();
+                var proxy = _this.chartController.getChartProxy();
                 if (enabled) {
                     var newTitle = _this.disabledTitle || _this.chartTranslator.translate('titlePlaceholder');
-                    chartProxy.setTitleOption('text', newTitle);
+                    proxy.setTitleOption('text', newTitle);
                     _this.disabledTitle = '';
                 }
                 else {
-                    _this.disabledTitle = _this.chartController.getChartProxy().getTitleOption('text');
-                    chartProxy.setTitleOption('text', '');
+                    _this.disabledTitle = proxy.getTitleOption('text');
+                    proxy.setTitleOption('text', '');
                 }
             }
         };

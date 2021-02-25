@@ -14,7 +14,7 @@ export declare class HeaderContainer extends BeanStub {
     private filtersRowComp;
     private columnsRowComp;
     private groupsRowComps;
-    constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string);
+    constructor(eContainer: HTMLElement, eViewport: HTMLElement | null, pinned: string | null);
     forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void;
     private init;
     private onColumnResized;

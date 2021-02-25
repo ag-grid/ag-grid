@@ -14,7 +14,7 @@ export declare class OriginalColumnGroup implements OriginalColumnGroupChild, IE
     private expanded;
     private padding;
     private level;
-    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean, level: number);
+    constructor(colGroupDef: ColGroupDef | null, groupId: string, padding: boolean, level: number);
     setOriginalParent(originalParent: OriginalColumnGroup | null): void;
     getOriginalParent(): OriginalColumnGroup | null;
     getLevel(): number;
@@ -27,7 +27,7 @@ export declare class OriginalColumnGroup implements OriginalColumnGroupChild, IE
     getId(): string;
     setChildren(children: OriginalColumnGroupChild[]): void;
     getChildren(): OriginalColumnGroupChild[];
-    getColGroupDef(): ColGroupDef;
+    getColGroupDef(): ColGroupDef | null;
     getLeafColumns(): Column[];
     private addLeafColumns;
     getColumnGroupShow(): string | undefined;

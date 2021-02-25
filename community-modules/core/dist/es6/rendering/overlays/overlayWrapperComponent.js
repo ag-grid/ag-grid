@@ -68,15 +68,17 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
         this.setWrapperTypeClass(type);
         this.destroyActiveOverlay();
         this.inProgress = true;
-        workItem.then(function (comp) {
-            _this.inProgress = false;
-            _this.eOverlayWrapper.appendChild(comp.getGui());
-            _this.activeOverlay = comp;
-            if (_this.destroyRequested) {
-                _this.destroyRequested = false;
-                _this.destroyActiveOverlay();
-            }
-        });
+        if (workItem) {
+            workItem.then(function (comp) {
+                _this.inProgress = false;
+                _this.eOverlayWrapper.appendChild(comp.getGui());
+                _this.activeOverlay = comp;
+                if (_this.destroyRequested) {
+                    _this.destroyRequested = false;
+                    _this.destroyActiveOverlay();
+                }
+            });
+        }
         this.setDisplayed(true);
     };
     OverlayWrapperComponent.prototype.destroyActiveOverlay = function () {

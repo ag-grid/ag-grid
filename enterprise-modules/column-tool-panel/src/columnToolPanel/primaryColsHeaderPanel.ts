@@ -85,15 +85,15 @@ export class PrimaryColsHeaderPanel extends Component {
 
     private createExpandIcons() {
         this.eExpand.appendChild((
-            this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper)
+            this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper)!
         ));
 
         this.eExpand.appendChild((
-            this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper)
+            this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper)!
         ));
 
         this.eExpand.appendChild((
-            this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper)
+            this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper)!
         ));
 
         this.setExpandState(ExpandState.EXPANDED);

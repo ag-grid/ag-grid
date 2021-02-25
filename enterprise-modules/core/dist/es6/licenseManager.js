@@ -84,7 +84,7 @@ var LicenseManager = /** @class */ (function (_super) {
         return !_.missingOrEmpty(this.watermarkMessage);
     };
     LicenseManager.prototype.getWatermarkMessage = function () {
-        return this.watermarkMessage;
+        return this.watermarkMessage || '';
     };
     LicenseManager.formatDate = function (date) {
         var monthNames = [
@@ -166,15 +166,14 @@ var LicenseManager = /** @class */ (function (_super) {
         return [version, isTrial];
     };
     LicenseManager.prototype.validateLicenseKeyForVersion = function (version, isTrial, license) {
-        switch (version) {
-            case "2":
-                if (isTrial) {
-                    this.validateForTrial(license);
-                }
-                else {
-                    this.validateLegacyKey(license);
-                }
-                break;
+        if (version !== '2') {
+            return;
+        }
+        if (isTrial) {
+            this.validateForTrial(license);
+        }
+        else {
+            this.validateLegacyKey(license);
         }
     };
     LicenseManager.prototype.validateLegacyKey = function (license) {

@@ -16,5 +16,5 @@ export declare class ComponentUtil {
     static getCallbackForEvent(eventName: string): string;
     static processOnChange(changes: any, gridOptions: GridOptions, api: GridApi, columnApi: ColumnApi): void;
     static toBoolean(value: any): boolean;
-    static toNumber(value: any): number;
+    static toNumber(value: any): number | undefined;
 }

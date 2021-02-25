@@ -5,6 +5,7 @@ export declare class LineSeriesPanel extends Component {
     private seriesGroup;
     private seriesTooltipsToggle;
     private seriesLineWidthSlider;
+    private seriesLineDashSlider;
     private chartTranslator;
     private activePanels;
     private readonly chartController;
@@ -13,6 +14,7 @@ export declare class LineSeriesPanel extends Component {
     private initSeriesGroup;
     private initSeriesTooltips;
     private initSeriesLineWidth;
+    private initSeriesLineDash;
     private initMarkersPanel;
     private destroyActivePanels;
     private getChartProxy;

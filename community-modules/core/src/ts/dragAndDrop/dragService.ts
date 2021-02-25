@@ -18,11 +18,11 @@ export class DragService extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private currentDragParams: DragListenerParams;
+    private currentDragParams: DragListenerParams | null;
     private dragging: boolean;
-    private mouseStartEvent: MouseEvent;
-    private touchLastTime: Touch;
-    private touchStart: Touch;
+    private mouseStartEvent: MouseEvent | null;
+    private touchLastTime: Touch | null;
+    private touchStart: Touch | null;
 
     private logger: Logger;
 
@@ -49,7 +49,7 @@ export class DragService extends BeanStub {
         // remove touch listener only if it exists
         if (dragSourceAndListener.touchEnabled) {
             const touchStartListener = dragSourceAndListener.touchStartListener;
-            element.removeEventListener('touchstart', touchStartListener, {passive:true} as any);
+            element.removeEventListener('touchstart', touchStartListener!, {passive:true} as any);
         }
     }
 
@@ -80,13 +80,13 @@ export class DragService extends BeanStub {
         const mouseListener = this.onMouseDown.bind(this, params);
         params.eElement.addEventListener('mousedown', mouseListener);
 
-        let touchListener: (touchEvent: TouchEvent) => void = null;
+        let touchListener: ((touchEvent: TouchEvent) => void) | null = null;
 
         const suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
 
         if (includeTouch && !suppressTouch) {
             touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener, { passive: true });
+            params.eElement.addEventListener('touchstart', touchListener!, { passive: true });
         }
 
         this.dragSources.push({
@@ -156,9 +156,9 @@ export class DragService extends BeanStub {
         const eDocument = this.gridOptionsWrapper.getDocument();
 
         this.setNoSelectToBody(true);
-        const mouseMoveEvent = (e: MouseEvent, el: HTMLElement) => this.onMouseMove(e, params.eElement);
-        const mouseUpEvent = (e: MouseEvent, el: HTMLElement) => this.onMouseUp(e, params.eElement);
-        const contextEvent = (e: MouseEvent) => e.preventDefault();
+        const mouseMoveEvent = (event: MouseEvent) => this.onMouseMove(event, params.eElement);
+        const mouseUpEvent = (event: MouseEvent) => this.onMouseUp(event, params.eElement);
+        const contextEvent = (event: MouseEvent) => event.preventDefault();
         const target = eDocument;
         const events = [
             { target, type: 'mousemove', listener: mouseMoveEvent },
@@ -199,14 +199,14 @@ export class DragService extends BeanStub {
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     private isEventNearStartEvent(currentEvent: MouseEvent | Touch, startEvent: MouseEvent | Touch): boolean {
         // by default, we wait 4 pixels before starting the drag
-        const {dragStartPixels} = this.currentDragParams;
+        const { dragStartPixels } = this.currentDragParams!;
         const requiredPixelDiff = exists(dragStartPixels) ? dragStartPixels : 4;
         return areEventsNear(currentEvent, startEvent, requiredPixelDiff);
     }
 
-    private getFirstActiveTouch(touchList: TouchList): Touch {
+    private getFirstActiveTouch(touchList: TouchList): Touch | null {
         for (let i = 0; i < touchList.length; i++) {
-            if (touchList[i].identifier === this.touchStart.identifier) {
+            if (touchList[i].identifier === this.touchStart!.identifier) {
                 return touchList[i];
             }
         }
@@ -226,7 +226,8 @@ export class DragService extends BeanStub {
                 target: el
             };
             this.eventService.dispatchEvent(event);
-            this.currentDragParams.onDragStart(startEvent);
+
+            this.currentDragParams!.onDragStart(startEvent);
             // we need ONE drag action at the startEvent, so that we are guaranteed the drop target
             // at the start gets notified. this is because the drag can start outside of the element
             // that started it, as the mouse is allowed drag away from the mouse down before it's
@@ -234,10 +235,10 @@ export class DragService extends BeanStub {
             // it would be possible to click a column by the edge, then drag outside of the drop zone
             // in less than 4 pixels and the drag officially starts outside of the header but the header
             // wouldn't be notified of the dragging.
-            this.currentDragParams.onDragging(startEvent);
+            this.currentDragParams!.onDragging(startEvent);
         }
 
-        this.currentDragParams.onDragging(currentEvent);
+        this.currentDragParams!.onDragging(currentEvent);
     }
 
     private onTouchMove(touchEvent: TouchEvent, el: HTMLElement): void {
@@ -245,13 +246,13 @@ export class DragService extends BeanStub {
         if (!touch) { return; }
 
         // this.___statusPanel.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
-        this.onCommonMove(touch, this.touchStart, el);
+        this.onCommonMove(touch, this.touchStart!, el);
     }
 
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
     private onMouseMove(mouseEvent: MouseEvent, el: HTMLElement): void {
-        this.onCommonMove(mouseEvent, this.mouseStartEvent, el);
+        this.onCommonMove(mouseEvent, this.mouseStartEvent!, el);
     }
 
     public onTouchUp(touchEvent: TouchEvent, el: HTMLElement): void {
@@ -271,7 +272,7 @@ export class DragService extends BeanStub {
         // let tap = !this.dragging;
         // let tapTarget = this.currentDragParams.eElement;
 
-        this.onUpCommon(touch, el);
+        this.onUpCommon(touch!, el);
 
         // if tap, tell user
         // console.log(`${Math.random()} tap = ${tap}`);
@@ -287,7 +288,7 @@ export class DragService extends BeanStub {
     public onUpCommon(eventOrTouch: MouseEvent | Touch, el: HTMLElement): void {
         if (this.dragging) {
             this.dragging = false;
-            this.currentDragParams.onDragStop(eventOrTouch);
+            this.currentDragParams!.onDragStop(eventOrTouch);
             const event: DragStoppedEvent = {
                 type: Events.EVENT_DRAG_STOPPED,
                 api: this.gridApi,
@@ -313,7 +314,7 @@ interface DragSourceAndListener {
     dragSource: DragListenerParams;
     mouseDownListener: (mouseEvent: MouseEvent) => void;
     touchEnabled: boolean;
-    touchStartListener: (touchEvent: TouchEvent) => void;
+    touchStartListener: ((touchEvent: TouchEvent) => void) | null;
 }
 
 export interface DragListenerParams {

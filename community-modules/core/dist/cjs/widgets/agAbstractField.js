@@ -31,7 +31,9 @@ var AgAbstractField = /** @class */ (function (_super) {
     }
     AgAbstractField.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);
-        dom_1.addCssClass(this.getGui(), this.className);
+        if (this.className) {
+            dom_1.addCssClass(this.getGui(), this.className);
+        }
     };
     AgAbstractField.prototype.onValueChange = function (callbackFn) {
         var _this = this;

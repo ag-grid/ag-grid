@@ -27,7 +27,6 @@ import { Component } from "../widgets/component";
 import { Autowired, PostConstruct } from "../context/context";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { Events } from "../events";
-import { Constants } from "../constants/constants";
 import { createIconNoSpan } from "../utils/icon";
 import { formatNumberCommas } from "../utils/number";
 import { addOrRemoveCssClass } from "../utils/dom";
@@ -50,9 +49,6 @@ var PaginationComp = /** @class */ (function (_super) {
         this.btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper));
         this.btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper));
         this.btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper));
-        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-            this.serverSideRowModel = this.rowModel;
-        }
         var isPaging = this.gridOptionsWrapper.isPagination();
         var paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
         if (!paginationPanelEnabled) {
@@ -167,7 +163,7 @@ var PaginationComp = /** @class */ (function (_super) {
             }
         }
         this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
-        if (this.serverSideRowModel && this.serverSideRowModel.isLoading()) {
+        if (this.rowNodeBlockLoader.isLoading()) {
             this.lbLastRowOnPage.innerHTML = '?';
         }
         else {
@@ -200,6 +196,9 @@ var PaginationComp = /** @class */ (function (_super) {
     __decorate([
         Autowired('rowModel')
     ], PaginationComp.prototype, "rowModel", void 0);
+    __decorate([
+        Autowired('rowNodeBlockLoader')
+    ], PaginationComp.prototype, "rowNodeBlockLoader", void 0);
     __decorate([
         RefSelector('btFirst')
     ], PaginationComp.prototype, "btFirst", void 0);

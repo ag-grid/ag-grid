@@ -33,10 +33,11 @@ var SetFilterListItem = /** @class */ (function (_super) {
         this.render();
         this.eCheckbox.setValue(this.isSelected, true);
         this.eCheckbox.onValueChange(function (value) {
-            _this.isSelected = value;
+            var parsedValue = value || false;
+            _this.isSelected = parsedValue;
             var event = {
                 type: SetFilterListItem.EVENT_SELECTION_CHANGED,
-                isSelected: value,
+                isSelected: parsedValue,
             };
             _this.dispatchEvent(event);
         });
@@ -79,7 +80,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
         return res;
     };
     SetFilterListItem.prototype.getFormattedValue = function (filterParams, column, value) {
-        var formatter = filterParams == null ? null : filterParams.valueFormatter;
+        var formatter = filterParams && filterParams.valueFormatter;
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     };
     SetFilterListItem.prototype.renderCell = function (params) {
@@ -91,8 +92,10 @@ var SetFilterListItem = /** @class */ (function (_super) {
             return;
         }
         cellRendererPromise.then(function (component) {
-            _this.eCheckbox.setLabel(component.getGui());
-            _this.addDestroyFunc(function () { return _this.destroyBean(component); });
+            if (component) {
+                _this.eCheckbox.setLabel(component.getGui());
+                _this.addDestroyFunc(function () { return _this.destroyBean(component); });
+            }
         });
     };
     SetFilterListItem.prototype.getComponentHolder = function () {

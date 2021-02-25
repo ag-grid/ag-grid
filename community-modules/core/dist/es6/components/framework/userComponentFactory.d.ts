@@ -44,10 +44,10 @@ export interface ComponentClassDef<A extends IComponent<TParams> & B, B, TParams
         new (): A;
     } | {
         new (): B;
-    };
+    } | null;
     componentFromFramework: boolean;
     source: ComponentSource;
-    paramsFromSelector: TParams;
+    paramsFromSelector: TParams | null;
 }
 export declare class UserComponentFactory extends BeanStub {
     private readonly gridOptions;
@@ -116,7 +116,7 @@ export declare class UserComponentFactory extends BeanStub {
      *      invoked
      *  @param defaultComponentName: The name of the component to load if there is no component specified
      */
-    lookupComponentClassDef<A extends IComponent<TParams> & B, B, TParams>(definitionObject: DefinitionObject, propertyName: string, params?: TParams, defaultComponentName?: string): ComponentClassDef<A, B, TParams>;
+    lookupComponentClassDef<A extends IComponent<TParams> & B, B, TParams>(definitionObject: DefinitionObject, propertyName: string, params?: TParams | null, defaultComponentName?: string | null): ComponentClassDef<A, B, TParams> | null;
     private lookupFromRegisteredComponents;
     /**
      * Useful to check what would be the resultant params for a given object

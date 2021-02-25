@@ -109,7 +109,7 @@ var TitleEdit = /** @class */ (function (_super) {
     TitleEdit.prototype.endEditing = function () {
         var value = this.getGui().value;
         this.chartProxy.setTitleOption('text', value);
-        this.eventService.dispatchEvent({ 'type': 'chartTitleEdit' });
+        this.eventService.dispatchEvent({ type: 'chartTitleEdit' });
         core_1._.removeCssClass(this.getGui(), 'currently-editing');
     };
     TitleEdit.TEMPLATE = "<input\n            class=\"ag-chart-title-edit\"\n            style=\"padding:0; border:none; border-radius: 0; min-height: 0; text-align: center;\" />\n        ";

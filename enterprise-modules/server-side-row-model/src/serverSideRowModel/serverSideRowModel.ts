@@ -13,6 +13,7 @@ import {
     GridApi,
     IServerSideDatasource,
     IServerSideRowModel,
+    IServerSideStore,
     Logger,
     LoggerFactory,
     ModelUpdatedEvent,
@@ -23,6 +24,7 @@ import {
     RowBounds,
     RowDataChangedEvent,
     RowNode,
+    RowRenderer,
     SortController,
     StoreRefreshAfterParams,
     RefreshStoreParams,
@@ -48,7 +50,6 @@ export interface SSRMParams {
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
@@ -62,28 +63,20 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
 
-    private rowHeight: number;
-    private cacheParams: ServerSideCacheParams;
-    private rowNodeBlockLoader: RowNodeBlockLoader | undefined;
+    private storeParams: SSRMParams;
 
     private pauseStoreUpdateListening = false;
 
     private logger: Logger;
 
     // we don't implement as lazy row heights is not supported in this row model
-    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean { return false; }
-
-    @PostConstruct
-    private postConstruct(): void {
-        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.addEventListeners();
-    }
+    public ensureRowHeightsValid(): boolean { return false; }
 
     public start(): void {
         const datasource = this.gridOptionsWrapper.getServerSideDatasource();
 
         if (datasource) {
-            this.setDatasource(datasource!);
+            this.setDatasource(datasource);
         }
     }
 
@@ -103,34 +96,28 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.logger = loggerFactory.create('ServerSideRowModel');
     }
 
-    public applyTransaction(rowDataTransaction: RowDataTransaction, route: string[]): void {
-        this.executeOnCache( route, cache => {
-            cache.applyTransaction(rowDataTransaction);
-        });
-    }
-
+    @PostConstruct
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        const resetListener = this.resetRootStore.bind(this);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
     }
 
     public setDatasource(datasource: IServerSideDatasource): void {
         this.destroyDatasource();
         this.datasource = datasource;
-        this.reset();
+        this.resetRootStore();
     }
 
-    public isLastRowFound(): boolean {
-        if (this.cacheExists()) {
-            return this.rootNode.childrenCache!.isMaxRowFound();
-        }
-
-        return false;
+    public isLastRowIndexKnown(): boolean {
+        const cache = this.getRootStore();
+        if (!cache) { return false; }
+        return cache.isLastRowIndexKnown();
     }
 
     private onColumnEverything(): void {
@@ -143,89 +130,27 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
         // every other customer can continue as normal and have it working!!!
 
+        // if first time, alwasy reset
+        if (!this.storeParams) {
+            this.resetRootStore();
+            return;
+        }
+
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
         // it has not, don't reset
-        let resetRequired: boolean;
-        if (!this.cacheParams) {
-            resetRequired = true;
-        } else {
+        const rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.columnController.getPivotColumns());
 
-            const rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
-            const valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
-            const pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
+        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
+        const rowGroupDifferent = !_.jsonEquals(this.storeParams.rowGroupCols, rowGroupColumnVos);
+        const pivotDifferent = !_.jsonEquals(this.storeParams.pivotCols, pivotColumnVos);
+        const valuesDifferent = !_.jsonEquals(this.storeParams.valueCols, valueColumnVos);
 
-            const sortModelDifferent = !_.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
-            const rowGroupDifferent = !_.jsonEquals(this.cacheParams.rowGroupCols, rowGroupColumnVos);
-            const pivotDifferent = !_.jsonEquals(this.cacheParams.pivotCols, pivotColumnVos);
-            const valuesDifferent = !_.jsonEquals(this.cacheParams.valueCols, valueColumnVos);
-            resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
-        }
+        const resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
 
         if (resetRequired) {
-            this.reset();
-        }
-    }
-
-    private onFilterChanged(): void {
-        this.reset();
-    }
-
-    // returns back all the cols that were effected by the sorting. eg if we were sorting by col A,
-    // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
-    // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
-    // was previously sorted by A and then the A sort now needs to be cleared.
-    private findChangedColumnsInSort(
-        newSortModel: { colId: string, sort: string }[],
-        oldSortModel: { colId: string, sort: string }[]): string[] {
-
-        let allColsInBothSorts: string[] = [];
-
-        [newSortModel, oldSortModel].forEach(sortModel => {
-            if (sortModel) {
-                const ids = sortModel.map(sm => sm.colId);
-                allColsInBothSorts = allColsInBothSorts.concat(ids);
-            }
-        });
-
-        const differentSorts = (oldSortItem: any, newSortItem: any) => {
-            const oldSort = oldSortItem ? oldSortItem.sort : null;
-            const newSort = newSortItem ? newSortItem.sort : null;
-            return oldSort !== newSort;
-        };
-
-        const differentIndexes = (oldSortItem: any, newSortItem: any) => {
-            const oldIndex = oldSortModel.indexOf(oldSortItem);
-            const newIndex = newSortModel.indexOf(newSortItem);
-            return oldIndex !== newIndex;
-        };
-
-        return allColsInBothSorts.filter(colId => {
-            const oldSortItem = _.find(oldSortModel, sm => sm.colId === colId);
-            const newSortItem = _.find(newSortModel, sm => sm.colId === colId);
-            return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
-        });
-    }
-
-    private onSortChanged(): void {
-        if (!this.cacheExists()) { return; }
-
-        const newSortModel = this.extractSortModel();
-        const oldSortModel = this.cacheParams.sortModel;
-        const changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
-
-        this.cacheParams.sortModel = newSortModel;
-
-        const rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-
-        const sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
-        const sortingWithSecondaryCol = this.isSortingWithSecondaryColumn(changedColumnsInSort);
-
-        const sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-        if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
-            this.reset();
-        } else {
-            serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
+            this.resetRootStore();
         }
     }
 
@@ -244,51 +169,14 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
 
-    private onColumnPivotChanged(): void {
-        this.reset();
+        rootStore.refreshAfterSort(params);
+
+        this.onStoreUpdated();
     }
 
-    private onPivotModeChanged(): void {
-        this.reset();
-    }
+    public resetRootStore(): void {
+        this.destroyRootStore();
 
-    private onRowGroupOpened(event: any): void {
-        const rowNode: RowNode = event.node;
-
-        if (rowNode.expanded) {
-            if (rowNode.master) {
-                this.createDetailNode(rowNode);
-            } else if (_.missing(rowNode.childrenCache)) {
-                this.createNodeCache(rowNode);
-            }
-        } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
-            rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);
-        }
-
-        const shouldAnimate = () => {
-            const rowAnimationEnabled = this.gridOptionsWrapper.isAnimateRows();
-
-            if (rowNode.master) { return rowAnimationEnabled && rowNode.expanded; }
-
-            return rowAnimationEnabled;
-        };
-
-        this.updateRowIndexesAndBounds();
-
-        const modelUpdatedEvent: ModelUpdatedEvent = {
-            type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            newPage: false,
-            newData: false,
-            animate: shouldAnimate(),
-            keepRenderedRows: true
-        };
-
-        this.eventService.dispatchEvent(modelUpdatedEvent);
-    }
-
-    private reset(): void {
         this.rootNode = new RowNode();
         this.rootNode.group = true;
         this.rootNode.level = -1;
@@ -311,35 +199,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
         // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
         // to treat the rows as new rows, as it's all new data
-        const modelUpdatedEvent: ModelUpdatedEvent = {
-            type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            animate: false,
-            keepRenderedRows: false,
-            newData: false,
-            newPage: false
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
+        this.dispatchModelUpdated(true);
     }
 
-    private createNewRowNodeBlockLoader(): void {
-        this.destroyRowNodeBlockLoader();
-        const maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        const blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
-        this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.createBean(this.rowNodeBlockLoader);
-    }
-
-    @PreDestroy
-    private destroyRowNodeBlockLoader(): void {
-        if (this.rowNodeBlockLoader) {
-            this.destroyBean(this.rowNodeBlockLoader);
-            this.rowNodeBlockLoader = undefined;
-        }
-    }
-
-    private toValueObjects(columns: Column[]): ColumnVO[] {
+    public columnsToValueObjects(columns: Column[]): ColumnVO[] {
         return columns.map(col => ({
             id: col.getId(),
             aggFunc: col.getAggFunc(),
@@ -348,36 +211,15 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }) as ColumnVO);
     }
 
-    private createCacheParams(): ServerSideCacheParams {
+    private createStoreParams(): SSRMParams {
 
-        const rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
-        const valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
-        const pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
+        const rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.columnController.getPivotColumns());
 
         const dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
-        let maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
 
-        if (dynamicRowHeight && maxBlocksInCache as number >= 0) {
-            console.warn('ag-Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
-                'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
-            maxBlocksInCache = undefined;
-        }
-
-        if (maxBlocksInCache as number >= 0 && this.columnController.isAutoRowHeightActive()) {
-            console.warn('ag-Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
-                'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
-            maxBlocksInCache = undefined;
-        }
-
-        const userProvidedBlockSize = this.gridOptionsWrapper.getCacheBlockSize();
-        let blockSize: number;
-        if (typeof userProvidedBlockSize == 'number' && userProvidedBlockSize>0) {
-            blockSize = userProvidedBlockSize;
-        } else {
-            blockSize = ServerSideBlock.DefaultBlockSize;
-        }
-
-        const params: ServerSideCacheParams = {
+        const params: SSRMParams = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
@@ -386,40 +228,28 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.extractSortModel(),
-
-            rowNodeBlockLoader: this.rowNodeBlockLoader,
+            sortModel: this.sortListener.extractSortModel(),
 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
-            overflowSize: 1,
-            initialRowCount: 1,
-            maxBlocksInCache: maxBlocksInCache,
-            blockSize: blockSize,
-            rowHeight: this.rowHeight,
+            // blockSize: blockSize == null ? 100 : blockSize,
             dynamicRowHeight: dynamicRowHeight
         };
 
         return params;
     }
 
-    private createNodeCache(rowNode: RowNode): void {
-        const cache = new ServerSideCache(this.cacheParams, rowNode);
-        this.getContext().createBean(cache);
-
-        cache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
-
-        rowNode.childrenCache = cache;
+    public getParams(): SSRMParams {
+        return this.storeParams;
     }
 
-    private onCacheUpdated(): void {
-        this.updateRowIndexesAndBounds();
+    private dispatchModelUpdated(reset = false): void {
         const modelUpdatedEvent: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
-            animate: this.gridOptionsWrapper.isAnimateRows(),
-            keepRenderedRows: true,
+            animate: !reset,
+            keepRenderedRows: !reset,
             newPage: false,
             newData: false
         };
@@ -437,25 +267,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public onRowHeightChanged(): void {
         this.updateRowIndexesAndBounds();
-        const modelUpdatedEvent: ModelUpdatedEvent = {
-            type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            newPage: false,
-            newData: false,
-            animate: true,
-            keepRenderedRows: true
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
+        this.dispatchModelUpdated();
     }
 
     public updateRowIndexesAndBounds(): void {
-        if (this.cacheExists()) {
-            // NOTE: should not be casting here, the RowModel should use IServerSideRowModel interface?
-            const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-            this.resetRowTops(serverSideCache);
-            this.setDisplayIndexes(serverSideCache);
-        }
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return; }
+        rootStore.setDisplayIndexes(new NumberSequence(), {value: 0});
     }
 
     public retryLoads(): void {
@@ -503,55 +321,41 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getRowCount(): number {
-        if (!this.cacheExists()) { return 1; }
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return 1; }
 
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-        const res = serverSideCache.getDisplayIndexEnd();
-
-        return res;
+        return rootStore.getDisplayIndexEnd()!;
     }
 
     public getTopLevelRowCount(): number {
-        if (!this.cacheExists()) { return 1; }
-
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-        return serverSideCache.getVirtualRowCount();
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return 1; }
+        return rootStore.getRowCount();
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
-        if (!this.cacheExists()) { return topLevelIndex; }
-
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-        return serverSideCache.getTopLevelRowDisplayedIndex(topLevelIndex);
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return topLevelIndex; }
+        return rootStore.getTopLevelRowDisplayedIndex(topLevelIndex);
     }
 
     public getRowBounds(index: number): RowBounds {
-        if (!this.cacheExists()) {
+        const rootStore = this.getRootStore();
+        if (!rootStore) {
+            const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
             return {
                 rowTop: 0,
-                rowHeight: this.rowHeight
+                rowHeight: rowHeight
             };
         }
-
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-        return serverSideCache.getRowBounds(index);
+        return rootStore.getRowBounds(index)!;
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        if (pixel === 0) {
-            return 0;
-        }
+        const rootStore = this.getRootStore();
+        if (pixel <= 0 || !rootStore) { return 0; }
 
-        if (!this.cacheExists()) {
-            return 0;
-        }
-
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-        return serverSideCache.getRowIndexAtPixel(pixel);
-    }
-
-    public getCurrentPageHeight(): number {
-        return this.rowHeight * this.getRowCount();
+        return rootStore.getRowIndexAtPixel(pixel)!;
     }
 
     public isEmpty(): boolean {
@@ -559,7 +363,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public isRowsToRender(): boolean {
-        return this.cacheExists() && this.getRowCount() > 0;
+        return this.getRootStore() != null && this.getRowCount() > 0;
     }
 
     public getType(): string {
@@ -567,19 +371,19 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
-        if (this.cacheExists()) {
-            this.rootNode.childrenCache!.forEachNodeDeep(callback);
-        }
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return; }
+        rootStore.forEachNodeDeep(callback);
     }
 
-    private executeOnCache(route: string[], callback: (cache: ServerSideCache) => void) {
-        if (!this.cacheExists()) { return; }
+    public executeOnStore(route: string[], callback: (cache: IServerSideStore) => void) {
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return; }
 
-        const topLevelCache = this.rootNode.childrenCache as ServerSideCache;
-        const cacheToPurge = topLevelCache.getChildCache(route);
+        const storeToExecuteOn = rootStore.getChildStore(route);
 
-        if (cacheToPurge) {
-            callback(cacheToPurge);
+        if (storeToExecuteOn) {
+            callback(storeToExecuteOn);
         }
     }
 
@@ -618,131 +422,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        const foundRowNode = this.getRowNode(rowNode.id);
+        const foundRowNode = this.getRowNode(rowNode.id!);
         return !!foundRowNode;
-    }
-
-    private extractSortModel(): { colId: string; sort: string }[] {
-        const sortModel = this.sortController.getSortModel();
-
-        // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
-        // into it's constitute group columns as they are not defined up front and can vary per node.
-        if (this.gridOptionsWrapper.isTreeData()) {
-            return sortModel;
-        }
-
-        const rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
-
-        // find index of auto group column in sort model
-        let autoGroupIndex = -1;
-        for (let i = 0; i < sortModel.length; ++i) {
-            if (sortModel[i].colId === Constants.GROUP_AUTO_COLUMN_ID) {
-                autoGroupIndex = i;
-                break;
-            }
-        }
-
-        // replace auto column with individual group columns
-        if (autoGroupIndex > -1) {
-            const individualGroupCols =
-                rowGroupCols.map(group => {
-                    return {
-                        colId: group.id,
-                        sort: sortModel[autoGroupIndex].sort
-                    };
-                });
-
-            // remove auto group column
-            sortModel.splice(autoGroupIndex, 1);
-
-            // insert individual group columns
-            for (let i = 0; i < individualGroupCols.length; i++) {
-                const individualGroupCol = individualGroupCols[i];
-
-                // don't add individual group column if non group column already exists as it gets precedence
-                const sameNonGroupColumnExists = sortModel.some(sm => sm.colId === individualGroupCol.colId);
-                if (sameNonGroupColumnExists) {
-                    continue;
-                }
-
-                sortModel.splice(autoGroupIndex++, 0, individualGroupCol);
-            }
-        }
-
-        // strip out multi-column prefix on colId's
-        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
-            const multiColumnPrefix = Constants.GROUP_AUTO_COLUMN_ID + "-";
-
-            for (let i = 0; i < sortModel.length; ++i) {
-                if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
-                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
-                }
-            }
-        }
-
-        return sortModel;
-    }
-
-    private isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
-        const valueColIds = this.columnController.getValueColumns().map(col => col.getColId());
-
-        for (let i = 0; i < changedColumnsInSort.length; i++) {
-            if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
-        if (!this.columnController.getSecondaryColumns()) {
-            return false;
-        }
-
-        const secondaryColIds = this.columnController.getSecondaryColumns()!.map(col => col.getColId());
-
-        for (let i = 0; i < changedColumnsInSort.length; i++) {
-            if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private cacheExists(): boolean {
-        return _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
-    }
-
-    private createDetailNode(masterNode: RowNode): RowNode {
-        if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
-
-        const detailNode = new RowNode();
-
-        this.getContext().createBean(detailNode);
-
-        detailNode.detail = true;
-        detailNode.selectable = false;
-        detailNode.parent = masterNode;
-
-        if (_.exists(masterNode.id)) {
-            detailNode.id = 'detail_' + masterNode.id;
-        }
-
-        detailNode.data = masterNode.data;
-        detailNode.level = masterNode.level + 1;
-
-        const defaultDetailRowHeight = 200;
-        const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode).height;
-
-        detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
-        masterNode.detailNode = detailNode;
-
-        return detailNode;
-    }
-
-    public isLoading(): boolean {
-        return this.rowNodeBlockLoader ? this.rowNodeBlockLoader.isLoading() : false;
     }
 }

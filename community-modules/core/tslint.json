@@ -48,7 +48,7 @@
             "check-branch", 
             "check-decl", 
             "check-operator", 
-            { "check-module": false }, 
+            "check-module",
             "check-separator", 
             "check-rest-spread", 
             "check-typecast",

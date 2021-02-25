@@ -14,8 +14,8 @@ export declare class DateCompWrapper {
     private context;
     constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: IDateParams, eParent: HTMLElement);
     destroy(): void;
-    getDate(): Date;
-    setDate(value: Date): void;
+    getDate(): Date | null;
+    setDate(value: Date | null): void;
     setInputPlaceholder(placeholder: string): void;
     setInputAriaLabel(label: string): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;

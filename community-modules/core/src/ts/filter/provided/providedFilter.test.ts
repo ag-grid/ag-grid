@@ -74,6 +74,7 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel> {
 
 describe('filterChangedCallback', () => {
     it('calls filterChangedCallback when filter has changed', () => {
+        // @ts-ignore
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
         const filter = new TestFilter(params);
 
@@ -84,6 +85,7 @@ describe('filterChangedCallback', () => {
     });
 
     it('does not call filterChangedCallback when filter has not changed', () => {
+        // @ts-ignore
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
         const filter = new TestFilter(params);
 
@@ -96,6 +98,7 @@ describe('filterChangedCallback', () => {
 describe('closeOnApply', () => {
     it('closes popup if closeOnApply is true and apply button is present', () => {
         const hidePopup = jest.fn();
+        // @ts-ignore
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
         params.buttons = ['apply'];
         params.closeOnApply = true;
@@ -110,6 +113,7 @@ describe('closeOnApply', () => {
 
     it('closes popup if closeOnApply is true even if model did not change', () => {
         const hidePopup = jest.fn();
+        // @ts-ignore
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
         params.buttons = ['apply'];
         params.closeOnApply = true;
@@ -124,6 +128,7 @@ describe('closeOnApply', () => {
 
     it('does not close popup if apply button is not present', () => {
         const hidePopup = jest.fn();
+        // @ts-ignore
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
         params.closeOnApply = true;
         const filter = new TestFilter(params);
@@ -137,6 +142,7 @@ describe('closeOnApply', () => {
 
     it('does not close popup if from change came from floating filter', () => {
         const hidePopup = jest.fn();
+        // @ts-ignore
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
         params.buttons = ['apply'];
         params.closeOnApply = true;
@@ -151,6 +157,7 @@ describe('closeOnApply', () => {
 
     it('does not close popup if from change came from data', () => {
         const hidePopup = jest.fn();
+        // @ts-ignore
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
         params.buttons = ['apply'];
         params.closeOnApply = true;
@@ -165,6 +172,7 @@ describe('closeOnApply', () => {
 
     it.each([undefined, false])('does not close popup if closeOnApply is %s', value => {
         const hidePopup = jest.fn();
+        // @ts-ignore
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
 
         // mocking library does not set property correctly for falsy values, so we have to do this instead

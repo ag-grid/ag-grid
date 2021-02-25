@@ -5,5 +5,5 @@ export declare class ImmutableService extends BeanStub implements IImmutableServ
     private postConstruct;
     createTransactionForRowData(data: any[]): ([RowDataTransaction, {
         [id: string]: number;
-    }]) | undefined;
+    } | null]) | undefined;
 }

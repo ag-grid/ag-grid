@@ -383,4 +383,5 @@ export declare class AgGridAngular implements AfterViewInit {
     columnAggFuncChangeRequest: EventEmitter<any>;
     keyboardFocus: EventEmitter<any>;
     mouseFocus: EventEmitter<any>;
+    storeUpdated: EventEmitter<any>;
 }

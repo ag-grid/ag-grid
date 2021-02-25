@@ -49,7 +49,7 @@ var HeaderContainer = /** @class */ (function (_super) {
             this.columnsRowComp.forEachHeaderElement(callback);
         }
         if (this.filtersRowComp) {
-            this.columnsRowComp.forEachHeaderElement(callback);
+            this.filtersRowComp.forEachHeaderElement(callback);
         }
     };
     HeaderContainer.prototype.init = function () {

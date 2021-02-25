@@ -38,9 +38,7 @@ export function cleanNumber(value) {
     if (typeof value === 'number') {
         return Math.floor(value);
     }
-    else {
-        return null;
-    }
+    return null;
 }
 export function decToHex(number, bytes) {
     var hex = '';

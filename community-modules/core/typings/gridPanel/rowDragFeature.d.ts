@@ -14,6 +14,7 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
 export declare class RowDragFeature extends BeanStub implements DropTarget {
     private dragAndDropService;
     private rowModel;
+    private paginationProxy;
     private columnController;
     private focusController;
     private sortController;

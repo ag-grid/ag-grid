@@ -32,25 +32,34 @@ import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
 var RowNodeBlockLoader = /** @class */ (function (_super) {
     __extends(RowNodeBlockLoader, _super);
-    function RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis) {
-        var _this = _super.call(this) || this;
+    function RowNodeBlockLoader() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.activeBlockLoadsCount = 0;
         _this.blocks = [];
         _this.active = true;
-        _this.maxConcurrentRequests = maxConcurrentRequests;
-        if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
-            _this.checkBlockToLoadDebounce = debounce(_this.performCheckBlocksToLoad.bind(_this), blockLoadDebounceMillis);
-        }
         return _this;
     }
+    RowNodeBlockLoader_1 = RowNodeBlockLoader;
+    RowNodeBlockLoader.prototype.postConstruct = function () {
+        this.maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
+        var blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
+        if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
+            this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
+        }
+    };
     RowNodeBlockLoader.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('RowNodeBlockLoader');
     };
     RowNodeBlockLoader.prototype.addBlock = function (block) {
         this.blocks.push(block);
+        // note that we do not remove this listener when removing the block. this is because the
+        // cache can get destroyed (and containing blocks) when a block is loading. however the loading block
+        // is still counted as an active loading block and we must decrement activeBlockLoadsCount when it finishes.
+        block.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.loadComplete.bind(this));
+        this.checkBlockToLoad();
     };
     RowNodeBlockLoader.prototype.removeBlock = function (block) {
-        removeFromArray(this.blocks, block);
+        _.removeFromArray(this.blocks, block);
     };
     RowNodeBlockLoader.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
@@ -58,6 +67,10 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
     };
     RowNodeBlockLoader.prototype.loadComplete = function () {
         this.activeBlockLoadsCount--;
+        this.checkBlockToLoad();
+        if (this.activeBlockLoadsCount == 0) {
+            this.dispatchEvent({ type: RowNodeBlockLoader_1.BLOCK_LOADER_FINISHED_EVENT });
+        }
     };
     RowNodeBlockLoader.prototype.checkBlockToLoad = function () {
         if (this.checkBlockToLoadDebounce) {
@@ -78,36 +91,21 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
         }
         var blockToLoad = null;
         this.blocks.forEach(function (block) {
-            if (block.getState() === RowNodeBlock.STATE_DIRTY) {
+            if (block.getState() === RowNodeBlock.STATE_WAITING_TO_LOAD) {
                 blockToLoad = block;
             }
         });
         if (blockToLoad) {
             blockToLoad.load();
             this.activeBlockLoadsCount++;
-            this.logger.log("checkBlockToLoad: loading page " + blockToLoad.getBlockNumber());
             this.printCacheStatus();
-        }
-        else {
-            this.logger.log("checkBlockToLoad: no pages to load");
         }
     };
     RowNodeBlockLoader.prototype.getBlockState = function () {
         var result = {};
         this.blocks.forEach(function (block) {
-            var nodeIdPrefix = block.getNodeIdPrefix();
-            var stateItem = {
-                blockNumber: block.getBlockNumber(),
-                startRow: block.getStartRow(),
-                endRow: block.getEndRow(),
-                pageStatus: block.getState()
-            };
-            if (exists(nodeIdPrefix)) {
-                result[nodeIdPrefix + block.getBlockNumber()] = stateItem;
-            }
-            else {
-                result[block.getBlockNumber()] = stateItem;
-            }
+            var _a = block.getBlockStateJson(), id = _a.id, state = _a.state;
+            result[id] = state;
         });
         return result;
     };
@@ -128,6 +126,9 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
     __decorate([
         __param(0, Qualifier('loggerFactory'))
     ], RowNodeBlockLoader.prototype, "setBeans", null);
+    RowNodeBlockLoader = RowNodeBlockLoader_1 = __decorate([
+        Bean('rowNodeBlockLoader')
+    ], RowNodeBlockLoader);
     return RowNodeBlockLoader;
 }(BeanStub));
 export { RowNodeBlockLoader };

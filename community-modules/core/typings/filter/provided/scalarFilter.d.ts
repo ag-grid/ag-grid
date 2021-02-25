@@ -22,8 +22,8 @@ export declare abstract class ScalarFilter<M extends ISimpleFilterModel, T> exte
     private scalarFilterParams;
     protected abstract comparator(): Comparator<T>;
     protected abstract mapRangeFromModel(filterModel: ISimpleFilterModel): {
-        from: T;
-        to: T;
+        from: T | null | undefined;
+        to: T | null | undefined;
     };
     protected setParams(params: IScalarFilterParams): void;
     private checkDeprecatedParams;

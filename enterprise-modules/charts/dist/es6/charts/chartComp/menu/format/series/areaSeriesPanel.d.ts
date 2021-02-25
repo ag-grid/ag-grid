@@ -5,6 +5,7 @@ export declare class AreaSeriesPanel extends Component {
     private seriesGroup;
     private seriesTooltipsToggle;
     private seriesLineWidthSlider;
+    private seriesLineDashSlider;
     private seriesLineOpacitySlider;
     private seriesFillOpacitySlider;
     private chartTranslator;
@@ -15,6 +16,7 @@ export declare class AreaSeriesPanel extends Component {
     private initSeriesGroup;
     private initSeriesTooltips;
     private initSeriesLineWidth;
+    private initSeriesLineDash;
     private initOpacity;
     private initMarkersPanel;
     private initShadowPanel;

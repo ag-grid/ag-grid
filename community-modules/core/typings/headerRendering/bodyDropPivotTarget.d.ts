@@ -7,10 +7,10 @@ export declare class BodyDropPivotTarget implements DropListener {
     private columnsToGroup;
     private columnsToPivot;
     private pinned;
-    constructor(pinned: string);
+    constructor(pinned: string | null);
     /** Callback for when drag enters */
     onDragEnter(draggingEvent: DraggingEvent): void;
-    getIconName(): string;
+    getIconName(): string | null;
     /** Callback for when drag leaves */
     onDragLeave(draggingEvent: DraggingEvent): void;
     private clearColumnsList;

@@ -20,4 +20,3 @@ export const FiltersToolPanelModule: Module = {
         EnterpriseCoreModule
     ]
 };
-

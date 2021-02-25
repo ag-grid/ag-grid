@@ -88,9 +88,6 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         }
         return prev;
     };
-    ChartSettingsPanel.prototype.prev = function () {
-        ;
-    };
     ChartSettingsPanel.prototype.getNext = function () {
         var next = this.activePaletteIndex + 1;
         if (next >= this.palettes.length) {

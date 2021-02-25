@@ -21,7 +21,7 @@ export declare class AgList extends Component {
     addOptions(listOptions: ListOption[]): this;
     addOption(listOption: ListOption): this;
     private renderOption;
-    setValue(value?: string, silent?: boolean): this;
+    setValue(value?: string | null, silent?: boolean): this;
     setValueByIndex(idx: number): this;
     getValue(): string | null;
     getDisplayValue(): string | null;

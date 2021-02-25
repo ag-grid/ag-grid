@@ -11,7 +11,7 @@ export declare class LoggerFactory extends BeanStub {
 export declare class Logger {
     private isLoggingFunc;
     private name;
-    constructor(name: string, isLoggingFunc: () => boolean);
-    isLogging(): boolean;
+    constructor(name: string, isLoggingFunc: () => boolean | undefined);
+    isLogging(): boolean | undefined;
     log(message: string): void;
 }

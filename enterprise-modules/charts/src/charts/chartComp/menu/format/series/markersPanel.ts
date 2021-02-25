@@ -9,9 +9,9 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ScatterChartProxy} from "../../../chartProxies/cartesian/scatterChartProxy";
-import {ChartController} from "../../../chartController";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
+import { ChartController } from "../../../chartController";
 
 export class MarkersPanel extends Component {
 

@@ -20,7 +20,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
 }
 
 export interface ISimpleFilterModel extends ProvidedFilterModel {
-    type: string;
+    type?: string | null;
 }
 
 export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends ProvidedFilterModel {
@@ -59,7 +59,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     private allowTwoConditions: boolean;
     private alwaysShowBothConditions: boolean;
-    private defaultJoinOperator: JoinOperator;
+    private defaultJoinOperator: JoinOperator | undefined;
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -87,32 +87,32 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     protected abstract createCondition(position: ConditionPosition): M;
 
     // puts model values into the UI
-    protected abstract setConditionIntoUi(model: ISimpleFilterModel, position: ConditionPosition): void;
+    protected abstract setConditionIntoUi(model: ISimpleFilterModel | null, position: ConditionPosition): void;
 
     // returns true if this type requires a 'from' field, eg any filter that requires at least one text value
-    protected showValueFrom(type: string): boolean {
+    protected showValueFrom(type?: string | null): boolean {
         return !this.doesFilterHaveHiddenInput(type) && type !== SimpleFilter.EMPTY;
     }
 
     // returns true if this type requires a 'to' field, currently only 'range' returns true
-    protected showValueTo(type: string): boolean {
+    protected showValueTo(type?: string | null): boolean {
         return type === SimpleFilter.IN_RANGE;
     }
 
     // floating filter calls this when user applies filter from floating filter
-    public onFloatingFilterChanged(type: string, value: any): void {
+    public onFloatingFilterChanged(type: string | null | undefined, value: any): void {
         this.setTypeFromFloatingFilter(type);
         this.setValueFromFloatingFilter(value);
         this.onUiChanged(true);
     }
 
-    protected setTypeFromFloatingFilter(type: string): void {
+    protected setTypeFromFloatingFilter(type?: string | null): void {
         this.eType1.setValue(type);
         this.eType2.setValue(this.optionsFactory.getDefaultOption());
         (this.isDefaultOperator('AND') ? this.eJoinOperatorAnd : this.eJoinOperatorOr).setValue(true);
     }
 
-    public getModelFromUi(): M | ICombinedSimpleModel<M> {
+    public getModelFromUi(): M | ICombinedSimpleModel<M> | null {
         if (!this.isConditionUiComplete(ConditionPosition.One)) {
             return null;
         }
@@ -129,11 +129,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         return this.createCondition(ConditionPosition.One);
     }
 
-    protected getCondition1Type(): string {
+    protected getCondition1Type(): string | null | undefined {
         return this.eType1.getValue();
     }
 
-    protected getCondition2Type(): string {
+    protected getCondition2Type(): string | null | undefined {
         return this.eType2.getValue();
     }
 
@@ -240,7 +240,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         this.addChangedListeners();
     }
 
-    private getDefaultJoinOperator(defaultJoinOperator: JoinOperator): JoinOperator {
+    private getDefaultJoinOperator(defaultJoinOperator?: JoinOperator): JoinOperator | undefined {
         return includes(['AND', 'OR'], defaultJoinOperator) ? defaultJoinOperator : 'AND';
     }
 
@@ -349,7 +349,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         this.eJoinOperatorAnd.onValueChange(listener);
     }
 
-    protected doesFilterHaveHiddenInput(filterType: string) {
+    protected doesFilterHaveHiddenInput(filterType?: string | null) {
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);
 
         return customFilterOption && customFilterOption.hideFilterInput;

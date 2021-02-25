@@ -209,7 +209,7 @@ var AgColorPanel = /** @class */ (function (_super) {
             return;
         }
         // remove duplicate color
-        recentColors = recentColors.filter(function (color) { return color != rgbaColor; });
+        recentColors = recentColors.filter(function (currentColor) { return currentColor != rgbaColor; });
         // add color to head
         recentColors = [rgbaColor].concat(recentColors);
         // ensure we don't exceed max number of recent colors

@@ -3,19 +3,19 @@ import { Autowired, PostConstruct } from "../context/context";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { Events } from "../events";
 import { PaginationProxy } from "./paginationProxy";
-import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { IRowModel } from "../interfaces/iRowModel";
-import { Constants } from "../constants/constants";
 import { createIconNoSpan } from "../utils/icon";
 import { formatNumberCommas } from "../utils/number";
 import { addOrRemoveCssClass } from "../utils/dom";
 import { setAriaDisabled } from "../utils/aria";
 import { KeyCode } from '../constants/keyCode';
+import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
 
 export class PaginationComp extends Component {
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
     @RefSelector('btFirst') private btFirst: HTMLElement;
     @RefSelector('btPrevious') private btPrevious: HTMLElement;
@@ -27,8 +27,6 @@ export class PaginationComp extends Component {
     @RefSelector('lbLastRowOnPage') private lbLastRowOnPage: any;
     @RefSelector('lbCurrent') private lbCurrent: any;
     @RefSelector('lbTotal') private lbTotal: any;
-
-    private serverSideRowModel: IServerSideRowModel;
 
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;
@@ -42,14 +40,10 @@ export class PaginationComp extends Component {
     protected postConstruct(): void {
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         this.setTemplate(this.getTemplate());
-        this.btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper));
-        this.btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper));
-        this.btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper));
-        this.btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper));
-
-        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-            this.serverSideRowModel = this.rowModel as IServerSideRowModel;
-        }
+        this.btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper)!);
+        this.btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper)!);
+        this.btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper)!);
+        this.btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper)!);
 
         const isPaging = this.gridOptionsWrapper.isPagination();
         const paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
@@ -203,13 +197,13 @@ export class PaginationComp extends Component {
         } else {
             startRow = (pageSize * currentPage) + 1;
             endRow = startRow + pageSize - 1;
-            if (maxRowFound && endRow > rowCount) {
+            if (maxRowFound && endRow > rowCount!) {
                 endRow = rowCount;
             }
         }
 
         this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
-        if (this.serverSideRowModel && this.serverSideRowModel.isLoading()) {
+        if (this.rowNodeBlockLoader.isLoading()) {
             this.lbLastRowOnPage.innerHTML = '?';
         } else {
             this.lbLastRowOnPage.innerHTML = this.formatNumber(endRow);
@@ -230,7 +224,7 @@ export class PaginationComp extends Component {
 
         if (lastPageFound) {
             this.lbTotal.innerHTML = this.formatNumber(totalPages);
-            this.lbRecordCount.innerHTML = this.formatNumber(rowCount);
+            this.lbRecordCount.innerHTML = this.formatNumber(rowCount!);
         } else {
             const moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;

@@ -128,7 +128,9 @@ var ProvidedFilter = /** @class */ (function (_super) {
                     console.warn('Unknown button type specified');
                     return;
             }
-            var button = loadTemplate(/* html */ "<button\n                    type=\"button\"\n                    ref=\"" + type + "FilterButton\"\n                    class=\"ag-standard-button ag-filter-apply-panel-button\">" + text + "</button>");
+            var button = loadTemplate(
+            /* html */
+            "<button\n                    type=\"button\"\n                    ref=\"" + type + "FilterButton\"\n                    class=\"ag-standard-button ag-filter-apply-panel-button\"\n                >" + text + "\n                </button>");
             eButtonsPanel.appendChild(button);
             _this.addManagedListener(button, 'click', clickListener);
         };
@@ -291,7 +293,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
     // static, as used by floating filter also
     ProvidedFilter.isUseApplyButton = function (params) {
         ProvidedFilter.checkForDeprecatedParams(params);
-        return params.buttons && params.buttons.indexOf('apply') >= 0;
+        return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     };
     ProvidedFilter.prototype.destroy = function () {
         this.hidePopup = null;

@@ -108,7 +108,6 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             if (!_this.shouldDisplayFilter(column)) {
                 return [];
             }
-            ;
             var hideFilterCompHeader = depth === 0;
             var filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
             _this.getContext().createBean(filterComp);
@@ -123,14 +122,16 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         }));
     };
     FiltersToolPanelListPanel.prototype.recursivelyAddFilterGroupComps = function (columnGroup, depth) {
-        if (!this.filtersExistInChildren(columnGroup.getChildren()))
+        if (!this.filtersExistInChildren(columnGroup.getChildren())) {
             return;
-        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressFiltersToolPanel) {
+        }
+        var colGroupDef = columnGroup.getColGroupDef();
+        if (colGroupDef && colGroupDef.suppressFiltersToolPanel) {
             return [];
         }
         var newDepth = columnGroup.isPadding() ? depth : depth + 1;
         var childFilterComps = _.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth));
-        if (columnGroup.isPadding())
+        if (columnGroup.isPadding()) {
             return childFilterComps;
         }
         var filterGroupComp = new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth, false);
@@ -237,8 +238,9 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         var expandedCount = 0;
         var notExpandedCount = 0;
         var updateExpandCounts = function (filterGroup) {
-            if (!filterGroup.isColumnGroup())
+            if (!filterGroup.isColumnGroup()) {
                 return;
+            }
             filterGroup.isExpanded() ? expandedCount++ : notExpandedCount++;
             filterGroup.getChildren().forEach(function (child) {
                 if (child instanceof ToolPanelFilterGroupComp) {
@@ -269,7 +271,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         };
         var recursivelySearch = function (filterItem, parentPasses) {
             if (!(filterItem instanceof ToolPanelFilterGroupComp)) {
-                return passesFilter(filterItem.getColumnFilterName());
+                return passesFilter(filterItem.getColumnFilterName() || '');
             }
             var children = filterItem.getChildren();
             var groupNamePasses = passesFilter(filterItem.getFilterGroupName());
@@ -290,8 +292,9 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             children.forEach(function (child, index) {
                 var childPasses = recursivelySearch(child, parentPasses);
                 filterItem.hideGroupItem(!childPasses, index);
-                if (childPasses)
+                if (childPasses) {
                     anyChildPasses = true;
+                }
             });
             // hide group if no children pass
             filterItem.hideGroup(!anyChildPasses);

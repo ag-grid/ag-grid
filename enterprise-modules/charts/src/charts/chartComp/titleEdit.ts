@@ -1,11 +1,11 @@
-import {_, Autowired, Component, PostConstruct} from "@ag-grid-community/core";
-import {ChartMenu} from "./menu/chartMenu";
+import { _, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
+import { ChartMenu } from "./menu/chartMenu";
 
-import {Chart} from "ag-charts-community";
-import {ChartTranslator} from "./chartTranslator";
-import {ChartProxy} from "./chartProxies/chartProxy";
+import { Chart } from "ag-charts-community";
+import { ChartTranslator } from "./chartTranslator";
+import { ChartProxy } from "./chartProxies/chartProxy";
 
-type BBox = { x: number; y: number; width: number; height: number };
+interface BBox { x: number; y: number; width: number; height: number }
 
 export class TitleEdit extends Component {
     private static TEMPLATE = /* html */
@@ -50,7 +50,7 @@ export class TitleEdit extends Component {
             const { title } = chart;
 
             if (title && title.node.containsPoint(event.offsetX, event.offsetY)) {
-                const bbox = title.node.computeBBox();
+                const bbox = title.node.computeBBox()!;
                 const xy = title.node.inverseTransformPoint(bbox.x, bbox.y);
 
                 this.startEditing({ ...bbox, ...xy });
@@ -66,8 +66,8 @@ export class TitleEdit extends Component {
         });
 
         this.destroyableChartListeners = [
-            destroyDbleClickListener,
-            destroyMouseMoveListener
+            destroyDbleClickListener!,
+            destroyMouseMoveListener!
         ];
     }
 
@@ -114,7 +114,7 @@ export class TitleEdit extends Component {
 
         this.chartProxy.setTitleOption('text', value);
 
-        this.eventService.dispatchEvent({'type': 'chartTitleEdit'});
+        this.eventService.dispatchEvent({type: 'chartTitleEdit'});
 
         _.removeCssClass(this.getGui(), 'currently-editing');
     }

@@ -5,6 +5,7 @@ import { RowNode } from "../entities/rowNode";
 import { ColumnVO } from "./iColumnVO";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
+import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
 
 export interface IServerSideGetRowsRequest {
     // first row requested
@@ -37,9 +38,11 @@ export interface IServerSideGetRowsParams {
 
     // success callback, pass the rows back the grid asked for
     successCallback(rowsThisPage: any[], lastRow: number): void;
+    success(params: LoadSuccessParams): void;
 
     // fail callback, tell the grid the call failed so it can adjust it's state
     failCallback(): void;
+    fail(): void;
 
     // grid API
     api: GridApi;

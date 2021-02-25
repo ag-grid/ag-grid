@@ -71,7 +71,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             return map;
         }, new Map<string, LineSeries>());
 
-        let previousSeries: LineSeries | undefined = undefined;
+        let previousSeries: LineSeries | undefined;
 
         let { fills, strokes } = this.getPalette();
         fields.forEach((f, index) => {
@@ -82,7 +82,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             const stroke = strokes[index % strokes.length];
 
             if (lineSeries) {
-                lineSeries.title = f.displayName;
+                lineSeries.title = f.displayName!;
                 lineSeries.data = data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;

@@ -17,28 +17,32 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, RowNodeBlock, _ } from "@ag-grid-community/core";
+import { _, Autowired, PostConstruct, PreDestroy, RowNode, RowNodeBlock } from "@ag-grid-community/core";
 var InfiniteBlock = /** @class */ (function (_super) {
     __extends(InfiniteBlock, _super);
-    function InfiniteBlock(pageNumber, params) {
-        var _this = _super.call(this, pageNumber, params) || this;
-        _this.cacheParams = params;
+    function InfiniteBlock(id, parentCache, params) {
+        var _this = _super.call(this, id) || this;
+        _this.parentCache = parentCache;
+        _this.params = params;
+        // we don't need to calculate these now, as the inputs don't change,
+        // however it makes the code easier to read if we work them out up front
+        _this.startRow = id * params.blockSize;
+        _this.endRow = _this.startRow + params.blockSize;
         return _this;
     }
-    InfiniteBlock.prototype.getDisplayIndexStart = function () {
-        return this.getBlockNumber() * this.cacheParams.blockSize;
+    InfiniteBlock.prototype.postConstruct = function () {
+        this.createRowNodes();
     };
-    // this is an estimate, as the last block will probably only be partially full. however
-    // this method is used to know if this block is been rendered, before destroying, so
-    // and this estimate works in that use case.
-    InfiniteBlock.prototype.getDisplayIndexEnd = function () {
-        return this.getDisplayIndexStart() + this.cacheParams.blockSize;
-    };
-    InfiniteBlock.prototype.createBlankRowNode = function (rowIndex) {
-        var rowNode = _super.prototype.createBlankRowNode.call(this);
-        rowNode.uiLevel = 0;
-        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
-        return rowNode;
+    InfiniteBlock.prototype.getBlockStateJson = function () {
+        return {
+            id: '' + this.getId(),
+            state: {
+                blockNumber: this.getId(),
+                startRow: this.getStartRow(),
+                endRow: this.getEndRow(),
+                pageStatus: this.getState()
+            }
+        };
     };
     InfiniteBlock.prototype.setDataAndId = function (rowNode, data, index) {
         if (_.exists(data)) {
@@ -51,24 +55,6 @@ var InfiniteBlock = /** @class */ (function (_super) {
         else {
             rowNode.setDataAndId(undefined, undefined);
         }
-    };
-    InfiniteBlock.prototype.setRowNode = function (rowIndex, rowNode) {
-        _super.prototype.setRowNode.call(this, rowIndex, rowNode);
-        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
-    };
-    // no need for @postConstruct, as attached to parent
-    InfiniteBlock.prototype.init = function () {
-        _super.prototype.init.call(this);
-    };
-    InfiniteBlock.prototype.getNodeIdPrefix = function () {
-        return null;
-    };
-    InfiniteBlock.prototype.getRow = function (displayIndex) {
-        return this.getRowUsingLocalIndex(displayIndex);
-    };
-    InfiniteBlock.prototype.setIndexAndTopOnRowNode = function (rowNode, rowIndex) {
-        rowNode.setRowIndex(rowIndex);
-        rowNode.rowTop = this.cacheParams.rowHeight * rowIndex;
     };
     InfiniteBlock.prototype.loadFromDatasource = function () {
         var _this = this;

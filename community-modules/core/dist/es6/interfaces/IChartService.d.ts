@@ -1,19 +1,25 @@
 // Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { ChartType, ChartOptions } from "./iChartOptions";
+import { ChartOptions, ChartType } from "./iChartOptions";
 import { ChartRef } from "../entities/gridOptions";
 import { CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams } from "../gridApi";
 import { CellRangeParams } from "./iRangeController";
+import { IAggFunc } from "../entities/colDef";
 export interface GetChartImageDataUrlParams {
     type?: string;
 }
+export declare type ChartModelType = 'range' | 'pivot';
 export interface ChartModel {
+    modelType: ChartModelType;
     chartId: string;
-    cellRange: CellRangeParams;
     chartType: ChartType;
+    cellRange: CellRangeParams;
     chartThemeName?: string;
     chartOptions: ChartOptions<any>;
+    suppressChartRanges?: boolean;
+    aggFunc?: string | IAggFunc;
+    unlinkChart?: boolean;
     chart: any;
     getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }
@@ -23,4 +29,5 @@ export interface IChartService {
     createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined;
     createChartFromCurrentRange(chartType: ChartType): ChartRef | undefined;
     createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
+    restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
 }

@@ -101,7 +101,7 @@ var MenuList = /** @class */ (function (_super) {
         });
     };
     MenuList.prototype.activateFirstItem = function () {
-        var item = this.menuItems.filter(function (item) { return !item.isDisabled(); })[0];
+        var item = this.menuItems.filter(function (currentItem) { return !currentItem.isDisabled(); })[0];
         if (!item) {
             return;
         }

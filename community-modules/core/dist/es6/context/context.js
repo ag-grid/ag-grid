@@ -62,21 +62,21 @@ var Context = /** @class */ (function () {
         this.logger.log("created beans: " + createdBeanNames);
     };
     // tslint:disable-next-line
-    Context.prototype.createBeanWrapper = function (Bean) {
-        var metaData = Bean.__agBeanMetaData;
+    Context.prototype.createBeanWrapper = function (BeanClass) {
+        var metaData = BeanClass.__agBeanMetaData;
         if (!metaData) {
             var beanName = void 0;
-            if (Bean.prototype.constructor) {
-                beanName = getFunctionName(Bean.prototype.constructor);
+            if (BeanClass.prototype.constructor) {
+                beanName = getFunctionName(BeanClass.prototype.constructor);
             }
             else {
-                beanName = "" + Bean;
+                beanName = "" + BeanClass;
             }
             console.error("Context item " + beanName + " is not a bean");
             return;
         }
         var beanEntry = {
-            bean: Bean,
+            bean: BeanClass,
             beanInstance: null,
             beanName: metaData.beanName
         };

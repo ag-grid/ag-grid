@@ -81,7 +81,7 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
             eInput.getFocusableElement().focus();
         }
 
-        const inputEl = eInput.getInputElement() as HTMLInputElement;
+        const inputEl = eInput.getInputElement();
 
         if (this.highlightAllOnFocus) {
             inputEl.select();
@@ -103,14 +103,14 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
     public focusIn(): void {
         const eInput = this.eInput;
         const focusEl = eInput.getFocusableElement();
-        const inputEl = eInput.getInputElement() as HTMLInputElement;
+        const inputEl = eInput.getInputElement();
 
         focusEl.focus();
         inputEl.select();
     }
 
     public focusOut(): void {
-        const inputEl = this.eInput.getInputElement() as HTMLInputElement;
+        const inputEl = this.eInput.getInputElement();
         if (isBrowserIE()) {
             inputEl.setSelectionRange(0, 0);
         }

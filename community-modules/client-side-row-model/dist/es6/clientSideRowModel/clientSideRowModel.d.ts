@@ -38,7 +38,7 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
     getHighlightPosition(pixel: number, rowNode?: RowNode): 'above' | 'below';
     getLastHighlightedRowNode(): RowNode | null;
-    isLastRowFound(): boolean;
+    isLastRowIndexKnown(): boolean;
     getRowCount(): number;
     getTopLevelRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
@@ -61,7 +61,6 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     isRowPresent(rowNode: RowNode): boolean;
     getRowIndexAtPixel(pixelToMatch: number): number;
     private isRowInPixel;
-    getCurrentPageHeight(): number;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
     forEachNode(callback: (node: RowNode, index: number) => void): void;
     forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void): void;

@@ -10,7 +10,7 @@ import { ComponentType } from "./componentTypes";
 export interface FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(frameworkComponent: {
         new (): any;
-    }, methodList: string[], optionalMethodList: string[], componentType: ComponentType, componentName?: string): A;
+    } | null, methodList: string[], optionalMethodList: string[], componentType: ComponentType, componentName?: string | null): A;
 }
 export interface WrapableInterface {
     hasMethod(name: string): boolean;

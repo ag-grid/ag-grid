@@ -169,7 +169,7 @@ var SelectionController = /** @class */ (function (_super) {
     // to be like before the id was changed.
     SelectionController.prototype.syncInOldRowNode = function (rowNode, oldNode) {
         var oldNodeHasDifferentId = generic_1.exists(oldNode) && (rowNode.id !== oldNode.id);
-        if (oldNodeHasDifferentId) {
+        if (oldNodeHasDifferentId && oldNode) {
             var oldNodeSelected = generic_1.exists(this.selectedNodes[oldNode.id]);
             if (oldNodeSelected) {
                 this.selectedNodes[oldNode.id] = oldNode;

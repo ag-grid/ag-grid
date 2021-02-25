@@ -32,7 +32,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @PreConstruct
     private preConstruct(): void {
-        this.setTemplate( /* html */
+        this.setTemplate(/* html */
             `<div class="ag-filter-toolpanel-search" role="presentation">
                 <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <ag-input-text-field ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
@@ -62,9 +62,9 @@ export class FiltersToolPanelHeaderPanel extends Component {
     }
 
     private createExpandIcons() {
-        this.eExpand.appendChild(this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper));
-        this.eExpand.appendChild(this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper));
-        this.eExpand.appendChild(this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper)!);
+        this.eExpand.appendChild(this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper)!);
+        this.eExpand.appendChild(this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper)!);
     }
 
     // we only show expand / collapse if we are showing filters

@@ -24,7 +24,7 @@ var SortStage = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     SortStage.prototype.execute = function (params) {
-        var sortOptions = this.sortController.getSortForRowController();
+        var sortOptions = this.sortController.getSortOptions();
         var sortActive = _.exists(sortOptions) && sortOptions.length > 0;
         var deltaSort = sortActive
             && _.exists(params.rowNodeTransactions)
@@ -47,11 +47,13 @@ var SortStage = /** @class */ (function (_super) {
             }
         };
         // all leaf level nodes in the transaction were impacted
-        rowNodeTransactions.forEach(function (tran) {
-            addNodesFunc(tran.add);
-            addNodesFunc(tran.update);
-            addNodesFunc(tran.remove);
-        });
+        if (rowNodeTransactions) {
+            rowNodeTransactions.forEach(function (tran) {
+                addNodesFunc(tran.add);
+                addNodesFunc(tran.update);
+                addNodesFunc(tran.remove);
+            });
+        }
         return dirtyNodes;
     };
     __decorate([

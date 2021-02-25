@@ -1,8 +1,7 @@
 import {
     ICellEditor,
     PopupComponent,
-    ICellEditorParams,
-    ComponentMeta
+    ICellEditorParams
 } from "@ag-grid-community/core";
 import { DateTimeList } from "../dateTimeList/dateTimeList";
 
@@ -40,7 +39,6 @@ export class DateTimeCellEditor extends PopupComponent implements ICellEditor {
             } else {
                 initialValue = defaultDate;
             }
-            initialValue = new Date();
         }
         this.editor = new DateTimeList({
             onValueSelect: this.handleValueSelect.bind(this),

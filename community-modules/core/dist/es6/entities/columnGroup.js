@@ -149,7 +149,7 @@ var ColumnGroup = /** @class */ (function () {
     ColumnGroup.prototype.getMinWidth = function () {
         var result = 0;
         this.displayedChildren.forEach(function (groupChild) {
-            result += groupChild.getMinWidth();
+            result += groupChild.getMinWidth() || 0;
         });
         return result;
     };

@@ -11,7 +11,7 @@ export declare class ClientSideNodeManager {
     private selectionController;
     private nextId;
     private static ROOT_NODE_ID;
-    private isRowMasterFunc;
+    private isRowMasterFunc?;
     private suppressParentsInRowNodes;
     private doingTreeData;
     private doingMasterDetail;
@@ -22,10 +22,10 @@ export declare class ClientSideNodeManager {
         [id: string]: RowNode;
     };
     getRowNode(id: string): RowNode;
-    setRowData(rowData: any[]): RowNode[];
+    setRowData(rowData: any[]): RowNode[] | undefined;
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {
         [id: string]: number;
-    } | null | undefined): RowNodeTransaction | null;
+    } | null | undefined): RowNodeTransaction;
     private updateSelection;
     private executeAdd;
     private executeRemove;

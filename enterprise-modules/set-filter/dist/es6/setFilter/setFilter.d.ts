@@ -25,7 +25,7 @@ export declare class SetFilter extends ProvidedFilter<SetFilterModel> {
     getModelFromUi(): SetFilterModel | null;
     getModel(): SetFilterModel;
     getFilterType(): string;
-    getValueModel(): SetValueModel;
+    getValueModel(): SetValueModel | null;
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean;
     setParams(params: ISetFilterParams): void;
     private applyExcelModeOptions;
@@ -66,8 +66,8 @@ export declare class SetFilter extends ProvidedFilter<SetFilterModel> {
     private focusRowIfAlive;
     private onSelectAll;
     private onItemSelected;
-    setMiniFilter(newMiniFilter: string): void;
-    getMiniFilter(): string;
+    setMiniFilter(newMiniFilter: string | null): void;
+    getMiniFilter(): string | null;
     /** @deprecated since version 23.2. Please use setModel instead. */
     selectEverything(): void;
     /** @deprecated since version 23.2. Please use setModel instead. */
@@ -87,7 +87,7 @@ export declare class SetFilter extends ProvidedFilter<SetFilterModel> {
     getUniqueValueCount(): number;
     /** @deprecated since version 23.2. Please use getValues instead. */
     getUniqueValue(index: any): string;
-    getValues(): string[];
+    getValues(): (string | null)[];
     refreshVirtualList(): void;
     private translateForSetFilter;
     private isSelectAllSelected;

@@ -374,6 +374,7 @@ let AgGridAngular = class AgGridAngular {
         this.columnAggFuncChangeRequest = new EventEmitter();
         this.keyboardFocus = new EventEmitter();
         this.mouseFocus = new EventEmitter();
+        this.storeUpdated = new EventEmitter();
         this._nativeElement = elementDef.nativeElement;
     }
     ngAfterViewInit() {
@@ -1913,6 +1914,10 @@ __decorate([
     Output(),
     __metadata("design:type", EventEmitter)
 ], AgGridAngular.prototype, "mouseFocus", void 0);
+__decorate([
+    Output(),
+    __metadata("design:type", EventEmitter)
+], AgGridAngular.prototype, "storeUpdated", void 0);
 AgGridAngular = __decorate([
     Component({
         selector: 'ag-grid-angular',

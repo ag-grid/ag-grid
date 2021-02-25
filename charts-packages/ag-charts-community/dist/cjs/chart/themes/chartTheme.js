@@ -128,7 +128,11 @@ var ChartTheme = /** @class */ (function () {
     };
     ChartTheme.getSeriesDefaults = function () {
         return {
-            tooltipEnabled: true,
+            tooltip: {
+                enabled: true,
+                renderer: undefined,
+                format: undefined
+            },
             visible: true,
             showInLegend: true
         };
@@ -336,7 +340,7 @@ var ChartTheme = /** @class */ (function () {
                 }, tooltipRenderer: undefined, highlightStyle: {
                     fill: 'yellow'
                 }, marker: __assign(__assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { enabled: false }) }),
-            histogram: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
+            histogram: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, binCount: undefined, bins: undefined, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
                     fill: 'yellow'
                 }, label: {
                     enabled: false,

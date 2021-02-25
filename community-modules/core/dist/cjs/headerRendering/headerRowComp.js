@@ -254,14 +254,14 @@ var HeaderRowComp = /** @class */ (function (_super) {
     HeaderRowComp.prototype.createHeaderComp = function (columnGroupChild) {
         var result;
         switch (this.type) {
-            case HeaderRowType.COLUMN:
-                result = new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.pinned);
-                break;
             case HeaderRowType.COLUMN_GROUP:
                 result = new headerGroupWrapperComp_1.HeaderGroupWrapperComp(columnGroupChild, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER:
                 result = new floatingFilterWrapper_1.FloatingFilterWrapper(columnGroupChild, this.pinned);
+                break;
+            default:
+                result = new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.pinned);
                 break;
         }
         this.createBean(result);

@@ -10,9 +10,9 @@ export declare class ColumnModelItem implements IEventEmitter {
     private readonly children;
     private expanded;
     private passesFilter;
-    constructor(displayName: string, columnOrGroup: Column | OriginalColumnGroup, dept: number, group?: boolean, expanded?: boolean);
+    constructor(displayName: string | null, columnOrGroup: Column | OriginalColumnGroup, dept: number, group?: boolean, expanded?: boolean);
     isGroup(): boolean;
-    getDisplayName(): string;
+    getDisplayName(): string | null;
     getColumnGroup(): OriginalColumnGroup;
     getColumn(): Column;
     getDept(): number;

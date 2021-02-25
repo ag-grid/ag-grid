@@ -1,6 +1,5 @@
 import { Bean } from "../context/context";
 import { GridPanel } from "../gridPanel/gridPanel";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
 
 @Bean('columnAnimationService')

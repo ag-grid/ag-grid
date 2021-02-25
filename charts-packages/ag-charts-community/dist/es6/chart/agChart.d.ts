@@ -14,6 +14,7 @@ declare type AgChartType<T> = T extends AgCartesianChartOptions ? CartesianChart
 export declare abstract class AgChart {
     static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T>;
     static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, container?: HTMLElement, data?: any[]): void;
+    static save(component: any): any;
     static createComponent: typeof create;
 }
 declare function create(options: any, path?: string, component?: any, theme?: ChartTheme): any;

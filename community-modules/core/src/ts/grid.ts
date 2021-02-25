@@ -88,7 +88,9 @@ import { HeaderNavigationService } from "./headerRendering/header/headerNavigati
 import { missing, exists } from "./utils/generic";
 import { assign, iterateObject } from "./utils/object";
 import { ColumnDefFactory } from "./columnController/columnDefFactory";
-import {RowCssClassCalculator} from "./rendering/row/rowCssClassCalculator";
+import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
+import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
+import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
 
 export interface GridParams {
     // used by Web Components
@@ -170,26 +172,26 @@ export class Grid {
         agStackComponentsRegistry.setupComponents(agStackComponents);
     }
 
-    private getRegisteredModules(params: GridParams): Module[] {
-        const passedViaConstructor: Module[] = params ? params.modules : null;
+    private getRegisteredModules(params?: GridParams): Module[] {
+        const passedViaConstructor: Module[] | undefined | null = params ? params.modules : null;
         const registered = ModuleRegistry.getRegisteredModules();
 
         const allModules: Module[] = [];
         const mapNames: { [name: string]: boolean; } = {};
 
         // adds to list and removes duplicates
-        function addModule(moduleBased: boolean, module: Module) {
-            function addIndividualModule(module: Module) {
-                if (!mapNames[module.moduleName]) {
-                    mapNames[module.moduleName] = true;
-                    allModules.push(module);
-                    ModuleRegistry.register(module, moduleBased);
+        function addModule(moduleBased: boolean, mod: Module) {
+            function addIndividualModule(currentModule: Module) {
+                if (!mapNames[currentModule.moduleName]) {
+                    mapNames[currentModule.moduleName] = true;
+                    allModules.push(currentModule);
+                    ModuleRegistry.register(currentModule, moduleBased);
                 }
             }
 
-            addIndividualModule(module);
-            if (module.dependantModules) {
-                module.dependantModules.forEach(addModule.bind(null, moduleBased));
+            addIndividualModule(mod);
+            if (mod.dependantModules) {
+                mod.dependantModules.forEach(addModule.bind(null, moduleBased));
             }
         }
 
@@ -216,7 +218,7 @@ export class Grid {
         });
     }
 
-    private createProvidedBeans(eGridDiv: HTMLElement, params: GridParams): any {
+    private createProvidedBeans(eGridDiv: HTMLElement, params?: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
@@ -268,7 +270,7 @@ export class Grid {
         return components;
     }
 
-    private createBeansList(registeredModules: Module[]): any[] {
+    private createBeansList(registeredModules: Module[]): any[] | undefined {
         const rowModelClass = this.getRowModelClass(registeredModules);
 
         if (!rowModelClass) { return; }
@@ -289,7 +291,7 @@ export class Grid {
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
-            RowCssClassCalculator
+            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);
@@ -326,8 +328,8 @@ export class Grid {
         const eventService: EventService = this.context.getBean('eventService');
         const readyEvent: GridReadyEvent = {
             type: Events.EVENT_GRID_READY,
-            api: gridOptions.api,
-            columnApi: gridOptions.columnApi
+            api: gridOptions.api!,
+            columnApi: gridOptions.columnApi!
         };
         eventService.dispatchEvent(readyEvent);
     }
@@ -370,6 +372,6 @@ export class Grid {
     }
 
     public destroy(): void {
-        this.gridOptions.api.destroy();
+        this.gridOptions.api!.destroy();
     }
 }

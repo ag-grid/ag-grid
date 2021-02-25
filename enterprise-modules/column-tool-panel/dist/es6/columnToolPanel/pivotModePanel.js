@@ -36,7 +36,7 @@ var PivotModePanel = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     };
     PivotModePanel.prototype.onBtPivotMode = function () {
-        var newValue = this.cbPivotMode.getValue();
+        var newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnController.isPivotMode()) {
             this.columnController.setPivotMode(newValue, "toolPanelUi");
             var api = this.gridOptionsWrapper.getApi();

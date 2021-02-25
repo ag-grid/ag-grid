@@ -18,6 +18,9 @@ var DateCompWrapper = /** @class */ (function () {
                 return;
             }
             _this.dateComp = dateComp;
+            if (!dateComp) {
+                return;
+            }
             eParent.appendChild(dateComp.getGui());
             if (dateComp.afterGuiAttached) {
                 dateComp.afterGuiAttached();

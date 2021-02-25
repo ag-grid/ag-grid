@@ -19,6 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Group } from "../../../scene/group";
 import { Selection } from "../../../scene/selection";
+import { SeriesTooltip } from "../series";
 import { PointerEvents } from "../../../scene/node";
 import { Path } from "../../../scene/shape/path";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
@@ -30,10 +31,25 @@ import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive } from "../../../util/observable";
 import { interpolate } from "../../../util/string";
+var AreaSeriesTooltip = /** @class */ (function (_super) {
+    __extends(AreaSeriesTooltip, _super);
+    function AreaSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate([
+        reactive('change')
+    ], AreaSeriesTooltip.prototype, "renderer", void 0);
+    __decorate([
+        reactive('change')
+    ], AreaSeriesTooltip.prototype, "format", void 0);
+    return AreaSeriesTooltip;
+}(SeriesTooltip));
+export { AreaSeriesTooltip };
 var AreaSeries = /** @class */ (function (_super) {
     __extends(AreaSeries, _super);
     function AreaSeries() {
         var _this = _super.call(this) || this;
+        _this.tooltip = new AreaSeriesTooltip();
         _this.areaGroup = _this.group.appendChild(new Group);
         _this.strokeGroup = _this.group.appendChild(new Group);
         _this.markerGroup = _this.group.appendChild(new Group);
@@ -446,7 +462,8 @@ var AreaSeries = /** @class */ (function (_super) {
         if (!xKey || !yKey) {
             return '';
         }
-        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltipFormat = _a.tooltipFormat, tooltipRenderer = _a.tooltipRenderer;
+        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltip = _a.tooltip;
+        var _b = tooltip.renderer, tooltipRenderer = _b === void 0 ? this.tooltipRenderer : _b, tooltipFormat = tooltip.format;
         var datum = nodeDatum.seriesDatum;
         var xValue = datum[xKey];
         var yValue = datum[yKey];

@@ -49,7 +49,7 @@ var CsvCreator = /** @class */ (function (_super) {
     };
     CsvCreator.prototype.createSerializingSession = function (params) {
         var _a = this, columnController = _a.columnController, valueService = _a.valueService, gridOptionsWrapper = _a.gridOptionsWrapper;
-        var processCellCallback = params.processCellCallback, processHeaderCallback = params.processHeaderCallback, processGroupHeaderCallback = params.processGroupHeaderCallback, processRowGroupCallback = params.processRowGroupCallback, suppressQuotes = params.suppressQuotes, columnSeparator = params.columnSeparator;
+        var _b = params, processCellCallback = _b.processCellCallback, processHeaderCallback = _b.processHeaderCallback, processGroupHeaderCallback = _b.processGroupHeaderCallback, processRowGroupCallback = _b.processRowGroupCallback, suppressQuotes = _b.suppressQuotes, columnSeparator = _b.columnSeparator;
         return new CsvSerializingSession({
             columnController: columnController,
             valueService: valueService,

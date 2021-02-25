@@ -13,6 +13,6 @@ export declare class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     showPicker(): AgList;
     addOptions(options: ListOption[]): this;
     addOption(option: ListOption): this;
-    setValue(value: string, silent?: boolean, fromPicker?: boolean): this;
+    setValue(value?: string | null, silent?: boolean, fromPicker?: boolean): this;
     protected destroy(): void;
 }

@@ -32,7 +32,7 @@ export declare class RowContainerComponent {
     private postConstruct;
     private checkDomOrder;
     getRowElement(compId: number): HTMLElement;
-    setHeight(height: number): void;
+    setHeight(height: number | null): void;
     flushRowTemplates(): void;
     appendRowTemplate(rowTemplate: string, callback: () => void): void;
     ensureDomOrder(eRow: HTMLElement): void;

@@ -9,7 +9,7 @@ export declare class DefaultDateComponent extends Component implements IDateComp
     constructor();
     destroy(): void;
     init(params: IDateParams): void;
-    getDate(): Date;
+    getDate(): Date | null;
     setDate(date: Date): void;
     setInputPlaceholder(placeholder: string): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;

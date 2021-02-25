@@ -29,7 +29,6 @@ var component_1 = require("../widgets/component");
 var context_1 = require("../context/context");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var events_1 = require("../events");
-var constants_1 = require("../constants/constants");
 var icon_1 = require("../utils/icon");
 var number_1 = require("../utils/number");
 var dom_1 = require("../utils/dom");
@@ -52,9 +51,6 @@ var PaginationComp = /** @class */ (function (_super) {
         this.btPrevious.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper));
         this.btNext.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper));
         this.btLast.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper));
-        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-            this.serverSideRowModel = this.rowModel;
-        }
         var isPaging = this.gridOptionsWrapper.isPagination();
         var paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
         if (!paginationPanelEnabled) {
@@ -169,7 +165,7 @@ var PaginationComp = /** @class */ (function (_super) {
             }
         }
         this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
-        if (this.serverSideRowModel && this.serverSideRowModel.isLoading()) {
+        if (this.rowNodeBlockLoader.isLoading()) {
             this.lbLastRowOnPage.innerHTML = '?';
         }
         else {
@@ -202,6 +198,9 @@ var PaginationComp = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('rowModel')
     ], PaginationComp.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('rowNodeBlockLoader')
+    ], PaginationComp.prototype, "rowNodeBlockLoader", void 0);
     __decorate([
         componentAnnotations_1.RefSelector('btFirst')
     ], PaginationComp.prototype, "btFirst", void 0);

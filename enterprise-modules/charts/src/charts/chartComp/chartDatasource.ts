@@ -18,7 +18,7 @@ import {
     RowNodeSorter,
     SortController,
 } from "@ag-grid-community/core";
-import {ChartDataModel, ColState} from "./chartDataModel";
+import { ChartDataModel, ColState } from "./chartDataModel";
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
@@ -115,7 +115,7 @@ export class ChartDatasource extends BeanStub {
                         const labels = ChartDatasource.getGroupLabels(rowNode, valueString);
 
                         data[colId] = {
-                            labels, toString: function () {
+                            labels, toString: function() {
                                 return this.labels.filter((l: string) => !!l).reverse().join(' - ');
                             }
                         };
@@ -220,9 +220,9 @@ export class ChartDatasource extends BeanStub {
                     if (!groupItem) {
                         groupItem = { __children: [] };
 
-                        dimensionCols.forEach(col => {
-                            const colId = col.colId;
-                            groupItem[colId] = data[colId];
+                        dimensionCols.forEach(dimCol => {
+                            const dimColId = dimCol.colId;
+                            groupItem[dimColId] = data[dimColId];
                         });
 
                         currentMap[key] = groupItem;
@@ -280,24 +280,24 @@ export class ChartDatasource extends BeanStub {
     }
 
     private updatePivotKeysForSSRM() {
-        let secondaryColumns = this.columnController.getSecondaryColumns();
+        const secondaryColumns = this.columnController.getSecondaryColumns();
 
-        if (!secondaryColumns) return;
+        if (!secondaryColumns) { return; }
 
         // we don't know what the application will use for the pivot key separator (i.e. '_' or '|' ) as the
         // secondary columns are provided to grid by the application via columnApi.setSecondaryColumns()
-        let pivotKeySeparator = this.extractPivotKeySeparator(secondaryColumns);
+        const pivotKeySeparator = this.extractPivotKeySeparator(secondaryColumns);
 
         // 'pivotKeys' is not used by the SSRM for pivoting so it is safe to reuse this colDef property, this way
         // the same logic can be used for CSRM and SSRM to extract legend names in extractRowsFromGridRowModel()
         secondaryColumns.forEach(col => {
             const keys = col.getColId().split(pivotKeySeparator);
-            col.getColDef()['pivotKeys'] = keys.slice(0, keys.length - 1);
+            col.getColDef().pivotKeys = keys.slice(0, keys.length - 1);
         });
     }
 
     private extractPivotKeySeparator(secondaryColumns: any) {
-        if (secondaryColumns.length === 0) return "";
+        if (secondaryColumns.length === 0) { return ""; }
 
         const extractSeparator = (columnGroup: ColumnGroup, childId: string): string => {
             const groupId = columnGroup.getGroupId();
@@ -306,16 +306,16 @@ export class ChartDatasource extends BeanStub {
                 return childId.split(groupId)[1][0];
             }
             return extractSeparator(columnGroup.getParent(), groupId);
-        }
+        };
 
         const firstSecondaryCol = secondaryColumns[0];
         return extractSeparator(firstSecondaryCol.getParent(), firstSecondaryCol.getColId());
     }
 
-    private static getGroupLabels(rowNode: RowNode, initialLabel: string): string[] {
+    private static getGroupLabels(rowNode: RowNode | null, initialLabel: string): string[] {
         const labels = [initialLabel];
         while (rowNode && rowNode.level !== 0) {
-            rowNode = rowNode.parent!;
+            rowNode = rowNode.parent;
             if (rowNode) {
                 labels.push(rowNode.key);
             }

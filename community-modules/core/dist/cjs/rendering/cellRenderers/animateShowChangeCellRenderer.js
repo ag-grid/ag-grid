@@ -79,7 +79,7 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
     AnimateShowChangeCellRenderer.prototype.refresh = function (params) {
         var value = params.value;
         if (value === this.lastValue) {
-            return;
+            return false;
         }
         if (generic_1.exists(params.valueFormatted)) {
             this.eValue.innerHTML = params.valueFormatted;
@@ -93,7 +93,7 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
         // with regards processingFilterChange
         if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
-            return;
+            return false;
         }
         if (typeof value === 'number' && typeof this.lastValue === 'number') {
             var delta = value - this.lastValue;

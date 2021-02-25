@@ -43,7 +43,8 @@ var FilterService = /** @class */ (function (_super) {
                         var passBecauseChildren = childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
                         // both leaf level nodes and tree data nodes have data. these get added if
                         // the data passes the filter
-                        var passBecauseDataPasses = childNode.data && _this.filterManager.doesRowPassFilter(childNode);
+                        var passBecauseDataPasses = childNode.data
+                            && _this.filterManager.doesRowPassFilter({ rowNode: childNode });
                         // note - tree data nodes pass either if a) they pass themselves or b) any children of that node pass
                         return passBecauseChildren || passBecauseDataPasses;
                     });
@@ -67,7 +68,8 @@ var FilterService = /** @class */ (function (_super) {
                     for (var i = 0; i < rowNode.childrenAfterGroup.length; i++) {
                         var childNode = rowNode.childrenAfterGroup[i];
                         // first check if current node passes filter before invoking child nodes
-                        var foundInParent = alreadyFoundInParent || _this.filterManager.doesRowPassFilter(childNode);
+                        var foundInParent = alreadyFoundInParent
+                            || _this.filterManager.doesRowPassFilter({ rowNode: childNode });
                         if (childNode.childrenAfterGroup) {
                             treeDataDepthFirstFilter_1(rowNode.childrenAfterGroup[i], foundInParent);
                         }

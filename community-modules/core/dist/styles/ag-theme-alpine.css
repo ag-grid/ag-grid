@@ -110,7 +110,7 @@
     content: "\f130"; }
   .ag-theme-alpine .ag-icon-row-drag:before {
     content: "\f114"; }
-  .ag-theme-alpine .ag-right-arrow:before {
+  .ag-theme-alpine .ag-left-arrow:before {
     content: "\f117"; }
   .ag-theme-alpine .ag-right-arrow:before {
     content: "\f126"; }
@@ -794,8 +794,6 @@
     margin-left: 28px; }
   .ag-theme-alpine .ag-rtl .ag-row-group-leaf-indent {
     margin-right: 28px; }
-  .ag-theme-alpine .ag-cell {
-    -webkit-font-smoothing: subpixel-antialiased; }
   .ag-theme-alpine .ag-value-change-delta {
     padding-right: 2px; }
   .ag-theme-alpine .ag-value-change-delta-up {
@@ -872,13 +870,13 @@
     border: 1px solid transparent;
     line-height: 40px;
     padding-left: 17px;
-    padding-right: 17px; }
+    padding-right: 17px;
+    -webkit-font-smoothing: subpixel-antialiased; }
   .ag-theme-alpine .ag-row > .ag-cell-wrapper {
     padding-left: 17px;
     padding-right: 17px; }
   .ag-theme-alpine .ag-row-dragging {
-    cursor: move; }
-  .ag-theme-alpine .ag-row-dragging {
+    cursor: move;
     opacity: 0.5; }
   .ag-theme-alpine .ag-cell-inline-editing {
     border: solid 1px;
@@ -1495,7 +1493,8 @@
     border-bottom-color: var(--ag-border-color, #babfc7); }
   .ag-theme-alpine .ag-header-row {
     color: #181d1f;
-    color: var(--ag-header-foreground-color, var(--ag-secondary-foreground-color, var(--ag-foreground-color, #181d1f))); }
+    color: var(--ag-header-foreground-color, var(--ag-secondary-foreground-color, var(--ag-foreground-color, #181d1f)));
+    height: 48px; }
   .ag-theme-alpine .ag-pinned-right-header {
     border-left: solid 1px;
     border-left-color: #babfc7;
@@ -1504,8 +1503,6 @@
     border-right: solid 1px;
     border-right-color: #babfc7;
     border-right-color: var(--ag-border-color, #babfc7); }
-  .ag-theme-alpine .ag-header-row {
-    height: 48px; }
   .ag-theme-alpine .ag-ltr .ag-header-cell:not(.ag-right-aligned-header) .ag-header-label-icon {
     margin-left: 6px; }
   .ag-theme-alpine .ag-rtl .ag-header-cell:not(.ag-right-aligned-header) .ag-header-label-icon {
@@ -1729,8 +1726,6 @@
   .ag-theme-alpine .ag-column-drop-vertical-icon {
     margin-left: 6px;
     margin-right: 6px; }
-  .ag-theme-alpine .ag-column-drop-vertical-list {
-    position: relative; }
   .ag-theme-alpine .ag-column-drop-vertical-empty-message {
     position: absolute;
     top: 0;
@@ -2160,7 +2155,8 @@
   .ag-theme-alpine .ag-menu-header {
     background-color: #f8f8f8;
     background-color: var(--ag-control-panel-background-color, #f8f8f8);
-    padding-top: 1px; }
+    padding-top: 1px;
+    min-width: 240px; }
   .ag-theme-alpine .ag-tabs-header {
     border-bottom: solid 1px;
     border-bottom-color: #babfc7;
@@ -2240,8 +2236,6 @@
       background-color: var(--ag-input-disabled-background-color, #f1f2f4);
       border-color: rgba(186, 191, 199, 0.3);
       border-color: var(--ag-input-disabled-border-color, rgba(186, 191, 199, 0.3)); }
-  .ag-theme-alpine .ag-menu-header {
-    min-width: 240px; }
   .ag-theme-alpine .ag-column-drop-vertical {
     min-height: 75px;
     max-height: 175px; }

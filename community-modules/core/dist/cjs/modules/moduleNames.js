@@ -16,7 +16,6 @@ var ModuleNames;
     ModuleNames["InfiniteRowModelModule"] = "@ag-grid-community/infinite-row-model";
     ModuleNames["ClientSideRowModelModule"] = "@ag-grid-community/client-side-row-model";
     ModuleNames["CsvExportModule"] = "@ag-grid-community/csv-export";
-    ModuleNames["RowNodeCache"] = "@ag-grid-community/row-node-cache";
     // enterprise core - users never import on this, but other enterprise modules do
     ModuleNames["EnterpriseCoreModule"] = "@ag-grid-enterprise/core";
     // when not using modules, user references this

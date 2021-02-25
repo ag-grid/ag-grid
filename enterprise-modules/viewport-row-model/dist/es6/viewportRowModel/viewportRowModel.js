@@ -41,7 +41,7 @@ var ViewportRowModel = /** @class */ (function (_super) {
             this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource());
         }
     };
-    ViewportRowModel.prototype.isLastRowFound = function () {
+    ViewportRowModel.prototype.isLastRowIndexKnown = function () {
         return true;
     };
     ViewportRowModel.prototype.destroyDatasource = function () {
@@ -149,9 +149,6 @@ var ViewportRowModel = /** @class */ (function (_super) {
     };
     ViewportRowModel.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
         return topLevelIndex;
-    };
-    ViewportRowModel.prototype.getCurrentPageHeight = function () {
-        return this.rowCount * this.rowHeight;
     };
     ViewportRowModel.prototype.isEmpty = function () {
         return this.rowCount > 0;

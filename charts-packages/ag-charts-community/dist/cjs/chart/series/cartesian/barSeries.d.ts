@@ -1,6 +1,6 @@
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { DropShadow } from "../../../scene/dropShadow";
-import { HighlightStyle, SeriesNodeDatum, CartesianTooltipRendererParams as BarTooltipRendererParams } from "../series";
+import { HighlightStyle, SeriesNodeDatum, CartesianTooltipRendererParams as BarTooltipRendererParams, SeriesTooltip } from "../series";
 import { Label } from "../../label";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
@@ -56,6 +56,9 @@ export interface BarSeriesFormat {
     stroke?: string;
     strokeWidth?: number;
 }
+export declare class BarSeriesTooltip extends SeriesTooltip {
+    renderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
+}
 export declare class BarSeries extends CartesianSeries {
     static className: string;
     static type: string;
@@ -72,7 +75,11 @@ export declare class BarSeries extends CartesianSeries {
      * in the {@link yKeys} setter.
      */
     private readonly seriesItemEnabled;
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
+    tooltip: BarSeriesTooltip;
     flipXY: boolean;
     fills: string[];
     strokes: string[];

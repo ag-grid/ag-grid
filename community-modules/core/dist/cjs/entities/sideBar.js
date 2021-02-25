@@ -53,6 +53,9 @@ var SideBarDefParser = /** @class */ (function () {
     };
     SideBarDefParser.parseComponents = function (from) {
         var result = [];
+        if (!from) {
+            return result;
+        }
         from.forEach(function (it) {
             var toAdd = null;
             if (typeof it === 'string') {

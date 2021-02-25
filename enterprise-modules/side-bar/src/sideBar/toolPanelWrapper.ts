@@ -33,8 +33,8 @@ export class ToolPanelWrapper extends Component {
         this.toolPanelId = toolPanelDef.id;
 
         const params: IToolPanelParams = {
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!
         };
 
         const componentPromise: AgPromise<IToolPanelComp> | null = this.userComponentFactory.newToolPanelComponent(
@@ -59,7 +59,7 @@ export class ToolPanelWrapper extends Component {
         this.toolPanelCompInstance = compInstance;
 
         this.appendChild(compInstance.getGui());
-        this.addDestroyFunc(()=> {
+        this.addDestroyFunc(() => {
             this.destroyBean(compInstance);
         });
     }

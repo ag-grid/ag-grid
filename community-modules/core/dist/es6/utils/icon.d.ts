@@ -15,4 +15,4 @@ export declare const iconNameClassMap: {
  * @returns {HTMLElement}
  */
 export declare function createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement;
-export declare function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column, forceCreate?: boolean): HTMLElement;
+export declare function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null, forceCreate?: boolean): HTMLElement | undefined;

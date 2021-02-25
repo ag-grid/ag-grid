@@ -19,7 +19,6 @@ export declare class ChartSettingsPanel extends Component {
     private resetPalettes;
     private addCardLink;
     private getPrev;
-    private prev;
     private getNext;
     private setActivePalette;
     private destroyMiniCharts;

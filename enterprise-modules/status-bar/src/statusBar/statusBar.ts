@@ -6,7 +6,6 @@ import {
     PostConstruct,
     AgPromise,
     RefSelector,
-    _,
     IStatusPanelComp
 } from '@ag-grid-community/core';
 import { StatusBarService } from "./statusBarService";
@@ -56,12 +55,12 @@ export class StatusBar extends Component {
 
         statusBarComponents.forEach(componentConfig => {
             const params = {
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext()
             };
 
-            const promise = this.userComponentFactory.newStatusPanelComponent(componentConfig, params);
+            const promise = this.userComponentFactory.newStatusPanelComponent(componentConfig, params)!;
 
             componentDetails.push({
                 // default to the component name if no key supplied

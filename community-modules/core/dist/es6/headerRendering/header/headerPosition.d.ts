@@ -11,6 +11,6 @@ export interface HeaderPosition {
 export declare class HeaderPositionUtils extends BeanStub {
     private columnController;
     private headerNavigationService;
-    findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition;
-    findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition;
+    findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined;
+    findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined;
 }

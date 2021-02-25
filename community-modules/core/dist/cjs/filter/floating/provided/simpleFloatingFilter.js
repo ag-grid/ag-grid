@@ -114,9 +114,8 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         return customFilterOption && customFilterOption.hideFilterInput;
     };
     SimpleFloatingFilter.prototype.isTypeEditable = function (type) {
-        return !this.doesFilterHaveHiddenInput(type) &&
-            type
-            && type !== simpleFilter_1.SimpleFilter.IN_RANGE
+        return !!type && !this.doesFilterHaveHiddenInput(type) &&
+            type !== simpleFilter_1.SimpleFilter.IN_RANGE
             && type !== simpleFilter_1.SimpleFilter.EMPTY;
     };
     return SimpleFloatingFilter;

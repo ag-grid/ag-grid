@@ -50,7 +50,7 @@ var ColumnHoverService = /** @class */ (function (_super) {
         this.eventService.dispatchEvent(event);
     };
     ColumnHoverService.prototype.isHovered = function (column) {
-        return this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
+        return !!this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
     };
     __decorate([
         Autowired('columnApi')

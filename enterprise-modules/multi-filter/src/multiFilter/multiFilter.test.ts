@@ -33,6 +33,7 @@ let filter2: jest.Mocked<IFilterComp>;
 
 function createFilter(filterParams: any = {}): MultiFilter {
     const baseFilterParams: IProvidedFilterParams = {
+        // @ts-ignore
         api: null,
         column,
         colDef,
@@ -138,6 +139,7 @@ describe('doesFilterPass', () => {
 
     it('returns true if no filters are active', () => {
         const multiFilter = createFilter();
+        // @ts-ignore
         const params: IDoesFilterPassParams = { node: null, data: null };
 
         expect(multiFilter.doesFilterPass(params)).toBe(true);
@@ -145,6 +147,7 @@ describe('doesFilterPass', () => {
 
     it('returns true if all active filters pass', () => {
         const multiFilter = createFilter();
+        // @ts-ignore
         const params: IDoesFilterPassParams = { node: null, data: null };
 
         filter1.isFilterActive.mockReturnValue(true);
@@ -159,6 +162,7 @@ describe('doesFilterPass', () => {
     it.each([[false, false], [true, false], [false, true]])
         ('returns false if any active filters do not pass', (filter1passes, filter2passes) => {
             const multiFilter = createFilter();
+            // @ts-ignore
             const params: IDoesFilterPassParams = { node: null, data: null };
 
             filter1.isFilterActive.mockReturnValue(true);
@@ -642,6 +646,7 @@ describe('onFilterChanged', () => {
 
         const { filterChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[index][1];
 
+        // @ts-ignore
         filterChangedCallback();
 
         expect(multiFilterChangedCallback).toHaveBeenCalledTimes(1);
@@ -659,6 +664,7 @@ describe('onFilterChanged', () => {
         const params = userComponentFactory.newFilterComponent.mock.calls[0][1];
         const { filterChangedCallback } = params;
 
+        // @ts-ignore
         filterChangedCallback();
 
         expect(filter1.onAnyFilterChanged).not.toHaveBeenCalled();
@@ -690,8 +696,11 @@ describe('getLastActiveFilterIndex', () => {
         filter1.isFilterActive.mockReturnValue(true);
         filter2.isFilterActive.mockReturnValue(true);
 
+        // @ts-ignore
         filter1ChangedCallback();
+        // @ts-ignore
         filter2ChangedCallback();
+        // @ts-ignore
         filter1ChangedCallback();
 
         expect(filter.getLastActiveFilterIndex()).toBe(0);
@@ -706,11 +715,14 @@ describe('getLastActiveFilterIndex', () => {
         filter1.isFilterActive.mockReturnValue(true);
         filter2.isFilterActive.mockReturnValue(true);
 
+        // @ts-ignore
         filter2ChangedCallback();
+        // @ts-ignore
         filter1ChangedCallback();
 
         filter1.isFilterActive.mockReturnValue(false);
 
+        // @ts-ignore
         filter1ChangedCallback();
 
         expect(filter.getLastActiveFilterIndex()).toBe(1);

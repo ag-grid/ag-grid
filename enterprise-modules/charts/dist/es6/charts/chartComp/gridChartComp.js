@@ -142,7 +142,10 @@ var GridChartComp = /** @class */ (function (_super) {
             return;
         }
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
-        _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
+        var canvas = this.eChart.querySelector('canvas');
+        if (canvas) {
+            _.addCssClass(canvas, 'ag-charts-canvas');
+        }
         this.chartController.setChartProxy(this.chartProxy);
     };
     GridChartComp.prototype.getChartThemeName = function () {
@@ -205,15 +208,13 @@ var GridChartComp = /** @class */ (function (_super) {
         var maxWidth = _.getAbsoluteWidth(popupParent) * 0.75;
         var maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
         var ratio = 0.553;
-        {
-            var _a = this.chartProxy.getChartOptions(), width_1 = _a.width, height_1 = _a.height;
-            if (width_1 && height_1) {
-                return { width: width_1, height: height_1 };
-            }
+        var _a = this.chartProxy.getChartOptions(), width = _a.width, height = _a.height;
+        if (width && height) {
+            return { width: width, height: height };
         }
         var chart = this.chartProxy.getChart();
-        var width = this.params.insideDialog ? 850 : chart.width;
-        var height = this.params.insideDialog ? 470 : chart.height;
+        width = this.params.insideDialog ? 850 : chart.width;
+        height = this.params.insideDialog ? 470 : chart.height;
         if (width > maxWidth || height > maxHeight) {
             width = Math.min(width, maxWidth);
             height = Math.round(width * ratio);

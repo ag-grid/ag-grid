@@ -253,10 +253,8 @@ var GroupStage = /** @class */ (function (_super) {
                 // if not linked, then group was already removed
                 return false;
             }
-            else {
-                // if still not removed, then we remove if this group is empty
-                return rowNode.isEmptyRowGroupNode();
-            }
+            // if still not removed, then we remove if this group is empty
+            return !!rowNode.isEmptyRowGroupNode();
         };
         var _loop_1 = function () {
             checkAgain = false;

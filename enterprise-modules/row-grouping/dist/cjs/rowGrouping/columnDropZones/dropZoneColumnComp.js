@@ -107,7 +107,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         if (this.valueColumn) {
             var aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
-            var aggFuncString = (typeof aggFunc === 'string') ? aggFunc : 'agg';
+            var aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
             var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             var aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
             displayValue = aggFuncStringTranslated + "(" + this.displayName + ")";

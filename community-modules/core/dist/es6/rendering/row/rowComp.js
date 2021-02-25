@@ -207,7 +207,7 @@ var RowComp = /** @class */ (function (_super) {
         // and then all the callbacks are called. this is NOT done in an animation frame.
         rowContainerComp.appendRowTemplate(rowTemplate, function () {
             var eRow = rowContainerComp.getRowElement(_this.getCompId());
-            _this.refreshAriaLabel(eRow, _this.rowNode.isSelected());
+            _this.refreshAriaLabel(eRow, !!_this.rowNode.isSelected());
             _this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow);
             if (useAnimationsFrameForCreate) {

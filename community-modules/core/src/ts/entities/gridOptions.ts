@@ -89,7 +89,8 @@ import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
-import {AgChartOptions, AgChartTheme, AgChartThemeOptions, AgChartThemeOverrides} from "../interfaces/iAgChartOptions";
+import { AgChartOptions, AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
+import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/header/headerPosition";
 
 export interface GridOptions {
@@ -149,7 +150,7 @@ export interface GridOptions {
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
 
-    /** @deprecated Allows user to suppress certain keyboard events */
+    /** Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
     stopEditingWhenGridLosesFocus?: boolean;
@@ -333,7 +334,7 @@ export interface GridOptions {
     rowData?: any[];
     pinnedTopRowData?: any[];
     pinnedBottomRowData?: any[];
-    sideBar?: SideBarDef | string | boolean;
+    sideBar?: SideBarDef | string | boolean | null;
     columnDefs?: (ColDef | ColGroupDef)[];
     columnTypes?: { [key: string]: ColDef; };
     datasource?: IDatasource;
@@ -413,6 +414,7 @@ export interface GridOptions {
     getDataPath?: GetDataPath;
     treeData?: boolean;
     isServerSideGroup?: IsServerSideGroup;
+    isApplyServerSideTransaction?: IsApplyServerSideTransaction;
     getServerSideGroupKey?: GetServerSideGroupKey;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
@@ -729,24 +731,24 @@ export interface ProcessRowParams {
 
 export interface NavigateToNextHeaderParams {
     key: string;
-    previousHeaderPosition: HeaderPosition;
-    nextHeaderPosition: HeaderPosition;
+    previousHeaderPosition: HeaderPosition | null;
+    nextHeaderPosition: HeaderPosition | null;
     event: KeyboardEvent;
     headerRowCount: number;
 }
 
 export interface TabToNextHeaderParams {
     backwards: boolean;
-    previousHeaderPosition: HeaderPosition;
-    nextHeaderPosition: HeaderPosition;
+    previousHeaderPosition: HeaderPosition | null;
+    nextHeaderPosition: HeaderPosition | null;
     headerRowCount: number;
 }
 
 export interface NavigateToNextCellParams {
     key: number;
     previousCellPosition: CellPosition;
-    nextCellPosition: CellPosition;
-    event: KeyboardEvent;
+    nextCellPosition: CellPosition | null;
+    event: KeyboardEvent | null;
 }
 
 export interface TabToNextCellParams {

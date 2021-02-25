@@ -95,6 +95,9 @@ var CellNavigationService = /** @class */ (function (_super) {
                 rowNode = this.rowModel.getRow(gridCell.rowIndex);
                 break;
         }
+        if (!rowNode) {
+            return false;
+        }
         var suppressNavigable = column.isSuppressNavigable(rowNode);
         return !suppressNavigable;
     };

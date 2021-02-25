@@ -23,7 +23,7 @@ export declare class SelectionController extends BeanStub {
     getNodeForIdIfSelected(id: number): RowNode | undefined;
     clearOtherNodes(rowNodeToKeepSelected: RowNode): number;
     private onRowSelected;
-    syncInRowNode(rowNode: RowNode, oldNode: RowNode): void;
+    syncInRowNode(rowNode: RowNode, oldNode: RowNode | null): void;
     private syncInOldRowNode;
     private syncInNewRowNode;
     reset(): void;

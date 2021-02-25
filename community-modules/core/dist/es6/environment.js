@@ -92,20 +92,21 @@ var Environment = /** @class */ (function (_super) {
         if (!CALCULATED_SIZES[theme]) {
             CALCULATED_SIZES[theme] = {};
         }
-        if (CALCULATED_SIZES[theme][key]) {
-            return CALCULATED_SIZES[theme][key];
+        var size = CALCULATED_SIZES[theme][key];
+        if (size != null) {
+            return size;
         }
         if (SASS_PROPERTY_BUILDER[key]) {
             var classList = SASS_PROPERTY_BUILDER[key];
             var div = document.createElement('div');
             addCssClass(div, theme);
             div.style.position = 'absolute';
-            var el = classList.reduce(function (el, currentClass) {
-                var div = document.createElement('div');
-                div.style.position = 'static';
-                addCssClass(div, currentClass);
-                el.appendChild(div);
-                return div;
+            var el = classList.reduce(function (prevEl, currentClass) {
+                var currentDiv = document.createElement('div');
+                currentDiv.style.position = 'static';
+                addCssClass(currentDiv, currentClass);
+                prevEl.appendChild(currentDiv);
+                return currentDiv;
             }, div);
             if (document.body) {
                 document.body.appendChild(div);
@@ -128,11 +129,11 @@ var Environment = /** @class */ (function (_super) {
     Environment.prototype.getTheme = function () {
         var reg = /\bag-(material|(?:theme-([\w\-]*)))\b/;
         var el = this.eGridDiv;
-        var themeMatch;
+        var themeMatch = null;
         while (el) {
             themeMatch = reg.exec(el.className);
             if (!themeMatch) {
-                el = el.parentElement;
+                el = el.parentElement || undefined;
             }
             else {
                 break;

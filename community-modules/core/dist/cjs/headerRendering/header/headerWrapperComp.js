@@ -219,7 +219,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         var _this = this;
         var eGui = this.getGui();
         var updateSortableCssClass = function () {
-            dom_1.addOrRemoveCssClass(eGui, 'ag-header-cell-sortable', _this.sortable);
+            dom_1.addOrRemoveCssClass(eGui, 'ag-header-cell-sortable', !!_this.sortable);
         };
         var updateAriaSort = function () {
             if (_this.sortable) {
@@ -301,7 +301,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         var colCanMove = !isSuppressMovableColumns && !colDef.suppressMovable && !colDef.lockPosition;
         // we should still be allowed drag the column, even if it can't be moved, if the column
         // can be dragged to a rowGroup or pivot drop zone
-        return colCanMove || colDef.enableRowGroup || colDef.enablePivot;
+        return !!colCanMove || !!colDef.enableRowGroup || !!colDef.enablePivot;
     };
     HeaderWrapperComp.prototype.attachDraggingToHeaderComp = function () {
         var _this = this;

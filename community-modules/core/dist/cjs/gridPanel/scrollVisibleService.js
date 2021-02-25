@@ -56,17 +56,11 @@ var ScrollVisibleService = /** @class */ (function (_super) {
         return this.verticalScrollShowing;
     };
     __decorate([
-        context_1.Autowired('columnController')
-    ], ScrollVisibleService.prototype, "columnController", void 0);
-    __decorate([
         context_1.Autowired('columnApi')
     ], ScrollVisibleService.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi')
     ], ScrollVisibleService.prototype, "gridApi", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], ScrollVisibleService.prototype, "gridOptionsWrapper", void 0);
     ScrollVisibleService = __decorate([
         context_1.Bean('scrollVisibleService')
     ], ScrollVisibleService);

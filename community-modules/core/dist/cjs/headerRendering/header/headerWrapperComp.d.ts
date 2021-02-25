@@ -21,7 +21,7 @@ export declare class HeaderWrapperComp extends AbstractHeaderWrapper {
     private eResize;
     private cbSelectAll;
     protected readonly column: Column;
-    protected readonly pinned: string;
+    protected readonly pinned: string | null;
     private headerComp;
     private headerCompGui;
     private headerCompVersion;
@@ -36,7 +36,7 @@ export declare class HeaderWrapperComp extends AbstractHeaderWrapper {
     private draggable;
     private colDefHeaderComponent?;
     private colDefHeaderComponentFramework?;
-    constructor(column: Column, pinned: string);
+    constructor(column: Column, pinned: string | null);
     protected postConstruct(): void;
     private onColumnRowGroupChanged;
     private onColumnPivotChanged;

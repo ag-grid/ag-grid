@@ -91,6 +91,8 @@ var generic_1 = require("./utils/generic");
 var object_1 = require("./utils/object");
 var columnDefFactory_1 = require("./columnController/columnDefFactory");
 var rowCssClassCalculator_1 = require("./rendering/row/rowCssClassCalculator");
+var rowNodeBlockLoader_1 = require("./rowNodeCache/rowNodeBlockLoader");
+var rowNodeSorter_1 = require("./rowNodes/rowNodeSorter");
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -138,17 +140,17 @@ var Grid = /** @class */ (function () {
         var allModules = [];
         var mapNames = {};
         // adds to list and removes duplicates
-        function addModule(moduleBased, module) {
-            function addIndividualModule(module) {
-                if (!mapNames[module.moduleName]) {
-                    mapNames[module.moduleName] = true;
-                    allModules.push(module);
-                    moduleRegistry_1.ModuleRegistry.register(module, moduleBased);
+        function addModule(moduleBased, mod) {
+            function addIndividualModule(currentModule) {
+                if (!mapNames[currentModule.moduleName]) {
+                    mapNames[currentModule.moduleName] = true;
+                    allModules.push(currentModule);
+                    moduleRegistry_1.ModuleRegistry.register(currentModule, moduleBased);
                 }
             }
-            addIndividualModule(module);
-            if (module.dependantModules) {
-                module.dependantModules.forEach(addModule.bind(null, moduleBased));
+            addIndividualModule(mod);
+            if (mod.dependantModules) {
+                mod.dependantModules.forEach(addModule.bind(null, moduleBased));
             }
         }
         if (passedViaConstructor) {
@@ -230,7 +232,7 @@ var Grid = /** @class */ (function () {
             stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService, sortController_1.SortController, columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService,
             selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService, changeDetectionService_1.ChangeDetectionService, animationFrameService_1.AnimationFrameService,
             detailRowCompCache_1.DetailRowCompCache, undoRedoService_1.UndoRedoService, agStackComponentsRegistry_1.AgStackComponentsRegistry, columnDefFactory_1.ColumnDefFactory,
-            rowCssClassCalculator_1.RowCssClassCalculator
+            rowCssClassCalculator_1.RowCssClassCalculator, rowNodeBlockLoader_1.RowNodeBlockLoader, rowNodeSorter_1.RowNodeSorter
         ];
         var moduleBeans = this.extractModuleEntity(registeredModules, function (module) { return module.beans ? module.beans : []; });
         beans.push.apply(beans, moduleBeans);

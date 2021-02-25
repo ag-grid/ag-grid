@@ -35,7 +35,8 @@ var keyCode_1 = require("../constants/keyCode");
 var AgPickerField = /** @class */ (function (_super) {
     __extends(AgPickerField, _super);
     function AgPickerField(config, className, pickerIcon, popupRole) {
-        var _this = _super.call(this, config, /* html */ "<div class=\"ag-picker-field\" role=\"presentation\">\n                <div ref=\"eLabel\"></div>\n                <div ref=\"eWrapper\"\n                    class=\"ag-wrapper ag-picker-field-wrapper\"\n                    tabIndex=\"-1\"\n                    " + (popupRole ? "aria-haspopup=\"" + popupRole + "\"" : '') + ">\n                    <div ref=\"eDisplayField\" class=\"ag-picker-field-display\"></div>\n                    <div ref=\"eIcon\" class=\"ag-picker-field-icon\" aria-hidden=\"true\"></div>\n                </div>\n            </div>", className) || this;
+        var _this = _super.call(this, config, 
+        /* html */ "<div class=\"ag-picker-field\" role=\"presentation\">\n                <div ref=\"eLabel\"></div>\n                <div ref=\"eWrapper\"\n                    class=\"ag-wrapper ag-picker-field-wrapper\"\n                    tabIndex=\"-1\"\n                    " + (popupRole ? "aria-haspopup=\"" + popupRole + "\"" : '') + "\n                >\n                    <div ref=\"eDisplayField\" class=\"ag-picker-field-display\"></div>\n                    <div ref=\"eIcon\" class=\"ag-picker-field-icon\" aria-hidden=\"true\"></div>\n                </div>\n            </div>", className) || this;
         _this.pickerIcon = pickerIcon;
         _this.isPickerDisplayed = false;
         _this.isDestroyingPicker = false;
@@ -85,7 +86,10 @@ var AgPickerField = /** @class */ (function (_super) {
         this.addManagedListener(this.eWrapper, 'click', clickHandler);
         this.addManagedListener(this.eLabel, 'click', clickHandler);
         if (this.pickerIcon) {
-            this.eIcon.appendChild(icon_1.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper));
+            var icon = icon_1.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper);
+            if (icon) {
+                this.eIcon.appendChild(icon);
+            }
         }
     };
     AgPickerField.prototype.refreshLabel = function () {

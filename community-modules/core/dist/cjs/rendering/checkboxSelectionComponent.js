@@ -124,7 +124,7 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     CheckboxSelectionComponent.prototype.checkboxCallbackExists = function () {
         // column will be missing if groupUseEntireRow=true
         var colDef = this.column ? this.column.getColDef() : null;
-        return colDef && typeof colDef.checkboxSelection === 'function';
+        return !!colDef && typeof colDef.checkboxSelection === 'function';
     };
     __decorate([
         componentAnnotations_1.RefSelector('eCheckbox')

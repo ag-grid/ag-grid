@@ -806,8 +806,8 @@ var GridPanel = /** @class */ (function (_super) {
         var colToSmallForViewport = viewportWidth < column.getActualWidth();
         var alignColToLeft = viewportScrolledPastCol || colToSmallForViewport;
         var alignColToRight = viewportScrolledBeforeCol;
-        var newScrollPosition = this.getCenterViewportScrollLeft();
         if (alignColToLeft || alignColToRight) {
+            var newScrollPosition = void 0;
             if (this.enableRtl) {
                 newScrollPosition = alignColToLeft ? (bodyWidth - viewportWidth - colLeftPixel) : (bodyWidth - colRightPixel);
             }

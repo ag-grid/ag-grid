@@ -68,6 +68,9 @@ function traverseNodesWithKey(nodes, callback) {
     var keyParts = [];
     recursiveSearchNodes(nodes);
     function recursiveSearchNodes(currentNodes) {
+        if (!currentNodes) {
+            return;
+        }
         currentNodes.forEach(function (node) {
             // also checking for children for tree data
             if (node.group || node.hasChildren()) {

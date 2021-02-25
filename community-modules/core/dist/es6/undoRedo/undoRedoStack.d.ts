@@ -10,7 +10,7 @@ export interface CellValueChange {
     newValue: any;
 }
 export interface LastFocusedCell {
-    rowPinned?: string;
+    rowPinned?: string | null;
     rowIndex: number;
     columnId: string;
 }
@@ -28,7 +28,7 @@ export declare class UndoRedoStack {
     private readonly maxStackSize;
     private actionStack;
     constructor(maxStackSize?: number);
-    pop(): UndoRedoAction;
+    pop(): UndoRedoAction | undefined;
     push(item: UndoRedoAction): void;
     clear(): void;
     getCurrentStackSize(): number;

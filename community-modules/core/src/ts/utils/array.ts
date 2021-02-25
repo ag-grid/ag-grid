@@ -21,13 +21,15 @@ export function existsAndNotEmpty<T>(value?: T[]): boolean {
     return value != null && value.length > 0;
 }
 
-export function last<T>(arr: T[]): T | undefined {
-    if (!arr || !arr.length) { return undefined; }
+export function last<T>(arr: T[]): T;
+export function last<T extends Node>(arr: NodeListOf<T>): T;
+export function last(arr: any): any {
+    if (!arr || !arr.length) { return; }
 
     return arr[arr.length - 1];
 }
 
-export function areEqual<T>(a: T[], b: T[], comparator?: (a: T, b: T) => boolean): boolean {
+export function areEqual<T>(a?: T[] | null, b?: T[] | null, comparator?: (a: T, b: T) => boolean): boolean {
     if (a == null && b == null) {
         return true;
     }
@@ -114,7 +116,7 @@ export function pushAll<T>(target: T[], source: T[]): void {
     forEach(source, value => target.push(value));
 }
 
-export function toStrings<T>(array: T[]): (string | null)[] {
+export function toStrings<T>(array: T[]): ((string | null)[]) | null {
     return map(array, toStringOrNull);
 }
 
@@ -197,7 +199,7 @@ export function forEachReverse<T>(list: T[], action: (value: T, index: number) =
  * performance.
  * https://jsbench.me/njk91ez8pc/
  */
-export function map<T, V>(list: T[], process: (value: T, index: number) => V): V[] {
+export function map<T, V>(list: T[], process: (value: T, index: number) => V): V[] | null {
     if (list == null) {
         return null;
     }
@@ -216,7 +218,8 @@ export function map<T, V>(list: T[], process: (value: T, index: number) => V): V
  * use this for improved performance.
  * https://jsbench.me/7bk91fk08c/
  */
-export function filter<T>(list: T[], predicate: (value: T, index: number) => boolean): T[] {
+
+export function filter<T>(list: T[], predicate: (value: T, index: number) => boolean): T[] | null {
     if (list == null) {
         return null;
     }
@@ -238,7 +241,7 @@ export function filter<T>(list: T[], predicate: (value: T, index: number) => boo
  * performance.
  * https://jsbench.me/7vk92n6u1f/
  */
-export function reduce<T, V>(list: T[], step: (acc: V, value: T, index: number) => V, initial: V): V {
+export function reduce<T, V>(list: T[], step: (acc: V, value: T, index: number) => V, initial: V): V | null {
     if (list == null || initial == null) {
         return null;
     }

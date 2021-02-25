@@ -125,7 +125,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             strokes = strokesMod_1;
         }
         var labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
-        var previousSeries = undefined;
+        var previousSeries;
         seriesDefinitions.forEach(function (seriesDefinition, index) {
             var existingSeries = existingSeriesById.get(seriesDefinition.yField.colId);
             var marker = __assign({}, seriesDefaults.marker);
@@ -140,7 +140,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             if (!series) {
                 return;
             }
-            var xFieldDefinition = seriesDefinition.xField, yFieldDefinition = seriesDefinition.yField, sizeFieldDefinition = seriesDefinition.sizeField;
+            var _a = seriesDefinition, xFieldDefinition = _a.xField, yFieldDefinition = _a.yField, sizeFieldDefinition = _a.sizeField;
             series.title = yFieldDefinition.displayName + " vs " + xFieldDefinition.displayName;
             series.xKey = xFieldDefinition.colId;
             series.xName = xFieldDefinition.displayName;
@@ -212,34 +212,28 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         var isBubbleChart = this.chartType === ChartType.Bubble;
         if (paired) {
             if (isBubbleChart) {
-                return fields.map(function (xField, i) { return i % 3 === 0 ? ({
-                    xField: xField,
+                return fields.map(function (currentxField, i) { return i % 3 === 0 ? ({
+                    xField: currentxField,
                     yField: fields[i + 1],
                     sizeField: fields[i + 2],
                 }) : null; }).filter(function (x) { return x && x.yField && x.sizeField; });
             }
-            else {
-                return fields.map(function (xField, i) { return i % 2 === 0 ? ({
-                    xField: xField,
-                    yField: fields[i + 1],
-                }) : null; }).filter(function (x) { return x && x.yField; });
-            }
+            return fields.map(function (currentxField, i) { return i % 2 === 0 ? ({
+                xField: currentxField,
+                yField: fields[i + 1],
+            }) : null; }).filter(function (x) { return x && x.yField; });
         }
-        else {
-            var xField_1 = fields[0];
-            if (isBubbleChart) {
-                return fields
-                    .map(function (yField, i) { return i % 2 === 1 ? ({
-                    xField: xField_1,
-                    yField: yField,
-                    sizeField: fields[i + 1],
-                }) : null; })
-                    .filter(function (x) { return x && x.sizeField; });
-            }
-            else {
-                return fields.filter(function (_, i) { return i > 0; }).map(function (yField) { return ({ xField: xField_1, yField: yField }); });
-            }
+        var xField = fields[0];
+        if (isBubbleChart) {
+            return fields
+                .map(function (yField, i) { return i % 2 === 1 ? ({
+                xField: xField,
+                yField: yField,
+                sizeField: fields[i + 1],
+            }) : null; })
+                .filter(function (x) { return x && x.sizeField; });
         }
+        return fields.filter(function (value, i) { return i > 0; }).map(function (yField) { return ({ xField: xField, yField: yField }); });
     };
     ScatterChartProxy.prototype.getCrossFilteringDataDomain = function (seriesDefinitions, params) {
         var domain;

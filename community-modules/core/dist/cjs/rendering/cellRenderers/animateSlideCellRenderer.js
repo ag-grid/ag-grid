@@ -78,12 +78,12 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
             value = '';
         }
         if (value === this.lastValue) {
-            return;
+            return false;
         }
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
         // with regards processingFilterChange
         if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
-            return;
+            return false;
         }
         this.addSlideAnimation();
         this.lastValue = value;

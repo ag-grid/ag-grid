@@ -33,7 +33,7 @@ var RowContainerComponent = /** @class */ (function () {
         if (params.eWrapper) {
             this.eWrapper = params.eWrapper;
         }
-        this.hideWhenNoChildren = params.hideWhenNoChildren;
+        this.hideWhenNoChildren = !!params.hideWhenNoChildren;
     }
     RowContainerComponent.prototype.setVerticalScrollPosition = function (verticalScrollPosition) {
         this.scrollTop = verticalScrollPosition;

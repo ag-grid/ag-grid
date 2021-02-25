@@ -96,7 +96,7 @@ export class MenuList extends ManagedFocusComponent {
     }
 
     public activateFirstItem(): void {
-        const item = this.menuItems.filter(item => !item.isDisabled())[0];
+        const item = this.menuItems.filter(currentItem => !currentItem.isDisabled())[0];
 
         if (!item) { return; }
 
@@ -195,16 +195,14 @@ export class MenuList extends ManagedFocusComponent {
                 if (item === this.activeMenuItem) {
                     foundCurrent = true;
                 }
-
                 continue;
             }
 
             nextItem = item;
-
             break;
         }
 
-        return nextItem || this.activeMenuItem;
+        return nextItem! || this.activeMenuItem;
     }
 
     protected destroy(): void {

@@ -143,15 +143,16 @@ var UndoRedoService = /** @class */ (function (_super) {
         });
     };
     UndoRedoService.prototype.processRangeAndCellFocus = function (cellValueChanges, range) {
+        var lastFocusedCell;
         if (range) {
             var startRow = range.startRow;
             var endRow = range.endRow;
-            var lastFocusedCell_1 = {
+            lastFocusedCell = {
                 rowPinned: startRow.rowPinned,
                 rowIndex: startRow.rowIndex,
                 columnId: range.startColumn.getColId()
             };
-            this.setLastFocusedCell(lastFocusedCell_1);
+            this.setLastFocusedCell(lastFocusedCell);
             var cellRangeParams = {
                 rowStartIndex: startRow.rowIndex,
                 rowStartPinned: startRow.rowPinned,
@@ -167,7 +168,7 @@ var UndoRedoService = /** @class */ (function (_super) {
         var rowIndex = cellValueChange.rowIndex, rowPinned = cellValueChange.rowPinned;
         var rowPosition = { rowIndex: rowIndex, rowPinned: rowPinned };
         var row = this.getRowNode(rowPosition);
-        var lastFocusedCell = {
+        lastFocusedCell = {
             rowPinned: cellValueChange.rowPinned,
             rowIndex: row.rowIndex,
             columnId: cellValueChange.columnId

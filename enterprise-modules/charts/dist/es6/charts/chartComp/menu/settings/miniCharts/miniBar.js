@@ -11,9 +11,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+import { BandScale, LinearScale, Rect } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { BandScale, LinearScale, Rect } from "ag-charts-community";
 var MiniBar = /** @class */ (function (_super) {
     __extends(MiniBar, _super);
     function MiniBar(container, fills, strokes) {

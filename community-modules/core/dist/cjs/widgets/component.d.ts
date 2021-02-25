@@ -29,12 +29,12 @@ export declare class Component extends BeanStub {
     private createChildComponentsFromTags;
     createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: {
         [key: string]: any;
-    }): Component;
+    }): Component | null;
     private copyAttributesFromNode;
     private swapComponentForNode;
     private swapInComponentForQuerySelectors;
     private iterateOverQuerySelectors;
-    setTemplate(template: string, paramsMap?: {
+    setTemplate(template: string | null, paramsMap?: {
         [key: string]: any;
     }): void;
     setTemplateFromElement(element: HTMLElement, paramsMap?: {

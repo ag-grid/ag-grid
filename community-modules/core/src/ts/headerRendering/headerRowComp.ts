@@ -5,7 +5,6 @@ import { ColumnGroupChild } from '../entities/columnGroupChild';
 import { ColumnGroup } from '../entities/columnGroup';
 import { ColumnController } from '../columnController/columnController';
 import { Column } from '../entities/column';
-import { DropTarget } from '../dragAndDrop/dragAndDropService';
 import { Events } from '../events';
 import { HeaderWrapperComp } from './header/headerWrapperComp';
 import { HeaderGroupWrapperComp } from './headerGroup/headerGroupWrapperComp';
@@ -28,14 +27,14 @@ export class HeaderRowComp extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('focusController') private focusController: FocusController;
 
-    private readonly pinned: string;
+    private readonly pinned: string | null;
 
     private readonly type: HeaderRowType;
     private dept: number;
 
     private headerComps: { [key: string]: AbstractHeaderWrapper; } = {};
 
-    constructor(dept: number, type: HeaderRowType, pinned: string) {
+    constructor(dept: number, type: HeaderRowType, pinned: string | null) {
         super(/* html */`<div class="ag-header-row" role="row"></div>`);
         this.setRowIndex(dept);
         this.type = type;
@@ -90,8 +89,8 @@ export class HeaderRowComp extends Component {
         const sizes: number[] = [];
 
         let numberOfFloating = 0;
-        let groupHeight: number;
-        let headerHeight: number;
+        let groupHeight: number | null | undefined;
+        let headerHeight: number | null | undefined;
 
         if (this.columnController.isPivotMode()) {
             groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
@@ -109,11 +108,11 @@ export class HeaderRowComp extends Component {
         const numberOfNonGroups = 1 + numberOfFloating;
         const numberOfGroups = headerRowCount - numberOfNonGroups;
 
-        for (let i = 0; i < numberOfGroups; i++) { sizes.push(groupHeight); }
+        for (let i = 0; i < numberOfGroups; i++) { sizes.push(groupHeight as number); }
 
-        sizes.push(headerHeight);
+        sizes.push(headerHeight as number);
 
-        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight()); }
+        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight() as number); }
 
         let rowHeight = 0;
 
@@ -224,7 +223,7 @@ export class HeaderRowComp extends Component {
             const eParentContainer = this.getGui();
 
             // if we already have this cell rendered, do nothing
-            let previousComp = this.headerComps[idOfChild];
+            let previousComp: AbstractHeaderWrapper | undefined = this.headerComps[idOfChild];
 
             // it's possible there is a new Column with the same ID, but it's for a different Column.
             // this is common with pivoting, where the pivot cols change, but the id's are still pivot_0,
@@ -280,14 +279,14 @@ export class HeaderRowComp extends Component {
         let result: AbstractHeaderWrapper;
 
         switch (this.type) {
-            case HeaderRowType.COLUMN:
-                result = new HeaderWrapperComp(columnGroupChild as Column, this.pinned);
-                break;
             case HeaderRowType.COLUMN_GROUP:
                 result = new HeaderGroupWrapperComp(columnGroupChild as ColumnGroup, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER:
                 result = new FloatingFilterWrapper(columnGroupChild as Column, this.pinned);
+                break;
+            default:
+                result = new HeaderWrapperComp(columnGroupChild as Column, this.pinned);
                 break;
         }
 

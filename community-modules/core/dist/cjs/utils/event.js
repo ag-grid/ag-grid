@@ -37,7 +37,7 @@ exports.isEventSupported = (function () {
         load: 'img',
         abort: 'img'
     };
-    var isEventSupported = function (eventName) {
+    var eventChecker = function (eventName) {
         if (typeof supports[eventName] === 'boolean') {
             return supports[eventName];
         }
@@ -48,10 +48,9 @@ exports.isEventSupported = (function () {
             el.setAttribute(eventName, 'return;');
             isSupported = typeof el[eventName] == 'function';
         }
-        el = null;
         return supports[eventName] = isSupported;
     };
-    return isEventSupported;
+    return eventChecker;
 })();
 function getComponentForEvent(gridOptionsWrapper, event, type) {
     var sourceElement = getTarget(event);

@@ -143,6 +143,7 @@ var Events = /** @class */ (function () {
     Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
     Events.EVENT_KEYBOARD_FOCUS = 'keyboardFocus';
     Events.EVENT_MOUSE_FOCUS = 'mouseFocus';
+    Events.EVENT_STORE_UPDATED = 'storeUpdated';
     return Events;
 }());
 export { Events };

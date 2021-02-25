@@ -8,26 +8,22 @@ import { addCssClass } from "../utils/dom";
 
 export class CssClassApplier {
 
-    public static addHeaderClassesFromColDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column, columnGroup: ColumnGroup) {
-        if (missing(abstractColDef)) {
-            return;
-        }
+    public static addHeaderClassesFromColDef(abstractColDef: AbstractColDef | null, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: ColumnGroup | null) {
+        if (missing(abstractColDef)) { return; }
         this.addColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     }
 
-    public static addToolPanelClassesFromColDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: OriginalColumnGroup | null) {
-        if (missing(abstractColDef)) {
-            return;
-        }
+    public static addToolPanelClassesFromColDef(abstractColDef: AbstractColDef | null, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: OriginalColumnGroup | null) {
+        if (missing(abstractColDef)) { return; }
         this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     }
 
-    public static addColumnClassesFromCollDef(classesOrFunc: string | string[] | ((params: any) => string | string[]),
+    public static addColumnClassesFromCollDef(classesOrFunc: string | string[] | ((params: any) => string | string[]) | null | undefined,
                                               abstractColDef: AbstractColDef,
                                               eHeaderCell: HTMLElement,
                                               gridOptionsWrapper: GridOptionsWrapper,
-                                              column: Column,
-                                              columnGroup: ColumnGroup | OriginalColumnGroup) {
+                                              column: Column | null,
+                                              columnGroup: ColumnGroup | OriginalColumnGroup | null) {
         if (missing(classesOrFunc)) {
             return;
         }
@@ -46,7 +42,7 @@ export class CssClassApplier {
             const headerClassFunc = classesOrFunc as (params: any) => string | string[];
             classToUse = headerClassFunc(params);
         } else {
-            classToUse = classesOrFunc as string | string[];
+            classToUse = classesOrFunc;
         }
 
         if (typeof classToUse === 'string') {

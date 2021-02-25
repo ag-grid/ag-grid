@@ -15,7 +15,7 @@ export declare class AgSlider extends AgAbstractLabel {
     setTextFieldWidth(width: number): this;
     setMinValue(minValue: number): this;
     setMaxValue(maxValue: number): this;
-    getValue(): string;
+    getValue(): string | null | undefined;
     setValue(value: string): this;
     setStep(step: number): this;
 }

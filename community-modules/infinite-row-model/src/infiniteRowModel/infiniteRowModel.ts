@@ -14,10 +14,8 @@ import {
     PostConstruct,
     PreDestroy,
     RowBounds,
-    RowDataTransaction,
     RowNode,
     RowNodeBlockLoader,
-    RowNodeCache,
     RowRenderer,
     SelectionController,
     SortController,
@@ -34,14 +32,11 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
+    @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
 
-    private infiniteCache: InfiniteCache | null;
-    private rowNodeBlockLoader: RowNodeBlockLoader | null;
-
+    private infiniteCache: InfiniteCache | null | undefined;
     private datasource: IDatasource | null | undefined;
-
     private rowHeight: number;
-
     private cacheParams: InfiniteCacheParams;
 
     public getRowBounds(index: number): RowBounds {
@@ -80,10 +75,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             this.rowRenderer.datasourceChanged();
             this.datasource = null;
         }
-    }
-
-    public isLastRowFound(): boolean {
-        return this.infiniteCache!=null && this.infiniteCache.isMaxRowFound();
     }
 
     private addEventListeners(): void {
@@ -188,11 +179,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.destroyCache();
 
         const maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        const blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
-
-        // there is a bi-directional dependency between the loader and the cache,
-        // so we create loader here, and then pass dependencies in setDependencies() method later
-        this.rowNodeBlockLoader = this.createBean(new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis));
 
         this.cacheParams = {
             // the user provided datasource
@@ -226,20 +212,15 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         } as InfiniteCacheParams;
 
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
-        this.infiniteCache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
     }
 
-    private defaultIfInvalid(value: number, defaultValue: number): number {
-        return value > 0 ? value : defaultValue;
+    private defaultIfInvalid(value: number | undefined, defaultValue: number): number {
+        return value! > 0 ? value! : defaultValue;
     }
 
     private destroyCache(): void {
         if (this.infiniteCache) {
             this.infiniteCache = this.destroyBean(this.infiniteCache);
-        }
-
-        if (this.rowNodeBlockLoader) {
-            this.rowNodeBlockLoader = this.destroyBean(this.rowNodeBlockLoader);
         }
     }
 
@@ -264,12 +245,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         if (this.infiniteCache) {
-            this.infiniteCache.forEachNodeDeep(callback, new NumberSequence());
+            this.infiniteCache.forEachNodeDeep(callback);
         }
-    }
-
-    public getCurrentPageHeight(): number {
-        return this.getRowCount() * this.rowHeight;
     }
 
     public getTopLevelRowCount(): number {
@@ -295,23 +272,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public getRowCount(): number {
-        return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() : 0;
-    }
-
-    public updateRowData(transaction: RowDataTransaction): void {
-        if (_.exists(transaction.remove) || _.exists(transaction.update)) {
-            console.warn('ag-Grid: updateRowData for InfiniteRowModel does not support remove or update, only add');
-            return;
-        }
-
-        if (_.missing(transaction.addIndex)) {
-            console.warn('ag-Grid: updateRowData for InfiniteRowModel requires add and addIndex to be set');
-            return;
-        }
-
-        if (this.infiniteCache) {
-            this.infiniteCache.insertItemsAtIndex(transaction.addIndex, transaction.add);
-        }
+        return this.infiniteCache ? this.infiniteCache.getRowCount() : 0;
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
@@ -331,31 +292,18 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         }
     }
 
-    public getVirtualRowCount(): number | null {
+    // for iRowModel
+    public isLastRowIndexKnown(): boolean {
         if (this.infiniteCache) {
-            return this.infiniteCache.getVirtualRowCount();
+            return this.infiniteCache.isLastRowIndexKnown();
         } else {
-            return null;
+            return false;
         }
     }
 
-    public isMaxRowFound(): boolean | undefined {
+    public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {
         if (this.infiniteCache) {
-            return this.infiniteCache.isMaxRowFound();
-        }
-    }
-
-    public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
-        if (this.infiniteCache) {
-            this.infiniteCache.setVirtualRowCount(rowCount, maxRowFound);
-        }
-    }
-
-    public getBlockState(): any {
-        if (this.rowNodeBlockLoader) {
-            return this.rowNodeBlockLoader.getBlockState();
-        } else {
-            return null;
+            this.infiniteCache.setRowCount(rowCount, lastRowIndexKnown);
         }
     }
 }

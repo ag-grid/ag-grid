@@ -28,7 +28,7 @@ export interface ChartProxyParams {
 }
 export interface FieldDefinition {
     colId: string;
-    displayName: string;
+    displayName: string | null;
 }
 export interface UpdateChartParams {
     data: any[];

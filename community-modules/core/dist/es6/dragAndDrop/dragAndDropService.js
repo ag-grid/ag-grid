@@ -222,7 +222,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         return find(externalTargets, function (zone) { return zone.getContainer() === params.getContainer(); });
     };
     DragAndDropService.prototype.getHorizontalDirection = function (event) {
-        var clientX = this.eventLastTime.clientX;
+        var clientX = this.eventLastTime && this.eventLastTime.clientX;
         var eClientX = event.clientX;
         if (clientX === eClientX) {
             return null;
@@ -230,7 +230,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         return clientX > eClientX ? HorizontalDirection.Left : HorizontalDirection.Right;
     };
     DragAndDropService.prototype.getVerticalDirection = function (event) {
-        var clientY = this.eventLastTime.clientY;
+        var clientY = this.eventLastTime && this.eventLastTime.clientY;
         var eClientY = event.clientY;
         if (clientY === eClientY) {
             return null;
@@ -248,6 +248,9 @@ var DragAndDropService = /** @class */ (function (_super) {
     };
     DragAndDropService.prototype.positionGhost = function (event) {
         var ghost = this.eGhost;
+        if (!ghost) {
+            return;
+        }
         var ghostRect = ghost.getBoundingClientRect();
         var ghostHeight = ghostRect.height;
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
@@ -295,7 +298,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         if (isFunction(dragItemName)) {
             dragItemName = dragItemName();
         }
-        eText.innerHTML = escapeString(dragItemName);
+        eText.innerHTML = escapeString(dragItemName) || '';
         this.eGhost.style.height = '25px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
@@ -312,7 +315,7 @@ var DragAndDropService = /** @class */ (function (_super) {
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
         if (shake === void 0) { shake = false; }
         clearElement(this.eGhostIcon);
-        var eIcon;
+        var eIcon = null;
         if (!iconName) {
             iconName = this.dragSource.defaultIconName || DragAndDropService_1.ICON_NOT_ALLOWED;
         }

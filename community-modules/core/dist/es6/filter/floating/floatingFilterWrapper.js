@@ -179,7 +179,10 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
         }
     };
     FloatingFilterWrapper.prototype.parentFilterInstance = function (callback) {
-        this.getFilterComponent().then(callback);
+        var filterComponent = this.getFilterComponent();
+        if (filterComponent) {
+            filterComponent.then(callback);
+        }
     };
     FloatingFilterWrapper.prototype.getFilterComponent = function (createIfDoesNotExist) {
         if (createIfDoesNotExist === void 0) { createIfDoesNotExist = true; }
@@ -248,13 +251,13 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
     };
     FloatingFilterWrapper.prototype.currentParentModel = function () {
         var filterComponent = this.getFilterComponent(false);
-        return filterComponent ? filterComponent.resolveNow(null, function (filter) { return filter.getModel(); }) : null;
+        return filterComponent ? filterComponent.resolveNow(null, function (filter) { return filter && filter.getModel(); }) : null;
     };
     FloatingFilterWrapper.prototype.onParentModelChanged = function (model, filterChangedEvent) {
         if (!this.floatingFilterCompPromise) {
             return;
         }
-        this.floatingFilterCompPromise.then(function (comp) { return comp.onParentModelChanged(model, filterChangedEvent); });
+        this.floatingFilterCompPromise.then(function (comp) { return comp && comp.onParentModelChanged(model, filterChangedEvent); });
     };
     FloatingFilterWrapper.prototype.onFloatingFilterChanged = function () {
         console.warn('AG Grid: since version 21.x, how floating filters are implemented has changed. ' +

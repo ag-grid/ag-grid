@@ -11,8 +11,11 @@ function createFloatingFilter(filterParams) {
         .mockReturnValueOnce(AgPromise.resolve(floatingFilter1))
         .mockReturnValueOnce(AgPromise.resolve(floatingFilter2));
     var params = {
+        // @ts-ignore
         column: null,
+        // @ts-ignore
         api: null,
+        // @ts-ignore
         currentParentModel: null,
         parentFilterInstance: function (callback) { return callback(parentFilter); },
         showParentFilter: function () { },
@@ -57,6 +60,7 @@ describe('onParentModelChanged', function () {
     it('passes through onParentModelChanged call when model is null', function () {
         var multiFloatingFilter = createFloatingFilter();
         var event = mock();
+        // @ts-ignore
         multiFloatingFilter.onParentModelChanged(null, event);
         expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledTimes(1);
         expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledWith(null, event);
@@ -93,6 +97,7 @@ describe('onParentModelChanged', function () {
     it('shows first floating filter if no first filter is active', function () {
         var multiFloatingFilter = createFloatingFilter();
         var event = mock();
+        // @ts-ignore
         multiFloatingFilter.onParentModelChanged(null, event);
         expect(floatingFilter1.getGui().className).toBe('');
         expect(floatingFilter2.getGui().className).toBe('ag-hidden');

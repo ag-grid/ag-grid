@@ -98,9 +98,10 @@ var DetailCellRenderer = /** @class */ (function (_super) {
     };
     DetailCellRenderer.prototype.ensureValidRefreshStrategy = function () {
         switch (this.params.refreshStrategy) {
-            case 'rows': return;
-            case 'nothing': return;
-            case 'everything': return;
+            case 'rows':
+            case 'nothing':
+            case 'everything':
+                return;
         }
         // check for incorrectly supplied refresh strategy
         if (this.params.refreshStrategy) {

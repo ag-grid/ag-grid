@@ -72,7 +72,7 @@ var AxisPanel = /** @class */ (function (_super) {
                 .setValue(this.getChartProxy().getChartOption('xAxis.type') || '')
                 .onValueChange(function (newValue) {
                 var chartProxy = _this.getChartProxy();
-                chartProxy.setChartOption('xAxis.type', newValue.length && newValue);
+                chartProxy.setChartOption('xAxis.type', typeof newValue === 'string' && newValue.length && newValue);
                 _this.chartController.updateForDataChange();
             });
         }
@@ -96,23 +96,23 @@ var AxisPanel = /** @class */ (function (_super) {
             color: chartProxy.getAxisProperty("label.color")
         };
         var setFont = function (font) {
-            var chartProxy = _this.getChartProxy();
+            var proxy = _this.getChartProxy();
             if (font.family) {
-                chartProxy.setAxisProperty("label.fontFamily", font.family);
+                proxy.setAxisProperty("label.fontFamily", font.family);
             }
             if (font.weight) {
-                chartProxy.setAxisProperty("label.fontWeight", font.weight);
+                proxy.setAxisProperty("label.fontWeight", font.weight);
             }
             if (font.style) {
-                chartProxy.setAxisProperty("label.fontStyle", font.style);
+                proxy.setAxisProperty("label.fontStyle", font.style);
             }
             if (font.size) {
-                chartProxy.setAxisProperty("label.fontSize", font.size);
+                proxy.setAxisProperty("label.fontSize", font.size);
             }
             if (font.color) {
-                chartProxy.setAxisProperty("label.color", font.color);
+                proxy.setAxisProperty("label.color", font.color);
             }
-            chartProxy.getChart().performLayout();
+            proxy.getChart().performLayout();
         };
         var params = {
             enabled: true,
@@ -139,7 +139,7 @@ var AxisPanel = /** @class */ (function (_super) {
         var createLabelUpdateFunc = function (axisPosition) { return function (newValue) {
             var chartProxy = _this.getChartProxy();
             var chart = chartProxy.getChart();
-            var axis = find(chart.axes, function (axis) { return axis.position === axisPosition; });
+            var axis = find(chart.axes, function (currentAxis) { return currentAxis.position === axisPosition; });
             if (axis) {
                 axis.label.rotation = newValue;
                 // if (axis.position === ChartAxisPosition.Bottom) {

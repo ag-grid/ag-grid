@@ -74,9 +74,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         if (params.filterParams && params.filterParams.browserDatePicker != null) {
             return params.filterParams.browserDatePicker;
         }
-        else {
-            return isBrowserChrome() || isBrowserFirefox();
-        }
+        return isBrowserChrome() || isBrowserFirefox();
     };
     __decorate([
         RefSelector('eDateInput')

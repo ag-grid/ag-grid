@@ -11,7 +11,6 @@ export interface SSRMParams {
     datasource?: IServerSideDatasource;
 }
 export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
-    private gridOptionsWrapper;
     private columnController;
     private filterManager;
     private sortController;
@@ -26,15 +25,13 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     private storeParams;
     private pauseStoreUpdateListening;
     private logger;
-    ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
-    private postConstruct;
+    ensureRowHeightsValid(): boolean;
     start(): void;
     private destroyDatasource;
     private setBeans;
-    applyTransaction(rowDataTransaction: RowDataTransaction, route: string[]): void;
     private addEventListeners;
     setDatasource(datasource: IServerSideDatasource): void;
-    isLastRowFound(): boolean;
+    isLastRowIndexKnown(): boolean;
     private onColumnEverything;
     private destroyRootStore;
     refreshAfterSort(newSortModel: any, params: StoreRefreshAfterParams): void;
@@ -56,7 +53,6 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     getRowBounds(index: number): RowBounds;
     getRowIndexAtPixel(pixel: number): number;
-    getCurrentPageHeight(): number;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
     getType(): string;
@@ -66,12 +62,5 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     getStoreState(): ServerSideStoreState[];
     getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
     getRowNode(id: string): RowNode | null;
-    getBlockState(): any;
     isRowPresent(rowNode: RowNode): boolean;
-    private extractSortModel;
-    private isSortingWithValueColumn;
-    private isSortingWithSecondaryColumn;
-    private cacheExists;
-    private createDetailNode;
-    isLoading(): boolean;
 }

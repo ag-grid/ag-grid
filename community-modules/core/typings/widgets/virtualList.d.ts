@@ -25,9 +25,9 @@ export declare class VirtualList extends ManagedFocusComponent {
     protected handleKeyDown(e: KeyboardEvent): void;
     protected onTabKeyDown(e: KeyboardEvent): void;
     private navigate;
-    getLastFocusedRow(): number;
+    getLastFocusedRow(): number | null;
     focusRow(rowNumber: number): void;
-    getComponentAt(rowIndex: number): Component;
+    getComponentAt(rowIndex: number): Component | undefined;
     private static getTemplate;
     private getItemHeight;
     ensureIndexVisible(index: number): void;
