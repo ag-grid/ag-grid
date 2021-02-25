@@ -11,6 +11,7 @@ import { RowComp } from "./row/rowComp";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { TooltipParentComp } from '../widgets/tooltipFeature';
 import { ITooltipParams } from "./tooltipComponent";
+import { RowPosition } from "../entities/rowPosition";
 export declare class CellComp extends Component implements TooltipParentComp {
     static DOM_DATA_KEY_CELL_COMP: string;
     private static CELL_RENDERER_TYPE_NORMAL;
@@ -29,6 +30,7 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private includeSelectionComponent;
     private includeRowDraggingComponent;
     private includeDndSourceComponent;
+    private rowDraggingComp;
     private cellFocused;
     private editingCell;
     private cellEditorInPopup;
@@ -57,8 +59,9 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private readonly printLayout;
     private cellEditorVersion;
     private cellRendererVersion;
-    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp, autoHeightCell: boolean, printLayout: boolean);
+    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp | null, autoHeightCell: boolean, printLayout: boolean);
     getCreateTemplate(): string;
+    private getCellWrapperString;
     private getStylesForRowSpanning;
     afterAttached(): void;
     private createTooltipFeatureIfNeeded;
@@ -73,9 +76,9 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private refreshAriaIndex;
     private getInitialCssClasses;
     getInitialValueToRender(): string;
-    getRenderedRow(): RowComp;
+    getRenderedRow(): RowComp | null;
     isSuppressNavigable(): boolean;
-    getCellRenderer(): ICellRendererComp | null;
+    getCellRenderer(): ICellRendererComp | null | undefined;
     getCellEditor(): ICellEditorComp | null;
     onNewColumnsLoaded(): void;
     private postProcessWrapText;
@@ -85,8 +88,8 @@ export declare class CellComp extends Component implements TooltipParentComp {
         forceRefresh?: boolean;
     }): void;
     flashCell(delays?: {
-        flashDelay: number;
-        fadeDelay: number;
+        flashDelay?: number | null;
+        fadeDelay?: number | null;
     }): void;
     private animateCell;
     private replaceContentsAfterRefresh;
@@ -118,12 +121,12 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private getValueAndFormat;
     private getValue;
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
-    dispatchCellContextMenuEvent(event: Event): void;
+    dispatchCellContextMenuEvent(event: Event | null): void;
     createEvent(domEvent: Event | null, eventType: string): CellEvent;
     private onMouseOut;
     private onMouseOver;
     private onCellDoubleClicked;
-    startRowOrCellEdit(keyPress?: number | null, charPress?: string): void;
+    startRowOrCellEdit(keyPress?: number | null, charPress?: string | null): void;
     isCellEditable(): boolean;
     startEditingIfEnabled(keyPress?: number | null, charPress?: string | null, cellStartedEdit?: boolean): void;
     private createCellEditor;
@@ -156,6 +159,7 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private isDoubleClickOnIPad;
     private onCellClicked;
     private createGridCellVo;
+    getRowPosition(): RowPosition;
     getCellPosition(): CellPosition;
     getParentRow(): HTMLElement;
     setParentRow(eParentRow: HTMLElement): void;
@@ -178,6 +182,7 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private updateRangeBorders;
     onFirstRightPinnedChanged(): void;
     onLastLeftPinnedChanged(): void;
+    refreshShouldDestroy(): boolean;
     private populateTemplate;
     protected getFrameworkOverrides(): IFrameworkOverrides;
     private addRowDragging;

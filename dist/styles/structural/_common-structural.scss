@@ -245,10 +245,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     white-space: nowrap;
 }
 
-.ag-center-cols-clipper {
-    min-height: 100%;
-}
-
 .ag-center-cols-container {
     display: block;
 }
@@ -304,6 +300,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
+    min-height: 100%;
 }
 
 .ag-body-horizontal-scroll {
@@ -543,6 +540,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-column-drop-vertical-list {
+    position: relative;
     align-items: stretch;
     flex-grow: 1;
     flex-direction: column;
@@ -1443,13 +1441,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: absolute;
 }
 
-
-
 .ag-slider-wrapper {
     display: flex;
-}
-
-.ag-slider-wrapper {
     .ag-input-field {
         flex: 1 1 auto;
     }

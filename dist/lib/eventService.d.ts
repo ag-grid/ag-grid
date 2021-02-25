@@ -13,7 +13,7 @@ export declare class EventService implements IEventEmitter {
     private asyncFunctionsQueue;
     private scheduled;
     private firedEvents;
-    setBeans(loggerFactory: LoggerFactory, gridOptionsWrapper: GridOptionsWrapper, globalEventListener: Function | null | undefined, frameworkOverrides: IFrameworkOverrides): void;
+    setBeans(loggerFactory: LoggerFactory, gridOptionsWrapper: GridOptionsWrapper, frameworkOverrides: IFrameworkOverrides, globalEventListener?: Function | null): void;
     private getListeners;
     addEventListener(eventType: string, listener: Function, async?: boolean): void;
     removeEventListener(eventType: string, listener: Function, async?: boolean): void;

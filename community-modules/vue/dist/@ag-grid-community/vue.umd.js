@@ -37568,9 +37568,9 @@ function getScrollbarWidth() {
     var width = div.offsetWidth - div.clientWidth;
     // if width is 0 and client width is 0, means the DOM isn't ready
     if (width === 0 && div.clientWidth === 0) {
-        width = null;
+        return null;
     }
-    // remove div
+    // remove divs
     if (div.parentNode) {
         div.parentNode.removeChild(div);
     }

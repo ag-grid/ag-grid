@@ -4,7 +4,6 @@ export declare enum ModuleNames {
     InfiniteRowModelModule = "@ag-grid-community/infinite-row-model",
     ClientSideRowModelModule = "@ag-grid-community/client-side-row-model",
     CsvExportModule = "@ag-grid-community/csv-export",
-    RowNodeCache = "@ag-grid-community/row-node-cache",
     EnterpriseCoreModule = "@ag-grid-enterprise/core",
     EnterpriseAllModules = "@ag-grid-enterprise/all",
     RowGroupingModule = "@ag-grid-enterprise/row-grouping",

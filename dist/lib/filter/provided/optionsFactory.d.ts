@@ -11,5 +11,5 @@ export declare class OptionsFactory {
     private mapCustomOptions;
     private selectDefaultItem;
     getDefaultOption(): string;
-    getCustomOption(name: string): IFilterOptionDef;
+    getCustomOption(name?: string | null): IFilterOptionDef | undefined;
 }

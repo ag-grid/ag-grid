@@ -12,7 +12,7 @@ export declare class HeaderRowComp extends Component {
     private readonly type;
     private dept;
     private headerComps;
-    constructor(dept: number, type: HeaderRowType, pinned: string);
+    constructor(dept: number, type: HeaderRowType, pinned: string | null);
     forEachHeaderElement(callback: (comp: Component) => void): void;
     private setRowIndex;
     getRowIndex(): number;
@@ -25,7 +25,10 @@ export declare class HeaderRowComp extends Component {
     private setWidth;
     private getWidthForRow;
     private onDisplayedColumnsChanged;
-    private getItemsAtDepth;
+    private getColumnsInViewport;
+    private getColumnsInViewportPrintLayout;
+    private getActualDepth;
+    private getColumnsInViewportNormalLayout;
     private onVirtualColumnsChanged;
     private createHeaderComp;
     getHeaderComps(): {

@@ -41,7 +41,7 @@ export declare class GridCore extends ManagedFocusComponent {
     getToolPanelInstance(key: string): IToolPanel | undefined;
     refreshSideBar(): void;
     setSideBar(def: SideBarDef | string | boolean): void;
-    getOpenedToolPanel(): string;
+    getOpenedToolPanel(): string | null;
     openToolPanel(key: string): void;
     isToolPanelShowing(): boolean;
     protected destroy(): void;

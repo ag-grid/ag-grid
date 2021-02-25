@@ -3,6 +3,7 @@ declare type ColumnSortState = 'ascending' | 'descending' | 'none';
 export declare function getAriaSortState(column: Column): ColumnSortState;
 export declare function getAriaLevel(element: HTMLElement): number;
 export declare function getAriaPosInSet(element: HTMLElement): number;
+export declare function getAriaDescribedBy(element: HTMLElement): string;
 export declare function setAriaLabel(element: HTMLElement, label: string): void;
 export declare function setAriaLabelledBy(element: HTMLElement, labelledBy: string): void;
 export declare function setAriaDescribedBy(element: HTMLElement, describedby: string): void;

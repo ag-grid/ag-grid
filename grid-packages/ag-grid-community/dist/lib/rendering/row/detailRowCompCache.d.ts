@@ -13,11 +13,11 @@ export declare class DetailRowCompCache extends BeanStub {
     private maxCacheSize;
     private active;
     private postConstruct;
-    addOrDestroy(rowNode: RowNode, pinned: string, comp: ICellRendererComp): void;
+    addOrDestroy(rowNode: RowNode, pinned: string | null, comp: ICellRendererComp): void;
     private getCacheItem;
     private stampCacheItem;
     private destroyFullWidthRow;
     private purgeCache;
-    get(rowNode: RowNode, pinned: string): ICellRendererComp;
+    get(rowNode: RowNode, pinned: string | null): ICellRendererComp | undefined;
     protected destroy(): void;
 }

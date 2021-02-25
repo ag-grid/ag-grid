@@ -19,14 +19,14 @@ export declare class MoveColumnController implements DropListener {
     private lastDraggingEvent;
     private failedMoveAttempts;
     private eContainer;
-    constructor(pinned: string, eContainer: HTMLElement);
+    constructor(pinned: string | null, eContainer: HTMLElement);
     registerGridComp(gridPanel: GridPanel): void;
     init(): void;
     getIconName(): string;
     onDragEnter(draggingEvent: DraggingEvent): void;
     onDragLeave(draggingEvent: DraggingEvent): void;
-    setColumnsVisible(columns: Column[], visible: boolean, source?: ColumnEventType): void;
-    setColumnsPinned(columns: Column[], pinned: string, source?: ColumnEventType): void;
+    setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source?: ColumnEventType): void;
+    setColumnsPinned(columns: Column[] | null | undefined, pinned: string | null, source?: ColumnEventType): void;
     onDragStop(): void;
     private normaliseX;
     private checkCenterForScrolling;

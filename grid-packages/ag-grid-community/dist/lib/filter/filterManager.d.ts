@@ -47,7 +47,10 @@ export declare class FilterManager extends BeanStub {
     private doesRowPassQuickFilterNoCache;
     private doesRowPassQuickFilterCache;
     private doesRowPassQuickFilter;
-    doesRowPassFilter(node: any, filterToSkip?: IFilterComp): boolean;
+    doesRowPassFilter(params: {
+        rowNode: RowNode;
+        filterInstanceToSkip?: IFilterComp;
+    }): boolean;
     private getQuickFilterTextForColumn;
     private aggregateRowForQuickFilter;
     private onNewRowsLoaded;
@@ -55,7 +58,7 @@ export declare class FilterManager extends BeanStub {
     getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist?: boolean): AgPromise<IFilterComp> | null;
     isFilterActive(column: Column): boolean;
     getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper;
-    cachedFilter(column: Column): FilterWrapper;
+    cachedFilter(column: Column): FilterWrapper | undefined;
     private createFilterInstance;
     createFilterParams(column: Column, colDef: ColDef, $scope?: any): IFilterParams;
     private createFilterWrapper;

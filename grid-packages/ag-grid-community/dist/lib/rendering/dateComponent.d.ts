@@ -2,9 +2,9 @@ import { IComponent } from "../interfaces/iComponent";
 import { IDateFilterParams } from "../filter/provided/date/dateFilter";
 export interface IDate {
     /** Returns the current date represented by this editor */
-    getDate(): Date;
+    getDate(): Date | null;
     /** Sets the date represented by this component */
-    setDate(date: Date): void;
+    setDate(date: Date | null): void;
     setInputPlaceholder?(placeholder: string): void;
     setInputAriaLabel?(placeholder: string): void;
 }

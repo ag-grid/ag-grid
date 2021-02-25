@@ -110,7 +110,7 @@
     content: "\f130"; }
   .ag-theme-balham-dark .ag-icon-row-drag:before {
     content: "\f114"; }
-  .ag-theme-balham-dark .ag-right-arrow:before {
+  .ag-theme-balham-dark .ag-left-arrow:before {
     content: "\f117"; }
   .ag-theme-balham-dark .ag-right-arrow:before {
     content: "\f126"; }
@@ -794,8 +794,6 @@
     margin-left: 28px; }
   .ag-theme-balham-dark .ag-rtl .ag-row-group-leaf-indent {
     margin-right: 28px; }
-  .ag-theme-balham-dark .ag-cell {
-    -webkit-font-smoothing: subpixel-antialiased; }
   .ag-theme-balham-dark .ag-value-change-delta {
     padding-right: 2px; }
   .ag-theme-balham-dark .ag-value-change-delta-up {
@@ -872,13 +870,13 @@
     border: 1px solid transparent;
     line-height: 26px;
     padding-left: 11px;
-    padding-right: 11px; }
+    padding-right: 11px;
+    -webkit-font-smoothing: subpixel-antialiased; }
   .ag-theme-balham-dark .ag-row > .ag-cell-wrapper {
     padding-left: 11px;
     padding-right: 11px; }
   .ag-theme-balham-dark .ag-row-dragging {
-    cursor: move; }
-  .ag-theme-balham-dark .ag-row-dragging {
+    cursor: move;
     opacity: 0.5; }
   .ag-theme-balham-dark .ag-cell-inline-editing {
     border: solid 1px;
@@ -1508,7 +1506,8 @@
     border-bottom-color: var(--ag-border-color, #424242); }
   .ag-theme-balham-dark .ag-header-row {
     color: rgba(245, 245, 245, 0.64);
-    color: var(--ag-header-foreground-color, rgba(245, 245, 245, 0.64)); }
+    color: var(--ag-header-foreground-color, rgba(245, 245, 245, 0.64));
+    height: 32px; }
   .ag-theme-balham-dark .ag-pinned-right-header {
     border-left: solid 1px;
     border-left-color: #424242;
@@ -1517,8 +1516,6 @@
     border-right: solid 1px;
     border-right-color: #424242;
     border-right-color: var(--ag-border-color, #424242); }
-  .ag-theme-balham-dark .ag-header-row {
-    height: 32px; }
   .ag-theme-balham-dark .ag-ltr .ag-header-cell:not(.ag-right-aligned-header) .ag-header-label-icon {
     margin-left: 4px; }
   .ag-theme-balham-dark .ag-rtl .ag-header-cell:not(.ag-right-aligned-header) .ag-header-label-icon {
@@ -1741,8 +1738,6 @@
   .ag-theme-balham-dark .ag-column-drop-vertical-icon {
     margin-left: 4px;
     margin-right: 4px; }
-  .ag-theme-balham-dark .ag-column-drop-vertical-list {
-    position: relative; }
   .ag-theme-balham-dark .ag-column-drop-vertical-empty-message {
     position: absolute;
     top: 0;

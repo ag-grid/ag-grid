@@ -32,12 +32,12 @@ export class AgGridColumn {
             .map((column: AgGridColumn) => {
                 return column.toColDef();
             });
-    };
+    }
 
     private createColDefFromGridColumn(from: AgGridColumn): ColDef {
         let { childColumns, ...colDef } = from;
         return colDef;
-    };
+    }
 
     // inputs - pretty much most of ColDef, with the exception of template, templateUrl and internal only properties
     // @START@

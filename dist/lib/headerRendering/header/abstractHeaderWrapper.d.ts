@@ -3,9 +3,9 @@ import { Column } from "../../entities/column";
 import { ManagedFocusComponent } from "../../widgets/managedFocusComponent";
 export declare abstract class AbstractHeaderWrapper extends ManagedFocusComponent {
     protected abstract readonly column: Column | ColumnGroup;
-    protected abstract readonly pinned: string;
+    protected abstract readonly pinned: string | null;
     protected abstract onFocusIn(e: FocusEvent): void;
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean;
     getColumn(): Column | ColumnGroup;
-    getPinned(): string;
+    getPinned(): string | null;
 }

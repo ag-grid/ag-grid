@@ -17,10 +17,10 @@ export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, b
     setReadOnly(readOnly: boolean): void;
     setDisabled(disabled: boolean): this;
     toggle(): void;
-    getValue(): boolean;
+    getValue(): boolean | undefined;
     setValue(value?: boolean, silent?: boolean): this;
     setName(name: string): this;
-    protected isSelected(): boolean;
+    protected isSelected(): boolean | undefined;
     private setSelected;
     private dispatchChange;
     private onCheckboxClick;

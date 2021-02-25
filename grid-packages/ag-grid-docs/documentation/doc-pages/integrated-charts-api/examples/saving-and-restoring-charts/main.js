@@ -23,6 +23,28 @@ var gridOptions = {
 var chartModel;
 var currentChartRef;
 
+function saveChart() {
+    var chartModels = gridOptions.api.getChartModels();
+    if (chartModels.length > 0) {
+        chartModel = chartModels[0];
+    }
+    alert("Chart saved!");
+}
+
+function clearChart() {
+    if (currentChartRef) {
+        currentChartRef.destroyChart();
+        currentChartRef = null;
+    }
+}
+
+function restoreChart() {
+    if (!chartModel) return;
+    clearChart();
+
+    currentChartRef = gridOptions.api.restoreChart(chartModel);
+}
+
 function createChartContainer(chartRef) {
     // destroy existing chart
     if (currentChartRef) {
@@ -48,44 +70,6 @@ function createRowData() {
             weight: Math.floor(Math.floor(Math.random() * 200))
         };
     });
-}
-
-function saveChart() {
-    var chartModels = gridOptions.api.getChartModels();
-
-    if (chartModels.length > 0) {
-        chartModel = chartModels[0];
-    }
-
-    alert("Chart saved!");
-}
-
-function clearChart() {
-    if (currentChartRef) {
-        currentChartRef.destroyChart();
-        currentChartRef = null;
-    }
-}
-
-function restoreChart() {
-    if (!chartModel) {
-        return;
-    }
-
-    this.clearChart();
-
-    var options = chartModel.chartOptions;
-    var createRangeChartParams = {
-        chartContainer: document.querySelector('#myChart'),
-        cellRange: chartModel.cellRange,
-        chartType: chartModel.chartType,
-        chartThemeName: chartModel.chartThemeName,
-        processChartOptions: function() { return options; }
-    };
-
-    currentChartRef = gridOptions.api.createRangeChart(createRangeChartParams);
-
-    chartModel = undefined;
 }
 
 function openImage(type) {

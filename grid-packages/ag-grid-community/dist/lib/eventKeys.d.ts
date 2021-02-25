@@ -129,4 +129,5 @@ export declare class Events {
     static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST: string;
     static EVENT_KEYBOARD_FOCUS: string;
     static EVENT_MOUSE_FOCUS: string;
+    static EVENT_STORE_UPDATED: string;
 }

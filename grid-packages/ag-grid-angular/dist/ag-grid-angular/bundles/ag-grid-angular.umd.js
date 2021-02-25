@@ -249,12 +249,10 @@
                 return column.toColDef();
             });
         };
-        ;
         AgGridColumn.prototype.createColDefFromGridColumn = function (from) {
             var childColumns = from.childColumns, colDef = __rest(from, ["childColumns"]);
             return colDef;
         };
-        ;
         var AgGridColumn_1;
         __decorate([
             core.ContentChildren(AgGridColumn_1),
@@ -1279,6 +1277,7 @@
             this.columnAggFuncChangeRequest = new core.EventEmitter();
             this.keyboardFocus = new core.EventEmitter();
             this.mouseFocus = new core.EventEmitter();
+            this.storeUpdated = new core.EventEmitter();
             this._nativeElement = elementDef.nativeElement;
         }
         AgGridAngular.prototype.ngAfterViewInit = function () {
@@ -2817,6 +2816,10 @@
             core.Output(),
             __metadata("design:type", core.EventEmitter)
         ], AgGridAngular.prototype, "mouseFocus", void 0);
+        __decorate([
+            core.Output(),
+            __metadata("design:type", core.EventEmitter)
+        ], AgGridAngular.prototype, "storeUpdated", void 0);
         AgGridAngular = __decorate([
             core.Component({
                 selector: 'ag-grid-angular',

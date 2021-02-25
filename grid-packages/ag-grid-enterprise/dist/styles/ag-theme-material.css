@@ -110,7 +110,7 @@
     content: "\f130"; }
   .ag-theme-material .ag-icon-row-drag:before {
     content: "\f114"; }
-  .ag-theme-material .ag-right-arrow:before {
+  .ag-theme-material .ag-left-arrow:before {
     content: "\f117"; }
   .ag-theme-material .ag-right-arrow:before {
     content: "\f126"; }
@@ -766,8 +766,6 @@
     margin-left: 42px; }
   .ag-theme-material .ag-rtl .ag-row-group-leaf-indent {
     margin-right: 42px; }
-  .ag-theme-material .ag-cell {
-    -webkit-font-smoothing: subpixel-antialiased; }
   .ag-theme-material .ag-value-change-delta {
     padding-right: 2px; }
   .ag-theme-material .ag-value-change-delta-up {
@@ -843,13 +841,13 @@
     border: 1px solid transparent;
     line-height: 46px;
     padding-left: 23px;
-    padding-right: 23px; }
+    padding-right: 23px;
+    -webkit-font-smoothing: subpixel-antialiased; }
   .ag-theme-material .ag-row > .ag-cell-wrapper {
     padding-left: 23px;
     padding-right: 23px; }
   .ag-theme-material .ag-row-dragging {
-    cursor: move; }
-  .ag-theme-material .ag-row-dragging {
+    cursor: move;
     opacity: 0.5; }
   .ag-theme-material .ag-cell-inline-editing {
     background: #fff;
@@ -1408,7 +1406,8 @@
     border-bottom-color: var(--ag-border-color, #e2e2e2); }
   .ag-theme-material .ag-header-row {
     color: rgba(0, 0, 0, 0.54);
-    color: var(--ag-header-foreground-color, var(--ag-secondary-foreground-color, rgba(0, 0, 0, 0.54))); }
+    color: var(--ag-header-foreground-color, var(--ag-secondary-foreground-color, rgba(0, 0, 0, 0.54)));
+    height: 56px; }
   .ag-theme-material .ag-pinned-right-header {
     border-left: solid 1px;
     border-left-color: #e2e2e2;
@@ -1417,8 +1416,6 @@
     border-right: solid 1px;
     border-right-color: #e2e2e2;
     border-right-color: var(--ag-border-color, #e2e2e2); }
-  .ag-theme-material .ag-header-row {
-    height: 56px; }
   .ag-theme-material .ag-ltr .ag-header-cell:not(.ag-right-aligned-header) .ag-header-label-icon {
     margin-left: 8px; }
   .ag-theme-material .ag-rtl .ag-header-cell:not(.ag-right-aligned-header) .ag-header-label-icon {
@@ -1616,8 +1613,6 @@
   .ag-theme-material .ag-column-drop-vertical-icon {
     margin-left: 8px;
     margin-right: 8px; }
-  .ag-theme-material .ag-column-drop-vertical-list {
-    position: relative; }
   .ag-theme-material .ag-column-drop-vertical-empty-message {
     position: absolute;
     top: 0;

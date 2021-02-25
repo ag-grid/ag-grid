@@ -6,6 +6,6 @@ export interface CellPosition extends RowPosition {
 }
 export declare class CellPositionUtils extends BeanStub {
     createId(cellPosition: CellPosition): string;
-    createIdFromValues(rowIndex: number, column: Column, rowPinned: string | undefined): string;
+    createIdFromValues(rowIndex: number, column: Column, rowPinned: string | undefined | null): string;
     equals(cellA: CellPosition, cellB: CellPosition): boolean;
 }

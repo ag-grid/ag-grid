@@ -44,6 +44,6 @@ export declare class UserComponentRegistry extends BeanStub {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    retrieve<A extends IComponent<any> & B, B>(rawName: string): RegisteredComponent<A, B>;
+    retrieve<A extends IComponent<any> & B, B>(rawName: string): RegisteredComponent<A, B> | null;
     private translateIfDeprecated;
 }

@@ -15,7 +15,7 @@ export interface IFloatingFilterParams {
     onFloatingFilterChanged: (change: any) => boolean;
 }
 export interface IFloatingFilter {
-    onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent): void;
+    onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null): void;
 }
 export interface IFloatingFilterComp extends IFloatingFilter, IComponent<IFloatingFilterParams> {
 }

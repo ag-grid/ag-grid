@@ -13,7 +13,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
     alwaysShowBothConditions?: boolean;
 }
 export interface ISimpleFilterModel extends ProvidedFilterModel {
-    type: string;
+    type?: string | null;
 }
 export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends ProvidedFilterModel {
     operator: JoinOperator;
@@ -27,7 +27,7 @@ export declare enum ConditionPosition {
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends ProvidedFilter {
+export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends ProvidedFilter<M | ICombinedSimpleModel<M>> {
     static EMPTY: string;
     static EQUALS: string;
     static NOT_EQUAL: string;
@@ -58,14 +58,14 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     protected abstract areSimpleModelsEqual(a: ISimpleFilterModel, b: ISimpleFilterModel): boolean;
     protected abstract setValueFromFloatingFilter(value: string): void;
     protected abstract createCondition(position: ConditionPosition): M;
-    protected abstract setConditionIntoUi(model: ISimpleFilterModel, position: ConditionPosition): void;
-    protected showValueFrom(type: string): boolean;
-    protected showValueTo(type: string): boolean;
-    onFloatingFilterChanged(type: string, value: any): void;
-    protected setTypeFromFloatingFilter(type: string): void;
-    getModelFromUi(): M | ICombinedSimpleModel<M>;
-    protected getCondition1Type(): string;
-    protected getCondition2Type(): string;
+    protected abstract setConditionIntoUi(model: ISimpleFilterModel | null, position: ConditionPosition): void;
+    protected showValueFrom(type?: string | null): boolean;
+    protected showValueTo(type?: string | null): boolean;
+    onFloatingFilterChanged(type: string | null | undefined, value: any): void;
+    protected setTypeFromFloatingFilter(type?: string | null): void;
+    getModelFromUi(): M | ICombinedSimpleModel<M> | null;
+    protected getCondition1Type(): string | null | undefined;
+    protected getCondition2Type(): string | null | undefined;
     protected getJoinOperator(): JoinOperator;
     protected areModelsEqual(a: M | ICombinedSimpleModel<M>, b: M | ICombinedSimpleModel<M>): boolean;
     protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): AgPromise<void>;
@@ -81,5 +81,5 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     protected resetUiToDefaults(silent?: boolean): AgPromise<void>;
     private isDefaultOperator;
     private addChangedListeners;
-    protected doesFilterHaveHiddenInput(filterType: string): boolean;
+    protected doesFilterHaveHiddenInput(filterType?: string | null): boolean | undefined;
 }
