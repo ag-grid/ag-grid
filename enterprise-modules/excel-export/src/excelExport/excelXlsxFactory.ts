@@ -1,4 +1,4 @@
-import { XmlElement } from '@ag-grid-community/core';
+import { XmlElement, ExcelFactoryMode } from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
@@ -19,6 +19,7 @@ export class ExcelXlsxFactory {
 
     private static sharedStrings: Map<string, number> = new Map();
     private static sheetNames: string[] = [];
+    public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
     public static createExcel(styles: ExcelStyle[], worksheet: ExcelWorksheet): string {
         this.addSheetName(worksheet);
@@ -56,6 +57,7 @@ export class ExcelXlsxFactory {
     public static resetFactory(): void {
         this.sharedStrings = new Map();
         this.sheetNames = [];
+        this.factoryMode = ExcelFactoryMode.SINGLE_SHEET;
     }
 
     public static createWorkbook(): string {

@@ -16,7 +16,7 @@ const getFont = (props: [string, string, string?, string?]): XmlElement => {
 
 const fontScheme: ExcelOOXMLTemplate = {
     getTemplate() {
-        const {utf8_encode} = _;
+        const { utf8_encode } = _;
         return {
             name: "a:fontScheme",
             properties: {

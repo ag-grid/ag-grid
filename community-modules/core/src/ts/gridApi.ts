@@ -24,7 +24,7 @@ import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./interfaces/exportParams";
-import { ExcelExportParams, IExcelCreator } from "./interfaces/iExcelCreator";
+import { ExcelExportParams, ExcelFactoryMode, IExcelCreator } from "./interfaces/iExcelCreator";
 import { IDatasource } from "./interfaces/iDatasource";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import { PaginationProxy } from "./pagination/paginationProxy";
@@ -251,18 +251,30 @@ export class GridApi {
 
     public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getDataAsExcel')) {
+            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
+            if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
+                console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
+                return;
+            }
             return this.excelCreator.getDataAsExcel(params);
         }
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): void {
         if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportDataAsExcel')) {
+            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
+            if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
+                console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
+                return;
+            }
             this.excelCreator.exportDataAsExcel(params);
         }
     }
 
     public getGridRawDataForExcel(params?: ExcelExportParams): string | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getGridRawDataForExcel')) {
+            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
+            this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET, exportMode);
             return this.excelCreator.getGridRawDataForExcel(params);
         }
     }

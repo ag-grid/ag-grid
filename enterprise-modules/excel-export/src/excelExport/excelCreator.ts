@@ -4,6 +4,7 @@ import {
     Column,
     ColumnController,
     ExcelExportParams,
+    ExcelFactoryMode,
     GridOptions,
     GridOptionsWrapper,
     IExcelCreator,
@@ -20,6 +21,7 @@ import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, GridSerializer, ZipContainer, RowType, Downloader } from "@ag-grid-community/csv-export";
 import { ExcelGridSerializingParams } from './baseExcelSerializingSession';
+import { ExcelXmlFactory } from './excelXmlFactory';
 
 export interface ExcelMixedStyle {
     key: string;
@@ -95,6 +97,16 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         }
 
         return this.packageFile(data);
+    }
+
+    public setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx' = 'xlsx'): void {
+        const factory = exportMode === 'xlsx' ? ExcelXlsxFactory : ExcelXmlFactory;
+        factory.factoryMode = factoryMode;
+    }
+
+    public getFactoryMode(exportMode: 'xml' | 'xlsx'): ExcelFactoryMode {
+        const factory = exportMode === 'xlsx' ? ExcelXlsxFactory : ExcelXmlFactory;
+        return factory.factoryMode;
     }
 
     public getGridRawDataForExcel(params: ExcelExportParams): string {

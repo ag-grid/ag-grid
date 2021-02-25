@@ -60,6 +60,10 @@ export interface IExcelCreator {
     getGridRawDataForExcel(params?: ExcelExportParams): string;
     getMultipleSheetsAsExcel(gridRawData: string[]): Blob;
     exportMultipleSheetsAsExcel(gridRawData: string[], fileName?: string): void;
+
+    /** private methods */
+    setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx'): void;
+    getFactoryMode(exportMode: 'xml' | 'xlsx'): ExcelFactoryMode
 }
 
 // XML
@@ -164,3 +168,5 @@ export interface ExcelRelationship {
     Type: string;
     Target: string;
 }
+
+export enum ExcelFactoryMode { SINGLE_SHEET, MULTI_SHEET };

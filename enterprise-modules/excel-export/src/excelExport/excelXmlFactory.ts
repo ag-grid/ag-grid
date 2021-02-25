@@ -1,4 +1,4 @@
-import { XmlElement,  _ } from '@ag-grid-community/core';
+import { ExcelFactoryMode, XmlElement,  _ } from '@ag-grid-community/core';
 
 import workbook from './files/xml/workbook';
 import excelWorkbook from './files/xml/excelWorkbook';
@@ -20,6 +20,7 @@ import { XmlFactory } from "@ag-grid-community/csv-export";
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
  */
 export class ExcelXmlFactory {
+    public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
     public static createExcel(styles: ExcelStyle[], worksheet: ExcelWorksheet, sharedStrings?: string[]): string {
         const header = this.excelXmlHeader();

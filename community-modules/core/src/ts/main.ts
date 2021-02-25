@@ -60,6 +60,7 @@ export {
     ExcelOOXMLTemplate,
     ExcelProtection,
     ExcelRelationship,
+    ExcelFactoryMode,
     ExcelRow,
     ExcelStyle,
     ExcelTable,
