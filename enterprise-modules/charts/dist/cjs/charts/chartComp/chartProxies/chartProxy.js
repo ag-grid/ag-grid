@@ -97,7 +97,7 @@ var ChartProxy = /** @class */ (function () {
         var customChartThemes = this.chartProxyParams.customChartThemes;
         var customChartTheme = customChartThemes && customChartThemes[name];
         if (!customChartTheme) {
-            console.warn("ag-Grid: no stock theme exists with the name '" + name + "' and no " +
+            console.warn("AG Grid: no stock theme exists with the name '" + name + "' and no " +
                 "custom chart theme with that name was supplied to 'customChartThemes'");
         }
         return customChartTheme;

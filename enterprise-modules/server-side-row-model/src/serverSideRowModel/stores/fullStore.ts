@@ -212,7 +212,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.allNodesMap = {};
 
         if (!params.rowData) {
-            const message = 'ag-Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
+            const message = 'AG Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
             _.doOnce(() => console.warn(message, params), 'FullStore.noData');
         }
 
@@ -371,7 +371,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         return pixel >= this.topPx && pixel < (this.topPx + this.heightPx);
     }
 
-    public getRowIndexAtPixel(pixel: number): number | undefined {
+    public getRowIndexAtPixel(pixel: number): number | null {
 
         // if pixel before block, return first row
         const pixelBeforeThisStore = pixel <= this.topPx;
@@ -384,14 +384,15 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         if (pixelAfterThisStore) {
             const lastRowNode = this.nodesAfterSort[this.nodesAfterSort.length - 1];
             const lastRowNodeBottomPx = lastRowNode.rowTop! + lastRowNode.rowHeight!;
+
             if (pixel >= lastRowNodeBottomPx && lastRowNode.expanded && lastRowNode.childStore) {
                 return lastRowNode.childStore.getRowIndexAtPixel(pixel);
-            } else {
-                return lastRowNode.rowIndex;
             }
+
+            return lastRowNode.rowIndex;
         }
 
-        let res: number | undefined;
+        let res: number | null = null;
         this.nodesAfterSort.forEach(rowNode => {
             const res2 = this.blockUtils.getIndexAtPixel(rowNode, pixel);
             if (res2 != null) {
@@ -544,7 +545,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             }
 
             // so row renderer knows to fade row out (and not reposition it)
-            rowNode.clearRowTop();
+            rowNode.clearRowTopAndRowIndex();
 
             // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
             // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
@@ -585,14 +586,14 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const id: string = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error(`ag-Grid: could not find row id=${id}, data item was not found for this id`);
+                console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
                 return null;
             }
         } else {
             // find rowNode using object references
             rowNode = _.find(this.allRowNodes, currentRowNode => currentRowNode.data === data)!;
             if (!rowNode) {
-                console.error(`ag-Grid: could not find data item as object was not found`, data);
+                console.error(`AG Grid: could not find data item as object was not found`, data);
                 return null;
             }
         }

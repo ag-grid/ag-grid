@@ -7,7 +7,7 @@ import { DropShadow } from "../../../scene/dropShadow";
 import {
     HighlightStyle,
     SeriesNodeDatum,
-    CartesianTooltipRendererParams as BarTooltipRendererParams
+    CartesianTooltipRendererParams as BarTooltipRendererParams, SeriesTooltip
 } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
@@ -78,6 +78,21 @@ export interface BarSeriesFormat {
     strokeWidth?: number;
 }
 
+export class BarSeriesTooltip extends SeriesTooltip {
+    @reactive('change') renderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
+}
+
+function flat(arr: any[], target: any[] = []): any[] {
+    arr.forEach(v => {
+        if (Array.isArray(v)) {
+            flat(v, target);
+        } else {
+            target.push(v);
+        }
+    });
+    return target;
+}
+
 export class BarSeries extends CartesianSeries {
 
     static className = 'BarSeries';
@@ -105,7 +120,11 @@ export class BarSeries extends CartesianSeries {
      */
     private readonly seriesItemEnabled = new Map<string, boolean>();
 
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
+    tooltip: BarSeriesTooltip = new BarSeriesTooltip();
 
     @reactive('layoutChange') flipXY = false;
 
@@ -157,7 +176,7 @@ export class BarSeries extends CartesianSeries {
     getKeys(direction: ChartAxisDirection): string[] {
         const { directionKeys } = this;
         const keys = directionKeys && directionKeys[this.flipXY ? flipChartAxisDirection(direction) : direction];
-        const values: string[] = [];
+        let values: string[] = [];
 
         if (keys) {
             keys.forEach(key => {
@@ -165,7 +184,7 @@ export class BarSeries extends CartesianSeries {
 
                 if (value) {
                     if (Array.isArray(value)) {
-                        values.push(...value);
+                        values = values.concat(flat(value));
                     } else {
                         values.push(value);
                     }

@@ -6,6 +6,7 @@ export declare class CheckboxSelectionComponent extends Component {
     private isRowSelectableFunc;
     constructor();
     private postConstruct;
+    getCheckboxId(): string;
     private onDataChanged;
     private onSelectableChanged;
     private onSelectionChanged;

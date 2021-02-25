@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "JavaScript GPU Animation with Transform and Translate";
-$pageDescription = "This post from the ag-Grid Blog discusses techniques for GPU animation in JavaScript applications. It compares examples using translate and absolute positioning for fast animations.";
+$pageTitle = "AG Grid Blog: JavaScript GPU Animation with Transform and Translate";
+$pageDescription = "This post from the AG Grid Blog discusses techniques for GPU animation in JavaScript applications. It compares examples using translate and absolute positioning for fast animations.";
 $pageKeywords = "javascript animation transform translate gpu";
 $socialUrl = "https://www.ag-grid.com/ag-grid-gpu-animation-transform-translate/";
 $socialImage = "https://www.ag-grid.com/ag-grid-gpu-animation-transform-translate/TranslateVsAbsolute.png";
@@ -73,7 +73,7 @@ eRow.style.top = '500px';
 
         <p>
             Below shows an example data grid (which can be though of as a simple representation of
-            <a href="https://www.ag-grid.com/">ag-Grid</a>). Hitting the 'Shuffle Rows' button will
+            <a href="https://www.ag-grid.com/">AG Grid</a>). Hitting the 'Shuffle Rows' button will
             reverse the order of the rows akin to row sorting in a data grid. The rows are positioned
             using <code>position: absolute</code> and <code>style.top</code>.
             Notice how smooth the animation is (or is not) which we will compare with the next example.
@@ -120,14 +120,14 @@ eRow.style.transform = 'translateY(500px)';
 
         <?= grid_example('Example Transform', 'example-transform', 'vanilla') ?>
 
-        <h2>Usage in ag-Grid</h2>
+        <h2>Usage in AG Grid</h2>
 
         <p>
             For a real world example of this check out the
-            <a href="../example.php">ag-Grid main demo</a>. ag-Grid uses
+            <a href="/example.php">AG Grid main demo</a>. AG Grid uses
             this technique for animating the rows after a) the rows are sorted; b) the rows
             are filtered and c) a row group is opened (as rows are moved down to expand the group).
-            This is particularly helpful with either very large grids or when using ag-Grid on
+            This is particularly helpful with either very large grids or when using AG Grid on
             lower powered devices such as tablets.
         </p>
 
@@ -172,12 +172,12 @@ eRow.style.transform = 'translateY(500px)';
         </div>
     </div>
 
-<?php 
+<?php
     include '../blog-authors/niall.php';
 ?>
 
 </div>
-    
+
 
 </div>
 

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../interfaces/iComponent";
@@ -12,7 +12,7 @@ export interface IDate {
     setInputAriaLabel?(placeholder: string): void;
 }
 export interface IDateParams {
-    /** Method for component to tell ag-Grid that the date has changed. */
+    /** Method for component to tell AG Grid that the date has changed. */
     onDateChanged: () => void;
     filterParams: IDateFilterParams;
 }

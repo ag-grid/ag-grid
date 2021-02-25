@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,7 +52,7 @@ var Component = /** @class */ (function (_super) {
         }
         return _this;
     }
-    Component.prototype.postConstructOnComponent = function () {
+    Component.prototype.preConstructOnComponent = function () {
         this.usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
     };
     Component.prototype.getCompId = function () {
@@ -359,8 +359,8 @@ var Component = /** @class */ (function (_super) {
         Autowired('agStackComponentsRegistry')
     ], Component.prototype, "agStackComponentsRegistry", void 0);
     __decorate([
-        PostConstruct
-    ], Component.prototype, "postConstructOnComponent", null);
+        PreConstruct
+    ], Component.prototype, "preConstructOnComponent", null);
     __decorate([
         PreConstruct
     ], Component.prototype, "createChildComponentsPreConstruct", null);

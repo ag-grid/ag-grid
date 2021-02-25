@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -83,7 +83,7 @@ var HeaderContainer = /** @class */ (function (_super) {
         var scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         if (pinningLeft || pinningRight) {
             // size to fit all columns
-            var width = controller[pinningLeft ? 'getPinnedLeftContainerWidth' : 'getPinnedRightContainerWidth']();
+            var width = controller[pinningLeft ? 'getDisplayedColumnsLeftWidth' : 'getDisplayedColumnsRightWidth']();
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,
             // as body width fits the cols and the scrollbar
@@ -168,11 +168,24 @@ var HeaderContainer = /** @class */ (function (_super) {
             }
         };
         var refreshFilters = function () {
-            _this.destroyRowComp(_this.filtersRowComp);
-            _this.filtersRowComp = undefined;
             var includeFloatingFilter = !_this.columnController.isPivotMode() && _this.columnController.hasFloatingFilters();
-            if (includeFloatingFilter) {
-                _this.filtersRowComp = _this.createBean(new headerRowComp_1.HeaderRowComp(sequence.next(), headerRowComp_1.HeaderRowType.FLOATING_FILTER, _this.pinned));
+            var destroyPreviousComp = function () {
+                _this.destroyRowComp(_this.filtersRowComp);
+                _this.filtersRowComp = undefined;
+            };
+            if (!includeFloatingFilter) {
+                destroyPreviousComp();
+                return;
+            }
+            var rowIndex = sequence.next();
+            if (_this.filtersRowComp) {
+                var rowIndexMismatch = _this.filtersRowComp.getRowIndex() !== rowIndex;
+                if (!keepColumns || rowIndexMismatch) {
+                    destroyPreviousComp();
+                }
+            }
+            if (!_this.filtersRowComp) {
+                _this.filtersRowComp = _this.createBean(new headerRowComp_1.HeaderRowComp(rowIndex, headerRowComp_1.HeaderRowType.FLOATING_FILTER, _this.pinned));
             }
         };
         refreshColumnGroups();

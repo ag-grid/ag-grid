@@ -103,7 +103,7 @@ var ViewportRowModel = /** @class */ (function (_super) {
         this.viewportDatasource = viewportDatasource;
         this.rowCount = 0;
         if (!viewportDatasource.init) {
-            console.warn('ag-Grid: viewport is missing init method.');
+            console.warn('AG Grid: viewport is missing init method.');
         }
         else {
             viewportDatasource.init({

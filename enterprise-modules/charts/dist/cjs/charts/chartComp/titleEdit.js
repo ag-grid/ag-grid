@@ -69,7 +69,7 @@ var TitleEdit = /** @class */ (function (_super) {
         });
         var destroyMouseMoveListener = this.addManagedListener(canvas, 'mousemove', function (event) {
             var title = chart.title;
-            var inTitle = title && title.node.containsPoint(event.offsetX, event.offsetY);
+            var inTitle = title && title.enabled && title.node.containsPoint(event.offsetX, event.offsetY);
             canvas.style.cursor = inTitle ? 'pointer' : '';
         });
         this.destroyableChartListeners = [

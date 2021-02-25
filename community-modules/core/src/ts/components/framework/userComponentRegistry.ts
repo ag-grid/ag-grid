@@ -245,7 +245,7 @@ export class UserComponentRegistry extends BeanStub {
         }
 
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
-            console.warn(`ag-Grid: Looking for component [${name}] but it wasn't found.`);
+            console.warn(`AG Grid: Looking for component [${name}] but it wasn't found.`);
         }
 
         return null;

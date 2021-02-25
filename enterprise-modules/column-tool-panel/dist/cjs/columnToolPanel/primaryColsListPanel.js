@@ -265,7 +265,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         });
         var unrecognisedGroupIds = groupIds.filter(function (groupId) { return !core_1._.includes(expandedGroupIds, groupId); });
         if (unrecognisedGroupIds.length > 0) {
-            console.warn('ag-Grid: unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
+            console.warn('AG Grid: unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
         }
     };
     PrimaryColsListPanel.prototype.getExpandState = function () {

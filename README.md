@@ -1,4 +1,4 @@
-![alt text](./github-banner.png "ag-Grid")
+![alt text](./github-banner.png "AG Grid")
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
 [![npm](https://img.shields.io/npm/dm/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
@@ -9,14 +9,14 @@
 | ag-grid-community   | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-community&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-community) <br> |
 | ag-grid-enterprise  | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
 
-# ag-Grid
+# AG Grid
 
-ag-Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github#/performance/1), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/documentation/javascript/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
+AG Grid is a fully-featured and highly customizable JavaScript data grid.
+It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/documentation/javascript/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
-![alt text](./github-grid-demo.jpg "ag-Grid demo")
+![alt text](./github-grid-demo.jpg "AG Grid demo")
 
 ## Features
 
@@ -27,7 +27,7 @@ In addition to the standard set of features you'd expect from any grid:
 * Sorting
 * Row Selection
 
-Here are some of the features that make ag-Grid stand out:
+Here are some of the features that make AG Grid stand out:
 
 * Grouping / Aggregation *
 * Custom Filtering
@@ -119,7 +119,7 @@ Look for similar problems on [StackOverflow](https://stackoverflow.com/questions
 
 ## Contributing
 
-ag-Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs board](https://www.ag-grid.com/ag-grid-jobs-board/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
+AG Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs board](https://www.ag-grid.com/ag-grid-jobs-board/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
 
 ## License
 

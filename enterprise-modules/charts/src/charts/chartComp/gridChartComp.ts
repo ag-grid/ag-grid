@@ -155,7 +155,7 @@ export class GridChartComp extends Component {
         if (customChartThemes) {
             _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
                 if (!_.includes(suppliedThemes, customThemeName)) {
-                    console.warn("ag-Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
+                    console.warn("AG Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
                         "supplied but not added to the 'chartThemes' list");
                 }
             });
@@ -220,7 +220,7 @@ export class GridChartComp extends Component {
 
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
         if (!this.chartProxy) {
-            console.warn('ag-Grid: invalid chart type supplied: ', chartProxyParams.chartType);
+            console.warn('AG Grid: invalid chart type supplied: ', chartProxyParams.chartType);
             return;
         }
 

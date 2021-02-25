@@ -1,13 +1,13 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 import { exists, defaultComparator } from "./utils/generic";
 export function defaultGroupComparator(valueA, valueB, nodeA, nodeB, accentedCompare) {
     if (accentedCompare === void 0) { accentedCompare = false; }
-    console.warn('ag-Grid: Since ag-grid 11.0.0 defaultGroupComparator is not necessary. You can remove this from your colDef');
+    console.warn('AG Grid: Since ag-grid 11.0.0 defaultGroupComparator is not necessary. You can remove this from your colDef');
     var nodeAIsGroup = exists(nodeA) && nodeA.group;
     var nodeBIsGroup = exists(nodeB) && nodeB.group;
     var bothAreGroups = nodeAIsGroup && nodeBIsGroup;

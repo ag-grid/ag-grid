@@ -1,7 +1,8 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "../gridPanel/gridPanel";
+import { RowComp } from "./row/rowComp";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { CellComp } from "./cellComp";
@@ -19,7 +20,6 @@ export declare class RowRenderer extends BeanStub {
     private $scope;
     private pinnedRowModel;
     private rowModel;
-    private loggerFactory;
     private focusController;
     private cellNavigationService;
     private columnApi;
@@ -100,13 +100,17 @@ export declare class RowRenderer extends BeanStub {
     private createRowComp;
     getRenderedNodes(): RowNode[];
     navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: CellPosition, allowUserOverride: boolean): void;
+    private getNormalisedPosition;
+    private tryToFocusFullWidthRow;
+    private focusPosition;
     private isValidNavigateCell;
     private getLastCellOfColSpan;
     ensureCellVisible(gridCell: CellPosition): void;
-    startEditingCell(gridCell: CellPosition, keyPress: number, charPress: string): void;
-    getComponentForCell(cellPosition: CellPosition): CellComp;
+    startEditingCell(gridCell: CellPosition, keyPress?: number | null, charPress?: string | null): void;
+    private getRowCompByPosition;
+    getComponentForCell(cellPosition: CellPosition): CellComp | null;
     getRowNode(gridRow: RowPosition): RowNode | null;
-    onTabKeyDown(previousRenderedCell: CellComp, keyboardEvent: KeyboardEvent): void;
+    onTabKeyDown(previousRenderedCell: CellComp | RowComp, keyboardEvent: KeyboardEvent): void;
     tabToNextCell(backwards: boolean): boolean;
     private moveToCellAfter;
     private moveToNextEditingCell;
@@ -115,6 +119,7 @@ export declare class RowRenderer extends BeanStub {
     private moveEditToNextCellOrRow;
     private findNextCellToFocusOn;
     private lookupRowNodeForCell;
+    isRangeInRenderedViewport(startIndex: number, endIndex: number): boolean;
 }
 export interface RefreshViewParams {
     recycleRows?: boolean;

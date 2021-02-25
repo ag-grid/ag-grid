@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from '../entities/columnGroup';
@@ -20,7 +20,7 @@ export interface ColumnState {
     colId?: string;
     hide?: boolean | null;
     aggFunc?: string | IAggFunc | null;
-    width?: number | undefined;
+    width?: number;
     pivot?: boolean | null;
     pivotIndex?: number | null;
     pinned?: boolean | string | 'left' | 'right' | null;
@@ -61,18 +61,19 @@ export declare class ColumnController extends BeanStub {
     private gridHeaderRowCount;
     private lastPrimaryOrder;
     private gridColsArePrimary;
-    private displayedLeftColumnTree;
-    private displayedRightColumnTree;
-    private displayedCentreColumnTree;
-    private displayedLeftHeaderRows;
-    private displayedRightHeaderRows;
-    private displayedCentreHeaderRows;
-    private displayedLeftColumns;
-    private displayedRightColumns;
-    private displayedCenterColumns;
-    private allDisplayedColumns;
-    private allDisplayedVirtualColumns;
-    private allDisplayedCenterVirtualColumns;
+    private displayedTreeLeft;
+    private displayedTreeRight;
+    private displayedTreeCentre;
+    private displayedColumnsLeft;
+    private displayedColumnsRight;
+    private displayedColumnsCenter;
+    private displayedColumns;
+    private displayedColumnsAndGroupsMap;
+    private viewportColumns;
+    private viewportColumnsCenter;
+    private viewportRowLeft;
+    private viewportRowRight;
+    private viewportRowCenter;
     private colSpanActive;
     private autoRowHeightColumns;
     private suppressColumnVirtualisation;
@@ -108,10 +109,10 @@ export declare class ColumnController extends BeanStub {
     private orderGridColumnsLikePrimary;
     isAutoRowHeightActive(): boolean;
     getAllAutoRowHeightCols(): Column[];
-    private setVirtualViewportLeftAndRight;
+    private setViewport;
     getDisplayedColumnsStartingAt(column: Column): Column[];
-    private checkDisplayedVirtualColumns;
-    setVirtualViewportPosition(scrollWidth: number, scrollPosition: number): void;
+    private checkViewportColumns;
+    setViewportPosition(scrollWidth: number, scrollPosition: number): void;
     isPivotMode(): boolean;
     private isPivotSettingAllowed;
     setPivotMode(pivotMode: boolean, source?: ColumnEventType): void;
@@ -119,28 +120,27 @@ export declare class ColumnController extends BeanStub {
     private setBeans;
     private setFirstRightAndLastLeftPinned;
     autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean, source?: ColumnEventType): void;
-    fireColumnResizedEvent(columns: Column[], finished: boolean, source: ColumnEventType, flexColumns?: Column[]): void;
+    fireColumnResizedEvent(columns: Column[] | null, finished: boolean, source: ColumnEventType, flexColumns?: Column[] | null): void;
     autoSizeColumn(key: string | Column | null, skipHeader?: boolean, source?: ColumnEventType): void;
     autoSizeAllColumns(skipHeader?: boolean, source?: ColumnEventType): void;
     private getColumnsFromTree;
-    getAllDisplayedColumnGroups(): ColumnGroupChild[] | null;
+    getAllDisplayedTrees(): ColumnGroupChild[] | null;
     getPrimaryColumnTree(): OriginalColumnGroupChild[];
     getHeaderRowCount(): number;
-    getLeftDisplayedColumnGroups(): ColumnGroupChild[];
-    getRightDisplayedColumnGroups(): ColumnGroupChild[];
-    getCenterDisplayedColumnGroups(): ColumnGroupChild[];
-    getDisplayedColumnGroups(type: string): ColumnGroupChild[];
+    getDisplayedTreeLeft(): ColumnGroupChild[];
+    getDisplayedTreeRight(): ColumnGroupChild[];
+    getDisplayedTreeCentre(): ColumnGroupChild[];
     isColumnDisplayed(column: Column): boolean;
     getAllDisplayedColumns(): Column[];
-    getAllDisplayedVirtualColumns(): Column[];
+    getViewportColumns(): Column[];
     getDisplayedLeftColumnsForRow(rowNode: RowNode): Column[];
     getDisplayedRightColumnsForRow(rowNode: RowNode): Column[];
     private getDisplayedColumnsForRow;
-    getAllDisplayedCenterVirtualColumnsForRow(rowNode: RowNode): Column[];
+    getViewportCenterColumnsForRow(rowNode: RowNode): Column[];
     getAriaColumnIndex(col: Column): number;
     private isColumnInViewport;
-    getPinnedLeftContainerWidth(): number;
-    getPinnedRightContainerWidth(): number;
+    getDisplayedColumnsLeftWidth(): number;
+    getDisplayedColumnsRightWidth(): number;
     updatePrimaryColumnList(keys: (string | Column)[] | null, masterList: Column[], actionIsAdd: boolean, columnCallback: (column: Column) => void, eventType: string, source?: ColumnEventType): void;
     setRowGroupColumns(colKeys: (string | Column)[], source?: ColumnEventType): void;
     private setRowGroupActive;
@@ -181,7 +181,7 @@ export declare class ColumnController extends BeanStub {
     moveColumnByIndex(fromIndex: number, toIndex: number, source?: ColumnEventType): void;
     getColumnDefs(): (ColDef | ColGroupDef)[];
     getBodyContainerWidth(): number;
-    getContainerWidth(pinned: string): number;
+    getContainerWidth(pinned: string | null): number;
     private updateBodyWidths;
     getValueColumns(): Column[];
     getPivotColumns(): Column[];
@@ -190,7 +190,7 @@ export declare class ColumnController extends BeanStub {
     getDisplayedCenterColumns(): Column[];
     getDisplayedLeftColumns(): Column[];
     getDisplayedRightColumns(): Column[];
-    getDisplayedColumns(type: string): Column[];
+    getDisplayedColumns(type: string | null): Column[];
     getAllPrimaryColumns(): Column[] | null;
     getSecondaryColumns(): Column[] | null;
     getAllColumnsForQuickFilter(): Column[];
@@ -198,7 +198,7 @@ export declare class ColumnController extends BeanStub {
     isEmpty(): boolean;
     isRowGroupEmpty(): boolean;
     setColumnVisible(key: string | Column, visible: boolean, source?: ColumnEventType): void;
-    setColumnsVisible(keys: (string | Column)[], visible: boolean, source?: ColumnEventType): void;
+    setColumnsVisible(keys: (string | Column)[], visible?: boolean, source?: ColumnEventType): void;
     setColumnPinned(key: string | Column | null, pinned: string | boolean | null, source?: ColumnEventType): void;
     setColumnsPinned(keys: (string | Column)[], pinned: string | boolean | null, source?: ColumnEventType): void;
     private actionOnGridColumns;
@@ -214,8 +214,9 @@ export declare class ColumnController extends BeanStub {
     private createStateItemFromColumn;
     getColumnState(): ColumnState[];
     private orderColumnStateList;
-    resetColumnState(suppressEverythingEvent?: boolean, source?: ColumnEventType): void;
+    resetColumnState(source?: ColumnEventType): void;
     applyColumnState(params: ApplyColumnStateParams, source?: ColumnEventType): boolean;
+    private applyOrderAfterApplyState;
     private compareColumnStatesAndRaiseEvents;
     private raiseColumnPinnedEvent;
     private raiseColumnVisibleEvent;
@@ -249,7 +250,7 @@ export declare class ColumnController extends BeanStub {
         groupId: string;
         open: boolean | undefined;
     }[], source?: ColumnEventType): void;
-    setColumnGroupOpened(key: OriginalColumnGroup | string | undefined, newValue: boolean, source?: ColumnEventType): void;
+    setColumnGroupOpened(key: OriginalColumnGroup | string | null, newValue: boolean, source?: ColumnEventType): void;
     getOriginalColumnGroup(key: OriginalColumnGroup | string): OriginalColumnGroup | null;
     private calculateColumnsForDisplay;
     private checkColSpanActiveInCols;
@@ -265,18 +266,18 @@ export declare class ColumnController extends BeanStub {
     private setupQuickFilterColumns;
     private putFixedColumnsFirst;
     private addAutoGroupToGridColumns;
-    private clearDisplayedColumns;
+    private clearDisplayedAndViewportColumns;
     private updateGroupsAndDisplayedColumns;
-    private updateDisplayedColumnsFromTrees;
-    private setupAllDisplayedColumns;
+    private deriveDisplayedColumns;
+    private joinDisplayedColumns;
     private setLeftValues;
     private setLeftValuesOfColumns;
     private setLeftValuesOfGroups;
-    private addToDisplayedColumns;
-    private updateDisplayedCenterVirtualColumns;
-    getVirtualHeaderGroupRow(type: string, dept: number): ColumnGroupChild[];
-    private updateDisplayedVirtualGroups;
-    private updateVirtualSets;
+    private derivedDisplayedColumnsFromDisplayedTree;
+    private extractViewportColumns;
+    getVirtualHeaderGroupRow(type: string | null, dept: number): ColumnGroupChild[];
+    private extractViewportRows;
+    private extractViewport;
     private filterOutColumnsWithinViewport;
     refreshFlexedColumns(params?: {
         resizingCols?: Column[];
@@ -288,6 +289,8 @@ export declare class ColumnController extends BeanStub {
     }): Column[];
     sizeColumnsToFit(gridWidth: any, source?: ColumnEventType, silent?: boolean): void;
     private buildDisplayedTrees;
+    private updateDisplayedMap;
+    isDisplayed(item: ColumnGroupChild): boolean;
     private updateOpenClosedVisibilityInColumnGroups;
     getGroupAutoColumns(): Column[] | null;
     private createGroupAutoColumnsIfNeeded;
@@ -295,5 +298,5 @@ export declare class ColumnController extends BeanStub {
     private getWidthOfColsInList;
     getGridBalancedTree(): OriginalColumnGroupChild[];
     hasFloatingFilters(): boolean;
-    getFirstDisplayedColumn(): Column;
+    getFirstDisplayedColumn(): Column | null;
 }

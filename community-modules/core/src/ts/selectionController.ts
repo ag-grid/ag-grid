@@ -261,7 +261,7 @@ export class SelectionController extends BeanStub {
 
         if (justFiltered) {
             if (!rowModelClientSide) {
-                console.error('ag-Grid: selecting just filtered only works with In Memory Row Model');
+                console.error('AG Grid: selecting just filtered only works with In Memory Row Model');
                 return;
             }
             const clientSideRowModel = this.rowModel as IClientSideRowModel;

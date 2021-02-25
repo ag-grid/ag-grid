@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,6 +32,7 @@ var dom_1 = require("../utils/dom");
 var array_1 = require("../utils/array");
 var event_1 = require("../utils/event");
 var keyCode_1 = require("../constants/keyCode");
+var focusController_1 = require("../focusController");
 var PopupService = /** @class */ (function (_super) {
     __extends(PopupService, _super);
     function PopupService() {
@@ -43,10 +44,10 @@ var PopupService = /** @class */ (function (_super) {
         var _this = this;
         this.gridCore = gridCore;
         this.addManagedListener(this.gridCore, events_1.Events.EVENT_KEYBOARD_FOCUS, function () {
-            array_1.forEach(_this.popupList, function (popup) { return dom_1.addCssClass(popup.element, 'ag-keyboard-focus'); });
+            array_1.forEach(_this.popupList, function (popup) { return dom_1.addCssClass(popup.element, focusController_1.FocusController.AG_KEYBOARD_FOCUS); });
         });
         this.addManagedListener(this.gridCore, events_1.Events.EVENT_MOUSE_FOCUS, function () {
-            array_1.forEach(_this.popupList, function (popup) { return dom_1.removeCssClass(popup.element, 'ag-keyboard-focus'); });
+            array_1.forEach(_this.popupList, function (popup) { return dom_1.removeCssClass(popup.element, focusController_1.FocusController.AG_KEYBOARD_FOCUS); });
         });
     };
     PopupService.prototype.getPopupParent = function () {
@@ -326,6 +327,9 @@ var PopupService = /** @class */ (function (_super) {
         dom_1.addCssClass(eWrapper, 'ag-popup');
         dom_1.addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
         dom_1.addCssClass(eChild, 'ag-popup-child');
+        if (this.focusController.isKeyboardMode()) {
+            dom_1.addCssClass(eChild, focusController_1.FocusController.AG_KEYBOARD_FOCUS);
+        }
         eWrapper.appendChild(eChild);
         ePopupParent.appendChild(eWrapper);
         if (alwaysOnTop) {
@@ -529,6 +533,9 @@ var PopupService = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('environment')
     ], PopupService.prototype, "environment", void 0);
+    __decorate([
+        context_1.Autowired('focusController')
+    ], PopupService.prototype, "focusController", void 0);
     PopupService = __decorate([
         context_1.Bean('popupService')
     ], PopupService);

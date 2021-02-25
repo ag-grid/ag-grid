@@ -115,9 +115,9 @@ export class ClientSideNodeManager {
 
         const nodesToUnselect: RowNode[] = [];
 
-        this.executeAdd(rowDataTran, rowNodeTransaction);
         this.executeRemove(rowDataTran, rowNodeTransaction, nodesToUnselect);
         this.executeUpdate(rowDataTran, rowNodeTransaction, nodesToUnselect);
+        this.executeAdd(rowDataTran, rowNodeTransaction);
 
         this.updateSelection(nodesToUnselect);
 
@@ -190,7 +190,7 @@ export class ClientSideNodeManager {
             }
 
             // so row renderer knows to fade row out (and not reposition it)
-            rowNode.clearRowTop();
+            rowNode.clearRowTopAndRowIndex();
 
             // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
             // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
@@ -245,14 +245,14 @@ export class ClientSideNodeManager {
             const id: string = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error(`ag-Grid: could not find row id=${id}, data item was not found for this id`);
+                console.error(`AG Grid: could not find row id=${id}, data item was not found for this id`);
                 return null;
             }
         } else {
             // find rowNode using object references
             rowNode = _.find(this.rootNode.allLeafChildren, rowNode => rowNode.data === data);
             if (!rowNode) {
-                console.error(`ag-Grid: could not find data item as object was not found`, data);
+                console.error(`AG Grid: could not find data item as object was not found`, data);
                 return null;
             }
         }
@@ -263,7 +263,7 @@ export class ClientSideNodeManager {
     private recursiveFunction(rowData: any[], parent: RowNode, level: number): RowNode[] {
         // make sure the rowData is an array and not a string of json - this was a commonly reported problem on the forum
         if (typeof rowData === 'string') {
-            console.warn('ag-Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
+            console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
             return;
         }
 

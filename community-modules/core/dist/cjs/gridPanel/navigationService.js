@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,7 +43,7 @@ var NavigationService = /** @class */ (function (_super) {
     NavigationService.prototype.handlePageScrollingKey = function (event) {
         var key = event.which || event.keyCode;
         var alt = event.altKey;
-        var ctrl = event.ctrlKey;
+        var ctrl = event.ctrlKey || event.metaKey;
         var currentCell = this.mouseEventService.getCellPositionForEvent(event);
         if (!currentCell) {
             return false;
@@ -109,6 +109,24 @@ var NavigationService = /** @class */ (function (_super) {
     NavigationService.prototype.setTimeLastPageEventProcessed = function () {
         this.timeLastPageEventProcessed = new Date().getTime();
     };
+    NavigationService.prototype.navigateTo = function (navigateParams) {
+        var scrollIndex = navigateParams.scrollIndex, scrollType = navigateParams.scrollType, scrollColumn = navigateParams.scrollColumn, focusIndex = navigateParams.focusIndex, focusColumn = navigateParams.focusColumn;
+        if (generic_1.exists(scrollColumn)) {
+            this.gridPanel.ensureColumnVisible(scrollColumn);
+        }
+        if (generic_1.exists(scrollIndex)) {
+            this.gridPanel.ensureIndexVisible(scrollIndex, scrollType);
+        }
+        // make sure the cell is rendered, needed if we are to focus
+        this.animationFrameService.flushAllFrames();
+        // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
+        // highlighted.
+        this.focusController.setFocusedCell(focusIndex, focusColumn, null, true);
+        if (this.rangeController) {
+            var cellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };
+            this.rangeController.setRangeToCell(cellPosition);
+        }
+    };
     NavigationService.prototype.onPageDown = function (gridCell) {
         if (this.isTimeSinceLastPageEventToRecent()) {
             return;
@@ -133,7 +151,13 @@ var NavigationService = /** @class */ (function (_super) {
         if (scrollIndex > pageLastRow) {
             scrollIndex = pageLastRow;
         }
-        this.navigateTo(scrollIndex, 'top', null, focusIndex, gridCell.column);
+        this.navigateTo({
+            scrollIndex: scrollIndex,
+            scrollType: 'top',
+            scrollColumn: null,
+            focusIndex: focusIndex,
+            focusColumn: gridCell.column
+        });
         this.setTimeLastPageEventProcessed();
     };
     NavigationService.prototype.onPageUp = function (gridCell) {
@@ -160,43 +184,51 @@ var NavigationService = /** @class */ (function (_super) {
         if (scrollIndex < firstRow) {
             scrollIndex = firstRow;
         }
-        this.navigateTo(scrollIndex, 'bottom', null, focusIndex, gridCell.column);
+        this.navigateTo({
+            scrollIndex: scrollIndex,
+            scrollType: 'bottom',
+            scrollColumn: null,
+            focusIndex: focusIndex,
+            focusColumn: gridCell.column
+        });
         this.setTimeLastPageEventProcessed();
     };
-    // common logic to navigate. takes parameters:
-    // scrollIndex - what row to vertically scroll to
-    // scrollType - what position to put scroll index ie top/bottom
-    // scrollColumn - what column to horizontally scroll to
-    // focusIndex / focusColumn - for page up / down, we want to scroll to one row/column, but focus another
-    NavigationService.prototype.navigateTo = function (scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn) {
-        if (generic_1.exists(scrollColumn)) {
-            this.gridPanel.ensureColumnVisible(scrollColumn);
+    NavigationService.prototype.getIndexToFocus = function (indexToScrollTo, isDown) {
+        var indexToFocus = indexToScrollTo;
+        // for SSRM, when user hits ctrl+down, we can end up trying to focus the loading row.
+        // instead we focus the last row with data instead.
+        if (isDown) {
+            var node = this.paginationProxy.getRow(indexToScrollTo);
+            if (node && node.stub) {
+                indexToFocus -= 1;
+            }
         }
-        if (generic_1.exists(scrollIndex)) {
-            this.gridPanel.ensureIndexVisible(scrollIndex, scrollType);
-        }
-        // make sure the cell is rendered, needed if we are to focus
-        this.animationFrameService.flushAllFrames();
-        // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
-        // highlighted.
-        this.focusController.setFocusedCell(focusIndex, focusColumn, null, true);
-        if (this.rangeController) {
-            var cellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };
-            this.rangeController.setRangeToCell(cellPosition);
-        }
+        return indexToFocus;
     };
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
     NavigationService.prototype.onCtrlUpOrDown = function (key, gridCell) {
         var upKey = key === keyCode_1.KeyCode.UP;
-        var rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
-        this.navigateTo(rowIndexToScrollTo, null, gridCell.column, rowIndexToScrollTo, gridCell.column);
+        var rowIndexToScrollTo = upKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
+        this.navigateTo({
+            scrollIndex: rowIndexToScrollTo,
+            scrollType: null,
+            scrollColumn: gridCell.column,
+            focusIndex: this.getIndexToFocus(rowIndexToScrollTo, !upKey),
+            focusColumn: gridCell.column
+        });
     };
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
     NavigationService.prototype.onCtrlLeftOrRight = function (key, gridCell) {
         var leftKey = key === keyCode_1.KeyCode.LEFT;
         var allColumns = this.columnController.getAllDisplayedColumns();
         var columnToSelect = leftKey ? allColumns[0] : array_1.last(allColumns);
-        this.navigateTo(gridCell.rowIndex, null, columnToSelect, gridCell.rowIndex, columnToSelect);
+        this.navigateTo({
+            scrollIndex: gridCell.rowIndex,
+            scrollType: null,
+            scrollColumn: columnToSelect,
+            focusIndex: gridCell.rowIndex,
+            focusColumn: columnToSelect
+        });
     };
     // home brings focus to top left cell, end brings focus to bottom right, grid scrolled to bring
     // same cell into view (which means either scroll all the way up, or all the way down).
@@ -204,8 +236,14 @@ var NavigationService = /** @class */ (function (_super) {
         var homeKey = key === keyCode_1.KeyCode.PAGE_HOME;
         var allColumns = this.columnController.getAllDisplayedColumns();
         var columnToSelect = homeKey ? allColumns[0] : array_1.last(allColumns);
-        var rowIndexToScrollTo = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
-        this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);
+        var scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
+        this.navigateTo({
+            scrollIndex: scrollIndex,
+            scrollType: null,
+            scrollColumn: columnToSelect,
+            focusIndex: this.getIndexToFocus(scrollIndex, !homeKey),
+            focusColumn: columnToSelect
+        });
     };
     __decorate([
         context_1.Autowired('mouseEventService')

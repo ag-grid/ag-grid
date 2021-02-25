@@ -28,7 +28,7 @@ export class FilterListener extends BeanStub {
     private onFilterChanged(): void {
         const newModel = this.filterManager.getFilterModel();
         const storeParams = this.serverSideRowModel.getParams();
-        const oldModel = storeParams.filterModel;
+        const oldModel = storeParams ? storeParams.filterModel : {};
 
         const changedColumns = this.findChangedColumns(newModel, oldModel);
         const valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,12 +31,12 @@ var EventService = /** @class */ (function () {
     // use autowired attributes, as that would be confusing, as sometimes the attributes
     // would be wired, and sometimes not.
     //
-    // the global event servers used by ag-Grid is autowired by the context once, and this
+    // the global event servers used by AG Grid is autowired by the context once, and this
     // setBeans method gets called once.
     //
     // the times when this class is used outside of the context (eg RowNode has an instance of this
     // class) then it is not a bean, and this setBeans method is not called.
-    EventService.prototype.setBeans = function (loggerFactory, gridOptionsWrapper, globalEventListener, frameworkOverrides) {
+    EventService.prototype.setBeans = function (loggerFactory, gridOptionsWrapper, frameworkOverrides, globalEventListener) {
         if (globalEventListener === void 0) { globalEventListener = null; }
         this.logger = loggerFactory.create('EventService');
         this.frameworkOverrides = frameworkOverrides;
@@ -136,8 +136,8 @@ var EventService = /** @class */ (function () {
     __decorate([
         __param(0, context_1.Qualifier('loggerFactory')),
         __param(1, context_1.Qualifier('gridOptionsWrapper')),
-        __param(2, context_1.Qualifier('globalEventListener')),
-        __param(3, context_1.Qualifier('frameworkOverrides'))
+        __param(2, context_1.Qualifier('frameworkOverrides')),
+        __param(3, context_1.Qualifier('globalEventListener'))
     ], EventService.prototype, "setBeans", null);
     EventService = __decorate([
         context_1.Bean('eventService')

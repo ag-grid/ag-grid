@@ -46,6 +46,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
             this.addGuiEventListener('click', function (e) { return _this.onItemSelected(e); });
             this.addGuiEventListener('keydown', function (e) {
                 if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
+                    e.preventDefault();
                     _this.onItemSelected(e);
                 }
             });
@@ -169,7 +170,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
                 icon.innerHTML = this.params.icon;
             }
             else {
-                console.warn('ag-Grid: menu item icon must be DOM node or string');
+                console.warn('AG Grid: menu item icon must be DOM node or string');
             }
         }
         this.getGui().appendChild(icon);

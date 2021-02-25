@@ -31,13 +31,13 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     public createTransactionForRowData(data: any[]): ([RowDataTransaction, { [id: string]: number }]) | undefined {
 
         if (_.missing(this.clientSideRowModel)) {
-            console.error('ag-Grid: ImmutableService only works with ClientSideRowModel');
+            console.error('AG Grid: ImmutableService only works with ClientSideRowModel');
             return;
         }
 
         const getRowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
         if (!getRowNodeIdFunc || _.missing(getRowNodeIdFunc)) {
-            console.error('ag-Grid: ImmutableService requires getRowNodeId() callback to be implemented, your row data need IDs!');
+            console.error('AG Grid: ImmutableService requires getRowNodeId() callback to be implemented, your row data need IDs!');
             return;
         }
 

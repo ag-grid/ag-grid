@@ -119,7 +119,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: function () { return _this.columnController.resetColumnState(false, "contextMenu"); }
+                    action: function () { return _this.columnController.resetColumnState("contextMenu"); }
                 };
             case 'expandAll':
                 return {
@@ -211,7 +211,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     return chartMenuItem;
                 }
                 else {
-                    console.warn("ag-Grid: unknown menu item type " + key);
+                    console.warn("AG Grid: unknown menu item type " + key);
                     return null;
                 }
         }

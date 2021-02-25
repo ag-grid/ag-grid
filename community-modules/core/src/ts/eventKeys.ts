@@ -154,7 +154,7 @@ export class Events {
      * or the user has moved to a different page. */
     public static EVENT_PAGINATION_CHANGED = 'paginationChanged';
 
-    /** Only used by React, Angular 2+, Web Components and VueJS ag-Grid components
+    /** Only used by React, Angular 2+, Web Components and VueJS AG Grid components
      * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
      * to bound properties, this event fires after the grid has finished processing the change. */
     public static EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';

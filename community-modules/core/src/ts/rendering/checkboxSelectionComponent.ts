@@ -18,7 +18,7 @@ export class CheckboxSelectionComponent extends Component {
 
     constructor() {
         super(/* html*/`
-            <div class="ag-selection-checkbox">
+            <div class="ag-selection-checkbox" role="presentation">
                 <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
             </div>`
         );
@@ -27,6 +27,10 @@ export class CheckboxSelectionComponent extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.eCheckbox.setPassive(true);
+    }
+
+    public getCheckboxId(): string {
+        return this.eCheckbox.getInputElement().id;
     }
 
     private onDataChanged(): void {

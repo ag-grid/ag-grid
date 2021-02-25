@@ -82,7 +82,7 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
         var _this = this;
         var menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         var eMenuGui = menu.getGui();
-        var anchorToElement = eventSource ? eventSource : this.gridPanel.getGui();
+        var anchorToElement = eventSource || this.gridPanel.getGui();
         var closedFuncs = [];
         closedFuncs.push(function (e) {
             _this.destroyBean(menu);
@@ -106,7 +106,7 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
             },
             afterGuiAttached: function (params) { return menu.afterGuiAttached(params); },
             positionCallback: function () { return positionCallback(menu); },
-            anchorToElement: anchorToElement,
+            anchorToElement: anchorToElement
         });
         if (addPopupRes) {
             // if user starts showing / hiding columns, or otherwise move the underlying column

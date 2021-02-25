@@ -1,6 +1,8 @@
 import { Path } from "./path";
 import { Shape } from "./shape";
 import { BBox } from "../bbox";
+import { LinearGradient } from "../gradient/linearGradient";
+import { Color } from "../../util/color";
 
 export enum RectSizing {
     Content,
@@ -80,6 +82,50 @@ export class Rect extends Path {
     }
     get crisp(): boolean {
         return this._crisp;
+    }
+
+    private _gradient: boolean = false;
+    set gradient(value: boolean) {
+        if (this._gradient !== value) {
+            this._gradient = value;
+            this.updateGradientInstance();
+            this.dirty = true;
+        }
+    }
+    get gradient(): boolean {
+        return this._gradient;
+    }
+
+    private gradientInstance?: LinearGradient;
+    private updateGradientInstance() {
+        if (this.gradient) {
+            const { fill } = this;
+            if (fill) {
+                const gradient = new LinearGradient();
+                gradient.angle = 270;
+                gradient.stops = [{
+                    offset: 0,
+                    color: Color.fromString(fill).brighter().toString()
+                }, {
+                    offset: 1,
+                    color: Color.fromString(fill).darker().toString()
+                }];
+                this.gradientInstance = gradient;
+            }
+        } else {
+            this.gradientInstance = undefined;
+        }
+    }
+
+    set fill(value: string | undefined) {
+        if (this._fill !== value) {
+            this._fill = value;
+            this.updateGradientInstance();
+            this.dirty = true;
+        }
+    }
+    get fill(): string | undefined {
+        return this._fill;
     }
 
     private effectiveStrokeWidth: number = Shape.defaultStyles.strokeWidth;
@@ -176,7 +222,11 @@ export class Rect extends Path {
         const pixelRatio = this.scene.canvas.pixelRatio || 1;
 
         if (this.fill) {
-            ctx.fillStyle = this.fill;
+            if (this.gradientInstance) {
+                ctx.fillStyle = this.gradientInstance.generateGradient(ctx, this.computeBBox());
+            } else {
+                ctx.fillStyle = this.fill;
+            }
             ctx.globalAlpha = this.opacity * this.fillOpacity;
 
             // The canvas context scaling (depends on the device's pixel ratio)

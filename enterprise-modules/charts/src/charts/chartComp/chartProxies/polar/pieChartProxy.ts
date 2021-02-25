@@ -1,4 +1,10 @@
-import { AgChart, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart } from "ag-charts-community";
+import {
+    AgChart,
+    AgPolarChartOptions,
+    ChartTheme,
+    PieSeries,
+    PolarChart
+} from "ag-charts-community";
 import { AgPieSeriesOptions, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
@@ -38,10 +44,7 @@ export class PieChartProxy extends PolarChartProxy {
         const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
         options.seriesDefaults = {
             title: seriesDefaults.title,
-            label: {
-                ...seriesDefaults.label,
-                minRequiredAngle: seriesDefaults.label.minAngle
-            },
+            label: seriesDefaults.label,
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
@@ -57,6 +60,8 @@ export class PieChartProxy extends PolarChartProxy {
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
+            lineDash: seriesDefaults.lineDash,
+            lineDashOffset: seriesDefaults.lineDashOffset,
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
             listeners: seriesDefaults.listeners
         } as PieSeriesOptions;
@@ -143,6 +148,11 @@ export class PieChartProxy extends PolarChartProxy {
                     renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
                 },
             }, 'pie.series');
+
+            if (this.crossFiltering && !pieSeries.tooltip.renderer) {
+                // only add renderer if user hasn't provided one
+                this.addCrossFilteringTooltipRenderer(pieSeries);
+            }
         }
 
         pieSeries.angleName = field.displayName!;
@@ -171,7 +181,6 @@ export class PieChartProxy extends PolarChartProxy {
                     pieSeries.callout.colors = strokes;
                 }
             }
-
             chart.tooltip.delay = 500;
 
             // disable series highlighting by default
@@ -214,7 +223,7 @@ export class PieChartProxy extends PolarChartProxy {
                 ...fontOptions,
                 enabled: false,
                 offset: 3,
-                minRequiredAngle: 0,
+                minAngle: 0,
             },
             tooltip: {
                 enabled: true,

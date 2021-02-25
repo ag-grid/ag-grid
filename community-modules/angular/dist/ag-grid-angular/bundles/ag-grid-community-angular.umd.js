@@ -1070,6 +1070,7 @@
             this.suppressRowClickSelection = undefined;
             this.suppressCellSelection = undefined;
             this.suppressHorizontalScroll = undefined;
+            this.alwaysShowHorizontalScroll = undefined;
             this.alwaysShowVerticalScroll = undefined;
             this.debug = undefined;
             this.enableBrowserTooltips = undefined;
@@ -1192,6 +1193,7 @@
             this.suppressAggFilteredOnly = undefined;
             this.showOpenedGroup = undefined;
             this.suppressClipboardApi = undefined;
+            this.suppressModelUpdateAfterUpdateTransaction = undefined;
             this.columnEverythingChanged = new core.EventEmitter();
             this.newColumnsLoaded = new core.EventEmitter();
             this.columnPivotModeChanged = new core.EventEmitter();
@@ -1357,7 +1359,7 @@
                 }
             }
             else {
-                console.log('ag-Grid-angular: could not find EventEmitter: ' + eventType);
+                console.log('AG Grid Angular: could not find EventEmitter: ' + eventType);
             }
         };
         AgGridAngular.ctorParameters = function () { return [
@@ -1982,6 +1984,10 @@
         __decorate([
             core.Input(),
             __metadata("design:type", Object)
+        ], AgGridAngular.prototype, "alwaysShowHorizontalScroll", void 0);
+        __decorate([
+            core.Input(),
+            __metadata("design:type", Object)
         ], AgGridAngular.prototype, "alwaysShowVerticalScroll", void 0);
         __decorate([
             core.Input(),
@@ -2467,6 +2473,10 @@
             core.Input(),
             __metadata("design:type", Object)
         ], AgGridAngular.prototype, "suppressClipboardApi", void 0);
+        __decorate([
+            core.Input(),
+            __metadata("design:type", Object)
+        ], AgGridAngular.prototype, "suppressModelUpdateAfterUpdateTransaction", void 0);
         __decorate([
             core.Output(),
             __metadata("design:type", core.EventEmitter)

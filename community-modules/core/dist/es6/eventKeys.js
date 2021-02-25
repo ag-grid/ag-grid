@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -116,7 +116,7 @@ var Events = /** @class */ (function () {
     /** The displayed page for pagination has changed. For example the data was filtered or sorted,
      * or the user has moved to a different page. */
     Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';
-    /** Only used by React, Angular 2+, Web Components and VueJS ag-Grid components
+    /** Only used by React, Angular 2+, Web Components and VueJS AG Grid components
      * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
      * to bound properties, this event fires after the grid has finished processing the change. */
     Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';

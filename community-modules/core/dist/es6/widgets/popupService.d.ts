@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridCore } from "../gridCore";
@@ -31,6 +31,7 @@ export interface AddPopupResult {
 }
 export declare class PopupService extends BeanStub {
     private environment;
+    private focusController;
     private gridCore;
     private popupList;
     registerGridCore(gridCore: GridCore): void;

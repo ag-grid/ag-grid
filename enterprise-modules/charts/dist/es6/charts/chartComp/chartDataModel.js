@@ -115,8 +115,8 @@ var ChartDataModel = /** @class */ (function (_super) {
     ChartDataModel.prototype.getCellRangeParams = function () {
         var cellRanges = this.getCellRanges();
         var firstCellRange = cellRanges[0];
-        var startRow = firstCellRange && firstCellRange.startRow;
-        var endRow = firstCellRange && firstCellRange.endRow;
+        var startRow = (firstCellRange && firstCellRange.startRow) || null;
+        var endRow = (firstCellRange && firstCellRange.endRow) || null;
         return {
             rowStartIndex: startRow && startRow.rowIndex,
             rowStartPinned: startRow && startRow.rowPinned,
@@ -224,7 +224,7 @@ var ChartDataModel = /** @class */ (function (_super) {
                     case 'excluded':
                         return;
                     default:
-                        console.warn("ag-Grid: unexpected chartDataType value '" + chartDataType + "' supplied, instead use 'category', 'series' or 'excluded'");
+                        console.warn("AG Grid: unexpected chartDataType value '" + chartDataType + "' supplied, instead use 'category', 'series' or 'excluded'");
                         break;
                 }
             }

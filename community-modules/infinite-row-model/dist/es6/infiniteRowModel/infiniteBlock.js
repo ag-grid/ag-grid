@@ -74,7 +74,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
         var _this = this;
         var params = this.createLoadParams();
         if (_.missing(this.params.datasource.getRows)) {
-            console.warn("ag-Grid: datasource is missing getRows method");
+            console.warn("AG Grid: datasource is missing getRows method");
             return;
         }
         // put in timeout, to force result to be async
@@ -136,7 +136,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
             rowNode.setRowHeight(this.params.rowHeight);
             rowNode.uiLevel = 0;
             rowNode.setRowIndex(rowIndex);
-            rowNode.rowTop = this.params.rowHeight * rowIndex;
+            rowNode.setRowTop(this.params.rowHeight * rowIndex);
             this.rowNodes.push(rowNode);
         }
     };
@@ -159,9 +159,8 @@ var InfiniteBlock = /** @class */ (function (_super) {
     InfiniteBlock.prototype.destroyRowNodes = function () {
         this.rowNodes.forEach(function (rowNode) {
             // this is needed, so row render knows to fade out the row, otherwise it
-            // sees row top is present, and thinks the row should be shown. maybe
-            // rowNode should have a flag on whether it is visible???
-            rowNode.clearRowTop();
+            // sees row top is present, and thinks the row should be shown.
+            rowNode.clearRowTopAndRowIndex();
         });
     };
     __decorate([

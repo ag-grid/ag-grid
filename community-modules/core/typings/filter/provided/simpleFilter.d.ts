@@ -27,7 +27,7 @@ export declare enum ConditionPosition {
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends ProvidedFilter {
+export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends ProvidedFilter<M | ICombinedSimpleModel<M>> {
     static EMPTY: string;
     static EQUALS: string;
     static NOT_EQUAL: string;

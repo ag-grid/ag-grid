@@ -1,4 +1,4 @@
-// @ag-grid-community/react v25.0.1
+// @ag-grid-community/react v25.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -37,6 +37,7 @@ var NewReactComponent = /** @class */ (function (_super) {
         var _this = _super.call(this, reactComponent, parentComponent, componentType) || this;
         _this.oldPortal = null;
         _this.key = keyGenerator_1.default();
+        _this.portalKey = keyGenerator_1.default();
         return _this;
     }
     NewReactComponent.prototype.init = function (params) {
@@ -56,7 +57,7 @@ var NewReactComponent = /** @class */ (function (_super) {
             };
         }
         this.reactElement = react_1.createElement(this.reactComponent, __assign(__assign({}, params), { key: this.key }));
-        this.portal = react_dom_1.createPortal(this.reactElement, this.eParentElement, keyGenerator_1.default() // fixed deltaRowModeRefreshCompRenderer
+        this.portal = react_dom_1.createPortal(this.reactElement, this.eParentElement, this.portalKey // fixed deltaRowModeRefreshCompRenderer
         );
     };
     NewReactComponent.prototype.createReactComponent = function (resolve) {

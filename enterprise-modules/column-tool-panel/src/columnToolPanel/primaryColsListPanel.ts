@@ -330,7 +330,7 @@ export class PrimaryColsListPanel extends Component {
 
         const unrecognisedGroupIds = groupIds.filter(groupId => !_.includes(expandedGroupIds, groupId));
         if (unrecognisedGroupIds.length > 0) {
-            console.warn('ag-Grid: unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
+            console.warn('AG Grid: unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
         }
     }
 

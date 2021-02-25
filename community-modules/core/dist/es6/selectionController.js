@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -242,7 +242,7 @@ var SelectionController = /** @class */ (function (_super) {
         var rowModelClientSide = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         if (justFiltered) {
             if (!rowModelClientSide) {
-                console.error('ag-Grid: selecting just filtered only works with In Memory Row Model');
+                console.error('AG Grid: selecting just filtered only works with In Memory Row Model');
                 return;
             }
             var clientSideRowModel = this.rowModel;

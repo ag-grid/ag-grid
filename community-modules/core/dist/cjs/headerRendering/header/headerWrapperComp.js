@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,6 +66,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         this.addManagedListener(this.column, column_1.Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
         this.createManagedBean(new selectAllFeature_1.SelectAllFeature(this.cbSelectAll, this.column));
+        this.cbSelectAll.setParentComponent(this);
         this.createManagedBean(new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans));
         this.addAttributes();
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
@@ -113,8 +114,8 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
             || this.colDefHeaderComponentFramework != colDef.headerComponentFramework;
         var headerCompRefreshed = newHeaderCompConfigured ? false : this.attemptHeaderCompRefresh();
         if (headerCompRefreshed) {
-            var dragSourceIsMissing = this.draggable && !this.dragAndDropService;
-            var dragSourceNeedsRemoving = !this.draggable && this.dragAndDropService;
+            var dragSourceIsMissing = this.draggable && !this.moveDragSource;
+            var dragSourceNeedsRemoving = !this.draggable && this.moveDragSource;
             if (dragSourceIsMissing || dragSourceNeedsRemoving) {
                 this.attachDraggingToHeaderComp();
             }

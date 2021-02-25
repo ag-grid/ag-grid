@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from './entities/rowNode';
@@ -229,7 +229,7 @@ export interface ColumnPinnedEvent extends ColumnEvent {
 export interface RowEvent extends AgGridEvent {
     node: RowNode;
     data: any;
-    rowIndex: number;
+    rowIndex: number | null;
     rowPinned: string;
     context: any;
     event?: Event | null;

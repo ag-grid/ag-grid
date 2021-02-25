@@ -39,7 +39,7 @@ import { SizeMonitor } from "../util/sizeMonitor";
 import { Observable, reactive } from "../util/observable";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { createId } from "../util/id";
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: table;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-hidden {\n    top: -10000px !important;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: table;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-hidden {\n    top: -10000px !important;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n    overflow: hidden;\n}\n\n.ag-chart-tooltip-content:empty {\n    padding: 0;\n    height: 7px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
 export function toTooltipHtml(input, defaults) {
     if (typeof input === 'string') {
         return input;
@@ -63,6 +63,7 @@ var ChartTooltip = /** @class */ (function (_super) {
          */
         _this.tracking = true;
         _this.showTimeout = 0;
+        _this.constrained = false;
         _this.chart = chart;
         _this.class = '';
         var tooltipRoot = document.body;
@@ -121,17 +122,22 @@ var ChartTooltip = /** @class */ (function (_super) {
         }
         var left = meta.pageX - el.clientWidth / 2;
         var top = meta.pageY - el.clientHeight - 8;
+        this.constrained = false;
         if (this.chart.container) {
             var tooltipRect = el.getBoundingClientRect();
             var minLeft = 0;
             var maxLeft = window.innerWidth - tooltipRect.width;
             if (left < minLeft) {
                 left = minLeft;
-                this.updateClass(true, true);
+                this.updateClass(true, this.constrained = true);
             }
             else if (left > maxLeft) {
                 left = maxLeft;
-                this.updateClass(true, true);
+                this.updateClass(true, this.constrained = true);
+            }
+            if (top < window.pageYOffset) {
+                top = meta.pageY + 20;
+                this.updateClass(true, this.constrained = true);
             }
         }
         el.style.left = left + "px";
@@ -153,7 +159,7 @@ var ChartTooltip = /** @class */ (function (_super) {
                 this.chart.lastPick = undefined;
             }
         }
-        this.updateClass(visible);
+        this.updateClass(visible, this.constrained);
     };
     ChartTooltip.prototype.destroy = function () {
         var parentNode = this.element.parentNode;
@@ -753,6 +759,9 @@ var Chart = /** @class */ (function (_super) {
         chartElement.removeEventListener('mouseup', this._onMouseUp);
         chartElement.removeEventListener('mouseout', this._onMouseOut);
         chartElement.removeEventListener('click', this._onClick);
+    };
+    Chart.prototype.getSeriesRect = function () {
+        return this.seriesRect;
     };
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
     Chart.prototype.pickSeriesNode = function (x, y) {

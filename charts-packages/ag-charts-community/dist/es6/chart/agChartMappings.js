@@ -9,7 +9,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var _a, _b, _c, _d;
+var _a, _b, _c, _d, _e;
 import { Padding } from "../util/padding";
 import { CartesianChart } from "./cartesianChart";
 import { GroupedCategoryChart } from "./groupedCategoryChart";
@@ -33,6 +33,8 @@ import { NavigatorMask } from "./navigator/navigatorMask";
 import { NavigatorHandle } from "./navigator/navigatorHandle";
 import { CartesianSeriesMarker } from "./series/cartesian/cartesianSeries";
 import { Chart } from "./chart";
+import { HierarchyChart } from "./hierarchyChart";
+import { TreemapSeries } from "./series/hierarchy/treemapSeries";
 /*
     This file defines the specs for creating different kinds of charts, but
     contains no code that uses the specs to actually create charts
@@ -72,7 +74,7 @@ var commonChartMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -97,7 +99,7 @@ var commonChartMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -270,7 +272,6 @@ var axisMappings = {
         meta: {
             constructor: Caption,
             defaults: {
-                enabled: true,
                 padding: {
                     meta: {
                         constructor: Padding,
@@ -513,12 +514,19 @@ var mappings = (_a = {},
                     }
                 } }, shadowMapping),
             _d) }),
+    _a[HierarchyChart.type] = __assign(__assign({ meta: __assign(__assign({ constructor: HierarchyChart }, chartMeta), { defaults: __assign({}, chartDefaults) }) }, commonChartMappings), { series: (_e = {},
+            _e[TreemapSeries.type] = __assign({ meta: {
+                    constructor: TreemapSeries,
+                    defaults: __assign(__assign({}, seriesDefaults), { showInLegend: false })
+                } }, tooltipMapping),
+            _e) }),
     _a);
 // Amend the `mappings` object with aliases for different chart types.
 {
     var typeToAliases = {
         cartesian: ['line', 'area', 'bar', 'column'],
-        polar: ['pie']
+        polar: ['pie'],
+        hierarchy: ['treemap']
     };
     var _loop_1 = function (type) {
         typeToAliases[type].forEach(function (alias) {

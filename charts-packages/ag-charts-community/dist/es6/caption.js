@@ -26,7 +26,7 @@ var Caption = /** @class */ (function (_super) {
     function Caption() {
         var _this = _super.call(this) || this;
         _this.node = new Text();
-        _this.enabled = true;
+        _this.enabled = false;
         _this.padding = new Padding(10);
         var node = _this.node;
         node.textAlign = 'center';

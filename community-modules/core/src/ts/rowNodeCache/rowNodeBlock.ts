@@ -95,14 +95,17 @@ export abstract class RowNodeBlock extends BeanStub {
 
     protected successCommon(version: number, params: LoadSuccessParams) {
 
+        // need to dispatch load complete before processing the data, as PaginationComp checks
+        // RowNodeBlockLoader to see if it is still loading, so the RowNodeBlockLoader needs to
+        // be updated first (via LoadComplete event) before PaginationComp updates (via processServerResult method)
+        this.dispatchLoadCompleted();
+
         const requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
 
         if (requestMostRecentAndLive) {
             this.state = RowNodeBlock.STATE_LOADED;
             this.processServerResult(params);
         }
-
-        this.dispatchLoadCompleted();
     }
 
     private dispatchLoadCompleted(success = true) {

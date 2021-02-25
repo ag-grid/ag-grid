@@ -19,7 +19,7 @@ export declare class Component extends BeanStub {
     private tooltipText;
     private tooltipFeature;
     constructor(template?: string);
-    private postConstructOnComponent;
+    private preConstructOnComponent;
     getCompId(): number;
     getTooltipParams(): ITooltipParams;
     setTooltip(newTooltipText: string | undefined): void;

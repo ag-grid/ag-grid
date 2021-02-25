@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -53,7 +53,7 @@ var MouseEventService = /** @class */ (function (_super) {
         this.eGridDiv[MouseEventService_1.GRID_DOM_KEY] = this.gridInstanceId;
     };
     MouseEventService.prototype.getRenderedCellForEvent = function (event) {
-        return event_1.getCellCompForEvent(this.gridOptionsWrapper, event);
+        return event_1.getComponentForEvent(this.gridOptionsWrapper, event, 'cellComp');
     };
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
     // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste

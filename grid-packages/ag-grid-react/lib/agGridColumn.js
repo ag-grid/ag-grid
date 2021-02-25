@@ -1,4 +1,4 @@
-// ag-grid-react v25.0.1
+// ag-grid-react v25.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -40,7 +40,7 @@ var AgGridColumn = /** @class */ (function (_super) {
         return null;
     };
     AgGridColumn.mapChildColumnDefs = function (children) {
-        return React.Children.map(children, function (child) { return AgGridColumn.toColDef(child.props); });
+        return React.Children.map(children, function (child) { return !!child ? AgGridColumn.toColDef(child.props) : null; });
     };
     AgGridColumn.toColDef = function (columnProps) {
         var children = columnProps.children, colDef = __rest(columnProps, ["children"]);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,7 +13,7 @@ var OriginalColumnGroup = /** @class */ (function () {
         this.expandable = false;
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
-        this.expanded = colGroupDef && !!colGroupDef.openByDefault;
+        this.expanded = !!colGroupDef && !!colGroupDef.openByDefault;
         this.padding = padding;
         this.level = level;
     }
@@ -83,7 +83,11 @@ var OriginalColumnGroup = /** @class */ (function () {
         });
     };
     OriginalColumnGroup.prototype.getColumnGroupShow = function () {
-        return this.padding ? ColumnGroup.HEADER_GROUP_PADDING : this.colGroupDef.columnGroupShow;
+        var colGroupDef = this.colGroupDef;
+        if (!colGroupDef) {
+            return;
+        }
+        return colGroupDef.columnGroupShow;
     };
     // need to check that this group has at least one col showing when both expanded and contracted.
     // if not, then we don't allow expanding and contracting on this group
@@ -103,7 +107,7 @@ var OriginalColumnGroup = /** @class */ (function () {
         var atLeastOneShowingWhenClosed = false;
         // want to make sure the group has something to show / hide
         var atLeastOneChangeable = false;
-        var children = this.findChildren();
+        var children = this.findChildrenRemovingPadding();
         for (var i = 0, j = children.length; i < j; i++) {
             var abstractColumn = children[i];
             if (!abstractColumn.isVisible()) {
@@ -122,10 +126,6 @@ var OriginalColumnGroup = /** @class */ (function () {
             else {
                 atLeastOneShowingWhenOpen = true;
                 atLeastOneShowingWhenClosed = true;
-                if (headerGroupShow === ColumnGroup.HEADER_GROUP_PADDING) {
-                    var column = abstractColumn;
-                    atLeastOneChangeable = atLeastOneChangeable || column.children.some(function (child) { return child.getColumnGroupShow() !== undefined; });
-                }
             }
         }
         var expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
@@ -137,16 +137,22 @@ var OriginalColumnGroup = /** @class */ (function () {
             this.localEventService.dispatchEvent(event_1);
         }
     };
-    OriginalColumnGroup.prototype.findChildren = function () {
-        var children = this.children;
-        var firstChild = children[0];
-        if (firstChild && (!firstChild.isPadding || !firstChild.isPadding())) {
-            return children;
-        }
-        while (children.length === 1 && children[0] instanceof OriginalColumnGroup) {
-            children = children[0].children;
-        }
-        return children;
+    OriginalColumnGroup.prototype.findChildrenRemovingPadding = function () {
+        var res = [];
+        var process = function (items) {
+            items.forEach(function (item) {
+                // if padding, we add this children instead of the padding
+                var skipBecausePadding = item instanceof OriginalColumnGroup && item.isPadding();
+                if (skipBecausePadding) {
+                    process(item.children);
+                }
+                else {
+                    res.push(item);
+                }
+            });
+        };
+        process(this.children);
+        return res;
     };
     OriginalColumnGroup.prototype.onColumnVisibilityChanged = function () {
         this.setExpandable();

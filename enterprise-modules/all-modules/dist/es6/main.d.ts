@@ -17,6 +17,5 @@ export * from "@ag-grid-enterprise/side-bar";
 export * from "@ag-grid-enterprise/status-bar";
 export * from "@ag-grid-enterprise/viewport-row-model";
 export * from "@ag-grid-enterprise/core";
-export * from "@ag-grid-enterprise/date-time-cell-editor";
 export declare const AllEnterpriseModules: Module[];
 export declare const AllModules: Module[];

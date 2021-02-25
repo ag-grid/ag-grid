@@ -1,13 +1,7 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Constants {
-    static STEP_EVERYTHING: number;
-    static STEP_FILTER: number;
-    static STEP_SORT: number;
-    static STEP_MAP: number;
-    static STEP_AGGREGATE: number;
-    static STEP_PIVOT: number;
     static ROW_BUFFER_SIZE: number;
     static LAYOUT_INTERVAL: number;
     static BATCH_WAIT_MILLIS: number;

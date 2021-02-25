@@ -79,7 +79,7 @@ var PartialStore = /** @class */ (function (_super) {
             core_1._.assign(this.info, params.storeInfo);
         }
         if (!params.rowData) {
-            var message_1 = 'ag-Grid: "params.rowData" is missing from Server-Side Row Model success() callback. Please use the "rowData" attribute. If no data is returned, set an empty list.';
+            var message_1 = 'AG Grid: "params.rowData" is missing from Server-Side Row Model success() callback. Please use the "rowData" attribute. If no data is returned, set an empty list.';
             core_1._.doOnce(function () { return console.warn(message_1, params); }, 'InfiniteStore.noData');
         }
         var finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
@@ -126,10 +126,30 @@ var PartialStore = /** @class */ (function (_super) {
                 if (_this.isBlockCurrentlyDisplayed(block)) {
                     return;
                 }
+                // don't want to loose keyboard focus, so keyboard navigation can continue. so keep focused blocks.
+                if (_this.isBlockFocused(block)) {
+                    return;
+                }
                 // at this point, block is not needed, and no open nodes, so burn baby burn
                 _this.destroyBlock(block);
             }
         });
+    };
+    PartialStore.prototype.isBlockFocused = function (block) {
+        var focusedCell = this.focusController.getFocusCellToUseAfterRefresh();
+        if (!focusedCell) {
+            return false;
+        }
+        if (focusedCell.rowPinned != null) {
+            return false;
+        }
+        var blockIndexStart = block.getDisplayIndexStart();
+        var blockIndexEnd = block.getDisplayIndexEnd();
+        if (blockIndexEnd == null || blockIndexStart == null) {
+            return false;
+        }
+        var hasFocus = focusedCell.rowIndex >= blockIndexStart && focusedCell.rowIndex < blockIndexEnd;
+        return hasFocus;
     };
     PartialStore.prototype.isBlockCurrentlyDisplayed = function (block) {
         var startIndex = block.getDisplayIndexStart();
@@ -597,6 +617,9 @@ var PartialStore = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], PartialStore.prototype, "columnController", void 0);
+    __decorate([
+        core_1.Autowired("focusController")
+    ], PartialStore.prototype, "focusController", void 0);
     __decorate([
         core_1.PostConstruct
     ], PartialStore.prototype, "postConstruct", null);

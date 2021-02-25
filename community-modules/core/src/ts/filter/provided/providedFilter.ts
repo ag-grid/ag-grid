@@ -1,4 +1,4 @@
-import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { Autowired, PostConstruct } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { Constants } from '../../constants/constants';
@@ -25,17 +25,17 @@ export interface IProvidedFilterParams extends IFilterParams {
 
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
- * All the filters that come with ag-Grid extend this class. User filters do not
+ * All the filters that come with AG Grid extend this class. User filters do not
  * extend this class.
  */
-export abstract class ProvidedFilter extends ManagedFocusComponent implements IFilterComp {
+export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements IFilterComp {
     private newRowsActionKeep: boolean;
 
     // each level in the hierarchy will save params with the appropriate type for that level.
     private providedFilterParams: IProvidedFilterParams;
 
     private applyActive = false;
-    private hidePopup: (params: PopupEventParams) => void = null;
+    private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
     // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
 
@@ -45,7 +45,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
     // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
     // not active) then this appliedModel will be null/undefined.
-    private appliedModel: ProvidedFilterModel | null = null;
+    private appliedModel: T | null = null;
 
     @Autowired('rowModel') protected readonly rowModel: IRowModel;
 
@@ -61,13 +61,13 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
 
-    protected abstract setModelIntoUi(model: ProvidedFilterModel): AgPromise<void>;
-    protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
+    protected abstract setModelIntoUi(model: T): AgPromise<void>;
+    protected abstract areModelsEqual(a: T, b: T): boolean;
 
     /** Used to get the filter type for filter models. */
     protected abstract getFilterType(): string;
 
-    public abstract getModelFromUi(): ProvidedFilterModel | null;
+    public abstract getModelFromUi(): T | null;
 
     public getFilterTitle(): string {
         return this.translate(this.filterNameKey);
@@ -75,7 +75,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
 
     /** @deprecated */
     public onFilterChanged(): void {
-        console.warn(`ag-Grid: you should not call onFilterChanged() directly on the filter, please call
+        console.warn(`AG Grid: you should not call onFilterChanged() directly on the filter, please call
         gridApi.onFilterChanged() instead. onFilterChanged is not part of the exposed filter interface (it was
         a method that existed on an old version of the filters that was not intended for public use.`);
         this.providedFilterParams.filterChangedCallback();
@@ -160,14 +160,15 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
                     break;
                 case 'cancel':
                     text = this.translate('cancelFilter');
-                    clickListener = (e) => { this.onBtCancel(e); };
+                    clickListener = (e) => { this.onBtCancel(e!); };
                     break;
                 default:
                     console.warn('Unknown button type specified');
                     return;
             }
 
-            const button = loadTemplate(/* html */
+            const button = loadTemplate(
+                /* html */
                 `<button
                     type="button"
                     ref="${type}FilterButton"
@@ -193,22 +194,22 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         const { applyButton, resetButton, clearButton } = params;
 
         if (clearButton) {
-            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.clearButton is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v23.2, filterParams.clearButton is deprecated. Please use filterParams.buttons instead');
             buttons.push('clear');
         }
 
         if (resetButton) {
-            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.resetButton is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v23.2, filterParams.resetButton is deprecated. Please use filterParams.buttons instead');
             buttons.push('reset');
         }
 
         if (applyButton) {
-            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.applyButton is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v23.2, filterParams.applyButton is deprecated. Please use filterParams.buttons instead');
             buttons.push('apply');
         }
 
         if ((params as any).apply) {
-            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v21, filterParams.apply is deprecated. Please use filterParams.buttons instead');
             buttons.push('apply');
         }
 
@@ -225,11 +226,11 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
     }
 
-    public getModel(): ProvidedFilterModel {
+    public getModel(): T | null {
         return this.appliedModel;
     }
 
-    public setModel(model: ProvidedFilterModel): AgPromise<void> {
+    public setModel(model: T | null): AgPromise<void> {
         const promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
 
         return promise.then(() => {
@@ -243,7 +244,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     }
 
     private onBtCancel(e: Event): void {
-        this.setModelIntoUi(this.getModel()).then(() => {
+        this.setModelIntoUi(this.getModel()!).then(() => {
             this.onUiChanged(false, 'prevent');
 
             if (this.providedFilterParams.closeOnApply) {
@@ -267,7 +268,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     public applyModel(): boolean {
         const newModel = this.getModelFromUi();
 
-        if (!this.isModelValid(newModel)) { return false; }
+        if (!this.isModelValid(newModel!)) { return false; }
 
         const previousModel = this.appliedModel;
 
@@ -275,10 +276,10 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
 
         // models can be same if user pasted same content into text field, or maybe just changed the case
         // and it's a case insensitive filter
-        return !this.areModelsEqual(previousModel, newModel);
+        return !this.areModelsEqual(previousModel!, newModel!);
     }
 
-    protected isModelValid(model: ProvidedFilterModel): boolean {
+    protected isModelValid(model: T): boolean {
         return true;
     }
 
@@ -314,7 +315,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
             params = { keyboardEvent };
         }
 
-        this.hidePopup(params);
+        this.hidePopup(params!);
         this.hidePopup = null;
     }
 
@@ -333,7 +334,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         this.providedFilterParams.filterModifiedCallback();
 
         if (this.applyActive) {
-            const isValid = this.isModelValid(this.getModelFromUi());
+            const isValid = this.isModelValid(this.getModelFromUi()!);
 
             setDisabled(this.getRefElement('applyFilterButton'), !isValid);
         }
@@ -355,7 +356,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     public static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number {
         if (ProvidedFilter.isUseApplyButton(params)) {
             if (params.debounceMs != null) {
-                console.warn('ag-Grid: debounceMs is ignored when apply button is present');
+                console.warn('AG Grid: debounceMs is ignored when apply button is present');
             }
 
             return 0;
@@ -368,7 +369,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     public static isUseApplyButton(params: IProvidedFilterParams): boolean {
         ProvidedFilter.checkForDeprecatedParams(params);
 
-        return params.buttons && params.buttons.indexOf('apply') >= 0;
+        return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     }
 
     public destroy(): void {

@@ -10,6 +10,8 @@ import { Constants } from "../../constants/constants";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { SelectionController } from "../../selectionController";
+import { getAriaDescribedBy, setAriaDescribedBy } from "../../utils/aria";
+import { isVisible } from "../../utils/dom";
 
 export class SelectAllFeature extends BeanStub {
 
@@ -56,6 +58,30 @@ export class SelectAllFeature extends BeanStub {
             this.checkRightRowModelType();
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
+        }
+        this.refreshHeaderAriaDescribedBy(this.cbSelectAllVisible);
+    }
+
+    private refreshHeaderAriaDescribedBy(isSelectAllVisible: boolean): void {
+        const parentHeader = this.cbSelectAll.getParentComponent();
+        const parentHeaderGui = parentHeader && parentHeader.getGui();
+        if (!parentHeaderGui || !isVisible(parentHeaderGui)) { return; }
+
+        let describedByIds = '';
+
+        if (parentHeaderGui) {
+            describedByIds = getAriaDescribedBy(parentHeaderGui);
+        }
+
+        const cbSelectAllId = this.cbSelectAll.getInputElement().id;
+        const describedByIdsHasSelectAllFeature = describedByIds.indexOf(cbSelectAllId) !== -1;
+
+        if (isSelectAllVisible) {
+            if (!describedByIdsHasSelectAllFeature) {
+                setAriaDescribedBy(parentHeaderGui, `${cbSelectAllId} ${describedByIds.trim()}`);
+            }
+        } else if (describedByIdsHasSelectAllFeature) {
+            setAriaDescribedBy(parentHeaderGui, describedByIds.trim().split(' ').filter(id => id === cbSelectAllId).join(' '));
         }
     }
 
@@ -146,7 +172,7 @@ export class SelectAllFeature extends BeanStub {
         const rowModelMatches = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
         if (!rowModelMatches) {
-            console.warn(`ag-Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
+            console.warn(`AG Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
         }
     }
 

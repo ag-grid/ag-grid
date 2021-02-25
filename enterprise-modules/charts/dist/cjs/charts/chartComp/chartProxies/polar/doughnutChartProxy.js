@@ -40,7 +40,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         var seriesDefaults = theme.getConfig('pie.series.pie');
         options.seriesDefaults = {
             title: seriesDefaults.title,
-            label: __assign(__assign({}, seriesDefaults.label), { minRequiredAngle: seriesDefaults.label.minAngle }),
+            label: seriesDefaults.label,
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
             tooltip: {
@@ -161,6 +161,12 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
             } });
         var calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
         var pieSeries = existingSeries || ag_charts_community_1.AgChart.createComponent(seriesOptions, 'pie.series');
+        if (!existingSeries) {
+            if (this.crossFiltering && !pieSeries.tooltip.renderer) {
+                // only add renderer if user hasn't provided one
+                this.addCrossFilteringTooltipRenderer(pieSeries);
+            }
+        }
         pieSeries.angleName = updateParams.field.displayName;
         pieSeries.labelKey = updateParams.params.category.id;
         pieSeries.labelName = updateParams.params.category.name;
@@ -231,7 +237,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
                 colors: strokes,
                 length: 10,
                 strokeWidth: 2,
-            }, label: __assign(__assign({}, fontOptions), { enabled: false, offset: 3, minRequiredAngle: 0 }), tooltip: {
+            }, label: __assign(__assign({}, fontOptions), { enabled: false, offset: 3, minAngle: 0 }), tooltip: {
                 enabled: true,
             }, shadow: this.getDefaultDropShadowOptions() });
         return options;

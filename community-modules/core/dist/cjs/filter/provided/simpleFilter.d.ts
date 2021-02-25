@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '../../interfaces/iFilter';
@@ -30,7 +30,7 @@ export declare enum ConditionPosition {
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends ProvidedFilter {
+export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends ProvidedFilter<M | ICombinedSimpleModel<M>> {
     static EMPTY: string;
     static EQUALS: string;
     static NOT_EQUAL: string;

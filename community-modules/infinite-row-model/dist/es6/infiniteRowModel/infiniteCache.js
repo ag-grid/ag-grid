@@ -20,98 +20,43 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Autowired, Events, Qualifier, RowNodeCache, } from "@ag-grid-community/core";
+import { Autowired, BeanStub, Events, NumberSequence, PreDestroy, Qualifier, _ } from "@ag-grid-community/core";
 import { InfiniteBlock } from "./infiniteBlock";
 var InfiniteCache = /** @class */ (function (_super) {
     __extends(InfiniteCache, _super);
     function InfiniteCache(params) {
-        return _super.call(this, params) || this;
+        var _this = _super.call(this) || this;
+        _this.lastRowIndexKnown = false;
+        _this.blocks = {};
+        _this.blockCount = 0;
+        _this.rowCount = params.initialRowCount;
+        _this.params = params;
+        return _this;
     }
     InfiniteCache.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('InfiniteCache');
-    };
-    InfiniteCache.prototype.moveItemsDown = function (block, moveFromIndex, moveCount) {
-        var startRow = block.getStartRow();
-        var endRow = block.getEndRow();
-        var indexOfLastRowToMove = moveFromIndex + moveCount;
-        // all rows need to be moved down below the insertion index
-        for (var currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
-            // don't move rows at or before the insertion index
-            if (currentRowIndex < indexOfLastRowToMove) {
-                continue;
-            }
-            var indexOfNodeWeWant = currentRowIndex - moveCount;
-            var nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
-            if (nodeForThisIndex) {
-                block.setRowNode(currentRowIndex, nodeForThisIndex);
-            }
-            else {
-                block.setBlankRowNode(currentRowIndex);
-                block.setDirty();
-            }
-        }
-    };
-    InfiniteCache.prototype.insertItems = function (block, indexToInsert, items) {
-        var pageStartRow = block.getStartRow();
-        var pageEndRow = block.getEndRow();
-        var newRowNodes = [];
-        // next stage is insert the rows into this page, if applicable
-        for (var index = 0; index < items.length; index++) {
-            var rowIndex = indexToInsert + index;
-            var currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
-            if (currentRowInThisPage) {
-                var dataItem = items[index];
-                var newRowNode = block.setNewData(rowIndex, dataItem);
-                newRowNodes.push(newRowNode);
-            }
-        }
-        return newRowNodes;
-    };
-    InfiniteCache.prototype.insertItemsAtIndex = function (indexToInsert, items) {
-        // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
-        var _this = this;
-        var newNodes = [];
-        this.forEachBlockInReverseOrder(function (block) {
-            var pageEndRow = block.getEndRow();
-            // if the insertion is after this page, then this page is not impacted
-            if (pageEndRow <= indexToInsert) {
-                return;
-            }
-            _this.moveItemsDown(block, indexToInsert, items.length);
-            var newNodesThisPage = _this.insertItems(block, indexToInsert, items);
-            newNodesThisPage.forEach(function (rowNode) { return newNodes.push(rowNode); });
-        });
-        if (this.isMaxRowFound()) {
-            this.hack_setVirtualRowCount(this.getVirtualRowCount() + items.length);
-        }
-        this.onCacheUpdated();
-        var event = {
-            type: Events.EVENT_ROW_DATA_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        this.eventService.dispatchEvent(event);
     };
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
     // it will want new pages in the cache as it asks for rows. only when we are inserting /
     // removing rows via the api is dontCreatePage set, where we move rows between the pages.
     InfiniteCache.prototype.getRow = function (rowIndex, dontCreatePage) {
         if (dontCreatePage === void 0) { dontCreatePage = false; }
-        var blockId = Math.floor(rowIndex / this.cacheParams.blockSize);
-        var block = this.getBlock(blockId);
+        var blockId = Math.floor(rowIndex / this.params.blockSize);
+        var block = this.blocks[blockId];
         if (!block) {
             if (dontCreatePage) {
                 return null;
             }
-            else {
-                block = this.createBlock(blockId);
-            }
+            block = this.createBlock(blockId);
         }
         return block.getRow(rowIndex);
     };
     InfiniteCache.prototype.createBlock = function (blockNumber) {
-        var newBlock = this.createBean(new InfiniteBlock(blockNumber, this.cacheParams));
-        this.postCreateBlock(newBlock);
+        var newBlock = this.createBean(new InfiniteBlock(blockNumber, this, this.params));
+        this.blocks[newBlock.getId()] = newBlock;
+        this.blockCount++;
+        this.purgeBlocksIfNeeded(newBlock);
+        this.params.rowNodeBlockLoader.addBlock(newBlock);
         return newBlock;
     };
     // we have this on infinite row model only, not server side row model,
@@ -119,8 +64,131 @@ var InfiniteCache = /** @class */ (function (_super) {
     // state - eg if a node had children, but after the refresh it had data
     // for a different row, then the children would be with the wrong row node.
     InfiniteCache.prototype.refreshCache = function () {
-        this.forEachBlockInOrder(function (block) { return block.setDirty(); });
-        this.checkBlockToLoad();
+        this.getBlocksInOrder().forEach(function (block) { return block.setStateWaitingToLoad(); });
+        this.params.rowNodeBlockLoader.checkBlockToLoad();
+    };
+    InfiniteCache.prototype.destroyAllBlocks = function () {
+        var _this = this;
+        this.getBlocksInOrder().forEach(function (block) { return _this.destroyBlock(block); });
+    };
+    InfiniteCache.prototype.getRowCount = function () {
+        return this.rowCount;
+    };
+    InfiniteCache.prototype.isLastRowIndexKnown = function () {
+        return this.lastRowIndexKnown;
+    };
+    // block calls this, when page loaded
+    InfiniteCache.prototype.pageLoaded = function (block, lastRow) {
+        // if we are not active, then we ignore all events, otherwise we could end up getting the
+        // grid to refresh even though we are no longer the active cache
+        if (!this.isAlive()) {
+            return;
+        }
+        this.logger.log("onPageLoaded: page = " + block.getId() + ", lastRow = " + lastRow);
+        var rowCountHasChanged = this.checkRowCount(block, lastRow);
+        if (rowCountHasChanged || this.params.dynamicRowHeight) {
+            this.onCacheUpdated();
+        }
+    };
+    InfiniteCache.prototype.purgeBlocksIfNeeded = function (blockToExclude) {
+        var _this = this;
+        // we exclude checking for the page just created, as this has yet to be accessed and hence
+        // the lastAccessed stamp will not be updated for the first time yet
+        var blocksForPurging = this.getBlocksInOrder().filter(function (b) { return b != blockToExclude; });
+        var lastAccessedComparator = function (a, b) { return b.getLastAccessed() - a.getLastAccessed(); };
+        blocksForPurging.sort(lastAccessedComparator);
+        // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
+        // in other words, after the splice operation below, we have taken out the blocks
+        // we want to keep, which means we are left with blocks that we can potentially purge
+        var maxBlocksProvided = this.params.maxBlocksInCache > 0;
+        var blocksToKeep = maxBlocksProvided ? this.params.maxBlocksInCache - 1 : null;
+        var emptyBlocksToKeep = InfiniteCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
+        blocksForPurging.forEach(function (block, index) {
+            var purgeBecauseBlockEmpty = block.getState() === InfiniteBlock.STATE_WAITING_TO_LOAD && index >= emptyBlocksToKeep;
+            var purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep : false;
+            if (purgeBecauseBlockEmpty || purgeBecauseCacheFull) {
+                // if the block currently has rows been displayed, then don't remove it either.
+                // this can happen if user has maxBlocks=2, and blockSize=5 (thus 10 max rows in cache)
+                // but the screen is showing 20 rows, so at least 4 blocks are needed.
+                if (_this.isBlockCurrentlyDisplayed(block)) {
+                    return;
+                }
+                // don't want to loose keyboard focus, so keyboard navigation can continue. so keep focused blocks.
+                if (_this.isBlockFocused(block)) {
+                    return;
+                }
+                // at this point, block is not needed, so burn baby burn
+                _this.removeBlockFromCache(block);
+            }
+        });
+    };
+    InfiniteCache.prototype.isBlockFocused = function (block) {
+        var focusedCell = this.focusController.getFocusCellToUseAfterRefresh();
+        if (!focusedCell) {
+            return false;
+        }
+        if (focusedCell.rowPinned != null) {
+            return false;
+        }
+        var blockIndexStart = block.getStartRow();
+        var blockIndexEnd = block.getEndRow();
+        var hasFocus = focusedCell.rowIndex >= blockIndexStart && focusedCell.rowIndex < blockIndexEnd;
+        return hasFocus;
+    };
+    InfiniteCache.prototype.isBlockCurrentlyDisplayed = function (block) {
+        var startIndex = block.getStartRow();
+        var endIndex = block.getEndRow() - 1;
+        return this.rowRenderer.isRangeInRenderedViewport(startIndex, endIndex);
+    };
+    InfiniteCache.prototype.removeBlockFromCache = function (blockToRemove) {
+        if (!blockToRemove) {
+            return;
+        }
+        this.destroyBlock(blockToRemove);
+        // we do not want to remove the 'loaded' event listener, as the
+        // concurrent loads count needs to be updated when the load is complete
+        // if the purged page is in loading state
+    };
+    InfiniteCache.prototype.checkRowCount = function (block, lastRow) {
+        var rowCountBefore = this.rowCount;
+        // if client provided a last row, we always use it, as it could change between server calls
+        // if user deleted data and then called refresh on the grid.
+        if (typeof lastRow === 'number' && lastRow >= 0) {
+            this.rowCount = lastRow;
+            this.lastRowIndexKnown = true;
+        }
+        else if (!this.lastRowIndexKnown) {
+            // otherwise, see if we need to add some virtual rows
+            var lastRowIndex = (block.getId() + 1) * this.params.blockSize;
+            var lastRowIndexPlusOverflow = lastRowIndex + this.params.overflowSize;
+            if (this.rowCount < lastRowIndexPlusOverflow) {
+                this.rowCount = lastRowIndexPlusOverflow;
+            }
+        }
+        var rowCountHasChanged = rowCountBefore != this.rowCount;
+        return rowCountHasChanged;
+    };
+    InfiniteCache.prototype.setRowCount = function (rowCount, lastRowIndexKnown) {
+        this.rowCount = rowCount;
+        // if undefined is passed, we do not set this value, if one of {true,false}
+        // is passed, we do set the value.
+        if (_.exists(lastRowIndexKnown)) {
+            this.lastRowIndexKnown = lastRowIndexKnown;
+        }
+        // if we are still searching, then the row count must not end at the end
+        // of a particular page, otherwise the searching will not pop into the
+        // next page
+        if (!this.lastRowIndexKnown) {
+            if (this.rowCount % this.params.blockSize === 0) {
+                this.rowCount++;
+            }
+        }
+        this.onCacheUpdated();
+    };
+    InfiniteCache.prototype.forEachNodeDeep = function (callback) {
+        var _this = this;
+        var sequence = new NumberSequence();
+        this.getBlocksInOrder().forEach(function (block) { return block.forEachNode(callback, sequence, _this.rowCount); });
     };
     InfiniteCache.prototype.getBlocksInOrder = function () {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
@@ -221,8 +289,17 @@ var InfiniteCache = /** @class */ (function (_super) {
         Autowired('gridApi')
     ], InfiniteCache.prototype, "gridApi", void 0);
     __decorate([
+        Autowired('rowRenderer')
+    ], InfiniteCache.prototype, "rowRenderer", void 0);
+    __decorate([
+        Autowired("focusController")
+    ], InfiniteCache.prototype, "focusController", void 0);
+    __decorate([
         __param(0, Qualifier('loggerFactory'))
     ], InfiniteCache.prototype, "setBeans", null);
+    __decorate([
+        PreDestroy
+    ], InfiniteCache.prototype, "destroyAllBlocks", null);
     return InfiniteCache;
-}(RowNodeCache));
+}(BeanStub));
 export { InfiniteCache };

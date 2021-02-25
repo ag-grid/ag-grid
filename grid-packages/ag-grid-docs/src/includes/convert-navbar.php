@@ -1,5 +1,5 @@
 <nav>
-    <a id="logo" href="/" title="The Best HTML 5 Grid in the World">ag-Grid</a>
+    <a id="logo" href="/" title="The Best HTML 5 Grid in the World">AG Grid</a>
 
     <button id="navbar-toggle"
         type="button"
@@ -26,7 +26,7 @@
         <?php } else { ?>
             <ul>
                 <li>
-                    <a href="<?php print($rootFolder) ?>"> ag-Grid Archive Documentation <?php print($version) ?></a>
+                    <a href="<?php print($rootFolder) ?>"> AG Grid Archive Documentation <?php print($version) ?></a>
                 </li>
             </ul>
         <?php } ?>

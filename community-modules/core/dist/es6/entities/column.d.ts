@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -76,7 +76,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private validate;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
-    private createIsColumnFuncParams;
+    private createColumnFunctionCallbackParams;
     isSuppressNavigable(rowNode: RowNode): boolean;
     isCellEditable(rowNode: RowNode): boolean;
     isRowDrag(rowNode: RowNode): boolean;

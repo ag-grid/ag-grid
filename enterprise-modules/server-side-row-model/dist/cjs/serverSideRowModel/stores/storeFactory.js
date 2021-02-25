@@ -42,13 +42,13 @@ var StoreFactory = /** @class */ (function () {
             return undefined;
         }
         if (ssrmParams.dynamicRowHeight) {
-            var message_1 = 'ag-Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
+            var message_1 = 'AG Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.';
             core_1._.doOnce(function () { return console.warn(message_1); }, 'storeFactory.maxBlocksInCache.dynamicRowHeight');
             return undefined;
         }
         if (this.columnController.isAutoRowHeightActive()) {
-            var message_2 = 'ag-Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
+            var message_2 = 'AG Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';
             core_1._.doOnce(function () { return console.warn(message_2); }, 'storeFactory.maxBlocksInCache.autoRowHeightActive');
             return undefined;
@@ -96,7 +96,7 @@ var StoreFactory = /** @class */ (function () {
                 return core_1.ServerSideStoreType.Full;
             default:
                 var types = Object.keys(core_1.ServerSideStoreType).join(', ');
-                console.warn("ag-Grid: invalid Server Side Store Type " + storeType + ", valid types are [" + types + "]");
+                console.warn("AG Grid: invalid Server Side Store Type " + storeType + ", valid types are [" + types + "]");
                 return core_1.ServerSideStoreType.Partial;
         }
     };

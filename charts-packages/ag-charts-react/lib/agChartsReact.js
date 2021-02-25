@@ -1,4 +1,4 @@
-// ag-charts-react v3.0.0
+// ag-charts-react v3.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -58,7 +58,7 @@ var AgChartsReact = /** @class */ (function (_super) {
     };
     AgChartsReact.prototype.shouldComponentUpdate = function (nextProps) {
         this.processPropsChanges(this.props, nextProps);
-        // we want full control of the dom, as ag-Charts doesn't use React internally,
+        // we want full control of the dom, as AG Charts doesn't use React internally,
         // so for performance reasons we tell React we don't need render called after
         // property changes.
         return false;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -147,7 +147,7 @@ var Environment = /** @class */ (function (_super) {
         var usingOldTheme = themeMatch[2] === undefined;
         if (usingOldTheme) {
             var newTheme_1 = theme.replace('ag-', 'ag-theme-');
-            function_1.doOnce(function () { return console.warn("ag-Grid: As of v19 old theme are no longer provided. Please replace " + theme + " with " + newTheme_1 + "."); }, 'using-old-theme');
+            function_1.doOnce(function () { return console.warn("AG Grid: As of v19 old theme are no longer provided. Please replace " + theme + " with " + newTheme_1 + "."); }, 'using-old-theme');
         }
         return { theme: theme, el: el, themeFamily: theme.replace(/-dark$/, '') };
     };

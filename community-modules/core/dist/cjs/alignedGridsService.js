@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -144,7 +144,7 @@ var AlignedGridsService = /** @class */ (function (_super) {
                 case events_1.Events.EVENT_COLUMN_PIVOT_CHANGED:
                     // we cannot support pivoting with aligned grids as the columns will be out of sync as the
                     // grids will have columns created based on the row data of the grid.
-                    console.warn('ag-Grid: pivoting is not supported with aligned grids. ' +
+                    console.warn('AG Grid: pivoting is not supported with aligned grids. ' +
                         'You can only use one of these features at a time in a grid.');
                     break;
             }
@@ -180,7 +180,6 @@ var AlignedGridsService = /** @class */ (function (_super) {
         }
         // in time, all the methods below should use the column ids, it's a more generic way
         // of handling columns, and also allows for single or multi column events
-        var columnIds = this.getColumnIds(colEvent);
         var masterColumns = this.getMasterColumns(colEvent);
         switch (colEvent.type) {
             case events_1.Events.EVENT_COLUMN_MOVED:

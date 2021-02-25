@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,6 +66,7 @@ export { TabbedLayout } from "./layout/tabbedLayout";
 // misc
 export { simpleHttpRequest } from "./misc/simpleHttpRequest";
 export { ResizeObserverService } from "./misc/resizeObserverService";
+export { AnimationFrameService } from "./misc/animationFrameService";
 export { LargeTextCellEditor } from "./rendering/cellEditors/largeTextCellEditor";
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
 export { PopupSelectCellEditor } from "./rendering/cellEditors/popupSelectCellEditor";
@@ -91,6 +92,7 @@ export { RowNodeBlock } from "./modules/rowNodeCache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./modules/rowNodeCache/rowNodeBlockLoader";
 export { RowNodeCache } from "./modules/rowNodeCache/rowNodeCache";
 export { PaginationProxy } from "./pagination/paginationProxy";
+export { ClientSideRowModelSteps } from "./interfaces/iClientSideRowModel";
 //styling
 export { StylingService } from "./styling/stylingService";
 // widgets
@@ -112,7 +114,7 @@ export { AgPanel } from "./widgets/agPanel";
 export { Component } from "./widgets/component";
 export { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 export { PopupComponent } from "./widgets/popupComponent";
-export { PopupService, } from "./widgets/popupService";
+export { PopupService } from "./widgets/popupService";
 export { TouchListener } from "./widgets/touchListener";
 export { VirtualList } from "./widgets/virtualList";
 // range

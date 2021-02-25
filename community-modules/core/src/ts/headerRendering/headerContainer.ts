@@ -80,7 +80,7 @@ export class HeaderContainer extends BeanStub {
 
         if (pinningLeft || pinningRight) {
             // size to fit all columns
-            let width = controller[pinningLeft ? 'getPinnedLeftContainerWidth' : 'getPinnedRightContainerWidth']();
+            let width = controller[pinningLeft ? 'getDisplayedColumnsLeftWidth' : 'getDisplayedColumnsRightWidth']();
 
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,
@@ -184,13 +184,31 @@ export class HeaderContainer extends BeanStub {
         };
 
         const refreshFilters = () => {
-            this.destroyRowComp(this.filtersRowComp);
-            this.filtersRowComp = undefined;
 
             const includeFloatingFilter = !this.columnController.isPivotMode() && this.columnController.hasFloatingFilters();
-            if (includeFloatingFilter) {
+
+            const destroyPreviousComp = () => {
+                this.destroyRowComp(this.filtersRowComp);
+                this.filtersRowComp = undefined;
+            };
+
+            if (!includeFloatingFilter) {
+                destroyPreviousComp();
+                return;
+            }
+
+            const rowIndex = sequence.next();
+
+            if (this.filtersRowComp) {
+                const rowIndexMismatch = this.filtersRowComp.getRowIndex() !== rowIndex;
+                if (!keepColumns || rowIndexMismatch) {
+                    destroyPreviousComp();
+                }
+            }
+
+            if (!this.filtersRowComp) {
                 this.filtersRowComp = this.createBean(
-                    new HeaderRowComp(sequence.next(), HeaderRowType.FLOATING_FILTER, this.pinned));
+                    new HeaderRowComp(rowIndex, HeaderRowType.FLOATING_FILTER, this.pinned));
             }
         };
 

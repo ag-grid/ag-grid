@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -124,7 +124,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         this.addCssClass(this.indentClass);
     };
     GroupCellRenderer.prototype.setPaddingDeprecatedWay = function (paddingCount, padding) {
-        doOnce(function () { return console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation page for Themes, in particular the property $row-group-indent-size.'); }, 'groupCellRenderer->doDeprecatedWay');
+        doOnce(function () { return console.warn('AG Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the AG Grid documentation page for Themes, in particular the property $row-group-indent-size.'); }, 'groupCellRenderer->doDeprecatedWay');
         var paddingPx = paddingCount * padding;
         var eGui = this.getGui();
         var paddingSide = this.gridOptionsWrapper.isEnableRtl() ? 'paddingRight' : 'paddingLeft';
@@ -164,7 +164,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
                 footerValue = this.expressionService.evaluate(footerValueGetter, paramsClone);
             }
             else {
-                console.warn('ag-Grid: footerValueGetter should be either a function or a string (expression)');
+                console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
             }
         }
         else {
@@ -419,6 +419,19 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         rowNode.setExpanded(nextExpandState);
         setAriaExpanded(params.eGridCell, nextExpandState);
     };
+    GroupCellRenderer.prototype.isShowRowGroupForThisRow = function () {
+        if (this.gridOptionsWrapper.isTreeData()) {
+            return true;
+        }
+        var rowGroupColumn = this.displayedGroup.rowGroupColumn;
+        if (!rowGroupColumn) {
+            return false;
+        }
+        // column is null for fullWidthRows
+        var column = this.params.column;
+        var thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
+        return thisColumnIsInterested;
+    };
     GroupCellRenderer.prototype.isExpandable = function () {
         if (this.draggedFromHideOpenParents) {
             return true;
@@ -438,23 +451,11 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
         return true;
     };
-    GroupCellRenderer.prototype.isShowRowGroupForThisRow = function () {
-        if (this.gridOptionsWrapper.isTreeData()) {
-            return true;
-        }
-        var rowGroupColumn = this.displayedGroup.rowGroupColumn;
-        if (!rowGroupColumn) {
-            return false;
-        }
-        // column is null for fullWidthRows
-        var column = this.params.column;
-        var thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
-        return thisColumnIsInterested;
-    };
     GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
         var _a = this, eContracted = _a.eContracted, eExpanded = _a.eExpanded, params = _a.params, displayedGroup = _a.displayedGroup, columnController = _a.columnController;
         var eGridCell = params.eGridCell, node = params.node;
-        if (this.isExpandable()) {
+        var isExpandable = this.isExpandable();
+        if (isExpandable) {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
             var expanded = this.draggedFromHideOpenParents ? true : node.expanded;
@@ -468,12 +469,18 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             setDisplayed(eContracted, false);
         }
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
-        var pivotModeAndLeafGroup = columnController.isPivotMode() && displayedGroup.leafGroup;
-        var expandable = displayedGroup.isExpandable() && this.isShowRowGroupForThisRow();
-        var addExpandableCss = expandable && !displayedGroup.footer && !pivotModeAndLeafGroup;
+        var pivotMode = columnController.isPivotMode();
+        var pivotModeAndLeafGroup = pivotMode && displayedGroup.leafGroup;
+        var addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
+        var isTotalFooterNode = node.footer && node.level === -1;
         this.addOrRemoveCssClass('ag-cell-expandable', addExpandableCss);
         this.addOrRemoveCssClass('ag-row-group', addExpandableCss);
-        this.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
+        if (pivotMode) {
+            this.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeafGroup);
+        }
+        else if (!isTotalFooterNode) {
+            this.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
+        }
     };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to have public here instead of private or protected

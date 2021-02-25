@@ -205,7 +205,7 @@ var SortService = /** @class */ (function (_super) {
             groupDisplayCols.forEach(function (groupDisplayCol) {
                 var showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {
-                    console.error('ag-Grid: groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup');
+                    console.error('AG Grid: groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup');
                     return;
                 }
                 var displayingGroupKey = showRowGroup;

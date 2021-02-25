@@ -280,6 +280,7 @@ var gridOptions = {
     // columnDefs: [],
     // singleClickEdit: true,
     // suppressClickEdit: true,
+    // suppressClipboardApi: true,
     enterMovesDownAfterEdit: true,
     enterMovesDown: true,
     // domLayout: 'autoHeight',
@@ -295,6 +296,7 @@ var gridOptions = {
     // groupIncludeFooter: true,
     // groupIncludeTotalFooter: true,
     // suppressHorizontalScroll: true,
+    // alwaysShowHorizontalScroll: true,
     // alwaysShowVerticalScroll: true,
     // debounceVerticalScrollbar: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
@@ -1297,7 +1299,7 @@ PersonFilter.prototype.init = function(params) {
     this.setupGui();
 };
 
-// not called by ag-Grid, just for us to help setup
+// not called by AG Grid, just for us to help setup
 PersonFilter.prototype.setupGui = function() {
     this.gui = document.createElement('div');
     this.gui.innerHTML =

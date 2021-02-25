@@ -81,6 +81,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
     ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent, anchorToElement) {
         var _this = this;
         var menuItems = this.getMenuItems(node, column, value);
+        var eGridPanelGui = this.gridPanel.getGui();
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) {
             return false;
         }
@@ -104,7 +105,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: function () {
-                _.removeCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
+                _.removeCssClass(eGridPanelGui, CSS_CONTEXT_MENU_OPEN);
                 _this.destroyBean(menu);
             },
             click: mouseEvent,
@@ -113,7 +114,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             anchorToElement: anchorToElement
         });
         if (addPopupRes) {
-            _.addCssClass(anchorToElement, CSS_CONTEXT_MENU_OPEN);
+            _.addCssClass(eGridPanelGui, CSS_CONTEXT_MENU_OPEN);
             menu.afterGuiAttached({ container: 'contextMenu', hidePopup: addPopupRes.hideFunc });
         }
         // there should never be an active menu at this point, however it was found
@@ -178,12 +179,18 @@ var ContextMenu = /** @class */ (function (_super) {
             this.focusController.focusInto(this.menuList.getGui());
         }
     };
-    ContextMenu.prototype.destroy = function () {
+    ContextMenu.prototype.restoreFocusedCell = function () {
         var currentFocusedCell = this.focusController.getFocusedCell();
         if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {
             var _a = this.focusedCell, rowIndex = _a.rowIndex, rowPinned = _a.rowPinned, column = _a.column;
-            this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+            var doc = this.gridOptionsWrapper.getDocument();
+            if (doc.activeElement === doc.body) {
+                this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+            }
         }
+    };
+    ContextMenu.prototype.destroy = function () {
+        this.restoreFocusedCell();
         _super.prototype.destroy.call(this);
     };
     __decorate([

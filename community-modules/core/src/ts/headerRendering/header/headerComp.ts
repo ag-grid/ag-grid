@@ -41,7 +41,7 @@ export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> { }
 export class HeaderComp extends Component implements IHeaderComp {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-cell-label-container">
+        `<div class="ag-cell-label-container" role="presentation">
             <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
             <div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on">
                 <span ref="eText" class="ag-header-cell-text" unselectable="on"></span>

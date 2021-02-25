@@ -1,11 +1,13 @@
 import React from 'react';
-import { GlobalContextProvider } from '../components/GlobalContext';
-import HeaderNav from '../components/HeaderNav';
-import Menu from '../components/Menu';
-import Footer from '../components/footer/Footer';
-import Search from '../components/search/Search';
-import FrameworkSelector from '../components/FrameworkSelector';
-import { getPageName } from '../utils/get-page-name';
+import { Helmet } from 'react-helmet';
+import { GlobalContextProvider } from 'components/GlobalContext';
+import HeaderNav from 'components/HeaderNav';
+import Menu from 'components/Menu';
+import Footer from 'components/footer/Footer';
+import Search from 'components/search/Search';
+import FrameworkSelector from 'components/FrameworkSelector';
+import { getPageName } from 'utils/get-page-name';
+import favIcons from '../images/favicons';
 import styles from './index.module.scss';
 
 const TopBar = ({ frameworks, framework, path }) => (
@@ -21,7 +23,7 @@ const TopBar = ({ frameworks, framework, path }) => (
                     aria-label="Toggle navigation">
                     <span className={styles['top-bar__nav-button-icon']}></span>
                 </button>
-                <Search indices={[{ name: `ag-grid_${framework}`, title: "Documentation Pages" }]} />
+                <Search currentFramework={framework} />
             </div>
             <div className={styles['top-bar__framework-selector']}>
                 <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
@@ -38,7 +40,12 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
     const pageName = getPageName(path);
 
     return <GlobalContextProvider>
+        <Helmet>
+            {getFavicons()}
+            {getAppleTouchIcons()}
+        </Helmet>
         <div className={styles['main-container']}>
+            <Helmet htmlAttributes={{ lang: 'en' }} />
             <header className={styles.header}>
                 <div className={styles.header__wrapper}>
                     {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
@@ -59,5 +66,11 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
         <Footer framework={framework} />
     </GlobalContextProvider>;
 };
+
+const getFavicons = () =>
+    [196, 192, 180, 167, 152, 128, 32].map(size => <link key={size} rel="icon" type="image/png" sizes={`${size}x${size}`} href={favIcons[`favIcon${size}`]} />);
+
+const getAppleTouchIcons = () =>
+    [180, 167, 152].map(size => <link key={size} rel="apple-touch-icon" sizes={`${size}x${size}`} href={favIcons[`favIcon${size}Touch`]} />);
 
 export default Layout;

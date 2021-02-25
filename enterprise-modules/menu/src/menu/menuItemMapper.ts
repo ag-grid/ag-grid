@@ -123,7 +123,7 @@ export class MenuItemMapper extends BeanStub {
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: () => this.columnController.resetColumnState(false, "contextMenu")
+                    action: () => this.columnController.resetColumnState("contextMenu")
                 };
             case 'expandAll':
                 return {
@@ -213,7 +213,7 @@ export class MenuItemMapper extends BeanStub {
                 if (chartMenuItem) {
                     return chartMenuItem;
                 } else {
-                    console.warn(`ag-Grid: unknown menu item type ${key}`);
+                    console.warn(`AG Grid: unknown menu item type ${key}`);
                     return null;
                 }
         }

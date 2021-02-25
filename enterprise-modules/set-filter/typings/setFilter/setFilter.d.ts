@@ -1,7 +1,7 @@
 import { IDoesFilterPassParams, ISetFilterParams, ProvidedFilter, IAfterGuiAttachedParams, AgPromise } from '@ag-grid-community/core';
 import { SetValueModel } from './setValueModel';
 import { SetFilterModel } from './setFilterModel';
-export declare class SetFilter extends ProvidedFilter {
+export declare class SetFilter extends ProvidedFilter<SetFilterModel> {
     static SELECT_ALL_VALUE: string;
     private readonly eMiniFilter;
     private readonly eFilterLoading;

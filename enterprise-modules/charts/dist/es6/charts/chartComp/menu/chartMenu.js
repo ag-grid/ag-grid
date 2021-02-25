@@ -63,7 +63,7 @@ var ChartMenu = /** @class */ (function (_super) {
             };
             tabOptions = toolbarItemsFunc(params).filter(function (option) {
                 if (!_this.buttons[option]) {
-                    console.warn("ag-Grid: '" + option + " is not a valid Chart Toolbar Option");
+                    console.warn("AG Grid: '" + option + " is not a valid Chart Toolbar Option");
                     return false;
                 }
                 return true;

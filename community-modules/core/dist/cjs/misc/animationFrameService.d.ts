@@ -1,7 +1,8 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
+import { GridPanel } from "../gridPanel/gridPanel";
 export declare class AnimationFrameService extends BeanStub {
     private createTasksP1;
     private createTasksP2;
@@ -12,8 +13,10 @@ export declare class AnimationFrameService extends BeanStub {
     private lastScrollTop;
     private taskCount;
     private cancelledTasks;
+    private gridPanel;
     setScrollTop(scrollTop: number): void;
     private init;
+    registerGridComp(gridPanel: GridPanel): void;
     private verifyAnimationFrameOn;
     createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2'): void;
     cancelTask(task: () => void): void;

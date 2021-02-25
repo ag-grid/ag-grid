@@ -80,8 +80,11 @@ var ChartTheme = /** @class */ (function () {
     };
     ChartTheme.getAxisDefaults = function () {
         return {
+            top: {},
+            right: {},
+            bottom: {},
+            left: {},
             title: {
-                enabled: false,
                 padding: {
                     top: 10,
                     right: 10,
@@ -406,6 +409,9 @@ var ChartTheme = /** @class */ (function () {
                         yOffset: 3,
                         blur: 5
                     } })
+            } }),
+        hierarchy: __assign(__assign({}, ChartTheme.getChartDefaults()), { series: {
+                treemap: __assign({}, ChartTheme.getSeriesDefaults())
             } })
     };
     ChartTheme.cartesianSeriesTypes = ['line', 'area', 'bar', 'column', 'scatter', 'histogram'];

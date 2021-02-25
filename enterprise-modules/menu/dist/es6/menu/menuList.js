@@ -76,7 +76,7 @@ var MenuList = /** @class */ (function (_super) {
                 _this.addSeparator();
             }
             else if (typeof menuItemOrString === 'string') {
-                console.warn("ag-Grid: unrecognised menu item " + menuItemOrString);
+                console.warn("AG Grid: unrecognised menu item " + menuItemOrString);
             }
             else {
                 _this.addItem(menuItemOrString);

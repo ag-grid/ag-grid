@@ -15,7 +15,7 @@ export interface IServerSideStore {
     getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): RowNode | null;
     getRowBounds(index: number): RowBounds | null;
     isPixelInRange(pixel: number): boolean;
-    getRowIndexAtPixel(pixel: number): number | undefined;
+    getRowIndexAtPixel(pixel: number): number | null;
     getChildStore(keys: string[]): IServerSideStore | null;
     refreshAfterSort(params: StoreRefreshAfterParams): void;
     refreshAfterFilter(params: StoreRefreshAfterParams): void;

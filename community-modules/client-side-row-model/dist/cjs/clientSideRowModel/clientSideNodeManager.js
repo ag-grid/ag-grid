@@ -64,9 +64,9 @@ var ClientSideNodeManager = /** @class */ (function () {
             add: []
         };
         var nodesToUnselect = [];
-        this.executeAdd(rowDataTran, rowNodeTransaction);
         this.executeRemove(rowDataTran, rowNodeTransaction, nodesToUnselect);
         this.executeUpdate(rowDataTran, rowNodeTransaction, nodesToUnselect);
+        this.executeAdd(rowDataTran, rowNodeTransaction);
         this.updateSelection(nodesToUnselect);
         if (rowNodeOrder) {
             core_1._.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
@@ -133,7 +133,7 @@ var ClientSideNodeManager = /** @class */ (function () {
                 nodesToUnselect.push(rowNode);
             }
             // so row renderer knows to fade row out (and not reposition it)
-            rowNode.clearRowTop();
+            rowNode.clearRowTopAndRowIndex();
             // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
             // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
             rowIdsRemoved[rowNode.id] = true;
@@ -180,7 +180,7 @@ var ClientSideNodeManager = /** @class */ (function () {
             var id = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error("ag-Grid: could not find row id=" + id + ", data item was not found for this id");
+                console.error("AG Grid: could not find row id=" + id + ", data item was not found for this id");
                 return null;
             }
         }
@@ -188,7 +188,7 @@ var ClientSideNodeManager = /** @class */ (function () {
             // find rowNode using object references
             rowNode = core_1._.find(this.rootNode.allLeafChildren, function (rowNode) { return rowNode.data === data; });
             if (!rowNode) {
-                console.error("ag-Grid: could not find data item as object was not found", data);
+                console.error("AG Grid: could not find data item as object was not found", data);
                 return null;
             }
         }
@@ -198,7 +198,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         var _this = this;
         // make sure the rowData is an array and not a string of json - this was a commonly reported problem on the forum
         if (typeof rowData === 'string') {
-            console.warn('ag-Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
+            console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
             return;
         }
         var rowNodes = [];

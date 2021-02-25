@@ -4,13 +4,12 @@ import Extras from './Extras';
 import Scripts from './Scripts';
 import Styles from './Styles';
 import SystemJs from './SystemJs';
+import MetaData from './MetaData';
 
-const AngularTemplate = ({ library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+const AngularTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
     <html lang="en">
         <head>
-            <title>Angular 2 example</title>
-            <meta charSet="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <MetaData title="Angular 2 example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle rootId="app" />
             <Styles files={styleFiles} />
             <Extras options={options} />

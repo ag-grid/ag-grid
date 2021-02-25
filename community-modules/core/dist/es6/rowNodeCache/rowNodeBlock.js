@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -69,12 +69,15 @@ var RowNodeBlock = /** @class */ (function (_super) {
         return thisIsMostRecentRequest && weAreNotDestroyed;
     };
     RowNodeBlock.prototype.successCommon = function (version, params) {
+        // need to dispatch load complete before processing the data, as PaginationComp checks
+        // RowNodeBlockLoader to see if it is still loading, so the RowNodeBlockLoader needs to
+        // be updated first (via LoadComplete event) before PaginationComp updates (via processServerResult method)
+        this.dispatchLoadCompleted();
         var requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
         if (requestMostRecentAndLive) {
             this.state = RowNodeBlock.STATE_LOADED;
             this.processServerResult(params);
         }
-        this.dispatchLoadCompleted();
     };
     RowNodeBlock.prototype.dispatchLoadCompleted = function (success) {
         if (success === void 0) { success = true; }

@@ -120,6 +120,12 @@ export class PaginationProxy extends BeanStub {
         return Math.max(this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop, 0);
     }
 
+    public getCurrentPagePixelRange(): {pageFirstPixel: number, pageLastPixel: number} {
+        const pageFirstPixel = this.topRowBounds ? this.topRowBounds.rowTop : 0;
+        const pageLastPixel = this.bottomRowBounds ? this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight : 0;
+        return {pageFirstPixel, pageLastPixel};
+    }
+
     public isRowPresent(rowNode: RowNode): boolean {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;

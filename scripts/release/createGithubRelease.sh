@@ -24,4 +24,4 @@ while true; do
     esac
 done
 
-curl --user $USERNAME --data '{"tag_name": "v'$VERSION'","target_commitish": "master",  "name": "v'$VERSION'",  "body": "Please refer to the ag-Grid [Changelog](https://www.ag-grid.com/ag-grid-changelog/?fixVersion='$VERSION') for details.",  "draft": false,  "prerelease": false}' https://api.github.com/repos/$OWNER_REPO/releases
+curl --user $USERNAME --data '{"tag_name": "v'$VERSION'","target_commitish": "master",  "name": "v'$VERSION'",  "body": "Please refer to the AG Grid [Changelog](https://www.ag-grid.com/ag-grid-changelog/?fixVersion='$VERSION') for details.",  "draft": false,  "prerelease": false}' https://api.github.com/repos/$OWNER_REPO/releases

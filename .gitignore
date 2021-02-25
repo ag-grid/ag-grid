@@ -23,3 +23,7 @@ docs_are_running
 
 .hash
 
+archive*.zip
+release*.zip
+
+grid-packages/ag-grid-docs/documentation/algolia-ag-grid-dev_*.json

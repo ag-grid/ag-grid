@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,7 @@ var moduleRegistry_1 = require("./modules/moduleRegistry");
 var managedFocusComponent_1 = require("./widgets/managedFocusComponent");
 var dom_1 = require("./utils/dom");
 var array_1 = require("./utils/array");
+var focusController_1 = require("./focusController");
 var GridCore = /** @class */ (function (_super) {
     __extends(GridCore, _super);
     function GridCore() {
@@ -73,10 +74,10 @@ var GridCore = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
         var eGui = this.getGui();
         this.addManagedListener(this, events_1.Events.EVENT_KEYBOARD_FOCUS, function () {
-            dom_1.addCssClass(eGui, 'ag-keyboard-focus');
+            dom_1.addCssClass(eGui, focusController_1.FocusController.AG_KEYBOARD_FOCUS);
         });
         this.addManagedListener(this, events_1.Events.EVENT_MOUSE_FOCUS, function () {
-            dom_1.removeCssClass(eGui, 'ag-keyboard-focus');
+            dom_1.removeCssClass(eGui, focusController_1.FocusController.AG_KEYBOARD_FOCUS);
         });
         _super.prototype.postConstruct.call(this);
     };
@@ -166,7 +167,7 @@ var GridCore = /** @class */ (function (_super) {
     GridCore.prototype.setSideBarVisible = function (show) {
         if (!this.sideBarComp) {
             if (show) {
-                console.warn('ag-Grid: sideBar is not loaded');
+                console.warn('AG Grid: sideBar is not loaded');
             }
             return;
         }
@@ -174,14 +175,14 @@ var GridCore = /** @class */ (function (_super) {
     };
     GridCore.prototype.setSideBarPosition = function (position) {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: sideBar is not loaded');
+            console.warn('AG Grid: sideBar is not loaded');
             return;
         }
         this.sideBarComp.setSideBarPosition(position);
     };
     GridCore.prototype.closeToolPanel = function () {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
             return;
         }
         this.sideBarComp.close();
@@ -191,7 +192,7 @@ var GridCore = /** @class */ (function (_super) {
     };
     GridCore.prototype.getToolPanelInstance = function (key) {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
             return;
         }
         return this.sideBarComp.getToolPanelInstance(key);
@@ -218,7 +219,7 @@ var GridCore = /** @class */ (function (_super) {
     };
     GridCore.prototype.openToolPanel = function (key) {
         if (!this.sideBarComp) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
             return;
         }
         this.sideBarComp.openToolPanel(key);

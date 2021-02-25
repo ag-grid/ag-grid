@@ -231,7 +231,7 @@ var PartialStoreBlock = /** @class */ (function (_super) {
     PartialStoreBlock.prototype.getRowIndexAtPixel = function (pixel) {
         var _this = this;
         this.touchLastAccessed();
-        var res;
+        var res = null;
         _.find(this.rowNodes, function (rowNode) {
             res = _this.blockUtils.getIndexAtPixel(rowNode, pixel);
             return res != null;

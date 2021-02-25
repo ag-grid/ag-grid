@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,8 +20,19 @@ var generic_1 = require("../utils/generic");
 var object_1 = require("../utils/object");
 var RowNode = /** @class */ (function () {
     function RowNode() {
+        /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
+        this.rowIndex = null;
         /** Children mapped by the pivot columns */
         this.childrenMapped = {};
+        /**
+         * True if the RowNode is not filtered, or in a collapsed group.
+         */
+        this.displayed = false;
+        /** The top pixel for this row */
+        this.rowTop = null;
+        /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
+         * it is used so new rows can animate in from their old position. */
+        this.oldRowTop = null;
         /** True by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
         this.selectable = true;
         /** Used by sorting service - to give deterministic sort to groups. Previously we
@@ -135,7 +146,7 @@ var RowNode = /** @class */ (function () {
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
                 if (this.id && this.id.startsWith && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
-                    console.error("ag-Grid: Row ID's cannot start with " + RowNode.ID_PREFIX_ROW_GROUP + ", this is a reserved prefix for ag-Grid's row grouping feature.");
+                    console.error("AG Grid: Row ID's cannot start with " + RowNode.ID_PREFIX_ROW_GROUP + ", this is a reserved prefix for AG Grid's row grouping feature.");
                 }
             }
             else {
@@ -151,10 +162,6 @@ var RowNode = /** @class */ (function () {
     };
     RowNode.prototype.isPixelInRange = function (pixel) {
         return pixel >= this.rowTop && pixel < (this.rowTop + this.rowHeight);
-    };
-    RowNode.prototype.clearRowTop = function () {
-        this.oldRowTop = this.rowTop;
-        this.setRowTop(null);
     };
     RowNode.prototype.setFirstChild = function (firstChild) {
         if (this.firstChild === firstChild) {
@@ -190,6 +197,21 @@ var RowNode = /** @class */ (function () {
         this.rowTop = rowTop;
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
+        }
+        this.setDisplayed(rowTop !== null);
+    };
+    RowNode.prototype.clearRowTopAndRowIndex = function () {
+        this.oldRowTop = this.rowTop;
+        this.setRowTop(null);
+        this.setRowIndex(null);
+    };
+    RowNode.prototype.setDisplayed = function (displayed) {
+        if (this.displayed === displayed) {
+            return;
+        }
+        this.displayed = displayed;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DISPLAYED_CHANGED));
         }
     };
     RowNode.prototype.setDragging = function (dragging) {
@@ -268,8 +290,10 @@ var RowNode = /** @class */ (function () {
             expanded: expanded
         });
         this.mainEventService.dispatchEvent(event);
+        // when using footers we need to refresh the group row, as the aggregation
+        // values jump between group and footer
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.gridApi.redrawRows({ rowNodes: [this] });
+            this.rowRenderer.refreshCells({ rowNodes: [this] });
         }
     };
     RowNode.prototype.createGlobalRowEvent = function (type) {
@@ -448,11 +472,11 @@ var RowNode = /** @class */ (function () {
         // groupSelectsFiltered only makes sense when group selects children
         var groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
         if (this.id === undefined) {
-            console.warn('ag-Grid: cannot select node until id for node is known');
+            console.warn('AG Grid: cannot select node until id for node is known');
             return 0;
         }
         if (this.rowPinned) {
-            console.warn('ag-Grid: cannot select pinned rows');
+            console.warn('AG Grid: cannot select pinned rows');
             return 0;
         }
         // if we are a footer, we don't do selection, just pass the info
@@ -646,6 +670,7 @@ var RowNode = /** @class */ (function () {
     RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
     RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';
     RowNode.EVENT_TOP_CHANGED = 'topChanged';
+    RowNode.EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     RowNode.EVENT_FIRST_CHILD_CHANGED = 'firstChildChanged';
     RowNode.EVENT_LAST_CHILD_CHANGED = 'lastChildChanged';
     RowNode.EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
@@ -659,6 +684,9 @@ var RowNode = /** @class */ (function () {
     __decorate([
         context_1.Autowired('eventService')
     ], RowNode.prototype, "mainEventService", void 0);
+    __decorate([
+        context_1.Autowired('rowRenderer')
+    ], RowNode.prototype, "rowRenderer", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], RowNode.prototype, "gridOptionsWrapper", void 0);

@@ -465,7 +465,7 @@ body {
         }
     }
 
-    $frameworks: angular react polymer vue-inverted javascript angularjs aurelia webcomponents;
+    $frameworks: angular react vue-inverted javascript angularjs aurelia webcomponents;
 
     @each $framework in $frameworks {
         .get-started-framework.card-#{$framework} > a:first-child {

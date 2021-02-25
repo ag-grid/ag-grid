@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -270,11 +270,11 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.addRowDropZone = function (params) {
         var _this = this;
         if (!params.getContainer()) {
-            function_1.doOnce(function () { return console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'); }, 'add-drop-zone-empty-target');
+            function_1.doOnce(function () { return console.warn('AG Grid: addRowDropZone - A container target needs to be provided'); }, 'add-drop-zone-empty-target');
             return;
         }
         if (this.dragAndDropService.findExternalZone(params)) {
-            console.warn('ag-Grid: addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.');
+            console.warn('AG Grid: addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.');
             return;
         }
         var processedParams = {
@@ -316,7 +316,7 @@ var RowDragFeature = /** @class */ (function (_super) {
         var onDragging = this.onDragging.bind(this);
         var onDragStop = this.onDragStop.bind(this);
         if (!events) {
-            return { getContainer: getContainer, onDragEnter: onDragEnter, onDragLeave: onDragLeave, onDragging: onDragging, onDragStop: onDragStop, fromGrid: true };
+            return { getContainer: getContainer, onDragEnter: onDragEnter, onDragLeave: onDragLeave, onDragging: onDragging, onDragStop: onDragStop, /* @private */ fromGrid: true };
         }
         return {
             getContainer: getContainer,
@@ -344,7 +344,7 @@ var RowDragFeature = /** @class */ (function (_super) {
                     events.onDragStop(_this.draggingToRowDragEvent(eventKeys_1.Events.EVENT_ROW_DRAG_END, e));
                 })
                 : onDragStop,
-            fromGrid: true
+            fromGrid: true /* @private */
         };
     };
     RowDragFeature.prototype.draggingToRowDragEvent = function (type, draggingEvent) {

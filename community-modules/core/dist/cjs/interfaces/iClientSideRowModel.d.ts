@@ -1,12 +1,20 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IRowModel } from './iRowModel';
 import { RowNodeTransaction } from './rowNodeTransaction';
 import { RowDataTransaction } from './rowDataTransaction';
-import { RefreshModelParams } from './refreshModelParams';
 import { RowNode } from '../entities/rowNode';
 import { ChangedPath } from '../utils/changedPath';
+export declare enum ClientSideRowModelSteps {
+    EVERYTHING = "group",
+    FILTER = "filter",
+    SORT = "sort",
+    MAP = "map",
+    AGGREGATE = "aggregate",
+    PIVOT = "pivot",
+    NOTHING = "nothing"
+}
 export interface IClientSideRowModel extends IRowModel {
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {
         [id: string]: number;
@@ -30,4 +38,17 @@ export interface IClientSideRowModel extends IRowModel {
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
     getHighlightPosition(pixel: number, rowNode?: RowNode): 'above' | 'below';
     getLastHighlightedRowNode(): RowNode | null;
+}
+export interface RefreshModelParams {
+    step: ClientSideRowModelSteps;
+    groupState?: any;
+    keepRenderedRows?: boolean;
+    animate?: boolean;
+    keepEditingRows?: boolean;
+    rowNodeTransactions?: RowNodeTransaction[];
+    rowNodeOrder?: {
+        [id: string]: number;
+    };
+    newData?: boolean;
+    afterColumnsChanged?: boolean;
 }

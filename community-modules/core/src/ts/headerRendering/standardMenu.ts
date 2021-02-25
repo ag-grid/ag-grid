@@ -61,28 +61,19 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         eMenu.setAttribute('role', 'presentation');
         addCssClass(eMenu, 'ag-menu');
 
-        this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu));
+        this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
 
-        filterWrapper.guiPromise.then(gui => eMenu.appendChild(gui));
+        filterWrapper.guiPromise.then(gui => eMenu.appendChild(gui!));
 
         let hidePopup: (() => void);
 
-        const bodyScrollListener = (event: any) => {
-            // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal' && hidePopup) {
-                hidePopup();
-            }
-        };
-
-        this.eventService.addEventListener('bodyScroll', bodyScrollListener);
-
-        const closedCallback = (e: Event) => {
-            this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
+        const anchorToElement = eventSource || this.gridPanel.getGui();
+        const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             column.setMenuVisible(false, 'contextMenu');
             const isKeyboardEvent = e instanceof KeyboardEvent;
 
             if (this.tabListener) {
-                this.tabListener = this.tabListener();
+                this.tabListener = this.tabListener()!;
             }
 
             if (isKeyboardEvent && eventSource && isVisible(eventSource)) {
@@ -96,7 +87,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,
-            closedCallback: closedCallback
+            closedCallback,
+            positionCallback: () => positionCallback(eMenu),
+            anchorToElement
         });
 
         if (addPopupRes) {
@@ -108,8 +101,8 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             // after filter it is visible can we find out what the width of it is
             positionCallback(eMenu);
 
-            if (filter.afterGuiAttached) {
-                filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
+            if (filter!.afterGuiAttached) {
+                filter!.afterGuiAttached({ container: 'columnMenu', hidePopup });
             }
         });
 

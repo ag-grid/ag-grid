@@ -54,10 +54,10 @@ export interface CellRange {
 }
 
 export interface CellRangeParams {
-    rowStartIndex?: number;
-    rowStartPinned?: string;
-    rowEndIndex?: number;
-    rowEndPinned?: string;
+    rowStartIndex: number | null;
+    rowStartPinned?: string | null;
+    rowEndIndex: number | null;
+    rowEndPinned?: string | null;
     columnStart?: string | Column;
     columnEnd?: string | Column;
     columns?: (string | Column)[];

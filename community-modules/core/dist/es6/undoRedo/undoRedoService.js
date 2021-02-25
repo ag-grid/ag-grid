@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,8 +49,8 @@ var UndoRedoService = /** @class */ (function (_super) {
                 rowPinned: rowPinned,
                 rowIndex: rowIndex,
                 columnId: column.getColId(),
-                oldValue: oldValue,
-                newValue: value
+                newValue: value,
+                oldValue: oldValue
             };
             _this.cellValueChanges.push(cellValueChange);
         };
@@ -134,7 +134,7 @@ var UndoRedoService = /** @class */ (function (_super) {
             var rowPosition = { rowIndex: rowIndex, rowPinned: rowPinned };
             var currentRow = _this.getRowNode(rowPosition);
             // checks if the row has been filtered out
-            if (currentRow.rowTop == null) {
+            if (!currentRow.displayed) {
                 return;
             }
             currentRow.setDataValue(columnId, valueExtractor(cellValueChange));

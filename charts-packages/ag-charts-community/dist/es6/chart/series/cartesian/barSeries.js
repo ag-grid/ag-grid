@@ -22,6 +22,7 @@ import { Selection } from "../../../scene/selection";
 import { Rect } from "../../../scene/shape/rect";
 import { Text } from "../../../scene/shape/text";
 import { BandScale } from "../../../scale/bandScale";
+import { SeriesTooltip } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { CartesianSeries } from "./cartesianSeries";
@@ -46,6 +47,29 @@ var BarSeriesLabel = /** @class */ (function (_super) {
     ], BarSeriesLabel.prototype, "formatter", void 0);
     return BarSeriesLabel;
 }(Label));
+var BarSeriesTooltip = /** @class */ (function (_super) {
+    __extends(BarSeriesTooltip, _super);
+    function BarSeriesTooltip() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate([
+        reactive('change')
+    ], BarSeriesTooltip.prototype, "renderer", void 0);
+    return BarSeriesTooltip;
+}(SeriesTooltip));
+export { BarSeriesTooltip };
+function flat(arr, target) {
+    if (target === void 0) { target = []; }
+    arr.forEach(function (v) {
+        if (Array.isArray(v)) {
+            flat(v, target);
+        }
+        else {
+            target.push(v);
+        }
+    });
+    return target;
+}
 var BarSeries = /** @class */ (function (_super) {
     __extends(BarSeries, _super);
     function BarSeries() {
@@ -68,6 +92,7 @@ var BarSeries = /** @class */ (function (_super) {
          * in the {@link yKeys} setter.
          */
         _this.seriesItemEnabled = new Map();
+        _this.tooltip = new BarSeriesTooltip();
         _this.flipXY = false;
         _this.fills = [
             '#c16068',
@@ -133,7 +158,7 @@ var BarSeries = /** @class */ (function (_super) {
                 var value = _this[key];
                 if (value) {
                     if (Array.isArray(value)) {
-                        values.push.apply(values, value);
+                        values = values.concat(flat(value));
                     }
                     else {
                         values.push(value);

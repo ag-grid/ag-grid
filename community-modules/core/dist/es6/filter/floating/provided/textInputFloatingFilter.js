@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -78,8 +78,11 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         if (this.applyActive && !enterKeyPressed) {
             return;
         }
-        var value = TextFilter.cleanInput(this.eFloatingFilterInput.getValue());
-        this.eFloatingFilterInput.setValue(value, true); // ensure visible value is clean
+        var value = this.eFloatingFilterInput.getValue();
+        if (this.params.filterParams.trimInput) {
+            value = TextFilter.trimInput(value);
+            this.eFloatingFilterInput.setValue(value, true); // ensure visible value is trimmed
+        }
         this.params.parentFilterInstance(function (filterInstance) {
             if (filterInstance) {
                 var simpleFilter = filterInstance;

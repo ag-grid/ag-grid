@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,7 +32,7 @@ var ScalarFilter = /** @class */ (function (_super) {
     };
     ScalarFilter.prototype.checkDeprecatedParams = function () {
         if (this.scalarFilterParams.nullComparator) {
-            console.warn('ag-Grid: Since v21.0, the property filterParams.nullComparator is deprecated. ' +
+            console.warn('AG Grid: Since v21.0, the property filterParams.nullComparator is deprecated. ' +
                 'Please use filterParams.includeBlanksInEquals, filterParams.includeBlanksInLessThan and ' +
                 'filterParams.includeBlanksInGreaterThan instead.');
             this.scalarFilterParams.includeBlanksInEquals = this.scalarFilterParams.nullComparator.equals;

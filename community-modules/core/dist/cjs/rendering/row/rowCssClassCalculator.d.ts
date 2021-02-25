@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -25,7 +25,7 @@ export declare class RowCssClassCalculator {
     stylingService: StylingService;
     gridOptionsWrapper: GridOptionsWrapper;
     getInitialRowClasses(params: RowCssClassCalculatorParams): string[];
-    processClassesFromGridOptions(rowNode: RowNode): string[];
+    processClassesFromGridOptions(rowNode: RowNode, scope: any): string[];
     private preProcessRowClassRules;
     processRowClassRules(rowNode: RowNode, scope: any, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
     calculateRowLevel(rowNode: RowNode): number;

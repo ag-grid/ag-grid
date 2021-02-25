@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,6 +32,7 @@ var context_1 = require("../../context/context");
 var aria_1 = require("../../utils/aria");
 var array_1 = require("../../utils/array");
 var generic_1 = require("../../utils/generic");
+var eventKeys_1 = require("../../eventKeys");
 var SetLeftFeature = /** @class */ (function (_super) {
     __extends(SetLeftFeature, _super);
     function SetLeftFeature(columnOrGroup, eCell, beans, colsSpanning) {
@@ -57,6 +58,11 @@ var SetLeftFeature = /** @class */ (function (_super) {
     SetLeftFeature.prototype.postConstruct = function () {
         this.addManagedListener(this.columnOrGroup, column_1.Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.setLeftFirstTime();
+        // when in print layout, the left position is also dependent on the width of the pinned sections.
+        // so additionally update left if any column width changes.
+        if (this.printLayout) {
+            this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onLeftChanged.bind(this));
+        }
     };
     SetLeftFeature.prototype.setLeftFirstTime = function () {
         var suppressMoveAnimation = this.beans.gridOptionsWrapper.isSuppressColumnMoveAnimation();
@@ -100,13 +106,12 @@ var SetLeftFeature = /** @class */ (function (_super) {
         if (colOrGroup.getPinned() === constants_1.Constants.PINNED_LEFT) {
             return leftPosition;
         }
+        var leftWidth = this.beans.columnController.getDisplayedColumnsLeftWidth();
         if (colOrGroup.getPinned() === constants_1.Constants.PINNED_RIGHT) {
-            var leftWidth_1 = this.beans.columnController.getPinnedLeftContainerWidth();
             var bodyWidth = this.beans.columnController.getBodyContainerWidth();
-            return leftWidth_1 + bodyWidth + leftPosition;
+            return leftWidth + bodyWidth + leftPosition;
         }
         // is in body
-        var leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
         return leftWidth + leftPosition;
     };
     SetLeftFeature.prototype.setLeft = function (value) {

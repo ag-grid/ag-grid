@@ -20,6 +20,7 @@ export declare class ClipboardService extends BeanStub implements IClipboardServ
     registerGridCore(gridCore: GridCore): void;
     private init;
     pasteFromClipboard(): void;
+    private pasteFromClipboardLegacy;
     private processClipboardData;
     private doPasteOperation;
     private pasteIntoActiveRange;
@@ -42,6 +43,7 @@ export declare class ClipboardService extends BeanStub implements IClipboardServ
     private processHeader;
     copySelectedRowsToClipboard(includeHeaders?: boolean, columnKeys?: (string | Column)[]): void;
     private copyDataToClipboard;
+    private copyDataToClipboardLegacy;
     private executeOnTempElement;
     private getRangeSize;
 }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -113,7 +113,7 @@ var CellComp = /** @class */ (function (_super) {
         return _this;
     }
     CellComp.prototype.getCreateTemplate = function () {
-        var unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? 'unselectable="on"' : '';
+        var unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
         var templateParts = [];
         var col = this.column;
         var width = this.getCellWidth();
@@ -123,15 +123,13 @@ var CellComp = /** @class */ (function (_super) {
         this.tooltip = this.getToolTip();
         var tooltipSanitised = string_1.escapeString(this.tooltip);
         var colIdSanitised = string_1.escapeString(col.getId());
-        var wrapperStartTemplate = '';
-        var wrapperEndTemplate = '';
         var stylesFromColDef = this.preProcessStylesFromColDef();
         var cssClasses = this.getInitialCssClasses();
         var stylesForRowSpanning = this.getStylesForRowSpanning();
         var colIdxSanitised = string_1.escapeString(this.beans.columnController.getAriaColumnIndex(this.column).toString());
         templateParts.push("<div");
         templateParts.push(" tabindex=\"-1\"");
-        templateParts.push(" " + unselectable); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
+        templateParts.push("" + unselectable); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
         templateParts.push(" role=\"gridcell\"");
         templateParts.push(" aria-colindex=\"" + colIdxSanitised + "\"");
         templateParts.push(" comp-id=\"" + this.getCompId() + "\" ");
@@ -143,19 +141,21 @@ var CellComp = /** @class */ (function (_super) {
         if (this.rangeSelectionEnabled) {
             templateParts.push(" aria-selected=\"" + (this.rangeCount ? 'true' : 'false') + "\"");
         }
-        if (this.usingWrapper) {
-            wrapperStartTemplate =
-                "<div ref=\"eCellWrapper\" class=\"ag-cell-wrapper\" role=\"presentation\">\n                    <span ref=\"eCellValue\" role=\"presentation\" class=\"" + CSS_CELL_VALUE + "\" " + unselectable + ">";
-            wrapperEndTemplate = '</span></div>';
-        }
         templateParts.push(" style=\"width: " + Number(width) + "px; left: " + Number(left) + "px; " + string_1.escapeString(stylesFromColDef) + " " + string_1.escapeString(stylesForRowSpanning) + "\">");
-        templateParts.push(wrapperStartTemplate);
-        if (generic_1.exists(valueSanitised, true)) {
+        if (this.usingWrapper) {
+            templateParts.push(this.getCellWrapperString(valueSanitised));
+        }
+        else if (valueSanitised != null) {
             templateParts.push(valueSanitised);
         }
-        templateParts.push(wrapperEndTemplate);
         templateParts.push("</div>");
         return templateParts.join('');
+    };
+    CellComp.prototype.getCellWrapperString = function (value) {
+        if (value === void 0) { value = ''; }
+        var unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
+        var wrapper = /* html */ "<div ref=\"eCellWrapper\" class=\"ag-cell-wrapper\" role=\"presentation\">\n            <span ref=\"eCellValue\" role=\"presentation\" class=\"" + CSS_CELL_VALUE + "\"" + unselectable + ">\n                " + (value != null ? value : '') + "\n            </span>\n        </div>";
+        return wrapper;
     };
     CellComp.prototype.getStylesForRowSpanning = function () {
         if (this.rowSpan === 1) {
@@ -421,7 +421,7 @@ var CellComp = /** @class */ (function (_super) {
         if (!flashDelay) {
             flashDelay = gridOptionsWrapper.getCellFlashDelay();
         }
-        if (!fadeDelay) {
+        if (!generic_1.exists(fadeDelay)) {
             fadeDelay = gridOptionsWrapper.getCellFadeDelay();
         }
         // we want to highlight the cells, without any animation
@@ -435,12 +435,12 @@ var CellComp = /** @class */ (function (_super) {
             window.setTimeout(function () {
                 // and then to leave things as we got them, we remove the animation
                 _this.removeCssClass(animationFullName);
-                element.style.transition = null;
+                element.style.removeProperty('transition');
             }, fadeDelay);
         }, flashDelay);
     };
     CellComp.prototype.replaceContentsAfterRefresh = function () {
-        // otherwise we rip out the cell and replace it
+        this.setUsingWrapper();
         dom_1.clearElement(this.eCellValue);
         // remove old renderer component if it exists
         this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
@@ -482,14 +482,16 @@ var CellComp = /** @class */ (function (_super) {
             var cssToUse = void 0;
             if (typeof colDef.cellStyle === 'function') {
                 var cellStyleParams = {
+                    column: this.column,
                     value: this.value,
+                    colDef: colDef,
                     data: this.rowNode.data,
                     node: this.rowNode,
-                    colDef: colDef,
-                    column: this.column,
+                    rowIndex: this.rowNode.rowIndex,
                     $scope: this.scope,
+                    api: this.beans.gridOptionsWrapper.getApi(),
+                    columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
                     context: this.beans.gridOptionsWrapper.getContext(),
-                    api: this.beans.gridOptionsWrapper.getApi()
                 };
                 var cellStyleFunc = colDef.cellStyle;
                 cssToUse = cellStyleFunc(cellStyleParams);
@@ -511,7 +513,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.processClassesFromColDef = function (onApplicableClass) {
         var colDef = this.getComponentHolder();
-        this.beans.stylingService.processStaticCellClasses(colDef, {
+        var cellClassParams = {
             value: this.value,
             data: this.rowNode.data,
             node: this.rowNode,
@@ -521,7 +523,8 @@ var CellComp = /** @class */ (function (_super) {
             api: this.beans.gridOptionsWrapper.getApi(),
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext()
-        }, onApplicableClass);
+        };
+        this.beans.stylingService.processStaticCellClasses(colDef, cellClassParams, onApplicableClass);
     };
     CellComp.prototype.putDataIntoCellAfterRefresh = function () {
         // template gets preference, then cellRenderer, then do it ourselves
@@ -550,7 +553,7 @@ var CellComp = /** @class */ (function (_super) {
             else {
                 var valueToUse = this.getValueToUse();
                 if (valueToUse != null) {
-                    this.eCellValue.innerHTML = string_1.escapeString(valueToUse);
+                    this.eCellValue.innerHTML = string_1.escapeString(valueToUse) || '';
                 }
             }
         }
@@ -626,7 +629,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.processCellClassRules = function (onApplicableClass, onNotApplicableClass) {
         var colDef = this.getComponentHolder();
-        this.beans.stylingService.processClassRules(colDef.cellClassRules, {
+        var cellClassParams = {
             value: this.value,
             data: this.rowNode.data,
             node: this.rowNode,
@@ -636,7 +639,8 @@ var CellComp = /** @class */ (function (_super) {
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             $scope: this.scope,
             context: this.beans.gridOptionsWrapper.getContext()
-        }, onApplicableClass, onNotApplicableClass);
+        };
+        this.beans.stylingService.processClassRules(colDef.cellClassRules, cellClassParams, onApplicableClass, onNotApplicableClass);
     };
     CellComp.prototype.postProcessCellClassRules = function () {
         var _this = this;
@@ -765,6 +769,7 @@ var CellComp = /** @class */ (function (_super) {
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.getGui(),
             eParentOfValue: this.eCellValue,
+            registerRowDragger: function (element) { return _this.addRowDragging(element); },
             // these bits are not documented anywhere, so we could drop them?
             // it was in the olden days to allow user to register for when rendered
             // row was removed (the row comp was removed), however now that the user
@@ -772,7 +777,7 @@ var CellComp = /** @class */ (function (_super) {
             // happens so no longer need to fire event.
             addRowCompListener: this.rowComp ? this.rowComp.addEventListener.bind(this.rowComp) : null,
             addRenderedRowListener: function (eventType, listener) {
-                console.warn('ag-Grid: since ag-Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
+                console.warn('AG Grid: since AG Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
                 if (_this.rowComp) {
                     _this.rowComp.addEventListener(eventType, listener);
                 }
@@ -927,16 +932,17 @@ var CellComp = /** @class */ (function (_super) {
         var _this = this;
         var cellEditorPromise = this.beans.userComponentFactory.newCellEditor(this.column.getColDef(), params);
         return cellEditorPromise.then(function (cellEditor) {
-            var isPopup = cellEditor.isPopup && cellEditor.isPopup();
+            var cellEditorComp = cellEditor;
+            var isPopup = cellEditorComp.isPopup && cellEditorComp.isPopup();
             if (!isPopup) {
-                return cellEditor;
+                return cellEditorComp;
             }
             if (_this.beans.gridOptionsWrapper.isFullRowEdit()) {
-                console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
+                console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                     '- either turn off fullRowEdit, or stop using popup editors.');
             }
             // if a popup, then we wrap in a popup editor and return the popup
-            var popupEditorWrapper = new popupEditorWrapper_1.PopupEditorWrapper(cellEditor);
+            var popupEditorWrapper = new popupEditorWrapper_1.PopupEditorWrapper(cellEditorComp);
             _this.beans.context.createBean(popupEditorWrapper);
             popupEditorWrapper.init(params);
             return popupEditorWrapper;
@@ -959,10 +965,10 @@ var CellComp = /** @class */ (function (_super) {
             return;
         }
         if (!cellEditor.getGui) {
-            console.warn("ag-Grid: cellEditor for column " + this.column.getId() + " is missing getGui() method");
+            console.warn("AG Grid: cellEditor for column " + this.column.getId() + " is missing getGui() method");
             // no getGui, for React guys, see if they attached a react component directly
             if (cellEditor.render) {
-                console.warn("ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?");
+                console.warn("AG Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?");
             }
             this.beans.context.destroyBean(cellEditor);
             this.editingCell = false;
@@ -1366,6 +1372,12 @@ var CellComp = /** @class */ (function (_super) {
             column: this.column
         };
     };
+    CellComp.prototype.getRowPosition = function () {
+        return {
+            rowIndex: this.cellPosition.rowIndex,
+            rowPinned: this.cellPosition.rowPinned
+        };
+    };
     CellComp.prototype.getCellPosition = function () {
         return this.cellPosition;
     };
@@ -1408,14 +1420,13 @@ var CellComp = /** @class */ (function (_super) {
         if (!this.printLayout || this.column.getPinned() === constants_1.Constants.PINNED_LEFT) {
             return leftPosition;
         }
+        var leftWidth = this.beans.columnController.getDisplayedColumnsLeftWidth();
         if (this.column.getPinned() === constants_1.Constants.PINNED_RIGHT) {
-            var leftWidth_1 = this.beans.columnController.getPinnedLeftContainerWidth();
             var bodyWidth = this.beans.columnController.getBodyContainerWidth();
-            return leftWidth_1 + bodyWidth + leftPosition;
+            return leftWidth + bodyWidth + (leftPosition || 0);
         }
         // is in body
-        var leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
-        return leftWidth + leftPosition;
+        return leftWidth + (leftPosition || 0);
     };
     CellComp.prototype.onWidthChanged = function () {
         var width = this.getCellWidth();
@@ -1462,10 +1473,10 @@ var CellComp = /** @class */ (function (_super) {
             if (!bottom && this.beans.rowPositionUtils.sameRow(endRow, this.cellPosition)) {
                 bottom = true;
             }
-            if (!left && range.columns.indexOf(leftCol) < 0) {
+            if (!left && leftCol && range.columns.indexOf(leftCol) < 0) {
                 left = true;
             }
-            if (!right && range.columns.indexOf(rightCol) < 0) {
+            if (!right && rightCol && range.columns.indexOf(rightCol) < 0) {
                 right = true;
             }
         }
@@ -1572,7 +1583,7 @@ var CellComp = /** @class */ (function (_super) {
             rangeController.isBottomRightCell(cellRange, cellPosition);
     };
     CellComp.prototype.addSelectionHandle = function () {
-        var _a = this.beans, gridOptionsWrapper = _a.gridOptionsWrapper, context = _a.context, rangeController = _a.rangeController;
+        var _a = this.beans, gridOptionsWrapper = _a.gridOptionsWrapper, rangeController = _a.rangeController;
         var cellRangeType = array_1.last(rangeController.getCellRanges()).type;
         var selectionHandleFill = gridOptionsWrapper.isEnableFillHandle() && generic_1.missing(cellRangeType);
         var type = selectionHandleFill ? iRangeController_1.SelectionHandleType.FILL : iRangeController_1.SelectionHandleType.RANGE;
@@ -1630,10 +1641,23 @@ var CellComp = /** @class */ (function (_super) {
             this.addOrRemoveCssClass(CSS_LAST_LEFT_PINNED, lastLeftPinned);
         }
     };
+    CellComp.prototype.refreshShouldDestroy = function () {
+        var isUsingWrapper = this.usingWrapper;
+        var isIncludingRowDragging = this.includeRowDraggingComponent;
+        var isIncludingDndSource = this.includeDndSourceComponent;
+        var isIncludingSelection = this.includeSelectionComponent;
+        this.setUsingWrapper();
+        return isUsingWrapper !== this.usingWrapper ||
+            isIncludingRowDragging !== this.includeRowDraggingComponent ||
+            isIncludingDndSource !== this.includeDndSourceComponent ||
+            isIncludingSelection !== this.includeSelectionComponent;
+    };
     CellComp.prototype.populateTemplate = function () {
         if (this.usingWrapper) {
             this.eCellValue = this.getRefElement('eCellValue');
             this.eCellWrapper = this.getRefElement('eCellWrapper');
+            this.eCellValue.id = "cell-" + this.getCompId();
+            var describedByIds = '';
             if (this.includeRowDraggingComponent) {
                 this.addRowDragging();
             }
@@ -1641,17 +1665,19 @@ var CellComp = /** @class */ (function (_super) {
                 this.addDndSource();
             }
             if (this.includeSelectionComponent) {
-                this.addSelectionCheckbox();
+                describedByIds += this.addSelectionCheckbox().getCheckboxId();
             }
+            aria_1.setAriaDescribedBy(this.getGui(), describedByIds + " " + this.eCellValue.id);
         }
         else {
             this.eCellValue = this.getGui();
+            this.eCellWrapper = this.eCellValue;
         }
     };
     CellComp.prototype.getFrameworkOverrides = function () {
         return this.beans.frameworkOverrides;
     };
-    CellComp.prototype.addRowDragging = function () {
+    CellComp.prototype.addRowDragging = function (customElement) {
         var _this = this;
         var pagination = this.beans.gridOptionsWrapper.isPagination();
         var rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
@@ -1659,18 +1685,27 @@ var CellComp = /** @class */ (function (_super) {
         if (rowDragManaged) {
             // row dragging only available in default row model
             if (!clientSideRowModelActive) {
-                function_1.doOnce(function () { return console.warn('ag-Grid: managed row dragging is only allowed in the Client Side Row Model'); }, 'CellComp.addRowDragging');
+                function_1.doOnce(function () { return console.warn('AG Grid: managed row dragging is only allowed in the Client Side Row Model'); }, 'CellComp.addRowDragging');
                 return;
             }
             if (pagination) {
-                function_1.doOnce(function () { return console.warn('ag-Grid: managed row dragging is not possible when doing pagination'); }, 'CellComp.addRowDragging');
+                function_1.doOnce(function () { return console.warn('AG Grid: managed row dragging is not possible when doing pagination'); }, 'CellComp.addRowDragging');
                 return;
             }
         }
-        var rowDraggingComp = new rowDragComp_1.RowDragComp(this.rowNode, this.column, function () { return _this.value; }, this.beans);
-        this.createManagedBean(rowDraggingComp, this.beans.context);
-        // put the checkbox in before the value
-        this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eCellValue);
+        if (!this.rowDraggingComp) {
+            this.rowDraggingComp = new rowDragComp_1.RowDragComp(this.rowNode, this.column, function () { return _this.value; }, this.beans, customElement);
+            this.createManagedBean(this.rowDraggingComp, this.beans.context);
+        }
+        else if (customElement) {
+            // if the rowDraggingComp is already present, means we should only set the drag element
+            this.rowDraggingComp.setDragElement(customElement);
+        }
+        // If there is a custom element, the Cell Renderer is responsible for displaying it.
+        if (!customElement) {
+            // put the checkbox in before the value
+            this.eCellWrapper.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue);
+        }
     };
     CellComp.prototype.addDndSource = function () {
         var dndSourceComp = new dndSourceComp_1.DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans, this.getGui());
@@ -1683,11 +1718,14 @@ var CellComp = /** @class */ (function (_super) {
         var cbSelectionComponent = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
         this.beans.context.createBean(cbSelectionComponent);
         var visibleFunc = this.getComponentHolder().checkboxSelection;
-        visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
+        if (typeof visibleFunc !== 'function') {
+            visibleFunc = undefined;
+        }
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc });
         this.addDestroyFunc(function () { return _this.beans.context.destroyBean(cbSelectionComponent); });
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eCellValue);
+        return cbSelectionComponent;
     };
     CellComp.prototype.addDomData = function () {
         var _this = this;
@@ -1767,7 +1805,7 @@ var CellComp = /** @class */ (function (_super) {
         this.editingCell = false;
         // important to clear this out - as parts of the code will check for
         // this to see if an async cellEditor has yet to be created
-        this.cellEditor = this.beans.context.destroyBean(this.cellEditor);
+        this.beans.context.destroyBean(this.cellEditor);
         this.cellEditor = null;
         if (this.cellEditorInPopup && this.hideEditorPopup) {
             this.hideEditorPopup();

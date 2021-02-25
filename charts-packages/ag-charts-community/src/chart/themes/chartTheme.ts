@@ -42,8 +42,11 @@ export class ChartTheme {
 
     private static getAxisDefaults(): any {
         return {
+            top: {},
+            right: {},
+            bottom: {},
+            left: {},
             title: {
-                enabled: false,
                 padding: {
                     top: 10,
                     right: 10,
@@ -429,6 +432,14 @@ export class ChartTheme {
                         yOffset: 3,
                         blur: 5
                     }
+                }
+            }
+        },
+        hierarchy: {
+            ...ChartTheme.getChartDefaults(),
+            series: {
+                treemap: {
+                    ...ChartTheme.getSeriesDefaults()
                 }
             }
         }

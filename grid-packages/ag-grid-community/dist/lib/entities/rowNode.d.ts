@@ -1,9 +1,8 @@
 import { AgEvent } from "../events";
 import { Column } from "./column";
-import { RowNodeCache, RowNodeCacheParams } from "../modules/rowNodeCache/rowNodeCache";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { DetailGridInfo } from "../gridApi";
-import { IRowNodeBlock } from "../interfaces/iRowNodeBlock";
+import { IServerSideStore } from "../interfaces/IServerSideStore";
 export interface SetSelectedParams {
     newValue: boolean;
     clearSelection?: boolean;
@@ -38,6 +37,7 @@ export declare class RowNode implements IEventEmitter {
     static EVENT_MOUSE_LEAVE: string;
     static EVENT_HEIGHT_CHANGED: string;
     static EVENT_TOP_CHANGED: string;
+    static EVENT_DISPLAYED_CHANGED: string;
     static EVENT_FIRST_CHILD_CHANGED: string;
     static EVENT_LAST_CHILD_CHANGED: string;
     static EVENT_CHILD_INDEX_CHANGED: string;
@@ -49,6 +49,7 @@ export declare class RowNode implements IEventEmitter {
     static EVENT_HIGHLIGHT_CHANGED: string;
     static EVENT_DRAGGING_CHANGED: string;
     private mainEventService;
+    private rowRenderer;
     private gridOptionsWrapper;
     private selectionController;
     private columnController;
@@ -60,7 +61,7 @@ export declare class RowNode implements IEventEmitter {
     private gridApi;
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
-    id: string;
+    id: string | undefined;
     /** The group data */
     groupData: any;
     /** The aggregated data */
@@ -97,11 +98,11 @@ export declare class RowNode implements IEventEmitter {
     /** The index of this node in the group */
     childIndex: number;
     /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
-    rowIndex: number;
+    rowIndex: number | null;
     /** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */
     rowPinned: string;
     /** If using quick filter, stores a string representation of the row for searching against */
-    quickFilterAggregateText: string;
+    quickFilterAggregateText: string | null;
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
     footer: boolean;
     /** Groups only - The field we are grouping on eg Country*/
@@ -117,11 +118,11 @@ export declare class RowNode implements IEventEmitter {
     /** All user provided nodes */
     allLeafChildren: RowNode[];
     /** Groups only - Children of this group */
-    childrenAfterGroup: RowNode[];
+    childrenAfterGroup: RowNode[] | null;
     /** Groups only - Filtered children of this group */
-    childrenAfterFilter: RowNode[];
+    childrenAfterFilter: RowNode[] | null;
     /** Groups only - Sorted children of this group */
-    childrenAfterSort: RowNode[];
+    childrenAfterSort: RowNode[] | null;
     /** Groups only - Number of children and grand children */
     allChildrenCount: number | null;
     /** Children mapped by the pivot columns */
@@ -135,17 +136,21 @@ export declare class RowNode implements IEventEmitter {
     /** Groups only - If doing footers, reference to the footer node for this group */
     sibling: RowNode;
     /** The height, in pixels, of this row */
-    rowHeight: number;
+    rowHeight: number | null | undefined;
     /** Dynamic row heights are done on demand, only when row is visible. However for row virtualisation
      * we need a row height to do the 'what rows are in viewport' maths. So we assign a row height to each
      * row based on defaults and rowHeightEstimated=true, then when the row is needed for drawing we do
      * the row height calculation and set rowHeightEstimated=false.*/
     rowHeightEstimated: boolean;
+    /**
+     * True if the RowNode is not filtered, or in a collapsed group.
+     */
+    displayed: boolean;
     /** The top pixel for this row */
-    rowTop: number;
+    rowTop: number | null;
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
      * it is used so new rows can animate in from their old position. */
-    oldRowTop: number;
+    oldRowTop: number | null;
     /** True if this node is a daemon. This means row is not part of the model. Can happen when then
      * the row is selected and then the user sets a different ID onto the node. The nodes is then
      * representing a different entity, so the selection controller, if the node is selected, takes
@@ -171,28 +176,30 @@ export declare class RowNode implements IEventEmitter {
     private selected;
     private eventService;
     setData(data: any): void;
+    updateData(data: any): void;
+    private setDataCommon;
     private updateDataOnDetailNode;
     private createDataChangedEvent;
     private createLocalRowEvent;
-    updateData(data: any): void;
     getRowIndexString(): string;
     private createDaemonNode;
     setDataAndId(data: any, id: string | undefined): void;
     private checkRowSelectable;
     setRowSelectable(newVal: boolean): void;
-    setId(id: string): void;
+    setId(id?: string): void;
     isPixelInRange(pixel: number): boolean;
-    clearRowTop(): void;
     setFirstChild(firstChild: boolean): void;
     setLastChild(lastChild: boolean): void;
     setChildIndex(childIndex: number): void;
     setRowTop(rowTop: number | null): void;
+    clearRowTopAndRowIndex(): void;
+    private setDisplayed;
     setDragging(dragging: boolean): void;
     setHighlighted(highlighted: 'above' | 'below' | null): void;
     setAllChildrenCount(allChildrenCount: number | null): void;
     setMaster(master: boolean): void;
     setRowHeight(rowHeight: number | undefined | null, estimated?: boolean): void;
-    setRowIndex(rowIndex: number): void;
+    setRowIndex(rowIndex: number | null): void;
     setUiLevel(uiLevel: number): void;
     setExpanded(expanded: boolean): void;
     private createGlobalRowEvent;
@@ -202,11 +209,11 @@ export declare class RowNode implements IEventEmitter {
     setAggData(newAggData: any): void;
     updateHasChildren(): void;
     hasChildren(): boolean;
-    isEmptyRowGroupNode(): boolean;
+    isEmptyRowGroupNode(): boolean | undefined;
     private dispatchCellChangedEvent;
     resetQuickFilterAggregateText(): void;
     isExpandable(): boolean;
-    isSelected(): boolean;
+    isSelected(): boolean | undefined;
     depthFirstSearch(callback: (rowNode: RowNode) => void): void;
     calculateSelectedFromChildren(): void;
     setSelectedInitialValue(selected: boolean): void;
@@ -215,13 +222,13 @@ export declare class RowNode implements IEventEmitter {
     setSelectedParams(params: SetSelectedParams): number;
     private doRowRangeSelection;
     isParentOfNode(potentialParent: RowNode): boolean;
-    selectThisNode(newValue: boolean): boolean;
+    selectThisNode(newValue?: boolean): boolean;
     private selectChildNodes;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
     onMouseEnter(): void;
     onMouseLeave(): void;
-    getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode;
+    getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode | null;
     isFullWidthCell(): boolean;
     getRoute(): string[] | undefined;
 }

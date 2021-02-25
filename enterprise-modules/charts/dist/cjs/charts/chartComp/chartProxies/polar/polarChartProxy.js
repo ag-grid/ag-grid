@@ -19,6 +19,17 @@ var PolarChartProxy = /** @class */ (function (_super) {
     function PolarChartProxy(params) {
         return _super.call(this, params) || this;
     }
+    PolarChartProxy.prototype.addCrossFilteringTooltipRenderer = function (pieSeries) {
+        pieSeries.tooltip.renderer = function (params) {
+            var label = params.datum[params.labelKey];
+            var ratio = params.datum[params.radiusKey];
+            var totalValue = params.angleValue;
+            var value = totalValue * ratio;
+            return {
+                content: label + ": " + value,
+            };
+        };
+    };
     return PolarChartProxy;
 }(chartProxy_1.ChartProxy));
 exports.PolarChartProxy = PolarChartProxy;

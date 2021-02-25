@@ -73,7 +73,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private validate;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
-    private createIsColumnFuncParams;
+    private createColumnFunctionCallbackParams;
     isSuppressNavigable(rowNode: RowNode): boolean;
     isCellEditable(rowNode: RowNode): boolean;
     isRowDrag(rowNode: RowNode): boolean;

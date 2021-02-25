@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -12,7 +12,7 @@ export interface IRowModel {
     getRow(index: number): RowNode | null;
     /** Returns the rowNode for given id. */
     getRowNode(id: string): RowNode | null;
-    /** This is legacy, not used by ag-Grid, but keeping for backward compatibility */
+    /** This is legacy, not used by AG Grid, but keeping for backward compatibility */
     getRowCount(): number;
     getTopLevelRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;

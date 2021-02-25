@@ -26,7 +26,8 @@
 @import "../pages/features-overview.scss";
 @import "../docs/example-runner.scss";
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
 }
@@ -91,7 +92,6 @@ body {
             @extend .pr-4;
             text-align: justify;
         }
-    
     }
 }
 
@@ -102,20 +102,43 @@ body {
     section#section-frameworks {
         @extend .align-items-center;
 
-        & > div:nth-child(1) {
-            @extend .col-md-5;
-        }
-
-        & > div:nth-child(2) {
-            @extend .col-md-6, .ml-auto;
+        & > div {
+            width: 100%;
+            margin: 0 auto;
         }
 
         h2 {
-            @extend .display-4, .text-right, .mb-3;
+            @extend .display-4, .text-center, .mb-3;
         }
 
-        p {
-            @extend .display-5, .text-right;
+        .framework-boxes {
+            display: flex;
+            flex-wrap: wrap;
+            box-sizing: border-box;
+        }
+
+        .framework-box {
+            padding: 20px;
+            flex-basis: 25%;
+        }
+
+        .box-shadow {
+            box-shadow: 0 1px 5px 0 lightgray, 0 2px 2px 0 lightgray, 0 3px 1px -2px lightgray;
+            border-radius: 3px;
+        }
+
+        .box-contents {
+            display: flex;
+            height: 80px;
+            padding: 25px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .box-contents img {
+            width: 40px;
+            height: 40px;
+            margin-right: 14px;
         }
     }
 
@@ -154,7 +177,7 @@ body {
             }
         }
 
-        $frameworks: javascript angular react vue angularjs polymer aurelia webcomponents;
+        $frameworks: javascript angular react vue angularjs aurelia webcomponents;
 
         @each $framework in $frameworks {
             $i: index($frameworks, $framework);
@@ -200,7 +223,6 @@ body {
     }
 }
 
-
 #stage-sponsorships {
     @extend %stage;
     background-color: $offwhite;
@@ -243,9 +265,6 @@ body {
 
     .get-started-btn {
         @extend .btn, .btn-lg, .py-3, .px-4;
-        &:first-child {
-            @extend .btn-darkblue, .mr-1, .mr-sm-2;
-        }
         &:last-child {
             @extend .btn-outline-darkblue, .ml-2, .ml-sm-3;
         }
@@ -258,7 +277,7 @@ body {
 
     &.main {
         background-color: $blue-1;
-        h2 {
+        h1 {
             font-weight: 500 !important;
             color: $white;
         }
@@ -461,10 +480,11 @@ body {
 
 div.animated-example {
     img {
-        vertical-align: unset;            
+        vertical-align: unset;
     }
 
-    button:focus, img:focus {
+    button:focus,
+    img:focus {
         outline: none;
     }
 

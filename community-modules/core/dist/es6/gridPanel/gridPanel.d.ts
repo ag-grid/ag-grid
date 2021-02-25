@@ -1,7 +1,8 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowContainerComponent } from '../rendering/row/rowContainerComponent';
+import { RowComp } from '../rendering/row/rowComp';
 import { RowDragFeature } from './rowDragFeature';
 import { Component } from '../widgets/component';
 import { HeaderRootComp } from '../headerRendering/headerRootComp';
@@ -70,6 +71,7 @@ export declare class GridPanel extends Component {
     private eAllCellContainers;
     private scrollLeft;
     private scrollTop;
+    private nextScrollTop;
     private centerWidth;
     private lastHorizontalScrollElement;
     private readonly resetLastHorizontalScrollElementDebounced;
@@ -110,6 +112,8 @@ export declare class GridPanel extends Component {
     getBodyClientRect(): ClientRect;
     private getRowForEvent;
     private processKeyboardEvent;
+    private processCellKeyboardEvent;
+    processFullWidthRowKeyboardEvent(rowComp: RowComp, eventName: string, keyboardEvent: KeyboardEvent): void;
     private doGridOperations;
     scrollToTop(): void;
     private processMouseEvent;
@@ -123,8 +127,8 @@ export declare class GridPanel extends Component {
     private onCtrlAndD;
     ensureIndexVisible(index: any, position?: string | null): void;
     getCenterWidth(): number;
-    isVerticalScrollShowing(): boolean;
     isHorizontalScrollShowing(): boolean;
+    isVerticalScrollShowing(): boolean;
     private onScrollbarWidthChanged;
     checkViewportAndScrolls(): void;
     private updateScrollVisibleService;
@@ -164,6 +168,7 @@ export declare class GridPanel extends Component {
     scrollVertically(pixels: number): number;
     private addScrollListener;
     private onVerticalScroll;
+    executeAnimationFrameScroll(): boolean;
     private shouldBlockScrollUpdate;
     private isControllingScroll;
     private onFakeHorizontalScroll;

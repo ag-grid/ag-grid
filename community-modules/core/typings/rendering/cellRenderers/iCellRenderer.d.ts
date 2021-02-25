@@ -22,6 +22,7 @@ export interface ICellRendererParams {
     refreshCell: () => void;
     eGridCell: HTMLElement;
     eParentOfValue: HTMLElement;
+    registerRowDragger: (rowDraggerElement: HTMLElement) => void;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
 }
 export interface ISetFilterCellRendererParams {

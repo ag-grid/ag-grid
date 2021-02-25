@@ -3,7 +3,7 @@ import { ManagedFocusComponent } from './managedFocusComponent';
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
-    isRowSelected?(index: number): boolean;
+    isRowSelected?(index: number): boolean | undefined;
 }
 export declare class VirtualList extends ManagedFocusComponent {
     private readonly cssIdentifier;

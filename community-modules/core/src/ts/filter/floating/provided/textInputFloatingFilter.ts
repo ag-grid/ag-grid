@@ -11,7 +11,7 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isKeyPressed } from '../../../utils/keyboard';
 import { ColumnController } from '../../../columnController/columnController';
 import { KeyCode } from '../../../constants/keyCode';
-import { TextFilter } from '../../provided/text/textFilter';
+import { ITextFilterParams, TextFilter } from '../../provided/text/textFilter';
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     @Autowired('columnController') private readonly columnController: ColumnController;
@@ -77,8 +77,12 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
         if (this.applyActive && !enterKeyPressed) { return; }
 
-        const value = TextFilter.cleanInput(this.eFloatingFilterInput.getValue());
-        this.eFloatingFilterInput.setValue(value, true); // ensure visible value is clean
+        let value = this.eFloatingFilterInput.getValue();
+
+        if ((this.params.filterParams as ITextFilterParams).trimInput) {
+            value = TextFilter.trimInput(value);
+            this.eFloatingFilterInput.setValue(value, true); // ensure visible value is trimmed
+        }
 
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {

@@ -15,6 +15,7 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     private valueCache;
     private columnApi;
     private gridApi;
+    private animationFrameService;
     private filterStage;
     private sortStage;
     private flattenStage;
@@ -27,6 +28,7 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     private rowDataTransactionBatch;
     private lastHighlightedRow;
     private applyAsyncTransactionsTimeout;
+    private onRowGroupOpenedPending;
     init(): void;
     start(): void;
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
@@ -47,6 +49,7 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     getType(): string;
     private onValueChanged;
     private createChangePath;
+    private isSuppressModelUpdateAfterUpdateTransaction;
     refreshModel(params: RefreshModelParams): void;
     isEmpty(): boolean;
     isRowsToRender(): boolean;

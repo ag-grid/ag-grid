@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -94,11 +94,11 @@ var rowCssClassCalculator_1 = require("./rendering/row/rowCssClassCalculator");
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
-            console.error('ag-Grid: no div element provided to the grid');
+            console.error('AG Grid: no div element provided to the grid');
             return;
         }
         if (!gridOptions) {
-            console.error('ag-Grid: no gridOptions provided to the grid');
+            console.error('AG Grid: no gridOptions provided to the grid');
             return;
         }
         var debug = !!gridOptions.debug;
@@ -114,7 +114,7 @@ var Grid = /** @class */ (function () {
             beanClasses: beanClasses,
             debug: debug
         };
-        this.logger = new logger_1.Logger('ag-Grid', function () { return gridOptions.debug; });
+        this.logger = new logger_1.Logger('AG Grid', function () { return gridOptions.debug; });
         var contextLogger = new logger_1.Logger('Context', function () { return contextParams.debug; });
         this.context = new context_1.Context(contextParams, contextLogger);
         this.registerModuleUserComponents(registeredModules);
@@ -281,17 +281,17 @@ var Grid = /** @class */ (function () {
             return rowModelClass;
         }
         if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_INFINITE) {
-            console.error("ag-Grid: Row Model \"Infinite\" not found. Please ensure the " + moduleNames_1.ModuleNames.InfiniteRowModelModule + " is registered.';");
+            console.error("AG Grid: Row Model \"Infinite\" not found. Please ensure the " + moduleNames_1.ModuleNames.InfiniteRowModelModule + " is registered.';");
         }
-        console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
+        console.error('AG Grid: could not find matching row model for rowModelType ' + rowModelType);
         if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_VIEWPORT) {
-            console.error("ag-Grid: Row Model \"Viewport\" not found. Please ensure the ag-Grid Enterprise Module " + moduleNames_1.ModuleNames.ViewportRowModelModule + " is registered.';");
+            console.error("AG Grid: Row Model \"Viewport\" not found. Please ensure the AG Grid Enterprise Module " + moduleNames_1.ModuleNames.ViewportRowModelModule + " is registered.';");
         }
         if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-            console.error("ag-Grid: Row Model \"Server Side\" not found. Please ensure the ag-Grid Enterprise Module " + moduleNames_1.ModuleNames.ServerSideRowModelModule + " is registered.';");
+            console.error("AG Grid: Row Model \"Server Side\" not found. Please ensure the AG Grid Enterprise Module " + moduleNames_1.ModuleNames.ServerSideRowModelModule + " is registered.';");
         }
         if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.error("ag-Grid: Row Model \"Client Side\" not found. Please ensure the " + moduleNames_1.ModuleNames.ClientSideRowModelModule + " is registered.';");
+            console.error("AG Grid: Row Model \"Client Side\" not found. Please ensure the " + moduleNames_1.ModuleNames.ClientSideRowModelModule + " is registered.';");
         }
     };
     Grid.prototype.destroy = function () {

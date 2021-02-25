@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -130,6 +130,8 @@ var simpleHttpRequest_1 = require("./misc/simpleHttpRequest");
 exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
 var resizeObserverService_1 = require("./misc/resizeObserverService");
 exports.ResizeObserverService = resizeObserverService_1.ResizeObserverService;
+var animationFrameService_1 = require("./misc/animationFrameService");
+exports.AnimationFrameService = animationFrameService_1.AnimationFrameService;
 var largeTextCellEditor_1 = require("./rendering/cellEditors/largeTextCellEditor");
 exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
 var popupEditorWrapper_1 = require("./rendering/cellEditors/popupEditorWrapper");
@@ -177,6 +179,8 @@ var rowNodeCache_1 = require("./modules/rowNodeCache/rowNodeCache");
 exports.RowNodeCache = rowNodeCache_1.RowNodeCache;
 var paginationProxy_1 = require("./pagination/paginationProxy");
 exports.PaginationProxy = paginationProxy_1.PaginationProxy;
+var iClientSideRowModel_1 = require("./interfaces/iClientSideRowModel");
+exports.ClientSideRowModelSteps = iClientSideRowModel_1.ClientSideRowModelSteps;
 //styling
 var stylingService_1 = require("./styling/stylingService");
 exports.StylingService = stylingService_1.StylingService;

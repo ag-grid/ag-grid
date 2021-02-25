@@ -1,0 +1,20 @@
+#wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#bubbleChart {
+    flex: 1;
+    height: 25%;
+}
+
+#barChart {
+    flex: 1;
+    height: 25%;
+}
+
+#myGrid {
+    flex: 2;
+}

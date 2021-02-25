@@ -90,7 +90,7 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
                 this.addComponent(new HistogramSeriesPanel(this.chartController));
                 break;
             default:
-                console.warn("ag-Grid: ChartFormattingPanel - unexpected chart type index: " + chartType + " supplied");
+                console.warn("AG Grid: ChartFormattingPanel - unexpected chart type index: " + chartType + " supplied");
         }
         this.chartType = chartType;
         this.isGrouping = isGrouping;

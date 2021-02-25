@@ -60,7 +60,7 @@ export class TitleEdit extends Component {
         const destroyMouseMoveListener = this.addManagedListener(canvas, 'mousemove', event => {
             const { title } = chart;
 
-            const inTitle = title && title.node.containsPoint(event.offsetX, event.offsetY);
+            const inTitle = title && title.enabled && title.node.containsPoint(event.offsetX, event.offsetY);
 
             canvas.style.cursor = inTitle ? 'pointer' : '';
         });

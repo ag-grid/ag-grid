@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -249,7 +249,7 @@ function removeAllReferences(obj, objectName) {
         // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
         if (typeof value === 'function') {
             var func = function () {
-                console.warn("ag-Grid: " + objectName + " function " + key + "() cannot be called as the grid has been \ndestroyed. Please don't call grid API functions on destroyed grids - as a matter of fact you \nshouldn't be keeping the API reference, your application has a memory leak! Remove the API reference \nwhen the grid is destroyed.");
+                console.warn("AG Grid: " + objectName + " function " + key + "() cannot be called as the grid has been destroyed.\n                     Please don't call grid API functions on destroyed grids - as a matter of fact you shouldn't\n                     be keeping the API reference, your application has a memory leak! Remove the API reference\n                     when the grid is destroyed.");
             };
             properties[key] = { value: func, writable: true };
         }

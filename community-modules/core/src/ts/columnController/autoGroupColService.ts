@@ -23,7 +23,7 @@ export class AutoGroupColService extends BeanStub {
         let doingMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
 
         if (doingTreeData && doingMultiAutoColumn) {
-            console.warn('ag-Grid: you cannot mix groupMultiAutoColumn with treeData, only one column can be used to display groups when doing tree data');
+            console.warn('AG Grid: you cannot mix groupMultiAutoColumn with treeData, only one column can be used to display groups when doing tree data');
             doingMultiAutoColumn = false;
         }
 

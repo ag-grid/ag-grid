@@ -1,6 +1,6 @@
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
-import { SeriesNodeDatum, CartesianTooltipRendererParams, HighlightStyle } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams, HighlightStyle, SeriesTooltip } from "../series";
 import { finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
@@ -36,6 +36,10 @@ export interface ScatterTooltipRendererParams extends CartesianTooltipRendererPa
 
     readonly labelKey?: string;
     readonly labelName?: string;
+}
+
+export class ScatterSeriesTooltip extends SeriesTooltip {
+    @reactive('change') renderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult;
 }
 
 export class ScatterSeries extends CartesianSeries {
@@ -132,7 +136,11 @@ export class ScatterSeries extends CartesianSeries {
     sizeName?: string = 'Size';
     labelName?: string = 'Label';
 
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult;
+    readonly tooltip: ScatterSeriesTooltip = new ScatterSeriesTooltip();
 
     constructor() {
         super();
@@ -343,7 +351,7 @@ export class ScatterSeries extends CartesianSeries {
         }
 
         const {
-            tooltipRenderer,
+            tooltip,
             xName,
             yName,
             sizeKey,
@@ -353,6 +361,7 @@ export class ScatterSeries extends CartesianSeries {
             fill
         } = this;
 
+        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
         const color = fill || 'gray';
         const title = this.title || yName;
         const datum = nodeDatum.seriesDatum;

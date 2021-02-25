@@ -6,7 +6,7 @@ import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { mock } from '../../test-utils/mock';
 import { AgPromise } from '../../utils';
 
-class TestFilter extends ProvidedFilter {
+class TestFilter extends ProvidedFilter<ProvidedFilterModel> {
     private uiModel: ProvidedFilterModel;
     private modelHasChanged = false;
 

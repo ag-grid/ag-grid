@@ -1,5 +1,5 @@
 import React from 'react';
-import YouTubeIcon from '../images/youtube-icon.png';
+import YouTubeIcon from 'images/youtube-icon.png';
 import styles from './VideoLink.module.scss';
 
 const VideoLink = ({ src, time }) => (

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -76,7 +76,7 @@ export interface DragSource {
 export interface DropTarget {
     /** The main container that will get the drop. */
     getContainer(): HTMLElement;
-    /** If any secondary containers. For example when moving columns in ag-Grid, we listen for drops
+    /** If any secondary containers. For example when moving columns in AG Grid, we listen for drops
      * in the header as well as the body (main rows and pinned rows) of the grid. */
     getSecondaryContainers?(): HTMLElement[];
     /** Icon to show when drag is over */

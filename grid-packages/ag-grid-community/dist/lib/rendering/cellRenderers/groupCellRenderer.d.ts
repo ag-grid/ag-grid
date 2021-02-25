@@ -58,8 +58,8 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     onExpandClicked(mouseEvent: MouseEvent): void;
     onCellDblClicked(mouseEvent: MouseEvent): void;
     onExpandOrContract(): void;
-    private isExpandable;
     private isShowRowGroupForThisRow;
+    private isExpandable;
     private showExpandAndContractIcons;
     destroy(): void;
     refresh(): boolean;

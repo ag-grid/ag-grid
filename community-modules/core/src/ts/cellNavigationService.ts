@@ -57,7 +57,7 @@ export class CellNavigationService extends BeanStub {
                     break;
                 default:
                     pointer = null;
-                    console.warn('ag-Grid: unknown key for navigation ' + key);
+                    console.warn('AG Grid: unknown key for navigation ' + key);
                     break;
             }
 

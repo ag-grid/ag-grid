@@ -151,6 +151,10 @@ export function isElementChildOfClass(element: HTMLElement, cls: string, maxNest
     return false;
 }
 
+// returns back sizes as doubles instead of strings. similar to
+// getBoundingClientRect, however getBoundingClientRect does not:
+// a) work with fractions (eg browser is zooming)
+// b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values
 export function getElementSize(el: HTMLElement): {
     height: number,
     width: number,
@@ -249,7 +253,7 @@ export function isRtlNegativeScroll(): boolean {
     document.body.appendChild(template);
 
     template.scrollLeft = 1;
-    rtlNegativeScroll = template.scrollLeft === 0;
+    rtlNegativeScroll = Math.floor(template.scrollLeft) === 0;
     document.body.removeChild(template);
 
     return rtlNegativeScroll;

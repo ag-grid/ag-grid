@@ -13,17 +13,19 @@ import { SolarDark } from "./themes/solarDark";
 import { VividLight } from "./themes/vividLight";
 import { VividDark } from "./themes/vividDark";
 import { find } from "../util/array";
-import { getValue, isObject } from "../util/object";
+import { deepMerge, getValue, isObject } from "../util/object";
 import {
     AgCartesianChartOptions,
     AgChartOptions,
     AgPolarChartOptions,
     AgChartTheme,
-    AgChartThemeName
+    AgChartThemeName,
+    AgHierarchyChartOptions
 } from "./agChartOptions";
 import mappings from './agChartMappings';
 import { CartesianChart } from "./cartesianChart";
 import { PolarChart } from "./polarChart";
+import { HierarchyChart } from "./hierarchyChart";
 
 type ThemeMap = { [key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme };
 
@@ -80,6 +82,7 @@ export function getChartTheme(value?: string | ChartTheme | AgChartTheme): Chart
 type AgChartType<T> =
     T extends AgCartesianChartOptions ? CartesianChart :
     T extends AgPolarChartOptions ? PolarChart :
+    T extends AgHierarchyChartOptions ? HierarchyChart :
     never;
 
 let firstColorIndex = 0;
@@ -201,7 +204,28 @@ function create(options: any, path?: string, component?: any, theme?: ChartTheme
                     if (Array.isArray(value)) {
                         const subComponents = value
                             .map(config => {
-                                return create(config, path + '.' + key, undefined, theme);
+                                const axis = create(config, path + '.' + key, undefined, theme);
+                                if (theme && key === 'axes') {
+                                    const fakeTheme: any = {
+                                        getConfig(path: string): any {
+                                            const parts = path.split('.');
+                                            let modifiedPath = parts.slice(0, 3).join('.') + '.' + axis.position;
+                                            const after = parts.slice(3);
+                                            if (after.length) {
+                                                modifiedPath += '.' + after.join('.');
+                                            }
+                                            const config = theme.getConfig(path);
+                                            const modifiedConfig = theme.getConfig(modifiedPath);
+                                            isObject(theme.getConfig(modifiedPath));
+                                            if (isObject(config) && isObject(modifiedConfig)) {
+                                                return deepMerge(config, modifiedConfig);
+                                            }
+                                            return modifiedConfig;
+                                        }
+                                    };
+                                    update(axis, config, path + '.' + key, fakeTheme);
+                                }
+                                return axis;
                             })
                             .filter(instance => !!instance);
                         component[key] = subComponents;

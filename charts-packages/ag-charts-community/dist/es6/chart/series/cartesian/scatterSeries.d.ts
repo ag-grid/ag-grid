@@ -1,4 +1,4 @@
-import { SeriesNodeDatum, CartesianTooltipRendererParams, HighlightStyle } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams, HighlightStyle, SeriesTooltip } from "../series";
 import { LegendDatum } from "../../legend";
 import { TypedEvent } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
@@ -25,6 +25,9 @@ export interface ScatterTooltipRendererParams extends CartesianTooltipRendererPa
     readonly sizeName?: string;
     readonly labelKey?: string;
     readonly labelName?: string;
+}
+export declare class ScatterSeriesTooltip extends SeriesTooltip {
+    renderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult;
 }
 export declare class ScatterSeries extends CartesianSeries {
     static className: string;
@@ -59,7 +62,11 @@ export declare class ScatterSeries extends CartesianSeries {
     yName: string;
     sizeName?: string;
     labelName?: string;
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult;
+    readonly tooltip: ScatterSeriesTooltip;
     constructor();
     onMarkerShapeChange(): void;
     setColors(fills: string[], strokes: string[]): void;

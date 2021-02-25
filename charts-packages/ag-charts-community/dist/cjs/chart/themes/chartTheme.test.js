@@ -291,4 +291,183 @@ describe("common overrides", function () {
         expect(polarChart.series[0].tooltip.renderer).toBe(pieTooltipRenderer);
     });
 });
+describe('Position specific axis styling', function () {
+    var theme = {
+        baseTheme: 'ag-default',
+        overrides: {
+            cartesian: {
+                axes: {
+                    category: {
+                        line: {
+                            color: 'red',
+                        },
+                        label: {
+                            fontSize: 12
+                        },
+                        top: {},
+                        right: {
+                            line: {
+                                color: 'green',
+                            },
+                            label: {
+                                fontSize: 14
+                            }
+                        },
+                        bottom: {
+                            line: {
+                                color: 'blue',
+                            },
+                            label: {
+                                fontSize: 18
+                            }
+                        },
+                        left: {
+                            line: {
+                                color: 'gold',
+                            },
+                            label: {
+                                fontSize: 20
+                            }
+                        }
+                    },
+                    number: {
+                        top: {},
+                        right: {
+                            line: {
+                                color: 'blue',
+                            },
+                            label: {
+                                fontSize: 18
+                            }
+                        },
+                        bottom: {},
+                        left: {}
+                    }
+                }
+            }
+        }
+    };
+    var defaultTheme = new chartTheme_1.ChartTheme();
+    test('Themed bottom category, unthemed left number', function () {
+        var chart = agChart_1.AgChart.create({
+            theme: theme,
+            data: data,
+            series: [{
+                    type: 'area',
+                    xKey: 'label',
+                    yKeys: ['v1', 'v2', 'v3', 'v4', 'v5']
+                }]
+        });
+        expect(chart.axes[0].type).toBe('number');
+        expect(chart.axes[0].position).toBe('left');
+        expect(chart.axes[0].line.color).toBe(defaultTheme.getConfig('cartesian.axes.number.line.color'));
+        expect(chart.axes[0].label.fontSize).toBe(defaultTheme.getConfig('cartesian.axes.number.label.fontSize'));
+        expect(chart.axes[1].type).toBe('category');
+        expect(chart.axes[1].position).toBe('bottom');
+        expect(chart.axes[1].line.color).toBe('blue');
+        expect(chart.axes[1].label.fontSize).toBe(18);
+    });
+    test('Specialized chart type themed bottom category, unthemed left number', function () {
+        var chart = agChart_1.AgChart.create({
+            type: 'area',
+            theme: theme,
+            data: data,
+            series: [{
+                    xKey: 'label',
+                    yKeys: ['v1', 'v2', 'v3', 'v4', 'v5']
+                }]
+        });
+        expect(chart.axes[0].type).toBe('number');
+        expect(chart.axes[0].position).toBe('left');
+        expect(chart.axes[0].line.color).toBe(defaultTheme.getConfig('cartesian.axes.number.line.color'));
+        expect(chart.axes[0].label.fontSize).toBe(defaultTheme.getConfig('cartesian.axes.number.label.fontSize'));
+        expect(chart.axes[1].type).toBe('category');
+        expect(chart.axes[1].position).toBe('bottom');
+        expect(chart.axes[1].line.color).toBe('blue');
+        expect(chart.axes[1].label.fontSize).toBe(18);
+    });
+    test('Themed right number, unthemed top category', function () {
+        var chart = agChart_1.AgChart.create({
+            theme: theme,
+            data: data,
+            axes: [{
+                    type: 'number',
+                    position: 'right'
+                }, {
+                    type: 'category',
+                    position: 'top'
+                }],
+            series: [{
+                    type: 'area',
+                    xKey: 'label',
+                    yKeys: ['v1', 'v2', 'v3', 'v4', 'v5']
+                }]
+        });
+        expect(chart.axes[0].type).toBe('number');
+        expect(chart.axes[0].position).toBe('right');
+        expect(chart.axes[0].line.color).toBe('blue');
+        expect(chart.axes[0].label.fontSize).toBe(18);
+        expect(chart.axes[1].type).toBe('category');
+        expect(chart.axes[1].position).toBe('top');
+        expect(chart.axes[1].line.color).toBe('red');
+        expect(chart.axes[1].label.fontSize).toBe(12);
+    });
+    test('Partially themed axes', function () {
+        var chart = agChart_1.AgChart.create({
+            theme: theme,
+            data: data,
+            axes: [{
+                    type: 'number',
+                    position: 'right',
+                    line: {
+                        color: 'red'
+                    },
+                    label: {
+                        fontStyle: 'italic',
+                        fontFamily: 'Tahoma'
+                    }
+                }, {
+                    type: 'category',
+                    position: 'bottom',
+                    line: {
+                        width: 5
+                    },
+                    label: {
+                        fontWeight: 'bold',
+                        rotation: 45
+                    },
+                    title: {
+                        text: 'Test'
+                    }
+                }],
+            series: [{
+                    type: 'area',
+                    xKey: 'label',
+                    yKeys: ['v1', 'v2', 'v3', 'v4', 'v5']
+                }]
+        });
+        expect(chart.axes[0].type).toBe('number');
+        expect(chart.axes[0].position).toBe('right');
+        expect(chart.axes[0].line.color).toBe('red');
+        expect(chart.axes[0].label.fontSize).toBe(18);
+        expect(chart.axes[0].label.fontStyle).toBe('italic');
+        expect(chart.axes[0].label.fontFamily).toBe('Tahoma');
+        expect(chart.axes[0].label.fontWeight).toBe(defaultTheme.getConfig('cartesian.axes.number.label.fontWeight'));
+        expect(chart.axes[0].label.padding).toBe(defaultTheme.getConfig('cartesian.axes.number.label.padding'));
+        expect(chart.axes[0].label.rotation).toBe(defaultTheme.getConfig('cartesian.axes.number.label.rotation'));
+        expect(chart.axes[1].type).toBe('category');
+        expect(chart.axes[1].position).toBe('bottom');
+        expect(chart.axes[1].line.color).toBe('blue');
+        expect(chart.axes[1].line.width).toBe(5);
+        expect(chart.axes[1].label.fontSize).toBe(18);
+        expect(chart.axes[1].label.fontStyle).toBe(defaultTheme.getConfig('cartesian.axes.category.label.fontStyle'));
+        expect(chart.axes[1].label.fontFamily).toBe(defaultTheme.getConfig('cartesian.axes.category.label.fontFamily'));
+        expect(chart.axes[1].label.fontWeight).toBe('bold');
+        expect(chart.axes[1].label.rotation).toBe(45);
+        expect(chart.axes[1].title && chart.axes[1].title.text).toBe('Test');
+        // Since config is provided, the `enabled` should be auto-set to `true`,
+        // even though theme's default is `false`.
+        expect(chart.axes[1].title && chart.axes[1].title.enabled).toBe(false);
+    });
+});
 //# sourceMappingURL=chartTheme.test.js.map

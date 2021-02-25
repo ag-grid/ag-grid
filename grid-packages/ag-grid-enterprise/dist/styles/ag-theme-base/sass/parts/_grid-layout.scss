@@ -19,13 +19,13 @@
             @include ag-theme-rtl(( padding-left: $i * ag-param(row-group-indent-size) ));
         }
 
-        .ag-row-level-#{$i} .ag-row-group-leaf-indent {
+        .ag-row-level-#{$i} .ag-pivot-leaf-group {
             @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
         }
     }
 
-    .ag-cell {
-        -webkit-font-smoothing: subpixel-antialiased;
+    .ag-row-group-leaf-indent {
+        @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
     }
 
     .ag-value-change-delta {
@@ -129,13 +129,14 @@
         @include ag-theme-rtl(( margin-left: auto ));
     }
 
-    .ag-cell {
+    .ag-cell, .ag-full-width-row .ag-cell-wrapper.ag-row-group {
         // draw a transparent border so that the cell size doesn't change when we add a range border
         border: 1px solid transparent;
         // adjust for transparent border
         line-height: ag-param(row-height) - 2px;
         padding-left: ag-param(cell-horizontal-padding) - 1px;
         padding-right: ag-param(cell-horizontal-padding) - 1px;
+        -webkit-font-smoothing: subpixel-antialiased;
     }
 
     // in full width rows, a cell renderer is rendered directly into a row with no cell in between,
@@ -147,9 +148,6 @@
 
     .ag-row-dragging {
         cursor: move;
-    }
-
-    .ag-row-dragging {
         opacity: 0.5;
     }
 

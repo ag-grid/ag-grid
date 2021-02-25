@@ -7,7 +7,6 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 export declare class ColumnGroup implements ColumnGroupChild {
     static HEADER_GROUP_SHOW_OPEN: string;
     static HEADER_GROUP_SHOW_CLOSED: string;
-    static HEADER_GROUP_PADDING: string;
     static EVENT_LEFT_CHANGED: string;
     static EVENT_DISPLAYED_CHILDREN_CHANGED: string;
     static createUniqueId(groupId: string, instanceId: number): string;

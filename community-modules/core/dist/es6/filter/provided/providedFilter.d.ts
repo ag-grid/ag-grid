@@ -1,7 +1,7 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { AgPromise } from '../../utils/promise';
@@ -19,10 +19,10 @@ export interface IProvidedFilterParams extends IFilterParams {
 }
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
- * All the filters that come with ag-Grid extend this class. User filters do not
+ * All the filters that come with AG Grid extend this class. User filters do not
  * extend this class.
  */
-export declare abstract class ProvidedFilter extends ManagedFocusComponent implements IFilterComp {
+export declare abstract class ProvidedFilter<T> extends ManagedFocusComponent implements IFilterComp {
     private readonly filterNameKey;
     private newRowsActionKeep;
     private providedFilterParams;
@@ -37,11 +37,11 @@ export declare abstract class ProvidedFilter extends ManagedFocusComponent imple
     protected abstract createBodyTemplate(): string;
     protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
-    protected abstract setModelIntoUi(model: ProvidedFilterModel): AgPromise<void>;
-    protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
+    protected abstract setModelIntoUi(model: T): AgPromise<void>;
+    protected abstract areModelsEqual(a: T, b: T): boolean;
     /** Used to get the filter type for filter models. */
     protected abstract getFilterType(): string;
-    abstract getModelFromUi(): ProvidedFilterModel | null;
+    abstract getModelFromUi(): T | null;
     getFilterTitle(): string;
     /** @deprecated */
     onFilterChanged(): void;
@@ -54,8 +54,8 @@ export declare abstract class ProvidedFilter extends ManagedFocusComponent imple
     private static checkForDeprecatedParams;
     protected getDefaultDebounceMs(): number;
     private setupOnBtApplyDebounce;
-    getModel(): ProvidedFilterModel | null;
-    setModel(model: ProvidedFilterModel): AgPromise<void>;
+    getModel(): T | null;
+    setModel(model: T | null): AgPromise<void>;
     private onBtCancel;
     private onBtClear;
     private onBtReset;
@@ -63,7 +63,7 @@ export declare abstract class ProvidedFilter extends ManagedFocusComponent imple
      * Applies changes made in the UI to the filter, and returns true if the model has changed.
      */
     applyModel(): boolean;
-    protected isModelValid(model: ProvidedFilterModel): boolean;
+    protected isModelValid(model: T): boolean;
     protected onBtApply(afterFloatingFilter?: boolean, afterDataChange?: boolean, e?: Event): void;
     onNewRowsLoaded(): void;
     close(e?: Event): void;

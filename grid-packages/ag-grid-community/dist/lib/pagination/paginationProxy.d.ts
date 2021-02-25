@@ -27,6 +27,10 @@ export declare class PaginationProxy extends BeanStub {
     getRowNode(id: string): RowNode | null;
     getRowIndexAtPixel(pixel: number): number;
     getCurrentPageHeight(): number;
+    getCurrentPagePixelRange(): {
+        pageFirstPixel: number;
+        pageLastPixel: number;
+    };
     isRowPresent(rowNode: RowNode): boolean;
     isEmpty(): boolean;
     isRowsToRender(): boolean;

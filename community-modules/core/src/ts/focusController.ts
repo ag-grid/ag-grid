@@ -34,6 +34,8 @@ export class FocusController extends BeanStub {
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Optional('rangeController') private readonly rangeController: IRangeController;
 
+    public static AG_KEYBOARD_FOCUS: string = 'ag-keyboard-focus';
+
     private gridCore: GridCore;
     private focusedCellPosition: CellPosition | null;
     private focusedHeaderPosition: HeaderPosition | null;
@@ -97,6 +99,11 @@ export class FocusController extends BeanStub {
     private static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void {
         const isKeyboardActive = FocusController.keyboardModeActive;
         const isKeyboardEvent = event.type === 'keydown';
+
+        if (isKeyboardEvent) {
+            // the following keys should not toggle keyboard mode.
+            if (event.ctrlKey || event.metaKey || event.altKey) { return; }
+        }
 
         if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) { return; }
 

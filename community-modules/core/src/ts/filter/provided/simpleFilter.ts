@@ -34,7 +34,7 @@ export enum ConditionPosition { One, Two }
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export abstract class SimpleFilter<M extends ISimpleFilterModel> extends ProvidedFilter {
+export abstract class SimpleFilter<M extends ISimpleFilterModel> extends ProvidedFilter<M | ICombinedSimpleModel<M>> {
 
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';

@@ -1,0 +1,19 @@
+.test-grid {
+    height: 1px;
+    min-height: 1px;
+    flex-grow: 1;
+}
+
+.test-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.test-header {
+    margin-bottom: 1rem;
+}
+
+.test-header button:not(:first-child) {
+    margin-left: 5px;
+}

@@ -266,7 +266,7 @@ export interface PieSeriesOptions extends SeriesOptions {
     tooltip: TooltipOptions<PieTooltipRendererParams>;
 }
 export interface PieSeriesLabelOptions extends SeriesLabelOptions {
-    minRequiredAngle: number;
+    minAngle: number;
     offset: number;
 }
 export interface PieSeriesCalloutOptions {

@@ -188,7 +188,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         if (groupIds) {
             var unrecognisedGroupIds = groupIds.filter(function (groupId) { return updatedGroupIds.indexOf(groupId) < 0; });
             if (unrecognisedGroupIds.length > 0) {
-                console.warn('ag-Grid: unable to find groups for these supplied groupIds:', unrecognisedGroupIds);
+                console.warn('AG Grid: unable to find groups for these supplied groupIds:', unrecognisedGroupIds);
             }
         }
     };
@@ -226,7 +226,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         if (colIds) {
             var unrecognisedColIds = colIds.filter(function (colId) { return updatedColIds.indexOf(colId) < 0; });
             if (unrecognisedColIds.length > 0) {
-                console.warn('ag-Grid: unable to find columns for these supplied colIds:', unrecognisedColIds);
+                console.warn('AG Grid: unable to find columns for these supplied colIds:', unrecognisedColIds);
             }
         }
     };

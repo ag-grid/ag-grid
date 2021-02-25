@@ -312,7 +312,7 @@ export interface PieSeriesOptions extends SeriesOptions {
 }
 
 export interface PieSeriesLabelOptions extends SeriesLabelOptions {
-    minRequiredAngle: number;
+    minAngle: number;
     offset: number;
 }
 

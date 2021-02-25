@@ -1,34 +1,34 @@
 <?php
-$pageTitle = "ag-Grid Blog: Our Partnership with webpack";
+$pageTitle = "AG Grid Blog: Our Partnership with webpack";
 $pageDescription = "We're going to be supporting webpack so they can continue to deliver their very popular product to the JavaScript developer community. We'll be a major contributor to the open collective which funds webpack. We see it as a great way to support the community where we have our roots.";
-$pageKeywords = "ag-Grid JavaScript ";
+$pageKeywords = "AG Grid JavaScript ";
 
 include('../includes/mediaHeader.php');
 ?>
 
-        <h1>ag-Grid partners with webpack</h1>
+        <h1>AG Grid partners with webpack</h1>
         <p class="blog-author">Niall Crosby | 20th March 2017</p>
 
 
 <div class="row">
     <div class="col-md-8">
-        <img src="../images/ag_grid_and_webpack.png" class="large-cover-img" alt="ag-Grid and Webpack">
+        <img src="../images/ag_grid_and_webpack.png" class="large-cover-img" alt="AG Grid and Webpack">
 
 
         <p>
-            ag-Grid started life as an open source project and true to these roots, it now comes in two versions; ag-Grid Free 
-            and ag-Grid Enterprise. ag-Grid Free is a feature rich datagrid that is and will always remain free to use.
+            AG Grid started life as an open source project and true to these roots, it now comes in two versions; AG Grid Community
+            and AG Grid Enterprise. AG Grid Community is a feature rich datagrid that is and will always remain free to use.
         </p>
 
         <p>
-            ag-Grid Enterprise funds the company as it continues it’s work creating the best JavaScript datagrid in the world. 
+            AG Grid Enterprise funds the company as it continues it’s work creating the best JavaScript datagrid in the world.
             Since launching a year ago, it has attracted over 500 customers including 10% of the Fortune 500.
         </p>
 
         <h3>Living the Coder’s Dream</h3>
 
         <p>
-            We have somehow managed to live the coder’s dream — transitioning an open-source project into a successful commercial 
+            We have somehow managed to live the coder’s dream — transitioning an open-source project into a successful commercial
             offering.
         </p>
 
@@ -37,7 +37,7 @@ include('../includes/mediaHeader.php');
             <i>We found ourselves in a unique position with a strong revenue stream and the ability to contribute to the community we started in.</i>
             </blockquote>
         </p>
-            For us, the path forward was clear, continue our mission with ag-Grid Enterprise, supporting and improving the 
+            For us, the path forward was clear, continue our mission with AG Grid Enterprise, supporting and improving the
             product with the idea of giving back always in mind. We were just looking for the right opportunity.
         </p>
 
@@ -50,24 +50,24 @@ include('../includes/mediaHeader.php');
         <h3>Donations vs. Company Expense</h3>
 
         <p>
-            One thing that stood out was ag-Grid’s unique position in the market. Because we offer a datagrid component, companies can justify spending money on it. I think this is because you can show a datagrid to your users and they immediately see value. It is more difficult to illustrate the value of tooling as your users don’t resonate with a product that makes the life of a developer easier.
+            One thing that stood out was AG Grid’s unique position in the market. Because we offer a datagrid component, companies can justify spending money on it. I think this is because you can show a datagrid to your users and they immediately see value. It is more difficult to illustrate the value of tooling as your users don’t resonate with a product that makes the life of a developer easier.
         </p>
 
         <p>
-            When ag-Grid started, there was a donation button on the website. In the first year it raised £800. It was great to get those donations and motivated me to continue working on the project however it wasn’t going to pay the bills when compared with a salary in London.
+            When AG Grid started, there was a donation button on the website. In the first year it raised £800. It was great to get those donations and motivated me to continue working on the project however it wasn’t going to pay the bills when compared with a salary in London.
         </p>
 
         <p>
             <blockquote>
-            <i>We found that users were far more likely to convince their employers to purchase ag-Grid than make a personal donation.</i>
+            <i>We found that users were far more likely to convince their employers to purchase AG Grid than make a personal donation.</i>
             </blockquote>
         </p>
 
         <p>
-            Once ag-Grid Enterprise launched, one or two licenses quickly added up to more than the previous year’s donations. It felt like there were people waiting in the background to use the product and once it went commercial, they could purchase through their company.
+            Once AG Grid Enterprise launched, one or two licenses quickly added up to more than the previous year’s donations. It felt like there were people waiting in the background to use the product and once it went commercial, they could purchase through their company.
         </p>
 
-        <h3>ag-Grid Giving Back</h3>
+        <h3>AG Grid Giving Back</h3>
 
         <p>
             As the commercials aligned with our desire to contribute to open source, we wondered what we could do for our unrelated cousin webpack? Apart from giving them generous amounts of money every month? Well, not much, so we have decided to give them generous amounts of money every month.
@@ -90,19 +90,19 @@ include('../includes/mediaHeader.php');
         <h3>Corporate ‘Open-Source’ Social Responsibility</h3>
 
         <p>
-             That’s it, we like to keep things simple. ag-Grid is not a big corporation (6 employees and counting), but we fully appreciate our place in the JavaScript world. This is the first commitment to our Corporate Social Responsibility but instead of contributing to our local communities, we want to contribute to our friends in the open source community.
+             That’s it, we like to keep things simple. AG Grid is not a big corporation (6 employees and counting), but we fully appreciate our place in the JavaScript world. This is the first commitment to our Corporate Social Responsibility but instead of contributing to our local communities, we want to contribute to our friends in the open source community.
         </p>
 
         <p>
-             We have chosen webpack as our first as it’s a deserving project. In the future, who knows where this is going, baby steps for now, but wouldn’t it be great if we had an ag-Grid open source collective??!!
+             We have chosen webpack as our first as it’s a deserving project. In the future, who knows where this is going, baby steps for now, but wouldn’t it be great if we had an AG Grid open source collective??!!
         </p>
 
 
         <p>
             <blockquote>
-            <i>If ag-Grid had a conscience, it would be proud of itself right now.</i>    
+            <i>If AG Grid had a conscience, it would be proud of itself right now.</i>
             </blockquote>
-         </p>   
+         </p>
 
         <p>
             If you are a profitable company, then I urge you to do the same. Great projects like webpack do need help and companies like us can provide that help. It is not possible for these projects to survive on donations alone.
@@ -123,7 +123,7 @@ include('../includes/mediaHeader.php');
                     <td>
                         <a href="https://twitter.com/share" class="twitter-share-button"
                            data-url="https://www.ag-grid.com/ag-grid-partners-with-webpack/"
-                           data-text="ag-Grid partners with webpack" data-via="ceolter"
+                           data-text="AG Grid partners with webpack" data-via="ceolter"
                            data-size="large">Tweet</a>
                         <script>!function (d, s, id) {
                                 var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';

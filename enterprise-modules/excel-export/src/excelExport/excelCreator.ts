@@ -60,12 +60,14 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.export(params);
     }
 
-    public getDataAsExcelXml(params?: ExcelExportParams): string {
-        if (params && params.exportMode) {
-            delete params.exportMode;
+    public getDataAsExcel(params?: ExcelExportParams): Blob | string {
+        const data =  this.getData(params || {});
+
+        if (params && params.exportMode === 'xml') {
+            return data;
         }
-        this.setExportMode('xml');
-        return this.getData(params || {});
+
+        return this.packageFile(data);
     }
 
     public getMimeType(): string {

@@ -10,7 +10,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var _a, _b, _c, _d;
+var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
 var padding_1 = require("../util/padding");
 var cartesianChart_1 = require("./cartesianChart");
@@ -35,6 +35,8 @@ var navigatorMask_1 = require("./navigator/navigatorMask");
 var navigatorHandle_1 = require("./navigator/navigatorHandle");
 var cartesianSeries_1 = require("./series/cartesian/cartesianSeries");
 var chart_1 = require("./chart");
+var hierarchyChart_1 = require("./hierarchyChart");
+var treemapSeries_1 = require("./series/hierarchy/treemapSeries");
 /*
     This file defines the specs for creating different kinds of charts, but
     contains no code that uses the specs to actually create charts
@@ -74,7 +76,7 @@ var commonChartMappings = {
         meta: {
             constructor: caption_1.Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: padding_1.Padding,
@@ -99,7 +101,7 @@ var commonChartMappings = {
         meta: {
             constructor: caption_1.Caption,
             defaults: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     meta: {
                         constructor: padding_1.Padding,
@@ -272,7 +274,6 @@ var axisMappings = {
         meta: {
             constructor: caption_1.Caption,
             defaults: {
-                enabled: true,
                 padding: {
                     meta: {
                         constructor: padding_1.Padding,
@@ -515,12 +516,19 @@ var mappings = (_a = {},
                     }
                 } }, shadowMapping),
             _d) }),
+    _a[hierarchyChart_1.HierarchyChart.type] = __assign(__assign({ meta: __assign(__assign({ constructor: hierarchyChart_1.HierarchyChart }, chartMeta), { defaults: __assign({}, chartDefaults) }) }, commonChartMappings), { series: (_e = {},
+            _e[treemapSeries_1.TreemapSeries.type] = __assign({ meta: {
+                    constructor: treemapSeries_1.TreemapSeries,
+                    defaults: __assign(__assign({}, seriesDefaults), { showInLegend: false })
+                } }, tooltipMapping),
+            _e) }),
     _a);
 // Amend the `mappings` object with aliases for different chart types.
 {
     var typeToAliases = {
         cartesian: ['line', 'area', 'bar', 'column'],
-        polar: ['pie']
+        polar: ['pie'],
+        hierarchy: ['treemap']
     };
     var _loop_1 = function (type) {
         typeToAliases[type].forEach(function (alias) {

@@ -5,17 +5,40 @@ var number_1 = require("./number");
 var date_1 = require("./date");
 var array_1 = require("./array");
 var object_1 = require("./object");
+var color_1 = require("./color");
+var color_2 = require("../util/color");
 function default_1(a, b) {
     var t = typeof b;
-    // let c;
-    return b == null || t === 'boolean' ? constant_1.default(b)
-        : (t === 'number' ? number_1.default
-            // : t === 'string' ? ((c = color(b)) ? (b = c, rgb) : string)
-            //     : b instanceof color ? rgb
-            : b instanceof Date ? date_1.default
-                : Array.isArray(b) ? array_1.default
-                    : typeof b.valueOf !== 'function' && typeof b.toString !== 'function' || isNaN(b) ? object_1.default
-                        : number_1.default)(a, b);
+    var c;
+    if (b == null || t === 'boolean') {
+        return constant_1.default(b);
+    }
+    if (t === 'number') {
+        return number_1.default(a, b);
+    }
+    if (t === 'string') {
+        try {
+            c = color_2.Color.fromString(b);
+            b = c;
+            return color_1.default(a, b);
+        }
+        catch (e) {
+            // return string(a, b);
+        }
+    }
+    if (b instanceof color_2.Color) {
+        return color_1.default(a, b);
+    }
+    if (b instanceof Date) {
+        return date_1.default(a, b);
+    }
+    if (Array.isArray(b)) {
+        return array_1.default(a, b);
+    }
+    if (typeof b.valueOf !== 'function' && typeof b.toString !== 'function' || isNaN(b)) {
+        return object_1.default(a, b);
+    }
+    return number_1.default(a, b);
 }
 exports.default = default_1;
 //# sourceMappingURL=value.js.map

@@ -62,8 +62,8 @@ export class Component extends BeanStub {
         }
     }
 
-    @PostConstruct
-    private postConstructOnComponent(): void {
+    @PreConstruct
+    private preConstructOnComponent(): void {
         this.usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
     }
 

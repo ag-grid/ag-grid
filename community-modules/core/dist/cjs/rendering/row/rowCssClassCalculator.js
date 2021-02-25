@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,7 +55,7 @@ var RowCssClassCalculator = /** @class */ (function () {
         if (params.rowNode.dragging) {
             classes.push('ag-row-dragging');
         }
-        array_1.pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
+        array_1.pushAll(classes, this.processClassesFromGridOptions(params.rowNode, params.scope));
         array_1.pushAll(classes, this.preProcessRowClassRules(params.rowNode, params.scope));
         // we use absolute position unless we are doing print layout
         classes.push(params.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
@@ -67,7 +67,7 @@ var RowCssClassCalculator = /** @class */ (function () {
         }
         return classes;
     };
-    RowCssClassCalculator.prototype.processClassesFromGridOptions = function (rowNode) {
+    RowCssClassCalculator.prototype.processClassesFromGridOptions = function (rowNode, scope) {
         var res = [];
         var process = function (rowCls) {
             if (typeof rowCls === 'string') {
@@ -81,8 +81,8 @@ var RowCssClassCalculator = /** @class */ (function () {
         var rowClass = this.gridOptionsWrapper.getRowClass();
         if (rowClass) {
             if (typeof rowClass === 'function') {
-                console.warn('ag-Grid: rowClass should not be a function, please use getRowClass instead');
-                return;
+                console.warn('AG Grid: rowClass should not be a function, please use getRowClass instead');
+                return [];
             }
             process(rowClass);
         }
@@ -90,11 +90,13 @@ var RowCssClassCalculator = /** @class */ (function () {
         var rowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
         if (rowClassFunc) {
             var params = {
-                node: rowNode,
                 data: rowNode.data,
+                node: rowNode,
                 rowIndex: rowNode.rowIndex,
-                context: this.gridOptionsWrapper.getContext(),
-                api: this.gridOptionsWrapper.getApi()
+                $scope: scope,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
             };
             var rowClassFuncResult = rowClassFunc(params);
             process(rowClassFuncResult);
@@ -112,9 +114,7 @@ var RowCssClassCalculator = /** @class */ (function () {
         return res;
     };
     RowCssClassCalculator.prototype.processRowClassRules = function (rowNode, scope, onApplicableClass, onNotApplicableClass) {
-        this.stylingService.processClassRules(this.gridOptionsWrapper.rowClassRules(), {
-            value: undefined,
-            colDef: undefined,
+        var rowClassParams = {
             data: rowNode.data,
             node: rowNode,
             rowIndex: rowNode.rowIndex,
@@ -122,7 +122,8 @@ var RowCssClassCalculator = /** @class */ (function () {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             $scope: scope,
             context: this.gridOptionsWrapper.getContext()
-        }, onApplicableClass, onNotApplicableClass);
+        };
+        this.stylingService.processClassRules(this.gridOptionsWrapper.rowClassRules(), rowClassParams, onApplicableClass, onNotApplicableClass);
     };
     RowCssClassCalculator.prototype.calculateRowLevel = function (rowNode) {
         if (rowNode.group) {

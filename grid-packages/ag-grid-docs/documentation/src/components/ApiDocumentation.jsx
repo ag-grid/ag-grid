@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import Prism from 'prismjs';
 import { useJsonFileNodes } from './use-json-file-nodes';
-import anchorIcon from '../images/anchor';
+import anchorIcon from 'images/anchor';
 import styles from './ApiDocumentation.module.scss';
+import Code from './Code';
 
 export const ApiDocumentation = ({ pageName, source, sources, section, names = [], config = {} }) => {
     const nodes = useJsonFileNodes();
@@ -239,7 +239,7 @@ const ObjectCodeSample = ({ breadcrumbs, properties }) => {
         lines.push(`${getIndent(indentationLevel-- - 1)}}`);
     }
 
-    return <CodeSnippet code={lines.join('\n')} />;
+    return <Code code={lines.join('\n')} />;
 };
 
 const FunctionCodeSample = ({ type }) => {
@@ -265,7 +265,7 @@ const FunctionCodeSample = ({ type }) => {
         lines.push('', ...getInterfaceLines('IReturn', returnType));
     }
 
-    return <CodeSnippet code={lines.join('\n')} />;
+    return <Code code={lines.join('\n')} />;
 };
 
 const getInterfaceLines = (name, definition) => {
@@ -286,7 +286,7 @@ const getJsonFromFile = (nodes, pageName, source) => {
     const json = nodes.filter(n => n.relativePath === source || n.relativePath === `${pageName}/${source}`)[0];
 
     if (json) {
-        return JSON.parse(json.fields.content);
+        return JSON.parse(json.internal.content);
     }
 
     throw new Error(`Could not find JSON for source ${source}`);
@@ -299,7 +299,3 @@ const mergeObjects = objects => {
 const formatJson = value => JSON.stringify(value, undefined, 2)
     .replace(/\[(.*?)\]/sg, (_, match) => `[${match.trim().replace(/,\s+/sg, ', ')}]`) // remove carriage returns from arrays
     .replace(/"/g, "'"); // use single quotes
-
-const CodeSnippet = ({ code }) => <pre className="language-ts">
-    <code dangerouslySetInnerHTML={{ __html: Prism.highlight(code, Prism.languages.typescript) }}></code>
-</pre>;

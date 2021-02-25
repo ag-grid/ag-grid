@@ -7,10 +7,6 @@ export declare enum SetFilterModelValuesType {
 }
 export declare class SetValueModel implements IEventEmitter {
     private readonly filterParams;
-    private readonly colDef;
-    private readonly column;
-    private readonly doesRowPassOtherFilters;
-    private readonly suppressSorting;
     private readonly setIsLoading;
     private readonly valueFormatterService;
     private readonly translate;
@@ -18,6 +14,11 @@ export declare class SetValueModel implements IEventEmitter {
     private readonly localEventService;
     private readonly formatter;
     private readonly clientSideValuesExtractor;
+    private readonly column;
+    private readonly colDef;
+    private readonly doesRowPassOtherFilters;
+    private readonly suppressSorting;
+    private readonly comparator;
     private valuesType;
     private miniFilterText;
     /** Values provided to the filter for use. */
@@ -32,7 +33,8 @@ export declare class SetValueModel implements IEventEmitter {
     private displayedValues;
     /** Values that have been selected for this filter. */
     private selectedValues;
-    constructor(rowModel: IRowModel, valueGetter: (node: RowNode) => any, filterParams: ISetFilterParams, colDef: ColDef, column: Column, doesRowPassOtherFilters: (node: RowNode) => boolean, suppressSorting: boolean, setIsLoading: (loading: boolean) => void, valueFormatterService: ValueFormatterService, translate: (key: keyof ISetFilterLocaleText) => string);
+    private initialised;
+    constructor(filterParams: ISetFilterParams, setIsLoading: (loading: boolean) => void, valueFormatterService: ValueFormatterService, translate: (key: keyof ISetFilterLocaleText) => string);
     addEventListener(eventType: string, listener: Function, async?: boolean): void;
     removeEventListener(eventType: string, listener: Function, async?: boolean): void;
     /**
@@ -48,29 +50,30 @@ export declare class SetValueModel implements IEventEmitter {
      */
     overrideValues(valuesToUse: (string | null)[], keepSelection?: boolean): AgPromise<void>;
     refreshAfterAnyFilterChanged(): AgPromise<void>;
+    isInitialised(): boolean;
     private updateAllValues;
     setValuesType(value: SetFilterModelValuesType): void;
     getValuesType(): SetFilterModelValuesType;
-    isValueAvailable(value: string): boolean;
+    isValueAvailable(value: string | null): boolean;
     private showAvailableOnly;
     private updateAvailableValues;
     private sortValues;
     private getValuesFromRows;
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
-    setMiniFilter(value?: string): boolean;
-    getMiniFilter(): string;
+    setMiniFilter(value?: string | null): boolean;
+    getMiniFilter(): string | null;
     private updateDisplayedValues;
     getDisplayedValueCount(): number;
-    getDisplayedValue(index: any): string;
+    getDisplayedValue(index: number): string | null;
     hasSelections(): boolean;
     getUniqueValueCount(): number;
     getUniqueValue(index: any): string | null;
-    getValues(): string[];
+    getValues(): (string | null)[];
     selectAllMatchingMiniFilter(clearExistingSelection?: boolean): void;
     deselectAllMatchingMiniFilter(): void;
-    selectValue(value: string): void;
-    deselectValue(value: string): void;
-    isValueSelected(value: string): boolean;
+    selectValue(value: string | null): void;
+    deselectValue(value: string | null): void;
+    isValueSelected(value: string | null): boolean;
     isEverythingVisibleSelected(): boolean;
     isNothingVisibleSelected(): boolean;
     getModel(): (string | null)[] | null;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,6 +39,10 @@ function getAriaPosInSet(element) {
     return parseInt(element.getAttribute('aria-posinset'), 10);
 }
 exports.getAriaPosInSet = getAriaPosInSet;
+function getAriaDescribedBy(element) {
+    return element.getAttribute('aria-describedby') || '';
+}
+exports.getAriaDescribedBy = getAriaDescribedBy;
 // ARIA ATTRIBUTE SETTERS
 function setAriaLabel(element, label) {
     setAriaAttribute(element, 'label', label);

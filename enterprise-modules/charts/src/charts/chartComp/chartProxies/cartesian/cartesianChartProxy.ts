@@ -1,5 +1,5 @@
-import {ChartProxy, ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {_, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions} from "@ag-grid-community/core";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { _, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions } from "@ag-grid-community/core";
 import {
     AreaSeries,
     LineSeries,
@@ -14,8 +14,9 @@ import {
     NumberAxis,
     TimeAxis
 } from "ag-charts-community";
-import {ChartDataModel} from "../../chartDataModel";
-import {isDate} from "../../typeChecker";
+import { ChartDataModel } from "../../chartDataModel";
+import { isDate } from "../../typeChecker";
+import { deepMerge } from "../../object";
 
 export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
 
@@ -35,8 +36,17 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             [xAxisType, yAxisType] = [yAxisType, xAxisType];
         }
 
-        options.xAxis = theme.getConfig(standaloneChartType + '.axes.' + xAxisType);
-        options.yAxis = theme.getConfig(standaloneChartType + '.axes.' + yAxisType);
+        let xAxisTheme: any = {};
+        let yAxisTheme: any = {};
+
+        xAxisTheme = deepMerge(xAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + xAxisType));
+        xAxisTheme = deepMerge(xAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + xAxisType + '.bottom'));
+
+        yAxisTheme = deepMerge(yAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + yAxisType));
+        yAxisTheme = deepMerge(yAxisTheme, theme.getConfig(standaloneChartType + '.axes.' + yAxisType + '.left'));
+
+        options.xAxis = xAxisTheme;
+        options.yAxis = yAxisTheme;
 
         return options;
     }
@@ -67,16 +77,23 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         const axisKey = isHorizontalChart ? 'yAxis' : 'xAxis';
 
         const themeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        const axisPosition = isHorizontalChart ? ChartAxisPosition.Left : ChartAxisPosition.Bottom;
 
         const chartType = this.getStandaloneChartType();
-        let userThemeOverrideRotation = undefined;
+        let userThemeOverrideRotation;
 
         const commonRotation = _.get(themeOverrides, `common.axes.${axisType}.label.rotation`, undefined);
         const cartesianRotation = _.get(themeOverrides, `cartesian.axes.${axisType}.label.rotation`, undefined);
+        const cartesianPositionRotation = _.get(themeOverrides, `cartesian.axes.${axisType}.${axisPosition}.label.rotation`, undefined);
         const chartTypeRotation = _.get(themeOverrides, `${chartType}.axes.${axisType}.label.rotation`, undefined);
+        const chartTypePositionRotation = _.get(themeOverrides, `${chartType}.axes.${axisType}.${axisPosition}.label.rotation`, undefined);
 
-        if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
+        if (typeof chartTypePositionRotation === 'number' && isFinite(chartTypePositionRotation)) {
+            userThemeOverrideRotation = chartTypePositionRotation;
+        } else if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
             userThemeOverrideRotation = chartTypeRotation;
+        } else if (typeof cartesianPositionRotation === 'number' && isFinite(cartesianPositionRotation)) {
+            userThemeOverrideRotation = cartesianPositionRotation;
         } else if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {
             userThemeOverrideRotation = cartesianRotation;
         } else if (typeof commonRotation === 'number' && isFinite(commonRotation)) {
@@ -95,8 +112,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             }
         }
 
-        const axisPosition = isHorizontalChart ? ChartAxisPosition.Left : ChartAxisPosition.Bottom;
-        const axis = find(this.chart.axes, axis => axis.position === axisPosition);
+        const axis = find(this.chart.axes, currentAxis => currentAxis.position === axisPosition);
 
         if (axis) {
             axis.label.rotation = labelRotation;
@@ -206,16 +222,20 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
 
     protected getXAxisDefaults(xAxisType: AxisType, options: CartesianChartOptions<T>) {
         if (xAxisType === 'time') {
-            return this.chartTheme.getConfig(this.getStandaloneChartType() + '.axes.' + 'time');
+            let xAxisTheme: any = {};
+            const standaloneChartType = this.getStandaloneChartType();
+            xAxisTheme = deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time'));
+            xAxisTheme = deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time.bottom'));
+            return xAxisTheme;
         }
         return options.xAxis;
     }
 
-    protected getXAxis(): ChartAxis {
+    protected getXAxis(): ChartAxis | undefined {
         return find(this.chart.axes, a => a.position === ChartAxisPosition.Bottom);
     }
 
-    protected getYAxis(): ChartAxis {
+    protected getYAxis(): ChartAxis | undefined {
         return find(this.chart.axes, a => a.position === ChartAxisPosition.Left);
     }
 

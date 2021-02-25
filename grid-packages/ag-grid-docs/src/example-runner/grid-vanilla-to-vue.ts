@@ -21,16 +21,13 @@ function getOnGridReadyCode(bindings: any): string {
             callback.replace("params.api.setRowData(data);", "this.rowData = data;") :
             callback;
 
-        additionalLines.push(`const httpRequest = new XMLHttpRequest();
+        additionalLines.push(`
             const updateData = (data) => ${setRowDataBlock};
-
-            httpRequest.open('GET', ${url});
-            httpRequest.send();
-            httpRequest.onreadystatechange = () => {
-                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                    updateData(JSON.parse(httpRequest.responseText));
-                }
-            };`);
+            
+            fetch(${url})
+                .then(resp => resp.json())
+                .then(data => updateData(data));`
+        );
     }
 
     return `onGridReady(params) {${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}

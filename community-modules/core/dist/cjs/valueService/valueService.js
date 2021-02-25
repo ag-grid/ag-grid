@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -132,7 +132,7 @@ var ValueService = /** @class */ (function (_super) {
         // need either a field or a newValueHandler for this to work
         if (generic_1.missing(field) && generic_1.missing(newValueHandler) && generic_1.missing(valueSetter)) {
             // we don't tell user about newValueHandler, as that is deprecated
-            console.warn("ag-Grid: you need either field or valueSetter set on colDef for editing to work");
+            console.warn("AG Grid: you need either field or valueSetter set on colDef for editing to work");
             return;
         }
         var params = {
@@ -276,7 +276,7 @@ var ValueService = /** @class */ (function (_super) {
         result = String(result);
         if (result === '[object Object]') {
             function_1.doOnce(function () {
-                console.warn('ag-Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se ag-Grid docs) or b) to toString() on the object to return a key');
+                console.warn('AG Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se AG Grid docs) or b) to toString() on the object to return a key');
             }, 'getKeyForNode - warn about [object,object]');
         }
         return result;

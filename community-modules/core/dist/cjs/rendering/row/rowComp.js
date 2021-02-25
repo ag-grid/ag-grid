@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -119,6 +119,9 @@ var RowComp = /** @class */ (function (_super) {
         templateParts.push(businessKey ? " row-business-key=\"" + businessKeySanitised + "\"" : "");
         templateParts.push(" comp-id=\"" + this.getCompId() + "\"");
         templateParts.push(" class=\"" + rowClasses + "\"");
+        if (this.fullWidthRow) {
+            templateParts.push(" tabindex=\"-1\"");
+        }
         if (this.beans.gridOptionsWrapper.isRowSelection()) {
             templateParts.push(" aria-selected=\"" + (this.rowNode.isSelected() ? 'true' : 'false') + "\"");
         }
@@ -253,7 +256,7 @@ var RowComp = /** @class */ (function (_super) {
             centerCols = this.beans.columnController.getAllDisplayedColumns();
         }
         else {
-            centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
+            centerCols = this.beans.columnController.getViewportCenterColumnsForRow(this.rowNode);
             leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
             rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
         }
@@ -473,6 +476,44 @@ var RowComp = /** @class */ (function (_super) {
         }
         this.refreshCells();
     };
+    RowComp.prototype.getRowPosition = function () {
+        return {
+            rowPinned: this.rowNode.rowPinned,
+            rowIndex: this.rowNode.rowIndex
+        };
+    };
+    RowComp.prototype.onKeyboardNavigate = function (keyboardEvent) {
+        var node = this.rowNode;
+        var lastFocusedCell = this.beans.focusController.getFocusedCell();
+        var cellPosition = {
+            rowIndex: node.rowIndex,
+            rowPinned: node.rowPinned,
+            column: (lastFocusedCell && lastFocusedCell.column)
+        };
+        this.beans.rowRenderer.navigateToNextCell(keyboardEvent, keyboardEvent.keyCode, cellPosition, true);
+        keyboardEvent.preventDefault();
+    };
+    RowComp.prototype.onTabKeyDown = function (keyboardEvent) {
+        if (this.isFullWidth()) {
+            this.beans.rowRenderer.onTabKeyDown(this, keyboardEvent);
+        }
+    };
+    RowComp.prototype.onFullWidthRowFocused = function (event) {
+        var node = this.rowNode;
+        var isFocused = this.fullWidthRow && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
+        dom_1.addOrRemoveCssClass(this.eFullWidthRow, 'ag-full-width-focus', isFocused);
+        if (isFocused) {
+            var focusEl = this.embedFullWidth ? this.eFullWidthRowBody : this.eFullWidthRow;
+            focusEl.focus();
+        }
+    };
+    RowComp.prototype.refreshCell = function (cellComp) {
+        if (!this.areAllContainersReady()) {
+            return;
+        }
+        this.destroyCells([cellComp.getColumn().getId()]);
+        this.refreshCells();
+    };
     RowComp.prototype.refreshCells = function () {
         if (!this.areAllContainersReady()) {
             this.refreshNeeded = true;
@@ -504,7 +545,7 @@ var RowComp = /** @class */ (function (_super) {
             rightCols = [];
         }
         else {
-            centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
+            centerCols = this.beans.columnController.getViewportCenterColumnsForRow(this.rowNode);
             leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
             rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
         }
@@ -681,6 +722,12 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.onRowMouseDown = function (mouseEvent) {
         this.lastMouseDownOnDragger = dom_1.isElementChildOfClass(mouseEvent.target, 'ag-row-drag', 3);
+        if (!this.isFullWidth()) {
+            return;
+        }
+        var node = this.rowNode;
+        var columnController = this.beans.columnController;
+        this.beans.focusController.setFocusedCell(node.rowIndex, columnController.getAllDisplayedColumns()[0], node.rowPinned, true);
     };
     RowComp.prototype.onRowClick = function (mouseEvent) {
         var stop = event_1.isStopPropagationForAgGrid(mouseEvent) || this.lastMouseDownOnDragger;
@@ -764,10 +811,10 @@ var RowComp = /** @class */ (function (_super) {
                 if (!res) {
                     var masterDetailModuleLoaded = moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.MasterDetailModule);
                     if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
-                        console.warn("ag-Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?");
+                        console.warn("AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?");
                     }
                     else {
-                        console.error("ag-Grid: fullWidthCellRenderer " + cellRendererName + " not found");
+                        console.error("AG Grid: fullWidthCellRenderer " + cellRendererName + " not found");
                     }
                     return;
                 }
@@ -932,7 +979,7 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.postProcessClassesFromGridOptions = function () {
         var _this = this;
-        var cssClasses = this.beans.rowCssClassCalculator.processClassesFromGridOptions(this.rowNode);
+        var cssClasses = this.beans.rowCssClassCalculator.processClassesFromGridOptions(this.rowNode, this.scope);
         if (!cssClasses || !cssClasses.length) {
             return;
         }
@@ -960,7 +1007,7 @@ var RowComp = /** @class */ (function (_super) {
         // part 1 - rowStyle
         var rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
         if (rowStyle && typeof rowStyle === 'function') {
-            console.warn('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
+            console.warn('AG Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             return;
         }
         // part 1 - rowStyleFunc
@@ -970,9 +1017,11 @@ var RowComp = /** @class */ (function (_super) {
             var params = {
                 data: this.rowNode.data,
                 node: this.rowNode,
+                rowIndex: this.rowNode.rowIndex,
+                $scope: this.scope,
                 api: this.beans.gridOptionsWrapper.getApi(),
-                context: this.beans.gridOptionsWrapper.getContext(),
-                $scope: this.scope
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+                context: this.beans.gridOptionsWrapper.getContext()
             };
             rowStyleFuncResult = rowStyleFunc(params);
         }
@@ -1111,14 +1160,14 @@ var RowComp = /** @class */ (function (_super) {
     RowComp.prototype.addEventListener = function (eventType, listener) {
         if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
             eventType = events_1.Events.EVENT_VIRTUAL_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + events_1.Events.EVENT_VIRTUAL_ROW_REMOVED);
+            console.warn('AG Grid: Since version 11, event renderedRowRemoved is now called ' + events_1.Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
         _super.prototype.addEventListener.call(this, eventType, listener);
     };
     RowComp.prototype.removeEventListener = function (eventType, listener) {
         if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
             eventType = events_1.Events.EVENT_VIRTUAL_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved and rowRemoved is now called ' + events_1.Events.EVENT_VIRTUAL_ROW_REMOVED);
+            console.warn('AG Grid: Since version 11, event renderedRowRemoved and rowRemoved is now called ' + events_1.Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
         _super.prototype.removeEventListener.call(this, eventType, listener);
     };
@@ -1232,7 +1281,7 @@ var RowComp = /** @class */ (function (_super) {
         var spanList = Object.keys(this.cellComps)
             .map(function (name) { return _this.cellComps[name]; })
             .filter(function (cmp) { return cmp && cmp.getColSpanningList().indexOf(column) !== -1; });
-        return spanList.length ? spanList[0] : undefined;
+        return spanList.length ? spanList[0] : null;
     };
     RowComp.prototype.onRowIndexChanged = function () {
         // we only bother updating if the rowIndex is present. if it is not present, it means this row

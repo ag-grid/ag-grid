@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -156,7 +156,7 @@ var Context = /** @class */ (function () {
             return beanEntry.beanInstance;
         }
         if (!optional) {
-            console.error("ag-Grid: unable to find bean reference " + beanName + " while initialising " + wiringBean);
+            console.error("AG Grid: unable to find bean reference " + beanName + " while initialising " + wiringBean);
         }
         return null;
     };
@@ -265,11 +265,11 @@ export function Optional(name) {
 }
 function autowiredFunc(target, name, optional, classPrototype, methodOrAttributeName, index) {
     if (name === null) {
-        console.error("ag-Grid: Autowired name should not be null");
+        console.error("AG Grid: Autowired name should not be null");
         return;
     }
     if (typeof index === "number") {
-        console.error("ag-Grid: Autowired should be on an attribute");
+        console.error("AG Grid: Autowired should be on an attribute");
         return;
     }
     // it's an attribute on the class

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -14,9 +14,14 @@ export declare class RowDragComp extends Component {
     private readonly column;
     private readonly cellValueFn;
     private readonly beans;
-    constructor(rowNode: RowNode, column: Column, cellValueFn: () => string, beans: Beans);
+    private readonly customGui?;
+    isCustomGui: boolean;
+    private dragSource;
+    constructor(rowNode: RowNode, column: Column, cellValueFn: () => string, beans: Beans, customGui?: HTMLElement | undefined);
     private postConstruct;
+    setDragElement(dragElement: HTMLElement): void;
     private getSelectedCount;
     private checkCompatibility;
     private addDragSource;
+    private removeDragSource;
 }

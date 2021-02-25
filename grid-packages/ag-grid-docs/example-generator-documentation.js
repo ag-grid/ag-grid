@@ -64,8 +64,8 @@ function getFileContents(path) {
 }
 
 function forEachExample(done, name, regex, generateExample, scope = '*', trigger) {
-    const pattern = trigger && trigger.endsWith('.md') ? trigger : `documentation/src/pages/${scope}/*.md`;
-    const specificExample = trigger && (matches = /documentation\/src\/pages\/[^\/]+\/examples\/([^\/]+)\//.exec(trigger)) && matches[1];
+    const pattern = trigger && trigger.endsWith('.md') ? trigger : `documentation/doc-pages/${scope}/*.md`;
+    const specificExample = trigger && (matches = /documentation\/doc-pages\/[^\/]+\/examples\/([^\/]+)\//.exec(trigger)) && matches[1];
 
     glob(pattern, {}, (_, files) => {
         const startTime = Date.now();
@@ -73,7 +73,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 
         files.forEach(file => {
             const contents = getFileContents(file);
-            const section = path.dirname(file).replace('documentation/src/pages/', '');
+            const section = path.dirname(file).replace('documentation/doc-pages/', '');
 
             let matches;
 
@@ -92,7 +92,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 
         examplesToProcess.forEach(({ file, section, example, options, type }) => {
             try {
-                const examplePath = path.join('./documentation/src/pages', section, 'examples', example);
+                const examplePath = path.join('./documentation/doc-pages', section, 'examples', example);
 
                 if (processedExamples.has(examplePath)) { return; }
 
@@ -134,8 +134,8 @@ function createExampleGenerator(prefix, importTypes) {
     });
 
     return (examplePath, type, options) => {
-        //    src section                        example        glob
-        // eg src/pages/accessing-data/examples/using-for-each/*.js
+        //          section                 example        glob
+        // eg pages/accessing-data/examples/using-for-each/*.js
         const createExamplePath = pattern => path.join(examplePath, pattern);
         const getMatchingPaths = (pattern, options = {}) => glob.sync(createExamplePath(pattern), options);
 

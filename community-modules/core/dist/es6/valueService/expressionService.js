@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,7 +51,7 @@ var ExpressionService = /** @class */ (function (_super) {
             return this.evaluateExpression(expression, params);
         }
         else {
-            console.error('ag-Grid: value should be either a string or a function', expressionOrFunc);
+            console.error('AG Grid: value should be either a string or a function', expressionOrFunc);
         }
     };
     ExpressionService.prototype.evaluateExpression = function (expression, params) {

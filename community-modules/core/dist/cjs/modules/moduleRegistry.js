@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,7 +20,7 @@ var ModuleRegistry = /** @class */ (function () {
         else {
             if (ModuleRegistry.moduleBased !== moduleBased) {
                 function_1.doOnce(function () {
-                    console.warn("ag-Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.");
+                    console.warn("AG Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.");
                     console.warn('Please see https://www.ag-grid.com/documentation/javascript/packages-modules/ for more information.');
                 }, 'ModulePackageCheck');
             }
@@ -39,7 +39,7 @@ var ModuleRegistry = /** @class */ (function () {
             return true;
         }
         var warningKey = reason + moduleName;
-        var warningMessage = "ag-Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/documentation/javascript/modules/";
+        var warningMessage = "AG Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/documentation/javascript/modules/";
         function_1.doOnce(function () {
             console.warn(warningMessage);
         }, warningKey);

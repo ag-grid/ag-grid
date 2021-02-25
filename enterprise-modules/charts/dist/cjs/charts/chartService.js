@@ -45,12 +45,22 @@ var ChartService = /** @class */ (function (_super) {
         var selectedRange = this.getSelectedRange();
         return this.createChart(selectedRange, chartType);
     };
+    ChartService.prototype.restoreChart = function (model, chartContainer) {
+        if (!model) {
+            console.warn("AG Grid - unable to restore chart as no chart model is provided");
+            return;
+        }
+        if (model.modelType && model.modelType === 'pivot') {
+            return this.createPivotChart(this.mapToPivotParams(model, chartContainer));
+        }
+        return this.createRangeChart(this.mapToRangeParam(model, chartContainer));
+    };
     ChartService.prototype.createRangeChart = function (params) {
         var cellRange = this.rangeController
             ? this.rangeController.createCellRangeFromCellRangeParams(params.cellRange)
             : undefined;
         if (!cellRange) {
-            console.warn("ag-Grid - unable to create chart as no range is selected");
+            console.warn("AG Grid - unable to create chart as no range is selected");
             return;
         }
         return this.createChart(cellRange, params.chartType, params.chartThemeName, false, params.suppressChartRanges, params.chartContainer, params.aggFunc, params.chartThemeOverrides, params.unlinkChart, params.processChartOptions);
@@ -62,13 +72,15 @@ var ChartService = /** @class */ (function (_super) {
         }
         // pivot chart range contains all visible column without a row range to include all rows
         var chartAllRangeParams = {
+            rowStartIndex: null,
+            rowEndIndex: null,
             columns: this.columnController.getAllDisplayedColumns().map(function (col) { return col.getColId(); })
         };
         var cellRange = this.rangeController
             ? this.rangeController.createCellRangeFromCellRangeParams(chartAllRangeParams)
             : undefined;
         if (!cellRange) {
-            console.warn("ag-Grid - unable to create chart as there are no columns in the grid.");
+            console.warn("AG Grid - unable to create chart as there are no columns in the grid.");
             return;
         }
         return this.createChart(cellRange, params.chartType, params.chartThemeName, true, true, params.chartContainer, undefined, params.chartThemeOverrides, params.unlinkChart, params.processChartOptions);
@@ -78,7 +90,7 @@ var ChartService = /** @class */ (function (_super) {
             ? this.rangeController.createCellRangeFromCellRangeParams(params.cellRange)
             : undefined;
         if (!cellRange) {
-            console.warn("ag-Grid - unable to create chart as no range is selected");
+            console.warn("AG Grid - unable to create chart as no range is selected");
             return;
         }
         var crossFiltering = true;
@@ -155,6 +167,27 @@ var ChartService = /** @class */ (function (_super) {
     ChartService.prototype.getSelectedRange = function () {
         var ranges = this.rangeController.getCellRanges();
         return ranges.length > 0 ? ranges[0] : {};
+    };
+    ChartService.prototype.mapToRangeParam = function (model, chartContainer) {
+        return {
+            cellRange: model.cellRange,
+            chartType: model.chartType,
+            chartThemeName: model.chartThemeName,
+            chartContainer: chartContainer,
+            suppressChartRanges: model.suppressChartRanges,
+            aggFunc: model.aggFunc,
+            unlinkChart: model.unlinkChart,
+            processChartOptions: function () { return model.chartOptions; }
+        };
+    };
+    ChartService.prototype.mapToPivotParams = function (model, chartContainer) {
+        return {
+            chartType: model.chartType,
+            chartThemeName: model.chartThemeName,
+            chartContainer: chartContainer,
+            unlinkChart: model.unlinkChart,
+            processChartOptions: function () { return model.chartOptions; }
+        };
     };
     ChartService.prototype.destroyAllActiveCharts = function () {
         this.activeCharts.forEach(function (chart) { return chart.destroyChart(); });

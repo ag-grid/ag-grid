@@ -61,7 +61,7 @@ export class ToolPanelColDefService extends BeanStub {
         });
 
         if (invalidColIds.length > 0) {
-            console.warn('ag-Grid: unable to find grid columns for the supplied colDef(s):', invalidColIds);
+            console.warn('AG Grid: unable to find grid columns for the supplied colDef(s):', invalidColIds);
         }
 
         return mappedResults;

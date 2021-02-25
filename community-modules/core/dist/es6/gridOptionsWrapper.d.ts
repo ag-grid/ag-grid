@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from './entities/rowNode';
@@ -111,6 +111,7 @@ export declare class GridOptionsWrapper {
     isSuppressHorizontalScroll(): boolean;
     isSuppressMaxRenderedRowRestriction(): boolean;
     isExcludeChildrenWhenTreeDataFiltering(): boolean;
+    isAlwaysShowHorizontalScroll(): boolean;
     isAlwaysShowVerticalScroll(): boolean;
     isDebounceVerticalScrollbar(): boolean;
     isSuppressLoadingOverlay(): boolean;
@@ -301,6 +302,7 @@ export declare class GridOptionsWrapper {
     doesExternalFilterPass(node: RowNode): boolean;
     getTooltipShowDelay(): number;
     isTooltipMouseTrack(): boolean;
+    isSuppressModelUpdateAfterUpdateTransaction(): boolean;
     getDocument(): Document;
     getMinColWidth(): number;
     getMaxColWidth(): number;

@@ -1,18 +1,12 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var Constants = /** @class */ (function () {
     function Constants() {
     }
-    Constants.STEP_EVERYTHING = 0;
-    Constants.STEP_FILTER = 1;
-    Constants.STEP_SORT = 2;
-    Constants.STEP_MAP = 3;
-    Constants.STEP_AGGREGATE = 4;
-    Constants.STEP_PIVOT = 5;
     Constants.ROW_BUFFER_SIZE = 10;
     Constants.LAYOUT_INTERVAL = 500;
     Constants.BATCH_WAIT_MILLIS = 50;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,7 +32,7 @@ import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
 import { convertToSet } from '../../utils/set';
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
- * All the filters that come with ag-Grid extend this class. User filters do not
+ * All the filters that come with AG Grid extend this class. User filters do not
  * extend this class.
  */
 var ProvidedFilter = /** @class */ (function (_super) {
@@ -56,7 +56,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
     };
     /** @deprecated */
     ProvidedFilter.prototype.onFilterChanged = function () {
-        console.warn("ag-Grid: you should not call onFilterChanged() directly on the filter, please call\n        gridApi.onFilterChanged() instead. onFilterChanged is not part of the exposed filter interface (it was\n        a method that existed on an old version of the filters that was not intended for public use.");
+        console.warn("AG Grid: you should not call onFilterChanged() directly on the filter, please call\n        gridApi.onFilterChanged() instead. onFilterChanged is not part of the exposed filter interface (it was\n        a method that existed on an old version of the filters that was not intended for public use.");
         this.providedFilterParams.filterChangedCallback();
     };
     ProvidedFilter.prototype.isFilterActive = function () {
@@ -142,19 +142,19 @@ var ProvidedFilter = /** @class */ (function (_super) {
         }
         var applyButton = params.applyButton, resetButton = params.resetButton, clearButton = params.clearButton;
         if (clearButton) {
-            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.clearButton is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v23.2, filterParams.clearButton is deprecated. Please use filterParams.buttons instead');
             buttons.push('clear');
         }
         if (resetButton) {
-            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.resetButton is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v23.2, filterParams.resetButton is deprecated. Please use filterParams.buttons instead');
             buttons.push('reset');
         }
         if (applyButton) {
-            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.applyButton is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v23.2, filterParams.applyButton is deprecated. Please use filterParams.buttons instead');
             buttons.push('apply');
         }
         if (params.apply) {
-            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is deprecated. Please use filterParams.buttons instead');
+            console.warn('AG Grid: as of AG Grid v21, filterParams.apply is deprecated. Please use filterParams.buttons instead');
             buttons.push('apply');
         }
         params.buttons = buttons;
@@ -282,7 +282,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
     ProvidedFilter.getDebounceMs = function (params, debounceDefault) {
         if (ProvidedFilter.isUseApplyButton(params)) {
             if (params.debounceMs != null) {
-                console.warn('ag-Grid: debounceMs is ignored when apply button is present');
+                console.warn('AG Grid: debounceMs is ignored when apply button is present');
             }
             return 0;
         }

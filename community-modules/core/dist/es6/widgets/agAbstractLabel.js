@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
-import { addCssClass, clearElement, addOrRemoveCssClass, setElementWidth } from "../utils/dom";
+import { addCssClass, clearElement, addOrRemoveCssClass, setElementWidth, removeCssClass } from "../utils/dom";
 var AgAbstractLabel = /** @class */ (function (_super) {
     __extends(AgAbstractLabel, _super);
     function AgAbstractLabel(config, template) {
@@ -57,10 +57,17 @@ var AgAbstractLabel = /** @class */ (function (_super) {
         if (typeof this.label === 'string') {
             this.eLabel.innerText = this.label + this.labelSeparator;
         }
-        else {
+        else if (this.label) {
             this.eLabel.appendChild(this.label);
         }
-        addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
+        if (this.label === '') {
+            addCssClass(this.eLabel, 'ag-hidden');
+            this.eLabel.setAttribute('role', 'presentation');
+        }
+        else {
+            removeCssClass(this.eLabel, 'ag-hidden');
+            this.eLabel.removeAttribute('role');
+        }
     };
     AgAbstractLabel.prototype.setLabelSeparator = function (labelSeparator) {
         if (this.labelSeparator === labelSeparator) {

@@ -13,9 +13,10 @@ export declare class NavigationService extends BeanStub {
     handlePageScrollingKey(event: KeyboardEvent): boolean;
     private isTimeSinceLastPageEventToRecent;
     private setTimeLastPageEventProcessed;
+    private navigateTo;
     private onPageDown;
     private onPageUp;
-    private navigateTo;
+    private getIndexToFocus;
     private onCtrlUpOrDown;
     private onCtrlLeftOrRight;
     private onHomeOrEndKey;

@@ -39,23 +39,39 @@ var ClipboardService = /** @class */ (function (_super) {
         this.logger.log('pasteFromClipboard');
         // Method 1 - native clipboard API, available in modern chrome browsers
         var allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
-        if (allowNavigator && navigator.clipboard) {
+        // Some browsers (Firefox) do not allow Web Applications to read from
+        // the clipboard so verify if not only the ClipboardAPI is available,
+        // but also if the `readText` method is public.
+        if (allowNavigator && navigator.clipboard && navigator.clipboard.readText) {
             navigator.clipboard.readText()
                 .then(this.processClipboardData.bind(this))
-                .catch(function () {
-                // no processing, if fails, do nothing, paste doesn't happen
+                .catch(function (e) {
+                core_1._.doOnce(function () {
+                    console.warn(e);
+                    console.warn('AG Grid: Unable to use the Clipboard API (navigator.clipboard.readText()). ' +
+                        'The reason why it could not be used has been logged in the previous line. ' +
+                        'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
+                        'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
+                        'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API');
+                }, 'clipboardApiError');
+                _this.pasteFromClipboardLegacy();
             });
-            return;
         }
+        else {
+            this.pasteFromClipboardLegacy();
+        }
+    };
+    ClipboardService.prototype.pasteFromClipboardLegacy = function () {
+        var _this = this;
         // Method 2 - if modern API fails, the old school hack
-        this.executeOnTempElement(function (textArea) { return textArea.focus(); }, function (element) {
+        this.executeOnTempElement(function (textArea) { return textArea.focus({ preventScroll: true }); }, function (element) {
             var data = element.value;
             _this.processClipboardData(data);
         });
     };
     ClipboardService.prototype.processClipboardData = function (data) {
         var _this = this;
-        if (core_1._.missingOrEmpty(data)) {
+        if (data == null) {
             return;
         }
         var parsedData = core_1._.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
@@ -63,7 +79,7 @@ var ClipboardService = /** @class */ (function (_super) {
         if (userFunc) {
             parsedData = userFunc({ data: parsedData });
         }
-        if (core_1._.missingOrEmpty(parsedData)) {
+        if (parsedData == null) {
             return;
         }
         if (this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
@@ -99,8 +115,6 @@ var ClipboardService = /** @class */ (function (_super) {
         }
         var cellsToFlash = {};
         var updatedRowNodes = [];
-        var doc = this.gridOptionsWrapper.getDocument();
-        var focusedElementBefore = doc.activeElement;
         var focusedCell = this.focusController.getFocusedCell();
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
         if (changedPath) {
@@ -109,11 +123,10 @@ var ClipboardService = /** @class */ (function (_super) {
         this.rowRenderer.refreshCells();
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
-        var focusedElementAfter = doc.activeElement;
         // if using the clipboard hack with a temp element, then the focus has been lost,
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
-        if (focusedCell && focusedElementBefore != focusedElementAfter) {
+        if (focusedCell) {
             this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
         this.eventService.dispatchEvent({
@@ -495,17 +508,29 @@ var ClipboardService = /** @class */ (function (_super) {
         // method 2 - native clipboard API, available in modern chrome browsers
         var allowNavigator = !this.gridOptionsWrapper.isSuppressClipboardApi();
         if (allowNavigator && navigator.clipboard) {
-            navigator.clipboard.writeText(data).catch(function () {
-                // no processing, if fails, do nothing, copy doesn't happen
+            navigator.clipboard.writeText(data).catch(function (e) {
+                core_1._.doOnce(function () {
+                    console.warn(e);
+                    console.warn('AG Grid: Unable to use the Clipboard API (navigator.clipboard.writeText()). ' +
+                        'The reason why it could not be used has been logged in the previous line. ' +
+                        'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
+                        'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
+                        'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.');
+                }, 'clipboardApiError');
+                _this.copyDataToClipboardLegacy(data);
             });
             return;
         }
+        this.copyDataToClipboardLegacy(data);
+    };
+    ClipboardService.prototype.copyDataToClipboardLegacy = function (data) {
+        var _this = this;
         // method 3 - if all else fails, the old school hack
         this.executeOnTempElement(function (element) {
             var focusedElementBefore = _this.gridOptionsWrapper.getDocument().activeElement;
             element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
             element.select();
-            element.focus();
+            element.focus({ preventScroll: true });
             var result = document.execCommand('copy');
             if (!result) {
                 console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
@@ -513,18 +538,22 @@ var ClipboardService = /** @class */ (function (_super) {
                     'the browser will prevent it for security reasons.');
             }
             if (focusedElementBefore != null && focusedElementBefore.focus != null) {
-                focusedElementBefore.focus();
+                focusedElementBefore.focus({ preventScroll: true });
             }
         });
     };
     ClipboardService.prototype.executeOnTempElement = function (callbackNow, callbackAfter) {
-        var eTempInput = document.createElement('textarea');
+        var eDoc = this.gridOptionsWrapper.getDocument();
+        var eTempInput = eDoc.createElement('textarea');
         eTempInput.style.width = '1px';
         eTempInput.style.height = '1px';
-        eTempInput.style.top = '0px';
-        eTempInput.style.left = '0px';
+        // removing items from the DOM causes the document element to scroll to the
+        // position where the element was positioned. Here we set scrollTop / scrollLeft
+        // to prevent the document element from scrolling when we remove it from the DOM.
+        eTempInput.style.top = eDoc.documentElement.scrollTop + 'px';
+        eTempInput.style.left = eDoc.documentElement.scrollLeft + 'px';
         eTempInput.style.position = 'absolute';
-        eTempInput.style.opacity = '0.0';
+        eTempInput.style.opacity = '0';
         var guiRoot = this.gridCore.getRootGui();
         guiRoot.appendChild(eTempInput);
         try {

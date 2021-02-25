@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -14,6 +14,7 @@ import { RowComp } from "./row/rowComp";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { TooltipParentComp } from '../widgets/tooltipFeature';
 import { ITooltipParams } from "./tooltipComponent";
+import { RowPosition } from "../entities/rowPosition";
 export declare class CellComp extends Component implements TooltipParentComp {
     static DOM_DATA_KEY_CELL_COMP: string;
     private static CELL_RENDERER_TYPE_NORMAL;
@@ -32,6 +33,7 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private includeSelectionComponent;
     private includeRowDraggingComponent;
     private includeDndSourceComponent;
+    private rowDraggingComp;
     private cellFocused;
     private editingCell;
     private cellEditorInPopup;
@@ -62,6 +64,7 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private cellRendererVersion;
     constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp, autoHeightCell: boolean, printLayout: boolean);
     getCreateTemplate(): string;
+    private getCellWrapperString;
     private getStylesForRowSpanning;
     afterAttached(): void;
     private createTooltipFeatureIfNeeded;
@@ -159,6 +162,7 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private isDoubleClickOnIPad;
     private onCellClicked;
     private createGridCellVo;
+    getRowPosition(): RowPosition;
     getCellPosition(): CellPosition;
     getParentRow(): HTMLElement;
     setParentRow(eParentRow: HTMLElement): void;
@@ -181,6 +185,7 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private updateRangeBorders;
     onFirstRightPinnedChanged(): void;
     onLastLeftPinnedChanged(): void;
+    refreshShouldDestroy(): boolean;
     private populateTemplate;
     protected getFrameworkOverrides(): IFrameworkOverrides;
     private addRowDragging;

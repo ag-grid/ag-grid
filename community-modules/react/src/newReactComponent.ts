@@ -8,6 +8,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 export class NewReactComponent extends ReactComponent {
     private key: string;
+    private portalKey: string;
     private oldPortal: ReactPortal | null = null;
     private reactElement: any;
     private params: any;
@@ -16,6 +17,7 @@ export class NewReactComponent extends ReactComponent {
         super(reactComponent, parentComponent, componentType);
 
         this.key = generateNewKey();
+        this.portalKey = generateNewKey();
     }
 
     public init(params: any): AgPromise<void> {
@@ -41,7 +43,7 @@ export class NewReactComponent extends ReactComponent {
         this.portal = createPortal(
             this.reactElement,
             this.eParentElement as any,
-            generateNewKey() // fixed deltaRowModeRefreshCompRenderer
+            this.portalKey // fixed deltaRowModeRefreshCompRenderer
         );
     }
 

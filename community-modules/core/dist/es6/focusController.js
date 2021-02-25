@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -94,6 +94,12 @@ var FocusController = /** @class */ (function (_super) {
     FocusController.toggleKeyboardMode = function (event) {
         var isKeyboardActive = FocusController_1.keyboardModeActive;
         var isKeyboardEvent = event.type === 'keydown';
+        if (isKeyboardEvent) {
+            // the following keys should not toggle keyboard mode.
+            if (event.ctrlKey || event.metaKey || event.altKey) {
+                return;
+            }
+        }
         if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) {
             return;
         }
@@ -401,6 +407,7 @@ var FocusController = /** @class */ (function (_super) {
         }
     };
     var FocusController_1;
+    FocusController.AG_KEYBOARD_FOCUS = 'ag-keyboard-focus';
     FocusController.keyboardModeActive = false;
     FocusController.instancesMonitored = new Map();
     __decorate([

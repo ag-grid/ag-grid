@@ -38,7 +38,7 @@ export class Logger {
     public log(message: string) {
         if (this.isLoggingFunc()) {
             // tslint:disable-next-line
-            console.log('ag-Grid.' + this.name + ': ' + message);
+            console.log('AG Grid.' + this.name + ': ' + message);
         }
     }
 

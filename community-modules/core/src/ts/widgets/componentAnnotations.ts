@@ -10,12 +10,12 @@ export function RefSelector(ref: string): Function {
 
 function querySelectorFunc(selector: string, classPrototype: any, methodOrAttributeName: string, index: number) {
     if (selector === null) {
-        console.error('ag-Grid: QuerySelector selector should not be null');
+        console.error('AG Grid: QuerySelector selector should not be null');
         return;
     }
 
     if (typeof index === 'number') {
-        console.error('ag-Grid: QuerySelector should be on an attribute');
+        console.error('AG Grid: QuerySelector should be on an attribute');
         return;
     }
 
@@ -32,7 +32,7 @@ export function GridListener(eventName: string): Function {
 
 function gridListenerFunc(eventName: string, target: Object, methodName: string) {
     if (eventName == null) {
-        console.error('ag-Grid: GridListener eventName is missing');
+        console.error('AG Grid: GridListener eventName is missing');
         return;
     }
 
@@ -49,7 +49,7 @@ export function GuiListener(ref: string, eventName: string): Function {
 
 function guiListenerFunc(ref: string, eventName: string, target: Object, methodName: string) {
     if (eventName == null) {
-        console.error('ag-Grid: GuiListener eventName is missing');
+        console.error('AG Grid: GuiListener eventName is missing');
         return;
     }
 
@@ -67,7 +67,7 @@ function guiListenerFunc(ref: string, eventName: string, target: Object, methodN
 //
 // function methodFunc(alias: string, target: Object, methodName: string) {
 //     if (alias === null) {
-//         console.error("ag-Grid: EventListener eventName should not be null");
+//         console.error("AG Grid: EventListener eventName should not be null");
 //         return;
 //     }
 //

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,7 +32,7 @@ var generic_1 = require("../utils/generic");
 var array_1 = require("../utils/array");
 var dom_1 = require("../utils/dom");
 var mouse_1 = require("../utils/mouse");
-/** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
+/** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 var DragService = /** @class */ (function (_super) {
     __extends(DragService, _super);
@@ -71,7 +71,7 @@ var DragService = /** @class */ (function (_super) {
         var eDocument = this.gridOptionsWrapper.getDocument();
         var eBody = eDocument.querySelector('body');
         if (generic_1.exists(eBody)) {
-            // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
+            // when we drag the mouse in AG Grid, this class gets added / removed from the body, so that
             // the mouse isn't selecting text when dragging.
             dom_1.addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
         }

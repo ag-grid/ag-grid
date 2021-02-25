@@ -1,8 +1,8 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
-/** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
+/** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 export declare class DragService extends BeanStub {
     private loggerFactory;

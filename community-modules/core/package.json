@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/core",
-  "version": "25.0.1",
+  "version": "25.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
@@ -87,7 +87,7 @@
     "merge2": "^1.2.0",
     "mini-css-extract-plugin": "^0.9.0",
     "nib": "^1.1.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.14.1",
     "postcss-loader": "^3.0.0",
     "postcss-scss": "^2.0.0",
     "postcss-svgo": "^4.0.0",

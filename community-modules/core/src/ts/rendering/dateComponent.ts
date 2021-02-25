@@ -15,7 +15,7 @@ export interface IDate {
 }
 
 export interface IDateParams {
-    /** Method for component to tell ag-Grid that the date has changed. */
+    /** Method for component to tell AG Grid that the date has changed. */
     onDateChanged: () => void;
     filterParams: IDateFilterParams;
 }

@@ -187,7 +187,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private setPaddingDeprecatedWay(paddingCount: number, padding: number): void {
-        doOnce(() => console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation page for Themes, in particular the property $row-group-indent-size.'), 'groupCellRenderer->doDeprecatedWay');
+        doOnce(() => console.warn('AG Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the AG Grid documentation page for Themes, in particular the property $row-group-indent-size.'), 'groupCellRenderer->doDeprecatedWay');
 
         const paddingPx = paddingCount * padding;
         const eGui = this.getGui();
@@ -232,7 +232,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             } else if (typeof footerValueGetter === 'string') {
                 footerValue = this.expressionService.evaluate(footerValueGetter, paramsClone);
             } else {
-                console.warn('ag-Grid: footerValueGetter should be either a function or a string (expression)');
+                console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
             }
         } else {
             footerValue = 'Total ' + this.params.value;
@@ -527,6 +527,20 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         setAriaExpanded(params.eGridCell, nextExpandState);
     }
 
+    private isShowRowGroupForThisRow(): boolean {
+        if (this.gridOptionsWrapper.isTreeData()) { return true; }
+
+        const rowGroupColumn = this.displayedGroup.rowGroupColumn;
+
+        if (!rowGroupColumn) { return false; }
+
+        // column is null for fullWidthRows
+        const column = this.params.column;
+        const thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
+
+        return thisColumnIsInterested;
+    }
+
     private isExpandable(): boolean {
         if (this.draggedFromHideOpenParents) { return true; }
 
@@ -548,25 +562,13 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         return true;
     }
 
-    private isShowRowGroupForThisRow(): boolean {
-        if (this.gridOptionsWrapper.isTreeData()) { return true; }
-
-        const rowGroupColumn = this.displayedGroup.rowGroupColumn;
-
-        if (!rowGroupColumn) { return false; }
-
-        // column is null for fullWidthRows
-        const column = this.params.column;
-        const thisColumnIsInterested = column == null || column.isRowGroupDisplayed(rowGroupColumn.getId());
-
-        return thisColumnIsInterested;
-    }
-
     private showExpandAndContractIcons(): void {
         const { eContracted, eExpanded, params, displayedGroup, columnController } = this;
         const { eGridCell, node } = params;
 
-        if (this.isExpandable()) {
+        const isExpandable = this.isExpandable();
+
+        if (isExpandable) {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
             const expanded = this.draggedFromHideOpenParents ? true : node.expanded;
@@ -580,13 +582,19 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         }
 
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
-        const pivotModeAndLeafGroup = columnController.isPivotMode() && displayedGroup.leafGroup;
-        const expandable = displayedGroup.isExpandable() && this.isShowRowGroupForThisRow();
-        const addExpandableCss = expandable && !displayedGroup.footer && !pivotModeAndLeafGroup;
+        const pivotMode = columnController.isPivotMode();
+        const pivotModeAndLeafGroup = pivotMode && displayedGroup.leafGroup;
+        const addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
+        const isTotalFooterNode = node.footer && node.level === -1;
 
         this.addOrRemoveCssClass('ag-cell-expandable', addExpandableCss);
         this.addOrRemoveCssClass('ag-row-group', addExpandableCss);
-        this.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
+
+        if (pivotMode) {
+            this.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeafGroup);
+        } else if (!isTotalFooterNode) {
+            this.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
+        }
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

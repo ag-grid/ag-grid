@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,7 +15,7 @@ export function initialiseAgGridWithWebComponents() {
     }
     registered = true;
     if (typeof document === 'undefined' || !document.registerElement) {
-        console.error('ag-Grid: unable to find document.registerElement() function, unable to initialise ag-Grid as a Web Component');
+        console.error('AG Grid: unable to find document.registerElement() function, unable to initialise AG Grid as a Web Component');
     }
     // i don't think this type of extension is possible in TypeScript, so back to
     // plain Javascript to create this object

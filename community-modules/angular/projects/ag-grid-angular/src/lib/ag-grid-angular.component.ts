@@ -156,7 +156,7 @@ export class AgGridAngular implements AfterViewInit {
                 emitter.emit(event);
             }
         } else {
-            console.log('ag-Grid-angular: could not find EventEmitter: ' + eventType);
+            console.log('AG Grid Angular: could not find EventEmitter: ' + eventType);
         }
     }
 
@@ -314,6 +314,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;
     @Input() public suppressHorizontalScroll : any = undefined;
+    @Input() public alwaysShowHorizontalScroll : any = undefined;
     @Input() public alwaysShowVerticalScroll : any = undefined;
     @Input() public debug : any = undefined;
     @Input() public enableBrowserTooltips : any = undefined;
@@ -436,6 +437,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressAggFilteredOnly : any = undefined;
     @Input() public showOpenedGroup : any = undefined;
     @Input() public suppressClipboardApi : any = undefined;
+    @Input() public suppressModelUpdateAfterUpdateTransaction : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();

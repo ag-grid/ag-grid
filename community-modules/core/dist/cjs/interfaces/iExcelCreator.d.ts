@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExportParams } from "./exportParams";
@@ -48,7 +48,7 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
 }
 export interface IExcelCreator {
     exportDataAsExcel(params?: ExcelExportParams): void;
-    getDataAsExcelXml(params?: ExcelExportParams): string;
+    getDataAsExcel(params?: ExcelExportParams): Blob | string;
 }
 export interface ExcelStyle {
     id: string;

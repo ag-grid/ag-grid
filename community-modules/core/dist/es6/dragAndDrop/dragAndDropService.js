@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -130,7 +130,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.eventLastTime = mouseEvent;
         this.positionGhost(mouseEvent);
         // check if mouseEvent intersects with any of the drop targets
-        var validDropTargets = this.dropTargets.filter(function (dropTarget) { return _this.isMouseOnDropTarget(mouseEvent, dropTarget); });
+        var validDropTargets = this.dropTargets.filter(function (target) { return _this.isMouseOnDropTarget(mouseEvent, target); });
         var len = validDropTargets.length;
         var dropTarget = null;
         if (len > 0) {
@@ -200,8 +200,8 @@ var DragAndDropService = /** @class */ (function (_super) {
             if (rect.width === 0 || rect.height === 0) {
                 return;
             }
-            var horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
-            var verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
+            var horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX < rect.right;
+            var verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY < rect.bottom;
             if (horizontalFit && verticalFit) {
                 mouseOverTarget = true;
             }
@@ -300,9 +300,10 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
         var usrDocument = this.gridOptionsWrapper.getDocument();
-        this.eGhostParent = usrDocument.querySelector('body');
+        var targetEl = usrDocument.fullscreenElement || usrDocument.querySelector('body');
+        this.eGhostParent = targetEl;
         if (!this.eGhostParent) {
-            console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
+            console.warn('AG Grid: could not find document body, it is needed for dragging columns');
         }
         else {
             this.eGhostParent.appendChild(this.eGhost);

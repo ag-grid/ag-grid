@@ -124,14 +124,14 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
-            if (_.existsAndNotEmpty(tran.add)) {
-                this.insertNodes(tran.add, details, false);
-            }
             if (_.existsAndNotEmpty(tran.remove)) {
                 this.removeNodes(tran.remove, details, batchRemover);
             }
             if (_.existsAndNotEmpty(tran.update)) {
                 this.moveNodesInWrongPath(tran.update, details, batchRemover);
+            }
+            if (_.existsAndNotEmpty(tran.add)) {
+                this.insertNodes(tran.add, details, false);
             }
             // must flush here, and not allow another transaction to be applied,
             // as each transaction must finish leaving the data in a consistent state.
@@ -250,7 +250,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
             // When not TreeData, then removeEmptyGroups is called just before the BatchRemover is flushed.
             // However for TreeData, there is no BatchRemover, so we have to call removeEmptyGroups here.
-            const nodeParents = leafRowNodes.map( n => n.parent!);
+            const nodeParents = leafRowNodes.map(n => n.parent!);
             this.removeEmptyGroups(nodeParents, details);
         }
     }
@@ -357,6 +357,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     // a) removing from childrenAfterGroup (using batchRemover if present, otherwise immediately)
     // b) removing from childrenMapped (immediately)
     // c) setRowTop(null) - as the rowRenderer uses this to know the RowNode is no longer needed
+    // d) setRowIndex(null) - as the rowNode will no longer be displayed.
     private removeFromParent(child: RowNode, batchRemover?: BatchRemover) {
         if (child.parent) {
             if (batchRemover) {
@@ -373,6 +374,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
         child.setRowTop(null);
+        child.setRowIndex(null);
     }
 
     private addToParent(child: RowNode, parent: RowNode | null) {
@@ -429,7 +431,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         const parentGroup = this.findParentForNode(childNode, path, details);
         if (!parentGroup.group) {
-            console.warn(`ag-Grid: duplicate group keys for row data, keys should be unique`,
+            console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`,
                 [parentGroup.data, childNode.data]);
         }
 

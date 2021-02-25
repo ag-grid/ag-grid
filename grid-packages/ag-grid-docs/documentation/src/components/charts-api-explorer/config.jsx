@@ -1,5 +1,5 @@
 import { StringEditor, NumberEditor, BooleanEditor, PresetEditor, ColourEditor, ArrayEditor } from './Editors.jsx';
-import isServerSideRendering from '../../utils/is-server-side-rendering';
+import isServerSideRendering from 'utils/is-server-side-rendering';
 
 const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     fontStyle: {

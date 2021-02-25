@@ -9,7 +9,7 @@ export interface IRowModel {
     getRow(index: number): RowNode | null;
     /** Returns the rowNode for given id. */
     getRowNode(id: string): RowNode | null;
-    /** This is legacy, not used by ag-Grid, but keeping for backward compatibility */
+    /** This is legacy, not used by AG Grid, but keeping for backward compatibility */
     getRowCount(): number;
     getTopLevelRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;

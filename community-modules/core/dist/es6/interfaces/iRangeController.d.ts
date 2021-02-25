@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -56,10 +56,10 @@ export interface CellRange {
     startColumn: Column;
 }
 export interface CellRangeParams {
-    rowStartIndex?: number;
-    rowStartPinned?: string;
-    rowEndIndex?: number;
-    rowEndPinned?: string;
+    rowStartIndex: number | null;
+    rowStartPinned?: string | null;
+    rowEndIndex: number | null;
+    rowEndPinned?: string | null;
     columnStart?: string | Column;
     columnEnd?: string | Column;
     columns?: (string | Column)[];

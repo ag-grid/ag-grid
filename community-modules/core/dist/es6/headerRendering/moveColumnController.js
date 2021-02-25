@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -148,7 +148,7 @@ var MoveColumnController = /** @class */ (function () {
             switch (hDirection) {
                 case HorizontalDirection.Left: return HorizontalDirection.Right;
                 case HorizontalDirection.Right: return HorizontalDirection.Left;
-                default: console.error("ag-Grid: Unknown direction " + hDirection);
+                default: console.error("AG Grid: Unknown direction " + hDirection);
             }
         }
         else {

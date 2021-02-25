@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -257,7 +257,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
         this.floatingFilterCompPromise.then(function (comp) { return comp.onParentModelChanged(model, filterChangedEvent); });
     };
     FloatingFilterWrapper.prototype.onFloatingFilterChanged = function () {
-        console.warn('ag-Grid: since version 21.x, how floating filters are implemented has changed. ' +
+        console.warn('AG Grid: since version 21.x, how floating filters are implemented has changed. ' +
             'Instead of calling params.onFloatingFilterChanged(), get a reference to the main filter via ' +
             'params.parentFilterInstance() and then set a value on the parent filter directly.');
     };

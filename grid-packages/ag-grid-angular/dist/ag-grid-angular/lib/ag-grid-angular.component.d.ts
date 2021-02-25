@@ -174,6 +174,7 @@ export declare class AgGridAngular implements AfterViewInit {
     suppressRowClickSelection: any;
     suppressCellSelection: any;
     suppressHorizontalScroll: any;
+    alwaysShowHorizontalScroll: any;
     alwaysShowVerticalScroll: any;
     debug: any;
     enableBrowserTooltips: any;
@@ -296,6 +297,7 @@ export declare class AgGridAngular implements AfterViewInit {
     suppressAggFilteredOnly: any;
     showOpenedGroup: any;
     suppressClipboardApi: any;
+    suppressModelUpdateAfterUpdateTransaction: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;

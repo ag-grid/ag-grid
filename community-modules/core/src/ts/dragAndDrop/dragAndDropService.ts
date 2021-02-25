@@ -83,7 +83,7 @@ export interface DragSource {
 export interface DropTarget {
     /** The main container that will get the drop. */
     getContainer(): HTMLElement;
-    /** If any secondary containers. For example when moving columns in ag-Grid, we listen for drops
+    /** If any secondary containers. For example when moving columns in AG Grid, we listen for drops
      * in the header as well as the body (main rows and pinned rows) of the grid. */
     getSecondaryContainers?(): HTMLElement[];
     /** Icon to show when drag is over */
@@ -256,7 +256,7 @@ export class DragAndDropService extends BeanStub {
         this.positionGhost(mouseEvent);
 
         // check if mouseEvent intersects with any of the drop targets
-        const validDropTargets = this.dropTargets.filter(dropTarget => this.isMouseOnDropTarget(mouseEvent, dropTarget));
+        const validDropTargets = this.dropTargets.filter(target => this.isMouseOnDropTarget(mouseEvent, target));
         const len = validDropTargets.length;
 
         let dropTarget: DropTarget | null = null;
@@ -335,8 +335,8 @@ export class DragAndDropService extends BeanStub {
                 // if element is not visible, then width and height are zero
                 if (rect.width === 0 || rect.height === 0) { return; }
 
-                const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
-                const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
+                const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX < rect.right;
+                const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY < rect.bottom;
 
                 if (horizontalFit && verticalFit) {
                     mouseOverTarget = true;
@@ -466,10 +466,11 @@ export class DragAndDropService extends BeanStub {
         this.eGhost.style.left = '20px';
 
         const usrDocument = this.gridOptionsWrapper.getDocument();
-        this.eGhostParent = usrDocument.querySelector('body') as HTMLElement;
+        const targetEl = usrDocument.fullscreenElement || usrDocument.querySelector('body');
+        this.eGhostParent = targetEl as HTMLElement;
 
         if (!this.eGhostParent) {
-            console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
+            console.warn('AG Grid: could not find document body, it is needed for dragging columns');
         } else {
             this.eGhostParent.appendChild(this.eGhost);
         }

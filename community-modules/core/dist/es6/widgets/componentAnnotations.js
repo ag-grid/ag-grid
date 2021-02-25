@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,11 +13,11 @@ export function RefSelector(ref) {
 }
 function querySelectorFunc(selector, classPrototype, methodOrAttributeName, index) {
     if (selector === null) {
-        console.error('ag-Grid: QuerySelector selector should not be null');
+        console.error('AG Grid: QuerySelector selector should not be null');
         return;
     }
     if (typeof index === 'number') {
-        console.error('ag-Grid: QuerySelector should be on an attribute');
+        console.error('AG Grid: QuerySelector should be on an attribute');
         return;
     }
     addToObjectProps(classPrototype, 'querySelectors', {
@@ -31,7 +31,7 @@ export function GridListener(eventName) {
 }
 function gridListenerFunc(eventName, target, methodName) {
     if (eventName == null) {
-        console.error('ag-Grid: GridListener eventName is missing');
+        console.error('AG Grid: GridListener eventName is missing');
         return;
     }
     addToObjectProps(target, 'gridListenerMethods', {
@@ -45,7 +45,7 @@ export function GuiListener(ref, eventName) {
 }
 function guiListenerFunc(ref, eventName, target, methodName) {
     if (eventName == null) {
-        console.error('ag-Grid: GuiListener eventName is missing');
+        console.error('AG Grid: GuiListener eventName is missing');
         return;
     }
     addToObjectProps(target, 'guiListenerMethods', {
@@ -61,7 +61,7 @@ function guiListenerFunc(ref, eventName, target, methodName) {
 //
 // function methodFunc(alias: string, target: Object, methodName: string) {
 //     if (alias === null) {
-//         console.error("ag-Grid: EventListener eventName should not be null");
+//         console.error("AG Grid: EventListener eventName should not be null");
 //         return;
 //     }
 //

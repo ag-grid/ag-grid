@@ -76,18 +76,9 @@ export class HeaderRowComp extends Component {
         this.destroyChildComponents(idsOfAllChildren);
     }
 
-    private destroyChildComponents(idsToDestroy: string[], keepFocused?: boolean): void {
+    private destroyChildComponents(idsToDestroy: string[]): void {
         idsToDestroy.forEach(id => {
             const childHeaderWrapper: AbstractHeaderWrapper = this.headerComps[id];
-
-            if (
-                keepFocused &&
-                !childHeaderWrapper.getColumn().isMoving() &&
-                this.focusController.isHeaderWrapperFocused(childHeaderWrapper)
-            ) {
-                return;
-            }
-
             this.getGui().removeChild(childHeaderWrapper.getGui());
             this.destroyBean(childHeaderWrapper);
             delete this.headerComps[id];
@@ -181,57 +172,46 @@ export class HeaderRowComp extends Component {
         return this.columnController.getContainerWidth(this.pinned);
     }
 
-    // private onGridColumnsChanged(): void {
-    //     this.removeAndDestroyAllChildComponents();
-    // }
-
-    // private removeAndDestroyAllChildComponents(): void {
-    //     const idsOfAllChildren = Object.keys(this.headerComps);
-    //     this.destroyChildComponents(idsOfAllChildren);
-    // }
-
     private onDisplayedColumnsChanged(): void {
         this.onVirtualColumnsChanged();
         this.setWidth();
     }
 
-    private getItemsAtDepth(): ColumnGroupChild[] {
+    private getColumnsInViewport(): ColumnGroupChild[] {
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
+    }
 
-        if (printLayout) {
-            // for print layout, we add all columns into the center
-            const centerContainer = missing(this.pinned);
-            if (centerContainer) {
-                let result: ColumnGroupChild[] = [];
-                [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
-                    const items = this.columnController.getVirtualHeaderGroupRow(
-                        pinned,
-                        this.type == HeaderRowType.FLOATING_FILTER ?
-                            this.dept - 1 :
-                            this.dept
-                    );
-                    result = result.concat(items);
-                });
-                return result;
-            }
-            return [];
-        }
+    private getColumnsInViewportPrintLayout(): ColumnGroupChild[] {
+        // for print layout, we add all columns into the center
+        if (this.pinned != null) { return []; }
 
+        let viewportColumns: ColumnGroupChild[] = [];
+        const actualDepth = this.getActualDepth();
+
+        [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
+            const items = this.columnController.getVirtualHeaderGroupRow(pinned, actualDepth);
+            viewportColumns = viewportColumns.concat(items);
+        });
+
+        return viewportColumns;
+    }
+
+    private getActualDepth(): number {
+        return this.type == HeaderRowType.FLOATING_FILTER ? this.dept - 1 : this.dept;
+    }
+
+    private getColumnsInViewportNormalLayout(): ColumnGroupChild[] {
         // when in normal layout, we add the columns for that container only
-        return this.columnController.getVirtualHeaderGroupRow(
-            this.pinned,
-            this.type == HeaderRowType.FLOATING_FILTER ?
-                this.dept - 1 :
-                this.dept
-        );
+        return this.columnController.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
     }
 
     private onVirtualColumnsChanged(): void {
         const compIdsToRemove = Object.keys(this.headerComps);
         const compIdsWanted: string[] = [];
-        const itemsAtDepth = this.getItemsAtDepth();
+        const columns = this.getColumnsInViewport();
 
-        itemsAtDepth.forEach((child: ColumnGroupChild) => {
+        columns.forEach((child: ColumnGroupChild) => {
             // skip groups that have no displayed children. this can happen when the group is broken,
             // and this section happens to have nothing to display for the open / closed state.
             // (a broken group is one that is split, ie columns in the group have a non-group column
@@ -270,8 +250,24 @@ export class HeaderRowComp extends Component {
             compIdsWanted.push(idOfChild);
         });
 
+        // we want to keep columns that are focused, otherwise keyboard navigation breaks
+        const isFocusedAndDisplayed = (colId: string) => {
+            const wrapper = this.headerComps[colId];
+            const isFocused = this.focusController.isHeaderWrapperFocused(wrapper);
+            if (!isFocused) { return false; }
+            const isDisplayed = this.columnController.isDisplayed(wrapper.getColumn());
+            return isDisplayed;
+        };
+
+        const focusedAndDisplayedComps = compIdsToRemove.filter(isFocusedAndDisplayed);
+
+        focusedAndDisplayedComps.forEach(colId => {
+            removeFromArray(compIdsToRemove, colId);
+            compIdsWanted.push(colId);
+        });
+
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
-        this.destroyChildComponents(compIdsToRemove, true);
+        this.destroyChildComponents(compIdsToRemove);
 
         const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         if (ensureDomOrder) {

@@ -5,7 +5,7 @@
 <p class="lead">CEO / CTO</p>
 
     <p>
-        Niall provides the technical vision for ag-Grid, juggling this with the usual CEO duties. 15 years of experience building Enterprise applications has given Niall unique insight into the challenges while equipping him with the technical skills to deliver the correct solutions. Niall focuses primarily on developing and maintaining the core of ag-Grid and is very much at the heartbeat of the company.
+        Niall provides the technical vision for AG Grid, juggling this with the usual CEO duties. 15 years of experience building Enterprise applications has given Niall unique insight into the challenges while equipping him with the technical skills to deliver the correct solutions. Niall focuses primarily on developing and maintaining the core of AG Grid and is very much at the heartbeat of the company.
     </p>
 
     <div>

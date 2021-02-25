@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var value_1 = require("../interpolate/value");
 var number_1 = require("../interpolate/number");
+var bisect_1 = require("../util/bisect");
+var compare_1 = require("../util/compare");
 exports.constant = function (x) { return function () { return x; }; };
 exports.identity = function (x) { return x; };
 function clamper(domain) {
@@ -81,7 +83,7 @@ var ContinuousScale = /** @class */ (function () {
     });
     ContinuousScale.prototype.rescale = function () {
         if (Math.min(this.domain.length, this.range.length) > 2) {
-            // this.piecewise = this.polymap;
+            this.piecewise = this.polymap;
         }
         else {
             this.piecewise = this.bimap;
@@ -116,23 +118,24 @@ var ContinuousScale = /** @class */ (function () {
         }
         return function (x) { return ty(xt(x)); }; // domain value x --> t in [0, 1] --> range value y
     };
-    // private polymap(domain: any[], range: any[], interpolate: (a: any, b: any) => (t: number) => any): Reinterpolator<any> {
-    //     // number of segments in the polylinear scale
-    //     const n = Math.min(domain.length, range.length) - 1;
-    //     if (domain[n] < domain[0]) {
-    //         domain = domain.slice().reverse();
-    //         range = range.slice().reverse();
-    //     }
-    //     // deinterpolators from domain segment value to t
-    //     const dt = Array.from( {length: n}, (_, i) => this.normalize(domain[i], domain[i+1]) );
-    //     // reinterpolators from t to range segment value
-    //     const tr = Array.from( {length: n}, (_, i) => interpolate(range[i], range[i+1]) );
-    //     return (x) => {
-    //         const i = bisectRight(domain, x, ascending, 1, n) - 1; // Find the domain segment that `x` belongs to.
-    //         // This also tells us which deinterpolator/reinterpolator pair to use.
-    //         return tr[i](dt[i](x));
-    //     };
-    // }
+    ContinuousScale.prototype.polymap = function (domain, range, interpolate) {
+        var _this = this;
+        // number of segments in the polylinear scale
+        var n = Math.min(domain.length, range.length) - 1;
+        if (domain[n] < domain[0]) {
+            domain = domain.slice().reverse();
+            range = range.slice().reverse();
+        }
+        // deinterpolators from domain segment value to t
+        var dt = Array.from({ length: n }, function (_, i) { return _this.normalize(domain[i], domain[i + 1]); });
+        // reinterpolators from t to range segment value
+        var tr = Array.from({ length: n }, function (_, i) { return interpolate(range[i], range[i + 1]); });
+        return function (x) {
+            var i = bisect_1.bisectRight(domain, x, compare_1.ascending, 1, n) - 1; // Find the domain segment that `x` belongs to.
+            // This also tells us which deinterpolator/reinterpolator pair to use.
+            return tr[i](dt[i](x));
+        };
+    };
     ContinuousScale.prototype.convert = function (x) {
         x = +x;
         if (isNaN(x)) {

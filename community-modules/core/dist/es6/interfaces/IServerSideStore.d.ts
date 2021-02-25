@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v25.0.1
+// Type definitions for @ag-grid-community/core v25.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { NumberSequence } from "../utils";
@@ -18,7 +18,7 @@ export interface IServerSideStore {
     getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): RowNode | null;
     getRowBounds(index: number): RowBounds | null;
     isPixelInRange(pixel: number): boolean;
-    getRowIndexAtPixel(pixel: number): number | undefined;
+    getRowIndexAtPixel(pixel: number): number | null;
     getChildStore(keys: string[]): IServerSideStore | null;
     refreshAfterSort(params: StoreRefreshAfterParams): void;
     refreshAfterFilter(params: StoreRefreshAfterParams): void;

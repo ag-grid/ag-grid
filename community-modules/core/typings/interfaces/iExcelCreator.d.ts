@@ -45,7 +45,7 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
 }
 export interface IExcelCreator {
     exportDataAsExcel(params?: ExcelExportParams): void;
-    getDataAsExcelXml(params?: ExcelExportParams): string;
+    getDataAsExcel(params?: ExcelExportParams): Blob | string;
 }
 export interface ExcelStyle {
     id: string;

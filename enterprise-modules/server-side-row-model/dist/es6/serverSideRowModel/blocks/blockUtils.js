@@ -58,7 +58,7 @@ var BlockUtils = /** @class */ (function (_super) {
         // this is needed, so row render knows to fade out the row, otherwise it
         // sees row top is present, and thinks the row should be shown. maybe
         // rowNode should have a flag on whether it is visible???
-        rowNode.clearRowTop();
+        rowNode.clearRowTopAndRowIndex();
         if (rowNode.id != null) {
             this.nodeManager.removeNode(rowNode);
         }
@@ -137,8 +137,7 @@ var BlockUtils = /** @class */ (function (_super) {
         });
     };
     BlockUtils.prototype.clearDisplayIndex = function (rowNode) {
-        rowNode.clearRowTop();
-        rowNode.setRowIndex();
+        rowNode.clearRowTopAndRowIndex();
         var hasChildStore = rowNode.group && _.exists(rowNode.childStore);
         if (hasChildStore) {
             var childStore = rowNode.childStore;
@@ -146,8 +145,7 @@ var BlockUtils = /** @class */ (function (_super) {
         }
         var hasDetailNode = rowNode.master && rowNode.detailNode;
         if (hasDetailNode) {
-            rowNode.detailNode.clearRowTop();
-            rowNode.detailNode.setRowIndex();
+            rowNode.detailNode.clearRowTopAndRowIndex();
         }
     };
     BlockUtils.prototype.setDisplayIndex = function (rowNode, displayIndexSeq, nextRowTop) {
@@ -164,8 +162,7 @@ var BlockUtils = /** @class */ (function (_super) {
                 nextRowTop.value += rowNode.detailNode.rowHeight;
             }
             else if (rowNode.detailNode) {
-                rowNode.detailNode.clearRowTop();
-                rowNode.detailNode.setRowIndex();
+                rowNode.detailNode.clearRowTopAndRowIndex();
             }
         }
         // set children for SSRM child rows
@@ -214,7 +211,7 @@ var BlockUtils = /** @class */ (function (_super) {
                 topPointer = midPointer - 1;
             }
             else {
-                console.warn("ag-Grid: error: unable to locate rowIndex = " + displayRowIndex + " in cache");
+                console.warn("AG Grid: error: unable to locate rowIndex = " + displayRowIndex + " in cache");
                 return null;
             }
         }
@@ -256,6 +253,7 @@ var BlockUtils = /** @class */ (function (_super) {
                 return childStore.getRowIndexAtPixel(pixel);
             }
         }
+        return null;
         // pixel is not within this row node or it's children / detail, so return undefined
     };
     BlockUtils.prototype.createNodeIdPrefix = function (parentRowNode) {

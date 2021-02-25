@@ -48,12 +48,12 @@ var ExcelCreator = /** @class */ (function (_super) {
         this.setExportMode(params ? params.exportMode : undefined);
         return this.export(params);
     };
-    ExcelCreator.prototype.getDataAsExcelXml = function (params) {
-        if (params && params.exportMode) {
-            delete params.exportMode;
+    ExcelCreator.prototype.getDataAsExcel = function (params) {
+        var data = this.getData(params || {});
+        if (params && params.exportMode === 'xml') {
+            return data;
         }
-        this.setExportMode('xml');
-        return this.getData(params || {});
+        return this.packageFile(data);
     };
     ExcelCreator.prototype.getMimeType = function () {
         return this.getExportMode() === 'xml' ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';

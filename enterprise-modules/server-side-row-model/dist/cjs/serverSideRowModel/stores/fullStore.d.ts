@@ -62,7 +62,7 @@ export declare class FullStore extends RowNodeBlock implements IServerSideStore 
     getRowUsingDisplayIndex(displayRowIndex: number): RowNode | null;
     getRowBounds(index: number): RowBounds | null;
     isPixelInRange(pixel: number): boolean;
-    getRowIndexAtPixel(pixel: number): number | undefined;
+    getRowIndexAtPixel(pixel: number): number | null;
     getChildStore(keys: string[]): IServerSideStore | null;
     private forEachChildStoreShallow;
     refreshAfterFilter(params: StoreRefreshAfterParams): void;

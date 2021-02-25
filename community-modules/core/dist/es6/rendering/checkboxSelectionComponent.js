@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,10 +32,13 @@ import { stopPropagationForAgGrid } from '../utils/event';
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
-        return _super.call(this, /* html*/ "\n            <div class=\"ag-selection-checkbox\">\n                <ag-checkbox role=\"presentation\" ref=\"eCheckbox\"></ag-checkbox>\n            </div>") || this;
+        return _super.call(this, /* html*/ "\n            <div class=\"ag-selection-checkbox\" role=\"presentation\">\n                <ag-checkbox role=\"presentation\" ref=\"eCheckbox\"></ag-checkbox>\n            </div>") || this;
     }
     CheckboxSelectionComponent.prototype.postConstruct = function () {
         this.eCheckbox.setPassive(true);
+    };
+    CheckboxSelectionComponent.prototype.getCheckboxId = function () {
+        return this.eCheckbox.getInputElement().id;
     };
     CheckboxSelectionComponent.prototype.onDataChanged = function () {
         // when rows are loaded for the second time, this can impact the selection, as a row

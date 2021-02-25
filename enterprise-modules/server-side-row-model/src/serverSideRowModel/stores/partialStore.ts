@@ -23,7 +23,8 @@ import {
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
     StoreRefreshAfterParams,
-    StoreUpdatedEvent
+    StoreUpdatedEvent,
+    FocusController
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -45,6 +46,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired("focusController") private focusController: FocusController;
 
     private readonly ssrmParams: SSRMParams;
     private readonly storeParams: ServerSideStoreParams;
@@ -119,7 +121,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         }
 
         if (!params.rowData) {
-            const message = 'ag-Grid: "params.rowData" is missing from Server-Side Row Model success() callback. Please use the "rowData" attribute. If no data is returned, set an empty list.';
+            const message = 'AG Grid: "params.rowData" is missing from Server-Side Row Model success() callback. Please use the "rowData" attribute. If no data is returned, set an empty list.';
             _.doOnce(() => console.warn(message, params), 'InfiniteStore.noData');
         }
 
@@ -174,11 +176,27 @@ export class PartialStore extends BeanStub implements IServerSideStore {
                 // but the screen is showing 20 rows, so at least 4 blocks are needed.
                 if (this.isBlockCurrentlyDisplayed(block)) { return; }
 
+                // don't want to loose keyboard focus, so keyboard navigation can continue. so keep focused blocks.
+                if (this.isBlockFocused(block)) { return; }
+
                 // at this point, block is not needed, and no open nodes, so burn baby burn
                 this.destroyBlock(block);
             }
 
         });
+    }
+
+    private isBlockFocused(block: PartialStoreBlock): boolean {
+        const focusedCell = this.focusController.getFocusCellToUseAfterRefresh();
+        if (!focusedCell) { return false; }
+        if (focusedCell.rowPinned != null) { return false; }
+
+        const blockIndexStart = block.getDisplayIndexStart();
+        const blockIndexEnd = block.getDisplayIndexEnd();
+        if (blockIndexEnd == null || blockIndexStart == null) { return false; }
+
+        const hasFocus = focusedCell.rowIndex >= blockIndexStart && focusedCell.rowIndex < blockIndexEnd;
+        return hasFocus;
     }
 
     private isBlockCurrentlyDisplayed(block: PartialStoreBlock): boolean {

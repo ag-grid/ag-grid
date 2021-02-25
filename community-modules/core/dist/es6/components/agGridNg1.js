@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v25.0.1
+ * @version v25.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,7 +22,7 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
     quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
     gridOptions = $scope.$eval(keyOfGridInScope);
     if (!gridOptions) {
-        console.warn("WARNING - grid options for ag-Grid not found. Please ensure the attribute ag-grid points to a valid object on the scope");
+        console.warn("WARNING - grid options for AG Grid not found. Please ensure the attribute ag-grid points to a valid object on the scope");
         return;
     }
     var eGridDiv = $element[0];

@@ -11,6 +11,7 @@ import { ComponentSelectorResult } from "../components/framework/userComponentFa
 import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { IFilterDef } from '../interfaces/iFilter';
 import { ColumnGroup } from "./columnGroup";
+import { RowClassParams } from "./gridOptions";
 /***********************************************************************
  * Don't forget to update PropertyKeys if changing this class. PLEASE! *
  ***********************************************************************/
@@ -51,13 +52,13 @@ export interface ColGroupDef extends AbstractColDef {
     openByDefault?: boolean;
     /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
     marryChildren?: boolean;
-    /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
+    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used**/
     headerGroupComponent?: string | {
         new (): IHeaderGroupComp;
     };
-    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
+    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used**/
     headerGroupComponentFramework?: any;
-    /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
+    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used**/
     headerGroupComponentParams?: any;
 }
 export interface IAggFunc {
@@ -82,10 +83,10 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      *  This ID is used to identify the column in the API for sorting, filtering etc. */
     colId?: string;
     /** If sorting by default, set it here. Set to 'asc' or 'desc' */
-    sort?: string;
+    sort?: string | null;
     initialSort?: string;
     /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
-    sortIndex?: number;
+    sortIndex?: number | null;
     initialSortIndex?: number;
     /** @deprecated since v24 - use sortIndex instead*/
     sortedAt?: number;
@@ -103,7 +104,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     hide?: boolean;
     initialHide?: boolean;
     /** Whether this column is pinned or not. */
-    pinned?: boolean | string;
+    pinned?: boolean | string | null;
     initialPinned?: boolean | string;
     /** The field where we get the tooltip on the object */
     tooltipField?: string;
@@ -166,20 +167,20 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Gets called after editing, converts the value in the cell. */
     valueParser?: ((params: ValueParserParams) => any) | string;
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
-    aggFunc?: string | IAggFunc;
+    aggFunc?: string | IAggFunc | null;
     initialAggFunc?: string | IAggFunc;
     /** Agg funcs allowed on this column. If missing, all installed agg funcs are allowed.
      * Can be eg ['sum','avg']. This will restrict what the GUI allows to select only.*/
     allowedAggFuncs?: string[];
     /** To group by this column by default, either provide an index (eg rowGroupIndex=1), or set rowGroup=true. */
-    rowGroupIndex?: number;
+    rowGroupIndex?: number | null;
     rowGroup?: boolean;
     initialRowGroupIndex?: number;
     initialRowGroup?: boolean;
     /** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group. */
     showRowGroup?: string | boolean;
     /** To pivot by this column by default, either provide an index (eg pivotIndex=1), or set pivot=true. */
-    pivotIndex?: number;
+    pivotIndex?: number | null;
     pivot?: boolean;
     initialPivotIndex?: number;
     initialPivot?: boolean;
@@ -190,17 +191,17 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Comparator for ordering the pivot columns */
     pivotComparator?: (valueA: string, valueB: string) => number;
     /** Set to true to render a selection checkbox in the column. */
-    checkboxSelection?: boolean | ((params: any) => boolean) | null;
+    checkboxSelection?: boolean | ((params: CheckboxSelectionCallbackParams) => boolean);
     /** If true, a 'select all' checkbox will be put into the header */
     headerCheckboxSelection?: boolean | ((params: any) => boolean);
     /** If true, the header checkbox selection will work on filtered items*/
     headerCheckboxSelectionFilteredOnly?: boolean;
     /** For grid row dragging, set to true to enable row dragging within the grid */
-    rowDrag?: boolean | ((params: any) => boolean);
+    rowDrag?: boolean | ((params: RowDragCallbackParams) => boolean);
     /** To configure the text to be displayed in the floating div while dragging a row when rowDrag is true */
     rowDragText?: ((params: IRowDragItem, dragItemCount: number) => string);
     /** For native drag and drop, set to true to enable drag source */
-    dndSource?: boolean | ((params: any) => boolean);
+    dndSource?: boolean | ((params: DndSourceCallbackParams) => boolean);
     /** For native drag and drop, set to true to allow custom onRowDrag processing */
     dndSourceOnRowDrag?: ((params: {
         rowNode: RowNode;
@@ -240,13 +241,13 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** If true, GUI will allow adding this columns as a value */
     enableValue?: boolean;
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
-    editable?: boolean | IsColumnFunc;
+    editable?: boolean | ((params: EditableCallbackParams) => boolean);
     colSpan?: (params: ColSpanParams) => number;
     rowSpan?: (params: RowSpanParams) => number;
     /** Set to true if this col should not be allowed take new values from the clipboard . */
-    suppressPaste?: boolean | IsColumnFunc;
-    /** Set to tru if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
-    suppressNavigable?: boolean | IsColumnFunc;
+    suppressPaste?: boolean | ((params: SuppressPasteCallbackParams) => boolean);
+    /** Set to true if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
+    suppressNavigable?: boolean | ((params: SuppressNavigableCallbackParams) => boolean);
     /** To create the quick filter text for this column, if toString is not good enough on the value. */
     getQuickFilterText?: (params: GetQuickFilterTextParams) => string;
     /** Callbacks for editing. See editing section for further details.
@@ -282,11 +283,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     pivotValueColumn?: Column | null;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];
-    /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
+    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid is used**/
     headerComponent?: string | {
         new (): any;
     };
-    /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
+    /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used**/
     headerComponentFramework?: any;
     /** The custom header component parameters**/
     headerComponentParams?: any;
@@ -296,14 +297,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
         [key: string]: string;
     };
     /** Defines the column data type used when charting */
-    chartDataType?: 'category' | 'series' | 'time' | 'excluded' | undefined;
+    chartDataType?: 'category' | 'series' | 'time' | 'excluded';
     /** Params to customise the columns menu behaviour and appearance */
     columnsMenuParams?: ColumnsMenuParams;
 }
-export interface IsColumnFunc {
-    (params: IsColumnFuncParams): boolean;
-}
-export interface IsColumnFuncParams {
+export interface ColumnFunctionCallbackParams {
     node: RowNode;
     data: any;
     column: Column;
@@ -311,6 +309,31 @@ export interface IsColumnFuncParams {
     context: any;
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
+}
+export interface CheckboxSelectionCallbackParams extends ColumnFunctionCallbackParams {
+}
+export interface RowDragCallbackParams extends ColumnFunctionCallbackParams {
+}
+export interface DndSourceCallbackParams extends ColumnFunctionCallbackParams {
+}
+export interface EditableCallbackParams extends ColumnFunctionCallbackParams {
+}
+export interface SuppressPasteCallbackParams extends ColumnFunctionCallbackParams {
+}
+export interface SuppressNavigableCallbackParams extends ColumnFunctionCallbackParams {
+}
+/**
+ * @deprecated
+ * No longer in use. Replaced with (params: ColumnFunctionCallbackParams) => boolean.
+ */
+export interface IsColumnFunc {
+    (params: IsColumnFuncParams): boolean;
+}
+/**
+ * @deprecated
+ * Replaced with ColumnFunctionCallbackParams
+ */
+export interface IsColumnFuncParams extends ColumnFunctionCallbackParams {
 }
 export interface GetQuickFilterTextParams {
     value: any;
@@ -328,7 +351,7 @@ export interface ColumnsMenuParams {
     contractColumnSelection?: boolean;
 }
 export interface BaseColDefParams {
-    node: RowNode;
+    node: RowNode | null;
     data: any;
     colDef: ColDef;
     column: Column;
@@ -356,7 +379,7 @@ export interface ColSpanParams extends BaseColDefParams {
 }
 export interface RowSpanParams extends BaseColDefParams {
 }
-export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
+export interface SuppressKeyboardEventParams extends ColumnFunctionCallbackParams {
     event: KeyboardEvent;
     editing: boolean;
 }
@@ -369,14 +392,7 @@ export interface SuppressHeaderKeyboardEventParams {
     headerRowIndex: number;
     event: KeyboardEvent;
 }
-export interface CellClassParams {
-    value: any;
-    data: any;
-    node: RowNode;
+export interface CellClassParams extends RowClassParams {
     colDef: ColDef;
-    rowIndex: number;
-    $scope: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-    context: any;
+    value: any;
 }
