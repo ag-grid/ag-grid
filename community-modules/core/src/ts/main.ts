@@ -58,6 +58,7 @@ export {
     ExcelNumberFormat,
     ExcelOOXMLDataType,
     ExcelOOXMLTemplate,
+    ExcelFileParams,
     ExcelProtection,
     ExcelRelationship,
     ExcelFactoryMode,

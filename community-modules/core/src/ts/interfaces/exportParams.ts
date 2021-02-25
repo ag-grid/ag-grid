@@ -4,6 +4,10 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColumnGroup } from "../entities/columnGroup";
 
+export interface FileExportParams {
+    data: string[];
+    fileName?: string;
+}
 export interface BaseExportParams {
     skipHeader?: boolean;
     columnGroups?: boolean;
@@ -14,19 +18,14 @@ export interface BaseExportParams {
     suppressQuotes?: boolean;
     columnKeys?: (string | Column)[];
     fileName?: string;
-    fontSize?: number;
     allColumns?: boolean;
     onlySelected?: boolean;
     onlySelectedAllPages?: boolean;
 
     shouldRowBeSkipped?(params: ShouldRowBeSkippedParams): boolean;
-
     processCellCallback?(params: ProcessCellForExportParams): string;
-
     processHeaderCallback?(params: ProcessHeaderForExportParams): string;
-
     processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams): string;
-
     processRowGroupCallback?(params: ProcessRowGroupForExportParams): string;
 }
 

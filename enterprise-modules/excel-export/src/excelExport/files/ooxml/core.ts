@@ -1,7 +1,7 @@
 import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 
 const coreFactory: ExcelOOXMLTemplate = {
-    getTemplate() {
+    getTemplate(author: string) {
         const dt = new Date();
         const jsonDate = dt.toJSON();
 
@@ -21,7 +21,7 @@ const coreFactory: ExcelOOXMLTemplate = {
             },
             children: [{
                 name: 'dc:creator',
-                textNode: 'AG Grid'
+                textNode: author
             }, {
                 name: 'dc:title',
                 textNode: 'Workbook'

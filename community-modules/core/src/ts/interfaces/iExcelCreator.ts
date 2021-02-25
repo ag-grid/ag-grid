@@ -1,4 +1,4 @@
-import { ExportParams } from "./exportParams";
+import { ExportParams, FileExportParams } from "./exportParams";
 import { XmlElement } from "./iXmlFactory";
 
 // Common
@@ -53,17 +53,24 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     headerRowHeight?: number;
     autoConvertFormulas?: boolean;
 }
+export interface ExcelFileParams extends FileExportParams {
+    fontSize?: number;
+    author?: string;
+}
+
+export enum ExcelFactoryMode { SINGLE_SHEET, MULTI_SHEET }
 
 export interface IExcelCreator {
     exportDataAsExcel(params?: ExcelExportParams): void;
     getDataAsExcel(params?: ExcelExportParams): Blob | string;
     getGridRawDataForExcel(params?: ExcelExportParams): string;
-    getMultipleSheetsAsExcel(gridRawData: string[]): Blob;
-    exportMultipleSheetsAsExcel(gridRawData: string[], fileName?: string): void;
+
+    getMultipleSheetsAsExcel(params: ExcelFileParams): Blob;
+    exportMultipleSheetsAsExcel(params: ExcelFileParams): void;
 
     /** private methods */
     setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx'): void;
-    getFactoryMode(exportMode: 'xml' | 'xlsx'): ExcelFactoryMode
+    getFactoryMode(exportMode: 'xml' | 'xlsx'): ExcelFactoryMode;
 }
 
 // XML
@@ -168,5 +175,3 @@ export interface ExcelRelationship {
     Type: string;
     Target: string;
 }
-
-export enum ExcelFactoryMode { SINGLE_SHEET, MULTI_SHEET };

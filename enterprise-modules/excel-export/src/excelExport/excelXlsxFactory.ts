@@ -72,8 +72,8 @@ export class ExcelXlsxFactory {
         return this.createXmlPart(sharedStringsFactory.getTemplate(this.sharedStrings));
     }
 
-    public static createCore(): string {
-        return this.createXmlPart(coreFactory.getTemplate());
+    public static createCore(author: string): string {
+        return this.createXmlPart(coreFactory.getTemplate(author));
     }
 
     public static createContentTypes(sheetLen: number): string {

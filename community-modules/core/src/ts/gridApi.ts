@@ -24,7 +24,7 @@ import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./interfaces/exportParams";
-import { ExcelExportParams, ExcelFactoryMode, IExcelCreator } from "./interfaces/iExcelCreator";
+import { ExcelExportParams, ExcelFactoryMode, ExcelFileParams, IExcelCreator } from "./interfaces/iExcelCreator";
 import { IDatasource } from "./interfaces/iDatasource";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import { PaginationProxy } from "./pagination/paginationProxy";
@@ -279,15 +279,15 @@ export class GridApi {
         }
     }
 
-    public getMultipleSheetsAsExcel(gridRawData: string[]): Blob | undefined {
+    public getMultipleSheetsAsExcel(params: ExcelFileParams): Blob | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel')) {
-            return this.excelCreator.getMultipleSheetsAsExcel(gridRawData);
+            return this.excelCreator.getMultipleSheetsAsExcel(params);
         }
     }
 
-    public exportMultipleSheetsAsExcel(gridRawData: string[], fileName?: string): void {
+    public exportMultipleSheetsAsExcel(params: ExcelFileParams): void {
         if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel')) {
-            return this.excelCreator.exportMultipleSheetsAsExcel(gridRawData, fileName);
+            return this.excelCreator.exportMultipleSheetsAsExcel(params);
         }
     }
 

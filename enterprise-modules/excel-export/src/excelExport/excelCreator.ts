@@ -5,6 +5,7 @@ import {
     ColumnController,
     ExcelExportParams,
     ExcelFactoryMode,
+    ExcelFileParams,
     GridOptions,
     GridOptionsWrapper,
     IExcelCreator,
@@ -31,7 +32,8 @@ export interface ExcelMixedStyle {
 
 type SerializingSession = ExcelXmlSerializingSession | ExcelXlsxSerializingSession;
 
-export const getMultipleSheetsAsExcel = (rawData: string[], defaultFontSize: number = 11) => {
+export const getMultipleSheetsAsExcel = (params: ExcelFileParams) => {
+    const { data, fontSize = 11, author = 'AG Grid' } = params;
     ZipContainer.addFolders([
         'xl/worksheets/',
         'xl/',
@@ -41,16 +43,16 @@ export const getMultipleSheetsAsExcel = (rawData: string[], defaultFontSize: num
         '_rels/'
     ]);
 
-    const sheetLen = rawData.length;
-    rawData.forEach((value, idx) => {
+    const sheetLen = data.length;
+    data.forEach((value, idx) => {
         ZipContainer.addFile(`xl/worksheets/sheet${idx + 1}.xml`, value);
     });
     ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook());
-    ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet(defaultFontSize));
+    ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet(fontSize));
     ZipContainer.addFile('xl/sharedStrings.xml', ExcelXlsxFactory.createSharedStrings());
     ZipContainer.addFile('xl/theme/theme1.xml', ExcelXlsxFactory.createTheme());
     ZipContainer.addFile('xl/_rels/workbook.xml.rels', ExcelXlsxFactory.createWorkbookRels(sheetLen));
-    ZipContainer.addFile('docProps/core.xml', ExcelXlsxFactory.createCore());
+    ZipContainer.addFile('docProps/core.xml', ExcelXlsxFactory.createCore(author));
     ZipContainer.addFile('[Content_Types].xml', ExcelXlsxFactory.createContentTypes(sheetLen));
     ZipContainer.addFile('_rels/.rels', ExcelXlsxFactory.createRels());
 
@@ -59,12 +61,14 @@ export const getMultipleSheetsAsExcel = (rawData: string[], defaultFontSize: num
     return ZipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 }
 
-export const exportMultipleSheetsAsExcel = (rawData: string[], fileName: string = 'export.xlsx', defaultFontSize?: number) => {
-    Downloader.download(fileName, getMultipleSheetsAsExcel(rawData, defaultFontSize));
+export const exportMultipleSheetsAsExcel = (properties: ExcelFileParams) => {
+    const { fileName = 'export.xlsx' } = properties;
+
+    Downloader.download(fileName, getMultipleSheetsAsExcel(properties));
 }
 
 @Bean('excelCreator')
-export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession, ExcelExportParams> implements IExcelCreator {
+export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession, ExcelExportParams, ExcelFileParams> implements IExcelCreator {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
@@ -84,7 +88,24 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         });
     }
 
-    public exportDataAsExcel(params?: ExcelExportParams): string {
+    public export(userParams?: ExcelExportParams & ExcelFileParams): string {
+        if (this.isExportSuppressed()) {
+            console.warn(`ag-grid: Export cancelled. Export is not allowed as per your configuration.`);
+            return '';
+        }
+
+        const { mergedParams, data } = this.getMergedParamsAndData(userParams);
+
+        Downloader.download(this.getFileName(mergedParams.fileName), this.packageFile({
+            data: [data],
+            fontSize: mergedParams.fontSize,
+            author: mergedParams.author
+        }));
+
+        return data;
+    }
+
+    public exportDataAsExcel(params?: ExcelExportParams & ExcelFileParams): string {
         let exportMode = 'xlsx';
 
         if (params && params.exportMode) {
@@ -96,12 +117,16 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.export(params);
     }
 
-    public getDataAsExcel(params?: ExcelExportParams): Blob | string {
-        const { mergedParams, data } =  this.getMergedParamsAndData(params || {});
+    public getDataAsExcel(params?: ExcelExportParams & ExcelFileParams): Blob | string {
+        const { mergedParams, data } =  this.getMergedParamsAndData(params);
 
         if (params && params.exportMode === 'xml') { return data; }
 
-        return this.packageFile(data, mergedParams.fontSize);
+        return this.packageFile({
+            data: [data],
+            fontSize: mergedParams.fontSize,
+            author: mergedParams.author
+        });
     }
 
     public setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx' = 'xlsx'): void {
@@ -114,16 +139,16 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return factory.factoryMode;
     }
 
-    public getGridRawDataForExcel(params: ExcelExportParams): string {
-        return this.getMergedParamsAndData(params || {}).data;
+    public getGridRawDataForExcel(params: ExcelExportParams & ExcelFileParams): string {
+        return this.getMergedParamsAndData(params).data;
     }
 
-    public getMultipleSheetsAsExcel(gridRawData: string[], defaultFontSize?: number): Blob {
-        return getMultipleSheetsAsExcel(gridRawData, defaultFontSize);
+    public getMultipleSheetsAsExcel(params: ExcelFileParams): Blob {
+        return getMultipleSheetsAsExcel(params);
     }
 
-    public exportMultipleSheetsAsExcel(gridRawData: string[], fileName?: string, defaultFontSize?: number) {
-        return exportMultipleSheetsAsExcel(gridRawData, fileName, defaultFontSize);
+    public exportMultipleSheetsAsExcel(params: ExcelFileParams) {
+        return exportMultipleSheetsAsExcel(params);
     }
 
     public getMimeType(): string {
@@ -210,11 +235,11 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.exportMode;
     }
 
-    protected packageFile(data: string, fontSize?: number): Blob {
+    protected packageFile(params: ExcelFileParams): Blob {
         if (this.getExportMode() === 'xml') {
-            return super.packageFile(data);
+            return super.packageFile(params);
         }
 
-        return getMultipleSheetsAsExcel([data], fontSize);
+        return getMultipleSheetsAsExcel(params);
     }
 }

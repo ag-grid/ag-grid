@@ -1,8 +1,8 @@
 import { BaseExportParams, ExportParams, _ } from "@ag-grid-community/core";
-import { Downloader } from "./downloader";
+import { FileExportParams } from "@ag-grid-community/core/dist/cjs/interfaces/exportParams";
 import { BaseCreatorBeans, GridSerializingSession } from "./interfaces";
 
-export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> {
+export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>, Q extends FileExportParams> {
 
     private beans: BaseCreatorBeans;
 
@@ -10,43 +10,36 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         this.beans = beans;
     }
 
-    public export(userParams?: P): string {
-        if (this.isExportSuppressed()) {
-            console.warn(`ag-grid: Export cancelled. Export is not allowed as per your configuration.`);
-            return '';
-        }
-        const { mergedParams, data } = this.getMergedParamsAndData(userParams);
-        const fileNamePresent = mergedParams.fileName && mergedParams.fileName.length !== 0;
+    public abstract export(userParams?: P & Q): string;
 
-        let fileName = fileNamePresent ? mergedParams.fileName : this.getDefaultFileName();
+    protected getFileName(fileName?: string): string {
+        const extension = this.getDefaultFileExtension();
 
-        if (fileName!.indexOf(".") === -1) {
-            fileName = fileName + "." + this.getDefaultFileExtension();
+        if (fileName == null || !fileName.length) {
+            fileName = this.getDefaultFileName();
         }
 
-        Downloader.download(fileName!, this.packageFile(data, mergedParams.fontSize));
-
-        return data;
+        return fileName.indexOf('.') === -1 ? `${fileName}.${extension}` : fileName;
     }
 
-    protected getMergedParamsAndData(userParams?: P): { mergedParams: P, data: string } {
+    protected getMergedParamsAndData(userParams?: P & Q): { mergedParams: P & Q, data: string } {
         const mergedParams = this.mergeDefaultParams(userParams);
         const data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
 
         return { mergedParams, data };
     }
 
-    private mergeDefaultParams(userParams?: P): P {
+    private mergeDefaultParams(userParams?: P & Q): P & Q {
         const baseParams: BaseExportParams | undefined = this.beans.gridOptionsWrapper.getDefaultExportParams();
-        const params: P = {} as any;
+        const params: P & Q = {} as any;
         _.assign(params, baseParams);
         _.assign(params, userParams);
+
         return params;
     }
 
-    protected packageFile(data: string, fontSize?: number): Blob;
-    protected packageFile(data: string): Blob {
-        return new Blob(["\ufeff", data], {
+    protected packageFile(params: Q): Blob {
+        return new Blob(["\ufeff", params.data[0]], {
             // @ts-ignore
             type: window.navigator.msSaveOrOpenBlob ? this.getMimeType() : 'octet/stream'
         });
