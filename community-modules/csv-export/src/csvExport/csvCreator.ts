@@ -7,9 +7,9 @@ import {
     GridOptionsWrapper,
     ICsvCreator,
     PostConstruct,
+    FileExportParams,
     ValueService
 } from "@ag-grid-community/core";
-import { FileExportParams } from "@ag-grid-community/core/dist/cjs/interfaces/exportParams";
 import { BaseCreator } from "./baseCreator";
 import { Downloader } from "./downloader";
 import { GridSerializer } from "./gridSerializer";

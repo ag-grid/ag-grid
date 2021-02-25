@@ -229,8 +229,9 @@ export { IChartService, ChartModel, GetChartImageDataUrlParams } from "./interfa
 
 // exporter
 export {
-    CsvExportParams, CsvCustomContent, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams,
-    ProcessGroupHeaderForExportParams, ProcessRowGroupForExportParams, ShouldRowBeSkippedParams, BaseExportParams
+    CsvExportParams, CsvCustomContent, ExportParams, FileExportParams, ProcessCellForExportParams,
+    ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams, ProcessRowGroupForExportParams,
+    ShouldRowBeSkippedParams, BaseExportParams
 } from "./interfaces/exportParams";
 export { HeaderElement, PrefixedXmlAttributes, XmlElement } from "./interfaces/iXmlFactory";
 export { ICsvCreator } from "./interfaces/iCsvCreator";
