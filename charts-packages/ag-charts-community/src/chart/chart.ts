@@ -425,6 +425,7 @@ export abstract class Chart extends Observable {
 
         const { legend } = this;
         legend.addEventListener('layoutChange', this.onLayoutChange, this);
+        legend.item.label.addPropertyListener('formatter', this.updateLegend, this);
         legend.addPropertyListener('position', this.onLegendPositionChange, this);
 
         this.tooltip = new ChartTooltip(this);
@@ -786,6 +787,11 @@ export abstract class Chart extends Observable {
         const legendData: LegendDatum[] = [];
 
         this.series.filter(s => s.showInLegend).forEach(series => series.listSeriesItems(legendData));
+
+        const { formatter } = this.legend.item.label;
+        if (formatter) {
+            legendData.forEach(datum => datum.label.text = formatter(datum));
+        }
 
         this.legend.data = legendData;
     }

@@ -147,7 +147,8 @@ const commonChartMappings: any = {
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif'
+                        fontFamily: 'Verdana, sans-serif',
+                        formatter: undefined
                     }
                 }
             }

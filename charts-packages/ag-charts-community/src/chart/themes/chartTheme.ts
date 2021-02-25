@@ -211,7 +211,8 @@ export class ChartTheme {
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
-                        fontFamily: this.fontFamily
+                        fontFamily: this.fontFamily,
+                        formatter: undefined
                     }
                 }
             },
