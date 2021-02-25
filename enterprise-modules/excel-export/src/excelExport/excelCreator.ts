@@ -31,7 +31,7 @@ export interface ExcelMixedStyle {
 
 type SerializingSession = ExcelXmlSerializingSession | ExcelXlsxSerializingSession;
 
-export const getMultipleSheetsAsExcel = (rawData: string[]) => {
+export const getMultipleSheetsAsExcel = (rawData: string[], defaultFontSize: number = 11) => {
     ZipContainer.addFolders([
         'xl/worksheets/',
         'xl/',
@@ -46,7 +46,7 @@ export const getMultipleSheetsAsExcel = (rawData: string[]) => {
         ZipContainer.addFile(`xl/worksheets/sheet${idx + 1}.xml`, value);
     });
     ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook());
-    ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet());
+    ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet(defaultFontSize));
     ZipContainer.addFile('xl/sharedStrings.xml', ExcelXlsxFactory.createSharedStrings());
     ZipContainer.addFile('xl/theme/theme1.xml', ExcelXlsxFactory.createTheme());
     ZipContainer.addFile('xl/_rels/workbook.xml.rels', ExcelXlsxFactory.createWorkbookRels(sheetLen));
@@ -59,8 +59,8 @@ export const getMultipleSheetsAsExcel = (rawData: string[]) => {
     return ZipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 }
 
-export const exportMultipleSheetsAsExcel = (rawData: string[], fileName: string = 'export.xlsx') => {
-    Downloader.download(fileName, getMultipleSheetsAsExcel(rawData));
+export const exportMultipleSheetsAsExcel = (rawData: string[], fileName: string = 'export.xlsx', defaultFontSize?: number) => {
+    Downloader.download(fileName, getMultipleSheetsAsExcel(rawData, defaultFontSize));
 }
 
 @Bean('excelCreator')
@@ -74,7 +74,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
-    private exportMode: string | undefined;
+    private exportMode: string = 'xlsx';
 
     @PostConstruct
     public postConstruct(): void {
@@ -85,18 +85,23 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): string {
-        this.setExportMode(params ? params.exportMode : undefined);
+        let exportMode = 'xlsx';
+
+        if (params && params.exportMode) {
+            exportMode = params.exportMode;
+        }
+
+        this.setExportMode(exportMode);
+
         return this.export(params);
     }
 
     public getDataAsExcel(params?: ExcelExportParams): Blob | string {
-        const data =  this.getData(params || {});
+        const { mergedParams, data } =  this.getMergedParamsAndData(params || {});
 
-        if (params && params.exportMode === 'xml') {
-            return data;
-        }
+        if (params && params.exportMode === 'xml') { return data; }
 
-        return this.packageFile(data);
+        return this.packageFile(data, mergedParams.fontSize);
     }
 
     public setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx' = 'xlsx'): void {
@@ -110,15 +115,15 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     public getGridRawDataForExcel(params: ExcelExportParams): string {
-        return this.getData(params || {});
+        return this.getMergedParamsAndData(params || {}).data;
     }
 
-    public getMultipleSheetsAsExcel(gridRawData: string[]): Blob {
-        return getMultipleSheetsAsExcel(gridRawData);
+    public getMultipleSheetsAsExcel(gridRawData: string[], defaultFontSize?: number): Blob {
+        return getMultipleSheetsAsExcel(gridRawData, defaultFontSize);
     }
 
-    public exportMultipleSheetsAsExcel(gridRawData: string[], fileName?: string) {
-        return exportMultipleSheetsAsExcel(gridRawData, fileName);
+    public exportMultipleSheetsAsExcel(gridRawData: string[], fileName?: string, defaultFontSize?: number) {
+        return exportMultipleSheetsAsExcel(gridRawData, fileName, defaultFontSize);
     }
 
     public getMimeType(): string {
@@ -197,19 +202,19 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.gridOptionsWrapper.isSuppressExcelExport();
     }
 
-    private setExportMode(exportMode?: string): void {
+    private setExportMode(exportMode: string): void {
         this.exportMode = exportMode;
     }
 
     private getExportMode(): string {
-        return this.exportMode || 'xlsx';
+        return this.exportMode;
     }
 
-    protected packageFile(data: string): Blob {
+    protected packageFile(data: string, fontSize?: number): Blob {
         if (this.getExportMode() === 'xml') {
             return super.packageFile(data);
         }
 
-        return getMultipleSheetsAsExcel([data]);
+        return getMultipleSheetsAsExcel([data], fontSize);
     }
 }

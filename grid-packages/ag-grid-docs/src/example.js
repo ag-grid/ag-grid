@@ -234,9 +234,10 @@ var gridOptions = {
         ratingFilterRenderer: ratingFilterRenderer
     },
     defaultExportParams: {
-        columnGroups: true,
+        columnGroups: false,
         headerRowHeight: 30,
-        rowHeight: 22
+        rowHeight: 22,
+        fontSize: 14
     },
     defaultColDef: {
         minWidth: 50,

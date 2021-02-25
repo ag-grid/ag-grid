@@ -3,7 +3,7 @@ import { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 const fontFactory: ExcelOOXMLTemplate = {
     getTemplate(font: Font) {
         const {
-            size = 14, colorTheme, color = '00000000', name = 'Calibri', family, scheme,
+            size, colorTheme, color = '00000000', name = 'Calibri', family, scheme,
             italic, bold, strike, outline, shadow, underline
         } = font;
 

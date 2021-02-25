@@ -35,7 +35,7 @@ type BorderProperty = string | undefined;
 const resetStylesheetValues = (): void => {
     stylesMap = { base: 0 };
     registeredNumberFmts = [];
-    registeredFonts = [{ name: 'Calibri', size: 14, colorTheme: '1', family: 2, scheme: 'minor' }];
+    registeredFonts = [{ name: 'Calibri', colorTheme: '1', family: 2, scheme: 'minor' }];
     registeredFills = [{ patternType: 'none', }, { patternType: 'gray125' }];
     registeredBorders = [{ left: undefined, right: undefined, top: undefined, bottom: undefined, diagonal: undefined }];
     registeredCellStyleXfs = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0 }];
@@ -281,9 +281,9 @@ const registerStyle = (config: ExcelStyle): void => {
 };
 
 const stylesheetFactory: ExcelOOXMLTemplate = {
-    getTemplate() {
+    getTemplate(defaultFontSize: number) {
         const numberFormats = numberFormatsFactory.getTemplate(registeredNumberFmts);
-        const fonts = fontsFactory.getTemplate(registeredFonts);
+        const fonts = fontsFactory.getTemplate(registeredFonts.map(font => ({...font, size: font.size != null ? font.size : defaultFontSize })));
         const fills = fillsFactory.getTemplate(registeredFills);
         const borders = bordersFactory.getTemplate(registeredBorders);
         const cellStylesXfs = cellStylesXfsFactory.getTemplate(registeredCellStyleXfs);

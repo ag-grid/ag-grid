@@ -14,6 +14,7 @@ export interface BaseExportParams {
     suppressQuotes?: boolean;
     columnKeys?: (string | Column)[];
     fileName?: string;
+    fontSize?: number;
     allColumns?: boolean;
     onlySelected?: boolean;
     onlySelectedAllPages?: boolean;

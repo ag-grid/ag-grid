@@ -34,7 +34,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
-        return this.getData(params);
+        return this.getMergedParamsAndData(params).data;
     }
 
     public getMimeType(): string {

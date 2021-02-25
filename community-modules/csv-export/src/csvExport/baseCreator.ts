@@ -16,24 +16,20 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
             return '';
         }
         const { mergedParams, data } = this.getMergedParamsAndData(userParams);
+        const fileNamePresent = mergedParams.fileName && mergedParams.fileName.length !== 0;
 
-        const fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
         let fileName = fileNamePresent ? mergedParams.fileName : this.getDefaultFileName();
 
         if (fileName!.indexOf(".") === -1) {
             fileName = fileName + "." + this.getDefaultFileExtension();
         }
 
-        Downloader.download(fileName!, this.packageFile(data));
+        Downloader.download(fileName!, this.packageFile(data, mergedParams.fontSize));
 
         return data;
     }
 
-    public getData(params?: P): string {
-        return this.getMergedParamsAndData(params).data;
-    }
-
-    private getMergedParamsAndData(userParams?: P): { mergedParams: P, data: string } {
+    protected getMergedParamsAndData(userParams?: P): { mergedParams: P, data: string } {
         const mergedParams = this.mergeDefaultParams(userParams);
         const data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
 
@@ -48,6 +44,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         return params;
     }
 
+    protected packageFile(data: string, fontSize?: number): Blob;
     protected packageFile(data: string): Blob {
         return new Blob(["\ufeff", data], {
             // @ts-ignore

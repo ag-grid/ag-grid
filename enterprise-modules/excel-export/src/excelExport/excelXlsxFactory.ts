@@ -64,8 +64,8 @@ export class ExcelXlsxFactory {
         return this.createXmlPart(workbookFactory.getTemplate(this.sheetNames));
     }
 
-    public static createStylesheet(): string {
-        return this.createXmlPart(stylesheetFactory.getTemplate());
+    public static createStylesheet(defaultFontSize: number): string {
+        return this.createXmlPart(stylesheetFactory.getTemplate(defaultFontSize));
     }
 
     public static createSharedStrings(): string {
