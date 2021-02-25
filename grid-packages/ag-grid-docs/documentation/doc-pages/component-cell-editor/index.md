@@ -22,8 +22,6 @@ increased input validation and better initial carot behaviour
 
 <grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370 }'></grid-example>
 
-The interface for the cell editor component is as follows:
- 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
 md-include:component-interface-react.md
