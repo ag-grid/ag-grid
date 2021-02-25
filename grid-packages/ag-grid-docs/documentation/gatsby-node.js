@@ -1,3 +1,10 @@
+/**
+ * Gatsby gives plugins and site builders many APIs for controlling your site’s data in the GraphQL data layer. Code in
+ * the file gatsby-node.js is run once in the process of building your site. You can use it to create pages dynamically,
+ * add nodes in GraphQL, or respond to events during the build lifecycle.
+ * https://www.gatsbyjs.com/docs/reference/config-files/gatsby-node/
+ */
+
 const path = require('path');
 const { createFilePath } = require('gatsby-source-filesystem');
 const { CODES, prefixId } = require('gatsby-source-filesystem/error-utils');
@@ -11,8 +18,8 @@ const toKebabCase = require('./src/utils/to-kebab-case');
 const isDevelopment = require('./src/utils/is-development');
 
 /**
- * This hides the config file that we use to show linting in IDEs from Gatsby. See the comment in .eslintrc.js for more
- * information.
+ * This hides the config file that we use to show linting in IDEs from Gatsby.
+ * See .eslintrc.js for more information.
  */
 const showHideEsLintConfigFile = (reporter, hide) => {
     const originalFileName = '.eslintrc.js';
@@ -29,6 +36,9 @@ const showHideEsLintConfigFile = (reporter, hide) => {
     }
 };
 
+/**
+ * This runs very early in the build lifecycle, to print out information about configuration.
+ */
 exports.onPreInit = ({ reporter }) => {
     reporter.info("---[ Initial configuration ]----------------------------------------------------");
 
@@ -39,22 +49,31 @@ exports.onPreInit = ({ reporter }) => {
     reporter.info("--------------------------------------------------------------------------------");
 };
 
+/**
+ * Once the bootstrap is finished, move the IDE ESLint file before the Gatsby build, so that Gatsby will use its defaults.
+ * See .eslintrc.js for more information.
+ */
 exports.onPostBootstrap = ({ reporter }) => {
     showHideEsLintConfigFile(reporter, true);
 };
 
-exports.onPostBuild = ({ reporter }) => {
+/**
+ * Restore the IDE ESLint file once Gatsby has finished building. This will handle the case for development mode
+ * or a production build.
+ * See .eslintrc.js for more information.
+ */
+exports.onPostBuild = exports.onCreateDevServer = ({ reporter }) => {
     showHideEsLintConfigFile(reporter, false);
 };
 
-exports.onCreateDevServer = ({ reporter }) => {
-    showHideEsLintConfigFile(reporter, false);
-};
-
-/* This is an override of the code in https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-filesystem/src/extend-file-node.js
+/**
+ * This allows us to add fields to GraphQL nodes. This code is based on the code in
+ * https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-filesystem/src/extend-file-node.js
  * We override this to allow us to specify the directory structure of the example files, so that we can reference
  * them correctly in the examples. By default, Gatsby includes a cache-busting hash of the file which would cause
- * problems if we included it. It does mean that example files could be held in the cache though. */
+ * problems if we included it. It does mean that example files could be held in a browser cache though. We also use
+ * this hook to produce still images for GIFs, which are loaded before the GIF is played.
+ */
 exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, pathPrefix = ``, reporter }) => {
     if (type.name !== `File`) {
         return {};
@@ -136,7 +155,10 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
     };
 };
 
-/* We add the path onto markdown nodes which allows us to then find the relevant file when generating pages */
+/**
+ * This is called when nodes are created. We add the path field onto Markdown nodes which allows us to then find the
+ * relevant file when generating pages. We also load content for JSON files so that it can be accessed.
+ */
 exports.onCreateNode = async ({ node, loadNodeContent, getNode, actions: { createNodeField } }) => {
     if (node.internal.type === 'MarkdownRemark') {
         const filePath = createFilePath({ node, getNode });
@@ -152,7 +174,9 @@ exports.onCreateNode = async ({ node, loadNodeContent, getNode, actions: { creat
     }
 };
 
-/* This allows us to use different layouts for different pages */
+/**
+ * This is called when pages are created. We override the default layout for certain pages e.g. the example-runner page.
+ */
 exports.onCreatePage = ({ page, actions: { createPage } }) => {
     if (page.path.match(/example-runner/)) {
         page.context.layout = 'bare';
@@ -190,6 +214,10 @@ const createHomePages = createPage => {
     });
 };
 
+/**
+ * This creates pages for each of the Markdown files, creating different versions for each framework that the Markdown
+ * file supports (by default, all frameworks).
+ */
 const createDocPages = async (createPage, graphql, reporter) => {
     const docPageTemplate = path.resolve(`src/templates/doc-page.jsx`);
 
@@ -230,6 +258,9 @@ const createDocPages = async (createPage, graphql, reporter) => {
     });
 };
 
+/**
+ * This creates pages for each of the charts in the chart gallery.
+ */
 const createChartGalleryPages = createPage => {
     const chartGalleryPageTemplate = path.resolve(`src/templates/chart-gallery-page.jsx`);
     const categories = Object.keys(chartGallery);
@@ -254,7 +285,9 @@ const createChartGalleryPages = createPage => {
     });
 };
 
-/* This creates pages for each framework from all of the markdown files, using the doc-page template */
+/**
+ * This allows us to generate pages for the website.
+ */
 exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => {
     if (!process.env.GATSBY_HOST) {
         process.env.GATSBY_HOST =
@@ -266,6 +299,9 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
     createChartGalleryPages(createPage);
 };
 
+/**
+ * This allows us to customise the webpack configuration.
+ */
 exports.onCreateWebpackConfig = ({ actions, getConfig }) => {
     actions.setWebpackConfig({
         /* We use fs to write some files during the build, but fs is only available at compile time. This allows the
