@@ -4,7 +4,18 @@ import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useJsonFileNodes } from './use-json-file-nodes';
 import styles from './MatrixTable.module.scss';
 
-const MatrixTable = ({ src, rootnode: rootNode, columns, tree, booleanonly: booleanOnly, stringonly: stringOnly, childpropertyname: childPropertyName, showcondition: showCondition }) => {
+/**
+ * This presents a matrix of information, e.g. to show which features are available with different versions of the grid.
+ */
+const MatrixTable = ({
+    src,
+    rootnode: rootNode,
+    columns,
+    tree,
+    booleanonly: booleanOnly,
+    stringonly: stringOnly,
+    childpropertyname: childPropertyName,
+    showcondition: showCondition }) => {
     const nodes = useJsonFileNodes();
     const file = JSON.parse(nodes.find(node => node.relativePath === src).internal.content);
     const allRows = getRowsToProcess(file, rootNode, showCondition);

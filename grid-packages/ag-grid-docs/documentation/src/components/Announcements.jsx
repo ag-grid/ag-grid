@@ -6,8 +6,10 @@ import enterpriseSvg from 'images/enterprise.svg';
 import { Announcement } from './Announcement';
 import styles from './Announcements.module.scss';
 
+/**
+ * This are the announcement cards shown underneath the left-hand navigation menu.
+ */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
-
     <Announcement date="Feb 19" version="25.1.0">
         <p className="card-text">
             Minor release with bug fixes:
@@ -18,7 +20,6 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
             </li>
         </ul>
     </Announcement>
-
     <Announcement date="Jan 6" version="25.0.0">
         <p className="card-text">
             Major release with new features and bug fixes:
@@ -103,6 +104,9 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
     </Announcement>
 </div>;
 
+/**
+ * The mailing list signup form, which uses MailChimp.
+ */
 const MailingListSignup = () => {
     return <>
         <Helmet>

@@ -32,6 +32,9 @@ const TopBar = ({ frameworks, framework, path }) => (
     </div>
 );
 
+/**
+ * This controls the layout template for all pages.
+ */
 export const Layout = ({ children, pageContext: { frameworks, framework = 'javascript', layout }, location: { pathname: path } }) => {
     if (layout === 'bare') {
         return children;

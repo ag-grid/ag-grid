@@ -21,6 +21,9 @@ const GrammarMap = {
     scss: Prism.languages.scss
 };
 
+/**
+ * This uses Prism to highlight a provided code snippet.
+ */
 const Code = ({ code, language = 'ts' }) => {
     if (Array.isArray(code)) {
         code = code.join('\n');

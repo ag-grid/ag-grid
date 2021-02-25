@@ -4,7 +4,22 @@ import Gif from './Gif';
 import { useImageFileNodes, getImage } from './use-image-file-nodes';
 import styles from './ImageCaption.module.scss';
 
-const ImageCaption = ({ pageName, src, alt, centered, children, constrained, descriptiontop: descriptionTop, height, maxwidth: maxWidth, minwidth: minWidth, width }) => {
+/**
+ * This can be used to show an image in a box, along with text if provided, and provides various options for configuring
+ * the appearance.
+ */
+const ImageCaption = ({
+    pageName,
+    src,
+    alt,
+    centered,
+    children,
+    constrained,
+    descriptiontop: descriptionTop,
+    height,
+    maxwidth: maxWidth,
+    minwidth: minWidth,
+    width }) => {
     const { fluidImages, images } = useImageFileNodes();
 
     let imgSrc;

@@ -3,6 +3,9 @@ import { Helmet } from 'react-helmet';
 import { getChartsVersionMessage, getGridVersionMessage, getHeaderTitle } from 'utils/page-header';
 import isDevelopment from 'utils/is-development';
 
+/**
+ * This is used for adding SEO information to pages.
+ */
 export const SEO = ({ title, description, framework, pageName }) => {
     const isCharts = pageName === 'charts' || pageName.indexOf('charts-') === 0;
     const metaTitle = getHeaderTitle(title, framework, isCharts);

@@ -7,6 +7,9 @@ import ReactTemplate from './ReactTemplate';
 import VueTemplate from './VueTemplate';
 import { getEntryFile } from './helpers';
 
+/**
+ * This generates the HTML to execute an example.
+ */
 export const getIndexHtml = (exampleInfo, isExecuting = false) => {
     const { sourcePath, options, library } = exampleInfo;
     let { boilerplatePath, appLocation, framework } = exampleInfo;

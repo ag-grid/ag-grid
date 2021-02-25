@@ -88,6 +88,9 @@ const Search = ({ text, onChange }) => {
     </div>;
 };
 
+/**
+ * This displays the list of options in the Standalone Charts API Explorer.
+ */
 export const Options = ({ chartType, updateOption }) => {
     const [searchText, setSearchText] = useState('');
     const getTrimmedSearchText = () => searchText.trim();

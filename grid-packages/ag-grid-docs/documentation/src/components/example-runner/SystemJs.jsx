@@ -167,6 +167,10 @@ const publishedConfiguration = {
     chartPaths: {}
 };
 
+/**
+ * Our framework examples use SystemJS to load the various dependencies. This component is used to insert the required
+ * code to load SystemJS and the relevant modules depending on the framework.
+ */
 const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options }) => {
     const { enterprise: isEnterprise } = options;
     const systemJsPath = `${boilerplatePath}systemjs.config${isDevelopment() ? '.dev' : ''}.js`;

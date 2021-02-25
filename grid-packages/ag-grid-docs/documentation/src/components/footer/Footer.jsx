@@ -8,13 +8,13 @@ const SocialMediaButtons = () => (
     <div className={styles.footer__buttons}>
         <div>
             <Helmet>
-                <script async defer src="https://buttons.github.io/buttons.js"></script>
+                <script async defer src="https://buttons.github.io/buttons.js" />
             </Helmet>
             <a className="github-button" href="https://github.com/ag-grid/ag-grid" data-show-count="true" aria-label="Star ag-grid on GitHub">Star</a>
         </div>
         <div>
             <Helmet>
-                <script async src="https://platform.twitter.com/widgets.js"></script>
+                <script async src="https://platform.twitter.com/widgets.js" />
             </Helmet>
             <a href="https://twitter.com/ag_grid?ref_src=twsrc%5Etfw" className="twitter-follow-button" data-lang="en" data-show-count="true">Follow @ag_grid</a>
         </div>

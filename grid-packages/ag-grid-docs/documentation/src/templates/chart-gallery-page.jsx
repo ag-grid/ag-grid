@@ -7,6 +7,9 @@ import ExampleRunner from 'components/example-runner/ExampleRunner';
 import pageStyles from './doc-page.module.scss';
 import styles from './chart-gallery-page.module.scss';
 
+/**
+ * This template is used for individual chart gallery pages.
+ */
 const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description, previous, next }, location }) => {
     const pageName = getPageName(location.pathname);
     const headerTitle = getHeaderTitle(`Gallery - ${name}`, framework, true);

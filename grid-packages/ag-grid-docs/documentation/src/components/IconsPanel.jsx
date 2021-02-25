@@ -66,6 +66,9 @@ const BottomBar = ({ theme }) => (
     <div className={styles['icons-panel__download']}><a href={withPrefix(`/theme-icons/${theme}/${theme}-icons.zip`)}>Download All</a></div>
 );
 
+/**
+ * This is a viewer for the available theme icons, and will also let the user download the icons.
+ */
 const IconsPanel = () => {
     const [activeTheme, setActiveTheme] = useState('alpine');
 
@@ -77,6 +80,5 @@ const IconsPanel = () => {
         </div>
     );
 };
-
 
 export default IconsPanel;

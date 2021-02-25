@@ -3,7 +3,7 @@ title: "Row Grouping"
 enterprise: true
 ---
 
-<video-section src="https://www.youtube.com/embed/gzqjP_kF4NI" title="Row Grouping Video Tutorial" header="true">
+<video-section id="gzqjP_kF4NI" title="Row Grouping Video Tutorial" header="true">
     This page shows how to group your rows. It starts off with Auto Column Groups, the simplest way to configure row groups and then builds up into more advanced topics for row grouping.
 </video-section>
 
@@ -262,7 +262,7 @@ const gridOptions = {
     groupUseEntireRow: true,
     groupRowRendererParams: {
         // puts a checkbox onto each group row
-        checkbox: true, 
+        checkbox: true,
     },
 }
 </snippet>
@@ -371,8 +371,8 @@ const gridOptions = {
 If you want to include a footer with each group, set the property `groupIncludeFooter` to true. The footer is displayed as the last line of the group when the group is expanded - it is not displayed when the group is collapsed.
 
 
-The footer by default will display the word 'Total' followed by the group key. If this is not what you want, then use 
-the `footerValueGetter` option. The following shows two ways for achieving the same, one using a function, one 
+The footer by default will display the word 'Total' followed by the group key. If this is not what you want, then use
+the `footerValueGetter` option. The following shows two ways for achieving the same, one using a function, one
 using an expression.
 
 <snippet>
@@ -382,8 +382,8 @@ const gridOptions = {
         {
             cellRenderer: 'agGroupCellRenderer',
             cellRendererParams: {
-                footerValueGetter: params =>  { 
-                    return 'Total (' + params.value + ')'; 
+                footerValueGetter: params =>  {
+                    return 'Total (' + params.value + ')';
                 },
             }
         },
@@ -479,7 +479,7 @@ This illustrates how to configure an specific column to show the groups generate
 |    columnDefs: [
 |        // The column we are grouping by, it is also hidden.
 |        { field: "country", rowGroup: true, hide: true },
-|        
+|
 |        // We choose this column as the column to show the country groups.
 |        { headerName: "Country - group", showRowGroup: 'country', cellRenderer: 'agGroupCellRenderer' },
 |    ]

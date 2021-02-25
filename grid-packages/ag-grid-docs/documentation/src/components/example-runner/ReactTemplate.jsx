@@ -6,6 +6,9 @@ import Styles from './Styles';
 import SystemJs from './SystemJs';
 import MetaData from './MetaData';
 
+/**
+ * This is the template for executing React examples in the example runner.
+ */
 const ReactTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
     <html lang="en">
         <head>

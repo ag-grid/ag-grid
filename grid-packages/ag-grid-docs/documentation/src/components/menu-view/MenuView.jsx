@@ -2,6 +2,9 @@ import React from 'react';
 import Tile from './Tile';
 import styles from './MenuView.module.scss';
 
+/**
+ * This renders the sections shown on the documentation homepage.
+ */
 const MenuView = ({ framework, data }) => (
     <>
         {data.map(group => (

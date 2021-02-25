@@ -4,6 +4,9 @@ import { data, series } from './templates.jsx';
 import { deepClone } from './utils.jsx';
 import styles from './Chart.module.scss';
 
+/**
+ * This renders the chart inside the Standalone Charts API Explorer.
+ */
 export class Chart extends React.Component {
     constructor(props) {
         super(props);

@@ -1,3 +1,8 @@
+/**
+ * These are the different editors available to be used in the Standalone Charts API Explorer, depending on the data
+ * type of the particular option.
+ */
+
 import React, { useState } from 'react';
 import { HuePicker, AlphaPicker } from 'react-color';
 import classnames from 'classnames';

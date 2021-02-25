@@ -7,8 +7,15 @@ import useClickOutside from './use-click-outside';
 import isDevelopment from 'utils/is-development';
 import styles from './Search.module.scss';
 
+/**
+ * The website uses Algolia to power its search functionality. This component builds on components provided by Algolia
+ * to render the search box and results.
+ */
 const Search = ({ currentFramework }) => {
     const [query, setQuery] = useState();
+
+    // It is important to memoise the client, otherwise we end up creating a new one on every re-render, resulting in
+    // no caching and multiple repeated queries!
     const searchClient = useMemo(() =>
         algoliasearch(process.env.GATSBY_ALGOLIA_APP_ID, process.env.GATSBY_ALGOLIA_SEARCH_KEY), []);
 

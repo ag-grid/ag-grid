@@ -4,6 +4,10 @@ import fwLogos from 'images/fw-logos';
 import supportedFrameworks from 'utils/supported-frameworks';
 import styles from './FrameworkSelector.module.scss';
 
+/**
+ * This is shown in the header in the top right, and is used to choose which framework the user wishes to see for the
+ * documentation.
+ */
 export default function FrameworkSelector({ frameworks, path, currentFramework }) {
     if (!currentFramework) { return null; }
 

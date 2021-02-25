@@ -294,7 +294,7 @@ title: "Get Started with AG Grid"
 [[only-javascript]]
 | ## Getting Started
 |
-| <video-section src="https://www.youtube.com/embed/KS-wg5zfCXc" title="Getting Started Video Tutorial">
+| <video-section id="KS-wg5zfCXc" title="Getting Started Video Tutorial">
 |     In this article, we will walk you through the necessary steps to add AG Grid to an existing JavaScript
 |     project, and configure some of the essential features of it. We will show you some of the fundamentals
 |     of the grid (passing properties, using the API, etc).
@@ -709,7 +709,7 @@ title: "Get Started with AG Grid"
 |
 | ## Getting Started
 |
-| <video-section src="https://www.youtube.com/embed/AeEfiWAGyLc" title="Getting Started Video Tutorial">
+| <video-section id="AeEfiWAGyLc" title="Getting Started Video Tutorial">
 |     Below we walk through the necessary steps to add AG Grid (both
 |     <a href="../licensing/">Community and Enterprise</a> are covered) to an
 |     Angular project and configure some grid features. In particular, we will go through
@@ -1302,7 +1302,7 @@ title: "Get Started with AG Grid"
 |
 | ## Getting Started
 |
-| <video-section src="https://www.youtube.com/embed/6PA45adHun8" title="Getting Started Video Tutorial">
+| <video-section id="6PA45adHun8" title="Getting Started Video Tutorial">
 |     In this article, we will walk you through the necessary steps to add AG Grid
 |     (both <a href="../licensing/">Community and Enterprise</a> are covered) to an existing
 |     React project, and configure some of the essential features of it. We will show you some of the
@@ -1705,7 +1705,7 @@ title: "Get Started with AG Grid"
 
 
 [[only-vue]]
-| <video-section src="https://www.youtube.com/embed/eW3qCti1lsA" title="Getting Started Video Tutorial">
+| <video-section id="eW3qCti1lsA" title="Getting Started Video Tutorial">
 |     In this article, we will walk you through the necessary steps to add AG Grid
 |     (both <a href="../licensing/">Community and Enterprise</a> are covered)
 |     to an existing Vue project, configure some of the essential features of it.

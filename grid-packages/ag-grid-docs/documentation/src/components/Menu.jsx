@@ -53,6 +53,10 @@ const MenuItem = ({ item, currentFramework }) => {
     );
 };
 
+/**
+ * This generates the navigation menu for the left-hand side. When a page loads, it will ensure the relevant section and
+ * link is shown and highlighted.
+ */
 const Menu = ({ currentFramework, currentPage }) => {
     const [activeSection, setActiveSection] = useState(null);
     const combinedMenuItems = menuData.reduce((combined, group) => [...combined, ...group.items], []);

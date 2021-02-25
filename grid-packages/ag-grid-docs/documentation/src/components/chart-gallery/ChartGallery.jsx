@@ -5,6 +5,9 @@ import thumbnails from './thumbnails';
 import toKebabCase from 'utils/to-kebab-case';
 import styles from './ChartGallery.module.scss';
 
+/**
+ * This used to display the chart gallery on the Standalone Charts Overview page.
+ */
 const ChartGallery = () => {
     const categories = Object.keys(chartGallery);
 

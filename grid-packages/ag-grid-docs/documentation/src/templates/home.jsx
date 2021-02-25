@@ -17,7 +17,7 @@ const flatRenderItems = (items, framework) => {
 
         if (curr.frameworks && curr.frameworks.indexOf(framework) === -1) { return ret; }
 
-        ret = prev.concat(Object.assign({},{ title: curr.title, url: curr.url }, curr.icon ? { icon: curr.icon } : {}));
+        ret = prev.concat(Object.assign({}, { title: curr.title, url: curr.url }, curr.icon ? { icon: curr.icon } : {}));
 
         if (!curr.items) { return ret; }
 
@@ -46,7 +46,7 @@ const urlMap = {
         'video-tutorial': 'https://youtu.be/eW3qCti1lsA',
         'example': 'https://stackblitz.com/edit/ag-grid-vue-hello-world'
     }
-}
+};
 
 const parseGettingStartedUrl = (url, framework) => {
     const match = url.match(/{(\w+-?\w*)}/);
@@ -55,19 +55,19 @@ const parseGettingStartedUrl = (url, framework) => {
             href: urlMap[framework][match[1]],
             target: '_blank',
             rel: 'noreferrer'
-        }
+        };
     }
     return {
         href: withPrefix(url.replace('../', `/${framework}/`))
     };
-}
+};
 
 const getLogo = (name, framework) => {
     if (name === 'framework') {
         return processedLogos[framework];
     }
     return processedLogos[name];
-}
+};
 
 const GettingStartedPane = ({ framework, data }) => {
     const linksToRender = flatRenderItems(data, framework);
@@ -76,15 +76,15 @@ const GettingStartedPane = ({ framework, data }) => {
             {linksToRender.map(link => {
                 const parsedLink = parseGettingStartedUrl(link.url, framework);
                 return (
-                    <a key={`${framework}_${link.title.replace(/\s/g,'').toLowerCase()}`} {...parsedLink} className={styles['docs-home__getting-started__item']}>
-                        <div  className={styles['docs-home__getting-started__item_logo']}>
-                            <img src={ getLogo(link.icon, framework) } alt={link.title}></img>
+                    <a key={`${framework}_${link.title.replace(/\s/g, '').toLowerCase()}`} {...parsedLink} className={styles['docs-home__getting-started__item']}>
+                        <div className={styles['docs-home__getting-started__item_logo']}>
+                            <img src={getLogo(link.icon, framework)} alt={link.title}></img>
                         </div>
                         <div className={styles['docs-home__getting-started__item_label']}>
                             {link.title}
                         </div>
                     </a>
-                )
+                );
             })}
         </div>
     );
@@ -105,6 +105,9 @@ const GettingStarted = ({ framework, data }) => {
     );
 };
 
+/**
+ * This is the home page for the documentation.
+ */
 const HomePage = ({ pageContext: { framework } }) => {
     // basics / getting started
     const gettingStartedItems = menuData[0].items[0].items;

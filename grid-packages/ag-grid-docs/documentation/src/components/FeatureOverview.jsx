@@ -11,6 +11,9 @@ features.forEach(feature => featureMap.set(feature.title, feature));
 
 const toCamelCase = (str) => str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
 
+/**
+ * This shows an overview of the grid features.
+ */
 const FeatureOverview = () => (
     groups.map(group => (
         <div key={group.group} className={styles['feature-overview']}>

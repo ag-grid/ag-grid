@@ -15,20 +15,24 @@ import { getIndexHtml } from './index-html-helper';
 import anchorIcon from 'images/anchor';
 import styles from './ExampleRunner.module.scss';
 
-const isGeneratedExample = type => ['generated', 'mixed'].includes(type);
+/**
+ * The example runner is used for displaying examples in the documentation, showing the example executing
+ * along with a view of the example code. Users are also able to open the example in a new window, or create
+ * a Plunker based on the example code.
+ */
+export const ExampleRunner = props => {
+    return <GlobalContextConsumer>
+        {({ exampleImportType, useFunctionalReact, set }) => {
+            const innerProps = {
+                ...props,
+                exampleImportType,
+                useFunctionalReact,
+                set,
+            };
 
-const writeIndexHtmlFile = exampleInfo => {
-    const { appLocation, type } = exampleInfo;
-    const indexHtml = getIndexHtml(exampleInfo, true);
-
-    fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
-
-    const templateIndexHtmlPath = `public${appLocation}../../index.html`;
-
-    if (isGeneratedExample(type) && fs.existsSync(templateIndexHtmlPath)) {
-        // don't publish the template index.html
-        fs.rmSync(templateIndexHtmlPath);
-    }
+            return <ExampleRunnerInner {...innerProps} />;
+        }}
+    </GlobalContextConsumer>;
 };
 
 const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, set }) => {
@@ -39,11 +43,16 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
         [nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, exampleImportType]
     );
 
+    /*
+     * During server side rendering, we generate the relevant index.html(s) for each example, so that in production
+     * every example uses the pre-generated index.html, which can also be opened if the user wants to open the example
+     * in a new window.
+     */
     if (isServerSideRendering()) {
         writeIndexHtmlFile(exampleInfo);
 
         if (isGeneratedExample(type)) {
-            // Need to generate the different permutations of index file:
+            // Need to generate the different permutations of index.html file:
             // 1. Modules version - this is saved already as it is the default
 
             // 2. Packages version
@@ -138,21 +147,6 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
     </div>;
 };
 
-export const ExampleRunner = props => {
-    return <GlobalContextConsumer>
-        {({ exampleImportType, useFunctionalReact, set }) => {
-            const innerProps = {
-                ...props,
-                exampleImportType,
-                useFunctionalReact,
-                set,
-            };
-
-            return <ExampleRunnerInner {...innerProps} />;
-        }}
-    </GlobalContextConsumer>;
-};
-
 const ImportTypeSelector = ({ importType, onChange }) => {
     return <div className={styles['example-runner__import-type']}>
         {!isServerSideRendering() && <select className={styles['example-runner__import-type__select']} style={{ width: 120 }} value={importType} onChange={onChange} onBlur={onChange}>
@@ -170,6 +164,22 @@ const ReactStyleSelector = ({ useFunctionalReact, onChange }) => {
             <option value="true">Hooks</option>
         </select>}
     </div>;
+};
+
+const isGeneratedExample = type => ['generated', 'mixed'].includes(type);
+
+const writeIndexHtmlFile = exampleInfo => {
+    const { appLocation, type } = exampleInfo;
+    const indexHtml = getIndexHtml(exampleInfo, true);
+
+    fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
+
+    const templateIndexHtmlPath = `public${appLocation}../../index.html`;
+
+    if (isGeneratedExample(type) && fs.existsSync(templateIndexHtmlPath)) {
+        // don't publish the template index.html
+        fs.rmSync(templateIndexHtmlPath);
+    }
 };
 
 export default ExampleRunner;

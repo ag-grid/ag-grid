@@ -6,24 +6,9 @@ import { doOnEnter } from 'components/key-handlers';
 import styles from './CodeViewer.module.scss';
 import Code from '../Code';
 
-const updateFiles = (exampleInfo, setFiles, setActiveFile) => {
-    if (isServerSideRendering()) { return; }
-
-    const { framework } = exampleInfo;
-
-    getExampleFiles(exampleInfo).then(files => {
-        setFiles(files);
-
-        const entryFile = getEntryFile(framework);
-
-        if (files[entryFile]) {
-            setActiveFile(entryFile);
-        } else {
-            setActiveFile(Object.keys(files).sort()[0]);
-        }
-    });
-};
-
+/**
+ * This renders the code viewer in the example runner.
+ */
 const CodeViewer = ({ isActive, exampleInfo }) => {
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
@@ -51,6 +36,24 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
             {files && activeFile && <FileView key={activeFile} path={activeFile} code={files[activeFile].source} />}
         </div>
     </div>;
+};
+
+const updateFiles = (exampleInfo, setFiles, setActiveFile) => {
+    if (isServerSideRendering()) { return; }
+
+    const { framework } = exampleInfo;
+
+    getExampleFiles(exampleInfo).then(files => {
+        setFiles(files);
+
+        const entryFile = getEntryFile(framework);
+
+        if (files[entryFile]) {
+            setActiveFile(entryFile);
+        } else {
+            setActiveFile(Object.keys(files).sort()[0]);
+        }
+    });
 };
 
 const FileItem = ({ path, isActive, onClick }) =>

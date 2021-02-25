@@ -1,3 +1,10 @@
+/**
+ * This configures the options to show in the Standalone Charts API Explorer. Each option can use different editors
+ * depending on the type of data to be supplied for that option. We also generate a configuration JSON file to be used
+ * for the API documentation from this file, so this is the source of truth; you can run `npm run generate-config` in
+ * this folder in order to generate it.
+ */
+
 import { StringEditor, NumberEditor, BooleanEditor, PresetEditor, ColourEditor, ArrayEditor } from './Editors.jsx';
 import isServerSideRendering from 'utils/is-server-side-rendering';
 

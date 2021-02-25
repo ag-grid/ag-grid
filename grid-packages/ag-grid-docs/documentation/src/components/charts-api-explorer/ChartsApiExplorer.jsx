@@ -94,6 +94,11 @@ const createOptionsJson = (chartType, options) => {
 
 const isFullScreen = () => window.self === window.top;
 
+/**
+ * The Standalone Charts API Explorer is an interactive tool for exploring the charts API. The user can change different
+ * settings and see how they affect the appearance of the chart, and it will generate the code they would need to use in
+ * the framework of their choice.
+ */
 export const ChartsApiExplorer = ({ framework }) => {
     const [chartType, setChartType] = useState('bar');
     const [options, setOptions] = useState({});

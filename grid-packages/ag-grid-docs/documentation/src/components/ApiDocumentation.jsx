@@ -5,6 +5,11 @@ import anchorIcon from 'images/anchor';
 import styles from './ApiDocumentation.module.scss';
 import Code from './Code';
 
+/**
+ * This generates tabulated API documentation based on information in JSON files. This way it is possible to show
+ * information about different parts of an API in multiple places across the website while pulling the information
+ * from one source of truth, so we only have to update one file when the documentation needs to change.
+ */
 export const ApiDocumentation = ({ pageName, source, sources, section, names = [], config = {} }) => {
     const nodes = useJsonFileNodes();
 

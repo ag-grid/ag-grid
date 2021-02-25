@@ -6,6 +6,16 @@ import { getIndexHtml } from './index-html-helper';
 import { ParameterConfig } from '../../../pages/example-runner';
 import isDevelopment from 'utils/is-development';
 
+/**
+ * The "internalFramework" is the framework name we use inside the example runner depending on which options the
+ * user has selected. It can be one of the following:
+ *
+ * - 'vanilla' (JavaScript)
+ * - 'react' (React Classes)
+ * - 'reactFunctional' (React Hooks)
+ * - 'angular' (Angular)
+ * - 'vue' (Vue)
+ */
 const getInternalFramework = (framework, useFunctionalReact) => {
     if (framework === 'javascript') {
         return 'vanilla';

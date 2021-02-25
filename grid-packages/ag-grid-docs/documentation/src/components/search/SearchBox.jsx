@@ -5,6 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import styles from './SearchBox.module.scss';
 
+/**
+ * The search box shown in the header at the top of the page.
+ */
 const SearchBox = ({ refine, currentRefinement, className, onFocus }) =>
     <form className={classnames(className, styles['search-box'])}>
         <input

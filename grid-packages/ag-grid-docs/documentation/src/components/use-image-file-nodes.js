@@ -1,5 +1,8 @@
 import { graphql, useStaticQuery } from 'gatsby';
 
+/**
+ * This provides access to information about all image files.
+ */
 export const useImageFileNodes = () => {
     const { fluidImages: { nodes: fluidImages }, images: { nodes: images } } = useStaticQuery(graphql`
     {

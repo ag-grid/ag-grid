@@ -1,30 +1,41 @@
-import { formatJson, deepClone } from "./utils.jsx";
+/**
+ * These templates are used to generate the code to render the charts in the Standalone Charts API Explorer.
+ */
 
-export const data = [{
-    month: 'Jan',
-    revenue: 155,
-    profit: 33,
-}, {
-    month: 'Feb',
-    revenue: 123,
-    profit: 35.5,
-}, {
-    month: 'Mar',
-    revenue: 172.5,
-    profit: 41,
-}, {
-    month: 'Apr',
-    revenue: 94,
-    profit: 29,
-}, {
-    month: 'May',
-    revenue: 112.5,
-    profit: 37,
-}, {
-    month: 'Jun',
-    revenue: 148,
-    profit: 41.5,
-}];
+import { formatJson, deepClone } from './utils.jsx';
+
+export const data = [
+    {
+        month: 'Jan',
+        revenue: 155,
+        profit: 33,
+    },
+    {
+        month: 'Feb',
+        revenue: 123,
+        profit: 35.5,
+    },
+    {
+        month: 'Mar',
+        revenue: 172.5,
+        profit: 41,
+    },
+    {
+        month: 'Apr',
+        revenue: 94,
+        profit: 29,
+    },
+    {
+        month: 'May',
+        revenue: 112.5,
+        profit: 37,
+    },
+    {
+        month: 'Jun',
+        revenue: 148,
+        profit: 41.5,
+    }
+];
 
 export const series = [{
     type: 'column',

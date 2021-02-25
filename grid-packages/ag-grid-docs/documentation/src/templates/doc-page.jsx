@@ -22,6 +22,9 @@ import { SEO } from 'components/SEO';
 import stripHtml from 'utils/strip-html';
 import styles from './doc-page.module.scss';
 
+/**
+ * This template is used for documentation pages, i.e. those generated from Markdown files.
+ */
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
   const [showSideMenu, setShowSideMenu] = useState(true);
@@ -41,6 +44,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
 
   const getSnippetProps = props => ({ ...props, framework });
 
+  // This configures which components will be used for the specified HTML tags
   const renderAst = new rehypeReact({
     createElement: React.createElement,
     components: {
@@ -69,6 +73,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   let { title, description } = page.frontmatter;
 
   if (!description) {
+    // If no description is provided in the Markdown, we create one from the lead paragraph
     const firstParagraphNode = ast.children.filter(child => child.tagName === 'p')[0];
 
     if (firstParagraphNode) {
