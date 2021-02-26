@@ -25,7 +25,6 @@ main {
 .header {
     composes: d-flex align-items-center px-2 px-md-3 py-1 from global;
     position: relative;
-
     background-image: linear-gradient(to top left, $primary, darken($primary, 25%));
 
     &__wrapper {
@@ -34,10 +33,6 @@ main {
 
     &__logo {
         composes: d-block from global;
-
-        background-image: url("../images/ag-grid.svg");
-        background-repeat: no-repeat;
-        background-size: contain;
         min-width: 15rem;
     }
 }

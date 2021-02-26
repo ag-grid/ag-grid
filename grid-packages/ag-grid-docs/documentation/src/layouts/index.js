@@ -8,6 +8,7 @@ import Search from 'components/search/Search';
 import FrameworkSelector from 'components/FrameworkSelector';
 import { getPageName } from 'utils/get-page-name';
 import favIcons from '../images/favicons';
+import logo from '../images/ag-grid.svg';
 import styles from './index.module.scss';
 
 const TopBar = ({ frameworks, framework, path }) => (
@@ -51,8 +52,7 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
             <Helmet htmlAttributes={{ lang: 'en' }} />
             <header className={styles.header}>
                 <div className={styles.header__wrapper}>
-                    {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
-                    <a href="/" aria-label="Home" className={styles['header__logo']}></a>
+                    <a href="/" aria-label="Home" className={styles['header__logo']}><img src={logo} alt="AG Grid" /></a>
                     <HeaderNav />
                 </div>
             </header>
