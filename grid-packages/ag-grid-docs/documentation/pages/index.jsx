@@ -1,11 +1,12 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { getHeaderTitle } from 'utils/page-header';
+
+const title = 'AG Grid: Documentation';
 
 const Default = () => <div>
-    <Helmet title={getHeaderTitle('Documentation')} />
+    <Helmet title={title} />
     <div className="p-3">
-        <h1>AG Grid: Documentation</h1>
+        <h1>{title}</h1>
         <div>Loading framework-specific content...</div>
     </div>
 </div>;
