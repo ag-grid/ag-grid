@@ -2,7 +2,7 @@
 title: "Client-Side Data - Transaction Updates"
 ---
 
-Transaction Updates allow adding, removing or updating large numbers of rows inside the grid in an efficient manner.
+Transaction Updates allow large numbers of rows in the grid to be added, removed or updated in an efficient manner.
 
 Transaction Updates are excellent for applying large data changes with the following advantages:
 
@@ -14,7 +14,6 @@ Transaction Updates are excellent for applying large data changes with the follo
 A transaction object contains the details of what rows should be added, removed and updated. The grid API `applyTransaction(transaction)` takes this transaction object and applies it to the grid's data.
 
 The result of the `applyTransaction(transaction)` is also a transaction, however it is a list of [Row Nodes](../row-object/) that were added, removed or updated. Both types of transactions look similar, but the difference is the data type they contain.
-</p>
 
 - **Row Data Transaction**: Contains Row Data, the data that you are providing to the grid.
 - **Row Node Transaction**: Contains Row Nodes, the grid-created objects that wrap row data items.

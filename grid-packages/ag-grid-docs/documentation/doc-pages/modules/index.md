@@ -2,7 +2,7 @@
 title: "AG Grid Modules - Overview"
 ---
 
-AG Grid `modules` allow you to pick and choose which features you require, resulting in a smaller application size overall, with the trade-off being that you need to register the modules you require.
+AG Grid `modules` allow you to just import the features which you need, resulting in a smaller application size overall.
 
 [[note]]
 | The introduction of modules in version 22.0.0 is a significant first step towards reducing

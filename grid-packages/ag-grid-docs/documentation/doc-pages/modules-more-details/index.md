@@ -2,7 +2,7 @@
 title: "AG Grid Modules - More Details"
 ---
 
-AG Grid `modules` allow you to pick and choose which features you require, resulting in a smaller application size overall, with the trade-off being that you need to register the modules you require.
+AG Grid `modules` allow you to pick and choose which features you need, resulting in a smaller application size overall, with the trade-off being that you need to register the modules you require.
 
 ## Introduction
 
@@ -22,7 +22,7 @@ AG Grid `modules` allow you to pick and choose which features you require, resul
 
 [[note]]
 | If you decide to use `@ag-grid-enterprise/all-modules` then you do **not** need to
-| specify `@ag-grid-community/all-modules` too. `@ag-grid-enterprise/all-modules` 
+| specify `@ag-grid-community/all-modules` too. `@ag-grid-enterprise/all-modules`
 | will contain all Community modules.
 
 ### @ag-grid-community/core
