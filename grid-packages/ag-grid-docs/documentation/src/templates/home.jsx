@@ -1,15 +1,11 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { withPrefix } from 'gatsby';
 import { getHeaderTitle } from 'utils/page-header';
 import logos from 'images/logos';
 import MenuView from 'components/menu-view/MenuView';
+import { SEO } from 'components/SEO';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './home.module.scss';
-
-const processedLogos = (() => ({
-    ...logos
-}))();
 
 const flatRenderItems = (items, framework) => {
     return items.reduce((prev, curr) => {
@@ -62,12 +58,7 @@ const parseGettingStartedUrl = (url, framework) => {
     };
 };
 
-const getLogo = (name, framework) => {
-    if (name === 'framework') {
-        return processedLogos[framework];
-    }
-    return processedLogos[name];
-};
+const getLogo = (name, framework) => logos[name === 'framework' ? framework : name];
 
 const GettingStartedPane = ({ framework, data }) => {
     const linksToRender = flatRenderItems(data, framework);
@@ -114,7 +105,12 @@ const HomePage = ({ pageContext: { framework } }) => {
 
     return (
         <div className={styles['docs-home']}>
-            <Helmet title={getHeaderTitle('Documentation', framework)} />
+            <SEO
+                title={getHeaderTitle('Documentation', framework)}
+                description={`Our documentation will help you to get up and running with AG Grid.`}
+                framework={framework}
+                pageName={'home'}
+            />
             <GettingStarted framework={framework} data={gettingStartedItems} />
             <MenuView framework={framework} data={menuData} />
         </div>

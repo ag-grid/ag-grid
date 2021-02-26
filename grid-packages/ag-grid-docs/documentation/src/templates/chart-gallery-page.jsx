@@ -1,9 +1,9 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { getPageName } from 'utils/get-page-name';
 import { getHeaderTitle } from 'utils/page-header';
 import toKebabCase from 'utils/to-kebab-case';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
+import { SEO } from 'components/SEO';
 import pageStyles from './doc-page.module.scss';
 import styles from './chart-gallery-page.module.scss';
 
@@ -17,7 +17,11 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
     return (
         <div id="doc-page-wrapper" className={pageStyles['doc-page__wrapper']}>
             <div id="doc-content" className={pageStyles['doc-page']}>
-                <Helmet title={headerTitle} />
+                <SEO
+                    title={headerTitle}
+                    description={description}
+                    framework={framework}
+                    pageName={`charts-${pageName}`} />
 
                 <div className={styles['chart-navigation']}>
                     {/* eslint-disable jsx-a11y/control-has-associated-label */}

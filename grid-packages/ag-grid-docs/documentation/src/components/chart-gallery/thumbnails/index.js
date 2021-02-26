@@ -12,7 +12,7 @@ import thumbnailCustomMarkerShapes from './custom-marker-shapes.png';
 import thumbnailCustomTooltips from './custom-tooltips.png';
 import thumbnailGroupedBar from './grouped-bar.png';
 import thumbnailGroupedColumn from './grouped-column.png';
-import thumbnailHistogramwithspecifiedbins from './histogram-with-specified-bins.png';
+import thumbnailHistogramWithSpecifiedBins from './histogram-with-specified-bins.png';
 import thumbnailLineWithGaps from './line-with-gaps.png';
 import thumbnailMarketIndexTreemap from './market-index-treemap.png';
 import thumbnailPerMarkerCustomisation from './per-marker-customisation.png';
@@ -47,7 +47,7 @@ const thumbnails = {
     'custom-tooltips': thumbnailCustomTooltips,
     'grouped-bar': thumbnailGroupedBar,
     'grouped-column': thumbnailGroupedColumn,
-    'histogram-with-specified-bins': thumbnailHistogramwithspecifiedbins,
+    'histogram-with-specified-bins': thumbnailHistogramWithSpecifiedBins,
     'line-with-gaps': thumbnailLineWithGaps,
     'market-index-treemap': thumbnailMarketIndexTreemap,
     'per-marker-customisation': thumbnailPerMarkerCustomisation,
