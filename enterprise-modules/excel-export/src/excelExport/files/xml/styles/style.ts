@@ -3,7 +3,7 @@ import { ExcelStyle, ExcelXMLTemplate } from '@ag-grid-community/core';
 
 const style: ExcelXMLTemplate = {
     getTemplate(styleProperties: ExcelStyle): XmlElement {
-        const {id, name} = styleProperties;
+        const { id, name } = styleProperties!;
         return {
             name: 'Style',
             properties: {

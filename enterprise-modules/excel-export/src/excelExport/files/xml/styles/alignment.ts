@@ -12,7 +12,7 @@ const alignment: ExcelXMLTemplate = {
             shrinkToFit,
             verticalText,
             wrapText
-        } = styleProperties.alignment;
+        } = styleProperties.alignment!;
         return {
             name: 'Alignment',
             properties: {

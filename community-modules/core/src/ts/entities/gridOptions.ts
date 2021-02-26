@@ -92,6 +92,7 @@ import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartO
 import { AgChartOptions, AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
 import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/header/headerPosition";
+import { ExcelStyle } from "../interfaces/iExcelCreator";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -251,8 +252,7 @@ export interface GridOptions {
     /** @deprecated */
     deprecatedEmbedFullWidthRows?: boolean;
 
-    //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
-    excelStyles?: any[];
+    excelStyles?: ExcelStyle[];
     /** @deprecated Use floatingFilter on the colDef instead */
     floatingFilter?: boolean;
     suppressExcelExport?: boolean;

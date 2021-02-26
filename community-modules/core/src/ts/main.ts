@@ -56,9 +56,10 @@ export {
     ExcelFont,
     ExcelInterior,
     ExcelNumberFormat,
+    ExcelXMLDataType,
     ExcelOOXMLDataType,
     ExcelOOXMLTemplate,
-    ExcelFileParams,
+    ExcelExportMultipleSheetParams,
     ExcelProtection,
     ExcelRelationship,
     ExcelFactoryMode,
@@ -229,7 +230,7 @@ export { IChartService, ChartModel, GetChartImageDataUrlParams } from "./interfa
 
 // exporter
 export {
-    CsvExportParams, CsvCustomContent, ExportParams, FileExportParams, ProcessCellForExportParams,
+    CsvExportParams, CsvCustomContent, ExportParams, PackageFileParams, ProcessCellForExportParams,
     ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams, ProcessRowGroupForExportParams,
     ShouldRowBeSkippedParams, BaseExportParams
 } from "./interfaces/exportParams";

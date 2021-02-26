@@ -8,7 +8,7 @@ const borders: ExcelXMLTemplate = {
             borderLeft,
             borderRight,
             borderTop
-        } = styleProperties.borders;
+        } = styleProperties.borders!;
         return {
             name: 'Borders',
             children: [borderBottom, borderLeft, borderRight, borderTop].map((it: ExcelBorder, index: number) => {

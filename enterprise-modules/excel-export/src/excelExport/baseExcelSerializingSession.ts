@@ -1,6 +1,5 @@
 import { Column, Constants, ExcelCell, ExcelColumn, ExcelRow, ExcelStyle, ExcelWorksheet, RowNode, _ } from "@ag-grid-community/core";
 import { BaseGridSerializingSession, GridSerializingParams, RowAccumulator, RowSpanningAccumulator, RowType } from "@ag-grid-community/csv-export";
-import { ExcelMixedStyle } from "./excelCreator";
 
 export interface ColumnWidthCallbackParams {
     column: Column | null;
@@ -16,6 +15,12 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     headerRowHeight?: number;
     columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
     autoConvertFormulas?: boolean;
+}
+
+interface ExcelMixedStyle {
+    key: string;
+    excelID: string;
+    result: ExcelStyle;
 }
 
 export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializingSession<ExcelCell[][]> {

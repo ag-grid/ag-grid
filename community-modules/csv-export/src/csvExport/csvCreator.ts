@@ -7,7 +7,6 @@ import {
     GridOptionsWrapper,
     ICsvCreator,
     PostConstruct,
-    FileExportParams,
     ValueService
 } from "@ag-grid-community/core";
 import { BaseCreator } from "./baseCreator";
@@ -16,7 +15,7 @@ import { GridSerializer } from "./gridSerializer";
 import { CsvSerializingSession } from "./sessions/csvSerializingSession";
 
 @Bean('csvCreator')
-export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams, FileExportParams> implements ICsvCreator {
+export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams> implements ICsvCreator {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
@@ -31,7 +30,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         });
     }
 
-    public export(userParams?: CsvExportParams & FileExportParams): string {
+    public export(userParams?: CsvExportParams): string {
         if (this.isExportSuppressed()) {
             console.warn(`ag-grid: Export cancelled. Export is not allowed as per your configuration.`);
             return '';
@@ -44,11 +43,11 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         return data;
     }
 
-    public exportDataAsCsv(params?: CsvExportParams & FileExportParams): string {
+    public exportDataAsCsv(params?: CsvExportParams): string {
         return this.export(params);
     }
 
-    public getDataAsCsv(params?: CsvExportParams & FileExportParams): string {
+    public getDataAsCsv(params?: CsvExportParams): string {
         return this.getMergedParamsAndData(params).data;
     }
 

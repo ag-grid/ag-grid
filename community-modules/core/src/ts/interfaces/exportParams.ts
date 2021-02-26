@@ -4,10 +4,6 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColumnGroup } from "../entities/columnGroup";
 
-export interface FileExportParams {
-    data: string[];
-    fileName?: string;
-}
 export interface BaseExportParams {
     skipHeader?: boolean;
     columnGroups?: boolean;
@@ -17,10 +13,10 @@ export interface BaseExportParams {
     skipPinnedBottom?: boolean;
     suppressQuotes?: boolean;
     columnKeys?: (string | Column)[];
-    fileName?: string;
     allColumns?: boolean;
     onlySelected?: boolean;
     onlySelectedAllPages?: boolean;
+    fileName?: string;
 
     shouldRowBeSkipped?(params: ShouldRowBeSkippedParams): boolean;
     processCellCallback?(params: ProcessCellForExportParams): string;
@@ -34,6 +30,10 @@ export interface ExportParams<T> extends BaseExportParams {
     customFooter?: T;
     getCustomContentBelowRow?: (params: ProcessRowGroupForExportParams) => T | undefined;
 }
+
+export type PackageFileParams<T> = T & {
+    data: string[];
+};
 
 export interface CsvCell {
     data: CsvCellData;

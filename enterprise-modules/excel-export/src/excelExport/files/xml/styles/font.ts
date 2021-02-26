@@ -16,7 +16,7 @@ const font: ExcelXMLTemplate = {
             verticalAlign,
             charSet,
             family,
-        } = styleProperties.font;
+        } = styleProperties.font!;
         return {
             name: "Font",
             properties: {

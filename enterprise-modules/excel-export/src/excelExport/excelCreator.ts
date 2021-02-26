@@ -5,7 +5,7 @@ import {
     ColumnController,
     ExcelExportParams,
     ExcelFactoryMode,
-    ExcelFileParams,
+    ExcelExportMultipleSheetParams,
     GridOptions,
     GridOptionsWrapper,
     IExcelCreator,
@@ -24,15 +24,9 @@ import { BaseCreator, GridSerializer, ZipContainer, RowType, Downloader } from "
 import { ExcelGridSerializingParams } from './baseExcelSerializingSession';
 import { ExcelXmlFactory } from './excelXmlFactory';
 
-export interface ExcelMixedStyle {
-    key: string;
-    excelID: string;
-    result: ExcelStyle;
-}
+type SerializingSession = ExcelXlsxSerializingSession | ExcelXmlSerializingSession;
 
-type SerializingSession = ExcelXmlSerializingSession | ExcelXlsxSerializingSession;
-
-export const getMultipleSheetsAsExcel = (params: ExcelFileParams) => {
+export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
     const { data, fontSize = 11, author = 'AG Grid' } = params;
     ZipContainer.addFolders([
         'xl/worksheets/',
@@ -61,14 +55,14 @@ export const getMultipleSheetsAsExcel = (params: ExcelFileParams) => {
     return ZipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 }
 
-export const exportMultipleSheetsAsExcel = (properties: ExcelFileParams) => {
+export const exportMultipleSheetsAsExcel = (properties: ExcelExportMultipleSheetParams) => {
     const { fileName = 'export.xlsx' } = properties;
 
     Downloader.download(fileName, getMultipleSheetsAsExcel(properties));
 }
 
 @Bean('excelCreator')
-export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession, ExcelExportParams, ExcelFileParams> implements IExcelCreator {
+export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession, ExcelExportParams> implements IExcelCreator {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
@@ -88,7 +82,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         });
     }
 
-    public export(userParams?: ExcelExportParams & ExcelFileParams): string {
+    public export(userParams?: ExcelExportParams): string {
         if (this.isExportSuppressed()) {
             console.warn(`ag-grid: Export cancelled. Export is not allowed as per your configuration.`);
             return '';
@@ -105,7 +99,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return data;
     }
 
-    public exportDataAsExcel(params?: ExcelExportParams & ExcelFileParams): string {
+    public exportDataAsExcel(params?: ExcelExportParams): string {
         let exportMode = 'xlsx';
 
         if (params && params.exportMode) {
@@ -117,7 +111,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.export(params);
     }
 
-    public getDataAsExcel(params?: ExcelExportParams & ExcelFileParams): Blob | string {
+    public getDataAsExcel(params?: ExcelExportParams): Blob | string {
         const { mergedParams, data } =  this.getMergedParamsAndData(params);
 
         if (params && params.exportMode === 'xml') { return data; }
@@ -139,15 +133,15 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return factory.factoryMode;
     }
 
-    public getGridRawDataForExcel(params: ExcelExportParams & ExcelFileParams): string {
+    public getGridRawDataForExcel(params: ExcelExportParams): string {
         return this.getMergedParamsAndData(params).data;
     }
 
-    public getMultipleSheetsAsExcel(params: ExcelFileParams): Blob {
+    public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob {
         return getMultipleSheetsAsExcel(params);
     }
 
-    public exportMultipleSheetsAsExcel(params: ExcelFileParams) {
+    public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams) {
         return exportMultipleSheetsAsExcel(params);
     }
 
@@ -235,7 +229,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.exportMode;
     }
 
-    protected packageFile(params: ExcelFileParams): Blob {
+    protected packageFile(params: ExcelExportMultipleSheetParams): Blob {
         if (this.getExportMode() === 'xml') {
             return super.packageFile(params);
         }

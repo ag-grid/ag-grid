@@ -9,8 +9,8 @@ const protection: ExcelXMLTemplate = {
                 prefixedAttributes:[{
                     prefix: "ss:",
                     map: {
-                        Protected: styleProperties.protection.protected,
-                        HideFormula: styleProperties.protection.hideFormula
+                        Protected: styleProperties.protection!.protected,
+                        HideFormula: styleProperties.protection!.hideFormula
                     }
                 }]
             }
