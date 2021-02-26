@@ -46,7 +46,7 @@ const Footer = ({ framework }) => (
             </div>
             <div className={styles['footer__row']}>
                 <p>AG Grid Limited registered in the United Kingdom. Company No. 07318192.</p>
-                <p>{`\u00A9`} AG Grid Ltd. 2015-{new Date().getFullYear()}</p>
+                <p>&copy; AG Grid Ltd. 2015-{new Date().getFullYear()}</p>
             </div>
         </div>
     </footer>

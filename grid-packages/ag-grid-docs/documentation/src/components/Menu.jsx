@@ -15,12 +15,7 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
             role="button"
             tabIndex="0"
             className={styles['menu__section__heading']}>
-            <FontAwesomeIcon
-                icon={faChevronRight}
-                fixedWidth
-                rotation={isActive ? 90 : 0}
-                className={styles['menu__arrow']}
-            />
+            <svg class={classnames(styles['menu__arrow'], { 'fa-rotate-90': isActive })}><use href="#menu-item"></use></svg>
             {title}
         </div>
         {isActive && <MenuGroup isTopLevel={true} group={{ group: title, items }} currentFramework={currentFramework} />}
@@ -79,6 +74,7 @@ const Menu = ({ currentFramework, currentPage }) => {
     }, [currentPage, currentFramework]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <div className={styles['menu']}>
+        <FontAwesomeIcon icon={faChevronRight} className={styles['menu__arrow']} symbol="menu-item" />
         <ul id="side-nav" className={styles['menu__sections']}>
             {combinedMenuItems.map(item => {
                 const { title } = item;
