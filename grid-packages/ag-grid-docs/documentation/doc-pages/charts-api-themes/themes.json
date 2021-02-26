@@ -325,101 +325,127 @@
         "max": 40,
         "unit": "px"
       },
-      "layoutHorizontalSpacing": {
-        "default": 16,
-        "description": "The horizontal spacing in pixels to use between legend items.",
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      },
-      "layoutVerticalSpacing": {
-        "default": 8,
-        "description": "The vertical spacing in pixels to use between legend items.",
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      },
-      "itemSpacing": {
-        "default": 8,
-        "description": "The spacing in pixels between a legend marker and the corresponding label.",
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      },
-      "markerShape": {
-        "type": "string",
-        "description": "If set, overrides the marker shape from the series and the Legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to square if there is none.",
-        "options": [
-          "circle",
-          "cross",
-          "diamond",
-          "plus",
-          "square",
-          "triangle"
-        ]
-      },
-      "markerSize": {
-        "default": 15,
-        "description": "The size in pixels of the markers in the legend.",
-        "min": 0,
-        "max": 30,
-        "unit": "px"
-      },
-      "strokeWidth": {
-        "default": 1,
-        "description": "The width in pixels of the stroke for markers in the legend.",
-        "min": 0,
-        "max": 10,
-        "unit": "px"
-      },
-      "color": {
-        "default": "black",
-        "description": "The colour of the text."
-      },
-      "fontStyle": {
-        "default": "normal",
-        "options": [
-          "normal",
-          "italic",
-          "oblique"
-        ],
-        "description": "The font style to use for the legend."
-      },
-      "fontWeight": {
-        "default": "normal",
-        "options": [
-          "normal",
-          "bold",
-          "bolder",
-          "lighter",
-          "100",
-          "200",
-          "300",
-          "400",
-          "500",
-          "600",
-          "700",
-          "800",
-          "900"
-        ],
-        "description": "The font weight to use for the legend.",
-        "breakIndex": 4
-      },
-      "fontSize": {
-        "default": 12,
-        "description": "The font size in pixels to use for the legend.",
-        "min": 1,
-        "max": 30,
-        "unit": "px"
-      },
-      "fontFamily": {
-        "default": "Verdana, sans-serif",
-        "suggestions": [
-          "Verdana, sans-serif",
-          "Arial, sans-serif",
-          "Times New Roman, serif"
-        ],
-        "description": "The font family to use for the legend."
+      "item": {
+        "meta": {
+          "description": "Configuration for the legend items that consist of a marker and a label."
+        },
+        "paddingX": {
+          "default": 16,
+          "description": "The horizontal spacing in pixels to use between legend items.",
+          "min": 0,
+          "max": 40,
+          "unit": "px"
+        },
+        "paddingY": {
+          "default": 8,
+          "description": "The vertical spacing in pixels to use between legend items.",
+          "min": 0,
+          "max": 40,
+          "unit": "px"
+        },
+        "marker": {
+          "meta": {
+            "description": "Configuration for the legend markers."
+          },
+          "padding": {
+            "default": 8,
+            "description": "The padding in pixels between a legend marker and the corresponding label.",
+            "min": 0,
+            "max": 40,
+            "unit": "px"
+          },
+          "shape": {
+            "type": "string",
+            "description": "If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to <code>'square'</code> if there is none.",
+            "options": [
+              "circle",
+              "cross",
+              "diamond",
+              "plus",
+              "square",
+              "triangle"
+            ]
+          },
+          "size": {
+            "default": 15,
+            "description": "The size in pixels of the markers in the legend.",
+            "min": 0,
+            "max": 30,
+            "unit": "px"
+          },
+          "strokeWidth": {
+            "default": 1,
+            "description": "The width in pixels of the stroke for markers in the legend.",
+            "min": 0,
+            "max": 10,
+            "unit": "px"
+          }
+        },
+        "label": {
+          "meta": {
+            "description": "Configuration for the legend labels."
+          },
+          "color": {
+            "default": "black",
+            "description": "The colour of the text."
+          },
+          "fontStyle": {
+            "default": "normal",
+            "options": [
+              "normal",
+              "italic",
+              "oblique"
+            ],
+            "description": "The font style to use for the legend."
+          },
+          "fontWeight": {
+            "default": "normal",
+            "options": [
+              "normal",
+              "bold",
+              "bolder",
+              "lighter",
+              "100",
+              "200",
+              "300",
+              "400",
+              "500",
+              "600",
+              "700",
+              "800",
+              "900"
+            ],
+            "description": "The font weight to use for the legend.",
+            "breakIndex": 4
+          },
+          "fontSize": {
+            "default": 12,
+            "description": "The font size in pixels to use for the legend.",
+            "min": 1,
+            "max": 30,
+            "unit": "px"
+          },
+          "fontFamily": {
+            "default": "Verdana, sans-serif",
+            "suggestions": [
+              "Verdana, sans-serif",
+              "Arial, sans-serif",
+              "Times New Roman, serif"
+            ],
+            "description": "The font family to use for the legend."
+          },
+          "formatter": {
+            "type": {
+              "parameters": {
+                "id": "string",
+                "itemId": "any",
+                "label": "{ text: string }"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to render legend labels. Where <code>id</code> is a series ID, <code>itemId</code> is component ID within a series, such as a field name or an item index."
+          }
+        }
       }
     },
     "navigator": {
