@@ -15,7 +15,7 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
             role="button"
             tabIndex="0"
             className={styles['menu__section__heading']}>
-            <svg class={classnames(styles['menu__arrow'], { 'fa-rotate-90': isActive })}><use href="#menu-item"></use></svg>
+            <svg className={classnames(styles['menu__arrow'], { 'fa-rotate-90': isActive })}><use href="#menu-item" /></svg>
             {title}
         </div>
         {isActive && <MenuGroup isTopLevel={true} group={{ group: title, items }} currentFramework={currentFramework} />}

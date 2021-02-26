@@ -33,7 +33,10 @@ main {
 
     &__logo {
         composes: d-block from global;
-        min-width: 15rem;
+
+        img {
+            height: 40px;
+        }
     }
 }
 

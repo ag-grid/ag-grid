@@ -10,6 +10,7 @@ import { getPageName } from 'utils/get-page-name';
 import favIcons from '../images/favicons';
 import logo from '../images/ag-grid.svg';
 import styles from './index.module.scss';
+import './mailchimp.css';
 
 const TopBar = ({ frameworks, framework, path }) => (
     <div className={styles['top-bar']}>

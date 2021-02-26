@@ -1,5 +1,4 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import DocumentationLink from './DocumentationLink';
 import communitySvg from 'images/community.svg';
 import enterpriseSvg from 'images/enterprise.svg';
@@ -109,16 +108,6 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
  */
 const MailingListSignup = () => {
     return <>
-        <Helmet>
-            <link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css" />
-            <style type="text/css">
-                {`#mc_embed_signup {
-        background: #fff;
-        clear: left;
-        font: 14px Helvetica, Arial, sans-serif;
-    }`}
-            </style>
-        </Helmet>
         <div id="mc_embed_signup">
             <form action="https://ag-grid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&amp;id=9353cf87ce"
                 method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" className="validate"
@@ -135,7 +124,6 @@ const MailingListSignup = () => {
                             <input type="text" defaultValue="" name="FNAME" id="mce-FNAME" />
                         </label>
                     </div>
-                    <br />
                     <div className="mc-field-group input-group">
                         <ul>
                             <li><strong>Select your preference:</strong></li>
