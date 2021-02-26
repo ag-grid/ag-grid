@@ -179,7 +179,6 @@ export class MenuItemMapper extends BeanStub {
                 }
                 if (!this.gridOptionsWrapper.isSuppressExcelExport() && excelModuleLoaded) {
                     exportSubMenuItems.push('excelExport');
-                    exportSubMenuItems.push('excelXmlExport');
                 }
                 return {
                     name: localeTextFunc('export', 'Export'),
@@ -189,21 +188,14 @@ export class MenuItemMapper extends BeanStub {
             case 'csvExport':
                 return {
                     name: localeTextFunc('csvExport', 'CSV Export'),
+                    icon: _.createIconNoSpan('csvExport', this.gridOptionsWrapper, null),
                     action: () => this.gridApi.exportDataAsCsv({})
                 };
             case 'excelExport':
                 return {
-                    name: localeTextFunc('excelExport', 'Excel Export (.xlsx)&lrm;'),
-                    action: () => this.gridApi.exportDataAsExcel({
-                        exportMode: 'xlsx'
-                    })
-                };
-            case 'excelXmlExport':
-                return {
-                    name: localeTextFunc('excelXmlExport', 'Excel Export (.xml)&lrm;'),
-                    action: () => this.gridApi.exportDataAsExcel({
-                        exportMode: 'xml'
-                    })
+                    name: localeTextFunc('excelExport', 'Excel Export'),
+                    icon: _.createIconNoSpan('excelExport', this.gridOptionsWrapper, null),
+                    action: () => this.gridApi.exportDataAsExcel()
                 };
             case 'separator':
                 return 'separator';

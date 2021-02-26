@@ -100,6 +100,10 @@ export const iconNameClassMap: { [key: string]: string; } = {
     rowDrag: 'grip',
     // context menu export item
     save: 'save',
+    // csv export
+    csvExport: 'csv',
+    // excel export,
+    excelExport: 'excel',
     // icon on dropdown editors
     smallDown: 'small-down',
     // version of small-right used in RTL mode

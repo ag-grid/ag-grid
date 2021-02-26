@@ -89,8 +89,7 @@ const AG_GRID_LOCALE_EN = {
     ctrlV: 'Ctrl+V',
     export: 'Export',
     csvExport: 'CSV Export',
-    excelExport: 'Excel Export (.xlsx)',
-    excelXmlExport: 'Excel Export (.xml)',
+    excelExport: 'Excel Export',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',

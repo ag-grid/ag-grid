@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "node generator.js"
+    "build": "node generate-web-fonts.js"
   },
   "author": "AG Grid",
   "license": "ISC",

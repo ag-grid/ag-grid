@@ -70,7 +70,6 @@ The following is a list of all the default built in menu items with the rules ab
 - `export`: Export sub menu (containing csvExport and excelExport). Shown by default.
 - `csvExport`: Export to CSV using all default export values. Shown by default.
 - `excelExport`: Export to Excel (.xlsx) using all default export values. Shown by default.
-- `excelXmlExport`: Export to Excel (.xml) using all default export values. Shown by default.
 - `chartRange`: Chart a range of selected cells. Only shown if charting is enabled.
 
 ## Default Context Menu
