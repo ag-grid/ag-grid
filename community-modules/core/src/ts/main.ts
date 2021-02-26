@@ -43,6 +43,7 @@ export { QuerySelector, GuiListener, RefSelector, GridListener } from "./widgets
 
 // excel
 export {
+    ColumnWidthCallbackParams,
     IExcelCreator,
     ExcelAlignment,
     ExcelBorder,

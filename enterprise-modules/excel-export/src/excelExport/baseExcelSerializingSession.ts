@@ -1,10 +1,23 @@
-import { Column, Constants, ExcelCell, ExcelColumn, ExcelRow, ExcelStyle, ExcelWorksheet, RowNode, _ } from "@ag-grid-community/core";
-import { BaseGridSerializingSession, GridSerializingParams, RowAccumulator, RowSpanningAccumulator, RowType } from "@ag-grid-community/csv-export";
+import {
+    Column,
+    ColumnWidthCallbackParams,
+    Constants,
+    ExcelCell,
+    ExcelColumn,
+    ExcelRow,
+    ExcelStyle,
+    ExcelWorksheet,
+    RowNode,
+    _
+} from "@ag-grid-community/core";
 
-export interface ColumnWidthCallbackParams {
-    column: Column | null;
-    index: number;
-}
+import {
+    BaseGridSerializingSession,
+    GridSerializingParams,
+    RowAccumulator,
+    RowSpanningAccumulator,
+    RowType
+} from "@ag-grid-community/csv-export";
 
 export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;

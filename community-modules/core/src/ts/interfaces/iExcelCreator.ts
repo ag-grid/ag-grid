@@ -1,3 +1,4 @@
+import { Column } from "../entities/column";
 import { ExportParams, PackageFileParams } from "./exportParams";
 import { XmlElement } from "./iXmlFactory";
 
@@ -155,15 +156,21 @@ export interface ExcelOOXMLTemplate {
 // Excel Export
 export enum ExcelFactoryMode { SINGLE_SHEET, MULTI_SHEET }
 
+export interface ColumnWidthCallbackParams {
+    column: Column | null;
+    index: number;
+}
+
 export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
+    author?: string;
+    autoConvertFormulas?: boolean;
+    columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
+    exportMode?: 'xlsx' | 'xml';
+    fontSize?: number;
+    headerRowHeight?: number;
+    rowHeight?: number;
     sheetName?: string;
     suppressTextAsCDATA?:boolean;
-    exportMode?: "xlsx" | "xml";
-    rowHeight?: number;
-    headerRowHeight?: number;
-    autoConvertFormulas?: boolean;
-    fontSize?: number;
-    author?: string;
 }
 
 export type ExcelExportMultipleSheetParams = PackageFileParams<ExcelExportParams>;
