@@ -94,7 +94,7 @@ const fixFileLoadingIssue = () => {
   const createAndProcessNode = path => {
     return createFileNode(path, createNodeId, pluginOptions)
       .catch(() => {
-        reporter.warn(\`Failed to create filenode for \${path}. Re-trying...\`);
+        reporter.warn(\`Failed to create FileNode for \${path}. Re-trying...\`);
         return createFileNode(path, createNodeId, pluginOptions);
       })
       .then(fileNode => {
@@ -102,9 +102,16 @@ const fixFileLoadingIssue = () => {
         return null;
       })
       .catch(error => {
-        reporter.panic(\`Failed to create node for \${path}\`, error);
+        reporter.error(\`Failed to create FileNode for \${path}\`, error);
       });
   };`
+        )
+    }) && applyCustomisation('gatsby-source-filesystem', '2.11.0', {
+        name: 'Ensure filesystem plugin does not crash when file cannot be loaded',
+        apply: () => updateFileContents(
+            './node_modules/gatsby-source-filesystem/gatsby-node.js',
+            `reporter.panic(\`Failed`,
+            `reporter.error(\`Failed`
         )
     });
 };
