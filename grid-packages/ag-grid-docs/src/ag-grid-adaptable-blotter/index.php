@@ -85,7 +85,7 @@ include('../includes/mediaHeader.php');
         <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
 
             <p>
-            <img src='../images/team/john.jpg' width="232.5px"/>
+                <img src='../images/team/john.jpg' width="232.5px" alt="John Masterson" />
             </p>
 
             <p>
@@ -100,7 +100,7 @@ include('../includes/mediaHeader.php');
 
             <div>
                 <br/>
-                <a href="https://www.linkedin.com/in/john-f-masterson/"><img src="/images/linked-in.png"/></a>
+                <a href="https://www.linkedin.com/in/john-f-masterson/"><img src="/images/linked-in.png" alt="LinkedIn" /></a>
                 <br/>
                 <br/>
                 <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>

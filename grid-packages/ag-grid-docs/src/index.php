@@ -69,7 +69,7 @@ $version = 'latest';
                     <div class="box-shadow">
                         <a href="/documentation/javascript/" style="text-decoration: none;">
                             <div class="box-contents">
-                                <img src="./_assets/fw-logos/javascript.svg">
+                                <img src="./_assets/fw-logos/javascript.svg" alt="JavaScript">
                                 <div>
                                     <h3>JavaScript</h3>
                                 </div>
@@ -81,7 +81,7 @@ $version = 'latest';
                     <div class="box-shadow">
                         <a href="/documentation/angular/" style="text-decoration: none;">
                             <div class="box-contents">
-                                <img src="./_assets/fw-logos/angular.svg">
+                                <img src="./_assets/fw-logos/angular.svg" alt="Angular">
                                 <div>
                                     <h3>Angular</h3>
                                 </div>
@@ -93,7 +93,7 @@ $version = 'latest';
                     <div class="box-shadow">
                         <a href="/documentation/react/" style="text-decoration: none;">
                             <div class="box-contents">
-                                <img src="./_assets/fw-logos/react.svg">
+                                <img src="./_assets/fw-logos/react.svg" alt="React">
                                 <div>
                                     <h3>React</h3>
                                 </div>
@@ -105,7 +105,7 @@ $version = 'latest';
                     <div class="box-shadow">
                         <a href="/documentation/vue/" style="text-decoration: none;">
                             <div class="box-contents">
-                                <img src="./_assets/fw-logos/vue.svg">
+                                <img src="./_assets/fw-logos/vue.svg" alt="Vue">
                                 <div>
                                     <h3>Vue</h3>
                                 </div>

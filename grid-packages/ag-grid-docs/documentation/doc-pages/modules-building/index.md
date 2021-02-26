@@ -1,5 +1,5 @@
 ---
-title: "AG Grid Building Applications With AG Grid Modules"
+title: "Building Applications With AG Grid Modules"
 ---
 
 In this section we describe how you can cherry pick modules to provide the features you need with a reduced application bundle size.
