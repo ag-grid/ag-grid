@@ -25,7 +25,10 @@
     <div class="about-page">
         <div class="row">
             <section>
-                <h1>Our Mission</h1>
+                <h1>About AG Grid</h1>
+            </section>
+            <section>
+                <h2>Our Mission</h2>
                 <article>
                     <p class="lead">
                         At AG Grid, our mission is simple: <strong>Build the best datagrid in the world</strong>.
@@ -62,7 +65,7 @@
                 </article>
             </section>
             <section>
-                <h1> Our Principles</h1>
+                <h2>Our Principles</h2>
                 <article>
                     <p>We believe that a datagrid should be agnostic to the framework that developers choose. This
                         allows flexibility and future-proofs your development. This is also where the 'ag' in <strong>AG Grid</strong>
@@ -75,7 +78,7 @@
                 </article>
             </section>
             <section>
-                <h1 id="core-development-team">The Dev Team</h1>
+                <h2 id="core-development-team">The Dev Team</h2>
                 <article class="inline-container team">
                     <div class="row">
                         <div class="col-md-4">
@@ -195,7 +198,7 @@
                 </article>
             </section>
             <section>
-                <h1 id="operations_team">The Operations Team</h1>
+                <h2 id="operations_team">The Operations Team</h2>
                 <article class="inline-container team">
                     <div class="row">
                         <div class="col-md-4">
@@ -295,16 +298,16 @@
             </section>
 
             <section>
-                <h1 id="contact"> Contact Us </h1>
+                <h2 id="contact">Contact Us</h2>
                 <article class="inline-container row">
                     <div class="col-md-6">
                         <h3>Our Address</h3>
                         <address>
                             <strong>AG Grid Ltd.</strong><br/>
-                            Bank Chambers,<br/>
+                            Bank Chambers<br/>
                             6 Borough High Street<br/>
-                            London,<br/>
-                            SE1 9QQ,<br/>
+                            London<br/>
+                            SE1 9QQ<br/>
                             United Kingdom
                         </address>
                         <p>Email Enquiries: <a href="mailto:info@ag-grid.com">info@ag-grid.com</a></p>

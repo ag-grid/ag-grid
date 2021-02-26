@@ -227,7 +227,7 @@ gtm_data_layer('community-enterprise');
                 <div>
                     <div>&nbsp;</div>
                     <div style="text-decoration: underline; color: orange;">
-                        <h1 style="color: black">DEFINITIONS</h1>
+                        <h2 style="color: black; font-size: 2.5rem;">DEFINITIONS</h2>
                     </div>
                 </div>
                 <div>
@@ -408,7 +408,7 @@ gtm_data_layer('community-enterprise');
                 <div>
                     <div>&nbsp;</div>
                     <div style="text-decoration: underline; color: magenta;">
-                        <h1 style="color: black">LICENSE TIMELINE</h1>
+                        <h2 style="color: black; font-size: 2.5rem;">LICENSE TIMELINE</h2>
                     </div>
                 </div>
                 <div>
@@ -511,7 +511,7 @@ gtm_data_layer('community-enterprise');
                 <div>
                     <div>&nbsp;</div>
                     <div style="text-decoration: underline; color: red;">
-                        <h1 style="color: black">DEEPER DIVE</h1>
+                        <h2 style="color: black; font-size: 2.5rem;">DEEPER DIVE</h2>
                     </div>
                 </div>
                 <div>

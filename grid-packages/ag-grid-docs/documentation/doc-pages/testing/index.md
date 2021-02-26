@@ -834,7 +834,7 @@ title: "Testing AG Grid"
 | We use the Grid API to initiate and end testing as we're can't readily perform double clicks in a
 | unit testing environment (but could if doing e2e with something like Protractor for example).
 |
-| # Jest Configuration
+| ## Jest Configuration
 |
 | ### `SyntaxError: Cannot use import statement outside a module`
 |
