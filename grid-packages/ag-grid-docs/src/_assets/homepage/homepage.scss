@@ -112,14 +112,19 @@ body {
         }
 
         .framework-boxes {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            @include media-breakpoint-up(sm) {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            @include media-breakpoint-up(lg) {
+                grid-template-columns: repeat(4, 1fr);
+            }
             box-sizing: border-box;
         }
 
         .framework-box {
             padding: 20px;
-            flex-basis: 25%;
         }
 
         .box-shadow {
