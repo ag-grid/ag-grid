@@ -46,7 +46,7 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
         }
     }, [hideMenu]);
 
-    return (
+    return allHeadings.length > 0 &&
         <div className={styles['side-nav']}>
             <ul className={styles['side-nav__list']}>
                 <li className={styles[`side-nav__item--level-1`]}>
@@ -56,8 +56,7 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
                     <a className={styles['side-nav__link']} href={`#${heading.id}`}>{heading.value}</a>
                 </li>)}
             </ul>
-        </div>
-    );
+        </div>;
 };
 
 export default SideMenu;

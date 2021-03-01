@@ -19,15 +19,16 @@ const getRelativePath = path => path.replace(withPrefix('/'), '/');
  * that framework if so.
  */
 export const onRouteUpdate = ({ location }) => {
-    if (getRelativePath(location.pathname) === '/') {
+    if (['/', '/documentation/'].includes(getRelativePath(location.pathname))) {
         const selectedFramework = LocalStorage.get(frameworkStorageKey) || 'javascript';
 
-        navigate(`/${selectedFramework}/`, { replace: true });
+        navigate(`/${selectedFramework}-table/`, { replace: true });
     } else if (LocalStorage.exists()) {
-        const frameworkFromUrl = getRelativePath(location.pathname).split('/').filter(p => p !== '')[0];
+        const firstPart = getRelativePath(location.pathname).split('/').filter(p => p !== '')[0];
+        const framework = firstPart && firstPart.replace(/-table|-charts/, '');
 
-        if (frameworkFromUrl && supportedFrameworks.indexOf(frameworkFromUrl) >= 0) {
-            LocalStorage.set(frameworkStorageKey, frameworkFromUrl);
+        if (framework && supportedFrameworks.indexOf(framework) >= 0) {
+            LocalStorage.set(frameworkStorageKey, framework);
         }
     }
 };

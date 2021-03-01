@@ -17,6 +17,7 @@ import VideoLink from 'components/VideoLink';
 import ChartGallery from 'components/chart-gallery/ChartGallery';
 import ChartsApiExplorer from 'components/charts-api-explorer/ChartsApiExplorer';
 import { ListItem } from 'components/ListItem';
+import DocumentationLink from '../components/DocumentationLink';
 import Gif from 'components/Gif';
 import { SEO } from 'components/SEO';
 import stripHtml from 'utils/strip-html';
@@ -42,12 +43,11 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     options: props.options != null ? JSON.parse(props.options) : undefined
   });
 
-  const getSnippetProps = props => ({ ...props, framework });
-
   // This configures which components will be used for the specified HTML tags
   const renderAst = new rehypeReact({
     createElement: React.createElement,
     components: {
+      'a': props => DocumentationLink({ ...props, framework }),
       'li': ListItem,
       'gif': props => Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false }),
       'grid-example': props => ExampleRunner(getExampleRunnerProps(props, 'grid')),
@@ -58,7 +58,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
         sources: props.sources != null ? JSON.parse(props.sources) : undefined,
         config: props.config != null ? JSON.parse(props.config) : undefined
       }),
-      'snippet': props => Snippet(getSnippetProps(props)),
+      'snippet': props => Snippet({ ...props, framework }),
       'feature-overview': FeatureOverview,
       'icons-panel': IconsPanel,
       'image-caption': props => ImageCaption({ ...props, pageName }),

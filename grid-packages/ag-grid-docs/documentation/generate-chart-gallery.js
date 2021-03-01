@@ -20,8 +20,8 @@ function hasArgument(name) {
 }
 
 const options = {
-    rootPageName: 'charts',
-    rootDirectory: 'doc-pages/charts',
+    rootPageName: 'charts-overview',
+    rootDirectory: `doc-pages/charts-overview`,
     galleryJsonFile: 'gallery.json',
     thumbnailDirectory: 'src/components/chart-gallery/thumbnails',
     encoding: 'utf8',
@@ -56,7 +56,7 @@ ${getExampleNames(galleryConfig).map(name => `<chart-example title='${name}' nam
 function updateMenu(galleryConfig) {
     console.log('Updating menu...');
 
-    const rootPath = `../${options.rootPageName}/`;
+    const rootPath = `/${options.rootPageName}/`;
     const menu = getJson(options.menuJsonPath);
     const galleryObject = findItemWithUrl(menu, rootPath);
 
@@ -68,7 +68,7 @@ function updateMenu(galleryConfig) {
         hideChildren: true,
         items: Object.keys(galleryConfig[category]).map(name => ({
             title: name,
-            url: rootPath + toKebabCase(name) + '/',
+            url: `${rootPath}gallery/${toKebabCase(name)}/`,
         }))
     }));
 

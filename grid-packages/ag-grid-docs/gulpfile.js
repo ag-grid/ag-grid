@@ -205,7 +205,7 @@ const copyProdWebServerFilesToDist = () => gulp.src([
     './src/_assets/favicons/favicon-32.png'
 ]).pipe(gulp.dest('./dist/'));
 
-const copyDocumentationWebsite = () => gulp.src(['./documentation/public/**/*']).pipe(gulp.dest('./dist/documentation/'));
+const copyDocumentationWebsite = () => gulp.src(['./documentation/public/**/*']).pipe(gulp.dest('./dist/'));
 
 const serveDist = (done) => {
     const php = cp.spawn('php', ['-S', '127.0.0.1:9999', '-t', 'dist'], {

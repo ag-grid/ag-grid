@@ -21,7 +21,7 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
                     title={headerTitle}
                     description={description}
                     framework={framework}
-                    pageName={`charts-${pageName}`} />
+                    pageName={pageName} />
 
                 <div className={styles['chart-navigation']}>
                     {/* eslint-disable jsx-a11y/control-has-associated-label */}
@@ -35,10 +35,10 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
 
                 <ExampleRunner
                     title={name}
-                    name={pageName}
+                    name={pageName.replace(/^charts-/, '')}
                     type="generated"
                     framework={framework}
-                    pageName={'charts'}
+                    pageName={'charts-overview'}
                     library="charts"
                     options={{ exampleHeight: '60vh' }} />
             </div>

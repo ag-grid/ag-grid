@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import Announcements from 'components/Announcements';
+import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
 
@@ -38,7 +39,7 @@ const MenuItem = ({ item, currentFramework }) => {
         <li key={item.title} className={styles['menu__item']}>
             {item.url
                 ? <Link
-                    to={item.url.replace('../', `/${currentFramework}/`)}
+                    to={convertToFrameworkUrl(item.url, currentFramework)}
                     className={styles['menu__item__link']}
                     activeClassName={styles['menu__item__link--active']}>{title}</Link>
                 : title
@@ -60,7 +61,7 @@ const Menu = ({ currentFramework, currentPage }) => {
             const availableFrameworks = item.frameworks || frameworks;
 
             return hasPage ||
-                (item.url === `../${currentPage}/` && (!availableFrameworks || availableFrameworks.includes(currentFramework))) ||
+                (item.url === `/${currentPage}/` && (!availableFrameworks || availableFrameworks.includes(currentFramework))) ||
                 (item.items && containsPage(item.items, availableFrameworks));
         },
         false);

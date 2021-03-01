@@ -143,7 +143,7 @@ const plugins = [
     // This generates the sitemap
     resolve: 'gatsby-plugin-sitemap',
     options: {
-      exclude: [`/example-runner`],
+      exclude: [`/documentation`],
     }
   },
   {
@@ -159,7 +159,7 @@ const plugins = [
 
 module.exports = {
   // The path prefix is used when the production site is generated. All URL paths will be prepended with it.
-  pathPrefix: `${process.env.GATSBY_ROOT_DIRECTORY || ''}/documentation`,
+  pathPrefix: `${process.env.GATSBY_ROOT_DIRECTORY || ''}`,
   siteMetadata: {
     title: 'AG Grid Documentation',
     author: 'AG Grid',

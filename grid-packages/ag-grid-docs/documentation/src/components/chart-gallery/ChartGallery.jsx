@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import chartGallery from '../../../doc-pages/charts/gallery.json';
+import chartGallery from '../../../doc-pages/charts-overview/gallery.json';
 import thumbnails from './thumbnails';
 import toKebabCase from 'utils/to-kebab-case';
 import styles from './ChartGallery.module.scss';
@@ -30,7 +30,7 @@ const GalleryItem = ({ name }) => {
     const kebabCase = toKebabCase(name);
 
     return <div className={styles['chart-gallery-item']}>
-        <a href={`./${kebabCase}/`} className={styles['chart-gallery-item__link']}>
+        <a href={`../gallery/${kebabCase}/`} className={styles['chart-gallery-item__link']}>
             <img className={styles['chart-gallery-item__thumbnail']} src={thumbnails[kebabCase]} alt={name} /><br />
             <div className={styles['chart-gallery-item__name']}>{name}</div>
         </a>

@@ -13,9 +13,10 @@ const fs = require('fs-extra');
 const publicIp = require('public-ip');
 const gifFrames = require('gif-frames');
 const supportedFrameworks = require('./src/utils/supported-frameworks.js');
-const chartGallery = require('./doc-pages/charts/gallery.json');
+const chartGallery = require('./doc-pages/charts-overview/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 const isDevelopment = require('./src/utils/is-development');
+const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 
 /**
  * This hides the config file that we use to show linting in IDEs from Gatsby.
@@ -207,10 +208,15 @@ const createHomePages = createPage => {
 
     supportedFrameworks.forEach(framework => {
         createPage({
-            path: `/${framework}/`,
+            path: `/${framework}-table/`,
             component: homePage,
             context: { frameworks: supportedFrameworks, framework }
         });
+    });
+
+    createPage({
+        path: `/documentation/`,
+        component: path.resolve('pages/index.jsx'),
     });
 };
 
@@ -250,7 +256,7 @@ const createDocPages = async (createPage, graphql, reporter) => {
 
         frameworks.forEach(framework => {
             createPage({
-                path: `/${framework}${srcPath}/`,
+                path: convertToFrameworkUrl(srcPath, framework),
                 component: docPageTemplate,
                 context: { frameworks, framework, srcPath }
             });
@@ -277,7 +283,7 @@ const createChartGalleryPages = createPage => {
 
         supportedFrameworks.forEach(framework => {
             createPage({
-                path: `/${framework}/charts/${toKebabCase(name)}/`,
+                path: `/${framework}-charts/gallery/${toKebabCase(name)}/`,
                 component: chartGalleryPageTemplate,
                 context: { frameworks: supportedFrameworks, framework, name, description, previous, next }
             });

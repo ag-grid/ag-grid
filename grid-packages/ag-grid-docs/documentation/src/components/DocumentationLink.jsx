@@ -1,12 +1,12 @@
 import React from 'react';
 import { withPrefix } from 'gatsby';
+import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 
 /**
- * This takes a root-based link (e.g. /getting-started/) and transforms it into one which is correct for the website
- * (e.g. /documentation/javascript/getting-started/).
+ * This takes a root-based page link (e.g. /getting-started/) and transforms it into one which is correct for the website
+ * (e.g. /javascript-table/getting-started/).
  */
 export const DocumentationLink = ({ framework, href, children, ...props }) =>
-    <a href={withPrefix(`/${framework}${href}`)} {...props}>{children}</a>;
-;
+    <a href={href.startsWith('/') ? withPrefix(convertToFrameworkUrl(href, framework)) : href} {...props}>{children}</a>;
 
 export default DocumentationLink;

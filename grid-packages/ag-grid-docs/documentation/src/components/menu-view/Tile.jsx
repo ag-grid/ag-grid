@@ -2,10 +2,9 @@ import React, { Fragment, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
-import styles from './Tile.module.scss';
 import icons from './icons';
-
-const getUrl = (url) => url.replace('../', '');
+import convertToFrameworkUrl from 'utils/convert-to-framework-url';
+import styles from './Tile.module.scss';
 
 const recursiveRender = (items, framework, collapsed, level = 0, isLast, forceTopLevel) => items.map((item, idx) => {
     if (item.frameworks && item.frameworks.indexOf(framework) === - 1) { return null; }
@@ -15,7 +14,7 @@ const recursiveRender = (items, framework, collapsed, level = 0, isLast, forceTo
 
     const title = item.url && (!collapsed || item.showInCollapsed) && (
         <span className={styles[className]}>
-            <a href={getUrl(item.url)}>{item.title}{item.enterprise && <enterprise-icon />}</a>
+            <a href={convertToFrameworkUrl(item.url, framework)}>{item.title}{item.enterprise && <enterprise-icon />}</a>
             {!hideComma && <span className={styles['menu-view-tile__item-split']} style={{ marginRight: 2 }}>,</span>}
         </span>
     );
