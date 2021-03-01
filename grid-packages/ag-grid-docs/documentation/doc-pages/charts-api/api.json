@@ -355,7 +355,7 @@
               "parameters": {
                 "id": "string",
                 "itemId": "any",
-                "label": "{ text: string }"
+                "value": "string"
               },
               "returnType": "string"
             },

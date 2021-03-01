@@ -790,7 +790,11 @@ export abstract class Chart extends Observable {
 
         const { formatter } = this.legend.item.label;
         if (formatter) {
-            legendData.forEach(datum => datum.label.text = formatter(datum));
+            legendData.forEach(datum => datum.label.text = formatter({
+                id: datum.id,
+                itemId: datum.itemId,
+                value: datum.label.text
+            }));
         }
 
         this.legend.data = legendData;

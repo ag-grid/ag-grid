@@ -45,9 +45,7 @@ export enum LegendPosition {
 interface LegendLabelFormatterParams {
     id: string;
     itemId: any;
-    label: {
-        text: string;
-    }
+    value: string;
 }
 
 export class LegendLabel extends Observable {
