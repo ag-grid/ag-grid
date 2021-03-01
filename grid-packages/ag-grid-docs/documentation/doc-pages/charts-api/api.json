@@ -2021,6 +2021,15 @@
         "min": 0,
         "max": 360,
         "unit": "&deg;"
+      },
+      "formatter": {
+        "type": {
+          "parameters": {
+            "value": "string"
+          },
+          "returnType": "string"
+        },
+        "description": "Function used to turn 'labelKey' values into text to be displayed next to each pie sector. Be default the values are simply stringified."
       }
     },
     "callout": {

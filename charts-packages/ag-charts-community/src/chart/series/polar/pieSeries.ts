@@ -78,6 +78,7 @@ export interface PieSeriesFormat {
 class PieSeriesLabel extends Label {
     @reactive('change') offset = 3; // from the callout line
     @reactive('dataChange') minAngle = 20; // in degrees
+    @reactive('dataChange') formatter?: (params: { value: any }) => string;
 }
 
 class PieSeriesCallout extends Observable {
@@ -260,7 +261,7 @@ export class PieSeries extends PolarSeries {
     }
 
     processData(): boolean {
-        const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData } = this;
+        const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, label } = this;
         const data = angleKey && this.data ? this.data : [];
 
         const angleData: number[] = data.map((datum, index) => seriesItemEnabled[index] && Math.abs(+datum[angleKey]) || 0);
@@ -273,9 +274,18 @@ export class PieSeries extends PolarSeries {
             return angleData.map(datum => sum += datum / angleDataTotal);
         })();
 
-        const labelKey = this.label.enabled && this.labelKey;
-        const labelData = labelKey ? data.map(datum => String(datum[labelKey])) : [];
+        const labelFormatter = label.formatter;
+        const labelKey = label.enabled && this.labelKey;
+        let labelData: string[] = [];
         let radiusData: number[] = [];
+
+        if (labelKey) {
+            if (labelFormatter) {
+                labelData = data.map(datum => labelFormatter({ value: datum[labelKey] }));
+            } else {
+                labelData = data.map(datum => String(datum[labelKey]));
+            }
+        }
 
         if (radiusKey) {
             const { radiusMin, radiusMax } = this;
@@ -305,7 +315,7 @@ export class PieSeries extends PolarSeries {
             const midCos = Math.cos(midAngle);
             const midSin = Math.sin(midAngle);
 
-            const labelMinAngle = toRadians(this.label.minAngle);
+            const labelMinAngle = toRadians(label.minAngle);
             const labelVisible = labelKey && span > labelMinAngle;
             const midAngle180 = normalizeAngle180(midAngle);
 
