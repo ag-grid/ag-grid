@@ -158,6 +158,7 @@ const plugins = [
 ];
 
 module.exports = {
+  // The path prefix is used when the production site is generated. All URL paths will be prepended with it.
   pathPrefix: `${process.env.GATSBY_ROOT_DIRECTORY || ''}/documentation`,
   siteMetadata: {
     title: 'AG Grid Documentation',
