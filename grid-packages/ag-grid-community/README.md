@@ -6,10 +6,10 @@
 [![npm](https://img.shields.io/npm/dm/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
 [![npm](https://img.shields.io/npm/dt/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
 
-ag-Grid
+AG Grid
 ------
 
-ag-Grid is a fully-featured and highly customizable JavaScript data grid.
+AG Grid is a fully-featured and highly customizable JavaScript data grid.
 It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github#/performance/1), has no 3rd party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-grid-getting-started?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github). Here's how our grid looks like with multiple filters and grouping enabled:
 
 ![alt text](./github-grid-demo.jpg "Logo Title Text 1")
@@ -25,7 +25,7 @@ Besides the standard set of features you'd expect from any grid:
 * Sorting
 * Row Selection
 
-Here are some of the features that make ag-Grid stand out:
+Here are some of the features that make AG Grid stand out:
 
 * Grouping / Aggregation*
 * Custom Filtering
@@ -112,7 +112,7 @@ Look for similar problems on [StackOverflow](https://stackoverflow.com/questions
 
 Contributing
 ------------
-ag-Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs listing](https://www.ag-grid.com/ag-grid-jobs-board?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
+AG Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs listing](https://www.ag-grid.com/ag-grid-jobs-board?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
 
 License
 ------------------

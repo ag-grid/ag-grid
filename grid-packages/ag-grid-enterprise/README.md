@@ -1,8 +1,8 @@
 
-ag-Grid-Enterprise
+AG Grid Enterprise
 ==============
 
-This project contains ag-Grid-Enterprise features.
+This project contains AG Grid Enterprise features.
 
 See [www.ag-grid.com](http://www.ag-grid.com) for an overview and full documentation.
 
@@ -21,7 +21,7 @@ SUPPORT_AND_MAINTENANCE.md
 Issue Reporting
 ==============
 
-If you are an Enterprise customer (or are Evaluating ag-Grid Enterprise) and wish to report a Bug or raise a new Feature Request please do so on our [Members Forum](https://ag-grid.com/forum/forumdisplay.php?fid=5).
+If you are an Enterprise customer (or are Evaluating AG Grid Enterprise) and wish to report a Bug or raise a new Feature Request please do so on our [Members Forum](https://ag-grid.com/forum/forumdisplay.php?fid=5).
 
 To Sign Up:
 Send an email to accounts@ag-grid.com with your license key

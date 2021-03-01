@@ -35,7 +35,7 @@
 ||If the grid cannot safely determine a given row then cell components will always be replaced, instead of refreshed - as such
 ||we strongly encourage [Immutable Data](../immutable-data/) be used whenever possible.
 ||
-||Doing so will allow ag-Grid to intelligently determine which cells have changed in a given update and only refresh those cells.
+||Doing so will allow AG Grid to intelligently determine which cells have changed in a given update and only refresh those cells.
 ||
 ||Using Immutable Data is analogous to providing a `key` to an array of components in React - it allows for cells to be refreshed (if possible) instead
 ||of being replaced.

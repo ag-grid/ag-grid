@@ -11,9 +11,9 @@
 Please, do not open issues for the general support questions as we want to keep GitHub issues for bug reports and feature requests. You've got much better chances of getting your question answered on [StackOverflow](https://stackoverflow.com/questions/tagged/ag-grid) where the questions should be tagged with tag `ag-grid`,
 or on our [Forum](https://ag-grid.com/forum)
 
-If you're using the Enterprise version of ag-Grid (ag-grid-enterprise), then the [Members Forum](https://ag-grid.com/forum/forumdisplay.php?fid=5) is the best place to ask - you'll get a much quicker response there. Please contact accounts@ag-grid.com for access.
+If you're using the Enterprise version of AG Grid (ag-grid-enterprise), then the [Members Forum](https://ag-grid.com/forum/forumdisplay.php?fid=5) is the best place to ask - you'll get a much quicker response there. Please contact accounts@ag-grid.com for access.
 
-To save your and our time we will be systematically closing all the issues that are requests for general support (for ag-Grid Free) and redirecting people to StackOverflow.
+To save your and our time we will be systematically closing all the issues that are requests for general support (for AG Grid Community) and redirecting people to StackOverflow.
 
 ## <a name="issue"></a> Found a Bug?
 If you find a bug in the source code, you can help us by
@@ -31,7 +31,7 @@ Before you submit an issue, please search the issue tracker, maybe an issue for 
 
 We want to fix all the issues as soon as possible, but before fixing a bug we need to reproduce and confirm it. In order to reproduce bugs we will systematically ask you to provide a minimal reproduction scenario using http://plnkr.co. Having a live, reproducible scenario gives us wealth of important information without going back & forth to you with additional questions like:
 
-- version of ag-Grid used
+- version of AG Grid used
 - 3rd-party libraries and their versions
 - and most importantly - a use-case that fails
 
