@@ -54,22 +54,19 @@ if [ "$3" != "skipWarning" ]; then
     done
 fi
 
-echo "SSH_LOCATION: $SSH_LOCATION"
-echo "CREDENTIALS_LOCATION: $CREDENTIALS_LOCATION"
-
-echo "1 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 # delete dir if it exists - can ignore dir not found error
-ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
+#ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
 
 # upload file
-curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
-
-echo "2 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+#curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
 
 ##unzip archive
-ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/$VERSION && unzip $ARCHIVE"
+ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/$VERSION && gunzip $ARCHIVE"
+
+ARCHIVE_TAR_NAME=${$ARCHIVE/\.gz/}
+echo $ARCHIVE_TAR_NAME
+ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/$VERSION && tar xvf $ARCHIVE_TAR_NAME"
 
 #update folder permissions (default is 777 - change to 755)
 ssh -i $SSH_LOCATION ceolter@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
 
-echo "3 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
