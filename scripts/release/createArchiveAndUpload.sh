@@ -13,5 +13,7 @@ VERSION=$1
 #OUTPUT=$(./scripts/release/createDocsArchiveBundle.sh $VERSION | tee /dev/tty)
 #ARCHIVE_FILENAME=`echo $OUTPUT | sed 's/.*Archive Created://'`
 ARCHIVE_FILENAME='README.md'
+
+echo "HOME: $HOME"
 # $2 is optional skipWarning argument
 ./scripts/release/uploadAndUnzipArchive.sh $VERSION $ARCHIVE_FILENAME $2
