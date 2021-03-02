@@ -10,6 +10,7 @@ const jsdom = require('jsdom');
 const algoliasearch = require('algoliasearch');
 const menu = require('./doc-pages/licensing/menu.json');
 const supportedFrameworks = require('./src/utils/supported-frameworks');
+const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 
 const debug = true; // in debug mode, the script writes the records it would upload into JSON files for inspection
 const clearIndices = true; // to ensure a clean index, you should clear existing records before inserting new ones
@@ -38,7 +39,7 @@ const cleanContents = contents => {
 
 const createRecords = async (url, framework, breadcrumb, rank) => {
     const records = [];
-    const path = url.replace('../', `/${framework}/`);
+    const path = convertToFrameworkUrl(url, framework);
     const filePath = `public${path}index.html`;
 
     if (!fs.existsSync(filePath)) {
