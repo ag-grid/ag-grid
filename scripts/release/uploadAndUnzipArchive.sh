@@ -40,8 +40,7 @@ then
       echo "\$SSH_LOCATION is not set"
       exit;
 fi
-echo $3
-#
+
 # $3 is optional skipWarning argument
 if [ "$3" != "skipWarning" ]; then
     while true; do
@@ -55,11 +54,14 @@ if [ "$3" != "skipWarning" ]; then
     done
 fi
 
+echo "SSH_LOCATION: $SSH_LOCATION"
+echo "CREDENTIALS_LOCATION: $CREDENTIALS_LOCATION"
+
 # delete dir if it exists - can ignore dir not found error
-ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
+#ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
 
 # upload file
-curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
+#curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
 
 ##unzip archive
 #ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/$VERSION && unzip $ARCHIVE"

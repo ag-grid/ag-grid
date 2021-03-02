@@ -10,8 +10,9 @@ fi
 VERSION=$1
 
 # store the command output so that we can capture the archive filename
-OUTPUT=$(./scripts/release/createDocsArchiveBundle.sh $VERSION | tee /dev/tty)
-ARCHIVE_FILENAME=`echo $OUTPUT | sed 's/.*Archive Created://'`
+#OUTPUT=$(./scripts/release/createDocsArchiveBundle.sh $VERSION | tee /dev/tty)
+#ARCHIVE_FILENAME=`echo $OUTPUT | sed 's/.*Archive Created://'`
+ARCHIVE_FILENAME="archive_202132_100.0.0.tar.gz"
 
 # $2 is optional skipWarning argument
 ./scripts/release/uploadAndUnzipArchive.sh $VERSION $ARCHIVE_FILENAME $2
