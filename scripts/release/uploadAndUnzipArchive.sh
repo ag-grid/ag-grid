@@ -61,11 +61,8 @@ fi
 #curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
 
 ##unzip archive
-ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/$VERSION && gunzip $ARCHIVE"
+ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/$VERSION && tar -xf $ARCHIVE"
 
-ARCHIVE_TAR_NAME=${$ARCHIVE/\.gz/}
-echo $ARCHIVE_TAR_NAME
-ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/$VERSION && tar xvf $ARCHIVE_TAR_NAME"
 
 #update folder permissions (default is 777 - change to 755)
 ssh -i $SSH_LOCATION ceolter@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
