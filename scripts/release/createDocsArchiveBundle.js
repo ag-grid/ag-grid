@@ -2,7 +2,7 @@ const walk = require('walk');
 const fs = require('fs');
 const archiver = require('archiver');
 
-const LATEST_HASH = require('child_process').execSync('cat .git/refs/heads/latest').toString().trim();
+const LATEST_HASH = require('child_process').execSync('grep origin/latest .git/packed-refs | cut -d " " -f1').toString().trim();
 const LATEST_HASH_TIMESTAMP = require('child_process').execSync(`git show -s --format=%ci ${LATEST_HASH}`).toString().trim();
 
 if (process.argv.length !== 3) {
@@ -18,7 +18,7 @@ const DIST_PATH = 'grid-packages/ag-grid-docs/dist';
 
 function getArchiveFilename() {
     const now = new Date();
-    return `archive_${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}_${newVersion}.zip`
+    return `archive_${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}_${newVersion}.tar`
 }
 
 function isRootIndexPhp(filename) {
@@ -74,7 +74,9 @@ function deleteArchive() {
 
 function createArchive(filename) {
     const output = fs.createWriteStream(`./${filename}`);
-    const archive = archiver('zip', {
+    const archive = archiver('tar', {
+        // we don't use gzip here as we'll get a "too many files" error if we do
+        // post creation we'll zip the resulting tar file
         zlib: {level: 9} // Sets the compression level.
     });
     output.on('close', () => {

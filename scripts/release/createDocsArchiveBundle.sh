@@ -7,7 +7,6 @@ if [ "$#" -lt 1 ]
     exit 1
 fi
 
-ZIP_PREFIX=`date +%Y%m%d`
 RAW_VERSION=$1
 VERSION=""${RAW_VERSION//./}""
 
@@ -27,5 +26,8 @@ cd ../../
 OUTPUT=$(node scripts/release/createDocsArchiveBundle.js $RAW_VERSION | tee /dev/tty)
 ARCHIVE_FILENAME=`echo $OUTPUT | sed 's/.*Archive Complete://'`
 
-echo "Archive Created: $ARCHIVE_FILENAME"
+echo "Gzipping $$ARCHIVE_FILENAME"
+gzip --force $ARCHIVE_FILENAME
+
+echo "Archive Created: $ARCHIVE_FILENAME.gz"
 
