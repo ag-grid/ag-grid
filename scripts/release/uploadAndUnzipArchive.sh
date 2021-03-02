@@ -37,38 +37,27 @@ then
       echo "\$SSH_FILE is not set"
       exit;
 fi
+echo $3
+#
+# $3 is optional skipWarning argument
+if [ "$3" != "skipWarning" ]; then
+    while true; do
+        echo    "*********************************** WARNING ************************************************"
+        read -p "This script will DELETE the existing archive of $VERSION (if it exists) and will REPLACE it. Do you wish to continue [y/n]? " yn
+        case $yn in
+            [Yy]* ) break;;
+            [Nn]* ) exit;;
+            * ) echo "Please answer [y]es or [n]o.";;
+        esac
+    done
+fi
 
-checkFileExists $ARCHIVE
-checkFileExists $HOME/$SSH_FILE
-checkFileExists $HOME/$CREDENTIALS_FILE
+# delete dir if it exists - can ignore dir not found error
+ssh -i $SSH_FILE ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
 
-echo "ARCHIVE: $ARCHIVE"
-echo "SSH_FILE: $HOME/$SSH_FILE"
-echo "CREDENTIALS_FILE: $HOME/$CREDENTIALS_FILE"
+# upload file
+curl --netrc-file $CREDENTIALS_FILE --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
 
-#
-## $3 is optional skipWarning argument
-#if [ "$3" != "skipWarning" ]; then
-#    while true; do
-#        echo    "*********************************** WARNING ************************************************"
-#        read -p "This script will DELETE the existing archive of $VERSION (if it exists) and will REPLACE it. Do you wish to continue [y/n]? " yn
-#        case $yn in
-#            [Yy]* ) break;;
-#            [Nn]* ) exit;;
-#            * ) echo "Please answer [y]es or [n]o.";;
-#        esac
-#    done
-#fi
-#
-##USERNAME=`awk '{print $1}' ~/aggrid/aggrid.txt`
-##PASSWORD=`awk '{print $2}' ~/aggrid/aggrid.txt`
-#
-## delete dir if it exists - can ignore dir not found error
-#ssh -i $SSH_FILE ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
-#
-## upload file
-#curl --netrc-file $CREDENTIALS_FILE --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
-#
 ##unzip archive
 #ssh -i $SSH_FILE ceolter@ag-grid.com "cd public_html/archive/$VERSION && unzip $ARCHIVE"
 #
