@@ -19,7 +19,7 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
             <div id="doc-content" className={pageStyles['doc-page']}>
                 <SEO
                     title={headerTitle}
-                    description={description}
+                    description={description.replace(/<[^>]+>/g, '')}
                     framework={framework}
                     pageName={pageName} />
 
