@@ -1,6 +1,5 @@
 import React from 'react';
 import { withPrefix } from 'gatsby';
-import { getHeaderTitle } from 'utils/page-header';
 import logos from 'images/logos';
 import MenuView from 'components/menu-view/MenuView';
 import { SEO } from 'components/SEO';
@@ -106,10 +105,10 @@ const HomePage = ({ pageContext: { framework } }) => {
     return (
         <div className={styles['docs-home']}>
             <SEO
-                title={getHeaderTitle('Documentation', framework)}
+                title="Documentation"
                 description={`Our documentation will help you to get up and running with AG Grid.`}
                 framework={framework}
-                pageName={'home'}
+                pageName="home"
             />
             <GettingStarted framework={framework} data={gettingStartedItems} />
             <MenuView framework={framework} data={menuData} />

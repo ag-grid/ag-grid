@@ -7,7 +7,7 @@ import isDevelopment from 'utils/is-development';
  * This is used for adding SEO information to pages.
  */
 export const SEO = ({ title, description, framework, pageName }) => {
-    const isCharts = pageName === 'charts' || pageName.indexOf('charts-') === 0;
+    const isCharts = pageName.startsWith('charts-');
     const metaTitle = getHeaderTitle(title, framework, isCharts);
     const versionMessage = isCharts ? getChartsVersionMessage(framework) : getGridVersionMessage(framework);
 

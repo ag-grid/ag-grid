@@ -1,6 +1,5 @@
 import React from 'react';
 import { getPageName } from 'utils/get-page-name';
-import { getHeaderTitle } from 'utils/page-header';
 import toKebabCase from 'utils/to-kebab-case';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
 import { SEO } from 'components/SEO';
@@ -12,13 +11,12 @@ import styles from './chart-gallery-page.module.scss';
  */
 const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description, previous, next }, location }) => {
     const pageName = getPageName(location.pathname);
-    const headerTitle = getHeaderTitle(`Gallery - ${name}`, framework, true);
 
     return (
         <div id="doc-page-wrapper" className={pageStyles['doc-page__wrapper']}>
             <div id="doc-content" className={pageStyles['doc-page']}>
                 <SEO
-                    title={headerTitle}
+                    title={`Gallery - ${name}`}
                     description={description.replace(/<[^>]+>/g, '')}
                     framework={framework}
                     pageName={pageName} />
