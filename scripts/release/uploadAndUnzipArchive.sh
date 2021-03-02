@@ -39,12 +39,12 @@ then
 fi
 
 checkFileExists $ARCHIVE
-checkFileExists $SSH_FILE
-checkFileExists $CREDENTIALS_FILE
+checkFileExists $HOME/$SSH_FILE
+checkFileExists $HOME/$CREDENTIALS_FILE
 
 echo "ARCHIVE: $ARCHIVE"
-echo "SSH_FILE: $SSH_FILE"
-echo "CREDENTIALS_FILE: $CREDENTIALS_FILE"
+echo "SSH_FILE: $HOME/$SSH_FILE"
+echo "CREDENTIALS_FILE: $HOME/$CREDENTIALS_FILE"
 
 #
 ## $3 is optional skipWarning argument
