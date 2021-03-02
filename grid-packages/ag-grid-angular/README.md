@@ -1,9 +1,6 @@
+![alt text](./github-banner.png "AG Grid")
 
-![alt text](./github-banner.png "Logo Title Text 1")
-
-[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
-[![npm](https://img.shields.io/npm/dm/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
-[![npm](https://img.shields.io/npm/dt/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
+[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![npm](https://img.shields.io/npm/dm/ag-grid-angular)](https://www.npmjs.com/package/ag-grid-angular) [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-angular)](https://bundlephobia.com/result?p=ag-grid-angular) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
 
 ag-Grid Angular Component
 ------

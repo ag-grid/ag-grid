@@ -1,9 +1,7 @@
 
-![alt text](./github-banner.png "Logo Title Text 1")
+![alt text](./github-banner.png "AG Grid")
 
-[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
-[![npm](https://img.shields.io/npm/dm/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
-[![npm](https://img.shields.io/npm/dt/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
+[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![npm](https://img.shields.io/npm/dm/ag-grid-react)](https://www.npmjs.com/package/ag-grid-react) [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-react)](https://bundlephobia.com/result?p=ag-grid-react) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
 
 ag-Grid React Component
 ------
@@ -11,7 +9,7 @@ ag-Grid React Component
 ag-Grid is a fully-featured and highly customizable JavaScript data grid.
 It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-react-readme&utm_medium=repository&utm_campaign=github#/performance/1), has no 3rd party dependencies and integrates smoothly with React as React Component. Here's how our grid looks like with multiple filters and grouping enabled:
 
-![alt text](./github-grid-demo.jpg "Logo Title Text 1")
+![alt text](./github-grid-demo.jpg "AG Grid")
 
 
 Features
