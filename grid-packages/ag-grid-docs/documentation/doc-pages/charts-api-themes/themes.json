@@ -1802,6 +1802,19 @@
         "description": "An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above."
       }
     },
+    "nice": {
+      "type": "boolean",
+      "default": true,
+      "description": "If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. Applies to continuous axes only ('number', 'time')."
+    },
+    "min": {
+      "type": "number",
+      "description": "User override for the automatically determinted min value (based on series data). Only applied to \"number\" axes."
+    },
+    "max": {
+      "type": "number",
+      "description": "User override for the automatically determinted max value (based on series data). Only applied to \"number\" axes."
+    },
     "title": {
       "meta": {
         "description": "Configuration for the title shown next to the axis."
