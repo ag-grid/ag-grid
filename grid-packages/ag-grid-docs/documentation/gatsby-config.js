@@ -144,6 +144,7 @@ const plugins = [
     resolve: 'gatsby-plugin-sitemap',
     options: {
       exclude: [`/documentation`],
+      output: 'sitemap-documentation.xml'
     }
   },
   {
