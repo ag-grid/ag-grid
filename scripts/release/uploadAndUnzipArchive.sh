@@ -55,10 +55,10 @@ if [ "$3" != "skipWarning" ]; then
 fi
 
 # delete dir if it exists - can ignore dir not found error
-#ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
+ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
 
 # upload file
-#curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
+curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
 
 ##unzip archive
 ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/$VERSION && tar -xf $ARCHIVE"
