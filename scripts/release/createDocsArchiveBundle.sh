@@ -25,7 +25,9 @@ cd ../../
 
 OUTPUT=$(node scripts/release/createDocsArchiveBundle.js $RAW_VERSION | tee /dev/tty)
 ARCHIVE_FILENAME=`echo $OUTPUT | sed 's/.*Archive Complete://'`
-gzip $ARCHIVE_FILENAME
+
+echo "Gzipping $$ARCHIVE_FILENAME"
+gzip --force $ARCHIVE_FILENAME
 
 echo "Archive Created: $ARCHIVE_FILENAME.gz"
 

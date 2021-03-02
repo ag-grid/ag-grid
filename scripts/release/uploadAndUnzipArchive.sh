@@ -19,6 +19,9 @@ function checkFileExists {
 VERSION=$1
 ARCHIVE=$2
 
+CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
+SSH_LOCATION=$HOME/$SSH_FILE
+
 # a few safety checks
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
 then
@@ -26,15 +29,15 @@ then
     exit;
 fi
 
-if [ -z "$CREDENTIALS_FILE" ]
+if [ -z "$CREDENTIALS_LOCATION" ]
 then
-      echo "\$CREDENTIALS_FILE is not set"
+      echo "\$CREDENTIALS_LOCATION is not set"
       exit;
 fi
 
-if [ -z "$SSH_FILE" ]
+if [ -z "$SSH_LOCATION" ]
 then
-      echo "\$SSH_FILE is not set"
+      echo "\$SSH_LOCATION is not set"
       exit;
 fi
 echo $3
@@ -53,13 +56,13 @@ if [ "$3" != "skipWarning" ]; then
 fi
 
 # delete dir if it exists - can ignore dir not found error
-ssh -i $SSH_FILE ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
+ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
 
 # upload file
-curl --netrc-file $CREDENTIALS_FILE --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
+curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
 
 ##unzip archive
-#ssh -i $SSH_FILE ceolter@ag-grid.com "cd public_html/archive/$VERSION && unzip $ARCHIVE"
+#ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd public_html/archive/$VERSION && unzip $ARCHIVE"
 #
 ##update folder permissions (default is 777 - change to 755)
-#ssh -i $SSH_FILE ceolter@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
+#ssh -i $SSH_LOCATION ceolter@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
