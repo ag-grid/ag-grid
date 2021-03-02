@@ -2,7 +2,7 @@ const walk = require('walk');
 const fs = require('fs');
 const archiver = require('archiver');
 
-const LATEST_HASH = require('child_process').execSync('cat .git/refs/heads/latest').toString().trim();
+const LATEST_HASH = require('child_process').execSync('grep origin/latest .git/packed-refs | cut -d " " -f1').toString().trim();
 const LATEST_HASH_TIMESTAMP = require('child_process').execSync(`git show -s --format=%ci ${LATEST_HASH}`).toString().trim();
 
 if (process.argv.length !== 3) {

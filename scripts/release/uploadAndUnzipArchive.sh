@@ -19,42 +19,58 @@ function checkFileExists {
 VERSION=$1
 ARCHIVE=$2
 
-# a little safety check
+# a few safety checks
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
 then
     echo "Version isn't in the expected format. Valid format is: Number.Number.number. For example 19.1.2";
     exit;
 fi
 
-checkFileExists $ARCHIVE
-#checkFileExists ~/aggrid/aggrid.txt
-checkFileExists ~/.ssh/ag_ssh
-checkFileExists ~/Documents/aggrid/aggrid/.creds
-
-# $3 is optional skipWarning argument
-if [ "$3" != "skipWarning" ]; then
-    while true; do
-        echo    "*********************************** WARNING ************************************************"
-        read -p "This script will DELETE the existing archive of $VERSION (if it exists) and will REPLACE it. Do you wish to continue [y/n]? " yn
-        case $yn in
-            [Yy]* ) break;;
-            [Nn]* ) exit;;
-            * ) echo "Please answer [y]es or [n]o.";;
-        esac
-    done
+if [ -z "$CREDENTIALS_FILE" ]
+then
+      echo "\$CREDENTIALS_FILE is not set"
+      exit;
 fi
 
-#USERNAME=`awk '{print $1}' ~/aggrid/aggrid.txt`
-#PASSWORD=`awk '{print $2}' ~/aggrid/aggrid.txt`
+if [ -z "$SSH_FILE" ]
+then
+      echo "\$SSH_FILE is not set"
+      exit;
+fi
 
-# delete dir if it exists - can ignore dir not found error
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
+checkFileExists $ARCHIVE
+checkFileExists $SSH_FILE
+checkFileExists $CREDENTIALS_FILE
 
-# upload file
-curl --netrc-file ~/Documents/aggrid/aggrid/.creds --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
+echo "ARCHIVE: $ARCHIVE"
+echo "SSH_FILE: $SSH_FILE"
+echo "CREDENTIALS_FILE: $CREDENTIALS_FILE"
 
-#unzip archive
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/archive/$VERSION && unzip $ARCHIVE"
-
-#update folder permissions (default is 777 - change to 755)
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
+#
+## $3 is optional skipWarning argument
+#if [ "$3" != "skipWarning" ]; then
+#    while true; do
+#        echo    "*********************************** WARNING ************************************************"
+#        read -p "This script will DELETE the existing archive of $VERSION (if it exists) and will REPLACE it. Do you wish to continue [y/n]? " yn
+#        case $yn in
+#            [Yy]* ) break;;
+#            [Nn]* ) exit;;
+#            * ) echo "Please answer [y]es or [n]o.";;
+#        esac
+#    done
+#fi
+#
+##USERNAME=`awk '{print $1}' ~/aggrid/aggrid.txt`
+##PASSWORD=`awk '{print $2}' ~/aggrid/aggrid.txt`
+#
+## delete dir if it exists - can ignore dir not found error
+#ssh -i $SSH_FILE ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
+#
+## upload file
+#curl --netrc-file $CREDENTIALS_FILE --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
+#
+##unzip archive
+#ssh -i $SSH_FILE ceolter@ag-grid.com "cd public_html/archive/$VERSION && unzip $ARCHIVE"
+#
+##update folder permissions (default is 777 - change to 755)
+#ssh -i $SSH_FILE ceolter@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
