@@ -2,7 +2,7 @@
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
 
-| Module              | SonarCloud Status |
+| Module              | Info |
 | --------------------|------------------:|
 | ag-grid-community   | [![npm](https://img.shields.io/npm/dm/ag-grid-community)](https://www.npmjs.com/package/ag-grid-community) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-community)](https://bundlephobia.com/result?p=ag-grid-community) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-community&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-community) <br> |
 | ag-grid-enterprise  | [![npm](https://img.shields.io/npm/dm/ag-grid-enterprise)](https://www.npmjs.com/package/ag-grid-enterprise) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-enterprise)](https://bundlephobia.com/result?p=ag-grid-enterprise) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
@@ -14,7 +14,7 @@ It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_so
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
-![alt text](./github-grid-demo.jpg "AG Grid demo")
+![alt text](./github-grid-demo.jpg "AG Grid Demo")
 
 ## Features
 

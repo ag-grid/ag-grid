@@ -1,17 +1,20 @@
 ![alt text](./github-banner.png "AG Grid")
 
-[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
-[![npm](https://img.shields.io/npm/dm/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
-[![npm](https://img.shields.io/npm/dt/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
+[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
+
+| Module              | Info |
+| --------------------|------------------:|
+| ag-grid-community   | [![npm](https://img.shields.io/npm/dm/ag-grid-community)](https://www.npmjs.com/package/ag-grid-community) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-community)](https://bundlephobia.com/result?p=ag-grid-community) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-community&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-community) <br> |
+| ag-grid-enterprise  | [![npm](https://img.shields.io/npm/dm/ag-grid-enterprise)](https://www.npmjs.com/package/ag-grid-enterprise) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-enterprise)](https://bundlephobia.com/result?p=ag-grid-enterprise) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
 
 # AG Grid
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/documentation/javascript/getting-started/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github).
+It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/documentation/javascript/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
-![alt text](./github-grid-demo.jpg "AG Grid demo")
+![alt text](./github-grid-demo.jpg "AG Grid Demo")
 
 ## Features
 
@@ -44,23 +47,23 @@ Here are some of the features that make AG Grid stand out:
 * Pinned Rows
 * Full Width Rows
 
-\* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing.php?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github) only.
+\* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) only.
 
-Check out the [developer documentation](https://www.ag-grid.com/documentation/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
+Check out the [developer documentation](https://www.ag-grid.com/documentation/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
 
 ## Looking for a framework specific solution?
 
-* [Get Started with Angular](https://www.ag-grid.com/documentation/angular/getting-started/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with React](https://www.ag-grid.com/documentation/react/getting-started/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with Vue](https://www.ag-grid.com/documentation/vue/getting-started/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with AngularJS](https://www.ag-grid.com/documentation/angular/angularjs/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Angular](https://www.ag-grid.com/documentation/angular/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with React](https://www.ag-grid.com/documentation/react/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Vue](https://www.ag-grid.com/documentation/vue/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with AngularJS](https://www.ag-grid.com/documentation/angular/angularjs/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 
 ## Getting started
 
 ### Install dependencies
 
 ```sh
-$ npm install --save @ag-grid-community/core
+$ npm install --save ag-grid-community
 ```
 
 ### Add a placeholder to HTML
@@ -72,10 +75,10 @@ $ npm install --save @ag-grid-community/core
 ### Import the grid and styles
 
 ```js
-import { Grid } from '@ag-grid-community/core';
+import { Grid } from 'ag-grid-community';
 
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 ```
 
 ### Set configuration
@@ -102,11 +105,11 @@ var eGridDiv = document.querySelector('#myGrid');
 new Grid(eGridDiv, this.gridOptions);
 ```
 
-For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/documentation/javascript/building-typescript/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github).
+For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/documentation/javascript/building-typescript/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
 
 ## Issue Reporting
 
-If you have found a bug, please report it in this repository's [issues](https://github.com/ag-grid/ag-grid/issues) section. If you're using the Enterprise version, please use the private ticketing system to do that. For more information on support please see our [dedicated support page](https://www.ag-grid.com/support.php?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github).
+If you have found a bug, please report it in this repository's [issues](https://github.com/ag-grid/ag-grid/issues) section. If you're using the Enterprise version, please use the private ticketing system to do that. For more information on support please see our [dedicated support page](https://www.ag-grid.com/support.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
 
 ## Asking Questions
 
@@ -114,7 +117,7 @@ Look for similar problems on [StackOverflow](https://stackoverflow.com/questions
 
 ## Contributing
 
-AG Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs board](https://www.ag-grid.com/ag-grid-jobs-board/?utm_source=@ag-grid-community/core-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
+AG Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs board](https://www.ag-grid.com/ag-grid-jobs-board/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
 
 ## License
 
