@@ -16,7 +16,7 @@ const gridOptions = {
 }
 </snippet>
 
-See [Column Properties](../column-properties/) for a list of all properties that can be applied to a column.
+See [Column Properties](/column-properties/) for a list of all properties that can be applied to a column.
 
 If you want the columns to be grouped, you can include them as children like so:
 
@@ -36,7 +36,7 @@ const gridOptions = {
 }
 </snippet>
 
-Groups are explained in more detail in the section [Column Groups](../column-groups/).
+Groups are explained in more detail in the section [Column Groups](/column-groups/).
 
 [[only-react]]
 | ## Declarative Columns
@@ -99,7 +99,7 @@ In addition to the above, the grid provides additional ways to help simplify and
 - `defaultColGroupDef`: contains properties that all column groups will inherit.
 - `columnTypes`: specific column types containing properties that column definitions can inherit.
 
-Default columns and column types can specify any of the [column properties](../column-properties/) available on a column.
+Default columns and column types can specify any of the [column properties](/column-properties/) available on a column.
 
 [[note]]
 | Column Types are designed to work on Columns only, i.e. they won't be applied to Column Groups.

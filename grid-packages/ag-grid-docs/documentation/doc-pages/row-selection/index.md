@@ -18,7 +18,7 @@ Configure row selection with the following properties:
 
 - `suppressRowClickSelection`: If `true`, rows won't be selected when clicked. Use, for example, when you want checkbox selection, and don't want to also select the row when the row is clicked.
 
-When you pass data to the grid, it wraps each data item in a node object. This is explained in the section [Client-Side Row Model](../client-side-model/). When you query for the selected rows, there are two method types: ones that return nodes, and ones that return data items. To get the selected nodes / rows from the grid, use the following API methods:
+When you pass data to the grid, it wraps each data item in a node object. This is explained in the section [Client-Side Row Model](/client-side-model/). When you query for the selected rows, there are two method types: ones that return nodes, and ones that return data items. To get the selected nodes / rows from the grid, use the following API methods:
 
 
 - `api.getSelectedNodes()`: Returns an array of the selected nodes.
@@ -125,9 +125,9 @@ It is possible to have a checkbox in the header for selection. To configure the 
 const gridOptions = {
     columnDefs: [
         // the name column header always has a checkbox in the header
-        { 
-            field: 'name', 
-            headerCheckboxSelection: true 
+        {
+            field: 'name',
+            headerCheckboxSelection: true
         },
         // the country column header only has checkbox if it is the first column
         {
@@ -272,7 +272,7 @@ There is an API function `forEachNode`. This is useful for doing group selection
 
 ### Example: Selection with Keyboard Arrow Keys
 
-By default, you can select a row on mouse click, and navigate up and down the rows using your keyboard keys. However, the selection state does not correlate with the navigation keys, but we can add this behaviour using our own [Custom Navigation](../keyboard-navigation/#custom-navigation).
+By default, you can select a row on mouse click, and navigate up and down the rows using your keyboard keys. However, the selection state does not correlate with the navigation keys, but we can add this behaviour using our own [Custom Navigation](/keyboard-navigation/#custom-navigation).
 
 We need to provide a callback to the `navigateToNextCell` grid option to override the default arrow key navigation:
 
@@ -284,18 +284,18 @@ We need to provide a callback to the `navigateToNextCell` grid option to overrid
 |        // this is some code
 |        const KEY_UP = 38;
 |        const KEY_DOWN = 40;
-|    
+|
 |        const noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
 |        if (noUpOrDownKeyPressed) {
 |            return suggestedNextCell;
 |        }
-|    
+|
 |        params.api.forEachNode(node => {
 |            if (node.rowIndex === suggestedNextCell.rowIndex) {
 |                node.setSelected(true);
 |            }
 |        });
-|    
+|
 |        return suggestedNextCell;
 |    },
 |}

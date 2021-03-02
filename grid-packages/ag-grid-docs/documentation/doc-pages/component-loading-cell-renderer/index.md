@@ -32,7 +32,7 @@ interface ILoadingCellRendererParams {
 
 ## Registering Loading Cell Renderer Components
 
-See the section [registering custom components](../components/#registering-custom-components) for details on registering and using custom loading cell renderers.
+See the section [registering custom components](/components/#registering-custom-components) for details on registering and using custom loading cell renderers.
 
 ## Example: Custom Loading Cell Renderer
 

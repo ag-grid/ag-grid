@@ -24,7 +24,7 @@ Filtering is enabled in the grid via the `filter` column definition attribute. S
 |}
 </snippet>
 
-For more details on filtering configurations see the section on [Column Filtering](../filtering/).
+For more details on filtering configurations see the section on [Column Filtering](/filtering/).
 
 
 ## Full Store Filtering
@@ -48,7 +48,7 @@ Note that the Set Filter is provided values to work. This is a requirement when 
 ## Partial Store Filtering
 
 When using the Partial Store, filtering of rows is performed on the server. When a filter is applied in the grid
-a request is made for more rows via the [Datasource](../server-side-model-datasource/). The provided request 
+a request is made for more rows via the [Datasource](/server-side-model-datasource/). The provided request
 contains filter metadata in the `filterModel` property.
 
 An example of the contents contained in the `filterModel` is shown below:
@@ -74,13 +74,13 @@ An example of the contents contained in the `filterModel` is shown below:
 }
 ```
 
-Notice in the snippet above the `filterModel` object contains a `'text'` and `'number'` filter. This filter metadata 
+Notice in the snippet above the `filterModel` object contains a `'text'` and `'number'` filter. This filter metadata
 is used by the server to perform the filtering.
 
 For more details on properties and values used in these filters see the section on
-[Simple Column Filters](../filter-provided-simple/).
+[Simple Column Filters](/filter-provided-simple/).
 
-The example below demonstrates filtering using [Simple Column Filters](../filter-provided-simple/) and the 
+The example below demonstrates filtering using [Simple Column Filters](/filter-provided-simple/) and the
 Partial Store. Notice the following:
 
 - The **Athlete** column has a `'text'` filter defined using `filter: 'agTextColumnFilter'`.
@@ -93,7 +93,7 @@ Partial Store. Notice the following:
 
 ## Set Filtering
 
-Filtering using the [Set Filter](../filter-set/) has a few differences to filtering with Simple Filters.
+Filtering using the [Set Filter](/filter-set/) has a few differences to filtering with Simple Filters.
 
 ### Set Filter Model
 
@@ -148,9 +148,9 @@ const gridOptions = {
 }
 </snippet>
 
-For more details on setting values, see [Supplying Filter Values](../filter-set-filter-list/#supplying-filter-values).
-Once you have supplied values to the Set Filter, they will not change unless you ask for them to be refreshed; 
-see [Refreshing Values](../filter-set-filter-list/#refreshing-values) for more information.
+For more details on setting values, see [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values).
+Once you have supplied values to the Set Filter, they will not change unless you ask for them to be refreshed;
+see [Refreshing Values](/filter-set-filter-list/#refreshing-values) for more information.
 
 The example below demonstrates server-side filtering using the Set Filter and the Partial Row Store. Note the following:
 
@@ -165,6 +165,6 @@ When the filter for the **Country** column is changed, the values for the **Spor
 
 ## Next Up
 
-Continue to the next section to learn about [Row Grouping](../server-side-model-grouping/).
+Continue to the next section to learn about [Row Grouping](/server-side-model-grouping/).
 
 

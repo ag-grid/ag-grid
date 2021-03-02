@@ -4,7 +4,7 @@ title: "Client-Side Data - Single Row / Cell Updates"
 
 You can target updates to a single row or cell. Updating a single row means asking the grid to replace the data item for one specific row. Updating a cell means keeping the data item but asking the grid to replace one attribute of that data item.
 
-Both single row and single cell updates are done by first getting a reference to the row's Row Node and then using the relevant Row Node API method. See [Accessing Data](../accessing-data/) on how to access Row Nodes.
+Both single row and single cell updates are done by first getting a reference to the row's Row Node and then using the relevant Row Node API method. See [Accessing Data](/accessing-data/) on how to access Row Nodes.
 Once you have access to the required Row Node, you update its data with the following Row Node API methods:
 
 - `rowNode.setData(data):` Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing.
@@ -22,7 +22,7 @@ After calling `rowNode.setData()` or `rowNode.setDataValue()` the grid will not 
 
 To have the grid update its sort, filter or grouping call the Grid API `refreshClientSideRowModel()`.
 
-If you want the grid to automatically update sorting, filter or grouping then you should consider using [Transaction Updates](../data-update-transactions/).
+If you want the grid to automatically update sorting, filter or grouping then you should consider using [Transaction Updates](/data-update-transactions/).
 
 
 ## Updating Rows / Cells Example

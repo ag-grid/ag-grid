@@ -6,7 +6,7 @@ This section goes through examples of integrating the grid with [D3](https://d3j
 
 
 [[note]]
-| This section pre-dates [Integrated Charts](../integrated-charts/). It is our plan to add support to our charting library to achieve the below, but for now we will leave these examples using D3 and Sparklines.
+| This section pre-dates [Integrated Charts](/integrated-charts/). It is our plan to add support to our charting library to achieve the below, but for now we will leave these examples using D3 and Sparklines.
 
 ## External Graphs using D3
 

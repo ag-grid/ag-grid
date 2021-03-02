@@ -80,7 +80,7 @@ Holding down ctrl & context menu bypasses the grids context menu. If you do want
 
 ## Hiding the Context Menu
 
-Hide the context menu with the grid API `hidePopupMenu()`, which will hide either the context menu or the [column menu](../column-menu/), whichever is showing.
+Hide the context menu with the grid API `hidePopupMenu()`, which will hide either the context menu or the [column menu](/column-menu/), whichever is showing.
 
 ## Context Menu Example
 

@@ -39,7 +39,7 @@ There are various ways to load these stylesheets, as described in the sections b
 [[only-javascript]]
 | ### Pre-built Bundles
 |
-| Some pre-built bundles, whether [downloaded from our website](../download/) or included in the `ag-grid-community` [NPM package](../npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
+| Some pre-built bundles, whether [downloaded from our website](/download/) or included in the `ag-grid-community` [NPM package](/npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
 
 ### JavaScript Bundlers
 

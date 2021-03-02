@@ -43,7 +43,7 @@ interface ITooltipParams {
 
 ## Registering Custom Tooltip Components
 
-See the [registering custom components](../components/#registering-custom-components) section for details on registering and using custom tooltip components.
+See the [registering custom components](/components/#registering-custom-components) section for details on registering and using custom tooltip components.
 
 ## Default Browser Tooltip
 

@@ -17,7 +17,7 @@ When a Transaction is applied to the grid using Async Transactions, the transact
 The amount of time which the grid waits before applying the transaction is set via the grid property `asyncTransactionWaitMillis` and defaults to 50ms. Transactions are also applied after any rows are loaded.
 
 
-The transaction interfaces `ServerSideTransaction` and `ServerSideTransactionResult` used in [SSRM Transactions](../server-side-model-transactions/#transaction-api) are used again for Async Transactions.
+The transaction interfaces `ServerSideTransaction` and `ServerSideTransactionResult` used in [SSRM Transactions](/server-side-model-transactions/#transaction-api) are used again for Async Transactions.
 
 
 ```ts
@@ -125,7 +125,7 @@ interface IsApplyServerSideTransactionParams {
 
 If the callback returns `true`, the transaction is applied as normal and the Transaction Status `Applied` is returned. If the callback returns `false`, the transaction is discarded and the Transaction Status `Cancelled` is returned.
 
-The suggested mechanism is to use versioned (or timesampted) data. When row data is loaded, the application could provide a data version as [Store Info](../server-side-model-grouping/#store-state-info).
+The suggested mechanism is to use versioned (or timestamped) data. When row data is loaded, the application could provide a data version as [Store Info](/server-side-model-grouping/#store-state-info).
 
 The example is configured to demonstrate this. Note the following:
 
@@ -187,5 +187,5 @@ In the example, note the following:
 
 ## Next Up
 
-Continue to the next section to learn how to do [Load Retry](../server-side-model-retry/).
+Continue to the next section to learn how to do [Load Retry](/server-side-model-retry/).
 

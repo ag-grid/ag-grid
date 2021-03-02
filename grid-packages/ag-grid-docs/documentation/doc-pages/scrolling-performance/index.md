@@ -15,7 +15,7 @@ AG Grid can be as fast as demonstrated in the demo application [Demo Application
 ## 2. Check Cell Renderers
 
 AG Grid can be slowed down by your custom
-[cell renderers](../component-cell-renderer/). To test this, remove all cell renderers from your grid and compare the speed again. If the grid does improve it's speed by removing cell renderers, try to introduce the cell renderers one by one to find out which ones are adding the most overhead.
+[cell renderers](/component-cell-renderer/). To test this, remove all cell renderers from your grid and compare the speed again. If the grid does improve it's speed by removing cell renderers, try to introduce the cell renderers one by one to find out which ones are adding the most overhead.
 
 ## 3. Create Fast Cell Renderers
 
@@ -53,12 +53,12 @@ The grid works fastest on Google Chrome. If you can, tell your users.
 
 ## 7. Understand Data Updates
 
-For fast changing data, consider using [Batch Update Transactions](../data-update-high-frequency/) which allows the grid to take very large amounts of updates without bringing the browser to a crawl. This is also demonstrated in the blog
+For fast changing data, consider using [Batch Update Transactions](/data-update-high-frequency/) which allows the grid to take very large amounts of updates without bringing the browser to a crawl. This is also demonstrated in the blog
 [Streaming Updates in JavaScript Datagrids](https://medium.com/ag-grid/how-to-test-for-the-best-html5-grid-for-streaming-updates-53545bb9256a) that shows hundreds of thousands of updates per second.
 
 ## 8. See Also
 
-Read the article [8 Performance Hacks for JavaScript](../../javascript/8-performance-hacks-for-javascript/) so you know what the grid is doing, that way you will be able to reason with it.
+Read the article [8 Performance Hacks for JavaScript](../../javascript-table/8-performance-hacks-for-javascript/) so you know what the grid is doing, that way you will be able to reason with it.
 
 ## 9. Debounce Vertical Scroll
 

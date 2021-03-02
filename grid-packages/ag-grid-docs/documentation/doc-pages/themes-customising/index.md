@@ -4,7 +4,7 @@ title: "Customising Themes"
 
 This section describes how the themes provided by the grid can be customised to suit application requirements.
 
-[Provided Themes](../themes-provided/) can be customised using theme parameters and CSS
+[Provided Themes](/themes-provided/) can be customised using theme parameters and CSS
 rules. This requires configuring your project to build Sass files and allows you to change elements of the look
 and feel like colours, padding, and borders.
 
@@ -65,7 +65,7 @@ Note how this example includes the structural styles (`ag-gris.scss`) before the
 
 ### Customising row and header heights
 
-The grid uses [DOM virtualisation](../dom-virtualisation/) for rendering large amounts of data,
+The grid uses [DOM virtualisation](/dom-virtualisation/) for rendering large amounts of data,
 which means that it needs to know the size of various elements like columns and grid rows in order to calculate their
 layout. The grid uses several strategies to work out the right size:
 
@@ -74,7 +74,7 @@ layout. The grid uses several strategies to work out the right size:
 
 1. If CSS has not loaded and one of the provided themes is in use, the grid contains hard-coded fallback values for these themes. For this reason we recommend that if you are extending a provided theme like `ag-theme-alpine` and have not changed the row and header heights, you keep the same theme name so that the grid knows what fallback sizes to apply.
 
-1. If neither of the above methods will work for your app (you do not want to delay app initialisation until after CSS has loaded, and are not using a provided theme with heights unchanged) then you should inform the grid about your custom element heights using [grid properties](../grid-properties/). The minimal set of properties you need to set to ensure correct functioning are: `rowHeight`, `headerHeight` and `minColWidth`.
+1. If neither of the above methods will work for your app (you do not want to delay app initialisation until after CSS has loaded, and are not using a provided theme with heights unchanged) then you should inform the grid about your custom element heights using [grid properties](/grid-properties/). The minimal set of properties you need to set to ensure correct functioning are: `rowHeight`, `headerHeight` and `minColWidth`.
 
 ## Setting colour parameters using CSS variables
 
@@ -133,7 +133,7 @@ parameters alone. For example, there is no parameter to set the `font-style: ita
 If you're using Sass, you can reference theme parameters in your own CSS rules using the [ag-param function](#ag-param) or [ag-color-property mixin](#ag-color-property).
 
 The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often
-have multiple class names, some more general than others. For example, the [row grouping panel](../tool-panel-columns/#column-tool-panel-example) is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two
+have multiple class names, some more general than others. For example, the [row grouping panel](/tool-panel-columns/#column-tool-panel-example) is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two
 kinds - a horizontal one at the top of the header and a vertical one in the columns tool panel. You can use the class name `ag-column-drop` to target either kind, or `ag-column-drop-vertical` / `ag-column-drop-horizontal` to target one only.
 
 

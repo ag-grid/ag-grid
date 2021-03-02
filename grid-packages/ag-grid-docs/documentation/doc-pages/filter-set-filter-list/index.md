@@ -50,7 +50,7 @@ This section covers different ways to format the displayed Filter List values in
 
 ### Value Formatter
 
-A [Value Formatter](../value-formatters/) is a good choice when the string value displayed in the Filter List needs to
+A [Value Formatter](/value-formatters/) is a good choice when the string value displayed in the Filter List needs to
 be modified, for example adding country codes in parentheses after a country name, as shown below:
 
 <snippet>
@@ -68,7 +68,7 @@ const gridOptions = {
         // column definition using the same value formatter to format cell and filter values
         {
             field: 'country',
-            valueFormatter: countryValueFormatter, 
+            valueFormatter: countryValueFormatter,
             filter: 'agSetColumnFilter',
             filterParams: {
                 valueFormatter: countryValueFormatter,
@@ -91,11 +91,11 @@ The following example shows how Set Filter values are formatted using a Value Fo
 ### Cell Renderer
 
 
-A [Cell Renderer](../cell-rendering/) is a good choice when the value displayed requires markup. For instance if a 
+A [Cell Renderer](/cell-rendering/) is a good choice when the value displayed requires markup. For instance if a
 country flag image is to be shown alongside country names.
 
-The same Cell Renderer can used to format the grid cells and filter values, or different renderers can be supplied to 
-each. Note that the Cell Renderer will be supplied additional info when used to format cells inside the grid (as grid 
+The same Cell Renderer can used to format the grid cells and filter values, or different renderers can be supplied to
+each. Note that the Cell Renderer will be supplied additional info when used to format cells inside the grid (as grid
 cells have row details that are not present for values inside a Filter List).
 
 Given the following Cell Renderer:
@@ -112,9 +112,9 @@ The following snippet shows how to provide the `countryCellRenderer` to the Set 
 const gridOptions = {
     columnDefs: [
         // column definition using the same cell renderer to format cell and filter values
-        { 
+        {
             field: 'country',
-            cellRenderer: countryCellRenderer, 
+            cellRenderer: countryCellRenderer,
             filter: 'agSetColumnFilter',
             filterParams: {
                 cellRenderer: countryCellRenderer
@@ -125,7 +125,7 @@ const gridOptions = {
 </snippet>
 
 [[note]]
-| A custom [Cell Renderer Component](../component-cell-renderer/#cell-renderer-component) can also be supplied to `filterParams.cellRenderer`.
+| A custom [Cell Renderer Component](/component-cell-renderer/#cell-renderer-component) can also be supplied to `filterParams.cellRenderer`.
 
 
 The following example shows how Set Filter values are rendered using a Cell Renderer. Note the following:
@@ -167,7 +167,7 @@ Note that if there are missing values in the row data, the filter list will disp
 The following example demonstrates providing filter values using `filterParams.values`. Note the following:
 
 - The **Days (Values Not Provided)** set filter obtains values from the row data to populate the filter list and as `'Saturday'` and `'Sunday'` are not present in the data they do not appear in the filter list.
-- As the **Days (Values Not Provided)** filter values come from the row data they are sorted using a [Custom Sort Comparator](../filter-set-filter-list/#sorting-filter-lists) to ensure the days are ordered according to the week day.
+- As the **Days (Values Not Provided)** filter values come from the row data they are sorted using a [Custom Sort Comparator](/filter-set-filter-list/#sorting-filter-lists) to ensure the days are ordered according to the week day.
 - The **Days (Values Provided)** set filter is given values using `filterParams.values`. As all days are supplied the filter list also contains `'Saturday'` and `'Sunday'`.
 - As the **Days (Values Provided)** filter values are provided in the correct order, the default filter list sorting is turned off using: `filterParams.suppressSorting=true`.
 
@@ -187,7 +187,7 @@ const gridOptions = {
                     // async update simulated using setTimeout()
                     setTimeout(() => {
                         // fetch values from server
-                        const values = getValuesFromServer(); 
+                        const values = getValuesFromServer();
                         // supply values to the set filter
                         params.success(values);
                     }, 3000);
@@ -223,7 +223,7 @@ interface SetFilterValuesFuncParams {
 The following example demonstrates loading set filter values asynchronously. Note the following:
 
 - `filterParams.values` is assigned a callback function that loads the filter values after a 3 second delay using the callback supplied in the params: `params.success(['value1', 'value2'])`.
-- Opening the set filter shows a loading message before the values are set. See the [Localisation](../localisation/) section for details on how to change this message.
+- Opening the set filter shows a loading message before the values are set. See the [Localisation](/localisation/) section for details on how to change this message.
 - The callback is only invoked the first time the filter is opened. The next time the filter is opened the values are not loaded again.
 
 <grid-example title='Callback/Async' name='callback-async' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
@@ -314,7 +314,7 @@ Sometimes you might wish to support multiple values in a single cell, for exampl
 The example below demonstrates this in action. Note the following:
 
 - The **Animals (array)** column uses an array in the data containing multiple values.
-- The **Animals (string)** column uses a single string in the data to represent multiple values, with a [Value Getter](../value-getters/) used to extract an array of values from the data.
+- The **Animals (string)** column uses a single string in the data to represent multiple values, with a [Value Getter](/value-getters/) used to extract an array of values from the data.
 - The **Animals (objects)** column retrieves values from an array of objects, using a [Key Creator](#complex-objects).
 - For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
 - Selecting values in the Set Filter will show rows where the data for that row contains **any** of the selected values.
@@ -367,7 +367,7 @@ const gridOptions = {
 }
 </snippet>
 
-The default tooltip component will be used unless a [Custom Tooltip Component](../component-tooltip/) is provided.
+The default tooltip component will be used unless a [Custom Tooltip Component](/component-tooltip/) is provided.
 
 The following example demonstrates tooltips in the Set Filter. Note the following:
 
@@ -380,5 +380,5 @@ The following example demonstrates tooltips in the Set Filter. Note the followin
 
 ## Next Up
 
-Continue to the next section: [Data Updates](../filter-set-data-updates/).
+Continue to the next section: [Data Updates](/filter-set-data-updates/).
 

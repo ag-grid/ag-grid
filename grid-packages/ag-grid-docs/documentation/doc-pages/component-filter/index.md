@@ -9,18 +9,18 @@ Filter components allow you to add your own filter types to AG Grid. Use them wh
 md-include:simple-filter-javascript.md
 md-include:simple-filter-angular.md
 md-include:simple-filter-react.md
-md-include:simple-filter-vue.md 
+md-include:simple-filter-vue.md
 
 ## Custom Filter Example
 
-The example below shows two custom filters. The first is on the `Athlete` column and demonstrates a filter with "fuzzy" matching and the 
+The example below shows two custom filters. The first is on the `Athlete` column and demonstrates a filter with "fuzzy" matching and the
 second is on the `Year` column and uses the `YearFilter` above.
 
 <grid-example title='Filter Component' name='custom-filter' type='generated'></grid-example>
 
 md-include:component-interface-javascript.md
-md-include:component-interface-angular.md  
-md-include:component-interface-react.md  
+md-include:component-interface-angular.md
+md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
 ```ts
@@ -98,7 +98,7 @@ interface IDoesFilterPassParams {
 
 If you create your own filter you have two options to get floating filters working for that filter:
 
-1. You can [create your own floating filter](../component-floating-filter/).
+1. You can [create your own floating filter](/component-floating-filter/).
 1. You can implement the `getModelAsString()` method in your custom filter. If you implement this method and don't provide a custom floating filter, AG Grid will automatically provide a read-only version of a floating filter.
 
 If you don't provide either of these two options for your custom filter, the display area for the floating filter will be empty.
@@ -109,9 +109,9 @@ Sometimes you will need to create custom components for your filters that also c
 
 There are two ways you can get fix this problem:
 
-- Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid. 
+- Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.
   This is the best solution, but you can only do this if you are writing the component yourself.
-- Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](../component-date/#example-custom-date)
+- Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](/component-date/#example-custom-date)
 
 [[only-angular]]
 | ## Accessing the Angular Component Instance
@@ -228,4 +228,4 @@ There are two ways you can get fix this problem:
 | The example below illustrates how a custom filter component can be accessed and methods on it invoked:
 |
 | <grid-example title='Vue Filter Component' name='filter-component' type='generated' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "vue", "extras": ["bootstrap"] }'></grid-example>
- 
+

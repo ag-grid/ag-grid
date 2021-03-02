@@ -65,8 +65,8 @@ A Header Component allows customising the inside part of the header. The compone
 
 The grid is always responsible for the following:
 
-- [**Resizing:**](../column-sizing/) When enabled, the grid will put an invisible widget to be grabbed by the mouse for resizing.
-- [**Checkbox Selection:**](../row-selection/) When enabled, the grid puts a checkbox for 'select all' in the header.
+- [**Resizing:**](/column-sizing/) When enabled, the grid will put an invisible widget to be grabbed by the mouse for resizing.
+- [**Checkbox Selection:**](/row-selection/) When enabled, the grid puts a checkbox for 'select all' in the header.
 
 The header component (your bit) will be responsible for the following:
 
@@ -289,7 +289,7 @@ The example below shows a header component in action. The following can be obser
 | For a full working example of Header Components in React see
 | [React Example](https://github.com/ag-grid/ag-grid-react-example).
 |
-| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](../react-hooks/) for more information.
+| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](/react-hooks/) for more information.
 
 [[only-vue]]
 | ## VueJS Header Rendering

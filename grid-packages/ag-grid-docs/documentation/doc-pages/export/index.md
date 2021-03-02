@@ -6,8 +6,8 @@ This page covers the export options that are common to both CSV and Excel.
 
 The grid provides APIs to export data to CSV and Excel. You can download a file to the user's computer or generate a string to be uploaded to a server. For more detail on the specific options for each format see:
 
-- [CSV Export](../csv-export/)
-- [Excel Export](../excel-export/)<enterprise-icon></enterprise-icon>
+- [CSV Export](/csv-export/)
+- [Excel Export](/excel-export/)<enterprise-icon></enterprise-icon>
 
 ## Selecting Data to Export
 
@@ -44,7 +44,7 @@ The same data that is in the grid gets exported, but none of the GUI representat
     - Cell Renderers will NOT be used.
     - Value Getters will be used.
     - Cell Formatters will NOT be used (use `processCellCallback` instead).
-- Cell styles are not exported by default. CSV does not allow styling. For details on styling the Excel export, see [Excel Export](../excel-export/).
+- Cell styles are not exported by default. CSV does not allow styling. For details on styling the Excel export, see [Excel Export](/excel-export/).
 - If row grouping:
     - all data will be exported regardless of whether groups are open in the UI.
     - by default, group names will be in the format "-> Parent Name -> Child Name" (use `processRowGroupCallback` to change this)
@@ -84,9 +84,9 @@ interface ExcelData {
 }
 ```
 
-See the styles section of the [Excel Export](../excel-export/) page for more information how the `styleId` property is interpreted. The CSV exporter will ignore style information.
+See the styles section of the [Excel Export](/excel-export/) page for more information how the `styleId` property is interpreted. The CSV exporter will ignore style information.
 
-The CSV exporter can accept a multi-line string for `customHeader` and `customFooter`, see the [CSV Export](../csv-export/) page for more information.
+The CSV exporter can accept a multi-line string for `customHeader` and `customFooter`, see the [CSV Export](/csv-export/) page for more information.
 
 ## Export on iOS
 

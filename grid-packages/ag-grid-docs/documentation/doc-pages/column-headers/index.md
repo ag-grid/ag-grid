@@ -122,7 +122,7 @@ As you can see in the example below, if you change any of the header heights, th
 
 ## Custom Header
 
-Header templates are meant to be used for simple UI customisation, if you need to have more control over the header check how to create your own [Header Components](../component-header/).
+Header templates are meant to be used for simple UI customisation, if you need to have more control over the header check how to create your own [Header Components](/component-header/).
 
 ## Header Tooltips
 
@@ -137,7 +137,7 @@ The example below shows header tooltips. Note the following:
 
 ## Header Templates
 
-You can provide a header template used by the default header component for simple layout changes. If you want to change the behaviour, please look at creating your own [Custom Header Component](../component-header/). The template for the default header is specified in `columnDef.headerComponentParams.template`.
+You can provide a header template used by the default header component for simple layout changes. If you want to change the behaviour, please look at creating your own [Custom Header Component](/component-header/). The template for the default header is specified in `columnDef.headerComponentParams.template`.
 
 This is the default template used in AG Grid:
 
@@ -170,7 +170,7 @@ When you provide your own template, everything should work as expected as long a
 The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
 [[note]]
-| Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](../custom-icons/).
+| Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](/custom-icons/).
 
 ### Example: Simple Header Templates
 

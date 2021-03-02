@@ -14,7 +14,7 @@ You configure cell editors as part of the column definition and can be one of th
 
 The simplest way to enable editing is by providing `colDef.editable=true`. By doing so, all the cells in the column will be editable.
 
-It is possible to have only a few cells in a column editable; to do so, instead of `colDef.editable=true`, you can specify a callback that will get called for each cell displayed for that column. If you return `true` the cell will be editable. 
+It is possible to have only a few cells in a column editable; to do so, instead of `colDef.editable=true`, you can specify a callback that will get called for each cell displayed for that column. If you return `true` the cell will be editable.
 
 ```ts
 // function to enable/disable column editable.
@@ -81,7 +81,7 @@ The next and previous cells can also be navigated using the API functions `api.t
 
 ## Value Parser and Value Setter
 
-[Value setters](../value-setters/) and [value parsers](../value-parsers/) are the inverse of value getters and formatters. If you want to parse the data, or set the value into your data in ways other than just using the field, see the sections for [value setters](../value-setters/) and [value parsers](../value-parsers/).
+[Value setters](/value-setters/) and [value parsers](/value-parsers/) are the inverse of value getters and formatters. If you want to parse the data, or set the value into your data in ways other than just using the field, see the sections for [value setters](/value-setters/) and [value parsers](/value-parsers/).
 
 ## Event: Cell Value Changed
 
@@ -157,7 +157,7 @@ Finally, the example also demonstrates querying which cell is editing:
 
 It is also possible to use different editors for different rows in the same column. Typically an application might check the rows contents and choose an editor accordingly. To configure this set `colDef.cellEditorSelector` to a function that returns the name of the component to be used as an editor and optionally the custom params to be passed into it.
 
-The params that are passed to this function is the same as the params passed to [cell editors](../component-cell-editor/).
+The params that are passed to this function is the same as the params passed to [cell editors](/component-cell-editor/).
 
 The following example illustrates how to use different editors and parameters in the same column. Note that:
 
@@ -262,10 +262,10 @@ This does not mean that you cannot show a popup from your 'in cell' editor - you
 
 The example below shows full row editing. In addition to standard full row editing, the following should also be noted:
 
-- The 'Price' column has a custom editor demonstrating how you should implement the `focusIn()` method. 
+- The 'Price' column has a custom editor demonstrating how you should implement the `focusIn()` method.
   Both `focusIn()` and `focusOut()` for this editor are logged to the console. Note that `focusIn()`
   and `focusOut()` are only called when the user is tabbing between cells when editing, they are not called
-  as the user double clicks on a cell to start editing that cell, or the user finishes editing that cell by 
+  as the user double clicks on a cell to start editing that cell, or the user finishes editing that cell by
   e.g. hitting the Enter key.
 - The 'Suppress Navigable' column is not navigable using `Tab`. In other words, when tabbing around the grid, you cannot tab onto this cell.
 - The 'Not Editable' column is not editable, so when the row goes into edit mode, this column is not impacted. Also when editing, this column is not navigated to when tabbing.
@@ -315,4 +315,4 @@ The example below shows the editing with `stopEditingWhenGridLosesFocus = true`.
 <grid-example title='Stop Editing When Grid Loses Focus' name='stop-edit-when-grid-loses-focus' type='generated' options='{ "exampleHeight": 510 }'></grid-example>
 
 [[note]]
-| Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](../component-cell-editor/) for more information.
+| Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](/component-cell-editor/) for more information.

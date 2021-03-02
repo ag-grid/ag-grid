@@ -37,7 +37,7 @@ The example below shows a customised SSRM using the Partial Store. Note the foll
 
 - The grid property `maxBlocksInCache = 2`. This means the grid will keep two blocks in memory only. To see this in action, scroll past row 100 (which will require a third block to be loaded), then quickly scroll back to the start and you will observe the first block needs to be reloaded.
 
-- The grid property `rowBuffer = 0`. This means the grid will not render any rows outside the vertical scroll. This is good for demonstrating this example, as otherwise the loading could appear outside of the visible area and make the example more difficult to understand. See [DOM Virtualisation](../dom-virtualisation/) for more information on setting the `rowBuffer` property.
+- The grid property `rowBuffer = 0`. This means the grid will not render any rows outside the vertical scroll. This is good for demonstrating this example, as otherwise the loading could appear outside of the visible area and make the example more difficult to understand. See [DOM Virtualisation](/dom-virtualisation/) for more information on setting the `rowBuffer` property.
 
 <grid-example title='Custom Partial' name='custom-infinite' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
@@ -55,6 +55,6 @@ The example below demonstrates debouncing the block loading. Note the following:
 
 ## Next Up
 
-Continue to the next section to learn about [Sorting](../server-side-model-sorting/).
+Continue to the next section to learn about [Sorting](/server-side-model-sorting/).
 
 

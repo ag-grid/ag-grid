@@ -4,14 +4,14 @@ title: "Provided Filters"
 
 This section describes the functionality common to all filters that are provided by the grid.
 
-The grid provides four filters out of the box: three [Simple Filters](../filter-provided-simple/) (Text, Number and Date), and an advanced [Set Filter](../filter-set/) which is available in the Enterprise version of the grid.
+The grid provides four filters out of the box: three [Simple Filters](/filter-provided-simple/) (Text, Number and Date), and an advanced [Set Filter](/filter-set/) which is available in the Enterprise version of the grid.
 
 Follow the links below to learn more about each specific filter:
 
-- [Text](../filter-text/)
-- [Number](../filter-number/)
-- [Date](../filter-date/)
-- [Set Filter](../filter-set/)<enterprise-icon></enterprise-icon>
+- [Text](/filter-text/)
+- [Number](/filter-number/)
+- [Date](/filter-date/)
+- [Set Filter](/filter-set/)<enterprise-icon></enterprise-icon>
 
 The rest of this section will cover concepts that are common to every provided filter.
 

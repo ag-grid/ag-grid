@@ -209,7 +209,7 @@ We have implemented a backwards compatibility mode that will enable some apps to
 
 - Enter "legacy" compatibility mode if this is right for your app (see below).
 
-- Switch to the new mechanism for configuring themes. Change your theme import from `.../sass/ag-theme-$name.scss` to `.../sass/ag-theme-$name-mixin.scss` and call the theme mixin. See [themes documentation](../themes-provided/) sample code. You will need to convert all the `$ag-*` global variables you have defined to theme parameters.
+- Switch to the new mechanism for configuring themes. Change your theme import from `.../sass/ag-theme-$name.scss` to `.../sass/ag-theme-$name-mixin.scss` and call the theme mixin. See [themes documentation](/themes-provided/) sample code. You will need to convert all the `$ag-*` global variables you have defined to theme parameters.
 
 
 To enable "legacy" mode, define the `$ag-compatibility-mode` variable:

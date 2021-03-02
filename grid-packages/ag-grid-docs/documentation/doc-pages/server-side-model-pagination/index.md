@@ -20,7 +20,7 @@ const gridOptions = {
 }
 </snippet>
 
-For more configuration details see the section on [Pagination](../row-pagination/).
+For more configuration details see the section on [Pagination](/row-pagination/).
 
 ## Server Pagination
 
@@ -76,5 +76,5 @@ The example below demonstrates pagination with grouping and `paginateChildRows=t
 
 ## Next Up
 
-Continue to the next section to learn about [Row Selection](../server-side-model-selection/).
+Continue to the next section to learn about [Row Selection](/server-side-model-selection/).
 

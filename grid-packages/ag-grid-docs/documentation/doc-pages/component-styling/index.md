@@ -75,7 +75,7 @@ frameworks: ["react"]
 |});
 |```
 |
-|See [Hooks](../react-hooks/) for more information in using Hooks within the grid.
+|See [Hooks](/react-hooks/) for more information in using Hooks within the grid.
 |
 |In both cases (component or hook) the following would be rendered:
 |

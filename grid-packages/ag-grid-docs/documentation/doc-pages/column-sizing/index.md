@@ -6,7 +6,7 @@ All columns can be resized by dragging the top right portion of the column.
 
 ## Enable Sizing
 
-Turn column resizing on for the grid by setting `resizable=true` for each column. To set resizing for each column, set `resizable=true` on the [default column definition](../column-definitions/#default-column-definitions).
+Turn column resizing on for the grid by setting `resizable=true` for each column. To set resizing for each column, set `resizable=true` on the [default column definition](/column-definitions/#default-column-definitions).
 
 The snippet below allows all columns except Address to be resized by explicitly setting each column.
 
@@ -86,7 +86,7 @@ Autosizing columns can also be done using the following grid API methods:
 
 If skipHeader=true, the header won't be included when calculating the column widths.
 
-[Column Groups](../column-groups/) are never considered when calculating the column widths.
+[Column Groups](/column-groups/) are never considered when calculating the column widths.
 
 ## Resizing Example
 

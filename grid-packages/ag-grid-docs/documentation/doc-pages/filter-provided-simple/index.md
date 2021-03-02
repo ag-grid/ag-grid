@@ -92,7 +92,7 @@ Each simple filter presents a list of options to the user. The list of options f
 | In Range                | `inRange`             | Number, Date        |
 | Choose One              | `empty`               | Text, Number, Date  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](../filter-provided-simple/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-provided-simple/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
 
 ### Default Filter Options
 
@@ -261,7 +261,7 @@ interface IFilterOptionDef {
 ```
 
 
-The `displayKey` should contain a unique key value that doesn't clash with the built-in filter keys. A default `displayName` should also be provided but can be replaced by a locale-specific value using a [localeTextFunc](../localisation/#locale-callback).
+The `displayKey` should contain a unique key value that doesn't clash with the built-in filter keys. A default `displayName` should also be provided but can be replaced by a locale-specific value using a [localeTextFunc](/localisation/#locale-callback).
 
 The custom filter logic is implemented through the `test` function, which receives the `filterValue` typed by the user along with the `cellValue` from the grid, and returns `true` or `false`.
 

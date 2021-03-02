@@ -4,10 +4,10 @@ frameworks: ["angular", "vue"]
 ---
 
 [[only-angular]]
-|There are a variety of ways to manage component communication in Angular (shared service, 
-|local variables etc), but you often need a simple way to let a "parent" component know 
-|that something has happened on a "child" component. In this case the simplest route is 
-|to use the Grid's `context` feature to hold a reference to the parent, which the child can 
+|There are a variety of ways to manage component communication in Angular (shared service,
+|local variables etc), but you often need a simple way to let a "parent" component know
+|that something has happened on a "child" component. In this case the simplest route is
+|to use the Grid's `context` feature to hold a reference to the parent, which the child can
 |then access.
 |
 |```tsx
@@ -54,16 +54,16 @@ frameworks: ["angular", "vue"]
 |   //...other properties & methods
 |}
 |```
-|Note that although we've used `componentParent` as the property name here it can 
-|be anything - the main point is that you can use the `context` mechanism to share 
+|Note that although we've used `componentParent` as the property name here it can
+|be anything - the main point is that you can use the `context` mechanism to share
 |information between the components.
-|A working example of this can be found in the [Cell Renderer](../component-cell-renderer#example-dynamic-components) docs.
+|A working example of this can be found in the [Cell Renderer](/component-cell-renderer/#example-dynamic-components) docs.
 
 [[only-vue]]
-|There are a variety of ways to manage component communication in Vue (shared service, 
-|local variables etc), but you often need a simple way to let a "parent" component know 
-|that something has happened on a "child" component. In this case the simplest route is 
-|to use the Grid's `context` feature to hold a reference to the parent, which the child can 
+|There are a variety of ways to manage component communication in Vue (shared service,
+|local variables etc), but you often need a simple way to let a "parent" component know
+|that something has happened on a "child" component. In this case the simplest route is
+|to use the Grid's `context` feature to hold a reference to the parent, which the child can
 |then access.
 |
 |```js
@@ -121,8 +121,8 @@ frameworks: ["angular", "vue"]
 |}
 |</script>
 |```
-|Note that although we've used `componentParent` as the property name here it can 
-|be anything - the main point is that you can use the `context` mechanism to share 
+|Note that although we've used `componentParent` as the property name here it can
+|be anything - the main point is that you can use the `context` mechanism to share
 |information between the components.
 |
-|A working example of this can be found in the [Cell Renderer](../component-cell-renderer#example-dynamic-components) docs.
+|A working example of this can be found in the [Cell Renderer](/component-cell-renderer/#example-dynamic-components) docs.

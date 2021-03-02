@@ -188,14 +188,14 @@ You should return the `HeaderPosition` you want in the `navigateToNextHeader` an
 [[note]]
 | The `navigateToNextCell` and `tabToNextCell` are only called while navigating across grid cells, while
 | `navigateToNextHeader` and `tabToNextHeader` are only called while navigating across grid headers.
-| If you need to navigate from one container to another, pass **rowIndex: -1** in `CellPosition` 
+| If you need to navigate from one container to another, pass **rowIndex: -1** in `CellPosition`
 | or **headerRowIndex: -1** in `HeaderPosition`.
 
 ## Example Custom Cell Navigation
 
 The example below shows how to use `navigateToNextCell`, `tabToNextCell`,  `navigateToNextHeader` and `tabToNextHeader` in practice.
 
-Note the following: 
+Note the following:
 
 - `navigateToNextCell` swaps the up and down arrow keys.
 - `tabToNextCell` uses tabbing to go up and down rather than right and left.
@@ -258,7 +258,7 @@ In the following example there is an input box provided to test tabbing into the
 It is possible to add custom behaviour to any key event that you want using the grid events `cellKeyPress` (gets called when a DOM keyPress event fires on a cell) and `cellKeyDown` (gets called when a DOM keyDown event fires on a cell).
 
 [[note]]
-| These keyboard events are monitored by the grid panel, so they will not be fired 
+| These keyboard events are monitored by the grid panel, so they will not be fired
 | when the keydown or keypress happen inside of a popup editor, as popup elements are
 | rendered in a different DOM tree.
 
@@ -318,7 +318,7 @@ interface SuppressKeyboardEventParams {
 }
 ```
 
-The callback is available as a [column callback](../column-properties/) (set on the column definition). If you provide the callback on both the grid and column definition, then if either return 'true' the event will be suppressed.
+The callback is available as a [column callback](/column-properties/) (set on the column definition). If you provide the callback on both the grid and column definition, then if either return 'true' the event will be suppressed.
 
 ### Example: Suppress Keyboard Navigation
 

@@ -498,7 +498,7 @@ title: "Get Started with AG Grid"
 | Here, we replaced the `rowData` assignment  with a data fetch from a remote service. The remote data is the
 | same as the one we initially had, so you should not notice any actual changes to the grid.
 |
-| Notice that we also did something new - we accessed the [grid API](../grid-api/) instance through the
+| Notice that we also did something new - we accessed the [grid API](/grid-api/) instance through the
 | `gridOptions.api`. The api object exposes plethora of methods that allow us to implement complex scenarios
 | with the grid.
 |
@@ -565,7 +565,7 @@ title: "Get Started with AG Grid"
 | | you think. You only need to get in touch if you want to start using AG Grid Enterprise in a project intended
 | | for production.
 |
-| In addition to filtering and sorting, [grouping](../grouping/) is another effective way for the user to make
+| In addition to filtering and sorting, [grouping](/grouping/) is another effective way for the user to make
 | sense out of large amounts of data.
 |
 | Let's enable the enterprise features of ag-grid. Install the additional package:
@@ -686,7 +686,7 @@ title: "Get Started with AG Grid"
 |
 | ## Next Steps
 |
-| The best thing you can check after the Javascript grid tutorial is the [features overview](../grid-features/).
+| The best thing you can check after the Javascript grid tutorial is the [features overview](/grid-features/).
 | It provides an extensive review of what you can achieve with AG Grid. In addition, you can go through the
 | following help articles to learn more about the features we enabled:
 | <style>
@@ -835,7 +835,7 @@ title: "Get Started with AG Grid"
 | ```
 |
 | The code above presents two essential configuration properties of the grid -
-| [the column definitions](../column-definitions/)
+| [the column definitions](/column-definitions/)
 | (`columnDefs`) and the data (`rowData`). In our case, the column definitions contain three columns;
 | each column entry specifies the header label and the data field to be displayed in the body of the table.
 |
@@ -879,7 +879,7 @@ title: "Get Started with AG Grid"
 |
 | Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to
 | imagine how a real-world application may have hundreds (or even hundreds of thousands!) of
-| rows, with many columns. In a data set like this [filtering](../filtering/)
+| rows, with many columns. In a data set like this [filtering](/filtering/)
 | is your friend.
 |
 | As with sorting, enabling filtering is as easy as setting the `filter` property:
@@ -1013,7 +1013,7 @@ title: "Get Started with AG Grid"
 | }
 | ```
 |
-| Next, let's enable [multiple row selection](../row-selection/#example-multiple-row-selection),
+| Next, let's enable [multiple row selection](/row-selection/#example-multiple-row-selection),
 | so that the user can pick many rows:
 |
 | ```html
@@ -1033,7 +1033,7 @@ title: "Get Started with AG Grid"
 |
 | Great! Now the first column contains a checkbox that, when clicked, selects the row. The only
 | thing we have to add is a button that gets the selected data and sends it to the server. To do this,
-| we are going to use the [AG Grid API](../grid-api/) - we will access
+| we are going to use the [AG Grid API](/grid-api/) - we will access
 | it through the component instance. To access to component instance we will need to add the
 | `#agGrid` id to our component.
 |
@@ -1135,7 +1135,7 @@ title: "Get Started with AG Grid"
 | | to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
 | | in a project intended for production.
 |
-| In addition to filtering and sorting, [grouping](../grouping/) is another effective way for the
+| In addition to filtering and sorting, [grouping](/grouping/) is another effective way for the
 | user to make sense out of large amounts of data.
 |
 | Our current data set is pretty small so let's switch to a larger one:
@@ -1252,13 +1252,13 @@ title: "Get Started with AG Grid"
 | }
 | ```
 |
-| You can find a [full list of theme parameters here](../themes-customising/#full-list-of-theme-parameters).
+| You can find a [full list of theme parameters here](/themes-customising/#full-list-of-theme-parameters).
 |
 | If everything is configured correctly, the second row of the grid will get slightly darker.
 | Congratulations! You now know now bend the grid look to your will - there are a few dozens more
 | Sass variables that let you control the font family and size, border color, header background color
 | and even the amount of spacing in the cells and columns. The full
-| [theme parameter list](../themes-customising/#full-list-of-theme-parameters) is
+| [theme parameter list](/themes-customising/#full-list-of-theme-parameters) is
 | available in the themes documentation section.
 |
 | ## AG Grid & Angular Compatibility Chart
@@ -1408,7 +1408,7 @@ title: "Get Started with AG Grid"
 | The three lines above import the `AgGridReact` and `AgGridColumn` components, the grid
 | "structure" stylesheet (`ag-grid.css`), and one of the available grid themes: (`ag-theme-alpine.css`).
 |
-| The grid ships [several different themes](../themes/); pick one that matches your project
+| The grid ships [several different themes](/themes/); pick one that matches your project
 | design. You can customise it further with Sass variables, a technique which we will cover further down the road.
 |
 | ```jsx
@@ -1429,7 +1429,7 @@ title: "Get Started with AG Grid"
 | ```
 |
 | The code above presents two essential configuration properties of the grid -
-| [the column definitions](../column-configuration/)
+| [the column definitions](/column-configuration/)
 | (`AgGridColumn`) and the data (`rowData`). In our case, the column definitions contain three columns;
 | each column entry specifies the header label and the data field to be displayed in the body of the table.
 |
@@ -1580,7 +1580,7 @@ title: "Get Started with AG Grid"
 | | to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
 | | in a project intended for production.
 |
-| In addition to filtering and sorting, [grouping](../grouping/)
+| In addition to filtering and sorting, [grouping](/grouping/)
 | is another effective way for the user to make sense out of large amounts of data.
 |
 | Our current data set is pretty small so let's switch to a larger one:
@@ -1651,7 +1651,7 @@ title: "Get Started with AG Grid"
 |
 | The last thing which we are going to do is to change the grid look and feel by customising a theme.
 |
-| By default, AG Grid ships a set of [pre-built theme stylesheets](../themes/). If we want to tweak
+| By default, AG Grid ships a set of [pre-built theme stylesheets](/themes/). If we want to tweak
 | the colors and the fonts of theme, we should add a Sass preprocessor to our project, override the theme
 | variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable
 | overrides are applied.
@@ -1686,7 +1686,7 @@ title: "Get Started with AG Grid"
 | You now know now bend the grid look to your will - there are a few dozens more theme parameters
 | variables that let you control the font family and size, border color, header background color
 | and even the amount of spacing in the cells and columns. The
-| [full list of theme parameters](../themes-provided/#customising-themes)
+| [full list of theme parameters](/themes-provided/#customising-themes)
 | is available in the themes documentation section.
 |
 | ## AG Grid & React Compatibility Chart
@@ -1729,7 +1729,7 @@ title: "Get Started with AG Grid"
 | |
 | | Our examples all use Vue 2 by default.
 | |
-| | For more information on import types please refer to the documentation [here.](../modules/)
+| | For more information on import types please refer to the documentation [here.](/modules/)
 |
 | ## Add AG Grid to Your Project
 |
@@ -1845,7 +1845,7 @@ title: "Get Started with AG Grid"
 | ```
 |
 | The code above presents two essential configuration properties of the grid -
-| [the column definitions](../column-definitions/) (`columnDefs`) and the data (`rowData`).
+| [the column definitions](/column-definitions/) (`columnDefs`) and the data (`rowData`).
 | In our case, the column definitions contain three columns; column entry specifies the header
 | label and the data field to be displayed in the body of the table.
 |
@@ -1880,7 +1880,7 @@ title: "Get Started with AG Grid"
 |
 | Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to
 | imagine how a real-world application may have hundreds (or even hundreds of thousands!) of rows,
-| with many columns. In a data set like this [filtering](../filtering/)
+| with many columns. In a data set like this [filtering](/filtering/)
 | is your friend.
 |
 | As with sorting, enabling filtering is as easy as setting the `filter` property:
@@ -1981,7 +1981,7 @@ title: "Get Started with AG Grid"
 | <style></style>
 | ```
 |
-| Next let's enable [multiple row selection](../row-selection/#example-multiple-row-selection),
+| Next let's enable [multiple row selection](/row-selection/#example-multiple-row-selection),
 | so that the user can pick many rows:
 |
 | ```jsx
@@ -2003,7 +2003,7 @@ title: "Get Started with AG Grid"
 |
 | Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing
 | we have to add is a button that gets the selected data and sends it to the server. To do this, we are
-| going to use the [AG Grid API](../grid-api/) - we will store a reference to both the grid and
+| going to use the [AG Grid API](/grid-api/) - we will store a reference to both the grid and
 | column API's in the `gridReady` event
 |
 | To test this we'll add a button that gets the selected data and sends it to the server.
@@ -2082,7 +2082,7 @@ title: "Get Started with AG Grid"
 | | to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
 | | in a project intended for production.
 |
-| In addition to filtering and sorting, [grouping](../grouping/) is another effective way for the user
+| In addition to filtering and sorting, [grouping](/grouping/) is another effective way for the user
 | to make sense out of large amounts of data.
 |
 | Our current data set is pretty small so let's switch to a larger one:
@@ -2205,7 +2205,7 @@ title: "Get Started with AG Grid"
 | of the theme's Sass variables.
 |
 | By default, AG Grid ships a set of
-| [pre-built theme stylesheets](../themes/). If we want to tweak the colors and the fonts of
+| [pre-built theme stylesheets](/themes/). If we want to tweak the colors and the fonts of
 | theme, we should add a Sass preprocessor to our project, override the theme variable values,
 | and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable
 | overrides are applied.
@@ -2227,7 +2227,7 @@ title: "Get Started with AG Grid"
 | If everything is configured correctly, the second row of the grid will be blue. Congratulations!
 | You now know now bend the grid look to your will - there are a few dozens more Sass variables that
 | let you control the font family and size, border color, header background color and even the amount
-| of spacing in the cells and columns. The full [Sass variable list](../themes-customising/#full-list-of-theme-parameters)
+| of spacing in the cells and columns. The full [Sass variable list](/themes-customising/#full-list-of-theme-parameters)
 | is available in the themes documentation section.
 |
 | ## Summary

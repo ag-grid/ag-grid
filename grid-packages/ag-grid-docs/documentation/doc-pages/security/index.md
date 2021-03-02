@@ -12,7 +12,7 @@ The basic information on Content Security Policy can be found on the [MDN web do
 
 The `script-src` policy will work only with `'self'` rule. If you are working with expressions / code parsing inside of the grid instead of functions, it will be necessary to add the `unsafe-eval` rule to your policy.
 
-Using expressions instead of functions is an option for many grid properties such as [Cell Class Rules](../cell-styles/#cell-class-rules) and [Value Getters](../value-getters/). Below demonstrates the difference where expressions are used instead of functions.
+Using expressions instead of functions is an option for many grid properties such as [Cell Class Rules](/cell-styles/#cell-class-rules) and [Value Getters](/value-getters/). Below demonstrates the difference where expressions are used instead of functions.
 
 <snippet>
 const gridOptions = {
@@ -41,7 +41,7 @@ const gridOptions = {
 
 ### style-src
 
-The `style-src` policy requires the `unsafe-inline` due to the [DOM Row and Column Virtualisation](../dom-virtualisation/). The technique the grid uses to display position rows requires explicit positioning of the rows and columns. This positioning is only possible using CSS style attributes to set explicit X and Y positions. This is a feature that all data grids have. Without it, the data grid would have a very low limit on the amount of data that could be displayed.
+The `style-src` policy requires the `unsafe-inline` due to the [DOM Row and Column Virtualisation](/dom-virtualisation/). The technique the grid uses to display position rows requires explicit positioning of the rows and columns. This positioning is only possible using CSS style attributes to set explicit X and Y positions. This is a feature that all data grids have. Without it, the data grid would have a very low limit on the amount of data that could be displayed.
 
 ### img-src
 

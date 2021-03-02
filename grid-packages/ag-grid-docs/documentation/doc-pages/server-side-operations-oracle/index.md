@@ -26,7 +26,7 @@ When designing a grid based application, one of the key considerations is how mu
 
 ### Client-Side Row Model
 
-The simplest approach is to send all row data to the browser in response to a single request at initialisation. For this use case the [Client-Side Row Model](../client-side-model/) has been designed.
+The simplest approach is to send all row data to the browser in response to a single request at initialisation. For this use case the [Client-Side Row Model](/client-side-model/) has been designed.
 
 This scenario is illustrated below where 10,000 records are loaded directly into the browser:
 
@@ -38,7 +38,7 @@ The Client-Side Row Model only renders the rows currently visible, so the upper 
 
 However many real world applications contain much larger datasets, often involving millions of records. In this case it simply isn't feasible to load all the data into the browser in one go. Instead data will need to be lazy-loaded as required and then purged to limit the memory footprint in the browser.
 
-This is precisely the problem the [Server-Side Row Model](../server-side-model/) addresses, along with delegating server-side operations such as filtering, sorting, grouping and pivoting.
+This is precisely the problem the [Server-Side Row Model](/server-side-model/) addresses, along with delegating server-side operations such as filtering, sorting, grouping and pivoting.
 
 The following diagram shows the approach used by the Server-Side Row Model. Here there are 10 million records, however the number of records is only constrained by the limits of the server:
 
@@ -215,7 +215,7 @@ public class ServerSideGetRowsResponse {
 }
 ```
 
-We will discuss these in detail throughout this guide, however for more details see: [Server-Side Datasource](../server-side-model/#server-side-datasource)
+We will discuss these in detail throughout this guide, however for more details see: [Server-Side Datasource](/server-side-model/#server-side-datasource)
 
 
 ## Service Controller
@@ -301,7 +301,7 @@ public class TradeDao {
 
 ## Filtering
 
-Our example will make use of the grid's `NumberFilter` and `SetFilter` [Column Filters](../filtering/). The corresponding server-side classes are as follows:
+Our example will make use of the grid's `NumberFilter` and `SetFilter` [Column Filters](/filtering/). The corresponding server-side classes are as follows:
 
 ```java
 // src/main/java/com/ag/grid/enterprise/oracle/demo/filter/NumberColumnFilter.java

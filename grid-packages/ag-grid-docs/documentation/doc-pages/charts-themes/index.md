@@ -95,6 +95,6 @@ This example demonstrates a more advanced theme, providing different settings fo
 
 ## Next Up
 
-Continue to the next section to learn more about the [navigator](../charts-navigator/) component.
+Continue to the next section to learn more about the [navigator](/charts-navigator/) component.
 
 

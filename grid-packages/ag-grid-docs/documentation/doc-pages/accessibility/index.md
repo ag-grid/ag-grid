@@ -10,8 +10,8 @@ Even if you are not mandated to conform to any particular accessibility standard
 
 Currently the most commonly encountered conformance guidelines are:
 
-- [ADA](https://www.ada.gov) - US Department of Justice
-- [Section 508](https://www.section508.gov) - US federal agencies
+- [ADA](https://www.ada.gov/) - US Department of Justice
+- [Section 508](https://www.section508.gov/) - US federal agencies
 - [WCAG 2.0](https://www.w3.org/WAI/intro/wcag) - globally accepted standard
 
 WCAG 2.0 has 3 levels of conformance; A, AA and AAA (in order of conformance)
@@ -26,13 +26,13 @@ Using our demo page as an example, the chrome plugin [Colorblinding](https://chr
 
 <image-caption src="accessibility/resources/accessibility-colour-contrast.png" alt="High Contrast Theme" maxwidth="50rem" constrained="true"></image-caption>
 
-To create a high contrast theme please check out the [Themes](../themes/) documentation for details.
+To create a high contrast theme please check out the [Themes](/themes/) documentation for details.
 
 ## Keyboard navigation
 
 Users who have motor disabilities, as well as visually impaired users, often rely on keyboards for navigation.
 
-For details on how to navigate the grid without using a mouse refer to the [Keyboard Navigation](../keyboard-navigation/) documentation. Note that it is possible to provide custom navigation which could come in useful for some accessibility requirements.
+For details on how to navigate the grid without using a mouse refer to the [Keyboard Navigation](/keyboard-navigation/) documentation. Note that it is possible to provide custom navigation which could come in useful for some accessibility requirements.
 
 ## Screen Readers
 
@@ -54,7 +54,7 @@ In order to give screen readers the contextual information they require to inter
 When inspecting the DOM you'll notice the following roles and properties have been added:
 
 - **role="grid"** - marks the enclosing element of the grid.<br>
-    **Note:** You can set any aria property in the panel (role="grid") by using the `setGridAriaProperty` method in the [Grid Api](../grid-api/).
+    **Note:** You can set any aria property in the panel (role="grid") by using the `setGridAriaProperty` method in the [Grid Api](/grid-api/).
     - **aria-rowcount** - announces the number of rows.
     - **aria-colcount** - announces the number of rows.
     - **aria-multiselectable="true"** - marks the grid as being able to select multiple rows.
@@ -118,7 +118,7 @@ const gridOptions = {
 
 ### Ensure all grid elements are always rendered
 
-In order to ensure all grid elements are loaded, you need to disable column and row virtualization. The best way to do this is to use [pagination](../row-pagination/). This way you can reduce the initial loading time and memory footprint while ensuring all elements for these rows are loaded for screen readers.
+In order to ensure all grid elements are loaded, you need to disable column and row virtualization. The best way to do this is to use [pagination](/row-pagination/). This way you can reduce the initial loading time and memory footprint while ensuring all elements for these rows are loaded for screen readers.
 
 If your requirement is to use scrolling instead of pagination, you can disable row virtualisation at the expense  of increasing the memory footprint. Please test the performance of this and if it's not satisfactory, switch to  using pagination instead.
 
@@ -157,8 +157,8 @@ The example below presents a simple grid layout with the following properties en
 ## Customising ARIA Labels
 
 The grid has default ARIA labels for areas like `rows`, `group cells`, `filters`, `search fields` and so on. If there is a need to
-customise these labels, this could be achieved by changing the [localisation variables](../localisation/#creating-a-locale) for ARIA.
-See the [localisation example](../localisation/#example--localisation), inspect the items or use a screen reader to see the 
+customise these labels, this could be achieved by changing the [localisation variables](/localisation/#creating-a-locale) for ARIA.
+See the [localisation example](/localisation/#example--localisation), inspect the items or use a screen reader to see the
 customisation in action.
 
 ## Known Limitations

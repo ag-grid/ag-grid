@@ -80,8 +80,8 @@ type ChartType =
 ```
 
 Here the `chartThemeName` will be set to the name of the currently selected theme, which will be either
-one of the [Provided Themes](../integrated-charts-customisation/#provided-themes) or
-a [Custom Theme](../integrated-charts-customisation/#custom-chart-themes) if used.
+one of the [Provided Themes](/integrated-charts-customisation/#provided-themes) or
+a [Custom Theme](/integrated-charts-customisation/#custom-chart-themes) if used.
 
 ## ChartDestroyed
 
@@ -112,7 +112,7 @@ The following example demonstrates when the described events occur by writing to
 
 ## Accessing Chart Instance
 
-Charts in the grid are produced by the [AG Charts](../charts-overview/) library, which is integrated
+Charts in the grid are produced by the [AG Charts](/charts-overview/) library, which is integrated
 directly into the grid for your convenience. In some advanced use cases, you may wish to access the chart
 instance that is produced by AG Charts, in order to interact with the chart directly.
 
@@ -125,8 +125,8 @@ it dynamically as you change the range selection.
 
 ## Other Resources
 
-To learn about series events refer to the standalone charting library [documentation](../integrated-charts-events/).
+To learn about series events refer to the standalone charting library [documentation](/integrated-charts-events/).
 
 ## Next Up
 
-Continue to the next section to learn about: [Third-Party Charting](../third-party-charting/).
+Continue to the next section to learn about: [Third-Party Charting](/third-party-charting/).

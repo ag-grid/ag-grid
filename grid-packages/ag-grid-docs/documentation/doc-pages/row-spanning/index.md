@@ -16,9 +16,9 @@ span more than one row, return how many rows to span in the callback
 
 
 <snippet spaceBetweenProperties="true">
-const gridOptions = { 
+const gridOptions = {
     // turn off row translation
-    suppressRowTransform: true, 
+    suppressRowTransform: true,
     columnDefs: [
         {
             field: 'country',
@@ -102,4 +102,4 @@ If using Row Spanning, be aware of the following:
 
 - Sorting and filtering will provide strange results when row spanning. For example a cell may span 4 rows, however applying a filter or a sort will probably change the requirements of what rows should be spanned.
 
-- [Range Selection](../range-selection/) will not work correctly when spanning cells. This is because it is not possible to cover all scenarios, as a range is no longer a perfect rectangle.
+- [Range Selection](/range-selection/) will not work correctly when spanning cells. This is because it is not possible to cover all scenarios, as a range is no longer a perfect rectangle.

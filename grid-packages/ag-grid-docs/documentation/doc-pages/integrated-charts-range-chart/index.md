@@ -11,7 +11,7 @@ Range charts provide a quick and easy way for users to create charts from inside
 
 Notice that Chart Ranges appear in the grid after a chart is created. These provide useful visual feedback for users by highlighting the charted category and series data in the grid.
 
-Note that developers can also programmatically create range charts through the [Chart API](../integrated-charts-api/).
+Note that developers can also programmatically create range charts through the [Chart API](/integrated-charts-api/).
 
 ## Creating Chart Ranges
 
@@ -19,9 +19,9 @@ When a chart is created from a selected range of cells in the grid, or via the c
 
 To see how chart ranges are created from a cell range, using our [demo page](../../../example.php) do the following:
 
-- Select a [Cell Range](../range-selection/) of numeric values in the grid by dragging the mouse over a range of cells.
+- Select a [Cell Range](/range-selection/) of numeric values in the grid by dragging the mouse over a range of cells.
 
-- Bring up the [Context Menu](../context-menu/) and select the desired chart type from the 'Chart Range' sub menu.
+- Bring up the [Context Menu](/context-menu/) and select the desired chart type from the 'Chart Range' sub menu.
 
 <gif src="charting-ranges.gif" alt="Charting Ranges"></gif>
 
@@ -29,11 +29,11 @@ As illustrated above, the resulting chart range can subsequently be modified by 
 
 ## Hiding Chart Ranges
 
-In some cases it may be desirable to hide the chart ranges in the grid, like in this [example](../integrated-charts/#example-application-created-charts).
+In some cases it may be desirable to hide the chart ranges in the grid, like in this [example](/integrated-charts/#example-application-created-charts).
 
 To hide the chart ranges simply enable `suppressChartRanges=true` on the `ChartRangeParams`.
 
-For more details refer to [Range Chart API](../integrated-charts-api/#range-charts).
+For more details refer to [Range Chart API](/integrated-charts-api/#range-charts).
 
 ## Category and Series Ranges
 
@@ -71,10 +71,10 @@ The following column definitions show how the different `ColDef.chartDataType` v
 |        { field: 'athlete', chartDataType: 'category' },
 |        { field: 'age', chartDataType: 'category' },
 |        { field: 'country' },
-|        
+|
 |        // 'excluded' from charts
 |        { field: 'date', chartDataType: 'excluded' },
-|        
+|
 |        // 'series' columns
 |        { field: 'gold', chartDataType: 'series' },
 |        { field: 'silver' }
@@ -83,10 +83,10 @@ The following column definitions show how the different `ColDef.chartDataType` v
 </snippet>
 
 Note from the snippet above that the `age` column contains numbers but explicitly defined as a category, however as the
-`country` column contains strings it can be inferred correctly as a category column without needing to specify the 
+`country` column contains strings it can be inferred correctly as a category column without needing to specify the
 `chartDataType`.
 
-See the [Time Series](../integrated-charts-time-series/) section for details on the `'time'` chart data type.
+See the [Time Series](/integrated-charts-time-series/) section for details on the `'time'` chart data type.
 
 ### Inferred by the Grid
 
@@ -108,4 +108,4 @@ The example below demonstrates the different ways columns can be defined for cha
 
 ## Next Up
 
-Continue to the next section to learn about the: [Pivot Chart](../integrated-charts-pivot-chart/).
+Continue to the next section to learn about the: [Pivot Chart](/integrated-charts-pivot-chart/).

@@ -15,12 +15,12 @@ In this section we describe how you can cherry pick modules to provide the featu
 | That's it! In the sections below we will expand on these points with examples.
 
 [[note]]
-| This page assume that you want to selectively choose modules and do not require all Grid functionality. If you require all Grid features (either Community or Enterprise) then you might be better off using `ag-grid-community` or `ag-grid-enterprise` and follow the steps documented in the [Getting Started Guides](../getting-started/) as doing so will require less effort on your part.
+| This page assume that you want to selectively choose modules and do not require all Grid functionality. If you require all Grid features (either Community or Enterprise) then you might be better off using `ag-grid-community` or `ag-grid-enterprise` and follow the steps documented in the [Getting Started Guides](/getting-started/) as doing so will require less effort on your part.
 
 [[only-frameworks]]
 | ### Choosing Modules
 |
-| Please refer to the complete list of modules [here](../modules/#modules).
+| Please refer to the complete list of modules [here](/modules/#modules).
 |
 | For our purposes we're going to assume that the application we're building requires the following features:
 |
@@ -28,11 +28,11 @@ In this section we describe how you can cherry pick modules to provide the featu
 | - Excel Export
 | - Context Menu
 |
-| Recall from earlier [documentation](../modules/#providing-modules-to-individual-grids) that at a minimum you need to provide a [Row Model](../row-models/) to the Grid and in our case we've | opted for the Client Side Row Model.
+| Recall from earlier [documentation](/modules/#providing-modules-to-individual-grids) that at a minimum you need to provide a [Row Model](/row-models/) to the Grid and in our case we've | opted for the Client Side Row Model.
 |
-| Additionally we're going to provide [Excel Export](../excel-export/) functionality, so we're going to need the corresponding Excel Module.
+| Additionally we're going to provide [Excel Export](/excel-export/) functionality, so we're going to need the corresponding Excel Module.
 |
-| Finally, we'd like our users to be able to export the data using the [Context Menu](../context-menu/), so we'll include that module too.
+| Finally, we'd like our users to be able to export the data using the [Context Menu](/context-menu/), so we'll include that module too.
 |
 | This is what our `package.json` file will look like based on the requirements above:
 |

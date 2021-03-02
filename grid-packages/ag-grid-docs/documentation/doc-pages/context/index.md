@@ -6,7 +6,7 @@ This sections covers how shared contextual information can be passed around the 
 
 ## Overview
 
-The context object is passed to most of the callbacks used in the grid. The purpose of the context object is to allow the client application to pass details to custom callbacks such as the [Cell Renderers](../cell-rendering/) and [Cell Editors](../cell-editing/).
+The context object is passed to most of the callbacks used in the grid. The purpose of the context object is to allow the client application to pass details to custom callbacks such as the [Cell Renderers](/cell-rendering/) and [Cell Editors](/cell-editing/).
 
 Note that the grid does not place anything into the context and it is not used internally by the grid.
 

@@ -73,7 +73,7 @@ Order is important here - the order of the components provided will determine th
 
 ## Initialisation of Status Bar Components
 
-Please refer to the documentation [here.](../status-bar/#initialisation-of-status-bar-components)
+Please refer to the documentation [here.](/status-bar/#initialisation-of-status-bar-components)
 
 ## Accessing Status Bar Panel Instances
 

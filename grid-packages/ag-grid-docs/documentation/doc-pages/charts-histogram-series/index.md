@@ -97,4 +97,4 @@ series: [{
 
 ## Next Up
 
-Continue to the next section to learn about [area series](../charts-area-series/).
+Continue to the next section to learn about [area series](/charts-area-series/).

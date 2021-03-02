@@ -5,7 +5,7 @@ enterprise: true
 
 Chart themes can be used to customise the look and feel of your charts to match your application.
 
-AG Charts support [Chart Themes](../charts-themes/) to change how charts are styled. There are a number of chart themes provided out of the box by the grid. You can also provide your own custom chart theme to the grid to customise the colours of charts along with other styling options. Alternatively, you can just provide overrides to tweak the provided chart themes in the way you want.
+AG Charts support [Chart Themes](/charts-themes/) to change how charts are styled. There are a number of chart themes provided out of the box by the grid. You can also provide your own custom chart theme to the grid to customise the colours of charts along with other styling options. Alternatively, you can just provide overrides to tweak the provided chart themes in the way you want.
 
 ## Provided Themes
 
@@ -107,7 +107,7 @@ These overrides can be used with any cartesian chart.
 
 ## Next Up
 
-Continue to the next section to learn about: [Chart Containers](../integrated-charts-container/).
+Continue to the next section to learn about: [Chart Containers](/integrated-charts-container/).
 
 
 

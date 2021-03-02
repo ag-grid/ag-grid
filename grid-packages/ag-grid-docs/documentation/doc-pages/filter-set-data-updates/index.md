@@ -3,14 +3,14 @@ title: "Set Filter - Data Updates"
 enterprise: true
 ---
 
-This section describes how changing data through [Cell Editing](../cell-editing/) and the application [Updating Data](../data-update/) impacts the Set Filter's values. This is only applicable when the Set Filter is taking its values form the grid's data.
+This section describes how changing data through [Cell Editing](/cell-editing/) and the application [Updating Data](/data-update/) impacts the Set Filter's values. This is only applicable when the Set Filter is taking its values form the grid's data.
 
 ## Row / Cell Updates
 
 Row / Cell updates refers to any of the following:
 
-- All edits via the grid's UI such as [Cell Editing](../cell-editing/) and [Clipboard Operations](../clipboard/).
-- Using the grid's [Single Row / Cell Update API](../data-update-single-row-cell/) i.e. `rowNode.setData()` and `rowNode.setDataValue()` API methods.
+- All edits via the grid's UI such as [Cell Editing](/cell-editing/) and [Clipboard Operations](/clipboard/).
+- Using the grid's [Single Row / Cell Update API](/data-update-single-row-cell/) i.e. `rowNode.setData()` and `rowNode.setDataValue()` API methods.
 
 Filter Values will be refreshed when data is updated through any of these methods.
 
@@ -50,9 +50,9 @@ The following example demonstrates Cell Editing with the Set Filter. Try the fol
 Transaction Updates refers to any of the following:
 
 
-- Updating data via [Transactions](../data-update-transactions/) API.
-- Updating data via [Async Transactions](../data-update-high-frequency/) API.
-- Changes when using [Immutable Data](../immutable-data/) (as this uses Transactions underneath the hood).
+- Updating data via [Transactions](/data-update-transactions/) API.
+- Updating data via [Async Transactions](/data-update-high-frequency/) API.
+- Changes when using [Immutable Data](/immutable-data/) (as this uses Transactions underneath the hood).
 
 Filter values are refreshed when data is updated using any of these methods.
 
@@ -116,5 +116,5 @@ The following example demonstrates how `api.setRowData()` affects filter selecti
 
 ## Next Up
 
-Continue to the next section: [Mini Filter](../filter-set-mini-filter/).
+Continue to the next section: [Mini Filter](/filter-set-mini-filter/).
 

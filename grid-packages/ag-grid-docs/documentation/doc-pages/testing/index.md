@@ -534,7 +534,7 @@ title: "Testing AG Grid"
 | In the same way we need to wait for the Grid to be ready we also need to do something similar for user supplied
 | Grid components.
 |
-| For example, let us suppose a user provides a custom [Editor Component](../component-cell-editor/) and wants
+| For example, let us suppose a user provides a custom [Editor Component](/component-cell-editor/) and wants
 | to test this within the context of the Grid.
 |
 | ```jsx
@@ -701,7 +701,7 @@ title: "Testing AG Grid"
 |
 | ## Testing User Supplied Components
 |
-| For example, let us suppose a user provides a custom [Editor Component](../component-cell-editor/) and wants
+| For example, let us suppose a user provides a custom [Editor Component](/component-cell-editor/) and wants
 | to test this within the context of the Grid.
 |
 | ```jsx

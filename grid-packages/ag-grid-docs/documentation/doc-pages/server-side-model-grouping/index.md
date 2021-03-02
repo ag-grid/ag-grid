@@ -20,13 +20,13 @@ const gridOptions = {
 }
 </snippet>
 
-For more configuration details see the section on [Row Grouping](../grouping/).
+For more configuration details see the section on [Row Grouping](/grouping/).
 
 ## Row Grouping on the Server
 
 The actual grouping of rows is performed on the server when using the SSRM.
 When the grid needs more rows it makes a request via `getRows(params)` on
-the [Server-Side Datasource](../server-side-model-datasource/#datasource-interface) with
+the [Server-Side Datasource](/server-side-model-datasource/#datasource-interface) with
 metadata containing grouping details.
 
 The properties relevant to row grouping in the request are shown below:
@@ -59,7 +59,7 @@ The example below demonstrates server-side Row Grouping. Note the following:
 <grid-example title='Row Grouping' name='row-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 [[note]]
-| The example above also demonstrates [Sorting](../server-side-model-sorting/) with groups.
+| The example above also demonstrates [Sorting](/server-side-model-sorting/) with groups.
 | When the grid sort changes, only impacted rows will be reloaded. For example, if 'Sport' groups
 | are expanded, sorting on the 'Year' column won't cause the top level 'Country' groups to reload,
 | but sorting on the 'Gold' column will.
@@ -77,13 +77,13 @@ The diagram below shows what the Row Stores could look like with Row Grouping, w
 </image-caption>
 
 This means there can be any number of Row Stores existing inside the SSRM. Each time a Row Group is expanded,
-a new Row Store is created for that level. The sections [Server-Side Row Grouping](../server-side-model-grouping/)
+a new Row Store is created for that level. The sections [Server-Side Row Grouping](/server-side-model-grouping/)
 explains in detail this topic.
 
 ## Full vs Partial Store
 
-The Row Grouping mechanics are almost identical with the [Full Store](../server-side-model-row-stores/)
-and [Partial Store](../server-side-model-row-stores/). The difference is that when
+The Row Grouping mechanics are almost identical with the [Full Store](/server-side-model-row-stores/)
+and [Partial Store](/server-side-model-row-stores/). The difference is that when
 using the Partial Store, data will be requested in blocks and could be requested to have sorting and / or
 filtering applied.
 
@@ -164,7 +164,7 @@ the `getServerSideStoreParams()` callback. The callback logs its results to the 
 ## Store State & Store Info
 
 For debugging purposes, the grid has the API `getServerSideStoreState()` which returns info on all
-existing [Row Stores](../server-side-model-row-stores/). This is good for learning purposes, as you can
+existing [Row Stores](/server-side-model-row-stores/). This is good for learning purposes, as you can
 see details about the store such as the store type and it's route.
 
 ```ts
@@ -193,7 +193,7 @@ interface ServerSideStoreState {
 ```
 
 Inspecting the Store State can be useful, for example when wanting to know what Route to use when
-providing [Transactions](../server-side-model-transactions/) or doing a [Store Refresh](../server-side-model-refresh/).
+providing [Transactions](/server-side-model-transactions/) or doing a [Store Refresh](/server-side-model-refresh/).
 
 It is also possible to attach info to each store as data is loaded. This is done through the `success()` callback
 when rows are fetched.
@@ -220,11 +220,11 @@ The info object is merged into the Store Info (which is initially an empty objec
 
 1. Included in the Store State returned from `getServerSideStoreState()`.
 1. Included in the params to `isApplyServerSideTransaction()`. This method is explained
-in [Cancelling Transactions](../server-side-model-high-frequency/#cancelling-transactions).
+in [Cancelling Transactions](/server-side-model-high-frequency/#cancelling-transactions).
 
 If rows are loaded multiple times into the Store, then the Store Info values will over write existing values
 as they are merged on top of the existing values. Rows can be loaded multiple times if a) the store
-is [Refreshed](../server-side-model-refresh/) or b) Partial Store is used (as each block load will get the
+is [Refreshed](/server-side-model-refresh/) or b) Partial Store is used (as each block load will get the
 opportunity to add info data).
 
 The example below shows Store Info in action.
@@ -253,7 +253,7 @@ function isServerSideGroupOpenByDefault(params) {
 }
 ```
 
-It may also be helpful to use the [Row Node](../row-object/) API `getRoute()` to inspect the route of a row node. If the Row Node is a group, it returns the route to that Row Node. If the Row Node is not a group, it returns `undefined`.
+It may also be helpful to use the [Row Node](/row-object/) API `getRoute()` to inspect the route of a row node. If the Row Node is a group, it returns the route to that Row Node. If the Row Node is not a group, it returns `undefined`.
 
 Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note the following:
 
@@ -378,4 +378,4 @@ Then the columns are set up so that country uses a `valueGetter` that uses the f
 
 ## Next Up
 
-Continue to the next section to learn how to perform [Data Refresh](../server-side-model-refresh/).
+Continue to the next section to learn how to perform [Data Refresh](/server-side-model-refresh/).

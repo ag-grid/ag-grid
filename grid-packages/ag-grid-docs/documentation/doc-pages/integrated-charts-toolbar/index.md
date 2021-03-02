@@ -47,7 +47,7 @@ Using the chart data panel the category used in the chart can be changed via rad
 
 Grid columns can either be configured as categories or series for charting or left for the grid to infer based on the data contained in the columns.
 
-For more details on how the grid determines which columns are to be used as chart categories and series see the section on [Defining Categories and Series](../integrated-charts-range-chart/#defining-categories-and-series).
+For more details on how the grid determines which columns are to be used as chart categories and series see the section on [Defining Categories and Series](/integrated-charts-range-chart/#defining-categories-and-series).
 
 ### Chart Format
 
@@ -110,5 +110,5 @@ The example below shows how the toolbar can be customised. Notice the following:
 
 ## Next Up
 
-Continue to the next section to learn about the: [Chart API](../integrated-charts-api/).
+Continue to the next section to learn about the: [Chart API](/integrated-charts-api/).
 

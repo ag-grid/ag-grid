@@ -3,11 +3,11 @@ title: "SSRM Datasource"
 enterprise: true
 ---
 
-This section describes the Server-Side Datasource and demonstrates how it can be used to lazy-load data from a 
+This section describes the Server-Side Datasource and demonstrates how it can be used to lazy-load data from a
 server through an infinite scroll.
 
 
-The Server-Side Row Model (SSRM) requires a datasource to fetch rows for the grid. As the grid requires more data 
+The Server-Side Row Model (SSRM) requires a datasource to fetch rows for the grid. As the grid requires more data
 (eg the user scrolls down and Infinite Scrolling is active) more data will be requested via the datasource.
 
 [[note]]
@@ -15,7 +15,7 @@ The Server-Side Row Model (SSRM) requires a datasource to fetch rows for the gri
 
 ## Enabling Server-Side Row Model
 
-When no row model is specified the grid will use the [Client-Side Row Model](../client-side-model/) by default. To use the SSRM instead, set the `rowModelType` as follows:
+When no row model is specified the grid will use the [Client-Side Row Model](/client-side-model/) by default. To use the SSRM instead, set the `rowModelType` as follows:
 
 
 ```js
@@ -33,7 +33,7 @@ const createDatasource = server => {
     return {
         // called by the grid when more rows are required
         getRows: params => {
-            
+
             // get data for request from server
             const response = server.getData(params.request);
 
@@ -59,7 +59,7 @@ Rows fetched from the server are supplied to the grid via `params.success()`. No
 
 The datasource is registered with the grid via either a) the grid property `serverSideDatasoruce` or b) the grid API.
 
-Registering the datasource with via grid options is done as follows: 
+Registering the datasource with via grid options is done as follows:
 
 <snippet>
 const gridOptions = {
@@ -75,7 +75,7 @@ gridOptions.api.setServerSideDatasource(myDatasource);
 
 ## Simple Example
 
-The example below demonstrates loading rows using an SSRM Datasource. The example does not use 
+The example below demonstrates loading rows using an SSRM Datasource. The example does not use
 Row Grouping or Infinite Scrolling, so it doesn't demonstrate the benefits of using the SSRM.
 However it does demonstrate how to configure the grid with the SSRM which will be built on later.
 Note the following:
@@ -129,8 +129,8 @@ interface IServerSideGetRowsParams {
 }
 ```
 
-The request gives details on what the grid is looking for. The success and failure callbacks are not included inside 
-the request object to keep the request object simple data (i.e. simple data types, no functions). This allows the 
+The request gives details on what the grid is looking for. The success and failure callbacks are not included inside
+the request object to keep the request object simple data (i.e. simple data types, no functions). This allows the
 request object to be serialised (e.g. via JSON) and sent to your server.
 
 The interface for the `request` is shown below:
@@ -175,7 +175,7 @@ interface ColumnVO {
 }
 ```
 
-In the example above, no sorting, filtering, infinite scrolling, grouping or pivoting was active. This means the 
+In the example above, no sorting, filtering, infinite scrolling, grouping or pivoting was active. This means the
 request didn't have any information for any of these attributes.
 
 ## Success Callback
@@ -202,7 +202,7 @@ The `rowData` attribute provides the grid with the requested data.
 
 The `rowCount` is used when Partial Store is used. When the total row count is known, this should be passed to the grid to enable the grid to set the vertical scroll range. This then allows the user to scroll the full extend of the dataset and the grid will never ask for data past the provided row count. Otherwise the grid will assume the total number of rows is not known and the vertical scrollbar range will grow as the user scrolls down (the default behaviour for Partial Store).
 
-The `info` is additional data the application can pass to the grid about a particular load. This is useful when doing [High Frequency Updates](../server-side-model-high-frequency/) and explained further in that section.
+The `info` is additional data the application can pass to the grid about a particular load. This is useful when doing [High Frequency Updates](/server-side-model-high-frequency/) and explained further in that section.
 
 [[note]]
 | Prior to version 25, the `success` callback was called `successCallback` and takes a list of parameters instead
@@ -215,10 +215,10 @@ The `info` is additional data the application can pass to the grid about a parti
 The Fail callback has no parameters. It informs the grid the request has failed - eg a network error. It is important to inform the grid of failed requests as it limits the number of concurrent datasource requests. If the Fail callback was not called, the grid would still count the request as pending. For example if the grid was configured with `maxConcurrentDatasourceRequests = 1`, only one request can be pending at any time, and all other requests would be paused until either the Fail or Success callbacks were called for the outstanding request.
 
 [[note]]
-| Prior to version 25, the `fail` callback was called `failCallback`. The old method is still provided for backwards 
+| Prior to version 25, the `fail` callback was called `failCallback`. The old method is still provided for backwards
 | compatibility however it will be deprecated and then removed in future major releases.
 
 ## Next Up
 
-Continue to the next section to learn about [Row Stores](../server-side-model-row-stores/).
+Continue to the next section to learn about [Row Stores](/server-side-model-row-stores/).
 

@@ -6,7 +6,7 @@ enterprise: true
 Learn how to perform server-side operations using GraphQL with a complete reference implementation that uses the MySQL database.
 
 
-In this guide we will develop an Olympic Medals application that demonstrates how to integrate a GraphQL endpoint with AG Grid's [Server-Side Row Model](../server-side-model/). Specifically it will show how data can be lazy-loaded as required, even when performing group, filter, sort operations when working with large datasets.
+In this guide we will develop an Olympic Medals application that demonstrates how to integrate a GraphQL endpoint with AG Grid's [Server-Side Row Model](/server-side-model/). Specifically it will show how data can be lazy-loaded as required, even when performing group, filter, sort operations when working with large datasets.
 
 The following screenshot shows what the finished application looks like:
 
@@ -122,7 +122,7 @@ input RowGroup {
 }
 ```
 
-The input types defined in the schema directly map to the [IServerSideGetRowsRequest](../server-side-model-datasource/#datasource-interface). We will discuss these mappings in detail in the following sections.
+The input types defined in the schema directly map to the [IServerSideGetRowsRequest](/server-side-model-datasource/#datasource-interface). We will discuss these mappings in detail in the following sections.
 
 The corresponding `rows` resolver function is implemented as follows:
 

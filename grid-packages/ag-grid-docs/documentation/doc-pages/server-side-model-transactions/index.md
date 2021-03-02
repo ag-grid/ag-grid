@@ -3,9 +3,9 @@ title: "SSRM Transactions"
 enterprise: true
 ---
 
-SSRM Transaction Updates allow large numbers of rows in the grid to be added, removed or updated in an efficient manner. Transactions work with the [Full Store](../server-side-model-row-stores/) only.
+SSRM Transaction Updates allow large numbers of rows in the grid to be added, removed or updated in an efficient manner. Transactions work with the [Full Store](/server-side-model-row-stores/) only.
 
-Transactions for the Server Side Row Model (SSRM) work similarly to [Client Side Row Model Transactions](../data-update-transactions/). The APIs are almost identical, but there are some important differences (such as the SSRM requiring a 'route') and as such the APIs are not shared.
+Transactions for the Server Side Row Model (SSRM) work similarly to [Client Side Row Model Transactions](/data-update-transactions/). The APIs are almost identical, but there are some important differences (such as the SSRM requiring a 'route') and as such the APIs are not shared.
 
 Applying a SSRM transaction is done using the grid API `applyServerSideTransaction()`. Here are some introductory code snippets demonstrating how to use the API:
 
@@ -142,8 +142,8 @@ The example below demonstrates applying transactions to a store with groups. Not
 
 ## Partial Store
 
-Transaction Updates work with the SSRM and Full Store only. For SSRM and Partial Store, Transactions are not allowed. Instead either move your application to use Full Store or use [Store Refresh](../server-side-model-refresh/) to have the grid data update.
+Transaction Updates work with the SSRM and Full Store only. For SSRM and Partial Store, Transactions are not allowed. Instead either move your application to use Full Store or use [Store Refresh](/server-side-model-refresh/) to have the grid data update.
 
 ## Next Up
 
-Continue to the next section to learn how to perform [High Frequency Updates](../server-side-model-high-frequency/).
+Continue to the next section to learn how to perform [High Frequency Updates](/server-side-model-high-frequency/).

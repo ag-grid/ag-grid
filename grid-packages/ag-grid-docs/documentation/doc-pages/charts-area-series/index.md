@@ -114,4 +114,4 @@ normalizedTo: 100
 
 ## Next Up
 
-Continue to the next section to learn about [scatter and bubble series](../charts-scatter-series/).
+Continue to the next section to learn about [scatter and bubble series](/charts-scatter-series/).

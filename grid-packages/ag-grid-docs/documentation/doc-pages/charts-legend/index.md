@@ -122,4 +122,4 @@ legend: {
 
 ## Next Up
 
-Continue to the next section to learn more about the [navigator](../charts-navigator/).
+Continue to the next section to learn more about the [navigator](/charts-navigator/).

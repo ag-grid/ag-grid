@@ -22,7 +22,7 @@ const gridOptions = {
 }
 </snippet>
 
-To enable sorting for all columns, set sorting in the [default column definition](../column-definitions/).
+To enable sorting for all columns, set sorting in the [default column definition](/column-definitions/).
 
 <snippet>
 const gridOptions = {
@@ -44,14 +44,14 @@ const gridOptions = {
 Custom sorting is provided at a column level by configuring a comparator on the column definition.
 
 <snippet spaceBetweenProperties="true">
-const gridOptions = { 
+const gridOptions = {
     columnDefs: [
-        { 
-            field: 'age', 
+        {
+            field: 'age',
             // simple number comparator
             comparator: (valueA, valueB, nodeA, nodeB, isInverted) => valueA - valueB
         },
-        { 
+        {
             field: 'name',
             // simple string comparator
             comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
@@ -66,7 +66,7 @@ const gridOptions = {
 The parameters are as follows:
 
 - `valueA, valueB`: The values in the cells to be compared. Typically sorts are done on these values only.
-- `nodeA, nodeB`: The [Row Nodes](../row-object/) for the rows getting sorted. These can be used if more information, such as data from other columns, are needed for the comparison.
+- `nodeA, nodeB`: The [Row Nodes](/row-object/) for the rows getting sorted. These can be used if more information, such as data from other columns, are needed for the comparison.
 - `isInverted`: `true` for Ascending, `false` for Descending.
 
 
@@ -82,16 +82,16 @@ Example below shows the following:
 
 ### Example: Custom Sorting Groups
 
-When [Row Grouping](../grouping/) it is possible to override the sort order of the Row Group columns. If using the Auto Group Column, provide a comparator via the `autoGroupColumnDef` grid property.
+When [Row Grouping](/grouping/) it is possible to override the sort order of the Row Group columns. If using the Auto Group Column, provide a comparator via the `autoGroupColumnDef` grid property.
 
 
 <snippet>
 var gridOptions = {
     autoGroupColumnDef: {
-        field: 'athlete',        
+        field: 'athlete',
         comparator: function(valueA, valueB, nodeA, nodeB, isInverted) {
-            return (valueA == valueB) ? 0 : (valueA > valueB) ? 1 : -1; 
-        },  
+            return (valueA == valueB) ? 0 : (valueA > valueB) ? 1 : -1;
+        },
     }
 };
 </snippet>
@@ -151,7 +151,7 @@ The example below shows animation of the rows plus different combinations of sor
 
 ## Sorting API
 
-What sorting is applied is controlled via [Column State](../column-state/). The below examples uses the Column State API to control column sorting.
+What sorting is applied is controlled via [Column State](/column-state/). The below examples uses the Column State API to control column sorting.
 
 <grid-example title='Sorting API' name='sorting-api' type='generated'></grid-example>
 
@@ -177,10 +177,10 @@ This is provided via the `postSort` grid callback function as shown below:
 <snippet>
 const gridOptions = {
     postSort: rowNodes => {
-        // here we put Ireland rows on top while preserving the sort order  
+        // here we put Ireland rows on top while preserving the sort order
         let nextInsertPos = 0;
         for (let i = 0; i < rowNodes.length; i++) {
-            const country = rowNodes[i].data.country;      
+            const country = rowNodes[i].data.country;
             if (country === 'Ireland') {
                 rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);
                 nextInsertPos++;

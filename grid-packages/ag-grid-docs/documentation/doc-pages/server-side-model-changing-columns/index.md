@@ -5,11 +5,11 @@ enterprise: true
 
 It is possible to add and remove columns to the Server-Side Row Model without having the row model reset.
 
-[Changing columns](../column-updating-definitions/) allows you to specify new column definitions to the grid and 
+[Changing columns](/column-updating-definitions/) allows you to specify new column definitions to the grid and
 the grid will work out which columns are new and which are old, keeping the state of the old columns.
 
-For the Server-Side Row Model this means adding and removing columns will reload the data if the 
-changed column has row group, pivot, value, sort or filter active. This is because a change to 
+For the Server-Side Row Model this means adding and removing columns will reload the data if the
+changed column has row group, pivot, value, sort or filter active. This is because a change to
 row group, pivot, value, sort or filter will impact the row data that comes back.
 
 ## Example Changing Columns
@@ -25,5 +25,5 @@ The example below demonstrates how changing columns impacts the server side row 
 
 ## Next Up
 
-Continue to the next section to learn how to [Update Data](../server-side-model-updating/) with the SSRM.
+Continue to the next section to learn how to [Update Data](/server-side-model-updating/) with the SSRM.
 

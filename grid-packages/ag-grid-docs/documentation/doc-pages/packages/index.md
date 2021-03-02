@@ -97,7 +97,7 @@ import 'ag-grid-enterprise';
 |}
 |```
 
-Please refer to the [modules](../modules/) documentation for more information on that side of things.
+Please refer to the [modules](/modules/) documentation for more information on that side of things.
 
-Please refer to the [Getting Started](../getting-started/) guides for a walkthrough on how to install and use these packages from the ground up:
+Please refer to the [Getting Started](/getting-started/) guides for a walkthrough on how to install and use these packages from the ground up:
 

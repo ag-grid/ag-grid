@@ -18,7 +18,7 @@ series: [{
     angleKey: 'value'
 }]
 ```
-This results in the chart shown below. Note that [tooltips](../charts-tooltips/) show the absolute value of each pie slice.
+This results in the chart shown below. Note that [tooltips](/charts-tooltips/) show the absolute value of each pie slice.
 
 <chart-example title='Basic Pie Chart' name='basic-pie' type='generated'></chart-example>
 
@@ -128,4 +128,4 @@ The example below uses one pie series to plot the market share of each operating
 
 ## Next Up
 
-Continue to the next section to learn about [layout](../charts-layout/).
+Continue to the next section to learn about [layout](/charts-layout/).

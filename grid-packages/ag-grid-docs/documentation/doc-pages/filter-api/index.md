@@ -56,7 +56,7 @@ The example below shows getting and setting all the filter models in action.
 - `Reset Filters` will clear all active filters.
 - `Destroy Filter` destroys the filter for the **Athlete** column by calling `gridApi.destroyFilter('athlete')`. This removes any active filter from that column, and will cause the filter to be created with new initialisation values the next time it is interacted with.
 
-(Note: the example uses the Enterprise-only [Set Filter](../filter-set/)).
+(Note: the example uses the Enterprise-only [Set Filter](/filter-set/)).
 
 <grid-example title='Filter Model' name='filter-model' type='generated' options='{ "enterprise": true, "exampleHeight": 587, "modules": ["clientside", "menu", "filterpanel", "columnpanel", "setfilter"] }'></grid-example>
 
@@ -123,7 +123,7 @@ The example below shows how you can interact with an individual filter instance,
 - `Restore Mini Filter Text` will restore the Mini Filter text from the saved state.
 - `Reset Filter` will reset the filter.
 
-(Note: the example uses the Enterprise-only [Set Filter](../filter-set/)).
+(Note: the example uses the Enterprise-only [Set Filter](/filter-set/)).
 
 <grid-example title='Accessing Individual Filters' name='filter-api' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
 

@@ -53,14 +53,14 @@ The example below shows a simple Master / Detail with all the above configured.
 
 [[note]]
 | To learn more about `detailCellRendererParams` configuration see the
-| [Detail Grids](../master-detail-grids/) section.
+| [Detail Grids](/master-detail-grids/) section.
 
 <grid-example title='Master Detail Example' name='simple' type='generated' options='{ "enterprise": true, "exampleHeight": 535, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
 
 ## Row Models
 
-When using Master / Detail the Master Grid must be using either the [Client-Side](../client-side-model/) or [Server-Side](../server-side-model-master-detail/) Row Models. It is not supported with the [Viewport](../viewport) or [Infinite](../infinite-scrolling) Row Models.
+When using Master / Detail the Master Grid must be using either the [Client-Side](/client-side-model/) or [Server-Side](/server-side-model-master-detail/) Row Models. It is not supported with the [Viewport](/viewport/) or [Infinite](/infinite-scrolling/) Row Models.
 
 The Detail Grid on the other hand can use any Row Model.
 

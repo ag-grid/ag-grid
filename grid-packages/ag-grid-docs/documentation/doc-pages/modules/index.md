@@ -70,7 +70,7 @@ You **cannot** mix `packages` and `modules` - in other words you cannot have a m
 
 ## Installing AG Grid Modules
 
-If you choose to select individual modules then at a minimum the a [Row Model](../row-models/) need to be specified. After that all other modules are optional depending on your requirements.
+If you choose to select individual modules then at a minimum the a [Row Model](/row-models/) need to be specified. After that all other modules are optional depending on your requirements.
 
 There are two ways to supply modules to the grid - either globally or by individual grid.
 

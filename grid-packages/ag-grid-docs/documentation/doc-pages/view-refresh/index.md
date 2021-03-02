@@ -9,7 +9,7 @@ However sometimes you may be updating the data outside of the grids control. Whe
 To deal with the scenario where the row data is changed without the grid been aware, the grid provides the following methods:
 
 
-- **Refresh Cells**: `api.refreshCells(cellRefreshParams)` - Gets the grid to refresh all cells. Change detection will be used to refresh only cells whose display cell values are out of sync with the actual value. If using a [cellRenderer](../component-cell-renderer/) with a refresh method, the refresh method will get called.
+- **Refresh Cells**: `api.refreshCells(cellRefreshParams)` - Gets the grid to refresh all cells. Change detection will be used to refresh only cells whose display cell values are out of sync with the actual value. If using a [cellRenderer](/component-cell-renderer/) with a refresh method, the refresh method will get called.
 
 - **Redraw Rows**: `api.redrawRows(redrawRowsParams)` - Removes the rows from the DOM and draws them again from scratch. The cells are created again from scratch. No change detection is done. No refreshing of cells is done.
 
@@ -33,7 +33,7 @@ interface RefreshCellsParams {
 ```
 
 
-Each parameter is optional. The simplest is to call with no parameters which will refresh all cells using [change detection](../change-detection/) (change detection means it will only refresh cells whose values have changed).
+Each parameter is optional. The simplest is to call with no parameters which will refresh all cells using [change detection](/change-detection/) (change detection means it will only refresh cells whose values have changed).
 
 ### Example Refresh Cells
 
@@ -74,7 +74,7 @@ Redraw rows is a much heavier operation than refreshing cells. If refreshing cel
 Use redraw row if you want to create the row again from scratch. This is useful when you have changed property that only gets used when the row is created for the first time such as:
 
 
-- Whether the row is [fullWidth](../full-width-rows/) or not.
+- Whether the row is [fullWidth](/full-width-rows/) or not.
 - The cellRenderer used for any cell (as this is specified once when the cell is created).
 - You want to specify different styles for the row via the callbacks `getRowStyle()` or `getRowClass()`.
 

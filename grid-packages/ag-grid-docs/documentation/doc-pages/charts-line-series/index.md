@@ -98,7 +98,7 @@ We'll get a result like this:
 
 <chart-example title='Line and Marker Colours' name='line-marker-colors' type='generated'></chart-example>
 
-There are many other customisations you can make to the markers; see the [markers section](../charts-markers/) for more information.
+There are many other customisations you can make to the markers; see the [markers section](/charts-markers/) for more information.
 
 ## Missing Data
 
@@ -110,7 +110,7 @@ If the `yKey` value of a data point is positive or negative `Infinity`, `null`, 
 
 ## Continuous Data
 
-By default, the bottom axis is a `'category'` axis, but this can be changed if you have continuous data that you would like to plot. See the [axes section](../charts-axes/) for more information on configuring axes.
+By default, the bottom axis is a `'category'` axis, but this can be changed if you have continuous data that you would like to plot. See the [axes section](/charts-axes/) for more information on configuring axes.
 
 <chart-example title='Continuous Data: Spiral Curve' name='two-number-axes' type='generated' options='{ "exampleHeight": 600 }'></chart-example>
 
@@ -171,4 +171,4 @@ This example uses the `'time'` axis which is configured to show a tick every 5 s
 
 ## Next Up
 
-Continue to the next section to learn about [bar and column series](../charts-bar-series/).
+Continue to the next section to learn about [bar and column series](/charts-bar-series/).

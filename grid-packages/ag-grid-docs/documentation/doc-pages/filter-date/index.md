@@ -2,7 +2,7 @@
 title: "Date Filter"
 ---
 
-Date filters allow you to filter date data. The [Provided Filters](../filter-provided/) and [Simple Filters](../filter-provided-simple/) pages explain the parts of the date filter that are the same as the other provided filters. This page builds on that and explains some details that are specific to the date filter.
+Date filters allow you to filter date data. The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the date filter that are the same as the other provided filters. This page builds on that and explains some details that are specific to the date filter.
 
 ## Date Filter Parameters
 
@@ -17,7 +17,7 @@ In addition, the following parameters are also available:
 ## Date Selection Component
 
 
-By default the grid will use the browser-provided date picker for Chrome and Firefox (as we think it's nice), but for all other browsers it will provide a simple text field. To override this and provide a custom date picker, see [Date Component](../component-date/).
+By default the grid will use the browser-provided date picker for Chrome and Firefox (as we think it's nice), but for all other browsers it will provide a simple text field. To override this and provide a custom date picker, see [Date Component](/component-date/).
 
 ## Date Filter Comparator
 

@@ -80,5 +80,5 @@ The final result is shown in the example below.
 
 ## Next Up
 
-Continue to the next section to learn about [formatters](../charts-formatters/).
+Continue to the next section to learn about [formatters](/charts-formatters/).
 

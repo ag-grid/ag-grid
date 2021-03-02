@@ -137,7 +137,7 @@ interface IFiltersToolPanel {
 }
 ```
 
-Notice that the same [Column Definitions](../column-definitions/) that are supplied in the grid options are also passed to `setFilterLayout(colDefs)`.
+Notice that the same [Column Definitions](/column-definitions/) that are supplied in the grid options are also passed to `setFilterLayout(colDefs)`.
 
 The code snippets below show how to set custom filter layouts using the Filters Tool Panel instance:
 
@@ -186,5 +186,5 @@ The example below shows two custom layouts for the Filters Tool Panel. Note the 
 
 ## Next Up
 
-Now that we covered the provided Tool Panels, learn how to create [Custom Tool Panel Components](../component-tool-panel/).
+Now that we covered the provided Tool Panels, learn how to create [Custom Tool Panel Components](/component-tool-panel/).
 

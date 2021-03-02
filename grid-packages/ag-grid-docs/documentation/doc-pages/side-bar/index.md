@@ -15,7 +15,7 @@ The side bar is configured using the grid property `sideBar`. The property takes
 | boolean                    | Set to `true` to display the side bar with default configuration.                       |
 | string                     | Set to 'columns' or 'filters' to display side bar with just one of Columns or Filters tool panels. |
 | SideBarDef<br/>(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the side bar. Use this to configure the provided tool panels (e.g. pass parameters to the columns or filters panel) or to include custom tool panels. |
-    
+
 
 ### Boolean Configuration
 
@@ -192,7 +192,7 @@ If you are using the long form (providing a `SideBarDef` object) then it is poss
 
 ## Providing Parameters to Tool Panels
 
-Parameters are passed to tool panels via the `componentParams` object. For example, the following code snippet sets `suppressRowGroups: true` and `suppressValues: true` for the [columns tool panel](../tool-panel-columns/).
+Parameters are passed to tool panels via the `componentParams` object. For example, the following code snippet sets `suppressRowGroups: true` and `suppressValues: true` for the [columns tool panel](/tool-panel-columns/).
 
 <snippet>
 const gridOptions = {
@@ -214,7 +214,7 @@ const gridOptions = {
 }
 </snippet>
 
-This example configures the columns tool panel. See the [columns tool panel](../tool-panel-columns/) documentation for the full list of possible parameters to this tool panel.
+This example configures the columns tool panel. See the [columns tool panel](/tool-panel-columns/) documentation for the full list of possible parameters to this tool panel.
 
 ## Side Bar API
 
@@ -235,4 +235,4 @@ The example below demonstrates different usages of the tool panel API methods. T
 
 ## Next Up
 
-Now that we covered the Side bar, continue to the next section to learn about the [Columns Tool Panel](../tool-panel-columns/).
+Now that we covered the Side bar, continue to the next section to learn about the [Columns Tool Panel](/tool-panel-columns/).

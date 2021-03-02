@@ -6,9 +6,9 @@ This section outlines the flow of saving cell content after editing. That is the
 
 The different parts of the grid concerned with saving cell values are as follows:
 
-- [Value Parser](../value-parsers/): Allows you to parse values after an edit.
+- [Value Parser](/value-parsers/): Allows you to parse values after an edit.
 
-- [Value Setter](../value-setters/): Allows you to put values back into the underlying data.
+- [Value Setter](/value-setters/): Allows you to put values back into the underlying data.
 
 ## Saving Flow
 

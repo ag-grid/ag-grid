@@ -22,5 +22,4 @@
 |   );
 |};
 |```
-
-|It is also possible to write a JavaScript based cell renderer function - refer to the [docs here](../../javascript/component-cell-renderer#cell-renderer-function) for more information
+| It is also possible to write a JavaScript-based cell renderer function - refer to the [docs here](../../javascript-table/component-cell-renderer/#cell-renderer-function) for more information

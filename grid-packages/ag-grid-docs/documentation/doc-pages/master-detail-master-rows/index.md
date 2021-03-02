@@ -42,7 +42,7 @@ The following example only shows detail rows when there are corresponding child 
 
 ## Changing Dynamic Master Rows
 
-The callback `isRowMaster` is re-called after data changes in the row as a result of a [Transaction Update](../data-update-transactions/). This gives the opportunity to change whether the row is expandable or not.
+The callback `isRowMaster` is re-called after data changes in the row as a result of a [Transaction Update](/data-update-transactions/). This gives the opportunity to change whether the row is expandable or not.
 
 ```js
 // to get isRowMaster called again, update the row using a Transaction Update

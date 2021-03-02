@@ -2,7 +2,7 @@
 title: "Updating Column Definitions"
 ---
 
-The section [Column Definitions](../column-definitions/) explained how to configure columns. It is possible to change the
+The section [Column Definitions](/column-definitions/) explained how to configure columns. It is possible to change the
 configuration of the Columns after they are initially set. This section goes through how to update Column Definitions.
 
 ## Adding & Removing Columns {#adding-removing-columns}
@@ -70,11 +70,11 @@ All stateful attributes of Column Definitions are as follows:
 
 [[note]]
 | If you are interested in changing Column State only and not the other parts of the column definitions, then consider
-| working with the [Column State](../column-state/) API instead.
+| working with the [Column State](/column-state/) API instead.
 |
 | Column State is provided as part of Column Definitions to enable these properties to be reactive. Some developers wish
 | to update Column Definitions and expect the grid to respond. Other developers may find this non-intuitive and will
-| prefer interacting with [Column State](../column-state/) directly.
+| prefer interacting with [Column State](/column-state/) directly.
 
 The **Initial Attribute** will be used only when the **Column is Created** only. The **Stateful Attribute** will be used
 when the **Column is Created or Updated**.
@@ -177,7 +177,7 @@ information to the console, so best open the example in a new tab and observe th
 
 ## Refreshing Headers
 
-If you are creating your own [Header Components](../component-header/) then you will need to be aware of
+If you are creating your own [Header Components](/component-header/) then you will need to be aware of
 how Header Components are refreshed.
 
 All Header Components that still exist after the new Column Definitions are applied (in other words, the Column still

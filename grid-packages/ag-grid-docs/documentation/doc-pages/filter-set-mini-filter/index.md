@@ -41,7 +41,7 @@ The following example demonstrates this behaviour. Note the following:
 
 Sometimes it is necessary to provide custom handling for Mini Filter searches, for example to substitute accented characters.
 
-As with the [Text Filter](../filter-text/#text-formatter) it is possible to supply a Text Formatter to the Set Filter which formats the text before applying the Mini Filter compare logic. The snippet below shows how this can be configured:
+As with the [Text Filter](/filter-text/#text-formatter) it is possible to supply a Text Formatter to the Set Filter which formats the text before applying the Mini Filter compare logic. The snippet below shows how this can be configured:
 
 <snippet>
 const gridOptions = {
@@ -80,7 +80,7 @@ The following example demonstrates searching when there are accented characters.
 
 ## Text Customisation
 
-Text used in the Mini Filter can be customised using [Localisation](../localisation/).
+Text used in the Mini Filter can be customised using [Localisation](/localisation/).
 
 The text shown as a placeholder in the Mini Filter textbox can be customised by setting `'searchOoo'`.
 
@@ -117,4 +117,4 @@ The following example demonstrates hiding the mini filter. Note the following:
 
 ## Next Up
 
-Continue to the next section: [Excel Mode](../filter-set-excel-mode/).
+Continue to the next section: [Excel Mode](/filter-set-excel-mode/).

@@ -453,7 +453,7 @@ see the documentation for those projects.
 ##  Angular Grid Resources
 
 
-- Get started with Angular Grid in 5 minutes in our [guide](../getting-started/).
+- Get started with Angular Grid in 5 minutes in our [guide](/getting-started/).
 
-- Please take a look at the [components](../components/) section next for more detailed information on using Angular with AG Grid.
+- Please take a look at the [components](/components/) section next for more detailed information on using Angular with AG Grid.
 

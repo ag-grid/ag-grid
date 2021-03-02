@@ -4,7 +4,7 @@ title: "Value Setters"
 
 After editing a cell, the grid normally inserts the new value into your data using the column definition `field` attribute. If it's not possible to use a field attribute, you can provide a Value Setter instead.
 
-A Value Setter is the inverse of a [Value Getter](../value-getters/). Where the value getter allows getting values from your data using a function rather than a field, the value setter allows you to set values into your data using a function rather than specifying a field.
+A Value Setter is the inverse of a [Value Getter](/value-getters/). Where the value getter allows getting values from your data using a function rather than a field, the value setter allows you to set values into your data using a function rather than specifying a field.
 
 The parameters provided to a value setter are as follows:
 

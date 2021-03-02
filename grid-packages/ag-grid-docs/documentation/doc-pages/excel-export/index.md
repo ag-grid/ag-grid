@@ -7,7 +7,7 @@ Excel Export allows exporting AG Grid data to Excel using Open XML format (xlsx)
 
 [[note]]
 | This page covers Excel-specific features such as styling. For information on how to control what data is included in the export
-| and to format/transform the data as it is exported, see the [Export documentation](../export/).
+| and to format/transform the data as it is exported, see the [Export documentation](/export/).
 
 Using this format allows for rich Excel files to be created with the following:
 
@@ -29,17 +29,17 @@ Using this format allows for rich Excel files to be created with the following:
 
 <api-documentation source='grid-api/api.json' section='export' names='["exportDataAsExcel(params)", "getDataAsExcel(params)"]'></api-documentation>
 
-The `params` object can contain all the [common export options](../export/), as well as these Excel-specific options:
+The `params` object can contain all the [common export options](/export/), as well as these Excel-specific options:
 
 <api-documentation source='excel-export/resources/excel.json' section='exportProperties'></api-documentation>
 
 ## Defining styles
 
-The main reason to export to Excel instead of CSV is so that the look and feel remain as consistent as possible with your AG Grid application. In order to simplify the configuration the Excel Export reuses the [cellClassRules](../cell-styles/#cell-class-rules) and the [cellClass](../cell-styles/#cell-class) from the column definition. Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the `excelStyles` property in the [gridOptions](../grid-properties/).
+The main reason to export to Excel instead of CSV is so that the look and feel remain as consistent as possible with your AG Grid application. In order to simplify the configuration the Excel Export reuses the [cellClassRules](/cell-styles/#cell-class-rules) and the [cellClass](/cell-styles/#cell-class) from the column definition. Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the `excelStyles` property in the [gridOptions](/grid-properties/).
 
 An Excel style object has the following properties:
 
-- `id` (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the [cellClassRules](../cell-styles/#cell-class-rules)
+- `id` (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the [cellClassRules](/cell-styles/#cell-class-rules)
 
 - `alignment` (optional): Vertical and horizontal alignment:
     - horizontal: String one of Automatic, Left, Center, Right, Fill, Justify, CenterAcrossSelection, Distributed, and JustifyDistributed
@@ -154,7 +154,7 @@ const gridOptions = {
 ## Resolving Excel Styles
 
 
-All the defined classes from [cellClass](../cell-styles/#cell-class) and all the classes resulting from evaluating the [cellClassRules](../cell-styles/#cell-class-rules) are applied to each cell when exporting to Excel. Normally these styles map to CSS classes when the grid is doing normal rendering. In Excel Export, the styles are mapped against the Excel styles that you have provided. If more than one Excel style is found, the results are merged (similar to how CSS classes are merged by the browser when multiple classes are applied).
+All the defined classes from [cellClass](/cell-styles/#cell-class) and all the classes resulting from evaluating the [cellClassRules](/cell-styles/#cell-class-rules) are applied to each cell when exporting to Excel. Normally these styles map to CSS classes when the grid is doing normal rendering. In Excel Export, the styles are mapped against the Excel styles that you have provided. If more than one Excel style is found, the results are merged (similar to how CSS classes are merged by the browser when multiple classes are applied).
 
 Headers are a special case, headers are exported to Excel as normal rows, so in order to allow you to style them you can provide an ExcelStyle with id and name "header". If you do so, the headers.
 

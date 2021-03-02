@@ -49,7 +49,7 @@ The example below demonstrates `valueGetter`. The following can be noted from th
 - Columns A and B are simple columns using `field`
 
 - Value Getters are used in all subsequent columns as follows:
-    - Column 'Row Num' prints the row number, taken from the [Row Node](../row-object/).
+    - Column 'Row Num' prints the row number, taken from the [Row Node](/row-object/).
     - Column 'A+B' adds A and B.
     - Column 'A * 1000' multiplies A by 1000.
     - Column 'B * 137' multiplies B by 137.
@@ -68,11 +68,11 @@ The parameters for `headerValueGetter` differ from standard `valueGetter` as fol
 - Only one of column or columnGroup will be present, depending on whether it's a column or a column group.
 - Parameter `location` allows you to have different column names depending on where the column is appearing, eg you might want to have a different name when the column is in the column drop zone or the toolbar.
 
-See the [Column Tool Panel Example](../tool-panel-columns/#column-tool-panel-example) for an example of `headerValueGetter` used in different locations, where you can change the header name depending on where the name appears.
+See the [Column Tool Panel Example](/tool-panel-columns/#column-tool-panel-example) for an example of `headerValueGetter` used in different locations, where you can change the header name depending on where the name appears.
 
 ### Filter Value Getters
 
-See [Filtering in Row Grouping](../grouping/#filtering-on-group-columns) for more information on Filter Value Getters.
+See [Filtering in Row Grouping](/grouping/#filtering-on-group-columns) for more information on Filter Value Getters.
 
 ## Value Cache
 
@@ -151,7 +151,7 @@ As before, we focus on the value getter of the **'Total'** column and can see ho
 - If you close and then re-open a group, the value getters are not re-executed, even though the values are needed to re-create the DOM elements that represent the cells.
 - Hitting **'Refresh Cells'** will refresh all the cells, but again the value getters will not get re-executed.
 - Hitting **'Invalidate Cache'** and then **'Refresh Cells'** will result in the value getters getting re-executed, as the cell refresh operation requires the values and the cache was invalidated. You will notice invalidating and then refreshing doesn't do anything noticeable to the grid, the data is the same, the only hint that anything happened is the value getter's console messages.
-- Changing any value in the grid, either editing via the UI directly or hitting the **'Change One Value'** button, will result in the value cache getting cleared and all cells getting refreshed (where [change detection](../change-detection/) then updates any changes cells and only changed cells).
+- Changing any value in the grid, either editing via the UI directly or hitting the **'Change One Value'** button, will result in the value cache getting cleared and all cells getting refreshed (where [change detection](/change-detection/) then updates any changes cells and only changed cells).
 
 <grid-example title='Expiring Cache through Editing' name='expiring-through-editing' type='generated' options='{ "enterprise": true }'></grid-example>
 

@@ -102,4 +102,4 @@ series: [{
 
 ## Next Up
 
-Continue to the next section to learn about [bar and column series](../charts-bar-series/).
+Continue to the next section to learn about [bar and column series](/charts-bar-series/).

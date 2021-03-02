@@ -10,10 +10,10 @@ Remember Pagination works with all frameworks eg Angular and React as well as pl
 
 ## Supported Row Models
 
-Pagination in AG Grid is supported in [all the different row models](../row-models/). The [Client-Side Row Model](../client-side-model/) (the default row model) is used for the examples on this page.
+Pagination in AG Grid is supported in [all the different row models](/row-models/). The [Client-Side Row Model](/client-side-model/) (the default row model) is used for the examples on this page.
 
 
-To see the specifics of pagination on the other row models check the relevant documentation for [Infinite Row Model](../infinite-scrolling/#pagination), [Viewport Row Model](../viewport/#example-viewport-with-pagination) and [Server-Side Row Model](../server-side-model-pagination/).
+To see the specifics of pagination on the other row models check the relevant documentation for [Infinite Row Model](/infinite-scrolling/#pagination), [Viewport Row Model](/viewport/#example-viewport-with-pagination) and [Server-Side Row Model](/server-side-model-pagination/).
 
 ## Features While Using Pagination
 
@@ -28,7 +28,7 @@ If you set `paginationAutoPageSize=true` the grid will automatically show as man
 
 [[note]]
 | Each pagination page must have the same number of rows. If you use `paginationAutoPageSize` with
-| [getRowHeight()](../row-height/#getrowheight-callback) callback (to have different
+| [getRowHeight()](/row-height/#getrowheight-callback) callback (to have different
 | rows with different heights) then the page height will be calculated using the default row height and not
 | the actual row heights. Therefore the rows will not fit perfectly into the page if these features are mixed.
 
@@ -45,7 +45,7 @@ In this example the default pagination settings are changed. Note the following:
 
 ## Example: Custom Pagination Controls
 
-If you set `suppressPaginationPanel=true`, the grid will not show the standard navigation controls for pagination. This is useful is you want to provide your own navigation controls. 
+If you set `suppressPaginationPanel=true`, the grid will not show the standard navigation controls for pagination. This is useful is you want to provide your own navigation controls.
 
 In the example below you can see how this works. Note that we are listening to `onPaginationChanged` to update the information about the current pagination status. We also call methods on the pagination API to change the pagination state.
 
@@ -57,7 +57,7 @@ The example also sets property `suppressScrollOnNewData=true`, which tells the g
 
 ## Pagination & Child Rows
 
-Both [Row Grouping](../grouping/) and [Master Detail](../master-detail/) have rows that expand. When this happens, consideration needs to be given as to how this impacts the number of rows on the page. There are two modes of operation that can be used depending on what your application requirements.
+Both [Row Grouping](/grouping/) and [Master Detail](/master-detail/) have rows that expand. When this happens, consideration needs to be given as to how this impacts the number of rows on the page. There are two modes of operation that can be used depending on what your application requirements.
 
 ### Mode 1: Paginate Only Top Level Rows
 
@@ -92,8 +92,8 @@ In the example below, note the following:
 
 If using either of the following features, the grid will be forced to use the second mode:
 
-- [Hide Open Parents](../grouping/#hide-open-parents)
-- [Group Remove Single Children](../grouping/#removing-single-children)
+- [Hide Open Parents](/grouping/#hide-open-parents)
+- [Group Remove Single Children](/grouping/#removing-single-children)
 
 This is because both of these features remove top level rows (group rows and master rows) from the displayed rows, making it impossible to paginate based on the top level rows only.
 

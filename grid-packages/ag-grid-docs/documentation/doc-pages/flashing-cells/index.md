@@ -39,11 +39,11 @@ The example below demonstrates flashing delay changes. The following can be note
 
 ## Filtering & Aggregations
 
-One exception to the above is changes due to filtering. If you are [Row Grouping](../grouping/) the data with [Aggregations](../aggregation/), then the aggregated values will change as filtering adds and removes rows contained within the groups. It typically doesn't make sense to flash these changes when it's due to a filter change, as filtering would impact many (possibly all) cells at once, thus not usefully bringing the users attention to any particular cell. If you do not like this exception and would like to flash changes even when it's the result of a filter change, then set grid property `allowShowChangeAfterFilter=true`.
+One exception to the above is changes due to filtering. If you are [Row Grouping](/grouping/) the data with [Aggregations](/aggregation/), then the aggregated values will change as filtering adds and removes rows contained within the groups. It typically doesn't make sense to flash these changes when it's due to a filter change, as filtering would impact many (possibly all) cells at once, thus not usefully bringing the users attention to any particular cell. If you do not like this exception and would like to flash changes even when it's the result of a filter change, then set grid property `allowShowChangeAfterFilter=true`.
 
 ## Flashing Cells vs Custom Cell Renderers
 
-Flashing cells is a simple and quick way to visually show to the user that the data has changed. It is also possible to have more intelligent animations by putting animations into custom [Cell Renderers](../component-cell-renderer/). Cell Renderers have a `refresh` method that gets called when data changes, allowing custom animations to highlight data changes.
+Flashing cells is a simple and quick way to visually show to the user that the data has changed. It is also possible to have more intelligent animations by putting animations into custom [Cell Renderers](/component-cell-renderer/). Cell Renderers have a `refresh` method that gets called when data changes, allowing custom animations to highlight data changes.
 
 
-The grid comes with two such Cell Renderers for showing data changes which are detailed in the [Change Cell Renderers](../change-cell-renderers/) section.
+The grid comes with two such Cell Renderers for showing data changes which are detailed in the [Change Cell Renderers](/change-cell-renderers/) section.

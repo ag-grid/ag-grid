@@ -1,20 +1,20 @@
 ---
 title: "Undo / Redo Edits"
---- 
+---
 
 This section covers how to allow users to undo / redo their cell edits.
 
-When [Cell Editing](../cell-editing/) is enabled in the grid, it is usually desirable to allow users to undo / redo any edits.
+When [Cell Editing](/cell-editing/) is enabled in the grid, it is usually desirable to allow users to undo / redo any edits.
 
 Users can change the contents of cells through the following grid features:
 
-- [Cell Editing](../cell-editing/)
-- [Copy / Paste](../clipboard/)
-- [Fill Handle](../range-selection-fill-handle/)
+- [Cell Editing](/cell-editing/)
+- [Copy / Paste](/clipboard/)
+- [Fill Handle](/range-selection-fill-handle/)
 
 [[note]]
-| This Undo / Redo feature is designed to be a recovery mechanism for user editing mistakes. Performing grid 
-| operations that change the row / column order, e.g. sorting, filtering and grouping, will clear the 
+| This Undo / Redo feature is designed to be a recovery mechanism for user editing mistakes. Performing grid
+| operations that change the row / column order, e.g. sorting, filtering and grouping, will clear the
 | undo / redo stacks.
 
 ## Enabling Undo / Redo
@@ -24,7 +24,7 @@ The following undo / redo properties are provided in the grid options interface:
 <snippet>
 const gridOptions = {
     undoRedoCellEditing: true,
-    undoRedoCellEditingLimit: 20 
+    undoRedoCellEditingLimit: 20
 }
 </snippet>
 
@@ -70,19 +70,19 @@ The example below has the following grid options enabled to demonstrate undo / r
 |    defaultColDef: {
 |        // makes all cells editable
 |        editable: true
-|    }, 
+|    },
 |    // allows copy / paste using cell ranges
 |    enableRangeSelection: true,
-|    
+|
 |    // enables the fill handle
 |    enableFillHandle: true,
-|    
+|
 |    // enables undo / redo
 |    undoRedoCellEditing: true,
-|    
+|
 |    // restricts the number of undo / redo steps to 5
 |    undoRedoCellEditingLimit: 5,
-|    
+|
 |    // enables flashing to help see cell changes
 |    enableCellChangeFlash: true,
 |}

@@ -90,4 +90,4 @@ When the chart's size changes, the amount of user-specified padding doesn't chan
 
 ## Next Up
 
-Continue to the next section to learn about the [legend and its layout](../charts-legend/).
+Continue to the next section to learn about the [legend and its layout](/charts-legend/).

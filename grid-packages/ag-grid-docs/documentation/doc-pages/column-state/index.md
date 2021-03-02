@@ -2,7 +2,7 @@
 title: "Column State"
 ---
 
-[Column Definitions](../column-definitions/) contain both stateful and non-stateful attributes. Stateful attributes can
+[Column Definitions](/column-definitions/) contain both stateful and non-stateful attributes. Stateful attributes can
 have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header).
 Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Header Name is set as
 part of a Column Definition, it typically does not change).

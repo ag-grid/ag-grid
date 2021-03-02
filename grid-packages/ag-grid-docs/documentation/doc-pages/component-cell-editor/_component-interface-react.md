@@ -2,7 +2,7 @@
 |## Cell Editor Component
 |
 |When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
-|row values available to you via `props`.  
+|row values available to you via `props`.
 |
 |The editor interface is as follows:
 |
@@ -42,7 +42,7 @@
 ||grid will call (for example, the `getValue` callback from an Editor Component), then you'll need to expose them with
 ||`forwardRef` & `useImperativeHandle`.
 ||
-||Please refer to the [Hook](../react-hooks) documentation (or the examples on this page) for more information.
+||Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
 |
 |The interface for values available on on component creation (via `props`) is as follows:
 

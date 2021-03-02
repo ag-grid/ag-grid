@@ -177,9 +177,9 @@ in the relevant parts of the documentation.
 
 ## Angular 1.x and AG Grid Components
 
-AG Grid does not provide direct support for it's [components](../components/) and AngularJS 1.x.
+AG Grid does not provide direct support for it's [components](/components/) and AngularJS 1.x.
 If you want to put custom AngularJS 1.x components into AG Grid, follow the
-[instructions for plain JavaScript component](../getting-started/). You will then need to manage creating
+[instructions for plain JavaScript component](/getting-started/). You will then need to manage creating
 and destroying child scopes yourself inside the `init()` and `destroy()` methods.
 
 Below shows an example of using AG Grid Filter, Header and Cell Renderer components. The following can be noted:
@@ -208,7 +208,7 @@ But maybe you are not worried about performance. Maybe you are not displaying th
 columns. And maybe you want to provide your own cell renderers and use Angular here. For whatever
 reason, it is possible to turn Angular on for Angular version 1.x.
 
-When [Angular is turned on in AG Grid](../getting-started/), every time a row is inserted, a new
+When [Angular is turned on in AG Grid](/getting-started/), every time a row is inserted, a new
 child Angular Scope is created for that row. This scope gets the row attached to it so it's
 available to any Angular logic inside the cell.
 
@@ -241,7 +241,7 @@ Below then uses three columns rendered using custom Angular renderers.
 
 ## Cell Templates
 
-[Cell Templates](../component-cell-renderer/#cell-renderer-component) allow you to specify
+[Cell Templates](/component-cell-renderer/#cell-renderer-component) allow you to specify
 templates to use to render your cells. This is handy if you want to put JavaScript markup with
 AngularJS 1.x bindings as the cells. Cell templates are specified in the column definition by
 providing a template as a string or a templateUrl to load the template from the server.

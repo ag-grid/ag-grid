@@ -8,7 +8,7 @@ Learn how to perform server-side operations using Apache Spark with a complete r
 In recent years analysts and data scientists are requesting browser based applications for big data analytics. This data is often widely dispersed in different systems and large file storage volumes.
 
 
-This guide will show how to combine Apache Spark's powerful server side transformations with AG Grid's [Server-Side Row Model](../server-side-model/) to create interactive reports for big data analytics.
+This guide will show how to combine Apache Spark's powerful server side transformations with AG Grid's [Server-Side Row Model](/server-side-model/) to create interactive reports for big data analytics.
 
 We will develop an Olympic Medals application that demonstrates how data can be lazy-loaded as required, even when performing group, filter, sort and pivot operations.
 
@@ -45,7 +45,7 @@ The following diagram illustrates the pipeline of transformations we will be per
 
 Each of these individual transformations will be described in detail throughout this guide.
 
-Before proceeding with this guide be sure to review the [Row Model Overview](../server-side-operations-oracle/#overview) as it provides some context for choosing the Server-Side Row Model for big data applications.
+Before proceeding with this guide be sure to review the [Row Model Overview](/server-side-operations-oracle/#overview) as it provides some context for choosing the Server-Side Row Model for big data applications.
 
 
 ## Prerequisites
@@ -180,7 +180,7 @@ public class ServerSideGetRowsRequest implements Serializable {
 }
 ```
 
-We will discuss this in detail throughout this guide, however for more details see: [Server-Side Datasource](../server-side-model-datasource/).
+We will discuss this in detail throughout this guide, however for more details see: [Server-Side Datasource](/server-side-model-datasource/).
 
 ## Service Controller
 
@@ -255,7 +255,7 @@ The rest of this class will be discussed in the remaining sections.
 
 ## Filtering
 
-Our example will make use of the grid's `NumberFilter` and `SetFilter` [Column Filters](../filtering/). The corresponding server-side classes are as follows:
+Our example will make use of the grid's `NumberFilter` and `SetFilter` [Column Filters](/filtering/). The corresponding server-side classes are as follows:
 
 ```java
 // src/main/java/com/ag/grid/enterprise/spark/demo/filter/NumberColumnFilter.java

@@ -36,7 +36,7 @@ interface IToolPanelParams {
 
 ## Registering Tool Panel Components
 
-Registering a Tool Panel component follows the same approach as any other custom components in the grid. For more details see: [Registering Custom Components](../components/#registering-custom-components).
+Registering a Tool Panel component follows the same approach as any other custom components in the grid. For more details see: [Registering Custom Components](/components/#registering-custom-components).
 
 Once the Tool Panel Component is registered with the grid it needs to be included into the Side Bar. The following snippet illustrates this:
 
@@ -61,7 +61,7 @@ gridOptions: {
 }
 ```
 
-For more details on the configuration properties above, refer to the [Side Bar Configuration](../side-bar/#sidebardef-configuration) section.
+For more details on the configuration properties above, refer to the [Side Bar Configuration](/side-bar/#sidebardef-configuration) section.
 
 ## Example: 'Custom Stats' Tool Panel Component
 

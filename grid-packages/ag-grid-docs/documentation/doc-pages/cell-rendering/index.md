@@ -44,7 +44,7 @@ const gridOptions = {
 }
 </snippet>
 
-This remainder of this documentation page goes through the grid provided cell renderer's. To build your own cell renderer see the section [Cell Rendering Components](../component-cell-renderer/).
+This remainder of this documentation page goes through the grid provided cell renderer's. To build your own cell renderer see the section [Cell Rendering Components](/component-cell-renderer/).
 
 ## No Cell Renderer
 
@@ -54,7 +54,7 @@ If you just want to do simple formatting of the data (eg currency or date format
 
 ## Cell Renderer Components
 
-Cell renderer components can be referenced by string or directly by class. They can be [Provided Cell Renderers](#provided-cell-renderers) (that come with the grid) or [Custom Cell Renderers](../component-cell-renderer/) (built by you).
+Cell renderer components can be referenced by string or directly by class. They can be [Provided Cell Renderers](#provided-cell-renderers) (that come with the grid) or [Custom Cell Renderers](/component-cell-renderer/) (built by you).
 
 ## Many Renderers One Column
 
@@ -82,7 +82,7 @@ The following example illustrates how to use different renderers and parameters 
         if (params.data.type === 'gender') {
             return genderDetails;
         }
-            
+
         if (params.data.type === 'mood') {
             return moodDetails;
         }
@@ -117,7 +117,7 @@ Notice the following in the example below:
 
 The grid comes with some provided cell renderers out of the box. These cell renderers cover some common complex cell rendering requirements.
 
-- [Group Cell Renderer](../group-cell-renderer/): For showing group details with expand & collapse functionality when using any of the [Row Grouping](../grouping/), [Master Detail](../master-detail/) or [Tree Data](../tree-data/).
+- [Group Cell Renderer](/group-cell-renderer/): For showing group details with expand & collapse functionality when using any of the [Row Grouping](/grouping/), [Master Detail](/master-detail/) or [Tree Data](/tree-data/).
 
-- [Show Change Cell Renderers](../change-cell-renderers/): For animating changes when data is changing.
+- [Show Change Cell Renderers](/change-cell-renderers/): For animating changes when data is changing.
 

@@ -25,10 +25,10 @@ interface RefreshStoreParams {
     // If no route is passed, or an empty array, then the top level store is refreshed.
     route?: string[];
 
-    // If true, then all rows at the level getting refreshed are immediatly destroyed 
+    // If true, then all rows at the level getting refreshed are immediatly destroyed
     // and 'loading' rows will appear.
     //
-    // If false, then all rows at the level getting refreshed are kept until rows 
+    // If false, then all rows at the level getting refreshed are kept until rows
     // are loaded (no 'loading' rows appear).
     purge?: boolean;
 }
@@ -65,7 +65,7 @@ refreshing which are as follows:
   be only 1 block exists in the cache after purging. This means only one block request is sent to the server.<br/><br/>
   Refreshing however will refresh all existing blocks. Thus if 5 blocks exist in the cache, all blocks
   will get refreshed resulting in 5 requests sent to the server.
- 
+
 
 ## Maintaining Open Groups
 
@@ -78,11 +78,11 @@ Maintaining open groups is achieved when all of the following are configured:
 
 - Refreshing (`params.purge=false`). When using a purge, groups and children will be lost.
 
-- Row Id's are provided (`getRowNodeId()` implemented, see [Row ID's](../row-object/#application-assigned-ids)). If not providing row Id's, groups and children will be lost
+- Row Id's are provided (`getRowNodeId()` implemented, see [Row IDs](/row-object/#application-assigned-ids)). If not providing row Id's, groups and children will be lost
 
 When all the above is true, when a refresh is done, open groups will remain open and children will be kept.
 
-The example below shows refreshing using the Full Store and keeping group state. The example is similar to the 
+The example below shows refreshing using the Full Store and keeping group state. The example is similar to the
 previous example with the addition `getRowNodeId()` is implemented. Note the following:
 
 - When 'Purge' is not checked, refreshing using any refresh button will maintain any open groups and children at that level.<br/><br/>
@@ -98,8 +98,8 @@ previous example with the addition `getRowNodeId()` is implemented. Note the fol
   child rows are loaded again from scratch.
 
 Because the grid is getting provided ID's with via `getRowNodeId()` it allows the grid to update rows rather than
-replace rows. This also means when grid property `enableCellChangeFlash = true` the cells will flash when their data 
-changes. If `getRowNodeId()` is not implemented, rows are replaced and cells are re-created from scratch, no flashing 
+replace rows. This also means when grid property `enableCellChangeFlash = true` the cells will flash when their data
+changes. If `getRowNodeId()` is not implemented, rows are replaced and cells are re-created from scratch, no flashing
 is possible.
 
 
@@ -109,14 +109,14 @@ is possible.
 | If using the Partial Store, the grid does not provide for keeping open groups. Refreshing a Partial Store will always
 | reset groups and destroy children.
 |
-| This is because the Partial Store loads rows in blocks, so it's unreliable to expect rows that existed before to 
+| This is because the Partial Store loads rows in blocks, so it's unreliable to expect rows that existed before to
 | exist in the new load, as the row could appear in a different block.
 |
-|If you are using the Partial Store and need to restore groups to their previously open state, then this logic can 
-|be implemented in your application using the [Open by Default](../server-side-model-grouping/#open-by-default) API.
+|If you are using the Partial Store and need to restore groups to their previously open state, then this logic can
+|be implemented in your application using the [Open by Default](/server-side-model-grouping/#open-by-default) API.
 
 
 ## Next Up
 
-Continue to the next section to learn how to perform [Pivoting](../server-side-model-pivoting/).
+Continue to the next section to learn how to perform [Pivoting](/server-side-model-pivoting/).
 

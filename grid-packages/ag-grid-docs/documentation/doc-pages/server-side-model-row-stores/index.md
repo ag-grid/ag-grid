@@ -8,7 +8,7 @@ Row Stores - Full Store and Partial Store. This section explains more on these t
 
 ## Row Stores
 
-A Row Store stores [Row Nodes](../row-object/). A Row Node represents one Row inside the grid.
+A Row Store stores [Row Nodes](/row-object/). A Row Node represents one Row inside the grid.
 
 There is at least one Row Store inside the SSRM for storing top level rows. The diagram below shows a SSRM with one Row Store.
 
@@ -17,7 +17,7 @@ There is at least one Row Store inside the SSRM for storing top level rows. The 
     <div>Fig 1. Node Store</div>
 </div>
 
-If the grid had [Row Grouping](../server-side-model-grouping/) there would be many rows stores, but for now we consider the simple case.
+If the grid had [Row Grouping](/server-side-model-grouping/) there would be many rows stores, but for now we consider the simple case.
 
 ## Row Store Types
 
@@ -57,7 +57,7 @@ Below shows a simple example using Partial Store. Note the following:
 - Open the console to observe when the server is called to load rows.
 - Rows are loaded back 100 rows at a time. As the user scrolls down, more rows will be loaded.
 - Sorting the data is not possible by the grid and requires the data to be retrieved from the server again.
-Sorting on the server side is explained in [Server-Side Sorting](../server-side-model-sorting/).
+Sorting on the server side is explained in [Server-Side Sorting](/server-side-model-sorting/).
 
 <grid-example title='Partial Store' name='partial-store' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
 
@@ -72,7 +72,7 @@ the entire dataset is loaded into the grid.
 
 [[note]]
 | At this point you might be wondering what’s the advantage of using the Full store versus
-| the standard [Client-Side Row Model](../client-side-model/).
+| the standard [Client-Side Row Model](/client-side-model/).
 | The difference is when Row Grouping, the children of the row groups are loaded as the
 | groups are expanded. For Client-Side Row Model, all data needs to be loaded up front.
 
@@ -97,15 +97,15 @@ and using infinite scrolling to load the blocks as the users scrolls. However it
 - **In Grid Sorting**
     Because data is read back in blocks from the Partial Store, the grid cannot sort the data,
     as it does not have all the data loaded. All sorting must be done on the server
-    as described in [Sorting](../server-side-model-sorting/).
+    as described in [Sorting](/server-side-model-sorting/).
 
 - **In Grid Filtering**
     Because data is read back in blocks from the Partial Store, the grid cannot filter the data,
     as it does not have all the data loaded. All filtering must be done on the server
-    as described in [Filtering](../server-side-model-filtering/).
+    as described in [Filtering](/server-side-model-filtering/).
 
 - **Updating Data**
-    Updating data in the grid using [Transactions](../server-side-model-transactions/) is not supported
+    Updating data in the grid using [Transactions](/server-side-model-transactions/) is not supported
     by the Partial Store.
 
     This is because applying updates would potentially move rows between blocks, which would not be possible
@@ -129,4 +129,4 @@ and using infinite scrolling to load the blocks as the users scrolls. However it
 
 ## Next Up
 
-Continue to the next section to learn about [Configuration](../server-side-model-configuration/) of the SSRM.
+Continue to the next section to learn about [Configuration](/server-side-model-configuration/) of the SSRM.
