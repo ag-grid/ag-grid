@@ -3,19 +3,25 @@ import { withPrefix } from 'gatsby';
 import classnames from 'classnames';
 import styles from './HeaderNav.module.scss';
 
-const links = [{
-    name: 'Demo',
-    url: '/example.php'
-}, {
-    name: 'Documentation',
-    url: withPrefix('/')
-}, {
-    name: 'Pricing',
-    url: '/license-pricing.php'
-}, {
-    name: 'Blog',
-    url: 'https://blog.ag-grid.com/?_ga=2.240961155.106872681.1607518091-965402545.1605286673'
-}];
+const links = [
+    {
+        name: 'Demo',
+        url: '/example.php'
+    },
+    {
+        name: 'Documentation',
+        url: withPrefix('/documentation/'),
+        isActive: true,
+    },
+    {
+        name: 'Pricing',
+        url: '/license-pricing.php'
+    },
+    {
+        name: 'Blog',
+        url: 'https://blog.ag-grid.com/?_ga=2.240961155.106872681.1607518091-965402545.1605286673'
+    }
+];
 
 const HeaderLinks = () => (
     <ul className={styles['header-nav__navbar']}>
@@ -23,7 +29,7 @@ const HeaderLinks = () => (
             const linkClasses = classnames(
                 styles['header-nav__link'],
                 {
-                    [styles['header-nav__link--active']]: link.url.indexOf('/documentation/') > -1
+                    [styles['header-nav__link--active']]: link.isActive
                 });
 
             return (
