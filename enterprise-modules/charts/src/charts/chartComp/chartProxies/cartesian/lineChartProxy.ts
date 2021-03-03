@@ -149,7 +149,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 opacity: 1
             },
             stroke: {
-                colors: theme.palette.strokes,
+                colors: (seriesDefaults.stroke && [seriesDefaults.stroke]) || theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },

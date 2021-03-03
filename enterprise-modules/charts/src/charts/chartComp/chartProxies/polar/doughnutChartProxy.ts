@@ -48,11 +48,11 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
-                colors: theme.palette.fills,
+                colors: seriesDefaults.fills || theme.palette.fills,
                 opacity: seriesDefaults.fillOpacity
             },
             stroke: {
-                colors: theme.palette.strokes,
+                colors: seriesDefaults.strokes || theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
@@ -94,7 +94,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
         });
 
         const { seriesDefaults } = this.chartOptions;
-        const { fills, strokes } = this.getPalette();
+        const fills = seriesDefaults.fill.colors;
+        const strokes = seriesDefaults.stroke.colors;
         const numFields = params.fields.length;
 
         let offset = 0;

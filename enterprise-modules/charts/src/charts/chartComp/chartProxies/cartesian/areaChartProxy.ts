@@ -204,11 +204,11 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
-                colors: theme.palette.fills,
+                colors: seriesDefaults.fills || theme.palette.fills,
                 opacity: seriesDefaults.fillOpacity
             },
             stroke: {
-                colors: theme.palette.strokes,
+                colors: seriesDefaults.strokes || theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },

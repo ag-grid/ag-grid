@@ -30,11 +30,11 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
                 renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
-                colors: theme.palette.fills,
+                colors: (seriesDefaults.fill && [seriesDefaults.fill]) || theme.palette.fills,
                 opacity: seriesDefaults.fillOpacity
             },
             stroke: {
-                colors: theme.palette.strokes,
+                colors: (seriesDefaults.stroke && [seriesDefaults.stroke]) || theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
