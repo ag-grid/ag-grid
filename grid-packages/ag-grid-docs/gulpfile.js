@@ -61,50 +61,6 @@ const populateDevFolder = () => {
     );
 };
 
-updateFrameworkBoilerplateSystemJsEntry = (done) => {
-    console.log("updating fw systemjs boilerplate config...");
-
-    const boilerPlateLocation = [
-        './dist/example-runner/grid-angular-boilerplate/',
-        './dist/example-runner/grid-vue-boilerplate/',
-        './dist/example-runner/grid-react-boilerplate/',
-        './dist/example-runner/grid-reactFunctional-boilerplate/',
-        './dist/example-runner/chart-angular-boilerplate/',
-        './dist/example-runner/chart-vue-boilerplate/',
-        './dist/example-runner/chart-react-boilerplate/',
-        './dist/react-runner/app-boilerplate/',
-    ];
-
-    boilerPlateLocation.forEach(boilerPlateLocation => {
-        fs.renameSync(`${boilerPlateLocation}/systemjs.prod.config.js`, `${boilerPlateLocation}/systemjs.config.js`);
-    });
-
-    const utilFileContent = fs.readFileSync('./dist/example-runner/example-mappings.php', 'UTF-8');
-    let updatedUtilFileContent = updateBetweenStrings(utilFileContent,
-        '/* START OF GRID MODULES DEV - DO NOT DELETE */',
-        '/* END OF GRID MODULES DEV - DO NOT DELETE */',
-        [],
-        [],
-        () => {
-        },
-        () => {
-        });
-
-    updatedUtilFileContent = updateBetweenStrings(updatedUtilFileContent,
-        '/* START OF CHART MODULES DEV - DO NOT DELETE */',
-        '/* END OF CHART MODULES DEV - DO NOT DELETE */',
-        [],
-        [],
-        () => {
-        },
-        () => {
-        });
-
-    fs.writeFileSync('./dist/example-runner/example-mappings.php', updatedUtilFileContent, 'UTF-8');
-
-    done();
-};
-
 const processSource = () => {
     // the below caused errors if we tried to copy in from ag-grid and ag-grid-enterprise linked folders
     const phpFilter = filter('**/*.php', { restore: true });
@@ -222,12 +178,10 @@ const serveDist = (done) => {
 // if local we serve from /dist, but once this is run entries will point to corresponding cdn entries instead
 const replaceAgReferencesWithCdnLinks = () => {
     const gridVersion = require('../../community-modules/core/package.json').version;
-    const chartsVersion = require('../../charts-packages/ag-charts-community/package.json').version;
 
     return gulp
         .src('./dist/config.php')
         .pipe(replace('$$GRID_VERSION$$', gridVersion))
-        .pipe(replace('$$CHARTS_VERSION$$', chartsVersion))
         .pipe(gulp.dest('./dist'));
 };
 
@@ -235,7 +189,6 @@ gulp.task('generate-grid-examples', (done) => generateGridExamples.bind(null, '*
 gulp.task('generate-chart-examples', (done) => generateChartExamples.bind(null, '*', null, done)());
 
 gulp.task('populate-dev-folder', populateDevFolder);
-gulp.task('update-dist-systemjs-files', updateFrameworkBoilerplateSystemJsEntry);
 gulp.task('process-src', processSource);
 gulp.task('bundle-site-archive', bundleSite.bind(null, false));
 gulp.task('bundle-site-release', bundleSite.bind(null, true));
@@ -244,8 +197,8 @@ gulp.task('copy-prod-webserver-files', copyProdWebServerFilesToDist);
 gulp.task('copy-documentation-website', copyDocumentationWebsite);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
 gulp.task('generate-examples', parallel('generate-grid-examples', 'generate-chart-examples'));
-gulp.task('release-archive', series('process-src', 'bundle-site-archive', 'copy-from-dist', 'copy-documentation-website', 'populate-dev-folder', 'update-dist-systemjs-files'));
-gulp.task('release', series('process-src', 'bundle-site-release', 'copy-from-dist', 'copy-documentation-website', 'update-dist-systemjs-files', 'copy-prod-webserver-files', 'replace-references-with-cdn'));
+gulp.task('release-archive', series('process-src', 'bundle-site-archive', 'copy-from-dist', 'copy-documentation-website', 'populate-dev-folder'));
+gulp.task('release', series('process-src', 'bundle-site-release', 'copy-from-dist', 'copy-documentation-website', 'copy-prod-webserver-files', 'replace-references-with-cdn'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 

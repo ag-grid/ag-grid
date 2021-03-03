@@ -8,18 +8,17 @@ $canonical = '';
 foreach ($posts as $post) {
     if ($post['link'] == $article_id) {
         $canonical = $post['medium'];
-    } 
+    }
 }
 
 if ($canonical) {
     header("Location: $canonical", true, 301);
-    exit; 
+    exit;
 }
 
 $navKey = "blog";
 $version = 'latest';
 require_once dirname(__FILE__) . '/html-helpers.php';
-require_once dirname(__FILE__) . '/../example-runner/example-runners.php';
 gtm_data_layer('blogs');
 ?>
 
@@ -37,7 +36,7 @@ meta_and_links($pageTitle, $pageKeywords, $pageDescription, false);
 <body ng-app="documentation">
 
 <header id="nav" class="compact">
-<?php 
+<?php
     include dirname(__FILE__) . '/navbar.php';
 ?>
 </header>

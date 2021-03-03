@@ -3,7 +3,7 @@ ini_set('memory_limit', '1024M');
 error_reporting(E_ERROR | E_PARSE);
 
 $navKey = "changelog";
-include_once '../includes/html-helpers.php';
+require_once '../includes/html-helpers.php';
 gtm_data_layer('changelog');
 include '../jira_reports/jira_utilities.php';
 ?>

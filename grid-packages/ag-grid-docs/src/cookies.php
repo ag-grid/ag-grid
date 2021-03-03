@@ -1,6 +1,6 @@
 <?php
 $navKey = "cookies";
-include_once 'includes/html-helpers.php';
+require_once 'includes/html-helpers.php';
 gtm_data_layer('cookies');
 ?>
 <!DOCTYPE html>

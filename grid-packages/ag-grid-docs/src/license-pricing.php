@@ -1,6 +1,6 @@
 <?php
 $navKey = "licenseAndPricing";
-include_once 'includes/html-helpers.php';
+require_once 'includes/html-helpers.php';
 gtm_data_layer('community-enterprise');
 ?>
 <!DOCTYPE html>

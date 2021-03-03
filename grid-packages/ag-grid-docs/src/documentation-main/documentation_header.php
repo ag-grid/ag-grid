@@ -1,7 +1,6 @@
 <?php
 include_once "../php-utils/videoHelper.php";
-include_once '../example-runner/example-runners.php';
-include_once '../includes/html-helpers.php';
+require_once '../includes/html-helpers.php';
 include_once '../php-utils/apiDocumentation.php';
 include_once '../php-utils/snippets.php';
 $DONT_USE_FONT_AWESOME = true;
@@ -31,7 +30,7 @@ function enterprise_feature($name)
     <?php
     meta_and_links($pageTitle, $pageKeywords, $pageDescription, false);
     ?>
-    
+
     <!-- Google Tag Manager -->
     <script>(function (w, d, s, l, i) {
             w[l] = w[l] || [];
@@ -46,7 +45,7 @@ function enterprise_feature($name)
             f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-T7JG534');</script>
     <!-- End Google Tag Manager -->
-    
+
     <link rel="stylesheet" href="../dist/docs.css">
     <link rel="stylesheet" href="../documentation-main/documentation.css">
     <script>

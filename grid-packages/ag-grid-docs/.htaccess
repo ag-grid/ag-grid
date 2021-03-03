@@ -111,10 +111,12 @@ AddType text/javascript ts jsx
     Redirect 301 /ag-grid-datagrid-crud-part-2/ https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-2-c5e5e4548bf
     Redirect 301 /ag-grid-datagrid-crud-part-4/ https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-4-3189034df922
     Redirect 301 /ag-grid-goes-commercial/ https://medium.com/ag-grid/ag-grid-goes-commercial-3961cf0c6f7b
+    Redirect 301 /ag-grid-gpu-animation-transform-translate/ https://medium.com/ag-grid/javascript-gpu-animation-with-transform-and-translate-bf09c7000aa6
     Redirect 301 /ag-grid-in-2016/ https://medium.com/ag-grid/stepping-it-up-ag-grid-focuses-on-agnostic-in-2016-fd7cdb8c11d4
     Redirect 301 /ag-grid-javascript-pivot-grid/ https://medium.com/ag-grid/announcing-ag-grid-v5-and-pivot-417fa7649ccb
     Redirect 301 /ag-grid-proud-to-support-plunker/ https://medium.com/ag-grid/plunker-is-now-backed-by-ag-grid-601c17440fca
     Redirect 301 /ag-grid-react-datagrid/ https://medium.com/ag-grid/building-a-react-datagrid-with-redux-and-ag-grid-1a837ef1b649
+    Redirect 301 /ag-grid-the-best-html5-grid-for-streaming-updates/ https://medium.com/ag-grid/how-to-test-for-the-best-html5-grid-for-streaming-updates-53545bb9256a
     Redirect 301 /ag-grid-trader-dashboard/ https://www.ag-grid.com/
     Redirect 301 /ag-grid-tutorials/ /documentation/javascript/getting-started/
     Redirect 301 /ag-grid-understanding-webpack/ https://medium.com/ag-grid/webpack-tutorial-understanding-how-it-works-f73dfa164f01

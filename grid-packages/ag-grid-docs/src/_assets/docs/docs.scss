@@ -8,11 +8,11 @@
 @import "../common/roadshow.scss";
 @import "../common/note.scss";
 @import "../common/animated_example.scss";
-@import "./example-runner.scss";
 @import "./legacy.scss";
 @import "./algolia.scss";
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
 }
@@ -155,7 +155,6 @@ body {
         }
         #side-nav-container > ul ul li {
             span,
-
             &.expanded {
                 span,
                 a.has-children {
@@ -562,7 +561,6 @@ body {
         background-color: floralwhite;
         background-image: url("../doodles/at-symbol.svg");
     }
-
 
     p > img:only-child {
         display: block;

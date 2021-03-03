@@ -1,5 +1,5 @@
-<?php 
-include  '../example-runner/example-runners.php'
+<?php
+require_once dirname(__FILE__) . "/../includes/html-helpers.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">

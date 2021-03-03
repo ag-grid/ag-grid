@@ -1,6 +1,5 @@
 <?php
-include_once '../example-runner/example-runners.php';
-include_once '../includes/html-helpers.php';
+require_once '../includes/html-helpers.php';
 $DONT_USE_FONT_AWESOME=true;
 $version = 'latest';
 

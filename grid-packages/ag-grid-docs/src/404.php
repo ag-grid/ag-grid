@@ -1,5 +1,5 @@
 <?php
-include_once 'includes/html-helpers.php';
+require_once 'includes/html-helpers.php';
 gtm_data_layer('404');
 ?>
 <!DOCTYPE html>

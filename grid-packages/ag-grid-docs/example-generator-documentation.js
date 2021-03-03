@@ -310,7 +310,7 @@ function getGeneratorCode(prefix) {
     // spl todo - add charts support in time
     let vanillaToReactFunctional = null;
 
-    if (prefix === './src/example-runner/grid-') {
+    if (prefix === './src/example-generation/grid-') {
         vanillaToReactFunctional = require(`${prefix}vanilla-to-react-functional.ts`).vanillaToReactFunctional;
     }
 
@@ -320,7 +320,7 @@ function getGeneratorCode(prefix) {
 }
 
 function generateExamples(type, importTypes, scope, trigger, done) {
-    const exampleGenerator = createExampleGenerator(`./src/example-runner/${type}-`, importTypes);
+    const exampleGenerator = createExampleGenerator(`./src/example-generation/${type}-`, importTypes);
     const regex = new RegExp(`<${type}-example.*?name=['"](.*?)['"].*?type=['"](.*?)['"](.*?options='(.*?)')?`, 'g');
 
     forEachExample(done, type, regex, exampleGenerator, scope, trigger);

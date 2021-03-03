@@ -12,7 +12,7 @@ import { wait, getElement, addErrorMessage, saveErrorFile } from './utils';
 
 const defaultSpecPath = '/example.php';
 const defaultSelector = '.ag-root-wrapper';
-const exampleBasePath = '/example-runner/grid-vanilla.php';
+const exampleBasePath = '/example-runner/';
 const maxParallelPageLoads = 8;
 const failedTestsFile = 'tmp-failed-tests.txt';
 
@@ -218,10 +218,10 @@ const ensureEmptyFolder = async (folder: string, deleteImages: boolean) => {
 
 interface ImageAnalysisResult {
     isSameDimensions: boolean;
-    dimensionDifference: { width: number; height: number };
+    dimensionDifference: { width: number; height: number; };
     rawMisMatchPercentage: number;
     misMatchPercentage: string;
-    diffBounds: { top: number; left: number; bottom: number; right: number };
+    diffBounds: { top: number; left: number; bottom: number; right: number; };
     analysisTime: number;
     getImageDataUrl: () => string;
     getBuffer: () => Buffer;
@@ -296,13 +296,13 @@ export const runSuite = async (params: RunSuiteParams) => {
         .flatMap(spec =>
             spec.autoRtl
                 ? [
-                      spec,
-                      {
-                          ...spec,
-                          name: `${spec.name}-rtl`,
-                          urlParams: { ...spec.urlParams, rtl: true }
-                      }
-                  ]
+                    spec,
+                    {
+                        ...spec,
+                        name: `${spec.name}-rtl`,
+                        urlParams: { ...spec.urlParams, rtl: true }
+                    }
+                ]
                 : spec
         )
         // generate alternate theme versions of provided specs

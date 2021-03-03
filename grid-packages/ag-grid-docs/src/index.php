@@ -1,6 +1,5 @@
 <?php
-require "example-runner/example-runners.php";
-require "includes/html-helpers.php";
+require_once "includes/html-helpers.php";
 define('HOMEPAGE', true);
 gtm_data_layer('home');
 // variable necessary in navbar.php

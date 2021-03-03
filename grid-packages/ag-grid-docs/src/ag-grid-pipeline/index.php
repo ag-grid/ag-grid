@@ -3,7 +3,7 @@ $navKey = "pipeline";
 
 ini_set('memory_limit', '1024M');
 
-include_once '../includes/html-helpers.php';
+require_once '../includes/html-helpers.php';
 gtm_data_layer('pipeline');
 include '../jira_reports/jira_utilities.php';
 ?>

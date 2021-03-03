@@ -1,7 +1,6 @@
 <?php
 $navKey = "demo";
-require "example-runner/example-runners.php";
-include_once 'includes/html-helpers.php';
+require_once 'includes/html-helpers.php';
 ?>
 <!DOCTYPE html>
 <html lang="en" class="stretch-html">

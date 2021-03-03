@@ -1,4 +1,6 @@
 <?php
+require_once dirname(__FILE__) . "/../config.php";
+
 $GTM_SCRIPT = <<<SCRIPT
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -103,4 +105,45 @@ function docScripts() {
 <script src="../documentation-main/documentation.js"></script>
 <script src="../dist/docs.js"></script>
 SCRIPT;
+}
+
+function globalAgGridScript($enterprise = false)
+{
+    $archiveMatch = '/archive\/\d+.\d+.\d+/';
+    $host = isset($_SERVER['HTTP_X_PROXY_HTTP_HOST']) ? $_SERVER['HTTP_X_PROXY_HTTP_HOST'] : $_SERVER['HTTP_HOST'];
+
+    if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
+        $archiveSegment = $matches[0];
+        $prefix = "//$host/$archiveSegment/dev";
+    } else {
+        $prefix = "//$host/dev";
+    }
+
+    if (AG_GRID_VERSION == '$$GRID_VERSION$$') {
+        $communityPath = "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.js";
+        $enterprisePath = "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js";
+
+        $cssPaths = [
+            "$prefix/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
+            "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css",
+            "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css",
+            "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css",
+            "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
+            "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css",
+            "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css",
+            "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css",
+            "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css",
+            "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css"
+        ];
+
+        foreach ($cssPaths as $cssLink) {
+            echo "    <link rel=\"stylesheet\" href=\"$cssLink\">\n";
+        }
+    } else {
+        $communityPath = "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.min.js";
+        $enterprisePath = "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.min.js";
+    }
+
+    $path = $enterprise ? $enterprisePath : $communityPath;
+    return "    <script src=\"$path\"></script>";
 }
