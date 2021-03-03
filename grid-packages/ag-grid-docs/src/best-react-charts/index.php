@@ -39,7 +39,7 @@ $pageDescription = "Fastest, most feature-rich React Data Grid component from AG
 <a class="nav-link" href="/license-pricing.php">Pricing</a>
 </li>
 <li class="nav-item">
-<a class="nav-link" id="get-started" href="../documentation/javascript/getting-started/">Get Started</a>
+<a class="nav-link" id="get-started" href="/javascript-table/getting-started/">Get Started</a>
 </li>
 </ul>
 </div>

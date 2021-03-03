@@ -13,7 +13,7 @@
                     <a href="/example.php">Demo</a>
                 </li>
                 <li class="<?php if ($navKey == "getting-started") { ?>active<?php }?>">
-                    <a href="/documentation/javascript/getting-started/">Getting Started</a>
+                    <a href="/javascript-table/getting-started/">Getting Started</a>
                 </li>
                 <li class="<?php if ($navKey == "features-overview") { ?>active<?php }?>">
                     <a href="/features-overview/">Features Overview</a>

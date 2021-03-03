@@ -3,7 +3,7 @@
         <div>
             <h5>Documentation</h5>
             <ul>
-                <li><a href="/documentation/javascript/getting-started/">Getting Started</a></li>
+                <li><a href="/javascript-table/getting-started/">Getting Started</a></li>
                 <li><a href="/ag-grid-changelog/">Changelog</a></li>
                 <li><a href="/ag-grid-pipeline/">Pipeline</a></li>
                 <li><a href="/archive/">Documentation Archive</a></li>

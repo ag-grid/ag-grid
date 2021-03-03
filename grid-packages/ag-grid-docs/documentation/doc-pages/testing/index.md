@@ -127,7 +127,7 @@ title: "Testing AG Grid"
 |     browser.ignoreSynchronization = true;
 |
 |     beforeEach(() => {
-|         browser.get('https://www.ag-grid.com/documentation/examples/testing/hello-world/index.html');
+|         browser.get('https://www.ag-grid.com/examples/testing/hello-world/index.html');
 |     });
 |
 |     it('should have expected column headers', () => {

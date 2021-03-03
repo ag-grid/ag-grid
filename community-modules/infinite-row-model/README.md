@@ -7,7 +7,7 @@
 # AG Grid
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/documentation/javascript/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github).
+It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-table/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github).
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
@@ -50,10 +50,10 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 
 ## Looking for a framework specific solution?
 
-* [Get Started with Angular](https://www.ag-grid.com/documentation/angular/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with React](https://www.ag-grid.com/documentation/react/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with Vue](https://www.ag-grid.com/documentation/vue/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with AngularJS](https://www.ag-grid.com/documentation/angular/angularjs/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Angular](https://www.ag-grid.com/angular-table/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with React](https://www.ag-grid.com/react-table/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Vue](https://www.ag-grid.com/vue-table/getting-started/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with AngularJS](https://www.ag-grid.com/angular-table/angularjs/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github)
 
 ## Getting started
 
@@ -102,7 +102,7 @@ var eGridDiv = document.querySelector('#myGrid');
 new Grid(eGridDiv, this.gridOptions);
 ```
 
-For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/documentation/javascript/building-typescript/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github).
+For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/javascript-table/building-typescript/?utm_source=@ag-grid-community/infinite-row-model-readme&utm_medium=repository&utm_campaign=github).
 
 ## Issue Reporting
 
