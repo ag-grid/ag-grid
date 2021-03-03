@@ -7,18 +7,17 @@ if [ "$#" -lt 1 ]
     exit 1
 fi
 
-function checkFileExists {
-    file=$1
-    if ! [[ -f "$file" ]]
-    then
-        echo "File [$file] doesn't exist - exiting script.";
-        exit;
-    fi
-}
+SSH_LOCATION=$HOME/$SSH_FILE
 
-checkFileExists ~/.ssh/ag_ssh
+if [ -z "$SSH_LOCATION" ]
+then
+      echo "\$SSH_LOCATION is not set"
+      exit;
+fi
+
+checkFileExists $SSH_LOCATION
 
 FILENAME=$1
 
 # backup the old public_html, unzip the new release and update permissions etc
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd /home/ceolter/ && ./prepareNewDeploymentRemote.sh $FILENAME"
+ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd /home/ceolter/ && ./prepareNewDeploymentRemote.sh $FILENAME"
