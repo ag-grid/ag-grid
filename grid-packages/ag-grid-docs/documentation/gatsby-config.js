@@ -136,7 +136,13 @@ const plugins = [
     }
   },
   'gatsby-plugin-minify-classnames', // This minifies classnames to reduce CSS size
-  'gatsby-plugin-catch-links', // This will convert links to route changes, to ensure an SPA feel
+  {
+    // This will convert links to route changes, to ensure an SPA feel
+    resolve: `gatsby-plugin-catch-links`,
+    options: {
+      excludePattern: /^\/$/, // avoid trapping the root route
+    },
+  },
   'gatsby-plugin-react-helmet', // This is used for putting information into the header, e.g. meta tags
   'gatsby-plugin-use-query-params', // This provides access to query parameters
   {

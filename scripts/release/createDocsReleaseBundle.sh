@@ -13,7 +13,6 @@ VERSION=""${RAW_VERSION//./}""
 
 echo "Starting Docs Bundle Process"
 cd grid-packages/ag-grid-docs
-rm -rf dist
 
 echo "Gatsby Package"
 cd documentation
