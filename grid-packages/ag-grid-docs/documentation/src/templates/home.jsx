@@ -65,10 +65,12 @@ const GettingStartedPane = ({ framework, data }) => {
         <div className={styles['docs-home__getting-started__item_pane']}>
             {linksToRender.map(link => {
                 const parsedLink = parseGettingStartedUrl(link.url, framework);
+                const frameworkCapitalised = framework.charAt(0).toUpperCase() + framework.slice(1);
+                const alt = `${frameworkCapitalised} Table: ${link.title}`
                 return (
                     <a key={`${framework}_${link.title.replace(/\s/g, '').toLowerCase()}`} {...parsedLink} className={styles['docs-home__getting-started__item']}>
                         <div className={styles['docs-home__getting-started__item_logo']}>
-                            <img src={getLogo(link.icon, framework)} alt={link.title}></img>
+                            <img src={getLogo(link.icon, framework)} alt={alt}/>
                         </div>
                         <div className={styles['docs-home__getting-started__item_label']}>
                             {link.title}
@@ -86,7 +88,7 @@ const GettingStarted = ({ framework, data }) => {
 
     return (
         <div className={styles['docs-home__getting-started']}>
-            <h2 className={styles['docs-home__getting-started__title']}>Getting Started</h2>
+            <h2 className={styles['docs-home__getting-started__title']}>{framework} Table: Getting Started</h2>
             <div className={styles['docs-home__getting-started__row']}>
                 <GettingStartedPane framework={framework} data={leftPaneItems} />
                 {rightPaneItems.length > 0 && <GettingStartedPane framework={framework} data={rightPaneItems} />}

@@ -17,9 +17,10 @@ export default function FrameworkSelector({ frameworks, path, currentFramework }
             .filter(f => !frameworks || frameworks.includes(f))
             .map(framework => {
                 const isSelected = framework === currentFramework;
-
+                const frameworkCapitalised = framework.charAt(0).toUpperCase() + framework.slice(1);
+                const alt = `${frameworkCapitalised} Table`;
                 return <a href={path.replace(`/${currentFramework}-`, `/${framework}-`)} key={framework} className={classnames(styles['framework-selector__option'], { [styles['framework-selector__option--selected']]: isSelected })}>
-                    <img src={fwLogos[framework]} alt={framework} className={styles['framework-selector__icon']} />
+                    <img src={fwLogos[framework]} alt={alt} className={styles['framework-selector__icon']} />
                 </a>;
             })}
     </div>;
