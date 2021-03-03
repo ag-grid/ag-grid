@@ -83,12 +83,13 @@ const GettingStartedPane = ({ framework, data }) => {
 };
 
 const GettingStarted = ({ framework, data }) => {
+    const title = `${framework === 'javascript' ? 'JavaScript' : framework} Table: Getting Started`;
     const leftPaneItems = data.filter(panelItemsFilter("left", framework));
     const rightPaneItems = data.filter(panelItemsFilter("right", framework));
 
     return (
         <div className={styles['docs-home__getting-started']}>
-            <h2 className={styles['docs-home__getting-started__title']}>{framework} Table: Getting Started</h2>
+            <h2 className={styles['docs-home__getting-started__title']}>{title}</h2>
             <div className={styles['docs-home__getting-started__row']}>
                 <GettingStartedPane framework={framework} data={leftPaneItems} />
                 {rightPaneItems.length > 0 && <GettingStartedPane framework={framework} data={rightPaneItems} />}
