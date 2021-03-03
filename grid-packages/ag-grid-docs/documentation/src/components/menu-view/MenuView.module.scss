@@ -5,11 +5,13 @@
         font-weight: 400;
         text-align: left;
         text-transform: capitalize;
+        margin: 0 10px 0 10px;
+        border-radius: 0.3rem;
 
         @include media-breakpoint-down(md) {
             @supports (position: sticky) {
                 position: sticky;
-                top: 0px;
+                top: 0;
                 z-index: 1;
             }
         }
@@ -18,6 +20,8 @@
     &__tile-row {
         composes: d-flex from global;
         flex-wrap: wrap;
+        margin-left: 12px;
+        margin-right: 12px;
     }
     
 }

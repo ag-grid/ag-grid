@@ -27,6 +27,8 @@
             font-weight: 400;
             text-align: left;
             text-transform: capitalize;
+            margin: 10px;
+            border-radius: 0.3rem;
         }
 
         &__row {
@@ -37,19 +39,20 @@
             display: flex;
             flex-grow: 1;
             flex-wrap: wrap;
+            margin-top: 8px;
+            margin-left: 15px;
         }
 
         &__item {
             composes: d-flex flex-column justify-content-center align-items-center m-2 p-2 from global;
-            background-color: transparentize($secondary, 0.7);
+            border: 1px solid transparentize($secondary, 0.7);
             border-radius: 5px;
-            width: 8.5rem;
-            height: 8.5rem;
-            color: $dark;
+            width: 9.5rem;
+            height: 9.5rem;
+
             &:hover {
-                background-color: $grey-2;
+                background-color: $grey-4;
                 text-decoration: none;
-                color: white;
             }
             @include media-breakpoint-down(sm) {
                 width: 6.5rem;
@@ -76,7 +79,7 @@
         &__item_label {
             text-align: center;
             white-space: nowrap;
-            font-size: 0.9rem;
+            font-size: 1.0rem;
             @include media-breakpoint-down(sm) {
                 font-size: 0.65rem;
             }
