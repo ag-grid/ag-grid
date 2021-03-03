@@ -21,18 +21,18 @@ echo "************************************************************************"
 echo "************************************************************************"
 echo "******************** Uploading Release Bundle **************************"
 echo "************************************************************************"
-./scripts/release/uploadReleaseZip.sh $FILENAME
+#./scripts/release/uploadReleaseZip.sh $FILENAME
 
 echo "************************************************************************"
 echo "******************** Archiving Current Release *************************"
 echo "************************************************************************"
-./scripts/release/archiveCurrentRelease.sh
+#./scripts/release/archiveCurrentRelease.sh
 echo "************************************************************************"
 echo "******************** Preparing For New Deployment **********************"
 echo "************************************************************************"
-./scripts/release/prepareNewDeployment.sh $FILENAME
+#./scripts/release/prepareNewDeployment.sh $FILENAME
 echo "************************************************************************"
 echo "******************** Switch To New Release *****************************"
 echo "************************************************************************"
-./scripts/release/switchRelease.sh $TIMESTAMP
+#./scripts/release/switchRelease.sh $TIMESTAMP $2
 
