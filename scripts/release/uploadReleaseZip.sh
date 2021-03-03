@@ -21,12 +21,6 @@ CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
 SSH_LOCATION=$HOME/$SSH_FILE
 
 # a few safety checks
-if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
-then
-    echo "Version isn't in the expected format. Valid format is: Number.Number.number. For example 19.1.2";
-    exit;
-fi
-
 if [ -z "$CREDENTIALS_LOCATION" ]
 then
       echo "\$CREDENTIALS_LOCATION is not set"
