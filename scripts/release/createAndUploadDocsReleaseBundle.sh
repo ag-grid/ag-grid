@@ -17,11 +17,11 @@ FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 echo "************************************************************************"
 echo "******************** Create Release Bundle *****************************"
 echo "************************************************************************"
-./scripts/release/createDocsReleaseBundle.sh $RAW_VERSION
+#./scripts/release/createDocsReleaseBundle.sh $RAW_VERSION
 echo "************************************************************************"
 echo "******************** Uploading Release Bundle **************************"
 echo "************************************************************************"
-#./scripts/release/uploadReleaseZip.sh $FILENAME
+./scripts/release/uploadReleaseZip.sh $FILENAME
 
 echo "************************************************************************"
 echo "******************** Archiving Current Release *************************"
