@@ -1034,7 +1034,7 @@
         },
         "rowFillExtraWidth": {
             "default": false,
-            "description": "The grid's row will fill all width of the grid if sum of width of columns are less than width of grid. otherwise there is an empty space in extra area."
+            "description": "The grid's row will fill all width of the grid if the sum of the width of columns is less than the width of the grid. otherwise, there is an empty space in the extra area."
         }
     }
 }
