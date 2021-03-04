@@ -106,12 +106,18 @@ const fixFileLoadingIssue = () => {
       });
   };`
         )
-    }) && applyCustomisation('gatsby-source-filesystem', '2.11.0', {
-        name: 'Ensure filesystem plugin does not crash when file cannot be loaded',
+    });
+};
+
+const restrictSearchForPageQueries = () => {
+    // restricts the files that Gatsby searches for queries, which improves performance
+
+    return applyCustomisation('gatsby', '2.32.4', {
+        name: 'Restrict search for page queries',
         apply: () => updateFileContents(
-            './node_modules/gatsby-source-filesystem/gatsby-node.js',
-            `reporter.panic(\`Failed`,
-            `reporter.error(\`Failed`
+            './node_modules/gatsby/dist/query/query-compiler.js',
+            `path.join(base, \`src\`),`,
+            `path.join(base, \`src\`, \`templates\`),`,
         )
     });
 };
@@ -123,6 +129,7 @@ const success = [
     addMarkdownIncludeSupport(),
     fixScrollingIssue(),
     fixFileLoadingIssue(),
+    restrictSearchForPageQueries(),
 ].every(x => x);
 
 if (success) {
