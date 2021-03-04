@@ -3,6 +3,7 @@ import { getPageName } from 'utils/get-page-name';
 import toKebabCase from 'utils/to-kebab-case';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
 import { SEO } from 'components/SEO';
+import { getHeaderTitle } from 'utils/page-header';
 import pageStyles from './doc-page.module.scss';
 import styles from './chart-gallery-page.module.scss';
 
@@ -28,7 +29,7 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
                     {/* eslint-enable jsx-a11y/control-has-associated-label */}
                 </div>
 
-                <h1 className={styles['title']}>AG Charts Gallery: {name}</h1>
+                <h1 className={styles['title']}>{getHeaderTitle(`Gallery - ${name}`, framework, true)}</h1>
                 <p dangerouslySetInnerHTML={{ __html: description }}></p>
 
                 <ExampleRunner

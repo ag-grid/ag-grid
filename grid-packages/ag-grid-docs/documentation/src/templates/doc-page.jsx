@@ -20,6 +20,7 @@ import { ListItem } from 'components/ListItem';
 import DocumentationLink from '../components/DocumentationLink';
 import Gif from 'components/Gif';
 import { SEO } from 'components/SEO';
+import { getHeaderTitle } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import styles from './doc-page.module.scss';
 
@@ -81,11 +82,13 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     }
   }
 
+  const pageTitle = getHeaderTitle(title, framework, pageName.startsWith('charts-'));
+
   return (
     <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
       <div id="doc-content" className={classnames(styles['doc-page'], { [styles['doc-page--with-side-menu']]: showSideMenu })}>
         <SEO title={title} description={description} framework={framework} pageName={pageName} />
-        <h1 id="top" className={classnames(styles['doc-page__title'], { [styles['doc-page__title--enterprise']]: page.frontmatter.enterprise })}>{title}</h1>
+        <h1 id="top" className={classnames(styles['doc-page__title'], { [styles['doc-page__title--enterprise']]: page.frontmatter.enterprise })}>{pageTitle}</h1>
         {renderAst(ast)}
       </div>
       <SideMenu headings={page.headings || []} pageName={pageName} pageTitle={title} hideMenu={() => setShowSideMenu(false)} />
