@@ -60,7 +60,7 @@ export class PropertyKeys {
         'undoRedoCellEditing', 'allowDragFromColumnsToolPanel', 'immutableData', 'immutableColumns', 'pivotSuppressAutoColumn',
         'suppressExpandablePivotGroups', 'applyColumnDefOrder', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
         'serverSideFilteringAlwaysResets', 'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi',
-        'suppressModelUpdateAfterUpdateTransaction'
+        'suppressModelUpdateAfterUpdateTransaction','rowFillExtraWidth'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

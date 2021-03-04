@@ -149,6 +149,7 @@ export interface GridOptions {
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
+    rowFillExtraWidth?: boolean;
 
     /** Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;

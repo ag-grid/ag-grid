@@ -1400,6 +1400,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.tooltipMouseTrack);
     }
 
+    public isRowFillExtraWidth() {
+        return isTrue(this.gridOptions.rowFillExtraWidth);
+    }
+
     public isSuppressModelUpdateAfterUpdateTransaction(): boolean {
         return isTrue(this.gridOptions.suppressModelUpdateAfterUpdateTransaction);
     }
