@@ -263,7 +263,8 @@ export type ColumnEventType =
     "rowModelUpdated" |
     "api" |
     "flex" |
-    "pivotChart";
+    "pivotChart" |
+    "fillExtraWidth";
 
 export interface ColumnEvent extends AgGridEvent {
     column: Column | null;
