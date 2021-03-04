@@ -120,6 +120,7 @@ export class ColumnController extends BeanStub {
     // header row count, either above, or based on pivoting if we are pivoting
     private gridHeaderRowCount = 0;
 
+    private extraWidthOnRow = 0;
     private lastPrimaryOrder: Column[];
     private gridColsArePrimary: boolean;
 
@@ -1180,7 +1181,7 @@ export class ColumnController extends BeanStub {
         const atLeastOneColChanged = changedCols.length > 0;
 
         const flexedCols = this.refreshFlexedColumns({ resizingCols: allResizedCols, skipSetLeft: true });
-
+        this.fillExtraWidth();
         if (atLeastOneColChanged) {
             this.setLeftValues(source);
             this.updateBodyWidths();
@@ -1396,7 +1397,7 @@ export class ColumnController extends BeanStub {
 
     // after setColumnWidth or updateGroupsAndDisplayedColumns
     private updateBodyWidths(): void {
-        const newBodyWidth = this.getWidthOfColsInList(this.displayedColumnsCenter);
+        const newBodyWidth = this.getWidthOfColsInList(this.displayedColumnsCenter)+ (this.extraWidthOnRow || 0);
         const newLeftWidth = this.getWidthOfColsInList(this.displayedColumnsLeft);
         const newRightWidth = this.getWidthOfColsInList(this.displayedColumnsRight);
 
@@ -3167,6 +3168,7 @@ export class ColumnController extends BeanStub {
         this.updateOpenClosedVisibilityInColumnGroups();
         this.deriveDisplayedColumns(source);
         this.refreshFlexedColumns();
+        this.fillExtraWidth();
         this.extractViewport();
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
@@ -3216,17 +3218,18 @@ export class ColumnController extends BeanStub {
             this.displayedColumnsLeft,
             this.displayedColumnsRight,
             this.displayedColumnsCenter
-        ].forEach(columns => {
+        ].forEach((columns,index) => {
+            const initLeft = index === 2 ? this.extraWidthOnRow || 0 : 0;
             if (doingRtl) {
                 // when doing RTL, we start at the top most pixel (ie RHS) and work backwards
-                let left = this.getWidthOfColsInList(columns);
+                let left = this.getWidthOfColsInList(columns) + initLeft;
                 columns.forEach(column => {
                     left -= column.getActualWidth();
                     column.setLeft(left, source);
                 });
             } else {
                 // otherwise normal LTR, we start at zero
-                let left = 0;
+                let left = initLeft;
                 columns.forEach(column => {
                     column.setLeft(left, source);
                     left += column.getActualWidth();
@@ -3365,6 +3368,30 @@ export class ColumnController extends BeanStub {
     private filterOutColumnsWithinViewport(): Column[] {
         return this.displayedColumnsCenter.filter(this.isColumnInViewport.bind(this));
     }
+
+
+    public fillExtraWidth(params?: { viewportWidth?: number; skipSetLeft?: boolean; updateBodyWidths?: boolean }) {
+        if (this.gridOptionsWrapper.isRowFillExtraWidth()) {
+            const flexViewportWidth = params?.viewportWidth || this.flexViewportWidth;
+            if (!flexViewportWidth) {
+                return;
+            }
+            let extraWidth = flexViewportWidth - this.getWidthOfColsInList(this.displayedColumnsCenter);
+            extraWidth = extraWidth <= 0 ? 0 : extraWidth;
+
+            if (extraWidth !== (this.extraWidthOnRow || 0)) {
+                this.extraWidthOnRow = extraWidth;
+                if (params?.updateBodyWidths !== false) {
+                    this.updateBodyWidths();
+                }
+                if (params?.skipSetLeft !== true) {
+                    this.setLeftValues('fillExtraWidth');
+                    this.gridApi.refreshHeader();
+                }
+            }
+        }
+    }
+
 
     public refreshFlexedColumns(params: { resizingCols?: Column[], skipSetLeft?: boolean, viewportWidth?: number, source?: ColumnEventType, fireResizedEvent?: boolean, updateBodyWidths?: boolean; } = {}): Column[] {
         const source = params.source ? params.source : 'flex';
