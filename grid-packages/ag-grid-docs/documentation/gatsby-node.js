@@ -28,7 +28,7 @@ const showHideEsLintConfigFile = (reporter, hide) => {
 
     if (hide && fs.existsSync(originalFileName)) {
         reporter.info(`Hiding IDE ESLint file...`);
-        fs.moveSync(originalFileName, hiddenFileName);
+        fs.moveSync(originalFileName, hiddenFileName, { overwrite: true });
     }
 
     if (!hide && fs.existsSync(hiddenFileName)) {
