@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/ts/interfaces/iMenu.ts"],"names":[],"mappings":";;;;;;AAAA;AACA;AACA","file":"iMenu.js","sourcesContent":["export interface IMenu { }\n"]}
