@@ -1031,6 +1031,10 @@
         "suppressBrowserResizeObserver": {
             "default": false,
             "description": "The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist."
+        },
+        "rowFillExtraWidth": {
+            "default": false,
+            "description": "The grid's row will fill all width of the grid if sum of width of columns are less than width of grid. otherwise there is an empty space in extra area."
         }
     }
 }
