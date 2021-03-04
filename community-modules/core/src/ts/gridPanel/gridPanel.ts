@@ -376,6 +376,7 @@ export class GridPanel extends Component {
                 this.columnController.refreshFlexedColumns(
                     { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
                 );
+                this.columnController.fillExtraWidth();
             }
         } else {
             this.bodyHeight = 0;
