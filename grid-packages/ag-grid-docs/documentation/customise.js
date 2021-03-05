@@ -112,7 +112,7 @@ const fixFileLoadingIssue = () => {
 const restrictSearchForPageQueries = () => {
     // restricts the files that Gatsby searches for queries, which improves performance
 
-    return applyCustomisation('gatsby', '2.32.4', {
+    return applyCustomisation('gatsby', '2.32.9', {
         name: 'Restrict search for page queries',
         apply: () => updateFileContents(
             './node_modules/gatsby/dist/query/query-compiler.js',
