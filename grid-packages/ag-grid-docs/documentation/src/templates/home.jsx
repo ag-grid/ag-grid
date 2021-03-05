@@ -3,6 +3,7 @@ import { withPrefix } from 'gatsby';
 import logos from 'images/logos';
 import MenuView from 'components/menu-view/MenuView';
 import { SEO } from 'components/SEO';
+import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './home.module.scss';
 
@@ -45,6 +46,7 @@ const urlMap = {
 
 const parseGettingStartedUrl = (url, framework) => {
     const match = url.match(/{(\w+-?\w*)}/);
+
     if (match) {
         return {
             href: urlMap[framework][match[1]],
@@ -52,8 +54,9 @@ const parseGettingStartedUrl = (url, framework) => {
             rel: 'noreferrer'
         };
     }
+
     return {
-        href: withPrefix(url.replace('../', `/${framework}/`))
+        href: withPrefix(convertToFrameworkUrl(url, framework))
     };
 };
 
@@ -61,16 +64,18 @@ const getLogo = (name, framework) => logos[name === 'framework' ? framework : na
 
 const GettingStartedPane = ({ framework, data }) => {
     const linksToRender = flatRenderItems(data, framework);
+
     return (
         <div className={styles['docs-home__getting-started__item_pane']}>
             {linksToRender.map(link => {
                 const parsedLink = parseGettingStartedUrl(link.url, framework);
                 const frameworkCapitalised = framework.charAt(0).toUpperCase() + framework.slice(1);
-                const alt = `${frameworkCapitalised} Table: ${link.title}`
+                const alt = `${frameworkCapitalised} Table: ${link.title}`;
+
                 return (
                     <a key={`${framework}_${link.title.replace(/\s/g, '').toLowerCase()}`} {...parsedLink} className={styles['docs-home__getting-started__item']}>
                         <div className={styles['docs-home__getting-started__item_logo']}>
-                            <img src={getLogo(link.icon, framework)} alt={alt}/>
+                            <img src={getLogo(link.icon, framework)} alt={alt} />
                         </div>
                         <div className={styles['docs-home__getting-started__item_label']}>
                             {link.title}
@@ -84,8 +89,8 @@ const GettingStartedPane = ({ framework, data }) => {
 
 const GettingStarted = ({ framework, data }) => {
     const title = `${framework === 'javascript' ? 'JavaScript' : framework} Table: Getting Started`;
-    const leftPaneItems = data.filter(panelItemsFilter("left", framework));
-    const rightPaneItems = data.filter(panelItemsFilter("right", framework));
+    const leftPaneItems = data.filter(panelItemsFilter('left', framework));
+    const rightPaneItems = data.filter(panelItemsFilter('right', framework));
 
     return (
         <div className={styles['docs-home__getting-started']}>
@@ -109,7 +114,7 @@ const HomePage = ({ pageContext: { framework } }) => {
         <div className={styles['docs-home']}>
             <SEO
                 title="Documentation"
-                description={`Our documentation will help you to get up and running with AG Grid.`}
+                description="Our documentation will help you to get up and running with AG Grid."
                 framework={framework}
                 pageName="home"
             />
