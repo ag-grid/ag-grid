@@ -258,7 +258,8 @@ const barLabelMapping: any = {
         meta: {
             defaults: {
                 ...labelDefaults,
-                formatter: undefined
+                formatter: undefined,
+                placement: 'inside'
             }
         }
     }

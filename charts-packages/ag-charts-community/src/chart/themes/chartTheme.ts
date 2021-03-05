@@ -125,7 +125,8 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
-                formatter: undefined
+                formatter: undefined,
+                placement: 'inside'
             },
             shadow: {
                 enabled: false,

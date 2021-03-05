@@ -537,6 +537,7 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
 
 interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
     formatter?: (params: { value: number; }) => string;
+    placement?: 'inside' | 'outside';
 }
 
 export interface AgBarSeriesFormatterParams {

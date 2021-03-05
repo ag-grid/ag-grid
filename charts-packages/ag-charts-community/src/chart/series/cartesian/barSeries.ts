@@ -47,6 +47,8 @@ interface BarNodeDatum extends SeriesNodeDatum {
         readonly fontWeight?: FontWeight;
         readonly fontSize: number;
         readonly fontFamily: string;
+        readonly textAlign: CanvasTextAlign;
+        readonly textBaseline: CanvasTextBaseline;
         readonly fill: string;
         readonly x: number;
         readonly y: number;
@@ -58,8 +60,14 @@ enum BarSeriesNodeTag {
     Label
 }
 
+export enum BarLabelPlacement {
+    Inside = 'inside',
+    Outside = 'outside'
+}
+
 class BarSeriesLabel extends Label {
     @reactive('change') formatter?: (params: { value: number }) => string;
+    @reactive('change') placement = BarLabelPlacement.Inside;
 }
 
 export interface BarSeriesFormatterParams {
@@ -126,7 +134,7 @@ export class BarSeries extends CartesianSeries {
     tooltipRenderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
     tooltip: BarSeriesTooltip = new BarSeriesTooltip();
 
-    @reactive('layoutChange') flipXY = false;
+    @reactive('dataChange') flipXY = false;
 
     @reactive('dataChange') fills: string[] = [
         '#c16068',
@@ -491,15 +499,16 @@ export class BarSeries extends CartesianSeries {
             data,
             xData,
             yData,
+            label
         } = this;
 
-        const label = this.label;
         const labelFontStyle = label.fontStyle;
         const labelFontWeight = label.fontWeight;
         const labelFontSize = label.fontSize;
         const labelFontFamily = label.fontFamily;
         const labelColor = label.color;
         const labelFormatter = label.formatter;
+        const labelPlacement = label.placement;
 
         groupScale.range = [0, xScale.bandwidth!];
 
@@ -543,6 +552,36 @@ export class BarSeries extends CartesianSeries {
                         labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
                     }
 
+                    let labelX: number;
+                    let labelY: number;
+
+                    if (flipXY) {
+                        labelY = barX + barWidth / 2;
+                        if (labelPlacement === BarLabelPlacement.Inside) {
+                            labelX = y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2;
+                        } else {
+                            labelX = y + (yValue >= 0 ? 1 : -1) * 4;
+                        }
+                    } else {
+                        labelX = barX + barWidth / 2;
+                        if (labelPlacement === BarLabelPlacement.Inside) {
+                            labelY = y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2;
+                        } else {
+                            labelY = y + (yValue >= 0 ? -3 : 4);
+                        }
+                    }
+
+                    let labelTextAlign: CanvasTextAlign;
+                    let labelTextBaseline: CanvasTextBaseline;
+
+                    if (labelPlacement === BarLabelPlacement.Inside) {
+                        labelTextAlign = 'center';
+                        labelTextBaseline = 'middle';
+                    } else {
+                        labelTextAlign = flipXY ? (yValue >= 0 ? 'start' : 'end') : 'center';
+                        labelTextBaseline = flipXY ? 'middle' : (yValue >= 0 ? 'bottom' : 'top');
+                    }
+
                     const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                     nodeData.push({
                         series: this,
@@ -562,9 +601,11 @@ export class BarSeries extends CartesianSeries {
                             fontWeight: labelFontWeight,
                             fontSize: labelFontSize,
                             fontFamily: labelFontFamily,
+                            textAlign: labelTextAlign,
+                            textBaseline: labelTextBaseline,
                             fill: labelColor,
-                            x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
-                            y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
+                            x: labelX,
+                            y: labelY
                         } : undefined
                     });
 
@@ -666,8 +707,6 @@ export class BarSeries extends CartesianSeries {
         const enterTexts = updateTexts.enter.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
-            text.textAlign = 'center';
-            text.textBaseline = 'middle';
         });
 
         this.textSelection = updateTexts.merge(enterTexts);
@@ -684,6 +723,8 @@ export class BarSeries extends CartesianSeries {
                 text.fontWeight = label.fontWeight;
                 text.fontSize = label.fontSize;
                 text.fontFamily = label.fontFamily;
+                text.textAlign = label.textAlign;
+                text.textBaseline = label.textBaseline;
                 text.text = label.text;
                 text.x = label.x;
                 text.y = label.y;
