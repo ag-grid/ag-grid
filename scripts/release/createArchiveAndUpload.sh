@@ -13,8 +13,5 @@ VERSION=$1
 ./scripts/release/createDocsArchiveBundle.sh $VERSION
 ARCHIVE_FILENAME="archive_`date +%Y%m%d`_$RAW_VERSION.tar"
 
-#OUTPUT=$(./scripts/release/createDocsArchiveBundle.sh $VERSION | tee /dev/tty)
-#ARCHIVE_FILENAME=`echo $OUTPUT | sed 's/.*Archive Created://'`
-#
-# $2 is optional skipWarning argument
-#./scripts/release/uploadAndUnzipArchive.sh $VERSION $ARCHIVE_FILENAME $2
+ $2 is optional skipWarning argument
+./scripts/release/uploadAndUnzipArchive.sh $VERSION $ARCHIVE_FILENAME $2

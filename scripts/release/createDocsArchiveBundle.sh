@@ -25,9 +25,6 @@ cd ../../
 ARCHIVE_FILENAME="archive_`date +%Y%m%d`_$RAW_VERSION.tar"
 node scripts/release/createDocsArchiveBundle.js $RAW_VERSION $ARCHIVE_FILENAME
 
-#OUTPUT=$(node scripts/release/createDocsArchiveBundle.js $RAW_VERSION | tee /dev/tty)
-#ARCHIVE_FILENAME=`echo $OUTPUT | sed 's/.*Archive Complete://'`
-
 echo "Gzipping $$ARCHIVE_FILENAME"
 gzip --force $ARCHIVE_FILENAME
 
