@@ -160,7 +160,7 @@ export class ClientSideNodeManager {
         const newNodes: RowNode[] = add!.map(item => this.createNode(item, this.rootNode, ClientSideNodeManager.TOP_LEVEL));
 
         // add new row nodes to the root nodes 'allLeafChildren'
-        const useIndex = typeof addIndex === 'number' && addIndex > 0;
+        const useIndex = typeof addIndex === 'number' && addIndex >= 0;
         if (useIndex) {
             // new rows are inserted in one go by concatenating them in between the existing rows at the desired index.
             // this is much faster than splicing them individually into 'allLeafChildren' when there are large inserts.
