@@ -156,19 +156,24 @@ export class ClientSideNodeManager {
         const {add, addIndex} = rowDataTran;
         if (_.missingOrEmpty(add)) { return; }
 
-        const useIndex = typeof addIndex === 'number' && addIndex >= 0;
+        // create new row nodes for each data item
+        const newNodes: RowNode[] = add!.map(item => this.createNode(item, this.rootNode, ClientSideNodeManager.TOP_LEVEL));
+
+        // add new row nodes to the root nodes 'allLeafChildren'
+        const useIndex = typeof addIndex === 'number' && addIndex > 0;
         if (useIndex) {
-            // items get inserted in reverse order for index insertion
-            add!.reverse().forEach(item => {
-                const newRowNode: RowNode = this.addRowNode(item, addIndex!);
-                rowNodeTransaction.add.push(newRowNode);
-            });
+            // new rows are inserted in one go by concatenating them in between the existing rows at the desired index.
+            // this is much faster than splicing them individually into 'allLeafChildren' when there are large inserts.
+            const existingLeafChildren = this.rootNode.allLeafChildren;
+            const nodesBeforeIndex = existingLeafChildren.slice(0, addIndex!);
+            const nodesAfterIndex = existingLeafChildren.slice(addIndex!, existingLeafChildren.length);
+            this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
         } else {
-            add!.forEach(item => {
-                const newRowNode: RowNode = this.addRowNode(item);
-                rowNodeTransaction.add.push(newRowNode);
-            });
+            this.rootNode.allLeafChildren = [...this.rootNode.allLeafChildren, ...newNodes];
         }
+
+        // add new row nodes to the transaction add items
+        rowNodeTransaction.add = newNodes;
     }
 
     private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
@@ -222,18 +227,6 @@ export class ClientSideNodeManager {
 
             rowNodeTransaction.update.push(rowNode);
         });
-    }
-
-    private addRowNode(data: any, index?: number): RowNode {
-        const newNode = this.createNode(data, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
-
-        if (_.exists(index)) {
-            _.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
-        } else {
-            this.rootNode.allLeafChildren.push(newNode);
-        }
-
-        return newNode;
     }
 
     private lookupRowNode(data: any): RowNode | null {
