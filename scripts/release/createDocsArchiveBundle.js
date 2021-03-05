@@ -5,21 +5,17 @@ const archiver = require('archiver');
 const LATEST_HASH = require('child_process').execSync('grep origin/latest .git/packed-refs | cut -d " " -f1').toString().trim();
 const LATEST_HASH_TIMESTAMP = require('child_process').execSync(`git show -s --format=%ci ${LATEST_HASH}`).toString().trim();
 
-if (process.argv.length !== 3) {
-    console.log("Usage: node scripts/release/createDocsArchiveBundle.js [Version Number]");
+if (process.argv.length !== 4) {
+    console.log("Usage: node scripts/release/createDocsArchiveBundle.js [Version Number] [archive filename]");
     console.log("For example: node scripts/release/createDocsArchiveBundle.js 19.1.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }
 
-const [exec, scriptPath, newVersion] = process.argv;
+const [exec, scriptPath, newVersion, archiveFileName] = process.argv;
 
 const DIST_PATH = 'grid-packages/ag-grid-docs/dist';
 
-function getArchiveFilename() {
-    const now = new Date();
-    return `archive_${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}_${newVersion}.tar`;
-}
 
 function isRootIndexPhp(filename) {
     return filename === `${DIST_PATH}/index.php`;
@@ -88,7 +84,6 @@ function createArchive(filename) {
 
 const walker = walk.walk(DIST_PATH, {});
 
-const archiveFileName = getArchiveFilename();
 deleteArchive(archiveFileName);
 const archive = createArchive(archiveFileName);
 
