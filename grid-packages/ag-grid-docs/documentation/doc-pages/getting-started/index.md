@@ -1902,7 +1902,7 @@ title: "Get Started with AG Grid"
 | ## Fetch Remote Data
 |
 | Displaying hard-coded data in JavaScript is not going to get us very far. In the real world, most of
-| the time, we are dealing with data that resides on a remote server. Thanks to React, implementing this
+| the time, we are dealing with data that resides on a remote server. Thanks to Vue, implementing this
 | is actually quite simple. Notice that the actual data fetching is performed outside of the grid
 | component - We are using the HTML5 `fetch` API.
 |
