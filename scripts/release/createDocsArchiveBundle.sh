@@ -25,7 +25,7 @@ cd ../../
 ARCHIVE_FILENAME="archive_`date +%Y%m%d`_$RAW_VERSION.tar"
 node scripts/release/createDocsArchiveBundle.js $RAW_VERSION $ARCHIVE_FILENAME
 
-echo "Gzipping $$ARCHIVE_FILENAME"
+echo "Gzipping $ARCHIVE_FILENAME"
 gzip --force $ARCHIVE_FILENAME
 
 echo "Archive Created: $ARCHIVE_FILENAME.gz"
