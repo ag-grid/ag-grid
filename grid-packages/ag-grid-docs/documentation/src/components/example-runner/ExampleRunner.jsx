@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
 import classnames from 'classnames';
-import fs from 'fs-extra';
+import fs from 'fs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import CodeViewer from './CodeViewer';
