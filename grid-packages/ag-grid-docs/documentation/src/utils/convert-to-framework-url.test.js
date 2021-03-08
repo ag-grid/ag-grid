@@ -4,7 +4,7 @@ import supportedFrameworks from './supported-frameworks';
 describe('convertToFrameworkUrl', () => {
     it.each(supportedFrameworks)
         ('returns grid URLs for %s grid pages', framework => {
-            expect(convertToFrameworkUrl('/getting-started/', framework)).toBe(`/${framework}-table/getting-started/`);
+            expect(convertToFrameworkUrl('/getting-started/', framework)).toBe(`/${framework}-grid/getting-started/`);
         });
 
     it.each(supportedFrameworks)

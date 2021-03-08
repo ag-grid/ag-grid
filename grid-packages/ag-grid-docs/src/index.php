@@ -66,7 +66,7 @@ $version = 'latest';
             <div class="framework-boxes">
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/javascript-table/" style="text-decoration: none;">
+                        <a href="/javascript-grid/" style="text-decoration: none;">
                             <div class="box-contents">
                                 <img src="./_assets/fw-logos/javascript.svg" alt="JavaScript">
                                 <div>
@@ -78,7 +78,7 @@ $version = 'latest';
                 </div>
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/angular-table/" style="text-decoration: none;">
+                        <a href="/angular-grid/" style="text-decoration: none;">
                             <div class="box-contents">
                                 <img src="./_assets/fw-logos/angular.svg" alt="Angular">
                                 <div>
@@ -90,7 +90,7 @@ $version = 'latest';
                 </div>
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/react-table/" style="text-decoration: none;">
+                        <a href="/react-grid/" style="text-decoration: none;">
                             <div class="box-contents">
                                 <img src="./_assets/fw-logos/react.svg" alt="React">
                                 <div>
@@ -102,7 +102,7 @@ $version = 'latest';
                 </div>
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/vue-table/" style="text-decoration: none;">
+                        <a href="/vue-grid/" style="text-decoration: none;">
                             <div class="box-contents">
                                 <img src="./_assets/fw-logos/vue.svg" alt="Vue">
                                 <div>

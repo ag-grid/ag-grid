@@ -70,7 +70,7 @@ const GettingStartedPane = ({ framework, data }) => {
             {linksToRender.map(link => {
                 const parsedLink = parseGettingStartedUrl(link.url, framework);
                 const frameworkCapitalised = framework.charAt(0).toUpperCase() + framework.slice(1);
-                const alt = `${frameworkCapitalised} Table: ${link.title}`;
+                const alt = `${frameworkCapitalised} Grid: ${link.title}`;
 
                 return (
                     <a key={`${framework}_${link.title.replace(/\s/g, '').toLowerCase()}`} {...parsedLink} className={styles['docs-home__getting-started__item']}>
@@ -88,7 +88,7 @@ const GettingStartedPane = ({ framework, data }) => {
 };
 
 const GettingStarted = ({ framework, data }) => {
-    const title = `${framework === 'javascript' ? 'JavaScript' : framework} Table: Getting Started`;
+    const title = `${framework === 'javascript' ? 'JavaScript' : framework} Grid: Getting Started`;
     const leftPaneItems = data.filter(panelItemsFilter('left', framework));
     const rightPaneItems = data.filter(panelItemsFilter('right', framework));
 

@@ -7,7 +7,7 @@ describe('getHeaderTitle', () => {
         ['react', 'React'],
         ['vue', 'Vue'],
     ])('returns title for grid pages: %s', (framework, expected) => {
-        expect(getHeaderTitle('The Best Grid', framework, false)).toBe(`${expected} Table: The Best Grid`);
+        expect(getHeaderTitle('The Best Grid', framework, false)).toBe(`${expected} Grid: The Best Grid`);
     });
 
     it.each([

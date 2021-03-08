@@ -7,7 +7,7 @@
 # AG Grid React Component
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-community/react-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/react-table/getting-started/?utm_source=@ag-grid-community/react-readme&utm_medium=repository&utm_campaign=github).
+It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-community/react-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/react-grid/getting-started/?utm_source=@ag-grid-community/react-readme&utm_medium=repository&utm_campaign=github).
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
@@ -50,7 +50,7 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 
 ## Getting started
 
-Use the setup instructions below or go through [a 5-minute-quickstart guide](https://www.ag-grid.com/react-table/getting-started/?utm_source=@ag-grid-community/react-readme&utm_medium=repository&utm_campaign=github).
+Use the setup instructions below or go through [a 5-minute-quickstart guide](https://www.ag-grid.com/react-grid/getting-started/?utm_source=@ag-grid-community/react-readme&utm_medium=repository&utm_campaign=github).
 
 ### Install dependencies
 

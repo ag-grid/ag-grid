@@ -127,8 +127,8 @@ gtm_data_layer('community-enterprise');
                             AG Grid Enterprise is a commercial product distributed under our
                             <a href="./eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
                             technical staff. It has advanced functionality like Row Grouping, Range Selection,
-                            Master / Detail, Server Side Row Model and <a href="/javascript-table/licensing/">more</a>.
-                            AG Grid Enterprise also comes with <a href="/javascript-table/integrated-charts/">Integrated Charts</a>, allowing users to create charts
+                            Master / Detail, Server Side Row Model and <a href="/javascript-grid/licensing/">more</a>.
+                            AG Grid Enterprise also comes with <a href="/javascript-grid/integrated-charts/">Integrated Charts</a>, allowing users to create charts
                             using the grid's UI.
                         </p>
                         <p>

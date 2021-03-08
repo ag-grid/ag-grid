@@ -18,7 +18,7 @@ export default function FrameworkSelector({ frameworks, path, currentFramework }
             .map(framework => {
                 const isSelected = framework === currentFramework;
                 const frameworkCapitalised = framework.charAt(0).toUpperCase() + framework.slice(1);
-                const alt = `${frameworkCapitalised} Table`;
+                const alt = `${frameworkCapitalised} Grid`;
                 return <a href={path.replace(`/${currentFramework}-`, `/${framework}-`)} key={framework} className={classnames(styles['framework-selector__option'], { [styles['framework-selector__option--selected']]: isSelected })}>
                     <img src={fwLogos[framework]} alt={alt} className={styles['framework-selector__icon']} />
                 </a>;

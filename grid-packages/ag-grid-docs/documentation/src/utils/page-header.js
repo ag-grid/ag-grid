@@ -4,7 +4,7 @@ export const getHeaderTitle = (title, framework = 'javascript', isCharts = false
     `${getProductType(framework, isCharts)}: ${title}`;
 
 const getProductType = (framework, isCharts = false) =>
-    `${getFrameworkName(framework)} ${isCharts ? 'Charts' : 'Table'}`;
+    `${getFrameworkName(framework)} ${isCharts ? 'Charts' : 'Grid'}`;
 
 export const getFrameworkName = framework => {
     const mappings = {
