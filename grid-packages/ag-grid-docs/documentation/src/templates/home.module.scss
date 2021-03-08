@@ -8,8 +8,9 @@
     }
 
     h2 {
-        background-image: linear-gradient(to top left, #007bff, #005ec4);
-        color: $white;
+        color: #6A7576;
+        font-size: 1.95rem;
+        font-weight: 500;
     }
 
     @include media-breakpoint-down(md) {
@@ -24,7 +25,7 @@
         &__title {
             composes: mb-0 p-2 from global;
             font-size: 2.0rem;
-            font-weight: 400;
+            font-weight: 500;
             text-align: left;
             text-transform: capitalize;
             margin: 10px;
@@ -39,8 +40,9 @@
             display: flex;
             flex-grow: 1;
             flex-wrap: wrap;
-            margin-top: 8px;
-            margin-left: 15px;
+            margin-left: 10px;
+            margin-top: -5px;
+            margin-bottom: 20px;
         }
 
         &__item {

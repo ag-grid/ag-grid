@@ -2,10 +2,10 @@
     &__title {
         composes: my-2 p-2 from global;
         font-size: 2.0rem;
-        font-weight: 400;
+        font-weight: 500;
         text-align: left;
         text-transform: capitalize;
-        margin: 0 10px 0 10px;
+        margin: 10px 0 0 10px;
         border-radius: 0.3rem;
 
         @include media-breakpoint-down(md) {
@@ -20,8 +20,8 @@
     &__tile-row {
         composes: d-flex from global;
         flex-wrap: wrap;
-        margin-left: 12px;
-        margin-right: 12px;
+        margin: -15px 8px 25px;
+
     }
     
 }
