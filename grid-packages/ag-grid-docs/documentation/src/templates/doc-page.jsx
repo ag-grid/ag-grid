@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
 import SideMenu from 'components/SideMenu';
 import processFrameworkSpecificSections from 'utils/framework-specific-sections';
-import { getPageName } from 'utils/get-page-name';
 import { ApiDocumentation } from 'components/ApiDocumentation';
 import { Snippet } from 'components/snippet/Snippet';
 import FeatureOverview from 'components/FeatureOverview';
@@ -27,13 +26,12 @@ import styles from './doc-page.module.scss';
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
  */
-const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
+const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
   const { markdownRemark: page } = data;
   const [showSideMenu, setShowSideMenu] = useState(true);
 
   if (!page) { return null; }
 
-  const pageName = getPageName(location.pathname);
   const ast = processFrameworkSpecificSections(page.htmlAst, framework);
 
   const getExampleRunnerProps = (props, library) => ({

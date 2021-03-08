@@ -1,5 +1,4 @@
 import React from 'react';
-import { getPageName } from 'utils/get-page-name';
 import toKebabCase from 'utils/to-kebab-case';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
 import { SEO } from 'components/SEO';
@@ -10,9 +9,7 @@ import styles from './chart-gallery-page.module.scss';
 /**
  * This template is used for individual chart gallery pages.
  */
-const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description, previous, next }, location }) => {
-    const pageName = getPageName(location.pathname);
-
+const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description, previous, next, pageName } }) => {
     return (
         <div id="doc-page-wrapper" className={pageStyles['doc-page__wrapper']}>
             <div id="doc-content" className={pageStyles['doc-page']}>
@@ -34,10 +31,10 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
 
                 <ExampleRunner
                     title={name}
-                    name={pageName.replace(/^charts-/, '')}
+                    name={toKebabCase(name)}
                     type="generated"
                     framework={framework}
-                    pageName={'charts-overview'}
+                    pageName={pageName}
                     library="charts"
                     options={{ exampleHeight: '60vh' }} />
             </div>

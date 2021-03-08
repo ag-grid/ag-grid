@@ -6,7 +6,6 @@ import Menu from 'components/Menu';
 import Footer from 'components/footer/Footer';
 import Search from 'components/search/Search';
 import FrameworkSelector from 'components/FrameworkSelector';
-import { getPageName } from 'utils/get-page-name';
 import favIcons from '../images/favicons';
 import logo from '../images/ag-grid.svg';
 import styles from './index.module.scss';
@@ -37,12 +36,10 @@ const TopBar = ({ frameworks, framework, path }) => (
 /**
  * This controls the layout template for all pages.
  */
-export const Layout = ({ children, pageContext: { frameworks, framework = 'javascript', layout }, location: { pathname: path } }) => {
+export const Layout = ({ children, pageContext: { frameworks, framework = 'javascript', layout, pageName }, location: { pathname: path } }) => {
     if (layout === 'bare') {
         return children;
     }
-
-    const pageName = getPageName(path);
 
     return <GlobalContextProvider>
         <Helmet>

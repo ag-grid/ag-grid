@@ -14,7 +14,7 @@ const Gif = ({ pageName, src, alt, autoPlay, className, wrapped, children, ...pr
     const image = getImage(images, pageName, src);
 
     if (!image) {
-        throw new Error(`Could not find requested image: ${src}`);
+        throw new Error(`Could not find ${src} for ${pageName}`);
     }
 
     const classes = classnames(styles['gif'], { [styles['gif--wrapped']]: wrapped }, className);

@@ -210,7 +210,7 @@ const createHomePages = createPage => {
         createPage({
             path: `/${framework}-table/`,
             component: homePage,
-            context: { frameworks: supportedFrameworks, framework }
+            context: { frameworks: supportedFrameworks, framework, pageName: `${framework}-table` }
         });
     });
 
@@ -249,16 +249,18 @@ const createDocPages = async (createPage, graphql, reporter) => {
 
     result.data.allMarkdownRemark.nodes.forEach(node => {
         const { frontmatter: { frameworks: specifiedFrameworks }, fields: { path: srcPath } } = node;
+        const parts = srcPath.split('/').filter(x => x !== '');
 
-        if (srcPath.split('/').some(part => part.startsWith('_'))) { return; }
+        if (parts.some(part => part.startsWith('_'))) { return; }
 
         const frameworks = supportedFrameworks.filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
+        const pageName = parts[parts.length - 1];
 
         frameworks.forEach(framework => {
             createPage({
                 path: convertToFrameworkUrl(srcPath, framework),
                 component: docPageTemplate,
-                context: { frameworks, framework, srcPath }
+                context: { frameworks, framework, srcPath, pageName }
             });
         });
     });
@@ -285,7 +287,7 @@ const createChartGalleryPages = createPage => {
             createPage({
                 path: `/${framework}-charts/gallery/${toKebabCase(name)}/`,
                 component: chartGalleryPageTemplate,
-                context: { frameworks: supportedFrameworks, framework, name, description, previous, next }
+                context: { frameworks: supportedFrameworks, framework, name, description, previous, next, pageName: 'charts-overview' }
             });
         });
     });
