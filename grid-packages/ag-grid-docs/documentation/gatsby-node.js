@@ -249,11 +249,8 @@ const createDocPages = async (createPage, graphql, reporter) => {
 
     result.data.allMarkdownRemark.nodes.forEach(node => {
         const { frontmatter: { frameworks: specifiedFrameworks }, fields: { path: srcPath } } = node;
-        const parts = srcPath.split('/').filter(x => x !== '');
-
-        if (parts.some(part => part.startsWith('_'))) { return; }
-
         const frameworks = supportedFrameworks.filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
+        const parts = srcPath.split('/').filter(x => x !== '');
         const pageName = parts[parts.length - 1];
 
         frameworks.forEach(framework => {

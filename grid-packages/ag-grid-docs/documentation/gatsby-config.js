@@ -48,6 +48,7 @@ const plugins = [
     options: {
       path: `${__dirname}/doc-pages`,
       name: 'doc-pages',
+      ignore: ['**/_*.md'], // exclude partial Markdown files (they are included when the parent is loaded)
     },
   },
   {
