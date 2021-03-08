@@ -2,14 +2,14 @@ const os = require('os');
 const fs = require('fs-extra');
 const cp = require('child_process');
 const glob = require('glob');
-const resolve = require('path').resolve
+const resolve = require('path').resolve;
 const express = require('express');
 const realWebpack = require('webpack');
 const proxy = require('express-http-proxy');
 const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
-const { generateExamples: generateDocumentationExamples } = require('./example-generator-documentation');
+const { generateDocumentationExamples } = require('./example-generator-documentation');
 const { updateBetweenStrings, getAllModules } = require('./utils');
 const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss } = require('./lernaOperations');
 const { EOL } = os;
@@ -668,7 +668,7 @@ const watchFrameworkModules = async () => {
 
         const ignoredFolders = [...defaultIgnoreFolders];
         if (moduleFramework !== 'angular') {
-            ignoredFolders.push('**/lib/**/*')
+            ignoredFolders.push('**/lib/**/*');
         }
 
         chokidar.watch([`${frameworkDirectory}/**/*`], {

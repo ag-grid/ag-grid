@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const glob = require('glob');
 const gulp = require('gulp');
-const { series, parallel } = require('gulp');
+const { series } = require('gulp');
 const postcss = require('gulp-postcss');
 const uncss = require('postcss-uncss');
 const inlinesource = require('gulp-inline-source');
@@ -171,9 +171,7 @@ const serveDist = (done) => {
         stdio: 'inherit'
     });
 
-    process.on('exit', () => {
-        php.kill();
-    });
+    process.on('exit', () => php.kill());
 
     done();
 };
@@ -188,8 +186,8 @@ const replaceAgReferencesWithCdnLinks = () => {
         .pipe(gulp.dest(distFolder));
 };
 
-gulp.task('generate-grid-examples', (done) => generateGridExamples.bind(null, '*', null, done)());
-gulp.task('generate-chart-examples', (done) => generateChartExamples.bind(null, '*', null, done)());
+gulp.task('generate-grid-examples', generateGridExamples.bind(null, '*', null));
+gulp.task('generate-chart-examples', generateChartExamples.bind(null, '*', null));
 
 gulp.task('clean-dist', () => fs.remove(distFolder));
 gulp.task('remove-index-html', () => fs.rm(`${distFolder}/index.html`));
@@ -201,13 +199,13 @@ gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('copy-prod-webserver-files', copyProdWebServerFilesToDist);
 gulp.task('copy-documentation-website', copyDocumentationWebsite);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
-gulp.task('generate-examples', parallel('generate-grid-examples', 'generate-chart-examples'));
+gulp.task('generate-all-examples', series('generate-grid-examples', 'generate-chart-examples'));
 gulp.task('release-archive', series('clean-dist', 'process-src', 'bundle-site-archive', 'copy-from-dist', 'copy-documentation-website', 'populate-dev-folder'));
 gulp.task('release', series('clean-dist', 'process-src', 'bundle-site-release', 'copy-from-dist', 'copy-documentation-website', 'remove-index-html', 'copy-prod-webserver-files', 'replace-references-with-cdn'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 
-//                                                               this, skipFrameworks, skipExampleFormatting
-gulp.task('serve',                  require('./dev-server').bind(null, false, true));
-gulp.task('serve-core-only',        require('./dev-server').bind(null, true, true));
-gulp.task('serve-with-formatting',  require('./dev-server').bind(null, false, false));
+//                                                               this, skipFrameworks,  skipExampleFormatting
+gulp.task('serve',                  require('./dev-server').bind(null, false,           true));
+gulp.task('serve-core-only',        require('./dev-server').bind(null, true,            true));
+gulp.task('serve-with-formatting',  require('./dev-server').bind(null, false,           false));

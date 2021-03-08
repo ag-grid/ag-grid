@@ -332,6 +332,7 @@ module.exports.generateGridExamples = (scope, trigger, done) => {
         generateExamples('grid', ['packages', 'modules'], scope, trigger, done);
     } catch (e) {
         console.error('Failed to generate grid examples', e);
+
         if (done) {
             done(e);
         }
@@ -344,13 +345,14 @@ module.exports.generateChartExamples = (scope, trigger, done) => {
         generateExamples('chart', ['packages'], scope, trigger, done);
     } catch (e) {
         console.error('Failed to generate chart examples', e);
+
         if (done) {
             done(e);
         }
     }
 };
 
-module.exports.generateExamples = async (scope, trigger) => {
+module.exports.generateDocumentationExamples = async (scope, trigger) => {
     if (trigger) {
         console.log(`\u270E ${trigger} was changed`);
         console.log(`\u27F3 Re-generating affected documentation examples...`);
