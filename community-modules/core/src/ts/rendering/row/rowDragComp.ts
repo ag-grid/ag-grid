@@ -74,7 +74,7 @@ export class RowDragComp extends Component {
         }
     }
 
-    private addDragSource(dragStartPixels: number = 0): void {
+    private addDragSource(dragStartPixels: number = 4): void {
         // if this is changing the drag element, delete the previous dragSource
         if (this.dragSource) { this.removeDragSource(); }
 
