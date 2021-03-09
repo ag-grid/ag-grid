@@ -1432,7 +1432,7 @@ AddType text/javascript ts jsx
     Redirect 301 /review-of-angularjs-grids/ https://medium.com/ag-grid/from-hater-to-fan-how-i-fell-in-love-with-ag-grid-3cbc5976d5e3
     Redirect 301 /spark-server-side-operations/ /javascript-grid/server-side-operations-spark/
     Redirect 301 /understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/ https://medium.com/ag-grid/understand-packaging-for-javascript-typescript-commonjs-and-everything-else-1fe835f3243a
-    Redirect 301 /vue-components/ /documentation/vue/framework-components/
+    Redirect 301 /vue-components/ /vue-grid/getting-started/
     Redirect 301 /vue-getting-started/ /vue-grid/getting-started/
     Redirect 301 /vue-js-grid/ https://medium.com/ag-grid/using-ag-grid-inside-a-vuejs-application-b6c442d77da8
     Redirect 301 /vue-markup/ /vue-grid/getting-started/
