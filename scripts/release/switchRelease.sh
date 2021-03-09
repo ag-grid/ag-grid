@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$#" -ne 1 ]
+if [ "$#" -lt 1 ]
   then
     echo "You must supply a timestamp"
     echo "For example: ./scripts/release/prepareAgGridForRelease.sh 20191210"

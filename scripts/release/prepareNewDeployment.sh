@@ -15,9 +15,19 @@ then
       exit;
 fi
 
+function checkFileExists {
+    file=$1
+    if ! [[ -f "$file" ]]
+    then
+        echo "File [$file] doesn't exist - exiting script.";
+        exit;
+    fi
+}
+
 checkFileExists $SSH_LOCATION
 
 FILENAME=$1
 
 # backup the old public_html, unzip the new release and update permissions etc
 ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd /home/ceolter/ && ./prepareNewDeploymentRemote.sh $FILENAME"
+

@@ -28,7 +28,7 @@ mv ./$FILENAME public_html_tmp/
 cd public_html_tmp/ && unzip $FILENAME
 cd ..
 
-# copy non versionsed files & directories over
+# copy non versioned files & directories over
 echo "Copying non-versioned directories"
 cp -R ./public_html/support public_html_tmp/
 cp -R ./public_html/example-assets public_html_tmp/
