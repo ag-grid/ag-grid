@@ -15,6 +15,15 @@ then
       exit;
 fi
 
+function checkFileExists {
+    file=$1
+    if ! [[ -f "$file" ]]
+    then
+        echo "File [$file] doesn't exist - exiting script.";
+        exit;
+    fi
+}
+
 checkFileExists $SSH_LOCATION
 
 TIMESTAMP=$1

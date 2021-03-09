@@ -170,7 +170,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid-value-getters/ /angular-grid/value-getters/
     Redirect 301 /angular-grid-virtual-paging/ /angular-grid/dom-virtualisation/
     Redirect 301 /angular-grid-width-and-height/ /angular-grid/grid-size/
-    Redirect 301 /angular-markup/ /documentation/angular/framework-markup/
+    Redirect 301 /angular-markup/ /angular-grid/getting-started/
     Redirect 301 /angular-more-details/ /documentation/angular/framework-components/
     Redirect 301 /best-angular-2-data-grid/ /angular-grid/getting-started/
     Redirect 301 /best-angular-grid/ /angular-grid/getting-started/
@@ -1435,7 +1435,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-components/ /documentation/vue/framework-components/
     Redirect 301 /vue-getting-started/ /vue-grid/getting-started/
     Redirect 301 /vue-js-grid/ https://medium.com/ag-grid/using-ag-grid-inside-a-vuejs-application-b6c442d77da8
-    Redirect 301 /vue-markup/ /documentation/vue/framework-markup/
+    Redirect 301 /vue-markup/ /vue-grid/getting-started/
     Redirect 301 /vuejs-charts/ /vue-charts/getting-started/
     Redirect 301 /vuejs-grid/ /vue-grid/getting-started/
     Redirect 301 /vuejs-misc/ /vue-grid/framework-misc/
