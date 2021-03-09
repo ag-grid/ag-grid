@@ -12,7 +12,7 @@ const menu = require('./doc-pages/licensing/menu.json');
 const supportedFrameworks = require('./src/utils/supported-frameworks');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 
-const debug = true; // in debug mode, the script writes the records it would upload into JSON files for inspection
+const debug = false; // in debug mode, the script writes the records it would upload into JSON files for inspection
 const clearIndices = true; // to ensure a clean index, you should clear existing records before inserting new ones
 const indexNamePrefix = 'ag-grid-dev'; // we use 'ag-grid-dev' for development indices, and 'ag-grid' for production
 

@@ -33,9 +33,9 @@ echo "************************************************************************"
 echo "************************************************************************"
 echo "******************** Switch To New Release *****************************"
 echo "************************************************************************"
-./scripts/release/switchRelease.sh $TIMESTAMP $2
+#./scripts/release/switchRelease.sh $TIMESTAMP $2
 echo "************************************************************************"
 echo "******************** Update Algolia Indices *****************************"
 echo "************************************************************************"
-./scripts/release/updateAlgoliaIndices.sh $TIMESTAMP $2
+#./scripts/release/updateAlgoliaIndices.sh $TIMESTAMP $2
 
