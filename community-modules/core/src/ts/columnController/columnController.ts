@@ -2111,11 +2111,18 @@ export class ColumnController extends BeanStub {
     private raiseColumnPinnedEvent(changedColumns: Column[], source: ColumnEventType) {
         if (!changedColumns.length) { return; }
 
+        // if just one column, we use this, otherwise we don't include the col
+        const column: Column | null = changedColumns.length === 1 ? changedColumns[0] : null;
+
+        // only include visible if it's common in all columns
+        const pinned = this.getCommonValue(changedColumns, col => col.getPinned() )
+
         const event: ColumnPinnedEvent = {
             type: Events.EVENT_COLUMN_PINNED,
-            pinned: null,
+            // mistake in typing, 'undefined' should be allowed, as 'null' means 'not pinned'
+            pinned: pinned!=null ? pinned : null,
             columns: changedColumns,
-            column: null,
+            column,
             api: this.gridApi,
             columnApi: this.columnApi,
             source: source
@@ -2124,14 +2131,35 @@ export class ColumnController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
+    private getCommonValue<T>(cols: Column[], valueGetter: ( (col: Column) => T )): T | undefined {
+        if (!cols || cols.length==0) { return undefined; }
+
+        // compare each value to the first value. if nothing differs, then value is common so return it.
+        let firstValue = valueGetter(cols[0]);
+        for (let i = 1; i<cols.length; i++) {
+            if (firstValue !== valueGetter(cols[i])) {
+                // values differ, no common value
+                return undefined;
+            }
+        }
+
+        return firstValue;
+    }
+
     private raiseColumnVisibleEvent(changedColumns: Column[], source: ColumnEventType) {
         if (!changedColumns.length) { return; }
 
+        // if just one column, we use this, otherwise we don't include the col
+        const column: Column | null = changedColumns.length === 1 ? changedColumns[0] : null;
+
+        // only include visible if it's common in all columns
+        const visible = this.getCommonValue(changedColumns, col => col.isVisible() )
+
         const event: ColumnVisibleEvent = {
             type: Events.EVENT_COLUMN_VISIBLE,
-            visible: undefined,
+            visible,
             columns: changedColumns,
-            column: null,
+            column,
             api: this.gridApi,
             columnApi: this.columnApi,
             source: source
