@@ -1976,9 +1976,12 @@ export class ColumnController extends BeanStub {
         let newOrder: Column[] = [];
         const processedColIds: {[id: string]:boolean} = {};
 
+        const gridColumnsMap: {[id: string]: Column} = {};
+        this.gridColumns.forEach( col => gridColumnsMap[col.getId()] = col);
+
         params.state.forEach(item => {
             if (!item.colId || processedColIds[item.colId]) { return; }
-            const col = this.primaryColumnsMap[item.colId];
+            const col = gridColumnsMap[item.colId];
             if (col) {
                 newOrder.push(col);
                 processedColIds[item.colId] = true;
