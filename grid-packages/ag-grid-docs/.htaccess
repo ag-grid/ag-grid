@@ -170,7 +170,6 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid-value-getters/ /angular-grid/value-getters/
     Redirect 301 /angular-grid-virtual-paging/ /angular-grid/dom-virtualisation/
     Redirect 301 /angular-grid-width-and-height/ /angular-grid/grid-size/
-    Redirect 301 /angular-grid/ /angular-grid/getting-started/
     Redirect 301 /angular-markup/ /documentation/angular/framework-markup/
     Redirect 301 /angular-more-details/ /documentation/angular/framework-components/
     Redirect 301 /best-angular-2-data-grid/ /angular-grid/getting-started/
@@ -1418,11 +1417,8 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-value-setters/ /javascript-grid/value-setters/
     Redirect 301 /javascript-grid-viewport/ /javascript-grid/viewport/
     Redirect 301 /javascript-grid-width-and-height/ /javascript-grid/grid-size/
-    Redirect 301 /javascript-grid/ /javascript-grid/getting-started/
     Redirect 301 /nodejs-server-side-operations/ /javascript-grid/server-side-operations-nodejs/
     Redirect 301 /oracle-server-side-operations/ /javascript-grid/server-side-operations-oracle/
-    Redirect 301 /polymer-getting-started/ /documentation/javascript/polymer-getting-started/
-    Redirect 301 /polymer-more-details/ /documentation/javascript/polymer-more-details/
     Redirect 301 /react-15/ /documentation/react/react-15/
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
     Redirect 301 /react-apis/ /documentation/react/framework-apis/
@@ -1430,7 +1426,6 @@ AddType text/javascript ts jsx
     Redirect 301 /react-column-configuration/ /documentation/react/column-configuration/
     Redirect 301 /react-fine-tuning/ /react-grid/fine-tuning/
     Redirect 301 /react-getting-started/ /react-grid/getting-started/
-    Redirect 301 /react-grid/ /react-grid/getting-started/
     Redirect 301 /react-hooks/ /react-grid/react-hooks/
     Redirect 301 /react-redux-integration-pt1/ /react-grid/redux-integration-pt1/
     Redirect 301 /react-redux-integration-pt2/ /react-grid/redux-integration-pt2/
