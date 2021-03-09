@@ -25,7 +25,7 @@ mkdir public_html_tmp
 # unzip release
 echo "Unzipping release archive"
 mv ./$FILENAME public_html_tmp/
-cd public_html_tmp/ && unzip $FILENAME
+cd public_html_tmp/ && tar -xvfz $FILENAME
 cd ..
 
 # copy non versionsed files & directories over
