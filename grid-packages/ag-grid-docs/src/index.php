@@ -187,7 +187,7 @@ $version = 'latest';
                     <img src="_assets/fw-logos/webpack.svg" alt="Webpack"/>
                     <div class="media-body">
                         <h3>Webpack</h3>
-                        <p><a href="/ag-grid-partners-with-webpack/">Read about our Partnership with webpack.</a></p>
+                        <p><a href="https://medium.com/webpack/ag-grid-partners-with-webpack-24f8cf9d890b">Read about our Partnership with webpack.</a></p>
                     </div>
                 </div>
 
@@ -195,7 +195,7 @@ $version = 'latest';
                     <img src="_assets/fw-logos/plunker.svg" alt="Plunker"/>
                     <div class="media-body">
                         <h3>Plunker</h3>
-                        <p><a href="/ag-grid-proud-to-support-plunker/">Read about our Backing of Plunker.</a></p>
+                        <p><a href="https://medium.com/ag-grid/plunker-is-now-backed-by-ag-grid-601c17440fca">Read about our Backing of Plunker.</a></p>
                     </div>
                 </div>
             </div>

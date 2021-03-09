@@ -23,11 +23,8 @@ function gtm_data_layer($pageCategory, $additional = array()) {
 }
 
 function meta_and_links($title, $keywords, $description, $root = false) {
-    $font_awesome = $GLOBALS['DONT_USE_FONT_AWESOME']
-        ? ""
-        : '<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />';
-
     $socialImage = $GLOBALS['socialImage'];
+
     if ($socialImage) {
         $socialImageMeta = <<<META
     <meta property="og:image" content="$socialImage" />
@@ -92,19 +89,6 @@ META;
     <link rel="apple-touch-icon" sizes="152x152" href="{$prefix}_assets/favicons/favicon-152-touch.png" />
     ${GLOBALS['LINKEDIN_SCRIPT']}
 META;
-}
-
-function docScripts() {
-    echo <<<SCRIPT
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-cookies.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/algoliasearch/3.24.9/algoliasearch.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.29.0/autocomplete.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gifffer/1.5.0/gifffer.min.js"></script>
-
-<script src="../documentation-main/documentation.js"></script>
-<script src="../dist/docs.js"></script>
-SCRIPT;
 }
 
 function globalAgGridScript($enterprise = false)

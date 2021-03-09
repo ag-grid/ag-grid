@@ -1419,6 +1419,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-width-and-height/ /javascript-grid/grid-size/
     Redirect 301 /nodejs-server-side-operations/ /javascript-grid/server-side-operations-nodejs/
     Redirect 301 /oracle-server-side-operations/ /javascript-grid/server-side-operations-oracle/
+    Redirect 301 /quote/ /ecommerce/#/ecommerce/quote-lookup
     Redirect 301 /react-15/ /react-grid/getting-started/
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
     Redirect 301 /react-apis/ /react-grid/getting-started/
@@ -1431,6 +1432,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-redux-integration-pt2/ /react-grid/redux-integration-pt2/
     Redirect 301 /review-of-angularjs-grids/ https://medium.com/ag-grid/from-hater-to-fan-how-i-fell-in-love-with-ag-grid-3cbc5976d5e3
     Redirect 301 /spark-server-side-operations/ /javascript-grid/server-side-operations-spark/
+    Redirect 301 /support.php /
     Redirect 301 /understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/ https://medium.com/ag-grid/understand-packaging-for-javascript-typescript-commonjs-and-everything-else-1fe835f3243a
     Redirect 301 /vue-components/ /vue-grid/getting-started/
     Redirect 301 /vue-getting-started/ /vue-grid/getting-started/
