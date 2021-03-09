@@ -14,7 +14,7 @@ const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 
 const debug = false; // in debug mode, the script writes the records it would upload into JSON files for inspection
 const clearIndices = true; // to ensure a clean index, you should clear existing records before inserting new ones
-const indexNamePrefix = 'ag-grid-dev'; // we use 'ag-grid-dev' for development indices, and 'ag-grid' for production
+const indexNamePrefix = 'ag-grid'; // we use 'ag-grid-dev' for development indices, and 'ag-grid' for production
 
 const { JSDOM } = jsdom;
 
