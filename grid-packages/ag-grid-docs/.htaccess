@@ -171,7 +171,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid-virtual-paging/ /angular-grid/dom-virtualisation/
     Redirect 301 /angular-grid-width-and-height/ /angular-grid/grid-size/
     Redirect 301 /angular-markup/ /angular-grid/getting-started/
-    Redirect 301 /angular-more-details/ /documentation/angular/framework-components/
+    Redirect 301 /angular-more-details/ /angular-grid/components/
     Redirect 301 /best-angular-2-data-grid/ /angular-grid/getting-started/
     Redirect 301 /best-angular-grid/ /angular-grid/getting-started/
     Redirect 301 /best-angularjs-2-grid/ /angular-grid/getting-started/
@@ -1419,9 +1419,9 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-width-and-height/ /javascript-grid/grid-size/
     Redirect 301 /nodejs-server-side-operations/ /javascript-grid/server-side-operations-nodejs/
     Redirect 301 /oracle-server-side-operations/ /javascript-grid/server-side-operations-oracle/
-    Redirect 301 /react-15/ /documentation/react/react-15/
+    Redirect 301 /react-15/ /react-grid/getting-started/
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
-    Redirect 301 /react-apis/ /documentation/react/framework-apis/
+    Redirect 301 /react-apis/ /react-grid/getting-started/
     Redirect 301 /react-charts/ /react-charts/getting-started/
     Redirect 301 /react-column-configuration/ /documentation/react/column-configuration/
     Redirect 301 /react-fine-tuning/ /react-grid/fine-tuning/
