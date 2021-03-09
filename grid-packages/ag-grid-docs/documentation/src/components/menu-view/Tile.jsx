@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
 import icons from './icons';
-import convertToFrameworkUrl from 'utils/convert-to-framework-url';
+import DocumentationLink from 'components/DocumentationLink';
 import styles from './Tile.module.scss';
 
 const recursiveRender = (items, framework, collapsed, level = 0, isLast, forceTopLevel) => items.map((item, idx) => {
@@ -14,7 +14,7 @@ const recursiveRender = (items, framework, collapsed, level = 0, isLast, forceTo
 
     const title = item.url && (!collapsed || item.showInCollapsed) && (
         <span className={styles[className]}>
-            <a href={convertToFrameworkUrl(item.url, framework)}>{item.title}{item.enterprise && <enterprise-icon />}</a>
+            <DocumentationLink href={item.url} framework={framework}>{item.title}{item.enterprise && <enterprise-icon />}</DocumentationLink>
             {!hideComma && <span className={styles['menu-view-tile__item-split']} style={{ marginRight: 2 }}>,</span>}
         </span>
     );
