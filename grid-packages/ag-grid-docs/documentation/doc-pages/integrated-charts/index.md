@@ -63,7 +63,7 @@ User created charts are designed to provide an out-of-the box charting experienc
 
 All that is required for users to create charts, from the data already contained in the grid, is to import the [charts module](#charts-module) and [enable charts](#enabling-charts).
 
-Try it out on our [demo page](../../../example.php) by doing the following:
+Try it out on our [demo page](../../example.php) by doing the following:
 
 - Select a [Cell Range](/range-selection/) of numeric values in the grid by dragging the mouse over a range of cells.
 - Bring up the [Context Menu](/context-menu/) and select the desired chart type from the 'Chart Range' sub menu.

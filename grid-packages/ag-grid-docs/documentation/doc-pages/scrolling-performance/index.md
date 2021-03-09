@@ -10,7 +10,7 @@ This page explains how you can make the grid go faster.
 
 ## 1. Setting Expectations
 
-AG Grid can be as fast as demonstrated in the demo application [Demo Application](../../../example.php). You can resize the demo application to the same size as the grid in your application by resizing the browser, then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own implementation. If the demo grid is going faster, then there is room for performance improvements.
+AG Grid can be as fast as demonstrated in the demo application [Demo Application](../../example.php). You can resize the demo application to the same size as the grid in your application by resizing the browser, then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own implementation. If the demo grid is going faster, then there is room for performance improvements.
 
 ## 2. Check Cell Renderers
 
