@@ -1589,6 +1589,11 @@ export class GridOptionsWrapper {
             console.warn('AG Grid: since v25, grid property suppressEnterpriseResetOnNewColumns is deprecated. This was a temporary property to allow changing columns in Server Side Row Model without triggering a reload. Now that it is possible to dynamically change columns in the grid, this is no longer needed.');
             options.detailRowAutoHeight = true;
         }
+
+        if (options.suppressColumnStateEvents) {
+            console.warn('AG Grid: since v25, grid property suppressColumnStateEvents no longer works due to a refactor that we did. It should be possible to achieve similar using event.source, which would be "api" if the event was due to setting column state via the API');
+            options.detailRowAutoHeight = true;
+        }
     }
 
     private checkForViolations() {

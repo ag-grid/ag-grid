@@ -227,6 +227,7 @@ export interface GridOptions {
     suppressRowTransform?: boolean;
     /** @deprecated */
     suppressSetColumnStateEvents?: boolean;
+    /** @deprecated */
     suppressColumnStateEvents?: boolean;
     allowDragFromColumnsToolPanel?: boolean;
     suppressMaxRenderedRowRestriction?: boolean;
