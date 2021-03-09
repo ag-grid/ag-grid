@@ -13,9 +13,15 @@ const redirectsTargets = htaccess.split('\n')
     .map(line => line.replace(/^.* (.*)$/, "$1", ""))
     .filter(line => line !== 'https://www.ag-grid.com/')
 
+let errors = 0;
 redirectsTargets.forEach(redirectsTarget => {
     if (!fs.existsSync(`./grid-packages/ag-grid-docs/documentation/public/${redirectsTarget}`) &&
         !fs.existsSync(`grid-packages/ag-grid-docs/src/${redirectsTarget}/index.php`)) {
         console.error(`Redirect ending with ${redirectsTarget} - this directory doesn't exist under ./grid-packages/ag-grid-docs/documentation/public/ or under /grid-packages/ag-grid-docs/src/` );
+        errors = 1;
     }
-})
+});
+
+process.exit(errors);
+
+
