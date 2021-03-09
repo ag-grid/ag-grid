@@ -121,7 +121,6 @@ AddType text/javascript ts jsx
     Redirect 301 /ag-grid-tutorials/ /javascript-grid/getting-started/
     Redirect 301 /ag-grid-understanding-webpack/ https://medium.com/ag-grid/webpack-tutorial-understanding-how-it-works-f73dfa164f01
     Redirect 301 /ag-grid-webpack-ngtools/ https://medium.com/ag-grid/webpack-tutorial-understanding-ngtools-webpack-306dd7f9e07d
-    Redirect 301 /angular-charts/ /angular-charts/getting-started/
     Redirect 301 /angular-getting-started/ /angular-grid/getting-started/
     Redirect 301 /angular-grid-angular-compiling/ /angular-grid/getting-started/
     Redirect 301 /angular-grid-api/ /angular-grid/grid-api/
@@ -1201,7 +1200,6 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-charts-scatter-series/ /javascript-charts/scatter-series/
     Redirect 301 /javascript-charts-themes/ /javascript-charts/themes/
     Redirect 301 /javascript-charts-tooltips/ /javascript-charts/tooltips/
-    Redirect 301 /javascript-charts/ /javascript-charts/getting-started/
     Redirect 301 /javascript-datagrid/ https://medium.com/ag-grid/8-reasons-to-choose-ag-grid-as-your-javascript-datagrid-eb4a767a351f
     Redirect 301 /javascript-getting-started/ /javascript-grid/getting-started/
     Redirect 301 /javascript-grid-accessibility/ /javascript-grid/accessibility/
@@ -1423,7 +1421,6 @@ AddType text/javascript ts jsx
     Redirect 301 /react-15/ /react-grid/getting-started/
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
     Redirect 301 /react-apis/ /react-grid/getting-started/
-    Redirect 301 /react-charts/ /react-charts/getting-started/
     Redirect 301 /react-column-configuration/ /react-grid/getting-started/
     Redirect 301 /react-fine-tuning/ /react-grid/fine-tuning/
     Redirect 301 /react-getting-started/ /react-grid/getting-started/
