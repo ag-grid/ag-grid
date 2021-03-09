@@ -184,7 +184,6 @@ AddType text/javascript ts jsx
     Redirect 301 /best-vuejs-data-grid/ /vue-grid/getting-started/
     Redirect 301 /best-vuejs-grid/ /vue-grid/getting-started/
     Redirect 301 /documentation-main/documentation.php /documentation/
-    Redirect 301 /documentation/angular/ /angular-grid/
     Redirect 301 /documentation/angular/accessibility/ /angular-grid/accessibility/
     Redirect 301 /documentation/angular/accessing-data/ /angular-grid/accessing-data/
     Redirect 301 /documentation/angular/aggregation/ /angular-grid/aggregation/
@@ -433,7 +432,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/webpack-2/ /angular-grid/webpack-2/
     Redirect 301 /documentation/angular/webpack-3/ /angular-grid/webpack-3/
     Redirect 301 /documentation/angular/webpack/ /angular-grid/webpack/
-    Redirect 301 /documentation/javascript/ /javascript-grid/
+    Redirect 301 /documentation/angular/ /angular-grid/
     Redirect 301 /documentation/javascript/8-performance-hacks-for-javascript/ /javascript-grid/8-performance-hacks-for-javascript/
     Redirect 301 /documentation/javascript/accessibility/ /javascript-grid/accessibility/
     Redirect 301 /documentation/javascript/accessing-data/ /javascript-grid/accessing-data/
@@ -682,7 +681,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/value-setters/ /javascript-grid/value-setters/
     Redirect 301 /documentation/javascript/view-refresh/ /javascript-grid/view-refresh/
     Redirect 301 /documentation/javascript/viewport/ /javascript-grid/viewport/
-    Redirect 301 /documentation/react/ /react-grid/
+    Redirect 301 /documentation/javascript/ /javascript-grid/
     Redirect 301 /documentation/react/accessibility/ /react-grid/accessibility/
     Redirect 301 /documentation/react/accessing-data/ /react-grid/accessing-data/
     Redirect 301 /documentation/react/aggregation/ /react-grid/aggregation/
@@ -929,7 +928,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/value-setters/ /react-grid/value-setters/
     Redirect 301 /documentation/react/view-refresh/ /react-grid/view-refresh/
     Redirect 301 /documentation/react/viewport/ /react-grid/viewport/
-    Redirect 301 /documentation/vue/ /vue-grid/
+    Redirect 301 /documentation/react/ /react-grid/
     Redirect 301 /documentation/vue/accessibility/ /vue-grid/accessibility/
     Redirect 301 /documentation/vue/accessing-data/ /vue-grid/accessing-data/
     Redirect 301 /documentation/vue/aggregation/ /vue-grid/aggregation/
@@ -1173,6 +1172,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/value-setters/ /vue-grid/value-setters/
     Redirect 301 /documentation/vue/view-refresh/ /vue-grid/view-refresh/
     Redirect 301 /documentation/vue/viewport/ /vue-grid/viewport/
+    Redirect 301 /documentation/vue/ /vue-grid/
     Redirect 301 /embracing-the-future-with-angularjs2-web-components-and-ag-grid/ https://medium.com/ag-grid/embracing-the-future-with-angular-2-0-web-components-and-ag-grid-fec000d5a304
     Redirect 301 /example-angular-material-design/ /angular-grid/material-design/
     Redirect 301 /example-angular-rxjs/ /angular-grid/angular-rxjs/
@@ -1423,7 +1423,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
     Redirect 301 /react-apis/ /react-grid/getting-started/
     Redirect 301 /react-charts/ /react-charts/getting-started/
-    Redirect 301 /react-column-configuration/ /documentation/react/column-configuration/
+    Redirect 301 /react-column-configuration/ /react-grid/getting-started/
     Redirect 301 /react-fine-tuning/ /react-grid/fine-tuning/
     Redirect 301 /react-getting-started/ /react-grid/getting-started/
     Redirect 301 /react-hooks/ /react-grid/react-hooks/
