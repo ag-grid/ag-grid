@@ -12,7 +12,7 @@ TIMESTAMP=`date +%Y%m%d`
 RAW_VERSION=$1
 VERSION=""${RAW_VERSION//./}""
 
-FILENAME=release_"$TIMESTAMP"_v"$VERSION".gz
+FILENAME=release_"$TIMESTAMP"_v"$VERSION".tar.gz
 
 echo "************************************************************************"
 echo "******************** Create Release Bundle *****************************"
