@@ -26,6 +26,10 @@ then
   # move archives from the previous "live" to the original public_html backup: public_html_$TIMESTAMP
   # this will in turn be moved to the new public_html down below
   mv public_html/archive public_html_$TIMESTAMP/archive
+
+  # it's unlikely we'd need the version we're replacing, but just in case
+  CURRENT_BACKUP_DIR="public_html_`date '+%Y%m%d_%H%M'`"
+  mv public_html $CURRENT_BACKUP_DIR
 else
   mv public_html public_html_$TIMESTAMP
 fi
