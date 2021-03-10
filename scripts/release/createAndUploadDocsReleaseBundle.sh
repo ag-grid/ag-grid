@@ -41,6 +41,6 @@ echo "************************************************************************"
 echo "************************************************************************"
 echo "*********************** Tag Docs Release *******************************"
 echo "************************************************************************"
-#TAG="vDocs-$RAW_VERSION-$TIMESTAMP"
-#git tag -a $TAG -m "Docs Update: Version $VERSION, On: $TIMESTAMP"
-
+TAG="vDocs-$RAW_VERSION-$TIMESTAMP"
+git tag -a $TAG -m "Docs Update: Version $VERSION, On: $TIMESTAMP"
+git push origin $TAG
