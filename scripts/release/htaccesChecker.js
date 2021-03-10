@@ -7,12 +7,11 @@ if(!fs.existsSync("./grid-packages/ag-grid-docs/documentation/public")) {
 
 const htaccess = fs.readFileSync('./grid-packages/ag-grid-docs/.htaccess', 'utf8');
 
+const excludes = ['medium.com', 'ecommerce', 'www.ag-grid.com']
 const redirectsTargets = htaccess.split('\n')
     .filter(line => line.includes('Redirect 301'))
-    .filter(line => !line.includes("https://medium.com"))
-    .filter(line => !line.includes("ecommerce"))
+    .filter(line => !excludes.some(exclude => line.includes(exclude)))
     .map(line => line.replace(/^.* (.*)$/, "$1", ""))
-    .filter(line => line !== 'https://www.ag-grid.com/')
 
 let errors = 0;
 redirectsTargets.forEach(redirectsTarget => {
