@@ -10,6 +10,7 @@ const htaccess = fs.readFileSync('./grid-packages/ag-grid-docs/.htaccess', 'utf8
 const redirectsTargets = htaccess.split('\n')
     .filter(line => line.includes('Redirect 301'))
     .filter(line => !line.includes("https://medium.com"))
+    .filter(line => !line.includes("ecommerce"))
     .map(line => line.replace(/^.* (.*)$/, "$1", ""))
     .filter(line => line !== 'https://www.ag-grid.com/')
 

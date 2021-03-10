@@ -1333,7 +1333,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-modules-more-details/ /javascript-grid/modules-more-details/
     Redirect 301 /javascript-grid-modules/ /javascript-grid/modules/
     Redirect 301 /javascript-grid-npm/ /javascript-grid/npm/
-    Redirect 301 /javascript-grid-openfin-dashboard/ /javascript-grid-openfin/
+    Redirect 301 /javascript-grid-openfin-dashboard/ https://www.ag-grid.com/
     Redirect 301 /javascript-grid-overlay-component/ /javascript-grid/component-overlay/
     Redirect 301 /javascript-grid-overlays/ /javascript-grid/overlays/
     Redirect 301 /javascript-grid-packages-modules/ /javascript-grid/packages-modules/
