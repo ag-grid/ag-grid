@@ -17,7 +17,7 @@ const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 const options = commander
     .option('-d, --debug <debug>', 'if debug = true, the script writes the records it would upload into JSON files for inspection', true)
     .option("-i, --indexNamePrefix <prefix>", 'if indexNamePrefix = "ag-grid-dev" we\'ll update development indices, and for "ag-grid" production', 'ag-grid-dev')
-    .parse()
+    .parse(process.argv)
     .opts();
 
 
