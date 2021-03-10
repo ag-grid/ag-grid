@@ -6,16 +6,27 @@
 require('dotenv').config();
 
 const fs = require('fs-extra');
-const { JSDOM } = require('jsdom');
+const {JSDOM} = require('jsdom');
 const algoliasearch = require('algoliasearch');
+const commander = require("commander");
+
 const menu = require('./doc-pages/licensing/menu.json');
 const supportedFrameworks = require('./src/utils/supported-frameworks');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 
-const debug = false; // in debug mode, the script writes the records it would upload into JSON files for inspection
-const clearIndices = true; // to ensure a clean index, you should clear existing records before inserting new ones
-const indexNamePrefix = 'ag-grid'; // we use 'ag-grid-dev' for development indices, and 'ag-grid' for production
+const options = commander
+    .option('-d, --debug <debug>', 'if debug = true, the script writes the records it would upload into JSON files for inspection', true)
+    .option("-i, --indexNamePrefix <prefix>", 'if indexNamePrefix = "ag-grid-dev" we\'ll update development indices, and for "ag-grid" production', 'ag-grid-dev')
+    .parse()
+    .opts();
 
+
+const clearIndices = true; // to ensure a clean index, you should clear existing records before inserting new ones
+const debug = options.debug;
+const indexNamePrefix = options.indexNamePrefix;
+
+console.log("Updating Algolia Indices");
+console.log(`debug: ${debug}, indexNamePrefix: ${indexNamePrefix}`);
 console.log(`Updating Algolia using App ID ${process.env.GATSBY_ALGOLIA_APP_ID} and admin key ${process.env.ALGOLIA_ADMIN_KEY}`);
 
 const algoliaClient = algoliasearch(process.env.GATSBY_ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
@@ -62,7 +73,9 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
 
         const cleanText = cleanContents(text);
 
-        if (cleanText === '') { return; }
+        if (cleanText === '') {
+            return;
+        }
 
         const hashPath = `${path}${key ? `#${key}` : ''}`;
 
@@ -152,7 +165,9 @@ const processIndexForFramework = async framework => {
     console.log(`Generating records for ${indexName}...`);
 
     const iterateItems = async (items, prefix) => {
-        if (!items) { return; }
+        if (!items) {
+            return;
+        }
 
         const breadcrumbPrefix = prefix ? `${prefix} > ` : '';
 

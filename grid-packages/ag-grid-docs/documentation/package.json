@@ -80,6 +80,7 @@
     "jsdom": "16.4.0",
     "prettier": "2.2.1",
     "puppeteer-core": "7.1.0",
-    "react-test-renderer": "16.14.0"
+    "react-test-renderer": "16.14.0",
+	  "commander": "7.1.0"
   }
 }
