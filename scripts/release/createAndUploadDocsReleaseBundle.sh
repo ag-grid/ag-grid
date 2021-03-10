@@ -25,22 +25,22 @@ echo "************************************************************************"
 echo "************************************************************************"
 echo "******************** Archiving Current Release *************************"
 echo "************************************************************************"
-./scripts/release/archiveCurrentRelease.sh
+#./scripts/release/archiveCurrentRelease.sh
 echo "************************************************************************"
 echo "******************** Preparing For New Deployment **********************"
 echo "************************************************************************"
-./scripts/release/prepareNewDeployment.sh $FILENAME
+#./scripts/release/prepareNewDeployment.sh $FILENAME
 echo "************************************************************************"
 echo "******************** Switch To New Release *****************************"
 echo "************************************************************************"
-./scripts/release/switchRelease.sh $TIMESTAMP $2
+#./scripts/release/switchRelease.sh $TIMESTAMP $2
 echo "************************************************************************"
 echo "******************** Update Algolia Indices *****************************"
 echo "************************************************************************"
-./scripts/release/updateAlgoliaIndices.sh
+#./scripts/release/updateAlgoliaIndices.sh
 echo "************************************************************************"
 echo "*********************** Tag Docs Release *******************************"
 echo "************************************************************************"
-TAG="vDocs-$RAW_VERSION-$TIMESTAMP"
-git tag -a $TAG -m "Docs Update: Version $VERSION, On: $TIMESTAMP"
+#TAG="vDocs-$RAW_VERSION-$TIMESTAMP"
+#git tag -a $TAG -m "Docs Update: Version $VERSION, On: $TIMESTAMP"
 
