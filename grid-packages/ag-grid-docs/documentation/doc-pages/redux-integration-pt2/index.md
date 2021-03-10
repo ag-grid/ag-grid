@@ -13,10 +13,6 @@ store to achieve elegant and powerful grid implementations.
 
 <image-caption src="redux-integration-pt2/resources/redux-file-browser.png" alt="Redux File Browser"></image-caption>
 
-[[note]]
-| This section assumes the reader has already covered [Redux Integration Part 1](/redux-integration-pt1/)
-| and is familiar with React and ES6 Javascript features.
-
 ## Creating our Redux File Store
 
 Like in Part 1, our Redux File Store is created using the `createStore` factory method
@@ -193,29 +189,29 @@ render() {
     return (
         <div className="ag-theme-alpine">
             <AgGridReact
-                // provide column definitions
+                {/* provide column definitions */}
                 columnDefs={this.colDefs}
-                // specify auto group column definition
+                {/* specify auto group column definition */}
                 autoGroupColumnDef={this.autoGroupColumnDef}
-                // row data provided via props from the file store
+                {/* row data provided via props from the file store */}
                 rowData={this.props.files}
-                // enable tree data
+                {/* enable tree data */}
                 treeData={true}
-                // return tree hierarchy from supplied data
+                {/* return tree hierarchy from supplied data */}
                 getDataPath={data => data.filePath}
-                // expand tree by default
+                {/* expand tree by default */}
                 groupDefaultExpanded={-1}
-                // fit grid columns
+                {/* fit grid columns */}
                 onGridReady={params => params.api.sizeColumnsToFit()}
-                // provide context menu callback
+                {/* provide context menu callback */}
                 getContextMenuItems={this.getContextMenuItems}
-                // provide row drag end callback
+                {/* provide row drag end callback */}
                 onRowDragEnd={this.onRowDragEnd}
-                // enable immutable data
+                {/* enable immutable data */}
                 immutableData={true}
-                // return id required for tree data and immutable data
+                {/* return id required for tree data and immutable data */}
                 getRowNodeId={data => data.id}
-                // specify our FileCellRenderer component
+                {/* specify our FileCellRenderer component */}
                 frameworkComponents={this.frameworkComponents}>
             </AgGridReact>
         </div>

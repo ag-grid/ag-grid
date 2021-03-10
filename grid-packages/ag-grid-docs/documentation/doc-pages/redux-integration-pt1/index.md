@@ -3,12 +3,8 @@ title: "Redux Integration - Part 1"
 frameworks: ["react"]
 ---
 
-This section introduces how React components using the AG Grid Data Table can take advantage of a Redux store to
+This section introduces how React components using the AG Grid Data Grid can take advantage of a Redux store to
 simplify state management.
-
-
-[[note]]
-| Be sure to refer to the [React/Redux More Details](/framework-apis/#redux--higher-order-components-hoc) section for more details around configuration.
 
 We will use the concrete example of a file view component to demonstrate how to move local
 component state to a Redux store. Updates to the files state will be retrieved from the Redux store,
@@ -247,19 +243,19 @@ render() {
     return (
         <div className="ag-theme-alpine">
             <AgGridReact
-                // provide column definitions
+                {/* provide column definitions */}                 
                 columnDefs={this.colDefs}
-                // specify auto group column definition
+                {/* specify auto group column definition */}
                 autoGroupColumnDef={this.autoGroupColumnDef}
-                // row data provided via props from the file store
+                {/* row data provided via props from the file store */}
                 rowData={this.props.files}
-                // expand groups by default
+                {/* expand groups by default */}
                 groupDefaultExpanded={-1}
-                // provide context menu callback
+                {/* provide context menu callback */}
                 getContextMenuItems={this.getContextMenuItems}
-                // enable immutable data
+                {/* enable immutable data */}
                 immutableData={true}
-                // return id required for immutable data
+                {/* return id required for immutable data */}
                 getRowNodeId={data => data.id}>
             </AgGridReact>
         </div>
