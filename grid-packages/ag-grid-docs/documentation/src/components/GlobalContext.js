@@ -2,8 +2,8 @@ import React from 'react';
 import { LocalStorage } from 'utils/local-storage';
 
 const defaultContextValue = {
-    exampleImportType: 'modules',
-    useFunctionalReact: false,
+    exampleImportType: 'packages',
+    useFunctionalReact: true,
     set: () => { },
 };
 
