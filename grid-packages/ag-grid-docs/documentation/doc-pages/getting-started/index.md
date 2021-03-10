@@ -731,8 +731,8 @@ title: "Get Started with AG Grid"
 | |             <img src="resources/thinkster.png"/>
 | |         </a>
 | |     </span>
-| |     <span style="flex-grow: 1; display: inline-block; padding-left: 10px;">
-| |         Thinkster has provided a free course
+| |     <span style="flex-grow: 1; display: flex; align-items: center; padding-left: 10px;">
+| |         Thinkster has provided a free course:&nbsp;
 | |         <a href="https://thinkster.io/topics/ag-grid" target="_blank">Learning AG Grid with Angular</a>
 | |     </span>
 | | </div>
@@ -1319,8 +1319,8 @@ title: "Get Started with AG Grid"
 | |             <img style="width: 150px;" src="resources/thinkster.png"/>
 | |         </a>
 | |     </span>
-| |     <span style="flex-grow: 1; display: inline-block; padding-left: 10px;">
-| |         Thinkster has provided a free course
+| |     <span style="flex-grow: 1; display: flex; align-items: center; padding-left: 10px;">
+| |         Thinkster has provided a free course:&nbsp;
 | |         <a href="https://thinkster.io/topics/ag-grid" target="_blank">
 | |             Learning AG Grid with React
 | |         </a>

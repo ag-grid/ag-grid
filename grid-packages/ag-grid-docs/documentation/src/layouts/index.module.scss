@@ -141,6 +141,8 @@ main {
         background-position: 1rem 1rem;
         padding-left: 5rem;
         min-height: 5rem;
+        display: flex;
+        align-items: center;
 
         :global(code.language-text) {
             background-color: $pink;
