@@ -128,4 +128,5 @@ gulp.task('link-umd-e2e', linkUmdForE2E);
 gulp.task('clean-lib', cleanLib);
 gulp.task('tsc', tscTask);
 gulp.task('watch', series('tsc', watch));
-gulp.task('default', series('clean-lib', 'tsc', "clean-bundles", "create-bundles"));
+gulp.task('defaultx', series('clean-lib', 'tsc', "clean-bundles", "create-bundles"));
+gulp.task('default', series('clean-lib', 'tsc'));
