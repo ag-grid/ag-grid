@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript';
@@ -8,31 +8,30 @@ import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
-
-const GrammarMap = {
-    js: Prism.languages.javascript,
-    ts: Prism.languages.typescript,
-    css: Prism.languages.css,
-    bash: Prism.languages.bash,
-    html: Prism.languages.html,
-    jsx: Prism.languages.jsx,
-    java: Prism.languages.java,
-    sql: Prism.languages.sql,
-    diff: Prism.languages.diff,
-    scss: Prism.languages.scss
-};
+import 'prismjs/plugins/keep-markup/prism-keep-markup';
+import styles from './Code.module.scss';
 
 /**
  * This uses Prism to highlight a provided code snippet.
  */
-const Code = ({ code, language = 'ts', className, ...props }) => {
+const Code = ({ code, language = 'ts', plugins, className, ...props }) => {
+    const ref = useRef();
+
+    useEffect(() => {
+        if (ref && ref.current) {
+            // using highlightElement() rather than highlight() utilises more of the Prism lifecycle,
+            // allowing us to use plugins
+            Prism.highlightElement(ref.current);
+        }
+    });
+
     if (Array.isArray(code)) {
         code = code.join('\n');
     }
 
-    return <pre className={classnames(`language-${language}`, className)} {...props}>
-        {code && <code dangerouslySetInnerHTML={{ __html: Prism.highlight(code, GrammarMap[language], language) }} />}
+    return <pre className={classnames(styles['code'], `language-${language}`, className)} {...props}>
+        <code ref={ref} dangerouslySetInnerHTML={{ __html: code }} />
     </pre>;
 };
 
-export default Code;
+export default memo(Code);

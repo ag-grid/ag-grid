@@ -1,0 +1,10 @@
+.code {
+    a {
+        color: inherit;
+
+        &:hover {
+            color: initial;
+            border-bottom: 1px dashed;
+        }
+    }
+}

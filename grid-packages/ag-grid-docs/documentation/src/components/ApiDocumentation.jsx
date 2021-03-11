@@ -71,7 +71,7 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
             <Breadcrumbs breadcrumbs={breadcrumbs} />
             {meta && meta.description && <p dangerouslySetInnerHTML={{ __html: generateCodeTags(meta.description) }}></p>}
             {meta && meta.page && <p>See <a href={meta.page.url}>{meta.page.name}</a> for more information.</p>}
-            {config.showSnippets && names.length < 1 && <ObjectCodeSample breadcrumbs={breadcrumbs} properties={properties} />}
+            {config.showSnippets && names.length < 1 && <ObjectCodeSample id={id} breadcrumbs={breadcrumbs} properties={properties} />}
         </>;
     }
 
@@ -113,6 +113,28 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
     </>;
 };
 
+const getTypeUrl = type => {
+    if (typeof type === 'string') {
+        if (type.includes('|')) {
+            // can't handle multiple types
+            return null;
+        } else if (type.endsWith('[]')) {
+            type = type.replace(/\[\]/g, '');
+        }
+    }
+
+    const types = {
+        'Array': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array',
+        'number': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number',
+        'string': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
+        'boolean': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean',
+        'HTMLElement': 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
+        'ColDef': '../column-properties/',
+    };
+
+    return types[type];
+};
+
 const Property = ({ id, name, definition }) => {
     const [isExpanded, setExpanded] = useState(false);
 
@@ -146,25 +168,7 @@ const Property = ({ id, name, definition }) => {
 
     const type = definition.type || inferType(definition.default);
     const isFunction = !isObject && type != null && typeof type === 'object';
-
-    const getTypeLink = type => {
-        if (typeof type === 'string') {
-            if (type.includes('|')) {
-                // can't handle multiple types
-                return null;
-            } else if (type.endsWith('[]')) {
-                type = 'Array';
-            }
-        }
-
-        const specialTypes = {
-            'HTMLElement': 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement'
-        };
-
-        return specialTypes[type] || `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/${type}`;
-    };
-
-    const link = isObject ? `#reference-${id}.${name}` : getTypeLink(type);
+    const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type);
 
     return <tr>
         <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)} role="presentation">
@@ -175,8 +179,8 @@ const Property = ({ id, name, definition }) => {
         <td onClick={() => setExpanded(!isExpanded)} role="presentation">
             <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
             <div>
-                {link && !isFunction ?
-                    <a className={styles['reference__type']} href={link} target={link.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
+                {typeUrl ?
+                    <a className={styles['reference__type']} href={typeUrl} target={typeUrl.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
                         {isObject ? getInterfaceName(name) : type}
                     </a> :
                     <span className={styles['reference__type']}>{isFunction ? 'Function' : type}</span>}
@@ -221,7 +225,9 @@ const Breadcrumbs = ({ breadcrumbs }) => {
 
 const generateCodeTags = content => content.replace(/`(.*?)`/g, '<code>$1</code>');
 
-const ObjectCodeSample = ({ breadcrumbs, properties }) => {
+const createLinkedType = (type, url) => `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${type}</a>`;
+
+const ObjectCodeSample = ({ id, breadcrumbs, properties }) => {
     const lines = [];
     let indentationLevel = 0;
 
@@ -249,23 +255,27 @@ const ObjectCodeSample = ({ breadcrumbs, properties }) => {
             line += '?';
         }
 
-        line += ': ';
+        let type;
+        let isObject = false;
 
         if (definition.meta && definition.meta.type != null) {
-            line += definition.meta.type;
+            type = definition.meta.type;
         } else if (definition.type != null) {
-            line += typeof definition.type === 'object' ? 'Function' : definition.type;
+            type = typeof definition.type === 'object' ? 'Function' : definition.type;
         } else if (definition.options != null) {
-            line += definition.options.map(option => formatJson(option)).join(' | ');
+            type = definition.options.map(option => formatJson(option)).join(' | ');
         } else if (definition.default != null) {
-            line += Array.isArray(definition.default) ? 'any[]' : typeof definition.default;
+            type = Array.isArray(definition.default) ? 'any[]' : typeof definition.default;
         } else if (definition.description != null) {
-            line += 'any';
+            type = 'any';
         } else {
-            line += getInterfaceName(key);
+            type = getInterfaceName(key);
+            isObject = true;
         }
 
-        line += ';';
+        const typeUrl = isObject ? `#reference-${id}.${key}` : getTypeUrl(type);
+
+        line += `: ${typeUrl ? createLinkedType(type, typeUrl) : type};`;
 
         if (definition.default != null) {
             line += ` // default: ${formatJson(definition.default)}`;
@@ -291,7 +301,9 @@ const FunctionCodeSample = ({ name, type }) => {
 
     Object.entries(args).forEach(([key, value]) => {
         const type = typeof value === 'object' ? getInterfaceName(key) : value;
-        argumentDefinitions.push(`${key}: ${type}`);
+        const typeUrl = getTypeUrl(type);
+
+        argumentDefinitions.push(`${key}: ${typeUrl ? createLinkedType(type, typeUrl) : type}`);
     });
 
     const functionName = name.endsWith('()') ? name.replace('()', '') : '';
@@ -299,8 +311,10 @@ const FunctionCodeSample = ({ name, type }) => {
         `\n    ${argumentDefinitions.join(',\n    ')}\n` :
         argumentDefinitions.join('');
 
+    const returnTypeUrl = getTypeUrl(returnType);
+
     const lines = [
-        `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? 'IReturn' : returnType || 'void'};`,
+        `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? 'IReturn' : (returnTypeUrl ? createLinkedType(returnType, returnTypeUrl) : returnType || 'void')};`,
     ];
 
     Object.keys(args)
@@ -317,8 +331,10 @@ const FunctionCodeSample = ({ name, type }) => {
 const getInterfaceLines = (name, definition) => {
     const lines = [`interface ${name} {`];
 
-    Object.entries(definition).forEach(([key, value]) => {
-        lines.push(`  ${key}: ${value};`);
+    Object.entries(definition).forEach(([property, type]) => {
+        const typeUrl = getTypeUrl(type);
+
+        lines.push(`  ${property}: ${typeUrl ? createLinkedType(type, typeUrl) : type};`);
     });
 
     lines.push('}');

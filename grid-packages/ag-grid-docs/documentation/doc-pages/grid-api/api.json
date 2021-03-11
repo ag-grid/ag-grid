@@ -7,7 +7,7 @@
             "description": "Returns the current column definitions.",
             "type": {
                 "arguments": {},
-                "returnType": "ColumnDef[]"
+                "returnType": "ColDef[]"
             }
         },
         "sizeColumnsToFit()": {
@@ -20,7 +20,7 @@
             "description": "Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.",
             "type": {
                 "arguments": {
-                    "colDefs": "ColumnDef[]"
+                    "colDefs": "ColDef[]"
                 }
             }
         },
@@ -28,7 +28,7 @@
             "description": "Call to set new auto group column definition. The grid will recreate any auto-group columns if present.",
             "type": {
                 "arguments": {
-                    "colDef": "ColumnDef"
+                    "colDef": "ColDef"
                 }
             }
         }
@@ -144,6 +144,9 @@
             "type": {
                 "arguments": {
                     "datasource": "IDatasource"
+                },
+                "argumentLinks": {
+                    "datasource": "http://www.google.com/"
                 }
             }
         },
