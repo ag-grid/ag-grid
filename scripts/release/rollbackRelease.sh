@@ -56,13 +56,13 @@ if [ "$2" != "skipWarning" ]; then
     done
 fi
 
-# copy the remote script that will create tmp dirs, unzip the new deployment etc to the upload dir (archives)
-curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T "./scripts/release/switchReleaseRemote.sh" ftp://ag-grid.com/
+# copy the remote script that will restore public_html to the backup with the timestamp specified
+curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T "./scripts/release/rollbackReleaseRemote.sh" ftp://ag-grid.com/
 # move prepareNewDeploymentRemote from the archives dir to the root, and make it executable
-ssh -i $SSH_LOCATION ceolter@ag-grid.com "mv public_html/archive/switchReleaseRemote.sh ./"
-ssh -i $SSH_LOCATION ceolter@ag-grid.com "chmod +x ./switchReleaseRemote.sh"
+ssh -i $SSH_LOCATION ceolter@ag-grid.com "mv public_html/archive/rollbackReleaseRemote.sh ./"
+ssh -i $SSH_LOCATION ceolter@ag-grid.com "chmod +x ./rollbackReleaseRemote.sh"
 
-# backup the old public_html, unzip the new release and update permissions etc
+# restore public_html to the backup with the timestamp specified
 # we do this via a remote script as there are many steps and doing so one by one remotely times out occasionally
-echo "cd /home/ceolter/ && ./switchReleaseRemote.sh $TIMESTAMP"
-ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd /home/ceolter/ && ./switchReleaseRemote.sh $TIMESTAMP"
+echo "cd /home/ceolter/ && ./rollbackReleaseRemote.sh $TIMESTAMP"
+ssh -i $SSH_LOCATION ceolter@ag-grid.com "cd /home/ceolter/ && ./rollbackReleaseRemote.sh $TIMESTAMP"
