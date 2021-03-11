@@ -35,9 +35,6 @@ module.exports = {
     devServer: {
         contentBase: path.join(__dirname, "dev-server"),
         compress: true,
-        port: 4000,
-        open: {
-            app: ['Google Chrome', '--incognito', '--other-flag'],
-        }
+        port: 4000
     },
 };
