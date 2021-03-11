@@ -2,12 +2,16 @@
 
 if [ "$#" -lt 1 ]
   then
-    echo "You must supply a timestamp"
-    echo "For example: ./scripts/release/switchRelease.sh 20191210"
+    echo "You must supply a release tag"
+    echo "For example: ./scripts/release/rollbackRelease.sh vDocs-25.1.0-20210309"
     exit 1
 fi
 
-TIMESTAMP=$1
+# will be in the form of vDocs-25.1.0-20210309
+TAG=$1
+
+# extract the date component - ie 20210309
+TIMESTAMP=`sed 's/.*-//g'`
 
 CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
 SSH_LOCATION=$HOME/$SSH_FILE
