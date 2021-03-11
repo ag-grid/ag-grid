@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
+import classnames from 'classnames';
 import { useJsonFileNodes } from './use-json-file-nodes';
 import anchorIcon from 'images/anchor';
-import styles from './ApiDocumentation.module.scss';
 import Code from './Code';
+import { inferType } from 'components/documentation-helpers';
+import styles from './ApiDocumentation.module.scss';
 
 /**
  * This generates tabulated API documentation based on information in JSON files. This way it is possible to show
@@ -87,66 +89,17 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
             return;
         }
 
-        let isRequired = false;
-        let description = null;
+        rows.push(<Property key={name} id={id} name={name} definition={definition} />);
 
-        if (definition.description) {
-            // process property object
-            isRequired = !!definition.isRequired;
-            description = generateCodeTags(definition.description);
-
-            const { more } = definition;
-
-            if (more != null && more.url) {
-                description += ` See <a href="${more.url}">${more.name}</a>.`;
-            }
-
-            if (definition.default != null) {
-                description += `<br />Default: <code>${formatJson(definition.default)}</code>`;
-            }
-
-            if (definition.options != null) {
-                description += `<br />Options: <code>${definition.options.map(o => formatJson(o)).join('</code>, <code>')}</code>`;
-            }
-
-            if (typeof definition.type === 'object') {
-                description += ReactDOMServer.renderToStaticMarkup(<FunctionCodeSample type={definition.type} />);
-            }
-        } else if (typeof definition === 'string') {
-            // process simple property string
-            description = definition;
-        } else {
-            // this must be the parent of a child object
-            if (definition.meta != null && definition.meta.description != null) {
-                description = generateCodeTags(definition.meta.description);
-
-                if (definition.meta.description.indexOf('<br') >= 0) {
-                    // if the description already has line breaks, add these for more space
-                    description += '<br /><br />';
-                } else {
-                    description += ' ';
-                }
-            } else {
-                description = '';
-            }
-
-            description += `See <a href="#reference-${id}.${name}">${name}</a> for more details about this configuration object.`;
+        if (typeof definition !== 'string' && !definition.description) {
+            // store object property to process later
             objectProperties[name] = definition;
         }
-
-        rows.push(<tr key={name}>
-            <td>
-                <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
-                {isRequired && <><br /><span className={styles['reference__required']}>Required</span></>}
-            </td>
-            <td dangerouslySetInnerHTML={{ __html: description }}></td>
-            {definition.relevantTo && <td style={{ whiteSpace: 'nowrap' }}>{definition.relevantTo.join(', ')}</td>}
-        </tr>);
     });
 
     return <>
         {header}
-        <table>
+        <table className={styles['reference']}>
             <tbody>
                 {rows}
             </tbody>
@@ -159,6 +112,88 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
             breadcrumbs={{ ...breadcrumbs }}
         />)}
     </>;
+};
+
+const Property = ({ id, name, definition }) => {
+    const [isExpanded, setExpanded] = useState(false);
+
+    let description = '';
+    let isObject = false;
+
+    if (definition.description) {
+        // process property object
+        description = generateCodeTags(definition.description);
+
+        const { more } = definition;
+
+        if (more != null && more.url) {
+            description += ` See <a href="${more.url}">${more.name}</a>.`;
+        }
+    } else if (typeof definition === 'string') {
+        // process simple property string
+        description = definition;
+    } else {
+        // this must be the parent of a child object
+        if (definition.meta != null && definition.meta.description != null) {
+            description = generateCodeTags(definition.meta.description);
+        }
+
+        isObject = true;
+    }
+
+    if (!!definition.isRequired) {
+        name += `&nbsp;<span class="${styles['reference__required']}" title="Required">&ast;</span>`;
+    }
+
+    const type = definition.type || inferType(definition.default);
+    const isFunction = !isObject && type != null && typeof type === 'object';
+
+    const getTypeLink = type => {
+        if (typeof type === 'string') {
+            if (type.includes('|')) {
+                // can't handle multiple types
+                return null;
+            } else if (type.endsWith('[]')) {
+                type = 'Array';
+            }
+        }
+
+        const specialTypes = {
+            'HTMLElement': 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement'
+        };
+
+        return specialTypes[type] || `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/${type}`;
+    };
+
+    const link = isObject ? `#reference-${id}.${name}` : getTypeLink(type);
+
+    return <tr>
+        <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)}>
+            {isFunction && <div className={styles['reference__expander']}>
+                <svg className={classnames({ 'fa-rotate-90': isExpanded })}><use href="#menu-item" /></svg>
+            </div>}
+        </td>
+        <td onClick={() => setExpanded(!isExpanded)}>
+            <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
+            <div>
+                {link && !isFunction ?
+                    <a className={styles['reference__type']} href={link} target={link.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
+                        {isObject ? getInterfaceName(name) : type}
+                    </a> :
+                    <span className={styles['reference__type']}>{isFunction ? 'Function' : type}</span>}
+            </div>
+        </td>
+        <td>
+            <div
+                className={classnames(styles['reference__description'], { [styles['reference__description--expanded']]: isExpanded })}
+                dangerouslySetInnerHTML={{ __html: description }}></div>
+            {isObject && <div>See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.</div>}
+            {definition.default != null && <div>Default: <code>{formatJson(definition.default)}</code></div>}
+            {definition.options != null && <div>Options: {definition.options.map((o, i) => <>{i > 0 ? ', ' : ''}<code key={o}>{formatJson(o)}</code></>)}</div>}
+            {typeof definition.type === 'object' && <div className={isExpanded ? '' : 'd-none'}><FunctionCodeSample type={definition.type} /></div>}
+        </td>
+        {definition.relevantTo && <td style={{ whiteSpace: 'nowrap' }}>{definition.relevantTo.join(', ')}</td>}
+    </tr>;
 };
 
 const Breadcrumbs = ({ breadcrumbs }) => {
@@ -211,7 +246,7 @@ const ObjectCodeSample = ({ breadcrumbs, properties }) => {
         let line = getIndent(indentationLevel) + key;
 
         // process property object
-        if (!!definition.isRequired) {
+        if (!definition.isRequired) {
             line += '?';
         }
 
@@ -228,7 +263,7 @@ const ObjectCodeSample = ({ breadcrumbs, properties }) => {
         } else if (definition.description != null) {
             line += 'any';
         } else {
-            line += `I${ucfirst(key)}`;
+            line += getInterfaceName(key);
         }
 
         line += ';';
@@ -247,6 +282,8 @@ const ObjectCodeSample = ({ breadcrumbs, properties }) => {
     return <Code code={lines.join('\n')} />;
 };
 
+const getInterfaceName = name => `I${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
+
 const FunctionCodeSample = ({ type }) => {
     const args = type.parameters ? { params: type.parameters } : type.arguments;
     const { returnType } = type;
@@ -254,7 +291,7 @@ const FunctionCodeSample = ({ type }) => {
     const argumentDefinitions = [];
 
     Object.entries(args).forEach(([key, value]) => {
-        const type = typeof value === 'object' ? `I${ucfirst(key)}` : value;
+        const type = typeof value === 'object' ? getInterfaceName(key) : value;
         argumentDefinitions.push(`${key}: ${type}`);
     });
 
@@ -264,13 +301,13 @@ const FunctionCodeSample = ({ type }) => {
 
     Object.keys(args)
         .filter(key => typeof args[key] === 'object')
-        .forEach(key => lines.push('', ...getInterfaceLines(`I${ucfirst(key)}`, args[key])));
+        .forEach(key => lines.push('', ...getInterfaceLines(getInterfaceName(key), args[key])));
 
     if (returnTypeIsObject) {
         lines.push('', ...getInterfaceLines('IReturn', returnType));
     }
 
-    return <Code code={lines.join('\n')} />;
+    return <Code code={lines.join('\n')} className={styles['reference__code-sample']} />;
 };
 
 const getInterfaceLines = (name, definition) => {
@@ -284,8 +321,6 @@ const getInterfaceLines = (name, definition) => {
 
     return lines;
 };
-
-const ucfirst = value => value.substr(0, 1).toUpperCase() + value.substr(1);
 
 const getJsonFromFile = (nodes, pageName, source) => {
     const json = nodes.filter(n => n.relativePath === source || n.relativePath === `${pageName}/${source}`)[0];

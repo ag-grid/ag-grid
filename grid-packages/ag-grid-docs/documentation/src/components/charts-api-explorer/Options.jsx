@@ -1,22 +1,11 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
-import { formatJson } from './utils.jsx';
-import * as Config from './config.jsx';
+import { formatJson } from './utils';
+import * as Config from './config';
 import styles from './Options.module.scss';
-import { doOnEnter } from 'components/key-handlers.js';
-import Code from '../Code.jsx';
-
-const getType = value => {
-    if (value == null) {
-        return null;
-    }
-
-    if (Array.isArray(value)) {
-        return value.length ? `${getType(value[0])}[]` : 'object[]';
-    }
-
-    return typeof value;
-};
+import { doOnEnter } from 'components/key-handlers';
+import { inferType } from 'components/documentation-helpers';
+import Code from '../Code';
 
 const FunctionDefinition = ({ definition }) => {
     const { parameters, returnType } = definition;
@@ -42,7 +31,7 @@ const FunctionDefinition = ({ definition }) => {
 };
 
 const Option = ({ name, isVisible, isAlternate, isRequired, type, description, defaultValue, Editor, editorProps }) => {
-    const derivedType = type || getType(defaultValue);
+    const derivedType = type || inferType(defaultValue);
     const isFunction = derivedType != null && typeof derivedType === 'object';
     const configureLinksForParent = value =>
         value.replace(/<a (.*?)href="([^"]+)"(.*?)>/g, '<a $1href="#" onclick="window.parent.location=\'../$2\'"$3>');

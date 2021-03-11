@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-bash';
@@ -24,12 +25,12 @@ const GrammarMap = {
 /**
  * This uses Prism to highlight a provided code snippet.
  */
-const Code = ({ code, language = 'ts' }) => {
+const Code = ({ code, language = 'ts', className, ...props }) => {
     if (Array.isArray(code)) {
         code = code.join('\n');
     }
 
-    return <pre className={`language-${language}`}>
+    return <pre className={classnames(`language-${language}`, className)} {...props}>
         {code && <code dangerouslySetInnerHTML={{ __html: Prism.highlight(code, GrammarMap[language], language) }} />}
     </pre>;
 };
