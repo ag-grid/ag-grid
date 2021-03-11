@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import ReactDOMServer from 'react-dom/server';
 import classnames from 'classnames';
 import { useJsonFileNodes } from './use-json-file-nodes';
 import anchorIcon from 'images/anchor';
@@ -168,12 +167,12 @@ const Property = ({ id, name, definition }) => {
     const link = isObject ? `#reference-${id}.${name}` : getTypeLink(type);
 
     return <tr>
-        <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)}>
+        <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)} role="presentation">
             {isFunction && <div className={styles['reference__expander']}>
                 <svg className={classnames({ 'fa-rotate-90': isExpanded })}><use href="#menu-item" /></svg>
             </div>}
         </td>
-        <td onClick={() => setExpanded(!isExpanded)}>
+        <td onClick={() => setExpanded(!isExpanded)} role="presentation">
             <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
             <div>
                 {link && !isFunction ?
