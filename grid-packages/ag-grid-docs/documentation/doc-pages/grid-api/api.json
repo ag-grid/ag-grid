@@ -4,51 +4,164 @@
             "displayName": "Columns"
         },
         "getColumnDefs()": {
-            "description": "Returns the current column definitions."
+            "description": "Returns the current column definitions.",
+            "type": {
+                "arguments": {},
+                "returnType": "ColumnDef[]"
+            }
         },
         "sizeColumnsToFit()": {
-            "description": "Sets columns to adjust in size to fit the grid horizontally."
+            "description": "Sets columns to adjust in size to fit the grid horizontally.",
+            "type": {
+                "arguments": {}
+            }
         },
-        "setColumnDefs(colDefs)": {
-            "description": "Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows."
+        "setColumnDefs()": {
+            "description": "Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.",
+            "type": {
+                "arguments": {
+                    "colDefs": "ColumnDef[]"
+                }
+            }
         },
-        "setAutoGroupColumnDef(colDef)": {
-            "description": "Call to set new auto group column definition. The grid will recreate any auto-group columns if present."
+        "setAutoGroupColumnDef()": {
+            "description": "Call to set new auto group column definition. The grid will recreate any auto-group columns if present.",
+            "type": {
+                "arguments": {
+                    "colDef": "ColumnDef"
+                }
+            }
         }
     },
     "data": {
         "meta": {
             "displayName": "Data"
         },
-        "setRowData(rows)": {
-            "description": "Set rows."
+        "setRowData()": {
+            "description": "Set row data.",
+            "type": {
+                "arguments": {
+                    "rowData": "any[]"
+                }
+            }
         },
-        "applyTransaction(transaction)": {
-            "description": "Update row data. Pass a transaction object with lists for `add`, `remove` and `update`."
+        "applyTransaction()": {
+            "description": "Update row data. Pass a transaction object with lists for `add`, `remove` and `update`.",
+            "type": {
+                "arguments": {
+                    "transaction": {
+                        "add?": "any[]",
+                        "remove?": "any[]",
+                        "update?": "any[]"
+                    }
+                }
+            }
         },
-        "applyTransactionAsync(transaction, callback)": {
-            "description": "Same as applyTransaction except executes asynchronous for efficiency."
+        "applyTransactionAsync()": {
+            "description": "Same as `applyTransaction` except executes asynchronously for efficiency.",
+            "type": {
+                "arguments": {
+                    "transaction": {
+                        "add?": "any[]",
+                        "remove?": "any[]",
+                        "update?": "any[]"
+                    },
+                    "callback": "() => void"
+                }
+            }
         },
         "flushAsyncTransactions()": {
-            "description": "Executes any remaining grid async transaction, if any are waiting to be executed."
+            "description": "Executes any remaining grid async transaction, if any are waiting to be executed.",
+            "type": {
+                "arguments": {}
+            }
         },
-        "setPinnedTopRowData(rowData)<br />setPinnedBottomRowData()<br />getPinnedTopRowCount()<br />getPinnedBottomRowCount()<br />getPinnedTopRow(index)<br />getPinnedBottomRow(index)": {
-            "description": "Methods for getting and setting the data and getting the Row Nodes of the pinned rows."
+        "setPinnedTopRowData()": {
+            "description": "Set the top pinned rows.",
+            "type": {
+                "arguments": {
+                    "rowData": "any[]"
+                }
+            }
+        },
+        "setPinnedBottomRowData()": {
+            "description": "Set the bottom pinned rows.",
+            "type": {
+                "arguments": {
+                    "rowData": "any[]"
+                }
+            }
+        },
+        "getPinnedTopRowCount()": {
+            "description": "Gets the number of top pinned rows.",
+            "type": {
+                "arguments": {},
+                "returnType": "number"
+            }
+        },
+        "getPinnedBottomRowCount()": {
+            "description": "Gets the number of bottom pinned rows.",
+            "type": {
+                "arguments": {},
+                "returnType": "number"
+            }
+        },
+        "getPinnedTopRow()": {
+            "description": "Gets the top pinned row with the specified index.",
+            "type": {
+                "arguments": {
+                    "index": "number"
+                },
+                "returnType": "any"
+            }
+        },
+        "getPinnedBottomRow()": {
+            "description": "Gets the top pinned row with the specified index.",
+            "type": {
+                "arguments": {
+                    "index": "number"
+                },
+                "returnType": "any"
+            }
         },
         "getModel()": {
-            "description": "Returns the row model inside the table. From here you can see the original rows, rows after filter has been applied, rows after aggregation has been applied, and the final set of 'to be displayed' rows."
+            "description": "Returns the row model inside the table. From here you can see the original rows, rows after filter has been applied, rows after aggregation has been applied, and the final set of 'to be displayed' rows.",
+            "type": {
+                "arguments": {},
+                "returnType": "IRowModel"
+            }
         },
-        "refreshClientSideRowModel(params)": {
-            "description": "Gets the Client-Side Row Model to refresh, executing the grouping, filtering and sorting again."
+        "refreshClientSideRowModel()": {
+            "description": "Gets the Client-Side Row Model to refresh, executing the grouping, filtering and sorting again.",
+            "type": {
+                "arguments": {
+                    "step?": "string"
+                }
+            }
         },
-        "setDatasource(datasource)": {
-            "description": "Set new datasource for Infinite Row Model."
+        "setDatasource()": {
+            "description": "Set new datasource for Infinite Row Model.",
+            "type": {
+                "arguments": {
+                    "datasource": "IDatasource"
+                }
+            }
         },
-        "setServerSideDatasource(datasource)": {
-            "description": "Set new datasource for Server-Side Row Model."
+        "setServerSideDatasource()": {
+            "description": "Set new datasource for Server-Side Row Model.",
+            "type": {
+                "arguments": {
+                    "datasource": "IDatasource"
+                }
+            }
         },
-        "setViewportDatasource(datasource)": {
-            "description": "Set new datasource for Viewport Row Model."
+        "setViewportDatasource()": {
+            "description": "Set new datasource for Viewport Row Model.",
+            "type": {
+                "arguments": {
+                    "datasource": "IDatasource"
+                }
+            }
         }
     },
     "rowNodes": {

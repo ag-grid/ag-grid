@@ -189,7 +189,7 @@ const Property = ({ id, name, definition }) => {
             {isObject && <div>See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.</div>}
             {definition.default != null && <div>Default: <code>{formatJson(definition.default)}</code></div>}
             {definition.options != null && <div>Options: {definition.options.map((o, i) => <>{i > 0 ? ', ' : ''}<code key={o}>{formatJson(o)}</code></>)}</div>}
-            {typeof definition.type === 'object' && <div className={isExpanded ? '' : 'd-none'}><FunctionCodeSample type={definition.type} /></div>}
+            {typeof definition.type === 'object' && <div className={isExpanded ? '' : 'd-none'}><FunctionCodeSample name={name} type={definition.type} /></div>}
         </td>
         {definition.relevantTo && <td style={{ whiteSpace: 'nowrap' }}>{definition.relevantTo.join(', ')}</td>}
     </tr>;
@@ -283,10 +283,10 @@ const ObjectCodeSample = ({ breadcrumbs, properties }) => {
 
 const getInterfaceName = name => `I${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
 
-const FunctionCodeSample = ({ type }) => {
+const FunctionCodeSample = ({ name, type }) => {
     const args = type.parameters ? { params: type.parameters } : type.arguments;
     const { returnType } = type;
-    const returnTypeIsObject = typeof returnType === 'object';
+    const returnTypeIsObject = returnType != null && typeof returnType === 'object';
     const argumentDefinitions = [];
 
     Object.entries(args).forEach(([key, value]) => {
@@ -294,8 +294,13 @@ const FunctionCodeSample = ({ type }) => {
         argumentDefinitions.push(`${key}: ${type}`);
     });
 
+    const functionName = name.endsWith('()') ? name.replace('()', '') : '';
+    const functionArguments = argumentDefinitions.length > 1 ?
+        `\n    ${argumentDefinitions.join(',\n    ')}\n` :
+        argumentDefinitions.join('');
+
     const lines = [
-        `function (${argumentDefinitions.join(',\n         ')}): ${returnTypeIsObject ? 'IReturn' : returnType};`,
+        `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? 'IReturn' : returnType || 'void'};`,
     ];
 
     Object.keys(args)
