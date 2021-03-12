@@ -7,7 +7,10 @@ export class TimeAxis extends ChartAxis<TimeScale> {
 
     constructor() {
         super();
-        this.scale.clamp = true;
+
+        const scale = new TimeScale();
+        scale.clamp = true;
+        this.scale = scale;
     }
 
     private _nice: boolean = true;

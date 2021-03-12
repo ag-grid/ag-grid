@@ -166,6 +166,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     set scale(value: S) {
         this._scale = value;
         this.requestedRange = value.range.slice();
+        this.onTickFormatChange();
     }
     get scale(): S {
         return this._scale;
@@ -200,7 +201,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
         this.label.onFormatChange = this.onTickFormatChange.bind(this);
         this.group.append(this.lineNode);
-        this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
 
@@ -269,11 +269,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
     private tickFormatter?: (datum: any) => string;
     private onTickFormatChange(format?: string) {
         if (format) {
-            if (this.scale.tickFormat) {
+            if (this.scale && this.scale.tickFormat) {
                 this.tickFormatter = this.scale.tickFormat(this.tick.count, format);
             }
         } else {
-            if (this.scale.tickFormat) {
+            if (this.scale && this.scale.tickFormat) {
                 this.tickFormatter = this.scale.tickFormat(this.tick.count, undefined);
             } else {
                 this.tickFormatter = undefined;

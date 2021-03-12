@@ -1,4 +1,4 @@
-import ContinuousScale from "../../scale/continuousScale";
+import { LinearScale } from "../../scale/linearScale";
 import { ChartAxis } from "../chartAxis";
 
 export class NumberAxis extends ChartAxis {
@@ -7,7 +7,10 @@ export class NumberAxis extends ChartAxis {
 
     constructor() {
         super();
-        (this.scale as ContinuousScale).clamp = true;
+
+        const scale = new LinearScale();
+        scale.clamp = true;
+        this.scale = scale;
     }
 
     protected _nice: boolean = true;
