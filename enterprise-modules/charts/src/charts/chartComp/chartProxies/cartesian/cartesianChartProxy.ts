@@ -160,7 +160,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         return options;
     }
 
-    protected axisTypeToClassMap: { [key in string]: typeof ChartAxis } = {
+    protected axisTypeToClassMap: { [key in string]: any } = {
         number: NumberAxis,
         category: CategoryAxis,
         groupedCategory: GroupedCategoryAxis,

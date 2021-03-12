@@ -30,15 +30,11 @@ interface ChartAxisMeta {
     boundSeries: Series[];
 }
 
-export class ChartAxis extends Axis<Scale<any, number>> {
+export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extends Axis<S> {
     keys: string[] = [];
     direction: ChartAxisDirection;
     boundSeries: Series[] = [];
     linkedTo?: ChartAxis;
-
-    constructor(scale: Scale<any, number>) {
-        super(scale);
-    }
 
     get type(): string {
         return (this.constructor as any).type || '';

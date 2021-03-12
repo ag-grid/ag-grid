@@ -1,13 +1,13 @@
 import { TimeScale } from "../../scale/timeScale";
 import { ChartAxis } from "../chartAxis";
 
-export class TimeAxis extends ChartAxis {
+export class TimeAxis extends ChartAxis<TimeScale> {
     static className = 'TimeAxis';
     static type = 'time';
 
     constructor() {
-        super(new TimeScale());
-        (this.scale as TimeScale).clamp = true;
+        super();
+        this.scale.clamp = true;
     }
 
     private _nice: boolean = true;
