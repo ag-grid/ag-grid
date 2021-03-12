@@ -7,6 +7,20 @@ export class LogScale extends ContinuousScale {
     baseLog = identity; // takes a log with base `base` of `x`
     basePow = identity; // raises `base` to the power of `x`
 
+    protected setDomain(values: any[]) {
+        const df = values[0];
+        const dl = values[values.length - 1];
+
+        if (df === 0 || dl === 0 || df < 0 && dl > 0 || df > 0 && dl < 0) {
+            throw 'Log scale domain should not start at, end at or cross zero.';
+        }
+
+        super.setDomain(values);
+    }
+    protected getDomain(): any[] {
+        return super.getDomain();
+    }
+
     _base = 10;
     set base(value) {
         if (this._base !== value) {
@@ -161,5 +175,35 @@ export class LogScale extends ContinuousScale {
         }
 
         return isReversed ? z.reverse() : z;
+    }
+
+    tickFormat(count: any, specifier?: (x: number) => string): (x: number) => string {
+        const { base } = this;
+
+        if (specifier == null) {
+            specifier = (base === 10 ? '.0e' : ',') as any;
+        }
+
+        if (typeof specifier !== 'function') {
+            specifier = (x: number) => String(x); // TODO: implement number formatting
+        }
+
+        if (count === Infinity) {
+            return specifier;
+        }
+
+        if (count == null) {
+            count = 10;
+        }
+
+        const k = Math.max(1, base * count / this.ticks().length);
+
+        return function (d) {
+            var i = d / this.makePowFn(Math.round(this.makeLogFn(d)));
+            if (i * base < base - 0.5) {
+                i *= base;
+            }
+            return i <= k ? specifier!(d) : '';
+        };
     }
 }

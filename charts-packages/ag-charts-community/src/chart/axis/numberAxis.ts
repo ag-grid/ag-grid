@@ -1,3 +1,4 @@
+import ContinuousScale from "../../scale/continuousScale";
 import { LinearScale } from "../../scale/linearScale";
 import { ChartAxis } from "../chartAxis";
 
@@ -5,8 +6,8 @@ export class NumberAxis extends ChartAxis {
     static className = 'NumberAxis';
     static type = 'number';
 
-    constructor() {
-        super(new LinearScale());
+    constructor(scale: ContinuousScale = new LinearScale()) {
+        super(scale);
         (this.scale as LinearScale).clamp = true;
     }
 

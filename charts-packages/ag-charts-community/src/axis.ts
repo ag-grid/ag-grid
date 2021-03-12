@@ -121,7 +121,7 @@ export class AxisLabel {
 
     onFormatChange?: (format?: string) => void;
 
-    private _format?: string;
+    private _format: string | undefined;
     set format(value: string | undefined) {
         // See `TimeLocaleObject` docs for the list of supported format directives.
         if (this._format !== value) {
@@ -264,11 +264,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
     private onTickFormatChange(format?: string) {
         if (format) {
             if (this.scale.tickFormat) {
-                this.tickFormatter = this.scale.tickFormat(10, format);
+                this.tickFormatter = this.scale.tickFormat(this.tick.count, format);
             }
         } else {
             if (this.scale.tickFormat) {
-                this.tickFormatter = this.scale.tickFormat(10, undefined);
+                this.tickFormatter = this.scale.tickFormat(this.tick.count, undefined);
             } else {
                 this.tickFormatter = undefined;
             }
