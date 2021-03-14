@@ -667,7 +667,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const params: CsvExportParams = {
             columnKeys: columnKeys,
             skipHeader: !includeHeaders,
-            skipFooters: true,
             suppressQuotes: true,
             columnSeparator: this.gridOptionsWrapper.getClipboardDeliminator(),
             onlySelected: true,

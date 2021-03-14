@@ -22,12 +22,34 @@ var gridOptions = {
     ]
 };
 
+function getValue(inputSelector) {
+    var text = document.querySelector(inputSelector).value;
+    switch (text) {
+        case 'none':
+            return;
+        case 'tab':
+            return '\t';
+        default:
+            return text;
+    }
+}
+
+function getParams() {
+    return {
+        columnSeparator: getValue('#columnSeparator'),
+    };
+}
+
 function onBtnExport() {
-    gridOptions.api.exportDataAsCsv();
+    var params = getParams();
+    if (params.columnSeparator) {
+        alert('NOTE: you are downloading a file with non-standard separators - it may not render correctly in Excel.');
+    }
+    gridOptions.api.exportDataAsCsv(params);
 }
 
 function onBtnUpdate() {
-    document.querySelector('#csvResult').value = gridOptions.api.getDataAsCsv();
+    document.querySelector('#csvResult').value = gridOptions.api.getDataAsCsv(getParams());
 }
 
 // setup the grid after the page has finished loading

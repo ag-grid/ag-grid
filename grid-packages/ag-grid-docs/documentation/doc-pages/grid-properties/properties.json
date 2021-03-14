@@ -772,9 +772,6 @@
         "rowClassRules": {
             "description": "Rules which can be applied to include certain CSS classes. See <a href='../row-styles/#row-class-rules'>Row Class Rules</a>."
         },
-        "excelStyles": {
-            "description": "The list of Excel styles to be used when <a href='../excel-export/'>exporting to Excel</a>"
-        },
         "scrollbarWidth": {
             "description": "Tell the grid how wide the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations."
         },
@@ -1012,6 +1009,9 @@
         "suppressExcelExport": {
             "default": false,
             "description": "Prevents the user from exporting the grid to Excel."
+        },
+        "excelStyles": {
+            "description": "A list (array) of <a href='../excel-export-styles/#excelstyle'>Excel Styles</a> to be used when <a href='../excel-export-styles/'>exporting to Excel with styles</a>"
         },
         "asyncTransactionWaitMillis": {
             "description": "How many milliseconds to wait before executing a <a href='../data-update-high-frequency/'>batch of async transactions</a>."

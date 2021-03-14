@@ -10,9 +10,18 @@ var gridOptions = {
     popupParent:document.body,
 
     columnDefs: [
-        { field: 'make' },
-        { field: 'model' },
-        { field: 'price' }
+        { headerName: 'Brand',
+            children: [
+                { field: 'make' },
+                { field: 'model' },
+            ]
+        },
+        {
+            headerName : 'Value',
+           children: [
+            { field: 'price' }
+            ]
+        }
     ],
 
     rowData: [
@@ -22,12 +31,25 @@ var gridOptions = {
     ]
 };
 
+function getBoolean(id) {
+    var field = document.querySelector('#' + id);
+
+    return !!field.checked;
+}
+
+function getParams() {
+    return {
+        columnGroups: getBoolean('columnGroups'),
+        skipHeader: getBoolean('skipHeader')
+    }
+}
+
 function onBtnExport() {
-    gridOptions.api.exportDataAsCsv();
+    gridOptions.api.exportDataAsCsv(getParams());
 }
 
 function onBtnUpdate() {
-    document.querySelector('#csvResult').value = gridOptions.api.getDataAsCsv();
+    document.querySelector('#csvResult').value = gridOptions.api.getDataAsCsv(getParams());
 }
 
 // setup the grid after the page has finished loading

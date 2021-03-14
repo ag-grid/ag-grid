@@ -1,0 +1,202 @@
+---
+title: "Excel Export - Styles"
+enterprise: true
+---
+
+Excel Export provides a special mechanism to add styles to the Exported spreadsheet that works independently of the styles applied to the grid.
+
+## Defining styles
+
+The main reason to export to Excel with styles is so that the look and feel remain as consistent as possible with your AG Grid application. In order to simplify the configuration, the Excel Export reuses the [cellClassRules](/cell-styles/#cell-class-rules) and the [cellClass](/cell-styles/#cell-class) from the column definition. Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the `excelStyles`: <a href="#excelstyle">ExcelStyle[]</a> property in the [gridOptions](/grid-properties/).
+
+## Excel Style Definition Example
+
+The example below demonstrates how to merge the styles in Excel. Everyone less than 23 will have a green background, and
+a light green color font (#e0ffc1) also because redFont is set in cellClass, it will always be applied
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            // The same cellClassRules and cellClass can be used for CSS and Excel
+            cellClassRules: {
+                greenBackground: params => params.value > 23,
+            },
+            cellClass: 'redFont'
+        }
+    ],
+    excelStyles: [
+        // The base style, red font.
+        {
+            id: "redFont",
+            interior: {
+                color: "#FF0000", pattern: 'Solid'
+            }
+        },
+        // The cellClassStyle: background is green and font color is light green,
+        // note that since this excel style it's defined after redFont
+        // it will override the red font color obtained through cellClass:'red'
+        {
+            id: "greenBackground",
+            alignment: {
+                horizontal: 'Right', vertical: 'Bottom'
+            },
+            borders: {
+                borderBottom: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderLeft: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderRight: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                },
+                borderTop: {
+                    color: "#000000", lineStyle: 'Continuous', weight: 1
+                }
+            },
+            font: { color: "#e0ffc1"},
+            interior: {
+                color: "#008000", pattern: 'Solid'
+            }
+        }
+    ]
+}
+</snippet>
+
+## Resolving Excel Styles
+
+
+All the defined classes from [cellClass](/cell-styles/#cell-class) and all the classes resulting from evaluating the [cellClassRules](/cell-styles/#cell-class-rules) are applied to each cell when exporting to Excel. Normally these styles map to CSS classes when the grid is doing normal rendering. In Excel Export, the styles are mapped against the Excel styles that you have provided. If more than one Excel style is found, the results are merged (similar to how CSS classes are merged by the browser when multiple classes are applied).
+
+Headers are a special case, headers are exported to Excel as normal rows, so in order to allow you to style them you can provide an ExcelStyle with id and name "header". If you do so, the headers.
+
+## Example: Export With Styles
+
+- Cells with only one style will be exported to Excel, as you can see in the Country and Gold columns
+
+- Styles can be combined it a similar fashion than CSS, this can be seen in the column age where athletes less than 20 years old get two styles applied (greenBackground and redFont)
+
+- A default columnDef containing cellClassRules can be specified and it will be exported to Excel. You can see this is in the styling of the oddRows of the grid (boldBorders)
+
+- Its possible to export borders as specified in the gold column (boldBorders)
+- If a cell has an style but there isn't an associated Excel Style defined, the style for that cell won't get exported. This is the case in this example of the year column which has the style notInExcel, but since it hasn't been specified in the gridOptions, the column then gets exported without formatting.
+
+- Note that there is an Excel Style with name and id header that gets automatically applied to the AG Grid headers when exported to Excel
+
+- As you can see in the column "Group", the Excel styles can be combined into cellClassRules and cellClass
+
+- Note that there are specific to Excel styles applied, the age column has a number formatting style applied and the group column uses italic and bold font
+
+- The silver column has a style with `dataType=string`. This forces this column to be rendered as text in Excel even though all of their cells are numeric
+
+<grid-example title='Excel Export With Styles' name='excel-export-with-styles' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+
+## Example: Styling Row Groups
+
+By default, row groups are exported with the names of each node in the hierarchy combined together, like <span style="white-space: nowrap">"-> Parent -> Child"</span>. If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining `colDef.cellClass` and `processRowGroupCallback`:
+
+<grid-example title='Styling Row Groups' name='styling-row-groups' type='generated' options='{ "enterprise": true }'></grid-example>
+
+
+## API
+
+### Grid Properties
+
+<api-documentation source='grid-properties/properties.json' section='miscellaneous' names='["excelStyles"]'></api-documentation>
+
+## Interfaces
+
+### ExcelStyle
+```ts
+interface ExcelStyle {
+    id: string;
+    alignment?: ExcelAlignment;
+    borders?: ExcelBorders;
+    font?: ExcelFont;
+    interior?: ExcelInterior;
+    numberFormat?: ExcelNumberFormat;
+    protection?: ExcelProtection;
+    dataType?: ExcelDataType;
+}
+```
+
+### ExcelAlignment
+```ts
+interface ExcelAlignment {
+    horizontal: 'Automatic' | 'Left' | 'Center' | 'Right' | 'Fill' | 'Justify' | 'CenterAcrossSelection' | 'Distributed' | 'JustifyDistributed';
+    indent: number;
+    readingOrder: 'RightToLeft' | 'LeftToRight' | 'Context';
+    rotate: number;
+    shrinkToFit: boolean;
+    vertical: 'Automatic' | 'Top' | 'Bottom' | 'Center' | 'Justify' | 'Distributed' | 'JustifyDistributed';
+    wrapText: boolean;
+}
+```
+
+### ExcelBorders
+```ts
+interface ExcelBorders {
+    borderBottom: ExcelBorder;
+    borderLeft: ExcelBorder;
+    borderTop: ExcelBorder;
+    borderRight: ExcelBorder;
+}
+```
+
+### ExcelBorder
+```ts
+interface ExcelBorder {
+    lineStyle: 'None' | 'Continuous' | 'Dash' | 'Dot' | 'DashDot' | 'DashDotDot' | 'SlantDashDot' | 'Double';
+    weight: 0 | 1 | 2 | 3;
+    color: string;
+}
+```
+
+### ExcelFont
+```ts
+interface ExcelFont {
+    bold: boolean;
+    color: string;
+    fontName: string;
+    italic: boolean;
+    outline: boolean;
+    shadow: boolean;
+    size: number;
+    strikeThrough: boolean;
+    underline: 'None' | 'Subscript' | 'Superscript';
+    charSet: number;
+    family: string;
+    /* legacy property */
+    verticalAlign: string;
+}
+```
+
+### ExcelInterior
+```ts
+interface ExcelInterior {
+    color: string;
+    pattern: 'None' | 'Solid' | 'Gray75' | 'Gray50' | 'Gray25' | 'Gray125' | 'Gray0625' | 'HorzStripe' | 'VertStripe' | 'ReverseDiagStripe' | 'DiagStripe' | 'DiagCross' | 'ThickDiagCross' | 'ThinHorzStripe' | 'ThinVertStripe' | 'ThinReverseDiagStripe' | 'ThinDiagStripe' | 'ThinHorzCross' | 'ThinDiagCross';
+    patternColor: string;
+}
+```
+
+### ExcelNumberFormat
+```ts
+interface ExcelNumberFormat {
+    format: string;
+}
+```
+
+### ExcelProtection
+```ts
+interface ExcelProtection {
+    protected: boolean;
+    hideFormula: boolean;
+}
+```
+
+### ExcelDataType
+```ts
+type ExcelDataType = 'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error';
+```

@@ -72,8 +72,6 @@ export interface ExcelProtection {
     hideFormula: boolean;
 }
 
-export type ExcelDataType = 'string' | 'formula' | 'number' | 'boolean' | 'dateTime' | 'error';
-
 // Excel Structure
 export interface ExcelWorksheet {
     name: string;
@@ -123,11 +121,11 @@ export interface ExcelCell {
  * (d) DateTime
  * (e) Error
 */
-export type ExcelXMLDataType = 'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error';
+export type ExcelDataType = 'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error';
 export type ExcelOOXMLDataType = 'str' | 's' | 'f' | 'inlineStr' | 'n' | 'b' | 'd' | 'e' | 'empty';
 
 export interface ExcelData {
-    type: ExcelXMLDataType | ExcelOOXMLDataType;
+    type: ExcelDataType | ExcelOOXMLDataType;
     value: string | null;
 }
 

@@ -21,6 +21,14 @@
 </style>
 
 <div style="display: flex; flex-direction: column; height: 100%;">
+    <div style="display: flex;">
+        <div style="margin-left: 10px;">
+            <div class="row"> 
+                <label for="allColumns">All Columns</label>
+                <input id="allColumns" type="checkbox" />
+            </div>
+        </div>
+    </div>
     <div style="margin: 10px 0;">
         <button onclick="onBtnUpdate()">Show api.getDataAsCsv() text</button>
         <button onclick="onBtnExport()">Download file (api.exportDataAsCsv())</button>

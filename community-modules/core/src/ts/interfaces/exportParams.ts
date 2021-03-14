@@ -5,18 +5,16 @@ import { ColumnApi } from "../columnController/columnApi";
 import { ColumnGroup } from "../entities/columnGroup";
 
 export interface BaseExportParams {
-    skipHeader?: boolean;
-    columnGroups?: boolean;
-    skipFooters?: boolean;
-    skipGroups?: boolean;
-    skipPinnedTop?: boolean;
-    skipPinnedBottom?: boolean;
-    suppressQuotes?: boolean;
-    columnKeys?: (string | Column)[];
     allColumns?: boolean;
+    columnGroups?: boolean;
+    columnKeys?: (string | Column)[];
+    fileName?: string;
     onlySelected?: boolean;
     onlySelectedAllPages?: boolean;
-    fileName?: string;
+    skipGroups?: boolean;
+    skipHeader?: boolean;
+    skipPinnedTop?: boolean;
+    skipPinnedBottom?: boolean;
 
     shouldRowBeSkipped?(params: ShouldRowBeSkippedParams): boolean;
     processCellCallback?(params: ProcessCellForExportParams): string;
@@ -48,6 +46,7 @@ export type CsvCustomContent = CsvCell[][] | string;
 
 export interface CsvExportParams extends ExportParams<CsvCustomContent> {
     columnSeparator?: string;
+    suppressQuotes?: boolean;
 }
 
 export interface ShouldRowBeSkippedParams {

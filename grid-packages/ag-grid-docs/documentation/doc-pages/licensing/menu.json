@@ -978,20 +978,32 @@
         "icon": "icon-import-export",
         "items": [
           {
-            "title": "Export",
-            "url": "/export/",
+            "title": "CSV Export",
+            "url": "/csv-export/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Excel Export",
+            "url": "/excel-export/",
             "showInCollapsed": true,
+            "enterprise": true,
             "items": [
               {
-                "title": "CSV Export",
-                "url": "/csv-export/"
+                "title": "Excel Styles",
+                "url": "/excel-export-styles/",
+                "enterprise": true
               },
               {
-                "title": "Excel Export",
-                "url": "/excel-export/",
+                "title": "Formulas",
+                "url": "/excel-export-formulas/",
+                "enterprise": true
+              },
+              {
+                "title": "Multiple Sheets",
+                "url": "/excel-export-multiple-sheets/",
                 "enterprise": true
               }
-            ]
+          ]
           },
           {
             "title": "Clipboard",

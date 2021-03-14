@@ -1,9 +1,17 @@
 <style>
+    label, .row {
+        box-sizing: border-box;
+        display: block;
+        padding: 2px;
+    }
+    .row label {
+        display: inline;
+        padding: 0;
+    }
     button {
         display: inline-block;
         font-weight: bold;
     }
-
     #myGrid {
         height: 100%;
         width: 47%;
@@ -21,10 +29,23 @@
 </style>
 
 <div style="display: flex; flex-direction: column; height: 100%;">
+    <div style="display: flex;">
+        <div style="margin-left: 10px;">
+            <div class="row"> 
+                <label for="columnGroups">Column Groups</label>
+                <input id="columnGroups" type="checkbox" checked />
+                <label for="skipHeader">Skip Header</label>
+                <input id="skipHeader" type="checkbox" />
+            </div>
+        </div>
+    </div>
+
     <div style="margin: 10px 0;">
         <button onclick="onBtnUpdate()">Show api.getDataAsCsv() text</button>
         <button onclick="onBtnExport()">Download file (api.exportDataAsCsv())</button>
     </div>
+
+
     <div style="flex: 1 1 0px; position: relative;">
         <div id="myGrid" class="ag-theme-alpine"></div>
         <textarea id="csvResult">Press the api.getDataAsCsv() button to view exported CSV here</textarea>

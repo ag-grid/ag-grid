@@ -2,7 +2,7 @@ import {
     Column,
     ExcelCell,
     ExcelStyle,
-    ExcelXMLDataType,
+    ExcelDataType,
     ExcelWorksheet,
     RowNode,
     _
@@ -12,7 +12,7 @@ import { ExcelXmlFactory } from './excelXmlFactory';
 import { RowType, RowSpanningAccumulator } from "@ag-grid-community/csv-export";
 import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
-export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<ExcelXMLDataType> {
+export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<ExcelDataType> {
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
         const currentCells: ExcelCell[] = [];
@@ -32,7 +32,7 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
         return ExcelXmlFactory.createExcel(this.excelStyles, data, []);
     }
 
-    protected getDataTypeForValue(valueForCell: string): ExcelXMLDataType {
+    protected getDataTypeForValue(valueForCell: string): ExcelDataType {
         return _.isNumeric(valueForCell) ? 'Number' : 'String';
     }
 
@@ -44,7 +44,7 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
         };
     }
 
-    protected getType(type: ExcelXMLDataType, style: ExcelStyle | null, value: string | null): ExcelXMLDataType | null {
+    protected getType(type: ExcelDataType, style: ExcelStyle | null, value: string | null): ExcelDataType | null {
         if (this.isFormula(value)) { return 'Formula'; }
         if (style && style.dataType) {
             switch (style.dataType.toLocaleLowerCase()) {
@@ -66,9 +66,9 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
         return type;
     }
 
-    protected createCell(styleId: string | null, type: ExcelXMLDataType, value: string): ExcelCell {
+    protected createCell(styleId: string | null, type: ExcelDataType, value: string): ExcelCell {
         const actualStyle: ExcelStyle | null = this.getStyleById(styleId);
-        const typeTransformed = (this.getType(type, actualStyle, value) || type) as ExcelXMLDataType;
+        const typeTransformed = (this.getType(type, actualStyle, value) || type) as ExcelDataType;
 
         const massageText = (val: string) => {
             if (this.config.suppressTextAsCDATA) {
@@ -102,7 +102,7 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
         };
     }
 
-    protected createMergedCell(styleId: string | null, type: ExcelXMLDataType, value: string, numOfCells: number): ExcelCell {
+    protected createMergedCell(styleId: string | null, type: ExcelDataType, value: string, numOfCells: number): ExcelCell {
         return {
             styleId: !!this.getStyleById(styleId) ? styleId! : undefined,
             data: {

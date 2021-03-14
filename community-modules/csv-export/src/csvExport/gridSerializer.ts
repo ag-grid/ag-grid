@@ -136,10 +136,6 @@ export class GridSerializer extends BeanStub {
                 return;
             }
 
-            if (params.skipFooters && node.footer) {
-                return;
-            }
-
             if (params.onlySelected && !node.isSelected()) {
                 return;
             }

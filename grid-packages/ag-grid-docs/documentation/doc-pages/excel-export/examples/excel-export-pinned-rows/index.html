@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <label for="skipPinnedTop">Skip Pinned Top Rows
+                <input id="skipPinnedTop" type="checkbox" />
+            </label>
+        </div>
+        <div class="column">
+            <label for="skipPinnedBottom">Skip Pinned Bottom Rows
+                <input id="skipPinnedBottom" type="checkbox" />
+            </label>
+        </div>
+    </div>
+    <div style="margin: 5px;">
+        <label>
+            <button onclick="onBtExport()" style="margin: 5px; font-weight: bold;">Export to Excel</button>
+        </label>
+    </div>
+    <div class="grid-wrapper">
+        <div id="myGrid" class="ag-theme-alpine"></div>
+    </div>
+</div>
