@@ -7,9 +7,9 @@
   "scripts": {
     "generate-examples": "cd .. && node dev-server.js generate-examples && cd documentation",
     "customise": "node customise.js",
-    "build": "npm run clean && npm run customise",
-    "package": "npm run generate-examples && npm run publish",
-    "publish": "npm run build && npx gatsby build --prefix-paths",
+    "build": "npm run clean && npm run customise && npm run generate-examples",
+    "package": "npm run build && npm run publish",
+    "publish": "npx gatsby build --prefix-paths",
     "develop": "npx gatsby develop -H 0.0.0.0",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run customise && npm run develop",
@@ -81,6 +81,6 @@
     "prettier": "2.2.1",
     "puppeteer-core": "7.1.0",
     "react-test-renderer": "16.14.0",
-	  "commander": "7.1.0"
+    "commander": "7.1.0"
   }
 }
