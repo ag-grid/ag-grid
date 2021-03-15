@@ -54,6 +54,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
       'api-documentation': props => ApiDocumentation({
         ...props,
         pageName,
+        framework,
         sources: props.sources != null ? JSON.parse(props.sources) : undefined,
         config: props.config != null ? JSON.parse(props.config) : undefined
       }),

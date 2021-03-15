@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { useJsonFileNodes } from './use-json-file-nodes';
 import anchorIcon from 'images/anchor';
 import Code from './Code';
-import { inferType } from 'components/documentation-helpers';
+import { inferType, convertUrl } from 'components/documentation-helpers';
 import styles from './ApiDocumentation.module.scss';
 
 /**
@@ -11,7 +11,7 @@ import styles from './ApiDocumentation.module.scss';
  * information about different parts of an API in multiple places across the website while pulling the information
  * from one source of truth, so we only have to update one file when the documentation needs to change.
  */
-export const ApiDocumentation = ({ pageName, source, sources, section, names = [], config = {} }) => {
+export const ApiDocumentation = ({ pageName, framework, source, sources, section, names = [], config = {} }) => {
     const nodes = useJsonFileNodes();
 
     if (source) {
@@ -32,7 +32,7 @@ export const ApiDocumentation = ({ pageName, source, sources, section, names = [
         const properties = mergeObjects(propertiesFromFiles);
 
         return Object.entries(properties)
-            .map(([key, value]) => <Section key={key} title={key} properties={value} config={config} />);
+            .map(([key, value]) => <Section key={key} framework={framework} title={key} properties={value} config={config} />);
     }
 
     const keys = section.split('.');
@@ -40,13 +40,14 @@ export const ApiDocumentation = ({ pageName, source, sources, section, names = [
     const properties = mergeObjects(processed);
 
     return <Section
+        framework={framework}
         title={keys[keys.length - 1]}
         properties={properties}
         config={{ ...config, isSubset: true }}
         names={names} />;
 };
 
-const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] }) => {
+const Section = ({ framework, title, properties, config = {}, breadcrumbs = {}, names = [] }) => {
     const { meta } = properties;
     const displayName = (meta && meta.displayName) || title;
 
@@ -69,8 +70,8 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
                 {displayName}
             </HeaderTag>
             <Breadcrumbs breadcrumbs={breadcrumbs} />
-            {meta && meta.description && <p dangerouslySetInnerHTML={{ __html: generateCodeTags(meta.description) }}></p>}
-            {meta && meta.page && <p>See <a href={meta.page.url}>{meta.page.name}</a> for more information.</p>}
+            {meta && meta.description && <p dangerouslySetInnerHTML={{ __html: convertMarkdown(meta.description, framework) }}></p>}
+            {meta && meta.page && <p>See <a href={convertUrl(meta.page.url, framework)}>{meta.page.name}</a> for more information.</p>}
             {config.showSnippets && names.length < 1 && <ObjectCodeSample id={id} breadcrumbs={breadcrumbs} properties={properties} />}
         </>;
     }
@@ -88,7 +89,7 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
             return;
         }
 
-        rows.push(<Property key={name} id={id} name={name} definition={definition} />);
+        rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} />);
 
         if (typeof definition !== 'string' && !definition.description) {
             // store object property to process later
@@ -135,7 +136,7 @@ const getTypeUrl = type => {
     return types[type];
 };
 
-const Property = ({ id, name, definition }) => {
+const Property = ({ framework, id, name, definition }) => {
     const [isExpanded, setExpanded] = useState(false);
 
     let description = '';
@@ -143,12 +144,12 @@ const Property = ({ id, name, definition }) => {
 
     if (definition.description) {
         // process property object
-        description = generateCodeTags(definition.description);
+        description = convertMarkdown(definition.description, framework);
 
         const { more } = definition;
 
         if (more != null && more.url) {
-            description += ` See <a href="${more.url}">${more.name}</a>.`;
+            description += ` See <a href="${convertUrl(more.url, framework)}">${more.name}</a>.`;
         }
     } else if (typeof definition === 'string') {
         // process simple property string
@@ -156,7 +157,7 @@ const Property = ({ id, name, definition }) => {
     } else {
         // this must be the parent of a child object
         if (definition.meta != null && definition.meta.description != null) {
-            description = generateCodeTags(definition.meta.description);
+            description = convertMarkdown(definition.meta.description, framework);
         }
 
         isObject = true;
@@ -223,7 +224,9 @@ const Breadcrumbs = ({ breadcrumbs }) => {
     return <div className={styles['breadcrumbs']}>{links}</div>;
 };
 
-const generateCodeTags = content => content.replace(/`(.*?)`/g, '<code>$1</code>');
+const convertMarkdown = (content, framework) => content
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => `<a href="${convertUrl(href, framework)}">${text}</a>`);
 
 const createLinkedType = (type, url) => `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${type}</a>`;
 

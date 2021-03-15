@@ -3,5 +3,5 @@ module.exports = (pagePath, framework) => {
         `/${framework}-charts${pagePath.replace('/charts-', '/')}` :
         `/${framework}-grid${pagePath}`;
 
-    return url.endsWith('/') ? url : `${url}/`;
+    return url.endsWith('/') || url.includes('#') ? url : `${url}/`;
 };
