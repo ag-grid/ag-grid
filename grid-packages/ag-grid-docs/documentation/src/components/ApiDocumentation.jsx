@@ -7,6 +7,19 @@ import { inferType, convertUrl } from 'components/documentation-helpers';
 import styles from './ApiDocumentation.module.scss';
 
 /**
+ * These are used to create links from types to relevant documentation.
+ */
+const types = {
+    'Array': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array',
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number',
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
+    'boolean': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean',
+    'HTMLElement': 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
+    'ColDef': '/column-properties/',
+    'IViewportDatasource': '/viewport/#interface-iviewportdatasource'
+};
+
+/**
  * This generates tabulated API documentation based on information in JSON files. This way it is possible to show
  * information about different parts of an API in multiple places across the website while pulling the information
  * from one source of truth, so we only have to update one file when the documentation needs to change.
@@ -70,9 +83,12 @@ const Section = ({ framework, title, properties, config = {}, breadcrumbs = {}, 
                 {displayName}
             </HeaderTag>
             <Breadcrumbs breadcrumbs={breadcrumbs} />
-            {meta && meta.description && <p dangerouslySetInnerHTML={{ __html: convertMarkdown(meta.description, framework) }}></p>}
-            {meta && meta.page && <p>See <a href={convertUrl(meta.page.url, framework)}>{meta.page.name}</a> for more information.</p>}
-            {config.showSnippets && names.length < 1 && <ObjectCodeSample id={id} breadcrumbs={breadcrumbs} properties={properties} />}
+            {meta && meta.description &&
+                <p dangerouslySetInnerHTML={{ __html: convertMarkdown(meta.description, framework) }}></p>}
+            {meta && meta.page &&
+                <p>See <a href={convertUrl(meta.page.url, framework)}>{meta.page.name}</a> for more information.</p>}
+            {config.showSnippets && names.length < 1 &&
+                <ObjectCodeSample framework={framework} id={id} breadcrumbs={breadcrumbs} properties={properties} />}
         </>;
     }
 
@@ -114,7 +130,7 @@ const Section = ({ framework, title, properties, config = {}, breadcrumbs = {}, 
     </>;
 };
 
-const getTypeUrl = type => {
+const getTypeUrl = (type, framework) => {
     if (typeof type === 'string') {
         if (type.includes('|')) {
             // can't handle multiple types
@@ -124,16 +140,7 @@ const getTypeUrl = type => {
         }
     }
 
-    const types = {
-        'Array': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array',
-        'number': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number',
-        'string': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
-        'boolean': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean',
-        'HTMLElement': 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
-        'ColDef': '../column-properties/',
-    };
-
-    return types[type];
+    return convertUrl(types[type], framework);
 };
 
 const Property = ({ framework, id, name, definition }) => {
@@ -169,7 +176,7 @@ const Property = ({ framework, id, name, definition }) => {
 
     const type = definition.type || inferType(definition.default);
     const isFunction = !isObject && type != null && typeof type === 'object';
-    const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type);
+    const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
 
     return <tr>
         <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)} role="presentation">
@@ -193,8 +200,12 @@ const Property = ({ framework, id, name, definition }) => {
                 dangerouslySetInnerHTML={{ __html: description }}></div>
             {isObject && <div>See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.</div>}
             {definition.default != null && <div>Default: <code>{formatJson(definition.default)}</code></div>}
-            {definition.options != null && <div>Options: {definition.options.map((o, i) => <>{i > 0 ? ', ' : ''}<code key={o}>{formatJson(o)}</code></>)}</div>}
-            {typeof definition.type === 'object' && <div className={isExpanded ? '' : 'd-none'}><FunctionCodeSample name={name} type={definition.type} /></div>}
+            {definition.options != null &&
+                <div>Options: {definition.options.map((o, i) => <>{i > 0 ? ', ' : ''}<code key={o}>{formatJson(o)}</code></>)}</div>}
+            {typeof definition.type === 'object' &&
+                <div className={isExpanded ? '' : 'd-none'}>
+                    <FunctionCodeSample framework={framework} name={name} type={definition.type} />
+                </div>}
         </td>
         {definition.relevantTo && <td style={{ whiteSpace: 'nowrap' }}>{definition.relevantTo.join(', ')}</td>}
     </tr>;
@@ -226,11 +237,13 @@ const Breadcrumbs = ({ breadcrumbs }) => {
 
 const convertMarkdown = (content, framework) => content
     .replace(/`(.*?)`/g, '<code>$1</code>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => `<a href="${convertUrl(href, framework)}">${text}</a>`);
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => `<a href="${convertUrl(href, framework)}">${text}</a>`)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
-const createLinkedType = (type, url) => `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${type}</a>`;
+const createLinkedType = (type, url) =>
+    `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${type}</a>`;
 
-const ObjectCodeSample = ({ id, breadcrumbs, properties }) => {
+const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
     const lines = [];
     let indentationLevel = 0;
 
@@ -276,7 +289,7 @@ const ObjectCodeSample = ({ id, breadcrumbs, properties }) => {
             isObject = true;
         }
 
-        const typeUrl = isObject ? `#reference-${id}.${key}` : getTypeUrl(type);
+        const typeUrl = isObject ? `#reference-${id}.${key}` : getTypeUrl(type, framework);
 
         line += `: ${typeUrl ? createLinkedType(type, typeUrl) : type};`;
 
@@ -296,7 +309,7 @@ const ObjectCodeSample = ({ id, breadcrumbs, properties }) => {
 
 const getInterfaceName = name => `I${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
 
-const FunctionCodeSample = ({ name, type }) => {
+const FunctionCodeSample = ({ framework, name, type }) => {
     const args = type.parameters ? { params: type.parameters } : type.arguments;
     const { returnType } = type;
     const returnTypeIsObject = returnType != null && typeof returnType === 'object';
@@ -304,7 +317,7 @@ const FunctionCodeSample = ({ name, type }) => {
 
     Object.entries(args).forEach(([key, value]) => {
         const type = typeof value === 'object' ? getInterfaceName(key) : value;
-        const typeUrl = getTypeUrl(type);
+        const typeUrl = getTypeUrl(type, framework);
 
         argumentDefinitions.push(`${key}: ${typeUrl ? createLinkedType(type, typeUrl) : type}`);
     });
@@ -314,7 +327,7 @@ const FunctionCodeSample = ({ name, type }) => {
         `\n    ${argumentDefinitions.join(',\n    ')}\n` :
         argumentDefinitions.join('');
 
-    const returnTypeUrl = getTypeUrl(returnType);
+    const returnTypeUrl = getTypeUrl(returnType, framework);
 
     const lines = [
         `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? 'IReturn' : (returnTypeUrl ? createLinkedType(returnType, returnTypeUrl) : returnType || 'void')};`,
@@ -322,20 +335,20 @@ const FunctionCodeSample = ({ name, type }) => {
 
     Object.keys(args)
         .filter(key => typeof args[key] === 'object')
-        .forEach(key => lines.push('', ...getInterfaceLines(getInterfaceName(key), args[key])));
+        .forEach(key => lines.push('', ...getInterfaceLines(framework, getInterfaceName(key), args[key])));
 
     if (returnTypeIsObject) {
-        lines.push('', ...getInterfaceLines('IReturn', returnType));
+        lines.push('', ...getInterfaceLines(framework, 'IReturn', returnType));
     }
 
     return <Code code={lines.join('\n')} className={styles['reference__code-sample']} />;
 };
 
-const getInterfaceLines = (name, definition) => {
+const getInterfaceLines = (framework, name, definition) => {
     const lines = [`interface ${name} {`];
 
     Object.entries(definition).forEach(([property, type]) => {
-        const typeUrl = getTypeUrl(type);
+        const typeUrl = getTypeUrl(type, framework);
 
         lines.push(`  ${property}: ${typeUrl ? createLinkedType(type, typeUrl) : type};`);
     });
