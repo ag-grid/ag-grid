@@ -135,7 +135,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid-context/ /angular-grid/context/
     Redirect 301 /angular-grid-datasource/ /angular-grid/infinite-scrolling/
     Redirect 301 /angular-grid-editing/ /angular-grid/cell-editing/
-    Redirect 301 /angular-grid-export/ /angular-grid/export/
+    Redirect 301 /angular-grid-export/ /angular-grid/excel-export/
     Redirect 301 /angular-grid-filtering/ /angular-grid/filtering/
     Redirect 301 /angular-grid-floating/ /angular-grid/row-pinning/
     Redirect 301 /angular-grid-for-print/ /angular-grid/printing/
@@ -292,7 +292,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/drag-and-drop/ /angular-grid/drag-and-drop/
     Redirect 301 /documentation/angular/excel-export/ /angular-grid/excel-export/
     Redirect 301 /documentation/angular/excel-import/ /angular-grid/excel-import/
-    Redirect 301 /documentation/angular/export/ /angular-grid/export/
+    Redirect 301 /documentation/angular/export/ /angular-grid/excel-export/
     Redirect 301 /documentation/angular/expressions-and-context/ /angular-grid/expressions-and-context/
     Redirect 301 /documentation/angular/filter-api/ /angular-grid/filter-api/
     Redirect 301 /documentation/angular/filter-custom/ /angular-grid/filter-custom/
@@ -544,7 +544,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/drag-and-drop/ /javascript-grid/drag-and-drop/
     Redirect 301 /documentation/javascript/excel-export/ /javascript-grid/excel-export/
     Redirect 301 /documentation/javascript/excel-import/ /javascript-grid/excel-import/
-    Redirect 301 /documentation/javascript/export/ /javascript-grid/export/
+    Redirect 301 /documentation/javascript/export/ /javascript-grid/excel-export/
     Redirect 301 /documentation/javascript/expressions-and-context/ /javascript-grid/expressions-and-context/
     Redirect 301 /documentation/javascript/filter-api/ /javascript-grid/filter-api/
     Redirect 301 /documentation/javascript/filter-custom/ /javascript-grid/filter-custom/
@@ -788,7 +788,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/drag-and-drop/ /react-grid/drag-and-drop/
     Redirect 301 /documentation/react/excel-export/ /react-grid/excel-export/
     Redirect 301 /documentation/react/excel-import/ /react-grid/excel-import/
-    Redirect 301 /documentation/react/export/ /react-grid/export/
+    Redirect 301 /documentation/react/export/ /react-grid/excel-export/
     Redirect 301 /documentation/react/expressions-and-context/ /react-grid/expressions-and-context/
     Redirect 301 /documentation/react/filter-api/ /react-grid/filter-api/
     Redirect 301 /documentation/react/filter-custom/ /react-grid/filter-custom/
@@ -1035,7 +1035,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/drag-and-drop/ /vue-grid/drag-and-drop/
     Redirect 301 /documentation/vue/excel-export/ /vue-grid/excel-export/
     Redirect 301 /documentation/vue/excel-import/ /vue-grid/excel-import/
-    Redirect 301 /documentation/vue/export/ /vue-grid/export/
+    Redirect 301 /documentation/vue/export/ /vue-grid/excel-export/
     Redirect 301 /documentation/vue/expressions-and-context/ /vue-grid/expressions-and-context/
     Redirect 301 /documentation/vue/filter-api/ /vue-grid/filter-api/
     Redirect 301 /documentation/vue/filter-custom/ /vue-grid/filter-custom/
@@ -1278,7 +1278,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-editing-flow/ /javascript-grid/saving-content/
     Redirect 301 /javascript-grid-events/ /javascript-grid/grid-events/
     Redirect 301 /javascript-grid-excel/ /javascript-grid/excel-export/
-    Redirect 301 /javascript-grid-export/ /javascript-grid/export/
+    Redirect 301 /javascript-grid-export/ /javascript-grid/excel-export/
     Redirect 301 /javascript-grid-features/ /javascript-grid/grid-features/
     Redirect 301 /javascript-grid-filter-api/ /javascript-grid/filter-api/
     Redirect 301 /javascript-grid-filter-component/ /javascript-grid/component-filter/
