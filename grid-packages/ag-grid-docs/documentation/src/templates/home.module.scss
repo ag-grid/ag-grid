@@ -8,7 +8,7 @@
     }
 
     h2 {
-        color: #6A7576;
+        color: #6a7576;
         font-size: 1.95rem;
         font-weight: 500;
     }
@@ -25,7 +25,7 @@
 
         &__title {
             composes: mb-0 p-2 from global;
-            font-size: 2.0rem;
+            font-size: 2rem;
             font-weight: 500;
             text-align: left;
             text-transform: capitalize;
@@ -48,15 +48,16 @@
 
         &__item {
             composes: d-flex flex-column justify-content-center align-items-center m-2 p-2 from global;
-            border: 1px solid transparentize($secondary, 0.7);
+            border: 1px solid $ag-light-grey;
             border-radius: 5px;
             width: 9.5rem;
             height: 9.5rem;
 
             &:hover {
-                background-color: $grey-4;
+                background-color: #ebebeb;
                 text-decoration: none;
             }
+
             @include media-breakpoint-down(sm) {
                 width: 6.5rem;
                 height: 6.5rem;
@@ -68,6 +69,7 @@
             position: relative;
             width: 5rem;
             height: 5rem;
+
             @include media-breakpoint-down(sm) {
                 width: 4.5rem;
                 height: 4.5rem;
@@ -82,7 +84,8 @@
         &__item_label {
             text-align: center;
             white-space: nowrap;
-            font-size: 1.0rem;
+            font-size: 1rem;
+
             @include media-breakpoint-down(sm) {
                 font-size: 0.65rem;
             }

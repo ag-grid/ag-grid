@@ -44,7 +44,7 @@ main {
     composes: px-2 px-md-3 from global;
     position: relative;
     background-color: transparentize($light, 0.05);
-    border-bottom: 1px solid lighten($secondary, 40%);
+    border-bottom: 1px solid $ag-light-grey;
 
     @include media-breakpoint-up(lg) {
         @supports (position: sticky) {
@@ -89,7 +89,7 @@ main {
     flex: none;
     width: auto;
     border-width: 1px;
-    border-color: lighten($secondary, 40%);
+    border-color: $ag-light-grey;
     border-bottom-style: solid;
     background-color: $white;
 }

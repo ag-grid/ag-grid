@@ -3,7 +3,7 @@
         color: inherit;
 
         &:hover {
-            color: initial;
+            color: inherit !important;
             border-bottom: 1px dashed;
         }
     }

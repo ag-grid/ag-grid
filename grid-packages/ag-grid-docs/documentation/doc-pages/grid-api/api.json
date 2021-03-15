@@ -144,9 +144,6 @@
             "type": {
                 "arguments": {
                     "datasource": "IDatasource"
-                },
-                "argumentLinks": {
-                    "datasource": "http://www.google.com/"
                 }
             }
         },

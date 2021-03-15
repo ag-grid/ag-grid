@@ -51,7 +51,7 @@
     &__menu {
         display: flex;
         flex-direction: column;
-        background-color: lighten($secondary, 20%);
+        background-color: $ag-light-grey;
         padding: 20px 0;
     }
 

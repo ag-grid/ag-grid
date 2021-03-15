@@ -2,7 +2,7 @@
 .number-editor,
 .colour-editor {
     &__input {
-        border: 1px solid #0084e7;
+        border: 1px solid $primary;
         border-radius: 5px;
         padding: 4px 8px;
         font-size: 0.8rem;
@@ -39,7 +39,7 @@
 
     &__option {
         flex-grow: 1;
-        border: 1px solid #0084e7;
+        border: 1px solid $primary;
         border-right: 0;
         padding: 8px 4px;
         text-align: center;
@@ -52,14 +52,14 @@
         }
 
         &:last-child {
-            border: 1px solid #0084e7;
+            border: 1px solid $primary;
             border-radius: 0 5px 5px 0;
         }
 
         &--selected {
-            background-color: #0084e7;
+            background-color: $primary;
             color: white;
-            box-shadow: inset 0 0 5px #00407f;
+            box-shadow: inset 0 0 5px $ag-dark-blue;
         }
     }
 }

@@ -2,7 +2,7 @@
     composes: pt-1 from global;
 
     height: calc(100vh - 210px);
-    border: solid 1px lighten($secondary, 40%);
+    border: solid 1px $ag-light-grey;
     border-radius: 5px;
     display: flex;
     flex-direction: column;

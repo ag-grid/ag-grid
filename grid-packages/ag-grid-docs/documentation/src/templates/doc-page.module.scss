@@ -89,7 +89,13 @@
     a {
         &:hover {
             text-decoration: none;
-            color: $cyan;
+            color: $ag-orange;
+        }
+    }
+
+    :global(.nav-link) {
+        p {
+            margin: 0;
         }
     }
 }
