@@ -182,16 +182,19 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     private styleLinker(rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode): string[] | null {
-        if ((rowType === RowType.HEADER) || (rowType === RowType.HEADER_GROUPING)) { return ["header"]; }
+        if (rowType === RowType.HEADER) { return ["header"]; }
+        if (rowType === RowType.HEADER_GROUPING) { return ["header", "headerGroup"]; }
+
         const styles = this.gridOptions.excelStyles;
 
-        if (!styles || !styles.length) { return null; }
+        const applicableStyles: string [] = ["cell"];
+
+        if (!styles || !styles.length) { return applicableStyles; }
 
         const styleIds: string[] = styles.map((it: ExcelStyle) => {
             return it.id;
         });
 
-        const applicableStyles: string [] = [];
         this.stylingService.processAllCellClasses(
             column.getColDef(),
             {

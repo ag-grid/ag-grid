@@ -14,34 +14,12 @@ import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
 export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<ExcelDataType> {
 
-    public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        const currentCells: ExcelCell[] = [];
-        this.rows.push({
-            cells: currentCells,
-            height: this.config.headerRowHeight
-        });
-        return {
-            onColumn: (header: string, index: number, span: number) => {
-                const styleIds: string[] = this.config.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, undefined, undefined);
-                currentCells.push(this.createMergedCell((styleIds && styleIds.length > 0) ? styleIds[0] : null, "String", header, span));
-            }
-        };
-    }
-
     protected createExcel(data: ExcelWorksheet): string {
         return ExcelXmlFactory.createExcel(this.excelStyles, data, []);
     }
 
     protected getDataTypeForValue(valueForCell: string): ExcelDataType {
         return _.isNumeric(valueForCell) ? 'Number' : 'String';
-    }
-
-    protected onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
-        return (column, index) => {
-            const nameForCol = this.extractHeaderValue(column);
-            const styleIds: string[] = this.config.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
-            currentCells.push(this.createCell((styleIds && styleIds.length > 0) ? styleIds[0] : null, 'String', nameForCol));
-        };
     }
 
     protected getType(type: ExcelDataType, style: ExcelStyle | null, value: string | null): ExcelDataType | null {

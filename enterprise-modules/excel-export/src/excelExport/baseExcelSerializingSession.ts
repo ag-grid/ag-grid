@@ -59,16 +59,36 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         this.excelStyles = [...this.config.baseExcelStyles];
     }
 
-    public abstract onNewHeaderGroupingRow(): RowSpanningAccumulator;
     protected abstract createExcel(data: ExcelWorksheet): string;
     protected abstract getDataTypeForValue(valueForCell: string): T;
-    protected abstract onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void;
     protected abstract getType(type: T, style: ExcelStyle | null, value: string | null): T | null;
     protected abstract createCell(styleId: string | null, type: T, value: string): ExcelCell;
     protected abstract createMergedCell(styleId: string | null, type: T, value: string, numOfCells: number): ExcelCell;
 
     public addCustomContent(customContent: ExcelCell[][]): void {
         customContent.forEach(cells => this.rows.push({cells}));
+    }
+
+    public onNewHeaderGroupingRow(): RowSpanningAccumulator {
+        const currentCells: ExcelCell[] = [];
+        this.rows.push({
+            cells: currentCells,
+            height: this.config.headerRowHeight
+        });
+        return {
+            onColumn: (header: string, index: number, span: number) => {
+                const styleIds: string[] = this.config.styleLinker(RowType.HEADER_GROUPING, 1, index, `grouping-${header}`, undefined, undefined);
+                currentCells.push(this.createMergedCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), header, span));
+            }
+        };
+    }
+
+    public onNewHeaderRow(): RowAccumulator {
+        return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
+    }
+
+    public onNewBodyRow(): RowAccumulator {
+        return this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
     }
 
     public prepare(columnsToExport: Column[]): void {
@@ -92,14 +112,6 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         };
 
         return this.createExcel(data);
-    }
-
-    public onNewHeaderRow(): RowAccumulator {
-        return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
-    }
-
-    public onNewBodyRow(): RowAccumulator {
-        return this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
     }
 
     protected isFormula(value: string | null) {
@@ -128,6 +140,14 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         return {};
     }
 
+    private onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
+        return (column, index) => {
+            const nameForCol = this.extractHeaderValue(column);
+            const styleIds: string[] = this.config.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
+            currentCells.push(this.createCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), nameForCol));
+        };
+    }
+
     private onNewRow(onNewColumnAccumulator: (rowIndex: number, currentCells: ExcelCell[]) => (column: Column, index: number, node: RowNode) => void, height?: number): RowAccumulator {
         const currentCells: ExcelCell[] = [];
         this.rows.push({
@@ -143,18 +163,21 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         return (column, index, node) => {
             const valueForCell = this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_EXCEL, node);
             const styleIds: string[] = this.config.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
-            let excelStyleId: string | undefined;
-            if (styleIds && styleIds.length == 1) {
-                excelStyleId = styleIds [0];
-            } else if (styleIds && styleIds.length > 1) {
-                const key: string = styleIds.join("-");
-                if (!this.mixedStyles[key]) {
-                    this.addNewMixedStyle(styleIds);
-                }
-                excelStyleId = this.mixedStyles[key].excelID;
-            }
-            currentCells.push(this.createCell(excelStyleId || null, this.getDataTypeForValue(valueForCell), valueForCell));
+            const excelStyleId: string | null = this.getStyleId(styleIds);
+
+            currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell));
         };
+    }
+
+    private getStyleId(styleIds?: string[] | null): string | null {
+        if (!styleIds || !styleIds.length) { return null; }
+        if (styleIds.length === 1) { return styleIds[0]; }
+
+        const key: string = styleIds.join("-");
+        if (!this.mixedStyles[key]) {
+            this.addNewMixedStyle(styleIds);
+        }
+        return this.mixedStyles[key].excelID;
     }
 
     private addNewMixedStyle(styleIds: string[]): void {

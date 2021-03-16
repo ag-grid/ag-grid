@@ -87,7 +87,7 @@ var gridOptions = {
     defaultColDef: {
         cellClassRules: {
             darkGreyBackground: function(params) {
-                return params.rowIndex % 2 == 0;
+                return params.node.rowIndex % 2 == 0;
             }
         },
         sortable: true,
@@ -98,7 +98,6 @@ var gridOptions = {
     },
 
     columnDefs: columnDefs,
-    rowSelection: 'multiple',
 
     pinnedTopRowData: [
         {
@@ -131,6 +130,35 @@ var gridOptions = {
     ],
 
     excelStyles: [
+        {
+            id: 'cell',
+            alignment: {
+                vertical: 'Center'
+            }
+        },
+        {
+            id: 'header',
+            alignment: {
+                vertical: 'Center'
+            },
+            interior: {
+                color: '#f8f8f8',
+                pattern: 'Solid'
+            },
+            borders: {
+                borderBottom: {
+                    color: '#babfc7',
+                    lineStyle: 'Continuous',
+                    weight: 1
+                }
+            }
+        },
+        {
+            id: 'headerGroup',
+            font: {
+                bold: true
+            }
+        },
         {
             id: 'greenBackground',
             interior: {
@@ -184,35 +212,6 @@ var gridOptions = {
             }
         },
         {
-            id: 'header',
-            interior: {
-                color: '#CCCCCC',
-                pattern: 'Solid'
-            },
-            borders: {
-                borderBottom: {
-                    color: '#5687f5',
-                    lineStyle: 'Continuous',
-                    weight: 1
-                },
-                borderLeft: {
-                    color: '#5687f5',
-                    lineStyle: 'Continuous',
-                    weight: 1
-                },
-                borderRight: {
-                    color: '#5687f5',
-                    lineStyle: 'Continuous',
-                    weight: 1
-                },
-                borderTop: {
-                    color: '#5687f5',
-                    lineStyle: 'Continuous',
-                    weight: 1
-                }
-            }
-        },
-        {
             id: 'dateFormat',
             dataType: 'dateTime',
             numberFormat: {
@@ -228,12 +227,6 @@ var gridOptions = {
         {
             id: 'textFormat',
             dataType: 'string'
-        },
-        {
-            id: 'bigHeader',
-            font: {
-                size: 25
-            }
         }
     ]
 };
@@ -256,33 +249,12 @@ function getNumericValue(cssSelector) {
     return value;
 }
 
-function myColumnWidthCallback(params) {
-    var originalWidth = params.column.getActualWidth();
-    if (params.index < 7) {
-        return originalWidth;
-    }
-    return 30;
-}
-
 function onBtExport() {
-    var columnWidth = getBooleanValue('#columnWidth') ? getTextValue('#columnWidthValue') : undefined;
     var params = {
-        columnWidth: columnWidth === 'myColumnWidthCallback' ? myColumnWidthCallback : parseFloat(columnWidth),
-        sheetName: getBooleanValue('#sheetName') && getTextValue('#sheetNameValue'),
-        exportMode: getBooleanValue('#exportModeXml') ? "xml" : undefined,
-        suppressTextAsCDATA: getBooleanValue('#suppressTextAsCDATA'),
+        fontSize: getBooleanValue('#fontSize') ? getNumericValue('#fontSizeValue') : undefined,
         rowHeight: getBooleanValue('#rowHeight') ? getNumericValue('#rowHeightValue') : undefined,
         headerRowHeight: getBooleanValue('#headerRowHeight') ? getNumericValue('#headerRowHeightValue') : undefined,
-        customHeader: [
-            [],
-            [{ styleId: 'bigHeader', data: { type: 'String', value: 'content appended with customHeader' }, mergeAcross: 3 }],
-            [{ data: { type: 'String', value: 'Numeric value' }, mergeAcross: 2 }, { data: { type: 'Number', value: '3695.36' } }],
-            []
-        ],
-        customFooter: [
-            [],
-            [{ styleId: 'bigHeader', data: { type: 'String', value: 'content appended with customFooter' } }]
-        ]
+        columnGroups: true
     };
 
     gridOptions.api.exportDataAsExcel(params);

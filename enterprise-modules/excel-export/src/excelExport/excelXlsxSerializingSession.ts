@@ -8,26 +8,10 @@ import {
     _
 } from '@ag-grid-community/core';
 
-import { RowSpanningAccumulator, RowType } from "@ag-grid-community/csv-export";
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
 export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<ExcelOOXMLDataType> {
-
-    public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        const currentCells: ExcelCell[] = [];
-
-        this.rows.push({
-            cells: currentCells,
-            height: this.config.headerRowHeight
-        });
-        return {
-            onColumn: (header: string, index: number, span: number) => {
-                const styleIds: string[] = this.config.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, undefined, undefined);
-                currentCells.push(this.createMergedCell((styleIds && styleIds.length > 0) ? styleIds[0] : null, 's', header, span));
-            }
-        };
-    }
 
     protected createExcel(data: ExcelWorksheet): string {
         return ExcelXlsxFactory.createExcel(this.excelStyles, data);
@@ -35,14 +19,6 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
 
     protected getDataTypeForValue(valueForCell: string): ExcelOOXMLDataType {
         return _.isNumeric(valueForCell) ? 'n' : 's';
-    }
-
-    protected onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node?: RowNode) => void {
-        return (column: Column, index: number, node?: RowNode) => {
-            const nameForCol = this.extractHeaderValue(column);
-            const styleIds: string[] = this.config.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
-            currentCells.push(this.createCell((styleIds && styleIds.length > 0) ? styleIds[0] : null, 's', nameForCol));
-        };
     }
 
     protected getType(type: ExcelOOXMLDataType, style: ExcelStyle | null, value: string | null): ExcelOOXMLDataType | null {
