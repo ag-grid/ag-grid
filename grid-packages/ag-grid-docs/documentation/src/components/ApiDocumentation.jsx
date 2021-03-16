@@ -10,13 +10,20 @@ import styles from './ApiDocumentation.module.scss';
  * These are used to create links from types to relevant documentation.
  */
 const types = {
-    'Array': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array',
-    'number': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number',
-    'string': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
-    'boolean': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean',
-    'HTMLElement': 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
-    'ColDef': '/column-properties/',
-    'IViewportDatasource': '/viewport/#interface-iviewportdatasource'
+    Array: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array',
+    Blob: 'https://developer.mozilla.org/en-US/docs/Web/API/Blob',
+    boolean: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean',
+    CellPosition: '/keyboard-navigation/#cellposition',
+    CellRange: '/range-selection/#range-selection-api',
+    ColDef: '/column-properties/',
+    Function: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function',
+    HTMLElement: 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
+    IDatasource: '/infinite-scrolling/#datasource-interface',
+    IServerSideDatasource: '/server-side-model-datasource/#datasource-interface',
+    IViewportDatasource: '/viewport/#interface-iviewportdatasource',
+    number: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number',
+    RowNode: '/row-object/',
+    string: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
 };
 
 /**
@@ -314,16 +321,21 @@ const FunctionCodeSample = ({ framework, name, type }) => {
     const { returnType } = type;
     const returnTypeIsObject = returnType != null && typeof returnType === 'object';
     const argumentDefinitions = [];
+    let shouldUseNewline = false;
 
     Object.entries(args).forEach(([key, value]) => {
         const type = typeof value === 'object' ? getInterfaceName(key) : value;
         const typeUrl = getTypeUrl(type, framework);
 
         argumentDefinitions.push(`${key}: ${typeUrl ? createLinkedType(type, typeUrl) : type}`);
+
+        if (argumentDefinitions.length > 1 || type.length > 20) {
+            shouldUseNewline = true;
+        }
     });
 
     const functionName = name.endsWith('()') ? name.replace('()', '') : '';
-    const functionArguments = argumentDefinitions.length > 1 ?
+    const functionArguments = shouldUseNewline ?
         `\n    ${argumentDefinitions.join(',\n    ')}\n` :
         argumentDefinitions.join('');
 
