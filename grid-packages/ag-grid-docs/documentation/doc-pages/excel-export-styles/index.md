@@ -115,7 +115,47 @@ Note the following:
 
 ## Example: Styling Row Groups
 
-By default, row groups are exported with the names of each node in the hierarchy combined together, like <span style="white-space: nowrap">"-> Parent -> Child"</span>. If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining `colDef.cellClass` and `processRowGroupCallback`:
+By default, row groups are exported with the names of each node in the hierarchy combined together, like <span style="white-space: nowrap">"-> Parent -> Child"</span>. If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining `autoGroupColumnDef.cellClass` and `processRowGroupCallback`:
+
+```ts
+processRowGroupCallback(params: ProcessRowGroupForExportParams): string {
+    // Discard the `->` added by default, and render the original key.
+    return params.node.key;
+}
+```
+
+```ts
+    autoGroupColumnDef: {
+        cellClass: getIndentClass
+        //...
+    }
+    excelStyles: [
+        {
+            id: 'indent-1',
+            alignment: {
+                indent: 1
+            },
+            // note, dataType: 'string' required to ensure that numeric values aren't right-aligned
+            dataType: 'string'
+        },
+        //...
+    ]
+    //...
+```
+
+```ts
+getIndentClass(params: CellClassParams): string[] | string {
+    const node = params.node;
+
+    let indent = 0;
+    while (node && node.parent) {
+        indent++;
+        node = node.parent;
+    }
+
+    return `indent-${indent}`;
+}
+```
 
 <grid-example title='Styling Row Groups' name='styling-row-groups' type='generated' options='{ "enterprise": true }'></grid-example>
 
