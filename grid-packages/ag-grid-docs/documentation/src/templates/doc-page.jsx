@@ -32,6 +32,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
 
   if (!page) { return null; }
 
+  // handles [[only-xxxx blocks
   const ast = processFrameworkSpecificSections(page.htmlAst, framework);
 
   const getExampleRunnerProps = (props, library) => ({

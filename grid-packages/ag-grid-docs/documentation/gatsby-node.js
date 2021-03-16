@@ -180,7 +180,7 @@ exports.onCreateNode = async ({ node, loadNodeContent, getNode, actions: { creat
  */
 exports.onCreatePage = ({ page, actions: { createPage } }) => {
     if (page.path.match(/example-runner/)) {
-        page.context.layout = 'bare';
+        page.context.layout = 'bare'; // used in layouts/index.js
         createPage(page);
     }
 };

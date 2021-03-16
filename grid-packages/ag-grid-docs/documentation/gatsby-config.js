@@ -29,6 +29,7 @@ const plugins = [
         node.ext === '.html',
     },
   },
+  // wraps each page with the layout (ie layouts/index.js)
   'gatsby-plugin-layout', // This provides a common template for the website pages
   'gatsby-transformer-sharp', // This is used for handling images
   'gatsby-plugin-sharp', // This is used for handling images
