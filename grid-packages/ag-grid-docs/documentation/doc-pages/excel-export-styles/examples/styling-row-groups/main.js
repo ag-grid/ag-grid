@@ -57,11 +57,12 @@ function rowGroupCallback(params) {
 function getIndentClass(params) {
     var indent = 0;
     var node = params.node;
+
     while (node && node.parent) {
         indent++;
         node = node.parent;
     }
-    return ["indent-" + indent];
+    return 'indent-' + indent;
 }
 
 function onBtnExportDataAsExcel() {

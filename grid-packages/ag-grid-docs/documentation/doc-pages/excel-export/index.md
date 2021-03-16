@@ -388,6 +388,7 @@ interface ShouldRowBeSkippedParams {
 ```ts
 interface ProcessCellForExportParams {
     value: any;
+    accumulatedRowIndex?: number // the row number including headers (useful for formulas)
     node?: RowNode | null;
     column: Column;
     api: GridApi;

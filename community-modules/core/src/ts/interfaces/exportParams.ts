@@ -57,6 +57,7 @@ export interface ShouldRowBeSkippedParams {
 
 export interface ProcessCellForExportParams {
     value: any;
+    accumulatedRowIndex?: number;
     node?: RowNode | null;
     column: Column;
     api: GridApi | null | undefined;
