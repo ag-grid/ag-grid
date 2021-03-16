@@ -34,7 +34,9 @@ export class MouseEventService extends BeanStub {
     // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic
     // for where this is used.
     private stampDomElementWithGridInstance(): void {
-        (this.eGridDiv as any)[MouseEventService.GRID_DOM_KEY] = this.gridInstanceId;
+        if (this.eGridDiv) {
+            (this.eGridDiv as any)[MouseEventService.GRID_DOM_KEY] = this.gridInstanceId;
+        }
     }
 
     public getRenderedCellForEvent(event: Event): CellComp | null {

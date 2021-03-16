@@ -91,6 +91,7 @@ import { ColumnDefFactory } from "./columnController/columnDefFactory";
 import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
+import {HeadlessService} from "./headless/headlessService";
 
 export interface GridParams {
     // used by Web Components
@@ -120,11 +121,6 @@ export class Grid {
     private readonly gridOptions: GridOptions;
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
-        if (!eGridDiv) {
-            console.error('AG Grid: no div element provided to the grid');
-            return;
-        }
-
         if (!gridOptions) {
             console.error('AG Grid: no gridOptions provided to the grid');
             return;
@@ -152,12 +148,13 @@ export class Grid {
         this.context = new Context(contextParams, contextLogger);
 
         this.registerModuleUserComponents(registeredModules);
-
         this.registerStackComponents(registeredModules);
 
-        const gridCoreClass = (params && params.rootComponent) || GridCore;
-        const gridCore = new gridCoreClass();
-        this.context.createBean(gridCore);
+        if (eGridDiv) {
+            const gridCoreClass = (params && params.rootComponent) || GridCore;
+            const gridCore = new gridCoreClass();
+            this.context.createBean(gridCore);
+        }
 
         this.setColumnsAndData();
         this.dispatchGridReadyEvent(gridOptions);
@@ -291,7 +288,7 @@ export class Grid {
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
-            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter
+            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, HeadlessService
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);

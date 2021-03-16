@@ -75,6 +75,10 @@ const watch = () => {
     return gulp.watch(['./src/ts/**/*.ts'], tscSrcEs6Task);
 };
 
+const watchAndBuildBoth = () => {
+    return gulp.watch(['./src/ts/**/*.ts'], parallel[tscSrcTask, tscSrcEs6Task]);
+};
+
 // End of Typescript related tasks
 
 // Start of scss/css related tasks
@@ -94,7 +98,7 @@ const scssTask = () => {
                         test: /\.scss$/,
                         use: [
                             MiniCssExtractPlugin.loader,
-                            "css-loader", 
+                            "css-loader",
                             {
                                 loader: 'postcss-loader',
                                 options: {
@@ -189,6 +193,7 @@ gulp.task('copy-styles-for-dist', copyGridCoreStyles);
 
 // tsc & scss/css related tasks
 gulp.task('tsc-es6-watch', series('tsc-no-clean-es6', watch));
+gulp.task('tsc-watch', series('tsc-no-clean', watchAndBuildBoth));
 gulp.task('tsc-scss-clean', series('clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css'))));
 gulp.task('tsc-scss-no-clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css')));
 

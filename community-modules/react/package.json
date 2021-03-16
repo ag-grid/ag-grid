@@ -5,6 +5,7 @@
   "main": "main.js",
   "typings": "./main.d.ts",
   "scripts": {
+    "start": "cross-env NODE_ENV=development webpack serve",
     "build": "gulp && npm run hash",
     "umd": "rollup -c",
     "test": "jest",
@@ -36,9 +37,16 @@
     "prop-types": "^15.6.2"
   },
   "devDependencies": {
+    "cross-env": "7.0.3",
+    "css-loader": "5.1.2",
     "@ag-grid-community/client-side-row-model": "~25.1.0",
     "@ag-grid-community/core": "~25.1.0",
     "@babel/core": "7.12.3",
+    "@babel/preset-env": "7.13.10",
+    "@babel/preset-react": "7.12.13",
+    "@babel/preset-typescript": "7.13.0",
+    "@babel/plugin-transform-runtime": "7.13.10",
+    "@babel/runtime": "7.13.10",
     "@babel/plugin-proposal-throw-expressions": "^7.12.1",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.2",
     "@svgr/webpack": "5.4.0",
@@ -126,7 +134,10 @@
     "url-loader": "4.1.1",
     "vinyl-source-stream": "^2.0.0",
     "web-vitals": "^0.2.4",
-    "webpack": "4.44.2",
+    "webpack": "4.46.0",
+    "webpack-cli": "4.5.0",
+    "ts-node": "9.1.1",
+    "@types/webpack":"4.41.26",
     "webpack-dev-server": "3.11.0",
     "webpack-manifest-plugin": "2.2.0",
     "workbox-webpack-plugin": "5.1.4"

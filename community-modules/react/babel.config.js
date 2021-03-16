@@ -2,9 +2,14 @@ module.exports = {
     presets: [
         '@babel/preset-env',
         '@babel/preset-typescript',
-        '@babel/preset-react',
+        '@babel/preset-react'
     ],
-    plugins: ['@babel/plugin-proposal-class-properties'],
+    plugins: [
+        ["@babel/plugin-transform-runtime", {
+            "regenerator": true
+        }],
+        '@babel/plugin-proposal-class-properties'
+    ],
     env: {
         // place plugins for Cypress tests into "test" environment
         // so that production bundle is not instrumented

@@ -64,6 +64,7 @@ import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { ServerSideStoreState } from "./interfaces/IServerSideStore";
+import {HeadlessService} from "./headless/headlessService";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -167,6 +168,7 @@ export class GridApi {
     @Optional('statusBarService') private statusBarService: IStatusBarService;
     @Optional('chartService') private chartService: IChartService;
     @Optional('undoRedoService') private undoRedoService: UndoRedoService;
+    @Optional('headlessService') private headlessService: HeadlessService;
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
 
