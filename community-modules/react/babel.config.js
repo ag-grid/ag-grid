@@ -5,12 +5,16 @@ module.exports = {
         '@babel/preset-react'
     ],
     plugins: [
-        ["@babel/plugin-transform-runtime", {
-            "regenerator": true
-        }],
         '@babel/plugin-proposal-class-properties'
     ],
     env: {
+        dev: {
+            plugins: [
+                ["@babel/plugin-transform-runtime", {
+                    "regenerator": true
+                }],
+            ]
+        },
         // place plugins for Cypress tests into "test" environment
         // so that production bundle is not instrumented
         test: {
