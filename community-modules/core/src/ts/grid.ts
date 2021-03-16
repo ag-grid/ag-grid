@@ -152,7 +152,6 @@ export class Grid {
         this.context = new Context(contextParams, contextLogger);
 
         this.registerModuleUserComponents(registeredModules);
-
         this.registerStackComponents(registeredModules);
 
         const gridCoreClass = (params && params.rootComponent) || GridCore;
