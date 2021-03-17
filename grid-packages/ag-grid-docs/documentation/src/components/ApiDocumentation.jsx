@@ -158,7 +158,7 @@ const getTypeUrl = (type, framework) => {
 };
 
 const Property = ({ framework, id, name, definition }) => {
-    const [isExpanded, setExpanded] = useState(true);
+    const [isExpanded, setExpanded] = useState(false);
 
     let description = '';
     let isObject = false;
