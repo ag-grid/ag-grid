@@ -172,6 +172,10 @@ Note the following:
 
 ## API
 
+### API Methods
+
+<api-documentation source='grid-api/api.json' section='export' names='["exportDataAsExcel()", "getDataAsExcel()"]'></api-documentation>
+
 ### Grid Properties
 
 <api-documentation source='grid-properties/properties.json' section='miscellaneous' names='["excelStyles"]'></api-documentation>
