@@ -1,4 +1,4 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 const KEY_BACKSPACE = 8;
 const KEY_DELETE = 46;
@@ -56,7 +56,7 @@ export default forwardRef((props, ref) => {
                 eInput.setSelectionRange(length, length);
             }
         }
-    }, [])
+    }, []);
 
     /* Utility Methods */
     const cancelBeforeStart = props.charPress && ('1234567890'.indexOf(props.charPress) < 0);
@@ -114,7 +114,7 @@ export default forwardRef((props, ref) => {
                 return cancelBeforeStart;
             },
 
-            // Gets called once when editing is finished (eg if enter is pressed).
+            // Gets called once when editing is finished (eg if Enter is pressed).
             // If you return true, then the result of the edit will be ignored.
             isCancelAfterEnd() {
                 // will reject the number if it greater than 1,000,000
@@ -126,10 +126,10 @@ export default forwardRef((props, ref) => {
 
     return (
         <input ref={refInput}
-               value={value}
-               onChange={event => setValue(event.target.value)}
-               onKeyDown={event => onKeyDown(event)}
-               style={{width: "100%"}}
+            value={value}
+            onChange={event => setValue(event.target.value)}
+            onKeyDown={event => onKeyDown(event)}
+            style={{ width: "100%" }}
         />
     );
 });

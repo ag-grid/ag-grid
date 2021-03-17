@@ -280,7 +280,7 @@
         },
         "enterMovesDown<br />enterMovesDownAfterEdit": {
             "default": false,
-            "description": "Set both properties to `true` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the Enter key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation)."
+            "description": "Set both properties to `true` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation)."
         }
     },
     "headers": {
@@ -860,7 +860,7 @@
         },
         "copyHeadersToClipboard": {
             "default": false,
-            "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd> + <kbd>C</kbd> [clipboard](/clipboard/)."
+            "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> [clipboard](/clipboard/)."
         },
         "clipboardDeliminator": {
             "type": "string",

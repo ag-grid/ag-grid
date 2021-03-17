@@ -125,13 +125,13 @@ interface IHeaderCompParams {
 
     // callback to progress the sort for this column.
     // the grid will decide the next sort direction eg ascending, descending or 'no sort'.
-    // pass multiSort=true if you want to do a multi sort (eg user has shift held down when
+    // pass multiSort=true if you want to do a multi sort (eg user has Shift held down when
     // they click)
     progressSort(multiSort: boolean): void;
 
     // callback to set the sort for this column.
     // pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null
-    // (for no sort). pass multiSort=true if you want to do a multi sort (eg user has shift held
+    // (for no sort). pass multiSort=true if you want to do a multi sort (eg user has Shift held
     // down when they click)
     setSort(sort: string, multiSort?: boolean): void;
 
@@ -157,7 +157,7 @@ After the user requests a sort, you should call ONE of the following:
 ```js
 // option 1) tell the grid when you want to progress the sorting
 myHeaderElement.addEventListener('click', function(event) {
-    // in this example, we do multi sort if shift key is pressed
+    // in this example, we do multi sort if Shift key is pressed
     params.progressSort(event.shiftKey);
 });
 

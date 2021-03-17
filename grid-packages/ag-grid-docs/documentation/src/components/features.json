@@ -106,7 +106,7 @@
     {
         "title": "Row Sorting",
         "enterprise": false,
-        "description": "<span class=\"feature-highlight\">Row Sorting</span> will sort the data. Sort a column by clicking the header. \nSort multiple columns by holding down shift.",
+        "description": "<span class=\"feature-highlight\">Row Sorting</span> will sort the data. Sort a column by clicking the header. \nSort multiple columns by holding down <kbd>Shift</kbd>.",
         "snippet": "// enable sorting with column option\ncolDef.sortable=true\n",
         "level": 0,
         "url": "../row-sorting/"

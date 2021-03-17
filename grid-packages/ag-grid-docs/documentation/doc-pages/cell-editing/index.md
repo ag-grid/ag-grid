@@ -40,7 +40,7 @@ To get simple string editing, you do not need to provide an editor. The grid by 
 
 If you have `colDef.editable=true` set for a column, editing will start upon any of the following:
 
-- **Edit Key Pressed**: One of the following is pressed: `Enter`, `F2`, `Backspace`, `Delete`. If this happens then `params.keyPress` will contain the key code of the key that started the edit. The default editor will clear the contents of the cell if `Backspace` or `Delete` are pressed.
+- **Edit Key Pressed**: One of the following is pressed: <kbd>Enter</kbd>, <kbd>F2</kbd>, <kbd>Backspace</kbd>, <kbd>Delete</kbd>. If this happens then `params.keyPress` will contain the key code of the key that started the edit. The default editor will clear the contents of the cell if <kbd>Backspace</kbd> or <kbd>Delete</kbd> are pressed.
 - **Printable Key Pressed**: Any of the following characters are pressed: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!"£$%^&amp;*()_+-=[];\'#,./\|<>?:@~{}`<br/> If this happens then `params.charPress` will contain the character that started the edit. The default editor places this character into the edit field so that the user experience is they are typing into the cell.
 - **Mouse Double Click**: If the mouse is double-clicked. There is a grid property `singleClickEdit` that will allow single-click to start editing instead of double-click. Another property `suppressClickEdit` will prevent both single-click and double-click from starting the edit; use this if you only want to have your own way of starting editing, such as clicking a button in your custom cell renderer.
 - **api.startEditingCell()**: If you call `startEditingCell()` on the grid API
@@ -51,9 +51,9 @@ The grid will stop editing when any of the following happen:
 
 - **Callback stopEditing**: The callback `stopEditing` (from the params above) gets called by the editor. This is how your cell editor informs the grid to stop editing.
 - **Other Cell Focus**: If focus in the grid goes to another cell, the editing will stop.
-- **Enter Key Down**: If the grid receives an `Enter` key press event on the cell. If you do **not** want to stop editing when Enter is pressed, then listen for the event and stop propagation so the grid does not act on the event.
-- **Escape Key Down**: Similar to `Enter`, if `Escape` key is pressed, editing will stop. Unlike `Enter`, the `Escape` action will discard changes rather than taking the new value.
-- **Tab Key Down**: Editing will stop, accepting changes, and editing will move to the next cell, or the previous cell if `Shift` is also pressed.
+- **Enter Key Down**: If the grid receives an <kbd>Enter</kbd> key press event on the cell. If you do **not** want to stop editing when <kbd>Enter</kbd> is pressed, then listen for the event and stop propagation so the grid does not act on the event.
+- **Escape Key Down**: Similar to <kbd>Enter</kbd>, if <kbd>Esc</kbd> key is pressed, editing will stop. Unlike <kbd>Enter</kbd>, the <kbd>Esc</kbd> action will discard changes rather than taking the new value.
+- **Tab Key Down**: Editing will stop, accepting changes, and editing will move to the next cell, or the previous cell if <kbd>Shift</kbd> is also pressed.
 - **Popup Editor Closed**: If using popup editor, the popup is configured to close if you click outside the editor. Closing the popup triggers the grid to stop editing.
 - **gridApi.stopEditing()**: If you call `stopEditing()` on the grid API.
 
@@ -75,7 +75,7 @@ To have an editor appear in a popup, have the `isPopup()` method return `true`. 
 
 ## Tab Navigation
 
-While editing, if you hit `Tab`, the editing will stop for the current cell and start on the next cell. If you hold down `Shift + Tab`, the same will happen except the previous cell will start editing rather than the next. This is in line with editing data in Excel.
+While editing, if you hit <kbd>Tab</kbd>, the editing will stop for the current cell and start on the next cell. If you hold down <kbd>Shift</kbd>+<kbd>Tab</kbd>, the same will happen except the previous cell will start editing rather than the next. This is in line with editing data in Excel.
 
 The next and previous cells can also be navigated using the API functions `api.tabToNextCell()` and `api.tabToPreviousCell()`. Both of these methods will return `true` if the navigation was successful, otherwise `false`.
 
@@ -221,14 +221,14 @@ Below shows an example with dynamic editor parameters. The following can be note
 
 ## Enter Key Navigation
 
-By default pressing `Enter` will start editing on a cell, or stop editing on an editing cell. It will not navigate to the cell below.
+By default pressing <kbd>Enter</kbd> will start editing on a cell, or stop editing on an editing cell. It will not navigate to the cell below.
 
 To allow consistency with Excel the grid has the following properties:
 
-- `enterMovesDown`: Set to `true` to have `Enter` key move focus to the cell below if not editing. The default is `Enter` key starts editing the currently focused cell.
-- `enterMovesDownAfterEdit:` Set to `true` to have `Enter` key move focus to the cell below after `Enter` is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
+- `enterMovesDown`: Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below if not editing. The default is <kbd>Enter</kbd> key starts editing the currently focused cell.
+- `enterMovesDownAfterEdit:` Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below after <kbd>Enter</kbd> is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
 
-The example below demonstrates the focus moving down when **Enter** is pressed.
+The example below demonstrates the focus moving down when <kbd>Enter</kbd> is pressed.
 
 <grid-example title='Enter Key Navigation' name='enter-key-navigation' type='generated' options='{ "exampleHeight": 555 }'></grid-example>
 
@@ -266,8 +266,8 @@ The example below shows full row editing. In addition to standard full row editi
   Both `focusIn()` and `focusOut()` for this editor are logged to the console. Note that `focusIn()`
   and `focusOut()` are only called when the user is tabbing between cells when editing, they are not called
   as the user double clicks on a cell to start editing that cell, or the user finishes editing that cell by
-  e.g. hitting the Enter key.
-- The 'Suppress Navigable' column is not navigable using `Tab`. In other words, when tabbing around the grid, you cannot tab onto this cell.
+  e.g. hitting the <kbd>Enter</kbd> key.
+- The 'Suppress Navigable' column is not navigable using <kbd>Tab</kbd>. In other words, when tabbing around the grid, you cannot tab onto this cell.
 - The 'Not Editable' column is not editable, so when the row goes into edit mode, this column is not impacted. Also when editing, this column is not navigated to when tabbing.
 - The button will start editing line two. It uses the API to start editing a cell, however the result is that the whole row will become editable starting with the specified cell.
 - `cellValueChanged` and `rowValueChanged` events are logged to console.

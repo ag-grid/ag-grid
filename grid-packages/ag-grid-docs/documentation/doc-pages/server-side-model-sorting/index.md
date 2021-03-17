@@ -58,13 +58,13 @@ An example of the contents contained in the `sortModel` is shown below:
 Notice in the snippet above that the `sortModel` contains an array of models for each column that has active sorts
 in the grid. The column ID and sort type can then be used by the server to perform the actual sorting.
 
-The example below demonstrates soring using the SSRM and the Partial Store. Note the following:
+The example below demonstrates sorting using the SSRM and the Partial Store. Note the following:
 
 - The grid is using the Partial Row Store (the default store).
 - All columns have sorting enabled using the `defaultColDef.sortable = true`.
 - The server uses the metadata contained in the `sortModel` to sort the rows.
 - Open the browser's dev console to view the `sortModel` supplied in the request to the datasource.
-- Try single / multi column (using `Shift` key) sorting by clicking on column headers.
+- Try single / multi column (using <kbd>Shift</kbd> key) sorting by clicking on column headers.
 
 
 <grid-example title='Partial Sorting' name='partial-sorting' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>

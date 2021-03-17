@@ -58,9 +58,9 @@ const gridOptions = {
 | the Select is a) shown and b) opened ready for selection. There is no API to open a browsers
 | Select. For this reason to edit there are two interactions needed 1) double click to start
 | editing and 2) single click to open the Select.
-| <br/ >
+| <br />
 | We also observed different results while using keyboard navigation to control editing, e.g.
-| while using Enter to start editing. Some browsers would open the Select, others would not.
+| while using <kbd>Enter</kbd> to start editing. Some browsers would open the Select, others would not.
 | This is down to the browser implementation and given there is no API for opening the
 | Select, there is nothing the grid can do.
 | <br />

@@ -38,7 +38,7 @@
 |    // cancel the editing before it even starts.
 |    isCancelBeforeStart?(): boolean;
 |
-|    // Gets called once when editing is finished (eg if enter is pressed).
+|    // Gets called once when editing is finished (eg if Enter is pressed).
 |    // If you return true, then the result of the edit will be ignored.
 |    isCancelAfterEnd?(): boolean;
 |

@@ -67,13 +67,13 @@
             "description": "Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused."
         },
         "tabToNextHeader(params)": {
-            "description": "Allows overriding the default behaviour for when user hits tab key when a header is focused."
+            "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a header is focused."
         },
         "navigateToNextCell(params)": {
             "description": "Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused."
         },
         "tabToNextCell(params)": {
-            "description": "Allows overriding the default behaviour for when user hits tab key when a cell is focused."
+            "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a cell is focused."
         },
         "getDocument()": {
             "description": "Allows overriding what <code>document</code> is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different <code>document</code> than the one available on the global scope. This can happen if docking out components (something which Electron supports)."
