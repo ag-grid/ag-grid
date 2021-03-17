@@ -14,7 +14,7 @@ The same data that is in the grid gets exported, but none of the GUI representat
     - Cell Renderers will **NOT** be used.
     - Cell Formatters will **NOT** be used (use `processCellCallback` instead).
 
-- Cell styles are not exported by default, see [Export Excel Style](/excel-export-styles) for a detailed guide on how to export styles.
+- Cell styles are not exported by default, see [Export Excel Style](/excel-export-styles/) for a detailed guide on how to export styles.
 
 - If row grouping:
 
@@ -101,7 +101,7 @@ The following example demonstrates how to use other data types for your export. 
 - Boolean works off using 1 for true
 - The date time format for excel follows this format yyyy-mm-ddThh:MM:ss.mmm:
 - If you try to pass data that is not compatible with the underlying data type Excel will throw an error
-- When using `dataType: 'DateTime'` Excel doesn't format the resultant value, in this example it shows 39923. You need to add the formatting inside Excel. You can see a better example of how to handle Date Formatting in the [Excel Export - Excel Styles](/excel-export-styles/) section.
+- When using `dataType: 'DateTime'` Excel doesn't format the resultant value, in this example it shows 39923. You need to add the formatting inside Excel. You can see a better example of how to handle Date Formatting in the [Excel Export - Excel Styles](/excel-export-styles/#styling-dates) section.
 
 <grid-example title='Excel Data Types' name='excel-export-data-types' type='generated' options='{ "enterprise": true, "exampleHeight": 200 }'></grid-example>
 

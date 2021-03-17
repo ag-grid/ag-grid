@@ -111,7 +111,7 @@ Note the following:
 
 - The silver column has a style with `dataType=string`. This forces this column to be rendered as text in Excel even though all of their cells are numeric.
 
-<grid-example title='Excel Export With Styles' name='excel-export-with-styles' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+<grid-example title='Excel Export - Styles' name='excel-export-with-styles' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
 
 ## Example: Styling Row Groups
 
@@ -157,8 +157,18 @@ getIndentClass(params: CellClassParams): string[] | string {
 }
 ```
 
-<grid-example title='Styling Row Groups' name='styling-row-groups' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Styling Row Groups' name='excel-export-styling-row-groups' type='generated' options='{ "enterprise": true }'></grid-example>
 
+## Styling Dates
+When exporting dates to Excel format, you should use an Excel Style with `dataType="DateTime"`. The `DateTime` format only accepts dates in `ISO Format`, therefore, in order to get this to work, all dates need to be provided in the `yyyy-mm-ddThh:mm:ss` format. If your dates are not in ISO format, you should use the `processCellCallback` method to convert them. By default, these values are displayed as number, as demonstrated in [Data Types](/excel-export/#example-data-types). To make these numbers look like a regular date, the Excel Style should be combined with the `numberFormat` Excel Style.
+
+Note the following: 
+
+- There is only one date source in `ISO Format`.
+- All columns apart from the `ISO Format` column use `Value Formatter` to change the date format.
+- The `excelStyles` has a `numberFormat` for each date style (including the ISO Format), otherwise only a number would be displayed.
+
+<grid-example title='Excel Export - Styling Dates' name='excel-export-dates' type='generated' options='{ "enterprise": true }'></grid-example>
 
 ## API
 
