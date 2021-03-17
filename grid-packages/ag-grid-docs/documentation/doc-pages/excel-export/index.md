@@ -428,7 +428,7 @@ This interface is only relevant when exporting multiple sheets in a single Excel
 // This interface is the same as `ExcelExportParams`, with one addition data param.
 interface ExcelExportMultipleSheetParams extends ExcelExportParams {
     /**
-     * This should contain an array of Blobs, where each Blob is the return
+     * This should contain an array of strings, where each string is the return
      * of the `api.getGridRawDataForExcel()` method.
      */
     data: string[];

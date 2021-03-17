@@ -1,15 +1,11 @@
 <div class="container">
     <div class="columns">
-        <div class="column">
-            <label class="option" for="allColumns">All Columns
-                <input id="allColumns" type="checkbox" />
-            </label>
-        </div>
-    </div>
-    <div style="margin: 5px;">
-        <label>
-            <button onclick="onBtExport()" style="margin: 5px; font-weight: bold;">Export to Excel</button>
+        <label class="option" for="allColumns">All Columns
+            <input id="allColumns" type="checkbox" />
         </label>
+        <div>
+            <button onclick="onBtExport()" style="font-weight: bold;">Export to Excel</button>
+        </div>
     </div>
     <div class="grid-wrapper">
         <div id="myGrid" class="ag-theme-alpine"></div>
