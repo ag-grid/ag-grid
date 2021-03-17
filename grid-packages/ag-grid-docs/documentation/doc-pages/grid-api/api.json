@@ -41,7 +41,7 @@
             "description": "Set row data.",
             "type": {
                 "arguments": {
-                    "rowData": "any[]"
+                    "rowData": "object[]"
                 }
             }
         },
@@ -50,9 +50,9 @@
             "type": {
                 "arguments": {
                     "transaction": {
-                        "add?": "any[]",
-                        "remove?": "any[]",
-                        "update?": "any[]"
+                        "add?": "object[]",
+                        "remove?": "object[]",
+                        "update?": "object[]"
                     }
                 }
             }
@@ -62,16 +62,16 @@
             "type": {
                 "arguments": {
                     "transaction": {
-                        "add?": "any[]",
-                        "remove?": "any[]",
-                        "update?": "any[]"
+                        "add?": "object[]",
+                        "remove?": "object[]",
+                        "update?": "object[]"
                     },
                     "callback": "() => void"
                 }
             }
         },
         "flushAsyncTransactions()": {
-            "description": "Executes any remaining grid async transaction, if any are waiting to be executed.",
+            "description": "Executes any remaining asynchronous grid transactions, if any are waiting to be executed.",
             "type": {
                 "arguments": {}
             }
@@ -80,7 +80,7 @@
             "description": "Set the top pinned rows.",
             "type": {
                 "arguments": {
-                    "rowData": "any[]"
+                    "rowData": "object[]"
                 }
             }
         },
@@ -88,7 +88,7 @@
             "description": "Set the bottom pinned rows.",
             "type": {
                 "arguments": {
-                    "rowData": "any[]"
+                    "rowData": "object[]"
                 }
             }
         },
@@ -112,7 +112,7 @@
                 "arguments": {
                     "index": "number"
                 },
-                "returnType": "any"
+                "returnType": "object"
             }
         },
         "getPinnedBottomRow()": {
@@ -121,7 +121,7 @@
                 "arguments": {
                     "index": "number"
                 },
-                "returnType": "any"
+                "returnType": "object"
             }
         },
         "getModel()": {
@@ -1437,7 +1437,7 @@
             }
         },
         "setGridAriaProperty()": {
-            "description": "Sets an ARIA property in the grid panel (element with role=\"grid\"), and removes an ARIA property when the value is null.<br /><br />Example:<br />`api.setGridAriaProperty('label', 'my grid')` will set **aria-label=\"my grid\"**.<br />`api.setGridAriaProperty('label', null)` will remove the **aria-label** attribute from the grid element.",
+            "description": "Sets an ARIA property in the grid panel (element with `role=\"grid\"`), and removes an ARIA property when the value is null.<br /><br />Example:<br />`api.setGridAriaProperty('label', 'my grid')` will set `aria-label=\"my grid\"`.<br />`api.setGridAriaProperty('label', null)` will remove the `aria-label` attribute from the grid element.",
             "type": {
                 "arguments": {
                     "property": "string",
