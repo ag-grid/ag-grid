@@ -8,7 +8,7 @@ import { Component } from '../widgets/component';
 import { Constants } from '../constants/constants';
 import { setFixedWidth } from '../utils/dom';
 import { BeanStub } from "../context/beanStub";
-import { GridPanel } from '../gridPanel/gridPanel';
+import { GridPanelComp } from '../gridPanel/gridPanelComp';
 import { NumberSequence } from "../utils";
 
 export class HeaderContainer extends BeanStub {
@@ -120,7 +120,7 @@ export class HeaderContainer extends BeanStub {
         this.refreshRowComps(keepColumns);
     }
 
-    public setupDragAndDrop(gridComp: GridPanel): void {
+    public setupDragAndDrop(gridComp: GridPanelComp): void {
         // center section has viewport, but pinned sections do not
         const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);

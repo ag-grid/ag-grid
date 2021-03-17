@@ -7,7 +7,7 @@ import { PopupService } from '../widgets/popupService';
 import { FocusController } from '../focusController';
 import { addCssClass, isVisible } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
-import { GridPanel } from "../gridPanel/gridPanel";
+import { GridPanelComp } from "../gridPanel/gridPanelComp";
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -19,9 +19,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     private hidePopup: () => void;
     private tabListener: () => null;
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 

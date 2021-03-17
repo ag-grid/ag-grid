@@ -6,7 +6,7 @@ import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
 import { HeaderRowType } from "../headerRowComp";
-import { GridPanel } from "../../gridPanel/gridPanel";
+import { GridPanelComp } from "../../gridPanel/gridPanelComp";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
 import { last } from "../../utils/array";
@@ -25,10 +25,10 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
     private headerRoot: HeaderRootComp;
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 

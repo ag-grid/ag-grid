@@ -1,7 +1,7 @@
 import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
 import { Autowired, PostConstruct } from "../context/context";
 import { MoveColumnController } from "./moveColumnController";
-import { GridPanel } from "../gridPanel/gridPanel";
+import { GridPanelComp } from "../gridPanel/gridPanelComp";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnController } from "../columnController/columnController";
 import { Constants } from "../constants/constants";
@@ -22,7 +22,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
     private pinned: string | null;
     // public because it's part of the DropTarget interface
     private eContainer: HTMLElement;
@@ -38,7 +38,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.eContainer = eContainer;
     }
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
 
         this.moveColumnController.registerGridComp(gridPanel);

@@ -1,7 +1,7 @@
 import { BeanStub } from "../context/beanStub";
 import { Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
-import { GridPanel } from "../gridPanel/gridPanel";
+import { GridPanelComp } from "../gridPanel/gridPanelComp";
 import { getMaxDivHeight } from "../utils/browser";
 
 /**
@@ -12,7 +12,7 @@ import { getMaxDivHeight } from "../utils/browser";
 @Bean('maxDivHeightScaler')
 export class MaxDivHeightScaler extends BeanStub {
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
 
     private maxDivHeight: number;
 
@@ -42,7 +42,7 @@ export class MaxDivHeightScaler extends BeanStub {
         this.maxDivHeight = getMaxDivHeight();
     }
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 

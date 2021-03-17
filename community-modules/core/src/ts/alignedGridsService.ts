@@ -1,5 +1,5 @@
 import { ColumnController } from "./columnController/columnController";
-import { GridPanel } from "./gridPanel/gridPanel";
+import { GridPanelComp } from "./gridPanel/gridPanelComp";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
 import {
@@ -22,7 +22,7 @@ export class AlignedGridsService extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
 
     private logger: Logger;
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
 
     // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
     // while processing a master event) we mark this if consuming an event, and if we are, then
@@ -33,7 +33,7 @@ export class AlignedGridsService extends BeanStub {
         this.logger = loggerFactory.create('AlignedGridsService');
     }
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 

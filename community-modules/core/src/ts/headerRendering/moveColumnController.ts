@@ -4,7 +4,7 @@ import { ColumnController } from "../columnController/columnController";
 import { Column } from "../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";
 import { DropListener } from "./bodyDropTarget";
-import { GridPanel } from "../gridPanel/gridPanel";
+import { GridPanelComp } from "../gridPanel/gridPanelComp";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Logger, LoggerFactory } from "../logger";
 import { ColumnEventType } from "../events";
@@ -18,7 +18,7 @@ export class MoveColumnController implements DropListener {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
 
     private needToMoveLeft = false;
     private needToMoveRight = false;
@@ -44,7 +44,7 @@ export class MoveColumnController implements DropListener {
         this.centerContainer = !exists(pinned);
     }
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 

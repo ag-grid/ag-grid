@@ -1,5 +1,5 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { GridPanel, RowContainerComponents } from "../gridPanel/gridPanel";
+import { GridPanelComp, RowContainerComponents } from "../gridPanel/gridPanelComp";
 import { RowComp } from "./row/rowComp";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
@@ -7,7 +7,7 @@ import { CellFocusedEvent, Events, FirstDataRenderedEvent, ModelUpdatedEvent, Vi
 import { Constants } from "../constants/constants";
 import { CellComp } from "./cellComp";
 import { Autowired, Bean, Optional, Qualifier } from "../context/context";
-import { GridCore } from "../gridCore";
+import { GridComp } from "../gridComp";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColumnController } from "../columnController/columnController";
 import { Logger, LoggerFactory } from "../logger";
@@ -53,7 +53,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
     @Optional("rangeController") private rangeController: IRangeController;
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
 
     private destroyFuncsForColumnListeners: (() => void)[] = [];
 
@@ -82,13 +82,13 @@ export class RowRenderer extends BeanStub {
     private printLayout: boolean;
     private embedFullWidthRows: boolean;
 
-    private gridCore: GridCore;
+    private gridCore: GridComp;
 
-    public registerGridCore(gridCore: GridCore): void {
+    public registerGridCore(gridCore: GridComp): void {
         this.gridCore = gridCore;
     }
 
-    public getGridCore(): GridCore {
+    public getGridCore(): GridComp {
         return this.gridCore;
     }
 
@@ -96,7 +96,7 @@ export class RowRenderer extends BeanStub {
         this.logger = loggerFactory.create("RowRenderer");
     }
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
 
         this.rowContainers = this.gridPanel.getRowContainers();

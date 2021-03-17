@@ -1,5 +1,5 @@
 import { RowRenderer } from "./rowRenderer";
-import { GridPanel } from "../gridPanel/gridPanel";
+import { GridPanelComp } from "../gridPanel/gridPanelComp";
 import { Column } from "../entities/column";
 import { Autowired, Bean } from "../context/context";
 import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
@@ -13,10 +13,10 @@ export class AutoWidthCalculator extends BeanStub {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
     private headerRootComp: HeaderRootComp;
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 

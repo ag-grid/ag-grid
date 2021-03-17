@@ -3,7 +3,7 @@ import { Bean, PostConstruct } from "../context/context";
 import { AnimationQueueEmptyEvent } from "../events";
 import { Events } from "../eventKeys";
 import { BeanStub } from "../context/beanStub";
-import { GridPanel } from "../gridPanel/gridPanel";
+import { GridPanelComp } from "../gridPanel/gridPanelComp";
 
 interface TaskItem {
     task: () => void;
@@ -39,7 +39,7 @@ export class AnimationFrameService extends BeanStub {
     private taskCount = 0;
     private cancelledTasks = new Set();
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
 
     public setScrollTop(scrollTop: number): void {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
@@ -51,7 +51,7 @@ export class AnimationFrameService extends BeanStub {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
     }
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 

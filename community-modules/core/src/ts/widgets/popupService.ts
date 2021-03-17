@@ -1,5 +1,5 @@
 import { Autowired, Bean } from "../context/context";
-import { GridCore } from "../gridCore";
+import { GridComp } from "../gridComp";
 import { PostProcessPopupParams } from "../entities/gridOptions";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
@@ -75,10 +75,10 @@ export class PopupService extends BeanStub {
     @Autowired('environment') private environment: Environment;
     @Autowired('focusController') private focusController: FocusController;
 
-    private gridCore: GridCore;
+    private gridCore: GridComp;
     private popupList: AgPopup[] = [];
 
-    public registerGridCore(gridCore: GridCore): void {
+    public registerGridCore(gridCore: GridComp): void {
         this.gridCore = gridCore;
 
         this.addManagedListener(this.gridCore, Events.EVENT_KEYBOARD_FOCUS, () => {

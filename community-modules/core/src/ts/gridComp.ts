@@ -2,7 +2,7 @@ import { GridOptions } from "./entities/gridOptions";
 import { ColumnApi } from "./columnController/columnApi";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
-import { GridPanel } from "./gridPanel/gridPanel";
+import { GridPanelComp } from "./gridPanel/gridPanelComp";
 import { Logger, LoggerFactory } from "./logger";
 import { PopupService } from "./widgets/popupService";
 import { Autowired, Optional } from "./context/context";
@@ -26,7 +26,7 @@ import { addCssClass, removeCssClass, isVisible } from "./utils/dom";
 import { findIndex, last } from "./utils/array";
 import { FocusController } from "./focusController";
 
-export class GridCore extends ManagedFocusComponent {
+export class GridComp extends ManagedFocusComponent {
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -47,7 +47,7 @@ export class GridCore extends ManagedFocusComponent {
 
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
-    @RefSelector('gridPanel') private gridPanel: GridPanel;
+    @RefSelector('gridPanel') private gridPanel: GridPanelComp;
     @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
@@ -133,7 +133,7 @@ export class GridCore extends ManagedFocusComponent {
             `<div ref="eRootWrapper" class="ag-root-wrapper">
                 ${dropZones}
                 <div class="ag-root-wrapper-body" ref="rootWrapperBody">
-                    <ag-grid-comp ref="gridPanel"></ag-grid-comp>
+                    <ag-grid-panel ref="gridPanel"></ag-grid-panel>
                     ${sideBar}
                 </div>
                 ${statusBar}

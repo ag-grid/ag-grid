@@ -3,7 +3,7 @@ import { Autowired } from "../context/context";
 import { CellPosition } from "../entities/cellPosition";
 import { CellComp } from "../rendering/cellComp";
 import { NumberSequence } from '../utils';
-import { GridPanel } from "./gridPanel";
+import { GridPanelComp } from "./gridPanelComp";
 import { Constants } from "../constants/constants";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
@@ -17,7 +17,7 @@ export class MouseEventService extends BeanStub {
 
     private static gridInstanceSequence = new NumberSequence();
     private static GRID_DOM_KEY = '__ag_grid_instance';
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
 
     private gridInstanceId = MouseEventService.gridInstanceSequence.next();
 
@@ -26,7 +26,7 @@ export class MouseEventService extends BeanStub {
         this.stampDomElementWithGridInstance();
     }
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 

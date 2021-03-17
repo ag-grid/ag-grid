@@ -1,4 +1,4 @@
-import { GridPanel } from "../../gridPanel/gridPanel";
+import { GridPanelComp } from "../../gridPanel/gridPanelComp";
 import { Autowired, Bean } from "../../context/context";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
@@ -18,9 +18,9 @@ export class AutoHeightCalculator extends BeanStub {
     @Autowired("rowCssClassCalculator") private rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('$compile') public $compile: any;
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 

@@ -1,6 +1,6 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnController } from '../columnController/columnController';
-import { GridPanel } from '../gridPanel/gridPanel';
+import { GridPanelComp } from '../gridPanel/gridPanelComp';
 import { Autowired } from '../context/context';
 import { HeaderContainer } from './headerContainer';
 import { Events } from '../events';
@@ -37,7 +37,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
     private printLayout: boolean;
     private headerContainers: Map<HeaderContainerPosition, HeaderContainer> = new Map();
 
@@ -88,7 +88,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
         }
     }
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
         this.headerContainers.forEach(c => c.setupDragAndDrop(gridPanel));
     }

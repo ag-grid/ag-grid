@@ -8,7 +8,7 @@ import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { FilterManager } from "./filter/filterManager";
 import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
-import { GridPanel } from "./gridPanel/gridPanel";
+import { GridPanelComp } from "./gridPanel/gridPanelComp";
 import { GridApi } from "./gridApi";
 import { ColumnFactory } from "./columnController/columnFactory";
 import { DisplayedGroupCreator } from "./columnController/displayedGroupCreator";
@@ -20,7 +20,7 @@ import { ColumnUtils } from "./columnController/columnUtils";
 import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
 import { ComponentMeta, Context, ContextParams } from "./context/context";
-import { GridCore } from "./gridCore";
+import { GridComp } from "./gridComp";
 import { StandardMenuFactory } from "./headerRendering/standardMenu";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { DragService } from "./dragAndDrop/dragService";
@@ -109,31 +109,50 @@ export interface GridParams {
     providedBeanInstances?: { [key: string]: any; };
 
     modules?: Module[];
-
-    // Alternative UI root class. Default is GridCore.
-    rootComponent?: { new(): Component; };
 }
 
+// creates JavaScript vanilla Grid, including JavaScript (ag-stack) components, which can
+// be wrapped by the framework wrappers
 export class Grid {
 
-    private context: Context;
     protected logger: Logger;
+
     private readonly gridOptions: GridOptions;
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
+
         if (!gridOptions) {
             console.error('AG Grid: no gridOptions provided to the grid');
             return;
         }
 
-        const debug = !!gridOptions.debug;
-
         this.gridOptions = gridOptions;
+
+        new GridCoreCreator().create(eGridDiv, gridOptions, context => {
+            const gridComp = new GridComp();
+            context.createBean(gridComp);
+        }, params);
+    }
+
+    public destroy(): void {
+        if (this.gridOptions && this.gridOptions.api) {
+            this.gridOptions.api.destroy();
+        }
+    }
+}
+
+// created services of grid only, no UI, so frameworks can use this if providing
+// their own UI
+export class GridCoreCreator {
+
+    public create(eGridDiv: HTMLElement, gridOptions: GridOptions, uiCallback: (context: Context)=>void, params?: GridParams): void {
+
+        const debug = !!gridOptions.debug;
 
         const registeredModules = this.getRegisteredModules(params);
 
-        const beanClasses = this.createBeansList(registeredModules);
-        const providedBeanInstances = this.createProvidedBeans(eGridDiv, params);
+        const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules);
+        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
 
         if (!beanClasses) { return; } // happens when no row model found
 
@@ -143,29 +162,25 @@ export class Grid {
             debug: debug
         };
 
-        this.logger = new Logger('AG Grid', () => gridOptions.debug);
+        const logger = new Logger('AG Grid', () => gridOptions.debug);
         const contextLogger = new Logger('Context', () => contextParams.debug);
-        this.context = new Context(contextParams, contextLogger);
+        const context = new Context(contextParams, contextLogger);
 
-        this.registerModuleUserComponents(registeredModules);
-        this.registerStackComponents(registeredModules);
+        this.registerModuleUserComponents(context, registeredModules);
+        this.registerStackComponents(context, registeredModules);
 
-        if (eGridDiv) {
-            const gridCoreClass = (params && params.rootComponent) || GridCore;
-            const gridCore = new gridCoreClass();
-            this.context.createBean(gridCore);
-        }
+        uiCallback(context);
 
-        this.setColumnsAndData();
-        this.dispatchGridReadyEvent(gridOptions);
+        this.setColumnsAndData(context);
+        this.dispatchGridReadyEvent(context, gridOptions);
         const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
-        this.logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
+        logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
     }
 
-    private registerStackComponents(registeredModules: Module[]): void {
+    private registerStackComponents(context: Context, registeredModules: Module[]): void {
         const agStackComponents = this.createAgStackComponentsList(registeredModules);
         const agStackComponentsRegistry =
-            this.context.getBean('agStackComponentsRegistry') as AgStackComponentsRegistry;
+            context.getBean('agStackComponentsRegistry') as AgStackComponentsRegistry;
         agStackComponentsRegistry.setupComponents(agStackComponents);
     }
 
@@ -203,8 +218,8 @@ export class Grid {
         return allModules;
     }
 
-    private registerModuleUserComponents(registeredModules: Module[]): void {
-        const userComponentRegistry: UserComponentRegistry = this.context.getBean('userComponentRegistry');
+    private registerModuleUserComponents(context: Context, registeredModules: Module[]): void {
+        const userComponentRegistry: UserComponentRegistry = context.getBean('userComponentRegistry');
 
         const moduleUserComps: { componentName: string, componentClass: AgGridRegisteredComponentInput<IComponent<any>>; }[]
             = this.extractModuleEntity(registeredModules,
@@ -215,14 +230,14 @@ export class Grid {
         });
     }
 
-    private createProvidedBeans(eGridDiv: HTMLElement, params?: GridParams): any {
+    private createProvidedBeans(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
         }
 
         const seed = {
-            gridOptions: this.gridOptions,
+            gridOptions: gridOptions,
             eGridDiv: eGridDiv,
             $scope: params ? params.$scope : null,
             $compile: params ? params.$compile : null,
@@ -250,7 +265,7 @@ export class Grid {
             { componentName: 'AgSlider', componentClass: AgSlider },
             { componentName: 'AgAngleSelect', componentClass: AgAngleSelect },
             { componentName: 'AgColorPicker', componentClass: AgColorPicker },
-            { componentName: 'AgGridComp', componentClass: GridPanel },
+            { componentName: 'AgGridPanel', componentClass: GridPanelComp },
             { componentName: 'AgHeaderRoot', componentClass: HeaderRootComp },
             { componentName: 'AgPagination', componentClass: PaginationComp },
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
@@ -267,8 +282,8 @@ export class Grid {
         return components;
     }
 
-    private createBeansList(registeredModules: Module[]): any[] | undefined {
-        const rowModelClass = this.getRowModelClass(registeredModules);
+    private createBeansList(rowModelType: string | undefined, registeredModules: Module[]): any[] | undefined {
+        const rowModelClass = this.getRowModelClass(rowModelType, registeredModules);
 
         if (!rowModelClass) { return; }
 
@@ -310,19 +325,19 @@ export class Grid {
         return [].concat(...moduleEntities.map(extractor));
     }
 
-    private setColumnsAndData(): void {
-        const gridOptionsWrapper: GridOptionsWrapper = this.context.getBean('gridOptionsWrapper');
-        const columnController: ColumnController = this.context.getBean('columnController');
+    private setColumnsAndData(context: Context): void {
+        const gridOptionsWrapper: GridOptionsWrapper = context.getBean('gridOptionsWrapper');
+        const columnController: ColumnController = context.getBean('columnController');
         const columnDefs = gridOptionsWrapper.getColumnDefs();
 
         columnController.setColumnDefs(columnDefs || [], "gridInitializing");
 
-        const rowModel: IRowModel = this.context.getBean('rowModel');
+        const rowModel: IRowModel = context.getBean('rowModel');
         rowModel.start();
     }
 
-    private dispatchGridReadyEvent(gridOptions: GridOptions): void {
-        const eventService: EventService = this.context.getBean('eventService');
+    private dispatchGridReadyEvent(context: Context, gridOptions: GridOptions): void {
+        const eventService: EventService = context.getBean('eventService');
         const readyEvent: GridReadyEvent = {
             type: Events.EVENT_GRID_READY,
             api: gridOptions.api!,
@@ -331,8 +346,7 @@ export class Grid {
         eventService.dispatchEvent(readyEvent);
     }
 
-    private getRowModelClass(registeredModules: Module[]): any {
-        let rowModelType = this.gridOptions.rowModelType;
+    private getRowModelClass(rowModelType: string | undefined, registeredModules: Module[]): any {
 
         // default to client side
         if (!rowModelType) {
@@ -368,7 +382,4 @@ export class Grid {
         }
     }
 
-    public destroy(): void {
-        this.gridOptions.api!.destroy();
-    }
 }

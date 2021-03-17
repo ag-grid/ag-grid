@@ -129,7 +129,8 @@ export type RowContainerComponents = { [K in RowContainerComponentNames]: RowCon
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
-export class GridPanel extends Component {
+export class GridPanelComp extends Component {
+
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;

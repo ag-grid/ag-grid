@@ -1,11 +1,11 @@
 import { Bean } from "../context/context";
-import { GridPanel } from "../gridPanel/gridPanel";
+import { GridPanelComp } from "../gridPanel/gridPanelComp";
 import { BeanStub } from "../context/beanStub";
 
 @Bean('columnAnimationService')
 export class ColumnAnimationService extends BeanStub {
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
 
     private executeNextFuncs: Function[] = [];
     private executeLaterFuncs: Function[] = [];
@@ -14,7 +14,7 @@ export class ColumnAnimationService extends BeanStub {
 
     private animationThreadCount = 0;
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 

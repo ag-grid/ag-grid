@@ -114,7 +114,7 @@ export { FloatingFilterWrapper } from './filter/floating/floatingFilterWrapper';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 // gridPanel
-export { GridPanel } from "./gridPanel/gridPanel";
+export { GridPanelComp } from "./gridPanel/gridPanelComp";
 export { ScrollVisibleService } from "./gridPanel/scrollVisibleService";
 export { MouseEventService } from "./gridPanel/mouseEventService";
 
@@ -257,7 +257,7 @@ export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
 export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
-export { GridCore } from "./gridCore";
+export { GridComp } from "./gridComp";
 export { Logger, LoggerFactory } from "./logger";
 export { SelectionController } from "./selectionController";
 export { SortController, SortModelItem } from "./sortController";

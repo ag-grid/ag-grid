@@ -6,7 +6,7 @@ import { Autowired, Optional, PostConstruct } from "../context/context";
 import { ColumnController } from "../columnController/columnController";
 import { FocusController } from "../focusController";
 import { IRangeController } from "../interfaces/iRangeController";
-import { GridPanel } from "./gridPanel";
+import { GridPanelComp } from "./gridPanelComp";
 import { RowDragEvent, RowDragEnterEvent, RowDragLeaveEvent, RowDragMoveEvent, RowDragEndEvent } from "../events";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
@@ -47,7 +47,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
     private clientSideRowModel: IClientSideRowModel;
     private eContainer: HTMLElement;
     private needToMoveUp: boolean;
@@ -60,7 +60,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private isGridFiltered: boolean = false;
     private isRowGroupActive: boolean = false;
 
-    constructor(eContainer: HTMLElement, gridPanel: GridPanel) {
+    constructor(eContainer: HTMLElement, gridPanel: GridPanelComp) {
         super();
         this.eContainer = eContainer;
         this.gridPanel = gridPanel;

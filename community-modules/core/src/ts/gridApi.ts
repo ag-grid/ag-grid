@@ -4,7 +4,7 @@ import { ColumnController, ColumnState } from "./columnController/columnControll
 import { ColumnApi } from "./columnController/columnApi";
 import { SelectionController } from "./selectionController";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { GridPanel } from "./gridPanel/gridPanel";
+import { GridPanelComp } from "./gridPanel/gridPanelComp";
 import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
@@ -12,7 +12,7 @@ import { RowNode } from "./entities/rowNode";
 import { Constants } from "./constants/constants";
 import { Column } from "./entities/column";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
-import { GridCore } from "./gridCore";
+import { GridComp } from "./gridComp";
 import { IRowModel } from "./interfaces/iRowModel";
 import { SortController } from "./sortController";
 import { FocusController } from "./focusController";
@@ -172,8 +172,8 @@ export class GridApi {
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
 
-    private gridPanel: GridPanel;
-    private gridCore: GridCore;
+    private gridPanel: GridPanelComp;
+    private gridComp: GridComp;
 
     private headerRootComp: HeaderRootComp;
     private clientSideRowModel: IClientSideRowModel;
@@ -185,11 +185,11 @@ export class GridApi {
 
     private destroyCalled = false;
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
-    public registerGridCore(gridCore: GridCore): void {
-        this.gridCore = gridCore;
+    public registerGridCore(gridCore: GridComp): void {
+        this.gridComp = gridCore;
     }
 
     public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
@@ -452,7 +452,7 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
-        this.gridCore.refreshSideBar();
+        this.gridComp.refreshSideBar();
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -670,7 +670,7 @@ export class GridApi {
     }
 
     public getToolPanelInstance(id: string): IToolPanel | undefined {
-        return this.gridCore.getToolPanelInstance(id);
+        return this.gridComp.getToolPanelInstance(id);
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
@@ -803,7 +803,7 @@ export class GridApi {
 
     // Valid values for position are bottom, middle and top
     public ensureNodeVisible(comparator: any, position?: string | null) {
-        this.gridCore.ensureNodeVisible(comparator, position);
+        this.gridComp.ensureNodeVisible(comparator, position);
     }
 
     public forEachLeafNode(callback: (rowNode: RowNode) => void) {
@@ -1007,35 +1007,35 @@ export class GridApi {
     }
 
     public isSideBarVisible() {
-        return this.gridCore.isSideBarVisible();
+        return this.gridComp.isSideBarVisible();
     }
 
     public setSideBarVisible(show: boolean) {
-        this.gridCore.setSideBarVisible(show);
+        this.gridComp.setSideBarVisible(show);
     }
 
     public setSideBarPosition(position: 'left' | 'right') {
-        this.gridCore.setSideBarPosition(position);
+        this.gridComp.setSideBarPosition(position);
     }
 
     public openToolPanel(key: string) {
-        this.gridCore.openToolPanel(key);
+        this.gridComp.openToolPanel(key);
     }
 
     public closeToolPanel() {
-        this.gridCore.closeToolPanel();
+        this.gridComp.closeToolPanel();
     }
 
     public getOpenedToolPanel(): string | null {
-        return this.gridCore.getOpenedToolPanel();
+        return this.gridComp.getOpenedToolPanel();
     }
 
     public getSideBar(): SideBarDef {
-        return this.gridCore.getSideBar();
+        return this.gridComp.getSideBar();
     }
 
     public setSideBar(def: SideBarDef): void {
-        return this.gridCore.setSideBar(def);
+        return this.gridComp.setSideBar(def);
     }
 
     public setSuppressClipboardPaste(value: boolean): void {
@@ -1043,7 +1043,7 @@ export class GridApi {
     }
 
     public isToolPanelShowing() {
-        return this.gridCore.isToolPanelShowing();
+        return this.gridComp.isToolPanelShowing();
     }
 
     public doLayout() {
@@ -1114,7 +1114,7 @@ export class GridApi {
         this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
-        this.context.destroyBean(this.gridCore);
+        this.context.destroyBean(this.gridComp);
         // destroy the services
         this.context.destroy();
     }
