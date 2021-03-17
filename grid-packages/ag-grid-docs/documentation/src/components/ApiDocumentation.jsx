@@ -311,7 +311,7 @@ const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
         lines.push(`${getIndent(indentationLevel-- - 1)}}`);
     }
 
-    return <Code code={lines.join('\n')} />;
+    return <Code code={lines.join('\n')} keepMarkup={true} />;
 };
 
 const getInterfaceName = name => `I${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
@@ -353,7 +353,7 @@ const FunctionCodeSample = ({ framework, name, type }) => {
         lines.push('', ...getInterfaceLines(framework, 'IReturn', returnType));
     }
 
-    return <Code code={lines.join('\n')} className={styles['reference__code-sample']} />;
+    return <Code code={lines.join('\n')} className={styles['reference__code-sample']} keepMarkup={true} />;
 };
 
 const getInterfaceLines = (framework, name, definition) => {
