@@ -158,7 +158,7 @@ const getTypeUrl = (type, framework) => {
 };
 
 const Property = ({ framework, id, name, definition }) => {
-    const [isExpanded, setExpanded] = useState(false);
+    const [isExpanded, setExpanded] = useState(true);
 
     let description = '';
     let isObject = false;
@@ -324,19 +324,35 @@ const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
 const getInterfaceName = name => `I${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
 
 const FunctionCodeSample = ({ framework, name, type }) => {
-    const args = type.parameters ? { params: type.parameters } : type.arguments;
+    const args = type.parameters ?
+        {
+            params: {
+                meta: { name: `${getInterfaceName(name.replace(/\([^)]*\)/g, ''))}Params` },
+                ...type.parameters
+            }
+        } :
+        type.arguments;
+
     const { returnType } = type;
     const returnTypeIsObject = returnType != null && typeof returnType === 'object';
     const argumentDefinitions = [];
     let shouldUseNewline = false;
 
-    Object.entries(args).forEach(([key, value]) => {
-        const type = typeof value === 'object' ? getInterfaceName(key) : value;
-        const typeUrl = getTypeUrl(type, framework);
+    const getArgumentTypeName = (key, type) => {
+        if (typeof type === 'object') {
+            return (type.meta && type.meta.name) || getInterfaceName(key);
+        }
 
-        argumentDefinitions.push(`${key}: ${typeUrl ? createLinkedType(type, typeUrl) : type}`);
+        return type;
+    };
 
-        if (argumentDefinitions.length > 1 || type.length > 20) {
+    Object.entries(args).forEach(([key, type]) => {
+        const typeName = getArgumentTypeName(key, type);
+        const typeUrl = getTypeUrl(typeName, framework);
+
+        argumentDefinitions.push(`${key}: ${typeUrl ? createLinkedType(typeName, typeUrl) : typeName}`);
+
+        if (argumentDefinitions.length > 1 || typeName.length > 20) {
             shouldUseNewline = true;
         }
     });
@@ -347,17 +363,22 @@ const FunctionCodeSample = ({ framework, name, type }) => {
         argumentDefinitions.join('');
 
     const returnTypeUrl = getTypeUrl(returnType, framework);
+    const returnTypeName = getInterfaceName(functionName.replace(/^get/, ''));
 
     const lines = [
-        `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? 'IReturn' : (returnTypeUrl ? createLinkedType(returnType, returnTypeUrl) : returnType || 'void')};`,
+        `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? returnTypeName : (returnTypeUrl ? createLinkedType(returnType, returnTypeUrl) : returnType || 'void')};`,
     ];
 
     Object.keys(args)
         .filter(key => typeof args[key] === 'object')
-        .forEach(key => lines.push('', ...getInterfaceLines(framework, getInterfaceName(key), args[key])));
+        .forEach(key => {
+            const { meta, ...type } = args[key];
+
+            lines.push('', ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type));
+        });
 
     if (returnTypeIsObject) {
-        lines.push('', ...getInterfaceLines(framework, 'IReturn', returnType));
+        lines.push('', ...getInterfaceLines(framework, returnTypeName, returnType));
     }
 
     return <Code code={lines.join('\n')} className={styles['reference__code-sample']} keepMarkup={true} />;
