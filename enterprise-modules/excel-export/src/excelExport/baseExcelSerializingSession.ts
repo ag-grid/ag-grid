@@ -116,7 +116,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     protected isFormula(value: string | null) {
         if (value == null) { return false; }
-        return this.config.autoConvertFormulas && value.startsWith('=');
+        return this.config.autoConvertFormulas && value.toString().startsWith('=');
     }
 
     protected getStyleById(styleId?: string | null): ExcelStyle | null {
@@ -161,7 +161,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     private onNewBodyColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
         return (column, index, node) => {
-            const valueForCell = this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_EXCEL, node);
+            const valueForCell = this.extractRowCellValue(column, index, rowIndex, Constants.EXPORT_TYPE_EXCEL, node);
             const styleIds: string[] = this.config.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
             const excelStyleId: string | null = this.getStyleId(styleIds);
 

@@ -14,7 +14,7 @@ import styles from './Code.module.scss';
 /**
  * This uses Prism to highlight a provided code snippet.
  */
-const Code = ({ code, language = 'ts', plugins, className, ...props }) => {
+const Code = ({ code, language = 'ts', plugins, className, keepMarkup, ...props }) => {
     const ref = useRef();
 
     useEffect(() => {
@@ -30,7 +30,8 @@ const Code = ({ code, language = 'ts', plugins, className, ...props }) => {
     }
 
     return <pre className={classnames(styles['code'], `language-${language}`, className)} {...props}>
-        <code ref={ref} dangerouslySetInnerHTML={{ __html: code }} />
+        {keepMarkup && <code ref={ref} dangerouslySetInnerHTML={{ __html: code }} />}
+        {!keepMarkup && <code ref={ref}>{code}</code>}
     </pre>;
 };
 

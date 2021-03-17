@@ -24,13 +24,13 @@ var gridOptions = {
     excelStyles:[
         {
             id: 'booleanType',
-            dataType: 'boolean'
+            dataType: 'Boolean'
         },{
             id: 'stringType',
-            dataType: 'string'
+            dataType: 'String'
         },{
             id: 'dateType',
-            dataType: 'dateTime'
+            dataType: 'DateTime'
         }
     ]
 };

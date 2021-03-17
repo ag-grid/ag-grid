@@ -14,7 +14,7 @@ The same data that is in the grid gets exported, but none of the GUI representat
     - Cell Renderers will **NOT** be used.
     - Cell Formatters will **NOT** be used (use `processCellCallback` instead).
 
-- Cell styles are not exported by default, see [Export Excel Style](/excel-export-styles) for a detailed guide on how to export styles.
+- Cell styles are not exported by default, see [Export Excel Style](/excel-export-styles/) for a detailed guide on how to export styles.
 
 - If row grouping:
 
@@ -101,7 +101,7 @@ The following example demonstrates how to use other data types for your export. 
 - Boolean works off using 1 for true
 - The date time format for excel follows this format yyyy-mm-ddThh:MM:ss.mmm:
 - If you try to pass data that is not compatible with the underlying data type Excel will throw an error
-- When using `dataType: 'DateTime'` Excel doesn't format the resultant value, in this example it shows 39923. You need to add the formatting inside Excel. You can see a better example of how to handle Date Formatting in the [Excel Export - Excel Styles](/excel-export-styles/) section.
+- When using `dataType: 'DateTime'` Excel doesn't format the resultant value, in this example it shows 39923. You need to add the formatting inside Excel. You can see a better example of how to handle Date Formatting in the [Excel Export - Excel Styles](/excel-export-styles/#styling-dates) section.
 
 <grid-example title='Excel Data Types' name='excel-export-data-types' type='generated' options='{ "enterprise": true, "exampleHeight": 200 }'></grid-example>
 
@@ -127,7 +127,7 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 ### API Methods
 
-<api-documentation source='grid-api/api.json' section='export' names='["exportDataAsExcel(ExcelExportParams)", "getDataAsExcel(ExcelExportParams)", "getGridRawDataForExcel(ExcelExportParams)", "getMultipleSheetsAsExcel(ExcelExportMultipleSheetParams)", "exportMultipleSheetsAsExcel(ExcelExportMultipleSheetParams)"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='export' names='["exportDataAsExcel()", "getDataAsExcel()", "getGridRawDataForExcel()", "getMultipleSheetsAsExcel()", "exportMultipleSheetsAsExcel()"]'></api-documentation>
 
 ## Interfaces
 
@@ -388,6 +388,7 @@ interface ShouldRowBeSkippedParams {
 ```ts
 interface ProcessCellForExportParams {
     value: any;
+    accumulatedRowIndex?: number // the row number including headers (useful for formulas)
     node?: RowNode | null;
     column: Column;
     api: GridApi;
@@ -427,7 +428,7 @@ This interface is only relevant when exporting multiple sheets in a single Excel
 // This interface is the same as `ExcelExportParams`, with one addition data param.
 interface ExcelExportMultipleSheetParams extends ExcelExportParams {
     /**
-     * This should contain an array of Blobs, where each Blob is the return
+     * This should contain an array of strings, where each string is the return
      * of the `api.getGridRawDataForExcel()` method.
      */
     data: string[];

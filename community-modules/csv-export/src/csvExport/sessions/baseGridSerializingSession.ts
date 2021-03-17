@@ -56,7 +56,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return value != null ? value : '';
     }
 
-    public extractRowCellValue(column: Column, index: number, type: string, node: RowNode) {
+    public extractRowCellValue(column: Column, index: number, accumulatedRowIndex: number, type: string, node: RowNode) {
         // we render the group summary text e.g. "-> Parent -> Child"...
         const groupIndex = this.gridOptionsWrapper.isGroupMultiAutoColumn() ? node.rowGroupIndex : 0;
         const renderGroupSummaryCell =
@@ -75,7 +75,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         } else {
             valueForCell = this.valueService.getValue(column, node);
         }
-        const value = this.processCell(node, column, valueForCell, this.processCellCallback, type);
+        const value = this.processCell(accumulatedRowIndex, node, column, valueForCell, this.processCellCallback, type);
         return value != null ? value : '';
     }
 
@@ -112,9 +112,10 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return keys.reverse().join(' -> ');
     }
 
-    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string): any {
+    private processCell(accumulatedRowIndex: number, rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string): any {
         if (processCellCallback) {
             return processCellCallback({
+                accumulatedRowIndex,
                 column: column,
                 node: rowNode,
                 value: value,

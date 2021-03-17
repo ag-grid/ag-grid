@@ -166,14 +166,14 @@ After the grid has created an instance of a cell editor for a cell it is possibl
 
 ```ts
 // function takes params to identify what cells and returns back a list of cell editors
-function getCellEditorInstances(params: GetCellEditorInstancesParams): ICellRendererComp[];
+function getCellEditorInstances(params: GetCellEditorInstancesParams): ICellEditorComp[];
 
 // params object for the above
 interface GetCellEditorInstancesParams {
     // an optional list of row nodes
     rowNodes?: RowNode[];
     // an optional list of columns
-    columns?: (string|Column)[];
+    columns?: (string | Column)[];
 }
 ```
 

@@ -15,9 +15,16 @@ const types = {
     boolean: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean',
     CellPosition: '/keyboard-navigation/#cellposition',
     CellRange: '/range-selection/#range-selection-api',
+    ChartModel: '/integrated-charts-api/#saving-and-restoring-charts',
     ColDef: '/column-properties/',
+    CreatePivotChartParams: '/integrated-charts-api/#pivot-charts',
+    CreateRangeChartParams: '/integrated-charts-api/#range-charts',
+    CsvExportParams: '/csv-export/#csvexportparams',
+    ExcelExportParams: '/excel-export/#excelexportparams',
+    ExcelExportMultipleSheetParams: '/excel-export/#excelexportmultiplesheetparams',
     Function: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function',
     HTMLElement: 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
+    IAggFunc: '/aggregation/#custom-aggregation-functions',
     IDatasource: '/infinite-scrolling/#datasource-interface',
     IServerSideDatasource: '/server-side-model-datasource/#datasource-interface',
     IViewportDatasource: '/viewport/#interface-iviewportdatasource',
@@ -311,25 +318,41 @@ const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
         lines.push(`${getIndent(indentationLevel-- - 1)}}`);
     }
 
-    return <Code code={lines.join('\n')} />;
+    return <Code code={lines.join('\n')} keepMarkup={true} />;
 };
 
 const getInterfaceName = name => `I${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
 
 const FunctionCodeSample = ({ framework, name, type }) => {
-    const args = type.parameters ? { params: type.parameters } : type.arguments;
+    const args = type.parameters ?
+        {
+            params: {
+                meta: { name: `${getInterfaceName(name.replace(/\([^)]*\)/g, ''))}Params` },
+                ...type.parameters
+            }
+        } :
+        type.arguments;
+
     const { returnType } = type;
     const returnTypeIsObject = returnType != null && typeof returnType === 'object';
     const argumentDefinitions = [];
     let shouldUseNewline = false;
 
-    Object.entries(args).forEach(([key, value]) => {
-        const type = typeof value === 'object' ? getInterfaceName(key) : value;
-        const typeUrl = getTypeUrl(type, framework);
+    const getArgumentTypeName = (key, type) => {
+        if (typeof type === 'object') {
+            return (type.meta && type.meta.name) || getInterfaceName(key);
+        }
 
-        argumentDefinitions.push(`${key}: ${typeUrl ? createLinkedType(type, typeUrl) : type}`);
+        return type;
+    };
 
-        if (argumentDefinitions.length > 1 || type.length > 20) {
+    Object.entries(args).forEach(([key, type]) => {
+        const typeName = getArgumentTypeName(key, type);
+        const typeUrl = getTypeUrl(typeName, framework);
+
+        argumentDefinitions.push(`${key}: ${typeUrl ? createLinkedType(typeName, typeUrl) : typeName}`);
+
+        if (argumentDefinitions.length > 1 || typeName.length > 20) {
             shouldUseNewline = true;
         }
     });
@@ -340,20 +363,25 @@ const FunctionCodeSample = ({ framework, name, type }) => {
         argumentDefinitions.join('');
 
     const returnTypeUrl = getTypeUrl(returnType, framework);
+    const returnTypeName = getInterfaceName(functionName.replace(/^get/, ''));
 
     const lines = [
-        `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? 'IReturn' : (returnTypeUrl ? createLinkedType(returnType, returnTypeUrl) : returnType || 'void')};`,
+        `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? returnTypeName : (returnTypeUrl ? createLinkedType(returnType, returnTypeUrl) : returnType || 'void')};`,
     ];
 
     Object.keys(args)
         .filter(key => typeof args[key] === 'object')
-        .forEach(key => lines.push('', ...getInterfaceLines(framework, getInterfaceName(key), args[key])));
+        .forEach(key => {
+            const { meta, ...type } = args[key];
+
+            lines.push('', ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type));
+        });
 
     if (returnTypeIsObject) {
-        lines.push('', ...getInterfaceLines(framework, 'IReturn', returnType));
+        lines.push('', ...getInterfaceLines(framework, returnTypeName, returnType));
     }
 
-    return <Code code={lines.join('\n')} className={styles['reference__code-sample']} />;
+    return <Code code={lines.join('\n')} className={styles['reference__code-sample']} keepMarkup={true} />;
 };
 
 const getInterfaceLines = (framework, name, definition) => {

@@ -97,7 +97,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_CSV, node));
+        this.result += this.putInQuotes(this.extractRowCellValue(column, index, index, Constants.EXPORT_TYPE_CSV, node));
     }
 
     private putInQuotes(value: any): string {

@@ -41,7 +41,7 @@
             "description": "Set row data.",
             "type": {
                 "arguments": {
-                    "rowData": "any[]"
+                    "rowData": "object[]"
                 }
             }
         },
@@ -50,9 +50,9 @@
             "type": {
                 "arguments": {
                     "transaction": {
-                        "add?": "any[]",
-                        "remove?": "any[]",
-                        "update?": "any[]"
+                        "add?": "object[]",
+                        "remove?": "object[]",
+                        "update?": "object[]"
                     }
                 }
             }
@@ -62,16 +62,16 @@
             "type": {
                 "arguments": {
                     "transaction": {
-                        "add?": "any[]",
-                        "remove?": "any[]",
-                        "update?": "any[]"
+                        "add?": "object[]",
+                        "remove?": "object[]",
+                        "update?": "object[]"
                     },
                     "callback": "() => void"
                 }
             }
         },
         "flushAsyncTransactions()": {
-            "description": "Executes any remaining grid async transaction, if any are waiting to be executed.",
+            "description": "Executes any remaining asynchronous grid transactions, if any are waiting to be executed.",
             "type": {
                 "arguments": {}
             }
@@ -80,7 +80,7 @@
             "description": "Set the top pinned rows.",
             "type": {
                 "arguments": {
-                    "rowData": "any[]"
+                    "rowData": "object[]"
                 }
             }
         },
@@ -88,7 +88,7 @@
             "description": "Set the bottom pinned rows.",
             "type": {
                 "arguments": {
-                    "rowData": "any[]"
+                    "rowData": "object[]"
                 }
             }
         },
@@ -112,7 +112,7 @@
                 "arguments": {
                     "index": "number"
                 },
-                "returnType": "any"
+                "returnType": "object"
             }
         },
         "getPinnedBottomRow()": {
@@ -121,7 +121,7 @@
                 "arguments": {
                     "index": "number"
                 },
-                "returnType": "any"
+                "returnType": "object"
             }
         },
         "getModel()": {
@@ -262,7 +262,7 @@
                 "url": "/master-detail-grids/#accessing-detail-grids"
             }
         },
-        "forEachDetailGridInfo(callback)": {
+        "forEachDetailGridInfo()": {
             "description": "Iterates through each `DetailGridInfo` in the grid and calls the supplied callback on each.",
             "type": {
                 "arguments": {
@@ -586,12 +586,8 @@
         "exportDataAsCsv()": {
             "description": "Downloads a CSV export of the grid's data.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "columnSeparator?": "string",
-                    "suppressQuotes?": "boolean"
+                "arguments": {
+                    "params": "CsvExportParams"
                 }
             },
             "more": {
@@ -602,12 +598,8 @@
         "getDataAsCsv()": {
             "description": "Similar to `exportDataAsCsv`, except returns the result as a string rather than download it.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "columnSeparator?": "string",
-                    "suppressQuotes?": "boolean"
+                "arguments": {
+                    "params": "CsvExportParams"
                 },
                 "returnType": "string"
             },
@@ -619,19 +611,8 @@
         "exportDataAsExcel()": {
             "description": "Downloads an Excel export of the grid's data.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "author?": "string",
-                    "autoConvertFormulas?": "boolean",
-                    "columnWidth?": "number | ((params: object) => number)",
-                    "exportMode?": "'xlsx' | 'xml'",
-                    "fontSize?": "number",
-                    "headerRowHeight?": "number",
-                    "rowHeight?": "number",
-                    "sheetName?": "string",
-                    "suppressTextAsCDATA?": "boolean"
+                "arguments": {
+                    "params": "ExcelExportParams"
                 }
             },
             "more": {
@@ -642,19 +623,8 @@
         "getDataAsExcel()": {
             "description": "Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "author?": "string",
-                    "autoConvertFormulas?": "boolean",
-                    "columnWidth?": "number | ((params: object) => number)",
-                    "exportMode?": "'xlsx' | 'xml'",
-                    "fontSize?": "number",
-                    "headerRowHeight?": "number",
-                    "rowHeight?": "number",
-                    "sheetName?": "string",
-                    "suppressTextAsCDATA?": "boolean"
+                "arguments": {
+                    "params": "ExcelExportParams"
                 },
                 "returnType": "string | Blob"
             },
@@ -666,19 +636,8 @@
         "getGridRawDataForExcel()": {
             "description": "This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "author?": "string",
-                    "autoConvertFormulas?": "boolean",
-                    "columnWidth?": "number | ((params: object) => number)",
-                    "exportMode?": "'xlsx' | 'xml'",
-                    "fontSize?": "number",
-                    "headerRowHeight?": "number",
-                    "rowHeight?": "number",
-                    "sheetName?": "string",
-                    "suppressTextAsCDATA?": "boolean"
+                "arguments": {
+                    "params": "ExcelExportParams"
                 },
                 "returnType": "string"
             },
@@ -690,20 +649,8 @@
         "exportMultipleSheetsAsExcel()": {
             "description": "Downloads an Excel export of multiple sheets in one file.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "author?": "string",
-                    "autoConvertFormulas?": "boolean",
-                    "columnWidth?": "number | ((params: object) => number)",
-                    "exportMode?": "'xlsx' | 'xml'",
-                    "fontSize?": "number",
-                    "headerRowHeight?": "number",
-                    "rowHeight?": "number",
-                    "sheetName?": "string",
-                    "suppressTextAsCDATA?": "boolean",
-                    "data": "string[]"
+                "arguments": {
+                    "params": "ExcelExportMultipleSheetParams"
                 }
             },
             "more": {
@@ -714,20 +661,8 @@
         "getMultipleSheetsAsExcel()": {
             "description": "Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "author?": "string",
-                    "autoConvertFormulas?": "boolean",
-                    "columnWidth?": "number | ((params: object) => number)",
-                    "exportMode?": "'xlsx' | 'xml'",
-                    "fontSize?": "number",
-                    "headerRowHeight?": "number",
-                    "rowHeight?": "number",
-                    "sheetName?": "string",
-                    "suppressTextAsCDATA?": "boolean",
-                    "data": "string[]"
+                "arguments": {
+                    "params": "ExcelExportMultipleSheetParams"
                 },
                 "returnType": "Blob"
             },
@@ -820,20 +755,73 @@
         "meta": {
             "displayName": "Row Drag"
         },
-        "setSuppressRowDrag(value)": {
-            "description": "Sets the `suppressRowDrag` property."
+        "setSuppressRowDrag()": {
+            "description": "Sets the `suppressRowDrag` property.",
+            "type": {
+                "arguments": {
+                    "value": "boolean"
+                }
+            },
+            "more": {
+                "name": "Suppress Row Drag",
+                "url": "/row-dragging/#suppress-row-drag"
+            }
         },
-        "setSuppressMoveWhenRowDragging(value)": {
-            "description": "Sets the `suppressMoveWhenRowDragging` property."
+        "setSuppressMoveWhenRowDragging()": {
+            "description": "Sets the `suppressMoveWhenRowDragging` property.",
+            "type": {
+                "arguments": {
+                    "value": "boolean"
+                }
+            },
+            "more": {
+                "name": "Suppress Move When Dragging",
+                "url": "/row-dragging/#suppress-move-when-dragging"
+            }
         },
-        "addRowDropZone(params)": {
-            "description": "Adds a DropZone outside of the Grid where rows can be dropped."
+        "addRowDropZone()": {
+            "description": "Adds a drop zone outside of the grid where rows can be dropped.",
+            "type": {
+                "parameters": {
+                    "getContainer": "() => HTMLElement",
+                    "onDragEnter?": "(params: RowDragEnterEvent) => void",
+                    "onDragLeave?": "(params: RowDragLeaveEvent) => void",
+                    "onDragging?": "(params: RowDragMoveEvent) => void",
+                    "onDragStop?": "(params: RowDragEndEvent) => void"
+                }
+            },
+            "more": {
+                "name": "Row Dragging to an External DropZone",
+                "url": "/row-dragging-to-external-dropzone/"
+            }
         },
-        "removeRowDropZone(params)": {
-            "description": "Removes an external DropZone added by addRowDropZone."
+        "removeRowDropZone()": {
+            "description": "Removes an external drop zone added by `addRowDropZone`.",
+            "type": {
+                "parameters": {
+                    "getContainer": "() => HTMLElement"
+                }
+            },
+            "more": {
+                "name": "Row Dragging to an External DropZone",
+                "url": "/row-dragging-to-external-dropzone/"
+            }
         },
         "getRowDropZoneParams()": {
-            "description": "Returns the RowDropZoneParams to be used by another grid's addRowDropZone method."
+            "description": "Returns the `RowDropZoneParams` to be used by another grid's `addRowDropZone` method.",
+            "type": {
+                "parameters": {
+                    "onDragEnter?": "(params: RowDragEnterEvent) => void",
+                    "onDragLeave?": "(params: RowDragLeaveEvent) => void",
+                    "onDragging?": "(params: RowDragMoveEvent) => void",
+                    "onDragStop?": "(params: RowDragEndEvent) => void"
+                },
+                "returnType": "RowDropZoneParams"
+            },
+            "more": {
+                "name": "Row Dragging Between Grids",
+                "url": "/row-dragging-to-grid/"
+            }
         }
     },
     "rendering": {
@@ -841,42 +829,108 @@
             "displayName": "Rendering"
         },
         "getRenderedNodes()": {
-            "description": "Retrieve rendered nodes. Due to virtualisation this will contain only the current visible rows and those in the buffer."
+            "description": "Retrieve rendered nodes. Due to virtualisation this will contain only the current visible rows and those in the buffer.",
+            "type": {
+                "arguments": {},
+                "returnType": "RowNode[]"
+            }
         },
-        "getCellRendererInstances(params)": {
-            "description": "Returns the list of active <a href='../component-cell-renderer/#accessing-cell-renderer-instances'>Cell Renderer Instances</a>."
+        "getCellRendererInstances()": {
+            "description": "Returns the list of active [Cell Renderer Instances](/component-cell-renderer/#accessing-cell-renderer-instances).",
+            "type": {
+                "parameters": {
+                    "rowNodes?": "RowNode[]",
+                    "columns?": "(string | Column)[]"
+                },
+                "returnType": "ICellRendererComp[]"
+            }
         },
-        "getCellEditorInstances(params)": {
-            "description": "Returns the list of active <a href='../component-cell-editor/#accessing-cell-editor-instances'>Cell Editor Instances</a>."
+        "getCellEditorInstances()": {
+            "description": "Returns the list of active [Cell Editor Instances](/component-cell-editor/#accessing-cell-editor-instances).",
+            "type": {
+                "parameters": {
+                    "rowNodes?": "RowNode[]",
+                    "columns?": "(string | Column)[]"
+                },
+                "returnType": "ICellEditorComp[]"
+            }
         },
         "getSizesForCurrentTheme()": {
-            "description": "Gets the sizes that various UI elements will be rendered at with the current theme. Returns an object containing the keys `rowHeight` and `headerHeight`. If you override the row or header height using `gridOptions`, the override value you provided will be returned."
+            "description": "Gets the sizes that various UI elements will be rendered at with the current theme. If you override the row or header height using `gridOptions`, the override value you provided will be returned.",
+            "type": {
+                "arguments": {},
+                "returnType": {
+                    "rowHeight": "number",
+                    "headerHeight": "number"
+                }
+            }
         }
     },
     "scrolling": {
         "meta": {
             "displayName": "Scrolling"
         },
-        "setAlwaysShowHorizontalScroll(show)": {
-            "description": "If `true`, the horizontal scrollbar will always be present, event if not required. Otherwise, it will only be displayed when necessary."
+        "setAlwaysShowHorizontalScroll()": {
+            "description": "If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary.",
+            "type": {
+                "arguments": {
+                    "show": "boolean"
+                }
+            }
         },
-        "setAlwaysShowVerticalScroll(show)": {
-            "description": "If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary."
+        "setAlwaysShowVerticalScroll()": {
+            "description": "If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary.",
+            "type": {
+                "arguments": {
+                    "show": "boolean"
+                }
+            }
         },
-        "ensureIndexVisible(index, position)": {
-            "description": "Ensures the row index is visible by vertically scrolling the grid. The valid values for positions are `'top' | 'middle' | 'bottom' | undefined | null`. If `'top'`, `'middle'` or `'bottom'`, the grid will scroll the row to place the row at the top, middle or bottom respectively. If `undefined` or `null` the grid will do the minimum scrolling to show the row, i.e. if the grid needs to scroll up then it will scroll so that the row is at the top, if the grid needs to scroll down then it will scroll so that the row is at the bottom, if the row is already in view then the grid will do nothing."
+        "ensureIndexVisible()": {
+            "description": "Ensures the row index is visible by vertically scrolling the grid. If a position of `'top'`, `'middle'` or `'bottom'` is supplied, the grid will scroll the grid to place the row at the top, middle or bottom respectively. Otherwise, the grid will do the minimum scrolling possible to show the row, i.e. if the grid needs to scroll up then it will scroll so that the row is at the top, if the grid needs to scroll down then it will scroll so that the row is at the bottom, if the row is already in view then the grid will do nothing.",
+            "type": {
+                "arguments": {
+                    "index": "number",
+                    "position?": "'top' | 'middle' | 'bottom'"
+                }
+            }
         },
-        "ensureNodeVisible(comparator, position)": {
-            "description": "Ensures a node is visible, scrolling the table if needed. Provide one of a) the node b) the data object c) a comparator function (that takes the node as a parameter, and returns `true` for match or `false` for no match). The valid values for positions are same as for `api.ensureIndexVisible()`."
+        "ensureNodeVisible()": {
+            "description": "Ensures a row node is visible, scrolling the grid if needed. Provide either a) the node, b) the data object, or c) a comparator function (that takes the node as a parameter, and returns `true` for match or `false` for no match).",
+            "type": {
+                "arguments": {
+                    "comparator": "RowNode | object | (node: RowNode) => boolean",
+                    "position?": "'top' | 'middle' | 'bottom'"
+                }
+            }
         },
-        "ensureColumnVisible(colId)": {
-            "description": "Ensures the column is visible, scrolling the table if needed."
+        "ensureColumnVisible()": {
+            "description": "Ensures the column is visible, scrolling the table if needed.",
+            "type": {
+                "arguments": {
+                    "key": "string | Column"
+                }
+            }
         },
         "getHorizontalPixelRange()": {
-            "description": "Returns a JSON object with two properties:<ul class='content'><li>`left`: The left pixel position of the current scroll in the grid</li><li>`right`: The right pixel position of the current scroll in the grid</li></ul>"
+            "description": "Returns an object with two properties:<ul class='content'><li>`left`: The left pixel position of the current scroll in the grid</li><li>`right`: The right pixel position of the current scroll in the grid</li></ul>",
+            "type": {
+                "arguments": {},
+                "returnType": {
+                    "left": "number",
+                    "right": "number"
+                }
+            }
         },
         "getVerticalPixelRange()": {
-            "description": "Returns a JSON object with two properties:<ul class='content'><li>`top`: The top pixel position of the current scroll in the grid</li><li>`bottom`: The bottom pixel position of the current scroll in the grid</li></ul>"
+            "description": "Returns an object with two properties:<ul class='content'><li>`top`: The top pixel position of the current scroll in the grid</li><li>`bottom`: The bottom pixel position of the current scroll in the grid</li></ul>",
+            "type": {
+                "arguments": {},
+                "returnType": {
+                    "top": "number",
+                    "bottom": "number"
+                }
+            }
         }
     },
     "infiniteScrolling": {
@@ -884,22 +938,46 @@
             "displayName": "Infinite Scrolling"
         },
         "refreshInfiniteCache()": {
-            "description": "Marks all the currently loaded blocks in the cache for reload. If you have 10 blocks in the cache, all 10 will be marked for reload. The old data will continue to be displayed until the new data is loaded."
+            "description": "Marks all the currently loaded blocks in the cache for reload. If you have 10 blocks in the cache, all 10 will be marked for reload. The old data will continue to be displayed until the new data is loaded.",
+            "type": {
+                "arguments": {}
+            }
         },
         "purgeInfiniteCache()": {
-            "description": "Purges the cache. The grid is then told to refresh. Only the blocks required to display the current data on screen are fetched (typically no more than 2). The grid will display nothing while the new blocks are loaded. Use this to immediately remove the old data from the user."
+            "description": "Purges the cache. The grid is then told to refresh. Only the blocks required to display the current data on screen are fetched (typically no more than 2). The grid will display nothing while the new blocks are loaded. Use this to immediately remove the old data from the user.",
+            "type": {
+                "arguments": {}
+            }
         },
         "getInfiniteRowCount()": {
-            "description": "The row count defines how many rows the grid allows scrolling to."
+            "description": "The row count defines how many rows the grid allows scrolling to.",
+            "type": {
+                "arguments": {},
+                "returnType": "number"
+            }
         },
         "isLastRowIndexKnown()": {
-            "description": "Returns `true` if grid allows for scrolling past the last row to load more rows, thus providing infinite scroll."
+            "description": "Returns `true` if grid allows for scrolling past the last row to load more rows, thus providing infinite scroll.",
+            "type": {
+                "arguments": {},
+                "returnType": "boolean"
+            }
         },
-        "setRowCount(rowCount, lastRowIndexKnown)": {
-            "description": "Sets the `rowCount` and `lastRowIndexKnown` properties. The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set. Set `rowCount` to adjust the height of the vertical scroll. Set `lastRowIndexKnown` to enable / disable searching for more rows. Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode."
+        "setRowCount()": {
+            "description": "Sets the `rowCount` and `lastRowIndexKnown` properties. The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set. Set `rowCount` to adjust the height of the vertical scroll. Set `lastRowIndexKnown` to enable / disable searching for more rows. Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode.",
+            "type": {
+                "arguments": {
+                    "rowCount": "number",
+                    "lastRowIndexKnown?": "boolean"
+                }
+            }
         },
         "getCacheBlockState()": {
-            "description": "Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working."
+            "description": "Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.",
+            "type": {
+                "arguments": {},
+                "returnType": "object"
+            }
         }
     },
     "overlays": {
@@ -907,24 +985,50 @@
             "displayName": "Overlays"
         },
         "showLoadingOverlay()": {
-            "description": "Show the 'loading' overlay."
+            "description": "Show the 'loading' overlay.",
+            "type": {
+                "arguments": {}
+            }
         },
         "showNoRowsOverlay()": {
-            "description": "Show the 'no rows' overlay."
+            "description": "Show the 'no rows' overlay.",
+            "type": {
+                "arguments": {}
+            }
         },
         "hideOverlay()": {
-            "description": "Hides the overlay if showing."
+            "description": "Hides the overlay if showing.",
+            "type": {
+                "arguments": {}
+            }
         }
     },
     "clipboard": {
         "meta": {
             "displayName": "Clipboard"
         },
-        "copySelectedRangeToClipboard(includeHeaders)": {
-            "description": "Copies the selected ranges to the clipboard."
+        "copySelectedRangeToClipboard()": {
+            "description": "Copies the selected ranges to the clipboard.",
+            "type": {
+                "arguments": {
+                    "includeHeaders": "boolean"
+                }
+            }
         },
         "copySelectedRangeDown()": {
-            "description": "Copies the selected range down, similar to `Ctrl&nbsp;+&nbsp;D` in Excel."
+            "description": "Copies the selected range down, similar to <kbd>Ctrl</kbd>&nbsp;+&nbsp;<kbd>D</kbd> in Excel.",
+            "type": {
+                "arguments": {}
+            }
+        },
+        "copySelectedRowsToClipboard()": {
+            "description": "Copies the selected rows to the clipboard. Set `includeHeaders = true` to include the headers (default is `false`). Set `columnKeys` to the list of columns if you want just specific columns.",
+            "type": {
+                "arguments": {
+                    "includeHeaders": "boolean",
+                    "columnKeys?": "(string | Column)[]"
+                }
+            }
         }
     },
     "pagination": {
@@ -932,73 +1036,159 @@
             "displayName": "Pagination"
         },
         "paginationIsLastPageFound()": {
-            "description": "Returns `true` when the last page is known; this will always be the case if you are using the Client-Side Row Model for pagination. Returns `false` when the last page is not known; this only happens when using Infinite Scrolling Row Model.</p>"
+            "description": "Returns `true` when the last page is known; this will always be the case if you are using the [Client-Side Row Model](/client-side-model/) for pagination. Returns `false` when the last page is not known; this only happens when using [Infinite Row Model](/infinite-scrolling/).",
+            "type": {
+                "arguments": {},
+                "returnType": "boolean"
+            }
         },
         "paginationGetPageSize()": {
-            "description": "Returns how many rows are being shown per page."
+            "description": "Returns how many rows are being shown per page.",
+            "type": {
+                "arguments": {},
+                "returnType": "number"
+            }
         },
-        "paginationSetPageSize(newPageSize)": {
-            "description": "Sets the `paginationPageSize` to `newPageSize`, then re-paginates the grid so the changes are applied immediately."
+        "paginationSetPageSize()": {
+            "description": "Sets the `paginationPageSize`, then re-paginates the grid so the changes are applied immediately.",
+            "type": {
+                "arguments": {
+                    "value": "number"
+                }
+            }
         },
         "paginationGetCurrentPage()": {
-            "description": "Returns the 0-based index of the page which is showing."
+            "description": "Returns the 0-based index of the page which is showing.",
+            "type": {
+                "arguments": {},
+                "returnType": "number"
+            }
         },
         "paginationGetTotalPages()": {
-            "description": "Returns the total number of pages. Returns `null` if `paginationIsLastPageFound() == false`."
+            "description": "Returns the total number of pages. Returns `null` if `paginationIsLastPageFound() === false`.",
+            "type": {
+                "arguments": {},
+                "returnType": "number | null"
+            }
         },
         "paginationGetRowCount()": {
-            "description": "The total number of rows. Returns `null` if `paginationIsLastPageFound() == false`."
+            "description": "The total number of rows. Returns `null` if `paginationIsLastPageFound() === false`.",
+            "type": {
+                "arguments": {},
+                "returnType": "number | null"
+            }
         },
-        "paginationGoToPage(pageNumber)": {
-            "description": "Goes to the specified page. If the page requested doesn't exist, it will go to the last page."
+        "paginationGoToPage()": {
+            "description": "Goes to the specified page. If the page requested doesn't exist, it will go to the last page.",
+            "type": {
+                "arguments": {
+                    "pageNumber": "number"
+                }
+            }
         },
-        "paginationGoToNextPage()<br />paginationGoToPreviousPage()<br />paginationGoToFirstPage()<br />paginationGoToLastPage()": {
-            "description": "Shorthands for `goToPage(relevantPageNumber)`."
+        "paginationGoToNextPage()": {
+            "description": "Navigates to the next page.",
+            "type": {
+                "arguments": {}
+            }
+        },
+        "paginationGoToPreviousPage()": {
+            "description": "Navigates to the previous page.",
+            "type": {
+                "arguments": {}
+            }
+        },
+        "paginationGoToFirstPage()": {
+            "description": "Navigates to the first page.",
+            "type": {
+                "arguments": {}
+            }
+        },
+        "paginationGoToLastPage": {
+            "description": "Navigates to the last page.",
+            "type": {
+                "arguments": {}
+            }
         }
     },
     "headers": {
         "meta": {
             "displayName": "Headers"
         },
-        "setHeaderHeight(heightInPx)": {
-            "description": "Sets the height in pixels for the row containing the column label header."
+        "setHeaderHeight()": {
+            "description": "Sets the height in pixels for the row containing the column label header.",
+            "type": {
+                "arguments": {
+                    "height": "number"
+                }
+            }
         },
-        "setGroupHeaderHeight(heightInPx)": {
-            "description": "Sets the height in pixels for the rows containing header column groups."
+        "setGroupHeaderHeight()": {
+            "description": "Sets the height in pixels for the rows containing header column groups.",
+            "type": {
+                "arguments": {
+                    "height": "number"
+                }
+            }
         },
-        "setFloatingFiltersHeight(heightInPx)": {
-            "description": "Sets the height in pixels for the row containing the floating filters."
+        "setFloatingFiltersHeight()": {
+            "description": "Sets the height in pixels for the row containing the floating filters.",
+            "type": {
+                "arguments": {
+                    "height": "number"
+                }
+            }
         },
-        "setPivotHeaderHeight(heightInPx)": {
-            "description": "Sets the height in pixels for the row containing the columns when in pivot mode."
+        "setPivotHeaderHeight()": {
+            "description": "Sets the height in pixels for the row containing the columns when in pivot mode.",
+            "type": {
+                "arguments": {
+                    "height": "number"
+                }
+            }
         },
-        "setPivotGroupHeaderHeight(heightInPx)": {
-            "description": "Sets the height in pixels for the row containing header column groups when in pivot mode."
-        }
-    },
-    "statusBar": {
-        "meta": {
-            "displayName": "Status Bar"
-        },
-        "getStatusBarComponent(key)": {
-            "description": "Returns the status bar component instance for the `key` provided."
+        "setPivotGroupHeaderHeight()": {
+            "description": "Sets the height in pixels for the row containing header column groups when in pivot mode.",
+            "type": {
+                "arguments": {
+                    "height": "number"
+                }
+            }
         }
     },
     "UndoRedo": {
         "meta": {
-            "displayName": "Undo / Redo"
+            "displayName": "Undo / Redo",
+            "page": {
+                "name": "Undo/Redo Edits",
+                "url": "/undo-redo-edits/"
+            }
         },
         "undoCellEditing()": {
-            "description": "Undo's last cell edit."
+            "description": "Reverts the last cell edit.",
+            "type": {
+                "arguments": {}
+            }
         },
         "redoCellEditing()": {
-            "description": "Redo's last cell edit undo."
+            "description": "Re-applies the most recently undone cell edit.",
+            "type": {
+                "arguments": {}
+            }
         },
         "getCurrentUndoSize()": {
-            "description": "Returns current number of available cell edit undo's."
+            "description": "Returns current number of available cell edit undo operations.",
+            "type": {
+                "arguments": {},
+                "returnType": "number"
+            }
         },
         "getCurrentRedoSize()": {
-            "description": "Returns current number of available cell edit redo's."
+            "description": "Returns current number of available cell edit redo operations.",
+            "type": {
+                "arguments": {},
+                "returnType": "number"
+            }
         }
     },
     "charts": {
@@ -1006,20 +1196,34 @@
             "displayName": "Charts"
         },
         "getChartModels()": {
-            "description": "Returns a list of models with information about the charts that are currently rendered from the grid."
-        },
-        "createRangeChart(params)": {
-            "description": "Used to programmatically create charts from a range.",
-            "more": {
-                "name": "Range Chart API",
-                "url": "../integrated-charts-api/#range-charts"
+            "description": "Returns a list of models with information about the charts that are currently rendered from the grid.",
+            "type": {
+                "arguments": {},
+                "returnType": "ChartModel[]"
             }
         },
-        "createPivotChart(params)": {
+        "createRangeChart()": {
+            "description": "Used to programmatically create charts from a range.",
+            "type": {
+                "arguments": {
+                    "params": "CreateRangeChartParams"
+                }
+            },
+            "more": {
+                "name": "Range Chart API",
+                "url": "/integrated-charts-api/#range-charts"
+            }
+        },
+        "createPivotChart()": {
             "description": "Used to programmatically create pivot charts from a grid.",
+            "type": {
+                "arguments": {
+                    "params": "CreatePivotChartParams"
+                }
+            },
             "more": {
                 "name": "Pivot Chart API",
-                "url": "../integrated-charts-api/#pivot-charts"
+                "url": "/integrated-charts-api/#pivot-charts"
             }
         }
     },
@@ -1027,94 +1231,219 @@
         "meta": {
             "displayName": "Miscellaneous"
         },
-        "setPopupParent(element)": {
-            "description": "DOM element to use as the <a href='../context-menu/#popup-parent'>popup parent</a> for grid popups (context menu, column menu etc)."
+        "setPopupParent()": {
+            "description": "DOM element to use as the [popup parent](/context-menu/#popup-parent) for grid popups (context menu, column menu etc).",
+            "type": {
+                "arguments": {
+                    "element": "HTMLElement"
+                }
+            }
         },
-        "addRenderedRowListener(event, rowIndex, callback)": {
-            "description": "Registers a callback to a virtual row. A virtual row is a row that is visually rendered on the screen (rows that are not visible because of the scroll position are not rendered). Unlike normal events, you do not need to unregister rendered row listeners. When the rendered row is removed from the grid, all associated rendered row listeners will also be removed. Currently supports only one event, `virtualRowRemoved`; listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists."
+        "addRenderedRowListener()": {
+            "description": "Registers a callback to a virtual row. A virtual row is a row that is visually rendered on the screen (rows that are not visible because of the scroll position are not rendered). Unlike normal events, you do not need to unregister rendered row listeners. When the rendered row is removed from the grid, all associated rendered row listeners will also be removed. Currently supports only one event, `virtualRowRemoved`; listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.",
+            "type": {
+                "arguments": {
+                    "eventName": "string",
+                    "rowIndex": "number",
+                    "callback": "Function"
+                }
+            }
         },
-        "showToolPanel(show)": {
-            "description": "Shows (or hides) the tool panel."
+        "showToolPanel()": {
+            "description": "Shows (or hides) the tool panel.",
+            "type": {
+                "arguments": {
+                    "show": "boolean"
+                }
+            }
         },
         "isToolPanelShowing()": {
-            "description": "Returns `true` if the tool panel is showing, otherwise `false`."
+            "description": "Returns `true` if the tool panel is showing, otherwise `false`.",
+            "type": {
+                "arguments": {},
+                "returnType": "boolean"
+            }
         },
-        "getToolPanelInstance(id)": {
+        "getToolPanelInstance()": {
             "description": "Gets the tool panel instance corresponding to the supplied `id`.",
+            "type": {
+                "arguments": {
+                    "id": "string"
+                }
+            },
             "more": {
                 "name": "Expand / Collapse Column Groups",
-                "url": "../tool-panel-columns/#expand--collapse-column-groups"
+                "url": "/tool-panel-columns/#expand--collapse-column-groups"
             }
         },
         "doLayout()": {
-            "description": "Force the grid to perform a layout of its components. The grid, by default, resizes to fit the `div` the grid lives in. This is done a) on initialisation b) window resize and c) periodically as defined by `layoutInterval` (default 500ms). You should call this if something happens in your application where the grid size has changed and you want to lay the grid out without waiting for the next periodic refresh."
-        },
-        "getValue(colKey, node)": {
-            "description": "Gets the value for a column for a particular `rowNode` (row). This is useful if you want the raw value of a cell e.g. if implementing your own CSV export."
-        },
-        "destroy()": {
-            "description": "Will destroy the grid and release resources. If you are using Angular (version 1 or 2) you do not need to call this, as the grid links in with the AngularJS 1.x lifecycle. However if you are using Web Components or native Javascript, you do need to call this, to avoid a memory leak in your application."
-        },
-        "showColumnMenuAfterButtonClick(colKey, buttonElement), showColumnMenuAfterMouseClick(colKey, mouseEvent)": {
-            "description": "Shows the column menu after and positions it relative to the provided element (button click) or mouse event. Use in conjunction with your own header template."
-        },
-        "checkGridSize()": {
-            "description": "Tells the grid to check its size again. This is useful if you do not have the grid in the DOM when you create it, to call this method after the grid is in the DOM to get it to check its width and height again (which decides which columns and rows to render)."
-        },
-        "resetRowHeights()": {
-            "description": "Tells the grid to recalculate the row heights."
-        },
-        "onRowHeightChanged()": {
-            "description": "Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`."
-        },
-        "copySelectedRowsToClipboard(includeHeaders, columnKeys)": {
-            "description": "Copies the selected rows to the clipboard. Set `includeHeaders = true` to include the headers (default is `false`). Set `columnKeys` to the list of columns if you want just specific columns."
-        },
-        "addAggFunc(key, aggFunc), addAggFuncs(aggFuncs), clearAggFuncs()": {
-            "description": "Adding and clearing of aggregation functions."
-        },
-        "hidePopupMenu()": {
-            "description": "Hides any showing <a href='../context-menu/'>context menu</a> or <a href='../column-menu/'>column menu</a>."
-        },
-        "setEnableCellTextSelection()": {
-            "description": "Sets the `enableCellTextSelection` property."
-        },
-        "setGridAutoHeight(value)": {
-            "description": "Sets the `gridAutoHeight` property."
-        },
-        "isAnimationFrameQueueEmpty()": {
-            "description": "Returns `true` when there are no more animation frames left to process."
-        },
-        "refreshServerSideStore(params)": {
-            "description": "Refresh a server-side store.",
-            "more": {
-                "name": "Purging Groups",
-                "url": "../server-side-model-refresh/"
+            "description": "Force the grid to perform a layout of its components. The grid, by default, resizes to fit the `div` the grid lives in. This is done a) on initialisation b) window resize and c) periodically as defined by `layoutInterval` (default 500ms). You should call this if something happens in your application where the grid size has changed and you want to lay the grid out without waiting for the next periodic refresh.",
+            "type": {
+                "arguments": {}
             }
         },
-        "getServerSideStoreState(route)": {
+        "getValue()": {
+            "description": "Gets the value for a column for a particular `rowNode` (row). This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.",
+            "type": {
+                "arguments": {
+                    "colKey": "string | Column",
+                    "node": "RowNode"
+                },
+                "returnType": "object"
+            }
+        },
+        "destroy()": {
+            "description": "Will destroy the grid and release resources. If you are using a framework you do not need to call this, as the grid links in with the framework lifecycle. However if you are using Web Components or native JavaScript, you do need to call this, to avoid a memory leak in your application.",
+            "type": {
+                "arguments": {}
+            }
+        },
+        "showColumnMenuAfterButtonClick()": {
+            "description": "Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template.",
+            "type": {
+                "arguments": {
+                    "colKey": "string | Column",
+                    "buttonElement": "HTMLElement"
+                }
+            }
+        },
+        "showColumnMenuAfterMouseClick()": {
+            "description": "Shows the column menu after and positions it relative to the mouse event. Use in conjunction with your own header template.",
+            "type": {
+                "arguments": {
+                    "colKey": "string | Column",
+                    "mouseEvent": "MouseEvent | Touch"
+                }
+            }
+        },
+        "checkGridSize()": {
+            "description": "Tells the grid to check its size again (which decides which columns and rows to render). Calling this method can be useful if you do not have the grid in the DOM when you first create it, after the grid is placed in the DOM.",
+            "type": {
+                "arguments": {}
+            }
+        },
+        "resetRowHeights()": {
+            "description": "Tells the grid to recalculate the row heights.",
+            "type": {
+                "arguments": {}
+            }
+        },
+        "onRowHeightChanged()": {
+            "description": "Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`.",
+            "type": {
+                "arguments": {}
+            }
+        },
+        "addAggFunc()": {
+            "description": "Add an aggregation function with the specified key.",
+            "type": {
+                "arguments": {
+                    "key": "string",
+                    "aggFunc": "IAggFunc"
+                }
+            }
+        },
+        "addAggFuncs()": {
+            "description": "Add aggregations function with the specified keys.",
+            "type": {
+                "arguments": {
+                    "aggFuncs": "{ [key: string]: IAggFunc; }"
+                }
+            }
+        },
+        "clearAggFuncs()": {
+            "description": "Clears all aggregation functions (including those provided by the grid).",
+            "type": {
+                "arguments": {}
+            }
+        },
+        "hidePopupMenu()": {
+            "description": "Hides any visible [context menu](/context-menu/) or [column menu](/column-menu/).",
+            "type": {
+                "arguments": {}
+            }
+        },
+        "setEnableCellTextSelection()": {
+            "description": "Sets the `enableCellTextSelection` property.",
+            "type": {
+                "arguments": {
+                    "value": "boolean"
+                }
+            },
+            "more": {
+                "name": "Cell Text Selection",
+                "url": "/selection-overview/#cell-text-selection"
+            }
+        },
+        "isAnimationFrameQueueEmpty()": {
+            "description": "Returns `true` when there are no more animation frames left to process.",
+            "type": {
+                "arguments": {},
+                "returnType": "boolean"
+            }
+        },
+        "refreshServerSideStore()": {
+            "description": "Refresh a server-side store.",
+            "type": {
+                "parameters": {
+                    "route?": "string[]",
+                    "purge?": "boolean"
+                }
+            },
+            "more": {
+                "name": "Purging Groups",
+                "url": "/server-side-model-refresh/"
+            }
+        },
+        "getServerSideStoreState()": {
             "description": "Returns info on all server side stores.",
+            "type": {
+                "arguments": {},
+                "returnType": {
+                    "type": "'full' | 'partial'",
+                    "route": "string[]",
+                    "rowCount": "number",
+                    "lastRowIndexKnown?": "boolean",
+                    "info?": "object",
+                    "maxBlocksInCache?": "number",
+                    "cacheBlockSize?": "number"
+                }
+            },
             "more": {
                 "name": "Store State",
-                "url": "../server-side-model-grouping/#store-state--store-info"
+                "url": "/server-side-model-grouping/#store-state--store-info"
             }
         },
         "retryServerSideLoads()": {
             "description": "Gets all failed server side loads to retry.",
+            "type": {
+                "arguments": {}
+            },
             "more": {
                 "name": "Retry Loads",
-                "url": "../server-side-model-retry/"
+                "url": "/server-side-model-retry/"
             }
         },
-        "setFillHandleDirection(direction)": {
+        "setFillHandleDirection()": {
             "description": "Sets the preferred direction for the selection fill handle.",
+            "type": {
+                "arguments": {
+                    "direction": "'x' | 'y' | 'xy'"
+                }
+            },
             "more": {
                 "name": "Fill Handle",
-                "url": "../range-selection-fill-handle/"
+                "url": "/range-selection-fill-handle/"
             }
         },
-        "setGridAriaProperty(property, value)": {
-            "description": "Sets an aria property in the grid panel (element with role=\"grid\"), and removes an aria property when the value is null.<br><br> Example:<br>`api.setGridAriaProperty('label', 'my grid')` will set <strong>aria-label=\"my grid\"</strong>.<br>`api.setGridAriaProperty('label, null)` will remove the <strong>aria-label</strong> attribute form the grid element."
+        "setGridAriaProperty()": {
+            "description": "Sets an ARIA property in the grid panel (element with `role=\"grid\"`), and removes an ARIA property when the value is null.<br /><br />Example:<br />`api.setGridAriaProperty('label', 'my grid')` will set `aria-label=\"my grid\"`.<br />`api.setGridAriaProperty('label', null)` will remove the `aria-label` attribute from the grid element.",
+            "type": {
+                "arguments": {
+                    "property": "string",
+                    "value": "string | null"
+                }
+            }
         }
     }
 }

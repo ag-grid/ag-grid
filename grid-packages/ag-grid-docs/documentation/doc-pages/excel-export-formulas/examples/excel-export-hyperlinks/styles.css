@@ -1,4 +1,3 @@
-
 .details > label {
     margin-bottom: 10px;
 }
@@ -28,5 +27,4 @@
 .columns {
     display: flex;
     flex-direction: row;
-    align-items: center;
 }
