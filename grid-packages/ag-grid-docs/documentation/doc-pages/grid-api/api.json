@@ -586,12 +586,8 @@
         "exportDataAsCsv()": {
             "description": "Downloads a CSV export of the grid's data.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "columnSeparator?": "string",
-                    "suppressQuotes?": "boolean"
+                "arguments": {
+                    "params": "CsvExportParams"
                 }
             },
             "more": {
@@ -602,12 +598,8 @@
         "getDataAsCsv()": {
             "description": "Similar to `exportDataAsCsv`, except returns the result as a string rather than download it.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "columnSeparator?": "string",
-                    "suppressQuotes?": "boolean"
+                "arguments": {
+                    "params": "CsvExportParams"
                 },
                 "returnType": "string"
             },
@@ -619,19 +611,8 @@
         "exportDataAsExcel()": {
             "description": "Downloads an Excel export of the grid's data.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "author?": "string",
-                    "autoConvertFormulas?": "boolean",
-                    "columnWidth?": "number | ((params: object) => number)",
-                    "exportMode?": "'xlsx' | 'xml'",
-                    "fontSize?": "number",
-                    "headerRowHeight?": "number",
-                    "rowHeight?": "number",
-                    "sheetName?": "string",
-                    "suppressTextAsCDATA?": "boolean"
+                "arguments": {
+                    "params": "ExcelExportParams"
                 }
             },
             "more": {
@@ -642,19 +623,8 @@
         "getDataAsExcel()": {
             "description": "Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "author?": "string",
-                    "autoConvertFormulas?": "boolean",
-                    "columnWidth?": "number | ((params: object) => number)",
-                    "exportMode?": "'xlsx' | 'xml'",
-                    "fontSize?": "number",
-                    "headerRowHeight?": "number",
-                    "rowHeight?": "number",
-                    "sheetName?": "string",
-                    "suppressTextAsCDATA?": "boolean"
+                "arguments": {
+                    "params": "ExcelExportParams"
                 },
                 "returnType": "string | Blob"
             },
@@ -666,19 +636,8 @@
         "getGridRawDataForExcel()": {
             "description": "This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "author?": "string",
-                    "autoConvertFormulas?": "boolean",
-                    "columnWidth?": "number | ((params: object) => number)",
-                    "exportMode?": "'xlsx' | 'xml'",
-                    "fontSize?": "number",
-                    "headerRowHeight?": "number",
-                    "rowHeight?": "number",
-                    "sheetName?": "string",
-                    "suppressTextAsCDATA?": "boolean"
+                "arguments": {
+                    "params": "ExcelExportParams"
                 },
                 "returnType": "string"
             },
@@ -690,20 +649,8 @@
         "exportMultipleSheetsAsExcel()": {
             "description": "Downloads an Excel export of multiple sheets in one file.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "author?": "string",
-                    "autoConvertFormulas?": "boolean",
-                    "columnWidth?": "number | ((params: object) => number)",
-                    "exportMode?": "'xlsx' | 'xml'",
-                    "fontSize?": "number",
-                    "headerRowHeight?": "number",
-                    "rowHeight?": "number",
-                    "sheetName?": "string",
-                    "suppressTextAsCDATA?": "boolean",
-                    "data": "string[]"
+                "arguments": {
+                    "params": "ExcelExportMultipleSheetParams"
                 }
             },
             "more": {
@@ -714,20 +661,8 @@
         "getMultipleSheetsAsExcel()": {
             "description": "Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user.",
             "type": {
-                "parameters": {
-                    "customHeader?": "object",
-                    "customFooter?": "object",
-                    "getCustomContentBelowRow?": "(params: object) => object | undefined",
-                    "author?": "string",
-                    "autoConvertFormulas?": "boolean",
-                    "columnWidth?": "number | ((params: object) => number)",
-                    "exportMode?": "'xlsx' | 'xml'",
-                    "fontSize?": "number",
-                    "headerRowHeight?": "number",
-                    "rowHeight?": "number",
-                    "sheetName?": "string",
-                    "suppressTextAsCDATA?": "boolean",
-                    "data": "string[]"
+                "arguments": {
+                    "params": "ExcelExportMultipleSheetParams"
                 },
                 "returnType": "Blob"
             },
