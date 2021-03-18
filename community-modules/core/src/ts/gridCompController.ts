@@ -26,6 +26,8 @@ export interface GridCompView extends CompView {
     isToolPanelShowing(): boolean;
     destroyGridUi(): void;
     getRootGui(): HTMLElement;
+    focusNextInnerContainer(backwards: boolean): boolean;
+    forceFocusOutOfContainer(up: boolean): void;
 }
 
 export class CompController<V extends CompView> extends BeanStub {
@@ -60,9 +62,9 @@ export class GridCompController extends CompController<GridCompView> {
         // register with services that need grid core
         [
             this.gridApi,
-            this.gridCompService
-            // this.popupService,
-            // this.focusController
+            this.gridCompService,
+            this.popupService,
+            this.focusController
         ].forEach(service => service.registerGridCompController(this));
 
     }
@@ -121,5 +123,13 @@ export class GridCompController extends CompController<GridCompView> {
 
     public getRootGui(): HTMLElement {
         return this.view.getRootGui();
+    }
+
+    public focusNextInnerContainer(backwards: boolean): boolean {
+        return this.view.focusNextInnerContainer(backwards);
+    }
+
+    public forceFocusOutOfContainer(up = false): void {
+        this.view.forceFocusOutOfContainer(up);
     }
 }

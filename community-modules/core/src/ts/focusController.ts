@@ -22,6 +22,7 @@ import { getTabIndex } from './utils/browser';
 import { findIndex, last } from './utils/array';
 import { makeNull } from './utils/generic';
 import { Constants } from "./constants/constants";
+import {GridCompController} from "./gridCompController";
 
 @Bean('focusController')
 export class FocusController extends BeanStub {
@@ -36,12 +37,12 @@ export class FocusController extends BeanStub {
 
     public static AG_KEYBOARD_FOCUS: string = 'ag-keyboard-focus';
 
-    private gridCore: GridComp;
+    private gridCompController: GridCompController;
     private focusedCellPosition: CellPosition | null;
     private focusedHeaderPosition: HeaderPosition | null;
 
     private static keyboardModeActive: boolean = false;
-    private static instancesMonitored: Map<Document, GridComp[]> = new Map();
+    private static instancesMonitored: Map<Document, GridCompController[]> = new Map();
 
     /**
      * Adds a gridCore to the list of the gridCores monitoring Keyboard Mode
@@ -50,15 +51,15 @@ export class FocusController extends BeanStub {
      * @param doc {Document} - The Document containing the gridCore.
      * @param gridCore {GridComp} - The GridCore to be monitored.
      */
-    private static addKeyboardModeEvents(doc: Document, gridCore: GridComp): void {
-        const gridCoresForDocument = FocusController.instancesMonitored.get(doc);
+    private static addKeyboardModeEvents(doc: Document, controller: GridCompController): void {
+        const docControllers = FocusController.instancesMonitored.get(doc);
 
-        if (gridCoresForDocument && gridCoresForDocument.length > 0) {
-            if (gridCoresForDocument.indexOf(gridCore) === -1) {
-                gridCoresForDocument.push(gridCore);
+        if (docControllers && docControllers.length > 0) {
+            if (docControllers.indexOf(controller) === -1) {
+                docControllers.push(controller);
             }
         } else {
-            FocusController.instancesMonitored.set(doc, [gridCore]);
+            FocusController.instancesMonitored.set(doc, [controller]);
             doc.addEventListener('keydown', FocusController.toggleKeyboardMode);
             doc.addEventListener('mousedown', FocusController.toggleKeyboardMode);
         }
@@ -71,19 +72,19 @@ export class FocusController extends BeanStub {
      * @param doc {Document} - The Document containing the gridCore.
      * @param gridCore {GridComp} - The GridCore to be removed.
      */
-    private static removeKeyboardModeEvents(doc: Document, gridCore: GridComp): void {
-        const gridCoresForDocument = FocusController.instancesMonitored.get(doc);
+    private static removeKeyboardModeEvents(doc: Document, controller: GridCompController): void {
+        const docControllers = FocusController.instancesMonitored.get(doc);
 
-        let newGridCoresForDocument: GridComp[] = [];
+        let newControllers: GridCompController[] = [];
 
-        if (gridCoresForDocument && gridCoresForDocument.length) {
-            newGridCoresForDocument = [...gridCoresForDocument].filter(
-                currentGridCore => currentGridCore !== gridCore
+        if (docControllers && docControllers.length) {
+            newControllers = [...docControllers].filter(
+                currentGridCore => currentGridCore !== controller
             );
-            FocusController.instancesMonitored.set(doc, newGridCoresForDocument);
+            FocusController.instancesMonitored.set(doc, newControllers);
         }
 
-        if (newGridCoresForDocument.length === 0) {
+        if (newControllers.length === 0) {
             doc.removeEventListener('keydown', FocusController.toggleKeyboardMode);
             doc.removeEventListener('mousedown', FocusController.toggleKeyboardMode);
         }
@@ -112,11 +113,11 @@ export class FocusController extends BeanStub {
 
         if (!doc) { return; }
 
-        const gridCoresForDocument = FocusController.instancesMonitored.get(doc);
+        const controllersForDoc = FocusController.instancesMonitored.get(doc);
 
-        if (gridCoresForDocument) {
-            gridCoresForDocument.forEach(gridCore => {
-                gridCore.dispatchEvent({ type: isKeyboardEvent ? Events.EVENT_KEYBOARD_FOCUS : Events.EVENT_MOUSE_FOCUS });
+        if (controllersForDoc) {
+            controllersForDoc.forEach(controller => {
+                controller.dispatchEvent({ type: isKeyboardEvent ? Events.EVENT_KEYBOARD_FOCUS : Events.EVENT_MOUSE_FOCUS });
             });
         }
     }
@@ -131,18 +132,18 @@ export class FocusController extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
     }
 
-    public registerGridCore(gridCore: GridComp): void {
-        this.gridCore = gridCore;
+    public registerGridCompController(gridCompController: GridCompController): void {
+        this.gridCompController = gridCompController;
 
         const doc = this.gridOptionsWrapper.getDocument();
-        FocusController.addKeyboardModeEvents(doc, gridCore);
-        this.addDestroyFunc(() => this.unregisterGridCore(gridCore));
+        FocusController.addKeyboardModeEvents(doc, gridCompController);
+        this.addDestroyFunc(() => this.unregisterGridCompController(gridCompController));
     }
 
-    public unregisterGridCore(gridCore: GridComp): void {
+    public unregisterGridCompController(gridCompController: GridCompController): void {
         const doc = this.gridOptionsWrapper.getDocument();
 
-        FocusController.removeKeyboardModeEvents(doc, gridCore);
+        FocusController.removeKeyboardModeEvents(doc, gridCompController);
     }
 
     public onColumnEverythingChanged(): void {
@@ -461,12 +462,12 @@ export class FocusController extends BeanStub {
     }
 
     public focusNextGridCoreContainer(backwards: boolean): boolean {
-        if (this.gridCore.focusNextInnerContainer(backwards)) {
+        if (this.gridCompController.focusNextInnerContainer(backwards)) {
             return true;
         }
 
         if (!backwards) {
-            this.gridCore.forceFocusOutOfContainer();
+            this.gridCompController.forceFocusOutOfContainer();
         }
 
         return false;

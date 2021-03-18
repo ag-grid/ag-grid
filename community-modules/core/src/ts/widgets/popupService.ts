@@ -11,6 +11,7 @@ import { forEach, findIndex, last } from '../utils/array';
 import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
 import { FocusController } from "../focusController";
+import {GridCompController} from "../gridCompController";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
@@ -75,17 +76,17 @@ export class PopupService extends BeanStub {
     @Autowired('environment') private environment: Environment;
     @Autowired('focusController') private focusController: FocusController;
 
-    private gridCore: GridComp;
+    private gridCompController: GridCompController;
     private popupList: AgPopup[] = [];
 
-    public registerGridCore(gridCore: GridComp): void {
-        this.gridCore = gridCore;
+    public registerGridCompController(gridCompController: GridCompController): void {
+        this.gridCompController = gridCompController;
 
-        this.addManagedListener(this.gridCore, Events.EVENT_KEYBOARD_FOCUS, () => {
+        this.addManagedListener(this.gridCompController, Events.EVENT_KEYBOARD_FOCUS, () => {
             forEach(this.popupList, popup => addCssClass(popup.element, FocusController.AG_KEYBOARD_FOCUS));
         });
 
-        this.addManagedListener(this.gridCore, Events.EVENT_MOUSE_FOCUS, () => {
+        this.addManagedListener(this.gridCompController, Events.EVENT_MOUSE_FOCUS, () => {
             forEach(this.popupList, popup => removeCssClass(popup.element, FocusController.AG_KEYBOARD_FOCUS));
         });
     }
@@ -95,7 +96,7 @@ export class PopupService extends BeanStub {
 
         if (ePopupParent) { return ePopupParent; }
 
-        return this.gridCore.getRootGui();
+        return this.gridCompController.getRootGui();
     }
 
     public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement; }): void {
