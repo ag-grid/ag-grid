@@ -32,12 +32,10 @@ export class GridComp extends ManagedFocusComponent {
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
 
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('$scope') private $scope: any;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -53,9 +51,11 @@ export class GridComp extends ManagedFocusComponent {
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
     private logger: Logger;
+    private eGridDiv: HTMLElement;
 
-    constructor() {
+    constructor(eGridDiv: HTMLElement) {
         super(undefined, true);
+        this.eGridDiv = eGridDiv;
     }
 
     protected postConstruct(): void {
@@ -89,13 +89,19 @@ export class GridComp extends ManagedFocusComponent {
             updateLayoutClasses: this.updateLayoutClasses.bind(this)
         };
 
-        this.createManagedBean(new GridCompController(view));
+        this.createManagedBean(new GridCompController(view, this.eGridDiv));
 
-        const unsubscribeFromResize = this.resizeObserverService.observeResize(
-            this.eGridDiv, this.onGridSizeChanged.bind(this));
-        this.addDestroyFunc(() => unsubscribeFromResize());
+        this.insertGridIntoDom();
 
         super.postConstruct();
+    }
+
+    private insertGridIntoDom(): void {
+        const eGui = this.getGui();
+        this.eGridDiv.appendChild(eGui);
+        this.addDestroyFunc(() => {
+            this.eGridDiv.removeChild(eGui);
+        });
     }
 
     private updateLayoutClasses(params: UpdateLayoutClassesParams): void {
@@ -197,17 +203,6 @@ export class GridComp extends ManagedFocusComponent {
         );
 
         return true;
-    }
-
-    private onGridSizeChanged(): void {
-        const event: GridSizeChangedEvent = {
-            type: Events.EVENT_GRID_SIZE_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            clientWidth: this.eGridDiv.clientWidth,
-            clientHeight: this.eGridDiv.clientHeight
-        };
-        this.eventService.dispatchEvent(event);
     }
 
     public getRootGui(): HTMLElement {

@@ -129,15 +129,8 @@ export class Grid {
         this.gridOptions = gridOptions;
 
         new GridCoreCreator().create(eGridDiv, gridOptions, context => {
-            const gridComp = new GridComp();
+            const gridComp = new GridComp(eGridDiv);
             context.createBean(gridComp);
-
-            const eGui = gridComp.getGui();
-            eGridDiv.appendChild(eGui);
-            gridComp.addDestroyFunc(() => {
-                eGridDiv.removeChild(eGui);
-            });
-
         }, params);
     }
 

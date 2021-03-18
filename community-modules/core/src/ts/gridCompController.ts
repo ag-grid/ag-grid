@@ -14,6 +14,9 @@ import {LayoutFeature, LayoutView} from "./styling/layoutFeature";
 import {addCssClass, removeCssClass} from "./utils/dom";
 import {Events} from "./eventKeys";
 import {Logger, LoggerFactory} from "./logger";
+import {ResizeObserverService} from "./misc/resizeObserverService";
+import {GridSizeChangedEvent} from "./events";
+import {ColumnApi} from "./columnController/columnApi";
 
 export interface GridCompView extends LayoutView {
     refreshSideBar(): void;
@@ -38,6 +41,7 @@ export interface GridCompView extends LayoutView {
 
 export class GridCompController extends BeanStub {
 
+    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('popupService') private popupService: PopupService;
@@ -45,14 +49,17 @@ export class GridCompController extends BeanStub {
     @Autowired('gridCompService') protected readonly gridCompService: GridCompService;
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
+    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     private view: GridCompView;
+    private eGridHostDiv: HTMLElement;
 
     private logger: Logger;
 
-    constructor(view: GridCompView) {
+    constructor(view: GridCompView, eGridDiv: HTMLElement) {
         super();
         this.view = view;
+        this.eGridHostDiv = eGridDiv;
     }
 
     @PostConstruct
@@ -88,6 +95,20 @@ export class GridCompController extends BeanStub {
 
         this.logger.log('ready');
 
+        const unsubscribeFromResize = this.resizeObserverService.observeResize(
+            this.eGridHostDiv, this.onGridSizeChanged.bind(this));
+        this.addDestroyFunc(() => unsubscribeFromResize());
+    }
+
+    private onGridSizeChanged(): void {
+        const event: GridSizeChangedEvent = {
+            type: Events.EVENT_GRID_SIZE_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            clientWidth: this.eGridHostDiv.clientWidth,
+            clientHeight: this.eGridHostDiv.clientHeight
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     private addRtlSupport(): void {
