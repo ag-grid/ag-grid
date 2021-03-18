@@ -1,38 +1,3 @@
-.greenBackground{
-    background-color: #b5e6b5;
-}
-
-.redFont{
-    color: red;
-    font-style: italic;
-    text-decoration: underline;
-}
-
-.darkGreyBackground {
-    background-color: #888888;
-    color: #fff;
-}
-
-.boldBorders{
-    border: 3px solid black !important;
-}
-
-.notInExcel{
-    color: #1b6d85;
-}
-.details > label {
-    margin-bottom: 10px;
-}
-.details > label:first-of-type {
-    margin-top: 10px;
-}
-.details > label:last-of-type {
-    margin-bottom: 0;
-}
-.option {
-    display: block;
-    margin: 5px 10px 5px 0;
-}
 .grid-wrapper {
     display: flex;
     flex: 1 1 0px;

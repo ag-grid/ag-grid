@@ -31,8 +31,19 @@ Note the following:
 
 <grid-example title='Excel Export - Multiple Sheets with Filtered Data' name='excel-export-multiple-sheets-by-filter' type='generated' options='{ "enterprise": true }'></grid-example>
 
+## Export Master Detail
+
+Note the following:
+
+- The `Master Detail` data is only available for `expanded` nodes, for more info see [Detail Grids](/master-detail-grids/).
+- The `RowBuffer` was set to **100** so all Detail Grids would be available.
+- The `Detail Grids` get exported into different sheets.
+
+<grid-example title='Excel Export - Multiple Sheets with Master Detail' name='excel-export-multiple-sheets-master-detail' type='generated' options='{ "enterprise": true }'></grid-example>
+
 ## Example with Multiple Grids
 
+<grid-example title='Excel Export - Multiple Sheets with Multiple Grids' name='excel-export-multiple-sheets-multiple-grids' type='multi' options='{ "enterprise": true, "extras": ["fontawesome", "bootstrap"] }'></grid-example>
 
 ## API
 
