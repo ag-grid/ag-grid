@@ -17,6 +17,7 @@ import {Logger, LoggerFactory} from "./logger";
 import {ResizeObserverService} from "./misc/resizeObserverService";
 import {GridSizeChangedEvent} from "./events";
 import {ColumnApi} from "./columnController/columnApi";
+import {RefSelector} from "./widgets/componentAnnotations";
 
 export interface GridCompView extends LayoutView {
     refreshSideBar(): void;
@@ -32,7 +33,6 @@ export interface GridCompView extends LayoutView {
     setSideBar(def: SideBarDef | string | boolean): void;
     isToolPanelShowing(): boolean;
     destroyGridUi(): void;
-    getRootGui(): HTMLElement;
     focusNextInnerContainer(backwards: boolean): boolean;
     forceFocusOutOfContainer(up: boolean): void;
     setRtlClass(cssClass: string): void;
@@ -53,13 +53,15 @@ export class GridCompController extends BeanStub {
 
     private view: GridCompView;
     private eGridHostDiv: HTMLElement;
+    private eGridComp: HTMLElement;
 
     private logger: Logger;
 
-    constructor(view: GridCompView, eGridDiv: HTMLElement) {
+    constructor(view: GridCompView, eGridDiv: HTMLElement, eGridComp: HTMLElement) {
         super();
         this.view = view;
         this.eGridHostDiv = eGridDiv;
+        this.eGridComp = eGridComp;
     }
 
     @PostConstruct
@@ -169,7 +171,7 @@ export class GridCompController extends BeanStub {
     }
 
     public getRootGui(): HTMLElement {
-        return this.view.getRootGui();
+        return this.eGridComp;
     }
 
     public focusNextInnerContainer(backwards: boolean): boolean {

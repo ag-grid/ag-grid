@@ -83,13 +83,12 @@ export class GridComp extends ManagedFocusComponent {
             refreshSideBar: this.refreshSideBar.bind(this),
             setSideBar: this.setSideBar.bind(this),
             setSideBarPosition: this.setSideBarPosition.bind(this),
-            getRootGui: this.getRootGui.bind(this),
             focusNextInnerContainer: this.focusNextInnerContainer.bind(this),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this)
         };
 
-        this.createManagedBean(new GridCompController(view, this.eGridDiv));
+        this.createManagedBean(new GridCompController(view, this.getGui(), this.eGridDiv));
 
         this.insertGridIntoDom();
 
@@ -172,7 +171,6 @@ export class GridComp extends ManagedFocusComponent {
         }
 
         return this.focusController.focusInto(focusableContainers[nextIdx]);
-
     }
 
     public focusInnerElement(fromBottom?: boolean): boolean {
@@ -203,10 +201,6 @@ export class GridComp extends ManagedFocusComponent {
         );
 
         return true;
-    }
-
-    public getRootGui(): HTMLElement {
-        return this.getGui();
     }
 
     public isSideBarVisible(): boolean {
