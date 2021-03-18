@@ -39,7 +39,6 @@ export class GridComp extends ManagedFocusComponent {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('$scope') private $scope: any;
-    @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
@@ -89,12 +88,6 @@ export class GridComp extends ManagedFocusComponent {
         this.addDestroyFunc(() => {
             this.eGridDiv.removeChild(this.getGui());
         });
-
-        // if using angular, watch for quickFilter changes
-        if (this.$scope) {
-            const quickFilterUnregisterFn = this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.filterManager.setQuickFilter(newFilter));
-            this.addDestroyFunc(quickFilterUnregisterFn);
-        }
 
         // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
         // which doLayout indirectly depends on

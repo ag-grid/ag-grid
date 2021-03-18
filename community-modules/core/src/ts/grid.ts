@@ -101,7 +101,6 @@ export interface GridParams {
     // these are used by ng1 only
     $scope?: any;
     $compile?: any;
-    quickFilterOnScope?: any;
 
     // this allows the base frameworks (React, NG2, etc) to provide alternative cellRenderers and cellEditors
     frameworkOverrides?: IFrameworkOverrides;
@@ -242,7 +241,6 @@ export class GridCoreCreator {
             eGridDiv: eGridDiv,
             $scope: params ? params.$scope : null,
             $compile: params ? params.$compile : null,
-            quickFilterOnScope: params ? params.quickFilterOnScope : null,
             globalEventListener: params ? params.globalEventListener : null,
             frameworkOverrides: frameworkOverrides
         };

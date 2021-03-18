@@ -1,4 +1,5 @@
 import { Grid, GridParams } from "../grid";
+import {GridOptions} from "../entities/gridOptions";
 
 export function initialiseAgGridWithAngular1(angular: any) {
     const angularModule = angular.module("agGrid", []);
@@ -12,7 +13,7 @@ export function initialiseAgGridWithAngular1(angular: any) {
 }
 
 function AngularDirectiveController($element: any, $scope: any, $compile: any, $attrs: any) {
-    let gridOptions: any;
+    let gridOptions: GridOptions;
     let quickFilterOnScope: any;
 
     const keyOfGridInScope = $attrs.agGrid;
@@ -26,12 +27,17 @@ function AngularDirectiveController($element: any, $scope: any, $compile: any, $
     const eGridDiv = $element[0];
     const gridParams: GridParams = {
         $scope: $scope,
-        $compile: $compile,
-        quickFilterOnScope: quickFilterOnScope
+        $compile: $compile
     };
     let grid: Grid | null = new Grid(eGridDiv, gridOptions, gridParams);
 
+    const quickFilterUnregisterFn = this.$scope.$watch(
+        this.quickFilterOnScope,
+        (newFilter: any) => gridOptions.api!.setQuickFilter(newFilter)
+    );
+
     $scope.$on("$destroy", function() {
+        quickFilterUnregisterFn();
         if (grid) {
             grid.destroy();
         }
