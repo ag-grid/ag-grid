@@ -84,11 +84,6 @@ export class GridComp extends ManagedFocusComponent {
             updateLayoutClasses: this.updateLayoutClasses.bind(this)
         }));
 
-        this.eGridDiv.appendChild(this.getGui());
-        this.addDestroyFunc(() => {
-            this.eGridDiv.removeChild(this.getGui());
-        });
-
         // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
         // which doLayout indirectly depends on
         this.addRtlSupport();
