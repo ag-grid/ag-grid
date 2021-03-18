@@ -11,7 +11,7 @@ import {
     Events,
     GridApi,
     GridOptionsWrapper,
-    GridPanel,
+    GridPanelComp,
     IRangeController,
     IRowModel,
     Logger,
@@ -43,7 +43,7 @@ export class RangeController extends BeanStub implements IRangeController {
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
 
     private logger: Logger;
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
     private cellRanges: CellRange[] = [];
     private lastMouseEvent: MouseEvent | null;
     private bodyScrollListener = this.onBodyScroll.bind(this);
@@ -59,7 +59,7 @@ export class RangeController extends BeanStub implements IRangeController {
 
     public autoScrollService: AutoScrollService;
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
         this.autoScrollService = new AutoScrollService(this.gridPanel, this.gridOptionsWrapper);
     }
@@ -691,12 +691,12 @@ class AutoScrollService {
     private tickUp: boolean;
     private tickDown: boolean;
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
     private gridOptionsWrapper: GridOptionsWrapper;
 
     private tickCount: number;
 
-    constructor(gridPanel: GridPanel, gridOptionsWrapper: GridOptionsWrapper) {
+    constructor(gridPanel: GridPanelComp, gridOptionsWrapper: GridOptionsWrapper) {
         this.gridPanel = gridPanel;
         this.gridOptionsWrapper = gridOptionsWrapper;
     }

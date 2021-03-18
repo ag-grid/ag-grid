@@ -258,6 +258,8 @@ export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
 export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
 export { GridComp } from "./gridComp";
+export { GridCompService } from "./gridCompService";
+export { GridCompController } from "./gridCompController";
 export { Logger, LoggerFactory } from "./logger";
 export { SelectionController } from "./selectionController";
 export { SortController, SortModelItem } from "./sortController";

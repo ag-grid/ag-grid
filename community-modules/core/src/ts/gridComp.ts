@@ -77,13 +77,14 @@ export class GridComp extends ManagedFocusComponent {
             getToolPanelInstance: this.getToolPanelInstance.bind(this),
             refreshSideBar: this.refreshSideBar.bind(this),
             setSideBar: this.setSideBar.bind(this),
-            setSideBarPosition: this.setSideBarPosition.bind(this)
+            setSideBarPosition: this.setSideBarPosition.bind(this),
+            getRootGui: this.getRootGui.bind(this)
         }));
 
         // register with services that need grid core
         [
             // this.gridApi,
-            this.rowRenderer,
+            // this.rowRenderer,
             this.popupService,
             this.focusController
         ].forEach(service => service.registerGridCore(this));

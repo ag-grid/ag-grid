@@ -34,6 +34,7 @@ import { createArrayOfNumbers } from "../utils/number";
 import { pushAll, last } from "../utils/array";
 import { executeNextVMTurn, executeInAWhile, doOnce } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
+import {GridCompController} from "../gridCompController";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -81,16 +82,6 @@ export class RowRenderer extends BeanStub {
 
     private printLayout: boolean;
     private embedFullWidthRows: boolean;
-
-    private gridCore: GridComp;
-
-    public registerGridCore(gridCore: GridComp): void {
-        this.gridCore = gridCore;
-    }
-
-    public getGridCore(): GridComp {
-        return this.gridCore;
-    }
 
     public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create("RowRenderer");

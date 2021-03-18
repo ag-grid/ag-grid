@@ -6,6 +6,7 @@ import {FocusController} from "./focusController";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {SideBarDef} from "./entities/sideBar";
 import {BeanStub} from "./context/beanStub";
+import {GridCompService} from "./gridCompService";
 
 export interface CompView {
 }
@@ -24,6 +25,7 @@ export interface GridCompView extends CompView {
     setSideBar(def: SideBarDef | string | boolean): void;
     isToolPanelShowing(): boolean;
     destroyGridUi(): void;
+    getRootGui(): HTMLElement;
 }
 
 export class CompController<V extends CompView> extends BeanStub {
@@ -46,6 +48,7 @@ export class GridCompController extends CompController<GridCompView> {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusController') protected readonly focusController: FocusController;
+    @Autowired('gridCompService') protected readonly gridCompService: GridCompService;
 
     constructor(view: GridCompView) {
         super(view);
@@ -57,7 +60,7 @@ export class GridCompController extends CompController<GridCompView> {
         // register with services that need grid core
         [
             this.gridApi,
-            // this.rowRenderer,
+            this.gridCompService
             // this.popupService,
             // this.focusController
         ].forEach(service => service.registerGridCompController(this));
@@ -114,5 +117,9 @@ export class GridCompController extends CompController<GridCompView> {
 
     public destroyGridUi(): void {
         this.view.destroyGridUi();
+    }
+
+    public getRootGui(): HTMLElement {
+        return this.view.getRootGui();
     }
 }
