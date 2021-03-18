@@ -22,10 +22,11 @@ import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 import { ColumnController } from "./columnController/columnController";
 import { ColumnGroup } from "./entities/columnGroup";
 import { Column } from "./entities/column";
-import { addCssClass, removeCssClass, isVisible } from "./utils/dom";
+import {addCssClass, removeCssClass, isVisible, addOrRemoveCssClass} from "./utils/dom";
 import { findIndex, last } from "./utils/array";
 import { FocusController } from "./focusController";
 import {GridCompController, GridCompView} from "./gridCompController";
+import {LayoutCssClasses, UpdateLayoutClassesParams} from "./styling/layoutFeature";
 
 export class GridComp extends ManagedFocusComponent {
 
@@ -80,14 +81,9 @@ export class GridComp extends ManagedFocusComponent {
             setSideBarPosition: this.setSideBarPosition.bind(this),
             getRootGui: this.getRootGui.bind(this),
             focusNextInnerContainer: this.focusNextInnerContainer.bind(this),
-            forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this)
+            forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
+            updateLayoutClasses: this.updateLayoutClasses.bind(this)
         }));
-
-
-
-
-
-        this.gridOptionsWrapper.addLayoutElement(this.getGui());
 
         this.eGridDiv.appendChild(this.getGui());
         this.addDestroyFunc(() => {
@@ -106,8 +102,6 @@ export class GridComp extends ManagedFocusComponent {
 
         this.logger.log('ready');
 
-        this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
-
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
@@ -123,6 +117,16 @@ export class GridComp extends ManagedFocusComponent {
         });
 
         super.postConstruct();
+    }
+
+    private updateLayoutClasses(params: UpdateLayoutClassesParams): void {
+        addOrRemoveCssClass(this.eRootWrapperBody, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+        addOrRemoveCssClass(this.eRootWrapperBody, LayoutCssClasses.NORMAL, params.normal);
+        addOrRemoveCssClass(this.eRootWrapperBody, LayoutCssClasses.PRINT, params.print);
+
+        this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+        this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);
+        this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
     }
 
     public getFocusableElement(): HTMLElement {

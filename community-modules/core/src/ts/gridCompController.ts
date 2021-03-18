@@ -10,11 +10,9 @@ import {GridCompService} from "./gridCompService";
 import {ModuleRegistry} from "./modules/moduleRegistry";
 import {ModuleNames} from "./modules/moduleNames";
 import {IClipboardService} from "./interfaces/iClipboardService";
+import {LayoutFeature, LayoutView} from "./styling/layoutFeature";
 
-export interface CompView {
-}
-
-export interface GridCompView extends CompView {
+export interface GridCompView extends LayoutView {
     refreshSideBar(): void;
     getToolPanelInstance(key: string): IToolPanel | undefined;
     ensureNodeVisible(comparator: any, position: string | null): void;
@@ -33,21 +31,7 @@ export interface GridCompView extends CompView {
     forceFocusOutOfContainer(up: boolean): void;
 }
 
-export class CompController<V extends CompView> extends BeanStub {
-
-    protected view: V;
-
-    constructor(view: V) {
-        super();
-        this.view = view;
-    }
-
-    @PostConstruct
-    protected postConstruct(): void {
-    }
-}
-
-export class GridCompController extends CompController<GridCompView> {
+export class GridCompController extends BeanStub {
 
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -56,12 +40,15 @@ export class GridCompController extends CompController<GridCompView> {
     @Autowired('gridCompService') protected readonly gridCompService: GridCompService;
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
+    private view: GridCompView;
+
     constructor(view: GridCompView) {
-        super(view);
+        super();
+        this.view = view;
     }
 
+    @PostConstruct
     protected postConstruct(): void {
-        super.postConstruct();
 
         // register with services that need grid core
         [
@@ -75,6 +62,7 @@ export class GridCompController extends CompController<GridCompView> {
             this.clipboardService.registerGridCompController(this);
         }
 
+        this.createManagedBean(new LayoutFeature(this.view));
     }
 
     public refreshSideBar(): void {

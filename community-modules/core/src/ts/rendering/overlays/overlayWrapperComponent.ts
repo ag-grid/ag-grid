@@ -6,10 +6,11 @@ import { ILoadingOverlayComp } from './loadingOverlayComponent';
 import { INoRowsOverlayComp } from './noRowsOverlayComponent';
 import { AgPromise } from '../../utils';
 import { addOrRemoveCssClass, clearElement } from '../../utils/dom';
+import {LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams} from "../../styling/layoutFeature";
 
 enum LoadingType { Loading, NoRows }
 
-export class OverlayWrapperComponent extends Component {
+export class OverlayWrapperComponent extends Component implements LayoutView {
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
@@ -32,9 +33,15 @@ export class OverlayWrapperComponent extends Component {
         super(OverlayWrapperComponent.TEMPLATE);
     }
 
+    public updateLayoutClasses(params: UpdateLayoutClassesParams): void {
+        addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+        addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.NORMAL, params.normal);
+        addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.PRINT, params.print);
+    }
+
     @PostConstruct
     private postConstruct(): void {
-        this.gridOptionsWrapper.addLayoutElement(this.eOverlayWrapper);
+        this.createManagedBean(new LayoutFeature(this));
         this.setDisplayed(false);
     }
 

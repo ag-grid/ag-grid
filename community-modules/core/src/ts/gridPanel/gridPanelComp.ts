@@ -69,6 +69,7 @@ import { KeyCode } from '../constants/keyCode';
 import { PopupService } from "../widgets/popupService";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { KeyName } from '../constants/keyName';
+import {LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams} from "../styling/layoutFeature";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -129,7 +130,7 @@ export type RowContainerComponents = { [K in RowContainerComponentNames]: RowCon
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
-export class GridPanelComp extends Component {
+export class GridPanelComp extends Component implements LayoutView {
 
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -269,14 +270,22 @@ export class GridPanelComp extends Component {
         this.rowRenderer.forEachCellComp(cellComp => cellComp.onNewColumnsLoaded());
     }
 
+    public updateLayoutClasses(params: UpdateLayoutClassesParams): void {
+        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.NORMAL, params.normal);
+        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.PRINT, params.print);
+
+        this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+        this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);
+        this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
+    }
+
     @PostConstruct
     private init() {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
-        // these elements have different CSS when layout changes
-        this.gridOptionsWrapper.addLayoutElement(this.getGui());
-        this.gridOptionsWrapper.addLayoutElement(this.eBodyViewport);
+        this.createManagedBean(new LayoutFeature(this));
 
         this.suppressScrollOnFloatingRow();
         this.setupRowAnimationCssClass();

@@ -131,8 +131,6 @@ export class GridOptionsWrapper {
 
     private domDataKey = '__AG_' + Math.random().toString();
 
-    private layoutElements: HTMLElement[] = [];
-
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
     private updateLayoutClassesListener: any;
@@ -227,10 +225,6 @@ export class GridOptionsWrapper {
         warnOfDeprecaredIcon('checkboxChecked');
         warnOfDeprecaredIcon('checkboxUnchecked');
         warnOfDeprecaredIcon('checkboxIndeterminate');
-
-        this.updateLayoutClassesListener = this.updateLayoutClasses.bind(this);
-
-        this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
 
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
@@ -1286,26 +1280,6 @@ export class GridOptionsWrapper {
             };
             this.propertyEventService.dispatchEvent(event);
         }
-    }
-
-    // this logic is repeated in lots of places. any element that had different CSS
-    // dependent on the layout needs to have the layout class added ot it.
-    public addLayoutElement(element: HTMLElement): void {
-        this.layoutElements.push(element);
-        this.updateLayoutClasses();
-    }
-
-    private updateLayoutClasses(): void {
-        const domLayout = this.getDomLayout();
-        const domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
-        const domLayoutPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
-        const domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
-
-        this.layoutElements.forEach(e => {
-            addOrRemoveCssClass(e, 'ag-layout-auto-height', domLayoutAutoHeight);
-            addOrRemoveCssClass(e, 'ag-layout-normal', domLayoutNormal);
-            addOrRemoveCssClass(e, 'ag-layout-print', domLayoutPrint);
-        });
     }
 
     public addEventListener(key: string, listener: Function): void {
