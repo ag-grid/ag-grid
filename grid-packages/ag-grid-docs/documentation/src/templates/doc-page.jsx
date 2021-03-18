@@ -60,10 +60,10 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
         config: props.config != null ? JSON.parse(props.config) : undefined
       }),
       'snippet': props => Snippet({ ...props, framework }),
-      'feature-overview': FeatureOverview,
+      'feature-overview': props => FeatureOverview({ ...props, framework }),
       'icons-panel': IconsPanel,
       'image-caption': props => ImageCaption({ ...props, pageName }),
-      'matrix-table': MatrixTable,
+      'matrix-table': props => MatrixTable({ ...props, framework }),
       'video-section': VideoSection,
       'video-link': VideoLink,
       'chart-gallery': ChartGallery,

@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { useJsonFileNodes } from './use-json-file-nodes';
 import anchorIcon from 'images/anchor';
 import Code from './Code';
-import { inferType, convertUrl } from 'components/documentation-helpers';
+import { inferType, convertUrl, convertMarkdown } from 'components/documentation-helpers';
 import styles from './ApiDocumentation.module.scss';
 
 /**
@@ -250,11 +250,6 @@ const Breadcrumbs = ({ breadcrumbs }) => {
 
     return <div className={styles['breadcrumbs']}>{links}</div>;
 };
-
-const convertMarkdown = (content, framework) => content
-    .replace(/`(.*?)`/g, '<code>$1</code>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => `<a href="${convertUrl(href, framework)}">${text}</a>`)
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
 const createLinkedType = (type, url) =>
     `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${type}</a>`;

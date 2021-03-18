@@ -1,9 +1,8 @@
 import React from 'react';
-import { withPrefix } from 'gatsby';
 import logos from 'images/logos';
 import MenuView from 'components/menu-view/MenuView';
 import { SEO } from 'components/SEO';
-import convertToFrameworkUrl from 'utils/convert-to-framework-url';
+import { convertUrl } from 'components/documentation-helpers';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './home.module.scss';
 
@@ -56,7 +55,7 @@ const parseGettingStartedUrl = (url, framework) => {
     }
 
     return {
-        href: withPrefix(convertToFrameworkUrl(url, framework))
+        href: convertUrl(url, framework)
     };
 };
 
