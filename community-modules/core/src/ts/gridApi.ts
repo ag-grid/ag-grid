@@ -65,6 +65,7 @@ import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { ServerSideStoreState } from "./interfaces/IServerSideStore";
 import {HeadlessService} from "./headless/headlessService";
+import {GridCompController} from "./gridCompController";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -173,7 +174,7 @@ export class GridApi {
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
 
     private gridPanel: GridPanelComp;
-    private gridComp: GridComp;
+    private gridCompController: GridCompController;
 
     private headerRootComp: HeaderRootComp;
     private clientSideRowModel: IClientSideRowModel;
@@ -188,8 +189,9 @@ export class GridApi {
     public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
-    public registerGridCore(gridCore: GridComp): void {
-        this.gridComp = gridCore;
+
+    public registerGridCompController(gridCompController: GridCompController): void {
+        this.gridCompController = gridCompController;
     }
 
     public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
@@ -452,7 +454,7 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
-        this.gridComp.refreshSideBar();
+        this.gridCompController.refreshSideBar();
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -670,7 +672,7 @@ export class GridApi {
     }
 
     public getToolPanelInstance(id: string): IToolPanel | undefined {
-        return this.gridComp.getToolPanelInstance(id);
+        return this.gridCompController.getToolPanelInstance(id);
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
@@ -802,8 +804,8 @@ export class GridApi {
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureNodeVisible(comparator: any, position?: string | null) {
-        this.gridComp.ensureNodeVisible(comparator, position);
+    public ensureNodeVisible(comparator: any, position: string | null = null) {
+        this.gridCompController.ensureNodeVisible(comparator, position);
     }
 
     public forEachLeafNode(callback: (rowNode: RowNode) => void) {
@@ -1007,35 +1009,35 @@ export class GridApi {
     }
 
     public isSideBarVisible() {
-        return this.gridComp.isSideBarVisible();
+        return this.gridCompController.isSideBarVisible();
     }
 
     public setSideBarVisible(show: boolean) {
-        this.gridComp.setSideBarVisible(show);
+        this.gridCompController.setSideBarVisible(show);
     }
 
     public setSideBarPosition(position: 'left' | 'right') {
-        this.gridComp.setSideBarPosition(position);
+        this.gridCompController.setSideBarPosition(position);
     }
 
     public openToolPanel(key: string) {
-        this.gridComp.openToolPanel(key);
+        this.gridCompController.openToolPanel(key);
     }
 
     public closeToolPanel() {
-        this.gridComp.closeToolPanel();
+        this.gridCompController.closeToolPanel();
     }
 
     public getOpenedToolPanel(): string | null {
-        return this.gridComp.getOpenedToolPanel();
+        return this.gridCompController.getOpenedToolPanel();
     }
 
     public getSideBar(): SideBarDef {
-        return this.gridComp.getSideBar();
+        return this.gridCompController.getSideBar();
     }
 
     public setSideBar(def: SideBarDef): void {
-        return this.gridComp.setSideBar(def);
+        return this.gridCompController.setSideBar(def);
     }
 
     public setSuppressClipboardPaste(value: boolean): void {
@@ -1043,7 +1045,7 @@ export class GridApi {
     }
 
     public isToolPanelShowing() {
-        return this.gridComp.isToolPanelShowing();
+        return this.gridCompController.isToolPanelShowing();
     }
 
     public doLayout() {
@@ -1114,7 +1116,8 @@ export class GridApi {
         this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
-        this.context.destroyBean(this.gridComp);
+        this.gridCompController.destroyGridUi();
+
         // destroy the services
         this.context.destroy();
     }

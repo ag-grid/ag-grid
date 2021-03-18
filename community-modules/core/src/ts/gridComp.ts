@@ -25,6 +25,7 @@ import { Column } from "./entities/column";
 import { addCssClass, removeCssClass, isVisible } from "./utils/dom";
 import { findIndex, last } from "./utils/array";
 import { FocusController } from "./focusController";
+import {GridCompController, GridCompView} from "./gridCompController";
 
 export class GridComp extends ManagedFocusComponent {
 
@@ -51,7 +52,6 @@ export class GridComp extends ManagedFocusComponent {
     @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
-    private doingVirtualPaging: boolean;
     private logger: Logger;
 
     constructor() {
@@ -64,9 +64,25 @@ export class GridComp extends ManagedFocusComponent {
         const template = this.createTemplate();
         this.setTemplate(template);
 
+        this.createManagedBean(new GridCompController({
+            destroyGridUi: ()=> this.destroyBean(this),
+            isToolPanelShowing: this.isToolPanelShowing.bind(this),
+            setSideBarVisible: this.setSideBarVisible.bind(this),
+            getSideBar: this.getSideBar.bind(this),
+            getOpenedToolPanel: this.getOpenedToolPanel.bind(this),
+            closeToolPanel: this.closeToolPanel.bind(this),
+            openToolPanel: this.openToolPanel.bind(this),
+            isSideBarVisible: this.isSideBarVisible.bind(this),
+            ensureNodeVisible: this.ensureNodeVisible.bind(this),
+            getToolPanelInstance: this.getToolPanelInstance.bind(this),
+            refreshSideBar: this.refreshSideBar.bind(this),
+            setSideBar: this.setSideBar.bind(this),
+            setSideBarPosition: this.setSideBarPosition.bind(this)
+        }));
+
         // register with services that need grid core
         [
-            this.gridApi,
+            // this.gridApi,
             this.rowRenderer,
             this.popupService,
             this.focusController
@@ -315,9 +331,7 @@ export class GridComp extends ManagedFocusComponent {
 
     // Valid values for position are bottom, middle and top
     public ensureNodeVisible(comparator: any, position: string | null = null) {
-        if (this.doingVirtualPaging) {
-            throw new Error('Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory');
-        }
+
         // look for the node index we want to display
         const rowCount = this.rowModel.getRowCount();
         const comparatorIsAFunction = typeof comparator === 'function';
