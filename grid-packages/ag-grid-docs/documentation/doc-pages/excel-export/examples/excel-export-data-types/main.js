@@ -14,7 +14,7 @@ var gridOptions = {
         flex: 1
     },
 
-    rowSelection: 'multiple',
+    popupParent: document.body,
 
     rowData: [{
         rawValue: 1,

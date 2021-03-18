@@ -53,35 +53,19 @@ var gridOptions = {
     ]
 };
 
-function getValue(inputSelector) {
-    var text = document.querySelector(inputSelector).value;
-    switch (text) {
-        case 'array':
-            return [
-                [],
-                [
-                    { data: { value: 'Here is a comma, and a some "quotes".', type: "String" } }
-                ],
-                [
-                    { data: { value: 'They are visible when the downloaded file is opened in Excel because custom content is properly escaped.', type: "String" } }
-                ],
-                [
-                    { data: { value: "this cell:", type: "String" }, mergeAcross: 1 },
-                    { data: { value: "is empty because the first cell has mergeAcross=1", type: "String" } }
-                ],
-                []
-            ]
-        default:
-            return;
-    }
+function getBoolean(id) {
+    var field = document.querySelector('#' + id);
+
+    return !!field.checked;
 }
 
 function getParams() {
     return {
-        customHeader: getValue('#customHeader'),
-        customFooter: getValue('#customFooter')
-    };
+        columnGroups: getBoolean('columnGroups'),
+        skipHeader: getBoolean('skipHeader')
+    }
 }
+
 
 function onBtExport() {
     gridOptions.api.exportDataAsExcel(getParams());
