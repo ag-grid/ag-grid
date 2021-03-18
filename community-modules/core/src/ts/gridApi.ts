@@ -40,7 +40,7 @@ import { AnimationFrameService } from "./misc/animationFrameService";
 import { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
-import { SideBarDef } from "./entities/sideBar";
+import {SideBarDef, SideBarDefParser} from "./entities/sideBar";
 import { IChartService, ChartModel } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
@@ -66,6 +66,8 @@ import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces
 import { ServerSideStoreState } from "./interfaces/IServerSideStore";
 import {HeadlessService} from "./headless/headlessService";
 import {GridCompController} from "./gridCompController";
+import {ISideBar} from "./interfaces/iSideBar";
+import {Component} from "./widgets/component";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -175,6 +177,7 @@ export class GridApi {
 
     private gridPanel: GridPanelComp;
     private gridCompController: GridCompController;
+    private sideBarComp: ISideBar;
 
     private headerRootComp: HeaderRootComp;
     private clientSideRowModel: IClientSideRowModel;
@@ -196,6 +199,10 @@ export class GridApi {
 
     public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
         this.headerRootComp = headerRootComp;
+    }
+
+    public registerSideBarComp(sideBarComp: ISideBar): void {
+        this.sideBarComp = sideBarComp;
     }
 
     @PostConstruct
@@ -454,7 +461,8 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
-        this.gridCompController.refreshSideBar();
+        if (!this.sideBarComp) { return; }
+        this.sideBarComp.refresh();
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -672,7 +680,11 @@ export class GridApi {
     }
 
     public getToolPanelInstance(id: string): IToolPanel | undefined {
-        return this.gridCompController.getToolPanelInstance(id);
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
+            return;
+        }
+        return this.sideBarComp.getToolPanelInstance(id);
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
@@ -1009,35 +1021,53 @@ export class GridApi {
     }
 
     public isSideBarVisible() {
-        return this.gridCompController.isSideBarVisible();
+        return this.sideBarComp ? this.sideBarComp.isDisplayed() : false;
     }
 
     public setSideBarVisible(show: boolean) {
-        this.gridCompController.setSideBarVisible(show);
+        if (!this.sideBarComp) {
+            if (show) {
+                console.warn('AG Grid: sideBar is not loaded');
+            }
+            return;
+        }
+        this.sideBarComp.setDisplayed(show);
     }
 
     public setSideBarPosition(position: 'left' | 'right') {
-        this.gridCompController.setSideBarPosition(position);
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: sideBar is not loaded');
+            return;
+        }
+        this.sideBarComp.setSideBarPosition(position);
     }
 
     public openToolPanel(key: string) {
-        this.gridCompController.openToolPanel(key);
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
+            return;
+        }
+        this.sideBarComp.openToolPanel(key);
     }
 
     public closeToolPanel() {
-        this.gridCompController.closeToolPanel();
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
+            return;
+        }
+        this.sideBarComp.close();
     }
 
     public getOpenedToolPanel(): string | null {
-        return this.gridCompController.getOpenedToolPanel();
+        return this.sideBarComp ? this.sideBarComp.openedItem() : null;
     }
 
     public getSideBar(): SideBarDef {
-        return this.gridCompController.getSideBar();
+        return this.gridOptionsWrapper.getSideBar();
     }
 
     public setSideBar(def: SideBarDef): void {
-        return this.gridCompController.setSideBar(def);
+        this.gridOptionsWrapper.setProperty('sideBar', SideBarDefParser.parse(def));
     }
 
     public setSuppressClipboardPaste(value: boolean): void {
@@ -1045,7 +1075,7 @@ export class GridApi {
     }
 
     public isToolPanelShowing() {
-        return this.gridCompController.isToolPanelShowing();
+        return this.sideBarComp.isToolPanelShowing();
     }
 
     public doLayout() {

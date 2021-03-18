@@ -3,39 +3,28 @@ import {GridApi} from "./gridApi";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {PopupService} from "./widgets/popupService";
 import {FocusController} from "./focusController";
-import {IToolPanel} from "./interfaces/iToolPanel";
-import {SideBarDef} from "./entities/sideBar";
 import {BeanStub} from "./context/beanStub";
 import {GridCompService} from "./gridCompService";
 import {ModuleRegistry} from "./modules/moduleRegistry";
 import {ModuleNames} from "./modules/moduleNames";
 import {IClipboardService} from "./interfaces/iClipboardService";
 import {LayoutFeature, LayoutView} from "./styling/layoutFeature";
-import {addCssClass, removeCssClass} from "./utils/dom";
 import {Events} from "./eventKeys";
 import {Logger, LoggerFactory} from "./logger";
 import {ResizeObserverService} from "./misc/resizeObserverService";
 import {GridSizeChangedEvent} from "./events";
 import {ColumnApi} from "./columnController/columnApi";
-import {RefSelector} from "./widgets/componentAnnotations";
+import {ISideBar} from "./interfaces/iSideBar";
+import {Component} from "./widgets/component";
+import {GridOptions} from "./entities/gridOptions";
+import {GridPanelComp} from "./gridPanel/gridPanelComp";
+import {IRowModel} from "./interfaces/iRowModel";
 
 export interface GridCompView extends LayoutView {
-    refreshSideBar(): void;
-    getToolPanelInstance(key: string): IToolPanel | undefined;
-    ensureNodeVisible(comparator: any, position: string | null): void;
-    isSideBarVisible(): boolean;
-    setSideBarVisible(show: boolean): void;
-    setSideBarPosition(position: 'left' | 'right'): void;
-    openToolPanel(key: string): void;
-    closeToolPanel(): void;
-    getOpenedToolPanel(): string | null;
-    getSideBar(): SideBarDef;
-    setSideBar(def: SideBarDef | string | boolean): void;
-    isToolPanelShowing(): boolean;
+    setRtlClass(cssClass: string): void;
     destroyGridUi(): void;
     focusNextInnerContainer(backwards: boolean): boolean;
     forceFocusOutOfContainer(up: boolean): void;
-    setRtlClass(cssClass: string): void;
     addOrRemoveKeyboardFocusClass(value: boolean): void;
 }
 
@@ -50,18 +39,25 @@ export class GridCompController extends BeanStub {
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('gridOptions') private gridOptions: GridOptions;
+    @Autowired('rowModel') private rowModel: IRowModel;
 
     private view: GridCompView;
     private eGridHostDiv: HTMLElement;
     private eGridComp: HTMLElement;
+    private gridPanelComp: GridPanelComp;
+
+    private sideBarComp: ISideBar & Component
 
     private logger: Logger;
 
-    constructor(view: GridCompView, eGridDiv: HTMLElement, eGridComp: HTMLElement) {
+    constructor(view: GridCompView, eGridDiv: HTMLElement, eGridComp: HTMLElement, sideBarComp: ISideBar & Component, gridPanelComp: GridPanelComp) {
         super();
         this.view = view;
         this.eGridHostDiv = eGridDiv;
         this.eGridComp = eGridComp;
+        this.sideBarComp = sideBarComp;
+        this.gridPanelComp = gridPanelComp;
     }
 
     @PostConstruct
@@ -118,54 +114,6 @@ export class GridCompController extends BeanStub {
         this.view.setRtlClass(cssClass);
     }
 
-    public refreshSideBar(): void {
-        this.view.refreshSideBar();
-    }
-
-    public getToolPanelInstance(key: string): IToolPanel | undefined {
-        return this.view.getToolPanelInstance(key);
-    }
-
-    public ensureNodeVisible(comparator: any, position: string | null): void {
-        this.view.ensureNodeVisible(comparator, position);
-    }
-
-    public isSideBarVisible(): boolean {
-        return this.view.isSideBarVisible();
-    }
-
-    public setSideBarVisible(show: boolean): void {
-        this.view.setSideBarVisible(show);
-    }
-
-    public setSideBarPosition(position: 'left' | 'right'): void {
-        this.view.setSideBarPosition(position);
-    }
-
-    public openToolPanel(key: string): void {
-        this.view.openToolPanel(key);
-    }
-
-    public closeToolPanel(): void {
-        this.view.closeToolPanel();
-    }
-
-    public getOpenedToolPanel(): string | null {
-        return this.view.getOpenedToolPanel();
-    }
-
-    public getSideBar(): SideBarDef {
-        return this.view.getSideBar();
-    }
-
-    public setSideBar(def: SideBarDef | string | boolean): void {
-        this.view.setSideBar(def);
-    }
-
-    public isToolPanelShowing(): boolean {
-        return this.view.isToolPanelShowing();
-    }
-
     public destroyGridUi(): void {
         this.view.destroyGridUi();
     }
@@ -180,5 +128,33 @@ export class GridCompController extends BeanStub {
 
     public forceFocusOutOfContainer(up = false): void {
         this.view.forceFocusOutOfContainer(up);
+    }
+
+    // Valid values for position are bottom, middle and top
+    public ensureNodeVisible(comparator: any, position: string | null = null) {
+
+        // look for the node index we want to display
+        const rowCount = this.rowModel.getRowCount();
+        const comparatorIsAFunction = typeof comparator === 'function';
+        let indexToSelect = -1;
+        // go through all the nodes, find the one we want to show
+        for (let i = 0; i < rowCount; i++) {
+            const node = this.rowModel.getRow(i);
+            if (comparatorIsAFunction) {
+                if (comparator(node)) {
+                    indexToSelect = i;
+                    break;
+                }
+            } else {
+                // check object equality against node and data
+                if (comparator === node || comparator === node!.data) {
+                    indexToSelect = i;
+                    break;
+                }
+            }
+        }
+        if (indexToSelect >= 0) {
+            this.gridPanelComp.ensureIndexVisible(indexToSelect, position);
+        }
     }
 }
