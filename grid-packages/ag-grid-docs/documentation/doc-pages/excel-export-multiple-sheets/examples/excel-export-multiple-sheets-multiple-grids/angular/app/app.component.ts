@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
@@ -190,9 +190,8 @@ export class AppComponent {
             this.leftApi.getGridRawDataForExcel({ sheetName: 'Athletes' }),
             this.rightApi.getGridRawDataForExcel({ sheetName: 'Selected Athletes' })
         );
-    
-        // could be leftApi or rightApi
-        this.leftApi.exportMultipleSheetsAsExcel({
+
+        exportMultipleSheetsAsExcel({
             data: spreadsheets,
             fileName: 'ag-grid.xlsx'
         });

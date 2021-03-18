@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
@@ -197,8 +197,7 @@ export default class extends Component {
             this.state.rightApi.getGridRawDataForExcel({ sheetName: 'Selected Athletes' })
         );
     
-        // could be leftApi or rightApi
-        this.state.leftApi.exportMultipleSheetsAsExcel({
+        exportMultipleSheetsAsExcel({
             data: spreadsheets,
             fileName: 'ag-grid.xlsx'
         });

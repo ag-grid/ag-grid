@@ -9,6 +9,9 @@ Excel Export provides a way to export an Excel file with multiple sheets, this c
 
 A raw Excel Sheet can be exported from the grid by calling the `getGridRawDataForExcel` method. This will start the `Multiple Sheet Export` process. The results of calling `getGridRawDataForExcel` should be stored in an Array, and once all needed sheets have been stored, the `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel` method should be called.
 
+[[note]]
+| When using modules, the `exportMultipleSheetsAsExcel` and `getMultipleSheetsAsExcel` functions can be imported directly from the `excel-export` module as `import { exportMultipleSheetsAsExcel, getMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export'`.
+
 [[warning]]
 | Calling `getGridRawDataForExcel` will start a Multiple Sheet export process, that can only be ended by calling `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel`. Before this process is ended, no data will be able to be exported from the grid using `exportDataAsExcel` or `getDataAsExcel`.
 
@@ -42,6 +45,12 @@ Note the following:
 <grid-example title='Excel Export - Multiple Sheets with Master Detail' name='excel-export-multiple-sheets-master-detail' type='generated' options='{ "enterprise": true }'></grid-example>
 
 ## Example with Multiple Grids
+
+Note the following:
+
+- The contents of the `Athletes` grid will be exported to the `Athletes` sheet.
+- The contents of the `Selected Athletes` grid will be exported to the `Selected Athletes` sheet.
+- Only the `onExcelExport` method is relevant to **Excel Export**
 
 <grid-example title='Excel Export - Multiple Sheets with Multiple Grids' name='excel-export-multiple-sheets-multiple-grids' type='multi' options='{ "enterprise": true, "extras": ["fontawesome", "bootstrap"] }'></grid-example>
 

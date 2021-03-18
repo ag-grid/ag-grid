@@ -2,7 +2,7 @@ import Vue from 'vue';
 import {AgGridVue} from '@ag-grid-community/vue';
 
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
@@ -189,9 +189,8 @@ const VueExample = {
                 this.leftApi.getGridRawDataForExcel({ sheetName: 'Athletes' }),
                 this.rightApi.getGridRawDataForExcel({ sheetName: 'Selected Athletes' })
             );
-        
-            // could be leftApi or rightApi
-            this.leftApi.exportMultipleSheetsAsExcel({
+
+            exportMultipleSheetsAsExcel({
                 data: spreadsheets,
                 fileName: 'ag-grid.xlsx'
             });
