@@ -11,6 +11,9 @@ import {ModuleRegistry} from "./modules/moduleRegistry";
 import {ModuleNames} from "./modules/moduleNames";
 import {IClipboardService} from "./interfaces/iClipboardService";
 import {LayoutFeature, LayoutView} from "./styling/layoutFeature";
+import {addCssClass, removeCssClass} from "./utils/dom";
+import {Events} from "./eventKeys";
+import {Logger, LoggerFactory} from "./logger";
 
 export interface GridCompView extends LayoutView {
     refreshSideBar(): void;
@@ -29,6 +32,8 @@ export interface GridCompView extends LayoutView {
     getRootGui(): HTMLElement;
     focusNextInnerContainer(backwards: boolean): boolean;
     forceFocusOutOfContainer(up: boolean): void;
+    setRtlClass(cssClass: string): void;
+    addOrRemoveKeyboardFocusClass(value: boolean): void;
 }
 
 export class GridCompController extends BeanStub {
@@ -39,8 +44,11 @@ export class GridCompController extends BeanStub {
     @Autowired('focusController') protected readonly focusController: FocusController;
     @Autowired('gridCompService') protected readonly gridCompService: GridCompService;
     @Optional('clipboardService') private clipboardService: IClipboardService;
+    @Autowired('loggerFactory') loggerFactory: LoggerFactory;
 
     private view: GridCompView;
+
+    private logger: Logger;
 
     constructor(view: GridCompView) {
         super();
@@ -49,6 +57,8 @@ export class GridCompController extends BeanStub {
 
     @PostConstruct
     protected postConstruct(): void {
+
+        this.logger = this.loggerFactory.create('GridCompController');
 
         // register with services that need grid core
         [
@@ -63,6 +73,26 @@ export class GridCompController extends BeanStub {
         }
 
         this.createManagedBean(new LayoutFeature(this.view));
+
+        // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
+        // which doLayout indirectly depends on
+        this.addRtlSupport();
+
+        this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, () => {
+            this.view.addOrRemoveKeyboardFocusClass(true);
+        });
+
+        this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, () => {
+            this.view.addOrRemoveKeyboardFocusClass(false);
+        });
+
+        this.logger.log('ready');
+
+    }
+
+    private addRtlSupport(): void {
+        const cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
+        this.view.setRtlClass(cssClass);
     }
 
     public refreshSideBar(): void {

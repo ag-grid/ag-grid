@@ -64,8 +64,13 @@ export class GridComp extends ManagedFocusComponent {
         const template = this.createTemplate();
         this.setTemplate(template);
 
-        this.createManagedBean(new GridCompController({
-            destroyGridUi: ()=> this.destroyBean(this),
+        const view = {
+            destroyGridUi:
+                ()=> this.destroyBean(this),
+            setRtlClass:
+                (cssClass: string) => addCssClass(this.getGui(), cssClass),
+            addOrRemoveKeyboardFocusClass:
+                (addOrRemove: boolean) => this.addOrRemoveCssClass(FocusController.AG_KEYBOARD_FOCUS, addOrRemove),
             isToolPanelShowing: this.isToolPanelShowing.bind(this),
             setSideBarVisible: this.setSideBarVisible.bind(this),
             getSideBar: this.getSideBar.bind(this),
@@ -82,27 +87,13 @@ export class GridComp extends ManagedFocusComponent {
             focusNextInnerContainer: this.focusNextInnerContainer.bind(this),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this)
-        }));
+        };
 
-        // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
-        // which doLayout indirectly depends on
-        this.addRtlSupport();
-
-        this.logger.log('ready');
+        this.createManagedBean(new GridCompController(view));
 
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
-
-        const eGui = this.getGui();
-
-        this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, () => {
-            addCssClass(eGui, FocusController.AG_KEYBOARD_FOCUS);
-        });
-
-        this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, () => {
-            removeCssClass(eGui, FocusController.AG_KEYBOARD_FOCUS);
-        });
 
         super.postConstruct();
     }
@@ -217,11 +208,6 @@ export class GridComp extends ManagedFocusComponent {
             clientHeight: this.eGridDiv.clientHeight
         };
         this.eventService.dispatchEvent(event);
-    }
-
-    private addRtlSupport(): void {
-        const cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
-        addCssClass(this.getGui(), cssClass);
     }
 
     public getRootGui(): HTMLElement {
