@@ -12,7 +12,7 @@ import {
     FocusController,
     GetContextMenuItems,
     GetContextMenuItemsParams,
-    GridPanel,
+    GridPanelComp,
     IAfterGuiAttachedParams,
     IContextMenuFactory,
     IRangeController,
@@ -39,9 +39,9 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     @Autowired('columnController') private columnController: ColumnController;
 
     private activeMenu: ContextMenu | null;
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 

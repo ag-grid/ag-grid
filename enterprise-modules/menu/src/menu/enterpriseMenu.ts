@@ -25,7 +25,7 @@ import {
     TabbedLayout,
     FocusController,
     IAfterGuiAttachedParams,
-    GridPanel
+    GridPanelComp
 } from '@ag-grid-community/core';
 import { MenuList } from './menuList';
 import { MenuItemComponent } from './menuItemComponent';
@@ -46,9 +46,9 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     private lastSelectedTab: string;
     private activeMenu: EnterpriseMenu | null;
 
-    private gridPanel: GridPanel;
+    private gridPanel: GridPanelComp;
 
-    public registerGridComp(gridPanel: GridPanel): void {
+    public registerGridComp(gridPanel: GridPanelComp): void {
         this.gridPanel = gridPanel;
     }
 
