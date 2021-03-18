@@ -42,6 +42,7 @@ const types = {
     RowNode: '/row-object/',
     ServerSideTransaction: '/server-side-model-transactions/#transaction-api',
     string: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
+    Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
 };
 
 /**
@@ -261,9 +262,6 @@ const Breadcrumbs = ({ breadcrumbs }) => {
     return <div className={styles['breadcrumbs']}>{links}</div>;
 };
 
-const createLinkedType = (type, url) =>
-    `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${type}</a>`;
-
 const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
     const lines = [];
     let indentationLevel = 0;
@@ -302,17 +300,15 @@ const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
         } else if (definition.options != null) {
             type = definition.options.map(option => formatJson(option)).join(' | ');
         } else if (definition.default != null) {
-            type = Array.isArray(definition.default) ? 'any[]' : typeof definition.default;
+            type = Array.isArray(definition.default) ? 'object[]' : typeof definition.default;
         } else if (definition.description != null) {
-            type = 'any';
+            type = 'object';
         } else {
             type = getInterfaceName(key);
             isObject = true;
         }
 
-        const typeUrl = isObject ? `#reference-${id}.${key}` : getTypeUrl(type, framework);
-
-        line += `: ${typeUrl ? createLinkedType(type, typeUrl) : type};`;
+        line += `: ${isObject ? `<a href='#reference-${id}.${key}'>${type}</a>` : getLinkedType(type, framework)};`;
 
         if (definition.default != null) {
             line += ` // default: ${formatJson(definition.default)}`;
@@ -346,7 +342,7 @@ const FunctionCodeSample = ({ framework, name, type }) => {
     let shouldUseNewline = false;
 
     const getArgumentTypeName = (key, type) => {
-        if (typeof type === 'object') {
+        if (!Array.isArray(type) && typeof type === 'object') {
             return (type.meta && type.meta.name) || getInterfaceName(key);
         }
 
@@ -355,9 +351,10 @@ const FunctionCodeSample = ({ framework, name, type }) => {
 
     Object.entries(args).forEach(([key, type]) => {
         const typeName = getArgumentTypeName(key, type);
-        const typeUrl = getTypeUrl(typeName, framework);
 
-        argumentDefinitions.push(`${key}: ${typeUrl ? createLinkedType(typeName, typeUrl) : typeName}`);
+        console.log(`Getting linked type for`, typeName);
+
+        argumentDefinitions.push(`${key}: ${getLinkedType(typeName, framework)}`);
 
         if (argumentDefinitions.length > 1 || typeName.length > 20) {
             shouldUseNewline = true;
@@ -369,15 +366,14 @@ const FunctionCodeSample = ({ framework, name, type }) => {
         `\n    ${argumentDefinitions.join(',\n    ')}\n` :
         argumentDefinitions.join('');
 
-    const returnTypeUrl = getTypeUrl(returnType, framework);
     const returnTypeName = getInterfaceName((functionName || name).replace(/^get/, ''));
 
     const lines = [
-        `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? returnTypeName : (returnTypeUrl ? createLinkedType(returnType, returnTypeUrl) : returnType || 'void')};`,
+        `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`,
     ];
 
     Object.keys(args)
-        .filter(key => typeof args[key] === 'object')
+        .filter(key => !Array.isArray(args[key]) && typeof args[key] === 'object')
         .forEach(key => {
             const { meta, ...type } = args[key];
 
@@ -395,14 +391,26 @@ const getInterfaceLines = (framework, name, definition) => {
     const lines = [`interface ${name} {`];
 
     Object.entries(definition).forEach(([property, type]) => {
-        const typeUrl = getTypeUrl(type, framework);
-
-        lines.push(`  ${property}: ${typeUrl ? createLinkedType(type, typeUrl) : type};`);
+        lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
     });
 
     lines.push('}');
 
     return lines;
+};
+
+const getLinkedType = (type, framework) => {
+    if (!Array.isArray(type)) {
+        type = [type];
+    }
+
+    const formattedTypes = type.map(t => {
+        const url = getTypeUrl(t, framework);
+
+        return url ? `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${t}</a>` : t;
+    });
+
+    return formattedTypes.join(' | ');
 };
 
 const getJsonFromFile = (nodes, pageName, source) => {

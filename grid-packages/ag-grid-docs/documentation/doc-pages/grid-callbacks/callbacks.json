@@ -168,8 +168,14 @@
             "type": {
                 "parameters": {
                     "key": "string",
-                    "previousHeaderPosition": "HeaderPosition | null",
-                    "nextHeaderPosition": "HeaderPosition | null",
+                    "previousHeaderPosition": [
+                        "HeaderPosition",
+                        "null"
+                    ],
+                    "nextHeaderPosition": [
+                        "HeaderPosition",
+                        "null"
+                    ],
                     "event": "KeyboardEvent",
                     "headerRowCount": "number"
                 },
@@ -181,8 +187,14 @@
             "type": {
                 "parameters": {
                     "backwards": "boolean",
-                    "previousHeaderPosition": "HeaderPosition | null",
-                    "nextHeaderPosition": "HeaderPosition | null",
+                    "previousHeaderPosition": [
+                        "HeaderPosition",
+                        "null"
+                    ],
+                    "nextHeaderPosition": [
+                        "HeaderPosition",
+                        "null"
+                    ],
                     "headerRowCount": "number"
                 },
                 "returnType": "HeaderPosition"
@@ -194,8 +206,14 @@
                 "parameters": {
                     "key": "number",
                     "previousCellPosition": "CellPosition",
-                    "nextCellPosition": "CellPosition | null",
-                    "event": "KeyboardEvent | null"
+                    "nextCellPosition": [
+                        "CellPosition",
+                        "null"
+                    ],
+                    "event": [
+                        "KeyboardEvent",
+                        "null"
+                    ]
                 },
                 "returnType": "CellPosition"
             }
@@ -311,7 +329,10 @@
                     "ePopup": "HTMLElement",
                     "type": "string",
                     "eventSource?": "HTMLElement",
-                    "mouseEvent?": "MouseEvent | Touch"
+                    "mouseEvent?": [
+                        "MouseEvent",
+                        "Touch"
+                    ]
                 }
             }
         },
@@ -385,7 +406,10 @@
                     "pivotMode": "boolean"
                 },
                 "returnType": {
-                    "storeType?": "'full' | 'partial'",
+                    "storeType?": [
+                        "'full'",
+                        "'partial'"
+                    ],
                     "maxBlocksInCache?": "number",
                     "cacheBlockSize?": "number"
                 }
