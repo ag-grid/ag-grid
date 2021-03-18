@@ -42,7 +42,7 @@
         "description": "Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "cartesian": {
@@ -50,7 +50,7 @@
         "description": "Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series).",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "polar": {
@@ -58,7 +58,7 @@
         "description": "Specifies defaults for all polar charts (used for pie series).",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "bar": {
@@ -66,7 +66,7 @@
         "description": "Specifies defaults for bar/column charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "histogram": {
@@ -74,7 +74,7 @@
         "description": "Specifies defaults for histogram charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "line": {
@@ -82,7 +82,7 @@
         "description": "Specifies defaults for line charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "scatter": {
@@ -90,7 +90,7 @@
         "description": "Specifies defaults for scatter/bubble charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "area": {
@@ -98,7 +98,7 @@
         "description": "Specifies defaults for line charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "pie": {
@@ -106,7 +106,7 @@
         "description": "Specifies defaults for pie/doughnut charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       }
     }
@@ -114,7 +114,7 @@
   "chart": {
     "meta": {
       "displayName": "Chart Configuration",
-      "description": "This is the common configuration shared by all types of chart, as used in the <a href='../charts-api-themes/#reference-theme.overrides'>overrides</a> object."
+      "description": "This is the common configuration shared by all types of chart, as used in the [overrides](/charts-api-themes/#reference-theme.overrides) object."
     },
     "autoSize": {
       "default": true,
@@ -605,7 +605,7 @@
       "number": {
         "meta": {
           "type": "INumberAxis",
-          "description": "This extends the <a href='../charts-api-themes/#reference-axis'>common axis configuration</a> with options specific to number axes."
+          "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes."
         },
         "nice": {
           "default": true,
@@ -623,7 +623,7 @@
       "category": {
         "meta": {
           "type": "ICategoryAxis",
-          "description": "This extends the <a href=''../charts-api-themes/#reference-axes'>common axis configuration</a> with options specific to category axes."
+          "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axes) with options specific to category axes."
         },
         "paddingInner": {
           "type": "number",
@@ -637,13 +637,13 @@
       "groupedCategory": {
         "meta": {
           "type": "IGroupedCategoryAxis",
-          "description": "This extends the <a href='../charts-api-themes/#reference-axis'>common axis configuration</a> with options specific to grouped category axes. Currently there are no additional options beyond the common configuration."
+          "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to grouped category axes. Currently there are no additional options beyond the common configuration."
         }
       },
       "time": {
         "meta": {
           "type": "ITimeCategoryAxis",
-          "description": "This extends the <a href='../charts-api-themes/#reference-axis'>common axis configuration</a> with options specific to time axes."
+          "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to time axes."
         },
         "nice": {
           "default": true,
@@ -1992,7 +1992,7 @@
       },
       "format": {
         "type": "string",
-        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, <a href='../charts-axes/#time-label-format-string'>click here</a>."
+        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, [click here](/charts-axes/#time-label-format-string)."
       },
       "formatter": {
         "type": {

@@ -24,7 +24,6 @@ By default the Multi Filter will show a [Text Filter](/filter-text/) and [Set Fi
 
 The example below shows the Multi Filter in action. Note the following:
 
-
 - The **Athlete** has a Multi Filter with default behaviour.
 - The **Country**, **Gold** and **Date** columns have Multi Filters with the child filters configured explicitly, using the [Text](/filter-text/), [Number](/filter-number/) and [Date](/filter-date/) Simple Filters respectively.
 - Different `filterParams` can be supplied to each child filter:<br />
@@ -138,8 +137,12 @@ The example below shows how you can access child filter instances and call metho
 
 ## Multi Filter Parameters
 
-<api-documentation source='filter-multi/resources/multiFilter.json' section='filterParams'></api-documentation>
+<api-documentation source='filter-multi/resources/multi-filter.json' section='filterParams'></api-documentation>
+
+### IFilterDef
+
+<api-documentation source='filter-multi/resources/multi-filter.json' section='filterDef'></api-documentation>
 
 ## Multi Filter API
 
-<api-documentation sources='["filter-api/resources/filterApi.json", "filter-multi/resources/multiFilter.json"]' section='api'></api-documentation>
+<api-documentation sources='["filter-api/resources/filter-api.json", "filter-multi/resources/multi-filter.json"]' section='api'></api-documentation>

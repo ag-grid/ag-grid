@@ -25,7 +25,7 @@
             "description": "Callback for grouping.",
             "more": {
                 "name": "Row Grouping",
-                "url": "../grouping/#reference-callbacks"
+                "url": "/grouping/#reference-callbacks"
             }
         },
         "getBusinessKeyForNode(node)": {
@@ -35,7 +35,7 @@
             "description": "Function to use instead of <code>headerCellTemplate</code>. Should return string or HTML DOM element."
         },
         "getChildCount(data)": {
-            "description": "(For <a href='../server-side-model/'>Server-Side Row Model</a> only) Allows setting the child count for a group row."
+            "description": "(For [Server-Side Row Model](/server-side-model/) only) Allows setting the child count for a group row."
         },
         "processRowPostCreate(params)": {
             "description": "Allows you to process rows after they are created, so you can do final adding of custom attributes etc."
@@ -44,36 +44,36 @@
             "description": "Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination."
         },
         "isFullWidthCell(rowNode)": {
-            "description": "Tells the grid if this row should be rendered using <a href='../master-detail/'>fullWidth</a>"
+            "description": "Tells the grid if this row should be rendered using [fullWidth](/master-detail/)"
         },
         "isRowSelectable(rowNode)": {
             "description": "Callback to be used to determine which rows are selectable. By default rows are selectable, so return <code>false</code> to make a row un-selectable.",
             "more": {
                 "name": "Specify Selectable Rows",
-                "url": "../row-selection/#specify-selectable-rows"
+                "url": "/row-selection/#specify-selectable-rows"
             }
         },
         "isRowMaster(dataItem)": {
-            "description": "Callback to be used with <a href='../master-detail/'>Master Detail</a> to determine if a row should be a master row. If <code>false</code> is returned no detail row will exist for this row."
+            "description": "Callback to be used with [Master Detail](/master-detail/) to determine if a row should be a master row. If <code>false</code> is returned no detail row will exist for this row."
         },
         "postSort(rowNodes)": {
             "description": "Callback to perform additional sorting after the grid has sorted the rows.",
             "more": {
                 "name": "Post Sort",
-                "url": "../row-sorting/#post-sort"
+                "url": "/row-sorting/#post-sort"
             }
         },
         "navigateToNextHeader(params)": {
             "description": "Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused."
         },
         "tabToNextHeader(params)": {
-            "description": "Allows overriding the default behaviour for when user hits tab key when a header is focused."
+            "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a header is focused."
         },
         "navigateToNextCell(params)": {
             "description": "Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused."
         },
         "tabToNextCell(params)": {
-            "description": "Allows overriding the default behaviour for when user hits tab key when a cell is focused."
+            "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a cell is focused."
         },
         "getDocument()": {
             "description": "Allows overriding what <code>document</code> is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different <code>document</code> than the one available on the global scope. This can happen if docking out components (something which Electron supports)."
@@ -106,21 +106,21 @@
             "description": "Allows default sorting of groups.",
             "more": {
                 "name": "Default Group Order",
-                "url": "../grouping/#default-group-order"
+                "url": "/grouping/#default-group-order"
             }
         },
         "processChartOptions(params)": {
             "description": "Callback to be used to with charts to override default chart options.",
             "more": {
                 "name": "Overriding Chart Options",
-                "url": "../integrated-charts-customisation/#example-common-chart-overrides"
+                "url": "/integrated-charts-customisation/#example-common-chart-overrides"
             }
         },
         "getChartToolbarItems(params)": {
             "description": "Callback to be used to customise the chart toolbar items.",
             "more": {
                 "name": "Configuring Toolbar Items",
-                "url": "../integrated-charts-toolbar/#configuring-toolbar-items-and-menu-panels"
+                "url": "/integrated-charts-toolbar/#configuring-toolbar-items-and-menu-panels"
             }
         },
         "paginationNumberFormatter(params)": {

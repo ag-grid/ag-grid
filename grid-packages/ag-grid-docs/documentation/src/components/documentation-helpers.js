@@ -23,3 +23,11 @@ export const convertUrl = (href, framework) => (href || '').startsWith('/') ?
     // strip the prefix is case it's been applied, before creating the proper URL
     withPrefix(convertToFrameworkUrl(href.replace(prefixRegex, '/'), framework)) :
     href;
+
+/**
+ * Converts a subset of Markdown so that it can be used in JSON files.
+ */
+export const convertMarkdown = (content, framework) => content
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => `<a href="${convertUrl(href, framework)}">${text}</a>`)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');

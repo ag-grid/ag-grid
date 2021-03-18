@@ -53,7 +53,7 @@
             "description": "Used instead of `width` when the goal is to fill the remaining empty space of the grid.",
             "more": {
                 "name": "Column Flex",
-                "url": "../column-sizing/#column-flex"
+                "url": "/column-sizing/#column-flex"
             }
         },
         "initialFlex": {
@@ -191,21 +191,21 @@
             "description": "The style to give a particular cell.",
             "more": {
                 "name": "Cell Style",
-                "url": "../cell-styles/#cell-style"
+                "url": "/cell-styles/#cell-style"
             }
         },
         "cellClass": {
             "description": "The class to give a particular cell.",
             "more": {
                 "name": "Cell Class",
-                "url": "../cell-styles/#cell-class"
+                "url": "/cell-styles/#cell-class"
             }
         },
         "cellClassRules": {
             "description": "Rules which can be applied to include certain CSS classes.",
             "more": {
                 "name": "Cell Class Rules",
-                "url": "../cell-styles/#cell-class-rules"
+                "url": "/cell-styles/#cell-class-rules"
             }
         },
         "editable": {
@@ -363,7 +363,7 @@
             "description": "Suppress the grid taking action for the relevant keyboard event when a header is focused.",
             "more": {
                 "name": "Suppress Keyboard Events",
-                "url": "../keyboard-navigation/#suppressheaderkeyboardevent"
+                "url": "/keyboard-navigation/#suppressheaderkeyboardevent"
             }
         },
         "suppressKeyboardEvent(params)": {
@@ -371,7 +371,7 @@
             "description": "Suppress the grid taking action for the relevant keyboard event when a cell is focused.",
             "more": {
                 "name": "Suppress Keyboard Events",
-                "url": "../keyboard-navigation/#suppresskeyboardevent"
+                "url": "/keyboard-navigation/#suppresskeyboardevent"
             }
         },
         "onCellClicked(params)": {
@@ -407,7 +407,7 @@
             "description": "Params used to change the behaviour and appearance of the Columns Menu tab.",
             "more": {
                 "name": "Customising the Columns Menu Tab",
-                "url": "../column-menu/#customising-the-columns-menu-tab"
+                "url": "/column-menu/#customising-the-columns-menu-tab"
             }
         }
     },

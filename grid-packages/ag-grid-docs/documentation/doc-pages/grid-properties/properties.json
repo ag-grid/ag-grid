@@ -280,7 +280,7 @@
         },
         "enterMovesDown<br />enterMovesDownAfterEdit": {
             "default": false,
-            "description": "Set both properties to `true` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the Enter key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation)."
+            "description": "Set both properties to `true` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation)."
         }
     },
     "headers": {
@@ -860,7 +860,7 @@
         },
         "copyHeadersToClipboard": {
             "default": false,
-            "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd> + <kbd>C</kbd> [clipboard](/clipboard/)."
+            "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> [clipboard](/clipboard/)."
         },
         "clipboardDeliminator": {
             "type": "string",
@@ -1123,7 +1123,7 @@
             "description": "Prevents the user from exporting the grid to Excel."
         },
         "excelStyles": {
-            "description": "A list (array) of <a href='../excel-export-styles/#excelstyle'>Excel Styles</a> to be used when <a href='../excel-export-styles/'>exporting to Excel with styles</a>"
+            "description": "A list (array) of [Excel Styles](/excel-export-styles/#excelstyle) to be used when [exporting to Excel with styles](/excel-export-styles/)"
         },
         "asyncTransactionWaitMillis": {
             "type": "number",

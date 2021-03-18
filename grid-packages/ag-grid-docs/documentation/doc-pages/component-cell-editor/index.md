@@ -35,7 +35,7 @@ interface ICellEditorParams {
     // key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable characters appear here
     keyPress: number;
 
-    // the string that started the edit, eg 'a' if letter a was pressed, or 'A' if shift + letter a
+    // the string that started the edit, eg 'a' if letter A was pressed, or 'A' if Shift + letter A
     // - only printable characters appear here
     charPress: string;
 
@@ -64,7 +64,7 @@ interface ICellEditorParams {
     // angular 1 scope - null if not using angular 1, this is legacy and not used if not using angular 1
     $scope: any;
 
-    // callback to tell grid a key was pressed - useful to pass control key events (tab, arrows etc)
+    // callback to tell grid a key was pressed - useful to pass control key events (Tab, arrows etc)
     // back to grid - however you do
     onKeyDown: (event: KeyboardEvent)=>void;
 
@@ -155,7 +155,7 @@ The example below illustrates:
 - 'Gender' column uses a Component cell editor that allows choices via a 'richSelect' (AG Grid Enterprise only), with values supplied by complementing the editor parameters.
 - 'Age' column uses a Component cell editor that allows simple integer input only.
 - 'Mood' column uses a custom Component cell editor and renderer that allows choice of mood based on image selection.
-- 'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. Tab & Esc (amongst others) will exit editing in this field, Shift+Enter will allow newlines.
+- 'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. <kbd>Tab</kbd> and <kbd>Esc</kbd> (amongst others) will exit editing in this field, <kbd>Shift</kbd>+<kbd>Enter</kbd> will allow newlines.
 - 'Country' columns shows using 'richSelect' for a complex object - the cell renderer takes care of only rendering the country name.
 
 <grid-example title='Simple Editor Components' name='component-editor-2' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>

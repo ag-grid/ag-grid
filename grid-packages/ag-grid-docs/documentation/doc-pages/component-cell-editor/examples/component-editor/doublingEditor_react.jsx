@@ -1,4 +1,4 @@
-import React, {Component, createRef} from 'react';
+import React, { Component, createRef } from 'react';
 
 export default class DoublingEditor extends Component {
     constructor(props) {
@@ -28,7 +28,7 @@ export default class DoublingEditor extends Component {
         return false;
     }
 
-    // Gets called once when editing is finished (eg if enter is pressed).
+    // Gets called once when editing is finished (eg if Enter is pressed).
     // If you return true, then the result of the edit will be ignored.
     isCancelAfterEnd() {
         // our editor will reject any value greater than 1000
@@ -38,9 +38,9 @@ export default class DoublingEditor extends Component {
     render() {
         return (
             <input ref={this.inputRef}
-                   value={this.state.value}
-                   onChange={event => this.setState({value: event.target.value})}
-                   style={{width: "100%"}}
+                value={this.state.value}
+                onChange={event => this.setState({ value: event.target.value })}
+                style={{ width: "100%" }}
             />
         );
     }

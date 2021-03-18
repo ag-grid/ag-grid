@@ -6,14 +6,14 @@ The grid responds to keyboard interactions from the user as well as emitting eve
 
 ## Navigation
 
-Use the arrow keys (<kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd>) to move focus up, down, left and right. If the focused cell is already on the boundary for that position (e.g. if on the first column and the left key is pressed) then the key press has no effect. Use <kbd>Ctrl</kbd> + <kbd>←</kbd> to move to the start of the line, and <kbd>Ctrl</kbd> + <kbd>→</kbd> to move to the end.
+Use the arrow keys (<kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd>) to move focus up, down, left and right. If the focused cell is already on the boundary for that position (e.g. if on the first column and the left key is pressed) then the key press has no effect. Use <kbd>Ctrl</kbd>+<kbd>←</kbd> to move to the start of the line, and <kbd>Ctrl</kbd>+<kbd>→</kbd> to move to the end.
 
 If a cell on the first grid row is focused and you press <kbd>↑</kbd>, the focus will be moved into the grid header. The header navigation focus navigation works the same as the grid's: arrows will move up/down/left/right, <kbd>Tab</kbd> will move the focus horizontally until the last header cell and then move on to the next row.
 
 Use <kbd>Page Up</kbd> and <kbd>Page Down</kbd> to move the scroll up and down by one page. Use <kbd>Home</kbd> and <kbd>End</kbd> to go to the first and last rows.
 
 [[note]]
-| When a header cell is focused, commands like <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>Ctrl</kbd> + <kbd>←</kbd>/<kbd>→</kbd> will not work as they do when a grid cell is focused.
+| When a header cell is focused, commands like <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>Ctrl</kbd>+<kbd>←</kbd>/<kbd>→</kbd> will not work as they do when a grid cell is focused.
 
 ## Groups
 
@@ -45,8 +45,8 @@ Regular headers may have selection checkboxes, sorting functions and menus, so t
 
 - Press <kbd>Space</kbd> to toggle the header checkbox selection.
 - Press <kbd>Enter</kbd> to toggle the sorting state of that column.
-- Press <kbd>Shift</kbd> + <kbd>Enter</kbd> to toggle multi-sort for that column.
-- Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to open the menu for the focused header.
+- Press <kbd>Shift</kbd>+<kbd>Enter</kbd> to toggle multi-sort for that column.
+- Press <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to open the menu for the focused header.
 - When a menu is open, simply press <kbd>Esc</kbd> to close it and the focus will return to the header.
 
 ### Floating Filters
@@ -88,7 +88,7 @@ Provide a callback `tabToNextCell` if you want to override the <kbd>Tab</kbd> ke
 
 ```ts
 interface TabToNextCellParams {
-    // true if the shift key is also down
+    // true if the Shift key is also down
     backwards: boolean;
 
     // true if the current cell is editing (you may want to skip cells that are not editable,
@@ -151,7 +151,7 @@ Provide a callback `tabToNextHeader` if you want to override the <kbd>Tab</kbd> 
 
 ```ts
 interface TabToNextHeaderParams {
-    // true if the shift key is also down
+    // true if the Shift key is also down
     backwards: boolean;
 
     // the header that currently has focus
@@ -325,10 +325,10 @@ The example below demonstrates suppressing the following keyboard events:
 - On the Country column cells only:
     - <kbd>↑</kbd> <kbd>↓</kbd> arrow keys are allowed. This is the only column that allows navigation from the grid to the header.
 - On all cells (including the cells of the Athlete Column):
-    - <kbd>Ctrl</kbd> + <kbd>A</kbd> will not select all cells into a range.
-    - <kbd>Ctrl</kbd> + <kbd>C</kbd> will not copy to clipboard.
-    - <kbd>Ctrl</kbd> + <kbd>V</kbd> will not paste from clipboard.
-    - <kbd>Ctrl</kbd> + <kbd>D</kbd> will not copy range down.
+    - <kbd>Ctrl</kbd>+<kbd>A</kbd> will not select all cells into a range.
+    - <kbd>Ctrl</kbd>+<kbd>C</kbd> will not copy to clipboard.
+    - <kbd>Ctrl</kbd>+<kbd>V</kbd> will not paste from clipboard.
+    - <kbd>Ctrl</kbd>+<kbd>D</kbd> will not copy range down.
     - <kbd>Page Up</kbd> and <kbd>Page Down</kbd> will not get handled by the grid.
     - <kbd>Home</kbd> will not focus top left cell.
     - <kbd>End</kbd> will not focus bottom right cell.

@@ -1,4 +1,4 @@
-import React, {Component, createRef} from "react";
+import React, { Component, createRef } from "react";
 
 const KEY_BACKSPACE = 8;
 const KEY_DELETE = 46;
@@ -27,10 +27,10 @@ export default class NumericEditor extends Component {
     render() {
         return (
             <input ref={this.inputRef}
-                   value={this.state.value}
-                   onKeyDown={this.onKeyDown}
-                   onChange={this.handleChange}
-                   style={{width: "100%"}}
+                value={this.state.value}
+                onKeyDown={this.onKeyDown}
+                onChange={this.handleChange}
+                style={{ width: "100%" }}
             />
         );
     }
@@ -47,7 +47,7 @@ export default class NumericEditor extends Component {
         return this.cancelBeforeStart;
     }
 
-    // Gets called once when editing is finished (eg if enter is pressed).
+    // Gets called once when editing is finished (eg if Enter is pressed).
     // If you return true, then the result of the edit will be ignored.
     isCancelAfterEnd() {
         // will reject the number if it greater than 1,000,000
@@ -78,7 +78,7 @@ export default class NumericEditor extends Component {
         return {
             value: startValue,
             highlightAllOnFocus
-        }
+        };
     }
 
     onKeyDown(event) {
@@ -97,7 +97,7 @@ export default class NumericEditor extends Component {
     }
 
     handleChange(event) {
-        this.setState({value: event.target.value});
+        this.setState({ value: event.target.value });
     }
 
     getCharCodeFromEvent(event) {
@@ -134,7 +134,7 @@ export default class NumericEditor extends Component {
 
                 this.setState({
                     highlightAllOnFocus: false
-                })
+                });
             } else {
                 // when we started editing, we want the carot at the end, not the start.
                 // this comes into play in two scenarios: a) when user hits F2 and b)
@@ -145,6 +145,6 @@ export default class NumericEditor extends Component {
                     currentInput.setSelectionRange(length, length);
                 }
             }
-        })
+        });
     }
 }

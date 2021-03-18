@@ -26,7 +26,7 @@
 |                return false;
 |            },
 |
-|            // Gets called once when editing is finished (eg if enter is pressed).
+|            // Gets called once when editing is finished (eg if Enter is pressed).
 |            // If you return true, then the result of the edit will be ignored.
 |            isCancelAfterEnd() {
 |                // our editor will reject any value greater than 1000
@@ -77,7 +77,7 @@
 |        return false;
 |    }
 |
-|    // Gets called once when editing is finished (eg if enter is pressed).
+|    // Gets called once when editing is finished (eg if Enter is pressed).
 |    // If you return true, then the result of the edit will be ignored.
 |    isCancelAfterEnd() {
 |        // our editor will reject any value greater than 1000

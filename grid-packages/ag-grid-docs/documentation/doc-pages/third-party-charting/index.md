@@ -4,7 +4,6 @@ title: "Third-Party Charting"
 
 This section goes through examples of integrating the grid with [D3](https://d3js.org/) (for charting outside of the grid) and [Sparklines](https://omnipotent.net/jquery.sparkline/) (for charting inside the grid).
 
-
 [[note]]
 | This section pre-dates [Integrated Charts](/integrated-charts/). It is our plan to add support to our charting library to achieve the below, but for now we will leave these examples using D3 and Sparklines.
 
@@ -24,9 +23,8 @@ In this example we demonstrate the following:
 
 - Close Trend: Inline summary trend graph. If clicked on the full time-series will be displayed below.
 - Average Volume: The average volume per year in a Bar Graph.
-- Target Expenditure: Illustrates how a graph can be used withing a cell editor. If double clicked (or enter pressed) a popup editor in the form of a Pie Chart will be shown - when a segment is clicked on the value will be saved down to the grid.
+- Target Expenditure: Illustrates how a graph can be used within a cell editor. If double clicked (or <kbd>Enter</kbd> pressed) a popup editor in the form of a Pie Chart will be shown - when a segment is clicked on the value will be saved down to the grid.
 - Expenditure: Expenditure shown in a Pie Chart.
-
 
 <grid-example title='Inline Graphs' name='inline-graphs' type='vanilla' options='{ "enterprise": true, "exampleHeight": 850, "extras": ["lodash", "d3", "jquery", "sparkline"] }'></grid-example>
 

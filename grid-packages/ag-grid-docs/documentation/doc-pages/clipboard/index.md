@@ -5,39 +5,37 @@ enterprise: true
 
 You can copy and paste items to and from the grid using the system clipboard.
 
-##  Copy to Clipboard 
+##  Copy to Clipboard
 
 Copy to clipboard operation can be done in the following ways:
 
 - Select 'Copy' from the context menu that appears when you right click over a cell.
-- Press keys Ctrl+C while focus is on the grid.
+- Press keys <kbd>Ctrl</kbd>+<kbd>C</kbd> while focus is on the grid.
 - Use the API methods: copySelectedRowsToClipboard(includeHeaders) and copySelectedRangeToClipboard(includeHeaders)
 
 The API calls take a boolean value `includeHeaders` which when true, will include column headers in what is copied.
 
-Headers can also be included when copying to clipboard using Ctrl+C by setting: `gridOptions.copyHeadersToClipboard = true`.
+Headers can also be included when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> by setting: `gridOptions.copyHeadersToClipboard = true`.
 
 [[note]]
-| Performing multiple 'Ctrl + Left Click' operations followed by 'Ctrl+C' will not preserve original cell layout
+| Performing multiple <kbd>Ctrl</kbd>+&lt;left click> operations followed by <kbd>Ctrl</kbd>+<kbd>C</kbd> will not preserve original cell layout
 | but rather copy them vertically to the clipboard.
 
-##  Paste from Clipboard 
+##  Paste from Clipboard
 
 Paste to clipboard can only be done in the following ways:
 
-
-- Press keys **Ctrl+V** while focus in on the grid with a **single cell selected**. The paste will then proceed starting at the selected cell if multiple cells are to be pasted.
-- Press keys **Ctrl+V** while focus in on the grid with a **range of cells selected**. If the selected range being pasted is larger than copied range, it will repeat if it fits evenly, otherwise it will just copy the cells into the start of the range.
+- Press keys <kbd>Ctrl</kbd>+<kbd>V</kbd> while focus in on the grid with a **single cell selected**. The paste will then proceed starting at the selected cell if multiple cells are to be pasted.
+- Press keys <kbd>Ctrl</kbd>+<kbd>V</kbd> while focus in on the grid with a **range of cells selected**. If the selected range being pasted is larger than copied range, it will repeat if it fits evenly, otherwise it will just copy the cells into the start of the range.
 
 [[note]]
 | The 'paste' operation in the context menu is not possible and hence always disabled.
-| It is not possible because of a browser security restriction that Javascript cannot
+| It is not possible because of a browser security restriction that JavaScript cannot
 | take data from the clipboard without the user explicitly doing a paste command from the browser
-| (eg Ctrl+V or from the browser menu). If Javascript could do this, then websites could steal
-| data from the client via grabbing from the clipboard maliciously. The reason why AG Grid keeps
+| (e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
+| data from the client via grabbing from the clipboard maliciously. The reason why the grid keeps
 | the paste in the menu as disabled is to indicate to the user that paste is possible and it provides
 | the shortcut as a hint to the user. This is also why the API cannot copy from clipboard.
-
 
 The copy operation will copy selected ranges, selected rows, or the currently focused cell, based on this order:
 
@@ -46,7 +44,7 @@ The copy operation will copy selected ranges, selected rows, or the currently fo
 - Else copy focused cell.
 
 [[note]]
-| You can copy multiple ranges in range selection by holding down ctrl to select multiple ranges and then copy.
+| You can copy multiple ranges in range selection by holding down <kbd>Ctrl</kbd> to select multiple ranges and then copy.
 
 ## Toggle Paste On / Off
 
@@ -92,8 +90,8 @@ There are no events for paste to clipboard as this does not update the grids dat
 
 Below you can:
 
-- Copy with the Context Menu or 'Ctrl & C'.
-- Paste with 'Ctrl & V'.
+- Copy with the Context Menu or <kbd>Ctrl</kbd>+<kbd>C</kbd>.
+- Paste with <kbd>Ctrl</kbd>+<kbd>V</kbd>.
 - Copy with the provided buttons.
 - Notice for paste that events `pasteStart`, `pasteEnd` and `cellValueChanged` are logged to the console.
 - Buttons 'Toggle Paste On' and 'Toggle Paste Off' turn pasting on and off.
@@ -153,7 +151,7 @@ interface ProcessCellForExportParams {
     api: GridApi, // the grid's API
     columnApi: ColumnApi, // the grid's column API
     context: any, // the context object
-    type: string // clipboard, dragCopy (ctrl+D), export
+    type: string // clipboard, dragCopy (Ctrl+D), export
 }
 
 // for processHeaderForClipboard
@@ -167,8 +165,8 @@ interface ProcessHeaderForExportParams {
 
 These three callbacks above are demonstrated in the example below. Note the following:
 
-- When cells are copied to the clipboard, values are prefixed with 'C-'. Cells can be copied by dragging a range with the mouse and hitting ctrl+c.
-- When cells are pasted from the clipboard, values are prefixed with 'Z-'. Cells can be pasted by hitting ctrl+v.
+- When cells are copied to the clipboard, values are prefixed with 'C-'. Cells can be copied by dragging a range with the mouse and hitting <kbd>Ctrl</kbd>+<kbd>C</kbd>.
+- When cells are pasted from the clipboard, values are prefixed with 'Z-'. Cells can be pasted by hitting <kbd>Ctrl</kbd>+<kbd>V</kbd>.
 - When headers are copied to the clipboard, values are prefixed with 'H-'. Headers can be copied by using the context menu.
 
 <grid-example title='Example Process' name='process' type='generated' options='{ "enterprise": true }'></grid-example>
@@ -202,7 +200,7 @@ The example below demonstrates `processDataFromClipboard`. Note the following:
 
 ## Changing the Deliminator
 
-By default, the grid will use '\t' (tab) as the field deliminator. This is to keep the copy / paste compatible with Excel. If you want another deliminator then use the property `clipboardDeliminator`.
+By default, the grid will use `\t` (tab) as the field deliminator. This is to keep the copy / paste compatible with Excel. If you want another deliminator then use the property `clipboardDeliminator`.
 
 ## Using enableCellTextSelection
 

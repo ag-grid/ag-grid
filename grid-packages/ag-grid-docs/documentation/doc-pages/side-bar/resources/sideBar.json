@@ -24,13 +24,13 @@
             "description": "The unique ID for this panel. Used in the API and elsewhere to refer to the panel."
         },
         "labelKey": {
-            "description": "The key used for <a href='../localisation/'>localisation</a> for displaying the label. The label is displayed in the tab button."
+            "description": "The key used for [localisation](/localisation/) for displaying the label. The label is displayed in the tab button."
         },
         "labelDefault": {
             "description": "The default label if <code>labelKey</code> is missing or does not map to valid text through localisation."
         },
         "iconKey": {
-            "description": "The <a href='../custom-icons/'>key of the icon</a> to be used as a graphical aid beside the label in the side bar."
+            "description": "The [key of the icon](/custom-icons/) to be used as a graphical aid beside the label in the side bar."
         },
         "toolPanel<br />toolPanelFramework<br />toolPanelParams": {
             "description": "The tool panel component to use as the panel. The provided panels use components <code>agColumnsToolPanel</code> and <code>agFiltersToolPanel</code>. To provide your own custom panel component, you reference it by name here."

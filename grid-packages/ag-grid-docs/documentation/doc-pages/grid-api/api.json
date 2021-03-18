@@ -1016,7 +1016,7 @@
             }
         },
         "copySelectedRangeDown()": {
-            "description": "Copies the selected range down, similar to <kbd>Ctrl</kbd>&nbsp;+&nbsp;<kbd>D</kbd> in Excel.",
+            "description": "Copies the selected range down, similar to <kbd>Ctrl</kbd>+<kbd>D</kbd> in Excel.",
             "type": {
                 "arguments": {}
             }

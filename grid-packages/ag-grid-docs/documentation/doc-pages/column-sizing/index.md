@@ -139,14 +139,14 @@ Note that `api.sizeColumnsToFit()` needs to know the grid width in order to do i
 
 ## Shift Resizing
 
-If you hold the `Shift` key while dragging the resize handle, the column will take space away from the column adjacent to it. This means the total width for all columns will be constant.
+If you hold the <kbd>Shift</kbd> key while dragging the resize handle, the column will take space away from the column adjacent to it. This means the total width for all columns will be constant.
 
-You can also change the default behaviour for resizing. Set the grid property `colResizeDefault='shift'` to have shift resizing as the default and normal resizing to happen when the `Shift` key is pressed.
+You can also change the default behaviour for resizing. Set the grid property `colResizeDefault='shift'` to have shift resizing as the default and normal resizing to happen when the <kbd>Shift</kbd> key is pressed.
 
 In the example below, note the following:
 
-- Grid property `colResizeDefault='shift'` so default column resizing will behave as if `Shift` key is pressed.
-- Holding down `Shift` will then resize the normal default way.
+- Grid property `colResizeDefault='shift'` so default column resizing will behave as if <kbd>Shift</kbd> key is pressed.
+- Holding down <kbd>Shift</kbd> will then resize the normal default way.
 
 <grid-example title='Shift Resizing' name='shift-resizing' type='generated'></grid-example>
 

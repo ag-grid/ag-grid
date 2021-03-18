@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { useJsonFileNodes } from './use-json-file-nodes';
 import anchorIcon from 'images/anchor';
 import Code from './Code';
-import { inferType, convertUrl } from 'components/documentation-helpers';
+import { inferType, convertUrl, convertMarkdown } from 'components/documentation-helpers';
 import styles from './ApiDocumentation.module.scss';
 
 /**
@@ -26,6 +26,7 @@ const types = {
     HTMLElement: 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
     IAggFunc: '/aggregation/#custom-aggregation-functions',
     IDatasource: '/infinite-scrolling/#datasource-interface',
+    IFilterDef: '/filter-multi/#ifilterdef',
     IServerSideDatasource: '/server-side-model-datasource/#datasource-interface',
     IViewportDatasource: '/viewport/#interface-iviewportdatasource',
     number: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number',
@@ -136,6 +137,7 @@ const Section = ({ framework, title, properties, config = {}, breadcrumbs = {}, 
         </table>
         {Object.entries(objectProperties).map(([name, definition]) => <Section
             key={name}
+            framework={framework}
             title={name}
             properties={definition}
             config={{ ...config, isSubset: false }}
@@ -215,7 +217,7 @@ const Property = ({ framework, id, name, definition }) => {
             {isObject && <div>See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.</div>}
             {definition.default != null && <div>Default: <code>{formatJson(definition.default)}</code></div>}
             {definition.options != null &&
-                <div>Options: {definition.options.map((o, i) => <>{i > 0 ? ', ' : ''}<code key={o}>{formatJson(o)}</code></>)}</div>}
+                <div>Options: {definition.options.map((o, i) => <React.Fragment key={o}>{i > 0 ? ', ' : ''}<code>{formatJson(o)}</code></React.Fragment>)}</div>}
             {typeof definition.type === 'object' &&
                 <div className={isExpanded ? '' : 'd-none'}>
                     <FunctionCodeSample framework={framework} name={name} type={definition.type} />
@@ -248,11 +250,6 @@ const Breadcrumbs = ({ breadcrumbs }) => {
 
     return <div className={styles['breadcrumbs']}>{links}</div>;
 };
-
-const convertMarkdown = (content, framework) => content
-    .replace(/`(.*?)`/g, '<code>$1</code>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => `<a href="${convertUrl(href, framework)}">${text}</a>`)
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
 const createLinkedType = (type, url) =>
     `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${type}</a>`;

@@ -18,9 +18,8 @@ var gridOptions = {
         flex: 1
     },
 
-    columnDefs: columnDefs,
+    columnDefs: columnDefs
 };
-
 
 function onBtExport() {
     var sports = {};

@@ -9,19 +9,50 @@ Excel Export provides a way to export an Excel file with multiple sheets, this c
 
 A raw Excel Sheet can be exported from the grid by calling the `getGridRawDataForExcel` method. This will start the `Multiple Sheet Export` process. The results of calling `getGridRawDataForExcel` should be stored in an Array, and once all needed sheets have been stored, the `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel` method should be called.
 
+[[note]]
+| When using modules, the `exportMultipleSheetsAsExcel` and `getMultipleSheetsAsExcel` functions can be imported directly from the `excel-export` module as `import { exportMultipleSheetsAsExcel, getMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export'`.
+
 [[warning]]
 | Calling `getGridRawDataForExcel` will start a Multiple Sheet export process, that can only be ended by calling `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel`. Before this process is ended, no data will be able to be exported from the grid using `exportDataAsExcel` or `getDataAsExcel`.
+
+## Example with Data Selection
+In this example, we combine the `onlySelected=true` property to limit the export to 100 rows per sheet.
+
+Note the following: 
+
+- The header is exported on each page, so each page will contain 101 records (including the header).
+- Because each export did not have a specified `sheetName`, they will be named `ag-grid`, `ag-grid_1`, `ag-grid_2` and so on.
+
+<grid-example title='Excel Export - Multiple Sheets with Data Selection' name='excel-export-multiple-sheets-selected' type='generated' options='{ "enterprise": true }'></grid-example>
 
 ## Example with Data Filtering
 
 Note the following: 
 
-- The exported Excel file will contain one sheet for each sport result
+- The exported Excel file will contain one sheet for each sport result.
+- Each sheet was exported using the sport name as the name of the sheet.
 
 <grid-example title='Excel Export - Multiple Sheets with Filtered Data' name='excel-export-multiple-sheets-by-filter' type='generated' options='{ "enterprise": true }'></grid-example>
 
+## Export Master Detail
+
+Note the following:
+
+- The `Master Detail` data is only available for `expanded` nodes, for more info see [Detail Grids](/master-detail-grids/).
+- The `RowBuffer` was set to **100** so all Detail Grids would be available.
+- The `Detail Grids` get exported into different sheets.
+
+<grid-example title='Excel Export - Multiple Sheets with Master Detail' name='excel-export-multiple-sheets-master-detail' type='generated' options='{ "enterprise": true }'></grid-example>
+
 ## Example with Multiple Grids
 
+Note the following:
+
+- The contents of the `Athletes` grid will be exported to the `Athletes` sheet.
+- The contents of the `Selected Athletes` grid will be exported to the `Selected Athletes` sheet.
+- Only the `onExcelExport` method is relevant to **Excel Export**
+
+<grid-example title='Excel Export - Multiple Sheets with Multiple Grids' name='excel-export-multiple-sheets-multiple-grids' type='multi' options='{ "enterprise": true, "extras": ["fontawesome", "bootstrap"] }'></grid-example>
 
 ## API
 

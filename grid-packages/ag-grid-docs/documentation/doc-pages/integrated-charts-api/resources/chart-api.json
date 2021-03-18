@@ -28,7 +28,7 @@
             "meta": {
                 "type": "CellRangeParams",
                 "required": true,
-                "description": "Defines the range of cells to be charted. A range is normally defined with start and end rows and a list of columns. If the start and end rows are omitted, the range covers all rows (i.e. entire columns are selected). The columns can either be defined using a start and end column (the range will cover the start and end columns and all columns in between), or columns can be supplied specifically in cases where the required columns are not adjacent to each other. See <a href='../range-selection/#api-addcellrange-rangeselection'>Add Cell Range</a> for more information."
+                "description": "Defines the range of cells to be charted. A range is normally defined with start and end rows and a list of columns. If the start and end rows are omitted, the range covers all rows (i.e. entire columns are selected). The columns can either be defined using a start and end column (the range will cover the start and end columns and all columns in between), or columns can be supplied specifically in cases where the required columns are not adjacent to each other. See [Add Cell Range](/range-selection/#api-addcellrange-rangeselection) for more information."
             },
             "rowStartIndex": {
                 "type": "number",
@@ -73,7 +73,7 @@
                 "ag-solar",
                 "ag-solar-dark"
             ],
-            "description": "The default theme to use for the created chart. In addition to the default options you listed, you can also provide your own <a href='../integrated-charts-customisation/#custom-chart-themes'>custom chart themes</a>."
+            "description": "The default theme to use for the created chart. In addition to the default options you listed, you can also provide your own [custom chart themes](/integrated-charts-customisation/#custom-chart-themes)."
         },
         "chartContainer": {
             "type": "HTMLElement",
@@ -104,7 +104,7 @@
             "description": "When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart.",
             "more": {
                 "name": "Unlinking Charts",
-                "url": "../integrated-charts-toolbar/#unlinking-charts"
+                "url": "/integrated-charts-toolbar/#unlinking-charts"
             }
         },
         "chartThemeOverrides": {
@@ -112,7 +112,7 @@
             "description": "Allows specific chart options in the current theme to be overridden.",
             "more": {
                 "name": "Overriding Existing Themes",
-                "url": "../integrated-charts-customisation/#overriding-existing-themes"
+                "url": "/integrated-charts-customisation/#overriding-existing-themes"
             }
         }
     }
