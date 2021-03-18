@@ -19,13 +19,17 @@ import {Component} from "./widgets/component";
 import {GridOptions} from "./entities/gridOptions";
 import {GridPanelComp} from "./gridPanel/gridPanelComp";
 import {IRowModel} from "./interfaces/iRowModel";
+import {findIndex} from "./utils/array";
+import {Column} from "./entities/column";
+import {ColumnGroup} from "./entities/columnGroup";
+import {ColumnController} from "./columnController/columnController";
 
 export interface GridCompView extends LayoutView {
     setRtlClass(cssClass: string): void;
     destroyGridUi(): void;
-    focusNextInnerContainer(backwards: boolean): boolean;
     forceFocusOutOfContainer(up: boolean): void;
     addOrRemoveKeyboardFocusClass(value: boolean): void;
+    getFocusableContainers(): HTMLElement[];
 }
 
 export class GridCompController extends BeanStub {
@@ -41,6 +45,7 @@ export class GridCompController extends BeanStub {
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private view: GridCompView;
     private eGridHostDiv: HTMLElement;
@@ -123,7 +128,34 @@ export class GridCompController extends BeanStub {
     }
 
     public focusNextInnerContainer(backwards: boolean): boolean {
-        return this.view.focusNextInnerContainer(backwards);
+        const focusableContainers = this.view.getFocusableContainers();
+        const idxWithFocus = findIndex(focusableContainers, container => container.contains(document.activeElement));
+        const nextIdx = idxWithFocus + (backwards ? -1 : 1);
+
+        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
+            return false;
+        }
+
+        if (nextIdx === 0) {
+            return this.focusGridHeader();
+        }
+
+        return this.focusController.focusInto(focusableContainers[nextIdx]);
+    }
+
+    public focusGridHeader(): boolean {
+        let firstColumn: Column | ColumnGroup = this.columnController.getAllDisplayedColumns()[0];
+        if (!firstColumn) { return false; }
+
+        if (firstColumn.getParent()) {
+            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0)!;
+        }
+
+        this.focusController.focusHeaderPosition(
+            { headerRowIndex: 0, column: firstColumn }
+        );
+
+        return true;
     }
 
     public forceFocusOutOfContainer(up = false): void {

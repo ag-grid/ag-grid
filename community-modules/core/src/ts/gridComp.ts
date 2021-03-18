@@ -8,17 +8,13 @@ import {ModuleNames} from "./modules/moduleNames";
 import {ModuleRegistry} from "./modules/moduleRegistry";
 import {ManagedFocusComponent} from "./widgets/managedFocusComponent";
 import {ColumnController} from "./columnController/columnController";
-import {ColumnGroup} from "./entities/columnGroup";
-import {Column} from "./entities/column";
 import {addCssClass, addOrRemoveCssClass, isVisible} from "./utils/dom";
-import {findIndex, last} from "./utils/array";
+import {last} from "./utils/array";
 import {FocusController} from "./focusController";
-import {GridCompController} from "./gridCompController";
+import {GridCompController, GridCompView} from "./gridCompController";
 import {LayoutCssClasses, UpdateLayoutClassesParams} from "./styling/layoutFeature";
 
 export class GridComp extends ManagedFocusComponent {
-
-    @Autowired('columnController') private columnController: ColumnController;
 
     @RefSelector('gridPanel') private gridPanelComp: GridPanelComp;
     @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
@@ -26,6 +22,7 @@ export class GridComp extends ManagedFocusComponent {
 
     private logger: Logger;
     private eGridDiv: HTMLElement;
+    private controller: GridCompController;
 
     constructor(eGridDiv: HTMLElement) {
         super(undefined, true);
@@ -36,19 +33,19 @@ export class GridComp extends ManagedFocusComponent {
         const template = this.createTemplate();
         this.setTemplate(template);
 
-        const view = {
+        const view: GridCompView = {
             destroyGridUi:
                 ()=> this.destroyBean(this),
             setRtlClass:
                 (cssClass: string) => addCssClass(this.getGui(), cssClass),
             addOrRemoveKeyboardFocusClass:
                 (addOrRemove: boolean) => this.addOrRemoveCssClass(FocusController.AG_KEYBOARD_FOCUS, addOrRemove),
-            focusNextInnerContainer: this.focusNextInnerContainer.bind(this),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
-            updateLayoutClasses: this.updateLayoutClasses.bind(this)
+            updateLayoutClasses: this.updateLayoutClasses.bind(this),
+            getFocusableContainers: this.getFocusableContainers.bind(this)
         };
 
-        this.createManagedBean(new GridCompController(view, this.getGui(), this.eGridDiv, this.sideBarComp, this.gridPanelComp));
+        this.controller = this.createManagedBean(new GridCompController(view, this.getGui(), this.eGridDiv, this.sideBarComp, this.gridPanelComp));
 
         this.insertGridIntoDom();
 
@@ -72,10 +69,6 @@ export class GridComp extends ManagedFocusComponent {
         this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
         this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);
         this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
-    }
-
-    public getFocusableElement(): HTMLElement {
-        return this.eRootWrapperBody;
     }
 
     private createTemplate(): string {
@@ -104,6 +97,10 @@ export class GridComp extends ManagedFocusComponent {
         return template;
     }
 
+    public getFocusableElement(): HTMLElement {
+        return this.eRootWrapperBody;
+    }
+
     protected getFocusableContainers(): HTMLElement[] {
         const focusableContainers = [
             this.gridPanelComp.getGui()
@@ -118,22 +115,6 @@ export class GridComp extends ManagedFocusComponent {
         return focusableContainers.filter(el => isVisible(el));
     }
 
-    public focusNextInnerContainer(backwards: boolean): boolean {
-        const focusableContainers = this.getFocusableContainers();
-        const idxWithFocus = findIndex(focusableContainers, container => container.contains(document.activeElement));
-        const nextIdx = idxWithFocus + (backwards ? -1 : 1);
-
-        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
-            return false;
-        }
-
-        if (nextIdx === 0) {
-            return this.focusGridHeader();
-        }
-
-        return this.focusController.focusInto(focusableContainers[nextIdx]);
-    }
-
     protected focusInnerElement(fromBottom?: boolean): boolean {
         const focusableContainers = this.getFocusableContainers();
 
@@ -146,22 +127,7 @@ export class GridComp extends ManagedFocusComponent {
             if (this.focusController.focusGridView(lastColumn, true)) { return true; }
         }
 
-        return this.focusGridHeader();
-    }
-
-    private focusGridHeader(): boolean {
-        let firstColumn: Column | ColumnGroup = this.columnController.getAllDisplayedColumns()[0];
-        if (!firstColumn) { return false; }
-
-        if (firstColumn.getParent()) {
-            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0)!;
-        }
-
-        this.focusController.focusHeaderPosition(
-            { headerRowIndex: 0, column: firstColumn }
-        );
-
-        return true;
+        return this.controller.focusGridHeader();
     }
 
     protected onTabKeyDown(): void { }
