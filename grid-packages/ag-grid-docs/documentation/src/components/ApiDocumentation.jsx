@@ -16,21 +16,31 @@ const types = {
     CellPosition: '/keyboard-navigation/#cellposition',
     CellRange: '/range-selection/#range-selection-api',
     ChartModel: '/integrated-charts-api/#saving-and-restoring-charts',
+    ChartType: '/integrated-charts-events/#chartoptionschanged',
     ColDef: '/column-properties/',
+    ColGroupDef: '/column-properties/',
+    Column: '/column-object/',
+    ColumnApi: '/column-api/',
     CreatePivotChartParams: '/integrated-charts-api/#pivot-charts',
     CreateRangeChartParams: '/integrated-charts-api/#range-charts',
     CsvExportParams: '/csv-export/#csvexportparams',
+    Document: 'https://developer.mozilla.org/en-US/docs/Web/API/Document',
     ExcelExportParams: '/excel-export/#excelexportparams',
     ExcelExportMultipleSheetParams: '/excel-export/#excelexportmultiplesheetparams',
     Function: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function',
+    GridApi: '/grid-api/',
+    HeaderPosition: '/keyboard-navigation/#headerposition',
     HTMLElement: 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
     IAggFunc: '/aggregation/#custom-aggregation-functions',
     IDatasource: '/infinite-scrolling/#datasource-interface',
     IFilterDef: '/filter-multi/#ifilterdef',
     IServerSideDatasource: '/server-side-model-datasource/#datasource-interface',
     IViewportDatasource: '/viewport/#interface-iviewportdatasource',
+    KeyboardEvent: 'https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent',
+    MouseEvent: 'https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent',
     number: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number',
     RowNode: '/row-object/',
+    ServerSideTransaction: '/server-side-model-transactions/#transaction-api',
     string: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
 };
 
@@ -318,7 +328,7 @@ const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
     return <Code code={lines.join('\n')} keepMarkup={true} />;
 };
 
-const getInterfaceName = name => `I${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
+const getInterfaceName = name => `${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
 
 const FunctionCodeSample = ({ framework, name, type }) => {
     const args = type.parameters ?
@@ -360,7 +370,7 @@ const FunctionCodeSample = ({ framework, name, type }) => {
         argumentDefinitions.join('');
 
     const returnTypeUrl = getTypeUrl(returnType, framework);
-    const returnTypeName = getInterfaceName(functionName.replace(/^get/, ''));
+    const returnTypeName = getInterfaceName((functionName || name).replace(/^get/, ''));
 
     const lines = [
         `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? returnTypeName : (returnTypeUrl ? createLinkedType(returnType, returnTypeUrl) : returnType || 'void')};`,

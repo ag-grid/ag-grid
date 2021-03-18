@@ -50,7 +50,6 @@ interface CellRangeParams {
 
 Formatting changes made by users through the Format Panel will raise the `ChartOptionsChanged` event:
 
-
 ```ts
 interface ChartOptionsChanged {
     type: string; // 'chartOptionsChanged'

@@ -51,7 +51,7 @@ function axisLabelFormatter(params) {
     var hasAreaSeries = false;
     var hasLineSeries = false;
     var flipXY = false;
-    params.axis.boundSeries.forEach(function (series) {
+    params.axis.boundSeries.forEach(function(series) {
         if (series.normalizedTo) {
             isNormalized = true;
         }
@@ -386,8 +386,6 @@ var gridOptions = {
     // suppressMenuColumnPanel: true,
     // forPrint: true,
     // rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
-    // headerCellRenderer: headerCellRenderer_text,
-    // headerCellRenderer: headerCellRenderer_dom,
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
     aggFuncs: {
@@ -505,7 +503,7 @@ var gridOptions = {
                         enabled: false
                     },
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 content: '$' + formatThousands(Math.round(params.datum[params.angleKey]))
                             };
@@ -528,43 +526,43 @@ var gridOptions = {
             series: {
                 column: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
-                            }
+                            };
                         }
                     }
                 },
                 bar: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
-                            }
+                            };
                         }
                     }
                 },
                 line: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
-                            }
+                            };
                         }
                     }
                 },
                 area: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
-                            }
+                            };
                         }
                     }
                 },
                 scatter: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             var label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
                             var xValue = params.xName + ': $' + formatThousands(params.datum[params.xKey]);
                             var yValue = params.yName + ': $' + formatThousands(params.datum[params.yKey]);
@@ -580,7 +578,7 @@ var gridOptions = {
                 },
                 histogram: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 title: (params.xName || params.xKey) + ': $' + formatThousands(params.datum.domain[0]) + ' - $' + formatThousands(params.datum.domain[1]),
                                 // With a yKey, the value is the total of the yKey value for the population of the bin.
