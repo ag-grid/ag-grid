@@ -12,11 +12,22 @@ A raw Excel Sheet can be exported from the grid by calling the `getGridRawDataFo
 [[warning]]
 | Calling `getGridRawDataForExcel` will start a Multiple Sheet export process, that can only be ended by calling `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel`. Before this process is ended, no data will be able to be exported from the grid using `exportDataAsExcel` or `getDataAsExcel`.
 
+## Example with Data Selection
+In this example, we combine the `onlySelected=true` property to limit the export to 100 rows per sheet.
+
+Note the following: 
+
+- The header is exported on each page, so each page will contain 101 records (including the header).
+- Because each export did not have a specified `sheetName`, they will be named `ag-grid`, `ag-grid_1`, `ag-grid_2` and so on.
+
+<grid-example title='Excel Export - Multiple Sheets with Data Selection' name='excel-export-multiple-sheets-selected' type='generated' options='{ "enterprise": true }'></grid-example>
+
 ## Example with Data Filtering
 
 Note the following: 
 
-- The exported Excel file will contain one sheet for each sport result
+- The exported Excel file will contain one sheet for each sport result.
+- Each sheet was exported using the sport name as the name of the sheet.
 
 <grid-example title='Excel Export - Multiple Sheets with Filtered Data' name='excel-export-multiple-sheets-by-filter' type='generated' options='{ "enterprise": true }'></grid-example>
 

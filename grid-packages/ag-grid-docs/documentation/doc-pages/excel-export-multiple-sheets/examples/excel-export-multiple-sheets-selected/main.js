@@ -18,40 +18,40 @@ var gridOptions = {
         flex: 1
     },
 
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    rowSelection: 'multiple'
 };
 
-function onBtExport() {
-    var sports = {};
 
-    gridOptions.api.forEachNode(function(node) {
-        if (!sports[node.data.sport]) {
-            sports[node.data.sport] = true;
+function onBtExport() {
+    var spreadsheets = [];
+
+    gridOptions.api.forEachNode(function(node, index) {
+        if (index % 100 === 0) {
+            gridOptions.api.deselectAll();
+        }
+
+        node.setSelected(true);
+
+        if (index % 100 === 99) {
+            spreadsheets.push(gridOptions.api.getGridRawDataForExcel({
+                onlySelected: true
+            }));
         }
     });
 
-    var spreadsheets = [];
+    // check if the last page was exported
 
-    var sportFilterInstance = gridOptions.api.getFilterInstance('sport');
-
-    for (var sport in sports) {
-        sportFilterInstance.setModel({ values: [sport] });
-        gridOptions.api.onFilterChanged();
-
+    if (gridOptions.api.getSelectedNodes().length) {
         spreadsheets.push(gridOptions.api.getGridRawDataForExcel({
-            sheetName: sport
+            onlySelected: true
         }));
+        gridOptions.api.deselectAll();
     }
 
-    sportFilterInstance.setModel(null);
-    gridOptions.api.onFilterChanged();
-
     gridOptions.api.exportMultipleSheetsAsExcel({
-        data: spreadsheets,
-        fileName: 'ag-grid.xlsx'
+        data: spreadsheets
     });
-
-    spreadsheets = [];
 }
 
 // setup the grid after the page has finished loading
