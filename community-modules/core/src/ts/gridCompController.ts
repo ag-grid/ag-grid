@@ -1,4 +1,4 @@
-import {Autowired, PostConstruct} from "./context/context";
+import {Autowired, Optional, PostConstruct} from "./context/context";
 import {GridApi} from "./gridApi";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {PopupService} from "./widgets/popupService";
@@ -7,6 +7,9 @@ import {IToolPanel} from "./interfaces/iToolPanel";
 import {SideBarDef} from "./entities/sideBar";
 import {BeanStub} from "./context/beanStub";
 import {GridCompService} from "./gridCompService";
+import {ModuleRegistry} from "./modules/moduleRegistry";
+import {ModuleNames} from "./modules/moduleNames";
+import {IClipboardService} from "./interfaces/iClipboardService";
 
 export interface CompView {
 }
@@ -51,6 +54,7 @@ export class GridCompController extends CompController<GridCompView> {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusController') protected readonly focusController: FocusController;
     @Autowired('gridCompService') protected readonly gridCompService: GridCompService;
+    @Optional('clipboardService') private clipboardService: IClipboardService;
 
     constructor(view: GridCompView) {
         super(view);
@@ -66,6 +70,10 @@ export class GridCompController extends CompController<GridCompView> {
             this.popupService,
             this.focusController
         ].forEach(service => service.registerGridCompController(this));
+
+        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
+            this.clipboardService.registerGridCompController(this);
+        }
 
     }
 

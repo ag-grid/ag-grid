@@ -18,7 +18,7 @@ import {
     FlashCellsEvent,
     FocusController,
     GridApi,
-    GridCore,
+    GridCompController,
     IClipboardService,
     IRowModel,
     Logger,
@@ -69,10 +69,10 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private clientSideRowModel: IClientSideRowModel;
     private logger: Logger;
-    private gridCore: GridCore;
+    private gridCompController: GridCompController;
 
-    public registerGridCore(gridCore: GridCore): void {
-        this.gridCore = gridCore;
+    public registerGridCompController(gridCompController: GridCompController): void {
+        this.gridCompController = gridCompController;
     }
 
     @PostConstruct
@@ -750,7 +750,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         eTempInput.style.position = 'absolute';
         eTempInput.style.opacity = '0';
 
-        const guiRoot = this.gridCore.getRootGui();
+        const guiRoot = this.gridCompController.getRootGui();
 
         guiRoot.appendChild(eTempInput);
 

@@ -86,9 +86,6 @@ export class GridComp extends ManagedFocusComponent {
 
 
 
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
-            this.clipboardService.registerGridCore(this);
-        }
 
         this.gridOptionsWrapper.addLayoutElement(this.getGui());
 

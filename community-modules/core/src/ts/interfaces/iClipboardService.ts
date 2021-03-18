@@ -1,8 +1,8 @@
 import { Column } from "../entities/column";
-import { GridComp } from "../gridComp";
+import {GridCompController} from "../gridCompController";
 
 export interface IClipboardService {
-    registerGridCore(gridCore: GridComp): void;
+    registerGridCompController(gridCompController: GridCompController): void;
     pasteFromClipboard(): void;
     copyToClipboard(includeHeader?: boolean): void;
     copySelectedRowsToClipboard(includeHeader?: boolean, columnKeys?: (string | Column)[]): void;
