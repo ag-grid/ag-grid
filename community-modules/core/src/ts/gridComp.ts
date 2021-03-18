@@ -16,6 +16,8 @@ import {LayoutCssClasses, UpdateLayoutClassesParams} from "./styling/layoutFeatu
 
 export class GridComp extends ManagedFocusComponent {
 
+    @Autowired('columnController') private columnController: ColumnController;
+
     @RefSelector('gridPanel') private gridPanelComp: GridPanelComp;
     @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
