@@ -8,11 +8,31 @@ export class LogScale extends ContinuousScale {
     basePow = identity; // raises `base` to the power of `x`
 
     protected setDomain(values: any[]) {
-        const df = values[0];
-        const dl = values[values.length - 1];
+        let df = values[0];
+        let dl = values[values.length - 1];
 
         if (df === 0 || dl === 0 || df < 0 && dl > 0 || df > 0 && dl < 0) {
-            throw 'Log scale domain should not start at, end at or cross zero.';
+            console.warn('Log scale domain should not start at, end at or cross zero.');
+            if (df === 0 && dl > 0) {
+                df = Number.EPSILON;
+            } else if (dl === 0 && df < 0) {
+                dl = -Number.EPSILON;
+            } else if (df < 0 && dl > 0) {
+                if (Math.abs(dl) >= Math.abs(df)) {
+                    df = Number.EPSILON;
+                } else {
+                    dl = -Number.EPSILON;
+                }
+            } else if (df > 0 && dl < 0) {
+                if (Math.abs(dl) >= Math.abs(df)) {
+                    df = -Number.EPSILON;
+                } else {
+                    dl = Number.EPSILON;
+                }
+            }
+            values = values.slice();
+            values[0] = df;
+            values[values.length - 1] = dl;
         }
 
         super.setDomain(values);
@@ -33,8 +53,9 @@ export class LogScale extends ContinuousScale {
     }
 
     rescale() {
-        let baseLog = this.makeLogFn(this.base);
-        let basePow = this.makePowFn(this.base);
+        const { base } = this;
+        let baseLog = LogScale.makeLogFn(base);
+        let basePow = LogScale.makePowFn(base);
 
         if (this.domain[0] < 0) {
             baseLog = this.reflect(baseLog);
@@ -86,7 +107,7 @@ export class LogScale extends ContinuousScale {
         this.domain = domain;
     }
 
-    pow10(x: number): number {
+    static pow10(x: number): number {
         return isFinite(x)
             ? +('1e' + x) // to avoid precision issues, e.g. Math.pow(10, -4) is not 0.0001
             : x < 0
@@ -94,9 +115,9 @@ export class LogScale extends ContinuousScale {
                 : x;
     }
 
-    makePowFn(base: number): (x: number) => number {
+    static makePowFn(base: number): (x: number) => number {
         if (base === 10) {
-            return this.pow10;
+            return LogScale.pow10;
         }
         if (base === Math.E) {
             return Math.exp;
@@ -104,18 +125,19 @@ export class LogScale extends ContinuousScale {
         return (x: number) => Math.pow(base, x);
     }
 
-    makeLogFn(base: number) {
+    // Make a log function witn an arbitrary base or return a native function if exists.
+    static makeLogFn(base: number) {
         if (base === Math.E) {
             return Math.log;
         }
-        if (base === 10 && Math.log10) {
+        if (base === 10) {
             return Math.log10;
         }
-        if (base === 2 && Math.log2) {
+        if (base === 2) {
             return Math.log2;
         }
-        base = Math.log(base);
-        return (x: number) => Math.log(x) / base;
+        const logBase = Math.log(base);
+        return (x: number) => Math.log(x) / logBase;
     }
 
     ticks(count = 10) {
@@ -177,7 +199,7 @@ export class LogScale extends ContinuousScale {
         return isReversed ? z.reverse() : z;
     }
 
-    tickFormat(count: any, specifier?: (x: number) => string): (x: number) => string {
+    tickFormat(count: any, specifier?: string | ((x: number) => string)): (x: number) => string {
         const { base } = this;
 
         if (specifier == null) {
@@ -198,12 +220,12 @@ export class LogScale extends ContinuousScale {
 
         const k = Math.max(1, base * count / this.ticks().length);
 
-        return function (d) {
-            var i = d / this.makePowFn(Math.round(this.makeLogFn(d)));
+        return (d) => {
+            let i = d / this.basePow(Math.round(this.baseLog(d)));
             if (i * base < base - 0.5) {
                 i *= base;
             }
-            return i <= k ? specifier!(d) : '';
+            return i <= k ? (specifier as (x: number) => string)(d) : '';
         };
     }
 }
