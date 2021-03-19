@@ -18,7 +18,6 @@ export class Chart extends React.Component {
 
     componentDidMount() {
         import('ag-charts-community').then(({ AgChart }) => {
-            console.log(`Loading AgChart`);
             this.AgChart = AgChart;
             this.createChart();
         });

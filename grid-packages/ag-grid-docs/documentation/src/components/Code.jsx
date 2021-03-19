@@ -14,25 +14,53 @@ import styles from './Code.module.scss';
 /**
  * This uses Prism to highlight a provided code snippet.
  */
-const Code = ({ code, language = 'ts', plugins, className, keepMarkup, ...props }) => {
-    const ref = useRef();
-
-    useEffect(() => {
-        if (ref && ref.current) {
-            // using highlightElement() rather than highlight() utilises more of the Prism lifecycle,
-            // allowing us to use plugins
-            Prism.highlightElement(ref.current);
-        }
-    });
-
+const Code = ({ code, language = 'ts', className, keepMarkup, ...props }) => {
     if (Array.isArray(code)) {
         code = code.join('\n');
     }
 
     return <pre className={classnames(styles['code'], `language-${language}`, className)} {...props}>
-        {keepMarkup && <code ref={ref} dangerouslySetInnerHTML={{ __html: code }} />}
-        {!keepMarkup && <code ref={ref}>{code}</code>}
+        {keepMarkup ? <CodeWithPrismPlugins code={code} /> : <CodeWithoutPrismPlugins language={language} code={code} />}
     </pre>;
 };
+
+/**
+ * This component uses Prism.highlightElement() rather than Prism.highlight() which utilises more of the Prism lifecycle,
+ * allowing us to use plugins (e.g. keep-markup), but is much less performant, so should only be used where plugins
+ * are required.
+ */
+const CodeWithPrismPlugins = ({ code }) => {
+    const ref = useRef();
+
+    useEffect(() => {
+        if (ref && ref.current) {
+            const { current } = ref;
+
+            Prism.highlightElement(current);
+        }
+    });
+
+    return <code ref={ref} dangerouslySetInnerHTML={{ __html: code }} />;
+};
+
+const GrammarMap = {
+    js: Prism.languages.javascript,
+    ts: Prism.languages.typescript,
+    css: Prism.languages.css,
+    bash: Prism.languages.bash,
+    html: Prism.languages.html,
+    jsx: Prism.languages.jsx,
+    java: Prism.languages.java,
+    sql: Prism.languages.sql,
+    diff: Prism.languages.diff,
+    scss: Prism.languages.scss
+};
+
+/**
+ * This uses Prism.highlight() which is the most-performant method for syntax highlighting because it only executes a
+ * small part of the Prism lifecycle.
+ */
+const CodeWithoutPrismPlugins = ({ code, language }) =>
+    <code dangerouslySetInnerHTML={{ __html: Prism.highlight(code, GrammarMap[language], language) }} />;
 
 export default memo(Code);
