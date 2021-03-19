@@ -17,7 +17,7 @@ export { DisplayedGroupCreator } from "./columnController/displayedGroupCreator"
 export { GroupInstanceIdCreator } from "./columnController/groupInstanceIdCreator";
 
 // headless
-export { HeadlessService, HeaderRowSt, CellSt, ColumnSt, RowSt } from "./headless/headlessService";
+export { HeadlessService, RowContainerSt, HeaderRowSt, CellSt, ColumnSt, RowSt } from "./headless/headlessService";
 export { TestHeadless } from "./headless/testHeadless";
 
 // components
