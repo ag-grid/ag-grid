@@ -1,4 +1,4 @@
-import { XmlElement, ExcelFactoryMode } from '@ag-grid-community/core';
+import { XmlElement, ExcelFactoryMode, ExcelSheetConfig } from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
@@ -21,11 +21,11 @@ export class ExcelXlsxFactory {
     private static sheetNames: string[] = [];
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
-    public static createExcel(styles: ExcelStyle[], worksheet: ExcelWorksheet): string {
+    public static createExcel(styles: ExcelStyle[], worksheet: ExcelWorksheet, worksheetConfig: ExcelSheetConfig): string {
         this.addSheetName(worksheet);
         registerStyles(styles);
 
-        return this.createWorksheet(worksheet);
+        return this.createWorksheet(worksheet, worksheetConfig);
     }
 
     private static addSheetName(worksheet: ExcelWorksheet): void {
@@ -134,7 +134,10 @@ export class ExcelXlsxFactory {
         return `${header}${xmlBody}`;
     }
 
-    private static createWorksheet(worksheet: ExcelWorksheet): string {
-        return this.createXmlPart(worksheetFactory.getTemplate(worksheet));
+    private static createWorksheet(worksheet: ExcelWorksheet, worksheetConfig: ExcelSheetConfig): string {
+        return this.createXmlPart(worksheetFactory.getTemplate({
+            worksheet,
+            worksheetConfig
+        }));
     }
 }

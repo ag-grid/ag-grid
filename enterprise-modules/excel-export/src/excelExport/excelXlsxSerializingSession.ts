@@ -4,7 +4,6 @@ import {
     ExcelOOXMLDataType,
     ExcelStyle,
     ExcelWorksheet,
-    RowNode,
     _
 } from '@ag-grid-community/core';
 
@@ -14,7 +13,7 @@ import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<ExcelOOXMLDataType> {
 
     protected createExcel(data: ExcelWorksheet): string {
-        return ExcelXlsxFactory.createExcel(this.excelStyles, data);
+        return ExcelXlsxFactory.createExcel(this.excelStyles, data, this.config.sheetConfig);
     }
 
     protected getDataTypeForValue(valueForCell: string): ExcelOOXMLDataType {

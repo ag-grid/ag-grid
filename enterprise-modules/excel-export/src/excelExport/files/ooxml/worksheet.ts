@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelColumn } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelColumn, ExcelSheetConfig } from '@ag-grid-community/core';
 import columnFactory from './column';
 import rowFactory from './row';
 import mergeCell from './mergeCell';
@@ -66,10 +66,30 @@ export const getExcelColumnName = (colIdx: number): string => {
     return getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
 };
 
+const getPageOrientation = (orientation?: 'Portrait' | 'Landscape'): 'portrait' | 'landscape' => {
+    if (!orientation || (orientation !== 'Portrait' && orientation !== 'Landscape')) { 
+        return 'portrait'; 
+    }
+
+    return orientation.toLocaleLowerCase() as 'portrait' | 'landscape';
+}
+
+const getPageSize = (pageSize?: string): number => {
+    if (pageSize == null) { return 1; }
+
+    const positions = ['Letter', 'Letter Small', 'Tabloid', 'Ledger', 'Legal', 'Statement', 'Executive', 'A3', 'A4', 'A4 Small', 'A5', 'A6', 'B4', 'B5', 'Folio', 'Envelope', 'Envelope DL', 'Envelope C5', 'Envelope B5', 'Envelope C3', 'Envelope C4', 'Envelope C6', 'Envelope Monarch', 'Japanese Postcard', 'Japanese Double Postcard'];
+    const pos = positions.indexOf(pageSize);
+
+    return pos === -1 ? 1 : (pos + 1);
+}
+
 const worksheetFactory: ExcelOOXMLTemplate = {
-    getTemplate(config: ExcelWorksheet) {
-        const {table} = config;
-        const {rows, columns} = table;
+    getTemplate(params: {
+        worksheet: ExcelWorksheet,
+        worksheetConfig: ExcelSheetConfig
+    }) {
+        const { table } = params.worksheet;
+        const { rows, columns } = table;
 
         const mergedCells = (columns && columns.length) ? getMergedCells(rows, columns) : [];
 
@@ -98,6 +118,31 @@ const worksheetFactory: ExcelOOXMLTemplate = {
                 },
                 children: mergedCells.map(mergeCell.getTemplate)
             });
+        }
+
+        const { bottom, footer, header, left, right, top } = params.worksheetConfig.margins!;
+
+        children.push({
+            name: 'pageMargins',
+            properties: {
+                rawMap: { bottom, footer, header, left, right, top }
+            }
+        });
+
+        const pageSetup = params.worksheetConfig.setup;
+
+        if (pageSetup) {
+            children.push({
+                name: 'pageSetup',
+                properties: {
+                    rawMap: {
+                        horizontalDpi: 0,
+                        verticalDpi: 0,
+                        orientation: getPageOrientation(pageSetup.orientation),
+                        paperSize: getPageSize(pageSetup.pageSize)
+                    }
+                }
+            })
         }
 
         return {

@@ -1,13 +1,13 @@
 import {AgGridColumn} from "../agGridColumn";
 import {ComponentUtil, Grid, Context, GridOptions, HeaderRowSt, HeadlessService, RowSt, RowContainerSt} from "ag-grid-community";
 import React, {useEffect, useState} from "react";
-import {GridCoreComp, GridPanelComp} from "./gridPanelComp";
+import {GridCoreComp} from "./gridPanelComp";
 
 export function AgGridReactNext(props: any) {
 
     const [headerRows, setHeaderRows] = useState<HeaderRowSt[]>([]);
     const [rows, setRows] = useState<RowSt[]>([]);
-    const [centerRowContainer, setCenterRowContainer] = useState<RowContainerSt>({});
+    const [centerRowContainer, setCenterRowContainer] = useState<RowContainerSt>({height: 0, width: 0});
 
     const [context, setContext] = useState<Context>();
 

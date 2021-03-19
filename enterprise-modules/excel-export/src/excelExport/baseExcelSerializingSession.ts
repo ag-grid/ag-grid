@@ -5,6 +5,7 @@ import {
     ExcelCell,
     ExcelColumn,
     ExcelRow,
+    ExcelSheetConfig,
     ExcelStyle,
     ExcelWorksheet,
     RowNode,
@@ -21,6 +22,7 @@ import {
 
 export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;
+    sheetConfig: ExcelSheetConfig;
     baseExcelStyles: ExcelStyle[];
     styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column?: Column, node?: RowNode) => string[];
     suppressTextAsCDATA?: boolean;
@@ -108,7 +110,8 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             table: {
                 columns: this.cols,
                 rows: this.rows
-            }
+            },
+            config: this.config.sheetConfig
         };
 
         return this.createExcel(data);

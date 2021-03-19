@@ -76,6 +76,7 @@ export interface ExcelProtection {
 export interface ExcelWorksheet {
     name: string;
     table: ExcelTable;
+    config?: ExcelSheetConfig;
 }
 
 export interface ExcelTable {
@@ -168,6 +169,7 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     headerRowHeight?: number;
     rowHeight?: number;
     sheetName?: string;
+    sheetConfig?: ExcelSheetConfig;
     suppressTextAsCDATA?:boolean;
 }
 
@@ -184,4 +186,23 @@ export interface IExcelCreator {
     /** private methods */
     setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx'): void;
     getFactoryMode(exportMode: 'xml' | 'xlsx'): ExcelFactoryMode;
+}
+
+export interface ExcelSheetConfig {
+    margins?: ExcelSheetMargin;
+    setup?: ExcelSheetPageSetup;
+}
+
+export interface ExcelSheetMargin {
+    top?: number;
+    right?: number;
+    bottom?: number;
+    left?: number;
+    header?: number;
+    footer?: number;
+}
+
+export interface ExcelSheetPageSetup {
+    orientation?: 'Portrait' | 'Landscape';
+    pageSize?: 'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard';
 }

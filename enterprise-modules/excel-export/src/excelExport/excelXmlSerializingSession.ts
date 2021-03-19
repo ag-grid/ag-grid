@@ -9,13 +9,13 @@ import {
 } from '@ag-grid-community/core';
 
 import { ExcelXmlFactory } from './excelXmlFactory';
-import { RowType, RowSpanningAccumulator } from "@ag-grid-community/csv-export";
+
 import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
 export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<ExcelDataType> {
 
     protected createExcel(data: ExcelWorksheet): string {
-        return ExcelXmlFactory.createExcel(this.excelStyles, data, []);
+        return ExcelXmlFactory.createExcel(this.excelStyles, data);
     }
 
     protected getDataTypeForValue(valueForCell: string): ExcelDataType {
