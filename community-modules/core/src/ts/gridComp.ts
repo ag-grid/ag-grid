@@ -1,5 +1,5 @@
 import {GridPanelComp} from "./gridPanel/gridPanelComp";
-import {Logger} from "./logger";
+import {Logger, LoggerFactory} from "./logger";
 import {Autowired} from "./context/context";
 import {Component} from "./widgets/component";
 import {ISideBar} from "./interfaces/iSideBar";
@@ -17,6 +17,7 @@ import {LayoutCssClasses, UpdateLayoutClassesParams} from "./styling/layoutFeatu
 export class GridComp extends ManagedFocusComponent {
 
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
 
     @RefSelector('gridPanel') private gridPanelComp: GridPanelComp;
     @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
@@ -32,6 +33,8 @@ export class GridComp extends ManagedFocusComponent {
     }
 
     protected postConstruct(): void {
+        this.logger = this.loggerFactory.create('GridComp');
+
         const template = this.createTemplate();
         this.setTemplate(template);
 
