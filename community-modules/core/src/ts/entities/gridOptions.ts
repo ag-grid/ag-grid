@@ -628,9 +628,9 @@ export interface IsApplyServerSideTransaction {
 }
 
 export interface IsApplyServerSideTransactionParams {
-    transaction: ServerSideTransaction,
-    parentNode: RowNode,
-    storeInfo: any
+    transaction: ServerSideTransaction;
+    parentNode: RowNode;
+    storeInfo: any;
 }
 
 export interface GetServerSideGroupKey {
