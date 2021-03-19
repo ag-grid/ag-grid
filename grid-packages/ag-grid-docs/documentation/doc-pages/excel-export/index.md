@@ -5,6 +5,21 @@ enterprise: true
 
 The grid data can be exported to Excel using Open Office XML format (xlsx). The export can be initiated with with an API call or by using the right-click context menu on the Grid.
 
+## Exporting to Excel
+
+The following example has the default settings for exporting the grid data to Excel format.
+
+Note the following:
+
+- The column grouping is **NOT** exported.
+- Filtered rows are not included in the export.
+- The sort order is maintained in the export.
+- The order of the columns is maintained in the export.
+- Only visible columns are exported.
+- Value getters are used to work out the value to export (the 'Group' col in the example below uses a value getter to take the first letter of the country name).
+
+<grid-example title='Default Excel Export' name='excel-default-export' type='generated' options='{ "enterprise": true, "exampleHeight": 600 }'></grid-example>
+
 ## What Gets Exported
 
 The same data that is in the grid gets exported, but none of the GUI representation of the data will be. What this means is:
@@ -29,21 +44,6 @@ The same data that is in the grid gets exported, but none of the GUI representat
 |
 |1. The cells of the column header groups are merged in the same manner as the group headers in AG Grid.
 
-## Exporting with Excel
-
-The following example has the default settings for exporting the grid data to Excel format.
-
-Note the following:
-
-- The column grouping is **NOT** exported.
-- Filtered rows are not included in the export.
-- The sort order is maintained in the export.
-- The order of the columns is maintained in the export.
-- Only visible columns are exported.
-- Value getters are used to work out the value to export (the 'Group' col in the example below uses a value getter to take the first letter of the country name).
-
-<grid-example title='Excel Export' name='excel-export' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
-
 ## Appending header and footer content
 
 The recommended way to append header and footer content is by passing an array of CsvCell objects to `customHeader` or `customFooter`. This ensures that your header content is correctly escaped.
@@ -57,42 +57,6 @@ Note the following:
 
 
 <grid-example title='Excel Export - Custom Header and Footer' name='excel-export-header-footer' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
-
-## Column Headers
-
-In some situations, you could be interested in exporting only the grid data, without exporting the header cells. For this scenario, we provide the `skipHeader=true` param. Also, by default, grouped headers are not exported, but these can be exported by using the `columnGroups=true` param.
-
-Note the following: 
-
-- Initially, grouped headers and header are exported.
-- Group Headers will be skipped if `Column Groups` is uncheked.
-- Normal headers will be skipped if `Skip Header` is checked.
-- Uncheck `Column Groups` and check `Skip Header` to completely suppress headers. 
-
-<grid-example title='Excel Export - Column Headers' name='excel-export-column-headers' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
-
-## Pinned Rows
-
-If the pinned rows are not relevant to the data, they can be excluded from the export by using the `skipPinnedTop=true` and `skipPinnedBottom=true` params.
-
-Note the following: 
-
-- By default, all pinned rows are exported.
-- If `Skip Pinned Top Rows` is checked, the rows pinned at the top will be skipped.
-- If `Skip Pinned Bottom Rows` is checked, the rows pinned at the bottom will be skipped.
-
-<grid-example title='Excel Export - Pinned Rows' name='excel-export-pinned-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
-
-## Hidden Columns
-
-By default, hidden columns are not exported. If you would like all columns to be exported regardless of the current state of grid, use the `allColumns=true` params.
-
-Note the following: 
-
-- By default, only visible columns will be exported. The bronze, silver, and gold columns will not.
-- If `Export All Columns` is checked, the bronze, silver, and gold columns will be included in the export.
-
-<grid-example title='Excel Export - Hidden Columns' name='excel-export-hidden-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
 
 ## Example: Data types
 

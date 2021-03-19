@@ -1004,6 +1004,16 @@
                 "enterprise": true
               },
               {
+                "title": "Rows",
+                "url": "/excel-export-rows/",
+                "enterprise": true
+              },
+              {
+                "title": "Columns",
+                "url": "/excel-export-columns/",
+                "enterprise": true
+              },
+              {
                 "title": "Temp",
                 "url": "/excel-export-temp/",
                 "enterprise": true
