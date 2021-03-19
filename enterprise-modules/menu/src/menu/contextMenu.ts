@@ -12,7 +12,7 @@ import {
     FocusController,
     GetContextMenuItems,
     GetContextMenuItemsParams,
-    GridPanelComp,
+    GridBodyComp,
     IAfterGuiAttachedParams,
     IContextMenuFactory,
     IRangeController,
@@ -39,10 +39,10 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     @Autowired('columnController') private columnController: ColumnController;
 
     private activeMenu: ContextMenu | null;
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     public hideActiveMenu(): void {
@@ -104,7 +104,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch, anchorToElement: HTMLElement): boolean {
         const menuItems = this.getMenuItems(node, column, value);
-        const eGridPanelGui = this.gridPanel.getGui();
+        const eGridBodyGui = this.gridBodyComp.getGui();
 
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
 
@@ -131,7 +131,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: () => {
-                _.removeCssClass(eGridPanelGui, CSS_CONTEXT_MENU_OPEN);
+                _.removeCssClass(eGridBodyGui, CSS_CONTEXT_MENU_OPEN);
                 this.destroyBean(menu);
             },
             click: mouseEvent,
@@ -141,7 +141,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         });
 
         if (addPopupRes) {
-            _.addCssClass(eGridPanelGui, CSS_CONTEXT_MENU_OPEN);
+            _.addCssClass(eGridBodyGui, CSS_CONTEXT_MENU_OPEN);
             menu.afterGuiAttached({ container: 'contextMenu', hidePopup: addPopupRes.hideFunc });
         }
 

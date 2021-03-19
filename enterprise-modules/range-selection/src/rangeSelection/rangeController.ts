@@ -11,7 +11,7 @@ import {
     Events,
     GridApi,
     GridOptionsWrapper,
-    GridPanelComp,
+    GridBodyComp,
     IRangeController,
     IRowModel,
     Logger,
@@ -43,7 +43,7 @@ export class RangeController extends BeanStub implements IRangeController {
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
 
     private logger: Logger;
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
     private cellRanges: CellRange[] = [];
     private lastMouseEvent: MouseEvent | null;
     private bodyScrollListener = this.onBodyScroll.bind(this);
@@ -59,9 +59,9 @@ export class RangeController extends BeanStub implements IRangeController {
 
     public autoScrollService: AutoScrollService;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
-        this.autoScrollService = new AutoScrollService(this.gridPanel, this.gridOptionsWrapper);
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
+        this.autoScrollService = new AutoScrollService(this.gridBodyComp, this.gridOptionsWrapper);
     }
 
     @PostConstruct
@@ -572,7 +572,7 @@ export class RangeController extends BeanStub implements IRangeController {
             this.cellRanges.push(this.draggingRange);
         }
 
-        this.gridPanel.addScrollEventListener(this.bodyScrollListener);
+        this.gridBodyComp.addScrollEventListener(this.bodyScrollListener);
 
         this.dispatchChangedEvent(true, false, this.draggingRange.id);
     }
@@ -627,7 +627,7 @@ export class RangeController extends BeanStub implements IRangeController {
 
         this.autoScrollService.ensureCleared();
 
-        this.gridPanel.removeScrollEventListener(this.bodyScrollListener);
+        this.gridBodyComp.removeScrollEventListener(this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
         this.draggingRange = undefined;
@@ -691,22 +691,22 @@ class AutoScrollService {
     private tickUp: boolean;
     private tickDown: boolean;
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
     private gridOptionsWrapper: GridOptionsWrapper;
 
     private tickCount: number;
 
-    constructor(gridPanel: GridPanelComp, gridOptionsWrapper: GridOptionsWrapper) {
-        this.gridPanel = gridPanel;
+    constructor(gridBodyComp: GridBodyComp, gridOptionsWrapper: GridOptionsWrapper) {
+        this.gridBodyComp = gridBodyComp;
         this.gridOptionsWrapper = gridOptionsWrapper;
     }
 
     public check(mouseEvent: MouseEvent, skipVerticalScroll: boolean = false): void {
-        const rect: ClientRect = this.gridPanel.getBodyClientRect()!;
+        const rect: ClientRect = this.gridBodyComp.getBodyClientRect()!;
         skipVerticalScroll = skipVerticalScroll || this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL;
 
         // we don't do ticking if grid is auto height unless we have a horizontal scroller
-        if (skipVerticalScroll && !this.gridPanel.isHorizontalScrollShowing()) {
+        if (skipVerticalScroll && !this.gridBodyComp.isHorizontalScrollShowing()) {
             return;
         }
 
@@ -732,27 +732,27 @@ class AutoScrollService {
     private doTick(): void {
         this.tickCount++;
 
-        const vScrollPosition = this.gridPanel.getVScrollPosition();
-        const hScrollPosition = this.gridPanel.getHScrollPosition();
+        const vScrollPosition = this.gridBodyComp.getVScrollPosition();
+        const hScrollPosition = this.gridBodyComp.getHScrollPosition();
 
         let tickAmount: number;
 
         tickAmount = this.tickCount > 20 ? 200 : (this.tickCount > 10 ? 80 : 40);
 
         if (this.tickUp) {
-            this.gridPanel.setVerticalScrollPosition(vScrollPosition.top - tickAmount);
+            this.gridBodyComp.setVerticalScrollPosition(vScrollPosition.top - tickAmount);
         }
 
         if (this.tickDown) {
-            this.gridPanel.setVerticalScrollPosition(vScrollPosition.top + tickAmount);
+            this.gridBodyComp.setVerticalScrollPosition(vScrollPosition.top + tickAmount);
         }
 
         if (this.tickLeft) {
-            this.gridPanel.setHorizontalScrollPosition(hScrollPosition.left - tickAmount);
+            this.gridBodyComp.setHorizontalScrollPosition(hScrollPosition.left - tickAmount);
         }
 
         if (this.tickRight) {
-            this.gridPanel.setHorizontalScrollPosition(hScrollPosition.left + tickAmount);
+            this.gridBodyComp.setHorizontalScrollPosition(hScrollPosition.left + tickAmount);
         }
     }
 

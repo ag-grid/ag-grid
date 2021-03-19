@@ -14,21 +14,21 @@ import {
     ISelectionHandle,
     RowPositionUtils,
     _,
-    GridCompService,
-    SelectionHandleType
+    SelectionHandleType,
+    ControllersService
 } from "@ag-grid-community/core";
 import { RangeController } from "./rangeController";
 
 export abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
 
     @Autowired("rowRenderer") protected rowRenderer: RowRenderer;
-    @Autowired("gridCompService") protected gridCompService: GridCompService;
     @Autowired("dragService") protected dragService: DragService;
     @Autowired("rangeController") protected rangeController: RangeController;
     @Autowired("mouseEventService") protected mouseEventService: MouseEventService;
     @Autowired("columnController") protected columnController: ColumnController;
     @Autowired("cellNavigationService") protected cellNavigationService: CellNavigationService;
     @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
+    @Autowired('controllersService') protected controllersService: ControllersService;
 
     private cellComp: CellComp;
     private cellRange: CellRange;
@@ -132,7 +132,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     protected onDragStart(e: MouseEvent) {
         this.cellHoverListener = this.addManagedListener(
-            this.gridCompService.getGridCompController().getRootGui(),
+            this.controllersService.getGridCompController().getRootGui(),
             'mousemove',
             this.updateValuesOnMove.bind(this)
         );

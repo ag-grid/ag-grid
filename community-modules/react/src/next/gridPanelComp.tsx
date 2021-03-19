@@ -1,4 +1,4 @@
-import {Context, HeaderRootComp, GridPanel, ColumnSt, HeaderRowSt, RowSt, CenterRowContainerSt} from "@ag-grid-community/core";
+import {Context, HeaderRootComp, GridBodyComp, ColumnSt, HeaderRowSt, RowSt, CenterRowContainerSt} from "@ag-grid-community/core";
 import React, {useRef, useEffect, useState, MutableRefObject} from "react";
 import {RowComp} from "./rowComp";
 
@@ -112,7 +112,7 @@ function HeaderRootReactComp(props: {headerRows: HeaderRowSt[], context: Context
     useEffect(()=> {
         const headerRootComp = new HeaderRootComp();
         context.createBean(headerRootComp);
-        headerRootComp.registerGridComp(new MyGridPanel() as GridPanel)
+        headerRootComp.registerGridComp(new MyGridPanel() as any as GridBodyComp)
 
         const eGui = headerRootComp.getGui();
         eHeaderRoot.current!.appendChild(eGui);

@@ -12,7 +12,7 @@ export interface RowContainerComponentParams {
 /**
  * There are many instances of this component covering each of the areas a row can be entered
  * eg body, pinned left, fullWidth. The component differs from others in that it's given the
- * elements, there is no template. All of the elements are part of the GridPanel.
+ * elements, there is no template. All of the elements are part of the GridBodyComp.
  */
 export class RowContainerComponent {
 
@@ -34,7 +34,7 @@ export class RowContainerComponent {
     private scrollTop: number;
 
     // this is to cater for a 'strange behaviour' where when a panel is made visible, it is firing a scroll
-    // event which we want to ignore. see gridPanel.onAnyBodyScroll()
+    // event which we want to ignore. see gridBodyComp.onAnyBodyScroll()
     private lastMadeVisibleTime = 0;
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the

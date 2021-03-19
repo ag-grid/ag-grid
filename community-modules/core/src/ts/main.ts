@@ -257,6 +257,7 @@ export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
 export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
+export { ControllersService } from "./controllersService";
 export { GridComp } from "./gridComp/gridComp";
 export { GridCompController } from "./gridComp/gridCompController";
 export { Logger, LoggerFactory } from "./logger";

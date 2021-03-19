@@ -25,7 +25,7 @@ import {
     TabbedLayout,
     FocusController,
     IAfterGuiAttachedParams,
-    GridPanelComp
+    GridBodyComp
 } from '@ag-grid-community/core';
 import { MenuList } from './menuList';
 import { MenuItemComponent } from './menuItemComponent';
@@ -46,10 +46,10 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     private lastSelectedTab: string;
     private activeMenu: EnterpriseMenu | null;
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     public hideActiveMenu(): void {
@@ -116,7 +116,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         const eMenuGui = menu.getGui();
 
-        const anchorToElement = eventSource || this.gridPanel.getGui();
+        const anchorToElement = eventSource || this.gridBodyComp.getGui();
 
         const closedFuncs: ((e?: Event) => void)[] = [];
 

@@ -1,7 +1,7 @@
 import {AgGridColumn} from "../agGridColumn";
 import {ComponentUtil, Grid, Context, GridOptions, HeaderRowSt, HeadlessService, RowSt, RowContainerSt} from "@ag-grid-community/core";
 import React, {useEffect, useState} from "react";
-import {GridCoreComp, GridPanelComp} from "./gridPanelComp";
+import {GridCoreComp} from "./gridPanelComp";
 
 export function AgGridReactNext(props: any) {
 

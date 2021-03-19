@@ -22,6 +22,7 @@ import { findIndex } from "../utils/array";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
 import { ColumnController } from "../columnController/columnController";
+import { ControllersService } from "../controllersService";
 
 export interface GridCompView extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -44,6 +45,7 @@ export class GridCompController extends BeanStub {
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
     private view: GridCompView;
     private eGridHostDiv: HTMLElement;
@@ -72,7 +74,8 @@ export class GridCompController extends BeanStub {
         [
             this.gridApi,
             this.popupService,
-            this.focusController
+            this.focusController,
+            this.controllersService
         ].forEach(service => service.registerGridCompController(this));
 
         if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {

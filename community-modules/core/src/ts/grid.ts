@@ -91,6 +91,7 @@ import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
 import { HeadlessService } from "./headless/headlessService";
+import { ControllersService } from "./controllersService";
 
 export interface GridParams {
     // used by Web Components
@@ -300,7 +301,7 @@ export class GridCoreCreator {
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
-            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, HeadlessService
+            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, HeadlessService, ControllersService
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);
