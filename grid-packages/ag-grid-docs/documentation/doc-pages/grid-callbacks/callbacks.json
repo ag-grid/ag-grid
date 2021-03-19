@@ -31,7 +31,10 @@
                     "columnApi": "ColumnApi",
                     "context": "object"
                 },
-                "returnType": "string | string[]"
+                "returnType": [
+                    "string",
+                    "string[]"
+                ]
             }
         },
         "getRowStyle": {
@@ -58,7 +61,10 @@
                     "api": "GridApi",
                     "context": "object"
                 },
-                "returnType": "number | null"
+                "returnType": [
+                    "number",
+                    "null"
+                ]
             }
         },
         "groupRowAggNodes": {

@@ -18,7 +18,10 @@
             "description": "Sets the state of the filter using the supplied model. Providing `null` as the model will de-activate the filter.",
             "type": {
                 "arguments": {
-                    "model": "object | null"
+                    "model": [
+                        "object",
+                        "null"
+                    ]
                 }
             }
         }

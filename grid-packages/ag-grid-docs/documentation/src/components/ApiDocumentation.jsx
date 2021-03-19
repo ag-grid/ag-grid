@@ -353,8 +353,6 @@ const FunctionCodeSample = ({ framework, name, type }) => {
     Object.entries(args).forEach(([key, type]) => {
         const typeName = getArgumentTypeName(key, type);
 
-        console.log(`Getting linked type for`, typeName);
-
         argumentDefinitions.push(`${key}: ${getLinkedType(typeName, framework)}`);
 
         if (argumentDefinitions.length > 1 || typeName.length > 20) {
