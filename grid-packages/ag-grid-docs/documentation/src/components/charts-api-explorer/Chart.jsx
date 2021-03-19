@@ -1,5 +1,4 @@
 import React from 'react';
-import { AgChart } from 'ag-charts-community';
 import { data, series } from './templates.jsx';
 import { deepClone } from './utils.jsx';
 import styles from './Chart.module.scss';
@@ -11,14 +10,18 @@ export class Chart extends React.Component {
     constructor(props) {
         super(props);
         this.chart = React.createRef();
-        this.useDynamicUpdates = true;
     }
 
     chartInstance = undefined;
     animationFrameId = 0;
+    AgChart = undefined;
 
     componentDidMount() {
-        this.createChart();
+        import('ag-charts-community').then(({ AgChart }) => {
+            console.log(`Loading AgChart`);
+            this.AgChart = AgChart;
+            this.createChart();
+        });
     }
 
     componentDidUpdate(prevProps) {
@@ -26,10 +29,11 @@ export class Chart extends React.Component {
         const newSeriesType = this.props.options.series[0].type;
         const hasChangedType = newSeriesType !== oldSeriesType;
 
-        if (this.chartInstance && this.useDynamicUpdates && !hasChangedType) {
+        if (this.chartInstance && !hasChangedType) {
             cancelAnimationFrame(this.animationFrameId);
+
             this.animationFrameId = requestAnimationFrame(() => {
-                AgChart.update(this.chartInstance, this.createOptionsJson());
+                this.AgChart.update(this.chartInstance, this.createOptionsJson());
             });
         } else {
             this.chartInstance && this.chartInstance.destroy();
@@ -38,7 +42,7 @@ export class Chart extends React.Component {
     }
 
     createChart() {
-        this.chartInstance = AgChart.create(this.createOptionsJson());
+        this.chartInstance = this.AgChart.create(this.createOptionsJson());
     }
 
     createOptionsJson() {
