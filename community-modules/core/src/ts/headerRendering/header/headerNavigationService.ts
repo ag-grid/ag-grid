@@ -6,7 +6,7 @@ import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
 import { HeaderRowType } from "../headerRowComp";
-import { GridPanelComp } from "../../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
 import { last } from "../../utils/array";
@@ -25,11 +25,11 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
     private headerRoot: HeaderRootComp;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     public registerHeaderRoot(headerRoot: HeaderRootComp): void {
@@ -168,11 +168,11 @@ export class HeaderNavigationService extends BeanStub {
             columnToScrollTo = column;
         }
 
-        this.gridPanel.ensureColumnVisible(columnToScrollTo);
+        this.gridBodyComp.ensureColumnVisible(columnToScrollTo);
 
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
         // floating cell, the scrolls get out of sync
-        this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
+        this.gridBodyComp.horizontallyScrollHeaderCenterAndFloatingCenter();
 
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();

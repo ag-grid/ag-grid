@@ -4,7 +4,7 @@ import { ColumnController } from "../columnController/columnController";
 import { Column } from "../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";
 import { DropListener } from "./bodyDropTarget";
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Logger, LoggerFactory } from "../logger";
 import { ColumnEventType } from "../events";
@@ -18,7 +18,7 @@ export class MoveColumnController implements DropListener {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
     private needToMoveLeft = false;
     private needToMoveRight = false;
@@ -44,8 +44,8 @@ export class MoveColumnController implements DropListener {
         this.centerContainer = !exists(pinned);
     }
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     @PostConstruct
@@ -119,7 +119,7 @@ export class MoveColumnController implements DropListener {
 
         // adjust for scroll only if centre container (the pinned containers don't scroll)
         if (this.centerContainer) {
-            x += this.gridPanel.getCenterViewportScrollLeft();
+            x += this.gridBodyComp.getCenterViewportScrollLeft();
         }
 
         return x;
@@ -129,8 +129,8 @@ export class MoveColumnController implements DropListener {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            const firstVisiblePixel = this.gridPanel.getCenterViewportScrollLeft();
-            const lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
+            const firstVisiblePixel = this.gridBodyComp.getCenterViewportScrollLeft();
+            const lastVisiblePixel = firstVisiblePixel + this.gridBodyComp.getCenterWidth();
 
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
@@ -418,9 +418,9 @@ export class MoveColumnController implements DropListener {
 
         let pixelsMoved: number | null = null;
         if (this.needToMoveLeft) {
-            pixelsMoved = this.gridPanel.scrollHorizontally(-pixelsToMove);
+            pixelsMoved = this.gridBodyComp.scrollHorizontally(-pixelsToMove);
         } else if (this.needToMoveRight) {
-            pixelsMoved = this.gridPanel.scrollHorizontally(pixelsToMove);
+            pixelsMoved = this.gridBodyComp.scrollHorizontally(pixelsToMove);
         }
 
         if (pixelsMoved !== 0) {

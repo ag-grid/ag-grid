@@ -3,12 +3,12 @@ import { ColumnController } from '../columnController/columnController';
 import { Events } from '../events';
 import { HeaderRowComp, HeaderRowType } from './headerRowComp';
 import { BodyDropTarget } from './bodyDropTarget';
-import { ScrollVisibleService } from '../gridPanel/scrollVisibleService';
+import { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import { Component } from '../widgets/component';
 import { Constants } from '../constants/constants';
 import { setFixedWidth } from '../utils/dom';
 import { BeanStub } from "../context/beanStub";
-import { GridPanelComp } from '../gridPanel/gridPanelComp';
+import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { NumberSequence } from "../utils";
 
 export class HeaderContainer extends BeanStub {
@@ -120,12 +120,12 @@ export class HeaderContainer extends BeanStub {
         this.refreshRowComps(keepColumns);
     }
 
-    public setupDragAndDrop(gridComp: GridPanelComp): void {
+    public setupDragAndDrop(gridBodyComp: GridBodyComp): void {
         // center section has viewport, but pinned sections do not
         const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
         this.createManagedBean(bodyDropTarget);
-        bodyDropTarget.registerGridComp(gridComp);
+        bodyDropTarget.registerGridComp(gridBodyComp);
     }
 
     @PreDestroy

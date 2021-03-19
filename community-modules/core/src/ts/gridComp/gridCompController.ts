@@ -17,7 +17,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { ISideBar } from "../interfaces/iSideBar";
 import { Component } from "../widgets/component";
 import { GridOptions } from "../entities/gridOptions";
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { IRowModel } from "../interfaces/iRowModel";
 import { findIndex } from "../utils/array";
 import { Column } from "../entities/column";
@@ -50,19 +50,19 @@ export class GridCompController extends BeanStub {
     private view: GridCompView;
     private eGridHostDiv: HTMLElement;
     private eGridComp: HTMLElement;
-    private gridPanelComp: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
     private sideBarComp: ISideBar & Component
 
     private logger: Logger;
 
-    constructor(view: GridCompView, eGridDiv: HTMLElement, eGridComp: HTMLElement, sideBarComp: ISideBar & Component, gridPanelComp: GridPanelComp) {
+    constructor(view: GridCompView, eGridDiv: HTMLElement, eGridComp: HTMLElement, sideBarComp: ISideBar & Component, gridBodyComp: GridBodyComp) {
         super();
         this.view = view;
         this.eGridHostDiv = eGridDiv;
         this.eGridComp = eGridComp;
         this.sideBarComp = sideBarComp;
-        this.gridPanelComp = gridPanelComp;
+        this.gridBodyComp = gridBodyComp;
     }
 
     @PostConstruct
@@ -186,7 +186,7 @@ export class GridCompController extends BeanStub {
             }
         }
         if (indexToSelect >= 0) {
-            this.gridPanelComp.ensureIndexVisible(indexToSelect, position);
+            this.gridBodyComp.ensureIndexVisible(indexToSelect, position);
         }
     }
 }

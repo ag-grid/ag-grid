@@ -1,11 +1,11 @@
 import { Bean } from "../context/context";
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { BeanStub } from "../context/beanStub";
 
 @Bean('columnAnimationService')
 export class ColumnAnimationService extends BeanStub {
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
     private executeNextFuncs: Function[] = [];
     private executeLaterFuncs: Function[] = [];
@@ -14,8 +14,8 @@ export class ColumnAnimationService extends BeanStub {
 
     private animationThreadCount = 0;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     public isActive(): boolean {
@@ -64,12 +64,12 @@ export class ColumnAnimationService extends BeanStub {
         // by the time the 'wait' func executes
         this.animationThreadCount++;
         const animationThreadCountCopy = this.animationThreadCount;
-        this.gridPanel.setColumnMovingCss(true);
+        this.gridBodyComp.setColumnMovingCss(true);
 
         this.executeLaterFuncs.push(() => {
             // only remove the class if this thread was the last one to update it
             if (this.animationThreadCount === animationThreadCountCopy) {
-                this.gridPanel.setColumnMovingCss(false);
+                this.gridBodyComp.setColumnMovingCss(false);
             }
         });
     }

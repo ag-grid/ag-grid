@@ -84,7 +84,7 @@ export {
     DragSource,
     DraggingEvent
 } from "./dragAndDrop/dragAndDropService";
-export { RowDropZoneParams } from "./gridPanel/rowDragFeature";
+export { RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 export { DragService } from "./dragAndDrop/dragService";
 export { IRowDragItem } from "./rendering/row/rowDragComp";
 
@@ -114,9 +114,9 @@ export { FloatingFilterWrapper } from './filter/floating/floatingFilterWrapper';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 // gridPanel
-export { GridPanelComp } from "./gridPanel/gridPanelComp";
-export { ScrollVisibleService } from "./gridPanel/scrollVisibleService";
-export { MouseEventService } from "./gridPanel/mouseEventService";
+export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
+export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
+export { MouseEventService } from "./gridBodyComp/mouseEventService";
 
 // headerRendering
 export { BodyDropPivotTarget } from "./headerRendering/bodyDropPivotTarget";

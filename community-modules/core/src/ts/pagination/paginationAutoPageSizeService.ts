@@ -1,15 +1,15 @@
 import { BeanStub } from "../context/beanStub";
 import { Events } from "../events";
 import { Bean } from "../context/context";
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
 
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
@@ -34,7 +34,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
         }
 
         const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        const bodyHeight = this.gridPanel.getBodyHeight();
+        const bodyHeight = this.gridBodyComp.getBodyHeight();
 
         if (bodyHeight > 0) {
             const newPageSize = Math.floor(bodyHeight / rowHeight);

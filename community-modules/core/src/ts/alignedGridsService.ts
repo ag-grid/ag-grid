@@ -1,5 +1,5 @@
 import { ColumnController } from "./columnController/columnController";
-import { GridPanelComp } from "./gridPanel/gridPanelComp";
+import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
 import {
@@ -22,7 +22,7 @@ export class AlignedGridsService extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
 
     private logger: Logger;
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
     // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
     // while processing a master event) we mark this if consuming an event, and if we are, then
@@ -33,8 +33,8 @@ export class AlignedGridsService extends BeanStub {
         this.logger = loggerFactory.create('AlignedGridsService');
     }
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     @PostConstruct
@@ -90,7 +90,7 @@ export class AlignedGridsService extends BeanStub {
 
     private onScrollEvent(event: BodyScrollEvent): void {
         this.onEvent(() => {
-            this.gridPanel.setHorizontalScrollPosition(event.left);
+            this.gridBodyComp.setHorizontalScrollPosition(event.left);
         });
     }
 
@@ -225,7 +225,7 @@ export class AlignedGridsService extends BeanStub {
                 });
                 break;
         }
-        const isVerticalScrollShowing = this.gridPanel.isVerticalScrollShowing();
+        const isVerticalScrollShowing = this.gridBodyComp.isVerticalScrollShowing();
         const alignedGrids = this.gridOptionsWrapper.getAlignedGrids();
 
         if (alignedGrids) {

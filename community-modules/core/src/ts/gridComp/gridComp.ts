@@ -1,4 +1,4 @@
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { Logger, LoggerFactory } from "../logger";
 import { Autowired } from "../context/context";
 import { Component } from "../widgets/component";
@@ -19,7 +19,7 @@ export class GridComp extends ManagedFocusComponent {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
 
-    @RefSelector('gridPanel') private gridPanelComp: GridPanelComp;
+    @RefSelector('gridBody') private gridBodyComp: GridBodyComp;
     @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
@@ -50,7 +50,7 @@ export class GridComp extends ManagedFocusComponent {
             getFocusableContainers: this.getFocusableContainers.bind(this)
         };
 
-        this.controller = this.createManagedBean(new GridCompController(view, this.getGui(), this.eGridDiv, this.sideBarComp, this.gridPanelComp));
+        this.controller = this.createManagedBean(new GridCompController(view, this.getGui(), this.eGridDiv, this.sideBarComp, this.gridBodyComp));
 
         this.insertGridIntoDom();
 
@@ -91,7 +91,7 @@ export class GridComp extends ManagedFocusComponent {
             `<div ref="eRootWrapper" class="ag-root-wrapper">
                 ${dropZones}
                 <div class="ag-root-wrapper-body" ref="rootWrapperBody">
-                    <ag-grid-panel ref="gridPanel"></ag-grid-panel>
+                    <ag-grid-panel ref="gridBody"></ag-grid-panel>
                     ${sideBar}
                 </div>
                 ${statusBar}
@@ -108,7 +108,7 @@ export class GridComp extends ManagedFocusComponent {
 
     protected getFocusableContainers(): HTMLElement[] {
         const focusableContainers = [
-            this.gridPanelComp.getGui()
+            this.gridBodyComp.getGui()
         ];
 
         if (this.sideBarComp) {

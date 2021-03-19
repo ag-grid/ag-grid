@@ -5,7 +5,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { DragService, DragListenerParams } from "./dragService";
 import { Environment } from "../environment";
-import { RowDropZoneParams } from "../gridPanel/rowDragFeature";
+import { RowDropZoneParams } from "../gridBodyComp/rowDragFeature";
 import { RowNode } from "../entities/rowNode";
 import { escapeString } from "../utils/string";
 import { createIcon } from "../utils/icon";

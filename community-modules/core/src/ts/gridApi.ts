@@ -4,7 +4,7 @@ import { ColumnController, ColumnState } from "./columnController/columnControll
 import { ColumnApi } from "./columnController/columnApi";
 import { SelectionController } from "./selectionController";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { GridPanelComp } from "./gridPanel/gridPanelComp";
+import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
@@ -63,7 +63,7 @@ import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
-import { RowDropZoneEvents, RowDropZoneParams } from "./gridPanel/rowDragFeature";
+import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 import { iterateObject, removeAllReferences } from "./utils/object";
 import { exists, missing } from "./utils/generic";
 import { camelCaseToHumanText } from "./utils/string";
@@ -182,7 +182,7 @@ export class GridApi {
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
     private gridCompController: GridCompController;
     private sideBarComp: ISideBar;
 
@@ -196,8 +196,8 @@ export class GridApi {
 
     private destroyCalled = false;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     public registerGridCompController(gridCompController: GridCompController): void {
@@ -317,7 +317,7 @@ export class GridApi {
 
     public setGridAriaProperty(property: string, value: string | null): void {
         if (!property) { return; }
-        const eGrid = this.gridPanel.getGui();
+        const eGrid = this.gridBodyComp.getGui();
         const ariaProperty = `aria-${property}`;
 
         if (value === null) {
@@ -452,11 +452,11 @@ export class GridApi {
     }
 
     public getVerticalPixelRange(): { top: number, bottom: number; } {
-        return this.gridPanel.getVScrollPosition();
+        return this.gridBodyComp.getVScrollPosition();
     }
 
     public getHorizontalPixelRange(): { left: number, right: number; } {
-        return this.gridPanel.getHScrollPosition();
+        return this.gridBodyComp.getHScrollPosition();
     }
 
     public setAlwaysShowHorizontalScroll(show: boolean) {
@@ -574,7 +574,7 @@ export class GridApi {
 
     public refreshHeader() {
         this.headerRootComp.refreshHeader();
-        this.gridPanel.setHeaderAndFloatingHeights();
+        this.gridBodyComp.setHeaderAndFloatingHeights();
     }
 
     public isAnyFilterPresent(): boolean {
@@ -768,19 +768,19 @@ export class GridApi {
     }
 
     public sizeColumnsToFit() {
-        this.gridPanel.sizeColumnsToFit();
+        this.gridBodyComp.sizeColumnsToFit();
     }
 
     public showLoadingOverlay(): void {
-        this.gridPanel.showLoadingOverlay();
+        this.gridBodyComp.showLoadingOverlay();
     }
 
     public showNoRowsOverlay(): void {
-        this.gridPanel.showNoRowsOverlay();
+        this.gridBodyComp.showNoRowsOverlay();
     }
 
     public hideOverlay(): void {
-        this.gridPanel.hideOverlay();
+        this.gridBodyComp.hideOverlay();
     }
 
     public isNodeSelected(node: any) {
@@ -814,12 +814,12 @@ export class GridApi {
     }
 
     public ensureColumnVisible(key: string | Column) {
-        this.gridPanel.ensureColumnVisible(key);
+        this.gridBodyComp.ensureColumnVisible(key);
     }
 
     // Valid values for position are bottom, middle and top
     public ensureIndexVisible(index: any, position?: string | null) {
-        this.gridPanel.ensureIndexVisible(index, position);
+        this.gridBodyComp.ensureIndexVisible(index, position);
     }
 
     // Valid values for position are bottom, middle and top
@@ -975,7 +975,7 @@ export class GridApi {
     }
 
     public addRowDropZone(params: RowDropZoneParams): void {
-        this.gridPanel.getRowDragFeature().addRowDropZone(params);
+        this.gridBodyComp.getRowDragFeature().addRowDropZone(params);
     }
 
     public removeRowDropZone(params: RowDropZoneParams): void {
@@ -987,7 +987,7 @@ export class GridApi {
     }
 
     public getRowDropZoneParams(events: RowDropZoneEvents): RowDropZoneParams {
-        return this.gridPanel.getRowDragFeature().getRowDropZone(events);
+        return this.gridBodyComp.getRowDragFeature().getRowDropZone(events);
     }
 
     public setHeaderHeight(headerHeight?: number) {
@@ -1000,7 +1000,7 @@ export class GridApi {
     }
 
     public setEnableCellTextSelection(selectable: boolean) {
-        this.gridPanel.setCellTextSelection(selectable);
+        this.gridBodyComp.setCellTextSelection(selectable);
     }
 
     public setFillHandleDirection(direction: 'x' | 'y' | 'xy') {
@@ -1086,7 +1086,7 @@ export class GridApi {
     }
 
     public doLayout() {
-        this.gridPanel.checkViewportAndScrolls();
+        this.gridBodyComp.checkViewportAndScrolls();
     }
 
     public resetRowHeights() {
@@ -1354,7 +1354,7 @@ export class GridApi {
         };
         const notPinned = missing(params.rowPinned);
         if (notPinned) {
-            this.gridPanel.ensureIndexVisible(params.rowIndex);
+            this.gridBodyComp.ensureIndexVisible(params.rowIndex);
         }
         this.rowRenderer.startEditingCell(cellPosition, params.keyPress, params.charPress);
     }
@@ -1607,7 +1607,7 @@ export class GridApi {
     }
 
     public checkGridSize(): void {
-        this.gridPanel.setHeaderAndFloatingHeights();
+        this.gridBodyComp.setHeaderAndFloatingHeights();
     }
 
     public getFirstRenderedRow(): number {

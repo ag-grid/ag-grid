@@ -1,7 +1,7 @@
 import { BeanStub } from "../context/beanStub";
 import { Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { getMaxDivHeight } from "../utils/browser";
 
 /**
@@ -12,7 +12,7 @@ import { getMaxDivHeight } from "../utils/browser";
 @Bean('maxDivHeightScaler')
 export class MaxDivHeightScaler extends BeanStub {
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
     private maxDivHeight: number;
 
@@ -42,8 +42,8 @@ export class MaxDivHeightScaler extends BeanStub {
         this.maxDivHeight = getMaxDivHeight();
     }
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     public isScaling(): boolean {
@@ -57,7 +57,7 @@ export class MaxDivHeightScaler extends BeanStub {
     public updateOffset(): void {
         if (!this.scaling) { return; }
 
-        const newScrollY = this.gridPanel.getVScrollPosition().top;
+        const newScrollY = this.gridBodyComp.getVScrollPosition().top;
         const newBodyHeight = this.getUiBodyHeight();
 
         const atLeastOneChanged = newScrollY !== this.scrollY || newBodyHeight !== this.uiBodyHeight;
@@ -113,7 +113,7 @@ export class MaxDivHeightScaler extends BeanStub {
     }
 
     private getUiBodyHeight(): number {
-        const pos = this.gridPanel.getVScrollPosition();
+        const pos = this.gridBodyComp.getVScrollPosition();
         return pos.bottom - pos.top;
     }
 

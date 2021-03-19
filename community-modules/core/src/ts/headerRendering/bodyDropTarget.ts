@@ -1,7 +1,7 @@
 import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
 import { Autowired, PostConstruct } from "../context/context";
 import { MoveColumnController } from "./moveColumnController";
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnController } from "../columnController/columnController";
 import { Constants } from "../constants/constants";
@@ -22,7 +22,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
     private pinned: string | null;
     // public because it's part of the DropTarget interface
     private eContainer: HTMLElement;
@@ -38,15 +38,15 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.eContainer = eContainer;
     }
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
 
-        this.moveColumnController.registerGridComp(gridPanel);
+        this.moveColumnController.registerGridComp(gridBodyComp);
 
         switch (this.pinned) {
-            case Constants.PINNED_LEFT: this.eSecondaryContainers = this.gridPanel.getDropTargetLeftContainers(); break;
-            case Constants.PINNED_RIGHT: this.eSecondaryContainers = this.gridPanel.getDropTargetRightContainers(); break;
-            default: this.eSecondaryContainers = this.gridPanel.getDropTargetBodyContainers(); break;
+            case Constants.PINNED_LEFT: this.eSecondaryContainers = this.gridBodyComp.getDropTargetLeftContainers(); break;
+            case Constants.PINNED_RIGHT: this.eSecondaryContainers = this.gridBodyComp.getDropTargetRightContainers(); break;
+            default: this.eSecondaryContainers = this.gridBodyComp.getDropTargetBodyContainers(); break;
         }
     }
 

@@ -1,5 +1,5 @@
 import { RowRenderer } from "./rowRenderer";
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { Column } from "../entities/column";
 import { Autowired, Bean } from "../context/context";
 import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
@@ -13,11 +13,11 @@ export class AutoWidthCalculator extends BeanStub {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
     private headerRootComp: HeaderRootComp;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
@@ -39,7 +39,7 @@ export class AutoWidthCalculator extends BeanStub {
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        const eBodyContainer = this.gridPanel.getCenterContainer();
+        const eBodyContainer = this.gridBodyComp.getCenterContainer();
         eBodyContainer.appendChild(eDummyContainer);
 
         // get all the cells that are currently displayed (this only brings back

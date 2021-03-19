@@ -1,4 +1,4 @@
-import { GridPanelComp } from "../../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
 import { Autowired, Bean } from "../../context/context";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
@@ -18,10 +18,10 @@ export class AutoHeightCalculator extends BeanStub {
     @Autowired("rowCssClassCalculator") private rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('$compile') public $compile: any;
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     public getPreferredHeightForRow(rowNode: RowNode): number {
@@ -31,7 +31,7 @@ export class AutoHeightCalculator extends BeanStub {
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        const eBodyContainer = this.gridPanel.getCenterContainer();
+        const eBodyContainer = this.gridBodyComp.getCenterContainer();
         eBodyContainer.appendChild(eDummyContainer);
 
         const scopeResult = AngularRowUtils.createChildScopeOrNull(rowNode, this.$scope, this.beans.gridOptionsWrapper);

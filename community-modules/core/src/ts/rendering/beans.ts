@@ -17,7 +17,7 @@ import { PopupService } from "../widgets/popupService";
 import { ValueFormatterService } from "./valueFormatterService";
 import { StylingService } from "../styling/stylingService";
 import { ColumnHoverService } from "./columnHoverService";
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
@@ -82,13 +82,13 @@ export class Beans {
     @Autowired('rowModel') public rowModel: IRowModel;
 
     public doingMasterDetail: boolean;
-    public gridPanel: GridPanelComp;
+    public gridBodyComp: GridBodyComp;
 
     public clientSideRowModel: IClientSideRowModel;
     public serverSideRowModel: IServerSideRowModel;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     @PostConstruct

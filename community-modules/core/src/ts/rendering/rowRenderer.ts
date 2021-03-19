@@ -1,5 +1,5 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { GridPanelComp, RowContainerComponents } from "../gridPanel/gridPanelComp";
+import { GridBodyComp, RowContainerComponents } from "../gridBodyComp/gridBodyComp";
 import { RowComp } from "./row/rowComp";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
@@ -52,7 +52,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
     @Optional("rangeController") private rangeController: IRangeController;
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
     private destroyFuncsForColumnListeners: (() => void)[] = [];
 
@@ -85,10 +85,10 @@ export class RowRenderer extends BeanStub {
         this.logger = loggerFactory.create("RowRenderer");
     }
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
 
-        this.rowContainers = this.gridPanel.getRowContainers();
+        this.rowContainers = this.gridBodyComp.getRowContainers();
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
@@ -454,7 +454,7 @@ export class RowRenderer extends BeanStub {
         const suppressScrollToTop = this.gridOptionsWrapper.isSuppressScrollOnNewData();
 
         if (scrollToTop && !suppressScrollToTop) {
-            this.gridPanel.scrollToTop();
+            this.gridBodyComp.scrollToTop();
         }
     }
 
@@ -822,7 +822,7 @@ export class RowRenderer extends BeanStub {
         }
 
         this.checkAngularCompile();
-        this.gridPanel.updateRowCount();
+        this.gridBodyComp.updateRowCount();
     }
 
     private flushContainers(rowComps: RowComp[]): void {
@@ -993,7 +993,7 @@ export class RowRenderer extends BeanStub {
             const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
             const maxDivHeightScaler = this.maxDivHeightScaler.getOffset();
 
-            const bodyVRange = this.gridPanel.getVScrollPosition();
+            const bodyVRange = this.gridBodyComp.getVScrollPosition();
             const bodyTopPixel = bodyVRange.top;
             const bodyBottomPixel = bodyVRange.bottom;
 
@@ -1316,16 +1316,16 @@ export class RowRenderer extends BeanStub {
     public ensureCellVisible(gridCell: CellPosition): void {
         // this scrolls the row into view
         if (missing(gridCell.rowPinned)) {
-            this.gridPanel.ensureIndexVisible(gridCell.rowIndex);
+            this.gridBodyComp.ensureIndexVisible(gridCell.rowIndex);
         }
 
         if (!gridCell.column.isPinned()) {
-            this.gridPanel.ensureColumnVisible(gridCell.column);
+            this.gridBodyComp.ensureColumnVisible(gridCell.column);
         }
 
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
         // floating cell, the scrolls get out of sync
-        this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
+        this.gridBodyComp.horizontallyScrollHeaderCenterAndFloatingCenter();
 
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();

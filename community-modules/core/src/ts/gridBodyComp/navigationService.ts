@@ -4,7 +4,7 @@ import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { Column } from "../entities/column";
 import { FocusController } from "../focusController";
-import { GridPanelComp } from "./gridPanelComp";
+import { GridBodyComp } from "./gridBodyComp";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { ColumnController } from "../columnController/columnController";
@@ -35,11 +35,11 @@ export class NavigationService extends BeanStub {
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('columnController') private columnController: ColumnController;
 
-    private gridPanel: GridPanelComp;
+    private gridPanel: GridBodyComp;
 
     private timeLastPageEventProcessed = 0;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
+    public registerGridComp(gridPanel: GridBodyComp): void {
         this.gridPanel = gridPanel;
     }
 

@@ -1,6 +1,6 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnController } from '../columnController/columnController';
-import { GridPanelComp } from '../gridPanel/gridPanelComp';
+import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { Autowired } from '../context/context';
 import { HeaderContainer } from './headerContainer';
 import { Events } from '../events';
@@ -37,7 +37,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
     private printLayout: boolean;
     private headerContainers: Map<HeaderContainerPosition, HeaderContainer> = new Map();
 
@@ -88,9 +88,9 @@ export class HeaderRootComp extends ManagedFocusComponent {
         }
     }
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
-        this.headerContainers.forEach(c => c.setupDragAndDrop(gridPanel));
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
+        this.headerContainers.forEach(c => c.setupDragAndDrop(gridBodyComp));
     }
 
     private registerHeaderContainer(headerContainer: HeaderContainer, type: HeaderContainerPosition): void {
@@ -197,7 +197,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
             // on the header, giving the impression that the header scrolled as expected.
             const scrollLeft = this.eHeaderViewport.scrollLeft;
             if (scrollLeft !== 0) {
-                this.gridPanel.scrollHorizontally(scrollLeft);
+                this.gridBodyComp.scrollHorizontally(scrollLeft);
                 this.eHeaderViewport.scrollLeft = 0;
             }
         });

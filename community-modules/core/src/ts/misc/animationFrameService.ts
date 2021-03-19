@@ -3,7 +3,7 @@ import { Bean, PostConstruct } from "../context/context";
 import { AnimationQueueEmptyEvent } from "../events";
 import { Events } from "../eventKeys";
 import { BeanStub } from "../context/beanStub";
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 
 interface TaskItem {
     task: () => void;
@@ -39,7 +39,7 @@ export class AnimationFrameService extends BeanStub {
     private taskCount = 0;
     private cancelledTasks = new Set();
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
     public setScrollTop(scrollTop: number): void {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
@@ -51,8 +51,8 @@ export class AnimationFrameService extends BeanStub {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
     }
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     // this method is for our AG Grid sanity only - if animation frames are turned off,
@@ -116,7 +116,7 @@ export class AnimationFrameService extends BeanStub {
         const noMaxMillis = millis <= 0;
 
         while (noMaxMillis || duration < millis) {
-            if (!this.gridPanel.executeAnimationFrameScroll()) {
+            if (!this.gridBodyComp.executeAnimationFrameScroll()) {
                 let task: () => void;
                 if (p1Tasks.length) {
                     this.sortTaskList(p1TaskList);

@@ -7,7 +7,7 @@ import { PopupService } from '../widgets/popupService';
 import { FocusController } from '../focusController';
 import { addCssClass, isVisible } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -19,10 +19,10 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     private hidePopup: () => void;
     private tabListener: () => null;
 
-    private gridPanel: GridPanelComp;
+    private gridBodyComp: GridBodyComp;
 
-    public registerGridComp(gridPanel: GridPanelComp): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     public hideActiveMenu(): void {
@@ -67,7 +67,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         let hidePopup: (() => void);
 
-        const anchorToElement = eventSource || this.gridPanel.getGui();
+        const anchorToElement = eventSource || this.gridBodyComp.getGui();
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             column.setMenuVisible(false, 'contextMenu');
             const isKeyboardEvent = e instanceof KeyboardEvent;

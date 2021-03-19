@@ -8,7 +8,7 @@ import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { FilterManager } from "./filter/filterManager";
 import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
-import { GridPanelComp } from "./gridPanel/gridPanelComp";
+import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { GridApi } from "./gridApi";
 import { ColumnFactory } from "./columnController/columnFactory";
 import { DisplayedGroupCreator } from "./columnController/displayedGroupCreator";
@@ -26,7 +26,7 @@ import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { DragService } from "./dragAndDrop/dragService";
 import { SortController } from "./sortController";
 import { FocusController } from "./focusController";
-import { MouseEventService } from "./gridPanel/mouseEventService";
+import { MouseEventService } from "./gridBodyComp/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
 import { Events, GridReadyEvent } from "./events";
 import { ValueFormatterService } from "./rendering/valueFormatterService";
@@ -34,7 +34,7 @@ import { AgCheckbox } from "./widgets/agCheckbox";
 import { AgRadioButton } from "./widgets/agRadioButton";
 import { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
-import { ScrollVisibleService } from "./gridPanel/scrollVisibleService";
+import { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 import { StylingService } from "./styling/stylingService";
 import { ColumnHoverService } from "./rendering/columnHoverService";
 import { ColumnAnimationService } from "./rendering/columnAnimationService";
@@ -53,7 +53,7 @@ import { ComponentMetadataProvider } from "./components/framework/componentMetad
 import { Beans } from "./rendering/beans";
 import { Environment } from "./environment";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { NavigationService } from "./gridPanel/navigationService";
+import { NavigationService } from "./gridBodyComp/navigationService";
 import { MaxDivHeightScaler } from "./rendering/maxDivHeightScaler";
 import { SelectableService } from "./rowNodes/selectableService";
 import { AutoHeightCalculator } from "./rendering/row/autoHeightCalculator";
@@ -263,7 +263,7 @@ export class GridCoreCreator {
             { componentName: 'AgSlider', componentClass: AgSlider },
             { componentName: 'AgAngleSelect', componentClass: AgAngleSelect },
             { componentName: 'AgColorPicker', componentClass: AgColorPicker },
-            { componentName: 'AgGridPanel', componentClass: GridPanelComp },
+            { componentName: 'AgGridPanel', componentClass: GridBodyComp },
             { componentName: 'AgHeaderRoot', componentClass: HeaderRootComp },
             { componentName: 'AgPagination', componentClass: PaginationComp },
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },

@@ -1,6 +1,6 @@
 import { Column } from "../entities/column";
 import { CellPosition } from "../entities/cellPosition";
-import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { RowPosition } from "../entities/rowPosition";
 import { CellComp } from "../rendering/cellComp";
 
@@ -23,7 +23,7 @@ export interface IRangeController {
     extendLatestRangeInDirection(key: number): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
     updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent?: boolean): void;
-    registerGridComp(gridPanel: GridPanelComp): void;
+    registerGridComp(gridPanel: GridBodyComp): void;
     getRangeStartRow(cellRange: CellRange): RowPosition;
     getRangeEndRow(cellRange: CellRange): RowPosition;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
