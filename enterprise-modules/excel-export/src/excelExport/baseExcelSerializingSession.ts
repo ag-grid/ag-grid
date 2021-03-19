@@ -163,12 +163,23 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     }
 
     private onNewBodyColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
+        let skipCols = 0;
         return (column, index, node) => {
+            if (skipCols > 0) {
+                skipCols -= 1;
+                return;
+            }
             const valueForCell = this.extractRowCellValue(column, index, rowIndex, Constants.EXPORT_TYPE_EXCEL, node);
             const styleIds: string[] = this.config.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
             const excelStyleId: string | null = this.getStyleId(styleIds);
+            const colSpan = column.getColSpan(node);
 
-            currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell));
+            if (colSpan > 1) {
+                skipCols = colSpan - 1;
+                currentCells.push(this.createMergedCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
+            } else {
+                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell));
+            }
         };
     }
 
