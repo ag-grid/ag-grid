@@ -342,6 +342,7 @@ const rebuildPackagesBasedOnChangeState = async () => {
 
         if (buildFailed) {
             fsExtra.writeJsonSync('./.last.build.json', `[${packagesToRun.map(packageName => `"${packageName}"`)}]`);
+            process.exit(buildFailed ? 0 : 1);
         }
     } else {
         console.log("No changed packages to process!");
