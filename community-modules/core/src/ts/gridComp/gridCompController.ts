@@ -4,7 +4,6 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
 import { FocusController } from "../focusController";
 import { BeanStub } from "../context/beanStub";
-import { GridCompService } from "./gridCompService";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { ModuleNames } from "../modules/moduleNames";
 import { IClipboardService } from "../interfaces/iClipboardService";
@@ -39,7 +38,6 @@ export class GridCompController extends BeanStub {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusController') protected readonly focusController: FocusController;
-    @Autowired('gridCompService') protected readonly gridCompService: GridCompService;
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
@@ -73,7 +71,6 @@ export class GridCompController extends BeanStub {
         // register with services that need grid core
         [
             this.gridApi,
-            this.gridCompService,
             this.popupService,
             this.focusController
         ].forEach(service => service.registerGridCompController(this));

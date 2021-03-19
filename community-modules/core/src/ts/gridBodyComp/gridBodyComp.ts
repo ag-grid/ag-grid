@@ -70,6 +70,7 @@ import { PopupService } from "../widgets/popupService";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { KeyName } from '../constants/keyName';
 import {LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams} from "../styling/layoutFeature";
+import { GridBodyController, GridBodyView } from "./gridBodyController";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -222,6 +223,8 @@ export class GridBodyComp extends Component implements LayoutView {
 
     private rowDragFeature: RowDragFeature;
 
+    private controller: GridBodyController;
+
     constructor() {
         super(GRID_PANEL_NORMAL_TEMPLATE);
         this.resetLastHorizontalScrollElementDebounced = debounce(this.resetLastHorizontalScrollElement.bind(this), 500);
@@ -282,6 +285,13 @@ export class GridBodyComp extends Component implements LayoutView {
 
     @PostConstruct
     private init() {
+
+        const view: GridBodyView = {
+
+        };
+
+        this.controller = new GridBodyController(view);
+
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
