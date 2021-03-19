@@ -327,10 +327,11 @@ const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
 const getInterfaceName = name => `${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
 
 const FunctionCodeSample = ({ framework, name, type }) => {
+    const functionName = name.replace(/\([^)]*\)/g, '');
     const args = type.parameters ?
         {
             params: {
-                meta: { name: `${getInterfaceName(name.replace(/\([^)]*\)/g, ''))}Params` },
+                meta: { name: `${getInterfaceName(functionName)}Params` },
                 ...type.parameters
             }
         } :
@@ -361,15 +362,17 @@ const FunctionCodeSample = ({ framework, name, type }) => {
         }
     });
 
-    const functionName = name.endsWith('()') ? name.replace('()', '') : '';
     const functionArguments = shouldUseNewline ?
         `\n    ${argumentDefinitions.join(',\n    ')}\n` :
         argumentDefinitions.join('');
 
-    const returnTypeName = getInterfaceName((functionName || name).replace(/^get/, ''));
+    const returnTypeName = getInterfaceName(functionName).replace(/^get/, '');
+    const functionPrefix = name.includes('(') ?
+        `function ${functionName}(${functionArguments}):` :
+        `${functionName} = (${functionArguments}) =>`;
 
     const lines = [
-        `function ${functionName}(${functionArguments}): ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`,
+        `${functionPrefix} ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`,
     ];
 
     Object.keys(args)
