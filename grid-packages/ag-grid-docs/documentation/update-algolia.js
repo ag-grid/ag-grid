@@ -6,7 +6,7 @@
 require('dotenv').config();
 
 const fs = require('fs-extra');
-const {JSDOM} = require('jsdom');
+const { JSDOM } = require('jsdom');
 const algoliasearch = require('algoliasearch');
 const commander = require("commander");
 
@@ -15,18 +15,16 @@ const supportedFrameworks = require('./src/utils/supported-frameworks');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 
 const options = commander
-    .option('-d, --debug <debug>', 'if debug = true, the script writes the records it would upload into JSON files for inspection', true)
-    .option("-i, --indexNamePrefix <prefix>", 'if indexNamePrefix = "ag-grid-dev" we\'ll update development indices, and for "ag-grid" production', 'ag-grid-dev')
+    .option('-u, --update', 'unless this is specified, the script writes the records it would upload into JSON files for inspection', false)
+    .option('-r, --rollback', 'if this is specified, the script will restore the previous Algolia indices', false)
+    .option('-i, --indexNamePrefix <prefix>', 'if indexNamePrefix = "ag-grid-dev" we\'ll update development indices, and for "ag-grid" production', 'ag-grid-dev')
     .parse(process.argv)
     .opts();
 
-
-const clearIndices = true; // to ensure a clean index, you should clear existing records before inserting new ones
-const debug = options.debug;
-const indexNamePrefix = options.indexNamePrefix;
+const { update, indexNamePrefix, rollback } = options;
 
 console.log("Updating Algolia Indices");
-console.log(`debug: ${debug}, indexNamePrefix: ${indexNamePrefix}`);
+console.log(`update: ${update}, rollback: ${rollback}, indexNamePrefix: ${indexNamePrefix}`);
 console.log(`Updating Algolia using App ID ${process.env.GATSBY_ALGOLIA_APP_ID} and admin key ${process.env.ALGOLIA_ADMIN_KEY}`);
 
 const algoliaClient = algoliasearch(process.env.GATSBY_ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
@@ -157,10 +155,26 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
     return records;
 };
 
+const getBackupIndexName = indexName => `${indexName}_backup`;
+
 const processIndexForFramework = async framework => {
     let rank = 10000; // using this rank ensures that pages that are earlier in the menu will rank higher in results
     const records = [];
     const indexName = `${indexNamePrefix}_${framework}`;
+
+    if (rollback) {
+        const backupIndexName = getBackupIndexName(indexName);
+        const backupIndex = algoliaClient.initIndex(backupIndexName);
+
+        if (backupIndex.exists()) {
+            console.log(`Restoring ${indexName}...`);
+            await algoliaClient.moveIndex(backupIndexName, indexName);
+        } else {
+            console.log(`No backup for ${indexName} was found.`);
+        }
+
+        return;
+    }
 
     console.log(`Generating records for ${indexName}...`);
 
@@ -188,15 +202,13 @@ const processIndexForFramework = async framework => {
         await iterateItems(item.items);
     }
 
-    if (debug) {
-        const fileName = `algolia-${indexName}.json`;
-        fs.writeFileSync(fileName, JSON.stringify(records, null, 2));
-
-        console.log(`Wrote Algolia records for ${indexName} to ${fileName}`);
-    } else {
-        console.log(`Pushing records for ${indexName} to Algolia...`);
-
+    if (update) {
         const index = algoliaClient.initIndex(indexName);
+
+        if (index.exists()) {
+            console.log(`Backing up ${indexName}...`);
+            await algoliaClient.moveIndex(indexName, getBackupIndexName(indexName));
+        }
 
         index.setSettings({
             searchableAttributes: ['title', 'heading', 'subHeading', 'text'], // attributes used for searching
@@ -211,16 +223,20 @@ const processIndexForFramework = async framework => {
         });
 
         try {
-            if (clearIndices) {
-                await index.clearObjects();
-            }
+            console.log(`Pushing records for ${indexName} to Algolia...`);
 
-            const result = await index.saveObjects(records);
+            await index.saveObjects(records);
 
-            console.log(`Response from Algolia:`, result);
+            console.log(`Successfully updated records for ${indexName}`);
         } catch (e) {
             console.error(`Failed to save records.`, e);
         }
+    } else {
+        const fileName = `algolia-${indexName}.json`;
+
+        fs.writeFileSync(fileName, JSON.stringify(records, null, 2));
+
+        console.log(`Wrote Algolia records for ${indexName} to ${fileName}`);
     }
 };
 
