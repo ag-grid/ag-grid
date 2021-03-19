@@ -1014,6 +1014,16 @@
                 "enterprise": true
               },
               {
+                "title": "Data Types",
+                "url": "/excel-export-data-types/",
+                "enterprise": true
+              },
+              {
+                "title": "Hyperlinks",
+                "url": "/excel-export-hyperlinks/",
+                "enterprise": true
+              },
+              {
                 "title": "Extra Content",
                 "url": "/excel-export-extra-content/",
                 "enterprise": true

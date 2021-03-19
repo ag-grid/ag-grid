@@ -32,13 +32,3 @@ Note the following:
 - If you turn off `Auto Convert Formulas`, the `Full Name` column will display the formula as a string.
 
 <grid-example title='Excel Export - Auto Convert Formulas' name='excel-export-auto-convert-formulas' type='generated' options='{ "enterprise": true }'></grid-example>
-
-## Hyperlinks
-Formulas can be used to create `hyperlinks` while exporting an Excel Spreadsheet.
-
-Note the following:
-
-- The URL column has active links in the grid.
-- The exported Excel Spreadsheet will have active working links for the in the URL column.
-
-<grid-example title='Excel Export - Hyperlinks' name='excel-export-hyperlinks' type='generated' options='{ "enterprise": true }'></grid-example>

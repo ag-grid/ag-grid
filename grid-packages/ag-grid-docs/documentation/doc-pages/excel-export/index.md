@@ -44,18 +44,6 @@ The same data that is in the grid gets exported, but none of the GUI representat
 |
 |1. The cells of the column header groups are merged in the same manner as the group headers in AG Grid.
 
-
-## Example: Data types
-
-The following example demonstrates how to use other data types for your export. Note that:
-
-- Boolean works off using 1 for true
-- The date time format for excel follows this format yyyy-mm-ddThh:MM:ss.mmm:
-- If you try to pass data that is not compatible with the underlying data type Excel will throw an error
-- When using `dataType: 'DateTime'` Excel doesn't format the resultant value, in this example it shows 39923. You need to add the formatting inside Excel. You can see a better example of how to handle Date Formatting in the [Excel Export - Excel Styles](/excel-export-styles/#styling-dates) section.
-
-<grid-example title='Excel Data Types' name='excel-export-data-types' type='generated' options='{ "enterprise": true, "exampleHeight": 200 }'></grid-example>
-
 ## Dealing With Errors In Excel
 
 If you get an error when opening the Excel file, the most likely reason is that there is an error in the definition of the styles. If that is the case, we recommend that you remove all style definitions from your configuration and add them one-by-one until you find the definition that is causing the error.
