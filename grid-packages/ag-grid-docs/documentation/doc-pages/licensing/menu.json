@@ -1024,6 +1024,11 @@
                 "enterprise": true
               },
               {
+                "title": "Master Detail",
+                "url": "/excel-export-master-detail/",
+                "enterprise": true
+              },
+              {
                 "title": "Extra Content",
                 "url": "/excel-export-extra-content/",
                 "enterprise": true
