@@ -22,7 +22,7 @@ import { XmlFactory } from "@ag-grid-community/csv-export";
 export class ExcelXmlFactory {
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
-    public static createExcel(styles: ExcelStyle[], worksheet: ExcelWorksheet, sharedStrings?: string[]): string {
+    public static createExcel(styles: ExcelStyle[], worksheet: ExcelWorksheet): string {
         const header = this.excelXmlHeader();
         const docProps = documentProperties.getTemplate();
         const eWorkbook = excelWorkbook.getTemplate();
