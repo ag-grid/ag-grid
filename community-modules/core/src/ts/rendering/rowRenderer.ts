@@ -7,14 +7,13 @@ import { CellFocusedEvent, Events, FirstDataRenderedEvent, ModelUpdatedEvent, Vi
 import { Constants } from "../constants/constants";
 import { CellComp } from "./cellComp";
 import { Autowired, Bean, Optional, Qualifier } from "../context/context";
-import { GridComp } from "../gridComp";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColumnController } from "../columnController/columnController";
 import { Logger, LoggerFactory } from "../logger";
 import { FocusController } from "../focusController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { CellNavigationService } from "../cellNavigationService";
-import { CellPosition, CellPositionUtils } from "../entities/cellPosition";
+import { CellPosition } from "../entities/cellPosition";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
 import { RowContainerComponent } from "./row/rowContainerComponent";
 import { BeanStub } from "../context/beanStub";
@@ -28,13 +27,12 @@ import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { missing, exists } from "../utils/generic";
+import { exists, missing } from "../utils/generic";
 import { iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { pushAll, last } from "../utils/array";
-import { executeNextVMTurn, executeInAWhile, doOnce } from "../utils/function";
+import { last, pushAll } from "../utils/array";
+import { doOnce, executeInAWhile, executeNextVMTurn } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
-import {GridCompController} from "../gridCompController";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {

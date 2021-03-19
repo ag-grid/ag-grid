@@ -1,17 +1,23 @@
 import { Autowired, Bean } from "../context/context";
-import { GridComp } from "../gridComp";
 import { PostProcessPopupParams } from "../entities/gridOptions";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { Environment } from "../environment";
 import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
-import { addCssClass, removeCssClass, getAbsoluteHeight, getAbsoluteWidth, containsClass, addOrRemoveCssClass } from '../utils/dom';
-import { forEach, findIndex, last } from '../utils/array';
+import {
+    addCssClass,
+    addOrRemoveCssClass,
+    containsClass,
+    getAbsoluteHeight,
+    getAbsoluteWidth,
+    removeCssClass
+} from '../utils/dom';
+import { findIndex, forEach, last } from '../utils/array';
 import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
 import { FocusController } from "../focusController";
-import {GridCompController} from "../gridCompController";
+import { GridCompController } from "../gridComp/gridCompController";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;

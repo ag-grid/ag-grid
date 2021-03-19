@@ -1,4 +1,4 @@
-import { Bean, Autowired, PostConstruct, Optional } from "./context/context";
+import { Autowired, Bean, Optional, PostConstruct } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { CellFocusedEvent, Events } from "./events";
@@ -17,12 +17,12 @@ import { RowRenderer } from "./rendering/rowRenderer";
 import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
 import { ColumnGroup } from "./entities/columnGroup";
 import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
-import { GridComp } from "./gridComp";
+import { GridComp } from "./gridComp/gridComp";
 import { getTabIndex } from './utils/browser';
 import { findIndex, last } from './utils/array';
 import { makeNull } from './utils/generic';
 import { Constants } from "./constants/constants";
-import {GridCompController} from "./gridCompController";
+import { GridCompController } from "./gridComp/gridCompController";
 
 @Bean('focusController')
 export class FocusController extends BeanStub {

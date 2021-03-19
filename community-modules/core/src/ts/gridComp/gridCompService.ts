@@ -1,6 +1,6 @@
-import {BeanStub} from "./context/beanStub";
-import {GridCompController} from "./gridCompController";
-import {Bean} from "./context/context";
+import { BeanStub } from "../context/beanStub";
+import { GridCompController } from "./gridCompController";
+import { Bean } from "../context/context";
 
 @Bean('gridCompService')
 export class GridCompService extends BeanStub {

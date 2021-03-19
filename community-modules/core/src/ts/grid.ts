@@ -20,7 +20,7 @@ import { ColumnUtils } from "./columnController/columnUtils";
 import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
 import { ComponentMeta, Context, ContextParams } from "./context/context";
-import { GridComp } from "./gridComp";
+import { GridComp } from "./gridComp/gridComp";
 import { StandardMenuFactory } from "./headerRendering/standardMenu";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { DragService } from "./dragAndDrop/dragService";
@@ -81,18 +81,17 @@ import { IComponent } from "./interfaces/iComponent";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { ModuleNames } from "./modules/moduleNames";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
-import { Component } from "./widgets/component";
 import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 import { HeaderPositionUtils } from "./headerRendering/header/headerPosition";
 import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
-import { missing, exists } from "./utils/generic";
+import { exists, missing } from "./utils/generic";
 import { assign, iterateObject } from "./utils/object";
 import { ColumnDefFactory } from "./columnController/columnDefFactory";
 import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
-import {HeadlessService} from "./headless/headlessService";
-import {GridCompService} from "./gridCompService";
+import { HeadlessService } from "./headless/headlessService";
+import { GridCompService } from "./gridComp/gridCompService";
 
 export interface GridParams {
     // used by Web Components

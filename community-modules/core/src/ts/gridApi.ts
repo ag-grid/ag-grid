@@ -12,7 +12,6 @@ import { RowNode } from "./entities/rowNode";
 import { Constants } from "./constants/constants";
 import { Column } from "./entities/column";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
-import { GridComp } from "./gridComp";
 import { IRowModel } from "./interfaces/iRowModel";
 import { SortController } from "./sortController";
 import { FocusController } from "./focusController";
@@ -24,7 +23,12 @@ import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./interfaces/exportParams";
-import { ExcelExportParams, ExcelFactoryMode, ExcelExportMultipleSheetParams, IExcelCreator } from "./interfaces/iExcelCreator";
+import {
+    ExcelExportMultipleSheetParams,
+    ExcelExportParams,
+    ExcelFactoryMode,
+    IExcelCreator
+} from "./interfaces/iExcelCreator";
 import { IDatasource } from "./interfaces/iDatasource";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import { PaginationProxy } from "./pagination/paginationProxy";
@@ -37,11 +41,15 @@ import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams } from "./interfaces/iServerSideRowModel";
+import {
+    IServerSideRowModel,
+    IServerSideTransactionManager,
+    RefreshStoreParams
+} from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
-import {SideBarDef, SideBarDefParser} from "./entities/sideBar";
-import { IChartService, ChartModel } from "./interfaces/IChartService";
+import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
+import { ChartModel, IChartService } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
@@ -55,7 +63,7 @@ import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
-import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
+import { RowDropZoneEvents, RowDropZoneParams } from "./gridPanel/rowDragFeature";
 import { iterateObject, removeAllReferences } from "./utils/object";
 import { exists, missing } from "./utils/generic";
 import { camelCaseToHumanText } from "./utils/string";
@@ -64,10 +72,9 @@ import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { ServerSideStoreState } from "./interfaces/IServerSideStore";
-import {HeadlessService} from "./headless/headlessService";
-import {GridCompController} from "./gridCompController";
-import {ISideBar} from "./interfaces/iSideBar";
-import {Component} from "./widgets/component";
+import { HeadlessService } from "./headless/headlessService";
+import { GridCompController } from "./gridComp/gridCompController";
+import { ISideBar } from "./interfaces/iSideBar";
 
 export interface StartEditingCellParams {
     rowIndex: number;

@@ -1,5 +1,5 @@
 import { Column } from "../entities/column";
-import {GridCompController} from "../gridCompController";
+import { GridCompController } from "../gridComp/gridCompController";
 
 export interface IClipboardService {
     registerGridCompController(gridCompController: GridCompController): void;

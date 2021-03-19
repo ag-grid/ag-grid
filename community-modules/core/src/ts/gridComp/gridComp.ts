@@ -1,18 +1,18 @@
-import {GridPanelComp} from "./gridPanel/gridPanelComp";
-import {Logger, LoggerFactory} from "./logger";
-import {Autowired} from "./context/context";
-import {Component} from "./widgets/component";
-import {ISideBar} from "./interfaces/iSideBar";
-import {RefSelector} from "./widgets/componentAnnotations";
-import {ModuleNames} from "./modules/moduleNames";
-import {ModuleRegistry} from "./modules/moduleRegistry";
-import {ManagedFocusComponent} from "./widgets/managedFocusComponent";
-import {ColumnController} from "./columnController/columnController";
-import {addCssClass, addOrRemoveCssClass, isVisible} from "./utils/dom";
-import {last} from "./utils/array";
-import {FocusController} from "./focusController";
-import {GridCompController, GridCompView} from "./gridCompController";
-import {LayoutCssClasses, UpdateLayoutClassesParams} from "./styling/layoutFeature";
+import { GridPanelComp } from "../gridPanel/gridPanelComp";
+import { Logger, LoggerFactory } from "../logger";
+import { Autowired } from "../context/context";
+import { Component } from "../widgets/component";
+import { ISideBar } from "../interfaces/iSideBar";
+import { RefSelector } from "../widgets/componentAnnotations";
+import { ModuleNames } from "../modules/moduleNames";
+import { ModuleRegistry } from "../modules/moduleRegistry";
+import { ManagedFocusComponent } from "../widgets/managedFocusComponent";
+import { ColumnController } from "../columnController/columnController";
+import { addCssClass, addOrRemoveCssClass, isVisible } from "../utils/dom";
+import { last } from "../utils/array";
+import { FocusController } from "../focusController";
+import { GridCompController, GridCompView } from "./gridCompController";
+import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
 
 export class GridComp extends ManagedFocusComponent {
 
