@@ -70,7 +70,7 @@ import { PopupService } from "../widgets/popupService";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { KeyName } from '../constants/keyName';
 import {LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams} from "../styling/layoutFeature";
-import { GridBodyController, GridBodyView } from "./gridBodyController";
+import { GridBodyController, GridBodyView, RowAnimationCssClasses } from "./gridBodyController";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -214,12 +214,11 @@ export class GridBodyComp extends Component implements LayoutView {
 
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
+    private printLayout: boolean;
 
     // used to track if pinned panels are showing, so we can turn them off if not
     private pinningRight: boolean;
     private pinningLeft: boolean;
-
-    private printLayout: boolean;
 
     private rowDragFeature: RowDragFeature;
 
@@ -230,75 +229,30 @@ export class GridBodyComp extends Component implements LayoutView {
         this.resetLastHorizontalScrollElementDebounced = debounce(this.resetLastHorizontalScrollElement.bind(this), 500);
     }
 
-    public getVScrollPosition(): { top: number, bottom: number; } {
-        const result = {
-            top: this.eBodyViewport.scrollTop,
-            bottom: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
-        };
-        return result;
-    }
-
-    public getHScrollPosition(): { left: number, right: number; } {
-        const result = {
-            left: this.eCenterViewport.scrollLeft,
-            right: this.eCenterViewport.scrollLeft + this.eCenterViewport.offsetWidth
-        };
-        return result;
-    }
-
-    private onRowDataChanged(): void {
-        this.showOrHideOverlay();
-    }
-
-    private showOrHideOverlay(): void {
-        const isEmpty = this.paginationProxy.isEmpty();
-        const isSuppressNoRowsOverlay = this.gridOptionsWrapper.isSuppressNoRowsOverlay();
-        const method = isEmpty && !isSuppressNoRowsOverlay ? 'showNoRowsOverlay' : 'hideOverlay';
-
-        this[method]();
-    }
-
-    private onNewColumnsLoaded(): void {
-        // hide overlay if columns and rows exist, this can happen if columns are loaded after data.
-        // this problem exists before of the race condition between the services (column controller in this case)
-        // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
-        // this race condition would not happen.
-        if (this.columnController.isReady() && !this.paginationProxy.isEmpty()) {
-            this.hideOverlay();
-        }
-
-        // we don't want each cellComp to register for events, as would increase rendering time.
-        // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
-        // each cell if / when event was fired.
-        this.rowRenderer.forEachCellComp(cellComp => cellComp.onNewColumnsLoaded());
-    }
-
-    public updateLayoutClasses(params: UpdateLayoutClassesParams): void {
-        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
-        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.NORMAL, params.normal);
-        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.PRINT, params.print);
-
-        this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
-        this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);
-        this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
-    }
-
     @PostConstruct
     private init() {
 
         const view: GridBodyView = {
-
+            updateLayoutClasses: this.updateLayoutClasses.bind(this),
+            setProps: (params: { enableRtl: boolean; printLayout: boolean }) => {
+                this.enableRtl = params.enableRtl;
+                this.printLayout = params.printLayout;
+            },
+            setRowAnimationCssOnBodyViewport: this.setRowAnimationCssOnBodyViewport.bind(this),
+            resetTopViewportScrollLeft: ()=> this.eTopViewport.scrollLeft = 0,
+            resetBottomViewportScrollLeft: ()=> this.eBottomViewport.scrollLeft = 0
         };
 
-        this.controller = new GridBodyController(view);
+        const params = {
+            view: view,
+            eTopViewport: this.eTopViewport,
+            eBottomViewport: this.eBottomViewport
+        };
 
-        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
-        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        this.controller = this.createManagedBean(new GridBodyController(params));
 
-        this.createManagedBean(new LayoutFeature(this));
+        this.addPinnedRowsScrollListeners();
 
-        this.suppressScrollOnFloatingRow();
-        this.setupRowAnimationCssClass();
         this.buildRowContainerComponents();
 
         this.addEventListeners();
@@ -373,6 +327,70 @@ export class GridBodyComp extends Component implements LayoutView {
                 }
             });
         });
+    }
+
+    private addPinnedRowsScrollListeners(): void {
+        const con = this.controller;
+        this.addManagedListener(this.eTopViewport, 'scroll', con.onTopViewportScrollLeft.bind(con));
+        this.addManagedListener(this.eBottomViewport, 'scroll', con.onBottomViewportScrollLeft.bind(con));
+    }
+
+    private setRowAnimationCssOnBodyViewport(animateRows: boolean): void {
+        addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_ON, animateRows);
+        addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_OFF, !animateRows);
+    }
+
+    public getVScrollPosition(): { top: number, bottom: number; } {
+        const result = {
+            top: this.eBodyViewport.scrollTop,
+            bottom: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
+        };
+        return result;
+    }
+
+    public getHScrollPosition(): { left: number, right: number; } {
+        const result = {
+            left: this.eCenterViewport.scrollLeft,
+            right: this.eCenterViewport.scrollLeft + this.eCenterViewport.offsetWidth
+        };
+        return result;
+    }
+
+    private onRowDataChanged(): void {
+        this.showOrHideOverlay();
+    }
+
+    private showOrHideOverlay(): void {
+        const isEmpty = this.paginationProxy.isEmpty();
+        const isSuppressNoRowsOverlay = this.gridOptionsWrapper.isSuppressNoRowsOverlay();
+        const method = isEmpty && !isSuppressNoRowsOverlay ? 'showNoRowsOverlay' : 'hideOverlay';
+
+        this[method]();
+    }
+
+    private onNewColumnsLoaded(): void {
+        // hide overlay if columns and rows exist, this can happen if columns are loaded after data.
+        // this problem exists before of the race condition between the services (column controller in this case)
+        // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
+        // this race condition would not happen.
+        if (this.columnController.isReady() && !this.paginationProxy.isEmpty()) {
+            this.hideOverlay();
+        }
+
+        // we don't want each cellComp to register for events, as would increase rendering time.
+        // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
+        // each cell if / when event was fired.
+        this.rowRenderer.forEachCellComp(cellComp => cellComp.onNewColumnsLoaded());
+    }
+
+    public updateLayoutClasses(params: UpdateLayoutClassesParams): void {
+        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.NORMAL, params.normal);
+        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.PRINT, params.print);
+
+        this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+        this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);
+        this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
     }
 
     private onDomLayoutChanged(): void {
@@ -1247,30 +1265,6 @@ export class GridBodyComp extends Component implements LayoutView {
         });
     }
 
-    private setupRowAnimationCssClass(): void {
-        const listener = () => {
-            // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
-            // when scaling and doing row animation.
-            const animateRows = this.gridOptionsWrapper.isAnimateRows() && !this.heightScaler.isScaling();
-            addOrRemoveCssClass(this.eBodyViewport, 'ag-row-animation', animateRows);
-            addOrRemoveCssClass(this.eBodyViewport, 'ag-row-no-animation', !animateRows);
-        };
-
-        listener();
-
-        this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
-    }
-
-    // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
-    // scroll the column into view. we do not want this, the pinned sections should never scroll.
-    // so we listen to scrolls on these containers and reset the scroll if we find one.
-    private suppressScrollOnFloatingRow(): void {
-        const resetTopScroll = () => this.eTopViewport.scrollLeft = 0;
-        const resetBottomScroll = () => this.eTopViewport.scrollLeft = 0;
-
-        this.addManagedListener(this.eTopViewport, 'scroll', resetTopScroll);
-        this.addManagedListener(this.eBottomViewport, 'scroll', resetBottomScroll);
-    }
 
     public getRowContainers(): RowContainerComponents {
         return this.rowContainerComponents;

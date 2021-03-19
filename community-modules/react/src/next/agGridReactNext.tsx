@@ -7,7 +7,7 @@ export function AgGridReactNext(props: any) {
 
     const [headerRows, setHeaderRows] = useState<HeaderRowSt[]>([]);
     const [rows, setRows] = useState<RowSt[]>([]);
-    const [centerRowContainer, setCenterRowContainer] = useState<RowContainerSt>({});
+    const [centerRowContainer, setCenterRowContainer] = useState<RowContainerSt>({height: 0, width: 0});
 
     const [context, setContext] = useState<Context>();
 
