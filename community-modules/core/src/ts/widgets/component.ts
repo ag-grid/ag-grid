@@ -25,6 +25,8 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
+export let elementGettingCreated: HTMLElement;
+
 export class Component extends BeanStub {
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
@@ -153,6 +155,7 @@ export class Component extends BeanStub {
         const ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
 
         if (ComponentClass) {
+            elementGettingCreated = element;
             const newComponent = new ComponentClass(componentParams) as Component;
             this.createBean(newComponent, null, afterPreCreateCallback);
             return newComponent;

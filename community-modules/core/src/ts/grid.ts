@@ -92,6 +92,7 @@ import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
 import { HeadlessService } from "./headless/headlessService";
 import { ControllersService } from "./controllersService";
+import { RowContainerComp } from "./rendering/row/rowContainerComp";
 
 export interface GridParams {
     // used by Web Components
@@ -269,7 +270,8 @@ export class GridCoreCreator {
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
             { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
             { componentName: 'AgPanel', componentClass: AgPanel },
-            { componentName: 'AgDialog', componentClass: AgDialog }
+            { componentName: 'AgDialog', componentClass: AgDialog },
+            { componentName: 'AgRowContainer', componentClass: RowContainerComp }
         ];
 
         const moduleAgStackComps = this.extractModuleEntity(registeredModules,
