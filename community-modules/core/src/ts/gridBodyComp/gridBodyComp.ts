@@ -72,6 +72,7 @@ import { KeyName } from '../constants/keyName';
 import {LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams} from "../styling/layoutFeature";
 import { GridBodyController, GridBodyView, RowAnimationCssClasses } from "./gridBodyController";
 import { RowContainerComp, RowContainerNames } from "../rendering/row/rowContainerComp";
+import { FakeHorizontalScroll } from "./fakeHorizontalScroll";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -96,13 +97,7 @@ const GRID_PANEL_NORMAL_TEMPLATE = /* html */
             <ag-row-container ref="bottomRightContainer" name="${RowContainerNames.BOTTOM_RIGHT}"></ag-row-container>
             <ag-row-container ref="bottomFullWidthContainer" name="${RowContainerNames.BOTTOM_FULL_WITH}"></ag-row-container> 
         </div>
-        <div class="ag-body-horizontal-scroll" ref="eHorizontalScrollBody" aria-hidden="true">
-            <div class="ag-horizontal-left-spacer" ref="eHorizontalLeftSpacer"></div>
-            <div class="ag-body-horizontal-scroll-viewport" ref="eBodyHorizontalScrollViewport">
-                <div class="ag-body-horizontal-scroll-container" ref="eBodyHorizontalScrollContainer"></div>
-            </div>
-            <div class="ag-horizontal-right-spacer" ref="eHorizontalRightSpacer"></div>
-        </div>
+        <ag-fake-horizontal-scroll ref="fakeHScroll"></ag-fake-horizontal-scroll>
         <ag-overlay-wrapper ref="overlayWrapper"></ag-overlay-wrapper>
     </div>`;
 
@@ -157,16 +152,12 @@ export class GridBodyComp extends Component implements LayoutView {
     @Optional('menuFactory') private menuFactory: IMenuFactory;
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
-    // fake horizontal scroller
-    @RefSelector('eHorizontalScrollBody') private eHorizontalScrollBody: HTMLElement;
-    @RefSelector('eHorizontalLeftSpacer') private eHorizontalLeftSpacer: HTMLElement;
-    @RefSelector('eHorizontalRightSpacer') private eHorizontalRightSpacer: HTMLElement;
-    @RefSelector('eBodyHorizontalScrollViewport') private eBodyHorizontalScrollViewport: HTMLElement;
-    @RefSelector('eBodyHorizontalScrollContainer') private eBodyHorizontalScrollContainer: HTMLElement;
-
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
     @RefSelector('eTop') private eTop: HTMLElement;
     @RefSelector('eBottom') private eBottom: HTMLElement;
+
+    // fake horizontal scroll
+    @RefSelector('fakeHScroll') private fakeHScroll: FakeHorizontalScroll;
 
     // Container Components
     @RefSelector('leftContainer') private leftContainer: RowContainerComp;
@@ -1043,11 +1034,11 @@ export class GridBodyComp extends Component implements LayoutView {
         const addIEPadding = isBrowserIE() && visible;
 
         this.centerContainer.getViewport().style.height = `calc(100% + ${scrollbarWidth}px)`;
-        setFixedHeight(this.eHorizontalScrollBody, scrollContainerSize);
+        setFixedHeight(this.fakeHScroll.getGui(), scrollContainerSize);
         // we have to add an extra pixel to the scroller viewport on IE because
         // if the container has the same size as the scrollbar, the scroll button won't work
-        setFixedHeight(this.eBodyHorizontalScrollViewport, scrollContainerSize + (addIEPadding ? 1 : 0));
-        setFixedHeight(this.eBodyHorizontalScrollContainer, scrollContainerSize);
+        setFixedHeight(this.fakeHScroll.getViewport(), scrollContainerSize + (addIEPadding ? 1 : 0));
+        setFixedHeight(this.fakeHScroll.getContainer(), scrollContainerSize);
     }
 
     private setVerticalScrollPaddingVisible(show: boolean): void {
@@ -1310,7 +1301,7 @@ export class GridBodyComp extends Component implements LayoutView {
         this.topCenterContainer.getContainer().style.width = widthPx;
 
         if (!this.printLayout) {
-            this.eBodyHorizontalScrollContainer.style.width = widthPx;
+            this.fakeHScroll.getContainer().style.width = widthPx;
         }
     }
 
@@ -1364,8 +1355,8 @@ export class GridBodyComp extends Component implements LayoutView {
         if (scrollOnRight) {
             rightSpacing += scrollbarWidth;
         }
-        setFixedWidth(this.eHorizontalRightSpacer, rightSpacing);
-        addOrRemoveCssClass(this.eHorizontalRightSpacer, 'ag-scroller-corner', rightSpacing <= scrollbarWidth);
+        setFixedWidth(this.fakeHScroll.getRightSpacer(), rightSpacing);
+        addOrRemoveCssClass(this.fakeHScroll.getRightSpacer(), 'ag-scroller-corner', rightSpacing <= scrollbarWidth);
 
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
@@ -1376,8 +1367,8 @@ export class GridBodyComp extends Component implements LayoutView {
             leftSpacing += scrollbarWidth;
         }
 
-        setFixedWidth(this.eHorizontalLeftSpacer, leftSpacing);
-        addOrRemoveCssClass(this.eHorizontalLeftSpacer, 'ag-scroller-corner', leftSpacing <= scrollbarWidth);
+        setFixedWidth(this.fakeHScroll.getLeftSpacer(), leftSpacing);
+        addOrRemoveCssClass(this.fakeHScroll.getLeftSpacer(), 'ag-scroller-corner', leftSpacing <= scrollbarWidth);
     }
 
     private checkBodyHeight(): void {
@@ -1496,7 +1487,7 @@ export class GridBodyComp extends Component implements LayoutView {
 
     private addScrollListener() {
         this.addManagedListener(this.centerContainer.getViewport(), 'scroll', this.onCenterViewportScroll.bind(this));
-        this.addManagedListener(this.eBodyHorizontalScrollViewport, 'scroll', this.onFakeHorizontalScroll.bind(this));
+        this.addManagedListener(this.fakeHScroll.getViewport(), 'scroll', this.onFakeHorizontalScroll.bind(this));
 
         const onVerticalScroll = this.gridOptionsWrapper.isDebounceVerticalScrollbar() ?
             debounce(this.onVerticalScroll.bind(this), 100)
@@ -1579,8 +1570,8 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     private onFakeHorizontalScroll(): void {
-        if (!this.isControllingScroll(this.eBodyHorizontalScrollViewport)) { return; }
-        this.onBodyHorizontalScroll(this.eBodyHorizontalScrollViewport);
+        if (!this.isControllingScroll(this.fakeHScroll.getViewport())) { return; }
+        this.onBodyHorizontalScroll(this.fakeHScroll.getViewport());
     }
 
     private onCenterViewportScroll(): void {
@@ -1663,7 +1654,7 @@ export class GridBodyComp extends Component implements LayoutView {
         this.bottomCenterContainer.getContainer().style.transform = `translateX(${offset}px)`;
         this.topCenterContainer.getContainer().style.transform = `translateX(${offset}px)`;
 
-        const partner = this.lastHorizontalScrollElement === this.centerContainer.getViewport() ? this.eBodyHorizontalScrollViewport : this.centerContainer.getViewport();
+        const partner = this.lastHorizontalScrollElement === this.centerContainer.getViewport() ? this.fakeHScroll.getViewport() : this.centerContainer.getViewport();
 
         setScrollLeft(partner, scrollLeft, this.enableRtl);
     }

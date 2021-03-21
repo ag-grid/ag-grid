@@ -93,6 +93,7 @@ import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
 import { HeadlessService } from "./headless/headlessService";
 import { ControllersService } from "./controllersService";
 import { RowContainerComp } from "./rendering/row/rowContainerComp";
+import { FakeHorizontalScroll } from "./gridBodyComp/fakeHorizontalScroll";
 
 export interface GridParams {
     // used by Web Components
@@ -271,7 +272,8 @@ export class GridCoreCreator {
             { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
             { componentName: 'AgPanel', componentClass: AgPanel },
             { componentName: 'AgDialog', componentClass: AgDialog },
-            { componentName: 'AgRowContainer', componentClass: RowContainerComp }
+            { componentName: 'AgRowContainer', componentClass: RowContainerComp },
+            { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHorizontalScroll }
         ];
 
         const moduleAgStackComps = this.extractModuleEntity(registeredModules,
