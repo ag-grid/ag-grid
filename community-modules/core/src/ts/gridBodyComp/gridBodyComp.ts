@@ -1026,7 +1026,6 @@ export class GridBodyComp extends Component implements LayoutView {
         const scroller = show ? 'scroll' : 'hidden';
 
         this.eTop.style.overflowY = this.eBottom.style.overflowY = scroller;
-        this.setFakeHScrollSpacerWidths();
     }
 
     public updateRowCount(): void {
@@ -1323,33 +1322,6 @@ export class GridBodyComp extends Component implements LayoutView {
     private setPinnedContainerSize() {
         this.setPinnedLeftWidth();
         this.setPinnedRightWidth();
-        this.setFakeHScrollSpacerWidths();
-    }
-
-    private setFakeHScrollSpacerWidths(): void {
-        // we pad the right based on a) if cols are pinned to the right and
-        // b) if v scroll is showing on the right (normal position of scroll)
-        let rightSpacing = this.columnController.getDisplayedColumnsRightWidth();
-        const scrollOnRight = !this.enableRtl && this.isVerticalScrollShowing();
-        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
-
-        if (scrollOnRight) {
-            rightSpacing += scrollbarWidth;
-        }
-        setFixedWidth(this.fakeHScroll.getRightSpacer(), rightSpacing);
-        addOrRemoveCssClass(this.fakeHScroll.getRightSpacer(), 'ag-scroller-corner', rightSpacing <= scrollbarWidth);
-
-        // we pad the left based on a) if cols are pinned to the left and
-        // b) if v scroll is showing on the left (happens in LTR layout only)
-        let leftSpacing = this.columnController.getDisplayedColumnsLeftWidth();
-        const scrollOnLeft = this.enableRtl && this.isVerticalScrollShowing();
-
-        if (scrollOnLeft) {
-            leftSpacing += scrollbarWidth;
-        }
-
-        setFixedWidth(this.fakeHScroll.getLeftSpacer(), leftSpacing);
-        addOrRemoveCssClass(this.fakeHScroll.getLeftSpacer(), 'ag-scroller-corner', leftSpacing <= scrollbarWidth);
     }
 
     private checkBodyHeight(): void {

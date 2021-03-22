@@ -2,7 +2,7 @@ import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { FakeHorizontalScrollController, FakeHorizontalScrollView } from "./fakeHorizontalScrollController";
-import { setFixedHeight } from "../utils/dom";
+import { addOrRemoveCssClass, setFixedHeight, setFixedWidth } from "../utils/dom";
 
 export class FakeHorizontalScrollComp extends Component {
 
@@ -30,9 +30,15 @@ export class FakeHorizontalScrollComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         const view: FakeHorizontalScrollView = {
-            setHeight: (height: number)=> setFixedHeight(this.getGui(), height),
-            setContainerHeight: (height: number)=> setFixedHeight(this.eContainer, height),
-            setViewportHeight: (height: number)=> setFixedHeight(this.eViewport, height),
+            setHeight: height => setFixedHeight(this.getGui(), height),
+            setContainerHeight: height => setFixedHeight(this.eContainer, height),
+            setViewportHeight: height => setFixedHeight(this.eViewport, height),
+            setRightSpacerFixedWidth: width => setFixedWidth(this.eRightSpacer, width),
+            setLeftSpacerFixedWidth: width => setFixedWidth(this.eLeftSpacer, width),
+            includeLeftSpacerScrollerCss: (cssClass: string, include: boolean) =>
+                addOrRemoveCssClass(this.eLeftSpacer, cssClass, include),
+            includeRightSpacerScrollerCss: (cssClass: string, include: boolean) =>
+                addOrRemoveCssClass(this.eRightSpacer, cssClass, include),
         };
         this.controller = this.createManagedBean(new FakeHorizontalScrollController(view));
     }
@@ -43,14 +49,6 @@ export class FakeHorizontalScrollComp extends Component {
 
     public getContainer(): HTMLElement {
         return this.eContainer;
-    }
-
-    public getRightSpacer(): HTMLElement {
-        return this.eRightSpacer;
-    }
-
-    public getLeftSpacer(): HTMLElement {
-        return this.eLeftSpacer;
     }
 
 }
