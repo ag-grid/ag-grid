@@ -1034,6 +1034,11 @@
                 "enterprise": true
               },
               {
+                "title": "Page Setup",
+                "url": "/excel-export-page-setup/",
+                "enterprise": true
+              },
+              {
                 "title": "Temp",
                 "url": "/excel-export-temp/",
                 "enterprise": true
