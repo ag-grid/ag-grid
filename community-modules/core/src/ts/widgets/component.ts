@@ -157,6 +157,8 @@ export class Component extends BeanStub {
         if (ComponentClass) {
             elementGettingCreated = element;
             const newComponent = new ComponentClass(componentParams) as Component;
+            newComponent.setParentComponent(this);
+
             this.createBean(newComponent, null, afterPreCreateCallback);
             return newComponent;
         }
