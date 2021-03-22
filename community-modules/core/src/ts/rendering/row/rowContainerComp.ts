@@ -1,6 +1,7 @@
 import { Component, elementGettingCreated } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { PostConstruct } from "../../context/context";
+import { RowContainerController, RowContainerView } from "./rowContainerController";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -99,15 +100,26 @@ export class RowContainerComp extends Component {
     @RefSelector('eContainer') private eContainer: HTMLElement;
     private eColsClipper: HTMLElement;
 
-    private name: string | null;
+    private name: string;
 
     constructor() {
         super(templateFactory());
-        this.name = elementGettingCreated.getAttribute('name');
+        this.name = elementGettingCreated.getAttribute('name')!;
     }
 
     @PostConstruct
     private postConstruct(): void {
+        this.setTopLevelElement();
+
+        const view: RowContainerView = {
+            setViewportHeight: height => this.eViewport.style.height = height,
+        };
+
+        this.createManagedBean(new RowContainerController(view, this.name));
+    }
+
+    // because AG Stack doesn't allow putting ref= on the top most element
+    private setTopLevelElement(): void {
         switch (this.name) {
             case RowContainerNames.LEFT :
             case RowContainerNames.RIGHT :

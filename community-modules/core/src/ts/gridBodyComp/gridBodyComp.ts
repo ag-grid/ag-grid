@@ -1013,31 +1013,13 @@ export class GridBodyComp extends Component implements LayoutView {
 
     private updateScrollVisibleServiceImpl(): void {
         const params: SetScrollsVisibleParams = {
-            horizontalScrollShowing: false,
-            verticalScrollShowing: false
+            horizontalScrollShowing: this.isHorizontalScrollShowing(),
+            verticalScrollShowing: this.isVerticalScrollShowing()
         };
-
-        params.verticalScrollShowing = this.isVerticalScrollShowing();
-        params.horizontalScrollShowing = this.isHorizontalScrollShowing();
 
         this.scrollVisibleService.setScrollsVisible(params);
 
-        this.setHorizontalScrollVisible(params.horizontalScrollShowing);
         this.setVerticalScrollPaddingVisible(params.verticalScrollShowing);
-    }
-
-    private setHorizontalScrollVisible(visible: boolean): void {
-        const isSuppressHorizontalScroll = this.gridOptionsWrapper.isSuppressHorizontalScroll();
-        const scrollbarWidth = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
-        const scrollContainerSize = !isSuppressHorizontalScroll ? scrollbarWidth : 0;
-        const addIEPadding = isBrowserIE() && visible;
-
-        this.centerContainer.getViewport().style.height = `calc(100% + ${scrollbarWidth}px)`;
-        setFixedHeight(this.fakeHScroll.getGui(), scrollContainerSize);
-        // we have to add an extra pixel to the scroller viewport on IE because
-        // if the container has the same size as the scrollbar, the scroll button won't work
-        setFixedHeight(this.fakeHScroll.getViewport(), scrollContainerSize + (addIEPadding ? 1 : 0));
-        setFixedHeight(this.fakeHScroll.getContainer(), scrollContainerSize);
     }
 
     private setVerticalScrollPaddingVisible(show: boolean): void {

@@ -2,6 +2,7 @@ import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { FakeHorizontalScrollController, FakeHorizontalScrollView } from "./fakeHorizontalScrollController";
+import { setFixedHeight } from "../utils/dom";
 
 export class FakeHorizontalScrollComp extends Component {
 
@@ -28,7 +29,11 @@ export class FakeHorizontalScrollComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        const view: FakeHorizontalScrollView = {};
+        const view: FakeHorizontalScrollView = {
+            setHeight: (height: number)=> setFixedHeight(this.getGui(), height),
+            setContainerHeight: (height: number)=> setFixedHeight(this.eContainer, height),
+            setViewportHeight: (height: number)=> setFixedHeight(this.eViewport, height),
+        };
         this.controller = this.createManagedBean(new FakeHorizontalScrollController(view));
     }
 
