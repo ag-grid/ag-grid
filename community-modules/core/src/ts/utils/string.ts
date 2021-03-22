@@ -64,10 +64,15 @@ export function utf8_encode(s: string | null): string {
         return stringFromCharCode(((point >> shift) & 0x3F) | 0x80);
     }
 
-    function encodeCodePoint(point: number) {
+    function encodeCodePoint(point: number): string {
+        if (point >=0 && point <= 31) {
+            return `_x${point.toString(16).toUpperCase().padStart(4, '0')}_`;
+        }
+
         if ((point & 0xFFFFFF80) == 0) { // 1-byte sequence
             return stringFromCharCode(point);
         }
+
         let symbol = '';
 
         if ((point & 0xFFFFF800) == 0) { // 2-byte sequence
