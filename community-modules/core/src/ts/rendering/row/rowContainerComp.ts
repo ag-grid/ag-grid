@@ -2,6 +2,7 @@ import { Component, elementGettingCreated } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { PostConstruct } from "../../context/context";
 import { RowContainerController, RowContainerView } from "./rowContainerController";
+import { appendHtml, ensureDomOrder, insertTemplateWithDomOrder, setDisplayed } from "../../utils/dom";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -102,9 +103,29 @@ export class RowContainerComp extends Component {
 
     private name: string;
 
+    // full width containers only show when no children, because they float above the normal rows,
+    // it adds complexity that can be confusing when inspecting the dom when they are not needed.
+    private readonly hideWhenNoChildren: boolean;
+    private childCount = 0;
+
+    private rowTemplatesToAdd: string[] = [];
+    private afterGuiAttachedCallbacks: Function[] = [];
+
+    private scrollTop: number;
+
+    // this is to cater for a 'strange behaviour' where when a panel is made visible, it is firing a scroll
+    // event which we want to ignore. see gridBodyComp.onAnyBodyScroll()
+    private lastMadeVisibleTime = 0;
+
+    // we ensure the rows are in the dom in the order in which they appear on screen when the
+    // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
+    private domOrder: boolean;
+    private lastPlacedElement: HTMLElement | null;
+
     constructor() {
         super(templateFactory());
         this.name = elementGettingCreated.getAttribute('name')!;
+        this.hideWhenNoChildren = elementGettingCreated.getAttribute('hide-when-empty')==='true';
     }
 
     @PostConstruct
@@ -116,6 +137,12 @@ export class RowContainerComp extends Component {
         };
 
         this.createManagedBean(new RowContainerController(view, this.name));
+
+
+
+        // this.domOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        // this.checkVisibility();
+        // this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.checkDomOrder.bind(this));
     }
 
     // because AG Stack doesn't allow putting ref= on the top most element
@@ -156,4 +183,103 @@ export class RowContainerComp extends Component {
         return this.eContainer;
     }
 
+    public setVerticalScrollPosition(verticalScrollPosition: number): void {
+        this.scrollTop = verticalScrollPosition;
+    }
+
+    public getRowElement(compId: number): HTMLElement {
+        return this.eContainer.querySelector(`[comp-id="${compId}"]`) as HTMLElement;
+    }
+
+    public setHeight(height: number | null): void {
+        if (height == null) {
+            this.eContainer.style.height = '';
+            return;
+        }
+
+        this.eContainer.style.height = `${height}px`;
+        if (this.eColsClipper) {
+            this.eColsClipper.style.height = `${height}px`;
+        }
+    }
+
+    public flushRowTemplates(): void {
+
+        // if doing dom order, then rowTemplates will be empty,
+        // or if no rows added since last time also empty.
+        if (this.rowTemplatesToAdd.length !== 0) {
+            const htmlToAdd = this.rowTemplatesToAdd.join('');
+            appendHtml(this.eContainer, htmlToAdd);
+            this.rowTemplatesToAdd.length = 0;
+        }
+
+        // this only empty if no rows since last time, as when
+        // doing dom order, we still have callbacks to process
+        this.afterGuiAttachedCallbacks.forEach(func => func());
+        this.afterGuiAttachedCallbacks.length = 0;
+
+        this.lastPlacedElement = null;
+    }
+
+    public appendRowTemplate(rowTemplate: string,
+                             callback: () => void) {
+
+        if (this.domOrder) {
+            this.lastPlacedElement = insertTemplateWithDomOrder(this.eContainer, rowTemplate, this.lastPlacedElement);
+        } else {
+            this.rowTemplatesToAdd.push(rowTemplate);
+        }
+
+        this.afterGuiAttachedCallbacks.push(callback);
+
+        // it is important we put items in in order, so that when we open a row group,
+        // the new rows are inserted after the opened group, but before the rows below.
+        // that way, the rows below are over the new rows (as dom renders last in dom over
+        // items previous in dom), otherwise the child rows would cover the row below and
+        // that meant the user doesn't see the rows below slide away.
+        this.childCount++;
+        this.checkVisibility();
+    }
+
+    public ensureDomOrder(eRow: HTMLElement): void {
+        if (this.domOrder) {
+            ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
+            this.lastPlacedElement = eRow;
+        }
+    }
+
+    public removeRowElement(eRow: HTMLElement): void {
+        this.eContainer.removeChild(eRow);
+        this.childCount--;
+        this.checkVisibility();
+    }
+
+    private checkVisibility(): void {
+        if (!this.hideWhenNoChildren) { return; }
+
+        const displayed = this.childCount > 0;
+
+        if (this.isDisplayed() !== displayed) {
+            this.setDisplayed(displayed);
+
+            this.lastMadeVisibleTime = new Date().getTime();
+
+            // if we are showing the viewport, then the scroll is always zero,
+            // so we need to align with the other sections (ie if this is full
+            // width container, and first time showing a full width row, we need to
+            // scroll it so full width rows are show in right place alongside the
+            // body rows). without this, there was an issue with 'loading rows' for
+            // server side row model, as loading rows are full width, and they were
+            // not getting displayed in the right location when rows were expanded.
+            if (displayed && this.eViewport) {
+                this.eViewport.scrollTop = this.scrollTop;
+            }
+        }
+    }
+
+    public isMadeVisibleRecently(): boolean {
+        const now = new Date().getTime();
+        const millisSinceVisible = now - this.lastMadeVisibleTime;
+        return millisSinceVisible < 500;
+    }
 }

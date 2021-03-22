@@ -83,7 +83,7 @@ const GRID_PANEL_NORMAL_TEMPLATE = /* html */
             <ag-row-container ref="topLeftContainer" name="${RowContainerNames.TOP_LEFT}"></ag-row-container>
             <ag-row-container ref="topCenterContainer" name="${RowContainerNames.TOP_CENTER}"></ag-row-container>
             <ag-row-container ref="topRightContainer" name="${RowContainerNames.TOP_RIGHT}"></ag-row-container>
-            <ag-row-container ref="topFullWidthContainer" name="${RowContainerNames.TOP_FULL_WITH}"></ag-row-container>
+            <ag-row-container ref="topFullWidthContainer" name="${RowContainerNames.TOP_FULL_WITH}" hide-when-empty="true"></ag-row-container>
         </div>
         <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
             <ag-row-container ref="leftContainer" name="${RowContainerNames.LEFT}"></ag-row-container>
@@ -95,7 +95,7 @@ const GRID_PANEL_NORMAL_TEMPLATE = /* html */
             <ag-row-container ref="bottomLeftContainer" name="${RowContainerNames.BOTTOM_LEFT}"></ag-row-container>
             <ag-row-container ref="bottomCenterContainer" name="${RowContainerNames.BOTTOM_CENTER}"></ag-row-container>
             <ag-row-container ref="bottomRightContainer" name="${RowContainerNames.BOTTOM_RIGHT}"></ag-row-container>
-            <ag-row-container ref="bottomFullWidthContainer" name="${RowContainerNames.BOTTOM_FULL_WITH}"></ag-row-container> 
+            <ag-row-container ref="bottomFullWidthContainer" name="${RowContainerNames.BOTTOM_FULL_WITH}" hide-when-empty="true"></ag-row-container> 
         </div>
         <ag-fake-horizontal-scroll ref="fakeHScroll"></ag-fake-horizontal-scroll>
         <ag-overlay-wrapper ref="overlayWrapper"></ag-overlay-wrapper>
