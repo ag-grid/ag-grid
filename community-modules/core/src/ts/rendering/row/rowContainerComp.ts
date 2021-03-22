@@ -70,12 +70,12 @@ function templateFactory(): string {
         case RowContainerNames.BOTTOM_RIGHT :
         case RowContainerNames.BOTTOM_FULL_WITH :
             res = /* html */
-            `<div class="${containerClass}" role="presentation" unselectable="on"></div>`
+            `<div class="${containerClass}" role="presentation" unselectable="on" ref="eContainer"></div>`
             break;
 
         case RowContainerNames.CENTER :
             res =  /* html */
-            `<div class="${clipperClass}" role="presentation" unselectable="on">
+            `<div class="${clipperClass}" role="presentation" unselectable="on" ref="eColsClipper">
                 <div class="${viewportClass}" ref="eViewport" role="presentation">
                     <div class="${containerClass}" ref="eContainer" role="rowgroup" unselectable="on"></div>
                 </div>
@@ -85,7 +85,7 @@ function templateFactory(): string {
         case RowContainerNames.TOP_CENTER :
         case RowContainerNames.BOTTOM_CENTER :
             res = /* html */
-            `<div class="${viewportClass}" role="presentation" unselectable="on">
+            `<div class="${viewportClass}" role="presentation" unselectable="on" ref="eViewport">
                 <div class="${containerClass}" ref="eContainer" role="presentation" unselectable="on"></div>
             </div>`
             break;
@@ -98,9 +98,10 @@ function templateFactory(): string {
 
 export class RowContainerComp extends Component {
 
+
     @RefSelector('eViewport') private eViewport: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
-    private eColsClipper: HTMLElement;
+    @RefSelector('eColsClipper') private eColsClipper: HTMLElement;
 
     private name: string;
 
@@ -125,7 +126,6 @@ export class RowContainerComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.setTopLevelElement();
 
         const view: RowContainerView = {
             setViewportHeight: height => this.eViewport.style.height = height,
@@ -140,32 +140,6 @@ export class RowContainerComp extends Component {
         const listener = () => this.domOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
         listener();
-    }
-
-    // because AG Stack doesn't allow putting ref= on the top most element
-    private setTopLevelElement(): void {
-        switch (this.name) {
-            case RowContainerNames.LEFT :
-            case RowContainerNames.RIGHT :
-            case RowContainerNames.FULL_WIDTH :
-            case RowContainerNames.TOP_LEFT :
-            case RowContainerNames.TOP_RIGHT :
-            case RowContainerNames.TOP_FULL_WITH :
-            case RowContainerNames.BOTTOM_LEFT :
-            case RowContainerNames.BOTTOM_RIGHT :
-            case RowContainerNames.BOTTOM_FULL_WITH :
-                this.eContainer = this.getGui();
-                break;
-
-            case RowContainerNames.TOP_CENTER :
-            case RowContainerNames.BOTTOM_CENTER :
-                this.eViewport = this.getGui();
-                break;
-
-            case RowContainerNames.CENTER :
-                this.eColsClipper = this.getGui();
-                break;
-        }
     }
 
     public getColsClipper(): HTMLElement {
