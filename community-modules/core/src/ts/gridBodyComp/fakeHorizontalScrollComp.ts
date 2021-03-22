@@ -1,13 +1,9 @@
 import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
+import { PostConstruct } from "../context/context";
+import { FakeHorizontalScrollController, FakeHorizontalScrollView } from "./fakeHorizontalScrollController";
 
-export class FakeHorizontalScroll extends Component {
-
-    // fake horizontal scroller
-    @RefSelector('eLeftSpacer') private eLeftSpacer: HTMLElement;
-    @RefSelector('eRightSpacer') private eRightSpacer: HTMLElement;
-    @RefSelector('eViewport') private eViewport: HTMLElement;
-    @RefSelector('eContainer') private eContainer: HTMLElement;
+export class FakeHorizontalScrollComp extends Component {
 
     private static TEMPLATE = /* html */
         `<div class="ag-body-horizontal-scroll" aria-hidden="true">
@@ -18,8 +14,22 @@ export class FakeHorizontalScroll extends Component {
             <div class="ag-horizontal-right-spacer" ref="eRightSpacer"></div>
         </div>`;
 
+    // fake horizontal scroller
+    @RefSelector('eLeftSpacer') private eLeftSpacer: HTMLElement;
+    @RefSelector('eRightSpacer') private eRightSpacer: HTMLElement;
+    @RefSelector('eViewport') private eViewport: HTMLElement;
+    @RefSelector('eContainer') private eContainer: HTMLElement;
+
+    private controller: FakeHorizontalScrollController;
+
     constructor() {
-        super(FakeHorizontalScroll.TEMPLATE);
+        super(FakeHorizontalScrollComp.TEMPLATE);
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        const view: FakeHorizontalScrollView = {};
+        this.controller = this.createManagedBean(new FakeHorizontalScrollController(view));
     }
 
     public getViewport(): HTMLElement {

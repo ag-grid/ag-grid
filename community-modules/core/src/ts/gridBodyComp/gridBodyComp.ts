@@ -69,10 +69,10 @@ import { KeyCode } from '../constants/keyCode';
 import { PopupService } from "../widgets/popupService";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { KeyName } from '../constants/keyName';
-import {LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams} from "../styling/layoutFeature";
+import {LayoutCssClasses, LayoutView, UpdateLayoutClassesParams} from "../styling/layoutFeature";
 import { GridBodyController, GridBodyView, RowAnimationCssClasses } from "./gridBodyController";
 import { RowContainerComp, RowContainerNames } from "../rendering/row/rowContainerComp";
-import { FakeHorizontalScroll } from "./fakeHorizontalScroll";
+import { FakeHorizontalScrollComp } from "./fakeHorizontalScrollComp";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -157,7 +157,7 @@ export class GridBodyComp extends Component implements LayoutView {
     @RefSelector('eBottom') private eBottom: HTMLElement;
 
     // fake horizontal scroll
-    @RefSelector('fakeHScroll') private fakeHScroll: FakeHorizontalScroll;
+    @RefSelector('fakeHScroll') private fakeHScroll: FakeHorizontalScrollComp;
 
     // Container Components
     @RefSelector('leftContainer') private leftContainer: RowContainerComp;
@@ -288,7 +288,6 @@ export class GridBodyComp extends Component implements LayoutView {
                 this.rangeController.registerGridComp(this);
             }
         }
-        
         
         [this.centerContainer.getViewport(), this.eBodyViewport].forEach(viewport => {
             const unsubscribeFromResize = this.resizeObserverService.observeResize(
