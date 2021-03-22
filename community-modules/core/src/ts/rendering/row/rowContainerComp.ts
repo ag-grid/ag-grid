@@ -2,7 +2,8 @@ import { Component, elementGettingCreated } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { PostConstruct } from "../../context/context";
 import { RowContainerController, RowContainerView } from "./rowContainerController";
-import { appendHtml, ensureDomOrder, insertTemplateWithDomOrder, setDisplayed } from "../../utils/dom";
+import { appendHtml, ensureDomOrder, insertTemplateWithDomOrder } from "../../utils/dom";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -103,11 +104,6 @@ export class RowContainerComp extends Component {
 
     private name: string;
 
-    // full width containers only show when no children, because they float above the normal rows,
-    // it adds complexity that can be confusing when inspecting the dom when they are not needed.
-    private readonly hideWhenNoChildren: boolean;
-    private childCount = 0;
-
     private rowTemplatesToAdd: string[] = [];
     private afterGuiAttachedCallbacks: Function[] = [];
 
@@ -125,7 +121,6 @@ export class RowContainerComp extends Component {
     constructor() {
         super(templateFactory());
         this.name = elementGettingCreated.getAttribute('name')!;
-        this.hideWhenNoChildren = elementGettingCreated.getAttribute('hide-when-empty')==='true';
     }
 
     @PostConstruct
@@ -138,11 +133,13 @@ export class RowContainerComp extends Component {
 
         this.createManagedBean(new RowContainerController(view, this.name));
 
+        this.listenOnDomOrder();
+    }
 
-
-        // this.domOrder = this.gridOptionsWrapper.isEnsureDomOrder();
-        // this.checkVisibility();
-        // this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.checkDomOrder.bind(this));
+    private listenOnDomOrder(): void {
+        const listener = () => this.domOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
+        listener();
     }
 
     // because AG Stack doesn't allow putting ref= on the top most element
@@ -231,14 +228,6 @@ export class RowContainerComp extends Component {
         }
 
         this.afterGuiAttachedCallbacks.push(callback);
-
-        // it is important we put items in in order, so that when we open a row group,
-        // the new rows are inserted after the opened group, but before the rows below.
-        // that way, the rows below are over the new rows (as dom renders last in dom over
-        // items previous in dom), otherwise the child rows would cover the row below and
-        // that meant the user doesn't see the rows below slide away.
-        this.childCount++;
-        this.checkVisibility();
     }
 
     public ensureDomOrder(eRow: HTMLElement): void {
@@ -250,36 +239,6 @@ export class RowContainerComp extends Component {
 
     public removeRowElement(eRow: HTMLElement): void {
         this.eContainer.removeChild(eRow);
-        this.childCount--;
-        this.checkVisibility();
     }
 
-    private checkVisibility(): void {
-        if (!this.hideWhenNoChildren) { return; }
-
-        const displayed = this.childCount > 0;
-
-        if (this.isDisplayed() !== displayed) {
-            this.setDisplayed(displayed);
-
-            this.lastMadeVisibleTime = new Date().getTime();
-
-            // if we are showing the viewport, then the scroll is always zero,
-            // so we need to align with the other sections (ie if this is full
-            // width container, and first time showing a full width row, we need to
-            // scroll it so full width rows are show in right place alongside the
-            // body rows). without this, there was an issue with 'loading rows' for
-            // server side row model, as loading rows are full width, and they were
-            // not getting displayed in the right location when rows were expanded.
-            if (displayed && this.eViewport) {
-                this.eViewport.scrollTop = this.scrollTop;
-            }
-        }
-    }
-
-    public isMadeVisibleRecently(): boolean {
-        const now = new Date().getTime();
-        const millisSinceVisible = now - this.lastMadeVisibleTime;
-        return millisSinceVisible < 500;
-    }
 }

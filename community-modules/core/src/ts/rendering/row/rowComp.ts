@@ -15,7 +15,6 @@ import {
 } from "../../events";
 
 import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
-import { RowContainerComponent } from "./rowContainerComponent";
 import { Component } from "../../widgets/component";
 
 import { ProcessRowParams, RowClassParams } from "../../entities/gridOptions";
@@ -23,17 +22,26 @@ import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { Constants } from "../../constants/constants";
 import { ModuleNames } from "../../modules/moduleNames";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
-import { setAriaExpanded, setAriaSelected, setAriaLabel, setAriaRowIndex } from "../../utils/aria";
+import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
-import { removeCssClass, addCssClass, addOrRemoveCssClass, setDomChildOrder, appendHtml, isElementChildOfClass, addStylesToElement } from "../../utils/dom";
+import {
+    addCssClass,
+    addOrRemoveCssClass,
+    addStylesToElement,
+    appendHtml,
+    isElementChildOfClass,
+    removeCssClass,
+    setDomChildOrder
+} from "../../utils/dom";
 import { removeFromArray } from "../../utils/array";
-import { missing, exists } from "../../utils/generic";
+import { exists, missing } from "../../utils/generic";
 import { isStopPropagationForAgGrid } from "../../utils/event";
-import { iterateObject, assign } from "../../utils/object";
+import { assign, iterateObject } from "../../utils/object";
 import { cssStyleObjectToMarkup } from "../../utils/general";
 import { AngularRowUtils } from "./angularRowUtils";
 import { CellPosition } from "../../entities/cellPosition";
 import { RowPosition } from "../../entities/rowPosition";
+import { RowContainerComp } from "./rowContainerComp";
 
 interface CellTemplate {
     template: string;
@@ -69,10 +77,10 @@ export class RowComp extends Component {
     private eFullWidthRowLeft: HTMLElement;
     private eFullWidthRowRight: HTMLElement;
 
-    private readonly bodyContainerComp: RowContainerComponent;
-    private readonly fullWidthContainerComp: RowContainerComponent;
-    private readonly pinnedLeftContainerComp: RowContainerComponent;
-    private readonly pinnedRightContainerComp: RowContainerComponent;
+    private readonly bodyContainerComp: RowContainerComp;
+    private readonly fullWidthContainerComp: RowContainerComp;
+    private readonly pinnedLeftContainerComp: RowContainerComp;
+    private readonly pinnedRightContainerComp: RowContainerComp;
 
     private fullWidthRowComponent: ICellRendererComp | null | undefined;
     private fullWidthRowComponentBody: ICellRendererComp | null | undefined;
@@ -134,10 +142,10 @@ export class RowComp extends Component {
 
     constructor(
         parentScope: any,
-        bodyContainerComp: RowContainerComponent,
-        pinnedLeftContainerComp: RowContainerComponent,
-        pinnedRightContainerComp: RowContainerComponent,
-        fullWidthContainerComp: RowContainerComponent,
+        bodyContainerComp: RowContainerComp,
+        pinnedLeftContainerComp: RowContainerComp,
+        pinnedRightContainerComp: RowContainerComp,
+        fullWidthContainerComp: RowContainerComp,
         rowNode: RowNode,
         beans: Beans,
         animateIn: boolean,
@@ -302,7 +310,7 @@ export class RowComp extends Component {
     }
 
     private createRowContainer(
-        rowContainerComp: RowContainerComponent,
+        rowContainerComp: RowContainerComp,
         cols: Column[],
         callback: (eRow: HTMLElement) => void
     ): void {
@@ -978,7 +986,7 @@ export class RowComp extends Component {
     }
 
     private createFullWidthRowContainer(
-        rowContainerComp: RowContainerComponent,
+        rowContainerComp: RowContainerComp,
         pinned: string | null,
         extraCssClass: string | null,
         cellRendererType: string,
@@ -1313,7 +1321,7 @@ export class RowComp extends Component {
         });
     }
 
-    private afterRowAttached(rowContainerComp: RowContainerComponent, eRow: HTMLElement): void {
+    private afterRowAttached(rowContainerComp: RowContainerComp, eRow: HTMLElement): void {
         this.addDomData(eRow);
 
         this.removeSecondPassFuncs.push(() => {

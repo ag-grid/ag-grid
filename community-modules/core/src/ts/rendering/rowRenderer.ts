@@ -15,7 +15,6 @@ import { IRangeController } from "../interfaces/iRangeController";
 import { CellNavigationService } from "../cellNavigationService";
 import { CellPosition } from "../entities/cellPosition";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
-import { RowContainerComponent } from "./row/rowContainerComponent";
 import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCellsParams } from "../gridApi";
@@ -33,6 +32,7 @@ import { createArrayOfNumbers } from "../utils/number";
 import { last, pushAll } from "../utils/array";
 import { doOnce, executeInAWhile, executeNextVMTurn } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
+import { RowContainerComp } from "./row/rowContainerComp";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -294,10 +294,10 @@ export class RowRenderer extends BeanStub {
     private refreshFloatingRows(
         rowComps: RowComp[],
         rowNodes: RowNode[],
-        pinnedLeftContainerComp: RowContainerComponent,
-        pinnedRightContainerComp: RowContainerComponent,
-        bodyContainerComp: RowContainerComponent,
-        fullWidthContainerComp: RowContainerComponent
+        pinnedLeftContainerComp: RowContainerComp,
+        pinnedRightContainerComp: RowContainerComp,
+        bodyContainerComp: RowContainerComp,
+        fullWidthContainerComp: RowContainerComp
     ): void {
         rowComps.forEach((row: RowComp) => {
             row.destroy();
@@ -459,7 +459,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private sizeContainerToPageHeight(): void {
-        const containers: RowContainerComponent[] = [
+        const containers: RowContainerComp[] = [
             this.rowContainers.body,
             this.rowContainers.fullWidth,
             this.rowContainers.pinnedLeft,
@@ -826,7 +826,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private flushContainers(rowComps: RowComp[]): void {
-        iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComponent) => {
+        iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComp) => {
             if (rowContainerComp) {
                 rowContainerComp.flushRowTemplates();
             }

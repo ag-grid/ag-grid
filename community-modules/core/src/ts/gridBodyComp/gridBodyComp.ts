@@ -11,7 +11,6 @@ import { IClipboardService } from '../interfaces/iClipboardService';
 import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import { ScrollVisibleService, SetScrollsVisibleParams } from './scrollVisibleService';
 import { Column } from '../entities/column';
-import { RowContainerComponent } from '../rendering/row/rowContainerComponent';
 import { RowNode } from '../entities/rowNode';
 import { PaginationProxy } from '../pagination/paginationProxy';
 import { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
@@ -41,35 +40,33 @@ import { ModuleNames } from '../modules/moduleNames';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { ColumnController } from '../columnController/columnController';
 import { HeaderNavigationService } from '../headerRendering/header/headerNavigationService';
-import { setAriaMultiSelectable, setAriaRowCount, setAriaColCount } from '../utils/aria';
+import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../utils/aria';
 import { debounce } from '../utils/function';
 import {
     addCssClass,
     addOrRemoveCssClass,
+    getInnerHeight,
+    getInnerWidth,
+    getScrollLeft,
     isHorizontalScrollShowing,
     isRtlNegativeScroll,
     isVerticalScrollShowing,
     isVisible,
-    getInnerHeight,
-    getInnerWidth,
-    getScrollLeft,
     removeCssClass,
     setDisplayed,
-    setFixedHeight,
     setFixedWidth,
     setScrollLeft
 } from '../utils/dom';
-import { getTabIndex, isBrowserIE, isIOSUserAgent } from '../utils/browser';
+import { getTabIndex, isIOSUserAgent } from '../utils/browser';
 import { missing, missingOrEmpty } from '../utils/generic';
-import { getTarget, isStopPropagationForAgGrid, getComponentForEvent } from '../utils/event';
+import { getComponentForEvent, getTarget, isStopPropagationForAgGrid } from '../utils/event';
 import { isUserSuppressingKeyboardEvent } from '../utils/keyboard';
 import { last } from '../utils/array';
-import { iterateObject } from '../utils/object';
 import { KeyCode } from '../constants/keyCode';
 import { PopupService } from "../widgets/popupService";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { KeyName } from '../constants/keyName';
-import {LayoutCssClasses, LayoutView, UpdateLayoutClassesParams} from "../styling/layoutFeature";
+import { LayoutCssClasses, LayoutView, UpdateLayoutClassesParams } from "../styling/layoutFeature";
 import { GridBodyController, GridBodyView, RowAnimationCssClasses } from "./gridBodyController";
 import { RowContainerComp, RowContainerNames } from "../rendering/row/rowContainerComp";
 import { FakeHorizontalScrollComp } from "./fakeHorizontalScrollComp";
@@ -83,7 +80,7 @@ const GRID_PANEL_NORMAL_TEMPLATE = /* html */
             <ag-row-container ref="topLeftContainer" name="${RowContainerNames.TOP_LEFT}"></ag-row-container>
             <ag-row-container ref="topCenterContainer" name="${RowContainerNames.TOP_CENTER}"></ag-row-container>
             <ag-row-container ref="topRightContainer" name="${RowContainerNames.TOP_RIGHT}"></ag-row-container>
-            <ag-row-container ref="topFullWidthContainer" name="${RowContainerNames.TOP_FULL_WITH}" hide-when-empty="true"></ag-row-container>
+            <ag-row-container ref="topFullWidthContainer" name="${RowContainerNames.TOP_FULL_WITH}"></ag-row-container>
         </div>
         <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
             <ag-row-container ref="leftContainer" name="${RowContainerNames.LEFT}"></ag-row-container>
@@ -95,7 +92,7 @@ const GRID_PANEL_NORMAL_TEMPLATE = /* html */
             <ag-row-container ref="bottomLeftContainer" name="${RowContainerNames.BOTTOM_LEFT}"></ag-row-container>
             <ag-row-container ref="bottomCenterContainer" name="${RowContainerNames.BOTTOM_CENTER}"></ag-row-container>
             <ag-row-container ref="bottomRightContainer" name="${RowContainerNames.BOTTOM_RIGHT}"></ag-row-container>
-            <ag-row-container ref="bottomFullWidthContainer" name="${RowContainerNames.BOTTOM_FULL_WITH}" hide-when-empty="true"></ag-row-container> 
+            <ag-row-container ref="bottomFullWidthContainer" name="${RowContainerNames.BOTTOM_FULL_WITH}"></ag-row-container> 
         </div>
         <ag-fake-horizontal-scroll ref="fakeHScroll"></ag-fake-horizontal-scroll>
         <ag-overlay-wrapper ref="overlayWrapper"></ag-overlay-wrapper>
@@ -115,7 +112,7 @@ export type RowContainerComponentNames =
     'floatingBottomPinnedRight' |
     'floatingBottomFullWidth';
 
-export type RowContainerComponents = { [K in RowContainerComponentNames]: RowContainerComponent };
+export type RowContainerComponents = { [K in RowContainerComponentNames]: RowContainerComp };
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
@@ -1190,41 +1187,22 @@ export class GridBodyComp extends Component implements LayoutView {
             this.eTop, this.eBottom, this.fullWidthContainer.getContainer()];
 
         this.rowContainerComponents = {
-            body: new RowContainerComponent({
-                eContainer: this.centerContainer.getContainer(),
-                eWrapper: this.centerContainer.getColsClipper(),
-                eViewport: this.eBodyViewport
-            }),
-            fullWidth: new RowContainerComponent({
-                eContainer: this.fullWidthContainer.getContainer()
-            }),
-            pinnedLeft: new RowContainerComponent({ eContainer: this.leftContainer.getContainer() }),
-            pinnedRight: new RowContainerComponent({ eContainer: this.rightContainer.getContainer() }),
+            body: this.centerContainer,
+            fullWidth: this.fullWidthContainer,
+            pinnedLeft: this.leftContainer,
+            pinnedRight: this.rightContainer,
 
-            floatingTop: new RowContainerComponent({ eContainer: this.topCenterContainer.getContainer() }),
-            floatingTopPinnedLeft: new RowContainerComponent({ eContainer: this.topLeftContainer.getContainer() }),
-            floatingTopPinnedRight: new RowContainerComponent({ eContainer: this.topRightContainer.getContainer() }),
-            floatingTopFullWidth: new RowContainerComponent({
-                eContainer: this.topFullWidthContainer.getContainer(),
-                hideWhenNoChildren: true
-            }),
+            floatingTop: this.topCenterContainer,
+            floatingTopPinnedLeft: this.topLeftContainer,
+            floatingTopPinnedRight: this.topRightContainer,
+            floatingTopFullWidth: this.topFullWidthContainer,
 
-            floatingBottom: new RowContainerComponent({ eContainer: this.bottomCenterContainer.getContainer() }),
-            floatingBottomPinnedLeft: new RowContainerComponent({ eContainer: this.bottomLeftContainer.getContainer() }),
-            floatingBottomPinnedRight: new RowContainerComponent({ eContainer: this.bottomRightContainer.getContainer() }),
-            floatingBottomFullWidth: new RowContainerComponent({
-                eContainer: this.bottomFullWidthContainer.getContainer(),
-                hideWhenNoChildren: true
-            }),
+            floatingBottom: this.bottomCenterContainer,
+            floatingBottomPinnedLeft: this.bottomLeftContainer,
+            floatingBottomPinnedRight: this.bottomRightContainer,
+            floatingBottomFullWidth: this.bottomFullWidthContainer,
         };
-
-        iterateObject(this.rowContainerComponents, (key: string, container: RowContainerComponent) => {
-            if (container) {
-                this.getContext().createBean(container);
-            }
-        });
     }
-
 
     public getRowContainers(): RowContainerComponents {
         return this.rowContainerComponents;
