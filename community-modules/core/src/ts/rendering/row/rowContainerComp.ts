@@ -45,7 +45,7 @@ const ViewportCssClasses: Map<RowContainerNames, string> = new Map([
     [RowContainerNames.BOTTOM_CENTER, 'ag-floating-bottom-viewport'],
 ]);
 
-const ClipperCssClasses: Map<RowContainerNames, string> = new Map([
+const WrapperCssClasses: Map<RowContainerNames, string> = new Map([
     [RowContainerNames.CENTER, 'ag-center-cols-clipper'],
 ]);
 
@@ -54,7 +54,7 @@ function templateFactory(): string {
 
     const containerClass = ContainerCssClasses.get(name);
     const viewportClass = ViewportCssClasses.get(name);
-    const clipperClass = ClipperCssClasses.get(name);
+    const wrapperClass = WrapperCssClasses.get(name);
 
     let res: string;
 
@@ -70,12 +70,12 @@ function templateFactory(): string {
         case RowContainerNames.BOTTOM_RIGHT :
         case RowContainerNames.BOTTOM_FULL_WITH :
             res = /* html */
-            `<div class="${containerClass}" role="presentation" unselectable="on" ref="eContainer"></div>`
+            `<div class="${containerClass}" ref="eContainer" role="presentation" unselectable="on"></div>`
             break;
 
         case RowContainerNames.CENTER :
             res =  /* html */
-            `<div class="${clipperClass}" role="presentation" unselectable="on" ref="eColsClipper">
+            `<div class="${wrapperClass}" ref="eWrapper" role="presentation" unselectable="on">
                 <div class="${viewportClass}" ref="eViewport" role="presentation">
                     <div class="${containerClass}" ref="eContainer" role="rowgroup" unselectable="on"></div>
                 </div>
@@ -85,7 +85,7 @@ function templateFactory(): string {
         case RowContainerNames.TOP_CENTER :
         case RowContainerNames.BOTTOM_CENTER :
             res = /* html */
-            `<div class="${viewportClass}" role="presentation" unselectable="on" ref="eViewport">
+            `<div class="${viewportClass}" ref="eViewport" role="presentation" unselectable="on">
                 <div class="${containerClass}" ref="eContainer" role="presentation" unselectable="on"></div>
             </div>`
             break;
@@ -101,7 +101,7 @@ export class RowContainerComp extends Component {
 
     @RefSelector('eViewport') private eViewport: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
-    @RefSelector('eColsClipper') private eColsClipper: HTMLElement;
+    @RefSelector('eWrapper') private eWrapper: HTMLElement;
 
     private name: string;
 
@@ -142,15 +142,11 @@ export class RowContainerComp extends Component {
         listener();
     }
 
-    public getColsClipper(): HTMLElement {
-        return this.eColsClipper;
-    }
-
-    public getViewport(): HTMLElement {
+    public getViewportElement(): HTMLElement {
         return this.eViewport;
     }
 
-    public getContainer(): HTMLElement {
+    public getContainerElement(): HTMLElement {
         return this.eContainer;
     }
 
@@ -163,14 +159,11 @@ export class RowContainerComp extends Component {
     }
 
     public setHeight(height: number | null): void {
-        if (height == null) {
-            this.eContainer.style.height = '';
-            return;
-        }
+        const heightString = height != null ? `${height}px` : ``;
 
-        this.eContainer.style.height = `${height}px`;
-        if (this.eColsClipper) {
-            this.eColsClipper.style.height = `${height}px`;
+        this.eContainer.style.height = heightString;
+        if (this.eWrapper) {
+            this.eWrapper.style.height = heightString;
         }
     }
 

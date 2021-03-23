@@ -215,14 +215,14 @@ export class GridBodyComp extends Component implements LayoutView {
                 this.printLayout = params.printLayout;
             },
             setRowAnimationCssOnBodyViewport: this.setRowAnimationCssOnBodyViewport.bind(this),
-            resetTopViewportScrollLeft: ()=> this.topCenterContainer.getViewport().scrollLeft = 0,
-            resetBottomViewportScrollLeft: ()=> this.bottomCenterContainer.getViewport().scrollLeft = 0
+            resetTopViewportScrollLeft: ()=> this.topCenterContainer.getViewportElement().scrollLeft = 0,
+            resetBottomViewportScrollLeft: ()=> this.bottomCenterContainer.getViewportElement().scrollLeft = 0
         };
 
         const params = {
             view: view,
-            eTopViewport: this.topCenterContainer.getViewport(),
-            eBottomViewport: this.bottomCenterContainer.getViewport()
+            eTopViewport: this.topCenterContainer.getViewportElement(),
+            eBottomViewport: this.bottomCenterContainer.getViewportElement()
         };
 
         this.controller = this.createManagedBean(new GridBodyController(params));
@@ -286,7 +286,7 @@ export class GridBodyComp extends Component implements LayoutView {
             }
         }
         
-        [this.centerContainer.getViewport(), this.eBodyViewport].forEach(viewport => {
+        [this.centerContainer.getViewportElement(), this.eBodyViewport].forEach(viewport => {
             const unsubscribeFromResize = this.resizeObserverService.observeResize(
                 viewport, this.onCenterViewportResized.bind(this));
             this.addDestroyFunc(() => unsubscribeFromResize());
@@ -307,8 +307,8 @@ export class GridBodyComp extends Component implements LayoutView {
 
     private addPinnedRowsScrollListeners(): void {
         const con = this.controller;
-        this.addManagedListener(this.topCenterContainer.getViewport(), 'scroll', con.onTopViewportScrollLeft.bind(con));
-        this.addManagedListener(this.bottomCenterContainer.getViewport(), 'scroll', con.onBottomViewportScrollLeft.bind(con));
+        this.addManagedListener(this.topCenterContainer.getViewportElement(), 'scroll', con.onTopViewportScrollLeft.bind(con));
+        this.addManagedListener(this.bottomCenterContainer.getViewportElement(), 'scroll', con.onBottomViewportScrollLeft.bind(con));
     }
 
     private setRowAnimationCssOnBodyViewport(animateRows: boolean): void {
@@ -326,8 +326,8 @@ export class GridBodyComp extends Component implements LayoutView {
 
     public getHScrollPosition(): { left: number, right: number; } {
         const result = {
-            left: this.centerContainer.getViewport().scrollLeft,
-            right: this.centerContainer.getViewport().scrollLeft + this.centerContainer.getViewport().offsetWidth
+            left: this.centerContainer.getViewportElement().scrollLeft,
+            right: this.centerContainer.getViewportElement().scrollLeft + this.centerContainer.getViewportElement().offsetWidth
         };
         return result;
     }
@@ -381,7 +381,7 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     private onCenterViewportResized(): void {
-        if (isVisible(this.centerContainer.getViewport())) {
+        if (isVisible(this.centerContainer.getViewportElement())) {
             this.checkViewportAndScrolls();
 
             const newWidth = this.getCenterWidth();
@@ -504,9 +504,9 @@ export class GridBodyComp extends Component implements LayoutView {
         }
 
         const containers = [
-            this.leftContainer.getContainer(),
-            this.rightContainer.getContainer(),
-            this.centerContainer.getContainer(),
+            this.leftContainer.getContainerElement(),
+            this.rightContainer.getContainerElement(),
+            this.centerContainer.getContainerElement(),
             this.eTop,
             this.eBottom
         ];
@@ -573,7 +573,7 @@ export class GridBodyComp extends Component implements LayoutView {
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         const listener = (mouseEvent: MouseEvent) => {
             const target = getTarget(mouseEvent);
-            if (target === this.eBodyViewport || target === this.centerContainer.getViewport()) {
+            if (target === this.eBodyViewport || target === this.centerContainer.getViewportElement()) {
                 // show it
                 this.onContextMenu(mouseEvent, null, null, null, null, this.getGui());
                 this.preventDefaultOnContextMenu(mouseEvent);
@@ -954,12 +954,12 @@ export class GridBodyComp extends Component implements LayoutView {
 
     // + moveColumnController
     public getCenterWidth(): number {
-        return getInnerWidth(this.centerContainer.getViewport());
+        return getInnerWidth(this.centerContainer.getViewportElement());
     }
 
     public isHorizontalScrollShowing(): boolean {
         const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
-        return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.centerContainer.getViewport());
+        return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.centerContainer.getViewportElement());
     }
 
     public isVerticalScrollShowing(): boolean {
@@ -993,7 +993,7 @@ export class GridBodyComp extends Component implements LayoutView {
         // adding and removing the grid from the DOM both resets the scroll position and
         // triggers a resize event, so notify listeners if the scroll position has changed
         if (this.scrollLeft !== this.getCenterViewportScrollLeft()) {
-            this.onBodyHorizontalScroll(this.centerContainer.getViewport());
+            this.onBodyHorizontalScroll(this.centerContainer.getViewportElement());
         }
     }
 
@@ -1166,25 +1166,25 @@ export class GridBodyComp extends Component implements LayoutView {
 
     // used by autoWidthCalculator and autoHeightCalculator
     public getCenterContainer(): HTMLElement {
-        return this.centerContainer.getContainer();
+        return this.centerContainer.getContainerElement();
     }
 
     public getDropTargetBodyContainers(): HTMLElement[] {
-        return [this.eBodyViewport, this.topCenterContainer.getViewport(), this.bottomCenterContainer.getViewport()];
+        return [this.eBodyViewport, this.topCenterContainer.getViewportElement(), this.bottomCenterContainer.getViewportElement()];
     }
 
     public getDropTargetLeftContainers(): HTMLElement[] {
-        return [this.leftContainer.getContainer(), this.bottomLeftContainer.getContainer(), this.topLeftContainer.getContainer()];
+        return [this.leftContainer.getContainerElement(), this.bottomLeftContainer.getContainerElement(), this.topLeftContainer.getContainerElement()];
     }
 
     public getDropTargetRightContainers(): HTMLElement[] {
-        return [this.rightContainer.getContainer(), this.bottomRightContainer.getContainer(), this.topRightContainer.getContainer()];
+        return [this.rightContainer.getContainerElement(), this.bottomRightContainer.getContainerElement(), this.topRightContainer.getContainerElement()];
     }
 
     private buildRowContainerComponents() {
         this.eAllCellContainers = [
-            this.leftContainer.getContainer(), this.rightContainer.getContainer(), this.centerContainer.getContainer(),
-            this.eTop, this.eBottom, this.fullWidthContainer.getContainer()];
+            this.leftContainer.getContainerElement(), this.rightContainer.getContainerElement(), this.centerContainer.getContainerElement(),
+            this.eTop, this.eBottom, this.fullWidthContainer.getContainerElement()];
 
         this.rowContainerComponents = {
             body: this.centerContainer,
@@ -1254,9 +1254,9 @@ export class GridBodyComp extends Component implements LayoutView {
 
         const widthPx = `${width}px`;
 
-        this.centerContainer.getContainer().style.width = widthPx;
-        this.bottomCenterContainer.getContainer().style.width = widthPx;
-        this.topCenterContainer.getContainer().style.width = widthPx;
+        this.centerContainer.getContainerElement().style.width = widthPx;
+        this.bottomCenterContainer.getContainerElement().style.width = widthPx;
+        this.topCenterContainer.getContainerElement().style.width = widthPx;
 
         if (!this.printLayout) {
             this.fakeHScroll.getContainer().style.width = widthPx;
@@ -1267,7 +1267,7 @@ export class GridBodyComp extends Component implements LayoutView {
         const oldPinning = this.pinningLeft;
         const widthOfCols = this.columnController.getDisplayedColumnsLeftWidth();
         const newPinning = this.pinningLeft = !this.printLayout && widthOfCols > 0;
-        const containers = [this.leftContainer.getContainer(), this.topLeftContainer.getContainer(), this.bottomLeftContainer.getContainer()];
+        const containers = [this.leftContainer.getContainerElement(), this.topLeftContainer.getContainerElement(), this.bottomLeftContainer.getContainerElement()];
 
         if (oldPinning !== newPinning) {
             this.headerRootComp.setLeftVisible(newPinning);
@@ -1284,7 +1284,7 @@ export class GridBodyComp extends Component implements LayoutView {
         const oldPinning = this.pinningRight;
         const widthOfCols = this.columnController.getDisplayedColumnsRightWidth();
         const newPinning = this.pinningRight = !this.printLayout && widthOfCols > 0;
-        const containers = [this.rightContainer.getContainer(), this.topRightContainer.getContainer(), this.bottomRightContainer.getContainer()];
+        const containers = [this.rightContainer.getContainerElement(), this.topRightContainer.getContainerElement(), this.bottomRightContainer.getContainerElement()];
 
         if (oldPinning !== newPinning) {
             this.headerRootComp.setRightVisible(newPinning);
@@ -1381,13 +1381,13 @@ export class GridBodyComp extends Component implements LayoutView {
     // called by scrollHorizontally method and alignedGridsService
     public setHorizontalScrollPosition(hScrollPosition: number): void {
         const minScrollLeft = 0;
-        const maxScrollLeft = this.centerContainer.getViewport().scrollWidth - this.getCenterWidth();
+        const maxScrollLeft = this.centerContainer.getViewportElement().scrollWidth - this.getCenterWidth();
 
         if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
             hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
         }
 
-        this.centerContainer.getViewport().scrollLeft = hScrollPosition;
+        this.centerContainer.getViewportElement().scrollLeft = hScrollPosition;
 
         // we need to manually do the event handling (rather than wait for the event)
         // for the alignedGridsService, as if we don't, the aligned grid service gets
@@ -1402,10 +1402,10 @@ export class GridBodyComp extends Component implements LayoutView {
 
     // called by the headerRootComp and moveColumnController
     public scrollHorizontally(pixels: number): number {
-        const oldScrollPosition = this.centerContainer.getViewport().scrollLeft;
+        const oldScrollPosition = this.centerContainer.getViewportElement().scrollLeft;
 
         this.setHorizontalScrollPosition(oldScrollPosition + pixels);
-        return this.centerContainer.getViewport().scrollLeft - oldScrollPosition;
+        return this.centerContainer.getViewportElement().scrollLeft - oldScrollPosition;
     }
 
     // called by rowDragFeature
@@ -1417,7 +1417,7 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     private addScrollListener() {
-        this.addManagedListener(this.centerContainer.getViewport(), 'scroll', this.onCenterViewportScroll.bind(this));
+        this.addManagedListener(this.centerContainer.getViewportElement(), 'scroll', this.onCenterViewportScroll.bind(this));
         this.addManagedListener(this.fakeHScroll.getViewport(), 'scroll', this.onFakeHorizontalScroll.bind(this));
 
         const onVerticalScroll = this.gridOptionsWrapper.isDebounceVerticalScrollbar() ?
@@ -1477,7 +1477,7 @@ export class GridBodyComp extends Component implements LayoutView {
 
         if (direction === 'horizontal') {
             const clientWidth = this.getCenterWidth();
-            const { scrollWidth } = this.centerContainer.getViewport();
+            const { scrollWidth } = this.centerContainer.getViewportElement();
 
             if (this.enableRtl && isRtlNegativeScroll()) {
                 if (scrollTo > 0) { return true; }
@@ -1506,12 +1506,12 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     private onCenterViewportScroll(): void {
-        if (!this.isControllingScroll(this.centerContainer.getViewport())) { return; }
-        this.onBodyHorizontalScroll(this.centerContainer.getViewport());
+        if (!this.isControllingScroll(this.centerContainer.getViewportElement())) { return; }
+        this.onBodyHorizontalScroll(this.centerContainer.getViewportElement());
     }
 
     private onBodyHorizontalScroll(eSource: HTMLElement): void {
-        const { scrollLeft } = this.centerContainer.getViewport();
+        const { scrollLeft } = this.centerContainer.getViewportElement();
 
         if (this.shouldBlockScrollUpdate('horizontal', scrollLeft, true)) {
             return;
@@ -1566,12 +1566,12 @@ export class GridBodyComp extends Component implements LayoutView {
 
     public getCenterViewportScrollLeft(): number {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        return getScrollLeft(this.centerContainer.getViewport(), this.enableRtl);
+        return getScrollLeft(this.centerContainer.getViewportElement(), this.enableRtl);
     }
 
     private setCenterViewportScrollLeft(value: number): void {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        setScrollLeft(this.centerContainer.getViewport(), value, this.enableRtl);
+        setScrollLeft(this.centerContainer.getViewportElement(), value, this.enableRtl);
     }
 
     public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {
@@ -1582,10 +1582,10 @@ export class GridBodyComp extends Component implements LayoutView {
         const offset = this.enableRtl ? scrollLeft : -scrollLeft;
 
         this.headerRootComp.setHorizontalScroll(offset);
-        this.bottomCenterContainer.getContainer().style.transform = `translateX(${offset}px)`;
-        this.topCenterContainer.getContainer().style.transform = `translateX(${offset}px)`;
+        this.bottomCenterContainer.getContainerElement().style.transform = `translateX(${offset}px)`;
+        this.topCenterContainer.getContainerElement().style.transform = `translateX(${offset}px)`;
 
-        const partner = this.lastHorizontalScrollElement === this.centerContainer.getViewport() ? this.fakeHScroll.getViewport() : this.centerContainer.getViewport();
+        const partner = this.lastHorizontalScrollElement === this.centerContainer.getViewportElement() ? this.fakeHScroll.getViewport() : this.centerContainer.getViewportElement();
 
         setScrollLeft(partner, scrollLeft, this.enableRtl);
     }
