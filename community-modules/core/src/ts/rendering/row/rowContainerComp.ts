@@ -103,16 +103,12 @@ export class RowContainerComp extends Component {
     @RefSelector('eContainer') private eContainer: HTMLElement;
     @RefSelector('eWrapper') private eWrapper: HTMLElement;
 
-    private name: string;
+    private readonly name: string;
 
     private rowTemplatesToAdd: string[] = [];
     private afterGuiAttachedCallbacks: Function[] = [];
 
     private scrollTop: number;
-
-    // this is to cater for a 'strange behaviour' where when a panel is made visible, it is firing a scroll
-    // event which we want to ignore. see gridBodyComp.onAnyBodyScroll()
-    private lastMadeVisibleTime = 0;
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
