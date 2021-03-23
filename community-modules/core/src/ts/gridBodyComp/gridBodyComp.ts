@@ -73,9 +73,9 @@ import {
     GridBodyView,
     RowAnimationCssClasses
 } from "./gridBodyController";
-import { RowContainerComp, RowContainerNames } from "../rendering/row/rowContainerComp";
 import { FakeHorizontalScrollComp } from "./fakeHorizontalScrollComp";
-import { CenterRowContainerFeature } from "../rendering/row/centerRowContainerFeature";
+import { RowContainerComp, RowContainerNames } from "./rowContainer/rowContainerComp";
+import { ViewportSizeFeature } from "./viewportSizeFeature";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -229,7 +229,6 @@ export class GridBodyComp extends Component implements LayoutView {
             },
             clearBodyHeight: ()=> this.bodyHeight = 0,
             setVerticalScrollPaddingVisible: this.setVerticalScrollPaddingVisible.bind(this),
-            setPinnedContainerSize: this.setPinnedContainerSize.bind(this),
             checkBodyHeight: this.checkBodyHeight.bind(this),
             checkScrollLeft: this.checkScrollLeft.bind(this)
         };
@@ -241,7 +240,7 @@ export class GridBodyComp extends Component implements LayoutView {
         this.controller = this.createManagedBean(new GridBodyController(params));
 
 
-        this.createManagedBean(new CenterRowContainerFeature(this.centerContainer, this.controller));
+        this.createManagedBean(new ViewportSizeFeature(this.centerContainer, this.controller));
 
         this.buildRowContainerComponents();
 
@@ -255,7 +254,6 @@ export class GridBodyComp extends Component implements LayoutView {
         }
         this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
 
-        this.setPinnedContainerSize();
         this.setHeaderAndFloatingHeights();
         this.disableBrowserDragging();
         this.addMouseListeners();
@@ -376,9 +374,7 @@ export class GridBodyComp extends Component implements LayoutView {
 
         if (this.printLayout !== newPrintLayout) {
             this.printLayout = newPrintLayout;
-            this.setWidthsOfContainers();
-            // pinned containers are always hidden for print layout
-            this.setPinnedContainerSize();
+            this.setCenterWidth();
         }
     }
 
@@ -1181,7 +1177,7 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.setPinnedContainerSize();
+        this.setCenterWidth();
         this.setHeaderAndFloatingHeights();
         this.onHorizontalViewportChanged();
         this.updateScrollVisibleService();
@@ -1189,7 +1185,7 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     private onDisplayedColumnsWidthChanged(): void {
-        this.setWidthsOfContainers();
+        this.setCenterWidth();
         this.onHorizontalViewportChanged();
         this.updateScrollVisibleService();
 
@@ -1201,11 +1197,6 @@ export class GridBodyComp extends Component implements LayoutView {
             // scroll all the way to the left and then resize a column
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
         }
-    }
-
-    private setWidthsOfContainers(): void {
-        this.setCenterWidth();
-        this.setPinnedContainerSize();
     }
 
     private setCenterWidth(): void {
@@ -1229,47 +1220,6 @@ export class GridBodyComp extends Component implements LayoutView {
         if (!this.printLayout) {
             this.fakeHScroll.getContainer().style.width = widthPx;
         }
-    }
-
-    private setPinnedLeftWidth(): void {
-        const oldPinning = this.pinningLeft;
-        const widthOfCols = this.columnController.getDisplayedColumnsLeftWidth();
-        const newPinning = this.pinningLeft = !this.printLayout && widthOfCols > 0;
-        const containers = [this.leftContainer.getContainerElement(), this.topLeftContainer.getContainerElement(), this.bottomLeftContainer.getContainerElement()];
-
-        if (oldPinning !== newPinning) {
-            this.headerRootComp.setLeftVisible(newPinning);
-        }
-
-        containers.forEach(ct => {
-            setDisplayed(ct, this.pinningLeft)
-            if (newPinning) {
-                setFixedWidth(ct, widthOfCols);
-            }
-        });
-    }
-
-    private setPinnedRightWidth(): void {
-        const oldPinning = this.pinningRight;
-        const widthOfCols = this.columnController.getDisplayedColumnsRightWidth();
-        const newPinning = this.pinningRight = !this.printLayout && widthOfCols > 0;
-        const containers = [this.rightContainer.getContainerElement(), this.topRightContainer.getContainerElement(), this.bottomRightContainer.getContainerElement()];
-
-        if (oldPinning !== newPinning) {
-            this.headerRootComp.setRightVisible(newPinning);
-        }
-
-        containers.forEach(ct => {
-            setDisplayed(ct, newPinning)
-            if (newPinning) {
-                setFixedWidth(ct, widthOfCols);
-            }
-        });
-    }
-
-    private setPinnedContainerSize() {
-        this.setPinnedLeftWidth();
-        this.setPinnedRightWidth();
     }
 
     private checkBodyHeight(): void {

@@ -13,8 +13,8 @@ import {
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { ColumnController } from "../../columnController/columnController";
-import { CenterRowContainerFeature } from "./centerRowContainerFeature";
-import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
+import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
+import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -116,7 +116,7 @@ export class RowContainerComp extends Component {
     @RefSelector('eContainer') private eContainer: HTMLElement;
     @RefSelector('eWrapper') private eWrapper: HTMLElement;
 
-    private readonly name: string;
+    private readonly name: RowContainerNames;
 
     private enableRtl: boolean;
 
@@ -130,10 +130,9 @@ export class RowContainerComp extends Component {
     private domOrder: boolean;
     private lastPlacedElement: HTMLElement | null;
 
-
     constructor() {
         super(templateFactory());
-        this.name = elementGettingCreated.getAttribute('name')!;
+        this.name = elementGettingCreated.getAttribute('name')! as RowContainerNames;
     }
 
     @PostConstruct
@@ -150,6 +149,18 @@ export class RowContainerComp extends Component {
         this.listenOnDomOrder();
 
         this.stopHScrollOnPinnedRows();
+
+        this.forContainers([RowContainerNames.LEFT, RowContainerNames.BOTTOM_LEFT, RowContainerNames.TOP_LEFT],
+            ()=> this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer)))
+
+        this.forContainers([RowContainerNames.RIGHT, RowContainerNames.BOTTOM_RIGHT, RowContainerNames.TOP_RIGHT],
+            ()=> this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer)))
+    }
+
+    private forContainers(names: RowContainerNames[], callback: (()=>void)): void {
+        if (names.indexOf(this.name) >= 0) {
+            callback();
+        }
     }
 
     public registerViewportResizeListener(listener: (()=>void) ) {
@@ -177,9 +188,10 @@ export class RowContainerComp extends Component {
     // scroll the column into view. we do not want this, the pinned sections should never scroll.
     // so we listen to scrolls on these containers and reset the scroll if we find one.
     private stopHScrollOnPinnedRows(): void {
-        if (this.name!==RowContainerNames.TOP_CENTER && this.name!==RowContainerNames.BOTTOM_CENTER) { return; }
-        const resetScrollLeft = ()=> this.eViewport.scrollLeft = 0;
-        this.addManagedListener(this.eViewport, 'scroll', resetScrollLeft);
+        this.forContainers([RowContainerNames.TOP_CENTER, RowContainerNames.BOTTOM_CENTER], ()=> {
+            const resetScrollLeft = ()=> this.eViewport.scrollLeft = 0;
+            this.addManagedListener(this.eViewport, 'scroll', resetScrollLeft);
+        });
     }
 
     private listenOnDomOrder(): void {

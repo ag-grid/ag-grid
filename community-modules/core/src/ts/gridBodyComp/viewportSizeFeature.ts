@@ -1,15 +1,15 @@
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, PostConstruct } from "../../context/context";
-import { RowContainerComp } from "./rowContainerComp";
-import { ResizeObserverService } from "../../misc/resizeObserverService";
-import { ColumnController } from "../../columnController/columnController";
-import { ScrollVisibleService, SetScrollsVisibleParams } from "../../gridBodyComp/scrollVisibleService";
-import { GridBodyController } from "../../gridBodyComp/gridBodyController";
-import { Events } from "../../events";
-import { ColumnApi } from "../../columnController/columnApi";
-import { GridApi } from "../../gridApi";
+import { BeanStub } from "../context/beanStub";
+import { Autowired, PostConstruct } from "../context/context";
+import { ResizeObserverService } from "../misc/resizeObserverService";
+import { ColumnController } from "../columnController/columnController";
+import { ScrollVisibleService, SetScrollsVisibleParams } from "../gridBodyComp/scrollVisibleService";
+import { GridBodyController } from "../gridBodyComp/gridBodyController";
+import { Events } from "../events";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
+import { RowContainerComp } from "./rowContainer/rowContainerComp";
 
-export class CenterRowContainerFeature extends BeanStub{
+export class ViewportSizeFeature extends BeanStub {
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -77,8 +77,6 @@ export class CenterRowContainerFeature extends BeanStub{
 
         // check for virtual columns for ColumnController
         this.onHorizontalViewportChanged();
-
-        this.gridBodyCon.setPinnedContainerSize();
 
         this.gridBodyCon.checkScrollLeft();
     }

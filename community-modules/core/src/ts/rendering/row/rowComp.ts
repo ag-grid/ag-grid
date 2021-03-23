@@ -41,7 +41,7 @@ import { cssStyleObjectToMarkup } from "../../utils/general";
 import { AngularRowUtils } from "./angularRowUtils";
 import { CellPosition } from "../../entities/cellPosition";
 import { RowPosition } from "../../entities/rowPosition";
-import { RowContainerComp } from "./rowContainerComp";
+import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerComp";
 
 interface CellTemplate {
     template: string;

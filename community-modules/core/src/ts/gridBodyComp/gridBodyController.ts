@@ -5,6 +5,7 @@ import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
 import { MaxDivHeightScaler } from "../rendering/maxDivHeightScaler";
 import { addOrRemoveCssClass } from "../utils/dom";
+import { ColumnController } from "../columnController/columnController";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -21,7 +22,6 @@ export interface GridBodyView extends  LayoutView {
     getBodyHeight(): number;
     setVerticalScrollPaddingVisible(visible: boolean): void;
     checkScrollLeft(): void;
-    setPinnedContainerSize(): void;
     registerBodyViewportResizeListener(listener: (()=>void)): void;
     clearBodyHeight(): void;
     checkBodyHeight(): void;
@@ -64,10 +64,6 @@ export class GridBodyController extends BeanStub {
 
     public registerBodyViewportResizeListener(listener: (()=>void)): void {
         this.view.registerBodyViewportResizeListener(listener);
-    }
-
-    public setPinnedContainerSize(): void {
-        this.view.setPinnedContainerSize();
     }
 
     public checkScrollLeft(): void {

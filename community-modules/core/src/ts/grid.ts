@@ -92,8 +92,9 @@ import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
 import { HeadlessService } from "./headless/headlessService";
 import { ControllersService } from "./controllersService";
-import { RowContainerComp } from "./rendering/row/rowContainerComp";
 import { FakeHorizontalScrollComp } from "./gridBodyComp/fakeHorizontalScrollComp";
+import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
+import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 
 export interface GridParams {
     // used by Web Components
@@ -305,7 +306,8 @@ export class GridCoreCreator {
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
-            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, HeadlessService, ControllersService
+            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, HeadlessService, ControllersService,
+            PinnedWidthService
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);

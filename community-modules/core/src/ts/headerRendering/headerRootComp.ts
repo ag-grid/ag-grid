@@ -14,6 +14,8 @@ import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { HeaderNavigationService, HeaderNavigationDirection } from './header/headerNavigationService';
 import { exists } from '../utils/generic';
 import { KeyName } from '../constants/keyName';
+import { SetPinnedLeftWidthFeature } from "../gridBodyComp/rowContainer/setPinnedLeftWidthFeature";
+import { PinnedWidthService } from "../gridBodyComp/pinnedWidthService";
 
 export type HeaderContainerPosition = 'left' | 'right' | 'center';
 
@@ -36,6 +38,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
+    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
 
     private gridBodyComp: GridBodyComp;
     private printLayout: boolean;
@@ -79,6 +82,9 @@ export class HeaderRootComp extends ManagedFocusComponent {
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+
+        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, this.onPinnedLeftWidthChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, this.onPinnedRightWidthChanged.bind(this));
 
         this.onPivotModeChanged();
         this.addPreventHeaderScroll();
@@ -211,11 +217,13 @@ export class HeaderRootComp extends ManagedFocusComponent {
         this.eHeaderContainer.style.width = `${width}px`;
     }
 
-    public setLeftVisible(visible: boolean): void {
-        setDisplayed(this.ePinnedLeftHeader, visible);
+    private onPinnedLeftWidthChanged(): void {
+        const displayed = this.pinnedWidthService.getPinnedLeftWidth() > 0;
+        setDisplayed(this.ePinnedLeftHeader, displayed);
     }
 
-    public setRightVisible(visible: boolean): void {
-        setDisplayed(this.ePinnedRightHeader, visible);
+    private onPinnedRightWidthChanged(): void {
+        const displayed = this.pinnedWidthService.getPinnedRightWidth() > 0;
+        setDisplayed(this.ePinnedRightHeader, displayed);
     }
 }

@@ -32,7 +32,7 @@ import { createArrayOfNumbers } from "../utils/number";
 import { last, pushAll } from "../utils/array";
 import { doOnce, executeInAWhile, executeNextVMTurn } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
-import { RowContainerComp } from "./row/rowContainerComp";
+import { RowContainerComp } from "../gridBodyComp/rowContainer/rowContainerComp";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {

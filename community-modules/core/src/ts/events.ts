@@ -387,3 +387,6 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
 export interface ScrollVisibilityChangedEvent extends AgGridEvent { } // not documented
 
 export interface StoreUpdatedEvent extends AgEvent {} // not documented
+
+export interface LeftPinnedWidthChangedEvent extends AgEvent {} // not documented
+export interface RightPinnedWidthChangedEvent extends AgEvent {} // not documented

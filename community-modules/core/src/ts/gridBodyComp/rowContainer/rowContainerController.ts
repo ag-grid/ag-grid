@@ -2,7 +2,6 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired, PostConstruct } from "../../context/context";
 import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { Events } from "../../eventKeys";
-import { isBrowserIE } from "../../utils/browser";
 import { RowContainerNames } from "./rowContainerComp";
 
 export interface RowContainerView {
