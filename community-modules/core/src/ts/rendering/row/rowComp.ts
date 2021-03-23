@@ -34,7 +34,7 @@ import {
     setDomChildOrder
 } from "../../utils/dom";
 import { removeFromArray } from "../../utils/array";
-import { exists, missing } from "../../utils/generic";
+import { exists, find, missing } from "../../utils/generic";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { assign, iterateObject } from "../../utils/object";
 import { cssStyleObjectToMarkup } from "../../utils/general";
@@ -647,6 +647,11 @@ export class RowComp extends Component {
     }
 
     public onKeyboardNavigate(keyboardEvent: KeyboardEvent) {
+        const currentFullWidthContainer = find(this.eAllRowContainers, container => container.contains(keyboardEvent.target as HTMLElement));
+        const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
+
+        if (!isFullWidthContainerFocused) { return; }
+
         const node = this.rowNode;
         const lastFocusedCell = this.beans.focusController.getFocusedCell();
         const cellPosition: CellPosition = {
@@ -654,12 +659,22 @@ export class RowComp extends Component {
             rowPinned: node.rowPinned,
             column: (lastFocusedCell && lastFocusedCell.column) as Column
         };
+
         this.beans.rowRenderer.navigateToNextCell(keyboardEvent, keyboardEvent.keyCode, cellPosition, true);
         keyboardEvent.preventDefault();
     }
 
     public onTabKeyDown(keyboardEvent: KeyboardEvent) {
-        if (this.isFullWidth()) {
+        if (keyboardEvent.defaultPrevented || isStopPropagationForAgGrid(keyboardEvent)) { return; }
+        const currentFullWidthContainer = find(this.eAllRowContainers, container => container.contains(keyboardEvent.target as HTMLElement));
+        const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
+        let nextEl: HTMLElement | null = null;
+
+        if (!isFullWidthContainerFocused) {
+            nextEl = this.beans.focusController.findNextFocusableElement(currentFullWidthContainer!, false, keyboardEvent.shiftKey);
+        }
+
+        if ((this.isFullWidth() && isFullWidthContainerFocused) || !nextEl) {
             this.beans.rowRenderer.onTabKeyDown(this, keyboardEvent);
         }
     }
