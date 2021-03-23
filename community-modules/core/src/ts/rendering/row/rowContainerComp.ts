@@ -1,9 +1,20 @@
 import { Component, elementGettingCreated } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { PostConstruct } from "../../context/context";
+import { Autowired, PostConstruct } from "../../context/context";
 import { RowContainerController, RowContainerView } from "./rowContainerController";
-import { appendHtml, ensureDomOrder, insertTemplateWithDomOrder } from "../../utils/dom";
+import {
+    appendHtml,
+    ensureDomOrder,
+    getInnerWidth,
+    getScrollLeft,
+    insertTemplateWithDomOrder, isHorizontalScrollShowing,
+    isVisible
+} from "../../utils/dom";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { ResizeObserverService } from "../../misc/resizeObserverService";
+import { ColumnController } from "../../columnController/columnController";
+import { CenterRowContainerFeature } from "./centerRowContainerFeature";
+import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -98,12 +109,16 @@ function templateFactory(): string {
 
 export class RowContainerComp extends Component {
 
+    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('columnController') private columnController: ColumnController;
 
     @RefSelector('eViewport') private eViewport: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
     @RefSelector('eWrapper') private eWrapper: HTMLElement;
 
     private readonly name: string;
+
+    private enableRtl: boolean;
 
     private rowTemplatesToAdd: string[] = [];
     private afterGuiAttachedCallbacks: Function[] = [];
@@ -115,6 +130,7 @@ export class RowContainerComp extends Component {
     private domOrder: boolean;
     private lastPlacedElement: HTMLElement | null;
 
+
     constructor() {
         super(templateFactory());
         this.name = elementGettingCreated.getAttribute('name')!;
@@ -122,6 +138,8 @@ export class RowContainerComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
+
+        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
 
         const view: RowContainerView = {
             setViewportHeight: height => this.eViewport.style.height = height,
@@ -132,6 +150,27 @@ export class RowContainerComp extends Component {
         this.listenOnDomOrder();
 
         this.stopHScrollOnPinnedRows();
+    }
+
+    public registerViewportResizeListener(listener: (()=>void) ) {
+        const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eViewport, listener);
+        this.addDestroyFunc(() => unsubscribeFromResize());
+    }
+
+    public isViewportHScrollShowing(): boolean {
+        return isHorizontalScrollShowing(this.eViewport);
+    }
+
+    public getViewportScrollLeft(): number {
+        return getScrollLeft(this.eViewport, this.enableRtl);
+    }
+
+    public isViewportVisible(): boolean {
+        return isVisible(this.eViewport);
+    }
+
+    public getCenterWidth(): number {
+        return getInnerWidth(this.eViewport);
     }
 
     // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
