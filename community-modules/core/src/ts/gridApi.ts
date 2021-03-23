@@ -992,7 +992,6 @@ export class GridApi {
 
     public setHeaderHeight(headerHeight?: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_HEADER_HEIGHT, headerHeight);
-        this.doLayout();
     }
 
     public setDomLayout(domLayout: string) {
@@ -1009,22 +1008,18 @@ export class GridApi {
 
     public setGroupHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
-        this.doLayout();
     }
 
     public setFloatingFiltersHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, headerHeight);
-        this.doLayout();
     }
 
     public setPivotGroupHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, headerHeight);
-        this.doLayout();
     }
 
     public setPivotHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, headerHeight);
-        this.doLayout();
     }
 
     public isSideBarVisible() {
@@ -1086,7 +1081,8 @@ export class GridApi {
     }
 
     public doLayout() {
-        this.gridBodyComp.checkViewportAndScrolls();
+        const message = `AG Grid - since version 25.1, doLayout was taken out, as it's not needed. The grid responds to grid size changes automatically`;
+        doOnce(()=> console.warn(message), 'doLayoutDeprecated');
     }
 
     public resetRowHeights() {

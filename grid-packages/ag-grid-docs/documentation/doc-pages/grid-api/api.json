@@ -1336,12 +1336,6 @@
                 "url": "/tool-panel-columns/#expand--collapse-column-groups"
             }
         },
-        "doLayout()": {
-            "description": "Force the grid to perform a layout of its components. The grid, by default, resizes to fit the `div` the grid lives in. This is done a) on initialisation b) window resize and c) periodically as defined by `layoutInterval` (default 500ms). You should call this if something happens in your application where the grid size has changed and you want to lay the grid out without waiting for the next periodic refresh.",
-            "type": {
-                "arguments": {}
-            }
-        },
         "getValue()": {
             "description": "Gets the value for a column for a particular `rowNode` (row). This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.",
             "type": {

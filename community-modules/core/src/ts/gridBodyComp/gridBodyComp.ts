@@ -67,9 +67,15 @@ import { PopupService } from "../widgets/popupService";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { KeyName } from '../constants/keyName';
 import { LayoutCssClasses, LayoutView, UpdateLayoutClassesParams } from "../styling/layoutFeature";
-import { GridBodyController, GridBodyView, RowAnimationCssClasses } from "./gridBodyController";
+import {
+    CSS_CLASS_FORCE_VERTICAL_SCROLL,
+    GridBodyController,
+    GridBodyView,
+    RowAnimationCssClasses
+} from "./gridBodyController";
 import { RowContainerComp, RowContainerNames } from "../rendering/row/rowContainerComp";
 import { FakeHorizontalScrollComp } from "./fakeHorizontalScrollComp";
+import { CenterRowContainerFeature } from "../rendering/row/centerRowContainerFeature";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -180,8 +186,6 @@ export class GridBodyComp extends Component implements LayoutView {
     private scrollTop = -1;
     private nextScrollTop = -1;
 
-    private centerWidth: number;
-
     private lastHorizontalScrollElement: HTMLElement | undefined | null;
 
     private readonly resetLastHorizontalScrollElementDebounced: () => void;
@@ -215,19 +219,29 @@ export class GridBodyComp extends Component implements LayoutView {
                 this.printLayout = params.printLayout;
             },
             setRowAnimationCssOnBodyViewport: this.setRowAnimationCssOnBodyViewport.bind(this),
-            resetTopViewportScrollLeft: ()=> this.topCenterContainer.getViewportElement().scrollLeft = 0,
-            resetBottomViewportScrollLeft: ()=> this.bottomCenterContainer.getViewportElement().scrollLeft = 0
+            setAlwaysVerticalScrollClass: on =>
+                addOrRemoveCssClass(this.eBodyViewport, CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
+            isVerticalScrollShowing: () => isVerticalScrollShowing(this.eBodyViewport),
+            getBodyHeight: ()=> getInnerHeight(this.eBodyViewport),
+            registerBodyViewportResizeListener: listener => {
+                const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eBodyViewport, listener);
+                this.addDestroyFunc(() => unsubscribeFromResize());
+            },
+            clearBodyHeight: ()=> this.bodyHeight = 0,
+            setVerticalScrollPaddingVisible: this.setVerticalScrollPaddingVisible.bind(this),
+            setPinnedContainerSize: this.setPinnedContainerSize.bind(this),
+            checkBodyHeight: this.checkBodyHeight.bind(this),
+            checkScrollLeft: this.checkScrollLeft.bind(this)
         };
 
         const params = {
-            view: view,
-            eTopViewport: this.topCenterContainer.getViewportElement(),
-            eBottomViewport: this.bottomCenterContainer.getViewportElement()
+            view: view
         };
 
         this.controller = this.createManagedBean(new GridBodyController(params));
 
-        this.addPinnedRowsScrollListeners();
+
+        this.createManagedBean(new CenterRowContainerFeature(this.centerContainer, this.controller));
 
         this.buildRowContainerComponents();
 
@@ -285,12 +299,6 @@ export class GridBodyComp extends Component implements LayoutView {
                 this.rangeController.registerGridComp(this);
             }
         }
-        
-        [this.centerContainer.getViewportElement(), this.eBodyViewport].forEach(viewport => {
-            const unsubscribeFromResize = this.resizeObserverService.observeResize(
-                viewport, this.onCenterViewportResized.bind(this));
-            this.addDestroyFunc(() => unsubscribeFromResize());
-        });
 
         [this.eTop, this.eBodyViewport, this.eBottom].forEach(element => {
             this.addManagedListener(element, 'focusin', () => {
@@ -303,12 +311,6 @@ export class GridBodyComp extends Component implements LayoutView {
                 }
             });
         });
-    }
-
-    private addPinnedRowsScrollListeners(): void {
-        const con = this.controller;
-        this.addManagedListener(this.topCenterContainer.getViewportElement(), 'scroll', con.onTopViewportScrollLeft.bind(con));
-        this.addManagedListener(this.bottomCenterContainer.getViewportElement(), 'scroll', con.onBottomViewportScrollLeft.bind(con));
     }
 
     private setRowAnimationCssOnBodyViewport(animateRows: boolean): void {
@@ -377,22 +379,6 @@ export class GridBodyComp extends Component implements LayoutView {
             this.setWidthsOfContainers();
             // pinned containers are always hidden for print layout
             this.setPinnedContainerSize();
-        }
-    }
-
-    private onCenterViewportResized(): void {
-        if (isVisible(this.centerContainer.getViewportElement())) {
-            this.checkViewportAndScrolls();
-
-            const newWidth = this.getCenterWidth();
-            if (newWidth !== this.centerWidth) {
-                this.centerWidth = newWidth;
-                this.columnController.refreshFlexedColumns(
-                    { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
-                );
-            }
-        } else {
-            this.bodyHeight = 0;
         }
     }
 
@@ -485,7 +471,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
@@ -954,7 +939,7 @@ export class GridBodyComp extends Component implements LayoutView {
 
     // + moveColumnController
     public getCenterWidth(): number {
-        return getInnerWidth(this.centerContainer.getViewportElement());
+        return this.centerContainer.getCenterWidth();
     }
 
     public isHorizontalScrollShowing(): boolean {
@@ -968,30 +953,13 @@ export class GridBodyComp extends Component implements LayoutView {
         return isAlwaysShowVerticalScroll || isVerticalScrollShowing(this.eBodyViewport);
     }
 
-    private onScrollbarWidthChanged() {
-        this.checkViewportAndScrolls();
-    }
-
-    // gets called every time the viewport size changes. we use this to check visibility of scrollbars
-    // in the grid panel, and also to check size and position of viewport for row and column virtualisation.
-    public checkViewportAndScrolls(): void {
-        // results in updating anything that depends on scroll showing
-        this.updateScrollVisibleService();
-
-        // fires event if height changes, used by PaginationService, HeightScalerService, RowRenderer
-        this.checkBodyHeight();
-
-        // check for virtual columns for ColumnController
-        this.onHorizontalViewportChanged();
-
-        this.setPinnedContainerSize();
-
-        // this is to cater for AG-3274, where grid is removed from the dom and then inserted back in again.
-        // (which happens with some implementations of tabbing). this can result in horizontal scroll getting
-        // reset back to the left, however no scroll event is fired. so we need to get header to also scroll
-        // back to the left to be kept in sync.
-        // adding and removing the grid from the DOM both resets the scroll position and
-        // triggers a resize event, so notify listeners if the scroll position has changed
+    // this is to cater for AG-3274, where grid is removed from the dom and then inserted back in again.
+    // (which happens with some implementations of tabbing). this can result in horizontal scroll getting
+    // reset back to the left, however no scroll event is fired. so we need to get header to also scroll
+    // back to the left to be kept in sync.
+    // adding and removing the grid from the DOM both resets the scroll position and
+    // triggers a resize event, so notify listeners if the scroll position has changed
+    private checkScrollLeft(): void {
         if (this.scrollLeft !== this.getCenterViewportScrollLeft()) {
             this.onBodyHorizontalScroll(this.centerContainer.getViewportElement());
         }
@@ -1273,11 +1241,12 @@ export class GridBodyComp extends Component implements LayoutView {
             this.headerRootComp.setLeftVisible(newPinning);
         }
 
-        containers.forEach(e => setDisplayed(e, this.pinningLeft));
-
-        if (newPinning) {
-            containers.forEach(ct => setFixedWidth(ct, widthOfCols));
-        }
+        containers.forEach(ct => {
+            setDisplayed(ct, this.pinningLeft)
+            if (newPinning) {
+                setFixedWidth(ct, widthOfCols);
+            }
+        });
     }
 
     private setPinnedRightWidth(): void {
@@ -1290,11 +1259,12 @@ export class GridBodyComp extends Component implements LayoutView {
             this.headerRootComp.setRightVisible(newPinning);
         }
 
-        containers.forEach(ct => setDisplayed(ct, newPinning));
-
-        if (newPinning) {
-            containers.forEach(ct => setFixedWidth(ct, widthOfCols));
-        }
+        containers.forEach(ct => {
+            setDisplayed(ct, newPinning)
+            if (newPinning) {
+                setFixedWidth(ct, widthOfCols);
+            }
+        });
     }
 
     private setPinnedContainerSize() {

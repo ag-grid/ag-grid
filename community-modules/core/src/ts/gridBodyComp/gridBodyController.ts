@@ -2,21 +2,29 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Constants } from "../constants/constants";
-import { RefSelector } from "../widgets/componentAnnotations";
-import { addOrRemoveCssClass } from "../utils/dom";
 import { Events } from "../eventKeys";
 import { MaxDivHeightScaler } from "../rendering/maxDivHeightScaler";
+import { addOrRemoveCssClass } from "../utils/dom";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
     ANIMATION_OFF = 'ag-row-no-animation'
 }
 
+export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
+
 export interface GridBodyView extends  LayoutView {
     setProps(params: {enableRtl: boolean, printLayout: boolean}): void;
     setRowAnimationCssOnBodyViewport(animate: boolean): void;
-    resetTopViewportScrollLeft(): void;
-    resetBottomViewportScrollLeft(): void;
+    setAlwaysVerticalScrollClass(on: boolean): void;
+    isVerticalScrollShowing(): boolean;
+    getBodyHeight(): number;
+    setVerticalScrollPaddingVisible(visible: boolean): void;
+    checkScrollLeft(): void;
+    setPinnedContainerSize(): void;
+    registerBodyViewportResizeListener(listener: (()=>void)): void;
+    clearBodyHeight(): void;
+    checkBodyHeight(): void;
 }
 
 export class GridBodyController extends BeanStub {
@@ -25,18 +33,13 @@ export class GridBodyController extends BeanStub {
 
     private view: GridBodyView;
 
-    private eTopViewport: HTMLElement;
-    private eBottomViewport: HTMLElement;
-
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
     private printLayout: boolean;
 
-    constructor(params: {view: GridBodyView, eTopViewport: HTMLElement, eBottomViewport: HTMLElement}) {
+    constructor(params: {view: GridBodyView}) {
         super();
         this.view = params.view;
-        this.eTopViewport = params.eTopViewport;
-        this.eBottomViewport = params.eBottomViewport;
     }
 
     @PostConstruct
@@ -49,6 +52,40 @@ export class GridBodyController extends BeanStub {
         this.createManagedBean(new LayoutFeature(this.view));
 
         this.setupRowAnimationCssClass();
+    }
+
+    public checkBodyHeight(): void {
+        this.view.checkBodyHeight();
+    }
+
+    public clearBodyHeight(): void {
+        this.view.clearBodyHeight();
+    }
+
+    public registerBodyViewportResizeListener(listener: (()=>void)): void {
+        this.view.registerBodyViewportResizeListener(listener);
+    }
+
+    public setPinnedContainerSize(): void {
+        this.view.setPinnedContainerSize();
+    }
+
+    public checkScrollLeft(): void {
+        this.view.checkScrollLeft();
+    }
+
+    public getBodyHeight(): number {
+        return this.view.getBodyHeight();
+    }
+
+    public setVerticalScrollPaddingVisible(visible: boolean): void {
+        this.view.setVerticalScrollPaddingVisible(visible);
+    }
+
+    public isVerticalScrollShowing(): boolean {
+        const isAlwaysShowVerticalScroll = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
+        this.view.setAlwaysVerticalScrollClass(isAlwaysShowVerticalScroll);
+        return this.view.isVerticalScrollShowing();
     }
 
     private setupRowAnimationCssClass(): void {
@@ -64,13 +101,5 @@ export class GridBodyController extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
     }
 
-    // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
-    // scroll the column into view. we do not want this, the pinned sections should never scroll.
-    // so we listen to scrolls on these containers and reset the scroll if we find one.
-    public onTopViewportScrollLeft(): void {
-        this.view.resetTopViewportScrollLeft();
-    }
-    public onBottomViewportScrollLeft(): void {
-        this.view.resetBottomViewportScrollLeft();
-    }
+
 }

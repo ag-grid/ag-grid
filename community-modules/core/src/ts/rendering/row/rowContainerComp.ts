@@ -1,9 +1,20 @@
 import { Component, elementGettingCreated } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { PostConstruct } from "../../context/context";
+import { Autowired, PostConstruct } from "../../context/context";
 import { RowContainerController, RowContainerView } from "./rowContainerController";
-import { appendHtml, ensureDomOrder, insertTemplateWithDomOrder } from "../../utils/dom";
+import {
+    appendHtml,
+    ensureDomOrder,
+    getInnerWidth,
+    getScrollLeft,
+    insertTemplateWithDomOrder, isHorizontalScrollShowing,
+    isVisible
+} from "../../utils/dom";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { ResizeObserverService } from "../../misc/resizeObserverService";
+import { ColumnController } from "../../columnController/columnController";
+import { CenterRowContainerFeature } from "./centerRowContainerFeature";
+import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -98,26 +109,27 @@ function templateFactory(): string {
 
 export class RowContainerComp extends Component {
 
+    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('columnController') private columnController: ColumnController;
 
     @RefSelector('eViewport') private eViewport: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
     @RefSelector('eWrapper') private eWrapper: HTMLElement;
 
-    private name: string;
+    private readonly name: string;
+
+    private enableRtl: boolean;
 
     private rowTemplatesToAdd: string[] = [];
     private afterGuiAttachedCallbacks: Function[] = [];
 
     private scrollTop: number;
 
-    // this is to cater for a 'strange behaviour' where when a panel is made visible, it is firing a scroll
-    // event which we want to ignore. see gridBodyComp.onAnyBodyScroll()
-    private lastMadeVisibleTime = 0;
-
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
     private domOrder: boolean;
     private lastPlacedElement: HTMLElement | null;
+
 
     constructor() {
         super(templateFactory());
@@ -127,6 +139,8 @@ export class RowContainerComp extends Component {
     @PostConstruct
     private postConstruct(): void {
 
+        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
+
         const view: RowContainerView = {
             setViewportHeight: height => this.eViewport.style.height = height,
         };
@@ -134,6 +148,38 @@ export class RowContainerComp extends Component {
         this.createManagedBean(new RowContainerController(view, this.name));
 
         this.listenOnDomOrder();
+
+        this.stopHScrollOnPinnedRows();
+    }
+
+    public registerViewportResizeListener(listener: (()=>void) ) {
+        const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eViewport, listener);
+        this.addDestroyFunc(() => unsubscribeFromResize());
+    }
+
+    public isViewportHScrollShowing(): boolean {
+        return isHorizontalScrollShowing(this.eViewport);
+    }
+
+    public getViewportScrollLeft(): number {
+        return getScrollLeft(this.eViewport, this.enableRtl);
+    }
+
+    public isViewportVisible(): boolean {
+        return isVisible(this.eViewport);
+    }
+
+    public getCenterWidth(): number {
+        return getInnerWidth(this.eViewport);
+    }
+
+    // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
+    // scroll the column into view. we do not want this, the pinned sections should never scroll.
+    // so we listen to scrolls on these containers and reset the scroll if we find one.
+    private stopHScrollOnPinnedRows(): void {
+        if (this.name!==RowContainerNames.TOP_CENTER && this.name!==RowContainerNames.BOTTOM_CENTER) { return; }
+        const resetScrollLeft = ()=> this.eViewport.scrollLeft = 0;
+        this.addManagedListener(this.eViewport, 'scroll', resetScrollLeft);
     }
 
     private listenOnDomOrder(): void {
