@@ -2,8 +2,6 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Constants } from "../constants/constants";
-import { RefSelector } from "../widgets/componentAnnotations";
-import { addOrRemoveCssClass } from "../utils/dom";
 import { Events } from "../eventKeys";
 import { MaxDivHeightScaler } from "../rendering/maxDivHeightScaler";
 
@@ -15,8 +13,6 @@ export enum RowAnimationCssClasses {
 export interface GridBodyView extends  LayoutView {
     setProps(params: {enableRtl: boolean, printLayout: boolean}): void;
     setRowAnimationCssOnBodyViewport(animate: boolean): void;
-    resetTopViewportScrollLeft(): void;
-    resetBottomViewportScrollLeft(): void;
 }
 
 export class GridBodyController extends BeanStub {
@@ -25,18 +21,13 @@ export class GridBodyController extends BeanStub {
 
     private view: GridBodyView;
 
-    private eTopViewport: HTMLElement;
-    private eBottomViewport: HTMLElement;
-
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
     private printLayout: boolean;
 
-    constructor(params: {view: GridBodyView, eTopViewport: HTMLElement, eBottomViewport: HTMLElement}) {
+    constructor(params: {view: GridBodyView}) {
         super();
         this.view = params.view;
-        this.eTopViewport = params.eTopViewport;
-        this.eBottomViewport = params.eBottomViewport;
     }
 
     @PostConstruct
@@ -64,13 +55,5 @@ export class GridBodyController extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
     }
 
-    // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
-    // scroll the column into view. we do not want this, the pinned sections should never scroll.
-    // so we listen to scrolls on these containers and reset the scroll if we find one.
-    public onTopViewportScrollLeft(): void {
-        this.view.resetTopViewportScrollLeft();
-    }
-    public onBottomViewportScrollLeft(): void {
-        this.view.resetBottomViewportScrollLeft();
-    }
+
 }

@@ -214,20 +214,14 @@ export class GridBodyComp extends Component implements LayoutView {
                 this.enableRtl = params.enableRtl;
                 this.printLayout = params.printLayout;
             },
-            setRowAnimationCssOnBodyViewport: this.setRowAnimationCssOnBodyViewport.bind(this),
-            resetTopViewportScrollLeft: ()=> this.topCenterContainer.getViewportElement().scrollLeft = 0,
-            resetBottomViewportScrollLeft: ()=> this.bottomCenterContainer.getViewportElement().scrollLeft = 0
+            setRowAnimationCssOnBodyViewport: this.setRowAnimationCssOnBodyViewport.bind(this)
         };
 
         const params = {
-            view: view,
-            eTopViewport: this.topCenterContainer.getViewportElement(),
-            eBottomViewport: this.bottomCenterContainer.getViewportElement()
+            view: view
         };
 
         this.controller = this.createManagedBean(new GridBodyController(params));
-
-        this.addPinnedRowsScrollListeners();
 
         this.buildRowContainerComponents();
 
@@ -303,12 +297,6 @@ export class GridBodyComp extends Component implements LayoutView {
                 }
             });
         });
-    }
-
-    private addPinnedRowsScrollListeners(): void {
-        const con = this.controller;
-        this.addManagedListener(this.topCenterContainer.getViewportElement(), 'scroll', con.onTopViewportScrollLeft.bind(con));
-        this.addManagedListener(this.bottomCenterContainer.getViewportElement(), 'scroll', con.onBottomViewportScrollLeft.bind(con));
     }
 
     private setRowAnimationCssOnBodyViewport(animateRows: boolean): void {

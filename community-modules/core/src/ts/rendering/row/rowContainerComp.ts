@@ -130,6 +130,17 @@ export class RowContainerComp extends Component {
         this.createManagedBean(new RowContainerController(view, this.name));
 
         this.listenOnDomOrder();
+
+        this.stopHScrollOnPinnedRows();
+    }
+
+    // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
+    // scroll the column into view. we do not want this, the pinned sections should never scroll.
+    // so we listen to scrolls on these containers and reset the scroll if we find one.
+    private stopHScrollOnPinnedRows(): void {
+        if (this.name!==RowContainerNames.TOP_CENTER && this.name!==RowContainerNames.BOTTOM_CENTER) { return; }
+        const resetScrollLeft = ()=> this.eViewport.scrollLeft = 0;
+        this.addManagedListener(this.eViewport, 'scroll', resetScrollLeft);
     }
 
     private listenOnDomOrder(): void {
