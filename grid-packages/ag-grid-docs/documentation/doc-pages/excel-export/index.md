@@ -70,6 +70,18 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 ## Interfaces
 
+### ExcelExportParams:
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelExportParams'></api-documentation>
+
+### ExcelCell
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelCell'></api-documentation>
+
+### ExcelCell
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelData'></api-documentation>
+
 ### ExcelExportParams
 
 ```ts

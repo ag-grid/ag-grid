@@ -1,0 +1,225 @@
+{
+    "excelExportParams": {
+        "author": {
+            "default": "AG Grid",
+            "description": "The author of the exported file.",
+            "type": "string"
+        },
+        "autoConvertFormulas": {
+            "default": "false",
+            "description": "If set to `true`, this will try to convert any cell that starts with `=` to a formula, instead of setting the cell value as regular string that starts with `=`.",
+            "type": "boolean"
+        },
+        "columnWidth": {
+            "default": "undefined",
+            "description": "Defines the default column width. If no value is present, each column will have value currently set in the application with a min value of 75px. This property can also be supplied a callback function that returns a number: `(params: ColumnWidthCallbackParams) => number`.",
+            "type": "number"
+        },
+        "exportMode": {
+            "default": "xlsx",
+            "description": "For backwards compatibility, this property could be set to `xml`, which will export an Excel Spreadsheet compatible with old Office versions (prior to Office 2007). Setting this to `xml` is not recommended as some features will not work in legacy mode.",
+            "type": "string"
+        },
+        "fontSize": {
+            "default": "11",
+            "description": "The default value for the font size of the Excel document.",
+            "type": "number"
+        },
+        "headerRowHeight": {
+            "description": "The height in pixels of header rows. Defaults to the grid's current `rowHeight` value.",
+            "type": "number"
+        },
+        "rowHeight": {
+            "description": "The height in pixels of all rows. Defaults to Excel default value.",
+            "type": "number"
+        },
+        "sheetName": {
+            "default": "ag-grid",
+            "description": "The name of the sheet in Excel where the grid will be exported. There is a max limit of 31 characters.",
+            "type": "string"
+        },
+        "suppressTextAsCDATA": {
+            "default": "false",
+            "description": "If `true`, text content will be encoded with XML character entities like `&amp;lt;` and `&amp;gt;`. This is only relevant when `exportMode='xml'`.",
+            "type": "boolean"
+        },
+        "customHeader": {
+            "default": "undefined",
+            "description": "Content to put at the bottom of the file export. A 2D array of ExcelCell objects (see Custom Headers and Footers section).",
+            "type": "ExcelCell"
+        },
+        "allColumns": {
+            "default": "false",
+            "description": "If `true`, all columns will be exported in the order they appear in the columnDefs. When `false` only the columns currently being displayed will be exported.",
+            "type": "boolean"
+        },
+        "columnGroups": {
+            "default": "false",
+            "description": "Set to `true` to include header column groups.",
+            "type": "boolean"
+        },
+        "columnKeys": {
+            "default": "undefined",
+            "description": "Provide a list (an array) of column keys or Column objects if you want to export specific columns.",
+            "type": "(string | Column)[]"
+        },
+        "fileName": {
+            "default": "export.xlsx",
+            "description": "String to use as the file name.",
+            "type": "string"
+        },
+        "onlySelected": {
+            "default": "false",
+            "description": "Export only selected rows.",
+            "type": "boolean"
+        },
+        "onlySelectedAllPages": {
+            "default": "false",
+            "description": "Only export selected rows including other pages (only makes sense when using pagination).",
+            "type": "boolean"
+        },
+        "skipGroups": {
+            "default": "false",
+            "description": "Set to true to skip row group headers if grouping rows. Only relevant when grouping rows.",
+            "type": "boolean"
+        },
+        "skipHeader": {
+            "default": "false",
+            "description": "Set to true if you don't want to export column headers.",
+            "type": "boolean"
+        },
+        "skipPinnedBottom": {
+            "default": "false",
+            "description": "Set to true to suppress exporting rows pinned to the bottom of the grid.",
+            "type": "boolean"
+        },
+        "getCustomContentBelowRow": {
+            "default": "undefined",
+            "description": "A callback function to return content to be inserted below a row in the export.",
+            "type": {
+                "meta": {
+                    "name": "ProcessRowGroupForExportParams"
+                },
+                "parameters": {
+                    "node": "RowNode",
+                    "api": "GridApi",
+                    "columnApi": "ColumnApi",
+                    "context": "object"
+                },
+                "returnType": "ExcelCell"
+            }
+        },
+        "shouldRowBeSkipped": {
+            "default": "undefined",
+            "description": "A callback function that will be invoked once per row in the grid. Return true to omit the row from the export.",
+            "type": {
+                "meta": {
+                    "name": "ShouldRowBeSkippedParams"
+                },
+                "parameters": {
+                    "node": "RowNode",
+                    "api": "GridApi",
+                    "context": "object"
+                },
+                "returnType": "boolean"
+            }
+        },
+        "processCellCallback": {
+            "default": "undefined",
+            "description": "A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. For example this is useful for formatting date values.",
+            "type": {
+                "meta": {
+                    "name": "ProcessCellForExportParams"
+                },
+                "parameters": {
+                    "node": "RowNode",
+                    "api": "GridApi",
+                    "columnApi": "ColumnApi",
+                    "context": "object",
+                    "value": "any",
+                    "accumulatedRowIndex": "number",
+                    "column": "Column",
+                    "type": "string"
+                },
+                "returnType": "string"
+            }
+        },
+        "processHeaderCallback": {
+            "default": "undefined",
+            "description": "A callback function invoked once per column. Return a string to be displayed in the column header.",
+            "type": {
+                "meta": {
+                    "name": "ProcessHeaderForExportParams"
+                },
+                "parameters": {
+                    "node": "RowNode",
+                    "api": "GridApi",
+                    "columnApi": "ColumnApi",
+                    "context": "object"
+                },
+                "returnType": "string"
+            }
+        },
+        "processGroupHeaderCallback": {
+            "default": "undefined",
+            "description": "A callback function invoked once per column group. Return a `string` to be displayed in the column group header. Note that column groups are not exported by default, you must pass `columnGroups=true`.",
+            "type": {
+                "meta": {
+                    "name": "ProcessGroupHeaderForExportParams"
+                },
+                "parameters": {
+                    "node": "RowNode",
+                    "api": "GridApi",
+                    "columnApi": "ColumnApi",
+                    "context": "object"
+                },
+                "returnType": "string"
+            }
+        },
+        "processRowGroupCallback": {
+            "default": "undefined",
+            "description": "A callback function invoked once per row group. Return a `string` to be displayed in the group cell.",
+            "type": {
+                "meta": {
+                    "name": "ProcessRowGroupForExportParams"
+                },
+                "parameters": {
+                    "node": "RowNode",
+                    "api": "GridApi",
+                    "columnApi": "ColumnApi",
+                    "context": "object"
+                },
+                "returnType": "string"
+            }
+        }
+    },
+    "excelCell": {
+        "data": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelData"
+        },
+        "styleId": {
+            "default": "xxx",
+            "description": "style to apply",
+            "type": "string"
+        },
+        "mergeAcross": {
+            "default": "xxx",
+            "description": "the of cells to span across, (1 means span 2 columns)",
+            "type": "number"
+        }
+    },
+    "excelData": {
+        "type": {
+            "default": "xxx",
+            "description": "Possible values: `'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error'`",
+            "type": "ExcelDataType"
+        },
+        "value": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "string"
+        }
+    }
+}
