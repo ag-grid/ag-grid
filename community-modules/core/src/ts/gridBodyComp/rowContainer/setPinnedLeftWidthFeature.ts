@@ -22,7 +22,7 @@ export class SetPinnedLeftWidthFeature extends BeanStub {
 
     private onPinnedLeftWidthChanged(): void {
         const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-        const displayed = leftWidth >= 0;
+        const displayed = leftWidth > 0;
         setDisplayed(this.element, displayed);
         if (displayed) {
             setFixedWidth(this.element, leftWidth);

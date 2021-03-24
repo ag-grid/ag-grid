@@ -22,7 +22,7 @@ export class SetPinnedRightWidthFeature extends BeanStub {
 
     private onPinnedRightWidthChanged(): void {
         const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-        const displayed = rightWidth >= 0;
+        const displayed = rightWidth > 0;
         setDisplayed(this.element, displayed);
         if (displayed) {
             setFixedWidth(this.element, rightWidth);
