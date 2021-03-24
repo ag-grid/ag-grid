@@ -24,7 +24,7 @@ import { UserComponentFactory } from "../components/framework/userComponentFacto
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
-import { MaxDivHeightScaler } from "./maxDivHeightScaler";
+import { RowContainerHeightService } from "./rowContainerHeightService";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DetailRowCompCache } from "./row/detailRowCompCache";
 import { CellPositionUtils } from "../entities/cellPosition";
@@ -71,7 +71,7 @@ export class Beans {
     @Autowired('dragAndDropService') public dragAndDropService: DragAndDropService;
     @Autowired('sortController') public sortController: SortController;
     @Autowired('filterManager') public filterManager: FilterManager;
-    @Autowired('maxDivHeightScaler') public maxDivHeightScaler: MaxDivHeightScaler;
+    @Autowired('rowContainerHeightService') public rowContainerHeightService: RowContainerHeightService;
     @Autowired('frameworkOverrides') public frameworkOverrides: IFrameworkOverrides;
     @Autowired('detailRowCompCache') public detailRowCompCache: DetailRowCompCache;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;

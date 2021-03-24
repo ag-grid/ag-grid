@@ -8,13 +8,14 @@ import {
     getInnerWidth,
     getScrollLeft,
     insertTemplateWithDomOrder, isHorizontalScrollShowing,
-    isVisible
+    isVisible, setScrollLeft
 } from "../../utils/dom";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { ColumnController } from "../../columnController/columnController";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
 import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
+import { SetHeightFeature } from "./setHeightFeature";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -155,6 +156,9 @@ export class RowContainerComp extends Component {
 
         this.forContainers([RowContainerNames.RIGHT, RowContainerNames.BOTTOM_RIGHT, RowContainerNames.TOP_RIGHT],
             ()=> this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer)))
+
+        this.forContainers([RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT, RowContainerNames.FULL_WIDTH],
+            ()=> this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)))
     }
 
     private forContainers(names: RowContainerNames[], callback: (()=>void)): void {
@@ -204,6 +208,29 @@ export class RowContainerComp extends Component {
         return this.eViewport;
     }
 
+    public isHorizontalScrollShowing(): boolean {
+        const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
+        return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
+    }
+
+    public getCenterViewportScrollLeft(): number {
+        // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
+        return getScrollLeft(this.eViewport, this.enableRtl);
+    }
+
+    public setCenterViewportScrollLeft(value: number): void {
+        // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
+        setScrollLeft(this.eViewport, value, this.enableRtl);
+    }
+
+    public getHScrollPosition(): { left: number, right: number; } {
+        const res = {
+            left: this.eViewport.scrollLeft,
+            right: this.eViewport.scrollLeft + this.eViewport.offsetWidth
+        };
+        return res;
+    }
+
     public getContainerElement(): HTMLElement {
         return this.eContainer;
     }
@@ -214,15 +241,6 @@ export class RowContainerComp extends Component {
 
     public getRowElement(compId: number): HTMLElement {
         return this.eContainer.querySelector(`[comp-id="${compId}"]`) as HTMLElement;
-    }
-
-    public setHeight(height: number | null): void {
-        const heightString = height != null ? `${height}px` : ``;
-
-        this.eContainer.style.height = heightString;
-        if (this.eWrapper) {
-            this.eWrapper.style.height = heightString;
-        }
     }
 
     public flushRowTemplates(): void {

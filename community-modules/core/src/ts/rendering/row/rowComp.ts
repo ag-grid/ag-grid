@@ -276,7 +276,7 @@ export class RowComp extends Component {
         const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
         const afterPaginationPixels = this.applyPaginationOffset(pixels!);
         // we don't apply scaling if row is pinned
-        const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.maxDivHeightScaler.getRealPixelPosition(afterPaginationPixels);
+        const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
         const isSuppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
 
         return isSuppressRowTransform ? `top: ${afterScalingPixels}px; ` : `transform: translateY(${afterScalingPixels}px);`;
@@ -1534,7 +1534,7 @@ export class RowComp extends Component {
         // visible (ie parent group was expanded) but is now not visible
         if (exists(pixels)) {
             const afterPaginationPixels = this.applyPaginationOffset(pixels);
-            const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.maxDivHeightScaler.getRealPixelPosition(afterPaginationPixels);
+            const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
             const topPx = `${afterScalingPixels}px`;
 
             if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {

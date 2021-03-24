@@ -9,8 +9,8 @@ import { getMaxDivHeight } from "../utils/browser";
  * the max div height actually allows.
  */
 
-@Bean('maxDivHeightScaler')
-export class MaxDivHeightScaler extends BeanStub {
+@Bean('rowContainerHeightService')
+export class RowContainerHeightService extends BeanStub {
 
     private gridBodyComp: GridBodyComp;
 
@@ -21,8 +21,8 @@ export class MaxDivHeightScaler extends BeanStub {
     // no scaling applied.
     private scaling: boolean;
 
-    private modelHeight: number; // how many pixels the model needs
-    private uiContainerHeight: number; // how many pixels we actually have
+    private modelHeight: number | null; // how many pixels the model needs
+    private uiContainerHeight: number | null; // how many pixels we actually have
     private pixelsToShave: number; // the number of pixels we need to shave
 
     // the number of pixels we add to each rowTop - depends on the scroll position
@@ -69,19 +69,25 @@ export class MaxDivHeightScaler extends BeanStub {
     }
 
     private calculateOffset(): void {
-        this.uiContainerHeight = this.maxDivHeight;
-        this.pixelsToShave = this.modelHeight - this.uiContainerHeight;
+        this.setUiContainerHeight(this.maxDivHeight);
+        this.pixelsToShave = this.modelHeight! - this.uiContainerHeight!;
 
-        this.maxScrollY = this.uiContainerHeight - this.uiBodyHeight;
+        this.maxScrollY = this.uiContainerHeight! - this.uiBodyHeight;
         const scrollPercent = this.scrollY / this.maxScrollY;
 
         this.setOffset(scrollPercent * this.pixelsToShave);
     }
 
-    private clearOffset(): void {
-        this.uiContainerHeight = this.modelHeight;
-        this.pixelsToShave = 0;
+    private setUiContainerHeight(height: number | null): void {
+        if (height !== this.uiContainerHeight) {
+            this.uiContainerHeight = height;
+            this.eventService.dispatchEvent({type: Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED});
+        }
+    }
 
+    private clearOffset(): void {
+        this.setUiContainerHeight(this.modelHeight);
+        this.pixelsToShave = 0;
         this.setOffset(0);
     }
 
@@ -94,9 +100,11 @@ export class MaxDivHeightScaler extends BeanStub {
         this.eventService.dispatchEvent({type: Events.EVENT_HEIGHT_SCALE_CHANGED});
     }
 
-    public setModelHeight(modelHeight: number): void {
+    public setModelHeight(modelHeight: number | null): void {
         this.modelHeight = modelHeight;
-        this.scaling = this.maxDivHeight > 0 && modelHeight > this.maxDivHeight;
+        this.scaling = modelHeight != null // null happens when in print layout
+                        && this.maxDivHeight > 0
+                        && modelHeight! > this.maxDivHeight;
         if (this.scaling) {
             this.calculateOffset();
         } else {
@@ -104,7 +112,7 @@ export class MaxDivHeightScaler extends BeanStub {
         }
     }
 
-    public getUiContainerHeight(): number {
+    public getUiContainerHeight(): number | null {
         return this.uiContainerHeight;
     }
 
@@ -120,7 +128,7 @@ export class MaxDivHeightScaler extends BeanStub {
     public getScrollPositionForPixel(rowTop: number): number {
         if (this.pixelsToShave <= 0) { return rowTop; }
 
-        const modelMaxScroll = this.modelHeight - this.getUiBodyHeight();
+        const modelMaxScroll = this.modelHeight! - this.getUiBodyHeight();
         const scrollPercent = rowTop / modelMaxScroll;
         const scrollPixel = this.maxScrollY * scrollPercent;
         return scrollPixel;

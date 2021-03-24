@@ -171,6 +171,8 @@ export class Events {
     public static EVENT_LEFT_PINNED_WIDTH_CHANGED = 'leftPinnedWidthChanged';
     public static EVENT_RIGHT_PINNED_WIDTH_CHANGED = 'rightPinnedWidthChanged';
 
+    public static EVENT_ROW_CONTAINER_HEIGHT_CHANGED = 'rowContainerHeightChanged';
+
     public static EVENT_ROW_DRAG_ENTER = 'rowDragEnter';
     public static EVENT_ROW_DRAG_MOVE = 'rowDragMove';
     public static EVENT_ROW_DRAG_LEAVE = 'rowDragLeave';

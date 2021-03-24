@@ -3,9 +3,7 @@ import { Autowired, PostConstruct } from "../context/context";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
-import { MaxDivHeightScaler } from "../rendering/maxDivHeightScaler";
-import { addOrRemoveCssClass } from "../utils/dom";
-import { ColumnController } from "../columnController/columnController";
+import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -29,7 +27,7 @@ export interface GridBodyView extends  LayoutView {
 
 export class GridBodyController extends BeanStub {
 
-    @Autowired('maxDivHeightScaler') private heightScaler: MaxDivHeightScaler;
+    @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
 
     private view: GridBodyView;
 
@@ -88,7 +86,7 @@ export class GridBodyController extends BeanStub {
         const listener = () => {
             // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
             // when scaling and doing row animation.
-            const animateRows = this.gridOptionsWrapper.isAnimateRows() && !this.heightScaler.isScaling();
+            const animateRows = this.gridOptionsWrapper.isAnimateRows() && !this.rowContainerHeightService.isScaling();
             this.view.setRowAnimationCssOnBodyViewport(animateRows);
         };
 

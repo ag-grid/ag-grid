@@ -24,7 +24,7 @@ import { ValueService } from '../valueService/valueService';
 import { LongTapEvent, TouchListener } from '../widgets/touchListener';
 import { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import { RowDragFeature } from './rowDragFeature';
-import { MaxDivHeightScaler } from '../rendering/maxDivHeightScaler';
+import { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
 import { Component } from '../widgets/component';
 import { AutoHeightCalculator } from '../rendering/row/autoHeightCalculator';
@@ -143,7 +143,7 @@ export class GridBodyComp extends Component implements LayoutView {
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('maxDivHeightScaler') private heightScaler: MaxDivHeightScaler;
+    @Autowired('rowContainerHeightService') private heightScaler: RowContainerHeightService;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -321,11 +321,7 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     public getHScrollPosition(): { left: number, right: number; } {
-        const result = {
-            left: this.centerContainer.getViewportElement().scrollLeft,
-            right: this.centerContainer.getViewportElement().scrollLeft + this.centerContainer.getViewportElement().offsetWidth
-        };
-        return result;
+        return this.centerContainer.getHScrollPosition();
     }
 
     private onRowDataChanged(): void {
@@ -935,8 +931,7 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     public isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
-        return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.centerContainer.getViewportElement());
+        return this.centerContainer.isHorizontalScrollShowing();
     }
 
     public isVerticalScrollShowing(): boolean {
@@ -1058,7 +1053,7 @@ export class GridBodyComp extends Component implements LayoutView {
             } else {
                 newScrollPosition = alignColToLeft ? colLeftPixel! : (colRightPixel - viewportWidth);
             }
-            this.setCenterViewportScrollLeft(newScrollPosition);
+            this.centerContainer.setCenterViewportScrollLeft(newScrollPosition);
         } else {
             // otherwise, col is already in view, so do nothing
         }
@@ -1481,13 +1476,7 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     public getCenterViewportScrollLeft(): number {
-        // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        return getScrollLeft(this.centerContainer.getViewportElement(), this.enableRtl);
-    }
-
-    private setCenterViewportScrollLeft(value: number): void {
-        // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        setScrollLeft(this.centerContainer.getViewportElement(), value, this.enableRtl);
+        return this.centerContainer.getCenterViewportScrollLeft();
     }
 
     public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {

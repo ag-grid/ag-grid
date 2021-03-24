@@ -54,7 +54,7 @@ import { Beans } from "./rendering/beans";
 import { Environment } from "./environment";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { NavigationService } from "./gridBodyComp/navigationService";
-import { MaxDivHeightScaler } from "./rendering/maxDivHeightScaler";
+import { RowContainerHeightService } from "./rendering/rowContainerHeightService";
 import { SelectableService } from "./rowNodes/selectableService";
 import { AutoHeightCalculator } from "./rendering/row/autoHeightCalculator";
 import { PaginationComp } from "./pagination/paginationComp";
@@ -90,7 +90,6 @@ import { ColumnDefFactory } from "./columnController/columnDefFactory";
 import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
-import { HeadlessService } from "./headless/headlessService";
 import { ControllersService } from "./controllersService";
 import { FakeHorizontalScrollComp } from "./gridBodyComp/fakeHorizontalScrollComp";
 import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
@@ -296,7 +295,7 @@ export class GridCoreCreator {
             rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            MaxDivHeightScaler, AutoHeightCalculator, HorizontalResizeService,
+            RowContainerHeightService, AutoHeightCalculator, HorizontalResizeService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper,
             PopupService, SelectionController, FilterManager, ColumnController, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
@@ -306,7 +305,7 @@ export class GridCoreCreator {
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
-            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, HeadlessService, ControllersService,
+            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, ControllersService,
             PinnedWidthService
         ];
 

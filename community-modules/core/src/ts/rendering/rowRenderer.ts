@@ -20,7 +20,7 @@ import { PaginationProxy } from "../pagination/paginationProxy";
 import { FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCellsParams } from "../gridApi";
 import { Beans } from "./beans";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { MaxDivHeightScaler } from "./maxDivHeightScaler";
+import { RowContainerHeightService } from "./rowContainerHeightService";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
@@ -47,7 +47,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("columnApi") private columnApi: ColumnApi;
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("beans") private beans: Beans;
-    @Autowired("maxDivHeightScaler") private maxDivHeightScaler: MaxDivHeightScaler;
+    @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
     @Optional("rangeController") private rangeController: IRangeController;
@@ -407,7 +407,7 @@ export class RowRenderer extends BeanStub {
 
         const focusedCell: CellPosition | null = this.getCellToRestoreFocusToAfterRefresh(params);
 
-        this.sizeContainerToPageHeight();
+        this.updateContainerHeights();
         this.scrollToTopIfNewData(params);
 
         // never recycle rows when print layout, we draw each row again from scratch. this is because print layout
@@ -458,16 +458,10 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    private sizeContainerToPageHeight(): void {
-        const containers: RowContainerComp[] = [
-            this.rowContainers.body,
-            this.rowContainers.fullWidth,
-            this.rowContainers.pinnedLeft,
-            this.rowContainers.pinnedRight
-        ];
-
+    private updateContainerHeights(): void {
+        // when doing print layout, we don't explicitly set height on the containers
         if (this.printLayout) {
-            containers.forEach(container => container.setHeight(null));
+            this.rowContainerHeightService.setModelHeight(null);
             return;
         }
 
@@ -481,11 +475,7 @@ export class RowRenderer extends BeanStub {
             containerHeight = 1;
         }
 
-        this.maxDivHeightScaler.setModelHeight(containerHeight);
-
-        const realHeight = this.maxDivHeightScaler.getUiContainerHeight();
-
-        containers.forEach(container => container.setHeight(realHeight));
+        this.rowContainerHeightService.setModelHeight(containerHeight);
     }
 
     private getLockOnRefresh(): void {
@@ -777,7 +767,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private redraw(rowsToRecycle?: { [key: string]: RowComp; } | null, animate = false, afterScroll = false) {
-        this.maxDivHeightScaler.updateOffset();
+        this.rowContainerHeightService.updateOffset();
         this.workOutFirstAndLastRowsToRender();
 
         // the row can already exist and be in the following:
@@ -991,7 +981,7 @@ export class RowRenderer extends BeanStub {
         } else {
             const paginationOffset = this.paginationProxy.getPixelOffset();
             const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
-            const maxDivHeightScaler = this.maxDivHeightScaler.getOffset();
+            const maxDivHeightScaler = this.rowContainerHeightService.getOffset();
 
             const bodyVRange = this.gridBodyComp.getVScrollPosition();
             const bodyTopPixel = bodyVRange.top;
@@ -1078,10 +1068,7 @@ export class RowRenderer extends BeanStub {
         const rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
 
         if (rowHeightsChanged) {
-            // if row heights have changed, we need to resize the containers the rows sit it
-            this.sizeContainerToPageHeight();
-            // we also need to update heightScaler as this has dependency of row container height
-            this.maxDivHeightScaler.updateOffset();
+            this.updateContainerHeights();
         }
     }
 
