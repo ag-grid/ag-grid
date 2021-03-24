@@ -196,10 +196,6 @@ export class GridBodyComp extends Component implements LayoutView {
     private enableRtl: boolean;
     private printLayout: boolean;
 
-    // used to track if pinned panels are showing, so we can turn them off if not
-    private pinningRight: boolean;
-    private pinningLeft: boolean;
-
     private rowDragFeature: RowDragFeature;
 
     private controller: GridBodyController;
