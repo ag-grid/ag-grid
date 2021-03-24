@@ -46,6 +46,8 @@ export interface CellChangedEvent extends RowNodeEvent {
     oldValue: any;
 }
 
+export enum RowType { NORMAL, FULL_WIDTH_STUB, FULL_WIDTH_DETAIL, FULL_WIDTH_CELL, FULL_WIDTH_GROUP };
+
 export class RowNode implements IEventEmitter {
 
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
@@ -247,6 +249,9 @@ export class RowNode implements IEventEmitter {
 
     private selected: boolean | undefined = false;
     private eventService: EventService;
+
+    private fullWidthRow: boolean | undefined;
+    private rowType: RowType | undefined;
 
     public setData(data: any): void {
         this.setDataCommon(data, false);
@@ -724,6 +729,57 @@ export class RowNode implements IEventEmitter {
 
     public isRowPinned(): boolean {
         return this.rowPinned === Constants.PINNED_TOP || this.rowPinned === Constants.PINNED_BOTTOM;
+    }
+
+    public getRowType(): RowType {
+        if (this.rowType != null) { return this.rowType; }
+
+        let rowType: RowType | null = null;
+
+        if (this.stub) {
+            rowType = RowType.FULL_WIDTH_STUB;
+        }
+
+        if (!rowType) {
+            const isMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+            const isDetailCell = !!(isMasterDetail && this.detail);
+
+            if (isDetailCell) {
+                rowType = RowType.FULL_WIDTH_DETAIL;
+            }
+        }
+
+        if (!rowType && this.isFullWidthCell()) {
+            rowType = RowType.FULL_WIDTH_CELL;
+        }
+
+        if (!rowType) {
+            // we only use full width for groups, not footers. it wouldn't make sense to include footers if not looking
+            // for totals. if users complain about this, then we should introduce a new property 'footerUseEntireRow'
+            // so each can be set independently (as a customer complained about footers getting full width, hence
+            // introducing this logic)
+            const isGroupRow = !!(this.group && !this.footer);
+            const isPivotMode = this.columnController.isPivotMode();
+            const isFullWidthGroup = isGroupRow && this.gridOptionsWrapper.isGroupUseEntireRow(isPivotMode);
+
+            if (isFullWidthGroup) {
+                rowType = RowType.FULL_WIDTH_GROUP;
+            }
+        }
+
+        this.rowType = rowType || RowType.NORMAL;
+
+        return this.rowType;
+    }
+
+    public isFullWidthRow(): boolean {
+        if (this.fullWidthRow != null) { return this.fullWidthRow; }
+
+        const rowType = this.getRowType();
+
+        this.fullWidthRow = rowType !== RowType.NORMAL;
+
+        return this.fullWidthRow;
     }
 
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters

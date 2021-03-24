@@ -318,11 +318,9 @@ export class ChartDataModel extends BeanStub {
             return false;
         }
 
-        const row = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: undefined });
+        const row = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: null });
 
-        if (!row) {
-            return false;
-        }
+        if (!row) { return false; }
 
         let cellValue = this.valueService.getValue(col, row);
 

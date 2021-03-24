@@ -1,6 +1,6 @@
 import { Beans } from "../beans";
 import { CellComp } from "../cellComp";
-import { DataChangedEvent, RowNode } from "../../entities/rowNode";
+import { DataChangedEvent, RowNode, RowType } from "../../entities/rowNode";
 import { Column } from "../../entities/column";
 import {
     CellFocusedEvent,
@@ -34,7 +34,7 @@ import {
     setDomChildOrder
 } from "../../utils/dom";
 import { removeFromArray } from "../../utils/array";
-import { exists, missing } from "../../utils/generic";
+import { exists, find, missing } from "../../utils/generic";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { assign, iterateObject } from "../../utils/object";
 import { cssStyleObjectToMarkup } from "../../utils/general";
@@ -93,8 +93,6 @@ export class RowComp extends Component {
     private lastRowOnPage: boolean;
 
     private active = true;
-
-    private fullWidthRow: boolean;
 
     private editingRow: boolean;
     private rowFocused: boolean;
@@ -218,7 +216,7 @@ export class RowComp extends Component {
         templateParts.push(` comp-id="${this.getCompId()}"`);
         templateParts.push(` class="${rowClasses}"`);
 
-        if (this.fullWidthRow) {
+        if (this.isFullWidthRow()) {
             templateParts.push(` tabindex="-1"`);
         }
 
@@ -342,26 +340,23 @@ export class RowComp extends Component {
     }
 
     private setupRowContainers(): void {
-        const isFullWidthCell = this.rowNode.isFullWidthCell();
-        const isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
-        const pivotMode = this.beans.columnController.isPivotMode();
-        // we only use full width for groups, not footers. it wouldn't make sense to include footers if not looking
-        // for totals. if users complain about this, then we should introduce a new property 'footerUseEntireRow'
-        // so each can be set independently (as a customer complained about footers getting full width, hence
-        // introducing this logic)
-        const isGroupRow = this.rowNode.group && !this.rowNode.footer;
-        const isFullWidthGroup = isGroupRow && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
+        const rowType = this.rowNode.getRowType();
 
-        if (this.rowNode.stub) {
-            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME, false);
-        } else if (isDetailCell) {
-            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER, RowComp.DETAIL_CELL_RENDERER_COMP_NAME, true);
-        } else if (isFullWidthCell) {
-            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, null, false);
-        } else if (isFullWidthGroup) {
-            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME, false);
-        } else {
-            this.setupNormalRowContainers();
+        switch (rowType) {
+            case RowType.FULL_WIDTH_STUB:
+                this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME, false);
+                break;
+            case RowType.FULL_WIDTH_DETAIL:
+                this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER, RowComp.DETAIL_CELL_RENDERER_COMP_NAME, true);
+                break;
+            case RowType.FULL_WIDTH_CELL:
+                this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, null, false);
+                break;
+            case RowType.FULL_WIDTH_GROUP:
+                this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME, false);
+                break;
+            default:
+                this.setupNormalRowContainers();
         }
     }
 
@@ -384,8 +379,6 @@ export class RowComp extends Component {
     }
 
     private createFullWidthRows(type: string, name: string | null, detailRow: boolean): void {
-        this.fullWidthRow = true;
-
         if (this.embedFullWidth) {
             this.createFullWidthRowContainer(this.bodyContainerComp, null,
                 null, type, name!,
@@ -455,8 +448,8 @@ export class RowComp extends Component {
         this.stopEditing(cancel);
     }
 
-    public isFullWidth(): boolean {
-        return this.fullWidthRow;
+    public isFullWidthRow(): boolean {
+        return this.rowNode.isFullWidthRow();
     }
 
     public refreshFullWidth(): boolean {
@@ -591,13 +584,12 @@ export class RowComp extends Component {
     }
 
     private onDisplayedColumnsChanged(): void {
-        if (this.fullWidthRow) { return; }
+        if (this.isFullWidthRow()) { return; }
 
         this.refreshCells();
     }
 
     private destroyFullWidthComponents(): void {
-
         this.fullWidthRowDestroyFuncs.forEach(f => f());
         this.fullWidthRowDestroyFuncs = [];
 
@@ -628,13 +620,13 @@ export class RowComp extends Component {
     }
 
     private onVirtualColumnsChanged(): void {
-        if (this.fullWidthRow) { return; }
+        if (this.isFullWidthRow()) { return; }
 
         this.refreshCells();
     }
 
     private onColumnResized(): void {
-        if (this.fullWidthRow) { return; }
+        if (this.isFullWidthRow()) { return; }
 
         this.refreshCells();
     }
@@ -647,6 +639,11 @@ export class RowComp extends Component {
     }
 
     public onKeyboardNavigate(keyboardEvent: KeyboardEvent) {
+        const currentFullWidthContainer = find(this.eAllRowContainers, container => container.contains(keyboardEvent.target as HTMLElement));
+        const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
+
+        if (!isFullWidthContainerFocused) { return; }
+
         const node = this.rowNode;
         const lastFocusedCell = this.beans.focusController.getFocusedCell();
         const cellPosition: CellPosition = {
@@ -654,19 +651,29 @@ export class RowComp extends Component {
             rowPinned: node.rowPinned,
             column: (lastFocusedCell && lastFocusedCell.column) as Column
         };
+
         this.beans.rowRenderer.navigateToNextCell(keyboardEvent, keyboardEvent.keyCode, cellPosition, true);
         keyboardEvent.preventDefault();
     }
 
     public onTabKeyDown(keyboardEvent: KeyboardEvent) {
-        if (this.isFullWidth()) {
+        if (keyboardEvent.defaultPrevented || isStopPropagationForAgGrid(keyboardEvent)) { return; }
+        const currentFullWidthContainer = find(this.eAllRowContainers, container => container.contains(keyboardEvent.target as HTMLElement));
+        const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
+        let nextEl: HTMLElement | null = null;
+
+        if (!isFullWidthContainerFocused) {
+            nextEl = this.beans.focusController.findNextFocusableElement(currentFullWidthContainer!, false, keyboardEvent.shiftKey);
+        }
+
+        if ((this.isFullWidthRow() && isFullWidthContainerFocused) || !nextEl) {
             this.beans.rowRenderer.onTabKeyDown(this, keyboardEvent);
         }
     }
 
     public onFullWidthRowFocused(event: CellFocusedEvent) {
         const node = this.rowNode;
-        const isFocused = this.fullWidthRow && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
+        const isFocused = this.isFullWidthRow() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
         addOrRemoveCssClass(this.eFullWidthRow, 'ag-full-width-focus', isFocused);
 
@@ -914,7 +921,7 @@ export class RowComp extends Component {
     private onRowMouseDown(mouseEvent: MouseEvent) {
         this.lastMouseDownOnDragger = isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
 
-        if (!this.isFullWidth()) { return; }
+        if (!this.isFullWidthRow()) { return; }
 
         const node = this.rowNode;
         const columnController = this.beans.columnController;
@@ -1108,7 +1115,7 @@ export class RowComp extends Component {
             fadeRowIn: this.fadeRowIn,
             rowIsEven: this.rowIsEven,
             rowLevel: this.rowLevel,
-            fullWidthRow: this.fullWidthRow,
+            fullWidthRow: this.isFullWidthRow(),
             firstRowOnPage: this.isFirstRowOnPage(),
             lastRowOnPage: this.isLastRowOnPage(),
             printLayout: this.printLayout,

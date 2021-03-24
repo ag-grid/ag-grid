@@ -1345,7 +1345,7 @@ export class GridApi {
         }
         const cellPosition: CellPosition = {
             rowIndex: params.rowIndex,
-            rowPinned: params.rowPinned,
+            rowPinned: params.rowPinned || null,
             column: column
         };
         const notPinned = missing(params.rowPinned);

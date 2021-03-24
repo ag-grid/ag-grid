@@ -9,7 +9,7 @@ import { PaginationProxy } from "../pagination/paginationProxy";
 
 export interface RowPosition {
     rowIndex: number;
-    rowPinned?: string | null;
+    rowPinned: string | null;
 }
 
 @Bean('rowPositionUtils')
@@ -37,7 +37,7 @@ export class RowPositionUtils extends BeanStub {
 
     public getLastRow(): RowPosition | null {
         let rowIndex;
-        let rowPinned;
+        let rowPinned: string | null = null;
 
         const pinnedBottomCount = this.pinnedRowModel.getPinnedBottomRowCount();
         const pinnedTopCount = this.pinnedRowModel.getPinnedTopRowCount();
