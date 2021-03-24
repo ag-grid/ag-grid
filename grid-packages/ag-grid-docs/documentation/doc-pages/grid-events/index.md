@@ -64,6 +64,7 @@ interface CellValueChangedEvent {
         │       <span class="event-hierarchy__attribute">rowIndex</span>: number, // the row index of the focused cell
         │       <span class="event-hierarchy__attribute">column</span>: Column, // the column of the focused cell
         │       <span class="event-hierarchy__attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined/null (if not pinned)
+        │       <span class="event-hierarchy__attribute">isFullWidthCell</span>: boolean, // whether the cell is a full width cell or regular cell.
         │       <span class="event-hierarchy__attribute">forceBrowserFocus</span>: boolean // whether browser focus is also set (false when editing)
         │     }</span>
         ├── ViewportChangedEvent <span class="event-hierarchy__property">{

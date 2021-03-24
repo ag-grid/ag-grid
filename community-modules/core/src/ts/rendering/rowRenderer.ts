@@ -111,7 +111,7 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
             this.forEachCellComp(cellComp => cellComp.onCellFocused(event));
             this.forEachRowComp((key: string, rowComp: RowComp) => {
-                if (rowComp.isFullWidth()) {
+                if (rowComp.isFullWidthRow()) {
                     rowComp.onFullWidthRowFocused(event);
                 }
             });
@@ -858,7 +858,7 @@ export class RowRenderer extends BeanStub {
         const rowsToRemove: string[] = [];
 
         iterateObject(this.rowCompsByIndex, (id: string, rowComp: RowComp) => {
-            if (rowComp.isFullWidth()) {
+            if (rowComp.isFullWidthRow()) {
                 const rowIndex = rowComp.getRowNode().rowIndex;
 
                 rowsToRemove.push(rowIndex!.toString());
@@ -881,7 +881,7 @@ export class RowRenderer extends BeanStub {
         }
 
         iterateObject(this.rowCompsByIndex, (id: string, rowComp: RowComp) => {
-            if (!rowComp.isFullWidth()) { return; }
+            if (!rowComp.isFullWidthRow()) { return; }
 
             const rowNode = rowComp.getRowNode();
 
@@ -1269,7 +1269,7 @@ export class RowRenderer extends BeanStub {
     private tryToFocusFullWidthRow(position: CellPosition | RowPosition, backwards: boolean = false): boolean {
         const displayedColumns = this.columnController.getAllDisplayedColumns();
         const rowComp = this.getRowCompByPosition(position);
-        if (!rowComp || !rowComp.isFullWidth()) { return false; }
+        if (!rowComp || !rowComp.isFullWidthRow()) { return false; }
 
         const cellPosition: CellPosition = {
             rowIndex: position.rowIndex,
@@ -1420,7 +1420,7 @@ export class RowRenderer extends BeanStub {
         // or that the focusedCell is a Full Width Row
         if (missing(renderedComp)) {
             renderedComp = this.getRowCompByPosition(focusedCell);
-            if (!renderedComp || !renderedComp.isFullWidth()) {
+            if (!renderedComp || !renderedComp.isFullWidthRow()) {
                 return false;
             }
         }
@@ -1604,7 +1604,7 @@ export class RowRenderer extends BeanStub {
             // as fullWidth rows have no cells, so we skip it
             if (!nextCellComp) {
                 const rowComp = this.getRowCompByPosition(nextCell);
-                if (!rowComp || !rowComp.isFullWidth()) {
+                if (!rowComp || !rowComp.isFullWidthRow()) {
                     continue;
                 } else {
                     return rowComp;

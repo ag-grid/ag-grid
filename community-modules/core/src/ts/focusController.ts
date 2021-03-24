@@ -421,13 +421,21 @@ export class FocusController extends BeanStub {
             floating: null,
             api: this.gridApi,
             columnApi: this.columnApi,
-            rowPinned: null
+            rowPinned: null,
+            isFullWidthCell: false
         };
 
         if (this.focusedCellPosition) {
-            event.rowIndex = this.focusedCellPosition.rowIndex;
+            const rowIndex = event.rowIndex = this.focusedCellPosition.rowIndex;
+            const rowPinned = event.rowPinned = this.focusedCellPosition.rowPinned;
+
             event.column = this.focusedCellPosition.column;
-            event.rowPinned = this.focusedCellPosition.rowPinned;
+
+            const rowNode = this.rowPositionUtils.getRowNode({ rowIndex, rowPinned });
+
+            if (rowNode) {
+                event.isFullWidthCell = rowNode.isFullWidthRow();
+            }
         }
 
         this.eventService.dispatchEvent(event);

@@ -226,7 +226,8 @@ export interface PaginationPixelOffsetChangedEvent extends AgGridEvent {
 export interface CellFocusedEvent extends AgGridEvent {
     rowIndex: number | null;
     column: Column | null;
-    rowPinned?: string | null;
+    rowPinned: string | null;
+    isFullWidthCell: boolean;
     forceBrowserFocus?: boolean;
     // floating is for backwards compatibility, this is the same as rowPinned.
     // this is because the focus service doesn't keep references to rowNodes

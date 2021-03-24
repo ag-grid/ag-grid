@@ -127,7 +127,7 @@ export class RangeController extends BeanStub implements IRangeController {
                 cellRange.startRow : cellRange.endRow;
         }
 
-        const rowPinned = this.pinnedRowModel.getPinnedTopRowCount() > 0 ? Constants.PINNED_TOP : undefined;
+        const rowPinned = this.pinnedRowModel.getPinnedTopRowCount() > 0 ? Constants.PINNED_TOP : null;
 
         return { rowIndex: 0, rowPinned };
     }
@@ -150,20 +150,16 @@ export class RangeController extends BeanStub implements IRangeController {
 
         return {
             rowIndex: this.rowModel.getRowCount() - 1,
-            rowPinned: undefined
+            rowPinned: null
         };
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
-            return;
-        }
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
 
         const columns = this.calculateColumnsBetween(cell.column, cell.column);
 
-        if (!columns) {
-            return;
-        }
+        if (!columns) { return; }
 
         const suppressMultiRangeSelections = this.gridOptionsWrapper.isSuppressMultiRangeSelection();
 
@@ -222,9 +218,7 @@ export class RangeController extends BeanStub implements IRangeController {
     }
 
     public extendLatestRangeToCell(cellPosition: CellPosition): void {
-        if (this.isEmpty() || !this.newestRangeStartCell) {
-            return;
-        }
+        if (this.isEmpty() || !this.newestRangeStartCell) { return; }
 
         const cellRange = _.last(this.cellRanges);
 
@@ -377,12 +371,12 @@ export class RangeController extends BeanStub implements IRangeController {
 
         const startRow = params.rowStartIndex != null ? {
             rowIndex: params.rowStartIndex,
-            rowPinned: params.rowStartPinned
+            rowPinned: params.rowStartPinned || null
         } : undefined;
 
         const endRow = params.rowEndIndex != null ? {
             rowIndex: params.rowEndIndex,
-            rowPinned: params.rowEndPinned
+            rowPinned: params.rowEndPinned || null
         } : undefined;
 
         return {
@@ -498,7 +492,7 @@ export class RangeController extends BeanStub implements IRangeController {
     private isRowInRange(rowIndex: number, floating: string | null | undefined, cellRange: CellRange): boolean {
         const firstRow = this.getRangeStartRow(cellRange);
         const lastRow = this.getRangeEndRow(cellRange);
-        const thisRow: RowPosition = { rowIndex, rowPinned: floating };
+        const thisRow: RowPosition = { rowIndex, rowPinned: floating || null };
 
         // compare rowPinned with == instead of === because it can be `null` or `undefined`
         const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.rowPinned == firstRow.rowPinned;
