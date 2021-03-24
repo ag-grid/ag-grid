@@ -175,7 +175,7 @@ export class RowComp extends Component {
         this.setupAngular1Scope();
         this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
-        this.setupRowContainers();
+        this.setupRowUi();
         this.addListeners();
 
         if (this.slideRowIn) {
@@ -341,7 +341,7 @@ export class RowComp extends Component {
         });
     }
 
-    private setupRowContainers(): void {
+    private setupRowUi(): void {
         const isFullWidthCell = this.rowNode.isFullWidthCell();
         const isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
         const pivotMode = this.beans.columnController.isPivotMode();
@@ -353,13 +353,13 @@ export class RowComp extends Component {
         const isFullWidthGroup = isGroupRow && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
 
         if (this.rowNode.stub) {
-            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME, false);
+            this.createFullWidthRowUi(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME, false);
         } else if (isDetailCell) {
-            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER, RowComp.DETAIL_CELL_RENDERER_COMP_NAME, true);
+            this.createFullWidthRowUi(RowComp.DETAIL_CELL_RENDERER, RowComp.DETAIL_CELL_RENDERER_COMP_NAME, true);
         } else if (isFullWidthCell) {
-            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, null, false);
+            this.createFullWidthRowUi(RowComp.FULL_WIDTH_CELL_RENDERER, null, false);
         } else if (isFullWidthGroup) {
-            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME, false);
+            this.createFullWidthRowUi(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME, false);
         } else {
             this.setupNormalRowContainers();
         }
@@ -383,11 +383,11 @@ export class RowComp extends Component {
         this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
     }
 
-    private createFullWidthRows(type: string, name: string | null, detailRow: boolean): void {
+    private createFullWidthRowUi(type: string, name: string | null, detailRow: boolean): void {
         this.fullWidthRow = true;
 
         if (this.embedFullWidth) {
-            this.createFullWidthRowContainer(this.bodyContainerComp, null,
+            this.createFullWidthRowCell(this.bodyContainerComp, null,
                 null, type, name!,
                 (eRow: HTMLElement) => {
                     this.eFullWidthRowBody = eRow;
@@ -400,7 +400,7 @@ export class RowComp extends Component {
             // printLayout doesn't put components into the pinned sections
             if (this.printLayout) { return; }
 
-            this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Constants.PINNED_LEFT,
+            this.createFullWidthRowCell(this.pinnedLeftContainerComp, Constants.PINNED_LEFT,
                 'ag-cell-last-left-pinned', type, name!,
                 (eRow: HTMLElement) => {
                     this.eFullWidthRowLeft = eRow;
@@ -409,7 +409,7 @@ export class RowComp extends Component {
                     this.fullWidthRowComponentLeft = cellRenderer;
                 },
                 detailRow);
-            this.createFullWidthRowContainer(this.pinnedRightContainerComp, Constants.PINNED_RIGHT,
+            this.createFullWidthRowCell(this.pinnedRightContainerComp, Constants.PINNED_RIGHT,
                 'ag-cell-first-right-pinned', type, name!,
                 (eRow: HTMLElement) => {
                     this.eFullWidthRowRight = eRow;
@@ -421,7 +421,7 @@ export class RowComp extends Component {
         } else {
             // otherwise we add to the fullWidth container as normal
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
-            this.createFullWidthRowContainer(this.fullWidthContainerComp, null,
+            this.createFullWidthRowCell(this.fullWidthContainerComp, null,
                 null, type, name!,
                 (eRow: HTMLElement) => {
                     this.eFullWidthRow = eRow;
@@ -780,7 +780,7 @@ export class RowComp extends Component {
         const renderedCell = this.cellComps[indexStr];
 
         // always remove the cell if it's not rendered or if it's in the wrong pinned location
-        if (!renderedCell || this.isCellInWrongRow(renderedCell)) { return REMOVE_CELL; }
+        if (!renderedCell || this.isCellInWrongContainer(renderedCell)) { return REMOVE_CELL; }
 
         // we want to try and keep editing and focused cells
         const editing = renderedCell.isEditing();
@@ -796,37 +796,14 @@ export class RowComp extends Component {
         }
 
         return REMOVE_CELL;
-
     }
 
-    private ensureCellInCorrectContainer(cellComp: CellComp): void {
-        // for print layout, we always put cells into centre, otherwise we put in correct pinned section
-        if (this.printLayout) { return; }
-
-        const element = cellComp.getGui();
+    private isCellInWrongContainer(cellComp: CellComp): boolean {
         const column = cellComp.getColumn();
-        const pinnedType = column.getPinned();
-        const eContainer = this.getContainerForCell(pinnedType!);
+        const eDesiredContainer = this.getContainerForCell(column.getPinned()!);
+        const eOldContainer = cellComp.getParentRow(); // if in wrong container, remove it
 
-        // if in wrong container, remove it
-        const eOldContainer = cellComp.getParentRow();
-        const inWrongRow = eOldContainer !== eContainer;
-        if (inWrongRow) {
-            // take out from old row
-            if (eOldContainer) { eOldContainer.removeChild(element); }
-
-            eContainer.appendChild(element);
-            cellComp.setParentRow(eContainer);
-            this.elementOrderChanged = true;
-        }
-    }
-
-    private isCellInWrongRow(cellComp: CellComp): boolean {
-        const column = cellComp.getColumn();
-        const rowWeWant = this.getContainerForCell(column.getPinned()!);
-        const oldRow = cellComp.getParentRow(); // if in wrong container, remove it
-
-        return oldRow !== rowWeWant;
+        return eOldContainer !== eDesiredContainer;
     }
 
     private insertCellsIntoContainer(eRow: HTMLElement, cols: Column[]): void {
@@ -839,18 +816,19 @@ export class RowComp extends Component {
             const colId = col.getId();
             const existingCell = this.cellComps[colId];
 
-            // need to check the column is the same one, not a new column with the same ID
-            if (existingCell && existingCell.getColumn() == col) {
-                this.ensureCellInCorrectContainer(existingCell);
-            } else {
-                if (existingCell) {
-                    // here there is a col with the same id, so need to destroy the old cell first,
-                    // as the old column no longer exists. this happens often with pivoting, where
-                    // id's are pivot_1, pivot_2 etc, so common for new cols with same ID's
-                    this.destroyCells([colId]);
-                }
-                this.createNewCell(col, eRow, cellTemplates, newCellComps);
+            if (existingCell && existingCell.getColumn() === col && !this.isCellInWrongContainer(existingCell)) {
+                return;
             }
+
+            // existing cell can happen for 2 reasons:
+            // 1) column is in wrong container (ie column just got pinned)
+            // 2) there is an old col with same id,so need to destroy the old cell first,
+            //    as the old column no longer exists. this happens often with pivoting, where
+            //    id's are pivot_1, pivot_2 etc, so common for new cols with same ID's
+            if (existingCell) {
+                this.destroyCells([colId]);
+            }
+            this.createNewCell(col, eRow, cellTemplates, newCellComps);
 
         });
 
@@ -1000,7 +978,7 @@ export class RowComp extends Component {
         }
     }
 
-    private createFullWidthRowContainer(
+    private createFullWidthRowCell(
         rowContainerComp: RowContainerComp,
         pinned: string | null,
         extraCssClass: string | null,
