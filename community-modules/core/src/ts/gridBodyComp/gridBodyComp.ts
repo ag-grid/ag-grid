@@ -586,7 +586,7 @@ export class GridBodyComp extends Component implements LayoutView {
         if (keyboardEvent.defaultPrevented) { return; }
         if (cellComp) {
             this.processCellKeyboardEvent(cellComp, eventName, keyboardEvent);
-        } else if (rowComp && rowComp.isFullWidthRow()) {
+        } else if (rowComp && rowComp.isFullWidth()) {
             this.processFullWidthRowKeyboardEvent(rowComp, eventName, keyboardEvent);
         }
     }

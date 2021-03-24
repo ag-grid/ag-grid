@@ -431,10 +431,10 @@ export class FocusController extends BeanStub {
 
             event.column = this.focusedCellPosition.column;
 
-            const rowNode = this.rowPositionUtils.getRowNode({ rowIndex, rowPinned });
+            const rowComp = this.rowRenderer.getRowCompByPosition({ rowIndex, rowPinned });
 
-            if (rowNode) {
-                event.isFullWidthCell = rowNode.isFullWidthRow();
+            if (rowComp) {
+                event.isFullWidthCell = rowComp.isFullWidth();
             }
         }
 
