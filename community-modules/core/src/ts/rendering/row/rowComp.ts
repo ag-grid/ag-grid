@@ -351,6 +351,7 @@ export class RowComp extends Component {
                 break;
             case RowType.FULL_WIDTH_CELL:
                 this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, null, false);
+                break;
             case RowType.FULL_WIDTH_GROUP:
                 this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME, false);
                 break;
@@ -589,7 +590,6 @@ export class RowComp extends Component {
     }
 
     private destroyFullWidthComponents(): void {
-
         this.fullWidthRowDestroyFuncs.forEach(f => f());
         this.fullWidthRowDestroyFuncs = [];
 
