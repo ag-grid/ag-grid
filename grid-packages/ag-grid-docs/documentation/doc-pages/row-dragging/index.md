@@ -355,3 +355,13 @@ The example below shows a custom cell renderer, with using the `registerRowDragg
 - When you hover the cells, an arrow will appear, and this arrow can be used to **drag** the rows.
 
 <grid-example title='Row Drag With Custom Cell Renderer' name='dragger-inside-custom-cell-renderer' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
+
+### Row Dragger with Custom Start Drag Pixels
+
+By default, the drag event only starts after the **Row Drag Element** has been dragged by `4px`, but sometimes it might be useful to start the drag with a different drag threshold, for example, start dragging as soon as the `mousedown` event happens (dragged by `0px`). For that reason, the `registerRowDragger` takes a second parameter to specify the number of pixels that will start the drag event.
+
+Note the following:
+
+- The drag event starts as soon as `mousedown` is fired.
+
+<grid-example title='Row Drag With Custom Start Drag Pixels' name='dragger-inside-custom-start-drag-pixels' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
