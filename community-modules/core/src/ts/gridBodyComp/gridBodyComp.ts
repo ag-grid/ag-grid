@@ -17,7 +17,7 @@ import { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageS
 import { AlignedGridsService } from '../alignedGridsService';
 import { GridApi } from '../gridApi';
 import { AnimationFrameService } from '../misc/animationFrameService';
-import { RowComp } from '../rendering/row/rowComp';
+import { RowController } from '../rendering/row/rowController';
 import { NavigationService } from './navigationService';
 import { CellComp } from '../rendering/cellComp';
 import { ValueService } from '../valueService/valueService';
@@ -564,11 +564,11 @@ export class GridBodyComp extends Component implements LayoutView {
         return this.eBodyViewport.getBoundingClientRect();
     }
 
-    private getRowForEvent(event: Event): RowComp | null {
+    private getRowForEvent(event: Event): RowController | null {
         let sourceElement: Element | null = getTarget(event);
 
         while (sourceElement) {
-            const renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, RowComp.DOM_DATA_KEY_RENDERED_ROW);
+            const renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, RowController.DOM_DATA_KEY_RENDERED_ROW);
             if (renderedRow) {
                 return renderedRow;
             }
@@ -581,7 +581,7 @@ export class GridBodyComp extends Component implements LayoutView {
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
         const cellComp = getComponentForEvent<CellComp>(this.gridOptionsWrapper, keyboardEvent, 'cellComp');
-        const rowComp = getComponentForEvent<RowComp>(this.gridOptionsWrapper, keyboardEvent, 'renderedRow');
+        const rowComp = getComponentForEvent<RowController>(this.gridOptionsWrapper, keyboardEvent, 'renderedRow');
 
         if (keyboardEvent.defaultPrevented) { return; }
         if (cellComp) {
@@ -630,7 +630,7 @@ export class GridBodyComp extends Component implements LayoutView {
         }
     }
 
-    processFullWidthRowKeyboardEvent(rowComp: RowComp, eventName: string, keyboardEvent: KeyboardEvent) {
+    processFullWidthRowKeyboardEvent(rowComp: RowController, eventName: string, keyboardEvent: KeyboardEvent) {
         const rowNode = rowComp.getRowNode();
         const focusedCell = this.beans.focusController.getFocusedCell();
         const column = (focusedCell && focusedCell.column) as Column;
@@ -729,7 +729,7 @@ export class GridBodyComp extends Component implements LayoutView {
 
     }
 
-    private handleContextMenuMouseEvent(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowComp: RowComp | null, cellComp: CellComp) {
+    private handleContextMenuMouseEvent(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowComp: RowController | null, cellComp: CellComp) {
         const rowNode = rowComp ? rowComp.getRowNode() : null;
         const column = cellComp ? cellComp.getColumn() : null;
         let value = null;

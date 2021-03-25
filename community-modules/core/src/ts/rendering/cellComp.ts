@@ -20,7 +20,7 @@ import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { CellClassParams, ColDef, NewValueParams } from "../entities/colDef";
 import { CellPosition } from "../entities/cellPosition";
 import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../interfaces/iRangeController";
-import { RowComp } from "./row/rowComp";
+import { RowController } from "./row/rowController";
 import { RowDragComp } from "./row/rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
 import { AgPromise } from "../utils";
@@ -123,7 +123,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private firstRightPinned: boolean;
     private lastLeftPinned: boolean;
 
-    private rowComp: RowComp | null;
+    private rowComp: RowController | null;
 
     private rangeSelectionEnabled: boolean;
 
@@ -150,7 +150,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private cellEditorVersion = 0;
     private cellRendererVersion = 0;
 
-    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp | null,
+    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowController | null,
         autoHeightCell: boolean, printLayout: boolean) {
         super();
         this.scope = scope;
@@ -450,7 +450,7 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.getValueToUse();
     }
 
-    public getRenderedRow(): RowComp | null {
+    public getRenderedRow(): RowController | null {
         return this.rowComp;
     }
 

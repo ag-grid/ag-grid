@@ -176,7 +176,7 @@ export { SetLeftFeature } from "./rendering/features/setLeftFeature";
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cellComp";
-export { RowComp } from "./rendering/row/rowComp";
+export { RowController } from "./rendering/row/rowController";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
