@@ -301,9 +301,8 @@ export class RowController extends Component {
 
     private createRowContainer(
         rowContainerComp: RowContainerComp,
-        cols: Column[],
-        callback: (eRow: HTMLElement) => void
-    ): void {
+        cols: Column[]
+    ): HTMLElement {
         const useAnimationsFrameForCreate = this.useAnimationFrameForCreate;
         const cellTemplatesAndComps: CellTemplate = useAnimationsFrameForCreate ? { cellComps: [], template: '' } : this.createCells(cols);
         const rowTemplate = this.createTemplate(cellTemplatesAndComps.template);
@@ -317,7 +316,6 @@ export class RowController extends Component {
 
         this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
         this.afterRowAttached(rowContainerComp, eRow);
-        callback(eRow);
 
         if (useAnimationsFrameForCreate) {
             this.beans.taskQueue.createTask(
@@ -329,6 +327,8 @@ export class RowController extends Component {
             this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
             this.rowContainerReadyCount = 3;
         }
+
+        return eRow;
     }
 
     private setupRowUi(): void {
@@ -368,9 +368,9 @@ export class RowController extends Component {
             rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
         }
 
-        this.createRowContainer(this.bodyRowContainerComp, centerCols, eRow => this.eBodyRow = eRow);
-        this.createRowContainer(this.rightRowContainerComp, rightCols, eRow => this.eRightRow = eRow);
-        this.createRowContainer(this.leftRowContainerComp, leftCols, eRow => this.eLeftRow = eRow);
+        this.eBodyRow = this.createRowContainer(this.bodyRowContainerComp, centerCols);
+        this.eRightRow = this.createRowContainer(this.rightRowContainerComp, rightCols);
+        this.eLeftRow = this.createRowContainer(this.leftRowContainerComp, leftCols);
     }
 
     private createFullWidthRowUi(type: string, name: string | null, detailRow: boolean): void {
@@ -379,9 +379,6 @@ export class RowController extends Component {
         if (this.embedFullWidth) {
             this.createFullWidthRowCell(this.bodyRowContainerComp, null,
                 null, type, name!,
-                (eRow: HTMLElement) => {
-                    this.eFullWidthEmbedded = eRow;
-                },
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentBody = cellRenderer;
                 },
@@ -392,18 +389,12 @@ export class RowController extends Component {
 
             this.createFullWidthRowCell(this.leftRowContainerComp, Constants.PINNED_LEFT,
                 'ag-cell-last-left-pinned', type, name!,
-                (eRow: HTMLElement) => {
-                    this.eFullWidthEmbeddedLeft = eRow;
-                },
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentLeft = cellRenderer;
                 },
                 detailRow);
             this.createFullWidthRowCell(this.rightRowContainerComp, Constants.PINNED_RIGHT,
                 'ag-cell-first-right-pinned', type, name!,
-                (eRow: HTMLElement) => {
-                    this.eFullWidthEmbeddedRight = eRow;
-                },
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentRight = cellRenderer;
                 },
@@ -413,9 +404,6 @@ export class RowController extends Component {
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
             this.createFullWidthRowCell(this.fullWidthRowContainerComp, null,
                 null, type, name!,
-                (eRow: HTMLElement) => {
-                    this.eFullWidthRow = eRow;
-                },
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponent = cellRenderer;
                 },
@@ -974,10 +962,9 @@ export class RowController extends Component {
         extraCssClass: string | null,
         cellRendererType: string,
         cellRendererName: string,
-        eRowCallback: (eRow: HTMLElement) => void,
         cellRendererCallback: (comp: ICellRendererComp) => void,
         detailRow: boolean
-    ): void {
+    ): HTMLElement {
         const rowTemplate = this.createTemplate('', extraCssClass);
 
         const eRow = loadTemplate(rowTemplate);
@@ -1011,15 +998,16 @@ export class RowController extends Component {
                 } else {
                     console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
                 }
-                return;
+                return eRow;
             }
             res.then(callback);
         }
 
         this.afterRowAttached(rowContainerComp, eRow);
-        eRowCallback(eRow);
 
         this.angular1Compile(eRow);
+
+        return eRow;
     }
 
     private setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
