@@ -1,5 +1,6 @@
 import ContinuousScale, { identity } from "./continuousScale";
 import ticks from "../util/ticks";
+import { format } from "../util/numberFormat";
 
 export class LogScale extends ContinuousScale {
     _domain = [1, 10];
@@ -207,7 +208,7 @@ export class LogScale extends ContinuousScale {
         }
 
         if (typeof specifier !== 'function') {
-            specifier = (x: number) => String(x); // TODO: implement number formatting
+            specifier = format(specifier as string);
         }
 
         if (count === Infinity) {
