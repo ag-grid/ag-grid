@@ -29,7 +29,7 @@ import {
     addOrRemoveCssClass,
     addStylesToElement,
     appendHtml,
-    isElementChildOfClass,
+    isElementChildOfClass, loadTemplate,
     removeCssClass,
     setDomChildOrder
 } from "../../utils/dom";
@@ -131,8 +131,6 @@ export class RowController extends Component {
     private parentScope: any;
     private scope: any;
 
-    private initialised = false;
-
     private elementOrderChanged = false;
     private lastMouseDownOnDragger = false;
 
@@ -169,9 +167,7 @@ export class RowController extends Component {
         this.embedFullWidth = embedFullWidth;
 
         this.setAnimateFlags(animateIn);
-    }
 
-    public init(): void {
         this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
         this.setupAngular1Scope();
         this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
@@ -246,13 +242,6 @@ export class RowController extends Component {
         return cellComp ? cellComp.getGui() : null;
     }
 
-    public afterFlush(): void {
-        if (this.initialised) { return; }
-
-        this.initialised = true;
-        this.executeProcessRowPostCreateFunc();
-    }
-
     private executeProcessRowPostCreateFunc(): void {
         const func = this.beans.gridOptionsWrapper.getProcessRowPostCreateFunc();
         if (!func) { return; }
@@ -323,23 +312,23 @@ export class RowController extends Component {
         // at a time, the grid inserts all rows together - so the callback here is called by the
         // rowRenderer when all RowComps are created, then all the HTML is inserted in one go,
         // and then all the callbacks are called. this is NOT done in an animation frame.
-        rowContainerComp.appendRowTemplate(rowTemplate, () => {
-            const eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
-            this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
-            this.afterRowAttached(rowContainerComp, eRow);
-            callback(eRow);
+        const eRow = loadTemplate(rowTemplate);
+        rowContainerComp.appendRow(eRow);
 
-            if (useAnimationsFrameForCreate) {
-                this.beans.taskQueue.createTask(
-                    this.lazyCreateCells.bind(this, cols, eRow),
-                    this.rowNode.rowIndex!,
-                    'createTasksP1'
-                );
-            } else {
-                this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
-                this.rowContainerReadyCount = 3;
-            }
-        });
+        this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
+        this.afterRowAttached(rowContainerComp, eRow);
+        callback(eRow);
+
+        if (useAnimationsFrameForCreate) {
+            this.beans.taskQueue.createTask(
+                this.lazyCreateCells.bind(this, cols, eRow),
+                this.rowNode.rowIndex!,
+                'createTasksP1'
+            );
+        } else {
+            this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
+            this.rowContainerReadyCount = 3;
+        }
     }
 
     private setupRowUi(): void {
@@ -991,46 +980,46 @@ export class RowController extends Component {
     ): void {
         const rowTemplate = this.createTemplate('', extraCssClass);
 
-        rowContainerComp.appendRowTemplate(rowTemplate, () => {
-            const eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
-            const params = this.createFullWidthParams(eRow, pinned);
+        const eRow = loadTemplate(rowTemplate);
+        rowContainerComp.appendRow(eRow);
 
-            const callback = (cellRenderer: ICellRendererComp) => {
-                if (this.isAlive()) {
-                    const eGui = cellRenderer.getGui();
-                    eRow.appendChild(eGui);
-                    if (detailRow) {
-                        this.setupDetailRowAutoHeight(eGui);
-                    }
-                    cellRendererCallback(cellRenderer);
-                } else {
-                    this.beans.context.destroyBean(cellRenderer);
+        const params = this.createFullWidthParams(eRow, pinned);
+
+        const callback = (cellRenderer: ICellRendererComp) => {
+            if (this.isAlive()) {
+                const eGui = cellRenderer.getGui();
+                eRow.appendChild(eGui);
+                if (detailRow) {
+                    this.setupDetailRowAutoHeight(eGui);
                 }
-            };
-
-            // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
-            const cachedRowComp = this.beans.detailRowCompCache.get(this.rowNode, pinned);
-            if (cachedRowComp) {
-                callback(cachedRowComp);
+                cellRendererCallback(cellRenderer);
             } else {
-                const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
-                if (!res) {
-                    const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
-                    if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
-                        console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
-                    } else {
-                        console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
-                    }
-                    return;
-                }
-                res.then(callback);
+                this.beans.context.destroyBean(cellRenderer);
             }
+        };
 
-            this.afterRowAttached(rowContainerComp, eRow);
-            eRowCallback(eRow);
+        // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
+        const cachedRowComp = this.beans.detailRowCompCache.get(this.rowNode, pinned);
+        if (cachedRowComp) {
+            callback(cachedRowComp);
+        } else {
+            const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
+            if (!res) {
+                const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
+                if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
+                    console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
+                } else {
+                    console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
+                }
+                return;
+            }
+            res.then(callback);
+        }
 
-            this.angular1Compile(eRow);
-        });
+        this.afterRowAttached(rowContainerComp, eRow);
+        eRowCallback(eRow);
+
+        this.angular1Compile(eRow);
     }
 
     private setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
@@ -1319,7 +1308,7 @@ export class RowController extends Component {
         this.addDomData(eRow);
 
         this.removeSecondPassFuncs.push(() => {
-            rowContainerComp.removeRowElement(eRow);
+            rowContainerComp.removeRow(eRow);
         });
 
         this.removeFirstPassFuncs.push(() => {
@@ -1348,6 +1337,8 @@ export class RowController extends Component {
         } else {
             this.addHoverFunctionality(eRow);
         }
+
+        this.executeProcessRowPostCreateFunc();
     }
 
     private addHoverFunctionality(eRow: HTMLElement): void {

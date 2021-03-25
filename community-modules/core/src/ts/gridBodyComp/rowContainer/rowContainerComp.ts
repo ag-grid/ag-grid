@@ -7,7 +7,7 @@ import {
     ensureDomOrder,
     getInnerWidth,
     getScrollLeft,
-    insertTemplateWithDomOrder, isHorizontalScrollShowing,
+    insertWithDomOrder, isHorizontalScrollShowing,
     isVisible, setScrollLeft
 } from "../../utils/dom";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -120,9 +120,6 @@ export class RowContainerComp extends Component {
     private readonly name: RowContainerNames;
 
     private enableRtl: boolean;
-
-    private rowTemplatesToAdd: string[] = [];
-    private afterGuiAttachedCallbacks: Function[] = [];
 
     private scrollTop: number;
 
@@ -239,38 +236,17 @@ export class RowContainerComp extends Component {
         this.scrollTop = verticalScrollPosition;
     }
 
-    public getRowElement(compId: number): HTMLElement {
-        return this.eContainer.querySelector(`[comp-id="${compId}"]`) as HTMLElement;
-    }
-
-    public flushRowTemplates(): void {
-
-        // if doing dom order, then rowTemplates will be empty,
-        // or if no rows added since last time also empty.
-        if (this.rowTemplatesToAdd.length !== 0) {
-            const htmlToAdd = this.rowTemplatesToAdd.join('');
-            appendHtml(this.eContainer, htmlToAdd);
-            this.rowTemplatesToAdd.length = 0;
-        }
-
-        // this only empty if no rows since last time, as when
-        // doing dom order, we still have callbacks to process
-        this.afterGuiAttachedCallbacks.forEach(func => func());
-        this.afterGuiAttachedCallbacks.length = 0;
-
+    public clearLastPlacedElement(): void {
         this.lastPlacedElement = null;
     }
 
-    public appendRowTemplate(rowTemplate: string,
-                             callback: () => void) {
-
+    public appendRow(element: HTMLElement) {
         if (this.domOrder) {
-            this.lastPlacedElement = insertTemplateWithDomOrder(this.eContainer, rowTemplate, this.lastPlacedElement);
+            insertWithDomOrder(this.eContainer, element, this.lastPlacedElement);
         } else {
-            this.rowTemplatesToAdd.push(rowTemplate);
+            this.eContainer.appendChild(element);
         }
-
-        this.afterGuiAttachedCallbacks.push(callback);
+        this.lastPlacedElement = element;
     }
 
     public ensureDomOrder(eRow: HTMLElement): void {
@@ -280,7 +256,7 @@ export class RowContainerComp extends Component {
         }
     }
 
-    public removeRowElement(eRow: HTMLElement): void {
+    public removeRow(eRow: HTMLElement): void {
         this.eContainer.removeChild(eRow);
     }
 

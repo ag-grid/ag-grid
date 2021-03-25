@@ -321,12 +321,11 @@ export class RowRenderer extends BeanStub {
                     this.embedFullWidthRows
                 );
 
-                rowComp.init();
                 rowComps.push(rowComp);
             });
         }
 
-        this.flushContainers(rowComps);
+        this.clearLastPlacedElements();
     }
 
     private onPinnedRowDataChanged(): void {
@@ -799,7 +798,7 @@ export class RowRenderer extends BeanStub {
             }
         });
 
-        this.flushContainers(rowComps);
+        this.clearLastPlacedElements();
 
         executeNextVMTurn(nextVmTurnFunctions);
 
@@ -815,14 +814,12 @@ export class RowRenderer extends BeanStub {
         this.gridBodyComp.updateRowCount();
     }
 
-    private flushContainers(rowComps: RowController[]): void {
+    private clearLastPlacedElements(): void {
         iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComp) => {
             if (rowContainerComp) {
-                rowContainerComp.flushRowTemplates();
+                rowContainerComp.clearLastPlacedElement();
             }
         });
-
-        rowComps.forEach(rowComp => rowComp.afterFlush());
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -1138,8 +1135,6 @@ export class RowRenderer extends BeanStub {
             this.printLayout,
             this.embedFullWidthRows
         );
-
-        rowComp.init();
 
         return rowComp;
     }
