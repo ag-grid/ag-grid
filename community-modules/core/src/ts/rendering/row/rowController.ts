@@ -179,7 +179,13 @@ export class RowController extends Component {
         this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
         this.setRowType();
-        this.setupRowUi();
+
+        if (this.isFullWidth()) {
+            this.createFullWidthRowUi();
+        } else {
+            this.setupNormalRowContainers();
+        }
+
         this.addListeners();
 
         if (this.slideRowIn) {
@@ -312,7 +318,9 @@ export class RowController extends Component {
         pinned: string | null
     ): RowComp {
         const useAnimationsFrameForCreate = this.useAnimationFrameForCreate;
-        const cellTemplatesAndComps: CellTemplate = useAnimationsFrameForCreate ? { cellComps: [], template: '' } : this.createCells(cols);
+        const cellTemplatesAndComps = useAnimationsFrameForCreate
+            ? { cellComps: [], template: '' }
+            : this.createCells(cols);
         const rowTemplate = this.createTemplate(cellTemplatesAndComps.template);
 
         // the RowRenderer is probably inserting many rows. rather than inserting each template one
@@ -363,14 +371,6 @@ export class RowController extends Component {
             this.rowType = RowType.FullWidthGroup;
         } else {
             this.rowType = RowType.Normal;
-        }
-    }
-
-    private setupRowUi(): void {
-        if (this.isFullWidth()) {
-            this.createFullWidthRowUi();
-        } else {
-            this.setupNormalRowContainers();
         }
     }
 
