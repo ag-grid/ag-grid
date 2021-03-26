@@ -41,7 +41,7 @@ import { cssStyleObjectToMarkup } from "../../utils/general";
 import { AngularRowUtils } from "./angularRowUtils";
 import { CellPosition } from "../../entities/cellPosition";
 import { RowPosition } from "../../entities/rowPosition";
-import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerComp";
+import { RowContainerComp, RowContainerNames } from "../../gridBodyComp/rowContainer/rowContainerComp";
 import { RowComp } from "./rowComp";
 
 interface CellTemplate {
@@ -50,26 +50,39 @@ interface CellTemplate {
 }
 
 export interface RowCompView {
+    // setCells(cellComp);
 }
+
+export enum RowType {
+    Normal,
+    FullWidth,
+    FullWidthLoading,
+    FullWidthGroup,
+    FullWidthDetail
+}
+
+const FullWidthRenderers: Map<RowType, string> = new Map([
+    [RowType.FullWidthLoading, 'agLoadingCellRenderer'],
+    [RowType.FullWidthGroup, 'agGroupRowRenderer'],
+    [RowType.FullWidthDetail, 'agDetailCellRenderer']
+]);
+
+const FullWidthKeys: Map<RowType, string> = new Map([
+    [RowType.FullWidth, 'fullWidthCellRenderer'],
+    [RowType.FullWidthLoading, 'loadingCellRenderer'],
+    [RowType.FullWidthGroup, 'groupRowRenderer'],
+    [RowType.FullWidthDetail, 'detailCellRenderer']
+]);
 
 export class RowController extends Component {
 
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 
-    private static FULL_WIDTH_CELL_RENDERER = 'fullWidthCellRenderer';
-
-    private static GROUP_ROW_RENDERER = 'groupRowRenderer';
-    private static GROUP_ROW_RENDERER_COMP_NAME = 'agGroupRowRenderer';
-
-    private static LOADING_CELL_RENDERER = 'loadingCellRenderer';
-    private static LOADING_CELL_RENDERER_COMP_NAME = 'agLoadingCellRenderer';
-
-    private static DETAIL_CELL_RENDERER = 'detailCellRenderer';
-    private static DETAIL_CELL_RENDERER_COMP_NAME = 'agDetailCellRenderer';
-
     private readonly rowNode: RowNode;
 
     private readonly beans: Beans;
+
+    private rowType: RowType;
 
     private allRowComps: RowComp[] = [];
 
@@ -89,8 +102,6 @@ export class RowController extends Component {
     private lastRowOnPage: boolean;
 
     private active = true;
-
-    private fullWidthRow: boolean;
 
     private editingRow: boolean;
     private rowFocused: boolean;
@@ -167,6 +178,7 @@ export class RowController extends Component {
         this.setupAngular1Scope();
         this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
+        this.setRowType();
         this.setupRowUi();
         this.addListeners();
 
@@ -210,7 +222,7 @@ export class RowController extends Component {
         templateParts.push(` comp-id="${this.getCompId()}"`);
         templateParts.push(` class="${rowClasses}"`);
 
-        if (this.fullWidthRow) {
+        if (this.isFullWidth()) {
             templateParts.push(` tabindex="-1"`);
         }
 
@@ -329,7 +341,7 @@ export class RowController extends Component {
         return res;
     }
 
-    private setupRowUi(): void {
+    private setRowType(): void {
         const isStub = this.rowNode.stub;
         const isFullWidthCell = this.rowNode.isFullWidthCell();
         const isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
@@ -341,16 +353,22 @@ export class RowController extends Component {
         const isGroupRow = !!this.rowNode.group && !this.rowNode.footer;
         const isFullWidthGroup = isGroupRow && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
 
-        this.fullWidthRow = isStub || isDetailCell || isFullWidthCell || isFullWidthGroup;
-
         if (isStub) {
-            this.createFullWidthRowUi(RowController.LOADING_CELL_RENDERER, RowController.LOADING_CELL_RENDERER_COMP_NAME, false);
+            this.rowType = RowType.FullWidthLoading;
         } else if (isDetailCell) {
-            this.createFullWidthRowUi(RowController.DETAIL_CELL_RENDERER, RowController.DETAIL_CELL_RENDERER_COMP_NAME, true);
+            this.rowType = RowType.FullWidthDetail;
         } else if (isFullWidthCell) {
-            this.createFullWidthRowUi(RowController.FULL_WIDTH_CELL_RENDERER, null, false);
+            this.rowType = RowType.FullWidth;
         } else if (isFullWidthGroup) {
-            this.createFullWidthRowUi(RowController.GROUP_ROW_RENDERER, RowController.GROUP_ROW_RENDERER_COMP_NAME, false);
+            this.rowType = RowType.FullWidthGroup;
+        } else {
+            this.rowType = RowType.Normal;
+        }
+    }
+
+    private setupRowUi(): void {
+        if (this.isFullWidth()) {
+            this.createFullWidthRowUi();
         } else {
             this.setupNormalRowContainers();
         }
@@ -374,23 +392,23 @@ export class RowController extends Component {
         this.leftRowComp = this.createRowComp(this.leftRowContainerComp, leftCols, Constants.PINNED_RIGHT);
     }
 
-    private createFullWidthRowUi(type: string, name: string | null, detailRow: boolean): void {
+    private createFullWidthRowUi(): void {
 
         if (this.embedFullWidth) {
             this.centerRowComp = this.createFullWidthRowCell(this.bodyRowContainerComp, null,
-                null, type, name!, detailRow);
+                null);
 
             // printLayout doesn't put components into the pinned sections
             if (this.printLayout) { return; }
             this.leftRowComp = this.createFullWidthRowCell(this.leftRowContainerComp, Constants.PINNED_LEFT,
-                'ag-cell-last-left-pinned', type, name!, detailRow);
+                'ag-cell-last-left-pinned');
             this.rightRowComp = this.createFullWidthRowCell(this.rightRowContainerComp, Constants.PINNED_RIGHT,
-                'ag-cell-first-right-pinned', type, name!, detailRow);
+                'ag-cell-first-right-pinned');
         } else {
             // otherwise we add to the fullWidth container as normal
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
             this.fullWidthRowComp = this.createFullWidthRowCell(this.fullWidthRowContainerComp, null,
-                null, type, name!, detailRow);
+                null);
         }
     }
 
@@ -416,7 +434,7 @@ export class RowController extends Component {
     }
 
     public isFullWidth(): boolean {
-        return this.fullWidthRow;
+        return this.rowType !== RowType.Normal;
     }
 
     public refreshFullWidth(): boolean {
@@ -557,7 +575,7 @@ export class RowController extends Component {
     }
 
     private onDisplayedColumnsChanged(): void {
-        if (this.fullWidthRow) { return; }
+        if (this.isFullWidth()) { return; }
 
         this.refreshCells();
     }
@@ -578,13 +596,13 @@ export class RowController extends Component {
     }
 
     private onVirtualColumnsChanged(): void {
-        if (this.fullWidthRow) { return; }
+        if (this.isFullWidth()) { return; }
 
         this.refreshCells();
     }
 
     private onColumnResized(): void {
-        if (this.fullWidthRow) { return; }
+        if (this.isFullWidth()) { return; }
 
         this.refreshCells();
     }
@@ -633,7 +651,7 @@ export class RowController extends Component {
 
     public onFullWidthRowFocused(event: CellFocusedEvent) {
         const node = this.rowNode;
-        const isFocused = this.fullWidthRow && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
+        const isFocused = this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
         const element = this.fullWidthRowComp ? this.fullWidthRowComp.getGui() : this.centerRowComp.getGui();
 
@@ -937,10 +955,7 @@ export class RowController extends Component {
     private createFullWidthRowCell(
         rowContainerComp: RowContainerComp,
         pinned: string | null,
-        extraCssClass: string | null,
-        cellRendererType: string,
-        cellRendererName: string,
-        detailRow: boolean
+        extraCssClass: string | null
     ): RowComp {
         const rowTemplate = this.createTemplate('', extraCssClass);
 
@@ -955,7 +970,7 @@ export class RowController extends Component {
             if (this.isAlive()) {
                 const eGui = cellRenderer.getGui();
                 eRow.appendChild(eGui);
-                if (detailRow) {
+                if (this.rowType===RowType.FullWidthDetail) {
                     this.setupDetailRowAutoHeight(eGui);
                 }
                 rowComp.setFullWidthRowComp(cellRenderer);
@@ -969,6 +984,9 @@ export class RowController extends Component {
         if (cachedDetailComp) {
             callback(cachedDetailComp);
         } else {
+            const cellRendererType = FullWidthKeys.get(this.rowType)!;
+            const cellRendererName = FullWidthRenderers.get(this.rowType)!;
+
             const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
             if (res) {
                 res.then(callback);
@@ -1058,7 +1076,7 @@ export class RowController extends Component {
             fadeRowIn: this.fadeRowIn,
             rowIsEven: this.rowIsEven,
             rowLevel: this.rowLevel,
-            fullWidthRow: this.fullWidthRow,
+            fullWidthRow: this.isFullWidth(),
             firstRowOnPage: this.isFirstRowOnPage(),
             lastRowOnPage: this.isLastRowOnPage(),
             printLayout: this.printLayout,
