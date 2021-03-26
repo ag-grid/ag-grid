@@ -313,7 +313,7 @@ export class RowController extends Component {
         cols: Column[],
         pinned: string | null
     ): RowComp {
-        const useAnimationFrames = this.useAnimationFrameForCreate;
+
         const rowTemplate = this.createTemplate();
 
         // the RowRenderer is probably inserting many rows. rather than inserting each template one
@@ -328,6 +328,7 @@ export class RowController extends Component {
         this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
         this.afterRowAttached(rowContainerComp, res);
 
+        const useAnimationFrames = this.useAnimationFrameForCreate;
         if (useAnimationFrames) {
             this.beans.taskQueue.createTask(
                 this.lazyCreateCells.bind(this, cols, eRow),
@@ -810,7 +811,7 @@ export class RowController extends Component {
         const cellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this,
             false, this.printLayout, eRow, this.editingRow);
         this.cellComps[col.getId()] = cellComp;
-        eRow.appendChild(cellComp.getGui())
+        eRow.appendChild(cellComp.getGui());
     }
 
     private addDomData(eRowContainer: Element): void {

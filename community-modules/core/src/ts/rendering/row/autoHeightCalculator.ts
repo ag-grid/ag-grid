@@ -51,17 +51,14 @@ export class AutoHeightCalculator extends BeanStub {
                 rowNode,
                 null,
                 true,
+                false,
+                eDummyContainer,
                 false
             );
-            cellComp.setParentRow(eDummyContainer);
             cellComps.push(cellComp);
         });
 
-        const template = cellComps.map(cellComp => cellComp.getCreateTemplate()).join(' ');
-        eDummyContainer.innerHTML = template;
-
-        // this gets any cellComps that are using components to put the components in
-        cellComps.forEach(cellComp => cellComp.afterAttached());
+        cellComps.forEach( cellComp => eDummyContainer.appendChild(cellComp.getGui()))
 
         if (scope) {
             this.$compile(eDummyContainer)(scope);
