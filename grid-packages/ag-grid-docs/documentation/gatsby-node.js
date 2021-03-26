@@ -18,6 +18,7 @@ const toKebabCase = require('./src/utils/to-kebab-case');
 const isDevelopment = require('./src/utils/is-development');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 
+
 /**
  * This hides the config file that we use to show linting in IDEs from Gatsby.
  * See .eslintrc.js for more information.
@@ -233,6 +234,7 @@ const createDocPages = async (createPage, graphql, reporter) => {
                 nodes {
                     frontmatter {
                         frameworks
+                        rootPage
                     }
                     fields {
                         path
@@ -248,18 +250,26 @@ const createDocPages = async (createPage, graphql, reporter) => {
     }
 
     result.data.allMarkdownRemark.nodes.forEach(node => {
-        const { frontmatter: { frameworks: specifiedFrameworks }, fields: { path: srcPath } } = node;
+        const { frontmatter: { frameworks: specifiedFrameworks, rootPage = false}, fields: { path: srcPath } } = node;
         const frameworks = supportedFrameworks.filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
         const parts = srcPath.split('/').filter(x => x !== '');
         const pageName = parts[parts.length - 1];
 
-        frameworks.forEach(framework => {
+        if(rootPage) {
             createPage({
-                path: convertToFrameworkUrl(srcPath, framework),
+                path: srcPath,
                 component: docPageTemplate,
-                context: { frameworks, framework, srcPath, pageName }
+                context: { srcPath, pageName }
             });
-        });
+        } else {
+            frameworks.forEach(framework => {
+                createPage({
+                    path: convertToFrameworkUrl(srcPath, framework),
+                    component: docPageTemplate,
+                    context: { frameworks, framework, srcPath, pageName }
+                });
+            });
+        }
     });
 };
 

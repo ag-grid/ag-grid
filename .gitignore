@@ -6,6 +6,8 @@
 /.idea/atlassian-ide-plugin.xml
 .vscode
 
+grid-packages/ag-grid-docs/src/jira_reports/prod/credentials.json
+
 .lernaBuildChain.cache.json
 
 .DS_Store

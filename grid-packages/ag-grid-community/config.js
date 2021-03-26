@@ -19,13 +19,13 @@ const builds = {
         env: 'development',
         banner
     },
-/*    'community-cjs-prod': {
-        entry: path.resolve(__dirname, '../dist/es6/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid-community.cjs.min.js'),
+    'community-cjs-prod': {
+        entry: path.resolve(__dirname, './src/main.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-community.cjs.min.js'),
         format: 'cjs',
         env: 'production',
         banner
-    }*/
+    }
 };
 
 function genConfig(name) {
