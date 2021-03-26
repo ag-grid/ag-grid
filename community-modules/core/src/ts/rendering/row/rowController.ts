@@ -28,10 +28,9 @@ import {
     addCssClass,
     addOrRemoveCssClass,
     addStylesToElement,
-    appendHtml,
-    isElementChildOfClass, loadTemplate,
-    removeCssClass,
-    setDomChildOrder
+    isElementChildOfClass,
+    loadTemplate,
+    removeCssClass, setDomChildOrder
 } from "../../utils/dom";
 import { removeFromArray } from "../../utils/array";
 import { exists, find, missing } from "../../utils/generic";
@@ -41,7 +40,7 @@ import { cssStyleObjectToMarkup } from "../../utils/general";
 import { AngularRowUtils } from "./angularRowUtils";
 import { CellPosition } from "../../entities/cellPosition";
 import { RowPosition } from "../../entities/rowPosition";
-import { RowContainerComp, RowContainerNames } from "../../gridBodyComp/rowContainer/rowContainerComp";
+import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerComp";
 import { RowComp } from "./rowComp";
 
 interface CellTemplate {
@@ -208,7 +207,7 @@ export class RowController extends Component {
         }
     }
 
-    private createTemplate(contents: string, extraCssClass: string | null = null): string {
+    private createTemplate(extraCssClass: string | null = null): string {
         const templateParts: string[] = [];
         const rowHeight = this.rowNode.rowHeight;
         const rowClasses = this.getInitialRowClasses(extraCssClass!).join(' ');
@@ -243,7 +242,6 @@ export class RowController extends Component {
         templateParts.push(` style="height: ${rowHeight}px; ${rowTopStyle} ${userRowStyles}">`);
 
         // add in the template for the cells
-        templateParts.push(contents);
         templateParts.push(`</div>`);
 
         return templateParts.join('');
@@ -301,9 +299,7 @@ export class RowController extends Component {
     private lazyCreateCells(cols: Column[], eRow: HTMLElement): void {
         if (!this.active) { return; }
 
-        const cellTemplatesAndComps = this.createCells(cols);
-        eRow.innerHTML = cellTemplatesAndComps.template;
-        this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
+        this.createCells(cols, eRow);
 
         this.rowContainerReadyCount++;
 
@@ -317,11 +313,8 @@ export class RowController extends Component {
         cols: Column[],
         pinned: string | null
     ): RowComp {
-        const useAnimationsFrameForCreate = this.useAnimationFrameForCreate;
-        const cellTemplatesAndComps = useAnimationsFrameForCreate
-            ? { cellComps: [], template: '' }
-            : this.createCells(cols);
-        const rowTemplate = this.createTemplate(cellTemplatesAndComps.template);
+        const useAnimationFrames = this.useAnimationFrameForCreate;
+        const rowTemplate = this.createTemplate();
 
         // the RowRenderer is probably inserting many rows. rather than inserting each template one
         // at a time, the grid inserts all rows together - so the callback here is called by the
@@ -335,14 +328,14 @@ export class RowController extends Component {
         this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
         this.afterRowAttached(rowContainerComp, res);
 
-        if (useAnimationsFrameForCreate) {
+        if (useAnimationFrames) {
             this.beans.taskQueue.createTask(
                 this.lazyCreateCells.bind(this, cols, eRow),
                 this.rowNode.rowIndex!,
                 'createTasksP1'
             );
         } else {
-            this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
+            this.createCells(cols, eRow);
             this.rowContainerReadyCount = 3;
         }
 
@@ -400,13 +393,13 @@ export class RowController extends Component {
 
             // printLayout doesn't put components into the pinned sections
             if (this.printLayout) { return; }
+
             this.leftRowComp = this.createFullWidthRowCell(this.leftRowContainerComp, Constants.PINNED_LEFT,
                 'ag-cell-last-left-pinned');
             this.rightRowComp = this.createFullWidthRowCell(this.rightRowContainerComp, Constants.PINNED_RIGHT,
                 'ag-cell-first-right-pinned');
         } else {
             // otherwise we add to the fullWidth container as normal
-            // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
             this.fullWidthRowComp = this.createFullWidthRowCell(this.fullWidthRowContainerComp, null,
                 null);
         }
@@ -783,9 +776,6 @@ export class RowController extends Component {
     private insertCellsIntoContainer(eRow: HTMLElement, cols: Column[]): void {
         if (!eRow) { return; }
 
-        const cellTemplates: string[] = [];
-        const newCellComps: CellComp[] = [];
-
         cols.forEach(col => {
             const colId = col.getId();
             const existingCell = this.cellComps[colId];
@@ -802,14 +792,9 @@ export class RowController extends Component {
             if (existingCell) {
                 this.destroyCells([colId]);
             }
-            this.createNewCell(col, eRow, cellTemplates, newCellComps);
-
+            this.newCellComp(col, eRow);
+            this.elementOrderChanged = true;
         });
-
-        if (cellTemplates.length > 0) {
-            appendHtml(eRow, cellTemplates.join(''));
-            this.callAfterRowAttachedOnCells(newCellComps, eRow);
-        }
 
         if (this.elementOrderChanged && this.beans.gridOptionsWrapper.isEnsureDomOrder()) {
             const correctChildOrder = cols.map(col => this.getCellForCol(col));
@@ -817,23 +802,23 @@ export class RowController extends Component {
         }
     }
 
+    private createCells(cols: Column[], eRow: HTMLElement): void {
+        cols.forEach(col => this.newCellComp(col, eRow));
+    }
+
+    private newCellComp(col: Column, eRow: HTMLElement): void {
+        const cellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this,
+            false, this.printLayout, eRow, this.editingRow);
+        this.cellComps[col.getId()] = cellComp;
+        eRow.appendChild(cellComp.getGui())
+    }
+
     private addDomData(eRowContainer: Element): void {
         const gow = this.beans.gridOptionsWrapper;
         gow.setDomData(eRowContainer, RowController.DOM_DATA_KEY_RENDERED_ROW, this);
-        this.addDestroyFunc(() => {
-            gow.setDomData(eRowContainer, RowController.DOM_DATA_KEY_RENDERED_ROW, null);
-        }
+        this.addDestroyFunc(
+            () => gow.setDomData(eRowContainer, RowController.DOM_DATA_KEY_RENDERED_ROW, null)
         );
-    }
-
-    private createNewCell(col: Column, eContainer: HTMLElement, cellTemplates: string[], newCellComps: CellComp[]): void {
-        const newCellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this, false, this.printLayout);
-        const cellTemplate = newCellComp.getCreateTemplate();
-        cellTemplates.push(cellTemplate);
-        newCellComps.push(newCellComp);
-        this.cellComps[col.getId()] = newCellComp;
-        newCellComp.setParentRow(eContainer);
-        this.elementOrderChanged = true;
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -957,7 +942,7 @@ export class RowController extends Component {
         pinned: string | null,
         extraCssClass: string | null
     ): RowComp {
-        const rowTemplate = this.createTemplate('', extraCssClass);
+        const rowTemplate = this.createTemplate(extraCssClass);
 
         const eRow = loadTemplate(rowTemplate);
         rowContainerComp.appendRow(eRow);
@@ -1230,26 +1215,6 @@ export class RowController extends Component {
         return assign({}, rowStyle, rowStyleFuncResult);
     }
 
-    private createCells(cols: Column[]): { template: string, cellComps: CellComp[]; } {
-        const templateParts: string[] = [];
-        const newCellComps: CellComp[] = [];
-
-        cols.forEach(col => {
-            const newCellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this,
-                false, this.printLayout);
-            const cellTemplate = newCellComp.getCreateTemplate();
-            templateParts.push(cellTemplate);
-            newCellComps.push(newCellComp);
-            this.cellComps[col.getId()] = newCellComp;
-        });
-
-        const templateAndComps = {
-            template: templateParts.join(''),
-            cellComps: newCellComps
-        };
-        return templateAndComps;
-    }
-
     private onRowSelected(): void {
         const selected = this.rowNode.isSelected()!;
         this.allRowComps.forEach(rowComp => {
@@ -1273,22 +1238,6 @@ export class RowController extends Component {
         );
 
         setAriaLabel(node, label);
-    }
-
-    // called:
-    // + after row created for first time
-    // + after horizontal scroll, so new cells due to column virtualisation
-    private callAfterRowAttachedOnCells(newCellComps: CellComp[], eRow: HTMLElement): void {
-        newCellComps.forEach(cellComp => {
-            cellComp.setParentRow(eRow);
-            cellComp.afterAttached();
-
-            // if we are editing the row, then the cell needs to turn
-            // into edit mode
-            if (this.editingRow) {
-                cellComp.startEditingIfEnabled();
-            }
-        });
     }
 
     private afterRowAttached(rowContainerComp: RowContainerComp, rowComp: RowComp): void {
@@ -1573,7 +1522,6 @@ export class RowController extends Component {
         });
     }
 
-    // fixme ***************** - this should be looking at parent of the comp
     public ensureDomOrder(): void {
         this.allRowComps.forEach( rowComp => {
             rowComp.getContainer().ensureDomOrder(rowComp.getGui());

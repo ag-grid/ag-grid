@@ -83,7 +83,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private beans: Beans;
     private column: Column;
     private rowNode: RowNode;
-    private eParentRow: HTMLElement;
+    private eRow: HTMLElement;
     private cellPosition: CellPosition;
     private rangeCount: number;
     private hasChartRange = false;
@@ -151,7 +151,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private cellRendererVersion = 0;
 
     constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowController | null,
-        autoHeightCell: boolean, printLayout: boolean) {
+        autoHeightCell: boolean, printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
         super();
         this.scope = scope;
         this.beans = beans;
@@ -160,6 +160,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.rowComp = rowComp;
         this.autoHeightCell = autoHeightCell;
         this.printLayout = printLayout;
+        this.eRow = eRow;
 
         this.createGridCellVo();
 
@@ -179,9 +180,19 @@ export class CellComp extends Component implements TooltipParentComp {
         this.chooseCellRenderer();
         this.setupColSpan();
         this.rowSpan = this.column.getRowSpan(this.rowNode);
+
+        this.setTemplate(this.getCreateTemplate());
+
+        this.afterAttached();
+
+        // if we are editing the row, then the cell needs to turn
+        // into edit mode
+        if (editingRow) {
+            this.startEditingIfEnabled();
+        }
     }
 
-    public getCreateTemplate(): string {
+    private getCreateTemplate(): string {
         const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
         const templateParts: string[] = [];
         const col = this.column;
@@ -254,9 +265,6 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public afterAttached(): void {
-        const querySelector = `[comp-id="${this.getCompId()}"]`;
-        const eGui = this.eParentRow.querySelector(querySelector) as HTMLElement;
-        this.setGui(eGui);
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();
@@ -1698,11 +1706,11 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public getParentRow(): HTMLElement {
-        return this.eParentRow;
+        return this.eRow;
     }
 
     public setParentRow(eParentRow: HTMLElement): void {
-        this.eParentRow = eParentRow;
+        this.eRow = eParentRow;
     }
 
     public getColumn(): Column {
@@ -1714,7 +1722,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public detach(): void {
-        this.eParentRow.removeChild(this.getGui());
+        this.eRow.removeChild(this.getGui());
     }
 
     // if the row is also getting destroyed, then we don't need to remove from dom,
