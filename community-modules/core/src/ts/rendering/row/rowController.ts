@@ -49,6 +49,9 @@ interface CellTemplate {
     cellComps: CellComp[];
 }
 
+export interface RowCompView {
+}
+
 export class RowController extends Component {
 
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
@@ -327,6 +330,7 @@ export class RowController extends Component {
     }
 
     private setupRowUi(): void {
+        const isStub = this.rowNode.stub;
         const isFullWidthCell = this.rowNode.isFullWidthCell();
         const isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
         const pivotMode = this.beans.columnController.isPivotMode();
@@ -334,10 +338,12 @@ export class RowController extends Component {
         // for totals. if users complain about this, then we should introduce a new property 'footerUseEntireRow'
         // so each can be set independently (as a customer complained about footers getting full width, hence
         // introducing this logic)
-        const isGroupRow = this.rowNode.group && !this.rowNode.footer;
+        const isGroupRow = !!this.rowNode.group && !this.rowNode.footer;
         const isFullWidthGroup = isGroupRow && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
 
-        if (this.rowNode.stub) {
+        this.fullWidthRow = isStub || isDetailCell || isFullWidthCell || isFullWidthGroup;
+
+        if (isStub) {
             this.createFullWidthRowUi(RowController.LOADING_CELL_RENDERER, RowController.LOADING_CELL_RENDERER_COMP_NAME, false);
         } else if (isDetailCell) {
             this.createFullWidthRowUi(RowController.DETAIL_CELL_RENDERER, RowController.DETAIL_CELL_RENDERER_COMP_NAME, true);
@@ -369,7 +375,6 @@ export class RowController extends Component {
     }
 
     private createFullWidthRowUi(type: string, name: string | null, detailRow: boolean): void {
-        this.fullWidthRow = true;
 
         if (this.embedFullWidth) {
             this.centerRowComp = this.createFullWidthRowCell(this.bodyRowContainerComp, null,
