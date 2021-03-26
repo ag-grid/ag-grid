@@ -198,14 +198,13 @@ export class RowController extends Component {
         }
     }
 
-
     public getCellForCol(column: Column): HTMLElement | null {
         const cellComp = this.cellComps[column.getColId()];
 
         return cellComp ? cellComp.getGui() : null;
     }
 
-    private executeProcessRowPostCreateFunc(): void {
+    public executeProcessRowPostCreateFunc(): void {
         const func = this.beans.gridOptionsWrapper.getProcessRowPostCreateFunc();
         if (!func) { return; }
 
@@ -223,6 +222,13 @@ export class RowController extends Component {
         func(params);
     }
 
+    public addRemoveFirstPassFunc(f: Function): void {
+        this.removeFirstPassFuncs.push(f);
+    }
+
+    public addRemoveSecondPassFunc(f: Function): void {
+        this.removeSecondPassFuncs.push(f);
+    }
 
     private areAllContainersReady(): boolean {
         return this.rowContainerReadyCount === 3;
@@ -243,7 +249,9 @@ export class RowController extends Component {
     private newRowComp(rowContainerComp: RowContainerComp,
                        pinned: string | null,
                        extraCssClass: string | null = null): RowComp {
-        return new RowComp(this, rowContainerComp, this.beans, this.rowNode, pinned, extraCssClass);
+        const res = new RowComp(this, rowContainerComp, this.beans, this.rowNode, pinned, extraCssClass);
+        this.allRowComps.push(res);
+        return res;
     }
 
     private createRowComp(
@@ -256,7 +264,6 @@ export class RowController extends Component {
         const eRow = res.getGui();
 
         this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
-        this.afterRowAttached(rowContainerComp, res);
 
         const useAnimationFrames = this.useAnimationFrameForCreate;
         if (useAnimationFrames) {
@@ -744,14 +751,6 @@ export class RowController extends Component {
         eRow.appendChild(cellComp.getGui());
     }
 
-    private addDomData(eRowContainer: Element): void {
-        const gow = this.beans.gridOptionsWrapper;
-        gow.setDomData(eRowContainer, RowController.DOM_DATA_KEY_RENDERED_ROW, this);
-        this.addDestroyFunc(
-            () => gow.setDomData(eRowContainer, RowController.DOM_DATA_KEY_RENDERED_ROW, null)
-        );
-    }
-
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
         switch (eventName) {
             case 'dblclick': this.onRowDblClick(mouseEvent); break;
@@ -912,8 +911,6 @@ export class RowController extends Component {
                 }
             }
         }
-
-        this.afterRowAttached(rowContainerComp, rowComp);
 
         this.angular1Compile(eRow);
 
@@ -1189,46 +1186,11 @@ export class RowController extends Component {
         setAriaLabel(node, label);
     }
 
-    private afterRowAttached(rowContainerComp: RowContainerComp, rowComp: RowComp): void {
-        const eRow = rowComp.getGui();
-
-        this.addDomData(eRow);
-
-        this.removeSecondPassFuncs.push(() => {
-            rowContainerComp.removeRow(eRow);
-        });
-
-        this.removeFirstPassFuncs.push(() => {
-            if (exists(this.rowNode.rowTop)) {
-                // the row top is updated anyway, however we set it here again
-                // to something more reasonable for the animation - ie if the
-                // row top is 10000px away, the row will flash out, so this
-                // gives it a rounded value, so row animates out more slowly
-                const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop);
-                this.setRowTop(rowTop);
-            } else {
-                addCssClass(eRow, 'ag-opacity-zero');
-            }
-        });
-
-        this.allRowComps.push(rowComp);
-
-        // adding hover functionality adds listener to this row, so we
-        // do it lazily in an animation frame
-        if (this.useAnimationFrameForCreate) {
-            this.beans.taskQueue.createTask(
-                this.addHoverFunctionality.bind(this, eRow),
-                this.rowNode.rowIndex!,
-                'createTasksP2'
-            );
-        } else {
-            this.addHoverFunctionality(eRow);
-        }
-
-        this.executeProcessRowPostCreateFunc();
+    public isUseAnimationFrameForCreate(): boolean {
+        return this.useAnimationFrameForCreate;
     }
 
-    private addHoverFunctionality(eRow: HTMLElement): void {
+    public addHoverFunctionality(eRow: HTMLElement): void {
         // because we use animation frames to do this, it's possible the row no longer exists
         // by the time we get to add it
         if (!this.active) { return; }
@@ -1264,7 +1226,7 @@ export class RowController extends Component {
     // otherwise the row would move so fast, it would appear to disappear. so this method
     // moves the row closer to the viewport if it is far away, so the row slide in / out
     // at a speed the user can see.
-    private roundRowTopToBounds(rowTop: number): number {
+    public roundRowTopToBounds(rowTop: number): number {
         const range = this.beans.gridBodyComp.getVScrollPosition();
         const minPixel = this.applyPaginationOffset(range.top, true) - 100;
         const maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
@@ -1394,7 +1356,7 @@ export class RowController extends Component {
         return topPx + (pixelOffset * multiplier);
     }
 
-    private setRowTop(pixels: number): void {
+    public setRowTop(pixels: number): void {
         // print layout uses normal flow layout for row positioning
         if (this.printLayout) { return; }
 

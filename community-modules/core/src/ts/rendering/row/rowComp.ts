@@ -3,10 +3,11 @@ import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerCo
 import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
-import { loadTemplate } from "../../utils/dom";
+import { addCssClass, loadTemplate } from "../../utils/dom";
 import { escapeString } from "../../utils/string";
 import { cssStyleObjectToMarkup } from "../../utils/general";
 import { RowController } from "./rowController";
+import { exists } from "../../utils/generic";
 
 export class RowComp extends Component {
 
@@ -33,6 +34,8 @@ export class RowComp extends Component {
         const template = this.createTemplate(extraCssClass);
         this.setTemplate(template);
         container.appendRow(this.getGui());
+
+        this.afterRowAttached();
     }
 
     public getContainer(): RowContainerComp {
@@ -96,6 +99,50 @@ export class RowComp extends Component {
         return templateParts.join('');
     }
 
+    private afterRowAttached(): void {
 
+        this.addDomData();
+
+        const eRow = this.getGui();
+
+        this.controller.addRemoveSecondPassFunc(() => {
+            this.container.removeRow(eRow);
+        });
+
+        this.controller.addRemoveFirstPassFunc(() => {
+            if (exists(this.rowNode.rowTop)) {
+                // the row top is updated anyway, however we set it here again
+                // to something more reasonable for the animation - ie if the
+                // row top is 10000px away, the row will flash out, so this
+                // gives it a rounded value, so row animates out more slowly
+                const rowTop = this.controller.roundRowTopToBounds(this.rowNode.rowTop);
+                this.controller.setRowTop(rowTop);
+            } else {
+                addCssClass(eRow, 'ag-opacity-zero');
+            }
+        });
+
+        // adding hover functionality adds listener to this row, so we
+        // do it lazily in an animation frame
+        if (this.controller.isUseAnimationFrameForCreate()) {
+            this.beans.taskQueue.createTask(
+                this.controller.addHoverFunctionality.bind(this.controller, eRow),
+                this.rowNode.rowIndex!,
+                'createTasksP2'
+            );
+        } else {
+            this.controller.addHoverFunctionality(eRow);
+        }
+
+        this.controller.executeProcessRowPostCreateFunc();
+    }
+
+    private addDomData(): void {
+        const gow = this.beans.gridOptionsWrapper;
+        gow.setDomData(this.getGui(), RowController.DOM_DATA_KEY_RENDERED_ROW, this);
+        this.addDestroyFunc(
+            () => gow.setDomData(this.getGui(), RowController.DOM_DATA_KEY_RENDERED_ROW, null)
+        );
+    }
 
 }
