@@ -68,8 +68,6 @@ export class RowController extends Component {
 
     private readonly beans: Beans;
 
-    // private eAllRows: HTMLElement[] = [];
-
     private allRowComps: RowComp[] = [];
 
     private leftRowComp: RowComp;
@@ -86,10 +84,10 @@ export class RowController extends Component {
     private readonly leftRowContainerComp: RowContainerComp;
     private readonly rightRowContainerComp: RowContainerComp;
 
-    private fullWidthRowComponent: ICellRendererComp | null | undefined;
-    private fullWidthRowComponentBody: ICellRendererComp | null | undefined;
-    private fullWidthRowComponentLeft: ICellRendererComp | null | undefined;
-    private fullWidthRowComponentRight: ICellRendererComp | null | undefined;
+    // private fullWidthRowComponent: ICellRendererComp | null | undefined;
+    // private fullWidthRowComponentBody: ICellRendererComp | null | undefined;
+    // private fullWidthRowComponentLeft: ICellRendererComp | null | undefined;
+    // private fullWidthRowComponentRight: ICellRendererComp | null | undefined;
 
     private fullWidthRowDestroyFuncs: (() => void)[] = [];
 
@@ -302,9 +300,10 @@ export class RowController extends Component {
         }
     }
 
-    private createRowContainer(
+    private createRowComp(
         rowContainerComp: RowContainerComp,
-        cols: Column[]
+        cols: Column[],
+        pinned: string | null
     ): RowComp {
         const useAnimationsFrameForCreate = this.useAnimationFrameForCreate;
         const cellTemplatesAndComps: CellTemplate = useAnimationsFrameForCreate ? { cellComps: [], template: '' } : this.createCells(cols);
@@ -317,7 +316,7 @@ export class RowController extends Component {
         const eRow = loadTemplate(rowTemplate);
         rowContainerComp.appendRow(eRow);
 
-        const res = new RowComp(eRow, rowContainerComp);
+        const res = new RowComp(eRow, rowContainerComp, this.beans, this.rowNode, pinned);
 
         this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
         this.afterRowAttached(rowContainerComp, res);
@@ -373,9 +372,9 @@ export class RowController extends Component {
             rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
         }
 
-        this.centerRowComp = this.createRowContainer(this.bodyRowContainerComp, centerCols);
-        this.rightRowComp = this.createRowContainer(this.rightRowContainerComp, rightCols);
-        this.leftRowComp = this.createRowContainer(this.leftRowContainerComp, leftCols);
+        this.centerRowComp = this.createRowComp(this.bodyRowContainerComp, centerCols, null);
+        this.rightRowComp = this.createRowComp(this.rightRowContainerComp, rightCols, Constants.PINNED_RIGHT);
+        this.leftRowComp = this.createRowComp(this.leftRowContainerComp, leftCols, Constants.PINNED_RIGHT);
     }
 
     private createFullWidthRowUi(type: string, name: string | null, detailRow: boolean): void {
@@ -383,37 +382,19 @@ export class RowController extends Component {
 
         if (this.embedFullWidth) {
             this.fwCenterRowComp = this.createFullWidthRowCell(this.bodyRowContainerComp, null,
-                null, type, name!,
-                (cellRenderer: ICellRendererComp) => {
-                    this.fullWidthRowComponentBody = cellRenderer;
-                },
-                detailRow);
+                null, type, name!, detailRow);
 
             // printLayout doesn't put components into the pinned sections
             if (this.printLayout) { return; }
-
             this.fwLeftRowComp = this.createFullWidthRowCell(this.leftRowContainerComp, Constants.PINNED_LEFT,
-                'ag-cell-last-left-pinned', type, name!,
-                (cellRenderer: ICellRendererComp) => {
-                    this.fullWidthRowComponentLeft = cellRenderer;
-                },
-                detailRow);
+                'ag-cell-last-left-pinned', type, name!, detailRow);
             this.fwRightRowComp = this.createFullWidthRowCell(this.rightRowContainerComp, Constants.PINNED_RIGHT,
-                'ag-cell-first-right-pinned', type, name!,
-                (cellRenderer: ICellRendererComp) => {
-                    this.fullWidthRowComponentRight = cellRenderer;
-                },
-                detailRow);
+                'ag-cell-first-right-pinned', type, name!, detailRow);
         } else {
             // otherwise we add to the fullWidth container as normal
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
             this.fwRowComp = this.createFullWidthRowCell(this.fullWidthRowContainerComp, null,
-                null, type, name!,
-                (cellRenderer: ICellRendererComp) => {
-                    this.fullWidthRowComponent = cellRenderer;
-                },
-                detailRow
-            );
+                null, type, name!, detailRow);
         }
     }
 
@@ -445,8 +426,12 @@ export class RowController extends Component {
     public refreshFullWidth(): boolean {
 
         // returns 'true' if refresh succeeded
-        const tryRefresh = (rowComp: RowComp, cellComp: ICellRendererComp | null | undefined, pinned: string | null): boolean => {
-            if (!rowComp || !cellComp) { return true; } // no refresh needed
+        const tryRefresh = (rowComp: RowComp, pinned: string | null): boolean => {
+            if (!rowComp) { return true; } // no refresh needed
+
+            const cellComp = rowComp.getFullWidthRowComp();
+
+            if (!cellComp) { return true; } // no refresh needed
 
             // no refresh method present, so can't refresh, hard refresh needed
             if (!cellComp.refresh) { return false; }
@@ -457,10 +442,10 @@ export class RowController extends Component {
             return refreshSucceeded;
         };
 
-        const normalSuccess = tryRefresh(this.fwRowComp, this.fullWidthRowComponent, null);
-        const bodySuccess = tryRefresh(this.fwCenterRowComp, this.fullWidthRowComponentBody, null);
-        const leftSuccess = tryRefresh(this.fwLeftRowComp, this.fullWidthRowComponentLeft, Constants.PINNED_LEFT);
-        const rightSuccess = tryRefresh(this.fwRightRowComp, this.fullWidthRowComponentRight, Constants.PINNED_RIGHT);
+        const normalSuccess = tryRefresh(this.fwRowComp, null);
+        const bodySuccess = tryRefresh(this.fwCenterRowComp, null);
+        const leftSuccess = tryRefresh(this.fwLeftRowComp, Constants.PINNED_LEFT);
+        const rightSuccess = tryRefresh(this.fwRightRowComp, Constants.PINNED_RIGHT);
 
         const allFullWidthRowsRefreshed = normalSuccess && bodySuccess && leftSuccess && rightSuccess;
 
@@ -582,26 +567,10 @@ export class RowController extends Component {
     }
 
     private destroyFullWidthComponents(): void {
-
         this.fullWidthRowDestroyFuncs.forEach(f => f());
         this.fullWidthRowDestroyFuncs = [];
 
-        if (this.fullWidthRowComponent) {
-            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, null, this.fullWidthRowComponent);
-            this.fullWidthRowComponent = null;
-        }
-        if (this.fullWidthRowComponentBody) {
-            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, null, this.fullWidthRowComponentBody);
-            this.fullWidthRowComponentBody = null;
-        }
-        if (this.fullWidthRowComponentLeft) {
-            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Constants.PINNED_LEFT, this.fullWidthRowComponentLeft);
-            this.fullWidthRowComponentLeft = null;
-        }
-        if (this.fullWidthRowComponentRight) {
-            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Constants.PINNED_RIGHT, this.fullWidthRowComponentRight);
-            this.fullWidthRowComponentRight = null;
-        }
+        this.allRowComps.forEach( rowComp => rowComp.destroyFullWidthComponent() );
     }
 
     private getContainerForCell(pinnedType: string): HTMLElement {
@@ -975,13 +944,14 @@ export class RowController extends Component {
         extraCssClass: string | null,
         cellRendererType: string,
         cellRendererName: string,
-        cellRendererCallback: (comp: ICellRendererComp) => void,
         detailRow: boolean
     ): RowComp {
         const rowTemplate = this.createTemplate('', extraCssClass);
 
         const eRow = loadTemplate(rowTemplate);
         rowContainerComp.appendRow(eRow);
+
+        const rowComp = new RowComp(eRow, rowContainerComp, this.beans, this.rowNode, pinned);
 
         const params = this.createFullWidthParams(eRow, pinned);
 
@@ -992,13 +962,11 @@ export class RowController extends Component {
                 if (detailRow) {
                     this.setupDetailRowAutoHeight(eGui);
                 }
-                cellRendererCallback(cellRenderer);
+                rowComp.setFullWidthRowComp(cellRenderer);
             } else {
                 this.beans.context.destroyBean(cellRenderer);
             }
         };
-
-        const rowComp = new RowComp(eRow, rowContainerComp);
 
         // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
         const cachedDetailComp = this.beans.detailRowCompCache.get(this.rowNode, pinned);
