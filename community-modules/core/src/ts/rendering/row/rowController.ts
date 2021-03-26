@@ -73,21 +73,12 @@ export class RowController extends Component {
     private leftRowComp: RowComp;
     private rightRowComp: RowComp;
     private centerRowComp: RowComp;
-
-    private fwLeftRowComp: RowComp;
-    private fwRightRowComp: RowComp;
-    private fwCenterRowComp: RowComp;
-    private fwRowComp: RowComp;
+    private fullWidthRowComp: RowComp;
 
     private readonly bodyRowContainerComp: RowContainerComp;
     private readonly fullWidthRowContainerComp: RowContainerComp;
     private readonly leftRowContainerComp: RowContainerComp;
     private readonly rightRowContainerComp: RowContainerComp;
-
-    // private fullWidthRowComponent: ICellRendererComp | null | undefined;
-    // private fullWidthRowComponentBody: ICellRendererComp | null | undefined;
-    // private fullWidthRowComponentLeft: ICellRendererComp | null | undefined;
-    // private fullWidthRowComponentRight: ICellRendererComp | null | undefined;
 
     private fullWidthRowDestroyFuncs: (() => void)[] = [];
 
@@ -381,19 +372,19 @@ export class RowController extends Component {
         this.fullWidthRow = true;
 
         if (this.embedFullWidth) {
-            this.fwCenterRowComp = this.createFullWidthRowCell(this.bodyRowContainerComp, null,
+            this.centerRowComp = this.createFullWidthRowCell(this.bodyRowContainerComp, null,
                 null, type, name!, detailRow);
 
             // printLayout doesn't put components into the pinned sections
             if (this.printLayout) { return; }
-            this.fwLeftRowComp = this.createFullWidthRowCell(this.leftRowContainerComp, Constants.PINNED_LEFT,
+            this.leftRowComp = this.createFullWidthRowCell(this.leftRowContainerComp, Constants.PINNED_LEFT,
                 'ag-cell-last-left-pinned', type, name!, detailRow);
-            this.fwRightRowComp = this.createFullWidthRowCell(this.rightRowContainerComp, Constants.PINNED_RIGHT,
+            this.rightRowComp = this.createFullWidthRowCell(this.rightRowContainerComp, Constants.PINNED_RIGHT,
                 'ag-cell-first-right-pinned', type, name!, detailRow);
         } else {
             // otherwise we add to the fullWidth container as normal
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
-            this.fwRowComp = this.createFullWidthRowCell(this.fullWidthRowContainerComp, null,
+            this.fullWidthRowComp = this.createFullWidthRowCell(this.fullWidthRowContainerComp, null,
                 null, type, name!, detailRow);
         }
     }
@@ -442,10 +433,10 @@ export class RowController extends Component {
             return refreshSucceeded;
         };
 
-        const normalSuccess = tryRefresh(this.fwRowComp, null);
-        const bodySuccess = tryRefresh(this.fwCenterRowComp, null);
-        const leftSuccess = tryRefresh(this.fwLeftRowComp, Constants.PINNED_LEFT);
-        const rightSuccess = tryRefresh(this.fwRightRowComp, Constants.PINNED_RIGHT);
+        const normalSuccess = tryRefresh(this.fullWidthRowComp, null);
+        const bodySuccess = tryRefresh(this.centerRowComp, null);
+        const leftSuccess = tryRefresh(this.leftRowComp, Constants.PINNED_LEFT);
+        const rightSuccess = tryRefresh(this.rightRowComp, Constants.PINNED_RIGHT);
 
         const allFullWidthRowsRefreshed = normalSuccess && bodySuccess && leftSuccess && rightSuccess;
 
@@ -639,7 +630,7 @@ export class RowController extends Component {
         const node = this.rowNode;
         const isFocused = this.fullWidthRow && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
-        const element = this.fwRowComp ? this.fwRowComp.getGui() : this.fwCenterRowComp.getGui();
+        const element = this.fullWidthRowComp ? this.fullWidthRowComp.getGui() : this.centerRowComp.getGui();
 
         addOrRemoveCssClass(element, 'ag-full-width-focus', isFocused);
         if (isFocused) {
@@ -1568,22 +1559,22 @@ export class RowController extends Component {
 
     // returns the pinned left container, either the normal one, or the embedded full with one if exists
     public getPinnedLeftRowElement(): HTMLElement {
-        return this.leftRowComp ? this.leftRowComp.getGui() : this.fwLeftRowComp ? this.fwLeftRowComp.getGui() : undefined!;
+        return this.leftRowComp ? this.leftRowComp.getGui() : undefined!;
     }
 
     // returns the pinned right container, either the normal one, or the embedded full with one if exists
     public getPinnedRightRowElement(): HTMLElement {
-        return this.rightRowComp ? this.rightRowComp.getGui() : this.fwRightRowComp ? this.fwRightRowComp.getGui() : undefined!;
+        return this.rightRowComp ? this.rightRowComp.getGui() : undefined!;
     }
 
     // returns the body container, either the normal one, or the embedded full with one if exists
     public getBodyRowElement(): HTMLElement {
-        return this.centerRowComp ? this.centerRowComp.getGui() : this.fwCenterRowComp ? this.fwCenterRowComp.getGui() : undefined!;
+        return this.centerRowComp ? this.centerRowComp.getGui() : undefined!;
     }
 
     // returns the full width container
     public getFullWidthRowElement(): HTMLElement {
-        return this.fwRowComp ? this.fwRowComp.getGui() : undefined!;
+        return this.fullWidthRowComp ? this.fullWidthRowComp.getGui() : undefined!;
     }
 
 }
