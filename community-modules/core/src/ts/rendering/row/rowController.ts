@@ -43,15 +43,6 @@ import { RowPosition } from "../../entities/rowPosition";
 import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerComp";
 import { RowComp } from "./rowComp";
 
-interface CellTemplate {
-    template: string;
-    cellComps: CellComp[];
-}
-
-export interface RowCompView {
-    // setCells(cellComp);
-}
-
 export enum RowType {
     Normal,
     FullWidth,
@@ -207,45 +198,6 @@ export class RowController extends Component {
         }
     }
 
-    private createTemplate(extraCssClass: string | null = null): string {
-        const templateParts: string[] = [];
-        const rowHeight = this.rowNode.rowHeight;
-        const rowClasses = this.getInitialRowClasses(extraCssClass!).join(' ');
-        const rowIdSanitised = escapeString(this.rowNode.id!);
-        const userRowStyles = this.preProcessStylesFromGridOptions();
-        const businessKey = this.getRowBusinessKey();
-        const businessKeySanitised = escapeString(businessKey!);
-        const rowTopStyle = this.getInitialRowTopStyle();
-        const rowIdx = this.rowNode.getRowIndexString();
-        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
-
-        templateParts.push(`<div`);
-        templateParts.push(` role="row"`);
-        templateParts.push(` row-index="${rowIdx}" aria-rowindex="${headerRowCount + this.rowNode.rowIndex! + 1}"`);
-        templateParts.push(rowIdSanitised ? ` row-id="${rowIdSanitised}"` : ``);
-        templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
-        templateParts.push(` comp-id="${this.getCompId()}"`);
-        templateParts.push(` class="${rowClasses}"`);
-
-        if (this.isFullWidth()) {
-            templateParts.push(` tabindex="-1"`);
-        }
-
-        if (this.beans.gridOptionsWrapper.isRowSelection()) {
-            templateParts.push(` aria-selected="${this.rowNode.isSelected() ? 'true' : 'false'}"`);
-        }
-
-        if (this.rowNode.group) {
-            templateParts.push(` aria-expanded=${this.rowNode.expanded ? 'true' : 'false'}`);
-        }
-
-        templateParts.push(` style="height: ${rowHeight}px; ${rowTopStyle} ${userRowStyles}">`);
-
-        // add in the template for the cells
-        templateParts.push(`</div>`);
-
-        return templateParts.join('');
-    }
 
     public getCellForCol(column: Column): HTMLElement | null {
         const cellComp = this.cellComps[column.getColId()];
@@ -271,26 +223,6 @@ export class RowController extends Component {
         func(params);
     }
 
-    private getInitialRowTopStyle() {
-        // print layout uses normal flow layout for row positioning
-        if (this.printLayout) { return ''; }
-
-        // if sliding in, we take the old row top. otherwise we just set the current row top.
-        const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
-        const afterPaginationPixels = this.applyPaginationOffset(pixels!);
-        // we don't apply scaling if row is pinned
-        const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
-        const isSuppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
-
-        return isSuppressRowTransform ? `top: ${afterScalingPixels}px; ` : `transform: translateY(${afterScalingPixels}px);`;
-    }
-
-    private getRowBusinessKey(): string | undefined {
-        const businessKeyForNodeFunc = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc();
-        if (typeof businessKeyForNodeFunc !== 'function') { return; }
-
-        return businessKeyForNodeFunc(this.rowNode);
-    }
 
     private areAllContainersReady(): boolean {
         return this.rowContainerReadyCount === 3;
@@ -308,22 +240,20 @@ export class RowController extends Component {
         }
     }
 
+    private newRowComp(rowContainerComp: RowContainerComp,
+                       pinned: string | null,
+                       extraCssClass: string | null = null): RowComp {
+        return new RowComp(this, rowContainerComp, this.beans, this.rowNode, pinned, extraCssClass);
+    }
+
     private createRowComp(
         rowContainerComp: RowContainerComp,
         cols: Column[],
         pinned: string | null
     ): RowComp {
 
-        const rowTemplate = this.createTemplate();
-
-        // the RowRenderer is probably inserting many rows. rather than inserting each template one
-        // at a time, the grid inserts all rows together - so the callback here is called by the
-        // rowRenderer when all RowComps are created, then all the HTML is inserted in one go,
-        // and then all the callbacks are called. this is NOT done in an animation frame.
-        const eRow = loadTemplate(rowTemplate);
-        rowContainerComp.appendRow(eRow);
-
-        const res = new RowComp(eRow, rowContainerComp, this.beans, this.rowNode, pinned);
+        const res = this.newRowComp(rowContainerComp, pinned);
+        const eRow = res.getGui();
 
         this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
         this.afterRowAttached(rowContainerComp, res);
@@ -943,12 +873,9 @@ export class RowController extends Component {
         pinned: string | null,
         extraCssClass: string | null
     ): RowComp {
-        const rowTemplate = this.createTemplate(extraCssClass);
 
-        const eRow = loadTemplate(rowTemplate);
-        rowContainerComp.appendRow(eRow);
-
-        const rowComp = new RowComp(eRow, rowContainerComp, this.beans, this.rowNode, pinned);
+        const rowComp = this.newRowComp(rowContainerComp, pinned, extraCssClass);
+        const eRow = rowComp.getGui();
 
         const params = this.createFullWidthParams(eRow, pinned);
 
@@ -1052,24 +979,6 @@ export class RowController extends Component {
         };
 
         return params;
-    }
-
-    private getInitialRowClasses(extraCssClass: string): string[] {
-        const params = {
-            rowNode: this.rowNode,
-            extraCssClass: extraCssClass,
-            rowFocused: this.rowFocused,
-            fadeRowIn: this.fadeRowIn,
-            rowIsEven: this.rowIsEven,
-            rowLevel: this.rowLevel,
-            fullWidthRow: this.isFullWidth(),
-            firstRowOnPage: this.isFirstRowOnPage(),
-            lastRowOnPage: this.isLastRowOnPage(),
-            printLayout: this.printLayout,
-            expandable: this.rowNode.isExpandable(),
-            scope: this.scope
-        };
-        return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
     }
 
     private onUiLevelChanged(): void {
@@ -1177,17 +1086,56 @@ export class RowController extends Component {
         );
     }
 
-    private preProcessStylesFromGridOptions(): string {
-        const rowStyles = this.processStylesFromGridOptions();
-        return cssStyleObjectToMarkup(rowStyles);
-    }
-
     private postProcessStylesFromGridOptions(): void {
         const rowStyles = this.processStylesFromGridOptions();
         this.allRowComps.forEach(rowComp => addStylesToElement(rowComp.getGui(), rowStyles));
     }
 
-    private processStylesFromGridOptions(): any {
+    public getInitialRowTopStyle() {
+        // print layout uses normal flow layout for row positioning
+        if (this.printLayout) { return ''; }
+
+        // if sliding in, we take the old row top. otherwise we just set the current row top.
+        const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
+        const afterPaginationPixels = this.applyPaginationOffset(pixels!);
+        // we don't apply scaling if row is pinned
+        const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
+        const isSuppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
+
+        return isSuppressRowTransform ? `top: ${afterScalingPixels}px; ` : `transform: translateY(${afterScalingPixels}px);`;
+    }
+
+    public getRowBusinessKey(): string | undefined {
+        const businessKeyForNodeFunc = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc();
+        if (typeof businessKeyForNodeFunc !== 'function') { return; }
+
+        return businessKeyForNodeFunc(this.rowNode);
+    }
+
+    public getInitialRowClasses(extraCssClass: string): string[] {
+        const params = {
+            rowNode: this.rowNode,
+            extraCssClass: extraCssClass,
+            rowFocused: this.rowFocused,
+            fadeRowIn: this.fadeRowIn,
+            rowIsEven: this.rowIsEven,
+            rowLevel: this.rowLevel,
+            fullWidthRow: this.isFullWidth(),
+            firstRowOnPage: this.isFirstRowOnPage(),
+            lastRowOnPage: this.isLastRowOnPage(),
+            printLayout: this.printLayout,
+            expandable: this.rowNode.isExpandable(),
+            scope: this.scope
+        };
+        return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
+    }
+
+    public preProcessStylesFromGridOptions(): string {
+        const rowStyles = this.processStylesFromGridOptions();
+        return cssStyleObjectToMarkup(rowStyles);
+    }
+
+    public processStylesFromGridOptions(): any {
         // part 1 - rowStyle
         const rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
 
