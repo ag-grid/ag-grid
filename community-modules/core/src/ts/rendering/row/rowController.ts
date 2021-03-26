@@ -42,6 +42,7 @@ import { AngularRowUtils } from "./angularRowUtils";
 import { CellPosition } from "../../entities/cellPosition";
 import { RowPosition } from "../../entities/rowPosition";
 import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerComp";
+import { RowComp } from "./rowComp";
 
 interface CellTemplate {
     template: string;
@@ -67,16 +68,18 @@ export class RowController extends Component {
 
     private readonly beans: Beans;
 
-    private eAllRows: HTMLElement[] = [];
+    // private eAllRows: HTMLElement[] = [];
 
-    private eLeftRow: HTMLElement;
-    private eRightRow: HTMLElement;
-    private eBodyRow: HTMLElement;
+    private allRowComps: RowComp[] = [];
 
-    private eFullWidthRow: HTMLElement;
-    private eFullWidthEmbedded: HTMLElement;
-    private eFullWidthEmbeddedLeft: HTMLElement;
-    private eFullWidthEmbeddedRight: HTMLElement;
+    private leftRowComp: RowComp;
+    private rightRowComp: RowComp;
+    private centerRowComp: RowComp;
+
+    private fwLeftRowComp: RowComp;
+    private fwRightRowComp: RowComp;
+    private fwCenterRowComp: RowComp;
+    private fwRowComp: RowComp;
 
     private readonly bodyRowContainerComp: RowContainerComp;
     private readonly fullWidthRowContainerComp: RowContainerComp;
@@ -182,7 +185,7 @@ export class RowController extends Component {
         }
         if (this.fadeRowIn) {
             this.createSecondPassFuncs.push(() => {
-                this.eAllRows.forEach(eRow => removeCssClass(eRow, 'ag-opacity-zero'));
+                this.allRowComps.forEach( rowComp => removeCssClass(rowComp.getGui(), 'ag-opacity-zero'))
             });
         }
     }
@@ -247,9 +250,9 @@ export class RowController extends Component {
         if (!func) { return; }
 
         const params: ProcessRowParams = {
-            eRow: this.eBodyRow,
-            ePinnedLeftRow: this.eLeftRow,
-            ePinnedRightRow: this.eRightRow,
+            eRow: this.centerRowComp ? this.centerRowComp.getGui() : undefined!,
+            ePinnedLeftRow: this.leftRowComp ? this.leftRowComp.getGui() : undefined!,
+            ePinnedRightRow: this.rightRowComp ? this.rightRowComp.getGui() : undefined!,
             node: this.rowNode,
             api: this.beans.gridOptionsWrapper.getApi()!,
             rowIndex: this.rowNode.rowIndex!,
@@ -302,7 +305,7 @@ export class RowController extends Component {
     private createRowContainer(
         rowContainerComp: RowContainerComp,
         cols: Column[]
-    ): HTMLElement {
+    ): RowComp {
         const useAnimationsFrameForCreate = this.useAnimationFrameForCreate;
         const cellTemplatesAndComps: CellTemplate = useAnimationsFrameForCreate ? { cellComps: [], template: '' } : this.createCells(cols);
         const rowTemplate = this.createTemplate(cellTemplatesAndComps.template);
@@ -314,8 +317,10 @@ export class RowController extends Component {
         const eRow = loadTemplate(rowTemplate);
         rowContainerComp.appendRow(eRow);
 
+        const res = new RowComp(eRow, rowContainerComp);
+
         this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
-        this.afterRowAttached(rowContainerComp, eRow);
+        this.afterRowAttached(rowContainerComp, res);
 
         if (useAnimationsFrameForCreate) {
             this.beans.taskQueue.createTask(
@@ -328,7 +333,7 @@ export class RowController extends Component {
             this.rowContainerReadyCount = 3;
         }
 
-        return eRow;
+        return res;
     }
 
     private setupRowUi(): void {
@@ -368,16 +373,16 @@ export class RowController extends Component {
             rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
         }
 
-        this.eBodyRow = this.createRowContainer(this.bodyRowContainerComp, centerCols);
-        this.eRightRow = this.createRowContainer(this.rightRowContainerComp, rightCols);
-        this.eLeftRow = this.createRowContainer(this.leftRowContainerComp, leftCols);
+        this.centerRowComp = this.createRowContainer(this.bodyRowContainerComp, centerCols);
+        this.rightRowComp = this.createRowContainer(this.rightRowContainerComp, rightCols);
+        this.leftRowComp = this.createRowContainer(this.leftRowContainerComp, leftCols);
     }
 
     private createFullWidthRowUi(type: string, name: string | null, detailRow: boolean): void {
         this.fullWidthRow = true;
 
         if (this.embedFullWidth) {
-            this.createFullWidthRowCell(this.bodyRowContainerComp, null,
+            this.fwCenterRowComp = this.createFullWidthRowCell(this.bodyRowContainerComp, null,
                 null, type, name!,
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentBody = cellRenderer;
@@ -387,13 +392,13 @@ export class RowController extends Component {
             // printLayout doesn't put components into the pinned sections
             if (this.printLayout) { return; }
 
-            this.createFullWidthRowCell(this.leftRowContainerComp, Constants.PINNED_LEFT,
+            this.fwLeftRowComp = this.createFullWidthRowCell(this.leftRowContainerComp, Constants.PINNED_LEFT,
                 'ag-cell-last-left-pinned', type, name!,
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentLeft = cellRenderer;
                 },
                 detailRow);
-            this.createFullWidthRowCell(this.rightRowContainerComp, Constants.PINNED_RIGHT,
+            this.fwRightRowComp = this.createFullWidthRowCell(this.rightRowContainerComp, Constants.PINNED_RIGHT,
                 'ag-cell-first-right-pinned', type, name!,
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentRight = cellRenderer;
@@ -402,7 +407,7 @@ export class RowController extends Component {
         } else {
             // otherwise we add to the fullWidth container as normal
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
-            this.createFullWidthRowCell(this.fullWidthRowContainerComp, null,
+            this.fwRowComp = this.createFullWidthRowCell(this.fullWidthRowContainerComp, null,
                 null, type, name!,
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponent = cellRenderer;
@@ -440,22 +445,22 @@ export class RowController extends Component {
     public refreshFullWidth(): boolean {
 
         // returns 'true' if refresh succeeded
-        const tryRefresh = (eRow: HTMLElement, cellComp: ICellRendererComp | null | undefined, pinned: string | null): boolean => {
-            if (!eRow || !cellComp) { return true; } // no refresh needed
+        const tryRefresh = (rowComp: RowComp, cellComp: ICellRendererComp | null | undefined, pinned: string | null): boolean => {
+            if (!rowComp || !cellComp) { return true; } // no refresh needed
 
             // no refresh method present, so can't refresh, hard refresh needed
             if (!cellComp.refresh) { return false; }
 
-            const params = this.createFullWidthParams(eRow, pinned);
+            const params = this.createFullWidthParams(rowComp.getGui(), pinned);
             const refreshSucceeded = cellComp.refresh(params);
 
             return refreshSucceeded;
         };
 
-        const normalSuccess = tryRefresh(this.eFullWidthRow, this.fullWidthRowComponent, null);
-        const bodySuccess = tryRefresh(this.eFullWidthEmbedded, this.fullWidthRowComponentBody, null);
-        const leftSuccess = tryRefresh(this.eFullWidthEmbeddedLeft, this.fullWidthRowComponentLeft, Constants.PINNED_LEFT);
-        const rightSuccess = tryRefresh(this.eFullWidthEmbeddedRight, this.fullWidthRowComponentRight, Constants.PINNED_RIGHT);
+        const normalSuccess = tryRefresh(this.fwRowComp, this.fullWidthRowComponent, null);
+        const bodySuccess = tryRefresh(this.fwCenterRowComp, this.fullWidthRowComponentBody, null);
+        const leftSuccess = tryRefresh(this.fwLeftRowComp, this.fullWidthRowComponentLeft, Constants.PINNED_LEFT);
+        const rightSuccess = tryRefresh(this.fwRightRowComp, this.fullWidthRowComponentRight, Constants.PINNED_RIGHT);
 
         const allFullWidthRowsRefreshed = normalSuccess && bodySuccess && leftSuccess && rightSuccess;
 
@@ -537,11 +542,12 @@ export class RowController extends Component {
     private onRowNodeHighlightChanged(): void {
         const highlighted = this.rowNode.highlighted;
 
-        this.eAllRows.forEach(row => {
-            removeCssClass(row, 'ag-row-highlight-above');
-            removeCssClass(row, 'ag-row-highlight-below');
+        this.allRowComps.forEach(rowComp => {
+            const eGui = rowComp.getGui();
+            removeCssClass(eGui, 'ag-row-highlight-above');
+            removeCssClass(eGui, 'ag-row-highlight-below');
             if (highlighted) {
-                addCssClass(row, 'ag-row-highlight-' + highlighted);
+                addCssClass(eGui, 'ag-row-highlight-' + highlighted);
             }
         });
     }
@@ -552,7 +558,7 @@ export class RowController extends Component {
 
     private postProcessRowDragging(): void {
         const dragging = this.rowNode.dragging;
-        this.eAllRows.forEach(row => addOrRemoveCssClass(row, 'ag-row-dragging', dragging));
+        this.allRowComps.forEach(rowComp => addOrRemoveCssClass(rowComp.getGui(), 'ag-row-dragging', dragging));
     }
 
     private updateExpandedCss(): void {
@@ -560,7 +566,8 @@ export class RowController extends Component {
         const expandable = this.rowNode.isExpandable();
         const expanded = this.rowNode.expanded == true;
 
-        this.eAllRows.forEach(eRow => {
+        this.allRowComps.forEach(rowComp => {
+            const eRow = rowComp.getGui();
             addOrRemoveCssClass(eRow, 'ag-row-group', expandable);
             addOrRemoveCssClass(eRow, 'ag-row-group-expanded', expandable && expanded);
             addOrRemoveCssClass(eRow, 'ag-row-group-contracted', expandable && !expanded);
@@ -599,9 +606,9 @@ export class RowController extends Component {
 
     private getContainerForCell(pinnedType: string): HTMLElement {
         switch (pinnedType) {
-            case Constants.PINNED_LEFT: return this.eLeftRow;
-            case Constants.PINNED_RIGHT: return this.eRightRow;
-            default: return this.eBodyRow;
+            case Constants.PINNED_LEFT: return this.leftRowComp.getGui();
+            case Constants.PINNED_RIGHT: return this.rightRowComp.getGui();
+            default: return this.centerRowComp.getGui();
         }
     }
 
@@ -625,7 +632,8 @@ export class RowController extends Component {
     }
 
     public onKeyboardNavigate(keyboardEvent: KeyboardEvent) {
-        const currentFullWidthContainer = find(this.eAllRows, container => container.contains(keyboardEvent.target as HTMLElement));
+        const currentFullWidthComp = find(this.allRowComps, rowComp => rowComp.getGui().contains(keyboardEvent.target as HTMLElement));
+        const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.getGui() : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
 
         if (!isFullWidthContainerFocused) { return; }
@@ -644,7 +652,8 @@ export class RowController extends Component {
 
     public onTabKeyDown(keyboardEvent: KeyboardEvent) {
         if (keyboardEvent.defaultPrevented || isStopPropagationForAgGrid(keyboardEvent)) { return; }
-        const currentFullWidthContainer = find(this.eAllRows, container => container.contains(keyboardEvent.target as HTMLElement));
+        const currentFullWidthComp = find(this.allRowComps, rowComp => rowComp.getGui().contains(keyboardEvent.target as HTMLElement));
+        const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.getGui() : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
         let nextEl: HTMLElement | null = null;
 
@@ -661,11 +670,11 @@ export class RowController extends Component {
         const node = this.rowNode;
         const isFocused = this.fullWidthRow && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
-        addOrRemoveCssClass(this.eFullWidthRow, 'ag-full-width-focus', isFocused);
+        const element = this.fwRowComp ? this.fwRowComp.getGui() : this.fwCenterRowComp.getGui();
 
+        addOrRemoveCssClass(element, 'ag-full-width-focus', isFocused);
         if (isFocused) {
-            const focusEl = this.embedFullWidth ? this.eFullWidthEmbedded : this.eFullWidthRow;
-            focusEl.focus();
+            element.focus();
         }
     }
 
@@ -716,9 +725,13 @@ export class RowController extends Component {
             rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
         }
 
-        this.insertCellsIntoContainer(this.eBodyRow, centerCols);
-        this.insertCellsIntoContainer(this.eLeftRow, leftCols);
-        this.insertCellsIntoContainer(this.eRightRow, rightCols);
+        this.insertCellsIntoContainer(this.centerRowComp.getGui(), centerCols);
+        if (this.leftRowComp) {
+            this.insertCellsIntoContainer(this.leftRowComp.getGui(), leftCols);
+        }
+        if (this.rightRowComp) {
+            this.insertCellsIntoContainer(this.rightRowComp.getGui(), rightCols);
+        }
         this.elementOrderChanged = false;
 
         const colIdsToRemove = Object.keys(this.cellComps);
@@ -964,7 +977,7 @@ export class RowController extends Component {
         cellRendererName: string,
         cellRendererCallback: (comp: ICellRendererComp) => void,
         detailRow: boolean
-    ): HTMLElement {
+    ): RowComp {
         const rowTemplate = this.createTemplate('', extraCssClass);
 
         const eRow = loadTemplate(rowTemplate);
@@ -985,29 +998,31 @@ export class RowController extends Component {
             }
         };
 
+        const rowComp = new RowComp(eRow, rowContainerComp);
+
         // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
-        const cachedRowComp = this.beans.detailRowCompCache.get(this.rowNode, pinned);
-        if (cachedRowComp) {
-            callback(cachedRowComp);
+        const cachedDetailComp = this.beans.detailRowCompCache.get(this.rowNode, pinned);
+        if (cachedDetailComp) {
+            callback(cachedDetailComp);
         } else {
             const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
-            if (!res) {
+            if (res) {
+                res.then(callback);
+            } else {
                 const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
                 if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
                     console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
                 } else {
                     console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
                 }
-                return eRow;
             }
-            res.then(callback);
         }
 
-        this.afterRowAttached(rowContainerComp, eRow);
+        this.afterRowAttached(rowContainerComp, rowComp);
 
         this.angular1Compile(eRow);
 
-        return eRow;
+        return rowComp;
     }
 
     private setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
@@ -1094,9 +1109,10 @@ export class RowController extends Component {
         if (this.rowLevel != newLevel) {
             const classToAdd = 'ag-row-level-' + newLevel;
             const classToRemove = 'ag-row-level-' + this.rowLevel;
-            this.eAllRows.forEach((row) => {
-                addCssClass(row, classToAdd);
-                removeCssClass(row, classToRemove);
+            this.allRowComps.forEach(rowComp => {
+                const eGui = rowComp.getGui();
+                addCssClass(eGui, classToAdd);
+                removeCssClass(eGui, classToRemove);
             });
         }
         this.rowLevel = newLevel;
@@ -1116,11 +1132,11 @@ export class RowController extends Component {
 
         if (this.firstRowOnPage !== newFirst) {
             this.firstRowOnPage = newFirst;
-            this.eAllRows.forEach((row) => addOrRemoveCssClass(row, 'ag-row-first', newFirst));
+            this.allRowComps.forEach(rowComp => addOrRemoveCssClass(rowComp.getGui(), 'ag-row-first', newFirst));
         }
         if (this.lastRowOnPage !== newLast) {
             this.lastRowOnPage = newLast;
-            this.eAllRows.forEach((row) => addOrRemoveCssClass(row, 'ag-row-last', newLast));
+            this.allRowComps.forEach(rowComp => addOrRemoveCssClass(rowComp.getGui(), 'ag-row-last', newLast));
         }
     }
 
@@ -1140,7 +1156,7 @@ export class RowController extends Component {
 
     private setEditingRow(value: boolean): void {
         this.editingRow = value;
-        this.eAllRows.forEach(row => addOrRemoveCssClass(row, 'ag-row-editing', value));
+        this.allRowComps.forEach(rowComp => addOrRemoveCssClass(rowComp.getGui(), 'ag-row-editing', value));
 
         const event: RowEvent = value ?
             this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED) as RowEditingStartedEvent
@@ -1177,7 +1193,7 @@ export class RowController extends Component {
         if (!cssClasses || !cssClasses.length) { return; }
 
         cssClasses.forEach(classStr => {
-            this.eAllRows.forEach(row => addCssClass(row, classStr));
+            this.allRowComps.forEach(rowComp => addCssClass(rowComp.getGui(), classStr));
         });
     }
 
@@ -1185,10 +1201,10 @@ export class RowController extends Component {
         this.beans.rowCssClassCalculator.processRowClassRules(
             this.rowNode, this.scope,
             (className: string) => {
-                this.eAllRows.forEach(row => addCssClass(row, className));
+                this.allRowComps.forEach(rowComp => addCssClass(rowComp.getGui(), className));
             },
             (className: string) => {
-                this.eAllRows.forEach(row => removeCssClass(row, className));
+                this.allRowComps.forEach(rowComp => removeCssClass(rowComp.getGui(), className));
             }
         );
     }
@@ -1200,7 +1216,7 @@ export class RowController extends Component {
 
     private postProcessStylesFromGridOptions(): void {
         const rowStyles = this.processStylesFromGridOptions();
-        this.eAllRows.forEach(row => addStylesToElement(row, rowStyles));
+        this.allRowComps.forEach(rowComp => addStylesToElement(rowComp.getGui(), rowStyles));
     }
 
     private processStylesFromGridOptions(): any {
@@ -1254,10 +1270,11 @@ export class RowController extends Component {
 
     private onRowSelected(): void {
         const selected = this.rowNode.isSelected()!;
-        this.eAllRows.forEach((row) => {
-            setAriaSelected(row, selected);
-            addOrRemoveCssClass(row, 'ag-row-selected', selected);
-            this.refreshAriaLabel(row, selected);
+        this.allRowComps.forEach(rowComp => {
+            const eGui = rowComp.getGui();
+            setAriaSelected(eGui, selected);
+            addOrRemoveCssClass(eGui, 'ag-row-selected', selected);
+            this.refreshAriaLabel(eGui, selected);
         });
     }
 
@@ -1292,7 +1309,9 @@ export class RowController extends Component {
         });
     }
 
-    private afterRowAttached(rowContainerComp: RowContainerComp, eRow: HTMLElement): void {
+    private afterRowAttached(rowContainerComp: RowContainerComp, rowComp: RowComp): void {
+        const eRow = rowComp.getGui();
+
         this.addDomData(eRow);
 
         this.removeSecondPassFuncs.push(() => {
@@ -1312,7 +1331,7 @@ export class RowController extends Component {
             }
         });
 
-        this.eAllRows.push(eRow);
+        this.allRowComps.push(rowComp);
 
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame
@@ -1384,7 +1403,7 @@ export class RowController extends Component {
         if (exists(this.rowNode.rowHeight)) {
             const heightPx = `${this.rowNode.rowHeight}px`;
 
-            this.eAllRows.forEach(row => row.style.height = heightPx);
+            this.allRowComps.forEach(rowComp => rowComp.getGui().style.height = heightPx);
         }
     }
 
@@ -1448,8 +1467,11 @@ export class RowController extends Component {
         const rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
-            this.eAllRows.forEach(row => addOrRemoveCssClass(row, 'ag-row-focus', rowFocused));
-            this.eAllRows.forEach(row => addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused));
+            this.allRowComps.forEach(rowComp => {
+                const eRow = rowComp.getGui();
+                addOrRemoveCssClass(eRow, 'ag-row-focus', rowFocused);
+                addOrRemoveCssClass(eRow, 'ag-row-no-focus', !rowFocused);
+            });
             this.rowFocused = rowFocused;
         }
 
@@ -1503,11 +1525,15 @@ export class RowController extends Component {
             const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
             const topPx = `${afterScalingPixels}px`;
 
-            if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {
-                this.eAllRows.forEach(row => row.style.top = topPx);
-            } else {
-                this.eAllRows.forEach(row => row.style.transform = `translateY(${topPx})`);
-            }
+            const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
+            this.allRowComps.forEach(rowComp => {
+                const eGui = rowComp.getGui();
+                if (suppressRowTransform) {
+                    eGui.style.top = topPx;
+                } else {
+                    eGui.style.transform = `translateY(${topPx})`;
+                }
+            });
         }
     }
 
@@ -1554,7 +1580,8 @@ export class RowController extends Component {
             this.rowIsEven = rowIsEven;
         }
 
-        this.eAllRows.forEach(eRow => {
+        this.allRowComps.forEach(rowComp => {
+            const eRow = rowComp.getGui();
             eRow.setAttribute('row-index', rowIndexStr);
             setAriaRowIndex(eRow, headerRowCount + this.rowNode.rowIndex! + 1);
 
@@ -1564,48 +1591,31 @@ export class RowController extends Component {
         });
     }
 
+    // fixme ***************** - this should be looking at parent of the comp
     public ensureDomOrder(): void {
-        const sides = [
-            {
-                el: this.getBodyRowElement(),
-                ct: this.bodyRowContainerComp
-            },
-            {
-                el: this.getPinnedLeftRowElement(),
-                ct: this.leftRowContainerComp
-            }, {
-                el: this.getPinnedRightRowElement(),
-                ct: this.rightRowContainerComp
-            }, {
-                el: this.getFullWidthRowElement(),
-                ct: this.fullWidthRowContainerComp
-            }
-        ];
-
-        sides.forEach(side => {
-            if (!side.el) { return; }
-            side.ct.ensureDomOrder(side.el);
+        this.allRowComps.forEach( rowComp => {
+            rowComp.getContainer().ensureDomOrder(rowComp.getGui());
         });
     }
 
     // returns the pinned left container, either the normal one, or the embedded full with one if exists
     public getPinnedLeftRowElement(): HTMLElement {
-        return this.eLeftRow ? this.eLeftRow : this.eFullWidthEmbeddedLeft;
+        return this.leftRowComp ? this.leftRowComp.getGui() : this.fwLeftRowComp ? this.fwLeftRowComp.getGui() : undefined!;
     }
 
     // returns the pinned right container, either the normal one, or the embedded full with one if exists
     public getPinnedRightRowElement(): HTMLElement {
-        return this.eRightRow ? this.eRightRow : this.eFullWidthEmbeddedRight;
+        return this.rightRowComp ? this.rightRowComp.getGui() : this.fwRightRowComp ? this.fwRightRowComp.getGui() : undefined!;
     }
 
     // returns the body container, either the normal one, or the embedded full with one if exists
     public getBodyRowElement(): HTMLElement {
-        return this.eBodyRow ? this.eBodyRow : this.eFullWidthEmbedded;
+        return this.centerRowComp ? this.centerRowComp.getGui() : this.fwCenterRowComp ? this.fwCenterRowComp.getGui() : undefined!;
     }
 
     // returns the full width container
     public getFullWidthRowElement(): HTMLElement {
-        return this.eFullWidthRow;
+        return this.fwRowComp ? this.fwRowComp.getGui() : undefined!;
     }
 
 }
