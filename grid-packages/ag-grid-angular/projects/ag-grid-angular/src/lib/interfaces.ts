@@ -59,6 +59,9 @@ export interface AgEditorComponent extends ICellEditorAngularComp {
 export interface AgFilterComponent extends IFilterAngularComp {
 }
 
+export interface AgFloatingFilterComponent extends IFloatingFilterComp {
+}
+
 export interface ILoadingCellRendererAngularComp extends AgFrameworkComponent<ILoadingCellRendererParams> {
 }
 

@@ -1,5 +1,8 @@
 [[only-vue]]
-|## Custom Filter Component
+|## Custom Filter Interface
+|
+|When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
+|row values available to you via `this.params`.
 |
 |The interface for a custom filter component is as follows:
 |

@@ -15,6 +15,7 @@ import VideoSection from 'components/VideoSection';
 import VideoLink from 'components/VideoLink';
 import ChartGallery from 'components/chart-gallery/ChartGallery';
 import ChartsApiExplorer from 'components/charts-api-explorer/ChartsApiExplorer';
+import Changelog from 'components/changelog/Changelog';
 import { ListItem } from 'components/ListItem';
 import DocumentationLink from '../components/DocumentationLink';
 import Gif from 'components/Gif';
@@ -68,6 +69,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
       'video-link': VideoLink,
       'chart-gallery': ChartGallery,
       'charts-api-explorer': props => ChartsApiExplorer({ ...props, framework }),
+      'changelog': Changelog,
     },
   }).Compiler;
 
@@ -82,7 +84,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
     }
   }
 
-  const pageTitle = getHeaderTitle(title, framework, pageName.startsWith('charts-'));
+  const pageTitle = getHeaderTitle(title, framework, pageName.startsWith('charts-'), page.frontmatter.rootPage);
 
   return (
     <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
@@ -104,6 +106,7 @@ export const pageQuery = graphql`
         title
         enterprise
         description
+        rootPage
       }
       headings {
         id

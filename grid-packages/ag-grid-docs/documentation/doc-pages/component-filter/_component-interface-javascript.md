@@ -1,5 +1,5 @@
 [[only-javascript]]
-|## Custom Filter Component
+|## Custom Filter Interface
 |
 |The interface for a custom filter component is as follows:
 |
