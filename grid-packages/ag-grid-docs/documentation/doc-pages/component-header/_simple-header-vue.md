@@ -2,7 +2,7 @@
 |Below is a simple example of floating filter component:
 |
 |```js
-|export default Vue.extend({
+|const MyFloatingFilter = {
 |    template: `
 |      <div>
 |          <div v-if="params.enableMenu" ref="menuButton" class="customHeaderMenuButton" @click="onMenuClicked($event)">
@@ -51,6 +51,6 @@
 |            this.params.setSort(order, event.shiftKey);
 |        }
 |    }
-|});
+|};
 |```
  
