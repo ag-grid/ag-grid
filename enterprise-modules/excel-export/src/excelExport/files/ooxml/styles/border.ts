@@ -49,7 +49,7 @@ const borderFactory: ExcelOOXMLTemplate = {
 
 export default borderFactory;
 
-const getWeightName = (value: number | undefined): string => {
+const getWeightName = (value?: number): string => {
     if (value === 1) { return 'thin'; }
     if (value === 2) { return 'medium'; }
     if (value === 3) { return 'thick'; }
@@ -68,7 +68,9 @@ const mappedNames: {[key: string]: string} = {
 
 const mediumBorders = ['Dashed', 'DashDot', 'DashDotDot'];
 
-export const convertLegacyBorder = (type: string, weight: number): string => {
+export const convertLegacyBorder = (type?: string, weight?: number): string => {
+    if (!type) { return 'thin'; }
+
     // Legacy Types are: None, Continuous, Dash, Dot, DashDot, DashDotDot, SlantDashDot, and Double
     // Weight represents: 0—Hairline, 1—Thin , 2—Medium, 3—Thick
 
@@ -77,7 +79,6 @@ export const convertLegacyBorder = (type: string, weight: number): string => {
     const namedWeight = getWeightName(weight);
     const mappedName = mappedNames[type];
 
-    if (!type) { return 'thin'; }
     if (type === 'Continuous') { return namedWeight; }
     if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) !== -1) { return `medium${mappedName}`; }
 
@@ -85,14 +86,14 @@ export const convertLegacyBorder = (type: string, weight: number): string => {
 };
 
 export interface Border {
-    style: string | undefined;
-    color: string | undefined;
+    style?: string;
+    color?: string;
 }
 
 export interface BorderSet {
-    left: Border | undefined;
-    right: Border | undefined;
-    top: Border | undefined;
-    bottom: Border | undefined;
-    diagonal: Border | undefined;
+    left?: Border;
+    right?: Border;
+    top?: Border;
+    bottom?: Border;
+    diagonal?: Border;
 }

@@ -40,7 +40,7 @@ const fontFactory: ExcelOOXMLTemplate = {
 
 export default fontFactory;
 
-export const getFamilyId = (name: string): number => {
+export const getFamilyId = (name?: string): number => {
     const families = ['Automatic', 'Roman', 'Swiss', 'Modern', 'Script', 'Decorative'];
     const pos = families.indexOf(name || 'Automatic');
 

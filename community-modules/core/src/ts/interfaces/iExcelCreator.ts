@@ -12,48 +12,54 @@ export interface ExcelStyle {
     numberFormat?: ExcelNumberFormat;
     protection?: ExcelProtection;
     dataType?: ExcelDataType;
-    /* legacy properties */
+    /**
+     * @deprecated Legacy property
+     */
     name?: string;
 }
 
 export interface ExcelAlignment {
-    horizontal: 'Automatic' | 'Left' | 'Center' | 'Right' | 'Fill' | 'Justify' | 'CenterAcrossSelection' | 'Distributed' | 'JustifyDistributed';
-    indent: number;
-    readingOrder: 'RightToLeft' | 'LeftToRight' | 'Context';
-    rotate: number;
-    shrinkToFit: boolean;
-    vertical: 'Automatic' | 'Top' | 'Bottom' | 'Center' | 'Justify' | 'Distributed' | 'JustifyDistributed';
-    wrapText: boolean;
-    /* legacy properties */
-    verticalText: boolean;
+    horizontal?: 'Automatic' | 'Left' | 'Center' | 'Right' | 'Fill' | 'Justify' | 'CenterAcrossSelection' | 'Distributed' | 'JustifyDistributed';
+    indent?: number;
+    readingOrder?: 'RightToLeft' | 'LeftToRight' | 'Context';
+    rotate?: number;
+    shrinkToFit?: boolean;
+    vertical?: 'Automatic' | 'Top' | 'Bottom' | 'Center' | 'Justify' | 'Distributed' | 'JustifyDistributed';
+    wrapText?: boolean;
+    /**
+     * @deprecated Legacy property
+     */
+    verticalText?: boolean;
 }
 
 export interface ExcelBorders {
-    borderBottom: ExcelBorder;
-    borderLeft: ExcelBorder;
-    borderTop: ExcelBorder;
-    borderRight: ExcelBorder;
+    borderBottom?: ExcelBorder;
+    borderLeft?: ExcelBorder;
+    borderTop?: ExcelBorder;
+    borderRight?: ExcelBorder;
 }
 
 export interface ExcelBorder {
-    lineStyle: 'None' | 'Continuous' | 'Dash' | 'Dot' | 'DashDot' | 'DashDotDot' | 'SlantDashDot' | 'Double';
-    weight: 0 | 1 | 2 | 3;
-    color: string;
+    lineStyle?: 'None' | 'Continuous' | 'Dash' | 'Dot' | 'DashDot' | 'DashDotDot' | 'SlantDashDot' | 'Double';
+    weight?: 0 | 1 | 2 | 3;
+    color?: string;
 }
 
 export interface ExcelFont {
-    bold: boolean;
-    color: string;
-    fontName: string;
-    italic: boolean;
-    outline: boolean;
-    shadow: boolean;
-    size: number;
-    strikeThrough: boolean;
-    underline: 'None' | 'Subscript' | 'Superscript';
-    charSet: number;
-    family: string;
-    /* legacy property */
+    bold?: boolean;
+    color?: string;
+    fontName?: string;
+    italic?: boolean;
+    outline?: boolean;
+    shadow?: boolean;
+    size?: number;
+    strikeThrough?: boolean;
+    underline?: 'None' | 'Subscript' | 'Superscript';
+    charSet?: number;
+    family?: string;
+    /**
+     * @deprecated Legacy property
+     */
     verticalAlign: string;
 }
 
@@ -108,6 +114,12 @@ export interface ExcelCell {
     styleId?: string;
     data: ExcelData;
     mergeAcross?: number;
+}
+
+export interface ExcelImage {
+    path?: string;
+    base64?: string;
+    imageType: 'jpg' | 'png' | 'gif';
 }
 
 /*

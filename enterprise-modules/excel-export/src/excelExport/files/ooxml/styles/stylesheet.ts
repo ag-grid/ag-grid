@@ -71,7 +71,7 @@ const convertLegacyPattern = (name: string): string => {
     return colorMap[name] || name;
 };
 
-export const convertLegacyColor = (color: string): string => {
+export const convertLegacyColor = (color?: string): string | undefined => {
     if (color == undefined) { return color; }
 
     if (color.charAt(0) === '#') {
@@ -199,7 +199,7 @@ const registerBorders = (borders: ExcelBorders): number => {
 };
 
 const registerFont = (font: ExcelFont): number => {
-    const { fontName: name, color, size, bold, italic, outline, shadow, strikeThrough, underline, family } = font;
+    const { fontName: name = 'Calibri', color, size, bold, italic, outline, shadow, strikeThrough, underline, family } = font;
     const utf8Name = name ? _.utf8_encode(name) : name;
     const convertedColor = convertLegacyColor(color);
     const familyId = getFamilyId(family);
