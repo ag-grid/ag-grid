@@ -246,7 +246,7 @@ export class RowNode implements IEventEmitter {
     public highlighted: 'above' | 'below' | null = null;
 
     private selected: boolean | undefined = false;
-    private eventService: EventService;
+    private eventService: EventService | null;
 
     public setData(data: any): void {
         this.setDataCommon(data, false);
@@ -905,7 +905,12 @@ export class RowNode implements IEventEmitter {
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
+        if (!this.eventService) { return; }
+
         this.eventService.removeEventListener(eventType, listener);
+        if (this.eventService.noRegisteredListenersExist()) {
+            this.eventService = null;
+        }
     }
 
     public onMouseEnter(): void {
