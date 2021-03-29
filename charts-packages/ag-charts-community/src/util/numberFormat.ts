@@ -114,9 +114,46 @@ export function makeFormatSpecifier(specifier: string): FormatSpecifier {
     });
 }
 
-function tickFormat(start: number, stop: number, count: number, specifier: string) {
+export function tickFormat(start: number, stop: number, count: number, specifier?: string) {
     const step = tickStep(start, stop, count);
-    let precision;
+    const formatSpecifier = makeFormatSpecifier(specifier ?? ',f');
+
+    switch (formatSpecifier.type) {
+        case 's': {
+            var value = Math.max(Math.abs(start), Math.abs(stop));
+            if (formatSpecifier.precision == null) {
+                const precision = precisionPrefix(step, value);
+                if (!isNaN(precision)) {
+                    formatSpecifier.precision = precision;
+                }
+            }
+            return exports.formatPrefix(formatSpecifier, value);
+        }
+        case '':
+        case 'e':
+        case 'g':
+        case 'p':
+        case 'r': {
+            if (formatSpecifier.precision == null) {
+                const precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop)));
+                if (!isNaN(precision)) {
+                    formatSpecifier.precision = precision - Number(formatSpecifier.type === 'e');
+                }
+            }
+            break;
+        }
+        case 'f':
+        case '%': {
+            if (formatSpecifier.precision == null) {
+                const precision = precisionFixed(step);
+                if (!isNaN(precision)) {
+                    formatSpecifier.precision = precision - Number(formatSpecifier.type === '%') * 2;
+                }
+            }
+            break;
+        }
+    }
+    return exports.format(formatSpecifier);
 }
 
 let prefixExponent: number;
