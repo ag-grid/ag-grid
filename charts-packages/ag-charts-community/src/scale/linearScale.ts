@@ -58,6 +58,6 @@ export class LinearScale extends ContinuousScale {
 
     tickFormat(count?: number, specifier?: string) {
         const d = this.domain;
-        return tickFormat(d[0], d[d.length - 1], count ?? 10, specifier);
+        return tickFormat(d[0], d[d.length - 1], count == undefined ? 10 : count, specifier);
     }
 }

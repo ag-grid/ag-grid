@@ -116,7 +116,7 @@ export function makeFormatSpecifier(specifier: string): FormatSpecifier {
 
 export function tickFormat(start: number, stop: number, count: number, specifier?: string) {
     const step = tickStep(start, stop, count);
-    const formatSpecifier = makeFormatSpecifier(specifier ?? ',f');
+    const formatSpecifier = makeFormatSpecifier(specifier == undefined ? ',f' : specifier);
 
     switch (formatSpecifier.type) {
         case 's': {
