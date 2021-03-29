@@ -114,7 +114,7 @@ export function makeFormatSpecifier(specifier: string): FormatSpecifier {
     });
 }
 
-export function tickFormat(start: number, stop: number, count: number, specifier?: string) {
+export function tickFormat(start: number, stop: number, count: number, specifier?: string): (n: number | { valueOf(): number }) => string {
     const step = tickStep(start, stop, count);
     const formatSpecifier = makeFormatSpecifier(specifier == undefined ? ',f' : specifier);
 
@@ -153,7 +153,7 @@ export function tickFormat(start: number, stop: number, count: number, specifier
             break;
         }
     }
-    return exports.format(formatSpecifier);
+    return format(String(formatSpecifier));
 }
 
 let prefixExponent: number;
