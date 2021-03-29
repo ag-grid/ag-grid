@@ -23,19 +23,16 @@ import { Constants } from "../../constants/constants";
 import { ModuleNames } from "../../modules/moduleNames";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
-import { escapeString } from "../../utils/string";
 import {
     addCssClass,
     addOrRemoveCssClass,
     addStylesToElement,
     isElementChildOfClass,
-    loadTemplate,
-    removeCssClass, setDomChildOrder
+    removeCssClass
 } from "../../utils/dom";
-import { removeFromArray } from "../../utils/array";
-import { exists, find, missing } from "../../utils/generic";
+import { exists, find } from "../../utils/generic";
 import { isStopPropagationForAgGrid } from "../../utils/event";
-import { assign, iterateObject } from "../../utils/object";
+import { assign } from "../../utils/object";
 import { cssStyleObjectToMarkup } from "../../utils/general";
 import { AngularRowUtils } from "./angularRowUtils";
 import { CellPosition } from "../../entities/cellPosition";
@@ -96,11 +93,9 @@ export class RowController extends Component {
     private editingRow: boolean;
     private rowFocused: boolean;
 
-    private rowContainerReadyCount = 0;
-    private refreshNeeded = false;
-    private columnRefreshPending = false;
-
-    private cellComps: { [key: string]: CellComp | null; } = {};
+    private centerCols: Column[];
+    private leftCols: Column[];
+    private rightCols: Column[];
 
     // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
     // instead of each row doing a setTimeout(func,0), we put the functions here and the rowRenderer
@@ -127,13 +122,14 @@ export class RowController extends Component {
     private parentScope: any;
     private scope: any;
 
-    private elementOrderChanged = false;
     private lastMouseDownOnDragger = false;
 
     private rowLevel: number;
 
     private readonly printLayout: boolean;
     private readonly embedFullWidth: boolean;
+
+    private updateColumnListsPending = false;
 
     constructor(
         parentScope: any,
@@ -176,6 +172,10 @@ export class RowController extends Component {
             this.setupNormalRowContainers();
         }
 
+        if (!this.isFullWidth()) {
+            this.updateColumnLists(!this.useAnimationFrameForCreate);
+        }
+
         this.addListeners();
 
         if (this.slideRowIn) {
@@ -190,6 +190,22 @@ export class RowController extends Component {
         }
     }
 
+    public getColsForRowComp(pinned: string | null): Column[] {
+        switch (pinned) {
+            case Constants.PINNED_RIGHT : return this.rightCols;
+            case Constants.PINNED_LEFT : return this.leftCols;
+            default : return this.centerCols;
+        }
+    }
+
+    public getScope(): any {
+        return this.scope;
+    }
+
+    public isPrintLayout(): boolean {
+        return this.printLayout;
+    }
+
     private setupAngular1Scope(): void {
         const scopeResult = AngularRowUtils.createChildScopeOrNull(this.rowNode, this.parentScope, this.beans.gridOptionsWrapper);
         if (scopeResult) {
@@ -199,8 +215,7 @@ export class RowController extends Component {
     }
 
     public getCellForCol(column: Column): HTMLElement | null {
-        const cellComp = this.cellComps[column.getColId()];
-
+        const cellComp = this.getRenderedCellForColumn(column);
         return cellComp ? cellComp.getGui() : null;
     }
 
@@ -230,22 +245,6 @@ export class RowController extends Component {
         this.removeSecondPassFuncs.push(f);
     }
 
-    private areAllContainersReady(): boolean {
-        return this.rowContainerReadyCount === 3;
-    }
-
-    private lazyCreateCells(cols: Column[], eRow: HTMLElement): void {
-        if (!this.active) { return; }
-
-        this.createCells(cols, eRow);
-
-        this.rowContainerReadyCount++;
-
-        if (this.areAllContainersReady() && this.refreshNeeded) {
-            this.refreshCells();
-        }
-    }
-
     private newRowComp(rowContainerComp: RowContainerComp,
                        pinned: string | null,
                        extraCssClass: string | null = null): RowComp {
@@ -256,7 +255,6 @@ export class RowController extends Component {
 
     private createRowComp(
         rowContainerComp: RowContainerComp,
-        cols: Column[],
         pinned: string | null
     ): RowComp {
 
@@ -264,18 +262,6 @@ export class RowController extends Component {
         const eRow = res.getGui();
 
         this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
-
-        const useAnimationFrames = this.useAnimationFrameForCreate;
-        if (useAnimationFrames) {
-            this.beans.taskQueue.createTask(
-                this.lazyCreateCells.bind(this, cols, eRow),
-                this.rowNode.rowIndex!,
-                'createTasksP1'
-            );
-        } else {
-            this.createCells(cols, eRow);
-            this.rowContainerReadyCount = 3;
-        }
 
         return res;
     }
@@ -306,21 +292,46 @@ export class RowController extends Component {
     }
 
     private setupNormalRowContainers(): void {
-        let centerCols: Column[];
-        let leftCols: Column[] = [];
-        let rightCols: Column[] = [];
+        this.centerRowComp = this.createRowComp(this.bodyRowContainerComp, null);
+        this.rightRowComp = this.createRowComp(this.rightRowContainerComp, Constants.PINNED_RIGHT);
+        this.leftRowComp = this.createRowComp(this.leftRowContainerComp, Constants.PINNED_LEFT);
+    }
 
-        if (this.printLayout) {
-            centerCols = this.beans.columnController.getAllDisplayedColumns();
-        } else {
-            centerCols = this.beans.columnController.getViewportCenterColumnsForRow(this.rowNode);
-            leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
-            rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
+    private updateColumnLists(suppressAnimationFrame = false): void {
+
+        const noAnimation = suppressAnimationFrame
+            || this.beans.gridOptionsWrapper.isSuppressAnimationFrame()
+            || this.printLayout;
+
+        if (noAnimation) {
+            this.updateColumnListsImpl();
+            return;
         }
 
-        this.centerRowComp = this.createRowComp(this.bodyRowContainerComp, centerCols, null);
-        this.rightRowComp = this.createRowComp(this.rightRowContainerComp, rightCols, Constants.PINNED_RIGHT);
-        this.leftRowComp = this.createRowComp(this.leftRowContainerComp, leftCols, Constants.PINNED_RIGHT);
+        if (this.updateColumnListsPending) { return; }
+        this.beans.taskQueue.createTask(
+            ()=> {
+                if (!this.active) { return; }
+                this.updateColumnListsImpl();
+            },
+            this.rowNode.rowIndex!,
+            'createTasksP1'
+        );
+        this.updateColumnListsPending = true;
+    }
+
+    private updateColumnListsImpl(): void {
+        this.updateColumnListsPending = false;
+        if (this.printLayout) {
+            this.centerCols = this.beans.columnController.getAllDisplayedColumns();
+            this.leftCols = [];
+            this.rightCols = [];
+        } else {
+            this.centerCols = this.beans.columnController.getViewportCenterColumnsForRow(this.rowNode);
+            this.leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
+            this.rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
+        }
+        this.allRowComps.forEach( rc => rc.onColumnChanged() );
     }
 
     private createFullWidthRowUi(): void {
@@ -415,13 +426,17 @@ export class RowController extends Component {
         this.addManagedListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addManagedListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+
         this.addManagedListener(eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
 
         this.addListenersForCellComps();
+    }
+
+    private onColumnMoved(): void {
+        this.updateColumnLists();
     }
 
     private addListenersForCellComps(): void {
@@ -508,7 +523,7 @@ export class RowController extends Component {
     private onDisplayedColumnsChanged(): void {
         if (this.isFullWidth()) { return; }
 
-        this.refreshCells();
+        this.updateColumnLists();
     }
 
     private destroyFullWidthComponents(): void {
@@ -518,24 +533,10 @@ export class RowController extends Component {
         this.allRowComps.forEach( rowComp => rowComp.destroyFullWidthComponent() );
     }
 
-    private getContainerForCell(pinnedType: string): HTMLElement {
-        switch (pinnedType) {
-            case Constants.PINNED_LEFT: return this.leftRowComp.getGui();
-            case Constants.PINNED_RIGHT: return this.rightRowComp.getGui();
-            default: return this.centerRowComp.getGui();
-        }
-    }
-
     private onVirtualColumnsChanged(): void {
         if (this.isFullWidth()) { return; }
 
-        this.refreshCells();
-    }
-
-    private onColumnResized(): void {
-        if (this.isFullWidth()) { return; }
-
-        this.refreshCells();
+        this.updateColumnLists();
     }
 
     public getRowPosition(): RowPosition {
@@ -593,162 +594,8 @@ export class RowController extends Component {
     }
 
     public refreshCell(cellComp: CellComp) {
-        if (!this.areAllContainersReady()) { return; }
-
-        this.destroyCells([cellComp.getColumn().getId()]);
-        this.refreshCells();
-    }
-
-    private refreshCells() {
-        if (!this.areAllContainersReady()) {
-            this.refreshNeeded = true;
-            return;
-        }
-
-        const suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
-        const skipAnimationFrame = suppressAnimationFrame || this.printLayout;
-
-        if (skipAnimationFrame) {
-            this.refreshCellsInAnimationFrame();
-        } else {
-            if (this.columnRefreshPending) { return; }
-
-            this.beans.taskQueue.createTask(
-                this.refreshCellsInAnimationFrame.bind(this),
-                this.rowNode.rowIndex!,
-                'createTasksP1'
-            );
-        }
-    }
-
-    private refreshCellsInAnimationFrame() {
-        if (!this.active) { return; }
-        this.columnRefreshPending = false;
-
-        let centerCols: Column[];
-        let leftCols: Column[];
-        let rightCols: Column[];
-
-        if (this.printLayout) {
-            centerCols = this.beans.columnController.getAllDisplayedColumns();
-            leftCols = [];
-            rightCols = [];
-        } else {
-            centerCols = this.beans.columnController.getViewportCenterColumnsForRow(this.rowNode);
-            leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
-            rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
-        }
-
-        this.insertCellsIntoContainer(this.centerRowComp.getGui(), centerCols);
-        if (this.leftRowComp) {
-            this.insertCellsIntoContainer(this.leftRowComp.getGui(), leftCols);
-        }
-        if (this.rightRowComp) {
-            this.insertCellsIntoContainer(this.rightRowComp.getGui(), rightCols);
-        }
-        this.elementOrderChanged = false;
-
-        const colIdsToRemove = Object.keys(this.cellComps);
-        centerCols.forEach(col => removeFromArray(colIdsToRemove, col.getId()));
-        leftCols.forEach(col => removeFromArray(colIdsToRemove, col.getId()));
-        rightCols.forEach(col => removeFromArray(colIdsToRemove, col.getId()));
-
-        // we never remove editing cells, as this would cause the cells to loose their values while editing
-        // as the grid is scrolling horizontally.
-        const eligibleToBeRemoved = colIdsToRemove.filter(this.isCellEligibleToBeRemoved.bind(this));
-
-        // remove old cells from gui, but we don't destroy them, we might use them again
-        this.destroyCells(eligibleToBeRemoved);
-    }
-
-    private onColumnMoved() {
-        this.elementOrderChanged = true;
-    }
-
-    private destroyCells(colIds: string[]): void {
-        colIds.forEach((key: string) => {
-            const cellComp = this.cellComps[key];
-            // could be old reference, ie removed cell
-            if (missing(cellComp)) { return; }
-
-            cellComp.detach();
-            cellComp.destroy();
-            this.cellComps[key] = null;
-        });
-    }
-
-    private isCellEligibleToBeRemoved(indexStr: string): boolean {
-        const displayedColumns = this.beans.columnController.getAllDisplayedColumns();
-
-        const REMOVE_CELL = true;
-        const KEEP_CELL = false;
-        const renderedCell = this.cellComps[indexStr];
-
-        // always remove the cell if it's not rendered or if it's in the wrong pinned location
-        if (!renderedCell || this.isCellInWrongContainer(renderedCell)) { return REMOVE_CELL; }
-
-        // we want to try and keep editing and focused cells
-        const editing = renderedCell.isEditing();
-        const focused = this.beans.focusController.isCellFocused(renderedCell.getCellPosition());
-
-        const mightWantToKeepCell = editing || focused;
-
-        if (mightWantToKeepCell) {
-            const column = renderedCell.getColumn();
-            const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
-
-            return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
-        }
-
-        return REMOVE_CELL;
-    }
-
-    private isCellInWrongContainer(cellComp: CellComp): boolean {
-        const column = cellComp.getColumn();
-        const eDesiredContainer = this.getContainerForCell(column.getPinned()!);
-        const eOldContainer = cellComp.getParentRow(); // if in wrong container, remove it
-
-        return eOldContainer !== eDesiredContainer;
-    }
-
-    private insertCellsIntoContainer(eRow: HTMLElement, cols: Column[]): void {
-        if (!eRow) { return; }
-
-        cols.forEach(col => {
-            const colId = col.getId();
-            const existingCell = this.cellComps[colId];
-
-            if (existingCell && existingCell.getColumn() === col && !this.isCellInWrongContainer(existingCell)) {
-                return;
-            }
-
-            // existing cell can happen for 2 reasons:
-            // 1) column is in wrong container (ie column just got pinned)
-            // 2) there is an old col with same id,so need to destroy the old cell first,
-            //    as the old column no longer exists. this happens often with pivoting, where
-            //    id's are pivot_1, pivot_2 etc, so common for new cols with same ID's
-            if (existingCell) {
-                this.destroyCells([colId]);
-            }
-            this.newCellComp(col, eRow);
-            this.elementOrderChanged = true;
-        });
-
-        if (this.elementOrderChanged && this.beans.gridOptionsWrapper.isEnsureDomOrder()) {
-            const correctChildOrder = cols.map(col => this.getCellForCol(col));
-            setDomChildOrder(eRow, correctChildOrder);
-        }
-    }
-
-    private createCells(cols: Column[], eRow: HTMLElement): void {
-        cols.forEach(col => this.newCellComp(col, eRow));
-    }
-
-    private newCellComp(col: Column, eRow: HTMLElement): void {
-        const cellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this,
-            false, this.printLayout, eRow, this.editingRow);
-        this.cellComps[col.getId()] = cellComp;
-        eRow.appendChild(cellComp.getGui());
+        this.allRowComps.forEach( rc => rc.destroyCells([cellComp]));
+        this.updateColumnLists();
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -1055,11 +902,7 @@ export class RowController extends Component {
     }
 
     public forEachCellComp(callback: (renderedCell: CellComp) => void): void {
-        iterateObject(this.cellComps, (key: any, cellComp: CellComp) => {
-            if (!cellComp) { return; }
-
-            callback(cellComp);
-        });
+        this.allRowComps.forEach( rc => rc.forEachCellComp(callback));
     }
 
     private postProcessClassesFromGridOptions(): void {
@@ -1276,9 +1119,9 @@ export class RowController extends Component {
 
         if (animate) {
             this.removeFirstPassFuncs.forEach(func => func());
-            this.removeSecondPassFuncs.push(this.destroyContainingCells.bind(this));
+            this.removeSecondPassFuncs.push(this.destroyRowComps.bind(this));
         } else {
-            this.destroyContainingCells();
+            this.destroyRowComps();
 
             // we are not animating, so execute the second stage of removal now.
             // we call getAndClear, so that they are only called once
@@ -1293,9 +1136,9 @@ export class RowController extends Component {
         super.destroy();
     }
 
-    private destroyContainingCells(): void {
-        const cellsToDestroy = Object.keys(this.cellComps);
-        this.destroyCells(cellsToDestroy);
+    private destroyRowComps(): void {
+        this.allRowComps.forEach( c => c.destroy() );
+        this.allRowComps.length = 0;
     }
 
     // we clear so that the functions are never executed twice
@@ -1391,15 +1234,10 @@ export class RowController extends Component {
     }
 
     public getRenderedCellForColumn(column: Column): CellComp | null {
-        const cellComp = this.cellComps[column.getColId()];
-
+        let cellComp = this.allRowComps.map( rc => rc.getCellComp(column.getColId()) ).find( c => c);
         if (cellComp) { return cellComp; }
-
-        const spanList = Object.keys(this.cellComps)
-            .map(name => this.cellComps[name])
-            .filter(cmp => cmp && cmp.getColSpanningList().indexOf(column) !== -1);
-
-        return spanList.length ? spanList[0] : null;
+        cellComp = this.allRowComps.map( rc => rc.getCellCompSpanned(column) ).find( c => c);
+        if (cellComp) { return cellComp;} else {return null;}
     }
 
     private onRowIndexChanged(): void {
