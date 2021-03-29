@@ -1,5 +1,5 @@
 [[only-javascript]]
-|Below is a simple example of cell renderer class:
+|Below is a simple example of header component class:
 |
 |```js
 |class CustomHeader {

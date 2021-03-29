@@ -1,5 +1,5 @@
 [[only-vue]]
-|Below is a simple example of floating filter component:
+|Below is a simple example of header component:
 |
 |```js
 |const MyFloatingFilter = {

@@ -19,7 +19,7 @@
 |}
 |```
 |
-|### Custom Filter Parameters
+|### Custom Header Parameters
 |
 |The `init(params)` method takes a params object with the items listed below. If the user provides params via the `colDef.headerComponentParams` attribute, these 
 |will be additionally added to the params object, overriding items of the same name if a name clash exists.

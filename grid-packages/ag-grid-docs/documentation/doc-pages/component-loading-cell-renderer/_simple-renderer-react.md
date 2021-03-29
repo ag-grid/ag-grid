@@ -1,5 +1,5 @@
 [[only-react]]
-|Below is a simple example of filter component as a Hook:
+|Below is a simple example of loading cell renderer component as a Hook:
 |
 |```jsx
 |export default props => {

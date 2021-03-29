@@ -1,17 +1,19 @@
-import { Component, Input } from '@angular/core';
-import { ILoadingOverlayAngularComp } from "@ag-grid-community/angular";
+import {Component} from '@angular/core';
+import {ILoadingOverlayParams} from "@ag-grid-community/core";
+import {ILoadingOverlayAngularComp} from "@ag-grid-community/angular";
 
 @Component({
     selector: 'app-loading-overlay',
-    template: `<div class="ag-overlay-loading-center" style="background-color: lightsteelblue;">` +
-              `   <i class="fas fa-hourglass-half"> {{this.params.loadingMessage}} </i>` +
-              `</div>`
+    template: `
+      <div class="ag-overlay-loading-center" style="background-color: lightsteelblue;">
+        <i class="fas fa-hourglass-half">{{ this.params.loadingMessage }} </i>
+      </div>
+    `
 })
 export class CustomLoadingOverlay implements ILoadingOverlayAngularComp {
+    private params: ILoadingOverlayParams;
 
-    private params: any;
-
-    agInit(params): void {
+    agInit(params: ILoadingOverlayParams): void {
         this.params = params;
     }
 }

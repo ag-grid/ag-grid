@@ -1,5 +1,5 @@
 [[only-react]]
-|Below is a simple example of filter component as a Hook:
+|Below is a simple example of header component as a Hook:
 |
 |```jsx
 |export default props => {

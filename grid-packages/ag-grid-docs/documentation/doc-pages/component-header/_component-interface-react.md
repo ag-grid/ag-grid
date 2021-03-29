@@ -1,7 +1,7 @@
 [[only-react]]
 |## Header Component Interface
 |
-|The interface for a custom filter component is as follows:
+|The interface for a custom header component is as follows:
 |
 |```ts
 |interface IHeaderReactComp {
@@ -22,7 +22,7 @@
 ||as per the normal React lifecycle.
 ||
 |
-|### Custom Filter Parameters
+|### Custom Header Parameters
 |
 |When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
 |row values available to you via `props` - the interface for what is provided is documented below.

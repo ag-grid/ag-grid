@@ -16,7 +16,7 @@ md-include:simple-header-angular.md
 md-include:simple-header-react.md
 md-include:simple-header-vue.md
 
-## Example: Custom Floating Filter
+## Example: Custom Header Component
 
 The example below shows a header component in action. The following can be observed in the demo:
 
