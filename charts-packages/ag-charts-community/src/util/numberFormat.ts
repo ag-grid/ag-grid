@@ -3,18 +3,30 @@ import { tickStep } from './ticks';
 type FormatType = '%' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'o' | 'p' | 'r' | 's' | 'X' | 'x';
 
 const formatTypes: { [key in FormatType]: (x: number, p?: number) => string } = {
+    // Multiply by 100, and then decimal notation with a percent sign.
     '%': (x: number, p?: number): string => (x * 100).toFixed(p),
+    // Binary notation, rounded to integer.
     'b': (x: number) => Math.round(x).toString(2),
+    // Converts the integer to the corresponding unicode character before printing.
     'c': (x: number) => String(x),
+    // Decimal notation, rounded to integer.
     'd': formatDecimal,
+    // Exponent notation.
     'e': (x: number, p?: number) => x.toExponential(p),
+    // Fixed point notation.
     'f': (x: number, p?: number) => x.toFixed(p),
+    // Either decimal or exponent notation, rounded to significant digits.
     'g': (x: number, p?: number) => x.toPrecision(p),
+    // Octal notation, rounded to integer.
     'o': (x: number) => Math.round(x).toString(8),
+    // Multiply by 100, round to significant digits, and then decimal notation with a percent sign.
     'p': (x: number, p: number) => formatRounded(x * 100, p),
+    // Decimal notation, rounded to significant digits.
     'r': formatRounded,
+    // Decimal notation with a SI prefix, rounded to significant digits.
     's': formatPrefixAuto,
     'X': (x: number) => Math.round(x).toString(16).toUpperCase(),
+    // Hexadecimal notation, using upper-case letters, rounded to integer.
     'x': (x: number) => Math.round(x).toString(16)
 };
 
@@ -54,12 +66,33 @@ export class FormatSpecifier {
     sign: string;
     /**
      * `$` - Apply currency symbols per the locale definition.
+     * `#` - For binary, octal, or hexadecimal notation, prefix by `0b`, `0o`, or `0x`, respectively.
      */
     symbol: string;
+    /**
+     * The `0` option enables zero-padding. Implicitly sets fill to `0` and align to `=`.
+     */
     zero: boolean;
+    /**
+     * The width defines the minimum field width.
+     * If not specified, then the width will be determined by the content.
+     */
     width?: number;
+    /**
+     * The comma `,` option enables the use of a group separator, such as a comma for thousands.
+     */
     comma: boolean;
+    /**
+     * Depending on the type, the precision either indicates the number of digits
+     * that follow the decimal point (types `f` and `%`), or the number of significant digits (types ` `​, `e`, `g`, `r`, `s` and `p`).
+     * If the precision is not specified, it defaults to 6 for all types except `​ ` (none), which defaults to 12.
+     * Precision is ignored for integer formats (types `b`, `o`, `d`, `x`, `X` and `c`).
+     */
     precision?: number;
+    /**
+     * The `~` option trims insignificant trailing zeros across all format types.
+     * This is most commonly used in conjunction with types `r`, `e`, `s` and `%`.
+     */
     trim: boolean;
     type: FormatType | '';
 
