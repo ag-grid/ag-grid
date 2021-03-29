@@ -52,7 +52,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     public showLoadingOverlay(): void {
         const workItem = this.userComponentFactory.newLoadingOverlayComponent({
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi()!
         });
 
         this.showOverlay(workItem, LoadingType.Loading);
@@ -60,7 +60,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     public showNoRowsOverlay(): void {
         const workItem = this.userComponentFactory.newNoRowsOverlayComponent({
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi()!
         });
 
         this.showOverlay(workItem, LoadingType.NoRows);
