@@ -1,16 +1,16 @@
-var columnDefs = [
-    { field: "athlete", width: 150, filter: 'agTextColumnFilter' },
-    { field: "age", width: 90 },
-    { field: "country", width: 120 },
-    { field: "year", width: 90 },
-    { field: "date", width: 110 },
-    { field: "gold", width: 100, filter: false },
-    { field: "silver", width: 100, filter: false },
-    { field: "bronze", width: 100, filter: false },
-    { field: "total", width: 100, filter: false }
+const columnDefs = [
+    {field: "athlete", width: 150, filter: 'agTextColumnFilter'},
+    {field: "age", width: 90},
+    {field: "country", width: 120},
+    {field: "year", width: 90},
+    {field: "date", width: 110},
+    {field: "gold", width: 100, filter: false},
+    {field: "silver", width: 100, filter: false},
+    {field: "bronze", width: 100, filter: false},
+    {field: "total", width: 100, filter: false}
 ];
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -31,20 +31,20 @@ var gridOptions = {
             iconKey: 'columns',
             toolPanel: 'agColumnsToolPanel',
         },
-        {
-            id: 'filters',
-            labelDefault: 'Filters',
-            labelKey: 'filters',
-            iconKey: 'filter',
-            toolPanel: 'agFiltersToolPanel',
-        },
-        {
-            id: 'customStats',
-            labelDefault: 'Custom Stats',
-            labelKey: 'customStats',
-            iconKey: 'custom-stats',
-            toolPanel: 'customStatsToolPanel',
-        }],
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+            },
+            {
+                id: 'customStats',
+                labelDefault: 'Custom Stats',
+                labelKey: 'customStats',
+                iconKey: 'custom-stats',
+                toolPanel: 'customStatsToolPanel',
+            }],
         defaultToolPanel: 'customStats'
     },
     components: {
@@ -53,12 +53,12 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+        .then(data => {
             gridOptions.api.setRowData(data);
         });
 });

@@ -1,0 +1,101 @@
+[[only-react]]
+|
+|Below is a simple example of a tool panel component as a Hook:
+|
+|```jsx
+|const totalStyle = {paddingBottom: '15px'};
+|
+|export default props => {
+|    const [numMedals, setNumMedals] = useState(0);
+|    const [numGold, setNumGold] = useState(0);
+|    const [numSilver, setNumSilver] = useState(0);
+|    const [numBronze, setNumBronze] = useState(0);
+|
+|    const updateTotals = () => {
+|        let numGold = 0, numSilver = 0, numBronze = 0;
+|
+|        props.api.forEachNode(function (rowNode) {
+|            const data = rowNode.data;
+|
+|            if (data.gold) numGold += data.gold;
+|            if (data.silver) numSilver += data.silver;
+|            if (data.bronze) numBronze += data.bronze;
+|        });
+|
+|        const numMedals = numGold + numSilver + numBronze;
+|
+|        setNumMedals(numMedals);
+|        setNumGold(numGold);
+|        setNumSilver(numSilver);
+|        setNumBronze(numBronze);
+|    };
+|
+|    useEffect(() => {
+|        props.api.addEventListener('modelUpdated', updateTotals);
+|
+|        return () => props.api.removeEventListener('modelUpdated', updateTotals);
+|    }, []);
+|
+|    return (
+|        <div style={{textAlign: "center"}}>
+|                <span>
+|                    <h2><i className="fa fa-calculator"></i> Custom Stats</h2>
+|                    <dl style={{fontSize: 'large', padding: '30px 40px 10px 30px'}}>
+|                        <dt style={totalStyle}>Total Medals: <b>{numMedals}</b></dt>
+|                        <dt style={totalStyle}>Total Gold: <b>{numGold}</b></dt>
+|                        <dt style={totalStyle}>Total Silver: <b>{numSilver}</b></dt>
+|                        <dt style={totalStyle}>Total Bronze: <b>{numBronze}</b></dt>
+|                    </dl>
+|                </span>
+|        </div>
+|    );
+|};
+|```
+|
+|And here is the same example as a Class-based Component:
+|
+|```jsx
+|export default class CustomStatsToolPanel extends Component {
+|    constructor(props) {
+|        super(props);
+|
+|        this.state = {numMedals: 0, numGold: 0, numSilver: 0, numBronze: 0};
+|
+|        // calculate stats when new rows loaded, i.e. onModelUpdated
+|        this.props.api.addEventListener('modelUpdated', this.updateTotals.bind(this));
+|    }
+|
+|    render() {
+|        const totalStyle = {paddingBottom: '15px'};
+|
+|        return (
+|            <div style={{textAlign: "center"}}>
+|                <span>
+|                    <h2><i className="fa fa-calculator"></i> Custom Stats</h2>
+|                    <dl style={{fontSize: 'large', padding: '30px 40px 10px 30px'}}>
+|                        <dt style={totalStyle}>Total Medals: <b>{this.state.numMedals}</b></dt>
+|                        <dt style={totalStyle}>Total Gold: <b>{this.state.numGold}</b></dt>
+|                        <dt style={totalStyle}>Total Silver: <b>{this.state.numSilver}</b></dt>
+|                        <dt style={totalStyle}>Total Bronze: <b>{this.state.numBronze}</b></dt>
+|                    </dl>
+|                </span>
+|            </div>
+|        );
+|    }
+|
+|    updateTotals() {
+|        let numGold = 0, numSilver = 0, numBronze = 0;
+|
+|        this.props.api.forEachNode(rowNode => {
+|            const data = rowNode.data;
+|
+|            if (data.gold) numGold += data.gold;
+|            if (data.silver) numSilver += data.silver;
+|            if (data.bronze) numBronze += data.bronze;
+|        });
+|
+|        const numMedals = numGold + numSilver + numBronze;
+|        this.setState({numMedals, numGold, numSilver, numBronze});
+|    }
+|}
+|```
