@@ -1,5 +1,5 @@
 [[only-javascript]]
-|Below is a simple example of header component class:
+|Below is a simple example of header component:
 |
 |```js
 |class CustomHeader {

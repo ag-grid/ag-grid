@@ -1,5 +1,5 @@
 [[only-angular]]
-|Below is a simple example of a loading overlay component class:
+|Below is a simple example of a loading overlay component:
 |
 |```js
 |import {Component} from '@angular/core';

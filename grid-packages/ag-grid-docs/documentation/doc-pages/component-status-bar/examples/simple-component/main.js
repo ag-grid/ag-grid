@@ -9,11 +9,8 @@ const columnDefs = [
 
 const gridOptions = {
     defaultColDef: {
-        editable: true,
-        sortable: true,
         flex: 1,
         minWidth: 100,
-        filter: true,
         resizable: true
     },
     columnDefs: columnDefs,
@@ -30,28 +27,17 @@ const gridOptions = {
         {"row": "Row 10", "name": "Bob Mill"},
         {"row": "Row 11", "name": "Willy Walsh"},
         {"row": "Row 12", "name": "Sarah McCoy"},
-        {"row": "Row 13", "name":  "Jane Jack"},
+        {"row": "Row 13", "name": "Jane Jack"},
         {"row": "Row 14", "name": "Tina Wills"}
     ],
-    enableRangeSelection: true,
     rowSelection: "multiple",
     components: {
-        clickableStatusBarComponent: ClickableStatusBarComponent,
-        countStatusBarComponent: CountStatusBarComponent
+        clickableStatusBarComponent: ClickableStatusBarComponent
     },
     statusBar: {
         statusPanels: [
             {
-                statusPanel: 'countStatusBarComponent'
-            },
-            {
                 statusPanel: 'clickableStatusBarComponent'
-            },
-            {
-                statusPanel: 'agAggregationComponent',
-                statusPanelParams: {
-                    aggFuncs: ['count', 'sum']
-                }
             }
         ]
     }
@@ -61,5 +47,4 @@ const gridOptions = {
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.sizeColumnsToFit();
 });

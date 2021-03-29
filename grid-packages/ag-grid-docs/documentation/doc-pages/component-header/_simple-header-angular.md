@@ -1,5 +1,5 @@
 [[only-angular]]
-|Below is a simple example of header component class:
+|Below is a simple example of header component:
 |
 |```js
 |import {Component, ElementRef, ViewChild} from '@angular/core';

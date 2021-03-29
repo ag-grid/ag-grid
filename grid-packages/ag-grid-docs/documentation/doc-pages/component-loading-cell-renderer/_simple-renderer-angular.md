@@ -1,5 +1,5 @@
 [[only-angular]]
-|Below is a simple example of loading cell renderer component class:
+|Below is a simple example of loading cell renderer component:
 |
 |```js
 |import {Component} from '@angular/core';
