@@ -139,7 +139,7 @@ export class RowComp extends Component {
 
     private addDomData(): void {
         const gow = this.beans.gridOptionsWrapper;
-        gow.setDomData(this.getGui(), RowController.DOM_DATA_KEY_RENDERED_ROW, this);
+        gow.setDomData(this.getGui(), RowController.DOM_DATA_KEY_RENDERED_ROW, this.controller);
         this.addDestroyFunc(
             () => gow.setDomData(this.getGui(), RowController.DOM_DATA_KEY_RENDERED_ROW, null)
         );
