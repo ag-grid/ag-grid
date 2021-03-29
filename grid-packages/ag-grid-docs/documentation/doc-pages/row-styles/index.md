@@ -120,8 +120,7 @@ const gridOptions = {
 
 If you refresh a row, or a cell is updated due to editing, the `rowStyle`, `rowClass` and `rowClassRules` are all applied again. This has the following effect:
 
-- **rowStyle**: All new styles are applied. If a new style is the
-    same as an old style, the new style overwrites the old style.
+- **rowStyle**: All new styles are applied. If a new style is the same as an old style, the new style overwrites the old style.
 - **rowClass**: All new classes are applied. Old classes are not removed so be aware that classes will accumulate. If you want to remove old classes, then use rowClassRules.
 - **rowClassRules**: Rules that return true will have the class applied the second time. Rules that return false will have the class removed second time.
 
