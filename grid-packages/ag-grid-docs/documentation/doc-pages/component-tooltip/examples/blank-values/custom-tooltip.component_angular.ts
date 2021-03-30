@@ -1,13 +1,14 @@
-import { Component, ViewEncapsulation } from '@angular/core';
-import { ITooltipAngularComp } from "@ag-grid-community/angular";
+import {Component} from '@angular/core';
+import {ITooltipParams} from "@ag-grid-community/core";
+import {ITooltipAngularComp} from "@ag-grid-community/angular";
 
 @Component({
     selector: 'tooltip-component',
     template: `
-        <div class="custom-tooltip">
-            <p><span>Athlete's Name:</span></p>
-            <p>{{valueToDisplay}}</p>
-        </div>`,
+      <div class="custom-tooltip">
+      <p><span>Athlete's Name:</span></p>
+      <p>{{ valueToDisplay }}</p>
+      </div>`,
     styles: [
         `
             :host {
@@ -37,10 +38,10 @@ import { ITooltipAngularComp } from "@ag-grid-community/angular";
 })
 export class CustomTooltip implements ITooltipAngularComp {
 
-    private params: any;
+    private params: ITooltipParams;
     private valueToDisplay: string;
 
-    agInit(params): void {
+    agInit(params: ITooltipParams): void {
         this.params = params;
         this.valueToDisplay = this.params.value.value ? this.params.value.value : '- Missing -';
     }

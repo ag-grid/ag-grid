@@ -8,7 +8,7 @@ export default class CustomTooltip extends Component {
     render() {
         const data = this.props.api.getDisplayedRowAtIndex(this.props.rowIndex).data;
         return (
-            <div className={'panel panel-' + (this.props.type || 'primary') }>
+            <div className={'panel panel-' + (this.props.type || 'primary')}>
                 <div className="panel-heading">
                     <h3 className="panel-title">{data.country}</h3>
                 </div>

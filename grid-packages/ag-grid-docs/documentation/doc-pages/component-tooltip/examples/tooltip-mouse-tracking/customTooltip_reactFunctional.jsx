@@ -12,7 +12,7 @@ export default forwardRef((props, ref) => {
     });
 
     return (
-        <div className={'panel panel-' + (props.type || 'primary') }>
+        <div className={'panel panel-' + (props.type || 'primary')}>
             <div className="panel-heading">
                 <h3 className="panel-title">{data.country}</h3>
             </div>
