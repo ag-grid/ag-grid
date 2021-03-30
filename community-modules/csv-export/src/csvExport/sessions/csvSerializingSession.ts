@@ -22,8 +22,6 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
     public addCustomContent(content: CsvCustomContent) {
         if (!content) { return; }
         if (typeof content === 'string') {
-            // we used to require the customFooter to be prefixed with a newline but no longer do,
-            // so only add the newline if the user has not supplied one
             if (!/^\s*\n/.test(content)) {
                 this.beginNewLine();
             }

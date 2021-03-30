@@ -60,18 +60,18 @@ Note the following:
 
 <grid-example title='CSV Export - Suppress Quotes' name='csv-export-suppress-quotes' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
 
-## Appending header and footer content
+## Prepending and Appending Content
 
-The recommended way to append header and footer content is by passing an array of CsvCell objects to `customHeader` or `customFooter`. This ensures that your header content is correctly escaped.
+The recommended way to prepend or append content, is by passing an array of CsvCell objects to `appendContent` or `prependContent`. This ensures that your content is correctly escaped.
 
 For compatibility with earlier versions of the Grid you can also pass a string, which will be inserted into the CSV file without any processing. You are responsible for formatting the string according to the CSV standard.
 
 Note the following:
 
-- You can use select fields at the top to switch the value of `customHeader` and `customFooter`.
-    - With `customHeader=CsvCell[][]` or `customFooter=CsvCell[][]`, custom content will be inserted containing 
+- You can use select fields at the top to switch the value of `prependContent` and `appendContent`.
+    - With `prependContent=CsvCell[][]` or `appendContent=CsvCell[][]`, custom content will be inserted containing 
     commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
-    - With `customHeader=string` or `customFooter=string`, a string to be inserted into the CSV file without any processing, and without being affected by suppressQuotes and columnSeparator. It contains commas and quotes that will not be visible in Excel.
+    - With `prependContent=string` or `appendContent=string`, a string to be inserted into the CSV file without any processing, and without being affected by suppressQuotes and columnSeparator. It contains commas and quotes that will not be visible in Excel.
 
 - You can use the `Show api.getDataAsCsv() text` button, to preview the output.
 - You can use the `Download file (api.exportDataAsCsv())` button to download a csv file.
@@ -149,21 +149,21 @@ interface CsvExportParams {
 
     /**
      * Content to put at the top of the file export. A 2D array of CsvCell objects (see 
-     * Custom Headers and Footers section). Alternatively, you can pass a multi-line string 
+     * Prepending and Appending Content section). Alternatively, you can pass a multi-line string 
      * that is simply appended to the top of the file content.
      *
      * Default: undefined;
      */
-    customHeader?: CsvCell;
+    prependContent?: CsvCell;
 
     /**
      * Content to put at the bottom of the file export. A 2D array of CsvCell objects (see 
-     * Custom Headers and Footers section). Alternatively, you can pass a multi-line string 
+     * Prepending and Appending Content section). Alternatively, you can pass a multi-line string 
      * that is simply appended to the bottom of the file content.
      *
      * Default: undefined;
      */
-    customFooter?: CsvCell;
+    appendContent?: CsvCell;
 
     /**
      * If true, all columns will be exported in the order they appear in the columnDefs.

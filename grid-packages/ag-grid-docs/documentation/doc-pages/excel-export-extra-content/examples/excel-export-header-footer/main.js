@@ -78,8 +78,8 @@ function getValue(inputSelector) {
 
 function getParams() {
     return {
-        customHeader: getValue('#customHeader'),
-        customFooter: getValue('#customFooter')
+        prependContent: getValue('#prependContent'),
+        appendContent: getValue('#appendContent')
     };
 }
 

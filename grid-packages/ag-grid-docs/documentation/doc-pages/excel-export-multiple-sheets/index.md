@@ -142,19 +142,19 @@ interface ExcelExportParams {
 
     /**
      * Content to put at the top of the file export. A 2D array of ExcelCell objects (see 
-     * Custom Headers and Footers section).
+     * Prepending and Appending Content section).
      *
      * Default: undefined;
      */
-    customHeader?: ExcelCell;
+    prependContent?: ExcelCell;
 
     /**
      * Content to put at the bottom of the file export. A 2D array of ExcelCell objects (see 
-     * Custom Headers and Footers section).
+     * Prepending and Appending Content section).
      *
      * Default: undefined;
      */
-    customFooter?: ExcelCell;
+    appendContent?: ExcelCell;
 
     /**
      * If true, all columns will be exported in the order they appear in the columnDefs.

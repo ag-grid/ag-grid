@@ -24,7 +24,15 @@ export interface BaseExportParams {
 }
 
 export interface ExportParams<T> extends BaseExportParams {
+    prependContent?: T;
+    appendContent?: T;
+    /**
+     * @deprecated Use prependContent
+     */
     customHeader?: T;
+    /**
+     * @deprecated User appendContent
+     */
     customFooter?: T;
     getCustomContentBelowRow?: (params: ProcessRowGroupForExportParams) => T | undefined;
 }

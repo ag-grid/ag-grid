@@ -29,7 +29,7 @@ function getValue(inputSelector) {
             return 'Here is a comma, and a some "quotes". You can see them using the\n'
                 + 'api.getDataAsCsv() button but they will not be visible when the downloaded\n'
                 + 'CSV file is opened in Excel because string content passed to\n'
-                + 'customHeader and customFooter is not escaped.';
+                + 'prependContent and appendContent is not escaped.';
         case 'array':
             return [
                 [],
@@ -54,8 +54,8 @@ function getValue(inputSelector) {
 
 function getParams() {
     return {
-        customHeader: getValue('#customHeader'),
-        customFooter: getValue('#customFooter')
+        prependContent: getValue('#prependContent'),
+        appendContent: getValue('#appendContent')
     };
 }
 
