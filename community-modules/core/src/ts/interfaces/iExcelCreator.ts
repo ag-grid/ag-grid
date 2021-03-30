@@ -4,14 +4,14 @@ import { XmlElement } from "./iXmlFactory";
 
 // Excel Styles
 export interface ExcelStyle {
-    id: string;
     alignment?: ExcelAlignment;
     borders?: ExcelBorders;
+    dataType?: ExcelDataType;
     font?: ExcelFont;
+    id: string;
     interior?: ExcelInterior;
     numberFormat?: ExcelNumberFormat;
     protection?: ExcelProtection;
-    dataType?: ExcelDataType;
     /**
      * @deprecated Legacy property
      */
@@ -35,19 +35,21 @@ export interface ExcelAlignment {
 export interface ExcelBorders {
     borderBottom?: ExcelBorder;
     borderLeft?: ExcelBorder;
-    borderTop?: ExcelBorder;
     borderRight?: ExcelBorder;
+    borderTop?: ExcelBorder;
 }
 
 export interface ExcelBorder {
+    color?: string;
     lineStyle?: 'None' | 'Continuous' | 'Dash' | 'Dot' | 'DashDot' | 'DashDotDot' | 'SlantDashDot' | 'Double';
     weight?: 0 | 1 | 2 | 3;
-    color?: string;
 }
 
 export interface ExcelFont {
     bold?: boolean;
+    charSet?: number;
     color?: string;
+    family?: string;
     fontName?: string;
     italic?: boolean;
     outline?: boolean;
@@ -55,8 +57,6 @@ export interface ExcelFont {
     size?: number;
     strikeThrough?: boolean;
     underline?: 'None' | 'Subscript' | 'Superscript';
-    charSet?: number;
-    family?: string;
     /**
      * @deprecated Legacy property
      */

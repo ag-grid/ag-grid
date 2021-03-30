@@ -58,8 +58,8 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 - Specifying an invalid enumerated property. It is also important to realise that Excel is case sensitive, so Solid is a valid pattern, but SOLID or solid are not.
 
-
 ## API
+
 ### Grid Properties
 
 <api-documentation source='grid-properties/properties.json' section='miscellaneous' names='["suppressExcelExport", "excelStyles"]'></api-documentation>
@@ -68,7 +68,7 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 <api-documentation source='grid-api/api.json' section='export' names='["exportDataAsExcel()", "getDataAsExcel()", "getGridRawDataForExcel()", "getMultipleSheetsAsExcel()", "exportMultipleSheetsAsExcel()"]'></api-documentation>
 
-## Configuration
+## Interfaces
 
 ### ExcelExportParams:
 
@@ -82,11 +82,39 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelData'></api-documentation>
 
-### ExcelDataType
+## Excel Styles
 
-```ts
-type ExcelDataType = 'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error'
-```
+### ExcelStyle
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelStyle'></api-documentation>
+
+### ExcelAlignment
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelAlignment'></api-documentation>
+
+### ExcelBorders
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelBorders'></api-documentation>
+
+### ExcelBorder
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelBorder'></api-documentation>
+
+### ExcelFont
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelFont'></api-documentation>
+
+### ExcelInterior
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelInterior'></api-documentation>
+
+### ExcelNumberFormat
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelNumberFormat'></api-documentation>
+
+### ExcelProtection
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelProtection'></api-documentation>
 
 ## Multiple Sheet Configuration
 
@@ -116,15 +144,3 @@ interface ExcelExportMultipleSheetParams extends ExcelExportParams {
 ### ExcelSheetPageSetup
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetPageSetup'></api-documentation>
-
-### ExcelSheetPageOrientationType
-
-```ts
-type ExcelSheetPageOrientationType = 'Portrait' | 'Landscape'
-```
-
-### ExcelSheetPageSizeType
-
-```ts
-type ExcelSheetPageSizeType = 'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard'
-```

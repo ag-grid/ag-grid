@@ -1123,7 +1123,8 @@
             "description": "Prevents the user from exporting the grid to Excel."
         },
         "excelStyles": {
-            "description": "A list (array) of [Excel Styles](/excel-export-styles/#excelstyle) to be used when [exporting to Excel with styles](/excel-export-styles/)"
+            "description": "A list (array) of [Excel Styles](/excel-export-styles/#excelstyle) to be used when [exporting to Excel with styles](/excel-export-styles/)",
+            "type": "ExcelStyle[]"
         },
         "asyncTransactionWaitMillis": {
             "type": "number",

@@ -213,12 +213,283 @@
         "type": {
             "default": "xxx",
             "description": "xxx",
-            "type": "ExcelDataType"
+            "options": [
+                "String",
+                "Formula",
+                "Number",
+                "Boolean",
+                "DateTime",
+                "Error"
+            ],
+            "type": "string"
         },
         "value": {
             "default": "xxx",
             "description": "xxx",
             "type": "string"
+        }
+    },
+    "excelStyle": {
+        "alignment": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelAlignment"
+        },
+        "borders": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelBorders"
+        },
+        "dataType": {
+            "default": "xxx",
+            "description": "xxx",
+            "options": [
+                "String",
+                "Formula",
+                "Number",
+                "Boolean",
+                "DateTime",
+                "Error"
+            ],
+            "type": "string"
+        },
+        "font": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelFont"
+        },
+        "id": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "string"
+        },
+        "interior": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelInterior"
+        },
+        "numberFormat": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelNumberFormat"
+        },
+        "protection": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelProtection"
+        }
+    },
+    "excelAlignment": {
+        "horizontal": {
+            "default": "xxx",
+            "description": "xxx",
+            "options": [
+                "Automatic",
+                "Left",
+                "Center",
+                "Right",
+                "Fill",
+                "Justify",
+                "CenterAcrossSelection",
+                "Distributed",
+                "JustifyDistributed"
+            ],
+            "type": "string"
+        },
+        "indent": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "number"
+        },
+        "readingOrder": {
+            "default": "xxx",
+            "description": "xxx",
+            "options": [
+                "RightToLeft",
+                "LeftToRight",
+                "Context"
+            ],
+            "type": "string"
+        },
+        "rotate": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "number"
+        },
+        "shrinkToFit": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "boolean"
+        },
+        "vertical": {
+            "default": "xxx",
+            "description": "xxx",
+            "options": [
+                "Automatic",
+                "Top",
+                "Bottom",
+                "Center",
+                "Justify",
+                "Distributed",
+                "JustifyDistributed"
+            ],
+            "type": "string"
+        },
+        "wrapText": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "boolean"
+        }
+    },
+    "excelBorders": {
+        "borderBottom": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelBorder"
+        },
+        "borderLeft": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelBorder"
+        },
+        "borderRight": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelBorder"
+        },
+        "borderTop": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelBorder"
+        }
+    },
+    "excelBorder": {
+        "color": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "string"
+        },
+        "lineStyle": {
+            "default": "xxx",
+            "description": "xxx",
+            "options": [
+                "None",
+                "Continuous",
+                "Dash",
+                "Dot",
+                "DashDot",
+                "DashDotDot",
+                "SlantDashDot",
+                "Double"
+            ],
+            "type": "string"
+        },
+        "weight": {
+            "default": "xxx",
+            "description": "xxx",
+            "options": [0, 1, 2, 3],
+            "type": "number"
+        }
+    },
+    "excelFont": {
+        "bold": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "boolean"
+        },
+        "charSet": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "number"
+        },
+        "color": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "string"
+        },
+        "family": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "string"
+        },
+        "fontName": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "string"
+        },
+        "italic": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "boolean"
+        },
+        "outline": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "boolean"
+        },
+        "shadow": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "boolean"
+        },
+        "size": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "number"
+        },
+        "strikeThrough": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "boolean"
+        },
+        "underline": {
+            "default": "xxx",
+            "description": "xxx",
+            "options": [
+                "None",
+                "Subscript",
+                "Superscript"
+            ],
+            "type": "string"
+        }
+    },
+    "excelInterior": {
+        "color": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "string"
+        },
+        "pattern": {
+            "default": "xxx",
+            "description": "xxx",
+            "options": [
+                "None", "Solid", "Gray75", "Gray50", "Gray25", "Gray125", "Gray0625", "HorzStripe", "VertStripe", "ReverseDiagStripe", "DiagStripe", "DiagCross", "ThickDiagCross", "ThinHorzStripe", "ThinVertStripe", "ThinReverseDiagStripe", "ThinDiagStripe", "ThinHorzCross", "ThinDiagCross"
+            ],
+            "type": "string"
+        },
+        "patternColor": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "string"
+        }
+    },
+    "excelNumberFormat": {
+        "format": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "string"
+        }
+    },
+    "excelProtection": {
+        "protected": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "boolean"
+        },
+        "hideFormula": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "boolean"
         }
     },
     "excelSheetConfig": {
@@ -269,11 +540,42 @@
         "orientation": {
             "default": "Portrait",
             "description": "xxx",
+            "options": [
+                "Portrait",
+                "Landscape"
+            ],
             "type": "ExcelSheetPageOrientationType"
         },
         "pageSize": {
             "default": "Letter",
             "description": "xxx",
+            "options": [
+                "Letter",
+                "Letter Small",
+                "Tabloid",
+                "Ledger",
+                "Legal",
+                "Statement",
+                "Executive",
+                "A3",
+                "A4",
+                "A4 Small",
+                "A5",
+                "A6",
+                "B4",
+                "B5",
+                "Folio",
+                "Envelope",
+                "Envelope DL",
+                "Envelope C5",
+                "Envelope B5",
+                "Envelope C3",
+                "Envelope C4",
+                "Envelope C6",
+                "Envelope Monarch",
+                "Japanese Postcard",
+                "Japanese Double Postcard"
+            ],
             "type": "ExcelSheetPageSizeType"
         }
     }
