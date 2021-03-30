@@ -78,6 +78,11 @@
             "description": "Only export selected rows including other pages (only makes sense when using pagination).",
             "type": "boolean"
         },
+        "sheetConfig": {
+            "default": "undefined",
+            "description": "xxx",
+            "type": "ExcelSheetConfig"
+        },
         "skipGroups": {
             "default": "false",
             "description": "Set to true to skip row group headers if grouping rows. Only relevant when grouping rows.",
@@ -94,7 +99,6 @@
             "type": "boolean"
         },
         "getCustomContentBelowRow": {
-            "default": "undefined",
             "description": "A callback function to return content to be inserted below a row in the export.",
             "type": {
                 "meta": {
@@ -110,7 +114,6 @@
             }
         },
         "shouldRowBeSkipped": {
-            "default": "undefined",
             "description": "A callback function that will be invoked once per row in the grid. Return true to omit the row from the export.",
             "type": {
                 "meta": {
@@ -125,7 +128,6 @@
             }
         },
         "processCellCallback": {
-            "default": "undefined",
             "description": "A callback function invoked once per cell in the grid. Return a string value to be displayed in the export. For example this is useful for formatting date values.",
             "type": {
                 "meta": {
@@ -145,7 +147,6 @@
             }
         },
         "processHeaderCallback": {
-            "default": "undefined",
             "description": "A callback function invoked once per column. Return a string to be displayed in the column header.",
             "type": {
                 "meta": {
@@ -161,7 +162,6 @@
             }
         },
         "processGroupHeaderCallback": {
-            "default": "undefined",
             "description": "A callback function invoked once per column group. Return a `string` to be displayed in the column group header. Note that column groups are not exported by default, you must pass `columnGroups=true`.",
             "type": {
                 "meta": {
@@ -177,7 +177,6 @@
             }
         },
         "processRowGroupCallback": {
-            "default": "undefined",
             "description": "A callback function invoked once per row group. Return a `string` to be displayed in the group cell.",
             "type": {
                 "meta": {
@@ -213,13 +212,69 @@
     "excelData": {
         "type": {
             "default": "xxx",
-            "description": "Possible values: `'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error'`",
+            "description": "xxx",
             "type": "ExcelDataType"
         },
         "value": {
             "default": "xxx",
             "description": "xxx",
             "type": "string"
+        }
+    },
+    "excelSheetConfig": {
+        "margins": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelSheetMargin"
+        },
+        "setup": {
+            "default": "xxx",
+            "description": "xxx",
+            "type": "ExcelSheetPageSetup"
+        }
+    },
+    "excelSheetMargin": {
+        "top": {
+            "default": "0.75",
+            "description": "xxx",
+            "type": "number"
+        },
+        "right": {
+            "default": "0.7",
+            "description": "xxx",
+            "type": "number"
+        },
+        "bottom": {
+            "default": "0.75",
+            "description": "xxx",
+            "type": "number"
+        },
+        "left": {
+            "default": "0.7",
+            "description": "xxx",
+            "type": "number"
+        },
+        "header": {
+            "default": "0.3",
+            "description": "xxx",
+            "type": "number"
+        },
+        "footer": {
+            "default": "0.3",
+            "description": "xxx",
+            "type": "number"
+        }
+    },
+    "excelSheetPageSetup": {
+        "orientation": {
+            "default": "Portrait",
+            "description": "xxx",
+            "type": "ExcelSheetPageOrientationType"
+        },
+        "pageSize": {
+            "default": "Letter",
+            "description": "xxx",
+            "type": "ExcelSheetPageSizeType"
         }
     }
 }

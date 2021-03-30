@@ -25,17 +25,17 @@ Note the following:
 The same data that is in the grid gets exported, but none of the GUI representation of the data will be. What this means is:
 
 - The raw values, and not the result of cell renderer will get used, meaning:
-    - Value Getters will be used.
-    - Cell Renderers will **NOT** be used.
-    - Cell Formatters will **NOT** be used (use `processCellCallback` instead).
+  - Value Getters will be used.
+  - Cell Renderers will **NOT** be used.
+  - Cell Formatters will **NOT** be used (use `processCellCallback` instead).
 
 - Cell styles are not exported by default, see [Export Excel Style](/excel-export-styles/) for a detailed guide on how to export styles.
 
 - If row grouping:
 
-    - All data will be exported regardless of whether groups are open in the UI.
-    - By default, group names will be in the format "-> Parent Name -> Child Name" (use `processRowGroupCallback` to change this).
-    - Row group footers (`groupIncludeFooter=true`) will **NOT** be exported - this is a GUI addition only.
+  - All data will be exported regardless of whether groups are open in the UI.
+  - By default, group names will be in the format "-> Parent Name -> Child Name" (use `processRowGroupCallback` to change this).
+  - Row group footers (`groupIncludeFooter=true`) will **NOT** be exported - this is a GUI addition only.
 
 [[note]]
 |1. The column width in Excel will be the same as the actual width of the column in the application at the time that the export happens, or 75px, whichever is wider. "Actual width" may be different from the width in the column definition if column has been resized or uses flex sizing. This can be overridden using the `columnWidth` export parameter.
@@ -68,7 +68,7 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 <api-documentation source='grid-api/api.json' section='export' names='["exportDataAsExcel()", "getDataAsExcel()", "getGridRawDataForExcel()", "getMultipleSheetsAsExcel()", "exportMultipleSheetsAsExcel()"]'></api-documentation>
 
-## Interfaces
+## Configuration
 
 ### ExcelExportParams:
 
@@ -85,8 +85,10 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 ### ExcelDataType
 
 ```ts
-type ExcelDataType = 'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error';
+type ExcelDataType = 'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error'
 ```
+
+## Multiple Sheet Configuration
 
 ### ExcelExportMultipleSheetParams
 
@@ -101,4 +103,28 @@ interface ExcelExportMultipleSheetParams extends ExcelExportParams {
      */
     data: string[];
 }
+```
+
+### ExcelSheetConfig
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetConfig'></api-documentation>
+
+### ExcelSheetMargin
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetMargin'></api-documentation>
+
+### ExcelSheetPageSetup
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetPageSetup'></api-documentation>
+
+### ExcelSheetPageOrientationType
+
+```ts
+type ExcelSheetPageOrientationType = 'Portrait' | 'Landscape'
+```
+
+### ExcelSheetPageSizeType
+
+```ts
+type ExcelSheetPageSizeType = 'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard'
 ```
